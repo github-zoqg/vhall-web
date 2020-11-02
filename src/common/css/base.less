@@ -1,0 +1,93 @@
+
+// 1px边框
+@mixin border($direction, $color: #d4d4d4, $opacity: 1) {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    @if $direction == 'left' {
+      /* prettier-ignore */
+      border-left: 1PX solid $color;
+      top: 0;
+      left: 0;
+      height: 100%;
+      transform-origin: 0 0;
+      opacity: $opacity;
+    } @else if $direction == 'bottom' {
+      width: 100%;
+      /* prettier-ignore */
+      border-bottom: 1PX solid $color;
+      left: 0;
+      bottom: 0;
+      transform-origin: 0 bottom;
+      opacity: $opacity;
+    } @else if $direction == 'top' {
+      width: 100%;
+      /* prettier-ignore */
+      border-bottom: 1PX solid $color;
+      left: 0;
+      top: 0;
+      transform-origin: 0 bottom;
+      opacity: $opacity;
+    } @else if $direction == 'right' {
+      width: 100%;
+      /* prettier-ignore */
+      border-right: 1PX solid $color;
+      left: 0;
+      top: 0;
+      transform-origin: 0 0;
+      opacity: $opacity;
+    }
+
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+      @if $direction == 'left' {
+        height: 200%;
+      } @else {
+        width: 200%;
+      }
+      transform: scale(0.5);
+      @if $direction == 'right' {
+        height: 200%;
+      } @else {
+        width: 200%;
+      }
+    }
+    @media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx) {
+      @if $direction == 'left' {
+        height: 300%;
+      } @else {
+        width: 300%;
+      }
+      @if $direction == 'right' {
+        height: 300%;
+      } @else {
+        width: 300%;
+      }
+      transform: scale(0.33);
+    }
+  }
+}
+/* prettier-ignore */
+@mixin border-1px($color: #e6e6e6, $borderRadius: 8PX) {
+  position: relative;
+  border-width: 0;
+  input{
+    background-color: transparent;
+    position: relative;
+    z-index: 1;
+  }
+  &::after {
+    content: ' ';
+    width: 200%;
+    height: 200%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* prettier-ignore */
+    border: 1PX solid $color;
+    transform: scale(0.5);
+    transform-origin: 0 0;
+    box-sizing: border-box;
+    border-radius: $borderRadius;
+  }
+}

@@ -3,3 +3,9 @@
     <h1>This is an about page</h1>
   </div>
 </template>
+<style lang="less" scoped>
+h1{
+  color: @red;
+  font-size: @28;
+}
+</style>

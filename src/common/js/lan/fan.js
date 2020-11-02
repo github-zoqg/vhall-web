@@ -1,0 +1,47 @@
+module.exports = {
+  language: {
+    name: 'zh-tw'
+  },
+  mess: {
+    living: '直播中',
+    preView: '預告',
+    end: '結束',
+    playBack: '回放',
+    views: '次觀看',
+    original: '原畫',
+    video720: '超清',
+    video480: '高清',
+    video360: '標清',
+    audio: '音頻',
+    loading: '加載中...',
+    switchVideo: '已爲妳切換到',
+    contentLoading: '內容即將呈現...',
+    landscapeTips: '妳已經進入橫屏模式',
+    tip: '提示',
+    confirm: '確認',
+    voicePlaying: '語音播放中...',
+    speed: '倍速',
+    switchSpeed: '已爲您切換到',
+    switchNormal: '已爲您切換到正常倍速',
+    day: '天',
+    hour: '時',
+    minute: '分',
+    second: '秒',
+    replay: '重新播放',
+    liveEnd: '直播已结束',
+    speedFailed: '倍速設置失敗',
+    sharpnessFailed: '清晰度設置失敗',
+    发送太频繁啦: '發送太頻繁啦~還有',
+    秒可以发言: '秒可以發言',
+    // --------白名单----------
+    白名单验证: '白名單驗證',
+    请输入身份信息: '請輸入身份信息',
+    确认: '確認',
+    活动不存在: '活動不存在',
+    您已预约成功: '您已預約成功，',
+    直播当天请访问此页面观看直播: '直播當天請訪問此頁面觀看直播',
+    预约成功: '預約成功',
+    您的信息不在白名单中: '您的信息不在白名單中',
+    没有白名单: '沒有白名單'
+  }
+}
