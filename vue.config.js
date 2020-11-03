@@ -21,7 +21,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
 }
 module.exports = {
   assetsDir: './static',
-  lintOnSave: false,
+  // lintOnSave: false,
   devServer: {
     proxy: {
       '/mock': {
