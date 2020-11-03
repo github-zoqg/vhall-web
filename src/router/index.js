@@ -8,9 +8,24 @@ const routes = [
     component: () => import('../views/About.vue')
   },
   {
+    path: '/videoManage',
+    name: 'videoManage',
+    component: () => import('../views/DataManagement/video.vue')
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue')
+  },
+  {
+    path: '/live/list',
+    name: 'liveList',
+    component: () => import('@/views/LiveManage/list.vue')
+  },
+  {
+    path: '/live/edit',
+    name: 'liveEdit',
+    component: () => import('@/views/LiveManage/edit.vue')
   }
 ]
 

@@ -3,6 +3,9 @@
 ## Project setup
 ```
 npm install
+1、  公共的以写的
+    分页
+    table列表
 ```
 
 ### Compiles and hot-reloads for development
