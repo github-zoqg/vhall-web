@@ -11,8 +11,19 @@ module.exports = {
     parser: 'babel-eslint'
   },
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    semi: [1],
+    eqeqeq: [0],
+    camelcase: 0,
+    'space-before-function-paren': [0],
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'vue/no-parsing-error': [
+      1,
+      {
+        'x-invalid-end-tag': false,
+        'invalid-first-character-of-tag-name': false
+      }
+    ]
   },
   overrides: [
     {
