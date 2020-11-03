@@ -10,7 +10,7 @@ const routes = [
   {
     path: '/videoManage',
     name: 'videoManage',
-    component: () => import('../views/DataManagement/video.vue')
+    component: () => import('../views/StatisticsModule/video.vue')
   },
   {
     path: '/about',
@@ -20,12 +20,12 @@ const routes = [
   {
     path: '/live/list',
     name: 'liveList',
-    component: () => import('@/views/LiveManage/list.vue')
+    component: () => import('@/views/LiveModule/list.vue')
   },
   {
     path: '/live/edit',
     name: 'liveEdit',
-    component: () => import('@/views/LiveManage/edit.vue')
+    component: () => import('@/views/LiveModule/edit.vue')
   }
 ]
 

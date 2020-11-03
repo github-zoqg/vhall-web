@@ -1,0 +1,55 @@
+VUE开发规范： https://cn.vuejs.org/v2/style-guide/index.html
+CSS开发规范： http://wiki.vhallops.com/pages/viewpage.action?pageId=61177904
+JS开发规范： http://wiki.vhallops.com/pages/viewpage.action?pageId=61177907
+------------------------------------------------saas-v3-web 针对Saas重构-控制台项目 2020.12.26 截止---------------------------------------------------------
+目录结构如下：
+public
+----favicon.ico
+----index.html
+src
+----api
+--------config.js 接口请求地址配置文件
+--------fetch.js 接口请求封装文件
+----common
+--------css 样式文件（less）
+--------images 图片
+--------js 通用JS类库文件
+------------lan 国际化目录
+----components
+--------MenuItem 菜单导航组件
+----router 路由
+----utils
+--------Events.js
+--------general.js
+--------goBack.js
+--------jsonp.js
+--------qq.js
+--------softKeyboard.js
+--------weChat.js
+----views
+--------LiveModule 直播模块
+--------SpecialModule 专题模块
+--------MaterialModule 资料模块
+--------StatisticsModule 数据统计模块
+--------SettingModule 设置中心模块
+--------FinanceModule 财务中心模块
+--------AccountModule 账户模块
+--------PlatformModule 全平台-公共模块
+----App.vue
+----main.js 入口执行文件
+tests
+----unit
+--------example.spec.js 单元测试
+.browserslistrc
+.editorconfig
+.env.development
+.env.pre
+.env.production
+.env.test
+.eslintrc.js
+.gitignore
+babel.config.js
+jest.config.js
+package.json
+README.md
+vue.config.js
