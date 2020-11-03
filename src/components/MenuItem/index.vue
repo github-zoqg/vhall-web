@@ -9,7 +9,7 @@
     </template>
   </el-submenu>
   <el-menu-item v-else :index="item.index">
-    <router-link :to="{ path: item.path }" class="cxs-a-line">
+    <router-link :to="{ path: item.path }" class="a-line">
       <i :class="item.iconClass"></i>
       <span>{{ item.title }}</span>
     </router-link>
@@ -38,12 +38,22 @@ export default {
 .el-submenu .el-menu-item {
   padding: 0;
 }
-.cxs-a-line {
+.a-line {
   display: inline-block;
   width: 100%;
   height: 100%;
+  font-size: 16px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #E2E2E2;
 }
 .router-link-active {
-  color: orangered;
+  font-size: 16px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FA3F37;
+}
+.el-menu-item:focus, .el-menu-item:hover{
+  background: #333333;
 }
 </style>

@@ -19,13 +19,13 @@ export default {
     return {
       list: [
         {
-          title: "概况",
+          title: "首页",
           index: "0",
           iconClass: "el-icon-setting",
           path: "/default"
         },
         {
-          title: "导航一",
+          title: "直播管理",
           index: "1",
           iconClass: "el-icon-location",
           children: [
@@ -55,8 +55,7 @@ export default {
           ]
         },
         {
-          title: "导航二",
-
+          title: "专题管理",
           index: "2",
           iconClass: "el-icon-menu",
           children: [
@@ -119,6 +118,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .el-menu-vertical-demo{
-  height: calc(100vh - 120px);
+  height: calc(100vh - 60px);
+  background: #1A1A1A;
 }
 </style>

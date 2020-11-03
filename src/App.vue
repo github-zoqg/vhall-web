@@ -1,27 +1,28 @@
 <template>
   <div id="app">
-        <el-container class="box">
-        <el-header>-头部</el-header>
-        <el-container class="el-main-box">
-          <el-aside width="200px" style="height:100%">
-            <!-- 左侧导航 -->
-            <app-home></app-home>
-          </el-aside>
-          <el-main>
-            <!-- 面包屑 -->
-            <!-- <breadcrumb></breadcrumb> -->
-            <router-view />
-          </el-main>
+    <el-container class="box">
+          <el-header class="head">
+            <app-head></app-head>
+          </el-header>
+          <el-container class="el-main-box">
+            <el-aside width="225px" style="height:100%">
+              <!-- 左侧导航 -->
+              <app-home></app-home>
+            </el-aside>
+            <el-main class="route-wrap">
+              <router-view />
+            </el-main>
         </el-container>
-        <el-footer>底部</el-footer>
     </el-container>
   </div>
 </template>
 <script>
 import AppHome from "./views/Home/index";
+import AppHead from "@/components/Header/index";
 export default {
   components: {
-    AppHome
+    AppHome,
+    AppHead
   },
   data() {
     return {
@@ -36,5 +37,12 @@ export default {
   },
 }
 </script>
-<style lang="less">
+<style lang="less" scope>
+.el-container .head{
+  padding: 0;
+  height: 64px!important;
+}
+.route-wrap{
+  background: #F7F7F7;
+}
 </style>
