@@ -1,35 +1,19 @@
 <template>
-<el-menu default-active="1-4-1" class="el-menu-vertical-demo">
-  <el-submenu index="1">
-    <template slot="title">
-      <i class="el-icon-location"></i>
-      <span slot="title">导航一</span>
-    </template>
-    <el-menu-item-group>
-      <span slot="title">分组一</span>
-      <el-menu-item index="1-1">选项1</el-menu-item>
-      <el-menu-item index="1-2">选项2</el-menu-item>
-    </el-menu-item-group>
-  </el-submenu>
-  <el-menu-item index="2">
-    <i class="el-icon-menu"></i>
-    <span slot="title">导航二</span>
-  </el-menu-item>
-  <el-menu-item index="3" disabled>
-    <i class="el-icon-document"></i>
-    <span slot="title">导航三</span>
-  </el-menu-item>
-  <el-menu-item index="4">
-    <i class="el-icon-setting"></i>
-    <span slot="title">导航四</span>
-  </el-menu-item>
-</el-menu>
+  <el-menu
+    :default-active="activePath"
+    :default-openeds="activeArray"
+    class="el-menu-vertical-demo"
+    @open="handleOpen"
+    @select="handleSelect"
+  >
+    <menu-item v-for="(item, index) in list" :key="index" :item="item">{{item.title}}</menu-item>
+  </el-menu>
 </template>
 <script>
-// import elMenuItem from "@/components/MenuItem/index.vue";
+import MenuItem from "@/components/MenuItem/index.vue";
 export default {
   components: {
-    // elMenuItem
+    MenuItem
   },
   data() {
     return {
@@ -90,27 +74,27 @@ export default {
           path: "/dao3/index"
         }
       ],
-      activePath: '0', // 默认左边菜单栏路径
+      activePath: 0, // 默认左边菜单栏路径
       activeArray: [0]
     };
   },
   created() {
     if (localStorage.getItem("localPath")) {
-      // let localPath = JSON.parse(localStorage.getItem("localPath"));
-      // let localLength = localPath.length;
-      // this.activePath = localPath[localLength - 1];
-      // this.activeArray = localPath;
-      // console.log(this.activePath, "end-----------");
+      let localPath = JSON.parse(localStorage.getItem("localPath"));
+      let localLength = localPath.length;
+      this.activePath = localPath[localLength - 1];
+      this.activeArray = localPath;
+      console.log(this.activePath, "end-----------");
     }
   },
   methods: {
-    // handleOpen(key, keyPath) {
-    //   console.log(key, keyPath, "el-menu组件上的内容");
-    // },
-    // handleSelect(key, keyPath) {
-    //   console.log(key, keyPath, "el-menu 菜单激活回调");
-    //   localStorage.setItem("localPath", JSON.stringify(keyPath));
-    // }
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath, "el-menu组件上的内容");
+    },
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath, "el-menu 菜单激活回调");
+      localStorage.setItem("localPath", JSON.stringify(keyPath));
+    }
   }
 };
 </script>
