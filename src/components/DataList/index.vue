@@ -41,7 +41,7 @@
         prop="address" align='center'
         label="操作"
         show-overflow-tooltip>
-         <template slot-scope="scope">
+         <template>
            <el-button type="text" v-for="(item, index) in operatingArray" :key="index" @click="operating(item, index)">{{item}}</el-button>
          </template>
       </el-table-column>
