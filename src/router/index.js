@@ -11,6 +11,16 @@ const routes = [
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue')
+  },
+  {
+    path: '/live/list',
+    name: 'liveList',
+    component: () => import('@/views/LiveManage/list.vue')
+  },
+  {
+    path: '/live/edit',
+    name: 'liveEdit',
+    component: () => import('@/views/LiveManage/edit.vue')
   }
 ]
 

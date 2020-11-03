@@ -72,6 +72,25 @@ export default {
           index: "3",
           iconClass: "el-icon-setting",
           path: "/dao3/index"
+        },
+        {
+          title: "直播管理",
+          index: "4",
+          iconClass: "el-icon-video-camera",
+          children: [
+            {
+              title: "直播列表",
+              index: "4-1",
+              iconClass: "",
+              path: "/live/list"
+            },
+            {
+              title: "创建直播",
+              iconClass: "",
+              index: "4-2",
+              path: "/live/edit"
+            }
+          ]
         }
       ],
       activePath: 0, // 默认左边菜单栏路径
