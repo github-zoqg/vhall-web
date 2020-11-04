@@ -58,9 +58,15 @@
               <p class="liveTime">{{item.time}}</p>
             </div>
             <p class="liveOpera">
-              <i class="el-icon-video-camera"></i>
-              <i class="el-icon-s-promotion"></i>
-              <i class="el-icon-document"></i>
+              <el-tooltip class="item" effect="dark" content="开播" placement="top">
+                <i class="el-icon-video-camera"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="回放" placement="top">
+                <i class="el-icon-s-promotion"></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="详情" placement="top">
+                <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
+              </el-tooltip>
               <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)">
                 <i class="el-icon-more"></i>
                 <el-dropdown-menu slot="dropdown">
@@ -112,6 +118,7 @@ export default {
       ],
       liveList: [
         {
+          webinar_id: 795704919,
           title: '创想聚能艾瑞年对高峰会议既定终结攀登巅',
           time: '2018-07-09 09:30:00',
           hot: 2564,
@@ -119,6 +126,7 @@ export default {
           status: 1
         },
         {
+          webinar_id: 795704910,
           title: '艺术二维码的设计思路，每一次得头脑风暴，每一次得设计盛宴，每一次得境界生化',
           time: '2018-07-09 09:30:00',
           hot: 133900,
@@ -126,12 +134,14 @@ export default {
           status: 1
         },
         {
+          webinar_id: 795704911,
           title: '百度人工智能大会发布芯片',
           time: '2018-07-09 09:30:00',
           hot: 67423,
           type: 1
         },
         {
+          webinar_id: 795704912,
           title: '第三季度新品创新研讨会—趋势峰会论坛研讨会微吼直播',
           time: '2018-07-09 09:30:00',
           hot: 154654611131,
@@ -139,6 +149,7 @@ export default {
           status: 2
         },
         {
+          webinar_id: 795704913,
           title: '2018西南互联网趋势峰会',
           time: '2018-07-09 09:30:00',
           hot: 12342221,
@@ -165,6 +176,9 @@ export default {
     },
     currentChangeHandler(current) {
       console.log('current-change', current)
+    },
+    toDetail(id) {
+      this.$router.push({path: `/live-detail/${id}`})
     }
   },
   filters: {
