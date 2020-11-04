@@ -69,7 +69,12 @@ export default function fetchData (url, data1 = {}, header = {}) {
   return fetch(api, option).then((res) => {
     return res.json()
   }).then(res => {
-    if (res.code >= 200 && res.code < 600) {
+    if (res.code === 404 || res.code === 403 || res.code === 500) {
+      sessionStorage.setItem('errorReturn', this.$route.path)
+      this.$router.push({
+        path: '/error'
+      })
+    }else if (res.code >= 200 && res.code < 600) {
       return res
     } else {
       return Promise.reject(res)

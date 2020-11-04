@@ -1,57 +1,33 @@
 <template>
   <div class="page-padding">
     <h1 class="h1__title">功能配置</h1>
-    <div class="div__func div__view">
+    <div class="div__func div__view" v-if="keyList && keyList.length > 0">
       <div class="div__view__title">观看页设置</div>
       <ul>
-        <li class="switch__box">
-          <label class="leve3_title label__r12">隐藏打赏</label>
+        <li class="switch__box" v-for="(item, ins) in keyList[0]" :key="`view_`+ins">
+          <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
-            v-model="DS.value"
+            v-model="item.value"
             active-color="#FB3A32"
-            inactive-color="#CECECE">
+            inactive-color="#CECECE"
+            @change="changeStatus($event, item)">
           </el-switch>
-          <span class="leve3_title title--999">{{!!DS.value ? '已开启，观看端打赏按钮已被隐藏' : '开启后，观看端打赏按钮将被隐藏'}}</span>
-        </li>
-        <li class="switch__box">
-          <label class="leve3_title label__r12">隐藏点赞</label>
-          <el-switch
-            v-model="DZ.value">
-          </el-switch>
-          <span class="leve3_title title--999">{{!!DZ.value === 1 ? '已开启，观看端点赞按钮已被隐藏' : '开启后，观看端点赞按钮将被隐藏'}}</span>
-        </li>
-        <li class="switch__box">
-          <label class="leve3_title label__r12">隐藏礼物</label>
-          <el-switch
-            v-model="LW.value">
-          </el-switch>
-          <span class="leve3_title title--999">{{!!LW.value === 1 ? '已开启，观看端礼物按钮已被隐藏' : '开启后，观看端礼物按钮将被隐藏'}}</span>
-        </li>
-        <li class="switch__box">
-          <label class="leve3_title label__r12">隐藏分享</label>
-          <el-switch
-            v-model="FX.value">
-          </el-switch>
-          <span class="leve3_title title--999">{{!!FX.value === 1 ? '已开启，观看端分享按钮已被隐藏' : '开启后，观看端分享按钮将被隐藏'}}</span>
+          <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
         </li>
       </ul>
     </div>
-    <div class="div__func div__playback">
+    <div class="div__func div__playback" v-if="keyList && keyList.length > 1">
       <div class="div__view__title">回放设置</div>
       <ul>
-        <li class="switch__box">
-          <label class="leve3_title label__r12">回放禁言</label>
+        <li class="switch__box" v-for="(item, ins) in keyList[1]" :key="`playback_`+ins">
+          <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
-            v-model="HFJY.value">
+            v-model="item.value"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="changeStatus($event, item)">
           </el-switch>
-          <span class="leve3_title title--999">{{!!HFJY.value === 1 ? '已开启，回放默认已开启聊天禁言' : '开启后，回放默认开启聊天禁言'}}</span>
-        </li>
-        <li class="switch__box">
-          <label class="leve3_title label__r12">回放章节</label>
-          <el-switch
-            v-model="HFZJ.value">
-          </el-switch>
-          <span class="leve3_title title--999">{{!!HFZJ.value === 1 ? '已开启，回放/点播观看端显示文档章节' : '开启后，回放/点播观看端显示文档章节'}}</span>
+          <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
         </li>
       </ul>
     </div>
@@ -64,60 +40,102 @@ export default {
   data() {
     return {
       query: {},
-      DS: {
-        value: 0,
-        valueType: 'switch'
-      },
-      DZ: {
-        value: 0,
-        valueType: 'switch'
-      },
-      LW: {
-        value: 0,
-        valueType: 'switch'
-      },
-      FX: {
-        value: 0,
-        valueType: 'switch'
-      },
-      'HFJY': {
-        value: 0,
-        valueType: 'switch'
-      },
-      'HFZJ': {
-        value: 0,
-        valueType: 'switch'
-      }
+      keyList: [
+        [
+          {
+            type: 'DS',
+            key_name: '隐藏打赏',
+            openShow: '已开启，观看端打赏按钮已被隐藏',
+            closeShow: '开启后，观看端打赏按钮将被隐藏',
+            value: 0
+          },
+          {
+            type: 'DZ',
+            key_name: '隐藏点赞',
+            openShow: '已开启，观看端点赞按钮已被隐藏',
+            closeShow: '开启后，观看端点赞按钮将被隐藏',
+            value: 0
+          },
+          {
+            type: 'LW',
+            key_name: '隐藏礼物',
+            openShow: '已开启，观看端礼物按钮已被隐藏',
+            closeShow: '开启后，观看端礼物按钮将被隐藏',
+            value: 0
+          },
+          {
+            type: 'FX',
+            key_name: '隐藏分享',
+            openShow: '已开启，观看端分享按钮已被隐藏',
+            closeShow: '开启后，观看端分享按钮将被隐藏',
+            value: 0
+          }
+        ],
+        [
+          {
+            type: 'JY',
+            key_name: '回放禁言',
+            openShow: '已开启，回放默认已开启聊天禁言',
+            closeShow: '开启后，回放默认开启聊天禁言',
+            value: 0
+          },
+          {
+            type: 'ZJ',
+            key_name: '回放章节',
+            openShow: '已开启，回放/点播观看端显示文档章节',
+            closeShow: '开启后，回放/点播观看端显示文档章节',
+            value: 0
+          }
+        ]
+      ]
     }
   },
   methods: {
+    changeStatus(callback, item) {
+      let params = {
+        webinar_id: this.$route.params.str,
+        needKey: item.type,
+        value: callback
+      }
+      console.log('当前参数传递：', params)
+      this.$fetch('planFunctionEdit', params).then(res => {
+        console.log(res)
+        this.$message({
+          message:  `${callback ? '开启' : '关闭'} ${item.key_name} 成功`,
+          type: 'success'
+        });
+      }).catch(e => {
+        console.log(e)
+        this.$message({
+          message: `操作失败`,
+          type: 'failure'
+        });
+      })
+    },
+    planSuccessRender (data) {
+      console.log(data)
+    },
+    planErrorRender(err) {
+      this.$message({
+        message: `获取数据异常${err}`,
+        type: 'failure'
+      });
+      this.keyList = null
+    },
     // 获取可配置选项
     planFunctionGet() {
       this.$fetch('planFunctionGet', {}).then(res=>{
         console.log(res)
-      }).catch(err=>{
+        // 数据渲染
+        res && res.code == 200 && res.data ?  this.planSuccessRender(res.data) : this.planErrorRender(null)
+      }).catch(err =>{
         console.log(err)
+        this.planErrorRender(err)
       })
     },
-    // 开关选项
-    planFunctionEdit() {
-     /* let params = {
-        webinar_id: this.$route.params.str,
-        needKey: item.key,
-        value: item.isOpen
-      }*/
-    }
-  },
-  beforeCreate() {
   },
   created() {
     this.planFunctionGet()
-  },
-  mounted() {
-  },
-  beforeDestroy() {
-  },
-  destroyed() {
   }
 }
 </script>

@@ -42,8 +42,14 @@ const routes = [
   {
     path: '/css-demo',
     title: '样式Demo',
-    name: 'cssDemo',
+    name: '样式Demo',
     component: () => import('@/views/PlatformModule/cssDemo.vue')
+  },
+  {
+    path: '/error',
+    title: '错误提示',
+    name: '错误提示',
+    component: () => import('@/views/PlatformModule/Error/index.vue')
   }
 ]
 
