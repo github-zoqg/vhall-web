@@ -1,10 +1,10 @@
 <template>
-
+  <div>财务总览</div>
 </template>
 
 <script>
 export default {
-name: "index.vue"
+name: "financeInfo.vue"
 }
 </script>
 

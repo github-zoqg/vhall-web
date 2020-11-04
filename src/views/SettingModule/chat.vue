@@ -1,10 +1,10 @@
 <template>
-
+  <div>聊天严禁词</div>
 </template>
 
 <script>
 export default {
-name: "index.vue"
+name: "chat.vue"
 }
 </script>
 

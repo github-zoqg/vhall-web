@@ -1,10 +1,10 @@
 <template>
-
+  <div>音视频</div>
 </template>
 
 <script>
 export default {
-name: "index.vue"
+name: "video.vue"
 }
 </script>
 
