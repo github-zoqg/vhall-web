@@ -38,6 +38,12 @@ const routes = [
     title: '准备——功能配置',
     name: 'planFunction',
     component: () => import('@/views/LiveModule/planFunction.vue')
+  },
+  {
+    path: '/css-demo',
+    title: '样式Demo',
+    name: 'cssDemo',
+    component: () => import('@/views/PlatformModule/cssDemo.vue')
   }
 ]
 

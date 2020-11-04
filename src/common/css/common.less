@@ -3,7 +3,6 @@
 @999: #999;
 @fff: #fff;
 @red: red;
-@a1: #1A1A1A;
 
 @12: 12px;
 @14: 14px;
@@ -57,13 +56,13 @@
 
 /*文字-颜色: h1-标题/正文；h3-描述；h4-占位文字、禁用*/
 @font_color_h1: #1a1a1a;
-@font_color_h3: #666666;
+@font_color_h2: #666666;
 @font_color_h3: #999999;
 
 /*文字-大小*/
 @font_size_20: 20px;
 @font_size_22: 22px;
-@font_size_26: 16px;
+@font_size_16: 16px;
 @font_size_14: 14px;
 @font_size_12: 12px;
 
@@ -81,8 +80,57 @@
 @background--selected: #333333;
 @background_white: #ffffff;
 @background_gray: #f7f7f7;
+@background_switch: #cecece;
 
 /*分割线*/
 @hr_color: #e6e6e6;
 
+.leve3_title {
+  font-size: @font_size_14;
+  font-family: @fontRegular;
+  font-weight: 400;
+  color: @background_black;
+  line-height: 20px;
+  &.title--999 {
+    color: @font_color_h3;
+  }
+  &.title--666 {
+    color: @font_color_h2;
+  }
+}
 
+/*重置边框*/
+.el-main.route-wrap{
+  background: @background_gray;
+  padding: 40px 61px;
+}
+.label__r12 {
+  margin-right: 12px;
+}
+/*开关重置*/
+.switch__box {
+  /deep/.el-switch {
+    margin-right: 8px;
+  }
+  /deep/span.el-switch__core {
+    width: 28px!important;
+    height: 16px!important;
+    background: @background_switch!important;
+    border-radius: 10px!important;
+    border-color: @background_switch!important;
+  }
+  /deep/.el-switch.is-checked span.el-switch__core{
+    background: @theme--normal!important;
+    border-radius: 8px!important;
+    border-color: @theme--normal!important;
+  }
+  /deep/span.el-switch__core:after {
+    width: 12px;
+    height: 12px;
+    background: @background_white;
+    box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.2);
+  }
+  /deep/.el-switch.is-checked .el-switch__core::after {
+    margin-left: -12px;
+  }
+}

@@ -198,6 +198,12 @@ export default {
               path: "/account-home"
             }
           ]
+        },
+        {
+          title: "样式Demo",
+          index: "8",
+          iconClass: "el-icon-setting",
+          path: "/css-demo"
         }
       ],
       activePath: 0, // 默认左边菜单栏路径

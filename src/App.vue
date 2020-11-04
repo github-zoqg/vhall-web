@@ -42,7 +42,4 @@ export default {
   padding: 0;
   height: 64px!important;
 }
-.route-wrap{
-  background: #F7F7F7;
-}
 </style>
