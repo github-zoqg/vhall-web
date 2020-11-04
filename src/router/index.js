@@ -13,6 +13,11 @@ const routes = [
     component: () => import('@/views/StatisticsModule/video.vue')
   },
   {
+    path: '/VideoPreview',
+    name: 'VideoPreview',
+    component: () => import('@/views/StatisticsModule/VideoPreview/index.vue')
+  },
+  {
     path: '/docManage',
     name: 'docManage',
     component: () => import('@/views/StatisticsModule/doc.vue')

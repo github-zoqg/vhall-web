@@ -23,6 +23,16 @@
         label="页码" align='center'
         show-overflow-tooltip>
       </el-table-column>
+      <el-table-column label="进度" show-overflow-tooltip width="140px">
+        <template slot-scope="scope">
+          <span v-if="scope.row.transfer==0" class="status-ing">上传中 {{scope.row.progress}}</span>
+          <span v-else-if="scope.row.transfer==1" class="status-wait">等待转换</span>
+          <span v-else-if="scope.row.transfer==2" class="status-ing">转换中 {{scope.row.progress}}</span>
+          <span v-else-if="scope.row.transfer==3" class="status-success">转换成功</span>
+          <span v-else-if="scope.row.transfer==4" class="status-error">转换失败</span>
+          <span v-else-if="scope.row.transfer==5" class="status-error">上传失败</span>
+        </template>
+      </el-table-column>
       <el-table-column v-if="type==2"
         prop="address"
         label="时长" align='center'
@@ -37,8 +47,8 @@
         prop="address" align='center'
         label="操作"
         show-overflow-tooltip>
-         <template>
-           <el-button type="text" v-for="(item, index) in operatingArray" :key="index" @click="operating(item, index)">{{item}}</el-button>
+         <template slot-scope="scope">
+           <el-button type="text" v-for="(item, index) in operatingArray" :key="index" @click="operating(item, index, scope.row)">{{item}}</el-button>
          </template>
       </el-table-column>
     </el-table>
@@ -87,9 +97,8 @@
       }
     },
     methods: {
-      operating(item,index){
-        console.log(item, index);
-        this.$emit('operating',{item, index});
+      operating(name,index,row){
+        this.$emit('operating',{name, index,row});
       },
       select(data){
         this.$emit('select',data);
@@ -101,8 +110,5 @@
 .list-wrap{
   height: calc(100% - 60px);
   border: 1px solid red;
-}
-.data-manage-wrap{
-
 }
 </style>
