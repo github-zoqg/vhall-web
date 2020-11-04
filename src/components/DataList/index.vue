@@ -3,18 +3,14 @@
     <el-table
       ref="multipleTable"
       :data="tableData"
-      tooltip-effect="dark"
+      tooltip-effect="dark" @select='select'
       style="width: 100%">
       <el-table-column
         type="selection"
         width="55" align='center'>
       </el-table-column>
-      <el-table-column v-if="type==1"
-        label="文档名称" align='center'
-        width="120">
-      </el-table-column>
-      <el-table-column v-if="type==2"
-        label="音视频名称" align='center'
+      <el-table-column
+        :label="typeName" align='center'
         width="120">
       </el-table-column>
       <el-table-column
@@ -53,11 +49,7 @@
   export default {
     data() {
       return {
-        tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }],
+        typeName: '文档名称',
         multipleSelection: []
       };
     },
@@ -74,12 +66,33 @@
         default:()=>{
           return ['预览', '删除'];
         }
+      },
+      tableData: {
+        type: Array,
+        required: true,
+        default: ()=>{return [];}
+      }
+    },
+    created() {
+      switch (this.type) {
+        case 1:
+          this.typeName = '文档名称';
+          break;
+        case 2:
+          this.typeName = '音视频名称';
+          break;
+        default:
+          this.typeName = '文档名称';
+          break;
       }
     },
     methods: {
       operating(item,index){
         console.log(item, index);
         this.$emit('operating',{item, index});
+      },
+      select(data){
+        this.$emit('select',data);
       }
     }
   };

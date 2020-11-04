@@ -10,7 +10,12 @@ const routes = [
   {
     path: '/videoManage',
     name: 'videoManage',
-    component: () => import('../views/StatisticsModule/video.vue')
+    component: () => import('@/views/StatisticsModule/video.vue')
+  },
+  {
+    path: '/docManage',
+    name: 'docManage',
+    component: () => import('@/views/StatisticsModule/doc.vue')
   },
   {
     path: '/about',
