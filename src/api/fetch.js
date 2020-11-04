@@ -2,7 +2,7 @@ import 'whatwg-fetch'
 import qs from 'qs'
 import getApi from './config'
 
-export default function fetchData (url, data1 = {}, header = {}) {
+export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url)
 
   let [api, method, mock] = config
@@ -12,18 +12,18 @@ export default function fetchData (url, data1 = {}, header = {}) {
   const vc_cookie = localStorage.getItem('vc_cookie') || ''
   let data
   if (token) {
-    data = Object.assign({
-      token, vc_cookie
-    }, data1)
+    data = Object.assign(  { token, vc_cookie },
+      data1
+    )
   } else {
-    data = Object.assign({vc_cookie}, data1)
+    data = Object.assign({ vc_cookie }, data1)
   }
 
   let formData = null
 
   if (method === 'GET' && data) {
     let Uri
-    api.indexOf('?') > -1 ? Uri = '&' : Uri = '?'
+    api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?')
     Object.keys(data).forEach((key, indx) => {
       if (indx === data.length) {
         Uri = Uri + `${key}=${data[key]}`

@@ -38,7 +38,7 @@ export default {
 }
 </script>
 <style lang="less" scope>
-.el-container .head{
+.el-container .el-header{
   padding: 0;
   height: 64px!important;
 }
