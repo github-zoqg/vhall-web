@@ -55,6 +55,12 @@ const routes = [
     component: () => import('@/views/LiveModule/planFunction.vue')
   },
   {
+    path: '/viewer-rules/:str',
+    title: '准备——观看限制',
+    name: 'viewerRules',
+    component: () => import('@/views/LiveModule/viewerRules.vue')
+  },
+  {
     path: '/css-demo',
     title: '样式Demo',
     name: '样式Demo',
