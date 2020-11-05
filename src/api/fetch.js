@@ -12,11 +12,11 @@ export default function fetchData(url, data1 = {}, header = {}) {
   const vc_cookie = localStorage.getItem('vc_cookie') || ''
   let data
   if (token) {
-    data = Object.assign(  { token, vc_cookie },
+    data = Object.assign(  { token, vc_cookie, platform: 'pc', need_sign: 1 },
       data1
     )
   } else {
-    data = Object.assign({ vc_cookie }, data1)
+    data = Object.assign({ vc_cookie, platform: 'pc', need_sign: 1}, data1)
   }
 
   let formData = null
@@ -54,7 +54,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
-    credentials: 'same-origin',
+    credentials: 'same-origin', // include, *same-origin, omit
     headers: headers
   }
   if (method === 'POST') {
@@ -63,7 +63,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`
-    console.log(mock, 55555)
   }
   console.log(api, option)
   return fetch(api, option).then((res) => {
