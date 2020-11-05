@@ -39,7 +39,7 @@ export default {
               title: "创建直播",
               index: "1-2",
               iconClass: "",
-              path: "/live-detail/a"
+              path: "/live/edit"
             }
           ]
         },

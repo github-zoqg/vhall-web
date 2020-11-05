@@ -8,15 +8,31 @@ const routes = [
     component: () => import('../views/FirstPage/index.vue')
   },
   {
-    path: '/default',
-    name: 'home',
-    component: () => import('../views/FirstPage/index.vue')
+    path: '/videoManage',
+    name: 'videoManage',
+    component: () => import('@/views/StatisticsModule/video.vue')
+  },
+  {
+    path: '/VideoPreview',
+    name: 'VideoPreview',
+    component: () => import('@/views/StatisticsModule/VideoPreview/index.vue')
+  },
+  {
+    path: '/docManage',
+    name: 'docManage',
+    component: () => import('@/views/StatisticsModule/doc.vue')
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('../views/About.vue')
   },
   {
     path: '/videoManage',
     name: 'videoManage',
     component: () => import('../views/StatisticsModule/video.vue')
   },
+  /*********************************直播管理 ********************************************/
   {
     path: '/live-list',
     name: 'liveList',
@@ -38,6 +54,19 @@ const routes = [
     title: '准备——功能配置',
     name: 'planFunction',
     component: () => import('@/views/LiveModule/planFunction.vue')
+  },
+  {
+    path: '/signup',
+    title: '报名表单',
+    name: 'signUp',
+    component: () => import('@/views/LiveModule/signUp.vue')
+  },
+  /*********************************直播管理 ********************************************/
+  {
+    path: '/viewer-rules/:str',
+    title: '准备——观看限制',
+    name: 'viewerRules',
+    component: () => import('@/views/LiveModule/viewerRules.vue')
   },
   {
     path: '/css-demo',

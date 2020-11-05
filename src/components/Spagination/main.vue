@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { Pagination } from 'element-ui'
+import { Pagination } from 'element-ui';
 export default {
   props: {
     ...Object.assign(
@@ -30,19 +30,19 @@ export default {
   },
   methods: {
     sizeChangeHandler(pageSize) {
-      this.$emit('size-change', pageSize)
+      this.$emit('size-change', pageSize);
     },
     currentChangeHandler(current) {
-      this.$emit('current-change', current)
+      this.$emit('current-change', current);
     },
     prevClickHandler(current) {
-      this.$emit('prev-click', current)
+      this.$emit('prev-click', current);
     },
     nextClickHandler(current) {
-      this.$emit('next-click', current)
+      this.$emit('next-click', current);
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

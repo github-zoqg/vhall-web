@@ -1,28 +1,35 @@
 <template>
-  <div>
+  <div class="editBox">
     <pageTitle title="创建直播"></pageTitle>
-    <el-form>
-      <el-form-item label="直播标题：" prop="name">
+    <el-form :model="formData" ref="ruleForm" v-loading="loading">
+      <el-form-item label="直播标题：" prop="title"
+      :rules="[
+        { required: true, message: '请输入直播标题', trigger: 'blur' },
+      ]">
         <el-input v-model="formData.title" limit='100'></el-input>
       </el-form-item>
-      <el-form-item label="直播时间：">
+      <el-form-item label="直播时间：" required>
         <!-- <el-row :gutter="20"> -->
           <el-col :span="11">
-            <el-form-item prop="date1">
-              <el-date-picker type="date" placeholder="选择日期时间" v-model="formData.date1" style="width: 100%;"></el-date-picker>
+            <el-form-item prop="date1" :rules="[
+              { required: true, message: '请选择直播开始日期', trigger: 'blur' }
+            ]">
+              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%;"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
           <el-col :span="11">
-            <el-form-item prop="date2">
-              <el-date-picker type="date" placeholder="选择日期时间" v-model="formData.date2" style="width: 100%;"></el-date-picker>
+            <el-form-item prop="date2" :rules="[
+              { required: true, message: '请选择直播开始时间', trigger: 'blur' }
+            ]">
+              <el-time-picker placeholder="选择时间" value-format="HH:mm:ss" v-model="formData.date2" style="width: 100%;"></el-time-picker>
             </el-form-item>
           </el-col>
         <!-- </el-row> -->
       </el-form-item>
-      <el-form-item label="直播模式：">
+      <el-form-item label="直播模式：" required>
         <div class="modeBox">
-          <div @click='liveMode="video"' :class="{active: liveMode== 'video'}">
+          <div @click='liveMode=2' :class="{active: liveMode== 2}">
             <el-container class='model'>
               <el-aside width="80px" class="block">
                 <i class="el-icon-video-camera icon"></i>
@@ -34,15 +41,15 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode="interactive"' :class="{active: liveMode== 'interactive'}">
+          <div @click='liveMode=3' :class="{active: liveMode== 3}">
             <el-container class='model'>
               <el-header height='13px'>
-              <el-col :span="3" class="block"></el-col>
-              <el-col :span="3" :offset='1' class="block"></el-col>
-              <el-col :span="3" :offset='1' class="block"></el-col>
-              <el-col :span="3" :offset='1' class="block"></el-col>
-              <el-col :span="3" :offset='1' class="block"></el-col>
-              <el-col :span="4" :offset='1' class="block"></el-col>
+                <el-col :span="3" class="block"></el-col>
+                <el-col :span="3" :offset='1' class="block"></el-col>
+                <el-col :span="3" :offset='1' class="block"></el-col>
+                <el-col :span="3" :offset='1' class="block"></el-col>
+                <el-col :span="3" :offset='1' class="block"></el-col>
+                <el-col :span="4" :offset='1' class="block"></el-col>
               </el-header>
               <el-container>
                 <el-aside width="80px" class="block">
@@ -53,7 +60,7 @@
             </el-container>
             <p class="desc">互动直播</p>
           </div>
-          <div @click='liveMode="audio"' :class="{active: liveMode== 'audio'}">
+          <div @click='liveMode=1' :class="{active: liveMode== 1}">
             <el-container class='model'>
               <el-aside width="80px" class="block">
                 <i class="el-icon-microphone icon"></i>
@@ -67,8 +74,31 @@
           </div>
         </div>
       </el-form-item>
+      <el-form-item label="直播封面：">
+        <el-upload
+          class="avatar-uploader"
+          action="/mock/user/picupload"
+          list-type="picture-card"
+          :limit='1'
+          :on-success="handleuploadSuccess"
+          :on-progress="uploadProcess"
+          :on-error="uploadError"
+          :on-preview="uploadPreview"
+          :before-upload="beforeUpload">
+          <img v-if="imageUrl" :src="imageUrl" class="avatar">
+          <template v-else>
+            <div>
+              <i class="el-icon-plus avatar-uploader-icon"></i>
+              <!-- <p class="uploadDesc">尺寸1280×720px 图片小于2MB（支持jpg、gif、png、bmp）</p> -->
+            </div>
+          </template>
 
-      <el-form-item label="直播类别：">
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="直播简介：">
+        <editor ref="editor"></editor>
+      </el-form-item>
+      <el-form-item label="直播类别：" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
       </el-form-item>
       <el-switch
@@ -76,26 +106,123 @@
         v-model="docSwtich"
         active-color="#FB3A32"
         inactive-color="#CECECE"
-        inline
         inactive-text="文档翻页"
         :active-text="docSwtichDesc">
       </el-switch>
+      <el-switch
+        style="display: block"
+        v-model="reservation"
+        active-color="#FB3A32"
+        inactive-color="#CECECE"
+        inactive-text="预约人数"
+        :active-text="reservationDesc">
+      </el-switch>
+      <el-switch
+        style="display: block"
+        v-model="online"
+        active-color="#FB3A32"
+        inactive-color="#CECECE"
+        inactive-text="在线人数"
+        :active-text="onlineDesc">
+      </el-switch>
+      <el-switch
+        style="display: block"
+        v-model="hot"
+        active-color="#FB3A32"
+        inactive-color="#CECECE"
+        inactive-text="活动热度"
+        :active-text="hotDesc">
+      </el-switch>
+      <el-switch
+        style="display: block"
+        v-model="home"
+        active-color="#FB3A32"
+        inactive-color="#CECECE"
+        inactive-text="关联主页"
+        :active-text="homeDesc">
+      </el-switch>
+      <el-switch
+        style="display: block"
+        v-model="capacity"
+        active-color="#FB3A32"
+        inactive-color="#CECECE"
+        inactive-text="并发扩容"
+        :active-text="capacityDesc">
+      </el-switch>
+      <el-switch
+        style="display: block"
+        v-model="limitCapacitySwtich"
+        active-color="#FB3A32"
+        inactive-color="#CECECE"
+        inactive-text="最高并发"
+        :active-text="limitCapacityDesc">
+      </el-switch>
+      <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput"></el-input>
+      <p class="btnGroup">
+        <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
+        <el-button @click="resetForm('ruleForm')" round>取消</el-button>
+      </p>
     </el-form>
+
   </div>
 </template>
 
 <script>
-import pageTitle from './components/pageTitle'
+import pageTitle from './components/pageTitle';
+import editor from '@/components/WangEditor/main';
 export default {
   components: {
-    pageTitle
+    pageTitle,
+    editor
   },
   computed: {
     docSwtichDesc(){
       if(this.docSwtich){
-        return '已开启，支持观众直播中提前预览文档，进行文档翻页'
+        return '已开启，支持观众直播中提前预览文档，进行文档翻页';
       }else{
-        return "开启后，支持观众直播中提前预览文档，进行文档翻页"
+        return "开启后，支持观众直播中提前预览文档，进行文档翻页";
+      }
+    },
+    reservationDesc(){
+      if(this.reservation){
+        return '关闭后，观看端将隐藏预约人数';
+      }else{
+        return "已关闭，观看端已隐藏预约人数";
+      }
+    },
+    onlineDesc(){
+      if(this.online){
+        return '关闭后，观看端将隐藏在线人数';
+      }else{
+        return "已关闭，观看端已隐藏在线人数";
+      }
+    },
+    hotDesc(){
+      if(this.hot){
+        return '关闭后，观看端将隐藏活动热度';
+      }else{
+        return "已关闭，观看端已隐藏活动热度";
+      }
+    },
+    homeDesc(){
+      if(this.home){
+        return '关闭后，该直播将不在个人主页显示';
+      }else{
+        return "已关闭，该直播已不在个人主页显示";
+      }
+    },
+    capacityDesc(){
+      if(this.capacity){
+        return '已开启，观看并发人数扩容X人';
+      }else{
+        return "开启后，使用扩展包扩容并发人数（扩展包剩余X人）";
+      }
+    },
+    limitCapacityDesc(){
+      if(this.limitCapacitySwtich){
+        return '已开启，限制进入活动的观众最大并发数';
+      }else{
+        return "开启后，限制进入活动的观众最大并发数";
       }
     }
   },
@@ -107,15 +234,99 @@ export default {
         date2: ''
       },
       docSwtich: false,
+      reservation: false,
+      online: false,
+      hot: false,
+      home: false,
+      capacity: false,
+      limitCapacity: '',
+      limitCapacitySwtich: false,
       liveTags: ["金融", '互联网', '汽车', '教育', '健康', '其他'],
-      liveMode: "video",
+      liveMode: 2,
       tagIndex: 0,
-    }
+      imageUrl: '',
+      loading: false
+    };
   },
   created(){
-    console.log(this)
-  }
-}
+    console.log(this);
+  },
+  methods: {
+    handleuploadSuccess(res, file){
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeUpload(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`封面上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let data = {
+            subject: this.formData.title,
+            introduction: this.$refs.editor.editor.txt.html(),
+            start_date: this.formData.date1,
+            start_time: this.formData.date2,
+            webinar_type: this.liveMode,
+            category: 2,
+            img_url: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/7e/65/7e651ca254943327ab8d7d133ed2d778.jpg',
+            is_private: Boolean(this.home),
+            is_open: Boolean(this.home),
+            hide_watch: Boolean(this.online),
+            is_adi_watch_doc: Boolean(this.docSwtich),
+            hide_appointment: Boolean(this.reservation),
+            hide_pv: Boolean(this.hot),
+            is_capacity: Boolean(this.capacity),
+            webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0
+          };
+          this.loading = true;
+          this.$fetch('createLive', data).then(res=>{
+            this.$message.success(`创建成功`);
+            console.log(res);
+            setTimeout(()=>{
+              this.$router.push({name: 'liveList'});
+            }, 500);
+          }).catch(error=>{
+            this.$message.error(`创建失败，${error.message}`);
+          }).finally(()=>{
+            this.loading = false;
+          });
+          console.log(data);
+          // createLive
+          // alert('submit!');
+        } else {
+          this.$message.error('请完善必填字段');
+          document.documentElement.scrollTop = 0;
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>
@@ -221,6 +432,56 @@ export default {
       background: #FB3A32;
       color: #fff;
       border-color: transparent;
+    }
+  }
+  .el-switch{
+    margin-top: 30px;
+  }
+  .limitInput{
+    margin-left: 66px;
+    max-width: 360px;
+    margin-top: 15px;
+  }
+  .uploadDesc{
+    line-height: 20px;
+  }
+  .btnGroup{
+    text-align: center;
+    margin-top: 40px;
+    .el-button{
+      color:#FB3A32;
+      border-color:#FB3A32;
+      width: 150px;
+      &:hover{
+        background: #ffebeb;
+      }
+    }
+    .el-button--primary{
+      background:#FB3A32;
+      border-color:#FB3A32;
+      color: #fff;
+      &:hover{
+        background: #fc615b;
+      }
+    }
+    .el-button.is-round{
+      padding: 10px 23px;
+    }
+  }
+  .editBox {
+    padding: 0px 40px;
+  }
+  @media screen and (min-width: 1920px) {
+    .editBox {
+      padding: 0px 140px;
+    }
+  }
+  /deep/ .el-upload--picture-card{
+    width: 100%;
+    height: 140px;
+    img{
+      width: 100%;
+      height: 100%;
     }
   }
 </style>

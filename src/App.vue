@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container class="box">
-          <el-header class="head">
+          <el-header class="head" height="64px">
             <app-head></app-head>
           </el-header>
           <el-container class="el-main-box">
@@ -26,20 +26,19 @@ export default {
   },
   data() {
     return {
-    }
+    };
   },
   created() {
       this.$fetch('vssInfo', {platform: '123'}).then(res=>{
-        console.log(res)
+        console.log(res);
       }).catch(err=>{
-        console.log(err)
-      })
+        console.log(err);
+      });
   },
-}
+};
 </script>
-<style lang="less" scope>
-.el-container .head{
+<style lang="less" scoped>
+.el-container .el-header{
   padding: 0;
-  height: 64px!important;
 }
 </style>

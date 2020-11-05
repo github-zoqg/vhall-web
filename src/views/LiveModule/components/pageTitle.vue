@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="titleBox">
     <span class="pageTitle">{{title}}</span>
     <el-tooltip
       v-if="!!$props.content || !!$slots.content"
@@ -9,11 +9,12 @@
         </div>
       <i class="el-icon-question"></i>
     </el-tooltip>
+    <slot name="default"></slot>
   </div>
 </template>
 
 <script>
-import { Tooltip } from 'element-ui'
+import { Tooltip } from 'element-ui';
 export default {
   props: {
     title: {
@@ -35,11 +36,12 @@ export default {
     )
   },
   created() {
+    console.log(this.$slots);
   },
   data() {
-    return {}
+    return {};
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -47,5 +49,9 @@ export default {
     color: #1A1A1A;
     font-size: 22px;
     font-weight: 600;
+  }
+  .titleBox{
+    margin-top: 20px;
+    margin-bottom: 32px;
   }
 </style>
