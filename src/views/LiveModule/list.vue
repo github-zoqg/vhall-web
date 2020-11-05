@@ -89,26 +89,28 @@
 </template>
 
 <script>
-import pageTitle from './components/pageTitle'
-import sPagination from './components/pagination'
+import pageTitle from './components/pageTitle';
+import sPagination from './components/pagination';
 export default {
   data() {
     return {
       liveStatus: 0,
-      orderBy: 0,
+      orderBy: 1,
       keyWords: '',
+      pageSize: 10,
+      pageNum: 1,
       liveDropDownVisible: false,
       statusOptions: [
         { label: '全部', value: 0 },
-        { label: '预告', value: 1 },
-        { label: '直播', value: 2 },
+        { label: '预告', value: 2 },
+        { label: '直播', value: 1 },
         { label: '结束', value: 3 },
         { label: '点播', value: 4 },
         { label: '回访', value: 5 }
       ],
       orderOptions: [
-        { label: '按创建时间排序', value: 0 },
-        { label: '按最后直播时间排序', value: 1 }
+        { label: '按创建时间排序', value: 1 },
+        { label: '按最后直播时间排序', value: 2 }
       ],
       liveList: [
         {
@@ -146,25 +148,42 @@ export default {
           status: 0
         }
       ]
-    }
+    };
   },
   components: {
     pageTitle,
     sPagination
   },
   created() {
-    console.log(this.$options)
+    this.getLiveList();
   },
   methods: {
     searchHandler() {
-      console.log('searchHandler')
+      console.log('searchHandler');
     },
     dropDownVisibleChange(item) {
       // this.liveDropDownVisible = visible
-      this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible)
+      this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);
     },
     currentChangeHandler(current) {
-      console.log('current-change', current)
+      console.log('current-change', current);
+    },
+    getLiveList(){
+      const data = {
+        pos: this.pageNum,
+        // user_id: 1330,
+        limit: this.pageSize,
+        title: this.keyWords,
+        order_type: this.orderBy,
+        webinar_type: this.liveStatus
+      };
+      console.log(data);
+      this.$fetch('liveList', data, {"Content-Type": "application/x-www-form-urlencoded", "need_sign": 0, platform: 'pc', token: 'cc'}).then(res=>{
+        console.log(res);
+      }).catch(error=>{
+        this.$message.error(`获取直播列表失败,${error.errmsg || error.message}`);
+        console.log(error);
+      });
     }
   },
   filters: {
@@ -173,39 +192,39 @@ export default {
        * type: 0直播  1点播  2回放
        * status：0互动直播  1音频直播 2视频直播
        */
-      const liveTypeStr = ['直播', '点播', '回放']
-      const liveStatusStr = ['互动直播', '音频直播', '视频直播']
-      let str = liveTypeStr[val.type]
+      const liveTypeStr = ['直播', '点播', '回放'];
+      const liveStatusStr = ['互动直播', '音频直播', '视频直播'];
+      let str = liveTypeStr[val.type];
       if (val.type != 1) {
-        str += ` | ${liveStatusStr[val.status]}`
+        str += ` | ${liveStatusStr[val.status]}`;
       }
-      return str
+      return str;
     },
     unitCovert(val) {
-      val = Number(val)
-      if (isNaN(val)) return 0
+      val = Number(val);
+      if (isNaN(val)) return 0;
       if (val > 1e5 && val < 1e8) {
-        return `${(val / 1e4).toFixed(2)}万`
+        return `${(val / 1e4).toFixed(2)}万`;
       } else if (val > 1e8) {
-        return `${(val / 1e8).toFixed(2)}亿`
+        return `${(val / 1e8).toFixed(2)}亿`;
       } else {
-        return val
+        return val;
       }
     },
     subLiveTitle(str) {
       if (typeof str == 'string') {
-        str = `${str.substring(0, 32)}...`
+        str = `${str.substring(0, 32)}...`;
       }
-      return str
+      return str;
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
   .liveListBox{
     user-select: none;
-    padding: 40px 60px;
+    // padding: 0px 60px;
     .el-button{
       color:#FB3A32;
       border-color:#FB3A32;
@@ -364,11 +383,22 @@ export default {
     background: linear-gradient(0deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .8) 100%);
     z-index: 1;
   }
+  .liveListBox {
+    margin: auto;
+    width: 1020px;
+  }
   @media screen and (min-width: 1920px) {
     .liveListBox {
-      padding: 40px 160px;
+      // padding: 0px 140px;
+      margin: auto;
+      width: 1374px;
     }
   }
+  // @media screen and (min-width: 1920px) {
+  //   .liveListBox {
+  //     padding: 0px 160px;
+  //   }
+  // }
 </style>
 
 <style lang="css">

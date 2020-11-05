@@ -53,3 +53,5 @@ jest.config.js
 package.json
 README.md
 vue.config.js
+
+富文本编辑器为wangEdtior，已将编辑器封装成组件，位置：components/WangEdtior/，直接引用即可
