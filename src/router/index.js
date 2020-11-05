@@ -32,6 +32,7 @@ const routes = [
     name: 'videoManage',
     component: () => import('../views/StatisticsModule/video.vue')
   },
+  /*********************************直播管理 ********************************************/
   {
     path: '/live-list',
     name: 'liveList',
@@ -53,6 +54,19 @@ const routes = [
     title: '准备——功能配置',
     name: 'planFunction',
     component: () => import('@/views/LiveModule/planFunction.vue')
+  },
+  {
+    path: '/signup',
+    title: '报名表单',
+    name: 'signUp',
+    component: () => import('@/views/LiveModule/signUp.vue')
+  },
+  /*********************************直播管理 ********************************************/
+  {
+    path: '/viewer-rules/:str',
+    title: '准备——观看限制',
+    name: 'viewerRules',
+    component: () => import('@/views/LiveModule/viewerRules.vue')
   },
   {
     path: '/css-demo',

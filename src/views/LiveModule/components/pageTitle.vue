@@ -9,6 +9,7 @@
         </div>
       <i class="el-icon-question"></i>
     </el-tooltip>
+    <slot name="default"></slot>
   </div>
 </template>
 
@@ -35,6 +36,7 @@ export default {
     )
   },
   created() {
+    console.log(this.$slots);
   },
   data() {
     return {};
