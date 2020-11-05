@@ -19,35 +19,44 @@
       @end="drag = false"
     >
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
-        <li class="viewItem" v-for="item in renderData" :key="item.id">
+        <li class="viewItem" v-for="(item, index) in questionArr" :key="index">
           <p class="label">{{item.label}} {{item.required ? '（必填）' : ''}}</p>
-          <template v-for="node in item.nodes">
+          <template v-for="(node, nodeIndex) in item.nodes">
+
             <!-- 输入框类型 -->
-            <el-input v-if="node.type=='input'" v-model="item.value" v-bind="node.props" :key='node.id'></el-input>
+            {{node.other ? "其他" : ''}}
+            <el-input v-if="item.type=='input'" v-model="item.value" v-bind="node.props" :key='`${index}-${nodeIndex}`'>
+              <i class="el-icon-remove-outline removeIcon" slot="suffix" v-if="item.type=='select'" @click="deleteOptions()"></i>
+            </el-input>
             <!-- 单选类型 -->
-            <el-radio-group v-model="item.value" v-bind="node.props" v-else-if="node.type=='radio'" :key='node.id'>
-              <el-radio v-for="radioItem in node.children" :key="radioItem.id">
-                <el-input maxlength="50" show-word-limit placeholder="选项" :value="radioItem.value"></el-input>
+            <el-radio-group v-model="item.value" v-bind="node.props" v-else-if="item.type=='radio'" :key='`${index}-${nodeIndex}`'>
+              <el-radio v-for="(radioItem, raionIndex) in node.children" :key="`${index}-${nodeIndex}-${raionIndex}`">
+                {{radioItem.other ? "其他" : ''}}
+                <el-input maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
+                  <i class="el-icon-remove-outline removeIcon" slot="suffix" @click="deleteOptions(node.children, raionIndex)"></i>
+                </el-input>
+                <br/>
               </el-radio>
             </el-radio-group>
             <!-- 复选框类型 -->
-            <el-checkbox-group v-model="item.value" v-bind="node.props" v-else-if="node.type=='checkBox'" :key='node.id'>
-              <el-checkbox v-for="radioItem in node.children" :key="radioItem.id">
+            <el-checkbox-group v-model="item.value" v-bind="node.props" v-else-if="item.type=='checkBox'" :key='`${index}-${nodeIndex}`'>
+              <el-checkbox v-for="(radioItem, raionIndex) in node.children" :key="`${index}-${nodeIndex}-${raionIndex}`">
                 {{radioItem.other ? "其他" : ''}}
-                <el-input maxlength="50" show-word-limit placeholder="选项" :value="radioItem.value" :class="{noFull: !!radioItem.other}"></el-input>
+                <el-input maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
+                  <i class="el-icon-remove-outline removeIcon" slot="suffix" @click="deleteOptions(node.children, raionIndex)"></i>
+                </el-input>
+                <br/>
               </el-checkbox>
             </el-checkbox-group>
           </template>
           <div class="bottomBtn" v-if="!!item.bottomBtn">
-
-
             <template v-for="btn in item.bottomBtn">
               <div class="addBtn" v-if="btn=='addBtn'" :key="btn">
                 <el-button type="text" @click="addOption(item)"><i class="el-icon-plus"></i>添加选项</el-button>
                 <span class="line"></span>
                 <el-button el-button type="text" @click="addOption(item, 'other')"><i class="el-icon-plus"></i>添加其他</el-button>
               </div>
-              <i class="el-icon-delete" v-else-if="btn=='delete'" :key="btn"></i>
+              <i class="el-icon-delete" v-else-if="btn=='delete'" :key="btn" @click="deleteOptions(questionArr, index)"></i>
               <i class="el-icon-rank" v-else-if="btn=='move'" :key="btn"></i>
               <el-switch
                 v-else-if="btn=='requireSwtich'"
@@ -61,7 +70,7 @@
                 inactive-text="必填项">
               </el-switch>
               <el-switch
-                v-else-if="btn=='phoneValide'"
+                v-else-if="btn=='phoneValid'"
                 :key="btn"
                 class="swtich"
                 :width='30'
@@ -85,6 +94,12 @@ export default {
   components:{
     draggable
   },
+  props: {
+    questionArr: {
+      type: Array,
+      default: ()=> []
+    }
+  },
   data(){
     return {
       drag: false,
@@ -96,9 +111,9 @@ export default {
           required: false,
           bottomBtn: ['delete', 'move', 'requireSwtich'],
           id: 3,
+          type: 'radio',
           nodes: [
             {
-              type: 'radio',
               props: {},
               id: '3-1',
               value:'',
@@ -112,12 +127,12 @@ export default {
         {
           label: '多选题',
           required: false,
-          bottomBtn: ['delete', 'move', 'requireSwtich'],
+          bottomBtn: ["addBtn", 'delete', 'move', 'requireSwtich'],
           id: 4,
           value: '',
+          type: 'checkBox',
           nodes: [
             {
-              type: 'checkBox',
               props: {},
               id: '4-1',
               value:'',
@@ -135,25 +150,25 @@ export default {
           bottomBtn: ["addBtn", 'delete', 'move', 'requireSwtich'],
           id: 5,
           value: '',
+          type: 'input',
           nodes: [
             {
-              type: 'input',
+
               id: '5-1',
               props: {
                 maxlength: "50",
                 "show-word-limit": true,
                 placeholder: "选项",
-                class: 'selectInput'
+                class: ['selectInput']
               }
             },
             {
-              type: 'input',
               id: '5-2',
               props: {
                 maxlength: "50",
                 "show-word-limit": true,
                 placeholder: "选项",
-                class: 'selectInput'
+                class: ['selectInput']
               }
             }
           ]
@@ -174,10 +189,30 @@ export default {
   methods: {
     addOption(data, other){
       console.log(data, other);
-      let colneChild = JSON.parse(JSON.stringify(data.nodes[data.nodes.length - 1]));
+      let options = data.type != 'input' ? data.nodes[0].children : data.nodes;
+      let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
+      if(data.type == 'input'){
+        if(other){
+          if(colneChild.props.class){
+            !colneChild.props.class.includes('noFull') && colneChild.props.class.push('noFull');
+          }else{
+            colneChild.props.class = ['noFull'];
+          }
+        }else{
+          colneChild.props.class && (colneChild.props.class = colneChild.props.class.filter(item=> item!='noFull'));
+        }
+
+      }
       console.log(colneChild);
-      colneChild.other = other;
-      colneChild.id = colneChild.id.split('-');
+      colneChild.other = !!other;
+      options.push(colneChild);
+    },
+    deleteOptions(arr, index){
+      console.log(arr);
+      if(arr.length == 2){
+        return this.$message.error('请至少保留两个选项');
+      }
+      arr.splice(index, 1);
     }
   },
 };
@@ -283,5 +318,33 @@ export default {
   }
   .list-group-item i {
     cursor: pointer;
+  }
+  .radioInput:not(.noFull){
+    /deep/ .el-input__inner{
+      border-color: transparent !important;
+      &:focus{
+        background: #F7F7F7;
+        /deep/ & + .el-input__suffix .el-input__count{
+          visibility: visible;
+        }
+      }
+    }
+    /deep/ .el-input__count{
+      visibility: hidden;
+    }
+
+
+  }
+  .radioInput{
+    &:hover .removeIcon{
+      display: inline-block;
+    }
+  }
+  .removeIcon{
+    font-weight: bold;
+    font-size: 16px;
+    color: #666666;
+    vertical-align: middle;
+    display: none;
   }
 </style>

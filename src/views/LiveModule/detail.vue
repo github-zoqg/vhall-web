@@ -49,10 +49,10 @@
       </el-col>
     </el-row>
 
-    <template v-for="(item, index) in operas">
-      <p class="subject" :key="index">{{index}}</p>
-      <div class="subjectOuter" :key="index">
-        <div class="sunjectInner" v-for="opera in item" :key='opera.title'>
+    <section v-for="(item, index) in operas" :key="index">
+      <p class="subject">{{index}}</p>
+      <div class="subjectOuter">
+        <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
           <i class="icon"></i>
           <div class="desc">
             <p class="mainText">{{opera.title}}</p>
@@ -60,7 +60,7 @@
           </div>
         </div>
       </div>
-    </template>
+    </section>
   </div>
 </template>
 
@@ -81,7 +81,7 @@ export default {
           { icon: '', title: '角色邀请', subText: '设置不同角色参与直播的权限' },
           { icon: '', title: '暖场视频', subText: '开启后设置暖场视频' },
           { icon: '', title: '虚拟人数', subText: '添加直播的虚拟人数' },
-          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息' },
+          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息', path: '/signup'},
           { icon: '', title: '推广嵌入', subText: '编辑设置直播推广嵌入' },
         ],
         "品牌": [
@@ -124,6 +124,15 @@ export default {
         return val;
       }
     },
+  },
+  methods: {
+    blockHandler(item){
+      if(item.path){
+        this.$router.push({path: item.path});
+      }else[
+        console.log(item)
+      ];
+    }
   }
 };
 </script>
@@ -262,6 +271,7 @@ export default {
     padding-right: 24px;
     box-sizing: border-box;
     background-clip: content-box;
+    cursor: pointer;
     .icon{
       width: 56px;
       height: 56px;

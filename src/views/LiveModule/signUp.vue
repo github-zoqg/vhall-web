@@ -19,13 +19,13 @@
         <ul class="options">
           <template v-for="(item, key) in setOptions">
             <section class="block" :key="key">{{key}}</section>
-            <li class="item" v-for="setItem in item" :key="setItem.label">
+            <li :class="{item: true, active: setItem.name && questionArr.some(qes=> qes.name == setItem.name)}" v-for="setItem in item" :key="setItem.label" @click="addFiled(setItem)">
               <i :class="setItem.icon"></i>{{setItem.label}}
             </li>
           </template>
         </ul>
         <div class="rightView">
-          <signUpView></signUpView>
+          <signUpView :questionArr="questionArr"></signUpView>
         </div>
       </div>
     </div>
@@ -35,6 +35,7 @@
 <script>
 import pageTitle from './components/pageTitle';
 import signUpView from './signUp/viewSignUp';
+import {getfiledJson} from './signUp/util';
 export default {
   components: {
     pageTitle,
@@ -46,22 +47,23 @@ export default {
       radio: 3,
       setOptions: {
         "基本信息": [
-          {icon: 'el-icon-user-solid', label: "姓名"},
-          {icon: 'el-icon-male', label: "性别"},
-          {icon: 'el-icon-phone', label: "手机"},
-          {icon: 'el-icon-message', label: "邮箱"},
-          {icon: 'el-icon-location', label: "地域"},
-          {icon: 'el-icon-office-building', label: "公司"},
-          {icon: 'el-icon-info', label: "职务"},
+          {icon: 'el-icon-user-solid', label: "姓名", name: 'name'},
+          {icon: 'el-icon-male', label: "性别", name: 'gender'},
+          {icon: 'el-icon-phone', label: "手机", name: 'phone'},
+          {icon: 'el-icon-message', label: "邮箱", name: 'email'},
+          {icon: 'el-icon-location', label: "地域", name: 'regional'},
+          {icon: 'el-icon-office-building', label: "公司", name: 'company'},
+          {icon: 'el-icon-info', label: "职务", name: 'duty'},
         ],
         "题目类型": [
-          {icon: 'el-icon-user-solid', label: "单选题"},
-          {icon: 'el-icon-user-solid', label: "多选题"},
-          {icon: 'el-icon-tickets', label: "问答题"},
-          {icon: 'el-icon-caret-bottom', label: "下拉题"},
+          {icon: 'el-icon-user-solid', label: "单选题", type: 'radio'},
+          {icon: 'el-icon-user-solid', label: "多选题", type: 'checkBox'},
+          {icon: 'el-icon-tickets', label: "问答题", type: 'input'},
+          {icon: 'el-icon-caret-bottom', label: "下拉题", type: 'select'},
           {icon: 'el-icon-user-solid', label: "隐私声明"},
         ]
-      }
+      },
+      questionArr: [],
     };
   },
   computed: {
@@ -71,6 +73,16 @@ export default {
       }else{
         return '开启后，观看直播需要填写报名信息';
       }
+    }
+  },
+  created(){
+    this.addFiled(this.setOptions["基本信息"][0]);
+    this.addFiled(this.setOptions["基本信息"][2]);
+  },
+  methods: {
+    addFiled(info){
+      this.questionArr.push(getfiledJson({name: info.name, type: info.type}));
+      console.log(this.questionArr);
     }
   }
 };
@@ -107,6 +119,13 @@ export default {
         margin-bottom: 20px;
         width: fit-content;
         cursor: pointer;
+        &.active{
+          color: #FB3A32;
+          pointer-events: none;
+          i{
+            color: #FB3A32;
+          }
+        }
         i{
           margin-right: 4px;
           color: #1A1A1A;

@@ -96,7 +96,6 @@
 
 <script>
 import pageTitle from './components/pageTitle';
-import sPagination from './components/pagination';
 export default {
   data() {
     return {
@@ -163,7 +162,6 @@ export default {
   },
   components: {
     pageTitle,
-    sPagination
   },
   created() {
     this.getLiveList();
