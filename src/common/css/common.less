@@ -58,6 +58,7 @@
 @font_color_h1: #1a1a1a;
 @font_color_h2: #666666;
 @font_color_h3: #999999;
+@font_color_white: #ffffff;
 
 /*文字-大小*/
 @font_size_20: 20px;
@@ -133,4 +134,13 @@
   /deep/.el-switch.is-checked .el-switch__core::after {
     margin-left: -12px;
   }
+}
+
+/*选择框重置*/
+/deep/ .el-input__inner{
+  border-radius: 18px;
+  height: 35px;
+}
+/deep/.el-input__icon{
+ line-height: 35px;
 }

@@ -3,31 +3,31 @@
     <div class="main-center">
       <data-usage :upgrade_version="upgrade_version"></data-usage>
       <el-row type="flex" class="row-center" justify="space-between">
-        <el-col :span="4">
+        <el-col :span="5">
           <div class="center-item">
             <p></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <div class="center-item">
             <p></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <div class="center-item">
             <p></p>
             <h3>品牌设置</h3>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <div class="center-item">
             <p></p>
             <h3>账号数据</h3>
           </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <div class="center-item">
             <p></p>
             <h3>财务总览</h3>
@@ -102,8 +102,13 @@ export default {
 </script>
 <style lang="less" scoped>
   .data-center{
-    margin: 20px 41px;
+    margin: auto;
+    max-width: 1374px;
+    border: 1px solid #ccc;
     display: flex;
+    /deep/.el-col-5{
+      width: 18.8%;
+    }
     .main-center{
       flex: 1;
       .row-center{
