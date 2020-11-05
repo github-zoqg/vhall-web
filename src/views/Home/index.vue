@@ -134,26 +134,7 @@ export default {
           title: "设置中心",
           index: "5",
           iconClass: "",
-          children: [
-            {
-              title: "聊天严禁词",
-              index: "5-1",
-              iconClass: "",
-              path: "/setting-chat"
-            },
-            {
-              title: "开发设置",
-              iconClass: "",
-              index: "5-2",
-              path: "/setting-dev"
-            },
-            {
-              title: "控制台标志",
-              iconClass: "",
-              index: "5-3",
-              path: "/setting-logo"
-            }
-          ]
+          path: "/setting"
         },
         {
           title: "财务中心",

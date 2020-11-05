@@ -131,6 +131,12 @@ const routes = [
   },
   /*-----------------------------------设置中心------------------------*/
   {
+    path: '/setting',
+    title: '设置中心',
+    name: '设置中心',
+    component: () => import('@/views/SettingModule/setting.vue')
+  },
+  {
     path: '/setting-chat',
     title: '聊天严禁词',
     name: '聊天严禁词',

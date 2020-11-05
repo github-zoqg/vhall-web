@@ -1,0 +1,82 @@
+<template>
+  <div>
+    <section v-for="(item, index) in operas" :key="index">
+      <p class="subject">{{index}}</p>
+      <div class="subjectOuter">
+        <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
+          <i class="icon"></i>
+          <div class="desc">
+            <p class="mainText">{{opera.title}}</p>
+            <p class="subText">{{opera.subText}}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "index.vue",
+  props: {
+    operas: {
+      type: Object
+    }
+  },
+  methods: {
+    blockHandler(item) {
+      this.$emit('blockHandler', item);
+    }
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.subject{
+  font-size: 20px;
+  color: #333333;
+  border-left: 4px solid #FB3A32;
+  line-height: 16px;
+  height: 18px;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  padding-left: 5px;
+}
+.subjectOuter{
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -24px;
+// justify-content: space-between;
+}
+.sunjectInner{
+  display: flex;
+  background: #fff;
+  width: 348px;
+  height: 110px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-right: 24px;
+  box-sizing: border-box;
+  background-clip: content-box;
+  cursor: pointer;
+  .icon{
+    width: 56px;
+    height: 56px;
+    background: #FB3A32;
+    margin-right: 20px;
+    border-radius: 50%;
+    margin-left: 35px;
+  }
+  .desc{
+    .mainText{
+      font-size: 20px;
+      color: #1A1A1A;
+      margin-bottom: 12px;
+    }
+    .subText{
+      font-size: 14px;
+      color: #666666;
+    }
+  }
+}
+</style>
