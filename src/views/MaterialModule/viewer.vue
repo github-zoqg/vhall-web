@@ -238,11 +238,11 @@ export default {
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
-          { pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱' },
+          { pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur' },
         ],
         phone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
-          { pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码' },
+          { pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码' , trigger: 'blur'},
           { max: 11, message: '请输入正确的手机号码', trigger: 'blur' },
           { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
@@ -416,8 +416,8 @@ export default {
     viewerSend() {
       this.$refs.viewerForm.validate((valid) => {
         if (valid) {
-          console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm))
-          let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm)
+          console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
+          let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
           this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', params).then(res => {
             res && res.code === 200 ? this.$message.success(`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`) : this.$message({
               type: 'error',
@@ -436,7 +436,7 @@ export default {
     },
     // 白名单导入观众至分组
     viewerImport(e) {
-      this.file = e.target.files[0]
+      this.file = e.target.files[0];
       let params = {
         path: this.file.name,
         resfile: this.file,
@@ -467,9 +467,9 @@ export default {
           cancelButtonText: '取消'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
-            return item.id
-          })
-          console.log(`批量删除-观众ID集合为${ids.join(',')}`)
+            return item.id;
+          });
+          console.log(`批量删除-观众ID集合为${ids.join(',')}`);
           this.$fetch('viewerDel', {
             audience_ids: ids.join(',')
           }).then(res => {
@@ -477,7 +477,7 @@ export default {
               type: 'error',
               message: res.msg || '删除观众-操作失败'
             });
-            this.viewerList(0)
+            this.viewerList(0);
           }).catch(e => {
             console.log(e);
             this.$message({
@@ -491,7 +491,7 @@ export default {
         this.$message({
           type: 'error',
           message: '请至少选择一个观众进行删除'
-        })
+        });
       }
     },
     // 每次改变，重新查询观众信息
