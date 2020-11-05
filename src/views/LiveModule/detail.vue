@@ -58,10 +58,6 @@
             <p class="mainText">{{opera.title}}</p>
             <p class="subText">{{opera.subText}}</p>
           </div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
         </div>
       </div>
     </template>

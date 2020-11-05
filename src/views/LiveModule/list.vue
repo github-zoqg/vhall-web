@@ -90,7 +90,7 @@
 
       </li>
     </ul> -->
-    <sPagination :total="1000" :page-size='6' @current-change="currentChangeHandler" align="center"></sPagination>
+    <SPagination :total="1000" :page-size='6' @current-change="currentChangeHandler" align="center"></SPagination>
   </div>
 </template>
 
