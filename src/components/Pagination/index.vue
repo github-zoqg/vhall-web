@@ -2,7 +2,6 @@
   <div class="pagination-list">
     <el-pagination
       class="content"
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="localCurrentPage"
       :page-size="10"
@@ -34,11 +33,8 @@ export default {
     },
   },
   methods: {
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      this.$emit('pageSizeChange', val);
     }
   }
 };

@@ -1,0 +1,13 @@
+<template>
+  <div>子账号管理</div>
+</template>
+
+<script>
+export default {
+name: "son.vue"
+}
+</script>
+
+<style scoped>
+
+</style>

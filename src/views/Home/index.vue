@@ -27,30 +27,19 @@ export default {
         {
           title: "直播管理",
           index: "1",
-          iconClass: "el-icon-location",
+          iconClass: "el-icon-video-camera",
           children: [
             {
-              title: "选项一",
+              title: "直播列表",
               index: "1-1",
               iconClass: "",
-              path: "/dao1/xuan1"
+              path: "/live-list"
             },
             {
-              title: "选项二",
-              iconClass: "",
+              title: "创建直播",
               index: "1-2",
-              children: [
-                {
-                  title: "选项二_一",
-                  index: "1-2-1",
-                  path: "/dao1/xuan2/child1"
-                },
-                {
-                  title: "选项二_二",
-                  index: "1-2-2",
-                  path: "/dao1/xuan2/child2"
-                }
-              ]
+              iconClass: "",
+              path: "/live/edit"
             }
           ]
         },
@@ -60,36 +49,161 @@ export default {
           iconClass: "el-icon-menu",
           children: [
             {
-              title: "选项1",
+              title: "专题列表",
               index: "2-1",
-              path: "/dao2/xuan1"
-            }
-          ]
-        },
-        {
-          title: "导航三",
-          index: "3",
-          iconClass: "el-icon-setting",
-          path: "/dao3/index"
-        },
-        {
-          title: "直播管理",
-          index: "4",
-          iconClass: "el-icon-video-camera",
-          children: [
-            {
-              title: "直播列表",
-              index: "4-1",
               iconClass: "",
-              path: "/live/list"
+              path: "/specials-list"
             },
             {
-              title: "创建直播",
+              title: "创建专题",
+              index: "2-2",
               iconClass: "",
-              index: "4-2",
-              path: "/live/edit"
+              path: "/special-detail/a"
             }
           ]
+        },
+        {
+          title: "资料管理",
+          index: "3",
+          iconClass: "el-icon-menu",
+          children: [
+            {
+              title: "文档",
+              index: "3-1",
+              iconClass: "",
+              path: "/material-word"
+            },
+            {
+              title: "音视频",
+              index: "3-2",
+              iconClass: "",
+              path: "/material-video"
+            },
+            {
+              title: "问卷",
+              index: "3-3",
+              iconClass: "",
+              path: "/material-question"
+            },
+            {
+              title: "奖品",
+              index: "3-4",
+              iconClass: "",
+              path: "/material-prize"
+            },
+            {
+              title: "观众",
+              index: "3-5",
+              iconClass: "",
+              path: "/material-viewer"
+            },
+            {
+              title: "广告推荐",
+              index: "3-6",
+              iconClass: "",
+              path: "/material-advert"
+            },
+            {
+              title: "礼物",
+              index: "3-7",
+              iconClass: "",
+              path: "/material-gift"
+            }
+          ]
+        },
+        {
+          title: "数据中心",
+          index: "4",
+          iconClass: "",
+          children: [
+            {
+              title: "数据总览",
+              index: "4-1",
+              iconClass: "",
+              path: "/data-info"
+            },
+            {
+              title: "活动数据",
+              iconClass: "",
+              index: "4-2",
+              path: "/data-live"
+            }
+          ]
+        },
+        {
+          title: "设置中心",
+          index: "5",
+          iconClass: "",
+          children: [
+            {
+              title: "聊天严禁词",
+              index: "5-1",
+              iconClass: "",
+              path: "/setting-chat"
+            },
+            {
+              title: "开发设置",
+              iconClass: "",
+              index: "5-2",
+              path: "/setting-dev"
+            },
+            {
+              title: "控制台标志",
+              iconClass: "",
+              index: "5-3",
+              path: "/setting-logo"
+            }
+          ]
+        },
+        {
+          title: "财务中心",
+          index: "6",
+          iconClass: "",
+          children: [
+            {
+              title: "财务总览",
+              index: "6-1",
+              iconClass: "",
+              path: "/finance-info"
+            },
+            {
+              title: "账户收益",
+              iconClass: "",
+              index: "6-2",
+              path: "/finance-income"
+            }
+          ]
+        },
+        {
+          title: "账户管理",
+          index: "7",
+          iconClass: "",
+          children: [
+            {
+              title: "账户信息",
+              index: "7-1",
+              iconClass: "",
+              path: "/account-info"
+            },
+            {
+              title: "子账号管理",
+              iconClass: "",
+              index: "7-2",
+              path: "/account-son"
+            },
+            {
+              title: "个人主页",
+              iconClass: "",
+              index: "7-3",
+              path: "/account-home"
+            }
+          ]
+        },
+        {
+          title: "样式Demo",
+          index: "8",
+          iconClass: "el-icon-setting",
+          path: "/css-demo"
         }
       ],
       activePath: 0, // 默认左边菜单栏路径

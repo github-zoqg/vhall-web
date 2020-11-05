@@ -38,11 +38,8 @@ export default {
 }
 </script>
 <style lang="less" scope>
-.el-container .head{
+.el-container .el-header{
   padding: 0;
   height: 64px!important;
-}
-.route-wrap{
-  background: #F7F7F7;
 }
 </style>
