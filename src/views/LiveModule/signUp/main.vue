@@ -10,8 +10,8 @@
           :active-text="signUpSwtichDesc">
         </el-switch>
         <div class="headBtnGroup">
-          <el-button round size="medium">设置</el-button>
-          <el-button round size="medium">分享</el-button>
+          <el-button round size="medium" @click="openDialog('theme')">设置</el-button>
+          <el-button round size="medium" @click="openDialog('share')">分享</el-button>
           <el-button type="primary" round size="medium">预览</el-button>
         </div>
       </pageTitle>
@@ -29,17 +29,23 @@
         </div>
       </div>
     </div>
+    <shareDialog ref="share"></shareDialog>
+    <themeSet ref="theme"></themeSet>
   </div>
 </template>
 
 <script>
-import pageTitle from './components/pageTitle';
-import signUpView from './signUp/viewSignUp';
-import {getfiledJson} from './signUp/util';
+import pageTitle from '../components/pageTitle';
+import signUpView from './viewSignUp';
+import shareDialog from './shareDialog';
+import themeSet from './themeSet';
+import {getfiledJson} from './util';
 export default {
   components: {
     pageTitle,
-    signUpView
+    signUpView,
+    shareDialog,
+    themeSet
   },
   data(){
     return {
@@ -60,7 +66,7 @@ export default {
           {icon: 'el-icon-user-solid', label: "多选题", type: 'checkBox'},
           {icon: 'el-icon-tickets', label: "问答题", type: 'input'},
           {icon: 'el-icon-caret-bottom', label: "下拉题", type: 'select'},
-          {icon: 'el-icon-user-solid', label: "隐私声明"},
+          {icon: 'el-icon-user-solid', label: "隐私声明", name: 'privacy'},
         ]
       },
       questionArr: [],
@@ -83,6 +89,9 @@ export default {
     addFiled(info){
       this.questionArr.push(getfiledJson({name: info.name, type: info.type}));
       console.log(this.questionArr);
+    },
+    openDialog(ref){
+      this.$refs[ref].dialogVisible = true;
     }
   }
 };

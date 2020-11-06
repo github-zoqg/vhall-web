@@ -2,7 +2,7 @@ let filedJson = {
   radio: {
     "label": "单选题",
     "required": false,
-    "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
+    "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "radio",
     "nodes": [
       {
@@ -18,7 +18,7 @@ let filedJson = {
   checkBox: {
     "label": "多选题",
     "required": false,
-    "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
+    "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "checkBox",
     value: '',
     "nodes": [
@@ -33,10 +33,10 @@ let filedJson = {
     ]
   },
   select: {
-    "label": "问答题",
-    "required": true,
+    "label": "下拉题",
+    "required": false,
     "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
-    "type": "input",
+    "type": "input-select",
     "nodes": [
       {
         props: {
@@ -45,6 +45,7 @@ let filedJson = {
           placeholder: "选项",
           class: ['selectInput']
         },
+        canRemove: true,
         "value":""
       },
       {
@@ -54,13 +55,14 @@ let filedJson = {
           placeholder: "选项",
           class: ['selectInput']
         },
+        canRemove: true,
         "value":""
       }
     ]
   },
   input: {
     "label": "问答题",
-    "required": true,
+    "required": false,
     "bottomBtn": ["delete", "move", "requireSwtich"],
     "type": "input",
     "nodes": [
@@ -73,70 +75,6 @@ let filedJson = {
   privacy: {
 
   }
-  // "name": {
-  //   "label": "姓名",
-  //   "required": true,
-  //   "bottomBtn": ["move"],
-  //   "type": "input",
-  //   "nodes": [
-  //     {
-  //       "props": {},
-  //       "value":""
-  //     }
-  //   ]
-  // },
-  // "phone": {
-  //   "label": "手机号",
-  //   "required": true,
-  //   "bottomBtn": ["move", "phoneValid"],
-  //   "type": "input",
-  //   "nodes": [
-  //     {
-  //       "props": {},
-  //       "value":""
-  //     }
-  //   ]
-  // },
-  // "gender": {
-  //   "label": "性别",
-  //   "required": false,
-  //   "bottomBtn": ["delete", "move", "requireSwtich"],
-  //   "type": "radio",
-  //   "nodes": [
-  //     {
-  //       "props": {},
-  //       "value":"",
-  //       "children": [
-  //         {"value": "男"},
-  //         {"value": "女"}
-  //       ]
-  //     }
-  //   ]
-  // },
-  // "email": {
-  //   "label": "邮箱",
-  //   "required": false,
-  //   "bottomBtn": ["delete", "move", "requireSwtich"],
-  //   "type": "input",
-  //   "nodes": [
-  //     {
-  //       "props": {},
-  //       "value":""
-  //     }
-  //   ]
-  // },
-  // "company": {
-  //   "label": "邮箱",
-  //   "required": false,
-  //   "bottomBtn": ["delete", "move", "requireSwtich"],
-  //   "type": "input",
-  //   "nodes": [
-  //     {
-  //       "props": {},
-  //       "value":""
-  //     }
-  //   ]
-  // }
 };
 export function getfiledJson({name, type}){
   let json = '';
@@ -165,7 +103,7 @@ export function getfiledJson({name, type}){
       case 'gender':
         json = JSON.parse(JSON.stringify(filedJson['radio']));
         json.nodes[0].children[0].value = '男';
-        json.nodes[0].children[0].value = '女';
+        json.nodes[0].children[1].value = '女';
 
         json = Object.assign(json, {
           label: '性别',
@@ -193,6 +131,81 @@ export function getfiledJson({name, type}){
         });
 
         break;
+
+      case 'regional':
+        json = JSON.parse(JSON.stringify(filedJson['select']));
+        json = Object.assign(json, {
+          label: '地域',
+          "required": true,
+          "bottomBtn": ["delete", "move", "requireSwtich"],
+          "nodes": ["省/自治区/直辖市", "市", "区/县"].map(item=>{
+            return {
+              props: {
+                disabled: true,
+                placeholder: item,
+                class: ['selectInput']
+              },
+              "value":""
+            };
+          })
+        });
+
+        break;
+
+      case 'duty':
+        json = JSON.parse(JSON.stringify(filedJson['select']));
+
+        json = Object.assign(json, {
+          label: '职务',
+          "required": true,
+          // "bottomBtn": [,"delete", "move", "requireSwtich"],
+          "nodes": ["首席执行官/总经理", "市场总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
+            return {
+              props: {
+                disabled: item !='其他',
+                placeholder: "选项",
+                class: ['selectInput']
+              },
+              canRemove: true,
+              "value": item
+            };
+          })
+        });
+
+        break;
+
+      case 'privacy':
+        json = JSON.parse(JSON.stringify(filedJson['input']));
+        json = Object.assign(json, {
+          label: '隐私声明',
+          "required": true,
+          "bottomBtn": ["delete", "move", "requireSwtich"],
+          privacy: true,
+          "nodes": [
+            {
+              "props": {
+                class: ['radioInput']
+              },
+              "value":"我们根据《隐私声明》保护您填写的所有信息"
+            },
+            {
+              "props": {
+                class: ['radioInput'],
+                placeholder: '请输入第一行中可点击跳转得文字'
+              },
+              "value":"《隐私声明》",
+              privacyAdd: true
+            },
+            {
+              "props": {
+                placeholder: '跳转链接（可选）'
+              },
+              "value":""
+            },
+          ]
+        });
+        break;
+
 
       default:
         break;

@@ -39,7 +39,7 @@ const routes = [
     path: '/signup',
     title: '报名表单',
     name: 'signUp',
-    component: () => import('@/views/LiveModule/signUp.vue')
+    component: () => import('@/views/LiveModule/signUp/main.vue')
   },
   /*********************************直播管理 ********************************************/
   {
