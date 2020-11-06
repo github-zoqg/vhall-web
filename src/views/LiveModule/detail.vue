@@ -76,7 +76,7 @@ export default {
         ],
         "品牌": [
           { icon: '', title: '品牌设置', subText: '设置观看页品牌信息' },
-          { icon: '', title: '自定义菜单', subText: '自定义观看页菜单栏' },
+          { icon: '', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/custom-tab/${this.$route.params.str}` },
           { icon: '', title: '播放器设置', subText: '设置直播跑马灯水印' },
           { icon: '', title: '邀请卡', subText: '用于直播邀请或裂变分享' },
           { icon: '', title: '广告推荐', subText: '设置观看页广告位信息' },

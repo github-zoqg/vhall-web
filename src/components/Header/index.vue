@@ -2,7 +2,7 @@
   <div class="wrap-head">
     <div class="fl logo">
       <span>微吼直播</span>
-      <i class="el-icon-eleme"></i>
+     <!-- <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click.prevent.stop="changeCollapse"></i>-->
     </div>
     <div class="fr avat">
       <template>
@@ -26,6 +26,21 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      // isCollapse: false
+    }
+  },
+  methods: {
+    // changeCollapse() {
+    //    this.isCollapse = !this.isCollapse;
+    //    this.$emit('changeIsCollapse', this.isCollapse);
+    // }
+  }
+};
+</script>
 <style lang="less" scoped>
 .wrap-head{
   height: 64px;
