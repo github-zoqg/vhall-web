@@ -86,6 +86,58 @@
 /*分割线*/
 @hr_color: #e6e6e6;
 
+/*flex兼容*/
+.flex-display(){
+  display: -webkit-box; /* Chrome 4+, Safari 3.1, iOS Safari 3.2+ */
+  display: -moz-box; /* Firefox 17- */
+  display: -webkit-flex; /* Chrome 21+, Safari 6.1+, iOS Safari 7+, Opera 15/16 */
+  display: -moz-flex; /* Firefox 18+ */
+  display: -ms-flexbox; /* IE 10 */
+  display: flex; /* Chrome 29+, Firefox 22+, IE 11+, Opera 12.1/17/18, Android 4.4+ */
+}
+
+// 定义主轴方向
+.direction(@type:row){
+  -webkit-box-orient: vertical;
+  -ms-flex-direction: @type;
+  -webkit-flex-direction: @type;
+  flex-direction: @type;
+}
+
+// 定义垂直位置
+.align(@type){
+  -webkit-box-align: @type;
+  -ms-flex-align: @type;
+  -webkit-align-items: @type;
+  align-items: @type;
+}
+
+// 定义横向位置
+.justify(@type){
+  -webkit-box-pack: @type;
+  -ms-flex-pack: @type;
+  -webkit-justify-content: @type;
+  justify-content: @type;
+}
+
+// 定义换行
+.wrap(@type){
+  -webkit-flex-wrap: @type;
+  -moz-flex-wrap: @type;
+  -ms-flex-wrap: @type;
+  -o-flex-wrap: @type;
+  flex-wrap:  @type;
+}
+
+/* 自适应 */
+.flex {
+  width: 0;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+
 .leve3_title {
   font-size: @font_size_14;
   font-family: @fontRegular;
