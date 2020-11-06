@@ -5,6 +5,7 @@
     </div>
     <div class="version-info">
       <version-info :upgrade_version="upgrade_version"></version-info>
+      <div class="grid-content" @click="goAccountDetail"><span>账单明细</span></div>
     </div>
     <div class="statistical-line">
         <span>用量统计</span>
@@ -18,23 +19,12 @@
             class="button-tip"
           ></el-button>
         </el-tooltip>
-        <el-date-picker
-          v-model="time"
-          type="date"
-          style="width: 200px"
-          placeholder="选择日期"
+        <search-area
+          ref="searchArea"
+          :searchAreaLayout="searchAreaLayout"
+          @onSearchFun="getLineList('search')"
         >
-        </el-date-picker>
-        <el-select v-model="dataValue" placeholder="请选择" style="width: 140px">
-        <el-option
-          v-for="item in dataList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-        <button class="export-data">导出数据</button>
+        </search-area>
         <lint-charts></lint-charts>
     </div>
     <div class="statistical-line">
@@ -49,24 +39,12 @@
           class="button-tip"
         ></el-button>
       </el-tooltip>
-      <el-date-picker
-        v-model="time"
-        type="date"
-        style="width: 200px"
-        placeholder="选择日期"
+      <search-area
+          ref="searchAccount"
+          :searchAreaLayout="searchAccount"
+          @onSearchFun="getAccountList('search')"
       >
-      </el-date-picker>
-      <el-select v-model="dataValue" placeholder="请选择" style="width: 140px">
-      <el-option
-        v-for="item in dataList"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      >
-      </el-option>
-    </el-select>
-    <el-input v-model="searchTopic" placeholder="请输入标题" style="width: 180px"></el-input>
-      <button class="export-data">导出数据</button>
+      </search-area>
     </div>
     <el-row type="flex" class="row-bg" justify="space-around">
       <el-col :span="9">
@@ -84,10 +62,13 @@
       </el-col>
     </el-row>
     <table-list
+      ref="accountTableList"
       :manageTableData="tableList"
       :tabelColumnLabel="tabelColumn"
       :isCheckout="isCheckout"
       :isHandle="isHandle"
+      :totalNum="totalNum"
+      @getTableList="getAccountList"
       >
     </table-list>
   </div>
@@ -96,20 +77,65 @@
 <script>
 import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
-import tableList from '@/components/DataList/list.vue';
-
+// import tableList from '@/components/DataList/list.vue';
+// import searchArea from '@/components/SearchArea/index.vue';
 export default {
   name: "financeInfo",
   components: {
     versionInfo,
     lintCharts,
-    tableList
+    // tableList,
+    // searchArea
   },
   data() {
     return {
       upgrade_version: '旗舰版',
       time: '',
       dataValue: '',
+      totalNum: 1000,
+      searchAreaLayout: [
+        {
+          type: "2",
+          key: "searchDate",
+        },
+        {
+          type: "3",
+          key: "searchVersion",
+          options: [
+            {
+              label: '主账号',
+              value: 1
+            },
+            {
+              label: '主账号+子账号',
+              value: 2
+            }
+          ]
+        }
+      ],
+      searchAccount:[
+        {
+          type: "2",
+          key: "searchDate",
+        },
+        {
+          type: "3",
+          key: "searchVersion",
+          options: [
+            {
+              label: '主账号',
+              value: 1
+            },
+            {
+              label: '主账号+子账号',
+              value: 2
+            }
+          ]
+        },
+        {
+          key: "searchAccount"
+        }
+      ],
       dataList: [
         {
           value: '1',
@@ -173,6 +199,26 @@ export default {
       ]
     };
   },
+  methods: {
+    getLineList(params) {
+      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      console.log(formParams, params);
+    },
+    getAccountList(params) {
+      let pageInfo = this.$refs.accountTableList.pageInfo;
+      let formParams = this.$refs.searchArea.searchAccount; //获取搜索参数
+      if (params === 'search') {
+        pageInfo.pageNum= 1;
+      }
+      let obj = Object.assign({}, pageInfo, formParams);
+      console.log(obj);
+    },
+    goAccountDetail() {
+       this.$router.push({
+        name: 'infoDetail'
+      });
+    }
+  }
 };
 </script>
 
@@ -204,33 +250,6 @@ export default {
         color: #1a1a1a;
         margin: 0;
         // padding-left: 34px;
-      }
-    }
-    .export-data {
-      position: absolute;
-      right: 0;
-      top: 0px;
-      width: 104px;
-      height: 35px;
-      border-radius: 20px;
-      border: 1px solid #dcdfe6;
-      text-align: center;
-      line-height: 35px;
-      background: #fff;
-      outline: 0;
-      cursor: pointer;
-      span {
-        font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #666;
-      }
-    }
-    .export-data:hover {
-      background: #fb3a32;
-      border: none;
-      span {
-        color: #fff;
       }
     }
     .row-bg{

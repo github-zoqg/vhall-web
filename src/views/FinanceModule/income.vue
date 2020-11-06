@@ -1,10 +1,10 @@
 <template>
   <div class="account-income">
     <div class="title-data">
-      <span>账单明细</span>
+      <span>账户收益</span>
       <el-tooltip effect="dark" placement="right-start">
         <div slot="content">
-          购买明细指用户从后台主动下单购买相关功能的订单；开通明细指通过工作人<br>员给您开通的相关功能订单
+          1.账户收益包含直播收益和红包收益<br>2.直播收益：观众对主办方打赏的金额，包含门票、打赏、礼物道具<br>3.红包收益：作为观众身份抢到主办方发送的红包，以及主办方发送红包后未被领取完，会退款到红包收益
         </div>
         <el-button
           circle
@@ -13,56 +13,62 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <el-tabs v-model="activeIndex" @tab-click="handleClick">
-      <el-tab-pane label="购买明细" name="1"></el-tab-pane>
-      <el-tab-pane label="开通明细" name="2"></el-tab-pane>
-      <div class="change-time">
-        <el-date-picker
-          v-model="time"
-          type="date"
-          style="width: 200px"
-          placeholder="选择日期"
-        >
-        </el-date-picker>
-        <el-select v-model="typeValue" placeholder="请选择订单类型" style="width: 160px">
-        <el-option
-          v-for="item in typeData"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-        </el-select>
-        <el-select v-model="statusValue" placeholder="请选择订单状态" style="width: 160px">
-          <el-option
-            v-for="item in statusData"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-        <el-select v-model="sourceValue" placeholder="请选择订单来源" style="width: 160px">
-          <el-option
-            v-for="item in sourceData"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-        <el-button>查询</el-button>
-        <div class="export-data">
-          <span>导出数据</span>
+    <el-row type="flex" class="row-bg" justify="space-around">
+      <el-col :span="9">
+        <div class="grid-content">
+          <div class="incomt-time">
+            <p>直播收益<span>提现</span></p>
+          </div>
+          <div class="income-main">
+            <div class="income-topic">
+              <p>总收益（元）</p>
+              <h2>2,805,763.00</h2>
+            </div>
+            <div class="income-topic">
+              <p>可用余额（元）</p>
+              <h2>12.00</h2>
+            </div>
+          </div>
         </div>
-      </div>
+      </el-col>
+      <el-col :span="9">
+        <div class="grid-content">
+          <div class="incomt-time">
+            <p>红包收益<span>提现</span></p>
+          </div>
+          <div class="income-main">
+            <div class="income-topic">
+              <p>总收益（元）</p>
+              <h2>700.00</h2>
+            </div>
+            <div class="income-topic">
+              <p>可用余额（元）</p>
+              <h2>12.00</h2>
+            </div>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-tabs v-model="activeIndex" @tab-click="handleClick">
+      <el-tab-pane label="直播收益明细" name="1"></el-tab-pane>
+      <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
+      <search-area
+        ref="searchIncome"
+        :searchAreaLayout="searchAccount"
+        @onSearchFun="getIncomeList('search')"
+      >
+      </search-area>
       <table-list
+        ref="tableIncome"
         :manageTableData="tableList"
         :tabelColumnLabel="tabelColumn"
         :isCheckout="isCheckout"
         :isHandle="isHandle"
         :width="120"
         :tableRowBtnFun="tableRowBtnFun"
+        :totalNum="totalNum"
+        @onHandleBtnClick="onHandleBtnClick"
+        @getTableList="getIncomeList"
         >
       </table-list>
     </el-tabs>
@@ -70,148 +76,137 @@
 </template>
 
 <script>
-import tableList from '@/components/DataList/list.vue';
 export default {
   name: "income",
   data() {
     return {
       activeIndex: '1',
-      time: '',
-      typeValue: '',
-      statusValue: '',
-      sourceValue: '',
-      typeData: [
+      totalNum: 0,
+      searchAccount: [
         {
-          label: '专业版',
-          value: '1'
+          type: '2',
+          key: "searchDate"
         },
         {
-          label: '流量版',
-          value: '2'
-        }
-      ],
-      statusData: [
-        {
-          label: '成功',
-          value: '1'
-        },
-        {
-          label: '失败',
-          value: '2'
-        }
-      ],
-      sourceData: [
-        {
-          label: '下单购买',
-          value: '1'
-        },
-        {
-          label: '人工购买',
-          value: '2'
+          key: "accountTitle"
         }
       ],
       isCheckout: false,
       isHandle: true,
-      tableList: [
-        {
-          no: '1',
-          time: '2020-09-17',
-          type: '支付宝',
-          money: '123,000',
-          content: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
-          status: '1',
-          source: '直播',
-          onDate: '2020-10-01',
-          outDate: '2021-10-01'
-        },
-        {
-          no: '1',
-          time: '2020-01-17',
-          type: '微信',
-          money: '111,000',
-          content: '哈哈减肥吧开始讲课',
-          status: '2',
-          source: '录播',
-          onDate: '2020-01-01',
-          outDate: '2021-01-01'
-        }
-      ],
+      tableList: [],
       tabelColumn: [],
-      tabelColumns: [
+      liveColumns: [
         {
-          label: '订单编号',
+          label: '活动id',
           key: 'no',
           width: 120
         },
         {
-          label: '交易时间',
+          label: '标题',
           key: 'time',
-          width: 120
+          width: 240
         },
         {
-          label: '订单类型',
+          label: '总收益',
           key: 'type',
           width: 100
         },
         {
-          label: '交易金额',
+          label: '门票收益',
           key: 'money',
           width: 120,
         },
         {
-          label: '购买内容',
+          label: '打赏收益',
           key: 'content',
-          width: 200
+          width: 120
         },
         {
-          label: '订单状态',
+          label: '礼物',
           key: 'status',
-          width: 200
+          width: 120
+        }
+      ],
+      meneyColumns: [
+        {
+          label: '活动id',
+          key: 'no',
+          width: 120
         },
         {
-          label: '来源',
-          key: 'source',
+          label: '标题',
+          key: 'time',
+          width: 240
+        },
+        {
+          label: '发红包用户',
+          key: 'type',
           width: 100
         },
         {
-          label: '启用日期',
-          key: 'onDate',
-          width: 100
+          label: '红包类型',
+          key: 'money',
+          width: 120,
         },
         {
-          label: '失效日期',
-          key: 'outDate',
-          width: 100
+          label: '领取时间',
+          key: 'content',
+          width: 120
+        },
+        {
+          label: '领取金额',
+          key: 'status',
+          width: 120
         }
       ],
       tableRowBtnFun: [
         {
-          name: "删除",
-          methodName: 'delete'
+          name: "详情",
+          methodName: 'detail'
         }
       ]
     };
   },
-  components: {
-    tableList
-  },
+  // components: {
+  // },
   created() {
-    this.tabelColumn = this.tabelColumns;
+    this.tabelColumn = this.liveColumns;
   },
   watch: {
     activeIndex(value) {
       if (parseInt(value) === 2) {
         this.isHandle = false;
-        this.tabelColumn = this.tabelColumn.filter(item => item.key !== 'money');
+        this.tabelColumn = this.meneyColumns;
       } else {
         this.isHandle = true;
-        this.tabelColumn = this.tabelColumns;
+        this.tabelColumn = this.liveColumns;
       }
     }
   },
   methods: {
+    onHandleBtnClick(val) {
+      let methodsCombin = this.$options.methods;
+      methodsCombin[val.type](this, val);
+    },
     handleClick(tab) {
       this.activeIndex = tab.name;
+    },
+    getIncomeList(params) {
+      let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
+      let formParams = this.$refs.searchIncome.searchParams; //获取搜索参数
+      if (params === 'search') {
+        pageInfo.pageNum= 1;
+      }
+      let obj = Object.assign({}, pageInfo, formParams);
+      console.log(obj);
+    },
+    detail(that, { rows }) {
+      that.$router.push({
+        name: 'incomeDetail',
+        query: {
+          id: rows.no
+        }
+      });
     }
   },
 };

@@ -8,9 +8,9 @@ const routes = [
     component: () => import('../views/FirstPage/index.vue')
   },
   {
-    path: '/about',
-    name: 'About',
-    component: () => import('../views/About.vue')
+    path: '/default',
+    name: 'home',
+    component: () => import('../views/FirstPage/index.vue')
   },
   /*********************************直播管理 ********************************************/
   {
@@ -158,14 +158,26 @@ const routes = [
   {
     path: '/finance-info',
     title: '财务总览',
-    name: '财务总览',
+    name: 'info',
     component: () => import('@/views/FinanceModule/info.vue')
+  },
+  {
+    path: '/finance-infoDetail',
+    title: '账单明细',
+    name: 'infoDetail',
+    component: () => import('@/views/FinanceModule/infoDetail.vue')
   },
   {
     path: '/finance-income',
     title: '账户收益',
-    name: '账户收益',
+    name: 'income',
     component: () => import('@/views/FinanceModule/income.vue')
+  },
+  {
+    path: '/finance-incomeDetail',
+    title: '收益详情',
+    name: 'incomeDetail',
+    component: () => import('@/views/FinanceModule/incomeDetail.vue')
   },
   /*-----------------------------------账户管理------------------------*/
   {
