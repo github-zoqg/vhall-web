@@ -39,7 +39,13 @@ const routes = [
     path: '/signup',
     title: '报名表单',
     name: 'signUp',
-    component: () => import('@/views/LiveModule/signUp.vue')
+    component: () => import('@/views/LiveModule/signUp/main.vue')
+  },
+  {
+    path: '/custom-tab/:str',
+    title: '品牌——自定义菜单',
+    name: 'planFunction',
+    component: () => import('@/views/LiveModule/customTab.vue')
   },
   /*********************************直播管理 ********************************************/
   {

@@ -8,12 +8,13 @@
     </section>
     <section class="viewItem">
       <p class="label">表单简介</p>
-      <el-input maxlength="500" show-word-limit placeholder="请输入表单简介" type="textarea" autosize resize=none></el-input>
+      <el-input maxlength="500" show-word-limit placeholder="请输入表单简介" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
     </section>
     <!-- 表单名称与表单简介为固定字段 -->
     <draggable
       class="list-group"
       tag="ul"
+      handle=".moveBtn"
       v-bind="dragOptions"
       @start="drag = true"
       @end="drag = false"
@@ -23,10 +24,11 @@
           <p class="label">{{item.label}} {{item.required ? '（必填）' : ''}}</p>
           <template v-for="(node, nodeIndex) in item.nodes">
 
-            <!-- 输入框类型 -->
+            <!-- 输入框类型 || 设置表单时下拉框类型 -->
             {{node.other ? "其他" : ''}}
-            <el-input v-if="item.type=='input'" v-model="item.value" v-bind="node.props" :key='`${index}-${nodeIndex}`'>
-              <i class="el-icon-remove-outline removeIcon" slot="suffix" v-if="item.type=='select'" @click="deleteOptions()"></i>
+            <el-input v-if="item.type=='input' || item.type=='input-select'" v-model="node.value" v-bind="node.props" :key='`${index}-${nodeIndex}`'>
+              <i class="el-icon-remove-outline removeIcon" slot="suffix" v-if="!!node.canRemove" @click="deleteOptions(item.nodes, nodeIndex, item.privacy)"></i>
+              <i class="el-icon-circle-plus-outline removeIcon" slot="suffix" v-if="!!node.privacyAdd && item.nodes.length < 4" @click="privacyAdd(item.nodes, nodeIndex)"></i>
             </el-input>
             <!-- 单选类型 -->
             <el-radio-group v-model="item.value" v-bind="node.props" v-else-if="item.type=='radio'" :key='`${index}-${nodeIndex}`'>
@@ -49,39 +51,45 @@
               </el-checkbox>
             </el-checkbox-group>
           </template>
+          <div class="previewPrivacy" v-if="item.privacy">
+            <p>预览效果</p>
+            <el-checkbox>
+              <p v-html="privacyFormatter(item.nodes)"></p>
+            </el-checkbox>
+          </div>
+          <!-- 底部按钮 -->
           <div class="bottomBtn" v-if="!!item.bottomBtn">
-            <template v-for="btn in item.bottomBtn">
-              <div class="addBtn" v-if="btn=='addBtn'" :key="btn">
-                <el-button type="text" @click="addOption(item)"><i class="el-icon-plus"></i>添加选项</el-button>
+            <div class="addBtn">
+              <el-button type="text" v-if="item.bottomBtn.includes('addBtn')"  @click="addOption(item)"><i class="el-icon-plus"></i>添加选项</el-button>
+              <template v-if="item.bottomBtn.includes('addOther')">
                 <span class="line"></span>
                 <el-button el-button type="text" @click="addOption(item, 'other')"><i class="el-icon-plus"></i>添加其他</el-button>
-              </div>
-              <i class="el-icon-delete" v-else-if="btn=='delete'" :key="btn" @click="deleteOptions(questionArr, index)"></i>
-              <i class="el-icon-rank" v-else-if="btn=='move'" :key="btn"></i>
-              <el-switch
-                v-else-if="btn=='requireSwtich'"
-                :key="btn"
-                class="swtich"
-                :width='30'
-                :height="16"
-                v-model="item.required"
-                active-color="#FB3A32"
-                inactive-color="#CECECE"
-                inactive-text="必填项">
-              </el-switch>
-              <el-switch
-                v-else-if="btn=='phoneValid'"
-                :key="btn"
-                class="swtich"
-                :width='30'
-                :height="16"
-                v-model="item.phoneValide"
-                active-color="#FB3A32"
-                inactive-color="#CECECE"
-                inactive-text="短信验证">
-              </el-switch>
-            </template>
+              </template>
+            </div>
+            <i class="el-icon-delete" v-if="item.bottomBtn.includes('delete')" @click="deleteOptions(questionArr, index)"></i>
+            <i class="el-icon-rank moveBtn" v-if="item.bottomBtn.includes('move')"></i>
+            <el-switch
+              v-if="item.bottomBtn.includes('requireSwtich')"
+              class="swtich"
+              :width='30'
+              :height="16"
+              v-model="item.required"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+              inactive-text="必填项">
+            </el-switch>
+            <el-switch
+              v-if="item.bottomBtn.includes('phoneValid')"
+              class="swtich"
+              :width='30'
+              :height="16"
+              v-model="item.phoneValide"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+              inactive-text="短信验证">
+            </el-switch>
           </div>
+          <!-- 底部按钮 -->
         </li>
       </transition-group>
     </draggable>
@@ -105,75 +113,6 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      renderData: [
-        {
-          label: '单选题',
-          required: false,
-          bottomBtn: ['delete', 'move', 'requireSwtich'],
-          id: 3,
-          type: 'radio',
-          nodes: [
-            {
-              props: {},
-              id: '3-1',
-              value:'',
-              children: [
-                {value: '', id: '3-1-1'},
-                {value: '', id: '3-1-2'}
-              ]
-            }
-          ]
-        },
-        {
-          label: '多选题',
-          required: false,
-          bottomBtn: ["addBtn", 'delete', 'move', 'requireSwtich'],
-          id: 4,
-          value: '',
-          type: 'checkBox',
-          nodes: [
-            {
-              props: {},
-              id: '4-1',
-              value:'',
-              children: [
-                {value: '男', id: '4-1-1'},
-                {value: '', id: '4-1-2'},
-                {value: '', id: '4-1-3', other: true}
-              ]
-            }
-          ]
-        },
-        {
-          label: '下拉题',
-          required: false,
-          bottomBtn: ["addBtn", 'delete', 'move', 'requireSwtich'],
-          id: 5,
-          value: '',
-          type: 'input',
-          nodes: [
-            {
-
-              id: '5-1',
-              props: {
-                maxlength: "50",
-                "show-word-limit": true,
-                placeholder: "选项",
-                class: ['selectInput']
-              }
-            },
-            {
-              id: '5-2',
-              props: {
-                maxlength: "50",
-                "show-word-limit": true,
-                placeholder: "选项",
-                class: ['selectInput']
-              }
-            }
-          ]
-        }
-      ]
     };
   },
   computed: {
@@ -189,7 +128,8 @@ export default {
   methods: {
     addOption(data, other){
       console.log(data, other);
-      let options = data.type != 'input' ? data.nodes[0].children : data.nodes;
+      let options = data.type != 'input' && data.type != 'input-select' ? data.nodes[0].children : data.nodes;
+      console.log(options);
       let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
       if(data.type == 'input'){
         if(other){
@@ -203,16 +143,65 @@ export default {
         }
 
       }
+      colneChild.props && (colneChild.props.disabled = false);
       console.log(colneChild);
       colneChild.other = !!other;
+      colneChild.value = "";
       options.push(colneChild);
     },
-    deleteOptions(arr, index){
-      console.log(arr);
+    deleteOptions(arr, index, privacy){
+      console.log(arr, index, privacy);
+      if(privacy){
+        // 隐私协议删除两个 且不能有数量限制
+        console.log(123);
+        let reg = new RegExp(`(和${arr[index].value})`);
+        arr[0].value = arr[0].value.replace(reg, '');
+        arr.splice(index, 2);
+        return;
+      }
       if(arr.length == 2){
+        // 普通选项删除一个
         return this.$message.error('请至少保留两个选项');
       }
       arr.splice(index, 1);
+    },
+    privacyAdd(nodes){
+      let privacy1 = nodes[1].value;
+      if(!privacy1 || !nodes[0].value.match(privacy1)){
+        return this.$message.error('请完善可点击文字');
+      }
+      let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
+      let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
+      cloneNode.value = "《隐私声明2》";
+      cloneNode.privacyAdd = false;
+      cloneNode.canRemove = true;
+      cloneNode2.value = "";
+      let reg = new RegExp(`(${privacy1})`);
+      nodes[0].value = nodes[0].value.replace(reg, `$1和${cloneNode.value}`);
+      nodes.push(cloneNode);
+      nodes.push(cloneNode2);
+    },
+    privacyFormatter(item){
+      let text = JSON.parse(JSON.stringify(item[0].value));
+      // let privacy =
+      let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
+      if(matchPrivacy1){
+        let reg = new RegExp(`(${matchPrivacy1[0]})`);
+        text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`);
+      }else{
+        item[1].value = '';
+      }
+      let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
+      console.log(item[3] &&item[3].value, text);
+      if(matchPrivacy2){
+        let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
+        console.log(reg);
+        text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`);
+      }else{
+        item[3] && (item[3].value = '');
+      }
+
+      return text;
     }
   },
 };
@@ -268,6 +257,7 @@ export default {
             color: #3562FA;
             font-weight: bold;
             font-size: 14px;
+
           }
         .el-button{
           margin-left: 0;
@@ -280,6 +270,9 @@ export default {
           margin: 0 12px;
           vertical-align: middle;
         }
+      }
+      .moveBtn{
+        cursor: move;
       }
       i{
         font-size: 18px;
@@ -335,7 +328,7 @@ export default {
 
 
   }
-  .radioInput{
+  .radioInput,.selectInput{
     &:hover .removeIcon{
       display: inline-block;
     }
@@ -346,5 +339,23 @@ export default {
     color: #666666;
     vertical-align: middle;
     display: none;
+    line-height: 34px;
+    cursor: pointer;
+  }
+  .previewPrivacy{
+    font-size: 14px;
+    color: #666;
+    p{
+      margin: 16px 0 8px 0;
+    }
+    a{
+      color: #337ab7;
+      &:link{
+        color: #337ab7;
+      }
+      &:active{
+        color: #337ab7;
+      }
+    }
   }
 </style>

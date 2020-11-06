@@ -1,5 +1,5 @@
 <template>
-  <div class="liveListBox">
+  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle title="直播列表">
       <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
@@ -13,7 +13,7 @@
       <el-button type="primary" round>创建直播</el-button>
       <el-button round>创建点播</el-button>
       <div class="searchBox">
-        <el-select v-model="liveStatus" placeholder="全部">
+        <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
           <el-option
             v-for="item in statusOptions"
             :key="item.value+item.label"
@@ -21,7 +21,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-select v-model="orderBy" placeholder="请选择">
+        <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
           <el-option
             v-for="item in orderOptions"
             :key="item.value+item.label"
@@ -49,13 +49,14 @@
             <span class="liveTag">{{item | liveTag}}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
-              {{item.hot | unitCovert}}
+              {{item.pv | unitCovert}}
             </span>
+            <img :src="item.img_url" alt="">
           </div>
           <div class="bottom">
             <div class="">
-              <p class="liveTitle">{{item.title | subLiveTitle}}</p>
-              <p class="liveTime">{{item.time}}</p>
+              <p class="liveTitle">{{item.subject}}</p>
+              <p class="liveTime">{{item.start_time}}</p>
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="开播" placement="top">
@@ -90,7 +91,7 @@
 
       </li>
     </ul> -->
-    <SPagination :total="1000" :page-size='6' @current-change="currentChangeHandler" align="center"></SPagination>
+    <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
   </div>
 </template>
 
@@ -104,6 +105,7 @@ export default {
       keyWords: '',
       pageSize: 10,
       pageNum: 1,
+      totalElement: 0,
       liveDropDownVisible: false,
       statusOptions: [
         { label: '全部', value: 0 },
@@ -117,47 +119,8 @@ export default {
         { label: '按创建时间排序', value: 1 },
         { label: '按最后直播时间排序', value: 2 }
       ],
-      liveList: [
-        {
-          webinar_id: 795704919,
-          title: '创想聚能艾瑞年对高峰会议既定终结攀登巅',
-          time: '2018-07-09 09:30:00',
-          hot: 2564,
-          type: 0,
-          status: 1
-        },
-        {
-          webinar_id: 795704910,
-          title: '艺术二维码的设计思路，每一次得头脑风暴，每一次得设计盛宴，每一次得境界生化',
-          time: '2018-07-09 09:30:00',
-          hot: 133900,
-          type: 2,
-          status: 1
-        },
-        {
-          webinar_id: 795704911,
-          title: '百度人工智能大会发布芯片',
-          time: '2018-07-09 09:30:00',
-          hot: 67423,
-          type: 1
-        },
-        {
-          webinar_id: 795704912,
-          title: '第三季度新品创新研讨会—趋势峰会论坛研讨会微吼直播',
-          time: '2018-07-09 09:30:00',
-          hot: 154654611131,
-          type: 2,
-          status: 2
-        },
-        {
-          webinar_id: 795704913,
-          title: '2018西南互联网趋势峰会',
-          time: '2018-07-09 09:30:00',
-          hot: 12342221,
-          type: 2,
-          status: 0
-        }
-      ]
+      loading: true,
+      liveList: [],
     };
   },
   components: {
@@ -168,6 +131,8 @@ export default {
   },
   methods: {
     searchHandler() {
+      this.pageNum = 1;
+      this.getLiveList();
       console.log('searchHandler');
     },
     dropDownVisibleChange(item) {
@@ -175,7 +140,8 @@ export default {
       this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);
     },
     currentChangeHandler(current) {
-      console.log('current-change', current);
+      this.pageNum = current;
+      this.getLiveList();
     },
     getLiveList(){
       const data = {
@@ -186,12 +152,17 @@ export default {
         order_type: this.orderBy,
         webinar_type: this.liveStatus
       };
+      this.loading = true;
       console.log(data);
       this.$fetch('liveList', data, {"Content-Type": "application/x-www-form-urlencoded", "need_sign": 0, platform: 'pc', token: 'cc'}).then(res=>{
         console.log(res);
+        this.liveList = res.data.list;
+        this.totalElement = res.data.total;
       }).catch(error=>{
         this.$message.error(`获取直播列表失败,${error.errmsg || error.message}`);
         console.log(error);
+      }).finally(()=>{
+        this.loading = false;
       });
     },
     toDetail(id) {
@@ -201,14 +172,17 @@ export default {
   filters: {
     liveTag(val) {
       /**
+       * type  1预约 2直播 3回放 4点播 5结束
+       * is_interact 是否互动
+       *
        * type: 0直播  1点播  2回放
        * status：0互动直播  1音频直播 2视频直播
        */
-      const liveTypeStr = ['直播', '点播', '回放'];
+      const liveTypeStr = ['', '预约', '直播', '回放', '点播', '结束'];
       const liveStatusStr = ['互动直播', '音频直播', '视频直播'];
       let str = liveTypeStr[val.type];
-      if (val.type != 1) {
-        str += ` | ${liveStatusStr[val.status]}`;
+      if (val.type != 4) {
+        str += ` | ${liveStatusStr[val.is_interact]}`;
       }
       return str;
     },
@@ -323,12 +297,21 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
+        img{
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top:0;
+          left: 0;
+        }
         .liveTag{
           background: rgba(0,0,0, .7);
           color: #fff;
           font-size: 12px;
           padding: 2px 9px;
           border-radius: 20px;
+          position: relative;
+          z-index: 2;
         }
         .hot{
           position: absolute;
@@ -336,6 +319,7 @@ export default {
           left: 10px;
           color: #fff;
           font-size: 14px;
+          z-index: 2;
         }
       }
       .bottom{
