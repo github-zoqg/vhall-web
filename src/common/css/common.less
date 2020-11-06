@@ -145,4 +145,120 @@
  line-height: 35px;
 }
 
-/*公共选项卡*/
+/*滚动条*/
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #eff1f7;
+}
+/*滑块hover效果*/
+::-webkit-scrollbar-thumb:hover {
+  border-radius: 5px;
+  /*内阴影*/
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #eef2ff
+}
+
+/*左侧导航重置*/
+.el-menu-reset.el-menu {
+  .el-menu-item, .el-submenu__title {
+    height: auto;
+    line-height: normal;
+  }
+  .el-menu-item {
+    padding-left: 30px!important;
+    padding-top: 17px;
+    padding-bottom: 17px;
+    line-height: 22px;
+    border-left: 4px solid #1a1a1a;
+    background: #1a1a1a;
+    &.is-active,&:hover {
+      border-left-color: #fa3f37;
+      -moz-border-left-colors: #fa3f37;
+      i {
+        color: #fb3a32;
+      }
+      span {
+        font-size: 16px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #fb3a32;
+        line-height: 22px;
+      }
+    }
+  }
+  .el-menu-item [class^=el-icon-] {
+    margin-right: 14px;
+    text-align: center;
+    font-size: 18px;
+    vertical-align: middle;
+    color: #e2e2e2;
+  }
+  .el-submenu [class^=el-icon-] {
+    margin-right: 14px;
+    text-align: center;
+    font-size: 18px;
+    vertical-align: middle;
+    color: #e2e2e2;
+  }
+  .a-line {
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    font-size: 16px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #e2e2e2;
+    line-height: 22px;
+  }
+  .el-submenu__title {
+    padding-left: 34px!important;
+    padding-top: 17px;
+    padding-bottom: 17px;
+    line-height: 22px;
+    background: #1a1a1a;
+    span {
+      font-size: 16px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #e2e2e2;
+      line-height: 22px;
+    }
+  }
+  .el-submenu__icon-arrow {
+    right: 34px;
+    color: #e2e2e2;
+  }
+  .el-menu [role^=menu]{
+    background: #333333;
+    padding-left: 61px!important;
+    border-left: 4px solid #333333;
+    &.is-active,&:hover {
+      border-left-color: #fa3f37;
+      -moz-border-left-colors: #fa3f37;
+      span {
+        font-size: 16px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #fb3a32;
+        line-height: 22px;
+      }
+    }
+  }
+  .el-submenu.is-opened {
+    .el-submenu__title {
+      background: #333333;
+    }
+  }
+}
+
