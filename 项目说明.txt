@@ -10,13 +10,22 @@ src
 ----api
 --------config.js 接口请求地址配置文件
 --------fetch.js 接口请求封装文件
+--------env.js 不同环境，静态地址配置
 ----common
 --------css 样式文件（less）
 --------images 图片
 --------js 通用JS类库文件
 ------------lan 国际化目录
 ----components
+--------DataList 数据-表格类通用
+--------DataUsage 数据并发、流量总览卡片
+--------Echarts echarts图形组件
+--------Header 头部公共导航
+--------ItemCard 简介卡片入口
 --------MenuItem 菜单导航组件
+--------Pagination 分页组件（待删除）
+--------Sidebar 左侧菜单导航组件
+--------Spagination 分页组件
 ----router 路由
 ----utils
 --------Events.js
@@ -28,13 +37,41 @@ src
 --------weChat.js
 ----views
 --------LiveModule 直播模块
+------------customTab.vue 自定义组件
+------------detail.vue 直播详情
+------------edit.vue 编辑/基本信息
+------------list.vue 直播列表
+------------planFunction.vue 准备_功能配置
+------------signUp.vue 报名表单
+------------viewerRules.vue 准备_观看限制
 --------SpecialModule 专题模块
+------------detail.vue 专题详情
+------------list.vue 专题列表
 --------MaterialModule 资料模块
+------------advert.vue 广告推荐
+------------gift.vue 礼物
+------------prize.vue 奖品
+------------question.vue 问卷
+------------view.vue 音视频
+------------viewer.vue 观众
+------------word.vue 文档
 --------StatisticsModule 数据统计模块
+------------dataInfo.vue 数据总览
+------------dataLive.vue 活动数据
 --------SettingModule 设置中心模块
+------------chat.vue 聊天严禁词
+------------dev.vue 开发设置
+------------logo.vue 控制台标识
+------------setting.vue 设置中心总览
 --------FinanceModule 财务中心模块
+------------income.vue 账户收益
+------------info.vue 财务总览
 --------AccountModule 账户模块
+------------home.vue 个人主页
+------------info.vue 账户信息
+------------son.vue  子账号管理
 --------PlatformModule 全平台-公共模块
+------------Error 通用错误页
 ----App.vue
 ----main.js 入口执行文件
 tests
