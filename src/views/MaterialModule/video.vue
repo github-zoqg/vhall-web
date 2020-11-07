@@ -56,7 +56,7 @@ export default {
         }
       ],
       UploadSDK: null,
-      uploadId: 1000
+      uploadId: -1
     };
   },
   components: {
@@ -72,7 +72,6 @@ export default {
     tirggerFile(event){
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
-      console.log(beforeName, '上传前的name');
       if(beforeName.indexOf('.mp')==-1){
         this.$message({
           type: 'error',
@@ -82,10 +81,8 @@ export default {
       }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
       let name = beforeName.split('.m')[0];
-      let onlyId = this.uploadId++;
+      let onlyId = this.uploadId--;
       file.id = onlyId;
-      window.mom = this.$moment;
-      console.log(this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'));
       if(!reg.test(name)){
         this.$message({
           type: 'warning',
@@ -101,16 +98,17 @@ export default {
         id: onlyId
       };
       this.tableData.unshift(param);
-      this.UploadSDK.upload([file],(progress)=>{
-        console.log(progress, '进度', file, file.lastModifiedDate);
-        this.tableData.forEach(ele=>{
-          if(ele.id == file.id){
-            ele.uploadProgress = Math.floor(progress*100) + '%';
-          }
-        });
+      this.UploadSDK.upload([file],function(pro){
+        console.log(pro.progress, '进度');
+        // this.tableData.forEach(ele=>{
+        //   if(ele.id == file.id){
+        //     console.log(msg.progress,Math.floor(msg*100));
+        //     ele.uploadProgress = Math.floor(msg*100) + '%';
+        //   }
+        // });
       },res=>{
         console.log(res, '成功');
-        this.createVod(file, name);
+        // this.createVod(file, 'name');
       },err=>{
         console.log(err, '失败');
       });

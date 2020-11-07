@@ -17,12 +17,13 @@
           :label="item.label"
         >
         <template slot-scope="scope">
+          <!-- {{scope.row}}-{{item.key}}- -->
           <img :src="scope.row.liveTitle" width="40" height="40" v-if="item.key==='liveTitle'"/>
-          <span v-else>{{scope.row[item.key]}}</span>
+          <span v-else>{{scope.row[item.key] || '-'}}</span>
         </template>
         </el-table-column>
         <el-table-column label="操作" align="center" :width="width" v-if="isHandle">
-        <template slot-scope="scope">
+        <template slot-scope="scope" v-if="scope.row.id > 0">
           <el-button
             v-for="(item, index) in tableRowBtnFun"
             :key="index"
@@ -78,6 +79,18 @@ export default {
       default: 200
     },
   },
+  watch: {
+    manageTableData: {
+      handler(oldData, newData){
+        console.log(oldData, newData, 'watch变化');
+      },
+      deep: true
+    }
+  },
+  created() {
+    console.log('tabelColumnLabel', this.tabelColumnLabel);
+    console.log('manageTableData', this.manageTableData);
+  },
   methods: {
     isImg(_data){
       if(['.png', '.jpg','jpeg'].includes(_data.substr(-4))){
@@ -106,8 +119,8 @@ export default {
       this.$emit("changeTableCheckbox", val);
     },
     // 复选记忆函数
-    setRowKeyFun (row) {
-      console.log(row);
+    setRowKeyFun () {
+      // console.log(row);
       // return row.liveId || row.riaId;
     },
     // 清除记忆
