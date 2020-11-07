@@ -74,19 +74,52 @@ export const getParams = name => {
   return 'cn';
 };
 
+//格式化日期
+export function formateDate(timer) {
+  // timer是时间戳
+  let time = new Date(timer);
+  let y = time.getFullYear();
+  let m = time.getMonth() + 1;
+  let d = time.getDate();
+  let h = time.getHours();
+  let mm = time.getMinutes();
+  let s = time.getSeconds();
+  return y + '-' + mat(m) + '-' + mat(d) + ' ' + mat(h) + ':' + mat(mm) + ':' + mat(s);
+}
+
+export function getRangeDays(value) {
+  let date = new Date();
+  if (value == 2) {
+    // 昨日
+    let oldDate = date.setTime(date.getTime() - 3600 * 1000 * 24);
+    return formateDate(oldDate);
+  } else if (value == 3) {
+    // 近7日
+    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+    return formateDate(oldWeek);
+  } else if (value == 4) {
+    // 近30日
+    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
+    return formateDate(oldMonth);
+  } else {
+    return formateDate(date);
+  }
+}
+
+import moment from 'moment';
 // 最近7天、30天和90天
-// export function getRangeDay () {
-//   let ret = [];
-//   let desc = ['最近7天', '最近30天', '最近90天'];
-//   let diffdays = [7, 30, 90];
-//   diffdays.forEach((item, index) => {
-//     ret.push({
-//       text: desc[index],
-//       value: [
-//         moment().subtract(item, 'days').format('YYYY-MM-DD'),
-//         moment().format('YYYY-MM-DD')
-//       ]
-//     });
-//   });
-//   return ret;
-// }
+export function getRangeDay () {
+  let ret = [];
+  let desc = ['最近7天', '最近30天', '最近90天'];
+  let diffdays = [7, 30, 90];
+  diffdays.forEach((item, index) => {
+    ret.push({
+      text: desc[index],
+      value: [
+        moment().subtract(item, 'days').format('YYYY-MM-DD'),
+        moment().format('YYYY-MM-DD')
+      ]
+    });
+  });
+  return ret;
+}

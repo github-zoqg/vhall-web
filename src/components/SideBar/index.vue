@@ -2,9 +2,10 @@
   <el-menu
     :default-active="activePath"
     :default-openeds="activeArray"
-    class="el-menu-vertical-demo"
+    class="el-menu-vertical-demo el-menu-reset"
     @open="handleOpen"
     @select="handleSelect"
+    :collapse="isCollapse"
   >
     <menu-item v-for="(item, index) in list" :key="index" :item="item">{{item.title}}</menu-item>
   </el-menu>
@@ -15,13 +16,18 @@ export default {
   components: {
     MenuItem
   },
+  props: {
+    isCollapse: {
+      type: Boolean
+    }
+  },
   data() {
     return {
       list: [
         {
           title: "首页",
           index: "0",
-          iconClass: "el-icon-setting",
+          iconClass: "el-icon-s-home",
           path: "/default"
         },
         {
@@ -46,7 +52,7 @@ export default {
         {
           title: "专题管理",
           index: "2",
-          iconClass: "el-icon-menu",
+          iconClass: "el-icon-set-up",
           children: [
             {
               title: "专题列表",
@@ -114,7 +120,7 @@ export default {
         {
           title: "数据中心",
           index: "4",
-          iconClass: "",
+          iconClass: "el-icon-data-analysis",
           children: [
             {
               title: "数据总览",
@@ -133,13 +139,13 @@ export default {
         {
           title: "设置中心",
           index: "5",
-          iconClass: "",
+          iconClass: "el-icon-setting",
           path: "/setting"
         },
         {
           title: "财务中心",
           index: "6",
-          iconClass: "",
+          iconClass: "el-icon-postcard",
           children: [
             {
               title: "财务总览",
@@ -158,7 +164,7 @@ export default {
         {
           title: "账户管理",
           index: "7",
-          iconClass: "",
+          iconClass: "el-icon-s-custom",
           children: [
             {
               title: "账户信息",
@@ -215,4 +221,6 @@ export default {
   height: calc(100vh - 60px);
   background: #1A1A1A;
 }
+/*.el-menu-vertical-demo:not(.el-menu--collapse) {
+}*/
 </style>

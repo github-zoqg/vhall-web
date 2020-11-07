@@ -12,10 +12,14 @@ import '@/common/css/index.less';
 import fethData from './api/fetch';
 import VueI18n from 'vue-i18n';
 import SPagination from '@/components/Spagination/main';
+import tableList from '@/components/TableList/list';
+import searchArea from '@/components/SearchArea/index';
 Vue.use(ElementUI);
 Vue.use(VueI18n);
 // Vue.use(moment);
 Vue.component('SPagination',SPagination);
+Vue.component('tableList',tableList);  // 表格区域
+Vue.component('searchArea',searchArea); // 搜索区域
 Vue.prototype.$fetch = fethData;
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;

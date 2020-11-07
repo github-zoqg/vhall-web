@@ -1,40 +1,59 @@
 <template>
   <div class="data-live">
-    <header-time></header-time>
+    <div class="title-data">
+      <span>{{ $route.name }}</span>
+      <el-tooltip effect="dark" placement="right-start">
+        <div slot="content">
+          1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+        </div>
+        <el-button
+          circle
+          icon="el-icon-question"
+          class="button-tip"
+        ></el-button>
+      </el-tooltip>
+    </div>
+    <search-area
+      ref="searchArea"
+      :searchAreaLayout="searchAreaLayout"
+      @onSearchFun="getTableList('search')"
+      >
+    </search-area>
     <table-list
+      ref="tableList"
       :manageTableData="tableList"
       :tabelColumnLabel="tabelColumn"
       :tableRowBtnFun="tableRowBtnFun"
       :isCheckout="isCheckout"
       :isHandle="isHandle"
-      :width="width">
+      :width="width"
+      :totalNum="totalNum"
+      @onHandleBtnClick="onHandleBtnClick"
+      @getTableList="getTableList"
+      >
     </table-list>
-    <pagination-list :total='total' :currentPage='currentPage'></pagination-list>
   </div>
 </template>
 
 <script>
-import tableList from '@/components/DataList/list.vue';
-import headerTime from "./components/headerTime";
-import PaginationList from '@/components/Pagination/index.vue';
+// import tableList from '@/components/DataList/list.vue';
+// import searchArea from '@/components/SearchArea/index.vue';
 export default {
-  name: "dataLive.vue",
-  components: {
-    tableList,
-    PaginationList,
-    headerTime
-  },
+  name: "dataLive",
+  // components: {
+  //   tableList,
+  //   searchArea,
+  // },
   data() {
     return {
-      isCheckout: false,
+      isCheckout: true,
       width: 300,
-      total: 2,
+      totalNum: 1000,
       isHandle: true,
-      currentPage: 1,
       tableList: [
         {
           liveId: '1',
-          liveTitle: '哈哈哈',
+          liveTitle: "@/common/images/v35-webinar.png",
           wacthPeople: '123',
           wacthNum: '124',
           timeLang: '30:00:00'
@@ -86,12 +105,73 @@ export default {
           name: '用户统计',
           methodName: 'tongji'
         }
-      ]
+      ],
+      searchAreaLayout: [
+        {
+          type: "1"
+        },
+        {
+          type: "2",
+          key: "searchDate",
+        },
+        {
+          type: "",
+          key: "searchTitle",
+        }
+      ],
+       // 表格选中数据
+      selectedTableItem: []
     };
+  },
+  methods: {
+    onHandleBtnClick(val) {
+      let methodsCombin = this.$options.methods;
+      methodsCombin[val.type](this, val);
+    },
+    getTableList(params) {
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      if (params === 'search') {
+        pageInfo.pageNum= 1;
+        // 如果搜索是有选中状态，取消选择
+        // this.$refs.tableList.clearSelect();
+      }
+      let obj = Object.assign({}, pageInfo, formParams);
+      console.log(obj);
+    },
+     //复选框操作
+    changeTableCheckbox(val) {
+      // let len = val.length;
+      // let idList = [];
+      // this.selectedTableItem.map(item => idList.push(item.mrId));
+      this.selectedTableItem = val;
+    }
   }
 };
 </script>
 
 <style lang="less" scoped >
-
+.data-live{
+  /deep/.el-button {
+      border: none;
+      background: transparent;
+    }
+    /deep/.el-button.is-circle{
+      padding:3px;
+    }
+    .title-data {
+      margin: 10px 0 20px 0;
+      text-align: left;
+      line-height: 30px;
+      span{
+        font-size: 22px;
+        font-family: PingFangSC-Semibold, PingFang SC;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+      .button-tip {
+        vertical-align: top;
+      }
+    }
+}
 </style>
