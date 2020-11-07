@@ -4,6 +4,7 @@ let filedJson = {
     "required": false,
     "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "radio",
+    value: '',
     "nodes": [
       {
         "props": {},
@@ -20,11 +21,11 @@ let filedJson = {
     "required": false,
     "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "checkBox",
-    value: '',
+    value: "",
     "nodes": [
       {
         "props": {},
-        "value":"",
+        "value":[],
         "children": [
           {"value": ""},
           {"value": ""}
@@ -36,7 +37,8 @@ let filedJson = {
     "label": "下拉题",
     "required": false,
     "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
-    "type": "input-select",
+    "type": "select",
+    value: '',
     "nodes": [
       {
         props: {
@@ -65,9 +67,12 @@ let filedJson = {
     "required": false,
     "bottomBtn": ["delete", "move", "requireSwtich"],
     "type": "input",
+    value:'',
     "nodes": [
       {
-        "props": {},
+        "props": {
+          placeholder: '请输入答案'
+        },
         "value":""
       }
     ]
@@ -83,6 +88,7 @@ export function getfiledJson({name, type}){
     switch (name) {
       case 'name':
         json = JSON.parse(JSON.stringify(filedJson['input']));
+        json.nodes[0].props.placeholder='请输入姓名';
         json = Object.assign(json, {
           label: '名字',
           "required": true,
@@ -92,6 +98,7 @@ export function getfiledJson({name, type}){
         break;
       case 'phone':
         json = JSON.parse(JSON.stringify(filedJson['input']));
+        json.nodes[0].props.placeholder='请输入手机号';
         json = Object.assign(json, {
           label: '手机号',
           "required": true,
@@ -115,6 +122,7 @@ export function getfiledJson({name, type}){
 
       case 'email':
         json = JSON.parse(JSON.stringify(filedJson['input']));
+        json.nodes[0].props.placeholder='请输入邮箱号';
         json = Object.assign(json, {
           label: '邮箱',
           "required": true,
@@ -124,6 +132,7 @@ export function getfiledJson({name, type}){
 
       case 'company':
         json = JSON.parse(JSON.stringify(filedJson['input']));
+        json.nodes[0].props.placeholder='请输入公司名称';
         json = Object.assign(json, {
           label: '公司',
           "required": true,
@@ -214,6 +223,7 @@ export function getfiledJson({name, type}){
     console.log(1123123, json);
   }else{
     json = JSON.parse(JSON.stringify(filedJson[type]));
+    json.labelEditable = true;
   }
-  return JSON.parse(JSON.stringify(json));
+  return json;
 }

@@ -12,7 +12,7 @@
         <div class="headBtnGroup">
           <el-button round size="medium" @click="openDialog('theme')">设置</el-button>
           <el-button round size="medium" @click="openDialog('share')">分享</el-button>
-          <el-button type="primary" round size="medium">预览</el-button>
+          <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
         </div>
       </pageTitle>
       <div class="settingBox">
@@ -25,7 +25,8 @@
           </template>
         </ul>
         <div class="rightView">
-          <signUpView :questionArr="questionArr"></signUpView>
+          <component :is="rightComponent" :questionArr="questionArr"></component>
+          <i class="closeBtn" v-show="rightComponent=='signUpForm'" @click="rightComponent='fieldSet'">&times;</i>
         </div>
       </div>
     </div>
@@ -36,21 +37,24 @@
 
 <script>
 import pageTitle from '../components/pageTitle';
-import signUpView from './viewSignUp';
+import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
+import signUpForm from './signUpForm';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
 export default {
   components: {
     pageTitle,
-    signUpView,
+    fieldSet,
     shareDialog,
-    themeSet
+    themeSet,
+    signUpForm
   },
   data(){
     return {
       signUpSwtich: false,
       radio: 3,
+      rightComponent: 'fieldSet',
       setOptions: {
         "基本信息": [
           {icon: 'el-icon-user-solid', label: "姓名", name: 'name'},
@@ -88,7 +92,6 @@ export default {
   methods: {
     addFiled(info){
       this.questionArr.push(getfiledJson({name: info.name, type: info.type}));
-      console.log(this.questionArr);
     },
     openDialog(ref){
       this.$refs[ref].dialogVisible = true;
@@ -143,6 +146,22 @@ export default {
     }
     .rightView{
       flex: 1;
+      position: relative;
+      .closeBtn{
+        width: 32px;
+        height: 32px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 28px;
+        color: #fff;
+        position: absolute;
+        right: 50px;
+        top: 16px;
+        font-size: 32px;
+        text-align: center;
+        line-height: 26px;
+        font-style: normal;
+        cursor: pointer;
+      }
     }
   }
 
