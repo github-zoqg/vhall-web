@@ -1,6 +1,11 @@
 const apis = {
-  // 观看页
-  vssInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], // 获取用户信息 xiaoshuai.chen
+  // 资料管理
+  datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
+  dataVideoList: ['/99/v3/webinars/videos/get-video-list', 'POST', 'mock'], //音视频列表
+  dataVideoupdate: ['/99/v3/webinars/videos/put-video', 'POST', 'mock'], //音视频编辑
+  dataVideoDel: ['/99/v3/webinars/videos/del-video', 'POST', 'mock'], //音视频删除
+  dataVideoAdd: ['/99/v3/webianrs/videos/post-video', 'POST', 'mock'], //音视频列表
+
   // 直播模块
   createLive: ['/99/v3/webinars/webinar/post-webinar', 'POST', 'mock'], // 创建直播 jian.chang
   liveList: ['/99/v3/webinars/webinar/get-webinar-list', 'POST', 'mock'], // 获取直播列表 jian.chang

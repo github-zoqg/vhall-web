@@ -1,5 +1,12 @@
 <template>
   <div class="list-wrap">
+    <!-- "id": 124,
+"video_url": "asweqw",
+"file_name": "第二个",
+"file_size": "123444",
+"create_time": "2020-10-04 08:08:08",
+"update_time": "2020-10-06 08:08:08",
+"file_type": "mp4" -->
     <el-table
       ref="multipleTable"
       :data="tableData"
@@ -10,13 +17,9 @@
         width="55" align='center'>
       </el-table-column>
       <el-table-column
-        :label="typeName" align='center'
-        width="120">
-      </el-table-column>
-      <el-table-column
         label="上传时间" align='center'
         width="120">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
+        <template slot-scope="scope">{{ scope.row.create_time }}</template>
       </el-table-column>
       <el-table-column v-if="type==1"
         prop="address"
