@@ -16,7 +16,6 @@ import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
 Vue.use(ElementUI);
 Vue.use(VueI18n);
-// Vue.use(moment);
 Vue.component('SPagination',SPagination);
 Vue.component('tableList',tableList);  // 表格区域
 Vue.component('searchArea',searchArea); // 搜索区域
