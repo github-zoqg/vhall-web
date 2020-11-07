@@ -19,6 +19,11 @@ const routes = [
     component: () => import('@/views/LiveModule/list.vue')
   },
   {
+    path: '/live-warm',
+    name: 'liveWarm',
+    component: () => import('@/views/LiveModule/warm.vue')
+  },
+  {
     path: '/live/edit',
     name: 'liveEdit',
     component: () => import('@/views/LiveModule/edit.vue')

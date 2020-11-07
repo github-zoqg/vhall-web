@@ -10,9 +10,17 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button class="set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
+      <el-button class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
+      <el-button class="head-btn batch-del">批量删除</el-button>
+      <search-area class="head-btn fr search"
+        ref="searchArea"
+        :isExports='false'
+        :searchAreaLayout="searchAreaLayout"
+        @onSearchFun="getTableList('search')"
+        >
+      </search-area>
     </div>
-    <table-list :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
+    <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
       :isCheckout="isCheckout" :isHandle="true" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
     </table-list>
     <!-- 预览功能 -->
@@ -31,11 +39,12 @@ export default {
   data() {
     return {
       total: 100,
-      currentPage: 1,
+      // 预览
       showDialog: false,
       videoParam: {},
+      // 表格
       tableData: [],
-      isCheckout: false,
+      isCheckout: true,
       tableRowBtnFun: [{name:'预览', methodName: 'preview'},{name:'编辑', methodName: 'update'},{name:'删除', methodName: 'del'}],
       tabelColumn: [
         {
@@ -56,7 +65,14 @@ export default {
         }
       ],
       UploadSDK: null,
-      uploadId: -1
+      uploadId: -1,
+      uploadList: [],
+      searchAreaLayout: [
+        {
+          type: "",
+          key: "searchTitle",
+        }
+      ],
     };
   },
   components: {
@@ -68,7 +84,17 @@ export default {
     this.initUpload();
   },
   methods: {
-    getTableList(){},
+    getTableList(params){
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      if (params === 'search') {
+        pageInfo.pageNum= 1;
+        // 如果搜索是有选中状态，取消选择
+        // this.$refs.tableList.clearSelect();
+      }
+      let obj = Object.assign({}, pageInfo, formParams);
+      this.getList(obj);
+    },
     tirggerFile(event){
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
@@ -94,33 +120,52 @@ export default {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: name,
         duration: '',
-        uploadProgress: 0,
+        uploadObj: {}, // type：1   上传视频     2创建点播
         id: onlyId
       };
+      this.uploadList.unshift(param);
       this.tableData.unshift(param);
-      this.UploadSDK.upload([file],function(pro){
-        console.log(pro.progress, '进度');
-        // this.tableData.forEach(ele=>{
-        //   if(ele.id == file.id){
-        //     console.log(msg.progress,Math.floor(msg*100));
-        //     ele.uploadProgress = Math.floor(msg*100) + '%';
-        //   }
-        // });
+      this.UploadSDK.upload([file],(pro)=>{
+        this.tableData.forEach((ele)=>{
+          if(ele.id == file.id){
+            ele.uploadObj = {
+              type: 1, // 上传类型
+              text: '视频正在上传中',
+              num: Math.floor(pro.progress*100)
+            };
+          }
+        });
       },res=>{
         console.log(res, '成功');
         // this.createVod(file, 'name');
       },err=>{
         console.log(err, '失败');
+        this.tableData.shift();
+        this.uploadList.shift();
+        this.$message.error('本地上传失败');
       });
     },
     createVod(_file,name){
       this.UploadSDK.createDemand({ file: _file, fileName: name},(res)=>{
-        console.warn(res);
-        this.$fetch('dataVideoAdd', {video_id: res.recordId, user_id: 1333, filename: name, file_type: _file.type, file_size: _file.size}).then(res=>{
-          console.log(res, '上传成功');
+        this.tableData.forEach((ele)=>{
+          if(ele.id == _file.id){
+            ele.uploadObj = {
+              type: 2,
+              test: '创建点播',
+              num: 100
+            };
+          }
         });
+        console.warn(res);
+
+        // this.$fetch('dataVideoAdd', {video_id: res.recordId, user_id: 1333, filename: name, file_type: _file.type, file_size: _file.size}).then(res=>{
+        //   console.log(res, '上传成功');
+        // });
       },err=>{
         console.warn(err, '上传失败');
+        this.tableData.shift();
+        this.uploadList.shift();
+        this.$message.error('创建点播失败');
       });
     },
     initUpload(){
@@ -149,14 +194,26 @@ export default {
           res.data.list.forEach(ele => {
             switch (ele.transcode_status) {
               case 0:
-                ele.transcode_status_text = '转码完成';
+                ele.transcode_status_text = '新增排队中';
+                break;
+              case 1:
+                ele.transcode_status_text = '转码成功';
+                break;
+              case 2:
+                ele.transcode_status_text = '转码失败';
+                break;
+              case 3:
+                ele.transcode_status_text = '转码中';
                 break;
               default:
-                ele.transcode_status_text = '转码完成';
+                ele.transcode_status_text = '新增排队中';
                 break;
             }
           });
           this.tableData = res.data.list;
+          if(this.uploadList.length!=0){
+            this.tableData =this.uploadList.concat(this.tableData);
+          }
         }
       });
     },
@@ -236,16 +293,21 @@ export default {
       }
     }
   }
-  ::v-deep.set-upload{
-    position: relative;
-    span{
-      input{
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0;
-        width: 100%;
-        height: 100%;
+  .head-operat{
+    .head-btn{
+      display: inline-block;
+    }
+    ::v-deep.set-upload{
+      position: relative;
+      span{
+        input{
+          position: absolute;
+          left: 0;
+          top: 0;
+          opacity: 0;
+          width: 100%;
+          height: 100%;
+        }
       }
     }
   }

@@ -4,6 +4,7 @@
       ref="elTable"
       :data="manageTableData"
       :row-key="setRowKeyFun"
+      :key="isUpdate"
       empty-text="暂无数据"
       @selection-change="handleTableCheckbox"
       max-height="450"
@@ -17,8 +18,19 @@
           :label="item.label"
         >
         <template slot-scope="scope">
-          <!-- {{scope.row}}-{{item.key}}- -->
-          <img :src="scope.row.liveTitle" width="40" height="40" v-if="item.key==='liveTitle'"/>
+          <div v-if="item.key=='transcode_status_text'">
+            <p v-if="scope.row.uploadObj">
+              <!-- 上传 -->
+              <span>{{scope.row.uploadObj.num == 100 ? '上传已完成' : '视频正在上传中'}}</span>
+              <el-progress :percentage="scope.row.uploadObj.num"></el-progress>
+            </p>
+            <!-- {{scope.row}} -->
+            <p v-if="scope.row.transcode_status_text">
+              <!-- 列表 -->
+              <span>{{scope.row.transcode_status_text}}</span>
+            </p>
+          </div>
+          <img :src="scope.row.liveTitle" width="40" height="40" v-else-if="item.key==='liveTitle'"/>
           <span v-else>{{scope.row[item.key] || '-'}}</span>
         </template>
         </el-table-column>
@@ -58,7 +70,8 @@ export default {
       pageInfo: {
         pageNum: 1,
         pageSize: 10,
-      }
+      },
+      isUpdate: 0
     };
   },
   props: {
@@ -81,15 +94,17 @@ export default {
   },
   watch: {
     manageTableData: {
-      handler(oldData, newData){
-        console.log(oldData, newData, 'watch变化');
+      handler: function(oldData){
+        console.log(oldData[0].uploadObj, 'watch变化');
+        this.isUpdate = Math.random() * 100;
       },
+      immediate: false,
       deep: true
     }
   },
   created() {
-    console.log('tabelColumnLabel', this.tabelColumnLabel);
-    console.log('manageTableData', this.manageTableData);
+    // console.log('tabelColumnLabel', this.tabelColumnLabel);
+    // console.log('manageTableData', this.manageTableData);
   },
   methods: {
     isImg(_data){
