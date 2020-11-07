@@ -13,7 +13,7 @@
       <el-button class="set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
     </div>
     <table-list :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-      :isCheckout="isCheckout" :isHandle="true" @onHandleBtnClick='operating'>
+      :isCheckout="isCheckout" :isHandle="true" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
     </table-list>
     <!-- 预览功能 -->
     <template v-if="showDialog">
@@ -24,7 +24,6 @@
   </div>
 </template>
 <script>
-import tableList from '@/components/DataList/list.vue';
 import pageTitle from '../LiveModule/components/pageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 export default {
@@ -63,13 +62,13 @@ export default {
   components: {
     pageTitle,
     VideoPreview,
-    tableList
   },
   created() {
     this.getList();
     this.initUpload();
   },
   methods: {
+    getTableList(){},
     tirggerFile(event){
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();

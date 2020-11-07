@@ -23,8 +23,6 @@
         <el-button size="small" type="primary">点击上传</el-button>
       </el-upload>
     </div>
-    <!-- <video-list :type="2" :operatingArray="['编辑', '预览', '删除']" @operating="operating" :tableData="tableData" @select="select"></video-list> -->
-    <pagination-list :total="total" :currentPage="currentPage" @pageSizeChange="pageSizeChange"></pagination-list>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
@@ -35,8 +33,6 @@
 </template>
 <script>
 import pageTitle from '../LiveModule/components/pageTitle';
-// import VideoList from '@/components/DataList/index.vue';
-import PaginationList from '@/components/Pagination/index.vue';
 import DocPreview from './DocPreview/index.vue';
 export default {
   name: 'word.vue',
@@ -63,8 +59,6 @@ export default {
     };
   },
   components: {
-    // VideoList,
-    PaginationList,
     pageTitle,
     DocPreview
   },
