@@ -29,13 +29,6 @@ export default {
       isCollapse: false
     };
   },
-  created() {
-      this.$fetch('vssInfo', {platform: '123'}).then(res=>{
-        console.log(res);
-      }).catch(err=>{
-        console.log(err);
-      });
-  },
   methods: {
     changeIsCollapse(isCollapse) {
        this.isCollapse = !!isCollapse;
