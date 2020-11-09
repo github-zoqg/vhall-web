@@ -19,6 +19,7 @@
           :label="item.label"
         >
         <template slot-scope="scope">
+          <span>{{scope.row[item.isEdit]}}</span>
           <div v-if="item.key=='transcode_status_text'">
             <p v-if="scope.row.uploadObj">
               <!-- 上传 -->
@@ -57,7 +58,7 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-show="totalNum"
+      v-show="needPagination && totalNum"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
@@ -93,6 +94,10 @@ export default {
       type: Number,
       default: 200
     },
+    needPagination: {
+      type: Boolean,
+      default: true
+    }
   },
   watch: {
     manageTableData: {
@@ -118,7 +123,6 @@ export default {
     },
      // 行内操作按钮点击
     handleBtnClick(scope, type) {
-      debugger
       let obj = {
         rows: scope.row,
         index: scope.$index,

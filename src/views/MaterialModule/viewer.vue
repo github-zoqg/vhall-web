@@ -7,18 +7,26 @@
     </pageTitle>
     <div class="div__main">
       <div class="table__container">
-        <el-row class="row__container">
-          <el-button type="danger" @click.prevent.stop="importFileShow = true">导入观众</el-button>
-          <el-button @click.prevent.stop="viewerDialogShow(null)">新增观众</el-button>
-          <el-button @click.prevent.stop="viewerDel">批量删除</el-button>
-          <div class="download"><a :href="downloadUrl" class="download-mol">下载模版</a></div>
-          <el-input
-            class="width280"
-            placeholder="搜索内容"
-            v-model="query.keyword" @change="viewerList(0)">
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          </el-input>
-        </el-row>
+        <!-- 操作栏 -->
+        <div class="operaBox">
+          <el-button round @click.prevent.stop="importFileShow = true">导入观众</el-button>
+          <el-button type="primary" round @click.prevent.stop="viewerDialogShow(null)">新增观众</el-button>
+          <el-button round @click.prevent.stop="viewerDel">批量删除</el-button>
+          <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
+          <el-link :href="downloadUrl" v-else>下载模板</el-link>
+          <div class="searchBox">
+            <el-input
+              placeholder="搜索内容"
+              v-model="query.keyword">
+              <i
+                class="el-icon-search el-input__icon"
+                slot="suffix"
+                @click="viewerList(0)">
+              </i>
+            </el-input>
+          </div>
+        </div>
+        <!-- 操作栏 -->
 
         <el-table
           v-if="viewerDao && viewerDao.total > 0"
@@ -507,6 +515,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.operaBox{
+  overflow: hidden;
+  margin-bottom: 20px;
+  .el-link {
+    margin-left: 20px;
+  }
+  .searchBox{
+    float: right;
+    .el-input{
+      width: 220px;
+      .el-input__icon{
+        cursor: pointer;
+      }
+      /deep/ .el-input__icon{
+        line-height: 36px;
+      }
+    }
+    /deep/ .el-input__inner{
+      user-select: none;
+      border-radius: 50px;
+      font-size: 14px;
+      color: #666666;
+      height: 36px;
+      line-height: 36px;
+    }
+  }
+}
 .div__main {
   display: flex;
   align-items: flex-start;
@@ -520,10 +555,6 @@ export default {
 .row__container {
   display: flex;
   margin-bottom: 32px;
-}
-/deep/.width280 {
-  width: 280px;
-  margin-left: auto;
 }
 .group__container {
   width: 176px;
