@@ -30,7 +30,7 @@
             <i
               class="el-icon-search el-input__icon"
               slot="suffix"
-              @click="getAllKeywordList">
+              @click="getKeywordList">
             </i>
           </el-input>
         </div>
@@ -44,7 +44,7 @@
         :totalNum="keyWordDao.total"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=false
-        @getTableList="getAllKeywordList"
+        @getTableList="getKeywordList"
         @changeTableCheckbox="checkMoreRow"
         @onHandleBtnClick="onHandleBtnClick"
       >
@@ -95,7 +95,9 @@ export default {
         list: []
       },
       query: {
-        keyword: ''
+        keyword: '',
+        pos: 0,
+        limit: 1000
       },
       downloadHref: '',
       // 列表展示开始
@@ -130,8 +132,8 @@ export default {
     }
   },
   methods: {
-    getAllKeywordList() {
-      this.$fetch('getAllKeywordList', this.query).then(res =>{
+    getKeywordList() {
+      this.$fetch('getKeywordList', this.query).then(res =>{
         res = {
           "code":200,
           "msg":"success",
@@ -202,7 +204,7 @@ export default {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.getAllKeywordList();
+            that.getKeywordList();
           }else {
             that.$message({
               type: 'error',
@@ -252,7 +254,7 @@ export default {
     }
   },
   created() {
-    this.getAllKeywordList();
+    this.getKeywordList();
     this.getKeywordTemplate();
   }
 }

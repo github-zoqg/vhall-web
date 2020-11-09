@@ -1,6 +1,6 @@
 <template>
   <div class="page-padding">
-    <h1 class="h1__title">功能配置</h1>
+    <pageTitle title="功能配置"></pageTitle>
     <div class="div__func div__view" v-if="keyList && keyList.length > 0">
       <div class="div__view__title">观看页设置</div>
       <ul>
@@ -35,8 +35,12 @@
 </template>
 
 <script>
+import PageTitle from '../LiveModule/components/pageTitle';
 export default {
   name: "planFunction",
+  components: {
+    PageTitle
+  },
   data() {
     return {
       query: {},
@@ -145,13 +149,6 @@ export default {
 @import '../../common/css/base.less';
 .page-padding {
   padding: 0 0;
-}
-h1 {
-  font-size: @font_size_22;
-  font-family: @fontSemibold;
-  font-weight: 600;
-  color: @font_color_h1;
-  line-height: 30px;
 }
 .h1__title {
   margin-bottom: 32px;

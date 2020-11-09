@@ -47,13 +47,19 @@ const routes = [
     component: () => import('@/views/LiveModule/signUp/main.vue')
   },
   {
+    path: '/virtual/:str',
+    title: '准备——虚拟人数',
+    name: 'virtual',
+    component: () => import('@/views/LiveModule/virtual.vue')
+  },
+  {
     path: '/custom-tab/:str',
     title: '品牌——自定义菜单',
     name: 'planFunction',
     component: () => import('@/views/LiveModule/customTab.vue')
   },
-   /*-----------------------------------品牌设置------------------------*/
-   {
+  /*-----------------------------------品牌设置------------------------*/
+  {
     path: '/invitation-card',
     title: '品牌——邀请卡',
     name: 'invitation',
@@ -77,7 +83,7 @@ const routes = [
     name: 'poster',
     component: () => import('@/views/LiveModule/Brands/posterCard.vue')
   },
-/*-----------------------------------直播详情中数据------------------------*/
+  /*-----------------------------------直播详情中数据------------------------*/
   {
     path: '/reports-data',
     title: '数据报告',
