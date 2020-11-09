@@ -47,6 +47,33 @@ const routes = [
     name: 'planFunction',
     component: () => import('@/views/LiveModule/customTab.vue')
   },
+   /*-----------------------------------品牌设置------------------------*/
+   {
+    path: '/invitation-card',
+    title: '品牌——邀请卡',
+    name: 'invitation',
+    component: () => import('@/views/LiveModule/Brands//invitationCard.vue')
+  },
+  {
+    path: '/advertisement-card',
+    title: '广告推荐',
+    name: 'advertisement',
+    component: () => import('@/views/LiveModule/Brands//advertisementCard.vue')
+  },
+  {
+    path: '/official-card',
+    title: '公众号展示',
+    name: 'official',
+    component: () => import('@/views/LiveModule/Brands//officialCard.vue')
+  },
+  {
+    path: '/poster-card',
+    title: '品牌——开屏海报',
+    name: 'poster',
+    component: () => import('@/views/LiveModule/Brands//posterCard.vue')
+  },
+
+
   /*********************************直播管理 ********************************************/
   {
     path: '/viewer-rules/:str',

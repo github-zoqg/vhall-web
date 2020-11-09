@@ -99,6 +99,14 @@ export default {
 <style lang="less" scoped>
   .search-area{
     position: relative;
+    /*选择框重置*/
+      /deep/ .el-input__inner{
+        border-radius: 18px;
+        height: 35px;
+      }
+      /deep/.el-input__icon{
+      line-height: 35px;
+      }
     .time-kuai {
       height: 36px;
       border: 1px solid #dcdfe6;

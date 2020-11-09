@@ -1,9 +1,9 @@
 <template>
   <div class="data-list">
+          <!-- :row-key="setRowKeyFun" -->
     <el-table
       ref="elTable"
       :data="manageTableData"
-      :row-key="setRowKeyFun"
       empty-text="暂无数据"
       @selection-change="handleTableCheckbox"
       max-height="450"
@@ -17,7 +17,7 @@
           :label="item.label"
         >
         <template slot-scope="scope">
-          <img :src="scope.row.liveTitle" width="40" height="40" v-if="item.key==='liveTitle'"/>
+          <img :src="scope.row.img" width="40" height="40" v-if="item.key==='img'"/>
           <span v-else>{{scope.row[item.key]}}</span>
         </template>
         </el-table-column>
@@ -88,7 +88,6 @@ export default {
     },
      // 行内操作按钮点击
     handleBtnClick(scope, type) {
-      console.log(scope);
       let obj = {
         rows: scope.row,
         index: scope.$index,
@@ -117,3 +116,14 @@ export default {
   }
 };
 </script>
+<style lang="less" scoped>
+   .data-list{
+     /deep/.cell img{
+       width: 100px;
+       height: 100px;
+     }
+     /deep/.el-table{
+       margin-bottom: 30px;
+     }
+   }
+</style>

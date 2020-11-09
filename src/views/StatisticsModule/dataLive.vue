@@ -46,21 +46,21 @@ export default {
   // },
   data() {
     return {
-      isCheckout: true,
+      isCheckout: false,
       width: 300,
       totalNum: 1000,
       isHandle: true,
       tableList: [
         {
           liveId: '1',
-          liveTitle: "@/common/images/v35-webinar.png",
+          liveTitle: "哈哈哈哈哈",
           wacthPeople: '123',
           wacthNum: '124',
           timeLang: '30:00:00'
         },
         {
           liveId: '2',
-          liveTitle: 'xixiiii',
+          liveTitle: '嘻嘻嘻',
           wacthPeople: '111',
           wacthNum: '222',
           timeLang: '50:00:00'
