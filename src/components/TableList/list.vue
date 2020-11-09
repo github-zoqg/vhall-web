@@ -36,18 +36,19 @@
         </template>
         </el-table-column>
         <el-table-column label="操作" align="center" :width="width" v-if="isHandle">
-        <template slot-scope="scope" v-if="scope.row.id > 0">
-          <el-button
-            v-for="(item, index) in tableRowBtnFun"
-            :key="index"
-            size="mini"
-            type="text"
-            @click="handleBtnClick(scope, item.methodName)"
-          >{{item.name}}</el-button>
-        </template>
-      </el-table-column>
+          <template slot-scope="scope" v-if="scope.row.id > 0">
+            <el-button
+              v-for="(item, index) in tableRowBtnFun"
+              :key="index"
+              size="mini"
+              type="text"
+              class="text--default"
+              @click="handleBtnClick(scope, item.methodName)"
+            >{{item.name}}</el-button>
+          </template>
+        </el-table-column>
       </template>
-      <div slot="empty">
+      <div slot="empty" v-else>
         <div>
           <img src="../../common/images/v35-webinar.png" alt="" width="140" height="140" />
         </div>
@@ -117,6 +118,7 @@ export default {
     },
      // 行内操作按钮点击
     handleBtnClick(scope, type) {
+      debugger
       let obj = {
         rows: scope.row,
         index: scope.$index,
@@ -153,6 +155,32 @@ export default {
      }
      /deep/.el-table{
        margin-bottom: 30px;
+     }
+     /deep/.el-button.text--default {
+       margin-right: 20px;
+       color: #999999;
+       font-size: 14px;
+       &:last-child {
+         margin-right: 0;
+       }
+       &:hover {
+         color: #5d81fb;
+         &:after {
+           border-bottom: 1px solid #5d81fb;
+         }
+       }
+       &:active {
+         color: #3157e1;
+         &:after {
+           border-bottom: 1px solid #3157e1;
+         }
+       }
+       &:disabled {
+         color: #9db3fc;
+         &:after {
+           border-bottom: 1px solid #9db3fc;
+         }
+       }
      }
    }
 </style>

@@ -1,8 +1,9 @@
 <template>
   <div class="wrap-head">
     <div class="fl logo">
-      <span>微吼直播</span>
-     <!-- <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click.prevent.stop="changeCollapse"></i>-->
+      <div class="logo--center">
+        <img src="../../common/images/logo.png" />
+      </div>
     </div>
     <div class="fr avat">
       <template>
@@ -18,7 +19,9 @@
       <template>
         <div class="avat-right fr">
           <i class="el-icon-eleme"></i>
-          <i class="el-icon-eleme"></i>
+          <el-badge :value="unread_num" :max="99" class="item" :hidden="!unread_num>0">
+            <i class="el-icon-message-solid" @click.prevent.stop="toMsgPage"></i>
+          </el-badge>
           <img class="avater" src="./../../common/images/v35-webinar.png" alt="">
           <p class="name">微吼直播</p>
         </div>
@@ -31,6 +34,7 @@ export default {
   data() {
     return {
       // isCollapse: false
+      unread_num: 0
     }
   },
   methods: {
@@ -38,38 +42,53 @@ export default {
     //    this.isCollapse = !this.isCollapse;
     //    this.$emit('changeIsCollapse', this.isCollapse);
     // }
+    toMsgPage() {
+      this.$router.push({path: '/msg-list'})
+    },
+    getUnreadNum() {
+      this.$fetch('getUnreadNum', {}).then(res =>{
+        this.unread_num = res && res.code === 200 && res.data ? res.data.unread_num : 0;
+      }).catch(e=>{
+        console.log(e);
+        this.unread_num = 0;
+      });
+    }
+  },
+  created() {
+    this.getUnreadNum();
   }
 };
 </script>
 <style lang="less" scoped>
 .wrap-head{
   height: 64px;
-  line-height: 64px;
   padding: 0!important;
   height: 64px;
   .logo{
     width: 224px;
+    height: 64px;
     background: #FB3A32;
-    font-size: 16px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: @fff;
+  }
+  .logo--center {
+    width: 224px;
+    height: 54px;
+    margin: 5px auto;
     text-align: center;
-    span{
-      display: inline-block;
-      padding-right: 62px;
+    img {
+      height: 100%;
+      width: auto;
     }
   }
   .avat{
     height: 100%;
-    line-height: 64px;
     width: calc(100% - 224px);
     padding-left: 24px;
+    .flex-display();
+    .justify(space-between);
+    .align(center);
     .avat-left{
       width: calc(100% - 300px);
-      float: left;
       .el-breadcrumb{
-        line-height: 64px;
         .el-breadcrumb__inner{
           font-size: 14px;
           font-family: PingFangSC-Regular, PingFang SC;

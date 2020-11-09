@@ -31,6 +31,12 @@ const apis = {
   customMenuSave: ['/101/v3/menus/save', 'POST', 'mock'], // 控制台-菜单保存接口 jia.li
   webinarCMenuList: ['/101/v3/webinar-menus/list', 'POST', 'mock'], // 观看端-菜单列表接口 jia.li
   webinarCMenuGet: ['/101/v3/webinar-menus/info', 'POST', 'mock'], // 观看端-单个菜单详情接口 jia.li
+  // 消息管理
+  getMsgList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 站内消息列表接口 jia.li
+  msgDel: ['/102/v3/msgs/msg/delete', 'POST', 'mock'], // 站内消息删除接口 jia.li
+  getMsgInfo: ['/102/v3/msgs/msg/get-info', 'POST', 'mock'], // 站内消息详情接口 jia.li
+  getUnreadNum: ['/102/v3/msgs/msg/unread-num', 'POST', 'mock'], // 查询消息未读数 jia.li
+  executeUseRead: ['/102/v3/msgs/msg/use-read', 'POST', 'mock'], // 标记已读 jia.li
 };
 
 const getApi = api => {

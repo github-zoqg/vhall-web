@@ -77,8 +77,6 @@ const routes = [
     name: 'poster',
     component: () => import('@/views/LiveModule/Brands//posterCard.vue')
   },
-
-
   /*********************************直播管理 ********************************************/
   {
     path: '/viewer-rules/:str',
@@ -97,6 +95,18 @@ const routes = [
     title: '错误提示',
     name: '错误提示',
     component: () => import('@/views/PlatformModule/Error/index.vue')
+  },
+  {
+    path: '/msg-list',
+    title: '消息中心',
+    name: '消息中心',
+    component: () => import('@/views/PlatformModule/Message/list.vue')
+  },
+  {
+    path: '/msg-detail/:str',
+    title: '消息中心-详情',
+    name: '消息中心-详情',
+    component: () => import('@/views/PlatformModule/Message/detail.vue')
   },
   /*-----------------------------------专题管理------------------------*/
   {
@@ -236,6 +246,7 @@ const routes = [
     name: '个人主页',
     component: () => import('@/views/AccountModule/home.vue')
   },
+
 ];
 
 const router = new VueRouter({
