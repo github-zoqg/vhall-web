@@ -9,6 +9,9 @@
 let fileBaseUrl; // 文件服务器
 let downBaseUrl; // 下载邀请码
 let uploadImgUrl; // 图片服务器
+let staticLinkVo = {
+    kf: 'http://webim.qiao.baidu.com//im/index?siteid=113762&ucid=2052738'
+}
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -38,5 +41,6 @@ switch (process.env.VUE_APP_NODE_ENV) {
 export default {
   fileBaseUrl,
   downBaseUrl,
-  uploadImgUrl
+  uploadImgUrl,
+  staticLinkVo
 };
