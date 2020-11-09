@@ -2,8 +2,9 @@
   <div class="search-area">
     <el-form :inline="true" :model="searchParams" ref="searchForm">
       <el-form-item v-for="(item, index) in searchAreaLayout" :key="index">
+        <el-button v-if="item.type==5" @click="deletedChecked">批量删除</el-button>
         <!-- 快速选择时间 -->
-        <div class="time-kuai" v-if="item.type==1">
+        <div class="time-kuai" v-else-if="item.type==1">
           <span
             v-for="(opt, optIndex) in allTime"
             :key="optIndex"
@@ -32,11 +33,11 @@
           />
         </el-select>
         <!-- 输入框 -->
-        <el-input v-model="searchParams[item.key]" suffix-icon="el-icon-search" placeholder="请输入标题" style="width: 180px" v-else @change="changeDate"></el-input>
+        <el-input v-model="searchParams[item.key]" suffix-icon="el-icon-search" :placeholder="placeholder" style="width: 180px" v-else @change="changeDate"></el-input>
       </el-form-item>
     </el-form>
     <div class="export-data" v-if="isExports">
-        <span>导出数据</span>
+        <span @click="exportData">导出数据</span>
     </div>
   </div>
 </template>
@@ -65,19 +66,20 @@ export default {
         },
       ],
       searchParams: {
-        searchVersion: 1
+        searchVersion: 1,
+        searchIsTime: '1'
       }
     };
   },
   props: {
     searchAreaLayout: Array,
-    // placeholder: {
-    //   type: String,
-    //   default: '请选择'
-    // },
     isExports: {
       type: Boolean,
       default: true
+    },
+    placeholder: {
+      type: String,
+      default: '请输入标题'
     }
   },
   created() {
@@ -90,8 +92,16 @@ export default {
       this.$emit("onSearchFun");
     },
     changeDate(){
-      console.log("11111111111");
       this.$emit("onSearchFun");
+    },
+    deletedChecked() {
+      this.$emit("deletedChecked");
+    },
+    exportData() {
+      this.$emit("onExportData");
+    },
+    reset() {
+      console.log("111111111111");
     }
   }
 };
@@ -105,19 +115,26 @@ export default {
         height: 35px;
       }
       /deep/.el-input__icon{
-      line-height: 35px;
+      line-height: 40px;
+      }
+      .el-button{
+        margin-right: 24px;
+        border-radius: 18px;
+        padding: 10px 20px;
+      }
+      .el-form--inline .el-form-item {
+          margin-right: 16px;
       }
     .time-kuai {
       height: 36px;
       border: 1px solid #dcdfe6;
       border-radius: 18px;
       background: #fff;
-      line-height: 34px;
-      margin-top: 3px;
+      line-height: 36px;
+      margin-top: 2px;
       span {
-        display: inline-block;
         border-radius: 18px;
-        padding:0 10px;
+        padding: 8px 16px;
         text-align: center;
         font-size: 14px;
         font-family: PingFangSC-Regular, PingFang SC;

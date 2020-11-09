@@ -57,27 +57,51 @@ const routes = [
     path: '/invitation-card',
     title: '品牌——邀请卡',
     name: 'invitation',
-    component: () => import('@/views/LiveModule/Brands//invitationCard.vue')
+    component: () => import('@/views/LiveModule/Brands/invitationCard.vue')
   },
   {
     path: '/advertisement-card',
     title: '广告推荐',
     name: 'advertisement',
-    component: () => import('@/views/LiveModule/Brands//advertisementCard.vue')
+    component: () => import('@/views/LiveModule/Brands/advertisementCard.vue')
   },
   {
     path: '/official-card',
     title: '公众号展示',
     name: 'official',
-    component: () => import('@/views/LiveModule/Brands//officialCard.vue')
+    component: () => import('@/views/LiveModule/Brands/officialCard.vue')
   },
   {
     path: '/poster-card',
     title: '品牌——开屏海报',
     name: 'poster',
-    component: () => import('@/views/LiveModule/Brands//posterCard.vue')
+    component: () => import('@/views/LiveModule/Brands/posterCard.vue')
   },
-
+/*-----------------------------------直播详情中数据------------------------*/
+  {
+    path: '/reports-data',
+    title: '数据报告',
+    name: 'reportsData',
+    component: () => import('@/views/LiveModule/Data/reportsData.vue')
+  },
+  {
+    path: '/interaction-data',
+    title: '互动统计',
+    name: 'interaction',
+    component: () => import('@/views/LiveModule/Data/interactData.vue')
+  },
+  {
+    path: '/user-data',
+    title: '用户统计',
+    name: 'user',
+    component: () => import('@/views/LiveModule/Data/userData.vue')
+  },
+  {
+    path: '/interaction-detail',
+    title: '',
+    name: 'interactionDetail',
+    component: () => import('@/views/LiveModule/Data/interactDetail.vue')
+  },
 
   /*********************************直播管理 ********************************************/
   {

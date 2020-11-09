@@ -95,9 +95,9 @@ export default {
           { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         "数据": [
-          { icon: '', title: '数据报告', subText: '统计直播基本数据' },
-          { icon: '', title: '互动统计', subText: '统计直播互动工具数据' },
-          { icon: '', title: '用户统计', subText: '统计直播观众详细数据' },
+          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: '/reports-data' },
+          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: '/interaction-data' },
+          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: '/user-data' },
         ]
       }
     };

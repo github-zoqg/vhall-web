@@ -42,7 +42,7 @@
             :key="index"
             size="mini"
             type="text"
-            @click="handleBtnClick(scope, item.methodName)"
+            @click="handleBtnClick(scope, item)"
           >{{item.name}}</el-button>
         </template>
       </el-table-column>
@@ -90,6 +90,7 @@ export default {
     },
     width: {
       type: Number,
+      require: false,
       default: 200
     },
   },
@@ -116,13 +117,13 @@ export default {
       }
     },
      // 行内操作按钮点击
-    handleBtnClick(scope, type) {
+    handleBtnClick(scope, item) {
       let obj = {
         rows: scope.row,
-        index: scope.$index,
-        type,
+        path: item.path || '',
+        type: item.methodName
       };
-      this.$emit("onHandleBtnClick", obj);
+      this.$emit("onHandleBtnClick", Object.assign({}, obj));
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {
@@ -153,6 +154,9 @@ export default {
      }
      /deep/.el-table{
        margin-bottom: 30px;
+     }
+     /deep/.el-button--text{
+       color:#32a8fb;
      }
    }
 </style>
