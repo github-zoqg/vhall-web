@@ -203,7 +203,6 @@ export default {
       let localLength = localPath.length;
       this.activePath = localPath[localLength - 1];
       this.activeArray = localPath;
-      console.log(this.activePath, "end-----------");
     }
   },
   methods: {

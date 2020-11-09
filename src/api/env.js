@@ -8,28 +8,35 @@
  */
 let fileBaseUrl; // 文件服务器
 let downBaseUrl; // 下载邀请码
+let uploadImgUrl; // 图片服务器
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
+    uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     break;
   case 'test':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
+    uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     break;
   case 'pre':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
+    uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     break;
   case 'development':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
+    uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     break;
   default:
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
+    uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
 }
 export default {
   fileBaseUrl,
-  downBaseUrl
+  downBaseUrl,
+  uploadImgUrl
 };

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- v-model="list" -->
-    <!-- 表单名称与表单简介为固定字段 -->
+    <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
       <p class="label">表单名称（必填）</p>
       <el-input maxlength="50" show-word-limit placeholder="请输入表单标题"></el-input>
@@ -10,7 +10,16 @@
       <p class="label">表单简介</p>
       <el-input maxlength="500" show-word-limit placeholder="请输入表单简介" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
     </section>
-    <!-- 表单名称与表单简介为固定字段 -->
+    <section class="viewItem">
+      <p class="label">表单头图</p>
+      <upload
+        v-model="imageUrl"
+        :before-upload="beforeUploadHnadler"
+        :restPic="resetBanner">
+        <p slot="tip">最佳头图尺寸：840*240px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+      </upload>
+    </section>
+    <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <draggable
       class="list-group"
       tag="ul"
@@ -21,12 +30,18 @@
     >
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
         <li class="viewItem" v-for="(item, index) in questionArr" :key="index">
-          <p class="label">{{item.label}} {{item.required ? '（必填）' : ''}}</p>
+          <p class="label">
+            <!-- {{item.required ? '（必填）' : ''}} -->
+            <template v-if="!item.labelEditable">
+              {{item.label}}
+            </template>
+            <el-input v-else maxlength="50" show-word-limit placeholder="请输入题目" v-model="item.label" class="radioInput"></el-input>
+          </p>
           <template v-for="(node, nodeIndex) in item.nodes">
 
             <!-- 输入框类型 || 设置表单时下拉框类型 -->
             {{node.other ? "其他" : ''}}
-            <el-input v-if="item.type=='input' || item.type=='input-select'" v-model="node.value" v-bind="node.props" :key='`${index}-${nodeIndex}`'>
+            <el-input v-if="item.type=='input' || item.type=='select'" v-model="node.value" v-bind="node.props" :key='`${index}-${nodeIndex}`'>
               <i class="el-icon-remove-outline removeIcon" slot="suffix" v-if="!!node.canRemove" @click="deleteOptions(item.nodes, nodeIndex, item.privacy)"></i>
               <i class="el-icon-circle-plus-outline removeIcon" slot="suffix" v-if="!!node.privacyAdd && item.nodes.length < 4" @click="privacyAdd(item.nodes, nodeIndex)"></i>
             </el-input>
@@ -98,9 +113,11 @@
 
 <script>
 import draggable from "vuedraggable";
+import upload from '@/components/Upload/main';
 export default {
   components:{
-    draggable
+    draggable,
+    upload
   },
   props: {
     questionArr: {
@@ -113,6 +130,7 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
+      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png'
     };
   },
   computed: {
@@ -127,9 +145,7 @@ export default {
   },
   methods: {
     addOption(data, other){
-      console.log(data, other);
-      let options = data.type != 'input' && data.type != 'input-select' ? data.nodes[0].children : data.nodes;
-      console.log(options);
+      let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
       let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
       if(data.type == 'input'){
         if(other){
@@ -144,7 +160,6 @@ export default {
 
       }
       colneChild.props && (colneChild.props.disabled = false);
-      console.log(colneChild);
       colneChild.other = !!other;
       colneChild.value = "";
       options.push(colneChild);
@@ -202,6 +217,22 @@ export default {
       }
 
       return text;
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    resetBanner(){
+      this.imageUrl= '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png';
     }
   },
 };

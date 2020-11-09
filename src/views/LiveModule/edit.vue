@@ -75,25 +75,15 @@
         </div>
       </el-form-item>
       <el-form-item label="直播封面：">
-        <el-upload
-          class="avatar-uploader"
-          action="/mock/user/picupload"
-          list-type="picture-card"
-          :limit='1'
+        <upload
+          v-model="imageUrl"
           :on-success="handleuploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUpload">
-          <img v-if="imageUrl" :src="imageUrl" class="avatar">
-          <template v-else>
-            <div>
-              <i class="el-icon-plus avatar-uploader-icon"></i>
-              <!-- <p class="uploadDesc">尺寸1280×720px 图片小于2MB（支持jpg、gif、png、bmp）</p> -->
-            </div>
-          </template>
-
-        </el-upload>
+          :before-upload="beforeUploadHnadler">
+          <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+        </upload>
       </el-form-item>
       <el-form-item label="直播简介：">
         <editor ref="editor"></editor>
@@ -170,10 +160,12 @@
 <script>
 import pageTitle from './components/pageTitle';
 import editor from '@/components/WangEditor/main';
+import upload from '@/components/Upload/main';
 export default {
   components: {
     pageTitle,
-    editor
+    editor,
+    upload
   },
   computed: {
     docSwtichDesc(){
@@ -244,23 +236,21 @@ export default {
       liveTags: ["金融", '互联网', '汽车', '教育', '健康', '其他'],
       liveMode: 2,
       tagIndex: 0,
-      imageUrl: '',
-      loading: false
+      loading: false,
+      imageUrl: ''
     };
   },
-  created(){
-    console.log(this);
-  },
+  created(){},
   methods: {
     handleuploadSuccess(res, file){
+      console.log(res, file);
       this.imageUrl = URL.createObjectURL(file.raw);
     },
-    beforeUpload(file){
+    beforeUploadHnadler(file){
       console.log(file);
       const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
       const isType = typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
-
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
       }
@@ -317,7 +307,6 @@ export default {
         } else {
           this.$message.error('请完善必填字段');
           document.documentElement.scrollTop = 0;
-          console.log('error submit!!');
           return false;
         }
       });
@@ -474,14 +463,6 @@ export default {
   @media screen and (min-width: 1920px) {
     .editBox {
       padding: 0px 140px;
-    }
-  }
-  /deep/ .el-upload--picture-card{
-    width: 100%;
-    height: 140px;
-    img{
-      width: 100%;
-      height: 100%;
     }
   }
 </style>

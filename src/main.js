@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-
+import moment from 'moment';
 import ElementUI from 'element-ui';
 // import 'element-ui/lib/theme-chalk/index.css';
 import '@/common/css/theme/index.css';
@@ -20,6 +20,7 @@ Vue.component('SPagination',SPagination);
 Vue.component('tableList',tableList);  // 表格区域
 Vue.component('searchArea',searchArea); // 搜索区域
 Vue.prototype.$fetch = fethData;
+Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
