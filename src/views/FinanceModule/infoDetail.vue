@@ -13,29 +13,31 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <el-tabs v-model="activeIndex" @tab-click="handleClick">
-      <el-tab-pane label="购买明细" name="1"></el-tab-pane>
-      <el-tab-pane label="开通明细" name="2"></el-tab-pane>
-      <search-area
-        ref="searchDetail"
-        :searchAreaLayout="searchDetail"
-        @onSearchFun="getDetailList('search')"
-      >
-      </search-area>
-      <table-list
-        ref="tableDetail"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
-        :width="120"
-        :tableRowBtnFun="tableRowBtnFun"
-        :totalNum="totalNum"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getDetailList"
+    <el-card class="box-card">
+      <el-tabs v-model="activeIndex" @tab-click="handleClick">
+        <el-tab-pane label="购买明细" name="1"></el-tab-pane>
+        <el-tab-pane label="开通明细" name="2"></el-tab-pane>
+        <search-area
+          ref="searchDetail"
+          :searchAreaLayout="searchDetail"
+          @onSearchFun="getDetailList('search')"
         >
-      </table-list>
-    </el-tabs>
+        </search-area>
+        <table-list
+          ref="tableDetail"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isCheckout="isCheckout"
+          :isHandle="isHandle"
+          :width="120"
+          :tableRowBtnFun="tableRowBtnFun"
+          :totalNum="totalNum"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getDetailList"
+          >
+        </table-list>
+      </el-tabs>
+    </el-card>
   </div>
 </template>
 
@@ -56,6 +58,7 @@ export default {
         {
           type: '3',
           key: "accountType",
+          placeholder: '请选择订单类型',
           options: [
             {
               label: '专业版',
@@ -86,6 +89,7 @@ export default {
         {
           type: '3',
           key: "accountStatus",
+          placeholder: '请选择订单状态',
           options: [
             {
               label: '成功',
@@ -100,6 +104,7 @@ export default {
         {
           type: '3',
           key: "accountResoure",
+          placeholder: '请选择订单来源',
           options: [
             {
               label: '下单购买',
@@ -117,10 +122,11 @@ export default {
       tableList: [
         {
           no: '1',
+          id: '123244',
           time: '2020-09-17',
           type: '支付宝',
           money: '123,000',
-          content: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
+          content: '哈哈哈哈',
           status: '1',
           source: '直播',
           onDate: '2020-10-01',
@@ -128,10 +134,11 @@ export default {
         },
         {
           no: '1',
+          id: '100000',
           time: '2020-01-17',
           type: '微信',
           money: '111,000',
-          content: '哈哈减肥吧开始讲课',
+          content: '开始讲课',
           status: '2',
           source: '录播',
           onDate: '2020-01-01',
@@ -242,8 +249,11 @@ export default {
   /deep/.el-button.is-circle{
     padding:3px;
   }
+  /deep/.el-card__body{
+    padding: 5px 24px 51px 24px;
+  }
   .title-data {
-      margin: 10px 0 20px 0;
+      margin: 0 0 24px 0;
       text-align: left;
       line-height: 30px;
       span{
@@ -254,32 +264,6 @@ export default {
       }
       .button-tip{
         vertical-align: top;
-      }
-    }
-    .export-data {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 104px;
-      height: 35px;
-      border-radius: 20px;
-      border: 1px solid #dcdfe6;
-      text-align: center;
-      line-height: 35px;
-      background: #fff;
-      cursor: pointer;
-      span {
-        font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #666;
-      }
-    }
-    .export-data:hover {
-      background: #fb3a32;
-      border: none;
-      span {
-        color: #fff;
       }
     }
   }

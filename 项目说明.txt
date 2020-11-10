@@ -17,7 +17,7 @@ src
 --------js 通用JS类库文件
 ------------lan 国际化目录
 ----components
---------DataList 数据-表格类通用
+--------TableList 数据-表格类通用
 --------DataUsage 数据并发、流量总览卡片
 --------Echarts echarts图形组件
 --------Header 头部公共导航
@@ -26,6 +26,7 @@ src
 --------Pagination 分页组件（待删除）
 --------Sidebar 左侧菜单导航组件
 --------Spagination 分页组件
+--------SearchArea 搜索组件
 ----router 路由
 ----utils
 --------Events.js

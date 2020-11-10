@@ -18,13 +18,22 @@
           v-else-if="item.type==2"
           v-model="searchParams[item.key]"
           value-format="yyyy-MM-dd"
-          type="date"
+          type="daterange"
           @change="changeDate"
-          style="width: 150px"
-          placeholder="选择日期"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 240px"
         />
+         <el-date-picker
+            v-model="searchParams[item.key]"
+            v-else-if="item.type==4"
+            value-format="yyyy-MM-dd"
+            type="date"
+            placeholder="选择日期">
+          </el-date-picker>
         <!-- 下拉框 -->
-        <el-select filterable clearable v-model="searchParams[item.key]" v-else-if="item.type==3"  style="width: 160px" @change="changeDate">
+        <el-select filterable clearable v-model="searchParams[item.key]" v-else-if="item.type==3"  style="width: 160px" @change="changeDate" :placeholder="item.placeholder">
           <el-option
             v-for="(opt, optIndex) in item.options"
             :key="optIndex"
@@ -66,7 +75,7 @@ export default {
         },
       ],
       searchParams: {
-        searchVersion: 1,
+        type: 1,
         searchIsTime: '1'
       }
     };
@@ -82,9 +91,9 @@ export default {
       default: '请输入标题'
     }
   },
-  created() {
-    this.searchParams.endTime = getRangeDays(this.isActive);
-  },
+  // created() {
+  //   this.searchParams.endTime = getRangeDays(this.isActive);
+  // },
   methods: {
     changeTime(opt) {
       this.isActive = opt.active;
@@ -99,9 +108,6 @@ export default {
     },
     exportData() {
       this.$emit("onExportData");
-    },
-    reset() {
-      console.log("111111111111");
     }
   }
 };
@@ -109,13 +115,21 @@ export default {
 <style lang="less" scoped>
   .search-area{
     position: relative;
+    background: #fff;
+    margin-top: 15px;
+    // border-bottom: 1px solid #ccc;
     /*选择框重置*/
       /deep/ .el-input__inner{
         border-radius: 18px;
-        height: 35px;
+        height: 36px;
+        background: transparent;
       }
-      /deep/.el-input__icon{
-      line-height: 40px;
+      /deep/.el-range-separator{
+        width: 10%;
+        line-height: 28px;
+      }
+      /deep/.el-form-item__content {
+        line-height: 36px;
       }
       .el-button{
         margin-right: 24px;
@@ -124,14 +138,14 @@ export default {
       }
       .el-form--inline .el-form-item {
           margin-right: 16px;
+          margin-bottom: 20px;
       }
     .time-kuai {
       height: 36px;
-      border: 1px solid #dcdfe6;
+      border: 1px solid #ccc;
       border-radius: 18px;
       background: #fff;
       line-height: 36px;
-      margin-top: 2px;
       span {
         border-radius: 18px;
         padding: 8px 16px;

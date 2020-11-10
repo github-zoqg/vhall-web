@@ -1,10 +1,10 @@
 <template>
   <div class="map-charts">
     <el-row>
-      <el-col :span="16"
+      <el-col :span="14"
         ><div :style="{ height: '400px', width: '100%' }" ref="mapEchart"></div
       ></el-col>
-      <el-col :span="8">
+      <el-col :span="10">
         <div class="grid-table">
           <table border="0">
             <tr>
@@ -12,10 +12,10 @@
               <th>观看次数</th>
               <th>占比</th>
             </tr>
-            <tr>
-              <td>nann</td>
-              <td>1111</td>
-              <td>10%</td>
+            <tr v-for="(item, index) in areaDataList.list" :key="index">
+              <td>{{ item.name }}</td>
+              <td>{{ item.value }}</td>
+              <td>{{ ((parseInt(item.value) / areaDataList.total) * 100).toFixed(2)}}%</td>
             </tr>
           </table>
         </div>
@@ -29,41 +29,24 @@ import '../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数
 export default {
   data() {
     return {
-      mapList: [
-        {
-          name: '新疆',
-          value: 200,
-        },
-        {
-          name: '云南',
-          value: 500,
-        },
-        {
-          name: '西藏',
-          value: 300,
-        },
-        {
-          name: '黑龙江',
-          value: 400,
-        },
-        {
-          name: '内蒙古',
-          value: 100,
-        },
-        {
-          name: '青海',
-          value: 1000,
-        },
-      ],
     };
   },
+  props: ['areaDataList'],
+  watch: {
+    areaDataList: {
+      handler(data) {
+        this.initMapEcharts(data);
+      }
+    }
+  },
   mounted() {
-    this.initMapEcharts();
+    // this.initMapEcharts();
   },
   methods: {
-    initMapEcharts() {
-      this.mapDataList = [];
-      let that = this;
+    initMapEcharts(data) {
+      console.log(data);
+      // this.mapDataList = [];
+      // let that = this;
       let mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
@@ -71,14 +54,13 @@ export default {
           show: true,
           formatter: function (params) {
             let value = params.value ? params.value : 0;
-            let res = params.name + '<br/>观看次数' + '  ' + parseInt(value);
-            // let res = params.name + '  ' + (parseInt(value) / (parseInt(that.regionTotal) ? parseInt(that.regionTotal) : 1) * 100).toFixed(2) + '%'+ '<br/>(观看次数占比)' ;
+            let res = params.name + '<br/>观看次数' + '  ' + parseInt(value) + '<br/>观看比列' + '  ' + ((parseInt(value) / data.total) * 100).toFixed(2) + '%';
             return res;
           },
         },
         visualMap: {
           min: 0,
-          max: 1000,
+          max: data.max_number,
           left: '10',
           top: 'bottom',
           type: 'continuous',
@@ -120,7 +102,7 @@ export default {
                 areaColor: '#e7271f',
               },
             },
-            data: that.mapList,
+            data: data.list,
           },
         ],
       };
@@ -135,7 +117,7 @@ export default {
     margin-top: 40px;
     table {
       float: right;
-      margin-right: 60px;
+      margin-right: 90px;
       tr {
         height: 30px;
         line-height: 30px;
