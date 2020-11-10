@@ -52,12 +52,12 @@ const apis = {
   executeUseRead: ['/102/v3/msgs/msg/use-read', 'POST', 'mock'], // 标记已读 jia.li
   // 文件上传(图片)
   uploadImage: ['/102/v3/uploads/upload/index', 'POST', 'mock'], // 文件上传（图片） jia.li
-
   //首页
   getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户版本类型
-
   //数据中心
   getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
+  // 用户基础信息
+  userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
 };
 
 const getApi = api => {
