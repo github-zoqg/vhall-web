@@ -1,8 +1,9 @@
-let publicPath = null;
 const path = require('path');
 // function resolve (dir) {
-//   return path.join(__dirname, dir)
-// }
+// return path.join(__dirname, dir)
+// // }
+/*
+let publicPath = null;
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     publicPath = '//cnstatic01.e.vhall.com/saas-wap/';
@@ -18,8 +19,9 @@ switch (process.env.VUE_APP_NODE_ENV) {
   // eslint-disable-next-line no-fallthrough
   default:
     publicPath = '/room/';
-}
+}*/
 module.exports = {
+  publicPath: './',
   assetsDir: './static',
   // lintOnSave: false,
   devServer: {
