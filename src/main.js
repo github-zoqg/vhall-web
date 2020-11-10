@@ -14,6 +14,7 @@ import VueI18n from 'vue-i18n';
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
+import '@/components/RemoteScript';
 Vue.use(ElementUI);
 Vue.use(VueI18n);
 Vue.component('SPagination',SPagination);
@@ -29,6 +30,7 @@ const i18n = new VueI18n({
     en: require('../src/common/js/lan/en')
   }
 });
+Vue.prototype.$EventBus = new Vue();
 new Vue({
   router,
   i18n,

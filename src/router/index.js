@@ -52,6 +52,12 @@ const routes = [
     name: 'planFunction',
     component: () => import('@/views/LiveModule/customTab.vue')
   },
+  {
+    path: '/playback/video-tailoring',
+    title: '回放-裁剪',
+    name: 'videoTailoring',
+    component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue')
+  },
   /*********************************直播管理 ********************************************/
   {
     path: '/viewer-rules/:str',
