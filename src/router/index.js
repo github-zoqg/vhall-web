@@ -271,6 +271,12 @@ const routes = [
     name: 'incomeDetail',
     component: () => import('@/views/FinanceModule/incomeDetail.vue')
   },
+  {
+    path: '/pay-order',
+    title: '收益详情',
+    name: 'payOrder',
+    component: () => import('@/views/FinanceModule/payList.vue')
+  },
   /*-----------------------------------账户管理------------------------*/
   {
     path: '/account-info',

@@ -35,7 +35,7 @@ export default {
     return {
       // isCollapse: false
       unread_num: 0
-    }
+    };
   },
   methods: {
     // changeCollapse() {
@@ -43,7 +43,7 @@ export default {
     //    this.$emit('changeIsCollapse', this.isCollapse);
     // }
     toMsgPage() {
-      this.$router.push({path: '/msg-list'})
+      this.$router.push({path: '/msg-list'});
     },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{
@@ -64,6 +64,7 @@ export default {
   height: 64px;
   padding: 0!important;
   height: 64px;
+  background: #fff;
   .logo{
     width: 224px;
     height: 64px;

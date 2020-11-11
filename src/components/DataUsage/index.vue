@@ -11,14 +11,14 @@
       </el-col>
       <el-col :span="6">
         <div class="top-item">
-          <p>总并发(方)<span class="level">升级</span></p>
+          <p>总并发(方)<span class="level" @click="levelVersion('升级')">升级</span></p>
           <h2>{{ userInfo.total_concurrency }}</h2>
           <p>有效期: {{ userInfo.concurrency_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="6">
         <div class="top-item">
-          <p>并发扩展包<span class="level">续费</span></p>
+          <p>并发扩展包<span class="level" @click="levelVersion('购买')">购买</span></p>
           <h2>{{ userInfo.concurrency_extend }}</h2>
         </div>
       </el-col>
@@ -44,17 +44,33 @@
         </div>
       </el-col>
     </el-row>
+    <up-version ref="levelVersion" :title="title"></up-version>
   </div>
 </template>
 <script>
+import upVersion from './components/upversion';
 export default {
   props: ['userInfo'],
+  data() {
+    return {
+      title: '升级'
+    };
+  },
   watch: {
     userInfo: {
       handler() {
         this.userInfo.user_type = '2';
       }
     }
+  },
+  components: {
+    upVersion
+  },
+  methods: {
+    levelVersion(title) {
+      this.$refs.levelVersion.dialogVisible = true;
+      this.title = title;
+    },
   }
 };
 </script>
