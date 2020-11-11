@@ -1,14 +1,12 @@
 <template>
   <div class="data-list">
-    <!-- :row-key="setRowKeyFun" -->
     <el-table
       ref="elTable"
       :data="manageTableData"
       :row-key="setRowKeyFun"
-      :key="isUpdate"
-      empty-text="暂无数据"
       @selection-change="handleTableCheckbox"
       max-height="450"
+      :header-cell-style="{background:'#f7f7f7',color:'#666'}"
     >
       <el-table-column
         :reserve-selection="true"
@@ -188,8 +186,17 @@ export default {
   /deep/.el-table {
     margin-bottom: 30px;
   }
+  /deep/.el-table__header{
+    background-color: #FB3A32;
+  }
+  /deep/.el-table td, .el-table th{
+    padding: 14px 0;
+  }
   /deep/.el-button--text {
-    color: #32a8fb;
+    color: #1A1A1A;
+    &:hover{
+      color: #FB3A32;
+    }
     /deep/.el-button.text--default {
       margin-right: 20px;
       color: #999999;

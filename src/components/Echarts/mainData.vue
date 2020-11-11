@@ -16,10 +16,10 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>1</h3>
+          <h3>123</h3>
         </div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="6" v-if="titleType!=='全部'">
         <div class="grid-content">
           <span>{{ titleType }}总时长</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -32,7 +32,20 @@
           <h3>56:03:22</h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType==='直播'">
+       <el-col :span="6" v-if="titleType==='全部'">
+        <div class="grid-content">
+          <span>活动总数</span>
+          <el-tooltip effect="dark" placement="right-start">
+            <div slot="content">筛选条件内的活动总数，包含直播、点播</div>
+            <el-button
+              circle
+              icon="el-icon-question"
+            ></el-button>
+          </el-tooltip>
+          <h3>{{ mainKeyData.webinar_count}}</h3>
+        </div>
+      </el-col>
+      <el-col :span="6" v-if="titleType!=='点播'">
         <div class="grid-content">
           <span>最高并发</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -44,7 +57,7 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>1233</h3>
+          <h3>{{ mainKeyData.max_onlines}}</h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -59,10 +72,10 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>213243546</h3>
+          <h3>{{ mainKeyData.watch_number}}</h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType==='点播'">
+      <el-col :span="6" v-if="titleType!=='直播'">
         <div class="grid-content">
           <span>观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -74,11 +87,11 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>1000</h3>
+          <h3>{{ mainKeyData.watch_times }}</h3>
         </div>
       </el-col>
     </el-row>
-    <el-row type="flex" class="row-bg bg-purple" justify="space-around">
+    <el-row type="flex" class="row-bg bg-purple" :class="titleType !== '全部' ? 'activeJustify' : ''">
       <el-col :span="6" v-if="titleType==='直播'">
         <div class="grid-content">
           <span>观看次数</span>
@@ -91,7 +104,7 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>1000</h3>
+          <h3>{{ mainKeyData.watch_times }}</h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -104,7 +117,7 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>567</h3>
+          <h3>{{ mainKeyData.watch_times_avg }}</h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -117,7 +130,7 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>1233</h3>
+          <h3>{{ mainKeyData.watch_duration }}</h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -132,7 +145,7 @@
               icon="el-icon-question"
             ></el-button>
           </el-tooltip>
-          <h3>56:03:22</h3>
+          <h3>{{ mainKeyData.watch_duration_avg }}</h3>
         </div>
       </el-col>
     </el-row>
@@ -144,8 +157,11 @@ export default {
     titleType: {
       type: String,
       default: '直播'
+    },
+    mainKeyData: {
+      type: Object
     }
-  },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -173,6 +189,9 @@ export default {
   }
   .bg-purple {
     margin-bottom: 26px;
+  }
+  .activeJustify{
+    justify-content: space-around;
   }
   .grid-content {
     text-align: left;

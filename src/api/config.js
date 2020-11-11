@@ -57,6 +57,12 @@ const apis = {
   playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang
   playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
   playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
+  //首页
+  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户版本类型
+  //数据中心
+  getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
+  // 用户基础信息
+  userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
 };
 
 const getApi = api => {

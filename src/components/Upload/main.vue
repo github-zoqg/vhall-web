@@ -117,6 +117,8 @@ export default {
     refresh(){
       this.restPic();
     }
+  },
+  watch: {
   }
 };
 </script>

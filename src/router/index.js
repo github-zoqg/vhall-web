@@ -303,7 +303,7 @@ const emptyLayoutRoutes= [
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',

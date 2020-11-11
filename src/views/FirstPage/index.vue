@@ -1,7 +1,7 @@
 <template>
   <div class="data-center">
     <div class="main-center">
-      <data-usage :upgrade_version="upgrade_version"></data-usage>
+      <data-usage :userInfo="userInfo"></data-usage>
       <el-row type="flex" class="row-center" justify="space-between">
         <el-col :span="5">
           <div class="center-item">
@@ -91,12 +91,24 @@ import DataUsage from '@/components/DataUsage/index.vue';
 export default {
   data() {
     return {
-      upgrade_version: '无极版'
+      userInfo: {}
     };
   },
   components: {
     LineEcharts,
     DataUsage
+  },
+  created() {
+    this.getUserVersion();
+  },
+  methods: {
+    getUserVersion() {
+      this.$fetch('getInfo', {}).then(res =>{
+        this.userInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    }
   }
 };
 </script>
@@ -104,13 +116,14 @@ export default {
   .data-center{
     margin: auto;
     max-width: 1374px;
-    border: 1px solid #ccc;
+    height: 100%;
     display: flex;
     /deep/.el-col-5{
       width: 18.8%;
     }
     .main-center{
       flex: 1;
+      height: 100%;
       .row-center{
         margin: 24px 0;
       }
@@ -141,8 +154,9 @@ export default {
         height: 146px;
         background: #fff;
         .list-title{
+          font-family: PingFangSC-Regular, PingFang SC;
           font-size: 16px;
-          font-weight: 600;
+          font-weight: 400;
           color: #1A1A1A;
           padding: 24px 0 0 32px;
         }
@@ -166,6 +180,7 @@ export default {
         }
       }
       .line-updata{
+        height: calc(100% - 488px);
         margin-top: 24px;
         background: #fff;
         padding-bottom: 10px;
@@ -178,7 +193,7 @@ export default {
     }
     .advert-banner{
       width: 224px;
-      height: 100px;
+      height: 100%;
       margin-left: 32px;
       .download-btn{
         outline: none;
@@ -210,6 +225,7 @@ export default {
       }
       .data-document{
         background: #fff;
+        height: calc(100% - 589px);
         h2{
           font-size: 16px;
           color: #1A1A1A;

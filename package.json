@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build:prod": "vue-cli-service build",
+    "build:test": "vue-cli-service build --test",
+    "build:pre": "vue-cli-service build --mode pre",
+    "preview": "node build/index.js --preview",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
@@ -16,6 +19,7 @@
     "element-ui": "^2.14.0",
     "qs": "^6.8.0",
     "vue": "^2.6.11",
+    "vue-cropperjs": "^4.1.0",
     "vue-router": "^3.2.0",
     "vuedraggable": "^2.24.3",
     "wangeditor": "^4.2.1",

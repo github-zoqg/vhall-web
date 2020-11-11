@@ -6,6 +6,7 @@
 <script>
 import echarts from 'echarts';
 export default {
+  props: ['lineDataList'],
   data() {
     return {
       isActive: true,
@@ -46,14 +47,24 @@ export default {
     };
   },
   mounted() {
-    this.initLintEcharts();
+    // this.initLintEcharts();
+  },
+  watch: {
+    lineDataList: {
+      handler(data) {
+        this.initLintEcharts(data);
+      }
+    }
   },
   methods: {
-    // changeOptions() {
-    //   this.isActive = !this.isActive;
-    // },
-    initLintEcharts() {
-      let that = this;
+    initLintEcharts(data) {
+      let visitDataDate = [];
+      let visitDataValue = [];
+      data.map(item => {
+        visitDataDate.push(item.time);
+        visitDataValue.push(item.value);
+      });
+      // let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
       let options = {
         visualMap: {
@@ -63,9 +74,10 @@ export default {
           max: 100,
         },
         grid: {
-          left: '80',
+          left: '65',
           top: '25',
           bottom: '30',
+          right: '32'
         },
         tooltip: {
           trigger: 'axis',
@@ -73,7 +85,7 @@ export default {
           formatter: '{b0}<br />观看人数: {c0}',
         },
         xAxis: {
-          data: that.visitDateList,
+          data: visitDataDate,
         },
         yAxis: {
           splitLine: { show: false },
@@ -82,7 +94,9 @@ export default {
           {
             type: 'line',
             showSymbol: false,
-            data: that.visitValueList,
+            smooth: true,
+            data: visitDataValue,
+            color: '#fb3a32'
           },
         ],
       };

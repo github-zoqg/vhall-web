@@ -13,31 +13,31 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <search-area
-      ref="searchArea"
-      :searchAreaLayout="searchAreaLayout"
-      @onSearchFun="getTableList('search')"
-      >
-    </search-area>
-    <table-list
-      ref="tableList"
-      :manageTableData="tableList"
-      :tabelColumnLabel="tabelColumn"
-      :tableRowBtnFun="tableRowBtnFun"
-      :isCheckout="isCheckout"
-      :isHandle="isHandle"
-      :width="width"
-      :totalNum="totalNum"
-      @onHandleBtnClick="onHandleBtnClick"
-      @getTableList="getTableList"
-      >
-    </table-list>
+    <el-card class="box-card">
+      <search-area
+        ref="searchArea"
+        :searchAreaLayout="searchAreaLayout"
+        @onSearchFun="getTableList('search')"
+        >
+      </search-area>
+      <table-list
+        ref="tableList"
+        :manageTableData="tableList"
+        :tabelColumnLabel="tabelColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :isCheckout="isCheckout"
+        :isHandle="isHandle"
+        :width="width"
+        :totalNum="totalNum"
+        @onHandleBtnClick="onHandleBtnClick"
+        @getTableList="getTableList"
+        >
+      </table-list>
+    </el-card>
   </div>
 </template>
 
 <script>
-// import tableList from '@/components/DataList/list.vue';
-// import searchArea from '@/components/SearchArea/index.vue';
 export default {
   name: "dataLive",
   // components: {
@@ -168,6 +168,9 @@ export default {
     /deep/.el-button.is-circle{
       padding:3px;
     }
+    /deep/.el-card__body{
+    padding: 5px 24px 51px 24px;
+  }
     .title-data {
       margin: 10px 0 20px 0;
       text-align: left;

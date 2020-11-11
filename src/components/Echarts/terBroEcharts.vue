@@ -17,57 +17,27 @@
 <script>
 import echarts from 'echarts';
 export default {
-  props: ['isTerBar'],
+  props: ['isTerBar', 'terDataList'],
   data() {
     return {
       isActive: true,
-      terColorList: ['#FA9A32', '#4383E4', '#7D43E4', '#FB3A32', '#ccc'],
-      broColorList: ['#FB3A32', '#4383E4', '#10D3A8', '#FA9A32', '#ccc'],
-      terTopList: ['pc端', '手机端', '平板', '其他'],
-      broTopList: ['谷歌浏览器', '搜狐浏览器', '猎豹浏览器', '其他'],
-      terDataList: [
-            {
-              name: 'pc端',
-              value: '200',
-            },
-            {
-              name: '手机端',
-              value: '100',
-            },
-            {
-              name: '平板',
-              value: '20',
-            },
-            {
-              name: '其他',
-              value: '10',
-            },
-          ],
-      broDataList: [
-            {
-              name: '谷歌浏览器',
-              value: '500',
-            },
-            {
-              name: '搜狐浏览器',
-              value: '10',
-            },
-            {
-              name: '猎豹浏览器',
-              value: '20',
-            },
-            {
-              name: '其他',
-              value: '100',
-            },
-          ]
+      terColorList: ['#4383E4', '#FA9A32', '#7D43E4', '#FB3A32', '#ccc'],
+      broColorList: ['#FB3A32', '#4383E4', '#10D3A8', '#FA9A32', '#7D43E4','#ccc']
     };
   },
-  mounted() {
-    this.initTerBroCharts();
+  // mounted() {
+  //   this.initTerBroCharts();
+  // },
+   watch: {
+    terDataList: {
+      handler(data) {
+        this.initTerBroCharts(data);
+      }
+    }
   },
   methods: {
-    initTerBroCharts() {
+    initTerBroCharts(data) {
+      // console.log(topList);
       let that = this;
       let terBarCharts = echarts.init(this.$refs.terBroEchart);
       let options = {
@@ -78,11 +48,27 @@ export default {
         legend: {
           orient: 'vertical',
           top: 80,
-          right: 50,
-          data: that.isTerBar === 1 ? that.terTopList : that.broTopList,
+          right:50,
+          icon: 'circle',
+          itemWidth: 8,
+          itemHeight: 8,
+          formatter: function(name) {
+            let topList = [];
+            let topValue = 0;
+            data.map(item => {
+              if (item.name === name) {
+                topValue = item.value;
+              }
+              topList.push(item.value);
+            });
+            let sum = topList.reduce((prev, cur) => prev + cur);
+            return name + '   ' + ((topValue/sum) * 100).toFixed(2) + '%';
+          },
+          data: data,
         },
         color: that.isTerBar === 1 ? that.terColorList : that.broColorList,
         series: {
+          // name: this.legend,
           type: 'pie',
           radius: ['30%', '60%'],
           center: ['30%', '50%'],
@@ -94,7 +80,7 @@ export default {
           //         fontWeight: 'bold'
           //     }
           // },
-          roseType: 'radius',
+          // roseType: 'radius',
           label: {
             show: false,
             position: 'center',
@@ -110,7 +96,7 @@ export default {
               shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
           },
-          data: that.isTerBar === 1 ? that.terDataList : that.broDataList
+          data: data
         },
       };
       terBarCharts.setOption(options);
