@@ -32,6 +32,7 @@
       </slot>
     </div>
     <slot name="mainplaceholder" v-if="!(docInfo.showContainer && docInfo.cid)"></slot>
+    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.7.js"></remote-script>
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
@@ -61,7 +62,7 @@ export default {
         total: 0, // 当前展示文档总页数
         pageIndex: 0
       },
-
+      VhallMsgSdk: !!window.VhallMsg,
       hasDocPermission: Boolean(this.docPermissionId == this.accountId),
       boxStyle: {}, // 白板/文档宽高
       permission: JSON.parse(sessionStorage.getItem('vhall-permission')) || [],
@@ -206,7 +207,6 @@ export default {
   },
   mounted () {
     this._listenEvents();
-    // this._initSDK();
     this.stopKeyPropagation();
     console.log('文档传入的参数======', this.$props);
   },
@@ -503,9 +503,9 @@ export default {
      */
     async loadRemote (channelId) {
       let param = channelId ? { channelId: channelId } : null;
-      console.debug('loadRemote', param);
+      console.log('loadRemote', param);
       let res = await this.docSDK.getContainerInfo(param);
-      console.debug('loadRemote', res);
+      console.log('loadRemote', res);
       let { list = [] } = res;
       let activeItem = list.find((item) => item.active == 1);
       this.docInfo.showContainer = Boolean(res.switch_status);
@@ -937,6 +937,7 @@ export default {
         4: window.VHDocSDK.RoleType.GUEST // 4 嘉宾
       };
       this._initSDK();
+      // if(window.VhallMsg)
 
     }
   }
