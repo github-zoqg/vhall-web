@@ -1,5 +1,6 @@
 <template>
   <div class="data-list">
+    <!-- :row-key="setRowKeyFun" -->
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -9,7 +10,13 @@
       @selection-change="handleTableCheckbox"
       max-height="450"
     >
-      <el-table-column :reserve-selection="true" type="selection" width="55" align="center" v-if="isCheckout"/>
+      <el-table-column
+        :reserve-selection="true"
+        type="selection"
+        width="55"
+        align="center"
+        v-if="isCheckout"
+      />
       <template v-if="totalNum">
         <el-table-column
           align="center"
@@ -17,45 +24,68 @@
           :key="index"
           :label="item.label"
         >
-        <template slot-scope="scope">
-          <div v-if="item.key=='transcode_status_text'">
-            <p v-if="scope.row.uploadObj">
-              <!-- 上传 -->
-              <span>{{scope.row.uploadObj.num == 100 ? '上传已完成' : '视频正在上传中'}}</span>
-              <el-progress :percentage="scope.row.uploadObj.num"></el-progress>
-            </p>
-            <!-- {{scope.row}} -->
-            <p v-if="scope.row.transcode_status_text">
-              <!-- 列表 -->
-              <span>{{scope.row.transcode_status_text}}</span>
-            </p>
-          </div>
-          <img :src="scope.row.liveTitle" width="40" height="40" v-else-if="item.key==='liveTitle'"/>
-          <span v-else>{{scope.row[item.key] || '-'}}</span>
-        </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row[item.isEdit] }}</span>
+            <div v-if="item.key == 'transcode_status_text'">
+              <p v-if="scope.row.uploadObj">
+                <!-- 上传 -->
+                <span>{{
+                  scope.row.uploadObj.num == 100
+                    ? '上传已完成'
+                    : '视频正在上传中'
+                }}</span>
+                <el-progress
+                  :percentage="scope.row.uploadObj.num"
+                ></el-progress>
+              </p>
+              <!-- {{scope.row}} -->
+              <p v-if="scope.row.transcode_status_text">
+                <!-- 列表 -->
+                <span>{{ scope.row.transcode_status_text }}</span>
+              </p>
+            </div>
+            <img
+              :src="scope.row.img"
+              width="40"
+              height="40"
+              v-else-if="item.key === 'img'"
+            />
+            <span v-else>{{ scope.row[item.key] || '-' }}</span>
+          </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" :width="width" v-if="isHandle">
-        <template slot-scope="scope" v-if="scope.row.id > 0">
-          <el-button
-            v-for="(item, index) in tableRowBtnFun"
-            :key="index"
-            size="mini"
-            type="text"
-            @click="handleBtnClick(scope, item.methodName)"
-          >{{item.name}}</el-button>
-        </template>
-      </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          :width="width"
+          v-if="isHandle"
+        >
+          <template slot-scope="scope" v-if="scope.row.id > 0">
+            <el-button
+              v-for="(item, index) in tableRowBtnFun"
+              :key="index"
+              size="mini"
+              type="text"
+              @click="handleBtnClick(scope, item)"
+              >{{ item.name }}</el-button
+            >
+          </template>
+        </el-table-column>
       </template>
-      <div slot="empty">
+      <div slot="empty" v-else>
         <div>
-          <img src="../../common/images/v35-webinar.png" alt="" width="140" height="140" />
+          <img
+            src="../../common/images/v35-webinar.png"
+            alt=""
+            width="140"
+            height="140"
+          />
         </div>
-        <p :style="{'marginTop': '23px'}">没有数据</p>
+        <p :style="{ marginTop: '23px' }">没有数据</p>
       </div>
     </el-table>
     <SPagination
       :total="totalNum"
-      v-show="totalNum"
+      v-show="needPagination && totalNum"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
@@ -71,7 +101,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
       },
-      isUpdate: 0
+      isUpdate: 0,
     };
   },
   props: {
@@ -81,67 +111,111 @@ export default {
     totalNum: Number,
     isCheckout: {
       type: Boolean,
-      default: true
+      default: true,
     },
     isHandle: {
       type: Boolean,
-      default: true
+      default: true,
     },
     width: {
       type: Number,
-      default: 200
+      require: false,
+      default: 200,
+    },
+    needPagination: {
+      type: Boolean,
+      default: true,
     },
   },
   watch: {
     manageTableData: {
-      handler: function(oldData){
+      handler: function (oldData) {
         console.log(oldData[0].uploadObj, 'watch变化');
         this.isUpdate = Math.random() * 100;
       },
       immediate: false,
-      deep: true
-    }
+      deep: true,
+    },
   },
   created() {
     // console.log('tabelColumnLabel', this.tabelColumnLabel);
     // console.log('manageTableData', this.manageTableData);
   },
   methods: {
-    isImg(_data){
-      if(['.png', '.jpg','jpeg'].includes(_data.substr(-4))){
+    isImg(_data) {
+      if (['.png', '.jpg', 'jpeg'].includes(_data.substr(-4))) {
         return true;
-      }else{
+      } else {
         return false;
       }
     },
-     // 行内操作按钮点击
-    handleBtnClick(scope, type) {
-      console.log(scope);
+    // 行内操作按钮点击
+    handleBtnClick(scope, item) {
       let obj = {
         rows: scope.row,
-        index: scope.$index,
-        type,
+        path: item.path || '',
+        type: item.methodName,
       };
-      this.$emit("onHandleBtnClick", obj);
+      this.$emit('onHandleBtnClick', Object.assign({}, obj));
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current;
-      this.$emit("getTableList", this.pageInfo);
+      this.$emit('getTableList', this.pageInfo);
     },
     // 复选框操作
     handleTableCheckbox(val) {
-      this.$emit("changeTableCheckbox", val);
+      this.$emit('changeTableCheckbox', val);
     },
     // 复选记忆函数
-    setRowKeyFun () {
+    setRowKeyFun() {
       // console.log(row);
       // return row.liveId || row.riaId;
     },
     // 清除记忆
-    clearSelect () {
+    clearSelect() {
       this.$refs.elTable.clearSelection();
     },
-  }
+  },
 };
 </script>
+<style lang="less" scoped>
+.data-list {
+  /deep/.cell img {
+    width: 100px;
+    height: 100px;
+  }
+  /deep/.el-table {
+    margin-bottom: 30px;
+  }
+  /deep/.el-button--text {
+    color: #32a8fb;
+    /deep/.el-button.text--default {
+      margin-right: 20px;
+      color: #999999;
+      font-size: 14px;
+      &:last-child {
+        margin-right: 0;
+      }
+      &:hover {
+        color: #5d81fb;
+        &:after {
+          border-bottom: 1px solid #5d81fb;
+        }
+      }
+      &:active {
+        color: #3157e1;
+        &:after {
+          border-bottom: 1px solid #3157e1;
+        }
+      }
+      &:disabled {
+        color: #9db3fc;
+        &:after {
+          border-bottom: 1px solid #9db3fc;
+        }
+      }
+    }
+  }
+}
+</style>

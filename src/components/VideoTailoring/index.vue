@@ -249,7 +249,7 @@ export default {
       // 监听文档初始化完成
       this.$EventBus.$on('component_docSDK_ready', async () => {
         this.showVideo = true;
-        await this.initSDK();
+        await this.initSDK().catch(err=>this.$message.error(`${err.message}!x{${err.code}}`));
         this.showTailoring = true;
       });
       this.showTailoring = true;

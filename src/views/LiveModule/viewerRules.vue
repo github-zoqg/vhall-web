@@ -194,6 +194,8 @@ export default {
         return callback(new Error('生成数量不能为空'));
       } else if (value > 1000 || value < 1) {
         return callback(new Error('生成数量1~1000'));
+      } else {
+        callback();
       }
     };
     return {

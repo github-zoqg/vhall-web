@@ -7,7 +7,7 @@
     >
       <div class="vh-video-tailoring__content">
         {{ pointTime + ' ' + eventLabel }}
-        <el-button @click="delEventPoint">{{ 删除 }}</el-button>
+        <el-button @click="delEventPoint">{{ "删除" }}</el-button>
       </div>
     </div>
   </div>

@@ -13,70 +13,14 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <div class="container-box">
-      <div class="box-item">
-        <!-- <img src="../assets/img/1.jpg" alt="" /> -->
-      </div>
-      <div class="box-title">
-        <div class="title-status">
-          <i class="el-icon-share"></i>
-          <b>直播</b>
-        </div>
-        <!-- <div class="title-status grayColor"><b>回放</b></div> -->
-        <div class="title-text">
-          直播名称当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据,直播名称当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
-        </div>
-        <div class="box-time">直播时间：2020-10-28 18:00:00</div>
-      </div>
-    </div>
-    <div class="change-time">
-      <el-select v-model="timeValue" placeholder="请选择" style="width: 140px">
-        <el-option
-          v-for="item in timeData"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>
-      <div class="time-change" v-show="timeValue === '2'">
-        <el-select
-          v-model="showValue"
-          placeholder="请选择"
-          style="width: 140px"
-        >
-          <el-option
-            v-for="item in showData"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-      </div>
-      <div v-show="timeValue === '1'" style="display: flex">
-        <div class="time-kuai">
-          <span
-            v-for="(item, index) in allTime"
-            :key="index"
-            :class="item.active === isActive ? 'active' : ''"
-            @click="changeTime(item)"
-            >{{ item.title }}</span
-          >
-        </div>
-        <el-date-picker
-          v-model="time"
-          type="date"
-          style="width: 200px"
-          placeholder="选择日期"
-        >
-        </el-date-picker>
-      </div>
-      <div class="export-data">
-        <span>导出数据</span>
-      </div>
-    </div>
-    <main-data></main-data>
+    <title-data></title-data>
+    <search-area
+      ref="searchArea"
+      :searchAreaLayout="searchAreaLayout"
+      @onSearchFun="getDataList('search')"
+      >
+    </search-area>
+    <main-data :titleType="titleType"></main-data>
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
@@ -126,10 +70,11 @@ import mainData from '@/components/Echarts/mainData';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
+import titleData from './components/title';
 export default {
   data() {
     return {
-      timeValue: '1',
+      titleType: '点播',
       isActive: 1,
       timeData: [
         {
@@ -141,48 +86,72 @@ export default {
           value: '2',
         },
       ],
-      showValue: '1',
-      showData: [
+      searchAreaLayout: [],
+      searchLayout: [
         {
-          label: '全部',
-          value: '1',
+          type: "3",
+          key: "searchIsTime",
+          options: [
+            {
+              label: '按时间筛选',
+              value: '1',
+            },
+            {
+              label: '按场次筛选',
+              value: '2',
+            },
+          ]
         },
         {
-          label: '第1场',
-          value: '2',
+          type: "1",
         },
         {
-          label: '第2场',
-          value: '3',
-        },
-        {
-          label: '第3场',
-          value: '4',
-        },
-        {
-          label: '第4场',
-          value: '5',
-        },
-      ],
-      time: '',
-      allTime: [
-        {
-          title: '全部',
-          active: 1,
-        },
-        {
-          title: '今日',
-          active: 2,
-        },
-        {
-          title: '近7日',
-          active: 3,
-        },
-        {
-          title: '近30日',
-          active: 4,
+          type: "2",
+          key: "searchDate",
         },
       ],
+      searchArea: [
+        {
+          type: "3",
+          key: "searchIsTime",
+          options: [
+            {
+              label: '按时间筛选',
+              value: '1',
+            },
+            {
+              label: '按场次筛选',
+              value: '2',
+            },
+          ]
+        },
+        {
+          type: "3",
+          key: "searchOnce",
+          options: [
+            {
+              label: '全部',
+              value: '1',
+            },
+            {
+              label: '第1场',
+              value: '2',
+            },
+            {
+              label: '第2场',
+              value: '3',
+            },
+            {
+              label: '第3场',
+              value: '4',
+            },
+            {
+              label: '第4场',
+              value: '5',
+            },
+          ]
+        }
+      ]
     };
   },
   components: {
@@ -190,11 +159,25 @@ export default {
     lintCharts,
     mapCharts,
     terCharts,
+    titleData
+  },
+  created() {
+    this.searchAreaLayout = this.searchLayout;
   },
   methods: {
     changeTime(item) {
       this.isActive = parseInt(item.active);
     },
+    getDataList(params) {
+      let searchData = this.$refs.searchArea.searchParams;
+      if (parseInt(searchData.searchIsTime) === 2) {
+        this.searchAreaLayout = this.searchArea;
+      } else {
+        this.searchAreaLayout = this.searchLayout;
+      }
+      console.log(params);
+      console.log(searchData);
+    }
   },
 };
 </script>
@@ -224,72 +207,9 @@ export default {
     vertical-align: top;
   }
 }
-.container-box ::after {
-  clear: both;
-}
-.container-box {
-  height: 114px;
-  background: #fff;
-  border-radius: 4px;
-}
-.box-item {
-  float: left;
-  width: 146px;
-  height: 81px;
-  margin: 16px 21px 17px 16px;
-  border: 1px solid #ccc;
-}
-img {
-  width: 60%;
-}
-.box-title {
-  float: left;
-  text-align: left;
-  margin-top: 18px;
-  .title-status {
-    width: 52px;
-    height: 18px;
-    text-align: center;
-    background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
-    border-radius: 10px;
-    i {
-      font-size: 12px;
-      padding-right: 3px;
-    }
-    b {
-      display: inline-block;
-      font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      color: #fff;
-      line-height: 18px;
-    }
-  }
-  .grayColor {
-    background: #000000;
-    opacity: 0.6;
-  }
-  .title-text {
-    max-width: 700px;
-    font-size: 20px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0;
-    padding: 7px 0 4px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .box-time {
-    height: 20px;
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    color: #555;
-    line-height: 20px;
-  }
-}
 .change-time {
   display: flex;
+  display: none;
   position: relative;
   margin: 34px 0 24px 0;
   ::v-deep .el-input__inner{

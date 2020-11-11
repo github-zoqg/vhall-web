@@ -73,6 +73,7 @@
       <div class="vh-video-select__button">
         <el-button @click="addEvent" class="fl vh-video-tailoring__add-event" :disabled="!vodReady">
           <span class="vh-iconfont vh-icon-shijiandianicon"></span>
+          事件点
           <!-- {{
         t('事件点')
           }}-->
@@ -83,6 +84,7 @@
           :disabled="!vodReady"
         >
           <span class="vh-iconfont vh-icon-jianqiedianicon"></span>
+          剪切点
           <!-- {{
           t('剪切点')
           }}-->
@@ -93,6 +95,7 @@
           :disabled="!vodReady"
         >
           <span class="vh-iconfont vh-icon-shanchu_icon"></span>
+          删除
           <!-- {{
           t('删除')
           }}-->
@@ -104,6 +107,7 @@
           :disabled="this.currentUnit <= 1 && !vodReady"
         >
           <span class="vh-iconfont vh-icon-fangdaicon"></span>
+          放大
           <!-- {{ t('放大') }} -->
         </el-button>
 
@@ -113,6 +117,7 @@
           :disabled="this.currentUnit >= this.maxValue && !vodReady"
         >
           <span class="vh-iconfont vh-icon-suoxiaoicon"></span>
+          缩小
           <!-- {{ t('缩小') }} -->
         </el-button>
         <el-button @click="qp" class="fl vh-btn vh-video-tailoring__qp-btn" v-if="!isFullScreen">

@@ -1,8 +1,11 @@
 <template>
-  <div id="vh-player"></div>
+  <div>
+    <div id="vh-player"></div>
+    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4.js" @load="sdkLoad"></remote-script>
+  </div>
+
 </template>
 <script>
-const VhallPlayer = window.VhallPlayer  = require('//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.1.js');
 /**
  * 播放器组件
  * @author junyuan.cao
@@ -110,19 +113,7 @@ export default {
     return {};
   },
   async mounted () {
-    try {
-      if (this.openScrollText) {
-        await this.getScrollTextInfo();
-      }
-      await this.initSDK();
-      if (this.showBarrage) {
-        this.openBarrage();
-      } else {
-        this.closeBarrage();
-      }
-    } catch (e) {
-      console.log(e);
-    }
+
   },
   methods: {
     getScrollTextInfo () {
@@ -177,7 +168,7 @@ export default {
       }
       console.log('初始化播放器参数', params);
       return new Promise((resolve, reject) => {
-        VhallPlayer.createInstance(
+        window.VhallPlayer.createInstance(
           params,
           event => {
             console.log('初始化播放器成功');
@@ -186,14 +177,14 @@ export default {
             this.$PLAYER.openUI(this.openPlayerUI);
             if (this.type == 'live') {
               resolve();
-              EventBus.$emit('component_playerSDK_ready');
+              this.$EventBus.$emit('component_playerSDK_ready');
             } else {
-              this.$PLAYER.on(VhallPlayer.LOADED, () => {
+              this.$PLAYER.on(window.VhallPlayer.LOADED, () => {
                 resolve();
-                EventBus.$emit('component_playerSDK_ready');
+                this.$EventBus.$emit('component_playerSDK_ready');
               });
             }
-            EventBus.$emit('markPoints', event.markPoints);
+            this.$EventBus.$emit('markPoints', event.markPoints);
           },
           e => {
             reject(e);
@@ -234,6 +225,22 @@ export default {
      */
     openUI (boolean) {
       this.$PLAYER && this.$PLAYER.openUI(boolean);
+    },
+
+    async sdkLoad(){
+      try {
+        if (this.openScrollText) {
+          await this.getScrollTextInfo();
+        }
+        await this.initSDK();
+        if (this.showBarrage) {
+          this.openBarrage();
+        } else {
+          this.closeBarrage();
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
   beforeDestroy () {

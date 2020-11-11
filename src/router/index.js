@@ -47,17 +47,80 @@ const routes = [
     component: () => import('@/views/LiveModule/signUp/main.vue')
   },
   {
+    path: '/virtual/:str',
+    title: '准备——虚拟人数',
+    name: 'virtual',
+    component: () => import('@/views/LiveModule/virtual.vue')
+  },
+  {
     path: '/custom-tab/:str',
     title: '品牌——自定义菜单',
     name: 'planFunction',
     component: () => import('@/views/LiveModule/customTab.vue')
   },
   {
-    path: '/playback/video-tailoring',
-    title: '回放-裁剪',
-    name: 'videoTailoring',
-    component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue')
+    path: '/playback/list/:str',
+    title: '回放-列表',
+    name: 'playBackList',
+    component: () => import('@/views/LiveModule/PlayBack/list.vue')
   },
+  {
+    path: '/playback/chapter',
+    title: '回放-章节打点',
+    name: 'playBackChapter',
+    component: () => import('@/views/LiveModule/PlayBack/chapter.vue')
+  },
+  /*-----------------------------------品牌设置------------------------*/
+  {
+    path: '/invitation-card',
+    title: '品牌——邀请卡',
+    name: 'invitation',
+    component: () => import('@/views/LiveModule/Brands/invitationCard.vue')
+  },
+  {
+    path: '/advertisement-card',
+    title: '广告推荐',
+    name: 'advertisement',
+    component: () => import('@/views/LiveModule/Brands/advertisementCard.vue')
+  },
+  {
+    path: '/official-card',
+    title: '公众号展示',
+    name: 'official',
+    component: () => import('@/views/LiveModule/Brands/officialCard.vue')
+  },
+  {
+    path: '/poster-card',
+    title: '品牌——开屏海报',
+    name: 'poster',
+    component: () => import('@/views/LiveModule/Brands/posterCard.vue')
+  },
+  /*-----------------------------------直播详情中数据------------------------*/
+  {
+    path: '/reports-data',
+    title: '数据报告',
+    name: 'reportsData',
+    component: () => import('@/views/LiveModule/Data/reportsData.vue')
+  },
+  {
+    path: '/interaction-data',
+    title: '互动统计',
+    name: 'interaction',
+    component: () => import('@/views/LiveModule/Data/interactData.vue')
+  },
+  {
+    path: '/user-data',
+    title: '用户统计',
+    name: 'user',
+    component: () => import('@/views/LiveModule/Data/userData.vue')
+  },
+  {
+    path: '/interaction-detail',
+    title: '查看数据',
+    name: 'interactionDetail',
+    component: () => import('@/views/LiveModule/Data/interactDetail.vue')
+  },
+
   /*********************************直播管理 ********************************************/
   {
     path: '/viewer-rules/:str',
@@ -76,6 +139,18 @@ const routes = [
     title: '错误提示',
     name: '错误提示',
     component: () => import('@/views/PlatformModule/Error/index.vue')
+  },
+  {
+    path: '/msg-list',
+    title: '消息中心',
+    name: '消息中心',
+    component: () => import('@/views/PlatformModule/Message/list.vue')
+  },
+  {
+    path: '/msg-detail/:str',
+    title: '消息中心-详情',
+    name: '消息中心-详情',
+    component: () => import('@/views/PlatformModule/Message/detail.vue')
   },
   /*-----------------------------------专题管理------------------------*/
   {
@@ -215,11 +290,34 @@ const routes = [
     name: '个人主页',
     component: () => import('@/views/AccountModule/home.vue')
   },
+
+];
+
+const emptyLayoutRoutes= [
+  {
+    path: '/playback/video-tailoring',
+    title: '剪辑台',
+    name: 'videoTailoring',
+    component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue')
+  },
 ];
 
 const router = new VueRouter({
   mode: 'history',
-  routes
+  routes: [
+    {
+      path: '/',
+      name: 'baseLoyout',
+      component: () => import('@/layout/baseLayout.vue'),
+      children: routes
+    },
+    {
+      path: '/',
+      name: 'emptyLoyout',
+      component: () => import('@/layout/emptyLayout.vue'),
+      children: emptyLayoutRoutes
+    },
+  ]
 });
 
 export default router;

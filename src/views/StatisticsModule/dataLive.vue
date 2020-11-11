@@ -46,21 +46,21 @@ export default {
   // },
   data() {
     return {
-      isCheckout: true,
+      isCheckout: false,
       width: 300,
       totalNum: 1000,
       isHandle: true,
       tableList: [
         {
-          liveId: '1',
-          liveTitle: "@/common/images/v35-webinar.png",
+          id: '1',
+          liveTitle: "哈哈哈哈哈",
           wacthPeople: '123',
           wacthNum: '124',
           timeLang: '30:00:00'
         },
         {
-          liveId: '2',
-          liveTitle: 'xixiiii',
+          id: '2',
+          liveTitle: '嘻嘻嘻',
           wacthPeople: '111',
           wacthNum: '222',
           timeLang: '50:00:00'
@@ -69,7 +69,7 @@ export default {
       tabelColumn: [
         {
           label: '活动ID',
-          key: 'liveId',
+          key: 'id',
           width: 120
         },
         {
@@ -95,15 +95,18 @@ export default {
       tableRowBtnFun: [
         {
           name: '数据报告',
-          methodName: 'dataReport'
+          methodName: 'dataReport',
+          path: '/reports-data',
         },
         {
           name: '互动统计',
-          methodName: 'hudong'
+          methodName: 'dataReport',
+          path: '/interaction-data',
         },
         {
           name: '用户统计',
-          methodName: 'tongji'
+          methodName: 'dataReport',
+          path: '/user-data',
         }
       ],
       searchAreaLayout: [
@@ -119,8 +122,6 @@ export default {
           key: "searchTitle",
         }
       ],
-       // 表格选中数据
-      selectedTableItem: []
     };
   },
   methods: {
@@ -138,6 +139,14 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, formParams);
       console.log(obj);
+    },
+    dataReport(that, val) {
+      that.$router.push({
+        path: val.path,
+        query: {
+          id: val.rows.id
+        }
+     });
     },
      //复选框操作
     changeTableCheckbox(val) {

@@ -937,6 +937,7 @@ export default {
         4: window.VHDocSDK.RoleType.GUEST // 4 嘉宾
       };
       this._initSDK();
+
     }
   }
 };

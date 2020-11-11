@@ -1,5 +1,6 @@
 <template>
-  <div class="">
+  <div class="tailorWrap">
+    <header><i class="el-icon-back" @click="$router.back()"></i> 回放剪辑台</header>
     <videoTailoring
       ref="videoTailoringComponent"
       :roomInfo="roomInfo"
@@ -19,13 +20,14 @@ export default {
       roomInfo: {
         app_id: 'fd8d3653', // 应用 ID
         third_party_user_id: 16422750, // 当前房间用户id
-        paas_access_token: 'access:fd8d3653:00e01d756ea59717', // pass 身份标识
+        paas_access_token: 'access:fd8d3653:a926c581feae0266', // pass 身份标识
         roomeId: "lss_8018578c", // 当前活动房间id
         room_id: "lss_8018578c",
         record_id: "6a9fb155", // 当前活动回放的id
         webinar_id: "561752317", // 当前活动id
         roleName: 2, // 角色名称 1主持人2观众3助理4嘉宾(此处回放+文档模式只能是已观众角色初始化)
         channel_id: 'ch_93f8b149', // 频道Id
+        name: '回访名称'
       },
       isAdd: true // 是否可添加视频裁剪 一般情况下为true，当在某个回放中点击裁剪时设置为false
     };
@@ -103,5 +105,28 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+  .tailorWrap{
+    header{
+      background: #FB3A32;
+      color: #ffffff;
+      font-size: 20px;
+      text-align: center;
+      width: 1366px;
+      margin: 0 auto;
+      padding: 20px 25px;
+      i{
+        float: left;
+        cursor: pointer;
+      }
+    }
+    .vh-video-tailoring__warp{
+      margin-top: 0px;
+    }
+    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp.vh-video-tailoring__button-operation-warp-active .vh-video-select__button .el-button:hover{
+      color: #FB3A32;
+    }
+    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp .fr.el-button--default:hover{
+      background: #FB3A32;
+    }
+  }
 </style>
