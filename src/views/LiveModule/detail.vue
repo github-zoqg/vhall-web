@@ -75,7 +75,7 @@ export default {
           { icon: '', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: '/embed-card' },
         ],
         '品牌': [
-          { icon: '', title: '品牌设置', subText: '设置观看页品牌信息' },
+          { icon: '', title: '品牌设置', subText: '设置观看页品牌信息', path: `/brand-set/${this.$route.params.str}` },
           { icon: '', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/custom-tab/${this.$route.params.str}` },
           { icon: '', title: '播放器设置', subText: '设置直播跑马灯水印' },
           { icon: '', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: '/invitation-card' },
