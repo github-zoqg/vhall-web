@@ -173,14 +173,14 @@ export default {
     },
     // 批量选择
     checkMoreRow(val) {
-      console.log(val)
+      console.log(val);
       this.ids = val.map(item => {
         return item.id;
       });
     },
     // 标记为已读取
     executeUseRead() {
-      console.log(this.ids)
+      console.log(this.ids);
       if (!(this.ids && this.ids.length > 0)) {
         this.$message.error('请至少选择一条信息标记为已读');
       } else {
