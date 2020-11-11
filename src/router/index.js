@@ -72,6 +72,12 @@ const routes = [
   },
   /*-----------------------------------品牌设置------------------------*/
   {
+    path: '/brand-set/:str',
+    title: '品牌——品牌设置',
+    name: 'brandSet',
+    component: () => import('@/views/LiveModule/brandSet.vue')
+  },
+  {
     path: '/invitation-card',
     title: '品牌——邀请卡',
     name: 'invitation',
