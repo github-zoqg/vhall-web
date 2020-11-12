@@ -8,7 +8,7 @@
 <script>
 export default {
   name: "nullPage.vue"
-}
+};
 </script>
 
 <style lang="less" scoped>

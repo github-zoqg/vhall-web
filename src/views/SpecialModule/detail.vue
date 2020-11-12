@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "specialDetail.vue"
-}
+};
 </script>
 
 <style scoped>

@@ -12,11 +12,11 @@ export default {
   },
   methods: {
     toReturn() {
-      this.$router.push(sessionStorage.getItem('errorReturn'))
-      sessionStorage.removeItem('errorReturn')
+      this.$router.push(sessionStorage.getItem('errorReturn'));
+      sessionStorage.removeItem('errorReturn');
     }
   }
-}
+};
 </script>
 
 <style scoped>

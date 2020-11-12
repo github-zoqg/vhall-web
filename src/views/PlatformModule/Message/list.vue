@@ -75,7 +75,7 @@ export default {
         }
       ],
       ids: []
-    }
+    };
   },
   methods: {
     // 表格操作列回调函数， val表示每行
@@ -228,7 +228,7 @@ export default {
   created() {
     this.getMsgList();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

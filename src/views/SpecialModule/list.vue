@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "specialList.vue"
-}
+};
 </script>
 
 <style scoped>

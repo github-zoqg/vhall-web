@@ -17,7 +17,7 @@ export default {
       window.open(env.staticLinkVo.kf, '_blank');
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

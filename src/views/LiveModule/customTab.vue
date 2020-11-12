@@ -174,7 +174,7 @@ export default {
       ],
       tabType: 'app', // pc 电脑端；app 移动端
       menuTabIndex: 0
-    }
+    };
   },
   methods: {
     setTabHandler(tab) {

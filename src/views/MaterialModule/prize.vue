@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "prize.vue"
-}
+};
 </script>
 
 <style scoped>

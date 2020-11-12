@@ -7,8 +7,26 @@ module.exports = {
   parserOptions: {
     parser: 'babel-eslint'
   },
+  globals: {
+    BMap: true,
+    Vhall: true,
+    VhallInteraction: true,
+    VhallRTC: true,
+    VhallPlayer: true,
+    VHall_Questionnaire_Service: true,
+    VHall_Questionnaire_Const: true,
+    VHPublisher: true,
+    VHDocSDK: true,
+    VhallChat: true,
+    VhallReport: true,
+    $: true,
+    wx: true,
+    WeixinJSBridge: true
+  },
   rules: {
     semi: [1],
+    'no-unused-vars': [0],
+    'no-undef': [0],
     eqeqeq: [0],
     camelcase: 0,
     'space-before-function-paren': [0],
@@ -33,4 +51,4 @@ module.exports = {
       }
     }
   ]
-}
+};
