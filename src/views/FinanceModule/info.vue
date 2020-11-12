@@ -8,7 +8,7 @@
       <div class="grid-content" @click="goAccountDetail"><span>账单明细</span></div>
     </div>
     <div class="statistical-line">
-        <span>用量统计</span>
+        <span @click="goPayList()">用量统计</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
@@ -214,8 +214,13 @@ export default {
       console.log(obj);
     },
     goAccountDetail() {
-       this.$router.push({
+      this.$router.push({
         name: 'infoDetail'
+      });
+    },
+    goPayList() {
+      this.$router.push({
+        name: 'payOrder'
       });
     }
   }

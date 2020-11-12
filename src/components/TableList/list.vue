@@ -12,12 +12,12 @@
         :reserve-selection="true"
         type="selection"
         width="55"
-        align="center"
+        align="left"
         v-if="isCheckout"
       />
-      <template v-if="totalNum">
+      <template v-if="manageTableData.length">
         <el-table-column
-          align="center"
+          align="left"
           v-for="(item, index) in tabelColumnLabel"
           :key="index"
           :label="item.label"
@@ -42,12 +42,18 @@
                 <span>{{ scope.row.transcode_status_text }}</span>
               </p>
             </div>
-            <img
-              :src="scope.row.img"
-              width="40"
-              height="40"
-              v-else-if="item.key === 'img'"
-            />
+            <div v-else-if="item.key === 'img'">
+              <img
+                :src="scope.row.img"
+                width="40"
+                height="40"
+              />
+            </div>
+            <div v-else-if="item.key === 'status'" class="status-show">
+              <p>
+                <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
+                {{ scope.row.status =='1' ? '成功': scope.row.status =='2' ? '失败' : '等待' }}</p>
+            </div>
             <span v-else>{{ scope.row[item.key] || '-' }}</span>
           </template>
         </el-table-column>
@@ -190,7 +196,7 @@ export default {
     background-color: #FB3A32;
   }
   /deep/.el-table td, .el-table th{
-    padding: 14px 0;
+    padding: 16px 0;
   }
   /deep/.el-button--text {
     color: #1A1A1A;
@@ -222,6 +228,26 @@ export default {
           border-bottom: 1px solid #9db3fc;
         }
       }
+    }
+  }
+  .status-show{
+    span{
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 5px;
+      margin-top: -3px;
+    }
+    .active-success {
+      background: #14BA6A;
+    }
+    .active-error {
+      background: #FB3A32;
+    }
+    .active-waiting {
+      background: #FA9A32;
     }
   }
 }
