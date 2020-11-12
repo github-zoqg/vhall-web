@@ -13,75 +13,104 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <el-row type="flex" class="row-bg" justify="space-around">
-      <el-col :span="9">
-        <div class="grid-content">
-          <div class="incomt-time">
-            <p>直播收益<span>提现</span></p>
-          </div>
-          <div class="income-main">
-            <div class="income-topic">
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-card class="live-come">
+          <h3>直播收益</h3>
+          <div class="live-all">
+            <div class="all-come">
               <p>总收益（元）</p>
-              <h2>2,805,763.00</h2>
+              <h1>2805.00</h1>
             </div>
-            <div class="income-topic">
-              <p>可用余额（元）</p>
-              <h2>12.00</h2>
+            <div class="all-come">
+              <p>可用金额（元）
+                <span @click="cash('直播')">提现</span>
+                <el-tooltip effect="dark" placement="right-start">
+                  <div slot="content">
+                    1. 大于800元的提现审核，用户提交后无需人工审核，实现程序化自动到账<br>
+                    2. 小于或等于800的需要线下审核提现<br>
+                    3. 不管是人工审核还是自动审核，在admin中都需要有提现记录，进行对账审计
+                  </div>
+                  <el-button
+                    circle
+                    icon="el-icon-question"
+                    class="button-tip"
+                  ></el-button>
+                </el-tooltip>
+              </p>
+              <h1>2805.00</h1>
             </div>
           </div>
-        </div>
+        </el-card>
       </el-col>
-      <el-col :span="9">
-        <div class="grid-content">
-          <div class="incomt-time">
-            <p>红包收益<span>提现</span></p>
-          </div>
-          <div class="income-main">
-            <div class="income-topic">
+      <el-col :span="12" >
+        <el-card class="money-come">
+          <h3>红包收益</h3>
+          <div class="live-all">
+            <div class="all-come">
               <p>总收益（元）</p>
-              <h2>700.00</h2>
+              <h1>2805.00</h1>
             </div>
-            <div class="income-topic">
-              <p>可用余额（元）</p>
-              <h2>12.00</h2>
+            <div class="all-come">
+              <p>可用金额（元）
+                <span @click="cash('红包')">提现</span>
+                <el-tooltip effect="dark" placement="right-start">
+                  <div slot="content">
+                    1. 大于800元的提现审核，用户提交后无需人工审核，实现程序化自动到账<br>
+                    2. 小于或等于800的需要线下审核提现<br>
+                    3. 不管是人工审核还是自动审核，在admin中都需要有提现记录，进行对账审计
+                  </div>
+                  <el-button
+                    circle
+                    icon="el-icon-question"
+                    class="button-tip"
+                  ></el-button>
+                </el-tooltip>
+              </p>
+              <h1>2805.00</h1>
             </div>
           </div>
-        </div>
+        </el-card>
       </el-col>
     </el-row>
-    <el-tabs v-model="activeIndex" @tab-click="handleClick">
-      <el-tab-pane label="直播收益明细" name="1"></el-tab-pane>
-      <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
-      <search-area
-        ref="searchIncome"
-        :searchAreaLayout="searchAccount"
-        @onSearchFun="getIncomeList('search')"
-      >
-      </search-area>
-      <table-list
-        ref="tableIncome"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
-        :width="120"
-        :tableRowBtnFun="tableRowBtnFun"
-        :totalNum="totalNum"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getIncomeList"
+
+    <el-card class="listTab">
+      <el-tabs v-model="activeIndex" @tab-click="handleClick">
+        <el-tab-pane label="直播收益明细" name="1"></el-tab-pane>
+        <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
+        <search-area
+          ref="searchIncome"
+          :searchAreaLayout="searchAccount"
+          @onSearchFun="getIncomeList('search')"
         >
-      </table-list>
-    </el-tabs>
+        </search-area>
+        <table-list
+          ref="tableIncome"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isCheckout="isCheckout"
+          :isHandle="isHandle"
+          :width="120"
+          :tableRowBtnFun="tableRowBtnFun"
+          :totalNum="totalNum"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getIncomeList"
+          >
+        </table-list>
+      </el-tabs>
+    </el-card>
+    <cash-box :type="1" ref="cashBox"></cash-box>
   </div>
 </template>
 
 <script>
+import cashBox from './components/cashBox';
 export default {
   name: "income",
   data() {
     return {
       activeIndex: '1',
-      totalNum: 0,
+      totalNum: 100,
       searchAccount: [
         {
           type: '2',
@@ -93,22 +122,38 @@ export default {
       ],
       isCheckout: false,
       isHandle: true,
-      tableList: [],
+      tableList: [
+        {
+          id: '1',
+          title: '秒吼吼吼吼',
+          allIncome: '200',
+          money: '100',
+          content: '123',
+          price: '花'
+        },
+        {
+          id: '2',
+          title: '秒吼吼吼222吼',
+          allIncome: '1000',
+          money: '1000',
+          content: '1023',
+          price: '火箭'
+        }
+      ],
       tabelColumn: [],
       liveColumns: [
         {
           label: '活动id',
-          key: 'no',
+          key: 'id',
           width: 120
         },
         {
           label: '标题',
-          key: 'time',
-          width: 240
+          key: 'title'
         },
         {
           label: '总收益',
-          key: 'type',
+          key: 'allIncome',
           width: 100
         },
         {
@@ -123,7 +168,7 @@ export default {
         },
         {
           label: '礼物',
-          key: 'status',
+          key: 'price',
           width: 120
         }
       ],
@@ -167,8 +212,9 @@ export default {
       ]
     };
   },
-  // components: {
-  // },
+  components: {
+    cashBox
+  },
   created() {
     this.tabelColumn = this.liveColumns;
   },
@@ -200,6 +246,10 @@ export default {
       let obj = Object.assign({}, pageInfo, formParams);
       console.log(obj);
     },
+    cash(title) {
+      console.log(title);
+      this.$refs.cashBox.dialogCashVisible = true;
+    },
     detail(that, { rows }) {
       that.$router.push({
         name: 'incomeDetail',
@@ -214,17 +264,21 @@ export default {
 
 <style lang="less" scoped>
   .account-income{
-    /deep/.el-button {
-    border: none;
-    background: transparent;
-  }
   /deep/.el-button.is-circle{
-    padding:3px;
+    padding:0px 3px;
+  }
+  /deep/.el-card__body{
+    padding: 24px 32px;
+
   }
   .title-data {
-      margin: 10px 0 20px 0;
+     /deep/.el-button {
+      border: none;
+      background: transparent;
+    }
+      margin: 10px 0 30px 0;
       text-align: left;
-      line-height: 30px;
+      line-height: 22px;
       span{
         font-size: 22px;
         font-family: PingFangSC-Semibold, PingFang SC;
@@ -235,31 +289,55 @@ export default {
         vertical-align: top;
       }
     }
-    .export-data {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 104px;
-      height: 35px;
-      border-radius: 20px;
-      border: 1px solid #dcdfe6;
-      text-align: center;
-      line-height: 35px;
-      background: #fff;
-      cursor: pointer;
-      span {
+  .live-come{
+    margin-right: 10px;
+    height: 170px;
+    h3{
+      font-size: 16px;
+      color: #1A1A1A;
+      font-weight: 400;
+      padding-bottom: 26px;
+    }
+  }
+  .live-all{
+    display: flex;
+    .all-come{
+      width: 50%;
+      padding-left: 24px;
+      p{
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #666;
+        color: #999;
+        font-weight: 400px;
+        padding-bottom: 5px;
+      }
+      h1{
+        font-size: 28px;
+        color:#1A1A1A;
+        font-weight: bold;
+        line-height: 32px;
+      }
+      span{
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #FB3A32;
+        font-size: 12px;
+        color:#FB3A32;
+        cursor: pointer;
       }
     }
-    .export-data:hover {
-      background: #fb3a32;
-      border: none;
-      span {
-        color: #fff;
-      }
+  }
+  .money-come{
+    margin-left: 10px;
+    height: 170px;
+    h3{
+      font-size: 16px;
+      color: #1A1A1A;
+      font-weight: 400;
+      padding-bottom: 26px;
     }
+  }
+  .listTab {
+    margin-top: 24px;
+  }
   }
 </style>

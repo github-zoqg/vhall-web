@@ -1,14 +1,15 @@
 <template>
   <div class="income-detail">
     <div class="title-data">
-      <span>收益详情</span>
+      <p>收益详情</p>
     </div>
     <el-card class="box-card">
-      <p>这里是活动名称</p>
-      <span>直播时间：2020-09-09 10:00:00  </span>
+      <title-data></title-data>
+      <!-- <p>这里是活动名称</p>
+      <span>直播时间：2020-09-09 10:00:00  </span> -->
     </el-card>
-    <el-card class="box-card">
-      <span>收益明细</span>
+    <el-card class="box-income">
+      <p>收益明细</p>
       <search-area
         ref="incomeDetils"
         :searchAreaLayout="searchDetail"
@@ -31,8 +32,7 @@
 </template>
 
 <script>
-// import tableList from '@/components/DataList/list.vue';
-// import searchArea from '@/components/SearchArea/index.vue';
+import titleData from '../LiveModule/Data/components/title';
 export default {
   name: "income",
   data() {
@@ -45,8 +45,9 @@ export default {
           key: "searchDate"
         },
         {
-          type: '2',
+          type: '3',
           key: "payType",
+          placeholder: '请选择付费类型',
           options: [
             {
               label: '礼物',
@@ -72,10 +73,11 @@ export default {
           type: '支付宝',
           money: '123,000',
           content: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
-          status: '1',
+          id: '1',
           source: '直播',
           onDate: '2020-10-01',
-          outDate: '2021-10-01'
+          outDate: '2021-10-01',
+          phone:'11122233345',
         },
         {
           no: '1',
@@ -83,7 +85,8 @@ export default {
           type: '微信',
           money: '111,000',
           content: '哈哈减肥吧开始讲课',
-          status: '2',
+          id: '2',
+          phone:'12345678900',
           source: '录播',
           onDate: '2020-01-01',
           outDate: '2021-01-01'
@@ -92,18 +95,17 @@ export default {
       tabelColumn: [
         {
           label: '用户昵称',
-          key: 'no',
-          width: 120
+          key: 'content',
         },
         {
           label: '手机号',
-          key: 'time',
-          width: 240
+          key: 'phone',
+          width: 120
         },
         {
           label: '付费金额',
           key: 'type',
-          width: 100
+          width: 150
         },
         {
           label: '付费类型',
@@ -112,26 +114,21 @@ export default {
         },
         {
           label: '支付时间',
-          key: 'content',
-          width: 120
+          key: 'time',
+          width: 150,
         },
         {
           label: '是否参会',
-          key: 'status',
-          width: 120
+          key: 'source',
+          width: 100
         }
       ]
     };
   },
-  // components: {
-  //   tableList,
-  //   searchArea
-  // },
+  components: {
+   titleData
+  },
   methods: {
-    onHandleBtnClick(val) {
-      let methodsCombin = this.$options.methods;
-      methodsCombin[val.type](this, val);
-    },
     handleClick(tab) {
       this.activeIndex = tab.name;
     },
@@ -150,15 +147,32 @@ export default {
 
 <style lang="less" scoped>
   .income-detail{
+    height: 100%;
     .title-data {
       margin: 10px 0 20px 0;
       text-align: left;
-      line-height: 30px;
-      span{
+      p{
         font-size: 22px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
         color: #1a1a1a;
+        padding-bottom: 4px;
+      }
+    }
+    /deep/.box-card .el-card__body{
+      padding: 0;
+    }
+    /deep/.box-income .el-card__body{
+      padding: 24px;
+    }
+    .box-income{
+      height: calc(100% - 196px);
+      margin-top: 24px;
+      p{
+        padding-bottom: 7px;
+        font-size: 16px;
+        color:#1A1A1A;
+        font-weight: 400px;
       }
     }
   }

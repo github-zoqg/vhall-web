@@ -1,16 +1,16 @@
 var deviceType = (function() {
-  var ua = window.navigator.userAgent.toLocaleLowerCase()
-  var isIos = /iphone|ipad|ipod/.test(ua)
-  var isAndroid = /android/.test(ua)
+  var ua = window.navigator.userAgent.toLocaleLowerCase();
+  var isIos = /iphone|ipad|ipod/.test(ua);
+  var isAndroid = /android/.test(ua);
   return {
     isIos: isIos,
     isAndroid: isAndroid
-  }
-})()
+  };
+})();
 const softKeyboard = {
   mounted() {
     // console.error('软键盘----', deviceType)
-    this.blurKeyBoard()
+    this.blurKeyBoard();
   },
   methods: {
     blurKeyBoard() {
@@ -18,24 +18,24 @@ const softKeyboard = {
       if (deviceType.isAndroid) {
         // 原始高度
         var oldHeight =
-          document.documentElement.clientHeight || document.body.clientHeight
+          document.documentElement.clientHeight || document.body.clientHeight;
         window.addEventListener(
           'resize',
           () => {
             // 新高度
             var newHeight =
               document.documentElement.clientHeight ||
-              document.body.clientHeight
-            console.warn('new height', newHeight)
+              document.body.clientHeight;
+            console.warn('new height', newHeight);
             if (newHeight < oldHeight && !flag) {
               // 键盘弹起
             } else {
               // 键盘收起
-              flag = false
+              flag = false;
             }
           },
           false
-        )
+        );
       }
     }
     // 获取到焦点元素滚动到可视区方法
@@ -53,5 +53,5 @@ const softKeyboard = {
       }
     } */
   }
-}
-export default softKeyboard
+};
+export default softKeyboard;

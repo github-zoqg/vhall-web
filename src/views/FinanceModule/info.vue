@@ -4,8 +4,7 @@
       <span>财务总览</span>
     </div>
     <div class="version-info">
-      <version-info :upgrade_version="upgrade_version"></version-info>
-      <div class="grid-content" @click="goAccountDetail"><span>账单明细</span></div>
+      <version-info :userInfo="userInfo"></version-info>
     </div>
     <div class="statistical-line">
         <span @click="goPayList()">用量统计</span>
@@ -19,13 +18,15 @@
             class="button-tip"
           ></el-button>
         </el-tooltip>
-        <search-area
-          ref="searchArea"
-          :searchAreaLayout="searchAreaLayout"
-          @onSearchFun="getLineList('search')"
-        >
-        </search-area>
-        <lint-charts></lint-charts>
+        <el-card>
+          <search-area
+            ref="searchArea"
+            :searchAreaLayout="searchAreaLayout"
+            @onSearchFun="getLineList('search')"
+          >
+          </search-area>
+          <lint-charts></lint-charts>
+        </el-card>
     </div>
     <div class="statistical-line">
       <span>消费账单</span>
@@ -39,38 +40,40 @@
           class="button-tip"
         ></el-button>
       </el-tooltip>
-      <search-area
-          ref="searchAccount"
-          :searchAreaLayout="searchAccount"
-          @onSearchFun="getAccountList('search')"
-      >
-      </search-area>
-    </div>
-    <el-row type="flex" class="row-bg" justify="space-around">
-      <el-col :span="9">
-        <div class="grid-content">
-          <h1>100</h1>
-          <p>累计直播（个）</p>
-        </div>
-      </el-col>
-      <el-col :span="9">
-        <div class="grid-content">
-          <h1>12345</h1>
-          <p>最高并发（方）</p>
-          <span class="open">展开</span>
-        </div>
-      </el-col>
-    </el-row>
-    <table-list
-      ref="accountTableList"
-      :manageTableData="tableList"
-      :tabelColumnLabel="tabelColumn"
-      :isCheckout="isCheckout"
-      :isHandle="isHandle"
-      :totalNum="totalNum"
-      @getTableList="getAccountList"
-      >
-    </table-list>
+      <el-card>
+        <search-area
+            ref="searchAccount"
+            :searchAreaLayout="searchAccount"
+            @onSearchFun="getAccountList('search')"
+        >
+        </search-area>
+      <el-row type="flex" class="row-bg" justify="space-around">
+        <el-col :span="9">
+          <div class="grid-content">
+            <h1>100</h1>
+            <p>累计直播（个）</p>
+          </div>
+        </el-col>
+        <el-col :span="9">
+          <div class="grid-content">
+            <h1>12345</h1>
+            <p>最高并发（方）</p>
+            <span class="open">展开</span>
+          </div>
+        </el-col>
+      </el-row>
+      <table-list
+        ref="accountTableList"
+        :manageTableData="tableList"
+        :tabelColumnLabel="tabelColumn"
+        :isCheckout="isCheckout"
+        :isHandle="isHandle"
+        :totalNum="totalNum"
+        @getTableList="getAccountList"
+        >
+      </table-list>
+      </el-card>
+      </div>
   </div>
 </template>
 
@@ -89,7 +92,7 @@ export default {
   },
   data() {
     return {
-      upgrade_version: '旗舰版',
+      userInfo: '',
       time: '',
       dataValue: '',
       totalNum: 1000,
@@ -199,7 +202,17 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.getUserVersion();
+  },
   methods: {
+     getUserVersion() {
+      this.$fetch('getInfo', {}).then(res =>{
+        this.userInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
     getLineList(params) {
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       console.log(formParams, params);
@@ -212,11 +225,6 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, formParams);
       console.log(obj);
-    },
-    goAccountDetail() {
-      this.$router.push({
-        name: 'infoDetail'
-      });
     },
     goPayList() {
       this.$router.push({
@@ -236,6 +244,9 @@ export default {
   /deep/.el-button.is-circle{
     padding:3px;
   }
+  /deep/.el-card__body{
+    padding: 10px 20px;
+  }
   .title-data {
       margin: 10px 0 20px 0;
       text-align: left;
@@ -250,10 +261,12 @@ export default {
     .statistical-line {
       text-align: left;
       position: relative;
+      margin-top: 20px;
       span {
+        display: inline-block;
         font-size: 16px;
         color: #1a1a1a;
-        margin: 0;
+        margin-bottom: 10px;
         // padding-left: 34px;
       }
     }

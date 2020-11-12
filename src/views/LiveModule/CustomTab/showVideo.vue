@@ -41,7 +41,7 @@
 <script>
 export default {
 name: "showImgLink.vue"
-}
+};
 </script>
 
 <style lang="less" scoped>

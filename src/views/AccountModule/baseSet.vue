@@ -62,7 +62,7 @@ export default {
           { max: 15, message: '最多可输入15个字符', trigger: 'blur' },
         ],
       }
-    }
+    };
   },
   methods: {
     handleUploadSuccess(res, file){

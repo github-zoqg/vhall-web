@@ -27,9 +27,9 @@ export default {
   data() {
     return {
       switchVal: 0
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

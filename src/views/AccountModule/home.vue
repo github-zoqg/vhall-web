@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "myHome.vue"
-}
+};
 </script>
 
 <style scoped>

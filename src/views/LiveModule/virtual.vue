@@ -77,7 +77,7 @@ export default {
         return callback(new Error('热度不能大于观看人数的80%'));
       } else {
         if (this.virtualForm.pv !== '') {
-          this.$refs.virtualForm.clearValidate('pv')
+          this.$refs.virtualForm.clearValidate('pv');
         }
         callback();
       }
@@ -112,7 +112,7 @@ export default {
           { validator: checkTime, trigger: 'blur' }
         ]
       }
-    }
+    };
   },
   methods: {
     // 获取虚拟人数信息状态
