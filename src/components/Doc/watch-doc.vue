@@ -43,16 +43,19 @@
         @click="docControl('fullscreen')"
       ></div>
     </div>
+     <!-- v-if="!VhallMsgSdk" -->
+    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.7.js"></remote-script>
+    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.4-1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
-import EventBus from '../../utils/Events'
-const roleTypeMap = {
-  1: VHDocSDK.RoleType.HOST,
-  2: VHDocSDK.RoleType.SPECTATOR,
-  3: VHDocSDK.RoleType.ASSISTANT,
-  4: VHDocSDK.RoleType.GUEST
-}
+// import this.$EventBus from '../../utils/Events';
+// const roleTypeMap = {
+//   1: window.VHDocSDK.RoleType.HOST,
+//   2: window.VHDocSDK.RoleType.SPECTATOR,
+//   3: window.VHDocSDK.RoleType.ASSISTANT,
+//   4: window.VHDocSDK.RoleType.GUEST
+// };
 export default {
   props: {
     isMini: {
@@ -99,10 +102,11 @@ export default {
       cids: [],
       currentCid: '',
       activeTool: '', // 激活状态的工具
-      isFullscreen: false
+      isFullscreen: false,
+      VhallMsgSdk: !!window.VhallMsg, // 是否加载了msgsdk
       // vodCids: [],
       // currentId: ''
-    }
+    };
   },
   watch: {
     // isMini () {
@@ -110,66 +114,66 @@ export default {
     // },
     currentCid (newval) {
       if (newval) {
-        this.resize()
+        this.resize();
       }
     }
   },
   mounted () {
-    this._listenEvents()
-    this._initDocSDK()
+    this._listenEvents();
+    // this._initDocSDK();
   },
   methods: {
     /**
      * 初始化文档区域宽度，window resize时也触发
      */
     initWidth (type = 'document') {
-      let wrapWidth = null
-      let wrapHeight = null
+      let wrapWidth = null;
+      let wrapHeight = null;
       if (this.isMini) {
         let style = window.getComputedStyle(
           document.querySelector('.vhall-saas-miniArea-doc')
-        )
-        wrapWidth = parseFloat(style.width)
-        wrapHeight = parseFloat(style.height)
+        );
+        wrapWidth = parseFloat(style.width);
+        wrapHeight = parseFloat(style.height);
       } else {
         let style = window.getComputedStyle(
           this.$refs.watchDocWrapper.parentNode
-        )
-        wrapWidth = parseFloat(style.width)
-        wrapHeight = parseFloat(style.height)
+        );
+        wrapWidth = parseFloat(style.width);
+        wrapHeight = parseFloat(style.height);
       }
-      let ratio = 16 / 9
-      let docBoxWidth = null
-      let docBoxHeight = null
+      let ratio = 16 / 9;
+      let docBoxWidth = null;
+      let docBoxHeight = null;
       if (wrapWidth / wrapHeight > ratio) {
-        docBoxHeight = wrapHeight
-        docBoxWidth = docBoxHeight * ratio
+        docBoxHeight = wrapHeight;
+        docBoxWidth = docBoxHeight * ratio;
       } else {
-        docBoxWidth = wrapWidth
-        docBoxHeight = docBoxWidth * (1 / ratio)
+        docBoxWidth = wrapWidth;
+        docBoxHeight = docBoxWidth * (1 / ratio);
       }
       if (type === 'document') {
         this.docBoxStyle = {
           width: `${docBoxWidth}px`,
           height: `${docBoxHeight}px`
-        }
-        console.log('this.docBoxStyle', this.docBoxStyle)
+        };
+        console.log('this.docBoxStyle', this.docBoxStyle);
       } else {
         this.boardBoxStyle = {
           width: `${docBoxWidth}px`,
           height: `${docBoxHeight}px`
-        }
-        console.log('this.boardBoxStyle', this.boardBoxStyle)
+        };
+        console.log('this.boardBoxStyle', this.boardBoxStyle);
       }
     },
     resize () {
       if (this.watchDocShow) {
         this.$nextTick(async () => {
           if (!this.currentCid) {
-            return
+            return;
           }
-          let type = this.currentCid.split('-')[0]
-          this.initWidth(type)
+          let type = this.currentCid.split('-')[0];
+          this.initWidth(type);
           if (type === 'document') {
             this.docSDK.setSize(
               parseFloat(this.docBoxStyle.width),
@@ -177,7 +181,7 @@ export default {
               {
                 id: this.currentCid
               }
-            )
+            );
           } else {
             this.docSDK.setSize(
               parseFloat(this.boardBoxStyle.width),
@@ -185,27 +189,27 @@ export default {
               {
                 id: this.currentCid
               }
-            )
+            );
           }
-        })
+        });
       }
     },
     _listenEvents () {
       window.addEventListener('resize', () => {
-        console.log('========触发resize事件===========')
-        this.resize()
-      })
+        console.log('========触发resize事件===========');
+        this.resize();
+      });
       // 全屏兼容360浏览器等
       const setFullscreen = () => {
         const fullscreenElement =
           document.fullscreenElement ||
           document.webkitFullscreenElement ||
           document.mozFullscreenElement ||
-          document.msFullscreenElement
+          document.msFullscreenElement;
         if (!fullscreenElement) {
-          let video = document.querySelector('.vhall-saas-miniArea')
-          video && (video.style.visibility = 'visible')
-          this.isFullscreen = false
+          let video = document.querySelector('.vhall-saas-miniArea');
+          video && (video.style.visibility = 'visible');
+          this.isFullscreen = false;
         }
         if (
           !fullscreenElement ||
@@ -215,10 +219,10 @@ export default {
           setTimeout(() => {
             const wrapper = document.querySelector(
               '.vhall-saas-watchbox__mainContent__bigArea-placeholder'
-            )
-            wrapper && (wrapper.style.paddingBottom = '46px')
-            this.resize()
-          }, 100)
+            );
+            wrapper && (wrapper.style.paddingBottom = '46px');
+            this.resize();
+          }, 100);
         }
         if (
           !fullscreenElement ||
@@ -226,61 +230,64 @@ export default {
             fullscreenElement.className ==
               'vhall-saas-watchbox__mainContent__bigArea-placeholder')
         ) {
-          this.resize()
+          this.resize();
           setTimeout(() => {
             const wrapper = document.querySelector(
               '.vhall-saas-watchbox__mainContent__bigArea-placeholder'
-            )
+            );
             if (wrapper) {
-              wrapper.style.width = '100%'
+              wrapper.style.width = '100%';
             }
-            this.resize()
-          }, 100)
+            this.resize();
+          }, 100);
         }
-      }
-      window.addEventListener('fullscreenchange', setFullscreen)
-      window.addEventListener('webkitfullscreenchange', setFullscreen)
-      window.addEventListener('mozfullscreenchange', setFullscreen)
-      window.addEventListener('msfullscreenchange', setFullscreen)
-      window.addEventListener('MSFullscreenChange', setFullscreen)
+      };
+      window.addEventListener('fullscreenchange', setFullscreen);
+      window.addEventListener('webkitfullscreenchange', setFullscreen);
+      window.addEventListener('mozfullscreenchange', setFullscreen);
+      window.addEventListener('msfullscreenchange', setFullscreen);
+      window.addEventListener('MSFullscreenChange', setFullscreen);
       // 直播结束
-      EventBus.$on('live_over', () => {
-        this.watchDocShow = false
-        EventBus.$emit('watchDocShow', this.watchDocShow)
-      })
-      EventBus.$on('live_broadcast_start', msg => {
-        this.watchDocShow = false
-        EventBus.$emit('watchDocShow', this.watchDocShow)
-        this.loadRemote(msg.channel_id)
-      })
-      EventBus.$on('live_broadcast_stop', msg => {
-        if (this.roleName) return
-        console.log('live_broadcast_stop', this.roleName)
-        clearTimeout(this.rebroadcastStopTimer)
+      this.$EventBus.$on('live_over', () => {
+        this.watchDocShow = false;
+        this.$EventBus.$emit('watchDocShow', this.watchDocShow);
+      });
+      this.$EventBus.$on('live_broadcast_start', msg => {
+        this.watchDocShow = false;
+        this.$EventBus.$emit('watchDocShow', this.watchDocShow);
+        this.loadRemote(msg.channel_id);
+      });
+      // eslint-disable-next-line no-unused-vars
+      this.$EventBus.$on('live_broadcast_stop', msg => {
+        if (this.roleName) return;
+        console.log('live_broadcast_stop', this.roleName);
+        clearTimeout(this.rebroadcastStopTimer);
         this.rebroadcastStopTimer = setTimeout(() => {
-          this.watchDocShow = false
-          EventBus.$emit('watchDocShow', this.watchDocShow)
-          this.loadRemote(this.channelId)
-        }, 500)
-      })
+          this.watchDocShow = false;
+          this.$EventBus.$emit('watchDocShow', this.watchDocShow);
+          this.loadRemote(this.channelId);
+        }, 500);
+      });
       // 互动连麦成功
-      EventBus.$on('vrtc_connect_success', msg => {
+      this.$EventBus.$on('vrtc_connect_success', msg => {
         if (msg.room_join_id == this.joinId) {
-          this.docSDK.setPlayMode(VHDocSDK.PlayMode.INTERACT)
+          this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.INTERACT);
         }
-      })
+      });
       // 互动连麦断开成功
-      EventBus.$on('vrtc_disconnect_success', msg => {
-        let mode = VHDocSDK.PlayMode.FLV // 根据配置选择播放模式
+      this.$EventBus.$on('vrtc_disconnect_success', msg => {
+        let mode = window.VHDocSDK.PlayMode.FLV; // 根据配置选择播放模式
         if (this.playMode) {
-          mode = VHDocSDK.PlayMode.HLS
+          mode = window.VHDocSDK.PlayMode.HLS;
         }
         if (msg.target_id == this.joinId) {
           try {
-            this.docSDK.setPlayMode(mode)
-          } catch (e) {}
+            this.docSDK.setPlayMode(mode);
+          } catch (e) {
+            // eslint-disable-next-line no-unused-vars
+          }
         }
-      })
+      });
     },
     /**
      * 初始化文档SDK,观看端观看文档时调用
@@ -291,180 +298,173 @@ export default {
         roomId: this.roomId,
         channelId: this.channelId, // 频道id 必须
         appId: this.appId, // appId 必须
-        role: roleTypeMap[this.roleType], // 角色 必须
+        role: window.roleTypeMap[this.roleType], // 角色 必须
         isVod: this.isVod, // 是否是回放 必须
-        client: VHDocSDK.Client.PC_WEB, // 客户端类型
+        client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
         token: this.token
-      }
-      console.log('实例化文档参数', opt)
+      };
+      console.log('实例化文档参数', opt);
       let success = () => {
         if (!this.isVod) {
-          this.loadRemote()
+          this.loadRemote();
         }
-      }
+        this.$EventBus.$emit('docSDK_ready', this.docSDK);
+      };
       let failed = error => {
-        console.error('实例化文档失败', error.msg)
-      }
-      this.docSDK = VHDocSDK.createInstance(opt, success, failed)
+        console.error('实例化文档失败', error.msg);
+      };
+      this.docSDK = window.VHDocSDK.createInstance(opt, success, failed);
       // ====================================================================================
       // 监听回放消息
       if (this.isVod) {
-        window.VhallMsg.onBroadcast(e => {
-          if (e.type === 'cue_point') {
-            this.docSDK.setVodData({
-              data: JSON.parse(e.data).cuepoint || []
-            })
-            const data = this.docSDK.getVodAllCids()
-            this.cids = data.map(item => item.cid)
-            this.$nextTick(() => {
-              data.forEach(item => {
-                const { cid, type } = item
-                this.initContainer({ type: type.toLowerCase(), id: cid })
-              })
-            })
-          } else if (e.type === 'time_update') {
-            let player = e.data.target
-            let time = player.currentTime
-            this.docSDK.setVodTime(time)
-          }
-        })
+        this.docSDK.on(window.VHDocSDK.Event.VOD_CUEPOINT_LOAD_COMPLETE, async () => {
+          console.log('VOD_CUEPOINT_LOAD_COMPLETE', this.docSDK.getVodAllCids());
+          const data = this.docSDK.getVodAllCids();
+          this.cids = data.map(item => item.cid);
+          await this.$nextTick();
+          data.forEach(({cid, type}) => {
+            this.initContainer({ type: type.toLowerCase(), id: cid });
+          });
+        });
         // 监听回放事件
-        this.FIRST = true
-        this.docSDK.on(VHDocSDK.Event.VOD_TIME_UPDATE, data => {
+        this.FIRST = true;
+        this.docSDK.on(window.VHDocSDK.Event.VOD_TIME_UPDATE, data => {
           if (this.FIRST) {
-            EventBus.$emit('watchDocShow', data.watchOpen)
-            this.FIRST = false
+            this.$EventBus.$emit('watchDocShow', data.watchOpen);
+            this.FIRST = false;
           }
           if (data.watchOpen != this.watchDocShow) {
-            EventBus.$emit('watchDocShow', data.watchOpen)
+            this.$EventBus.$emit('watchDocShow', data.watchOpen);
           }
-          this.watchDocShow = data.watchOpen
+          this.watchDocShow = data.watchOpen;
 
           if (data.activeId) {
             // let type = data.activeId.split('-')[0]
             // this.currentVodCid = data.activeId
             // this.docSDK.selectContainer({ id: data.activeId })
-            this.selectContainer(data.activeId)
+            this.selectContainer(data.activeId);
           } else {
-            this.currentCid = ''
+            this.currentCid = '';
           }
           // {container:[容器id], activeid: 容器id, watchOpen: true | false}
-        })
+        });
       } else {
-        this.docSDK.on(VHDocSDK.Event.SWITCH_CHANGE, status => {
-          console.log('==========控制文档开关=============', status)
+        this.docSDK.on(window.VHDocSDK.Event.SWITCH_CHANGE, status => {
+          console.log('==========控制文档开关=============', status);
           if (status == 'on') {
-            this.watchDocShow = true
+            this.watchDocShow = true;
           } else {
-            this.watchDocShow = false
+            this.watchDocShow = false;
           }
-          EventBus.$emit('watchDocShow', this.watchDocShow)
-        })
-        this.docSDK.on(VHDocSDK.Event.CREATE_CONTAINER, async data => {
-          console.log('===================创建容器====================', data)
-          if (this.cids.includes(data.id)) return
-          this.cids.push(data.id)
-          await this.$nextTick()
-          data.select = true
-          this.initContainer(data)
-        })
-        this.docSDK.on(VHDocSDK.Event.SELECT_CONTAINER, async data => {
-          console.log('===================选择容器====================', data)
+          this.$EventBus.$emit('watchDocShow', this.watchDocShow);
+        });
+        this.docSDK.on(window.VHDocSDK.Event.CREATE_CONTAINER, async data => {
+          console.log('===================创建容器====================', data);
+          if (this.cids.includes(data.id)) return;
+          this.cids.push(data.id);
+          await this.$nextTick();
+          data.select = true;
+          this.initContainer(data);
+        });
+        this.docSDK.on(window.VHDocSDK.Event.SELECT_CONTAINER, async data => {
+          console.log('===================选择容器====================', data);
           // 判断容器是否存在
           if (this.cids.includes(data.id)) {
-            await this.$nextTick()
-            this.selectContainer(data.id)
+            await this.$nextTick();
+            this.selectContainer(data.id);
           } else {
-            this.cids.push(data.id)
-            await this.$nextTick()
-            data.select = true
+            this.cids.push(data.id);
+            await this.$nextTick();
+            data.select = true;
             this.initContainer({
               type: data.id.split('-')[0],
               id: data.id,
               docId: ''
-            })
-            this.selectContainer(data.id)
+            });
+            this.selectContainer(data.id);
           }
-        })
-        this.docSDK.on(VHDocSDK.Event.DELETE_CONTAINER, data => {
-          console.log('===================删除容器====================', data)
-          let index = this.cids.indexOf(data.id)
+        });
+        this.docSDK.on(window.VHDocSDK.Event.DELETE_CONTAINER, data => {
+          console.log('===================删除容器====================', data);
+          let index = this.cids.indexOf(data.id);
           if (index > -1) {
-            this.docSDK.destroyContainer({ id: data.id })
-            this.cids.splice(index, 1) // 删除dom结构
+            this.docSDK.destroyContainer({ id: data.id });
+            this.cids.splice(index, 1); // 删除dom结构
           }
           if (this.currentCid == data.id) {
-            this.currentCid = ''
+            this.currentCid = '';
           }
-        })
+        });
       }
-      this.docSDK.on(VHDocSDK.Event.DOCUMENT_NOT_EXIT, ({cid, docId}) => {
-        console.log('====================文档不存在或已删除=================', cid, this.currentCid, this.watchDocShow)
+      // eslint-disable-next-line no-unused-vars
+      this.docSDK.on(window.VHDocSDK.Event.DOCUMENT_NOT_EXIT, ({cid, docId}) => {
+        console.log('====================文档不存在或已删除=================', cid, this.currentCid, this.watchDocShow);
         if (this.watchDocShow) {
           this.$message({
             type: 'error',
             message: '文档不存在或已删除'
-          })
+          });
           this.deleteTimer = setTimeout(() => {
-            let index = this.cids.indexOf(cid)
-            this.cids.splice(index, 1)
-            this.docSDK.destroyContainer({id: this.currentCid})
-            this.currentCid = ''
-          }, 3000) // 其他地方调用回将值重新传入
+            let index = this.cids.indexOf(cid);
+            this.cids.splice(index, 1);
+            this.docSDK.destroyContainer({id: this.currentCid});
+            this.currentCid = '';
+          }, 3000); // 其他地方调用回将值重新传入
         }
-      })
-      this.docSDK.on(VHDocSDK.Event.ERROR, error => {
-        console.error(error)
-      })
+      });
+      this.docSDK.on(window.VHDocSDK.Event.ERROR, error => {
+        console.error(error);
+      });
     },
     async loadRemote (channelId = null) {
-      let params = null
+      let params = null;
       if (channelId) {
-        params = { channelId }
+        params = { channelId };
       } else if (this.rebroadcastChannelId) {
-        params = { channelId: this.rebroadcastChannelId }
+        params = { channelId: this.rebroadcastChannelId };
       }
-      let res = await this.docSDK.getContainerInfo(params)
+      let res = await this.docSDK.getContainerInfo(params);
       // res.data会返回空数组或者一个对象，所以需要判断，应该是后端（朱俊亚）优化
       if (res instanceof Array && !res.length) {
-        EventBus.$emit('watchDocShow', false)
-        this.watchDocShow = false
-        return
+        this.$EventBus.$emit('watchDocShow', false);
+        this.watchDocShow = false;
+        return;
       }
-      let { list = [], switch_status } = res
-      console.log('=============获取文档容器信息=============', res)
-      this.watchDocShow = Boolean(switch_status)
-      EventBus.$emit('watchDocShow', this.watchDocShow)
+      let { list = [], switch_status } = res;
+      console.log('=============获取文档容器信息=============', res);
+      this.watchDocShow = Boolean(switch_status);
+      this.$EventBus.$emit('watchDocShow', this.watchDocShow);
       // if (!this.watchDocShow) {
       //   console.log('========初始化观看端文档容器状态 隐藏========')
       //   return
       // }
       if (!list.length) {
-        return
+        return;
       }
-      this.cids = list.map(item => item.cid)
-      let activeItem = list.find(item => item.active == 1)
+      this.cids = list.map(item => item.cid);
+      let activeItem = list.find(item => item.active == 1);
       this.$nextTick(() => {
+        // eslint-disable-next-line no-unused-vars
         list.forEach((item, index) => {
           this.initContainer({
             type: item.cid.split('-')[0],
             id: item.cid,
             docId: item.docId
-          })
-          this.docSDK.setRemoteData(item)
-        })
+          });
+          this.docSDK.setRemoteData(item);
+        });
         if (activeItem) {
-          this.selectContainer(activeItem.cid)
+          this.selectContainer(activeItem.cid);
         }
-      })
+      });
     },
     /**
      * 初始化文档容器
      */
     initContainer (data) {
-      this.initWidth(data.type)
+      this.initWidth(data.type);
       if (data.type === 'document') {
-        console.log('docBoxStyle', this.docBoxStyle)
+        console.log('docBoxStyle', this.docBoxStyle);
         let opts = {
           id: data.id,
           docId: data.docId || '',
@@ -472,12 +472,12 @@ export default {
           width: parseFloat(this.docBoxStyle.width), // div 宽度，像素单位，数值型不带px 必须
           height: parseFloat(this.docBoxStyle.height), // div 高度，像素单位，数值型不带px 必须
           noDispatch: !data.select // 通过监听创建容器消息创建的需要派发加载完成消息
-        }
-        console.log(opts)
-        this.docSDK.createDocument(opts)
+        };
+        console.log(opts);
+        this.docSDK.createDocument(opts);
       } else {
-        console.log('boardBoxStyle', this.boardBoxStyle)
-        this.boardID = data.id
+        console.log('boardBoxStyle', this.boardBoxStyle);
+        this.boardID = data.id;
         let opts = {
           id: data.id,
           elId: data.id, // div 容器 必须
@@ -485,94 +485,104 @@ export default {
           height: parseFloat(this.boardBoxStyle.height), // div 高度，像素单位，数值型不带px 必须
           noDispatch: !data.select,
           backgroundColor: '#FFFFFF'
-        }
-        this.docSDK.createBoard(opts)
+        };
+        this.docSDK.createBoard(opts);
       }
     },
     selectContainer (id) {
-      this.docSDK.selectContainer({ id })
-      this.currentCid = id
+      this.docSDK.selectContainer({ id });
+      this.currentCid = id;
     },
     docControl (type) {
       if (
         ['zoomIn', 'zoomOut', 'zoomReset', 'move', 'fullcreen'].includes(type)
       ) {
-        this.activeTool = type
+        this.activeTool = type;
       }
-      this.routeTool(type)
+      this.routeTool(type);
     },
     routeTool (type) {
       switch (type) {
         // 放大
         case 'zoomIn':
-          this.docSDK.zoomIn()
-          break
+          this.docSDK.zoomIn();
+          break;
         // 缩小
         case 'zoomOut':
-          this.docSDK.zoomOut()
-          break
+          this.docSDK.zoomOut();
+          break;
         // 还原
         case 'zoomReset':
-          this.docSDK.zoomReset()
-          break
+          this.docSDK.zoomReset();
+          break;
         // 移动
         case 'move':
-          this.docSDK.move()
-          break
+          this.docSDK.move();
+          break;
         // 全屏
         case 'fullscreen':
-          const wrapper = document.querySelector(
-            '.vhall-saas-watchbox__mainContent__bigArea-placeholder'
-          )
-          const el = wrapper
-            ? '.vhall-saas-watchbox__mainContent__bigArea-placeholder'
-            : '.vhall-watch-doc'
-          this.fullscreen(el)
-          this.resize()
-          break
+
+          // eslint-disable-next-line no-case-declarations
+          const wrapper = document.querySelector('.vhall-saas-watchbox__mainContent__bigArea-placeholder');
+          // eslint-disable-next-line no-case-declarations
+          const el = wrapper ? '.vhall-saas-watchbox__mainContent__bigArea-placeholder' : '.vhall-watch-doc';
+          this.fullscreen(el);
+          this.resize();
+          break;
         default:
-          break
+          break;
       }
     },
     fullscreen (el) {
-      let video = document.querySelector('.vhall-saas-miniArea')
+      let video = document.querySelector('.vhall-saas-miniArea');
       if (this.isFullscreen) {
-        this.exitFullscreen(el)
-        video && (video.style.visibility = 'visible')
+        this.exitFullscreen(el);
+        video && (video.style.visibility = 'visible');
       } else {
-        this.enterFullscreen(el)
-        video && (video.style.visibility = 'hidden')
+        this.enterFullscreen(el);
+        video && (video.style.visibility = 'hidden');
         setTimeout(() => {
           const wrapper = document.querySelector(
             '.vhall-saas-watchbox__mainContent__bigArea-placeholder'
-          )
-          wrapper && (wrapper.style.padding = '0px')
-        }, 300)
+          );
+          wrapper && (wrapper.style.padding = '0px');
+        }, 300);
       }
     },
     enterFullscreen (el) {
-      let element = document.querySelector(el)
-      if (element.requestFullscreen) element.requestFullscreen()
-      else if (element.mozRequestFullScreen) element.mozRequestFullScreen()
+      let element = document.querySelector(el);
+      if (element.requestFullscreen) element.requestFullscreen();
+      else if (element.mozRequestFullScreen) element.mozRequestFullScreen();
       else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen()
-      } else if (element.msRequestFullscreen) element.msRequestFullscreen()
-      this.isFullscreen = true
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) element.msRequestFullscreen();
+      this.isFullscreen = true;
     },
     exitFullscreen () {
-      if (document.exitFullscreen) document.exitFullscreen()
-      else if (document.mozCancelFullScreen) document.mozCancelFullScreen()
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
-      else if (document.msExitFullscreen) document.msExitFullscreen()
-      this.isFullscreen = false
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+      this.isFullscreen = false;
+    },
+    sdkLoad(){
+      window.roleTypeMap = {
+        1: window.VHDocSDK.RoleType.HOST,
+        2: window.VHDocSDK.RoleType.SPECTATOR,
+        3: window.VHDocSDK.RoleType.ASSISTANT,
+        4: window.VHDocSDK.RoleType.GUEST
+      };
+      this._initDocSDK();
+      // if(window.VhallMsg)
+
     }
   },
   beforeDestroy () {
-    console.log('测试文档销毁================')
-    this.docSDK.destroy()
-    this.docSDK = null
+    console.log('测试文档销毁================');
+    this.docSDK.destroy();
+    this.docSDK = null;
   }
-}
+};
 </script>
 <style lang="less" scoped>
 .vhall-watch-doc {

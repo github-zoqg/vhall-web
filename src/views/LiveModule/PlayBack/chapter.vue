@@ -4,24 +4,26 @@
     <div class="contentView">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
-        <player ref="player"  v-bind="playerProps"></player>
+        <player ref="player" v-if="docSDKReady"  v-bind="playerProps"></player>
       </div>
-      <div class="docBox" id="docBox">
-        <!-- <doc
-          ref="doc"
-          webinarId="561752317"
-          docPermissionId="no"
-          documentId="docBox"
-          :isInteract="true"
-          :roleName="2"
-          :roomId="playerProps.roomId"
-          :channelId="playerProps.channel_id"
-          :appId="playerProps.appId"
-          :token="playerProps.token"
-          :liveStatus="2"
-          :accountId="playerProps.accountId"
-          :isVod="true"
-        ></doc> -->
+      <div class="docBox">
+        <div class="docInner">
+          <doc
+            ref="doc"
+            webinarId="561752317"
+            docPermissionId="no"
+            :isInteract="true"
+            :roleType="2"
+            :roomId="playerProps.roomId"
+            :channelId="playerProps.channel_id"
+            :appId="playerProps.appId"
+            :token="playerProps.token"
+            :liveStatus="2"
+            :joinId="287484"
+            :accountId="playerProps.accountId"
+            :isVod="true"
+          ></doc>
+        </div>
         <div class="actionBar">
           <span class="translatePage">
             <i class="el-icon-arrow-left" @click="prevPage"></i>
@@ -92,14 +94,14 @@
       </el-table>
     </div>
     <associateDoc ref="associateDialog"></associateDoc>
-    <previewChapter v-if="previewVisible" :chapters='tableData' @close="closePreview"></previewChapter>
+    <previewChapter :docSdk="docsdk" :playerProps="playerProps" v-if="previewVisible" :chapters='tableData' @close="closePreview"></previewChapter>
   </div>
 </template>
 
 <script>
 import pageTitle from '../components/pageTitle';
-import player from '@/components/Player/index.vue';
-// import doc from '@/components/Doc';
+import player from '@/components/Player_1';
+import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
 import previewChapter from './previewChapter';
 export default {
@@ -109,13 +111,14 @@ export default {
         accountId: 16422750,
         nickName: '123',
         appId: 'fd8d3653',
-        token: 'access:fd8d3653:24845ebe5972cc7e',
+        token: 'access:fd8d3653:4ee0cc5054b5c144',
         type: 'vod',
         roomId: 'lss_8018578c',
         channel_id: 'ch_93f8b149',
         vodOption: {
-          recordId: '6a9fb155'
+          recordId: '40fc09d4'
         },
+        openPlayerUI: false,
         playerInfo: {}
       },
       docSDKReady: false,
@@ -131,6 +134,30 @@ export default {
       ],
       selectedData: [],
       previewVisible: false,
+      docToolStatus: {
+        docToolActive: '',
+        hb: {
+          width: 7,
+          color: '#FD2C0A'
+        },
+        ygb: {
+          width: 7,
+          color: '#FD2C0A'
+        },
+        graph: {
+          color: '#FD2C0A',
+          value: 'setCircle'
+        },
+        font: {
+          width: '18',
+          color: '#FD2C0A'
+        }
+      },
+    };
+  },
+  provide () {
+    return {
+      docToolStatus: this.docToolStatus
     };
   },
   computed: {
@@ -141,15 +168,39 @@ export default {
   },
   created(){
     this.$EventBus.$on('docSDK_ready', docsdk=>{
-      this.docSDKReady = true;
+      // setTimeout(()=>{
+        this.docSDKReady = true;
+      // }, 3000);
+
+
       this.docsdk = docsdk;
+      this.docsdk;
+      this.docsdk.on(window.VHDocSDK.Event.PAGE_CHANGE, event => {
+        /* event内容
+        {
+          id:"document-5cbbb8f", // 当前选中的容器id
+          info:{
+              docType: "h5" // 演示的文档类型
+              hash: "e4d67e902b9ecddd157ed3ffbadb6bc4" // 文档hash
+              pageHash: "e4d67e902b9ecddd157ed3ffbadb6bc4/0" // 文档对应的pageHash
+              slideIndex: 0 // 当前页码
+              slidesTotal: 4 // 总页码
+              stepIndex: 0 // 当前步数
+              stepsAll: [1, 1, 1, 1,] 每页的总步数
+              totalSteps: 1 // 当前页的总步数
+            ｝
+        ｝*/
+        console.log(event);
+        this.pageInfo.pageIndex= event.info.slideIndex+1;
+        this.pageInfo.total= event.info.slidesTotal;
+      });
       console.log('docSDK_ready', docsdk, this.$refs.doc);
     });
-    this.$EventBus.$on('component_docSDK_ready', docsdk=>{
-      this.docSDKReady = true;
-      this.docsdk = docsdk;
-      console.log('component_docSDK_ready', docsdk, this.$refs.doc);
-    });
+    // this.$EventBus.$on('component_docSDK_ready', docsdk=>{
+    //   this.docSDKReady = true;
+    //   this.docsdk = docsdk;
+    //   console.log('component_docSDK_ready', docsdk, this.$refs.doc);
+    // });
 
     this.$EventBus.$on('component_playerSDK_ready', ()=>{
       console.log('component_playerSDK_ready');
@@ -165,16 +216,16 @@ export default {
 
   },
   beforeDestroy(){
-    this.$EventBus.$off('component_docSDK_ready');
+    this.$EventBus.$off('docSDK_ready');
     this.$EventBus.$off('component_playerSDK_ready');
     this.$EventBus.$off('component_page_info');
   },
   methods: {
     prevPage(){
-      this.docsdk._currentDoc && this.docsdk._currentDoc.prevPage();
+      this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
     },
     nextPage(){
-      this.docsdk._currentDoc && this.docsdk._currentDoc.nextPage();
+      this.docsdk.nextPage({id: document.querySelector('.docInner .doc-box').id});
     },
     handleSelectionChange(val){
       this.selectedData = val;
@@ -223,7 +274,7 @@ export default {
   components: {
     pageTitle,
     player,
-    // doc,
+    doc,
     associateDoc,
     previewChapter
   }
@@ -235,6 +286,7 @@ export default {
     padding: 24px;
     background: #222222;
     display: flex;
+    min-height: 320px;
     justify-content: space-between;
     >div{
       flex: 1;
@@ -242,6 +294,10 @@ export default {
     .docBox{
       display: flex;
       flex-direction: column;
+      .docInner{
+        height: 100%;
+        background-color: #292929;
+      }
     }
     .actionBar{
       height: 48px;
@@ -271,7 +327,11 @@ export default {
       visibility: visible;
       opacity: 1;
       z-index: 2;
+      display: block !important;
       .vhallPlayer-progress-container .vhallPlayer-progress-play{
+        background: #FB3A32;
+      }
+      .vhallPlayer-verticalSlider-popup .vhallPlayer-verticalSlider-box .verticalSlider-range .verticalSlider-value{
         background: #FB3A32;
       }
       .vhallPlayer-playBtn.play:hover{

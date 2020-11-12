@@ -3,32 +3,35 @@
     <el-container class="inner">
       <span class="close" @click="$emit('close')">&times;</span>
       <el-aside width="500px">
-        <doc
+        <div id="previewDocBox"></div>
+        <!-- <doc
           ref="doc"
           webinarId="561752317"
           docPermissionId="no"
-          :roleName="2"
+          :isInteract="true"
+          :roleType="2"
           :roomId="playerProps.roomId"
           :channelId="playerProps.channel_id"
           :appId="playerProps.appId"
           :token="playerProps.token"
           :liveStatus="2"
+          :joinId="287484"
           :accountId="playerProps.accountId"
           :isVod="true"
-        ></doc>
+        ></doc> -->
       </el-aside>
       <el-container>
         <el-header height='114px'>
-          <player ref="player" v-bind="playerProps" nodeId='previewPlayer'></player>
+          <player ref="player" v-bind="playerProps" nodeId='previewPlayer' :openPlayerUI="false"></player>
         </el-header>
         <el-main>
           <div class="tab">
             <span>章节</span>
           </div>
           <ul class="chapterList">
-            <li v-for="(item, index) in chapters" :key="index">
+            <li v-for="(item, index) in chapters" @click="chapterHandler(index)" :key="index">
               <span class="title">{{index+1}}. {{item.subject}}</span>
-              <span>{{item.times}}</span>
+              <span class="times">{{item.times | secondsFormmat}}</span>
             </li>
           </ul>
         </el-main>
@@ -38,35 +41,61 @@
 </template>
 
 <script>
-import player from '@/components/Player';
-import doc from '@/components/Doc';
+import player from '@/components/Player_1';
+// import doc from '@/components/Doc/watch-doc';
 export default {
   data(){
     return {
-      playerProps: {
-        accountId: 16422750,
-        nickName: '123',
-        appId: 'fd8d3653',
-        token: 'access:fd8d3653:24845ebe5972cc7e',
-        type: 'vod',
-        roomId: 'lss_8018578c',
-        channel_id: 'ch_93f8b149',
-        openPlayerUI: false,
-        vodOption: {
-          recordId: '6a9fb155'
-        },
-      },
     };
   },
   props: {
     chapters: {
       type: Array,
       default: ()=> []
+    },
+    playerProps: {
+      type: Object,
+    },
+    docSdk: {
+      type: Object
     }
+  },
+  mounted(){
+    console.log(this.$refs.previewDocBox);
+    // document.getElementById('previewDocBox').append(document.querySelector('.vhall-watch-doc').cloneNode());
+    this.docSdk.createDocument({elId: 'previewDocBox', width: 500, height: 420, docId:'b1ef443f'}).then(elId=>{
+      console.log('createDocument successfully', elId);
+      this.docSdk.loadDoc({docId: 'b1ef443f', id: 'previewDocBox', docType:2}).then(res=>{
+        console.log('background: #666; color: #fff','%c预览文档信息：', res);
+      });
+    }).catch(error=>{
+      this.$message.error(`文档创建失败,${error.message}`);
+      console.log(error);
+    });
+  },
+  methods: {
+    chapterHandler(index){
+      let opts = {
+        id: 'previewDocBox', // 容器id， 必填
+        page: Number(this.chapters[index].pageNum) // 跳转到某页，数字，必填
+      };
+      this.docSdk.gotoPage(opts);
+      this.$refs.player.$PLAYER.setCurrentTime(this.chapters[index].times);
+    }
+  },
+  filters:{
+    secondsFormmat(val){
+      val = parseInt(val);
+      if(isNaN(val)) return val;
+      const hours = parseInt(val/3600);
+      const minutes = parseInt(val/60) - (hours*60);
+      const seconds = val % 60;
+      return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    },
   },
   components: {
     player,
-    doc,
+    // doc,
   }
 };
 </script>
@@ -79,7 +108,7 @@ export default {
     background: rgba(0,0,0,.5);
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: 22;
     .inner{
       padding: 16px;
       width: 740px;
@@ -139,13 +168,15 @@ export default {
         span{
 
         }
-        .title{
+        .times,.title{
           display: inline-block;
-          vertical-align: middle;
           width: 150px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+        .times{
+          width: 50px;
         }
       }
     }

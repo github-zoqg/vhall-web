@@ -53,8 +53,8 @@
     <slot name="mainplaceholder" :docContainerShow="docInfo.docContainerShow">
       <div v-show="!docInfo.docContainerShow" style="color:white;"></div>
     </slot>
-    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.7.js"></remote-script>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.1.js" @load="sdkLoad"></remote-script>
+    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.9.js"></remote-script>
+    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.4-1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
@@ -126,6 +126,10 @@ export default {
     },
     rebroadcastChannelId: {
       required: false
+    },
+    isVod: {
+      type: Boolean,
+      default: false,
     }
   },
   data () {
@@ -165,7 +169,6 @@ export default {
       cids: [], // 动态容器
       currentCid: '', // 当前正在展示的容器id
       isSetRole: -1, // 重新设置的新的角色
-      VhallMsgSdk: !!window.VhallMsg, // 是否加载了msgsdk
     };
   },
   components: { PencilControlBar, PaginationBar },
@@ -587,6 +590,7 @@ export default {
         if (this.roleName == '1') {
           const type = this.isInteract == 1 ? 2 : 1;
           this.docSDK.start(1, type);
+          this.docSDK.republish();
         }
         if (this.roleName != 1) {
           this.loadRemote();
@@ -717,7 +721,7 @@ export default {
         channelId: this.channelId, // 频道id 必须
         appId: this.appId, // appId 必须
         role: window.roleTypeMap[this.disableAssistant ? 2 : this.roleName], // 角色 必须, 助理无文档权限时设置观众权限
-        isVod: false, // 是否是回放 必须
+        isVod: this.isVod, // 是否是回放 必须
         client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
         token: this.token,
         hide,

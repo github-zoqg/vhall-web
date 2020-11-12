@@ -684,14 +684,17 @@ export default {
             window.ppp = this.$PLAYER;
             this.$PLAYER.openControls(false);
             this.$PLAYER.openUI(false);
+            this.$EventBus.$emit('component_playerSDK_ready');
             if (this.isLive) {
               resolve();
             } else {
               this.$PLAYER.on(window.VhallPlayer.LOADED, () => {
-                // 加载中
+                // // 加载中
+                // this.$EventBus.$emit('component_playerSDK_ready');
                 resolve();
               });
             }
+            this.$EventBus.$emit('markPoints', event.markPoints);
           },
           e => {
             console.error('ffffffffffffffffffffffffff', event);
@@ -1012,7 +1015,7 @@ export default {
       return text;
     },
     getLoginStatus () {
-      return JSON.parse(sessionStorage.getItem('authInfo')).length == undefined;
+      return JSON.parse(sessionStorage.getItem('authInfo')) && JSON.parse(sessionStorage.getItem('authInfo')).length == undefined;
     },
     controllerMouseLeave () {
       clearTimeout(this.hoverVideoTimer);
