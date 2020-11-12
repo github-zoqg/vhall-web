@@ -1,25 +1,26 @@
 <template>
-  <div class="data-usage">
+  <el-card class="data-usage">
     <!-- userInfo.user_type == '2' ? '旗舰版' : userInfo.user_type == '1' ? '专业版' :  userInfo.user_type == '3' ? '无极版' : '标准版' -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.user_type == '2'">
       <el-col :span="6">
         <div class="top-item">
           <p>当前版本</p>
           <h2>旗舰版</h2>
-          <p>有效期: {{ userInfo.edition_valid_time }}</p>
+          <p>有效期: {{ userInfo.service_info.edition_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="6">
         <div class="top-item">
           <p>总并发(方)<span class="level" @click="levelVersion('升级')">升级</span></p>
-          <h2>{{ userInfo.total_concurrency }}</h2>
-          <p>有效期: {{ userInfo.concurrency_valid_time }}</p>
+          <h2>{{ userInfo.service_info.total_concurrency }}</h2>
+          <p>有效期: {{ userInfo.service_info.concurrency_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="6">
         <div class="top-item">
           <p>并发扩展包<span class="level" @click="levelVersion('购买')">购买</span></p>
-          <h2>{{ userInfo.concurrency_extend }}</h2>
+          <h2>{{ userInfo.service_info.concurrency_extend }}</h2>
+          <p>账单明细</p>
         </div>
       </el-col>
     </el-row>
@@ -27,25 +28,27 @@
       <el-col :span="9">
         <div class="top-item">
           <p>当前版本</p>
-          <h2>{{ userInfo.user_type == '1' ? '专业版' : userInfo.user_type == '3' ? '无极版' : '标准版' }} <span class="level" v-if = "userInfo.user_type != '3'">{{ userInfo.user_type == '1' ? '续费' : '升级'}}</span></h2>
-          <p>有效期: {{ userInfo.edition_valid_time }}</p>
+          <h2>{{ userInfo.user_type == '1' ? '专业版' : userInfo.user_type == '3' ? '无极版' : '标准版' }} <span class="level" v-if = "userInfo.user_type != '3'" @click="buyVersion('1')">{{ userInfo.user_type == '1' ? '续费' : '升级'}}</span></h2>
+          <p>有效期: {{ userInfo.service_info.edition_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="9" v-if = "userInfo.user_type == '3'">
         <div class="top-item">
           <p>总流量/回放流量（GB）</p>
-          <h2>{{userInfo.total_flow}}/{{ userInfo.valid_flow }}</h2>
+          <h2>{{userInfo.service_info.total_flow}}/{{ userInfo.service_info.playback_flow }}</h2>
+          <p @click="goAccountDetail">账单明细</p>
         </div>
       </el-col>
       <el-col :span="9" v-else>
         <div class="top-item">
-          <p>总流量/可用流量（GB）<span class="level">购买</span></p>
-          <h2>{{userInfo.total_flow}}/{{ userInfo.valid_flow }}</h2>
+          <p>总流量/可用流量（GB）<span class="level" @click="buyVersion('2')">购买</span></p>
+          <h2>{{userInfo.service_info.total_flow}}/{{ userInfo.service_info.valid_flow }}</h2>
+          <p @click="goAccountDetail">账单明细</p>
         </div>
       </el-col>
     </el-row>
-    <up-version ref="levelVersion" :title="title"></up-version>
-  </div>
+    <up-version ref="levelVersion" :title="title" :money="money"></up-version>
+  </el-card>
 </template>
 <script>
 import upVersion from './components/upversion';
@@ -53,13 +56,14 @@ export default {
   props: ['userInfo'],
   data() {
     return {
-      title: '升级'
+      title: '流量包',
+      money: '￥8000.00'
     };
   },
   watch: {
     userInfo: {
       handler() {
-        this.userInfo.user_type = '2';
+        this.userInfo.user_type = '0';
       }
     }
   },
@@ -71,6 +75,17 @@ export default {
       this.$refs.levelVersion.dialogVisible = true;
       this.title = title;
     },
+    goAccountDetail() {
+      this.$router.push({
+        name: 'infoDetail'
+      });
+    },
+    buyVersion(type) {
+      this.title = type === '1' ? '专业版' : '流量版';
+      this.money = type === '1' ? '￥8000.00' : '￥4000.00';
+      // this.title = this.userInfo.user_type === '1' ? '专业版':'流量版';
+      this.$refs.levelVersion.dialogBuyVisible = true;
+    }
   }
 };
 </script>

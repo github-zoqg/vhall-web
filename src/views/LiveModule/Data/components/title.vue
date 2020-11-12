@@ -33,7 +33,7 @@ export default {
   height: 114px;
   background: #fff;
   border-radius: 4px;
-  margin-bottom: 34px;
+  // margin-bottom: 34px;
   // display: flex;
 }
 .box-item {

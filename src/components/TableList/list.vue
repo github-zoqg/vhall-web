@@ -6,7 +6,7 @@
       :row-key="setRowKeyFun"
       @selection-change="handleTableCheckbox"
       max-height="450"
-      :header-cell-style="{background:'#f7f7f7',color:'#666'}"
+      :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
     >
       <el-table-column
         :reserve-selection="true"
@@ -20,6 +20,7 @@
           align="left"
           v-for="(item, index) in tabelColumnLabel"
           :key="index"
+          :width="item.width"
           :label="item.label"
         >
           <template slot-scope="scope">
@@ -196,7 +197,8 @@ export default {
     background-color: #FB3A32;
   }
   /deep/.el-table td, .el-table th{
-    padding: 16px 0;
+    padding: 0;
+    height: 56px;
   }
   /deep/.el-button--text {
     color: #1A1A1A;
