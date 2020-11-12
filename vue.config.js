@@ -19,6 +19,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
   default:
     publicPath = './';
 }
+console.log( publicPath, process.env.VUE_APP_NODE_ENV)
 module.exports = {
   publicPath: publicPath,
   assetsDir: './static',
