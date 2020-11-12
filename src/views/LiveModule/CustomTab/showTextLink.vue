@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "showImgLink.vue"
-}
+};
 </script>
 
 <style scoped>

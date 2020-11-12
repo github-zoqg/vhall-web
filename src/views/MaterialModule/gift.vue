@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "gift.vue"
-}
+};
 </script>
 
 <style scoped>

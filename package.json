@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
-    "build:test": "vue-cli-service build --mode --test",
+    "build:test": "vue-cli-service build --mode test",
     "build:pre": "vue-cli-service build --mode pre",
     "preview": "node build/index.js --preview",
     "test:unit": "vue-cli-service test:unit",

@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       msgDao: null
-    }
+    };
   },
   methods: {
     // 获取消息中心详情数据
@@ -40,7 +40,7 @@ export default {
   created() {
     this.getMsgInfo();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

@@ -5,7 +5,7 @@
 <script>
 export default {
 name: "brandSet.vue"
-}
+};
 </script>
 
 <style scoped>

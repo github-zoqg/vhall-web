@@ -28,7 +28,7 @@ export default {
       editor: null,
       eLen: 0,
       content: ''
-    }
+    };
   },
   mounted() {
     this.initWangEditor();
@@ -54,8 +54,8 @@ export default {
       this.editor = new E(`#${this.elName}`);
       // 设置编辑区域高度为 500px
       this.editor.config.height = 500;
-      this.editor.config.uploadImgMaxLength = 5 // 一次最多上传 5 个图片
-      this.editor.config.uploadImgMaxSize = 2 * 1024 * 1024 // 2M
+      this.editor.config.uploadImgMaxLength = 5; // 一次最多上传 5 个图片
+      this.editor.config.uploadImgMaxSize = 2 * 1024 * 1024; // 2M
       this.editor.config.menus = [
         'head',  // 标题
         'bold',  // 粗体

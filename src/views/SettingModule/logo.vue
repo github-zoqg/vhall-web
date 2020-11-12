@@ -37,7 +37,7 @@ export default {
       logoForm: {
         logoUrl: ''
       }
-    }
+    };
   },
   methods: {
     handleUploadSuccess(res, file){
@@ -68,7 +68,7 @@ export default {
       console.log('uploadPreview', file);
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
