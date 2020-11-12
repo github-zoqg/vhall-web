@@ -1,20 +1,38 @@
 <template>
-  <div class="vh-doc" ref="docInner">
-    <div class="vh-doc__wrap" v-show="docInfo.showContainer && docInfo.cid">
-      <div class="vh-doc__box">
+  <div class="doc-wrapper"  v-loading="loading" element-loading-text="文档加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
+    <div class="doc" ref="doc" v-show="docInfo.docContainerShow">
+      <div
+        :class="[
+          'doc-inner-wrapper',
+          hasDocPermission || (roleName == 3 && !this.disableAssistant)? '' : 'no-permission'
+        ]"
+        ref="docInner"
+      >
         <div
           v-for="cid in cids"
           :key="cid"
           :id="cid"
-          v-show="docInfo.cid == cid"
-          class="vh-doc__show student"
-          :style="boxStyle"
+          v-show="currentCid == cid"
+          class="doc-box"
+          :style="cid.split('-')[0] == 'document' ? docBoxStyle : boardBoxStyle"
         ></div>
       </div>
-      <slot v-if="hasDocPermission || roleName == 3" name="humbnailList"></slot>
-      <slot v-if="hasDocPermission && roleName != 3" name="pencilControlBar" :colorArr="colorArr" :sizeArr="sizeArr">
+      <slot name="liveEnd"></slot>
+      <slot
+        v-if="hasDocPermission || (roleName == '3' && !this.disableAssistant)"
+        name="humbnailList"
+      ></slot>
+      <slot name="placeholder" :docShowType="docInfo.docShowType"></slot>
+      <slot
+        v-if="hasDocPermission || (roleName == '3' && !this.disableAssistant)"
+        name="pencilControlBar"
+        :colorArr="colorArr"
+        :sizeArr="sizeArr"
+      >
         <pencil-control-bar
-          v-show="docInfo.cid && docInfo.cid == docInfo.docID"
+          v-show="docInfo.docShowType"
           :size-arr="sizeArr"
           :color-arr="colorArr"
           :show-graph="showGraph"
@@ -22,618 +40,298 @@
           @handleControlBar="handleControlBar"
         ></pencil-control-bar>
       </slot>
+
       <slot v-if="hasDocPermission || roleName == '3'" name="paginationBar">
         <pagination-bar
-          v-show="docInfo.cid && docInfo.cid == docInfo.docID && permission.indexOf(11004) > -1"
+          v-show="docInfo.docShowType === 'document'"
           :page-info="pageInfo"
           @handlePage="handlePage"
-          :isKeyEvent="isKeyEvent"
+          :disablePagechange="disableAssistant"
         ></pagination-bar>
       </slot>
     </div>
-    <slot name="mainplaceholder" v-if="!(docInfo.showContainer && docInfo.cid)"></slot>
+    <slot name="mainplaceholder" :docContainerShow="docInfo.docContainerShow">
+      <div v-show="!docInfo.docContainerShow" style="color:white;"></div>
+    </slot>
     <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.7.js"></remote-script>
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
+// import this.$EventBus from '../../utils/Events';
 import PencilControlBar from './pencil-control-bar';
 import PaginationBar from './pagination-bar';
-/**
- * 文档白板模块
- * @author qi.chen
- *
- * @component
- *
- */
+
 export default {
-  name: 'vhDoc',
-  data () {
-    return {
-      docSDK: null, // 问答个实例
-      docInfo: {
-        showContainer: false, // 观看端是否显示
-        cid: '', // 正在展示的文档或者白板id
-        docID: '', // 发起端的远程列表中的文档id
-        boardID: '' // 发起端的远程列表中的白板id
-      },
-      cids: [], // 所有演示过的文档的id
-      pageInfo: {
-        total: 0, // 当前展示文档总页数
-        pageIndex: 0
-      },
-      VhallMsgSdk: !!window.VhallMsg,
-      hasDocPermission: Boolean(this.docPermissionId == this.accountId),
-      boxStyle: {}, // 白板/文档宽高
-      permission: JSON.parse(sessionStorage.getItem('vhall-permission')) || [],
-      roleTypeMap: {}
-    };
-  },
   props: {
-    /**
-     *  频道id
-     */
-    channelId: {
-      type: String,
+    rebroadcast: {},
+    webinarId: {
       required: true
     },
-    /**
-     *  appid
-     */
-    appId: {
-      type: String,
+    token: {
+      required: false
+    },
+    documentId: {
       required: true
     },
-    /**
-     *  角色类型， 1主持人（默认主讲人，2观众，3助理，4嘉宾)
-     */
+    docPermissionId: {
+      required: true // 主讲人ID
+    },
     roleName: {
-      type: [String, Number],
       required: true // 角色类型
     },
-    /**
-     *  回放
-     */
-    isVod: {
-      type: Boolean,
-      required: true // 是否是回放
-    },
-    /**
-     *  房间id
-     */
     roomId: {
-      type: String,
-      required: true
+      required: true // eg "lss_bd1e9b69"
     },
-    /**
-     *  pass token 初始化sdk
-     */
-    token: {
-      type: String,
-      required: true
+    channelId: {
+      required: true // eg "ch_ab95b2bb"
     },
-    /**
-     *  用户id
-     */
     accountId: {
-      type: [String, Number],
       required: true
     },
-    /**
-     *  可操作文档人的id
-     */
-    docPermissionId: {
-      type: [String, Number],
+    appId: {
       required: true
     },
-    /**
-     * 互动状态： 0预约， 1直播中，2结束
-     */
+    // 直播状态 0待直播,1直播中,2直播结束
     liveStatus: {
-      type: [String, Number],
-      required: true // 活动状态
+      require: true
     },
-    /**
-     * 文档/白板选择画笔大小
-     */
+    // 文档/白板选择画笔大小
     sizeArr: {
       type: Array,
       default () {
         return [6, 8, 12, 14, 16]; // 画笔直径，单位px
       }
     },
-    /**
-     * 画笔颜色
-     */
     colorArr: {
       type: Array,
       default () {
-        return ['#1E90FF', '#B01EFF', '#5064FE', '#F1831C', '#FF3D41', '#1AD5CE', '#FFFFFF', '#666666', '#000000'];
+        return ['#FF0200', '#008002', '#0800FF', '#000000']; // 画笔颜色
       }
     },
-    /**
-     * 多边形功能
-     */
     showGraph: {
       type: Boolean,
       default: false
     },
-    /**
-     * 文字功能
-     */
     showText: {
       type: Boolean,
       default: false
     },
-    broadcastChannelId: {
-      type: String,
-      default: '',
-      required: false
+    isInteract: {
+      required: true
     },
-    isKeyEvent: {
-      // 翻页是否监听键盘事件
-      type: Boolean,
-      default: true,
+    disableAssistant: {
+      required: false,
+      default: false
+    },
+    rebroadcastChannelId: {
       required: false
     }
+  },
+  data () {
+    return {
+      liveEnd: false,
+      backToManagerUrl: `/mywebinar/recordpart/${this.webinarId}`,
+      docInfo: {
+        showInWatch: false,
+        docContainerShow: true,
+        docShowType: '' // document 显示文档  board白板  '' 未添加文档
+      },
+      // isBoard: false,
+      docBoxStyle: {}, // 文档宽高
+      boardBoxStyle: {}, // 白板宽高
+      // currentDocPermissionId: this.docPermissionId,
+      pageInfo: {
+        total: 0,
+        pageIndex: 1
+      },
+      hasDocPermission: Boolean(this.docPermissionId == this.accountId),
+      styleOpts: {
+        style: {
+          hasControls: true, // 是否有控制条
+          hasBorders: true, // 每个控制块之间是否有连接线
+          hasRotatingPoint: true, // 是否有旋转控制块
+          transparentCorners: false, // 方向控制块是否是透明
+          cornerStyle: 'circle', // 控制块样式， 支持:"circle", "square"
+          padding: 8, // 控制块与元件的边界
+          cornerSize: 13, // 控制块大小，单位px
+          rotatingPointOffset: 19, // 旋转控制块的距离元件的距离
+          borderColor: '#979797', // 连接线颜色
+          cornerColor: '#007AFF', // 控制块填充色颜色
+          cornerStrokeColor: '#007AFF' // 控制块描边颜色
+        } // 样式，必填
+      },
+      docLoadComplete: false, // 文档加载状态
+      cids: [], // 动态容器
+      currentCid: '', // 当前正在展示的容器id
+      isSetRole: -1, // 重新设置的新的角色
+      VhallMsgSdk: !!window.VhallMsg, // 是否加载了msgsdk
+    };
   },
   components: { PencilControlBar, PaginationBar },
   watch: {
     docPermissionId (newval) {
-      // 文档操作权限 写，画笔
-
       this.hasDocPermission = newval == this.accountId;
-      console.debug('docPermissionId', newval, this.accountId);
-      let index = Number(this.roleName);
       if (this.hasDocPermission) {
-        if (this.docSDK) {
-          this.setSdkRole(1, 'INTERACT');
-          this.handleControlBar('hb');
+        this.$EventBus.$emit('docInfo', this.docInfo);
+        this.isSetRole = 1;
+        // eslint-disable-next-line no-unused-vars
+        this.docSDK && this.docSDK.setRole(window.roleTypeMap[1]).then(res => {
+          console.log('文档---切换权限成功');
+          this.isSetRole = -1;
+        }).catch(() => {
+          // 实例未全部加载完毕，切换失败
+          console.log('文档---切换权限失败');
+        });
+        if (this.docInfo.docShowType == 'document') {
+          this.docID && this.$EventBus.$emit('remote_doc_select', { id: this.docID });
+        } else if (this.docInfo.docShowType == 'board') {
+          this.boardID &&
+            this.$EventBus.$emit('remote_doc_select', { id: this.boardID });
         }
       } else {
-        if (this.roleName == 1 || this.roleName == 4) {
-          this.docSDK && this.setSdkRole(4, 'INTERACT');
-        } else {
-          this.docSDK && this.setSdkRole(this.roleTypeMap[index], 'FLV');
+        if (this.roleName == 4 || this.roleName == 1) {
+          this.isSetRole = 4;
+          // eslint-disable-next-line no-unused-vars
+          this.docSDK && this.docSDK.setRole(window.roleTypeMap[4]).then(res => {
+            console.log('文档---切换权限成功');
+            this.isSetRole = -1;
+          }).catch(() => {
+          // 实例未全部加载完毕，切换失败
+            console.log('文档---切换权限失败');
+          }); // 主持人或嘉宾
+        }
+        this.docInfo.docContainerShow = true;
+      }
+      console.log('是否具有文档编辑权限', this.hasDocPermission);
+    },
+    // eslint-disable-next-line no-unused-vars
+    loading (val, old) {
+      if (val && !this.loadingTimer) {
+        this.loadingTimer = setTimeout(() => {
+          clearTimeout(this.loadingTimer);
+          this.loadingTimer = null;
+          this.changeRoleAlert();
+        }, 15000);
+      } else if (!val) {
+        if (this.loadingTimer) {
+          clearTimeout(this.loadingTimer);
+          this.loadingTimer = null;
         }
       }
-    },
-    docInfo: {
-      handler (val) {
-        this.$EventBus.$emit('component_doc_info', val);
-      },
-      deep: true
+    }
+  },
+  computed: {
+    loading () {
+      // 切换主讲人时，文档区域展示loading
+      return this.isSetRole > -1;
     }
   },
   mounted () {
     this._listenEvents();
-    this.stopKeyPropagation();
-    console.log('文档传入的参数======', this.$props);
+    // this._initDocSDK();
+
+    window.onbeforeunload = () => {
+      if (this.liveStatus != 1) {
+        this.docSDK.resetContainer();
+      }
+    };
   },
   methods: {
+    // ============================对外暴露方法 start===========================================================================
     /**
-     * 初始化组件监听的事件
+     *获取缩略图列表
      */
-    _listenEvents () {
-      window.addEventListener('resize', () => {
-        this.resize();
-      });
-      /**
-       * 处理键盘事件：上下左右，pageDown,pageUp翻页
-       */
-      this.isKeyEvent &&
-        document.addEventListener('keyup', (e) => {
-          switch (e.key) {
-            case 'ArrowUp':
-              this.handlePage('prePage');
-              break;
-            case 'ArrowDown':
-              this.handlePage('nextPage');
-              break;
-            case 'ArrowLeft':
-              this.handlePage('prevStep');
-              break;
-            case 'ArrowRight':
-              this.handlePage('nextStep');
-              break;
-            case 'PageUp':
-              this.gotoPage(0);
-              break;
-            case 'PageDown':
-              this.gotoPage(this.pageInfo.total - 1);
-              break;
-            default:
-              break;
-          }
-        });
-
-      // 文档列表组件触发演示文档事件
-      this.$EventBus.$on('component_doc_demonstration', (data) => {
-        console.log('============列表初始演示==============', data);
-        this.cids.forEach((item) => {
-          let type = item.split('-')[0];
-          if (type == 'document') {
-            this.docSDK.destroyContainer({ id: item });
-          }
-        });
-        // 删除多余的容器
-        if (this.docInfo.boardID) {
-          this.cids = [this.docInfo.boardID];
-        } else {
-          this.cids = [];
-        }
-        let cid = this.docSDK.createUUID('document');
-        this.cids.push(cid);
-        this.$nextTick(() => {
-          this.initContainer('document', cid, data.documentId);
-          this.docSDK.loadDoc({ docId: data.documentId, id: cid });
-          this.activeContainer(cid);
-        });
-      });
+    getThumibnailList () {
+      return this.docSDK.getThumbnailList({ id: this.currentCid });
     },
     /**
-     * 初始化文档/白板sdk
+     * 切换显示主持端文档区域
      */
-    _initSDK () {
-      let role = this.roleTypeMap[2];
-      let mode = window.VHDocSDK.PlayMode.FLV;
-      if (this.hasDocPermission) {
-        mode = window.VHDocSDK.PlayMode.INTERACT;
-        role = this.roleTypeMap[1];
-      } else if (this.roleName == 1 || this.roleName == 4) {
-        mode = window.VHDocSDK.PlayMode.INTERACT;
-        role = this.roleTypeMap[4];
-      } else if (this.roleName == 3) {
-        role = this.roleTypeMap[3];
+    toggleDocContainer (flag) {
+      this.docInfo.docContainerShow = flag;
+    },
+    /**
+     * 观看端是否可见
+     */
+    toggleWatchContainer (flag) {
+      if (flag) {
+        this.docSDK.switchOnContainer();
+      } else {
+        this.docSDK.switchOffContainer();
       }
-      let opt = {
-        channelId: this.channelId, // 频道id 必须
-        appId: this.appId, // appId 必须
-        role, // 角色 必须
-        isVod: this.isVod, // 是否是回放 必须
-        client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
-        roomId: this.roomId, // 必须， 房间ID
-        accountId: this.accountId, // paas 账户id， 必须
-        token: this.token, // 必须， token，初始化接口获取
-        hide: false, // 非必须， 默认false
-        mode
-      };
-      console.log('===实例参数===', opt);
-      // 失败回调
-      let failed = (error) => {
-        console.error('===实例化文档失败===', error.msg);
-      };
-      // 成功回调
-      let success = () => {
-        console.log('===实例化文档参数成功===');
-        if (this.liveStatus == 1) {
-          if (this.hasDocPermission) {
-            this.docSDK.republish();
-          }
-          this.loadRemote(this.broadcastChannelId || '');
-        }
-        if (this.hasDocPermission) {
-          if (this.broadcastChannelId) {
-            this.docSDK.setAccountId({ accountId: this.accountId + '7890' });
-            this.docInfo.showInWatch = false;
-            this.$EventBus.$emit('docInfo', this.docInfo);
-            this.setSdkRole(2, 'FLV');
-            this.hasDocPermission = false;
-          }
-        }
-        // 设置控制条样式
-        let styleOpts = {
-          style: {
-            hasControls: true, // 是否有控制条
-            hasBorders: true, // 每个控制块之间是否有连接线
-            hasRotatingPoint: true, // 是否有旋转控制块
-            transparentCorners: false, // 方向控制块是否是透明
-            cornerStyle: 'circle', // 控制块样式， 支持:"circle", "square"
-            padding: 8, // 控制块与元件的边界
-            cornerSize: 13, // 控制块大小，单位px
-            rotatingPointOffset: 19, // 旋转控制块的距离元件的距离
-            borderColor: '#979797', // 连接线颜色
-            cornerColor: '#007AFF', // 控制块填充色颜色
-            cornerStrokeColor: '#007AFF' // 控制块描边颜色
-          } // 样式，必填
-        };
-        this.docSDK.setControlStyle(styleOpts);
-        this.$EventBus.$emit('component_docSDK_ready', this.docSDK);
-      };
+      this.$EventBus.$emit('component_doc_watch_containner', flag);
+    },
 
-      this.docSDK = window.VHDocSDK.createInstance(opt, success, failed);
-
-      // 翻页事件
-      this.refresh = true;
-      this.docSDK.on(window.VHDocSDK.Event.PAGE_CHANGE, (data) => {
-        console.log('===================翻页====================');
-        this.pageInfo = {
-          total: data.info.slidesTotal,
-          pageIndex: Number(data.info.slideIndex) + 1
-        };
-        if (this.refresh || this.pageInfo.pageIndex == 1) {
-          this.resize();
-          this.refresh = false;
-        }
-        this.$EventBus.$emit('component_page_info', this.pageInfo);
-      });
-
-      // 创建容器事件
-      this.docSDK.on(window.VHDocSDK.Event.CREATE_CONTAINER, (data) => {
-        console.log('===================创建容器====================', data);
-        if (this.cids.indexOf(data.id) > -1) return;
-        this.cids.push(data.id);
+    /**
+     * 切换显示白板 == 切换显示文档
+     */
+    toggleBoard (flag) {
+      console.log('toggleBoard ======> ', flag);
+      if (flag) {
+        this.docInfo.docShowType = 'board';
         this.$nextTick(() => {
-          this.initContainer(data.type, data.id);
-          this.activeContainer(data.id);
-        });
-      });
-
-      // 选择容器
-      this.docSDK.on(window.VHDocSDK.Event.SELECT_CONTAINER, (data) => {
-        console.log('===============选择容器=======================', data);
-        // 兼容如果选择消息比创建消息先派发的问题
-        if (this.cids.indexOf(data.id) > -1) {
-          this.activeContainer(data.id);
-        } else {
-          this.cids.push(data.id);
-          this.$nextTick(() => {
-            this.initContainer(data.type, data.id);
-            this.activeContainer(data.id);
-          });
-        }
-        this.resize();
-      });
-
-      // 文档加载完成
-      this.docSDK.on(window.VHDocSDK.Event.DOCUMENT_LOAD_COMPLETE, (data) => {
-        // 数据格式同 window.VHDocSDK.Event.PAGE_CHANGE
-        console.log('===================文档加载完成====================', data);
-        this.$EventBus.$emit('component_doc_id', data.docId || data.info.docId);
-        this.pageInfo = {
-          total: data.info.slidesTotal,
-          pageIndex: Number(data.info.slideIndex) + 1
-        };
-        let res = this.docSDK.getThumbnailList({ id: this.docInfo.docID });
-        this.$EventBus.$emit('component_documenet_load_complete', res[0].list);
-      });
-
-      // 开关变换
-      this.docSDK.on(window.VHDocSDK.Event.SWITCH_CHANGE, (status) => {
-        console.log('==========控制文档开关=============', status);
-        if (status == 'on') {
-          this.docInfo.showContainer = true;
-          this.resize();
-        } else if (!this.hasDocPermission) {
-          this.docInfo.showContainer = false;
-        }
-        this.toggleWatchContainer(this.docInfo.showContainer); // 同步各端状态
-      });
-
-      // 删除容器时候触发的事件
-      this.docSDK.on(window.VHDocSDK.Event.DELETE_CONTAINER, (data) => {
-        console.log('===============删除容器=======================', data);
-        if (this.cids.indexOf(data.id) > -1) {
-          this.docSDK.destroyContainer({ id: data.id });
-        }
-        if (data.id == this.docInfo.cid) {
-          this.docInfo.cid = '';
-        }
-        if (data.id == this.docInfo.docID) {
-          this.docInfo.docID = '';
-        } else if (data.id == this.docInfo.boardID) {
-          this.docInfo.boardID = '';
-        }
-      });
-
-      // 报错信息
-      this.docSDK.on(window.VHDocSDK.Event.ERROR, (data) => {console.log(window.VHDocSDK.Event.ERROR, data);});
-
-      // 视频回放中，timeupdate事件
-      let first = true;
-      this.docSDK.on(window.VHDocSDK.Event.VOD_TIME_UPDATE, (data) => {
-        if (this.isVod) {
-          if (first) {
-            this.$EventBus.$emit('component_doc_info', this.docInfo);
-            first = false;
-          }
-          if (data.watchOpen != this.docInfo.showContainer) {
-            this.docInfo.showContainer = data.watchOpen;
-            this.$EventBus.$emit('component_doc_info', this.docInfo);
-          }
-          if (data.activeId && this.cids.indexOf(data.activeId) > -1) {
-            this.activeContainer(data.activeId);
-          } else if (data.activeId && this.cids.indexOf(data.activeId) == -1) {
-            this.cids.push(data.activeId);
+          this.initWidth('board');
+          if (!this.boardID) {
+            let cid = this.docSDK.createUUID('board');
+            this.cids.push(cid);
             this.$nextTick(() => {
-              let type = data.activeId.split('-')[0] || 'document';
-              this.initContainer(type, data.activeId, '');
-              this.activeContainer(data.activeId);
+              console.log('gyh cids ======>', this.cids);
+              this.initContainer('board', cid);
+              this.activeContainer(cid);
             });
-            // this.initContainer(type.toLowerCase(), cid documentId)
           } else {
-            this.docInfo.cid = '';
+            this.activeContainer(this.boardID);
+            this.docSDK.setControlStyle(this.styleOpts);
           }
-        }
-      });
-
-      // 回放文件加载完成事件
-      this.docSDK.once(window.VHDocSDK.Event.VOD_CUEPOINT_LOAD_COMPLETE, (data) => {
-        console.log(window.VHDocSDK.Event.VOD_CUEPOINT_LOAD_COMPLETE, data);
-        const list = this.docSDK.getVodAllCids();
-        console.log('=====回放文件加载完成====', list);
-        this.cids = [];
-        this.cids = list.map((item) => item.cid);
-        this.$nextTick(() => {
-          list.forEach((item) => {
-            const { cid, type, documentId } = item;
-            this.initContainer(type.toLowerCase(), cid, documentId);
-          });
         });
-      });
-      // 所有的文档准备完成
-      this.docSDK.on(window.VHDocSDK.Event.ALL_COMPLETE, () => {
-        console.log('=============所有文档加载完成==============');
-        this.docLoadComplete = true;
-        if (this.isSetRole > -1) {
-          this.setSdkRole(this.isSetRole);
-        }
-      });
-      // 正在演示的文档被删除
-      this.docSDK.on(window.VHDocSDK.Event.DOCUMENT_NOT_EXIT, ({ cid, docId }) => {
-        console.log('====================文档不存在或已删除=================', cid, docId);
-        if (cid == this.docInfo.cid) {
-          this.$message({
-            type: 'error',
-            message: '文档不存在或已删除'
-          });
-          this.deleteTimer = setTimeout(() => {
-            this.docInfo.docID = '';
-            let index = this.cids.indexOf(cid);
-            this.cids.splice(index, 1);
-            this.docSDK.destroyContainer({ id: this.currentCid });
-            this.docInfo.cid = '';
-            this.docInfo.docShowType = '';
-          }, 3000); // 其他地方调用回将值重新传入
-        }
-      });
-    },
-    /**
-     * 加载远端文档/白板信息
-     */
-    async loadRemote (channelId) {
-      let param = channelId ? { channelId: channelId } : null;
-      console.log('loadRemote', param);
-      let res = await this.docSDK.getContainerInfo(param);
-      console.log('loadRemote', res);
-      let { list = [] } = res;
-      let activeItem = list.find((item) => item.active == 1);
-      this.docInfo.showContainer = Boolean(res.switch_status);
-      this.cids = [];
-      this.cids = list.map((item) => item.cid);
-      if (activeItem) {
-        this.pageInfo = {
-          total: activeItem.page,
-          pageIndex: activeItem.show_page
-        };
-        this.docInfo.cid = activeItem.cid;
-        this.$EventBus.$emit('component_doc_id', activeItem.docId);
-      }
-      this.$nextTick(() => {
-        let type = '';
-        list.forEach((item) => {
-          if (item.is_board == 2) {
-            this.docInfo.boardID = item.cid;
-            type = 'board';
-          } else {
-            this.docInfo.docID = item.cid;
-            type = 'document';
-          }
-
-          this.initContainer(type, item.cid, item.documentId, true);
-          this.docSDK.setRemoteData(item);
-        });
-        if (activeItem) {
-          this.activeContainer(activeItem.cid);
-          if (this.hasDocPermission) {
-            setTimeout(() => {
-              this.handleControlBar('hb');
-            }, 5000);
-          }
-        }
-      });
-      this.$EventBus.$emit('component_doc_info', this.docInfo);
-    },
-    /**
-     * 创建 白板/文档
-     * @param {String} type - document文档 board白板
-     * @param {String} cid - sdk返回的一个id
-     * @param {String} documentId - 文档id
-     */
-    initContainer (type = 'document', cid, documentId, noDispatch = false) {
-      // await this.initWidth()
-      // 避免在小屏幕初始化后,画笔等工具很粗
-      let wrapWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-      let wrapHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      let ratio = 16 / 9;
-      if (wrapWidth / wrapHeight > ratio) {
-        this.boxStyle.height = wrapHeight;
-        this.boxStyle.width = this.boxStyle.height * ratio;
       } else {
-        this.boxStyle.width = wrapWidth;
-        this.boxStyle.height = this.boxStyle.width * (1 / ratio);
-      }
-      let opts = {
-        id: cid,
-        elId: cid, // div 容器 必须
-        width: parseInt(this.boxStyle.width),
-        height: parseInt(this.boxStyle.height),
-        noDispatch: noDispatch
-      };
-      console.log('====optsopts====', opts);
-      if (type == 'board') {
-        this.docInfo.boardID = cid;
-        opts.backgroundColor = '#FFF'; // 背景颜色， 支持RGB 与 RGBA， 如果全透明，舞台背景色与网页背景色相同，如 ‘#FF0000’或 ‘#FF000000’ 必须
-        this.docSDK.createBoard(opts); // 创建成功后，返回模块id
-      } else {
-        this.docInfo.docID = cid;
-        opts.docId = documentId; // 文档id
-        this.docSDK.createDocument(opts);
-      }
-    },
-    /**
-     * 获取宽高
-     */
-    initWidth () {
-      return new Promise((resolve) => {
-        this.$nextTick(() => {
-          if (!this.$refs.docInner) {
-            return;
-          }
-          let style = window.getComputedStyle(this.$refs.docInner);
-          let ratio = 16 / 9;
-          let wrapWidth = parseFloat(style.width);
-          let wrapHeight = parseFloat(style.height);
-          let boxWidth = null;
-          let boxHeight = null;
-          if (wrapWidth / wrapHeight > ratio) {
-            boxHeight = wrapHeight;
-            // boxHeight = wrapHeight
-            boxWidth = boxHeight * ratio;
-            console.log('=======内层层盒子的宽高======', boxWidth, boxHeight);
-          } else {
-            boxWidth = wrapWidth;
-            boxHeight = boxWidth * (1 / ratio);
-          }
-          this.boxStyle = {
-            width: `${boxWidth}px`,
-            height: `${boxHeight}px`
-          };
-          resolve();
-        });
-      });
-    },
-    /**
-     * 重新计算文档/白板的高度
-     */
-    resize () {
-      if (this.docInfo.showContainer) {
-        console.log('=======触发了resize事件 ========================');
-        this.$nextTick(() => {
-          this.initWidth().then(() => {
-            console.log('====测试重绘数据=====', this.boxStyle, this.docInfo.cid);
-            this.docSDK.setSize(parseFloat(this.boxStyle.width), parseFloat(this.boxStyle.height), {
-              id: this.docInfo.cid
-            });
+        if (this.docID) {
+          this.docInfo.docShowType = 'document';
+          this.$nextTick(() => {
+            this.initWidth('document');
+            this.activeContainer(this.docID);
+            this.docSDK.setControlStyle(this.styleOpts);
           });
-        });
+        } else {
+          this.currentCid = '';
+          this.docInfo.docShowType = '';
+        }
       }
     },
+    /**
+     *跳到某一页
+     */
+    gotoPage (page) {
+      let key = this.currentCid.split('-')[0];
+      if (!this.currentCid || key == 'board') {
+        return;
+      }
+      if (!this.docLoadComplete) {
+        return this.$message.warning('请文档加载完成以后再操作');
+      }
+      this.docSDK.gotoPage({ page });
+    },
+
+    debuncePrev () {
+      this.docSDK.prevStep();
+    },
+
+    debunceNext () {
+      this.docSDK.nextStep();
+    },
+
     /**
      * 文档翻页
-     * @param {String} type - prePage前一页，prevStep前一步，nextStep后一步，nextPage后一页，zoomIn放大，zoomOut缩小，zoomReset还原，move移动
      */
     handlePage (type) {
+      let key = this.currentCid.split('-')[0];
+      if (!this.currentCid || key == 'board') {
+        return;
+      }
+      if (!this.docLoadComplete) {
+        return this.$message.warning('请文档加载完成以后再操作');
+      }
       switch (type) {
         case 'prePage':
           this.docSDK.prevPage();
@@ -642,6 +340,9 @@ export default {
           this.debuncePrev();
           break;
         case 'nextStep':
+          // if (this.pageInfo.pageIndex >= this.pageInfo.total) {
+          //   return
+          // }
           this.debunceNext();
           break;
         case 'nextPage':
@@ -670,104 +371,7 @@ export default {
           break;
       }
     },
-    setSdkRole (role, mode) {
-      this.isSetRole = role;
-      this.docSDK.setRole(this.roleTypeMap[role]).then(() => {
-        // 切换角色成功
-        this.isSetRole = -1;
-      });
 
-      mode && this.docSDK.setPlayMode(window.VHDocSDK.PlayMode[mode]);
-    },
-    // ============================对外暴露方法 start===========================================================================
-    /**
-     *获取缩略图列表
-     */
-    getThumibnailList () {
-      if (this.roleName != 2) {
-        return this.docSDK.getThumbnailList({ id: this.docID });
-      }
-    },
-    /**
-     * 切换显示主持端文档区域
-     * @param {Boolean} flag - true展示 false不展示
-     */
-    toggleDocContainer (flag) {
-      this.docInfo.showContainer = flag;
-    },
-    /**
-     * 观看端是否可见
-     * @param {Boolean} flag - true观看端展示 false观看端不展示
-     */
-    toggleWatchContainer (flag) {
-      if (flag) {
-        this.docInfo.showContainer = flag;
-        this.docSDK.switchOnContainer();
-      } else {
-        this.docSDK.switchOffContainer();
-      }
-    },
-
-    /**
-     * 点击侧边栏或者其他切换文档，白板
-     * @param {Boolean} type - document显示文档  board示白板
-     */
-    toggleBoard (type = 'document') {
-      if (type == 'board') {
-        this.$nextTick(() => {
-          this.initWidth();
-          if (!this.docInfo.boardID) {
-            let cid = this.docSDK.createUUID('board');
-            this.cids.push(cid);
-            this.$nextTick(() => {
-              this.initContainer('board', cid);
-              this.activeContainer(cid);
-            });
-          } else {
-            this.activeContainer(this.docInfo.boardID);
-          }
-        });
-      } else {
-        if (this.docInfo.docID) {
-          this.$nextTick(() => {
-            this.initWidth();
-            this.activeContainer(this.docInfo.docID);
-            this.docInfo.cid = this.docID;
-          });
-        } else {
-          this.docInfo.cid = '';
-        }
-      }
-    },
-    /**
-     * 跳到某一页
-     * @param {Number} page 页码
-     */
-    gotoPage (page) {
-      this.docSDK.gotoPage({ page, id: this.docInfo.cid });
-    },
-    /**
-     *文档上一步
-     */
-    debuncePrev () {
-      if (this.pageTimeOut) return;
-      this.pageTimeOut = setTimeout(() => {
-        clearTimeout(this.pageTimeOut);
-        this.pageTimeOut = null;
-      }, 1000);
-      this.docSDK.prevStep({ id: this.docInfo.cid });
-    },
-    /**
-     *文档下一步
-     */
-    debunceNext () {
-      if (this.pageTimeOut) return;
-      this.pageTimeOut = setTimeout(() => {
-        clearTimeout(this.pageTimeOut);
-        this.pageTimeOut = null;
-      }, 1000);
-      this.docSDK.nextStep({ id: this.docInfo.cid });
-    },
     /**
      * 画笔，颜色，形状控制条操作
      */
@@ -776,216 +380,729 @@ export default {
         console.log('取消缩放');
         this.docSDK.cancelZoom();
       }
-      console.log('event.type', event);
-      let opts = {
-        id: this.docInfo.cid
-      };
       switch (event.type) {
         // 设置荧光笔
         case 'ygb':
-          this.docSDK.setHighlighters(opts);
+          this.docSDK.setHighlighters();
           if (event.value) {
-            this.docSDK.setStrokeWidth({ width: Number(event.value), ...opts });
+            this.docSDK.setStrokeWidth({ width: Number(event.value) });
           }
           break;
         // 设置画笔
         case 'hb':
-          this.docSDK.setPen(opts);
+          this.docSDK.setPen();
           if (event.value) {
-            this.docSDK.setStrokeWidth({ width: Number(event.value), ...opts });
+            clearTimeout(this.timer);
+            this.docSDK.setStrokeWidth({ width: Number(event.value) });
           }
           break;
         // 设置颜色
         case 'setColor':
-          this.docSDK.setStroke({ color: event.value, ...opts });
+          if (event.value) {
+            this.docSDK.setStroke({ color: event.value });
+          }
           break;
         // 设置图形
         case 'graph':
-          this.docSDK[event.value](opts);
+          this.docSDK[event.value]();
           break;
         // 设置橡皮擦
         case 'eraser':
-          this.docSDK.setEraser(opts);
+          this.docSDK.setEraser();
           break;
         // 全部清除
         case 'clear':
-          this.docSDK.clear(opts);
+          this.docSDK.clear();
           break;
         // 设置文字
         case 'font':
-          this.docSDK.setText(opts);
+          this.docSDK.setText();
           if (event.value) {
-            console.log('=====选择的容器=====', {
-              width: Number(event.value),
-              ...opts
-            });
-            this.docSDK.setStrokeWidth({ width: Number(event.value), ...opts });
+            this.timer = setTimeout(() => {
+              this.docSDK.setStrokeWidth({ width: Number(event.value) });
+            }, 200);
           }
           break;
         // 设置宽度
         case 'strokeWidth':
-          this.docSDK.setStrokeWidth({ width: Number(event.value), ...opts });
+          this.docSDK.setStrokeWidth({ width: Number(event.value) });
           break;
         // 取消画笔
         case 'cancelDrawable':
-          this.docSDK.cancelDrawable(opts);
+          this.docSDK.cancelDrawable();
           break;
         default:
           break;
       }
     },
-    // 激活容器，设置默认画笔颜色
-    activeContainer (cid = '') {
-      this.docSDK.selectContainer({ id: cid });
-      this.docInfo.cid = cid;
-      let type = cid.split('-')[0];
-      if (type == 'document') {
-        this.docInfo.docID = cid;
-      }
-    },
-    destroyCurContainer (type = 'document') {
-      if (this.docInfo.docID && type == 'document') {
-        let index = this.cids.indexOf(this.docInfo.docID);
-        this.cids.splice(index, 1);
-        this.docSDK.destroyContainer({ id: this.docInfo.docID });
-        if (this.docInfo.cid == this.docInfo.docID) {
-          this.docInfo.cid = '';
-        }
-        this.docInfo.docID = '';
-      } else if (this.docInfo.boardID && type == 'board') {
-        let index = this.cids.indexOf(this.docInfo.boardID);
-        this.cids.splice(index, 1);
-        this.docSDK.destroyContainer({ id: this.docInfo.boardID });
-        this.docInfo.boardID = '';
-        if (this.docInfo.cid == this.docInfo.boardID) {
-          this.docInfo.cid = '';
-        }
-      }
-      console.log('测试销毁现在展示容器========', this.docInfo);
-    },
-    /**
-     * 销毁文档/白板,主讲,将文档还原为初始状态
-     */
-    destroyDoc () {
-      !this.docSDK || this.docSDK.resetContainer();
-      this.toggleWatchContainer(false);
-      this.cids.forEach((item) => {
-        this.docSDK.destroyContainer({ id: item });
-      });
-      this.cids = [];
-      // this.$refs.docInner.innerHTML = ''
-      this.docInfo = {
-        showContainer: false,
-        cid: '',
-        boardID: '',
-        docID: ''
-      };
-    },
+
     // ============================对外暴露方法 end==============================================================================
     /**
-     * 通知服务器续存刷新前的数据信息
+     * 加载远端文档/白板信息
      */
-    republish () {
-      this.docSDK.republish();
+    async loadRemote () {
+      const params = this.rebroadcastChannelId
+        ? { channelId: this.rebroadcastChannelId }
+        : null;
+      this.cids = [];
+      let res = await this.docSDK.getContainerInfo(params);
+      // res.data会返回空数组或者一个对象，所以需要判断，应该是后端（朱俊亚）优化
+      if (res instanceof Array && !res.length) {
+        this.docInfo.docContainerShow = true;
+        this.$EventBus.$emit('docInfo', this.docInfo);
+        return;
+      }
+      let { list = [] } = res;
+      this.docInfo.showInWatch = Boolean(res.switch_status);
+      if (!list.length) {
+        this.initUploadDoc();
+        return;
+      }
+
+      let activeItem = list.find(item => item.active == 1);
+      this.pageInfo = {
+        total: activeItem.page,
+        pageIndex: activeItem.show_page
+      };
+      this.docInfo.docContainerShow = true;
+      this.docInfo.docShowType = activeItem.cid.split('-')[0];
+      this.currentCid = activeItem.cid;
+      this.cids = list.map(item => item.cid);
+      this.$nextTick(() => {
+        // eslint-disable-next-line no-unused-vars
+        list.forEach((item, index) => {
+          let type = item.is_board == 2 ? 'board' : 'document';
+          this.initWidth(type);
+          this.initContainer(type, item.cid, item.docId, true);
+          if (type == 'document') {
+            this.docID = item.cid;
+          } else if (type == 'board') {
+            this.boardID = item.cid;
+          }
+          this.docSDK.setRemoteData(item);
+        });
+        if (!activeItem) return;
+        this.activeContainer(activeItem.cid);
+        this.docSDK.setControlStyle(this.styleOpts);
+      });
+      this.$EventBus.$emit('docInfo', this.docInfo);
     },
-    // 转播 id转播频道id
-    // 转播结束后，把文档操作权限还给主持人
-    broadcast (type, id, isSelfDoc = true) {
-      if (type == 'start' && id) {
-        this.docSDK.setAccountId({ accountId: this.accountId + '7890' }); // 解决文档翻页不生效的问题
-        this.docInfo.showContainer = false;
+    /**
+     * 初始化文档区域宽度，window resize时也触发
+     */
+    initWidth (type = 'document') {
+      if (!this.$refs.docInner) {
+        return;
+      }
+      let style = window.getComputedStyle(this.$refs.docInner);
+      let ratio = 16 / 9;
+      let wrapWidth = parseFloat(style.width);
+      let wrapHeight = parseFloat(style.height);
+      let docBoxWidth = null;
+      let docBoxHeight = null;
+      if (wrapWidth / wrapHeight > ratio) {
+        docBoxHeight = wrapHeight;
+        docBoxWidth = docBoxHeight * ratio;
+      } else {
+        docBoxWidth = wrapWidth;
+        docBoxHeight = docBoxWidth * (1 / ratio);
+      }
+      if (type === 'document') {
+        this.docBoxStyle = {
+          width: `${docBoxWidth}px`,
+          height: `${docBoxHeight}px`
+        };
+      } else {
+        this.boardBoxStyle = {
+          width: `${docBoxWidth}px`,
+          height: `${docBoxHeight}px`
+        };
+      }
+    },
+    _listenEvents () {
+      window.addEventListener('resize', () => {
+        this.resize();
+      });
+      /**
+       * 处理键盘事件：上下左右，pageDown,pageUp翻页
+       */
+      document.addEventListener('keyup', e => {
+        switch (e.key) {
+          case 'ArrowUp':
+          case 'PageUp':
+            this.handlePage('prevStep');
+            break;
+          case 'ArrowDown':
+          case 'PageDown':
+            this.handlePage('nextStep');
+            break;
+          case 'ArrowLeft':
+            this.handlePage('prePage');
+            break;
+          case 'ArrowRight':
+            this.handlePage('nextPage');
+            break;
+          default:
+            break;
+        }
+      });
+
+      // 文档列表组件触发演示文档事件
+      this.$EventBus.$on('demonstration', data => {
+        this.docLoadComplete = false;
+        this.toggleWatchContainer(data.docVisibleToAudience);
+        this.cids.forEach(item => {
+          let type = item.split('-')[0];
+          if (type == 'document') {
+            this.docSDK.destroyContainer({ id: item });
+          }
+        });
+        // 删除多余的容器
+        if (this.boardID) {
+          this.cids = [this.boardID];
+        } else {
+          this.cids = [];
+        }
+
+        setTimeout(() => {
+          let cid = this.docSDK.createUUID('document');
+          this.currentCid = cid;
+          this.cids.push(cid);
+          this.docInfo.docShowType = 'document';
+          this.$nextTick(() => {
+            this.initWidth();
+            this.initContainer('document', cid, data.documentId);
+            this.docSDK.loadDoc({ docId: data.documentId, id: this.currentCid });
+            this.activeContainer(cid); // 创建后的选择不能延迟，否则不会派发文档加载完成事件
+          });
+        }, 300);
+      });
+
+      // 开始直播事件
+      this.$EventBus.$on('startLive', () => {
+        this.liveEnd = false;
+      });
+      // 开始直播事件
+      this.$EventBus.$on('live_start', () => {
+        if (this.roleName == '1') {
+          const type = this.isInteract == 1 ? 2 : 1;
+          this.docSDK.start(1, type);
+        }
+        if (this.roleName != 1) {
+          this.loadRemote();
+        }
+      });
+      // 结束直播事件
+      this.$EventBus.$on('live_over', () => {
+        this.liveEnd = true;
+        this.cids = [];
+        this.currentCid = '';
+        this.docSDK.resetContainer();
+        this.boardID = '';
+        this.docID = '';
+        if (this.roleName == '1') {
+          this.docInfo = {
+            showInWatch: false,
+            docContainerShow: true,
+            docShowType: '' // document 显示文档  board白板  '' 未添加文档
+          };
+          const type = this.isInteract == 1 ? 2 : 1;
+          this.docSDK.start(2, type);
+        } else {
+          this.docInfo = {
+            showInWatch: false,
+            docContainerShow: true,
+            docShowType: '' // document 显示文档  board白板  '' 未添加文档
+          };
+        }
+        this.$EventBus.$emit('docInfo', this.docInfo);
+      });
+      // 互动连麦成功
+      // eslint-disable-next-line no-unused-vars
+      this.$EventBus.$on('vrtc_connect_success', msg => {
+        if (this.$route.query.assistantType) {
+          this.resize();
+        }
+      });
+      // 互动连麦断开成功
+      // eslint-disable-next-line no-unused-vars
+      this.$EventBus.$on('vrtc_disconnect_success', msg => {
+        if (this.$route.query.assistantType) {
+          this.resize();
+        }
+      });
+      // 开始转播
+      // eslint-disable-next-line no-unused-vars
+      this.$EventBus.$on('live_broadcast_start', msg => {
+        this.docSDK && this.docSDK.setRole(window.roleTypeMap[2]);
+        this.docSDK &&
+          this.docSDK.setAccountId({ accountId: this.accountId + '7890' });
+        this.docInfo.showInWatch = false;
+        this.$EventBus.$emit('docInfo', this.docInfo);
         if (this.rebroadcastStartTimer) {
           clearTimeout(this.rebroadcastStartTimer);
           this.rebroadcastStartTimer = null;
         }
         this.rebroadcastStartTimer = setTimeout(() => {
-          this.docSDK && this.setSdkRole(2, 'FLV');
-          this.loadRemote(id);
+          this.docSDK && this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.FLV);
+          this.loadRemote();
           this.hasDocPermission = false;
           clearTimeout(this.rebroadcastStartTimer);
           this.rebroadcastStartTimer = null;
         }, 1000);
-      } else if (type == 'end') {
-        let mode = this.roleName == 1 || this.roleName == 4 ? 'INTERACT' : 'FLV';
-        this.docSDK && this.setSdkRole(this.roleName, mode);
-        this.docInfo.showContainer = false;
-        this.cids = [];
-        isSelfDoc && this.loadRemote(id);
-      } else {
-        this.$message({
-          type: 'error',
-          message: '转播参数错误'
+      });
+      // 结束转播
+      // eslint-disable-next-line no-unused-vars
+      this.$EventBus.$on('live_broadcast_stop', msg => {
+        this.docSDK && this.docSDK.setAccountId({ accountId: this.accountId });
+        clearTimeout(this.rebroadcastStopTimer);
+        this.rebroadcastStopTimer = setTimeout(() => {
+          this.$EventBus.$emit('documenet_load_complete', []);
+          this.boardID = '';
+          this.docID = '';
+          this.cids = [];
+          this.currentCid = '';
+          this.docInfo.showInWatch = false;
+          this.docInfo.docContainerShow = true;
+          this.docInfo.docShowType = '';
+          this.$EventBus.$emit('docInfo', this.docInfo);
+          if (this.liveStatus == 1) {
+            this.loadRemote();
+          }
+          this.docSDK && this.docSDK.setRole(window.roleTypeMap[1]);
+          this.docSDK && this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.INTERACT);
+          this.hasDocPermission = true;
+        }, 1000);
+      });
+      // 设置主讲人
+      // this.$EventBus.$on('vrtc_speaker_switch', msg => {
+      //   this.currentDocPermissionId = msg.room_join_id
+      // })
+    },
+    // 重新计算文档区域
+    resize () {
+      if (this.docInfo.docContainerShow && this.docInfo.docShowType) {
+        console.log('=======触发了resize事件 ========================');
+        this.$nextTick(() => {
+          this.initWidth(this.docInfo.docShowType);
+          if (this.docInfo.docShowType === 'document') {
+            this.docSDK.setSize(
+              parseFloat(this.docBoxStyle.width),
+              parseFloat(this.docBoxStyle.height),
+              {
+                id: this.docID
+              }
+            );
+          } else {
+            this.docSDK.setSize(
+              parseFloat(this.boardBoxStyle.width),
+              parseFloat(this.boardBoxStyle.height),
+              {
+                id: this.boardID
+              }
+            );
+          }
         });
       }
     },
-    // input框聚焦时，阻止键盘事件冒泡, 阻止此时翻页
-    stopKeyPropagation () {
-      let body = document.getElementsByTagName('body')[0];
-      body.addEventListener('keyup', (event) => {
-        var e = event || window.event;
-        if (e.target.tagName == 'INPUT') {
-          event.stopPropagation();
-          console.log('阻止input冒泡');
+    /**
+     * 初始化文档SDK实例,演示文档时调用
+     */
+    _initDocSDK () {
+      let hide = this.$route.query.hide == 1;
+      let mode = this.roleName == 3 ? window.window.VHDocSDK.PlayMode.FLV : window.window.VHDocSDK.PlayMode.INTERACT;
+      let opt = {
+        accountId: this.accountId,
+        roomId: this.roomId,
+        channelId: this.channelId, // 频道id 必须
+        appId: this.appId, // appId 必须
+        role: window.roleTypeMap[this.disableAssistant ? 2 : this.roleName], // 角色 必须, 助理无文档权限时设置观众权限
+        isVod: false, // 是否是回放 必须
+        client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
+        token: this.token,
+        hide,
+        mode
+      };
+      let success = () => {
+        this.docLoadComplete = false;
+        if (this.hasDocPermission) {
+          this.docSDK.setRole(window.roleTypeMap[1]);
+        } else {
+          this.docSDK.setRole(
+            window.roleTypeMap[this.disableAssistant ? 2 : this.roleName]
+          );
+        }
+        // 刷新时，如果在直播中会加载远端文档信息
+        if (this.roleName == 1) {
+          if (this.rebroadcastChannelId) {
+            this.docSDK.setAccountId({ accountId: this.accountId + '7890' });
+            this.docInfo.showInWatch = false;
+            this.$EventBus.$emit('docInfo', this.docInfo);
+            this.docSDK.setRole(window.roleTypeMap[2]);
+            this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.FLV);
+            this.hasDocPermission = false;
+          }
+          this.loadRemote();
+        } else {
+          if (this.liveStatus == 1) {
+            this.loadRemote();
+          }
+        }
+
+        // 主持人，嘉宾
+        if (
+          (this.roleName == 1 || this.roleName == 4) &&
+          !this.rebroadcastChannelId
+        ) {
+          this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.INTERACT);
+        }
+
+        // 助理
+        if (this.roleName == 3) {
+          this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.FLV);
+        }
+        console.log('实例化文档成功', this.docSDK);
+        this.$EventBus.$emit('docSDK_ready', this.docSDK);
+        window.docSDK = this.docSDK;
+      };
+      let failed = error => {
+        console.error('实例化文档失败', error.msg);
+      };
+      this.docSDK = window.VHDocSDK.createInstance(opt, success, failed);
+
+      // 助手端还需要监听房间消息
+      if (this.$route.query.assistantType) {
+        window.chatSDK.onRoomMsg(msg => {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg);
+          }
+          console.log('==========房间消息===========', msg);
+          msg.data = JSON.parse(msg.data);
+          Object.assign(msg, msg.data);
+          this.$EventBus.$emit(msg.type, msg);
+        });
+      }
+      // 设置编辑权限
+      // this.docSDK.setEditable(this.hasDocPermission)
+
+      this.docSDK.on(window.VHDocSDK.Event.ERROR, error => {
+        console.error('===================文档错误====================', error);
+      });
+
+      this.docSDK.on(window.VHDocSDK.Event.DOCUMENT_LOAD_COMPLETE, data => {
+        console.log('===================文档加载完成====================', data);
+        // this.isPageShow = true
+        this.pageInfo = {
+          total: data.info.slidesTotal,
+          pageIndex: Number(data.info.slideIndex) + 1
+        };
+        let res = this.docSDK.getThumbnailList({ id: this.docID });
+        const thumbnailList = res[0] ? res[0].list : [];
+        this.$EventBus.$emit('documenet_load_complete', thumbnailList);
+      });
+      this.docSDK.on(window.VHDocSDK.Event.PAGE_CHANGE, data => {
+        console.log('===================文档翻页====================', data);
+        this.$EventBus.$emit('PAGE_CHANGE', data.info.slideIndex);
+        this.pageInfo = {
+          total: data.info.slidesTotal,
+          pageIndex: Number(data.info.slideIndex) + 1
+        };
+      });
+
+      this.docSDK.on(window.VHDocSDK.Event.SWITCH_CHANGE, status => {
+        if (this.hasDocPermission) return;
+        console.log('==========控制文档开关=============', status);
+        if (status == 'on') {
+          this.toggleWatchContainer(true); // 同步各个端 文档开关状态
+          this.docInfo.showInWatch = true;
+        } else {
+          this.toggleWatchContainer(false); // 同步各个端 文档开关状态
+          this.docInfo.showInWatch = false;
+        }
+        this.$EventBus.$emit('docInfo', this.docInfo);
+      });
+      this.docSDK.on(window.VHDocSDK.Event.CREATE_CONTAINER, data => {
+        if (
+          (this.roleName != 1 && this.liveStatus != 1) ||
+          this.cids.includes(data.id)
+        ) {
+          return;
+        }
+        console.log('===================创建容器====================', data);
+        this.docInfo.docContainerShow = true;
+        this.docInfo.docShowType = data.type;
+        this.cids.push(data.id);
+        this.$nextTick(() => {
+          this.initWidth(data.type);
+          this.initContainer(data.type, data.id, '');
+        });
+      });
+      this.docSDK.on(window.VHDocSDK.Event.DELETE_CONTAINER, data => {
+        if (this.roleName != 1 && this.liveStatus != 1) {
+          return;
+        }
+        console.log('===============删除容器=======================', data);
+        let index = this.cids.indexOf(data.id);
+        if (index > -1) {
+          this.cids.splice(index, 1);
+          this.docSDK.destroyContainer({ id: data.id });
+        }
+        if (this.currentCid == data.id) {
+          this.currentCid = '';
+          this.docInfo.docShowType = '';
+        }
+      });
+      this.docSDK.on(window.VHDocSDK.Event.SELECT_CONTAINER, async data => {
+        if (
+          this.currentCid == data.id ||
+          (this.roleName != 1 && this.liveStatus != 1)
+        ) {
+          return;
+        }
+        console.log('===============选择容器=======================', data);
+        this.docInfo.docShowType = data.id.split('-')[0];
+        this.currentCid = data.id;
+        // 判断容器是否存在
+        if (this.cids.indexOf(data.id) > -1) {
+          this.activeContainer(data.id);
+        } else {
+          this.cids.push(data.id);
+          await this.$nextTick();
+          this.initWidth(data.type);
+          this.initContainer(data.type, data.id, '');
+          this.activeContainer(data.id);
+        }
+        this.$EventBus.$emit('docInfo', this.docInfo);
+        this.docSDK.setControlStyle(this.styleOpts);
+      });
+
+      this.docSDK.on(window.VHDocSDK.Event.ALL_COMPLETE, () => {
+        console.log('=============所有文档加载完成==============');
+        this.docLoadComplete = true;
+        if (this.isSetRole > -1) {
+          // eslint-disable-next-line no-unused-vars
+          this.docSDK.setRole(window.roleTypeMap[this.isSetRole]).then(res => {
+            this.isSetRole = -1;
+          }).catch(() => {
+            // 实例未全部加载完毕，切换失败
+            console.log('=============文档没有在完成===========');
+            // this.isSetRole = this.isSetRole
+          });
+        }
+      });
+      // eslint-disable-next-line no-unused-vars
+      this.docSDK.on(window.VHDocSDK.Event.DOCUMENT_NOT_EXIT, ({cid, docId}) => {
+        console.log('====================文档不存在或已删除=================', cid);
+        if (cid == this.currentCid) {
+          this.$message({
+            type: 'error',
+            message: '文档不存在或已删除'
+          });
+          this.deleteTimer = setTimeout(() => {
+            this.docID = '';
+            let index = this.cids.indexOf(cid);
+            this.cids.splice(index, 1);
+            this.docSDK.destroyContainer({id: this.currentCid});
+            this.currentCid = '';
+            this.docInfo.docShowType = '';
+          }, 3000); // 其他地方调用回将值重新传入
+        }
+      });
+      // eslint-disable-next-line no-unused-vars
+      this.docSDK.on(window.VHDocSDK.Event.DOCUMENT_LOAD_COMPLETE, data => {
+        // this.docLoadComplete = true
+      });
+    },
+    /**
+     * 初始化文档容器
+     * documentId在主讲人状态时，是演示的文档ID,其他角色时，是创建文档/白板的UUID
+     */
+    initContainer (type = 'document', cid, documentId, noDispatch = false) {
+      console.log('初始化容器的参数===========', cid, documentId);
+      if (type === 'document') {
+        let opts = {
+          id: cid,
+          docId: documentId,
+          elId: cid, // div 容器 必须
+          width: parseFloat(this.docBoxStyle.width), // div 宽度，像素单位，数值型不带px 必须
+          height: parseFloat(this.docBoxStyle.height), // div 高度，像素单位，数值型不带px 必须
+          noDispatch: noDispatch
+        };
+        this.docSDK.createDocument(opts);
+        this.docSDK.setControlStyle(this.styleOpts);
+      } else {
+        this.boardID = cid;
+        let opts = {
+          id: cid,
+          elId: cid, // div 容器 必须
+          width: parseFloat(this.boardBoxStyle.width), // div 宽度，像素单位，数值型不带px 必须
+          height: parseFloat(this.boardBoxStyle.height), // div 高度，像素单位，数值型不带px 必须
+          backgroundColor: '#FFFFFF',
+          noDispatch: noDispatch
+        };
+        this.docSDK.createBoard(opts);
+        this.docSDK.setControlStyle(this.styleOpts);
+      }
+    },
+    /**
+     * 创建直播时有上传文档，则显示上传文档
+     */
+    async initUploadDoc () {
+      if (this.documentId) {
+        this.docInfo.docContainerShow = true;
+        this.docInfo.docShowType = 'document';
+        this.$EventBus.$emit('docInfo', this.docInfo);
+        let cid = this.docSDK.createUUID('document');
+        this.cids.push(cid);
+        await this.$nextTick();
+        this.initWidth();
+        this.initContainer('document', cid, this.documentId, true);
+        this.docSDK.loadDoc({ docId: this.documentId, id: cid });
+        this.activeContainer(cid);
+      }
+    },
+    // 激活容器，设置默认画笔颜色
+    activeContainer (cid = '', isEvent = true) {
+      this.docSDK.selectContainer({id: cid});
+      this.currentCid = cid;
+      isEvent && this.$EventBus.$emit('remote_doc_select', { id: cid });
+      let type = cid.split('-')[0];
+      if (type == 'document') {
+        this.docID = cid;
+      }
+    },
+    // 切换角色时可能触发的弹窗
+    changeRoleAlert () {
+      this.$alert('文档加载失败，请尝试刷新浏览器', '', {
+        title: '提示',
+        confirmButtonText: '立即刷新',
+        center: true,
+        showClose: false,
+        // eslint-disable-next-line no-unused-vars
+        callback: action => {
+          window.location.reload();
         }
       });
     },
     sdkLoad(){
-      this.roleTypeMap= {
-        1: window.VHDocSDK.RoleType.HOST, // 1 活动拥有者
-        2: window.VHDocSDK.RoleType.SPECTATOR, // 2 观众
-        3: window.VHDocSDK.RoleType.ASSISTANT, // 3 助理
-        4: window.VHDocSDK.RoleType.GUEST // 4 嘉宾
+      window.roleTypeMap = {
+        1: window.VHDocSDK.RoleType.HOST, // 1     主持人[1]
+        2: window.VHDocSDK.RoleType.SPECTATOR, // 3 观众[2]
+        3: window.VHDocSDK.RoleType.ASSISTANT, // 4 助理[3]
+        4: window.VHDocSDK.RoleType.GUEST // 2 嘉宾[4]
       };
-      this._initSDK();
+      this._initDocSDK();
       // if(window.VhallMsg)
 
     }
+  },
+  destroyed () {
+    console.log('destroyed');
+    this.docSDK.destroy();
+    this.docSDK = null;
   }
 };
 </script>
-
-<style lang="less">
-.vh-doc {
+<style lang="less" scoped>
+.doc-wrapper {
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
-  &__wrap {
+  .doc-inner-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50px;
+    bottom: 0;
+    overflow: hidden;
+    &.no-permission {
+      top: 0px;
+    }
+  }
+  .doc {
     width: 100%;
     height: 100%;
     position: relative;
     // padding-top: 40px;
     box-sizing: border-box;
-    background-color: #000;
-    .vh-doc-tool {
-      display: none;
+    background-color: #292929;
+    .switch-white-board {
+      top: 0;
+      right: 20px;
+      position: absolute;
     }
-    .vh-doc-pager {
-      display: none;
+    .doc-box {
+      top: 50%;
+      left: 50%;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      overflow: visible !important;
     }
-    &:hover {
-      .vh-doc-tool {
-        display: flex;
-      }
-      .vh-doc-pager {
-        display: flex;
-      }
+    .board-box {
+      top: 50%;
+      left: 50%;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      overflow: visible !important;
+    }
+    .thumbnail-wrapper {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
     }
   }
-  &__box {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0px;
-    bottom: 0;
-    overflow: hidden;
+  .doc-empty {
+    width: 100%;
+    height: 100%;
+    background: url('../../common/images/doc-default.png') no-repeat;
+    background-color: #23232b;
+    background-size: 387px 205px;
+    background-position: center;
+    @media (max-width: 1366px) {
+      background-size: 256.88px 136.07px;
+    }
   }
-  &__show {
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    overflow: visible !important;
+   /deep/ .el-loading-spinner {
+    margin-top: 0;
+    transform: translateY(-50%);
+    i {
+      color: #fff;
+      font-size: 24px;
+    }
+    .el-loading-text {
+      color: #fff;
+    }
+  }
+}
+.live-end-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  z-index: 600;
+  background: url('https://t-alistatic01.e.vhall.com/static/images/interact/endcover.jpg?v=%2BrM3tCz1%2BRV%2BsxuP6fa7Bg%3D%3D')
+    no-repeat;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    line-height: 80px;
+    height: 80px;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .back-to-manager {
+    color: #fff;
+    text-decoration: underline;
   }
 }
 </style>

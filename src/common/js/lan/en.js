@@ -2,7 +2,7 @@ module.exports = {
   language: {
     name: 'Eng'
   },
-  mess: {
+  message: {
     living: 'Live now',
     preView: 'Preview',
     end: 'End',
@@ -45,4 +45,4 @@ module.exports = {
     您的信息不在白名单中: '您的信息不在白名单中',
     没有白名单: '没有白名单'
   }
-}
+};

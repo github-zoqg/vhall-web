@@ -30,6 +30,7 @@ const i18n = new VueI18n({
     en: require('../src/common/js/lan/en')
   }
 });
+window.i18n = i18n;
 Vue.prototype.$EventBus = new Vue();
 new Vue({
   router,

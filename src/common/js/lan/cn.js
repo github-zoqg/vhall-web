@@ -2,7 +2,7 @@ module.exports = {
   language: {
     name: '简体中文'
   },
-  mess: {
+  message: {
     living: '直播中',
     preView: '预告',
     end: '结束',
@@ -44,4 +44,4 @@ module.exports = {
     您的信息不在白名单中: '您的信息不在白名单中',
     没有白名单: '没有白名单'
   }
-}
+};
