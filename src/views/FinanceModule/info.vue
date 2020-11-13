@@ -80,8 +80,6 @@
 <script>
 import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
-// import tableList from '@/components/DataList/list.vue';
-// import searchArea from '@/components/SearchArea/index.vue';
 export default {
   name: "financeInfo",
   components: {
@@ -92,7 +90,7 @@ export default {
   },
   data() {
     return {
-      userInfo: '',
+      userInfo: {},
       time: '',
       dataValue: '',
       totalNum: 1000,
@@ -203,16 +201,9 @@ export default {
     };
   },
   mounted() {
-    this.getUserVersion();
+    this.userInfo = JSON.parse(window.sessionStorage.getItem("userInfo"));
   },
   methods: {
-     getUserVersion() {
-      this.$fetch('getInfo', {}).then(res =>{
-        this.userInfo = res.data;
-      }).catch(e=>{
-        console.log(e);
-      });
-    },
     getLineList(params) {
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       console.log(formParams, params);
@@ -237,13 +228,6 @@ export default {
 
 <style lang="less" scoped>
 .finance-info{
-  /deep/.el-button {
-    border: none;
-    background: transparent;
-  }
-  /deep/.el-button.is-circle{
-    padding:3px;
-  }
   /deep/.el-card__body{
     padding: 10px 20px;
   }
@@ -256,6 +240,13 @@ export default {
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
         color: #1a1a1a;
+      }
+       /deep/.el-button {
+        border: none;
+        background: transparent;
+      }
+      /deep/.el-button.is-circle{
+        padding:3px;
       }
     }
     .statistical-line {

@@ -5,7 +5,7 @@
         <app-head @change="changeIsCollapse"></app-head>
       </el-header>
       <el-container class="el-main-box">
-        <el-aside width="225px" style="height:100%">
+        <el-aside width="225px" style="height:100%" class="aside">
           <!-- 左侧导航 -->
           <side-bar :isCollapse="isCollapse"></side-bar>
         </el-aside>
@@ -41,4 +41,14 @@ export default {
 .el-container .el-header{
   padding: 0;
 }
+// .head{
+//   position: fixed;
+//   top:64px;
+//   left:0;
+// }
+// .aside{
+//   position: fixed;
+//   top:0;
+//   left: 0;
+// }
 </style>

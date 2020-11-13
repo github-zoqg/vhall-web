@@ -218,7 +218,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .el-menu-vertical-demo{
-  height: calc(100vh - 60px);
+  height: calc(100vh - 64px);
   background: #1A1A1A;
 }
 /*.el-menu-vertical-demo:not(.el-menu--collapse) {

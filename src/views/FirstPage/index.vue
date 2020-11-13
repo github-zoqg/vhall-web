@@ -35,30 +35,30 @@
         </el-col>
       </el-row>
       <div class="row-list">
-        <p class="list-title">直播列表</p>
+        <p class="list-title">数据统计</p>
         <el-row type="flex" class="row-buttom" justify="space-around">
           <el-col :span="6">
             <div class="buttom-item">
               <p>活动总数</p>
-              <h2>88888888</h2>
+              <h2>{{ mainKeyData.webinar_count}}</h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看次数</p>
-              <h2>550</h2>
+              <h2>{{ mainKeyData.watch_times}}</h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看人数</p>
-              <h2>550</h2>
+              <h2>{{ mainKeyData.watch_number}}</h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看时长(分)</p>
-              <h2>55:00:00</h2>
+              <h2>{{ mainKeyData.watch_duration}}</h2>
             </div>
           </el-col>
         </el-row>
@@ -67,7 +67,7 @@
         <div class="line-tip">
           <p>用量统计</p>
         </div>
-        <line-echarts></line-echarts>
+        <line-echarts :lineDataList="lineDataList"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">
@@ -91,20 +91,35 @@ import DataUsage from '@/components/DataUsage/index.vue';
 export default {
   data() {
     return {
-      userInfo: {}
+      userInfo: {},
+      mainKeyData: {},
+      lineDataList: []
     };
   },
   components: {
     LineEcharts,
     DataUsage
   },
-  created() {
+  mounted() {
     this.getUserVersion();
+    this.getLiveList();
   },
   methods: {
     getUserVersion() {
-      this.$fetch('getInfo', {}).then(res =>{
+      let params = {
+        user_id: '16417099'
+      };
+      this.$fetch('getVersionInfo', params).then(res =>{
         this.userInfo = res.data;
+        window.sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo));
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    getLiveList() {
+      this.$fetch('getDataCenterInfo').then(res =>{
+        this.mainKeyData = res.data.key_data;
+        this.lineDataList = res.data.trend.live;
       }).catch(e=>{
         console.log(e);
       });
@@ -118,6 +133,7 @@ export default {
     max-width: 1374px;
     height: 100%;
     display: flex;
+    overflow: hidden;
     /deep/.el-col-5{
       width: 18.8%;
     }

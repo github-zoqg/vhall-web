@@ -23,13 +23,13 @@
           width="180">
         </el-table-column>
         <el-table-column
-          prop="money"
+          prop="fee"
           label="金额"
           width="180">
         </el-table-column>
       </el-table>
       <div class="total">
-        <p>总金额: <span>￥ 4000.00</span> </p>
+        <p>总金额: <span>￥{{totalFee}}.00</span> </p>
       </div>
         <div class="pay-method">
           <p>支付方式</p>
@@ -47,6 +47,19 @@
               <img src="../../common/images/v35-webinar.png" alt="">
             </div>
           </div>
+          <el-dialog
+            :visible.sync="dialogBuyVisible"
+            :close-on-click-modal="false"
+            width="340px"
+          >
+          <div class="isPay">
+            <p>订单支付中...</p>
+            <div class="reBtn">
+              <span class="first-span">选择其他支付方式</span>
+              <span class="second-span">完成支付</span>
+            </div>
+          </div>
+          </el-dialog>
         </div>
     </el-card>
   </div>
@@ -56,27 +69,114 @@ export default {
   data() {
     return {
       isChecked: true,
-      tableList: [
-        {
-          id: '123244',
-          type: '支付宝',
-          money: '123,000',
-          content: '哈哈哈哈',
-          name: '直播',
-        },
-        {
-          id: '100000',
-          type: '微信',
-          money: '111,000',
-          content: '开始讲课',
-          name: '录播',
-        }
-      ]
+      dialogBuyVisible: false,
+      totalFee: 0,
+      tableList: []
     };
+  },
+  created() {
+    if (this.$route.query.type == '1') {
+      // 专业版
+      this.payProfessionalList();
+    } else if (this.$route.query.type == '2') {
+      //流量版
+      this.payFlowList();
+    }else if (this.$route.query.type == '3') {
+      //升级并发
+      this.payUpgradeList();
+    } else {
+      //购买扩展买
+      this.payExtentList();
+    }
   },
   methods: {
     changeColor() {
       this.isChecked = !this.isChecked;
+    },
+    payProfessionalList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.$route.query.userId
+      };
+      this.$fetch('orderProfessional', params).then(res =>{
+        this.totalFee = res.data.total_fee;
+        this.tableList.push({
+          id: res.data.order_id,
+          name: res.data.product_name,
+          content: res.data.content,
+          type: res.data.type,
+          fee: res.data.total_fee
+        });
+        console.log(res.data);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    payFlowList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.$route.query.userId,
+        number: this.$route.query.number
+      };
+      this.$fetch('orderFlow', params).then(res =>{
+        this.totalFee = res.data.total_fee;
+        this.tableList.push({
+          id: res.data.order_id,
+          name: res.data.product_name,
+          content: res.data.content,
+          type: res.data.type,
+          fee: res.data.total_fee
+        });
+        // console.log(res.data);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    payUpgradeList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.$route.query.userId,
+        number: this.$route.query.number
+      };
+      this.$fetch('orderUpgrade', params).then(res =>{
+        this.totalFee = res.data.total_fee;
+        this.tableList.push({
+          id: res.data.order_id,
+          name: res.data.product_name,
+          content: res.data.content,
+          type: res.data.type,
+          fee: res.data.total_fee
+        });
+        // console.log(res.data);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    payExtentList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.$route.query.userId,
+        number: this.$route.query.number
+      };
+      this.$fetch('orderExtend', params).then(res =>{
+        this.totalFee = res.data.total_fee;
+        this.tableList.push({
+          id: res.data.order_id,
+          name: res.data.product_name,
+          content: res.data.content,
+          type: res.data.type,
+          fee: res.data.total_fee
+        });
+        // console.log(res.data);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    choseOtherMethod() {
+      console.log("1111111111");
+    },
+    finishPay() {
+      console.log("222222222222");
     }
   }
 };
@@ -157,6 +257,35 @@ export default {
               height: 88px;
             }
           }
+        }
+      }
+    }
+    .isPay{
+      p{
+        text-align: center;
+      }
+      .reBtn{
+        text-align: center;
+        span{
+          display: inline-block;
+          width: 120px;
+          height: 30px;
+          line-height: 30px;
+          font-size: 12px;
+          text-align: center;
+          color: #fff;
+          border-radius: 2px;
+          cursor: pointer;
+        }
+        .first-span {
+          color: #666;
+          border: 1px solid #d2d2d2;
+        }
+        .second-span {
+          background: #fc5659;
+          border: 1px solid #fc5659;
+          color: #fff;
+          margin-left: 10px;
         }
       }
     }

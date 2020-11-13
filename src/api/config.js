@@ -58,11 +58,18 @@ const apis = {
   playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
   playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
   //首页
-  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户版本类型
+  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）
   //数据中心
   getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
   // 用户基础信息
   userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
+
+  //财务中心
+  getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
+  orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
+  orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
+  orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
+  orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
 };
 
 const getApi = api => {

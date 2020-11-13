@@ -279,7 +279,7 @@ const routes = [
   },
   {
     path: '/pay-order',
-    title: '收益详情',
+    title: '购买列表',
     name: 'payOrder',
     component: () => import('@/views/FinanceModule/payList.vue')
   },

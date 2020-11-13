@@ -115,7 +115,7 @@ export default {
 <style lang="less" scoped>
   .search-area{
     position: relative;
-    background: #fff;
+    // background: #fff;
     margin-top: 15px;
     // border-bottom: 1px solid #ccc;
     /*选择框重置*/
@@ -131,6 +131,9 @@ export default {
       /deep/.el-form-item__content {
         line-height: 36px;
       }
+      .el-range-editor .el-range-input {
+        background: transparent;
+      }
       .el-button{
         margin-right: 24px;
         border-radius: 18px;
@@ -144,7 +147,7 @@ export default {
       height: 36px;
       border: 1px solid #ccc;
       border-radius: 18px;
-      background: #fff;
+      background: transparent;
       line-height: 36px;
       span {
         border-radius: 18px;
@@ -171,7 +174,7 @@ export default {
       border: 1px solid #dcdfe6;
       text-align: center;
       line-height: 35px;
-      background: #fff;
+      background: transparent;
       cursor: pointer;
       span {
         font-size: 14px;
