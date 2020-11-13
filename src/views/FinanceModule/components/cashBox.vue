@@ -81,6 +81,7 @@ export default {
       dialogCashVisible: false,
       code: '',
       money: '',
+      checked: false,
       waitTime: 60,
       codeBtnWord: '获取验证码',
       getCodeBtnDisable: true

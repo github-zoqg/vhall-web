@@ -13,7 +13,7 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <search-area
+      <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
       @onSearchFun="getDataList('search')"
@@ -151,13 +151,6 @@ export default {
 
 <style lang="less" scoped>
 .data-info {
-  /deep/.el-button {
-    border: none;
-    background: transparent;
-  }
-  /deep/.el-button.is-circle {
-    padding: 3px;
-  }
   .title-data {
     margin: 10px 0 20px 0;
     text-align: left;
@@ -170,6 +163,13 @@ export default {
     }
     .button-tip {
       vertical-align: top;
+    }
+      /deep/.el-button {
+      border: none;
+      background: transparent;
+    }
+    /deep/.el-button.is-circle {
+      padding: 3px;
     }
   }
   .statistical-data {

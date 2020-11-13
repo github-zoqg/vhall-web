@@ -27,6 +27,13 @@ const routes = [
   {
     path: '/live/edit',
     name: 'liveEdit',
+    meta:{webniarType: "live"},
+    component: () => import('@/views/LiveModule/edit.vue')
+  },
+  {
+    path: '/vod/edit',
+    name: 'vodEdit',
+    meta:{webniarType: "vod"},
     component: () => import('@/views/LiveModule/edit.vue')
   },
   {
@@ -286,7 +293,7 @@ const routes = [
   },
   {
     path: '/pay-order',
-    title: '收益详情',
+    title: '购买列表',
     name: 'payOrder',
     component: () => import('@/views/FinanceModule/payList.vue')
   },
@@ -355,6 +362,7 @@ router.beforeEach((to, from, next) => {
   next();
 });
 router.afterEach(transition => {
+  console.log(transition);
   NProgress.done();
 });
 export default router;

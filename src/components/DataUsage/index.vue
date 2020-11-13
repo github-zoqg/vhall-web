@@ -1,26 +1,25 @@
 <template>
   <el-card class="data-usage">
-    <!-- userInfo.user_type == '2' ? '旗舰版' : userInfo.user_type == '1' ? '专业版' :  userInfo.user_type == '3' ? '无极版' : '标准版' -->
-    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.user_type == '2'">
+    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.edition == '2'">
       <el-col :span="6">
         <div class="top-item">
           <p>当前版本</p>
           <h2>旗舰版</h2>
-          <p>有效期: {{ userInfo.service_info.edition_valid_time }}</p>
+          <p>有效期: {{ userInfo.edition_valid_time || '' }}</p>
         </div>
       </el-col>
       <el-col :span="6">
-        <div class="top-item">
+        <div class="top-item" v-if="userInfo.concurrency">
           <p>总并发(方)<span class="level" @click="levelVersion('升级')">升级</span></p>
-          <h2>{{ userInfo.service_info.total_concurrency }}</h2>
-          <p>有效期: {{ userInfo.service_info.concurrency_valid_time }}</p>
+          <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
+          <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}</p>
         </div>
       </el-col>
       <el-col :span="6">
-        <div class="top-item">
+        <div class="top-item" v-if="userInfo.concurrency">
           <p>并发扩展包<span class="level" @click="levelVersion('购买')">购买</span></p>
-          <h2>{{ userInfo.service_info.concurrency_extend }}</h2>
-          <p>账单明细</p>
+          <h2>{{ userInfo.concurrency.concurrency_extend || userInfo.arrears.extend  }}</h2>
+          <p v-if="this.$route.name!='home'" @click="goAccountDetail">账单明细</p>
         </div>
       </el-col>
     </el-row>
@@ -28,52 +27,68 @@
       <el-col :span="9">
         <div class="top-item">
           <p>当前版本</p>
-          <h2>{{ userInfo.user_type == '1' ? '专业版' : userInfo.user_type == '3' ? '无极版' : '标准版' }} <span class="level" v-if = "userInfo.user_type != '3'" @click="buyVersion('1')">{{ userInfo.user_type == '1' ? '续费' : '升级'}}</span></h2>
-          <p>有效期: {{ userInfo.service_info.edition_valid_time }}</p>
+          <h2>{{ userInfo.edition == '1' ? '专业版' : userInfo.edition == '3' ? '无极版' : '标准版' }} <span class="level" v-if = "userInfo.edition != '3'" @click="buyVersion('1')">{{ userInfo.edition == '1' ? '续费' : '升级'}}</span></h2>
+          <p>有效期: {{ userInfo.edition_valid_time || ''  }}</p>
         </div>
       </el-col>
-      <el-col :span="9" v-if = "userInfo.user_type == '3'">
-        <div class="top-item">
+      <el-col :span="9" v-if = "userInfo.edition == '3'">
+        <div class="top-item"  v-if="userInfo.flow">
           <p>总流量/回放流量（GB）</p>
-          <h2>{{userInfo.service_info.total_flow}}/{{ userInfo.service_info.playback_flow }}</h2>
-          <p @click="goAccountDetail">账单明细</p>
+          <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
+          <p @click="goAccountDetail" v-if="this.$route.name!='home'">账单明细</p>
         </div>
       </el-col>
       <el-col :span="9" v-else>
         <div class="top-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion('2')">购买</span></p>
-          <h2>{{userInfo.service_info.total_flow}}/{{ userInfo.service_info.valid_flow }}</h2>
-          <p @click="goAccountDetail">账单明细</p>
+          <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
+          <p @click="goAccountDetail" v-if="this.$route.name!='home'">账单明细</p>
         </div>
       </el-col>
     </el-row>
-    <up-version ref="levelVersion" :title="title" :money="money"></up-version>
+    <up-version ref="levelVersion" :title="title" :concurrentPrice="concurrentPrice"></up-version>
   </el-card>
 </template>
 <script>
 import upVersion from './components/upversion';
 export default {
-  props: ['userInfo'],
-  data() {
-    return {
-      title: '流量包',
-      money: '￥8000.00'
-    };
+  props: {
+    userInfo:{
+      type: Object
+      // default: () => {
+      //   return {flow:{},arrears:{},concurrency:{}};
+      // }
+    }
   },
   watch: {
     userInfo: {
       handler() {
-        this.userInfo.user_type = '0';
+        this.userInfo.edition = '2';
       }
     }
+  },
+  data() {
+    return {
+      title: '流量包',
+      concurrentPrice: {}
+    };
   },
   components: {
     upVersion
   },
+  created() {
+    console.log(this.$route.name);
+  },
   methods: {
     levelVersion(title) {
-      this.$refs.levelVersion.dialogVisible = true;
-      this.title = title;
+      if (this.$route.name === 'home') {
+        this.$router.push({
+          name: 'info'
+        });
+      } else {
+        this.$refs.levelVersion.dialogVisible = true;
+        this.title = title;
+      }
     },
     goAccountDetail() {
       this.$router.push({
@@ -81,10 +96,15 @@ export default {
       });
     },
     buyVersion(type) {
-      this.title = type === '1' ? '专业版' : '流量版';
-      this.money = type === '1' ? '￥8000.00' : '￥4000.00';
-      // this.title = this.userInfo.user_type === '1' ? '专业版':'流量版';
-      this.$refs.levelVersion.dialogBuyVisible = true;
+      if (this.$route.name === 'home') {
+        this.$router.push({
+          name: 'info'
+        });
+      } else {
+        this.title = type === '1' ? '专业版' : '流量版';
+        this.concurrentPrice = this.userInfo.edition == '2' ? this.userInfo.concurrency : this.userInfo.flow;
+        this.$refs.levelVersion.dialogBuyVisible = true;
+      }
     }
   }
 };

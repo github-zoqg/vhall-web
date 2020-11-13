@@ -10,8 +10,8 @@
 
     <!-- 操作栏 -->
     <div class="operaBox">
-      <el-button type="primary" round>创建直播</el-button>
-      <el-button round>创建点播</el-button>
+      <el-button type="primary" round @click="$router.push({path:'/live/edit'})">创建直播</el-button>
+      <el-button round @click="$router.push({path:'/vod/edit'})">创建点播</el-button>
       <div class="searchBox">
         <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
           <el-option

@@ -111,7 +111,7 @@ export default {
         accountId: 16422750,
         nickName: '123',
         appId: 'fd8d3653',
-        token: 'access:fd8d3653:4ee0cc5054b5c144',
+        token: 'access:fd8d3653:c1b02f653cc7fabf',
         type: 'vod',
         roomId: 'lss_8018578c',
         channel_id: 'ch_93f8b149',

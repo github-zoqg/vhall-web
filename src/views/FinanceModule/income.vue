@@ -114,7 +114,7 @@ export default {
       searchAccount: [
         {
           type: '2',
-          key: "searchDate"
+          key: "searchTime"
         },
         {
           key: "accountTitle"
@@ -175,32 +175,31 @@ export default {
       meneyColumns: [
         {
           label: '活动id',
-          key: 'no',
+          key: 'id',
           width: 120
         },
         {
           label: '标题',
-          key: 'time',
-          width: 240
+          key: 'title',
         },
         {
           label: '发红包用户',
-          key: 'type',
-          width: 100
+          key: 'user',
+          width: 200
         },
         {
           label: '红包类型',
-          key: 'money',
+          key: 'type',
           width: 120,
         },
         {
           label: '领取时间',
-          key: 'content',
-          width: 120
+          key: 'time',
+          width: 150
         },
         {
           label: '领取金额',
-          key: 'status',
+          key: 'money',
           width: 120
         }
       ],
@@ -236,14 +235,25 @@ export default {
     },
     handleClick(tab) {
       this.activeIndex = tab.name;
+      this.$refs.searchIncome.searchParams = {};
+      this.$refs.tableIncome.pageInfo.pageNum = 1;
     },
     getIncomeList(params) {
       let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
       let formParams = this.$refs.searchIncome.searchParams; //获取搜索参数
+      let paramsObj = {};
       if (params === 'search') {
         pageInfo.pageNum= 1;
       }
-      let obj = Object.assign({}, pageInfo, formParams);
+      for (let i in formParams) {
+        if (i === 'searchTime') {
+          paramsObj['searchStartDate'] = formParams[i][0];
+          paramsObj['searchEndDate'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
     },
     cash(title) {

@@ -20,7 +20,7 @@ export default {
       roomInfo: {
         app_id: 'fd8d3653', // 应用 ID
         third_party_user_id: 16422750, // 当前房间用户id
-        paas_access_token: 'access:fd8d3653:d69341221dc5ed18', // pass 身份标识
+        paas_access_token: 'access:fd8d3653:c1b02f653cc7fabf', // pass 身份标识
         roomeId: "lss_8018578c", // 当前活动房间id
         room_id: "lss_8018578c",
         record_id: "6a9fb155", // 当前活动回放的id

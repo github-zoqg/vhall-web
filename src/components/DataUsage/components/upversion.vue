@@ -6,7 +6,7 @@
       :close-on-click-modal="false"
       width="560px"
     >
-      <el-form label-width="85px" :model="advertisement">
+      <el-form label-width="85px">
         <el-form-item label="套餐单价">
           <div class="img-box">
             <h3>{{ title === '升级'? '￥60.00' : '￥40.00'}}</h3>
@@ -15,7 +15,7 @@
           </div>
         </el-form-item>
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
-          <el-input v-model="advertisement.nums" style="width: 398px"
+          <el-input v-model="number" style="width: 398px"
             ><template slot="append">人</template></el-input
           >
           <p class="inputNums">当前并发20人 20-99999</p>
@@ -23,8 +23,8 @@
         <el-form-item label="订单信息">
           <div class="informtion">
             <div class="inform-pay">
-              <h3>支付金额: <b>{{ money }}</b></h3>
-              <p>有效期10个月<span> (2020-10-13至2020-12-10)</span></p>
+              <h3>支付金额: <b>{{ title === '升级'? concurrentPrice.concurrency_fee * number :  concurrentPrice.extend_fee * number }}</b></h3>
+              <p>有效期10个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
             </div>
             <div class="xieyi">
               <el-checkbox v-model="checked"
@@ -37,7 +37,7 @@
       <div class="sum">
         <el-button
           type="primary"
-          @click="dialogVisible = false"
+          @click="orderExtent"
           round
           size="medium"
           :disabled="!checked"
@@ -60,7 +60,7 @@
       :close-on-click-modal="false"
       width="560px"
     >
-      <el-form label-width="85px" :model="advertisement">
+      <el-form label-width="85px">
         <el-form-item :label="title === '专业版'? '单价' : '流量包'">
           <div class="img-box" v-if="title==='专业版'">
             <h3>￥8000.00</h3>
@@ -79,7 +79,7 @@
           </div>
         </el-form-item>
         <el-form-item label="支付金额">
-          <el-input v-model="money" style="width: 398px" disabled></el-input>
+          <el-input v-model="currentPrice" style="width: 398px" disabled></el-input>
           <div class="xieyi">
             <el-checkbox v-model="checked">同意<span>《微吼直播服务协议》</span></el-checkbox>
           </div>
@@ -88,7 +88,7 @@
       <div class="sum">
         <el-button
           type="primary"
-          @click="dialogBuyVisible = false"
+          @click="buyProfessional"
           round
           size="medium"
           :disabled="!checked"
@@ -109,43 +109,79 @@
 </template>
 <script>
 export default {
-  props: ['title', 'money'],
+  props: ['title', 'concurrentPrice'],
   data() {
     return {
       dialogVisible: false,
       dialogBuyVisible: false,
       checked: false,
-      advertisement: {
-        nums: 120,
-        money: '￥4000.00'
-      },
+      flows: 500,
+      number: 120,
       nomalBuyList: [
         {
           title: '500GB',
           send: '+20GB(赠送)',
           price: '8元/GB',
-          isChose: true
+          isChose: true,
+          numFlow: 500
         },
         {
           title: '1000GB',
           send: '+50GB(赠送)',
           price: '8元/GB',
-          isChose: false
+          isChose: false,
+          numFlow: 1000
         },
         {
           title: '2000GB',
           send: '+20GB(赠送)',
           price: '8元/GB',
-          isChose: false
+          isChose: false,
+          numFlow: 2000
         }
       ]
     };
   },
+  computed: {
+    // eslint-disable-next-line vue/return-in-computed-property
+    currentPrice() {
+      if (this.title == '流量版') {
+        return '￥' + this.concurrentPrice.flow_fee * this.flows;
+      } else if (this.title == '专业版'){
+        return `￥8000`;
+      }
+    }
+  },
   methods: {
     choseVersion(items) {
+      this.flows = items.numFlow;
       this.nomalBuyList.map(item => {
         item.isChose = false;
         items.isChose = true;
+      });
+    },
+    // 升级扩展、并发
+    orderExtent() {
+      // type 3:升级并发  4:购买扩展包
+      this.$router.push({
+        name: 'payOrder',
+        query: {
+          type: this.title == '升级' ? 3 : 4,
+          userId: 16417099,
+          number: this.number
+        }
+      });
+    },
+    // 购买专业版、流量
+    buyProfessional() {
+      // type 1:购买专业版  2:购买流量版
+      this.$router.push({
+        name: 'payOrder',
+        query: {
+          type: this.title == '专业版' ? 1 : 2,
+          userId: 16417099,
+          number: this.flows
+        }
       });
     }
   }
