@@ -1,14 +1,14 @@
 <template>
   <div class="editBox">
-    <pageTitle title="创建直播"></pageTitle>
+    <pageTitle :title="`创建${webniarTypeToZH}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading">
-      <el-form-item label="直播标题：" prop="title"
+      <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
       :rules="[
         { required: true, message: '请输入直播标题', trigger: 'blur' },
       ]">
         <el-input v-model="formData.title" limit='100'></el-input>
       </el-form-item>
-      <el-form-item label="直播时间：" required>
+      <el-form-item label="直播时间：" required v-if="webniarType=='live'">
         <!-- <el-row :gutter="20"> -->
           <el-col :span="11">
             <el-form-item prop="date1" :rules="[
@@ -27,7 +27,7 @@
           </el-col>
         <!-- </el-row> -->
       </el-form-item>
-      <el-form-item label="直播模式：" required>
+      <el-form-item label="直播模式：" required v-if="webniarType=='live'">
         <div class="modeBox">
           <div @click='liveMode=2' :class="{active: liveMode== 2}">
             <el-container class='model'>
@@ -74,7 +74,7 @@
           </div>
         </div>
       </el-form-item>
-      <el-form-item label="直播封面：">
+      <el-form-item :label="`${webniarTypeToZH}封面：`">
         <upload
           v-model="imageUrl"
           :on-success="handleuploadSuccess"
@@ -85,13 +85,38 @@
           <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
-      <el-form-item label="直播简介：">
+      <el-form-item label="选择视频："  v-if="webniarType=='vod'">
+        <div class="mediaBox">
+          <div class="mediaSlot" v-if="!selectMedia" @click="$refs.selecteMedia.dialogVisible=true">
+            <i class="el-icon-film"></i>
+            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
+          </div>
+          <div class="mediaSlot" v-else>
+            <i class="el-icon-moon-night"></i>
+            <p>{{selectMedia.name}}</p>
+          </div>
+          <div class="abRight" v-if="!!selectMedia">
+            <el-button type="text" class="operaBtn">预览</el-button>
+            <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
+          </div>
+          <el-tooltip>
+              <div slot="content">
+                1.上传单个文件最大2G，文件标题不能带有特殊字符和空格<br/>
+                2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
+                3.上传的视频，不支持剪辑和下载
+              </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+        </div>
+      </el-form-item>
+      <el-form-item :label="`${webniarTypeToZH}简介：`">
         <editor ref="editor"></editor>
       </el-form-item>
-      <el-form-item label="直播类别：" required>
+      <el-form-item :label="`${webniarTypeToZH}类别：`" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
       </el-form-item>
       <el-switch
+         v-if="webniarType=='live'"
         style="display: block"
         v-model="docSwtich"
         active-color="#FB3A32"
@@ -100,6 +125,7 @@
         :active-text="docSwtichDesc">
       </el-switch>
       <el-switch
+         v-if="webniarType=='live'"
         style="display: block"
         v-model="reservation"
         active-color="#FB3A32"
@@ -108,6 +134,7 @@
         :active-text="reservationDesc">
       </el-switch>
       <el-switch
+         v-if="webniarType=='live'"
         style="display: block"
         v-model="online"
         active-color="#FB3A32"
@@ -132,6 +159,7 @@
         :active-text="homeDesc">
       </el-switch>
       <el-switch
+         v-if="webniarType=='live'"
         style="display: block"
         v-model="capacity"
         active-color="#FB3A32"
@@ -153,19 +181,22 @@
         <el-button @click="resetForm('ruleForm')" round>取消</el-button>
       </p>
     </el-form>
-
+    <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
   </div>
 </template>
 
 <script>
 import pageTitle from './components/pageTitle';
+// import editor from '@/components/Tinymce';
 import editor from '@/components/WangEditor/main';
 import upload from '@/components/Upload/main';
+import selectMedia from './selecteMedia';
 export default {
   components: {
     pageTitle,
     editor,
-    upload
+    upload,
+    selectMedia
   },
   computed: {
     docSwtichDesc(){
@@ -216,6 +247,16 @@ export default {
       }else{
         return "开启后，限制进入活动的观众最大并发数";
       }
+    },
+    webniarType(){
+      return this.$route.meta.webniarType;
+    },
+    webniarTypeToZH(){
+      const zh ={
+        vod: '点播',
+        live: '直播'
+      };
+      return zh[this.$route.meta.webniarType];
     }
   },
   data(){
@@ -237,10 +278,13 @@ export default {
       liveMode: 2,
       tagIndex: 0,
       loading: false,
-      imageUrl: ''
+      imageUrl: '',
+      selectMedia: null
     };
   },
-  created(){},
+  created(){
+    console.log(this.$route);
+  },
   methods: {
     handleuploadSuccess(res, file){
       console.log(res, file);
@@ -314,6 +358,9 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
+    mediaSelected(media){
+      this.selectMedia = media;
+    }
   },
 };
 </script>
@@ -463,6 +510,49 @@ export default {
   @media screen and (min-width: 1920px) {
     .editBox {
       padding: 0px 140px;
+    }
+  }
+  .mediaBox{
+    background-color: #fbfdff;
+    border: 1px dashed #c0ccda;
+    border-radius: 6px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 148px;
+    display: table;
+    position: relative;
+    .abRight{
+      position: absolute;
+      top: 0px;
+      right: 12px;
+    }
+    .operaBtn{
+      font-size: 14px;
+      color: #666;
+      &:hover{
+        color: #FB3A32;
+      }
+    }
+    &:hover{
+      border-color: #FB3A32;
+    }
+    .mediaSlot{
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 20px;
+      color: #999999;
+      font-size: 12px;
+      cursor: pointer;
+      i{
+        font-size: 30px;
+      }
+    }
+    .el-tooltip{
+      position: absolute;
+      right: -24px;
+      top: 0px;
+      font-size: 16px;
     }
   }
 </style>

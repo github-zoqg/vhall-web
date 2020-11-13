@@ -26,6 +26,13 @@ const routes = [
   {
     path: '/live/edit',
     name: 'liveEdit',
+    meta:{webniarType: "live"},
+    component: () => import('@/views/LiveModule/edit.vue')
+  },
+  {
+    path: '/vod/edit',
+    name: 'vodEdit',
+    meta:{webniarType: "vod"},
     component: () => import('@/views/LiveModule/edit.vue')
   },
   {
