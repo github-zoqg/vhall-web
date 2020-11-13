@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import pageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 export default {
   name: 'video.vue',

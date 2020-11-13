@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import pageTitle from './components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 export default {
   data() {
     return {
@@ -124,7 +124,7 @@ export default {
     };
   },
   components: {
-    pageTitle,
+    PageTitle,
   },
   created() {
     this.getLiveList();

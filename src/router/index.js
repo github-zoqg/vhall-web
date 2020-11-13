@@ -297,6 +297,18 @@ const routes = [
     component: () => import('@/views/AccountModule/son.vue')
   },
   {
+    path: '/son-detail/:str',
+    title: '子账号管理-详情',
+    name: '子账号管理-详情',
+    component: () => import('@/views/AccountModule/sonDetail.vue')
+  },
+  {
+    path: '/allocation/:str',
+    title: '用量分配',
+    name: '子账号管理-详情',
+    component: () => import('@/views/AccountModule/allocation.vue')
+  },
+  {
     path: '/account-home',
     title: '个人主页',
     name: '个人主页',

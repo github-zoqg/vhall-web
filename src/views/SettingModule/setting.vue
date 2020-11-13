@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import pageTitle from '../LiveModule/components/pageTitle.vue';
+import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 export default {
   name: "setting.vue",

@@ -48,6 +48,6 @@ export default {
 
 <style lang="less" scoped>
   .valid--set {
-    padding: 41px 40px 0 40px;
+    .padding41-40();
   }
 </style>

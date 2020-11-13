@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import PageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import BaseSet from '../AccountModule/baseSet';
 import ValidSet from '../AccountModule/validSet';
 import AccountSet from '../AccountModule/accountSet';

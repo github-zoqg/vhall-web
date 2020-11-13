@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import pageTitle from '../components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
 import signUpForm from './signUpForm';

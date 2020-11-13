@@ -158,12 +158,12 @@
 </template>
 
 <script>
-import pageTitle from './components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import editor from '@/components/WangEditor/main';
 import upload from '@/components/Upload/main';
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     editor,
     upload
   },

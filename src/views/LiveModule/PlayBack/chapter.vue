@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import pageTitle from '../components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import player from '@/components/Player_1';
 import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
