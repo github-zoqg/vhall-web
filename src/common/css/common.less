@@ -59,23 +59,29 @@
 @font_color_h2: #666666;
 @font_color_h3: #999999;
 @font_color_white: #ffffff;
-@font_color_black: #1a1a1a;
+@font_color_gray: #e2e2e2;
 
 /*文字-大小*/
+@font_size_30: 30px;
 @font_size_20: 20px;
 @font_size_22: 22px;
+@font_size_18: 18px;
 @font_size_16: 16px;
 @font_size_14: 14px;
 @font_size_12: 12px;
 
 /*文字-字体*/
 @fontSemibold: PingFangSC-Semibold, PingFang SC;
+@fontMedium: PingFangSC-Medium, PingFang SC;
 @fontRegular: PingFangSC-Regular, PingFang SC;
+@fontDINAL: DINAlternate-Bold, DINAlternate;
 
 /*边框颜色*/
 @border--normal: #cccccc;
 @border--hover: #999999;
 @border--disabled: #e6e6e6;
+@border--red: #fa3f37;
+@border--selected: #333333;
 
 /*背景颜色*/
 @background_black: #1a1a1a;
@@ -223,19 +229,19 @@
     padding-top: 17px;
     padding-bottom: 17px;
     line-height: 22px;
-    border-left: 4px solid #1a1a1a;
-    background: #1a1a1a;
+    border-left: 4px solid @background_black;
+    background: @background_black;
     &.is-active,&:hover {
-      border-left-color: #fa3f37;
-      -moz-border-left-colors: #fa3f37;
+      border-left-color: @border--red;
+      -moz-border-left-colors: @border--red;
       i {
-        color: #fb3a32;
+        color: @theme--normal;
       }
       span {
-        font-size: 16px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-size: @font_size_16;
+        font-family: @fontRegular;
         font-weight: 400;
-        color: #fb3a32;
+        color: @theme--normal;
         line-height: 22px;
       }
     }
@@ -243,26 +249,26 @@
   .el-menu-item [class^=el-icon-] {
     margin-right: 14px;
     text-align: center;
-    font-size: 18px;
+    font-size: @font_size_18;
     vertical-align: middle;
-    color: #e2e2e2;
+    color: @font_color_gray;
   }
   .el-submenu [class^=el-icon-] {
     margin-right: 14px;
     text-align: center;
-    font-size: 18px;
+    font-size: @font_size_18;
     vertical-align: middle;
-    color: #e2e2e2;
+    color: @font_color_gray;
   }
   .a-line {
     display: flex;
     display: -webkit-flex;
     align-items: center;
     -webkit-align-items: center;
-    font-size: 16px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-size: @font_size_16;
+    font-family: @fontRegular;
     font-weight: 400;
-    color: #e2e2e2;
+    color: @font_color_gray;
     line-height: 22px;
   }
   .el-submenu__title {
@@ -270,64 +276,64 @@
     padding-top: 17px;
     padding-bottom: 17px;
     line-height: 22px;
-    background: #1a1a1a;
+    background: @background_black;
     span {
-      font-size: 16px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-size: @font_size_16;
+      font-family: @fontRegular;
       font-weight: 400;
-      color: #e2e2e2;
+      color: @font_color_gray;
       line-height: 22px;
     }
   }
   .el-submenu__icon-arrow {
     right: 34px;
-    color: #e2e2e2;
+    color: @font_color_gray;
   }
   .el-menu [role^=menu]{
-    background: #333333;
+    background: @background--selected;
     padding-left: 61px!important;
-    border-left: 4px solid #333333;
+    border-left: 4px solid @border--selected;
     &.is-active,&:hover {
-      border-left-color: #fa3f37;
-      -moz-border-left-colors: #fa3f37;
+      border-left-color: @border--red;
+      -moz-border-left-colors: @border--red;
       span {
-        font-size: 16px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-size: @font_size_16;
+        font-family: @fontRegular;
         font-weight: 400;
-        color: #fb3a32;
+        color: @theme--normal;
         line-height: 22px;
       }
     }
   }
   .el-submenu.is-opened {
     .el-submenu__title {
-      background: #333333;
+      background: @background--selected;
     }
   }
 }
 /*按钮-type="text"重置*/
 /deep/.el-button--text {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-size: @font_size_14;
+  font-family: @fontRegular;
   font-weight: 400;
-  color: #3562FA;
+  color: @default--normal;
   line-height: 20px;
 }
-/* 绑定/修改--卡片 */
+/*-----------------------------------------绑定/修改--卡片 开始 ---------------------------------------------*/
 .comp-card-one {
   .flex-display();
   .justify(flex-start);
   .align(center);
   height: 80px;
   border-radius: 4px;
-  border: 1px solid #E6E6E6;
+  border: 1px solid @border--disabled;
   padding: 20px 20px;
   width: 100%;
   margin-bottom: 32px;
   img {
     width: 40px;
     height: 40px;
-    background: #EBEFFF;
+    background: @default_background_color;
     border-radius: 100%;
   }
   .ul--son--card {
@@ -341,27 +347,79 @@
   }
 
   .card--bold {
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
+    font-size: @font_size_14;
+    font-family: @fontMedium;
     font-weight: 500;
-    color: #1A1A1A;
+    color: @font_color_h1;
     line-height: 20px;
   }
   .card--txt {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-size: @font_size_14;
+    font-family: @fontRegular;
     font-weight: 400;
-    color: #666666;
+    color: @font_color_h2;
     line-height: 20px;
   }
   .card--status {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-size: @font_size_14;
+    font-family: @fontRegular;
     font-weight: 400;
-    color: #3562FA;
+    color: @default--normal;
     line-height: 20px;
   }
   .card--blue {
     margin-left: auto;
   }
 }
+/*-----------------------------------------绑定/修改--卡片 结束 ---------------------------------------------*/
+/*-----------------------------------------主界面-布局-右侧100% 开始 ---------------------------------------------*/
+.layout--right--main() {
+  width: 100%;
+  height: auto;
+  background: #FFFFFF;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.min-height--header {
+  min-height: 140px;
+}
+.min-height {
+  min-height: 676px;
+}
+/*tab 跟内容之间 间距1*/
+.padding41-40(){
+  padding: 41px 40px 0 40px;
+  overflow: hidden;
+}
+/*-----------------------------------------主界面-布局-右侧100% 结束 ---------------------------------------------*/
+/*-----------------------------------------重置Tab 开始 ---------------------------------------------*/
+/deep/.el-tabs__header {
+  margin: 0 0;
+}
+/deep/.el-tabs__item {
+  padding: 0 24px;
+  box-sizing: border-box;
+  display: inline-block;
+  list-style: none;
+  position: relative;
+  font-size: 16px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #666666;
+  line-height: 55px;
+  height: 55px;
+  &.is-active {
+    color: #FB3A32;
+  }
+}
+/deep/.el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2),
+/deep/.el-tabs--bottom .el-tabs__item.is-top:nth-child(2),
+/deep/.el-tabs--top .el-tabs__item.is-bottom:nth-child(2),
+/deep/.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 24px;
+}
+/deep/.el-tabs__nav-wrap::after {
+  height: 1px;
+  color: #E6E6E6;
+}
+/*-----------------------------------------重置Tab 结束 ---------------------------------------------*/

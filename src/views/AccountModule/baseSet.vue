@@ -132,7 +132,7 @@ export default {
 
 <style lang="less" scoped>
 .base--set {
-  padding: 41px 40px 0 40px;
+  .padding41-40();
 }
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;

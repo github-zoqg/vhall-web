@@ -64,7 +64,7 @@
           :width="width"
           v-if="isHandle"
         >
-          <template slot-scope="scope" v-if="scope.row.id > 0">
+          <template slot-scope="scope">
             <el-button
               v-for="(item, index) in tableRowBtnFun"
               :key="index"

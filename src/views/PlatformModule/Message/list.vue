@@ -2,8 +2,9 @@
   <div>
     <pageTitle title='消息中心'></pageTitle>
     <!-- 有消息内容 -->
+    <div class="message-list">
     <div v-if="msgDao.total > 0">
-      <div class="">
+        <div class="message--title">
         <el-button type="primary" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
         <el-button round @click.prevent.stop="executeUseRead">标记为已读</el-button>
       </div>
@@ -24,10 +25,11 @@
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
   </div>
+  </div>
 </template>
 
 <script>
-import PageTitle from '../../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import NullPage from '../Error/nullPage.vue';
 export default {
   name: 'msgList.vue',
@@ -232,5 +234,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.message-list {
+  .layout--right--main();
+  .min-height();
+  .padding41-40();
+}
+.message--title {
+  margin-bottom: 24px;
+}
 </style>

@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import PageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 export default {
   name: "virtual.vue",
   components: {

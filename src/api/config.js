@@ -61,7 +61,7 @@ const apis = {
   getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）
   //数据中心
   getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
-  // 用户基础信息
+  // 账户管理
   userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
 
   //财务中心
@@ -70,6 +70,14 @@ const apis = {
   orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
   orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
   orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
+  getSonList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 获取子账号信息 Jia.li
+  sonAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 子账号创建 Jia.li
+  sonDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 子账号删除 Jia.li
+  sonEdit: ['/99/v3/webinars/audience/put-group', 'POST', 'mock'], // 子账号修改 Jia.li
+  getRoleList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 获取角色列表 Jia.li
+  roleAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 角色创建 Jia.li
+  roleDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 角色删除 Jia.li
+  roleEdit: ['/99/v3/webinars/audience/put-group', 'POST', 'mock'], // 角色编辑 Jia.li
 };
 
 const getApi = api => {
