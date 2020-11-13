@@ -44,7 +44,7 @@ import themeSet from './themeSet';
 import {getfiledJson} from './util';
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     fieldSet,
     shareDialog,
     themeSet,

@@ -1,24 +1,148 @@
 <template>
-  <div class="date--date">
-    <line-echarts></line-echarts>
+  <div class="date--data">
+   <div class="echarts--line" ref="dateLineChartDom" id="dateLineChartDom"></div>
   </div>
 </template>
 
 <script>
-import LineEcharts from '@/components/Echarts/lineEcharts.vue';
+import Echarts from 'echarts';
 export default {
   name: "dateData.vue",
-  components: {
-    LineEcharts
+  data() {
+    return {
+      lineDataList: [
+        {
+          time: '2020-11-07',
+          value: '50'
+        },
+        {
+          time: '2020-11-07',
+          value: '50'
+        }
+      ],
+      myChart: null
+    };
+  },
+  mounted() {
+    this.renderLineCharts();
   },
   methods: {
-    initComp() {}
+    initComp() {
+      this.getDateInfo();
+    },
+    getDateInfo() {
+      // 样式重置
+      if (this.myChart) {
+        this.myChart.resize();
+      }
+    },
+    renderLineCharts() {
+      this.myChart = Echarts.init(this.$refs.dateLineChartDom);
+      // 指定图表的配置项和数据
+      //数据
+      let options = {
+        grid: {
+          left: '65',
+          top: '45',
+          bottom: '30',
+          right: '32'
+        },
+        legend: {
+          show: false
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b} <br/>{a}: {c}（方）'
+        },
+        yAxis: [
+          {
+            name: '并发',
+            min: 0,
+            max: 60,
+            interval: 15,
+            type: 'value',
+            position: 'left',
+            splitLine: {
+              lineStyle: {
+                type: 'dashed',
+              }
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#CCCCCC',
+              }
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              formatter: '{value}',
+              color: '#999999',
+              fontSize: 12,
+              fontFamily: 'PingFangSC-Regular, PingFang SC'
+            }
+          }
+        ],
+        xAxis: [
+          {
+            name: '日期',
+            nameLocation: 'start',
+            nameGap: 30,
+            type: 'category',
+            axisTick: {
+              show: false
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#CCCCCC',
+              }
+            },
+            axisLabel: {
+              inside: false,
+              textStyle: {
+                color: '#999999',
+                fontSize: 12,
+                fontFamily: 'PingFangSC-Regular, PingFang SC'
+              }
+
+            },
+            data: ['2020-07-12', "2020-07-13", "2020-07-14", "2020-07-15", "2020-07-16", "2020-07-17", "2020-07-18"],
+          }
+        ],
+        series: [
+          {
+            name: '并发',
+            type: "line",
+            smooth: true,
+            data: [22, 37, 51, 55, 32, 11, 1],
+            itemStyle: {
+              normal: {
+                borderWidth: 5,
+                color: '#FB3A32',
+              }
+            }
+          }
+        ],
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      this.myChart.setOption(options);
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.date--date {
+.date--data {
   .padding41-40();
+}
+.echarts--line {
+  display: block;
+  width: 100%;
+  height: 311px;
+  box-sizing: border-box;
+  border: 1px solid #E6E6E6;
+  padding: 16px 32px 32px 49px;
 }
 </style>

@@ -22,9 +22,8 @@
         <el-tab-pane label="直播统计" name="liveData"></el-tab-pane>
       </el-tabs>
       <!-- 列表区域 -->
-      <date-data ref="dateDataComp" v-show="tabType === 'dateData'"></date-data>
-      <live-data ref="liveDataComp" v-show="tabType === 'liveData'"></live-data>
-
+      <date-data ref="dateDataComp" v-if="tabType === 'dateData'"></date-data>
+      <live-data ref="liveDataComp" v-if="tabType === 'liveData'"></live-data>
     </div>
   </div>
 </template>

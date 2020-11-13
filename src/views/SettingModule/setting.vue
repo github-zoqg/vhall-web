@@ -11,7 +11,7 @@ import ItemCard from '@/components/ItemCard/index.vue';
 export default {
   name: "setting.vue",
   components: {
-    pageTitle,
+    PageTitle,
     ItemCard
   },
   data() {

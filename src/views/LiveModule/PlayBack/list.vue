@@ -276,7 +276,7 @@ export default {
     }
   },
   components: {
-    pageTitle
+    PageTitle
   }
 };
 </script>

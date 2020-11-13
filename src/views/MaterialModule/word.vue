@@ -59,7 +59,7 @@ export default {
     };
   },
   components: {
-    pageTitle,
+    PageTitle,
     DocPreview
   },
   methods: {

@@ -65,7 +65,7 @@ export default {
         {
           label: '角色名称',
           key: 'role_name',
-          width: 200
+          width: 'auto'
         },
         {
           label: '关联账号',

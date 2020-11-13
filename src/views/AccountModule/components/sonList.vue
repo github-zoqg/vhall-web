@@ -111,7 +111,7 @@ export default {
         {
           label: '昵称',
           key: 'nick_name',
-          width: 200
+          width: 'auto'
         },
         {
           label: '手机号码',

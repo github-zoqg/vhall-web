@@ -272,7 +272,7 @@ export default {
     },
   },
   components: {
-    pageTitle,
+    PageTitle,
     player,
     doc,
     associateDoc,
