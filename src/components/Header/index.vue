@@ -19,7 +19,7 @@
       <template>
         <div class="avat-right fr">
           <i class="el-icon-eleme"></i>
-          <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload>0">
+          <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload > 0">
             <i class="el-icon-message-solid" @click.prevent.stop="toDownloadPage"></i>
           </el-badge>
           <el-badge :value="unread_num" :max="99" class="item" :hidden="!unread_num>0">
@@ -38,7 +38,7 @@ export default {
     return {
       // isCollapse: false
       unread_num: 0,
-      isDownload: true
+      isDownload: 0
     };
   },
   methods: {
