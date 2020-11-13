@@ -1,13 +1,30 @@
 <template>
-  <div>子流量并发</div>
+  <div>
+    <pageTitle title="可用资源"></pageTitle>
+
+  </div>
 </template>
 
 <script>
-export default {
-name: "allocation.vue"
-}
+  import PageTitle from '@/components/PageTitle';
+  export default {
+    name: 'allocation.vue',
+    components: {
+      PageTitle,
+    },
+    data() {
+      return {
+        tabType: null
+      };
+    },
+    methods: {
+      handleClick(tab, event) {
+      }
+    },
+    mounted() {
+    }
+  };
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
 </style>

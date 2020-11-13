@@ -67,7 +67,7 @@ export default {
         '准备': [
           { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/setting-chat' },
           { icon: '', title: '功能配置', subText: '编辑直播功能配置', path: `/plan-function/${this.$route.params.str}` },
-          { icon: '', title: '观看限制', subText: '设置直播观看限制', path: '/setting-chat' },
+          { icon: '', title: '观看限制', subText: '设置直播观看限制', path: `/viewer-rules/${this.$route.params.str}`},
           { icon: '', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: '/setting-chat' },
           { icon: '', title: '暖场视频', subText: '开启后设置暖场视频', path: '/setting-chat' },
           { icon: '', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/virtual/${this.$route.params.str}`},

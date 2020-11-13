@@ -159,6 +159,12 @@ const routes = [
     name: '消息中心-详情',
     component: () => import('@/views/PlatformModule/Message/detail.vue')
   },
+  {
+    path: '/download-list',
+    title: '下载中心',
+    name: '下载中心',
+    component: () => import('@/views/PlatformModule/download.vue')
+  },
   /*-----------------------------------专题管理------------------------*/
   {
     path: '/specials-list',
