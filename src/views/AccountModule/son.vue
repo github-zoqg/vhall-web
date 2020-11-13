@@ -5,15 +5,24 @@
     <div class="title--flex--top">
       <div class="top-item">
         <p>总并发（方）</p>
-        <p>8,888,888,888</p>
+        <p>
+          <count-to :startVal="0" :endVal="sonInfo.total" :duration="1500" v-if="sonInfo && sonInfo.total > 0"></count-to>
+          <span v-else>0</span>
+        </p>
       </div>
       <div class="top-item">
         <p>子账号（个）</p>
-        <p>8,888,888,888</p>
+        <p>
+          <count-to :startVal="0" :endVal="sonInfo.child_count" :duration="1500" v-if="sonInfo && sonInfo.child_count > 0"></count-to>
+          <span v-else>0</span>
+        </p>
       </div>
       <div class="top-item">
         <p>活动数量（个）</p>
-        <p>8,888,888,888</p>
+        <p>
+          <count-to :startVal="0" :endVal="sonInfo.webinar_count" :duration="1500" v-if="sonInfo && sonInfo.webinar_count > 0"></count-to>
+          <span v-else>0</span>
+        </p>
       </div>
     </div>
     <div class="page--son">
@@ -33,23 +42,53 @@
 import PageTitle from '@/components/PageTitle';
 import SonList from './components/sonList';
 import RoleList from './components/roleList';
+import CountTo from 'vue-count-to';
 export default {
   name: 'son.vue',
   components: {
     PageTitle,
     SonList,
-    RoleList
+    RoleList,
+    CountTo
   },
   data() {
     return {
       tabType: null,
+      sonInfo: null
     };
   },
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
       this.$refs[`${this.tabType}Comp`].initComp();
+    },
+    getRoleInfo() {
+      this.$fetch('getSonInfo', {
+        user_id: 1
+      }).then(res => {
+        this.sonInfo = res && res.code === 200 && res.data ? res.data : null;
+      }).catch(e => {
+        console.log(e);
+        this.sonInfo = null;
+      });
+    },
+    getSonInfo() {
+      this.$fetch('getSonInfo', {
+        user_id: 1
+      }).then(res => {
+        this.sonInfo = res && res.code === 200 && res.data ? res.data : null;
+      }).catch(e => {
+        console.log(e);
+        this.sonInfo = null;
+      });
+    },
+    async initPage() {
+      await this.getRoleInfo();// 根据用户ID获取可选角色列表
+      this.getSonInfo();// 获取子账号统计信息
     }
+  },
+  created() {
+    this.initPage();
   },
   mounted() {
     this.tabType = 'sonList';

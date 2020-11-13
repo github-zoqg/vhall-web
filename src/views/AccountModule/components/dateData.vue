@@ -1,5 +1,17 @@
 <template>
   <div class="date--data">
+    <div class="date__query__form">
+      <!-- 日期选择器 -->
+      <el-date-picker
+        v-model="searchForm.timeStr"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="width: 240px"
+      />
+    </div>
    <div class="echarts--line" ref="dateLineChartDom" id="dateLineChartDom"></div>
   </div>
 </template>
@@ -7,7 +19,7 @@
 <script>
 import Echarts from 'echarts';
 export default {
-  name: "dateData.vue",
+  name: 'dateData.vue',
   data() {
     return {
       lineDataList: [
@@ -20,11 +32,13 @@ export default {
           value: '50'
         }
       ],
-      myChart: null
+      myChart: null,
+      searchForm: {
+        timeStr: ''
+      }
     };
   },
   mounted() {
-    this.renderLineCharts();
   },
   methods: {
     initComp() {
@@ -32,9 +46,12 @@ export default {
     },
     getDateInfo() {
       // 样式重置
-      if (this.myChart) {
-        this.myChart.resize();
-      }
+      this.renderLineCharts();
+      this.$nextTick(() => {
+        if (this.myChart) {
+          this.myChart.resize();
+        }
+      });
     },
     renderLineCharts() {
       this.myChart = Echarts.init(this.$refs.dateLineChartDom);
@@ -144,5 +161,8 @@ export default {
   box-sizing: border-box;
   border: 1px solid #E6E6E6;
   padding: 16px 32px 32px 49px;
+}
+.date__query__form {
+  margin-bottom: 24px;
 }
 </style>

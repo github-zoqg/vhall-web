@@ -2,46 +2,53 @@
   <div class="live--data">
     <!-- 搜索 -->
     <div class="list--search">
-      <el-button size="medium" round>导出</el-button>
+      <!-- 日期选择器 -->
+      <el-date-picker
+        v-model="query.timeStr"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="width: 240px"
+      />
       <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
-      <el-select placeholder="全部" round  v-model="query.type">
-        <el-option
-          v-for="item in []"
-          :key="item.value+item.label"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+      <el-button size="medium" round>导出</el-button>
     </div>
     <!-- 数据 -->
     <div class="list--data">
       <table-list
         ref="sonTab"
-        :isHandle=true
+        :isHandle=false
+        :isCheckout=false
         :manageTableData="dataDao.list"
         :tabelColumnLabel="sonTableColumn"
         :totalNum="dataDao.total"
-        :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
         @getTableList="getLiveData"
-        @changeTableCheckbox="checkMoreRow"
-        @onHandleBtnClick="onHandleBtnClick"
+        v-if="dataDao.total > 0"
       >
       </table-list>
+      <!-- 无消息内容 -->
+      <null-page v-else></null-page>
     </div>
   </div>
 </template>
 
 <script>
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
 export default {
   name: "liveData.vue",
+  components: {
+    NullPage
+  },
   data() {
     return {
       query: {
-        keyword: '',
-        type: ''
+        timeStr: '',
+        keyword: ''
       },
       dataDao: {
         total: 0,
@@ -51,37 +58,23 @@ export default {
       sonTableColumn: [
         {
           label: '直播ID',
-          key: 'account_id',
+          key: 'live_id',
           width: 200
         },
         {
           label: '直播标题',
-          key: 'nick_name',
-          width: 200
+          key: 'title',
+          width: 'auto'
         },
         {
           label: '开播时间',
-          key: 'phone',
+          key: 'timeStr',
           width: 200
         },
         {
           label: '最高并发（方）',
-          key: 'roleStr',
+          key: 'count',
           width: 200
-        }
-      ],
-      tableRowBtnFun: [
-        {
-          name: "详情",
-          methodName: 'toSonDetail'
-        },
-        {
-          name: "编辑",
-          methodName: 'editSonShow'
-        },
-        {
-          name: "删除",
-          methodName: 'sonDel'
         }
       ]
     }
@@ -103,18 +96,6 @@ export default {
               "phone": "18310410964",
               "type": 1,
               "role": 1
-            },{
-              "account_id": 2,
-              "nick_name": "昵称2222",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            },{
-              "account_id": 3,
-              "nick_name": "昵称33333",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
             }],
             "total": 50
           }
@@ -136,12 +117,9 @@ export default {
         };
       });
     },
-    checkMoreRow() {},
-    onHandleBtnClick(val) {
-      let methodsCombin = this.$options.methods;
-      methodsCombin[val.type](this, val);
-    },
-    initComp() {}
+    initComp() {
+      this.getLiveData();
+    }
   }
 };
 </script>
@@ -151,9 +129,11 @@ export default {
   .padding41-40();
 }
 .list--search{
+  .flex-display();
+  .justify(flex-start);
+  .align(center);
   margin-bottom: 20px;
   .el-select{
-    float: right;
     margin-right: 20px;
     /deep/ .el-input__inner{
       user-select: none;
@@ -165,8 +145,8 @@ export default {
     }
   }
   .el-input{
+    margin-left: 24px;
     width: 270px;
-    float: right;
     /deep/ .el-input__inner{
       border-radius: 20px;
       height: 36px;
@@ -177,6 +157,9 @@ export default {
         line-height: 36px;
       }
     }
+  }
+  .el-button {
+    margin-left: auto;
   }
 }
 </style>
