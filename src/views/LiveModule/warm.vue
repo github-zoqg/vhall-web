@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import PageTitle from '@/views/LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 export default {
   components: {
     PageTitle

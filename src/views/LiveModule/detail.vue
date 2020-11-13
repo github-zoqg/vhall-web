@@ -53,11 +53,11 @@
 </template>
 
 <script>
-import pageTitle from './components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     ItemCard
   },
   data(){

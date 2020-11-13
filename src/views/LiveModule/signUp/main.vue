@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import pageTitle from '../components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
 import signUpForm from './signUpForm';
@@ -44,7 +44,7 @@ import themeSet from './themeSet';
 import {getfiledJson} from './util';
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     fieldSet,
     shareDialog,
     themeSet,

@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import PageTitle from "@/views/LiveModule/components/pageTitle";
+import PageTitle from '@/components/PageTitle';
 // 展示区
 import ShowImgTxt from  './CustomTab/showImgTxt.vue';
 import ShowRqCode from  './CustomTab/showRqCode.vue';
@@ -236,7 +236,7 @@ export default {
   font-size: @font_size_14;
   font-family: @fontRegular;
   font-weight: 400;
-  color: @font_color_black;
+  color: @font_color_gray;
   line-height: 20px;
   padding: 10px 0;
   cursor: pointer;

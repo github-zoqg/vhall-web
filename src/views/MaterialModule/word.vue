@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-import pageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import DocPreview from './DocPreview/index.vue';
 export default {
   name: 'word.vue',
@@ -59,7 +59,7 @@ export default {
     };
   },
   components: {
-    pageTitle,
+    PageTitle,
     DocPreview
   },
   methods: {

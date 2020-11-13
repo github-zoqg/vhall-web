@@ -1,7 +1,7 @@
 <template>
   <div class="account-set">
     <div class="comp-card-one">
-      <img src="../../common/images/avatar.jpg" />
+      <img src="../../common/images/icon/qq.png" />
       <ul class="ul--son--card">
         <li><label class="card--bold">绑定QQ</label></li>
         <li><label class="card--txt">当前尚未绑定QQ</label></li>
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="comp-card-one">
-      <img src="../../common/images/avatar.jpg" />
+      <img src="../../common/images/icon/wechat.png" />
       <ul class="ul--son--card">
         <li><label class="card--bold">绑定微信</label></li>
         <li><label class="card--txt">当前尚未绑定微信</label></li>
@@ -35,7 +35,7 @@ export default {
 
 <style lang="less" scoped>
   .account-set {
-    padding: 41px 40px 0 40px;
+    .padding41-40();
   }
 
 </style>

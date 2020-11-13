@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import PageTitle from '@/views/LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
 export default {
   name: 'viewerRules.vue',
