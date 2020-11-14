@@ -1,29 +1,40 @@
-import 'nprogress/nprogress.css';
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-import moment from 'moment';
+// element-ui 样式重置
 import ElementUI from 'element-ui';
-// import 'element-ui/lib/theme-chalk/index.css';
 import '@/common/css/theme/index.css';
+Vue.use(ElementUI);
 
-import { getParams } from './utils/general';
+// 页面加载进度样式
+import 'nprogress/nprogress.css';
+
+// 系统通用重置样式
 import '@/common/css/index.less';
+import '@/common/css/index.less'; // global css
 
-import fethData from './api/fetch';
-import VueI18n from 'vue-i18n';
+
+// 工具类引入
+import moment from 'moment'; // 日期格式化
+import { getParams } from './utils/general';
+import fetchData from './api/fetch';
+Vue.prototype.$fetch = fetchData;
+Vue.prototype.$moment = moment;
+Vue.config.productionTip = false;
+Vue.prototype.$EventBus = new Vue();
+
+// 组件扩展
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
 import '@/components/RemoteScript';
-Vue.use(ElementUI);
-Vue.use(VueI18n);
 Vue.component('SPagination',SPagination);
 Vue.component('tableList',tableList);  // 表格区域
 Vue.component('searchArea',searchArea); // 搜索区域
-Vue.prototype.$fetch = fethData;
-Vue.prototype.$moment = moment;
-Vue.config.productionTip = false;
+
+// 国际化
+import VueI18n from 'vue-i18n';
+Vue.use(VueI18n);
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
   messages: {
@@ -32,7 +43,6 @@ const i18n = new VueI18n({
   }
 });
 window.i18n = i18n;
-Vue.prototype.$EventBus = new Vue();
 new Vue({
   router,
   i18n,

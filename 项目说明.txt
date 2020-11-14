@@ -32,12 +32,14 @@ src
 --------baseLayout.vue 空白布局 不默认包含任何内容
 ----router 路由
 ----utils
+--------enumeration.js 常量、枚举，用于页面展示反显
 --------Events.js
 --------general.js
 --------goBack.js
 --------jsonp.js
 --------qq.js
 --------softKeyboard.js
+--------utils.js 工具包处理
 --------weChat.js
 ----views
 --------LiveModule 直播模块

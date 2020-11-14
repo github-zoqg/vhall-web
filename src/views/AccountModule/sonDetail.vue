@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       tabType: null,
-    }
+    };
   },
   methods:{
     handleClick(tab, event) {

@@ -162,7 +162,7 @@ export default {
       },
       sonFormRules: {
       },
-    }
+    };
   },
   methods: {
     // 表格操作列回调函数， val表示每行

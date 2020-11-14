@@ -1,7 +1,7 @@
 <template>
   <div class="data-info">
     <div class="title-data">
-      <span>{{ $route.name }}</span>
+      <span>{{ $route.meta.title }}</span>
       <el-tooltip effect="dark" placement="right-start">
         <div slot="content">
           1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
