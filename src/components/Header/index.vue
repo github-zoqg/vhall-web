@@ -30,7 +30,7 @@
         </div>
       </template>
     </div>
-  </div>g
+  </div>
 </template>
 <script>
 import { sessionOrLocal } from '@/utils/utils.js';
@@ -63,8 +63,9 @@ export default {
     }
   },
   created() {
-    sessionOrLocal.set('ae', '解决阿娇阿娇');
+    sessionOrLocal.set('ae', '解决阿娇阿娇', 'localStorage');
     this.getUnreadNum();
+    sessionOrLocal.set('ac', '解决111');
   }
 };
 </script>

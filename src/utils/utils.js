@@ -1,21 +1,20 @@
 // session存储（设置、获取、删除）
 export const sessionOrLocal = {
-  saveType: 'sessionStorage',
-  set: (key, value) => {
+  set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
     if (typeof value !== 'string') {
       value = JSON.stringify(value);
     }
     // alert(`当前${sessionOrLocal.saveType}`);
-    window[sessionOrLocal.saveType].setItem(key, value);
+    window[saveType].setItem(key, value);
   },
-  get: key => {
+  get: (key, saveType = 'sessionStorage') => {
     if (!key) return;
-    return window[sessionOrLocal.saveType].getItem(key);
+    return window[saveType].getItem(key);
   },
-  removeItem: key => {
+  removeItem: (key, saveType = 'sessionStorage') => {
     if (!key) return;
-    window[sessionOrLocal.saveType].removeItem(key);
+    window[saveType].removeItem(key);
   }
 };
 // 判断是否IE
