@@ -103,14 +103,14 @@ export default {
     return {
       switchType: 'pc',
       bgColorType: 'black'
-    }
+    };
   },
   methods: {
     changeSwitch(type) {
       this.switchType = type;
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

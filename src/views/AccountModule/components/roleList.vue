@@ -95,7 +95,7 @@ export default {
         name: null,
         type: 'add',
       },
-    }
+    };
   },
   methods: {
     // 表格操作列回调函数， val表示每行

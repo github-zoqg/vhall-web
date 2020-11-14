@@ -60,7 +60,7 @@ export default {
           {require: true, message: '请先选择图片', trigger: 'change'}
         ]
       }
-    }
+    };
   },
   methods: {
     handleUploadSuccess(res, file){
@@ -109,7 +109,7 @@ export default {
       });
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

@@ -77,7 +77,7 @@ export default {
           width: 200
         }
       ]
-    }
+    };
   },
   methods: {
     getLiveData(pageInfo = {pageNum: 1, pageSize: 10}) {

@@ -82,7 +82,7 @@ export default {
       },
       signSetFormRules: {
       }
-    }
+    };
   },
   methods: {
     handleUploadSuccess(res, file){
@@ -138,10 +138,10 @@ export default {
 
 <style lang="less" scoped>
 .sign--set {
-  .padding41-40();
+  .padding41-40;
 }
 .sign--set--main {
-  .flex-display();
+  .flex-display;
   .justify(space-between);
   .align(flex-start);
 }

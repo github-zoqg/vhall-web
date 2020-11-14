@@ -7,16 +7,12 @@
       <version-info :userInfo="userInfo"></version-info>
     </div>
     <div class="statistical-line">
-        <span @click="goPayList()">用量统计</span>
+        <span>用量统计</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
           </div>
-          <el-button
-            circle
-            icon="el-icon-question"
-            class="button-tip"
-          ></el-button>
+          <i class="el-icon-question"></i>
         </el-tooltip>
         <el-card>
           <search-area
@@ -25,7 +21,7 @@
             @onSearchFun="getLineList('search')"
           >
           </search-area>
-          <lint-charts></lint-charts>
+          <lint-charts :lineDataList="lintData"></lint-charts>
         </el-card>
     </div>
     <div class="statistical-line">
@@ -34,11 +30,7 @@
         <div slot="content">
           1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
         </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
+        <i class="el-icon-question"></i>
       </el-tooltip>
       <el-card>
         <search-area
@@ -80,17 +72,17 @@
 <script>
 import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
+import { session } from '@/utils/utils';
 export default {
   name: "financeInfo",
   components: {
     versionInfo,
-    lintCharts,
-    // tableList,
-    // searchArea
+    lintCharts
   },
   data() {
     return {
       userInfo: {},
+      lintData: [],
       time: '',
       dataValue: '',
       totalNum: 1000,
@@ -201,7 +193,8 @@ export default {
     };
   },
   mounted() {
-    this.userInfo = JSON.parse(window.sessionStorage.getItem("userInfo"));
+    this.userInfo = session.get("userInfo");
+    this.lintData = session.get("dataCenterInfo");
   },
   methods: {
     getLineList(params) {
@@ -241,13 +234,6 @@ export default {
         font-weight: 600;
         color: #1a1a1a;
       }
-       /deep/.el-button {
-        border: none;
-        background: transparent;
-      }
-      /deep/.el-button.is-circle{
-        padding:3px;
-      }
     }
     .statistical-line {
       text-align: left;
@@ -258,7 +244,6 @@ export default {
         font-size: 16px;
         color: #1a1a1a;
         margin-bottom: 10px;
-        // padding-left: 34px;
       }
     }
     .row-bg{

@@ -31,21 +31,21 @@
       <div class="total">
         <p>总金额: <span>￥{{totalFee}}.00</span> </p>
       </div>
-        <div class="pay-method">
+      <div class="pay-method">
           <p>支付方式</p>
           <div class="pay-list">
-            <div class="pay-item" :class="isChecked ? 'isActive' : ''" @click="changeColor">
-              <label class="img-tangle" v-show="isChecked">
+            <div class="pay-item" v-for="(item, index) in payList" :key="index" @click="changeColor(item)" :class="item.isChecked ? 'isActive' : ''">
+              <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
               </label>
               <img src="../../common/images/v35-webinar.png" alt="">
             </div>
-            <div class="pay-item" :class="isChecked ? '' : 'isActive'" @click="changeColor">
+            <!-- <div class="pay-item" :class="isChecked ? '' : 'isActive'" @click="changeColor('wechat')">
                <label class="img-tangle" v-show="!isChecked" >
                 <i class="el-icon-check"></i>
               </label>
               <img src="../../common/images/v35-webinar.png" alt="">
-            </div>
+            </div> -->
           </div>
           <el-dialog
             :visible.sync="dialogBuyVisible"
@@ -60,7 +60,7 @@
             </div>
           </div>
           </el-dialog>
-        </div>
+      </div>
     </el-card>
   </div>
 </template>
@@ -71,6 +71,18 @@ export default {
       isChecked: true,
       dialogBuyVisible: false,
       totalFee: 0,
+      payList: [
+        {
+          img: '../../common/images/v35-webinar.png',
+          type: 'alipay',
+          isChecked: true
+        },
+        {
+          img: '../../common/images/v35-webinar.png',
+          type: 'wechat',
+          isChecked: false
+        }
+      ],
       tableList: []
     };
   },
@@ -90,8 +102,21 @@ export default {
     }
   },
   methods: {
-    changeColor() {
-      this.isChecked = !this.isChecked;
+    changeColor(item) {
+      this.payList.map(items => {
+        items.isChecked = false;
+      });
+      item.isChecked = true;
+      let params = {
+        userId: this.$route.query.userId,
+        orderId: this.tableList[0].id,
+        type: item.type
+      };
+      this.$fetch('payOrder', params).then(res =>{
+        console.log(res.data);
+      }).catch(e=>{
+        console.log(e);
+      });
     },
     payProfessionalList() {
       this.tableList = [];
@@ -184,8 +209,8 @@ export default {
 <style lang="less" scoped>
   .pay-list{
     color: #1A1A1A;
-     /deep/.el-table td, .el-table th{
-        padding: 16px 0;
+     .el-table td, .el-table th{
+        height: 56px;
       }
     h1{
       font-size: 22px;
@@ -231,6 +256,7 @@ export default {
             margin-right: 24px;
             border: 1px solid #ccc;
             position: relative;
+            cursor: pointer;
             .img-tangle{
               position: absolute;
               right: 0;

@@ -1,7 +1,12 @@
 <template>
   <div class="data-live">
-    <div class="title-data">
-      <span>{{ $route.meta.title }}</span>
+    <pageTitle :title="$route.meta.title">
+      <div slot="content">
+        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+      </div>
+    </pageTitle>
+    <!-- <div class="title-data">
+      <span>{{ $route.name }}</span>
       <el-tooltip effect="dark" placement="right-start">
         <div slot="content">
           1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
@@ -12,13 +17,13 @@
           class="button-tip"
         ></el-button>
       </el-tooltip>
-    </div>
+    </div> -->
     <el-card class="box-card">
       <search-area
         ref="searchArea"
         :searchAreaLayout="searchAreaLayout"
         @onSearchFun="getTableList('search')"
-        >
+      >
       </search-area>
       <table-list
         ref="tableList"
@@ -27,33 +32,31 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :isHandle="isHandle"
-        :width="width"
         :totalNum="totalNum"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
-        >
+      >
       </table-list>
     </el-card>
   </div>
 </template>
 
 <script>
+import PageTitle from '@/components/PageTitle';
 export default {
   name: "dataLive",
-  // components: {
-  //   tableList,
-  //   searchArea,
-  // },
+  components: {
+    PageTitle
+  },
   data() {
     return {
       isCheckout: false,
-      width: 300,
       totalNum: 1000,
       isHandle: true,
       tableList: [
         {
           id: '1',
-          liveTitle: "哈哈哈哈哈",
+          liveTitle: "哈哈哈哈哈哈哈哈哈哈哈喜喜iiii哈哈哈哈哈哈哈哈哈",
           wacthPeople: '123',
           wacthNum: '124',
           timeLang: '30:00:00'
@@ -70,11 +73,12 @@ export default {
         {
           label: '活动ID',
           key: 'id',
-          width: 120
+          width: 100
         },
         {
           label: '活动标题',
           key: 'liveTitle',
+          width: 400
         },
         {
           label: '观看人数',
@@ -89,7 +93,7 @@ export default {
         {
           label: '观看时长（分）',
           key: 'timeLang',
-          width: 200
+          width: 150
         }
       ],
       tableRowBtnFun: [
@@ -146,9 +150,9 @@ export default {
         query: {
           id: val.rows.id
         }
-     });
+      });
     },
-     //复选框操作
+    //复选框操作
     changeTableCheckbox(val) {
       // let len = val.length;
       // let idList = [];
@@ -161,29 +165,8 @@ export default {
 
 <style lang="less" scoped >
 .data-live{
-  /deep/.el-button {
-      border: none;
-      background: transparent;
-    }
-    /deep/.el-button.is-circle{
-      padding:3px;
-    }
-    /deep/.el-card__body{
+  /deep/.el-card__body{
     padding: 5px 24px 51px 24px;
   }
-    .title-data {
-      margin: 10px 0 20px 0;
-      text-align: left;
-      line-height: 30px;
-      span{
-        font-size: 22px;
-        font-family: PingFangSC-Semibold, PingFang SC;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-      .button-tip {
-        vertical-align: top;
-      }
-    }
 }
 </style>

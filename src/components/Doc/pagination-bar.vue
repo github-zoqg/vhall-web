@@ -44,7 +44,7 @@ export default {
         return {
           pageIndex: 1,
           total: 1
-        }
+        };
       }
     },
     disablePagechange: {
@@ -54,23 +54,23 @@ export default {
   },
   computed: {
     docToolActive () {
-      return this.docToolStatus.docToolActive
+      return this.docToolStatus.docToolActive;
     }
   },
   methods: {
     handlePage (type) {
       if (['zoomIn', 'zoomOut', 'zoomReset', 'move'].includes(type)) {
-        this.docToolStatus.docToolActive = type
-        this.$emit('handlePage', type)
+        this.docToolStatus.docToolActive = type;
+        this.$emit('handlePage', type);
       } else if (!(
         (this.pageInfo.pageIndex <= 1 && type == 'prevStep') ||
         (this.pageInfo.pageIndex >= this.pageInfo.total && type == 'nextStep')
       )) {
-        this.$emit('handlePage', type)
+        this.$emit('handlePage', type);
       }
     }
   }
-}
+};
 </script>
 <style lang="less">
 .vhall-doc-pager {

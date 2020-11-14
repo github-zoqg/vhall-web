@@ -61,25 +61,25 @@ export default {
     return {
       docStatus: false,
       showSelectDoc: true
-    }
+    };
   },
 
   mounted () {
-    this.getDocList()
+    this.getDocList();
   },
 
   methods: {
     getDocList () {
-      this.showSelectDoc = !this.showSelectDoc
-      const token = JSON.parse(sessionStorage.getItem('user')).token
+      this.showSelectDoc = !this.showSelectDoc;
+      const token = JSON.parse(sessionStorage.getItem('user')).token;
       this.$vhallFetch('getDocList', {
         token: token
       }).then(res => {
-        console.log('res', res)
-      })
+        console.log('res', res);
+      });
     }
   }
-}
+};
 </script>
 <style lang="less">
     .vhall-doc-controls{

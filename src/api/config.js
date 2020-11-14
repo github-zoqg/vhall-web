@@ -64,12 +64,6 @@ const apis = {
   // 账户管理
   userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
   getSonInfo: ['/100/v3/users/child/get-head-info', 'POST', 'mock'], // 子账号tab页头部信息接口 Jia.li
-//财务中心
-  getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
-  orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
-  orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
-  orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
-  orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
   getSonList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 获取子账号信息 Jia.li
   sonAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 子账号创建 Jia.li
   sonDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 子账号删除 Jia.li
@@ -78,6 +72,22 @@ const apis = {
   roleAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 角色创建 Jia.li
   roleDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 角色删除 Jia.li
   roleEdit: ['/99/v3/webinars/audience/put-group', 'POST', 'mock'], // 角色编辑 Jia.li
+  //财务中心
+  getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
+  orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
+  orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
+  orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
+  orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
+  payOrder: ['/104/v3/finances/pay', 'POST', 'mock'], // 支付订单
+  buyDetail: ['/104/v3/finances/order/list', 'GET', 'mock'], // 购买明细
+  deleteDetail: ['/104/v3/finances/order/delete', 'GET', 'mock'], // 删除购买明细
+  orderDetail: ['/104/v3/finances/admin-order/list', 'GET', 'mock'], // 开通明细
+  //财务收益
+  incomeInfo: ['/104/v3/finances/income', 'GET', 'mock'], // 账户收益总览
+  liveIncomeList: ['/104/v3/finances/income/live/list', 'GET', 'mock'], // 直播收益
+  liveIncomeDetailList: ['/104/v3/finances/income/live/details/list', 'GET', 'mock'], // 直播收益详情列表
+  packetIncomeList: ['/104/v3/finances/income/red-packet/list', 'GET', 'mock'], // 红包收益
+  accountList: ['/104/v3/finances/withdraw/list', 'GET', 'mock'], // 提现明细
 };
 
 const getApi = api => {

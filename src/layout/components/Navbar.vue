@@ -75,7 +75,7 @@ export default {
 
 <style lang="less" scoped>
 .navbar {
-  height: 50px;
+  height: 64px;
   overflow: hidden;
   position: relative;
   background: #fff;

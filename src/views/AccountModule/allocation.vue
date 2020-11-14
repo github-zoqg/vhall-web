@@ -137,7 +137,7 @@ export default {
           count: 0,
           isHide: false
         }
-      ]
+      ];
     },
     renderTarCharts() {
       this.myChart = Echarts.init(this.$refs.allocTopChartDom);
@@ -183,7 +183,7 @@ export default {
         },
         color: ['#4383E4', '#FA9A32', '#7D43E4', '#FB3A32', '#ccc'],
         series: {
-          name: 'sdfsdf',
+          name: 'aL',
           type: 'pie',
           radius: ['30%', '60%'],
           center: ['30%', '50%'],
@@ -227,7 +227,7 @@ export default {
 
 <style lang="less" scoped>
 .alloc--top {
-  .flex-display();
+  .flex-display;
   .justify(flex-start);
   .align(center);
 }

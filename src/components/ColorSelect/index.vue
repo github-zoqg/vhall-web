@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { Sketch } from 'vue-color'//有6中风格，用哪种直接引用对应的名字就行
+import { Sketch } from 'vue-color';//有6中风格，用哪种直接引用对应的名字就行
 export default {
   name: "index.vue",
   components: {
@@ -59,7 +59,7 @@ export default {
         rgba: { r: 25, g: 77, b: 51, a: 1 },
         a: 1
       }*/
-    }
+    };
   },
   methods: {
     openSelectPanel() {
@@ -75,7 +75,7 @@ export default {
       this.colors = tab;
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
