@@ -17,7 +17,16 @@
       </el-col>
       <el-col :span="6">
         <div class="top-item" v-if="userInfo.concurrency">
-          <p>并发扩展包<span class="level" @click="levelVersion('购买')">购买</span></p>
+          <p>并发扩展包<span class="level" @click="levelVersion('购买')">购买</span>
+          <el-tooltip effect="dark" placement="right-start">
+            <div slot="content">
+              1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
+              若无扩展包，则不可发直播且直播回放不可播放<br>
+              2.扩展包欠费则不可发直播，回放不受影响
+            </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+          </p>
           <h2>{{ userInfo.concurrency.concurrency_extend || userInfo.arrears.extend  }}</h2>
           <p v-if="this.$route.name!='home'" @click="goAccountDetail">账单明细</p>
         </div>
@@ -33,14 +42,41 @@
       </el-col>
       <el-col :span="9" v-if = "userInfo.edition == '3'">
         <div class="top-item"  v-if="userInfo.flow">
-          <p>总流量/回放流量（GB）</p>
+          <p>总流量/回放流量（GB）
+            <el-tooltip effect="dark" placement="right-start">
+              <div slot="content">
+                1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
+                2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
+                3.流量包到期后自动失效
+              </div>
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
           <p @click="goAccountDetail" v-if="this.$route.name!='home'">账单明细</p>
         </div>
       </el-col>
       <el-col :span="9" v-else>
         <div class="top-item">
-          <p>总流量/可用流量（GB）<span class="level" @click="buyVersion('2')">购买</span></p>
+          <p>总流量/可用流量（GB）<span class="level" @click="buyVersion('2')">购买</span>
+          <el-tooltip effect="dark" placement="right-start" v-if="userInfo.edition == '1'">
+            <div slot="content">
+              1.专业版过期后将自动降级为标准版，流量包可继续使用<br>
+              2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
+              3.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
+              4.流量包到期后自动失效
+            </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+          <el-tooltip effect="dark" placement="right-start" v-else>
+              <div slot="content">
+                1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
+                2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
+                3.流量包到期后自动失效
+              </div>
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
           <p @click="goAccountDetail" v-if="this.$route.name!='home'">账单明细</p>
         </div>
@@ -134,6 +170,11 @@ export default {
     p {
       font-size: 14px;
       color: #999;
+    }
+    i{
+      color: #000;
+      display: inline-block;
+      margin-left: 2px;
     }
     h2 {
       font-size: 22px;

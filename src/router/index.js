@@ -280,6 +280,12 @@ const routes = [
     component: () => import('@/views/FinanceModule/infoDetail.vue')
   },
   {
+    path: '/finance-accountDetail',
+    title: '提现明细',
+    name: 'accountDetail',
+    component: () => import('@/views/FinanceModule/accountDetail.vue')
+  },
+  {
     path: '/finance-income',
     title: '账户收益',
     name: 'income',

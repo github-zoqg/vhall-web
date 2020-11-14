@@ -1,18 +1,10 @@
 <template>
   <div class="data-info">
-    <div class="title-data">
-      <span>{{ $route.name }}</span>
-      <el-tooltip effect="dark" placement="right-start">
-        <div slot="content">
-          1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
-        </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
-      </el-tooltip>
-    </div>
+    <pageTitle :title="$route.name">
+      <div slot="content">
+        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+      </div>
+    </pageTitle>
       <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
@@ -28,11 +20,7 @@
           <div slot="content">
             当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
           </div>
-          <el-button
-            circle
-            icon="el-icon-question"
-            class="button-tip"
-          ></el-button>
+          <i class="el-icon-question"></i>
         </el-tooltip>
         <div class="changeOption">
           <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
@@ -45,7 +33,7 @@
           <span>观看地域TOP10分布情况</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
-            <el-button circle icon="el-icon-question"></el-button>
+            <i class="el-icon-question"></i>
           </el-tooltip>
         </div>
         <template>
@@ -69,6 +57,7 @@ import mainData from '@/components/Echarts/mainData';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
+import PageTitle from '@/components/PageTitle';
 export default {
   name: 'dataInfo',
   components: {
@@ -76,6 +65,7 @@ export default {
     lintCharts,
     mapCharts,
     terCharts,
+    PageTitle
   },
   data() {
     return {
@@ -151,27 +141,6 @@ export default {
 
 <style lang="less" scoped>
 .data-info {
-  .title-data {
-    margin: 10px 0 20px 0;
-    text-align: left;
-    line-height: 30px;
-    span {
-      font-size: 22px;
-      font-family: PingFangSC-Semibold, PingFang SC;
-      font-weight: 600;
-      color: #1a1a1a;
-    }
-    .button-tip {
-      vertical-align: top;
-    }
-      /deep/.el-button {
-      border: none;
-      background: transparent;
-    }
-    /deep/.el-button.is-circle {
-      padding: 3px;
-    }
-  }
   .statistical-data {
     margin-top: 24px;
     .statistical-title {
@@ -211,9 +180,6 @@ export default {
       padding: 8px 16px;
       border-radius: 14px;
     }
-    // span + .span-active{
-
-    // }
     .span-active {
       border: none;
       background: #fb3a32;

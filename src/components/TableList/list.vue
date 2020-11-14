@@ -15,7 +15,7 @@
         align="left"
         v-if="isCheckout"
       />
-      <template v-if="manageTableData.length">
+      <template v-if="totalNum > 10">
         <el-table-column
           align="left"
           v-for="(item, index) in tabelColumnLabel"
@@ -53,15 +53,14 @@
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
                 <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
-                {{ scope.row.status =='1' ? '成功': scope.row.status =='2' ? '失败' : '等待' }}</p>
+                {{ scope.row.statusText }}</p>
             </div>
-            <span v-else>{{ scope.row[item.key] || '-' }}</span>
+            <p v-else class="text">{{ scope.row[item.key] || '-' }}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="操作"
           align="center"
-          :width="width"
           v-if="isHandle"
         >
           <template slot-scope="scope">
@@ -104,7 +103,8 @@ export default {
     return {
       pageInfo: {
         pageNum: 1,
-        pageSize: 10,
+        pos: 0,
+        limit: 10,
       },
       isUpdate: 0,
     };
@@ -121,11 +121,6 @@ export default {
     isHandle: {
       type: Boolean,
       default: true,
-    },
-    width: {
-      type: Number,
-      require: false,
-      default: 200,
     },
     needPagination: {
       type: Boolean,
@@ -166,6 +161,10 @@ export default {
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt(current * 10 - 10);
+      if (current == 1) {
+        this.pageInfo.pos = 0;
+      }
       this.$emit('getTableList', this.pageInfo);
     },
     // 复选框操作
@@ -197,40 +196,45 @@ export default {
     background-color: #FB3A32;
   }
   /deep/.el-table td, .el-table th{
-    padding: 0;
-    height: 56px;
+    padding: 10px 0 9px 0;
   }
+  .text{
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   /deep/.el-button--text {
     color: #1A1A1A;
     &:hover{
       color: #FB3A32;
     }
-    /deep/.el-button.text--default {
-      margin-right: 20px;
-      color: #999999;
-      font-size: 14px;
-      &:last-child {
-        margin-right: 0;
-      }
-      &:hover {
-        color: #5d81fb;
-        &:after {
-          border-bottom: 1px solid #5d81fb;
-        }
-      }
-      &:active {
-        color: #3157e1;
-        &:after {
-          border-bottom: 1px solid #3157e1;
-        }
-      }
-      &:disabled {
-        color: #9db3fc;
-        &:after {
-          border-bottom: 1px solid #9db3fc;
-        }
-      }
-    }
+    // /deep/.el-button.text--default {
+    //   margin-right: 20px;
+    //   color: #999999;
+    //   font-size: 14px;
+    //   &:last-child {
+    //     margin-right: 0;
+    //   }
+    //   &:hover {
+    //     color: #5d81fb;
+    //     &:after {
+    //       border-bottom: 1px solid #5d81fb;
+    //     }
+    //   }
+    //   &:active {
+    //     color: #3157e1;
+    //     &:after {
+    //       border-bottom: 1px solid #3157e1;
+    //     }
+    //   }
+    //   &:disabled {
+    //     color: #9db3fc;
+    //     &:after {
+    //       border-bottom: 1px solid #9db3fc;
+    //     }
+    //   }
+    // }
   }
   .status-show{
     span{
