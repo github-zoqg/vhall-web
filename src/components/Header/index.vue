@@ -30,9 +30,10 @@
         </div>
       </template>
     </div>
-  </div>
+  </div>g
 </template>
 <script>
+import { sessionOrLocal } from '@/utils/utils.js';
 export default {
   data() {
     return {
@@ -62,6 +63,7 @@ export default {
     }
   },
   created() {
+    sessionOrLocal.set('ae', '解决阿娇阿娇');
     this.getUnreadNum();
   }
 };
