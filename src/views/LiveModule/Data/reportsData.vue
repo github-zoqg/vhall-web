@@ -1,18 +1,10 @@
 <template>
   <div class="contain-data">
-    <div class="title-data">
-      <span>数据报告</span>
-      <el-tooltip effect="dark" placement="right-start">
-        <div slot="content">
-          1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
-        </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
-      </el-tooltip>
-    </div>
+    <pageTitle title="数据报告">
+      <div slot="content">
+        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+      </div>
+    </pageTitle>
     <title-data></title-data>
     <search-area
       ref="searchArea"
@@ -29,11 +21,7 @@
           <div slot="content">
             当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
           </div>
-          <el-button
-            circle
-            icon="el-icon-question"
-            class="button-tip"
-          ></el-button>
+          <i class="el-icon-question"></i>
         </el-tooltip>
         <div class="changeOption">
           <span :class="isActive ? 'span-active' : ''">直播</span>
@@ -46,10 +34,7 @@
           <span>观看地域TOP10分布情况</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
-            <el-button
-              circle
-              icon="el-icon-question"
-            ></el-button>
+            <i class="el-icon-question"></i>
           </el-tooltip>
         </div>
         <map-charts></map-charts>
@@ -71,6 +56,7 @@ import lintCharts from '@/components/Echarts/lineEcharts';
 import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import titleData from './components/title';
+import PageTitle from '@/components/PageTitle';
 export default {
   data() {
     return {
@@ -159,7 +145,8 @@ export default {
     lintCharts,
     mapCharts,
     terCharts,
-    titleData
+    titleData,
+    PageTitle
   },
   created() {
     this.searchAreaLayout = this.searchLayout;
@@ -185,94 +172,9 @@ export default {
 .contain-data {
   margin: 0 41px;
   padding: 0;
-  /deep/.el-button {
-    border: none;
-    background: transparent;
-  }
-  /deep/.el-button.is-circle{
-    padding:3px;
-  }
-}
-.title-data {
-  margin: 20px 0;
-  text-align: left;
-  line-height: 30px;
-  span{
-    font-size: 22px;
-    font-family: PingFangSC-Semibold, PingFang SC;
-    font-weight: 600;
-    color: #1a1a1a;
-  }
-  .button-tip {
-    vertical-align: top;
-  }
-}
-.change-time {
-  display: flex;
-  display: none;
-  position: relative;
-  margin: 34px 0 24px 0;
-  ::v-deep .el-input__inner{
-    border-radius: 18px;
-    height: 35px;
-  }
-  /deep/.el-input__icon{
-    line-height: 37px;
-  }
-}
-.time-kuai {
-  height: 35px;
-  border: 1px solid #dcdfe6;
-  border-radius: 18px;
-  background: #fff;
-  margin: 0 16px 0 24px;
-  span {
-    display: inline-block;
-    border-radius: 18px;
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #666666;
-    cursor: pointer;
-  }
-  .active {
-    background: #fb3a32;
-    color: #fff;
-  }
-}
-.time-change{
-  margin-left: 24px;
-}
-.export-data {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 104px;
-  height: 35px;
-  border-radius: 20px;
-  border: 1px solid #dcdfe6;
-  text-align: center;
-  line-height: 35px;
-  background: #fff;
-  cursor: pointer;
-  span {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #666;
-  }
-}
-.export-data:hover {
-  background: #fb3a32;
-  border: none;
-  span {
-    color: #fff;
-  }
 }
 .statistical-data {
-  margin-top: 24px;
+  // margin-top: 24px;
   .statistical-title {
     text-align: left;
     font-size: 16px;

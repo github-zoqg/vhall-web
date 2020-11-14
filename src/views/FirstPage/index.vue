@@ -88,6 +88,7 @@
 <script>
 import LineEcharts from '@/components/Echarts/lineEcharts.vue';
 import DataUsage from '@/components/DataUsage/index.vue';
+import { session } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -111,7 +112,7 @@ export default {
       };
       this.$fetch('getVersionInfo', params).then(res =>{
         this.userInfo = res.data;
-        window.sessionStorage.setItem("userInfo", JSON.stringify(this.userInfo));
+        session.set('userInfo', this.userInfo);
       }).catch(e=>{
         console.log(e);
       });
@@ -120,6 +121,7 @@ export default {
       this.$fetch('getDataCenterInfo').then(res =>{
         this.mainKeyData = res.data.key_data;
         this.lineDataList = res.data.trend.live;
+        session.set('dataCenterInfo', this.lineDataList);
       }).catch(e=>{
         console.log(e);
       });

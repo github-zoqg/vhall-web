@@ -70,6 +70,18 @@ const apis = {
   orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
   orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
   orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
+  payOrder: ['/104/v3/finances/pay', 'POST', 'mock'], // 支付订单
+  buyDetail: ['/104/v3/finances/order/list', 'GET', 'mock'], // 购买明细
+  deleteDetail: ['/104/v3/finances/order/delete', 'GET', 'mock'], // 删除购买明细
+  orderDetail: ['/104/v3/finances/admin-order/list', 'GET', 'mock'], // 开通明细
+  //财务收益
+  incomeInfo: ['/104/v3/finances/income', 'GET', 'mock'], // 账户收益总览
+  liveIncomeList: ['/104/v3/finances/income/live/list', 'GET', 'mock'], // 直播收益
+  liveIncomeDetailList: ['/104/v3/finances/income/live/details/list', 'GET', 'mock'], // 直播收益详情列表
+  packetIncomeList: ['/104/v3/finances/income/red-packet/list', 'GET', 'mock'], // 红包收益
+  accountList: ['/104/v3/finances/withdraw/list', 'GET', 'mock'], // 提现明细
+
+
   getSonList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 获取子账号信息 Jia.li
   sonAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 子账号创建 Jia.li
   sonDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 子账号删除 Jia.li

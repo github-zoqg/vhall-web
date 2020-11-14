@@ -1,18 +1,10 @@
 <template>
   <div class="account-income">
-    <div class="title-data">
-      <span>账单明细</span>
-      <el-tooltip effect="dark" placement="right-start">
-        <div slot="content">
-          购买明细指用户从后台主动下单购买相关功能的订单；开通明细指通过工作人<br>员给您开通的相关功能订单
-        </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
-      </el-tooltip>
-    </div>
+    <pageTitle title="账单明细">
+      <div slot="content">
+        购买明细指用户从后台主动下单购买相关功能的订单；开通明细指通过工作人<br>员给您开通的相关功能订单
+      </div>
+    </pageTitle>
     <el-card class="box-card">
       <el-tabs v-model="activeIndex" @tab-click="handleClick">
         <el-tab-pane label="购买明细" name="1"></el-tab-pane>
@@ -42,8 +34,7 @@
 </template>
 
 <script>
-// import tableList from '@/components/DataList/list.vue';
-// import searchArea from '@/components/SearchArea/index.vue';
+import PageTitle from '@/components/PageTitle';
 export default {
   name: "income",
   data() {
@@ -53,11 +44,11 @@ export default {
       searchDetail: [
         {
           type: '2',
-          key: "searchDate"
+          key: "searchTime"
         },
         {
           type: '3',
-          key: "accountType",
+          key: "type",
           placeholder: '请选择订单类型',
           options: [
             {
@@ -81,29 +72,33 @@ export default {
               value: '5'
             },
             {
-              label: '11111',
+              label: '结清并发欠费',
               value: '6'
             }
           ]
         },
         {
           type: '3',
-          key: "accountStatus",
+          key: "status",
           placeholder: '请选择订单状态',
           options: [
             {
-              label: '成功',
+              label: '失败',
               value: '1'
             },
-            {
-              label: '失败',
+             {
+              label: '成功',
+              value: '0'
+            },
+             {
+              label: '成功',
               value: '2'
-            }
+            },
           ]
         },
         {
           type: '3',
-          key: "accountResoure",
+          key: "source",
           placeholder: '请选择订单来源',
           options: [
             {
@@ -115,46 +110,49 @@ export default {
               value: '2'
             }
           ]
-        }
+        },
+        {
+          type: '6'
+        },
       ],
       isCheckout: false,
       isHandle: true,
       tableList: [
         {
-          no: '1',
+          order_id: '1',
           id: '123244',
-          time: '2020-09-17',
+          create_time: '2020-09-17',
           type: '支付宝',
-          money: '123,000',
+          amount: '123,000',
           content: '哈哈哈哈',
           status: '1',
           source: '直播',
-          onDate: '2020-10-01',
-          outDate: '2021-10-01'
+          start_time: '2020-10-01',
+          end_time: '2021-10-01'
         },
         {
-          no: '1',
+          order_id: '2',
           id: '100000',
-          time: '2020-01-17',
+          create_time: '2020-01-17',
           type: '微信',
-          money: '111,000',
+          amount: '111,000',
           content: '开始讲课',
           status: '2',
           source: '录播',
-          onDate: '2020-01-01',
-          outDate: '2021-01-01'
+          start_time: '2020-01-01',
+          end_time: '2021-01-01'
         }
       ],
       tabelColumn: [],
       tabelColumns: [
         {
           label: '订单编号',
-          key: 'no',
+          key: 'order_id',
           width: 120
         },
         {
           label: '交易时间',
-          key: 'time',
+          key: 'create_time',
           width: 120
         },
         {
@@ -164,13 +162,12 @@ export default {
         },
         {
           label: '交易金额',
-          key: 'money',
+          key: 'amount',
           width: 120,
         },
         {
           label: '购买内容',
           key: 'content',
-          width: 200
         },
         {
           label: '订单状态',
@@ -184,13 +181,13 @@ export default {
         },
         {
           label: '启用日期',
-          key: 'onDate',
-          width: 100
+          key: 'start_time',
+          width: 120
         },
         {
           label: '失效日期',
-          key: 'outDate',
-          width: 100
+          key: 'end_time',
+          width: 120
         }
       ],
       tableRowBtnFun: [
@@ -201,12 +198,12 @@ export default {
       ]
     };
   },
-  // components: {
-  //   tableList,
-  //   searchArea
-  // },
-  created() {
+  components: {
+    PageTitle
+  },
+  mounted() {
     this.tabelColumn = this.tabelColumns;
+    this.getDetailList();
   },
   watch: {
     activeIndex(value) {
@@ -226,45 +223,76 @@ export default {
     },
     handleClick(tab) {
       this.activeIndex = tab.name;
+      this.$refs.tableDetail.pageInfo.pos = 0;
+      this.$refs.tableDetail.pageInfo.pageNum = 1;
+      this.$refs.searchDetail.searchParams = {};
+      this.getDetailList();
     },
     getDetailList(params) {
       let pageInfo = this.$refs.tableDetail.pageInfo; //获取分页信息
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
+      let paramsObj = {};
       if (params === 'search') {
-        pageInfo.pageNum= 1;
+        pageInfo.pos= 0;
+        pageInfo.pageNum = 1;
       }
-      let obj = Object.assign({}, pageInfo, formParams);
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      paramsObj.user_id = '16417099';
+      let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
+      let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
+      this.$fetch(url, obj).then(res =>{
+        this.totalNum = res.data.total;
+        // this.tableList = res.data.list;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    delete(that, val) {
+      let userId = val.order_id;
+      that.$confirm('确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.deleteList(userId);
+        }).catch(() => {
+          that.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    },
+    deleteList(id) {
+       this.$fetch('deleteDetail', {id: id}).then(res =>{
+        console.log(res.data);
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(e=>{
+        console.log(e);
+        this.$message({
+          type: 'error',
+          message: '删除失败!'
+        });
+      });
     }
-  },
+  }
 };
 </script>
 
 <style lang="less" scoped>
   .account-income{
-    /deep/.el-button {
-    border: none;
-    background: transparent;
-  }
-  /deep/.el-button.is-circle{
-    padding:3px;
-  }
-  /deep/.el-card__body{
-    padding: 5px 24px 51px 24px;
-  }
-  .title-data {
-      margin: 0 0 24px 0;
-      text-align: left;
-      line-height: 30px;
-      span{
-        font-size: 22px;
-        font-family: PingFangSC-Semibold, PingFang SC;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-      .button-tip{
-        vertical-align: top;
-      }
+    .el-card__body{
+      padding: 5px 24px 51px 24px;
     }
   }
 </style>

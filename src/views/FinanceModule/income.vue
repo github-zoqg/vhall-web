@@ -1,18 +1,11 @@
 <template>
   <div class="account-income">
-    <div class="title-data">
-      <span>账户收益</span>
-      <el-tooltip effect="dark" placement="right-start">
-        <div slot="content">
-          1.账户收益包含直播收益和红包收益<br>2.直播收益：观众对主办方打赏的金额，包含门票、打赏、礼物道具<br>3.红包收益：作为观众身份抢到主办方发送的红包，以及主办方发送红包后未被领取完，会退款到红包收益
-        </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
-      </el-tooltip>
-    </div>
+    <pageTitle title="账户收益">
+      <div slot="content">
+        1.账户收益包含直播收益和红包收益<br>2.直播收益：观众对主办方打赏的金额，包含门票、打赏、礼物道具<br>3.红包收益：作为观众身份抢到主办方发送的红包，以及主办方发送红包后未被领取完，会退款到红包收益
+      </div>
+    </pageTitle>
+    <div class="detail" @click="accountDetail">账单明细</div>
     <el-row :gutter="20">
       <el-col :span="12">
         <el-card class="live-come">
@@ -20,7 +13,7 @@
           <div class="live-all">
             <div class="all-come">
               <p>总收益（元）</p>
-              <h1>2805.00</h1>
+              <h1>{{ incomeInfo.live_income }}</h1>
             </div>
             <div class="all-come">
               <p>可用金额（元）
@@ -31,14 +24,10 @@
                     2. 小于或等于800的需要线下审核提现<br>
                     3. 不管是人工审核还是自动审核，在admin中都需要有提现记录，进行对账审计
                   </div>
-                  <el-button
-                    circle
-                    icon="el-icon-question"
-                    class="button-tip"
-                  ></el-button>
+                  <i class="el-icon-question"></i>
                 </el-tooltip>
               </p>
-              <h1>2805.00</h1>
+              <h1>{{ incomeInfo.live_balance }}</h1>
             </div>
           </div>
         </el-card>
@@ -49,7 +38,7 @@
           <div class="live-all">
             <div class="all-come">
               <p>总收益（元）</p>
-              <h1>2805.00</h1>
+              <h1>{{ incomeInfo.red_packet_income }}</h1>
             </div>
             <div class="all-come">
               <p>可用金额（元）
@@ -60,14 +49,10 @@
                     2. 小于或等于800的需要线下审核提现<br>
                     3. 不管是人工审核还是自动审核，在admin中都需要有提现记录，进行对账审计
                   </div>
-                  <el-button
-                    circle
-                    icon="el-icon-question"
-                    class="button-tip"
-                  ></el-button>
+                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </p>
-              <h1>2805.00</h1>
+              <h1>{{ incomeInfo.red_packet_balance }}</h1>
             </div>
           </div>
         </el-card>
@@ -104,6 +89,7 @@
 </template>
 
 <script>
+import PageTitle from '@/components/PageTitle';
 import cashBox from './components/cashBox';
 export default {
   name: "income",
@@ -111,90 +97,99 @@ export default {
     return {
       activeIndex: '1',
       totalNum: 100,
+      incomeInfo: {},
       searchAccount: [
         {
           type: '2',
           key: "searchTime"
         },
         {
-          key: "accountTitle"
+          key: "webinar_name"
         }
       ],
       isCheckout: false,
       isHandle: true,
       tableList: [
         {
-          id: '1',
-          title: '秒吼吼吼吼',
-          allIncome: '200',
-          money: '100',
-          content: '123',
-          price: '花'
+          webinar_id: '1',
+          name: '秒吼吼吼吼',
+          total_income: '200',
+          ticket_income: '100',
+          reward_income: '123',
+          gifts_income: '123.00',
+          red_packet_user: 'xixiiiiid',
+          red_packet_type: '0',
+          created_at: '2020-10-01',
+          money: '1000.00'
         },
         {
-          id: '2',
-          title: '秒吼吼吼222吼',
-          allIncome: '1000',
-          money: '1000',
-          content: '1023',
-          price: '火箭'
+          webinar_id: '2',
+          name: '秒吼吼吼222吼',
+          total_income: '1000',
+          ticket_income: '1000',
+          reward_income: '1023',
+          gifts_income: '999999',
+          red_packet_user: '哈哈哈哈哈',
+          red_packet_type: '1',
+          created_at: '2020-10-01',
+          money: '2000.00'
         }
       ],
       tabelColumn: [],
       liveColumns: [
         {
           label: '活动id',
-          key: 'id',
+          key: 'webinar_id',
           width: 120
         },
         {
           label: '标题',
-          key: 'title'
+          key: 'name'
         },
         {
           label: '总收益',
-          key: 'allIncome',
-          width: 100
+          key: 'total_income',
+          width: 120
         },
         {
           label: '门票收益',
-          key: 'money',
+          key: 'ticket_income',
           width: 120,
         },
         {
           label: '打赏收益',
-          key: 'content',
+          key: 'reward_income',
           width: 120
         },
         {
-          label: '礼物',
-          key: 'price',
+          label: '礼物收益',
+          key: 'gifts_income',
           width: 120
         }
       ],
       meneyColumns: [
         {
           label: '活动id',
-          key: 'id',
+          key: 'webinar_id',
           width: 120
         },
         {
           label: '标题',
-          key: 'title',
+          key: 'name',
         },
         {
           label: '发红包用户',
-          key: 'user',
+          key: 'red_packet_user',
           width: 200
         },
         {
           label: '红包类型',
-          key: 'type',
+          key: 'red_packet',
           width: 120,
         },
         {
           label: '领取时间',
-          key: 'time',
+          key: 'created_at',
           width: 150
         },
         {
@@ -212,10 +207,15 @@ export default {
     };
   },
   components: {
-    cashBox
+    cashBox,
+    PageTitle
   },
   created() {
     this.tabelColumn = this.liveColumns;
+  },
+  mounted() {
+    this.getIncomeInfo();
+    this.getIncomeList();
   },
   watch: {
     activeIndex(value) {
@@ -229,6 +229,13 @@ export default {
     }
   },
   methods: {
+    getIncomeInfo() {
+      this.$fetch('incomeInfo', {user_id: '16417099'}).then(res =>{
+        this.incomeInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
@@ -237,6 +244,8 @@ export default {
       this.activeIndex = tab.name;
       this.$refs.searchIncome.searchParams = {};
       this.$refs.tableIncome.pageInfo.pageNum = 1;
+      this.$refs.tableIncome.pageInfo.pos = 0;
+      this.getIncomeList();
     },
     getIncomeList(params) {
       let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
@@ -244,17 +253,37 @@ export default {
       let paramsObj = {};
       if (params === 'search') {
         pageInfo.pageNum= 1;
+        pageInfo.pos = 0;
       }
       for (let i in formParams) {
-        if (i === 'searchTime') {
-          paramsObj['searchStartDate'] = formParams[i][0];
-          paramsObj['searchEndDate'] = formParams[i][1];
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
         } else {
           paramsObj[i] = formParams[i];
         }
       }
+      paramsObj.user_id = '16417099';
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
+      let url = this.activeIndex == '1' ? "liveIncomeList" : "packetIncomeList";
+      this.$fetch(url, obj).then(res =>{
+        if (this.activeIndex == '2') {
+            this.rowsList();
+        }
+        console.log(res);
+        // this.totalNum = res.data.total;
+        // this.tableList = res.data.list;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    rowsList() {
+      this.tableList.map(item => {
+        item.red_packet = item.red_packet_type == '1' ? '固定金额': '拼手气';
+      });
+      console.log(this.tableList);
+      // .map(item => {"red_packet": item.red_packet_type == '1' ? '固定金额': '拼手气' })
     },
     cash(title) {
       console.log(title);
@@ -264,8 +293,14 @@ export default {
       that.$router.push({
         name: 'incomeDetail',
         query: {
-          id: rows.no
+          webinar_id: rows.webinar_id
         }
+      });
+    },
+    // 账单明细
+    accountDetail() {
+      this.$router.push({
+        name: 'accountDetail'
       });
     }
   },
@@ -274,30 +309,18 @@ export default {
 
 <style lang="less" scoped>
   .account-income{
-  /deep/.el-button.is-circle{
-    padding:0px 3px;
-  }
-  /deep/.el-card__body{
-    padding: 24px 32px;
+    position: relative;
+    .el-card__body{
+      padding: 24px 32px;
 
-  }
-  .title-data {
-     /deep/.el-button {
-      border: none;
-      background: transparent;
     }
-      margin: 10px 0 30px 0;
-      text-align: left;
-      line-height: 22px;
-      span{
-        font-size: 22px;
-        font-family: PingFangSC-Semibold, PingFang SC;
-        font-weight: 600;
-        color: #1a1a1a;
-      }
-      .button-tip{
-        vertical-align: top;
-      }
+    .detail{
+      position: absolute;
+      top:0;
+      right:0;
+      color:#3B67F9;
+      font-size: 14px;
+      cursor: pointer;
     }
   .live-come{
     margin-right: 10px;
@@ -333,6 +356,11 @@ export default {
         font-size: 12px;
         color:#FB3A32;
         cursor: pointer;
+      }
+      i{
+        color: #000;
+        display: inline-block;
+        margin-left: 2px;
       }
     }
   }

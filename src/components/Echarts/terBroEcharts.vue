@@ -4,11 +4,12 @@
       <span>{{ isTerBar === 1 ? '终端设备占比' : '浏览器占比'}}</span>
       <el-tooltip effect="dark" placement="right-start">
         <div slot="content">{{ isTerBar === 1 ?  '统计观看终端占比情况' : '统计观看浏览器占比情况' }}</div>
-        <el-button
+         <i class="el-icon-question"></i>
+        <!-- <el-button
           circle
           icon="el-icon-question"
           class="button-tip"
-        ></el-button>
+        ></el-button> -->
       </el-tooltip>
     </div>
     <div :style="{ height: '300px', width: '100%' }" ref="terBroEchart"></div>
@@ -48,7 +49,7 @@ export default {
         legend: {
           orient: 'vertical',
           top: 80,
-          right:50,
+          right: 30,
           icon: 'circle',
           itemWidth: 8,
           itemHeight: 8,
