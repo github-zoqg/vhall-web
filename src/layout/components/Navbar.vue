@@ -6,17 +6,38 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
-          <img src="../../common/images/avatar.png" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
-        </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">退出</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <div class="right-menu-item">
+        <a>旧版控制台</a>
+      </div>
+      <!-- 帮助中心 -->
+      <div class="right-menu-item">
+        <i class="el-icon-message-solid"></i>
+      </div>
+      <!-- 下载中心 -->
+      <div class="right-menu-item">
+        <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload > 0">
+          <i class="el-icon-message-solid" @click.prevent.stop="toDownloadPage"></i>
+        </el-badge>
+      </div>
+      <!-- 消息中心 -->
+      <div class="right-menu-item">
+        <el-badge :value="unread_num" :max="99" class="item" :hidden="!unread_num>0">
+          <i class="el-icon-message-solid" @click.prevent.stop="toMsgPage"></i>
+        </el-badge>
+      </div>
+      <div class="right-menu-item">
+        <el-dropdown class="avatar-container" trigger="click">
+          <div class="avatar-wrapper">
+            <img src="../../common/images/avatar.png" class="user-avatar">
+            <span>微吼直播</span>
+          </div>
+          <el-dropdown-menu slot="dropdown" class="user-dropdown">
+            <el-dropdown-item divided @click.native="logout">
+              <span style="display:block;">退出</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
@@ -44,10 +65,10 @@ export default {
   // inject: [],
   methods: {
     toMsgPage() {
-      this.$router.push({path: '/msg-list'});
+      this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
-      this.$router.push({path: '/download-list'});
+      this.$router.push({path: '/other/downloadList'});
     },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{
@@ -75,77 +96,72 @@ export default {
 
 <style lang="less" scoped>
 .navbar {
-  height: 64px;
+  height: 32px;
+  margin: 15px 17px;
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
-  .hamburger-container {
-    line-height: 46px;
-    height: 100%;
-    float: left;
+}
+.hamburger-container {
+  line-height: 32px;
+  height: 32px;
+  float: left;
+  cursor: pointer;
+  transition: background .3s;
+  -webkit-tap-highlight-color:transparent;
+}
+.breadcrumb-container {
+  float: left;
+}
+.right-menu {
+  float: right;
+  height: 100%;
+  .flex-display();
+  vertical-align: middle;
+  line-height: 32px;
+  &:focus {
+    outline: none;
+  }
+  .right-menu-item {
+    margin-right: 16px;
+    &:first-child {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #1384FF;
+    }
+  }
+  /deep/.el-badge {
+    line-height: 20px;
+    i {
+      color: #666666;
+    }
+  }
+}
+.avatar-wrapper {
+  position: relative;
+  .user-avatar {
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
-    &:hover {
-      background: rgba(0, 0, 0, .025)
-    }
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 100%;
   }
-  .breadcrumb-container {
-    float: left;
+  span {
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
+    margin-left: 10px;
   }
-  .right-menu {
-    float: right;
-    height: 100%;
-    line-height: 50px;
-    &:focus {
-      outline: none;
-    }
-    .right-menu-item {
-      display: inline-block;
-      padding: 0 8px;
-      height: 100%;
-      font-size: 18px;
-      color: #5a5e66;
-      vertical-align: text-bottom;
-      &.hover-effect {
-        cursor: pointer;
-        transition: background .3s;
-        &:hover {
-          background: rgba(0, 0, 0, .025)
-        }
-      }
-    }
-    p{
-      display: inline-block;
-    }
-    .name{
-      padding: 0 32px 0 8px;
-    }
-    i{
-      font-size: 16px;
-      padding: 0 9px;
-    }
-    .avatar-container {
-      margin-right: 30px;
-      .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
-        .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-        }
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
-        }
-      }
-    }
+  .el-icon-caret-bottom {
+    cursor: pointer;
+    position: absolute;
+    right: -20px;
+    top: 25px;
+    font-size: 12px;
   }
 }
 </style>

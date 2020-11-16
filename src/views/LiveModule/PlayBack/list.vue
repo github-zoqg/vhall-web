@@ -235,7 +235,7 @@ export default {
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toTailoring(){
-      this.$router.push({path: `/live/tailoring`});
+      this.$router.push({path: `/videoTailoring`});
     },
     toChapter(){
       this.$router.push({path: `/live/chapter/11`});
