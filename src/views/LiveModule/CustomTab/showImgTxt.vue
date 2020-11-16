@@ -1,5 +1,5 @@
 <template>
-  <div unit-type="1" class="unit-templet img active" title="图文">
+  <div data-unit-type="1" class="unit-templete img active" title="图文">
     <div class="content"><p>默认图文</p></div>
     <i class="menu-icon del"></i>
   </div>
@@ -12,7 +12,7 @@ name: "showImgLink.vue"
 </script>
 
 <style lang="less" scoped>
-.unit-templet {
+.unit-templete {
   position: relative;
   box-sizing: border-box;
   border: dashed 1px #eee;

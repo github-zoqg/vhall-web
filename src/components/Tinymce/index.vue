@@ -1,94 +1,248 @@
 <template>
-  <div class='tinymce-container'>
-    <myedtior id="tinymce" v-model="value" :init="init"></myedtior>
+  <div :class="{fullscreen:fullscreen}" class="tinymce-container" :style="{width:containerWidth}">
+    <div>
+      <textarea :id="tinymceId" class="tinymce-textarea"></textarea>
+    </div>
+    <div class="editor-custom-btn-container">
+      <editorImage color="#1890ff" class="editor-upload-btn" @successCBK="imageSuccessCBK" />
+    </div>
   </div>
 </template>
 
 <script>
-import tinymce from "tinymce";
-import {myedtior} from "@tinymce/tinymce-vue";
-import "tinymce/themes/silver/theme";
-import "tinymce/plugins/image";
-import "tinymce/plugins/link";
-import "tinymce/plugins/code";
-import "tinymce/plugins/table";
-import "tinymce/plugins/lists";
-import "tinymce/plugins/wordcount";
-// import { uploadImg } from "@/api/common";
-//下面的插件是自带的,不需要引入
-// import "tinymce/plugins/contextmenu";
-// import "tinymce/plugins/colorpicker";
-// import "tinymce/plugins/textcolor";
+import editorImage from './components/EditorImage';
+import plugins from './plugins';
+import toolbar from './toolbar';
+import load from './dynamicLoadScript';
+const tinymceCDN = 'https://cdn.jsdelivr.net/npm/tinymce-all-in-one@4.9.3/tinymce.min.js';
 export default {
-  name: "MyTinymce",
+  name: 'Tinymce',
+  components: { editorImage },
   props: {
-    // eslint-disable-next-line vue/require-prop-type-constructor
-    tinymceHtml: '',
-    tinymceHeight: {
-      type: Number,
-      default: 500
+    id: {
+      type: String,
+      default: function() {
+        return 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '');
+      }
+    },
+    value: {
+      type: String,
+      default: ''
+    },
+    toolbar: {
+      type: Array,
+      required: false,
+      default() {
+        return [];
+      }
+    },
+    menubar: {
+      type: String,
+      default: 'file edit insert view format table'
+    },
+    height: {
+      type: [Number, String],
+      required: false,
+      default: 360
+    },
+    width: {
+      type: [Number, String],
+      required: false,
+      default: 'auto'
     }
-  },
-  components: {
-    myedtior
   },
   data() {
     return {
-      value: this.tinymceHtml, //父组件通过ref拿到该组件的值
-      init: {
-        selector: "#tinymce",
-        language_url: "/tinymce/langs/zh_CN.js",
-        language: "zh_CN",
-        skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
-        height: this.tinymceHeight,
-        plugins: "image link code table lists wordcount", //引入插件
-        toolbar:
-          "fontselect fontsizeselect link lineheight forecolor backcolor bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | image quicklink h2 h3 blockquote table numlist bullist preview fullscreen", //工具栏
-        browser_spellcheck: true, // 拼写检查
-        branding: false, // 去水印
-        elementpath: false, //禁用编辑器底部的状态栏
-        statusbar: false, // 隐藏编辑器底部的状态栏
-        paste_data_images: true, // 允许粘贴图像
-        menubar: false, // 隐藏最上方menu
-
-        file_picker_types: 'image',
-        images_upload_credentials: true,
-        fontsize_formats: "14px 16px 18px 20px 24px 26px 28px 30px 32px 36px", //字体大小
-        font_formats:
-          "微软雅黑=Microsoft YaHei,Helvetica Neue;PingFang SC;sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun;serifsans-serif;Terminal=terminal;monaco;Times New Roman=times new roman;times", //字体
-        /**
-         * 下面方法是为tinymce添加自定义插入图片按钮
-         * 借助iview的Upload组件,将图片先上传到存储云上，再将图片的存储地址放入编辑器内容
-         */
-        // 图片上传三个参数，图片数据，成功时的回调函数，失败时的回调函数
-        images_upload_handler: function(blobInfo, success, failure) {
-          let formdata = new FormData();
-          formdata.append("image", blobInfo.blob());
-
-          uploadImg(formdata)
-            .then(res => {
-              console.log(res);
-              success("https://qnsjk.huabeisky.com/" + res.data);
-            })
-            .catch(res => {
-              failure("error");
-            });
-        }
-      }
+      hasChange: false,
+      hasInit: false,
+      tinymceId: this.id,
+      fullscreen: false,
+      languageTypeList: {
+        'en': 'en',
+        'zh': 'zh_CN',
+        'es': 'es_MX',
+        'ja': 'ja'
+      },
+      language: 'zh_CN'
     };
   },
-  watch: {
-    tinymceHtml(newV,oldV) {
-      this.value = newV;
+  computed: {
+    containerWidth() {
+      const width = this.width;
+      if (/^[\d]+(\.[\d]+)?$/.test(width)) { // matches `100`, `'100'`
+        return `${width}px`;
+      }
+      return width;
     }
   },
-  computed: {},
-  created() {},
-  mounted() {
-    tinymce.init({});
+  watch: {
+    value(val) {
+      if (!this.hasChange && this.hasInit) {
+        this.$nextTick(() =>
+          window.tinymce.get(this.tinymceId).setContent(val || ''));
+      }
+    },
+    language() {
+      this.destroyTinymce();
+      this.$nextTick(() => this.initTinymce());
+    }
   },
-  methods: {}
+  mounted() {
+    this.init();
+  },
+  activated() {
+    if (window.tinymce) {
+      this.initTinymce();
+    }
+  },
+  deactivated() {
+    this.destroyTinymce();
+  },
+  destroyed() {
+    this.destroyTinymce();
+  },
+  methods: {
+    init() {
+      // dynamic load tinymce from cdn
+      load(tinymceCDN, (err) => {
+        if (err) {
+          this.$message.error(err.message);
+          return;
+        }
+        this.initTinymce();
+      });
+    },
+    initTinymce() {
+      const _this = this;
+      window.tinymce.init({
+        statusbar: false,
+        language: this.language,//调用放在langs文件夹内的语言包
+        selector: `#${this.tinymceId}`, //容器，可使用css选择器
+        height: this.height,
+        body_class: 'panel-body ',
+        object_resizing: false,
+        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar, //隐藏工具栏
+        menubar: this.menubar, //隐藏菜单栏
+        plugins: plugins, //选择需加载的插件
+        end_container_on_empty_block: true,
+        powerpaste_word_import: 'clean',
+        code_dialog_height: 450,
+        code_dialog_width: 1000,
+        advlist_bullet_styles: 'square',
+        advlist_number_styles: 'default',
+        imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+        default_link_target: '_blank',
+        link_title: false,
+        nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
+        init_instance_callback: editor => {
+          if (_this.value) {
+            editor.setContent(_this.value);
+          }
+          _this.hasInit = true;
+          editor.on('NodeChange Change KeyUp SetContent', () => {
+            this.hasChange = true;
+            this.$emit('input', editor.getContent());
+          });
+        },
+        setup(editor) {
+          editor.on('FullscreenStateChanged', (e) => {
+            _this.fullscreen = e.state;
+          });
+        },
+        // it will try to keep these URLs intact
+        // https://www.tiny.cloud/docs-3x/reference/configuration/Configuration3x@convert_urls/
+        // https://stackoverflow.com/questions/5196205/disable-tinymce-absolute-to-relative-url-conversions
+        convert_urls: false
+        // 整合七牛上传
+        // images_dataimg_filter(img) {
+        //   setTimeout(() => {
+        //     const $image = $(img);
+        //     $image.removeAttr('width');
+        //     $image.removeAttr('height');
+        //     if ($image[0].height && $image[0].width) {
+        //       $image.attr('data-wscntype', 'image');
+        //       $image.attr('data-wscnh', $image[0].height);
+        //       $image.attr('data-wscnw', $image[0].width);
+        //       $image.addClass('wscnph');
+        //     }
+        //   }, 0);
+        //   return img
+        // },
+        // images_upload_handler(blobInfo, success, failure, progress) {
+        //   progress(0);
+        //   const token = _this.$store.getters.token;
+        //   getToken(token).then(response => {
+        //     const url = response.data.qiniu_url;
+        //     const formData = new FormData();
+        //     formData.append('token', response.data.qiniu_token);
+        //     formData.append('key', response.data.qiniu_key);
+        //     formData.append('file', blobInfo.blob(), url);
+        //     upload(formData).then(() => {
+        //       success(url);
+        //       progress(100);
+        //     })
+        //   }).catch(err => {
+        //     failure('出现未知问题，刷新页面，或者联系程序员')
+        //     console.log(err);
+        //   });
+        // },
+      });
+    },
+    destroyTinymce() {
+      const tinymce = window.tinymce.get(this.tinymceId);
+      if (this.fullscreen) {
+        tinymce.execCommand('mceFullScreen');
+      }
+
+      if (tinymce) {
+        tinymce.destroy();
+      }
+    },
+    setContent(value) {
+      window.tinymce.get(this.tinymceId).setContent(value);
+    },
+    getContent() {
+      window.tinymce.get(this.tinymceId).getContent();
+    },
+    imageSuccessCBK(arr) {
+      arr.forEach(v => window.tinymce.get(this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" alt="">`));
+    }
+  }
 };
 </script>
+
 <style lang="less" scoped>
+.tinymce-container {
+  position: relative;
+  line-height: normal;
+}
+
+.tinymce-container {
+  ::v-deep {
+    .mce-fullscreen {
+      z-index: 10000;
+    }
+  }
+}
+
+.tinymce-textarea {
+  visibility: hidden;
+  z-index: -1;
+}
+
+.editor-custom-btn-container {
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  /*z-index: 2005;*/
+}
+
+.fullscreen .editor-custom-btn-container {
+  z-index: 10000;
+  position: fixed;
+}
+
+.editor-upload-btn {
+  display: inline-block;
+}
 </style>

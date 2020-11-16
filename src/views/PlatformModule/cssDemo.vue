@@ -1,38 +1,35 @@
 <template>
-  <div>
-    <h1>开关</h1>
-    <div class="switch__box">
-      <label class="leve3_title label__r12">标题</label>
-      <el-switch
-        v-model="switchVal"
-        active-color="#FB3A32"
-        inactive-color="#CECECE">
-      </el-switch>
-      <span class="leve3_title title--999">提示文本区域</span>
+  <div class="components-container">
+    <div>
+      <tinymce v-model="content" :height="300"/>
+      <tinymce v-model="content2" :height="300" menubar='false' />
+
     </div>
-    <div class="switch__box">
-      <el-switch
-        v-model="switchVal"
-        active-color="#FB3A32"
-        inactive-color="#CECECE">
-      </el-switch>
-      <span class="leve3_title title--666">提示文本区域</span>
-    </div>
+    <div class="editor-content" v-html="content" />
+    <div class="editor-content" v-html="content2" />
+
   </div>
 </template>
 
 <script>
+import Tinymce from '@/components/Tinymce';
+
 export default {
-  name: "cssDemo.vue",
+  name: 'TinymceDemo',
+  components: { Tinymce },
   data() {
     return {
-      switchVal: 0
+      content:
+        `第一个编辑器`,
+      content2:
+        `第二个编辑器`
     };
   }
 };
 </script>
 
-<style lang="less" scoped>
-@import '../../common/css/common.less';
-@import '../../common/css/base.less';
+<style scoped>
+.editor-content{
+  margin-top: 20px;
+}
 </style>

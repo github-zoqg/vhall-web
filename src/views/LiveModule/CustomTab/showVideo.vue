@@ -1,18 +1,18 @@
 <template>
-  <div unit-type="3" class="unit-templet video active" title="直播">
+  <div data-unit-type="3" class="unit-templete video active" title="直播">
     <ul class="list-content">
       <li class="v35-activity-card mb">
         <i class="menu-icon del"></i>
         <div class="card-top">
-          <span class='card-status sub'>empty($accountconfig['ui.change_webinar_notice'])?'预告':$accountconfig['ui.change_webinar_notice'];</span>
+          <span class='card-status sub'>预告</span>
           <span class="card-status playback">回放</span>
           <span class='card-status live'>直播</span>
           <span class='card-status end'>结束</span>
           <span class='card-status demand'>点播</span>
           <span class='card-status playback'>回放</span>
           <a>
-            <img class="live-play-icon" src="//cnstatic01.e.vhall.com/static/img/mobile/play_.png">
-            <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png">
+            <img class="live-play-icon" src="//cnstatic01.e.vhall.com/static/img/mobile/play_.png" alt="" />
+            <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png" alt="" />
             <div class="num">
               <div class="view_num"><i class="num-icon view-icon-h5-2"></i>66</div>
               <span class="card-type">付费</span>
@@ -45,7 +45,7 @@ name: "showImgLink.vue"
 </script>
 
 <style lang="less" scoped>
-.unit-templet {
+.unit-templete {
   position: relative;
   box-sizing: border-box;
   border: dashed 1px #eee;
@@ -77,6 +77,7 @@ name: "showImgLink.vue"
   background-size: cover;
   background-position: 100% 100%;
   margin: 8px auto 0 auto;
+  z-index: 5;
 }
 .list-content {
   .flex-display();

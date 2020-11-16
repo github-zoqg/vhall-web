@@ -104,7 +104,6 @@
             <unit-text-link />
             <unit-img-link />
             <unit-title />
-            <unit-hr />
             <unit-rank />
           </div>
         </div>
@@ -133,7 +132,6 @@ import UnitSpecial from  './CustomTab/unitSpecial.vue';
 import UnitTextLink from  './CustomTab/unitTextLink.vue';
 import UnitImgLink from  './CustomTab/unitImgLink.vue';
 import UnitTitle from  './CustomTab/unitTitle.vue';
-import UnitHr from  './CustomTab/unitHr.vue';
 import UnitRank from  './CustomTab/unitRank.vue';
 export default {
   name: "customTab.vue",
@@ -155,7 +153,6 @@ export default {
     UnitTextLink,
     UnitImgLink,
     UnitTitle,
-    UnitHr,
     UnitRank,
   },
   data() {
@@ -236,10 +233,16 @@ export default {
   font-size: @font_size_14;
   font-family: @fontRegular;
   font-weight: 400;
-  color: @font_color_gray;
+  color: @font_color_h1;
   line-height: 20px;
   padding: 10px 0;
   cursor: pointer;
+  &:hover, &.active {
+    color: @theme--normal;
+  }
+  &.comp__item--disabled {
+    color: @font_color_h3;
+  }
   span:last-child {
     margin-left: 6px;
   }

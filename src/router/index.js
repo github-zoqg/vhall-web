@@ -493,7 +493,15 @@ const v3Routes = [
     path: '/css-demo',
     component: Layout,
     name: 'Css',
-    meta: { title: '样式Demo', icon: 'el-icon-s-help' }
+    meta: { title: '样式Demo', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'css-demo',
+        name: 'css-demo',
+        component: () => import('@/views/PlatformModule/cssDemo'),
+        meta: { title: 'Tinymce富文本', icon: 'el-icon-s-home' }
+      }
+    ]
   },
   { path: '*', redirect: '/404', hidden: true },
   {

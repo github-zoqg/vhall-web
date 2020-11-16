@@ -1,6 +1,6 @@
 <template>
-  <div unit-type="2" class="unit-templet rq-code active" title="二维码">
-    <img src="//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/808780981" hrc="//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/808780981">
+  <div data-unit-type="2" class="unit-templet rq-code active" title="二维码">
+    <img src="//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/808780981" data-hrc="//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/808780981" alt="" />
     <i class="menu-icon del"></i>
   </div>
 </template>
