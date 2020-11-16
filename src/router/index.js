@@ -502,12 +502,13 @@ const v3Routes = [
     redirect: '/',
     name: 'emptyLayout',
     meta: { title: '回放-剪辑台', icon: 'el-icon-s-custom' },
+    hidden: true,
     children: [
       {
         path: 'videoTailoring',
         name: 'videoTailoring',
         component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue'),
-        meta: { title: '回放-剪辑台', icon: 'table' }
+        meta: { title: '回放-剪辑台', icon: 'table' },
       }
     ]
   }

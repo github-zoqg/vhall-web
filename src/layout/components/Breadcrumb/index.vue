@@ -71,10 +71,18 @@ export default {
   font-size: 14px;
   line-height: 32px;
   margin-left: 8px;
-
   .no-redirect {
-    color: #97a8be;
     cursor: text;
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #1A1A1A;
   }
+}
+/deep/.el-breadcrumb__inner a, /deep/.el-breadcrumb__inner.is-link {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #999999;
 }
 </style>
