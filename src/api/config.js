@@ -59,6 +59,8 @@ const apis = {
   playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
   //首页
   getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）
+  // 登录
+  loginInfo: ['/logins/v3/users/user/login', 'POST'],
   //数据中心
   getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
   // 账户管理
