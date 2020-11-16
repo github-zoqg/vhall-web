@@ -11,7 +11,7 @@
     <!-- 操作栏 -->
     <div class="operaBox">
       <el-button type="primary" round @click="$router.push({path:'/live/edit'})">创建直播</el-button>
-      <el-button round @click="$router.push({path:'/vod/edit'})">创建点播</el-button>
+      <el-button round @click="$router.push({path:'/vodEdit'})">创建点播</el-button>
       <div class="searchBox">
         <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
           <el-option
@@ -166,7 +166,7 @@ export default {
       });
     },
     toDetail(id) {
-      this.$router.push({path: `/live-detail/${id}`});
+      this.$router.push({path: `/live/detail/${id}`});
     }
   },
   filters: {

@@ -46,20 +46,20 @@ const v3Routes = [
         meta: { title: '直播列表', icon: 'table' }
       },
       {
-        path: 'edit/0',
+        path: 'edit',
         name: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { title: '创建直播', icon: 'edit' }
+        meta: { title: '创建直播', icon: 'edit', webniarType: 'live', }
       },
       {
-        path: '/vodEdit/:str(\\d+)',
+        path: '/vodEdit',
         component: () => import('@/views/LiveModule/edit'),
         name: 'vodEdit',
-        meta:{ webniarType: 'vod', title: '准备-基本信息', icon: '' , activeMenu: '/live/list'},
+        meta:{ webniarType: 'vod', title: '创建点播', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/detail/:str(\\d+)',
+        path: 'detail/:str(\\d+)',
         component: () => import('@/views/LiveModule/detail'),
         name: 'detail',
         meta:{ title: '直播-详情', icon: '' , activeMenu: '/live/list'},
