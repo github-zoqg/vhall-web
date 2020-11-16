@@ -76,7 +76,7 @@
             {{ scope.row.date }}
             <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
             <el-button type="text">下载</el-button>
-            <el-button type="text" @click="$router.push({path: '/playback/chapter'})">章节</el-button>
+            <el-button type="text" @click="toChapter">章节</el-button>
             <el-dropdown @command="handleCommand">
               <el-button type="text">更多</el-button>
               <el-dropdown-menu slot="dropdown">
@@ -232,10 +232,13 @@ export default {
       });
     },
     settingHandler(){
-      this.$router.push({path: `/plan-function/${this.webinar_id}`});
+      this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toTailoring(){
-      this.$router.push({path: `/playback/video-tailoring`});
+      this.$router.push({path: `/live/tailoring`});
+    },
+    toChapter(){
+      this.$router.push({path: `/live/chapter/11`});
     }
   },
   filters: {

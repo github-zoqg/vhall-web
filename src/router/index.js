@@ -8,7 +8,6 @@ import Layout from '@/layout';
 
 // 主入口路由(需嵌套上左右整体布局)
 const v3Routes = [
-  { path: '*', redirect: '/404', hidden: true },
   {
     path: '/login',
     component: () => import('@/views/PlatformModule/Login/index'),
@@ -49,80 +48,101 @@ const v3Routes = [
         path: 'edit',
         name: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { title: '创建直播', icon: 'edit', webniarType: 'live', }
+        meta: {webniarType: 'live', title: '创建直播', icon: 'table' , activeMenu: '/live/list'}
       },
       {
-        path: '/vodEdit',
-        component: () => import('@/views/LiveModule/edit'),
+        path: 'vodEdit',
         name: 'vodEdit',
-        meta:{ webniarType: 'vod', title: '创建点播', icon: '' , activeMenu: '/live/list'},
+        component: () => import('@/views/LiveModule/edit'),
+        meta: {webniarType: 'live', title: '创建点播', icon: 'table' , activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'detail/:str(\\d+)',
         component: () => import('@/views/LiveModule/detail'),
         name: 'detail',
-        meta:{ title: '直播-详情', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播详情', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/signup/:str(\\d+)',
+        path: 'signup/:str(\\d+)',
         component: () => import('@/views/LiveModule/signUp/main'),
         name: 'signup',
         meta:{ title: '准备—报名表单', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/viewerRules/:str(\\d+)',
+        path: 'viewerRules/:str(\\d+)',
         component: () => import('@/views/LiveModule/viewerRules'),
         name: 'viewerRules',
         meta:{ title: '准备—观看限制', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/live/planFunction/:str(\\d+)',
+        path: 'roleInvitation/:str(\\d+)',
+        component: () => import('@/views/LiveModule/roleInvitation'),
+        name: 'roleInvitation',
+        meta:{ title: '准备—角色邀请', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'planFunction/:str(\\d+)',
         component: () => import('@/views/LiveModule/planFunction'),
         name: 'planFunction',
         meta:{ title: '准备—功能配置', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/virtual/:str(\\d+)',
+        path: 'virtual/:str(\\d+)',
         component: () => import('@/views/LiveModule/viewerRules'),
         name: 'virtual',
         meta:{ title: '准备—虚拟人数', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/warm/:str(\\d+)',
+        path: 'warm/:str(\\d+)',
         component: () => import('@/views/LiveModule/warm'),
         name: 'warm',
         meta:{ title: '准备—暖场视频', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/brandSet/:str(\\d+)',
+        path: 'embedCard/:str(\\d+)',
+        component: () => import('@/views/LiveModule/embedCard'),
+        name: 'embedCard',
+        meta:{ title: '准备—推广嵌入', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'brandSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/brandSet'),
         name: 'brandSet',
         meta:{ title: '品牌—品牌设置', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/invCard/:str(\\d+)',
+        path: 'playerSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/playerSet'),
+        name: 'playerSet',
+        meta:{ title: '品牌—播放器设置', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'invCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/invitationCard'),
         name: 'invCard',
         meta:{ title: '品牌—邀请卡', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/advertCard/:str(\\d+)',
+        path: 'advertCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
         name: 'advertCard',
         meta:{ title: '品牌—广告推荐', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/officialCard/:str(\\d+)',
+        path: 'officialCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/officialCard'),
         name: 'officialCard',
         meta:{ title: '品牌—公众号展示', icon: '' , activeMenu: '/live/list'},
@@ -136,28 +156,63 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/customTab/:str(\\d+)',
+        path: 'customTab/:str(\\d+)',
         component: () => import('@/views/LiveModule/customTab'),
         name: 'customTab',
         meta:{ title: '品牌—自定义菜单', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/playback/:str(\\d+)',
+        path: 'wordSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/wordSet'),
+        name: 'wordSet',
+        meta:{ title: '直播—文档', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'prizeSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/prizeSet'),
+        name: 'prizeSet',
+        meta:{ title: '直播—抽奖', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'questionSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/questionSet'),
+        name: 'questionSet',
+        meta:{ title: '直播—问卷', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'productSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/productSet'),
+        name: 'productSet',
+        meta:{ title: '直播—商品', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'giftSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/giftSet'),
+        name: 'giftSet',
+        meta:{ title: '直播—礼物', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'playback/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/list'),
         name: 'playback',
         meta:{ title: '回放-回放管理', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/playbackChapter/:str(\\d+)',
+        path: 'chapter/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/chapter'),
-        name: 'playbackChapter',
+        name: 'chapter',
         meta:{ title: '回放-章节打点', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/tailoring',
+        path: 'tailoring',
         component: () => import('@/views/LiveModule/PlayBack/videoTailoring'),
         name: 'tailoring',
         meta:{ title: '回放-剪辑台', icon: '' , activeMenu: '/live/list'},
@@ -445,7 +500,8 @@ const v3Routes = [
     component: Layout,
     name: 'Css',
     meta: { title: '样式Demo', icon: 'el-icon-s-help' }
-  }
+  },
+  { path: '*', redirect: '/404', hidden: true }
 ];
 
 const router = new VueRouter({

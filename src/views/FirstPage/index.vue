@@ -4,31 +4,31 @@
       <data-usage :userInfo="userInfo"></data-usage>
       <el-row type="flex" class="row-center" justify="space-between">
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toCreateLive">
             <p></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toUploadWord">
             <p></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toBrandSet">
             <p></p>
             <h3>品牌设置</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toDataInfo">
             <p></p>
             <h3>账号数据</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toFinanceInfo">
             <p></p>
             <h3>财务总览</h3>
           </div>
@@ -106,13 +106,33 @@ export default {
     this.getLiveList();
   },
   methods: {
+    // 页面跳转
+     toCreateLive(){
+      this.$router.push({path: `/live/edit`});
+    },
+    // 上传文档
+    toUploadWord(){
+      this.$router.push({path: `/material/word`});
+    },
+    // 品牌设置
+    toBrandSet(){
+      this.$router.push({path: `/live/brandSet/795704919`});
+    },
+    // 数据中心-数据总览
+    toDataInfo(){
+      this.$router.push({path: `/data/info`});
+    },
+    // 财务中心-财务总览
+    toFinanceInfo(){
+      this.$router.push({path: `/finance/info`});
+    },
     getUserVersion() {
       let params = {
         user_id: '16417099'
       };
       this.$fetch('getVersionInfo', params).then(res =>{
         this.userInfo = res.data;
-        session.set('userInfo', this.userInfo);
+        sessionOrLocal.set('userInfo', this.userInfo);
       }).catch(e=>{
         console.log(e);
       });
@@ -121,7 +141,7 @@ export default {
       this.$fetch('getDataCenterInfo').then(res =>{
         this.mainKeyData = res.data.key_data;
         this.lineDataList = res.data.trend.live;
-        session.set('dataCenterInfo', this.lineDataList);
+        sessionOrLocal.set('dataCenterInfo', this.lineDataList);
       }).catch(e=>{
         console.log(e);
       });
