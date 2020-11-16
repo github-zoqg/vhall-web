@@ -96,8 +96,8 @@ export default {
 
 <style lang="less" scoped>
 .navbar {
-  height: 32px;
-  margin: 15px 17px;
+  height: 64px;
+  padding: 15px 17px;
   overflow: hidden;
   position: relative;
   background: #fff;
