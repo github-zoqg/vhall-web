@@ -65,7 +65,13 @@ export default {
   @import "../common/css/other/variables.less";
 
   .app-wrapper {
-    @include clearfix;
+    .clearfix {
+      &:after{
+        content: "";
+        clear: left;
+        display: block;
+      }
+    }
     position: relative;
     height: 100%;
     width: 100%;

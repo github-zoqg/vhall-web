@@ -88,7 +88,7 @@
 <script>
 import LineEcharts from '@/components/Echarts/lineEcharts.vue';
 import DataUsage from '@/components/DataUsage/index.vue';
-import { session } from '@/utils/utils';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
