@@ -12,6 +12,11 @@ export default {
   },
 };
 </script>
-<style lang="less" scoped>
-
+<style lang="less">
+html{
+  height: 100%;
+}
+#app{
+  height: 100%;
+}
 </style>

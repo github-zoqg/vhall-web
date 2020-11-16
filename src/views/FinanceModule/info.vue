@@ -72,7 +72,7 @@
 <script>
 import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
-import { session } from '@/utils/utils';
+// import { session } from '@/utils/utils';
 export default {
   name: "financeInfo",
   components: {
@@ -193,8 +193,8 @@ export default {
     };
   },
   mounted() {
-    this.userInfo = session.get("userInfo");
-    this.lintData = session.get("dataCenterInfo");
+    // this.userInfo = session.get("userInfo");
+    // this.lintData = session.get("dataCenterInfo");
   },
   methods: {
     getLineList(params) {

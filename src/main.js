@@ -11,6 +11,7 @@ import { getParams } from './utils/general';
 import '@/common/css/index.less';
 
 import fethData from './api/fetch';
+import './permission';
 import VueI18n from 'vue-i18n';
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
