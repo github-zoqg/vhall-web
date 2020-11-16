@@ -144,7 +144,7 @@ export default {
   methods: {
     lookOption(title) {
       this.$router.push({
-        path: '/interaction-detail',
+        path: '/interactionDetail',
         query: {
           id: 1,
           title: title

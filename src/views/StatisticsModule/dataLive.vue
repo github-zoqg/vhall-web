@@ -100,17 +100,17 @@ export default {
         {
           name: '数据报告',
           methodName: 'dataReport',
-          path: '/reports-data',
+          path: '/reportsData',
         },
         {
           name: '互动统计',
           methodName: 'dataReport',
-          path: '/interaction-data',
+          path: '/interactionData',
         },
         {
           name: '用户统计',
           methodName: 'dataReport',
-          path: '/user-data',
+          path: '/userData',
         }
       ],
       searchAreaLayout: [

@@ -173,7 +173,7 @@ export default {
     // 跳转消息详情页
     toSonDetail(that, { rows }) {
       that.$router.push({
-        path: `/son-detail/${rows.account_id}`,
+        path: `/sonDetail/${rows.account_id}`,
       });
     },
     // 跳转到用量分配
