@@ -1,5 +1,5 @@
 <template>
-  <div  data-unit-type="9" class="unit-templete ranking-list active" title="排行榜">
+  <div class="unit-templete ranking-list active" title="排行榜">
     <i class="menu-icon del"></i>
     <div class="ranking-title">
       <div class="rank-menu fl">
@@ -21,7 +21,17 @@
 
 <script>
 export default {
-name: "showImgLink.vue"
+  name: "showImgLink.vue",
+  props: {
+    // 当前展示组件下标
+    p_show_comps_index: {
+      type: Number
+    },
+    // 组件专属ID
+    component_id: {
+      type: Number
+    }
+  }
 };
 </script>
 
@@ -94,6 +104,10 @@ name: "showImgLink.vue"
   .rank-band {
     padding: 10px 0;
     background-color: #fff;
+    img {
+      width: 100%;
+      height: auto;
+    }
   }
   .menu-cont {
     min-height: 460px;

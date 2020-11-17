@@ -71,7 +71,7 @@ export default {
           { icon: '', title: '角色邀请', subText: '设置不同角色参与直播的权限', path:  `/live/role/${this.$route.params.str}`},
           { icon: '', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
           { icon: '', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
-          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息', path: '/live/signup'},
+          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
           { icon: '', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
         ],
         '品牌': [

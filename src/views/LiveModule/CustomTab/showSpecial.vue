@@ -1,69 +1,42 @@
 <template>
-  <div data-unit-type="4" class="unit-templete video active" title="专题">
-    <ul class="list-content">
-      <li class="v35-activity-card mb">
-        <div class="card-top">
-          <a>
-            <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png" alt="" />
-            <div class="num">
-              <div class="view_num"><i class="num-icon view-icon-h5-2"></i>16</div>
-              <div class="live-num"><i class="num-icon video-icon"></i>66</div>
-            </div>
-          </a>
-        </div>
-        <div class="card-bottom">
-          <p class="title">专题示例</p>
-          <p class="info">
-            <time>2018-06-28 16:00</time>
-          </p>
-        </div>
-      </li>
-    </ul>
-    <i class="menu-icon del"></i>
-  </div>
+  <ul class="list-content">
+    <li class="v35-activity-card mb">
+      <div class="card-top">
+        <a>
+          <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png" alt="" />
+          <div class="num">
+            <div class="view_num"><i class="num-icon view-icon-h5-2"></i>16</div>
+            <div class="live-num"><i class="num-icon video-icon"></i>66</div>
+          </div>
+        </a>
+      </div>
+      <div class="card-bottom">
+        <p class="title">专题示例</p>
+        <p class="info">
+          <time>2018-06-28 16:00</time>
+        </p>
+      </div>
+    </li>
+  </ul>
 </template>
 
 <script>
 export default {
-name: "showImgLink.vue"
+  name: "showImgLink.vue",
+  props: {
+    // 当前展示组件下标
+    p_show_comps_index: {
+      type: Number
+    },
+    // 组件专属ID
+    component_id: {
+      type: Number
+    }
+  }
 };
 </script>
 
 <style lang="less" scoped>
-.unit-templete {
-  position: relative;
-  box-sizing: border-box;
-  border: dashed 1px #eee;
-  padding: 5px;
-  margin: 10px 10px;
-  word-wrap: break-word;
-  &.active,&:hover {
-    cursor: pointer;
-    -webkit-transition: border .3s;
-    transition: border .3s;
-    border: 1px dashed #58ABFF;
-    background: rgba(88,171,255,0.1);
-  }
-  .content {
-    line-height: 1.5;
-    color: #666;
-    font-size: 12px;
-  }
-}
-.del {
-  position: absolute;
-  display: block;
-  top: -20px;
-  right: -10px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-image: url(../../../common/images/custom-tab/delete_icon.png) !important;
-  background-size: cover;
-  background-position: 100% 100%;
-  margin: 8px auto 0 auto;
-  z-index: 5;
-}
 .list-content {
   .flex-display();
   .justify(space-between);

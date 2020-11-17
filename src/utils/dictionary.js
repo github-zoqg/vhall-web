@@ -29,6 +29,35 @@ export function gender(type) {
 	];
 	return filter(type,types);
 }
+
+/*组件
+* 内容类型：
+  {name: "图文", is_vip: 0, type: "1", component_id: 1},
+  {name: "二维码", is_vip: 0, type: "1", component_id: 2},
+  {name: "直播", is_vip: 0, type: "1", component_id: 3},
+  {name: "专题", is_vip: 0, type: "1", component_id: 4},
+  {name: "文字链", is_vip: 1, type: "1", component_id: 5},
+  {name: "图文链", is_vip: 1, type: "1", component_id: 6},
+  {name: "标题", is_vip: 1, type: "1", component_id: 7},
+  {name: "分割线", is_vip: 1, type: "1", component_id: 8},
+  {name: "排行榜", is_vip: 0, type: "2", component_id: 9}
+ */
+export function customTabCompType(type) {
+  const types = [
+    {name: "图文", is_vip: 0, type: "1", component_id: 1, key: 'img-txt'},
+    {name: "二维码", is_vip: 0, type: "1", component_id: 2, key: 'rq-code'},
+    {name: "直播", is_vip: 0, type: "1", component_id: 3, key: 'video'},
+    {name: "专题", is_vip: 0, type: "1", component_id: 4, key: 'special'},
+    {name: "文字链", is_vip: 1, type: "1", component_id: 5, key: 'text-link'},
+    {name: "图文链", is_vip: 1, type: "1", component_id: 6, key: 'img-link'},
+    {name: "标题", is_vip: 1, type: "1", component_id: 7, key: 'title'},
+    {name: "分割线", is_vip: 1, type: "1", component_id: 8, key: 'hr'},
+    {name: "排行榜", is_vip: 0, type: "2", component_id: 9, key: 'rank'}
+  ];
+  return filter(type,types);
+}
+
+
 function filter(type,types){
 	if(!type){
 		return types;

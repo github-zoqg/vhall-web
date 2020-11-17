@@ -14,13 +14,13 @@
       <ul class="panel__left">
         <template>
           <li class="comp__group__title"><label>基本组件</label></li>
-          <li class="comp__item" v-for="item in compList.filter(cItem => cItem.type === '1')" :key="`comp1Item${item.component_id}`">
+          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '1')" :key="`comp1Item${item.component_id}`" @click.prevent.stop="addShowComps(item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
         </template>
         <template>
           <li class="comp__group__title"><label>功能组件</label></li>
-          <li class="comp__item" v-for="item in compList.filter(cItem => cItem.type === '2')" :key="`comp2Item${item.component_id}`">
+          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '2')" :key="`comp2Item${item.component_id}`" @click.prevent.stop="addShowComps(item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
           <li class="comp__item comp__item--disabled"><span class="el-icon-s-home"></span><span>尽请期待</span></li>
@@ -84,27 +84,59 @@
               </div>
             </div>
             <!-- 编辑区域 -->
-            <div class="edit__dragger">
-              <show-img-txt />
-              <show-rq-code />
-              <show-video />
-              <show-special />
-              <show-text-link />
-              <show-img-link />
-              <show-title />
-              <show-hr />
-              <show-rank />
+            <div class="edit__draggable">
+              <div data-unit-type="6" class="show-comp-template active" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins" @drop="drop($event, ins)" @dragover="allowDrop($event, ins)">
+                <!-- 图文 -->
+                <div class="img-txt" v-if="item.show_type === 'img-txt'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-img-txt @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-txt>
+                </div>
+                <!-- 二维码 -->
+                <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-rq-code @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-rq-code>
+                </div>
+                <!-- 直播 -->
+                <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-video @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-video>
+                </div>
+                <!-- 专题 -->
+                <div class="special" v-if="item.show_type === 'special'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-special @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-special>
+                </div>
+                <!-- 文字链 -->
+                <div class="text-link" v-if="item.show_type === 'text-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-text-link @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-text-link>
+                </div>
+                <!-- 图片链 -->
+                <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-img-link @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-link>
+                </div>
+                <!-- 标题 -->
+                <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-title @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-title>
+                </div>
+                <!-- 分割线 -->
+                <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-hr @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-hr>
+                </div>
+                <!-- 排行榜 -->
+                <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-rank @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-rank>
+                </div>
+                <i class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></i>
+              </div>
             </div>
           </div>
           <div class="app__right">
-            <unit-img-txt elName="imgTxtEditor" defaultText="默认图文"></unit-img-txt>
-            <unit-rq-code />
-            <unit-video />
-            <unit-special />
-            <unit-text-link />
-            <unit-img-link />
-            <unit-title />
-            <unit-rank />
+            <!-- 组件标题 -->
+            <div class="comp__edit__title">{{unitComp.name}}</div>
+            <unit-img-txt elName="imgTxtEditor" defaultText="默认图文" v-if="unitComp.show_type === 'img-txt'"></unit-img-txt>
+            <unit-rq-code v-if="unitComp.show_type === 'rq-code'"/>
+            <unit-video v-if="unitComp.show_type === 'video'"/>
+            <unit-special v-if="unitComp.show_type === 'special'"/>
+            <unit-text-link v-if="unitComp.show_type === 'text-link'"/>
+            <unit-img-link v-if="unitComp.show_type === 'img-link'"/>
+            <unit-title v-if="unitComp.show_type === 'title'"/>
+            <unit-rank v-if="unitComp.show_type === 'rank'"/>
           </div>
         </div>
       </div>
@@ -158,7 +190,67 @@ export default {
   data() {
     return {
       compVo: null,
-      compList: [
+      compList: [],
+      tabType: 'app', // pc 电脑端；app 移动端
+      customMenus: [],
+      menuTabIndex: 0,
+      modShowHtmlList: [], // 展示模块中创建的组件push进入的数据集合。但删除的时候，组件编号顺序变化情况需关注。
+      compIndex: 0, // 统计当前组件属于数据集合中第几个
+      unitComp: {}, // 当前操作面板, 同compList中单个内容
+    };
+  },
+  computed: {
+    dragOptions() {
+      return {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost"
+      };
+    }
+  },
+  methods: {
+    compCovert(component_id) {
+      let str = null;
+      switch (component_id) {
+        case 1:
+          str = 'img-txt';
+          break;
+        case 2:
+          str = 'rq-code';
+          break;
+        case 3:
+          str = 'video';
+          break;
+        case 4:
+          str = 'special';
+          break;
+        case 5:
+          str = 'text-link';
+          break;
+        case 6:
+          str = 'img-link';
+          break;
+        case 7:
+          str = 'title';
+          break;
+        case 8:
+          str = 'hr';
+          break;
+        case 9:
+          str = 'rank';
+          break;
+        default:
+          str = null;
+        break;
+      }
+      return str;
+    },
+    setTabHandler(tab) {
+      this.tabType = tab;
+    },
+    getCompList() {
+      let list = [
         {name: "图文", is_vip: 0, type: "1", component_id: 1},
         {name: "二维码", is_vip: 0, type: "1", component_id: 2},
         {name: "直播", is_vip: 0, type: "1", component_id: 3},
@@ -168,14 +260,11 @@ export default {
         {name: "标题", is_vip: 1, type: "1", component_id: 7},
         {name: "分割线", is_vip: 1, type: "1", component_id: 8},
         {name: "排行榜", is_vip: 0, type: "2", component_id: 9}
-      ],
-      tabType: 'app', // pc 电脑端；app 移动端
-      menuTabIndex: 0
-    };
-  },
-  methods: {
-    setTabHandler(tab) {
-      this.tabType = tab;
+      ];
+      list.map(item => {
+        item.compType = this.compCovert(item.component_id);
+      });
+      this.compList = list;
     },
     customMenuList() {
       this.customMenus = [
@@ -192,9 +281,77 @@ export default {
         console.log(error);
         this.customMenus = [];
       });*/
+    },
+    // 左侧按钮拖拽-创建组件
+    addShowComps(item) {
+      if (item.compType === null) {
+        this.$message.error('非有效组件，无法使用');
+        return;
+      }
+      this.compIndex++;
+      let unitComp = Object.assign({
+        show_type: item.compType
+      }, item);
+      unitComp.original_params = {
+        styles: '',
+        content: '',
+        params: ''
+      };
+      unitComp.update_params = {
+        styles: '',
+        content: '',
+        params: ''
+      };
+      this.modShowHtmlList.push(unitComp);
+      console.log(JSON.stringify(unitComp));
+      this.unitComp = unitComp; // 设置右侧操作面板跟当前一致
+    },
+    // 组件返回结果
+    getShowCompInfo(showCompStr, ins) {
+      let tempVo = JSON.parse(showCompStr);
+      this.modShowHtmlList[ins].update_params = {
+        styles: tempVo.styles,
+        content: tempVo.content,
+        params: tempVo.params
+      };
+    },
+    // drop 当拖拽对象移动停止时触发，执行拖拽后位置变更效果（目标前插入）；注意：暂时只针对大块处理，让其拖拽可移动，通过splice进行删除或者在某个位置插入数据
+    drop(eve, index) {
+      console.log('drop 拖拽对象移动停止触发~~~');
+      eve.preventDefault();
+      const moveIndex = eve.dataTransfer.getData('tbI');
+      const moveObject = this.modShowHtmlList[moveIndex];
+      this.modShowHtmlList.splice(moveIndex, 1);
+      this.modShowHtmlList.splice(index, 0, moveObject);
+    },
+    allowDrop(eve, index) {
+      console.log(`allDrop ${index}触发`);
+      eve.preventDefault();
+    },
+    drag(eve, index) {
+      console.log(`drap ${index} 触发`);
+    },
+    showCompsItemDel(eve, index) {
+      this.$confirm(`确认删除该项？`).then(res => {
+        console.log('删除', res);
+        this.modShowHtmlList.splice(index, 1);
+        // 每次删除后，默认展示可编辑面板为第一个
+        if(this.modShowHtmlList.length > 0) {
+          this.unitComp = this.modShowHtmlList[0];
+        }
+      }).catch(() => {
+        // this.$message.info('已取消');
+      });
+    },
+    rightKeyContent(eve) {
+      return false;
+    },
+    setIsActiveItem(item) {
+      item.isActive = !item.isActive;
     }
   },
   created() {
+    this.getCompList();
     this.customMenuList();
   }
 };
@@ -294,11 +451,16 @@ export default {
   .justify(space-between);
 }
 .app__left {
-  width: 384px;
+  width: 382px;
   margin-right: 16px;
+  height: 661px;
+  overflow-y: auto;
 }
 .app__right {
   width: calc(100% - 64px);
+}
+.comp__edit__title {
+  margin-bottom: 32px;
 }
 .app__title {
   img {
@@ -401,5 +563,45 @@ export default {
 .checkbox-item {
   .flex-display();
   .justify(space-between);
+}
+
+/*面板设置*/
+.show-comp-template {
+  position: relative;
+  box-sizing: border-box;
+  border: dashed 1px #eee;
+  padding: 5px;
+  word-wrap: break-word;
+  min-height: 32px;
+  margin: 10px;
+  &.active, &:hover {
+    cursor: pointer;
+    -webkit-transition: border .3s;
+    transition: border .3s;
+    border: 1px dashed #58ABFF;
+    background: rgba(88,171,255,0.1);
+  }
+  .num-icon {
+    display: inline-block;
+    background-size: cover;
+    background-position: 100% 100%;
+    width: 20px;
+    height: 20px;
+    vertical-align: -4px;
+  }
+  .del {
+    position: absolute;
+    display: block;
+    top: -20px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-image: url(../../common/images/custom-tab/delete_icon.png) !important;
+    background-size: cover;
+    background-position: 100% 100%;
+    margin: 8px auto 0 auto;
+    z-index: 5;
+  }
 }
 </style>

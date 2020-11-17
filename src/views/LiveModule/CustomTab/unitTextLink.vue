@@ -23,7 +23,7 @@
           textUrl: ''
         },
         unitTextLinkFormRules: {
-          nick_name: [
+          text: [
             { required: true, message: '文字不能为空', trigger: 'blur' },
             { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
             { min: 1, message: '请输入文字', trigger: 'blur' }
