@@ -60,7 +60,7 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="开播" placement="top">
-                <i class="el-icon-video-camera"></i>
+                <router-link :to="'chooseWay/' + item.webinar_id" target="_blank"><i class="el-icon-video-camera"></i></router-link>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="回放" placement="top">
                 <i class="el-icon-s-promotion"></i>

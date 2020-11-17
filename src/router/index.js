@@ -66,6 +66,13 @@ const v3Routes = [
         hidden: true
       },
       {
+        path: 'chooseWay/:str(\\d+)',
+        component: () => import('@/views/LiveModule/chooseWay'),
+        name: 'chooseWay',
+        meta:{ title: '选择发起方式', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'signup/:str(\\d+)',
         component: () => import('@/views/LiveModule/signUp/main'),
         name: 'signup',
