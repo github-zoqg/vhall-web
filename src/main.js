@@ -22,7 +22,7 @@ Vue.prototype.$fetch = fetchData;
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 Vue.prototype.$EventBus = new Vue();
-import './permission';
+// import './permission';
 
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
