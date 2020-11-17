@@ -183,7 +183,7 @@ import PageTitle from '@/components/PageTitle';
 import env from '@/api/env';
 
 export default {
-  name: "viewer.vue",
+  name: "viewer",
   components: {
     PageTitle
   },
@@ -549,7 +549,7 @@ export default {
 }
 .table__container {
   width: calc(100% - 256px);
-  background: #FFFFFF;
+  // background: #FFFFFF;
   min-height: 500px;
 }
 .row__container {

@@ -12,20 +12,22 @@
           <el-input v-model="searchTitle" placeholder="请输入标题"></el-input>
         </span>
       </div>
-      <table-list
-        ref="tableListBox"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :tableRowBtnFun="tableRowBtnFun"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
-        :width="width"
-        :totalNum="totalNum"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getTableList"
-        @changeTableCheckbox="changeTableCheckbox"
-        >
-      </table-list>
+      <el-card>
+         <table-list
+          ref="tableListBox"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :isCheckout="isCheckout"
+          :isHandle="isHandle"
+          :width="width"
+          :totalNum="totalNum"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getTableList"
+          @changeTableCheckbox="changeTableCheckbox"
+          >
+        </table-list>
+      </el-card>
       <create-advise ref="advise"></create-advise>
       <data-box ref="data"></data-box>
     </div>
@@ -60,22 +62,18 @@ export default {
        {
           label: '图片',
           key: 'img',
-          width: 120
         },
         {
           label: '标题',
           key: 'title',
-          width: 200
         },
         {
           label: '链接',
           key: 'url',
-          width: 150
         },
         {
           label: '创建时间',
           key: 'time',
-          width: 120
         }
       ],
       tableRowBtnFun:[
@@ -136,6 +134,10 @@ export default {
     }
   }
   .advertisement-main{
+    .el-card__body{
+      padding: 0;
+      padding-bottom: 30px;
+    }
     .search-data{
       margin-bottom: 30px;
     }

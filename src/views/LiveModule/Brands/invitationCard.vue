@@ -247,7 +247,7 @@ export default {
   }
   .invitation-show{
     padding-top: 20px;
-    padding-right: 40px;
+    padding-right: 200px;
     p {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
