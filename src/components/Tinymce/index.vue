@@ -124,6 +124,7 @@ export default {
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar, //隐藏工具栏
         menubar: this.menubar, //隐藏菜单栏
         plugins: plugins, //选择需加载的插件
+        fontsize_formats: "10px 13px 16px 18px 24px 32px 48px", // 第二步
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
