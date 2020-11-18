@@ -10,7 +10,7 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button class="head-btn set-upload">新建</el-button>
+      <el-button type="primary" class="head-btn set-upload">新建</el-button>
       <el-button class="head-btn batch-del">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
@@ -129,7 +129,7 @@ export default {
   }
   /deep/.el-card__body{
     width: 100%;
-    padding: 0 0 30px 0;
+    padding: 32px 24px;
   }
   .head-operat{
     margin-bottom: 20px;

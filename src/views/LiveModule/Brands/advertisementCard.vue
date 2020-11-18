@@ -6,8 +6,8 @@
     <div class="advertisement-main">
       <div class="search-data">
         <el-button type="primary" @click="createAdvise('advise')">创建</el-button>
-        <el-button type="primary" @click="createAdvise('data')">资料库</el-button>
-        <el-button type="primary">批量删除</el-button>
+        <el-button class="head-btn set-upload" @click="createAdvise('data')">资料库</el-button>
+        <el-button class="head-btn set-upload">批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model="searchTitle" placeholder="请输入标题"></el-input>
         </span>
@@ -135,8 +135,7 @@ export default {
   }
   .advertisement-main{
     .el-card__body{
-      padding: 0;
-      padding-bottom: 30px;
+      padding: 32px 24px;
     }
     .search-data{
       margin-bottom: 30px;
@@ -144,6 +143,12 @@ export default {
     .searchTitle{
       float: right;
       width: 200px;
+    }
+    /deep/.el-button{
+      border-radius: 20px;
+    }
+    /deep/.el-input__inner{
+      border-radius: 20px;
     }
   }
 }

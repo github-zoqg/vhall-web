@@ -84,11 +84,11 @@ export default {
           { icon: '', title: '开屏海报', subText: '设置观看页的开屏海报', path:  `/live/posterCard/${this.$route.params.str}`},
         ],
         '直播': [
-          { icon: '', title: '文档', subText: '直播中使用文档演示', path:  `/live/wordSet/${this.$route.params.str}`},
+          { icon: '', title: '文档', subText: '直播中使用文档演示', path:  `/live/word/${this.$route.params.str}`},
           { icon: '', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path:  `/live/prizeSet/${this.$route.params.str}`},
-          { icon: '', title: '问卷', subText: '创建问卷收集信息', path:  `/live/questionSet/${this.$route.params.str}` },
+          { icon: '', title: '问卷', subText: '创建问卷收集信息', path:  `/live/question/${this.$route.params.str}` },
           { icon: '', title: '商品', subText: '直播中展示商品给观众', path:  `/live/productSet/${this.$route.params.str}`},
-          { icon: '', title: '礼物', subText: '直播中观众发送的礼物', path:  `/live/giftSet/${this.$route.params.str}`},
+          { icon: '', title: '礼物', subText: '直播中观众发送的礼物', path:  `/live/gift/${this.$route.params.str}`},
         ],
         '回放': [
           { icon: '', title: '回放管理', subText: '管理直播回放内容', path:`/live/playback/${this.$route.params.str}` },
