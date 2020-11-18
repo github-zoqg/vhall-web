@@ -346,7 +346,7 @@ export default {
     drop(eve, index) {
       console.log('drop 拖拽对象移动停止触发~~~');
       eve.preventDefault();
-      const moveIndex = eve.dataTransfer.getData('tbI');
+      const moveIndex = eve.dataTransfer.getData('showCompIndex');
       const moveObject = this.modShowHtmlList[moveIndex];
       this.modShowHtmlList.splice(moveIndex, 1);
       this.modShowHtmlList.splice(index, 0, moveObject);
@@ -357,6 +357,7 @@ export default {
     },
     drag(eve, index) {
       console.log(`drag ${index} 触发`);
+      eve.dataTransfer.setData('showCompIndex', index);
     },
     showCompsItemDel(eve, index) {
       this.$confirm(`确认删除该项？`).then(res => {
