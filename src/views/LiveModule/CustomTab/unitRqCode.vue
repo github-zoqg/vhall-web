@@ -4,7 +4,8 @@
       <el-form-item label="二维码：" prop="rqCode">
         <upload
           :class="'upload__qrCode ' + imgType"
-          v-model="unitRQCodeForm.httpRequestStatusCode"
+          v-model="unitRQCodeForm.imageSrc"
+          :value="unitRQCodeForm.imageSrc"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -30,18 +31,29 @@ export default {
   },
   data() {
     return {
+      showCompIndex: 0,
       imgType: 'default', // 默认宽高相等
       unitRQCodeForm: {
-        rqCode: ''
+        component_id: '',
+        msg: '',
+        imageSrc: '',
+        isDefault: false,
+        hrc: ''
       },
       unitRQCodeFormRules: {
+        imageSrc: [
+          { required: true, message: '请上传图片', trigger: 'blur' },
+        ]
       }
     };
   },
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      let url = URL.createObjectURL(file.raw);
+      this.unitRQCodeForm.imageSrc = url;
+      this.unitRQCodeForm.hrc = url;
+      this.unitRQCodeForm.isDefault = false;
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -79,6 +91,47 @@ export default {
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
+    },
+    /*
+    * 参数1： compVoStr 参数结果对象，包含保存前数据
+    * 参数2： index 当前展示部分组件下标 */
+    initDataComp(compVoStr, index) {
+      console.log('二维码编辑区，每次show区域选中，右侧编辑区域变化', index);
+      // if(this.unitRQCodeForm) {
+      //   this.$refs.unitRQCodeForm.resetFields();
+      // }
+      let compVo = JSON.parse(compVoStr);
+      if (compVo.compInfo && compVo.compInfo.imageSrc !== '' && compVo.compInfo.isDefault === false) {
+        this.unitRQCodeForm.imageSrc = compVo.compInfo.imageSrc;
+        this.unitRQCodeForm.hrc = compVo.compInfo.hrc;
+      } else {
+        this.unitRQCodeForm.imageSrc = '';
+        this.unitRQCodeForm.hrc = '';
+      }
+      // 默认组件类别 和 组件名称
+      this.unitRQCodeForm.component_id = compVo.component_id;
+      this.unitRQCodeForm.msg = compVo.name;
+      this.showCompIndex = index;
+    },
+    sendData() {
+      this.$refs.unitRQCodeForm.validate((valid) => {
+        if (valid) {
+          this.$emit('cxtChangeInfo', {
+            content: JSON.stringify(this.unitRQCodeForm),
+            type: 'rq-code',
+            compIndex: this.showCompIndex
+          });
+        }
+      });
+    }
+  },
+  watch: {
+    'unitRQCodeForm.imageSrc': {
+      handler() {
+        //执行代码
+        this.sendData();
+      },
+      deep: true //为true，表示深度监听，这时候就能监测到a值变化
     }
   }
 };

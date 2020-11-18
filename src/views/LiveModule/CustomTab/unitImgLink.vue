@@ -1,10 +1,11 @@
 <template>
   <div>
     <el-form :model="unitImgLinkForm" ref="unitImgLinkForm" :rules="unitImgLinkFormRules" label-width="94px">
-      <el-form-item label="图片链：" prop="img">
+      <el-form-item label="图片链：" prop="imageSrc">
         <upload
           :class="'upload__imgLink ' + imgType"
-          v-model="unitImgLinkForm.httpRequestStatusCode"
+          v-model="unitImgLinkForm.imageSrc"
+          :value="unitImgLinkForm.imageSrc"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -17,8 +18,8 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="跳转地址：" prop="imgUrl">
-        <el-input type="text" placeholder="请输入链接" v-model="unitImgLinkForm.imgUrl" show-word-limit/>
+      <el-form-item label="跳转地址：" prop="src">
+        <el-input type="text" placeholder="请输入链接" v-model="unitImgLinkForm.src" show-word-limit/>
       </el-form-item>
     </el-form>
   </div>
@@ -33,19 +34,21 @@ export default {
   },
   data() {
     return {
+      showCompIndex: 0,
       imgType: 'default', // 默认宽高相等
       unitImgLinkForm: {
-        imgType: '',
-        imgUrl: ''
+        component_id: '',
+        msg: '',
+        imageSrc: '',
+        src: ''
       },
       unitImgLinkFormRules: {
-        imgType: [
-          { required: true, message: '账号昵称不能为空', trigger: 'blur' },
-          { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
-          { min: 1, message: '请输入账号昵称', trigger: 'blur' }
+        imageSrc: [
+          { required: true, message: '请上传图片', trigger: 'blur' },
         ],
-        imgUrl: [
-          { required: true, message: '跳转地址不能为空', trigger: 'blur' }
+        src: [
+          { required: true, message: '跳转地址不能为空', trigger: 'blur' },
+          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的跳转地址' , trigger: 'blur'}
         ]
       }
     };
@@ -53,7 +56,7 @@ export default {
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.unitImgLinkForm.imageSrc = URL.createObjectURL(file.raw);
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -87,10 +90,58 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`图片上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
+    },
+    /*
+    * 参数1： compVoStr 参数结果对象，包含保存前数据
+    * 参数2： index 当前展示部分组件下标 */
+    initDataComp(compVoStr, index) {
+      console.log('图片链编辑区，每次show区域选中，右侧编辑区域变化', index);
+      // if(this.unitTextLinkForm) {
+      //   this.$refs.unitTextLinkForm.resetFields();
+      // }
+      let compVo = JSON.parse(compVoStr);
+      if (compVo.compInfo && compVo.compInfo.imageSrc !== '') {
+        this.unitImgLinkForm.imageSrc = compVo.compInfo.imageSrc;
+        this.unitImgLinkForm.src = compVo.compInfo.src;
+      } else {
+        this.unitImgLinkForm.imageSrc = '';
+        this.unitImgLinkForm.src = '';
+      }
+      // 默认组件类别 和 组件名称
+      this.unitImgLinkForm.component_id = compVo.component_id;
+      this.unitImgLinkForm.msg = compVo.name;
+      this.showCompIndex = index;
+    },
+    sendData() {
+      this.$refs.unitImgLinkForm.validate((valid) => {
+        if (valid) {
+          this.$emit('cxtChangeInfo', {
+            content: JSON.stringify(this.unitImgLinkForm),
+            type: 'img-link',
+            compIndex: this.showCompIndex
+          });
+        }
+      });
+    }
+  },
+  watch: {
+    'unitImgLinkForm.imageSrc': {
+      handler() {
+        //执行代码
+        this.sendData();
+      },
+      deep: true //为true，表示深度监听，这时候就能监测到a值变化
+    },
+    'unitImgLinkForm.src': {
+      handler() {
+        //执行代码
+        this.sendData();
+      },
+      deep: true //为true，表示深度监听，这时候就能监测到a值变化
     }
   }
 };

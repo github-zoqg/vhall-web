@@ -1,9 +1,8 @@
 <template>
-  <div  data-unit-type="9" class="unit-templete ranking-list active" title="排行榜">
-    <i class="menu-icon del"></i>
+  <div>
     <div class="ranking-title">
       <div class="rank-menu fl">
-        <span data-id="0" class="rank-active" data-is="1">邀请榜</span>
+        <span data-id="0" data-is="1">邀请榜</span>
         <span data-id="1" data-is="1">打赏榜</span>
       </div>
       <span class="bang-rule fr">排行榜规则</span>
@@ -36,84 +35,66 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.unit-templete {
-  position: relative;
-  box-sizing: border-box;
-  padding: 5px;
-  word-wrap: break-word;
-  background-image: url(../../../common/images/custom-tab/rank-bg.png) !important;
-  min-height: 32px;
-  margin: 10px;
-  cursor: pointer;
-  -webkit-transition: border .3s;
-  transition: border .3s;
-  border: 1px dashed #58ABFF;
-  background: rgba(88,171,255,0.1);
-  &.active,&:hover {
-    cursor: pointer;
-    -webkit-transition: border .3s;
-    transition: border .3s;
-    border: 1px dashed #58ABFF;
-    background: rgba(88,171,255,0.1);
-  }
-}
-.del {
-  position: absolute;
-  display: block;
-  top: -20px;
-  right: -10px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-image: url(../../../common/images/custom-tab/delete_icon.png) !important;
-  background-size: cover;
-  background-position: 100% 100%;
-  margin: 8px auto 0 auto;
-}
 .fl {
   float: left;
 }
 .fr {
   float: right;
 }
-.ranking-list {
-  .ranking-title {
+.ranking-title {
+  display: block;
+  margin: 0 0 0 20px;
+  color: #fff;
+  height: 20px;
+}
+.rank-menu {
+  margin-left: -18px;
+}
+.ranking-box {
+  clear: both;
+  background-color: #f2f2f2;
+  min-height: 0;
+  margin: 20px 0 6px 0;
+}
+.rank-con {
+  display: none;
+  margin: 0 10px;
+  padding: 10px 0;
+  font-size: 12px;
+  color: #666;
+  &.show {
     display: block;
-    margin: 0 30px 0 20px;
-    color: #fff;
   }
-  .rank-menu {
-    margin-left: -18px;
-  }
-  .ranking-box {
-    position: relative;
-    background-color: #f2f2f2;
-    min-height: 0;
-    margin: 30px 0 6px 0;
-  }
-  .rank-con {
-    display: none;
-    margin: 0 10px;
-    padding: 10px 0;
-    font-size: 12px;
-    color: #666;
-    &.show {
-      display: block;
-    }
-  }
-  .rank-band {
-    padding: 10px 0;
-    background-color: #fff;
-    img {
-      width: 100%;
-      height: auto;
-    }
-  }
-  .menu-cont {
-    min-height: 460px;
-    display: none;
+}
+.rank-band {
+  padding: 10px 0;
+  background-color: #fff;
+  img {
     width: 100%;
+    height: auto;
   }
-
+}
+.menu-cont {
+  min-height: 460px;
+  display: none;
+  width: 100%;
+}
+.bang-rule:after {
+  content: '';
+  display: inline-block;
+  -webkit-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  transition: -webkit-transform .2s;
+  -webkit-transition: -webkit-transform .2s;
+  transition: transform .2s;
+  transition: transform .2s, -webkit-transform .2s;
+  width: 12px;
+  height: 12px;
+  background-image: url(../../../common/images/custom-tab/arror-detail.png);
+  background-size: cover;
+  background-position: 100% 100%;
+  margin-left: 7px;
+  vertical-align: -1px;
 }
 </style>

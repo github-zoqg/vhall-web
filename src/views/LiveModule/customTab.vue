@@ -15,14 +15,14 @@
         <template>
           <li class="comp__group__title"><label>基本组件</label></li>
           <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '1')"
-              :key="`comp1Item${item.component_id}`" @click.prevent.stop="addShowComps(item)" draggable="true" @dragstart="dragCompLabel($event, item.component_id)">
+              :key="`comp1Item${item.component_id}`" draggable="true" @dragstart="dragCompLabel($event, item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
         </template>
         <template>
           <li class="comp__group__title"><label>功能组件</label></li>
           <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '2')"
-              :key="`comp2Item${item.component_id}`" @click.prevent.stop="addShowComps(item)">
+              :key="`comp2Item${item.component_id}`" draggable="true" @dragstart="dragCompLabel($event, item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
           <li class="comp__item comp__item--disabled"><span class="el-icon-s-home"></span><span>尽请期待</span></li>
@@ -100,42 +100,52 @@
             </div>
             <!-- 编辑区域 -->
             <div class="edit__draggable" @drop="dropCompLabel($event)" @dragover="allowDropCompLabel($event)">
-              <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins" @drop="drop($event, ins)" @dragover="allowDrop($event, ins)">
+              <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins"
+                   @drop.prevent.stop="drop($event, ins)" @dragover.prevent.stop="allowDrop($event, ins)" @click.prevent.stop="selectShowComp(item, ins)">
                 <!-- 图文 -->
-                <div :data-unit-type="item.component_id" class="img-txt" v-if="item.show_type === 'img-txt'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-img-txt @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-txt>
+                <div class="img-txt" v-if="item.show_type === 'img-txt'" draggable="true" @dragstart="drag($event, ins)" >
+                  <show-img-txt :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-txt>
                 </div>
                 <!-- 二维码 -->
                 <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-rq-code @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-rq-code>
+                  <img class="rq-code"
+                       :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str"
+                       :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str" alt="" />
                 </div>
                 <!-- 直播 -->
                 <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-video @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-video>
+                  <show-video :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-video>
                 </div>
                 <!-- 专题 -->
                 <div class="special" v-if="item.show_type === 'special'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-special @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-special>
+                  <show-special :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-special>
                 </div>
                 <!-- 文字链 -->
                 <div class="text-link" v-if="item.show_type === 'text-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-text-link @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-text-link>
+                  <a :src="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''">{{item.compInfo && item.compInfo.text ? item.compInfo.text : '文字链'}}</a>
                 </div>
                 <!-- 图片链 -->
                 <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-img-link @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-link>
+                  <!-- TODO 路径暂时用本地的不配置 env.staticBaseUrl + item.compInfo.imageSrc-->
+                  <a>
+                    <img class="img--ink--img"
+                         :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticBaseUrl + 'static/images/menu/image-unit.png'"
+                         :hrc="item.compInfo && item.compInfo.imageSrc ?  item.compInfo.imageSrc : ''"
+                         :tosrc="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''"
+                         alt=""/>
+                  </a>
                 </div>
                 <!-- 标题 -->
                 <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-title @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-title>
+                  <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '标题'}}</h5>
                 </div>
                 <!-- 分割线 -->
                 <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-hr @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-hr>
+                  <span class="line"></span>
                 </div>
                 <!-- 排行榜 -->
                 <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-rank @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-rank>
+                  <show-rank :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-rank>
                 </div>
                 <i class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></i>
               </div>
@@ -145,14 +155,14 @@
             <!-- 组件标题 -->
             <div class="comp__edit__title">{{unitComp.name}}</div>
             <!-- 编辑区域引入 -->
-            <unit-img-txt elName="imgTxtEditor" defaultText="默认图文" v-if="unitComp.show_type === 'img-txt'"></unit-img-txt>
-            <unit-rq-code v-if="unitComp.show_type === 'rq-code'"/>
-            <unit-video v-if="unitComp.show_type === 'video'"/>
-            <unit-special v-if="unitComp.show_type === 'special'"/>
-            <unit-text-link v-if="unitComp.show_type === 'text-link'"/>
-            <unit-img-link v-if="unitComp.show_type === 'img-link'"/>
-            <unit-title v-if="unitComp.show_type === 'title'"/>
-            <unit-rank v-if="unitComp.show_type === 'rank'"/>
+            <unit-img-txt ref="img-txt-unit-dom" elName="imgTxtEditor" defaultText="默认图文" v-if="unitComp.show_type === 'img-txt'" @cxtChangeInfo="editChange"></unit-img-txt>
+            <unit-rq-code ref="rq-code-unit-dom" v-if="unitComp.show_type === 'rq-code'" @cxtChangeInfo="editChange"/>
+            <unit-video ref="video-unit-dom" v-if="unitComp.show_type === 'video'"/>
+            <unit-special ref="special-unit-dom" v-if="unitComp.show_type === 'special'"/>
+            <unit-text-link ref="text-link-unit-dom" v-if="unitComp.show_type === 'text-link'" @cxtChangeInfo="editChange"/>
+            <unit-img-link ref="img-link-unit-dom" v-if="unitComp.show_type === 'img-link'"  @cxtChangeInfo="editChange"/>
+            <unit-title ref="title-unit-dom" v-if="unitComp.show_type === 'title'" @cxtChangeInfo="editChange"/>
+            <unit-rank ref="rank-unit-dom" v-if="unitComp.show_type === 'rank'"/>
           </div>
         </div>
       </div>
@@ -161,16 +171,12 @@
 </template>
 
 <script>
+import env from '@/api/env';
 import PageTitle from '@/components/PageTitle';
 // 展示区
 import ShowImgTxt from  './CustomTab/showImgTxt.vue';
-import ShowRqCode from  './CustomTab/showRqCode.vue';
 import ShowVideo from  './CustomTab/showVideo.vue';
 import ShowSpecial from  './CustomTab/showSpecial.vue';
-import ShowTextLink from  './CustomTab/showTextLink.vue';
-import ShowImgLink from  './CustomTab/showImgLink.vue';
-import ShowTitle from  './CustomTab/showTitle.vue';
-import ShowHr from  './CustomTab/showHr.vue';
 import ShowRank from  './CustomTab/showRank.vue';
 // 编辑区
 import UnitImgTxt from  './CustomTab/unitImgTxt.vue';
@@ -181,18 +187,14 @@ import UnitTextLink from  './CustomTab/unitTextLink.vue';
 import UnitImgLink from  './CustomTab/unitImgLink.vue';
 import UnitTitle from  './CustomTab/unitTitle.vue';
 import UnitRank from  './CustomTab/unitRank.vue';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "customTab.vue",
   components: {
     PageTitle,
     ShowImgTxt,
-    ShowRqCode,
     ShowVideo,
     ShowSpecial,
-    ShowTextLink,
-    ShowImgLink,
-    ShowTitle,
-    ShowHr,
     ShowRank,
     UnitImgTxt,
     UnitRqCode,
@@ -213,6 +215,7 @@ export default {
       modShowHtmlList: [], // 展示模块中创建的组件push进入的数据集合。但删除的时候，组件编号顺序变化情况需关注。
       compIndex: 0, // 统计当前组件属于数据集合中第几个
       unitComp: {}, // 当前操作面板, 同compList中单个内容
+      env: env
     };
   },
   computed: {
@@ -298,7 +301,17 @@ export default {
         this.customMenus = [];
       });*/
     },
-    // 左侧按钮拖拽-创建组件
+    // 左侧按钮拖拽-创建组件A1
+    dropCompLabel(eve) {
+      console.log(`dropCompLabel拖拽对象移动停止触发~~~`);
+      eve.preventDefault();
+      let moveCompVoStr = eve.dataTransfer.getData('menuCompItem');
+      if (moveCompVoStr !== '') {
+        // 右侧添加
+        this.addShowComps(JSON.parse(moveCompVoStr));
+      }
+    },
+    // 左侧按钮拖拽-创建组件A2
     addShowComps(item) {
       if (item.compType === null) {
         this.$message.error('非有效组件，无法使用');
@@ -308,6 +321,7 @@ export default {
       let unitComp = Object.assign({
         show_type: item.compType
       }, item);
+      unitComp.compInfo = {};
       unitComp.original_params = {
         styles: '',
         content: '',
@@ -318,38 +332,73 @@ export default {
         content: '',
         params: ''
       };
+      // 如果是分割线，直接保存
+      if (item.compType === 'hr') {
+        unitComp.compInfo = {component_id: item.component_id, msg: item.msg};
+      } else if (item.compType === 'rq-code') {
+        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, isDefault:true};
+      }
       this.modShowHtmlList.push(unitComp);
+      sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
       console.log(JSON.stringify(unitComp));
-      this.unitComp = unitComp; // 设置右侧操作面板跟当前一致
+      this.unitComp = unitComp;
+      // 获得当前所处show位置下标
+      let showIndex = this.modShowHtmlList.length - 1 ;
+      // 组件创建完成，初始化传递至进入右侧编辑区
+      this.$nextTick(() =>{
+        if (item.compType !== 'hr') {
+          this.$refs[`${unitComp.show_type}-unit-dom`].initDataComp(JSON.stringify(unitComp), showIndex);
+        }
+      });
+    },
+    // 展示组件单项选中，原有内容清空
+    selectShowComp(item, ins) {
+      // 获取原有设置，清空内容
+      let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
+      let unitComp = customTab_comp[ins];
+      this.unitComp = unitComp;
+      console.log(`当前选中内容：${JSON.stringify(unitComp)}`);
+      this.$nextTick(() =>{
+        if (item.compType !== 'hr') {
+          this.$refs[`${unitComp.show_type}-unit-dom`].initDataComp(JSON.stringify(unitComp), ins);
+        }
+      });
+    },
+    // 右侧编辑区修改，通知左侧展示区域
+    editChange(saveItem) {
+      // 文字链格式： { content: "{component_id: 1, msg: '文字链', text: '文本', src: '文件链路径'}",type: 'text-link', compIndex: 0 }
+      // 标题格式： { content: "{component_id: 7, msg: '标题', title: '默认标123题'}",type: 'title', compIndex: 0 }
+      // 分割线： {content: "{component_id: 8, msg: '分割线'}", type: 'hr', compIndex: 0 }
+      // 图文链： {content: "{component_id: 6, msg: '图片链', imageSrc: '图片返回后地址，不带域名',src: '路径' }", type: 'img-link', compIndex: 0 }
+      // 二维码： {content: "{component_id: 2, msg: '二维码', imageSrc: '//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605', "hrc":"//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605", ,"isDefault":true }", type: 'img-link', compIndex: 0 }
+      if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code') {
+        let compInfo = JSON.parse(saveItem.content);
+        this.modShowHtmlList[saveItem.compIndex].compInfo = compInfo;
+        sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
+      }
     },
     // 组件返回结果
     getShowCompInfo(showCompStr, ins) {
-      let tempVo = JSON.parse(showCompStr);
-      this.modShowHtmlList[ins].update_params = {
-        styles: tempVo.styles,
-        content: tempVo.content,
-        params: tempVo.params
-      };
     },
-    dropCompLabel(eve, index) {
-      console.log(`dropCompLabel ${index}拖拽对象移动停止触发~~~`);
+
+    allowDropCompLabel(eve) {
+      console.log(`allowDropCompLabel触发`);
       eve.preventDefault();
     },
-    allowDropCompLabel(eve, index) {
-      console.log(`allowDropCompLabel ${index}触发`);
-      eve.preventDefault();
-    },
-    dragCompLabel(eve, index) {
-      console.log(eve, index);
+    dragCompLabel(eve, item) {
+      console.log(eve, item);
+      eve.dataTransfer.setData('menuCompItem', JSON.stringify(item));
     },
     // drop 当拖拽对象移动停止时触发，执行拖拽后位置变更效果（目标前插入）；注意：暂时只针对大块处理，让其拖拽可移动，通过splice进行删除或者在某个位置插入数据
     drop(eve, index) {
       console.log('drop 拖拽对象移动停止触发~~~');
       eve.preventDefault();
       const moveIndex = eve.dataTransfer.getData('showCompIndex');
-      const moveObject = this.modShowHtmlList[moveIndex];
-      this.modShowHtmlList.splice(moveIndex, 1);
-      this.modShowHtmlList.splice(index, 0, moveObject);
+      if (moveIndex !== '') {
+        const moveObject = this.modShowHtmlList[moveIndex];
+        this.modShowHtmlList.splice(moveIndex, 1);
+        this.modShowHtmlList.splice(index, 0, moveObject);
+      }
     },
     allowDrop(eve, index) {
       console.log(`allDrop ${index}触发`);
@@ -366,11 +415,21 @@ export default {
         // 每次删除后，默认展示可编辑面板为第一个
         if(this.modShowHtmlList.length > 0) {
           this.unitComp = this.modShowHtmlList[0];
+          sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
+          this.$nextTick(() =>{
+            if (this.unitComp.show_type !== 'hr') {
+              this.$refs[`${this.unitComp.show_type}-unit-dom`].initDataComp(JSON.stringify(this.unitComp), 0);
+            }
+          });
+        } else {
+          // 若已经是最后一个了，那么重置 {}
+          this.unitComp = {};
+          sessionOrLocal.removeItem('customTab_comp');
         }
       }).catch(() => {
         // this.$message.info('已取消');
       });
-    }
+    },
   },
   created() {
     this.getCompList();
@@ -637,6 +696,21 @@ export default {
     background-position: 100% 100%;
     margin: 8px auto 0 auto;
     z-index: 5;
+  }
+  .line {
+    display: block;
+    margin: 5px;
+    border-bottom: 1px solid #cdcdcd;
+  }
+  .img--ink--img{
+    display: inline-block;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .rq-code {
+    display: block;
+    width: 150px !important;
+    margin: 0 auto;
   }
 }
 </style>

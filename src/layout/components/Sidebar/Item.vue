@@ -15,8 +15,6 @@ export default {
   render(h, context) {
     const { icon, title } = context.props;
     const vNodes = [];
-    console.log('当前急急急急急急');
-    console.log(icon);
     if (icon) {
       if (icon.includes('el-icon')) {
         vNodes.push(<i class={[icon, 'sub-el-icon']} />);

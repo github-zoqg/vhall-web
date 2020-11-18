@@ -15,8 +15,11 @@ export default {
   },
   data() {
     return {
+      showCompIndex: 0,
       unitTitleForm: {
-        title: '',
+        component_id: '',
+        msg: '',
+        title: ''
       },
       unitTitleFormRules: {
         title: [
@@ -27,6 +30,40 @@ export default {
       }
     };
   },
+  methods: {
+    /*
+    * 参数1： compVoStr 参数结果对象，包含保存前数据
+    * 参数2： index 当前展示部分组件下标 */
+    initDataComp(compVoStr, index) {
+      console.log('标题区，每次show区域选中，右侧编辑区域变化', index);
+      let compVo = JSON.parse(compVoStr);
+      this.unitTitleForm.title = '';
+      // 默认组件类别 和 组件名称
+      this.unitTitleForm.component_id = compVo.component_id;
+      this.unitTitleForm.msg = compVo.name;
+      this.showCompIndex = index;
+    },
+    sendData() {
+      this.$refs.unitTitleForm.validate((valid) => {
+        if (valid) {
+          this.$emit('cxtChangeInfo', {
+            content: JSON.stringify(this.unitTitleForm),
+            type: 'title',
+            compIndex: this.showCompIndex
+          });
+        }
+      });
+    }
+  },
+  watch: {
+    'unitTitleForm.title': {
+      handler() {
+        //执行代码
+        this.sendData();
+      },
+      deep: true //为true，表示深度监听，这时候就能监测到a值变化
+    }
+  }
 };
 </script>
 

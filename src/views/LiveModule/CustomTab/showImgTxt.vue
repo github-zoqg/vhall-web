@@ -1,5 +1,7 @@
 <template>
-  <div class="content"><p>默认图文</p></div>
+  <div class="content">
+    <p>默认图文</p>
+  </div>
 </template>
 
 <script>
@@ -13,6 +15,13 @@ export default {
     // 组件专属ID
     component_id: {
       type: Number
+    }
+  },
+  methods: {
+    initShowComp(ctx) {
+      alert(1);
+      let str = JSON.parse(ctx);
+      console.log('vvvvvvvvvvvvv',ctx);
     }
   }
 };

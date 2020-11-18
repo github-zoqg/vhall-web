@@ -9,38 +9,53 @@
 let fileBaseUrl; // 文件服务器
 let downBaseUrl; // 下载邀请码
 let uploadImgUrl; // 图片服务器
+let staticBaseUrl; // 静态图片展示地址
 let staticLinkVo = {
-    kf: 'http://webim.qiao.baidu.com//im/index?siteid=113762&ucid=2052738'
+  kf: 'http://webim.qiao.baidu.com//im/index?siteid=113762&ucid=2052738',
+  aliQr: '//aliqr.e.vhall.com/qr.png?t=',
 };
+let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
+    staticBaseUrl = '//cnstatic01.e.vhall.com/';
+    roomWatchUrl = 'http://live.vhall.com/';
     break;
   case 'test':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
+    staticBaseUrl = '//cnstatic01.e.vhall.com/';
+    roomWatchUrl = 'http://live.vhall.com/';
     break;
   case 'pre':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
+    staticBaseUrl = '//cnstatic01.e.vhall.com/';
+    roomWatchUrl = 'http://live.vhall.com/';
     break;
   case 'development':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
+    staticBaseUrl = '//cnstatic01.e.vhall.com/';
+    roomWatchUrl = 'http://live.vhall.com/';
     break;
   default:
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
     downBaseUrl = '//t.e.vhall.com';
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
+    staticBaseUrl = '//cnstatic01.e.vhall.com/';
+    roomWatchUrl = 'http://live.vhall.com/';
 }
 export default {
   fileBaseUrl,
   downBaseUrl,
   uploadImgUrl,
-  staticLinkVo
+  staticLinkVo,
+  staticBaseUrl,
+  roomWatchUrl
 };
