@@ -5,7 +5,6 @@ Vue.use(VueRouter);
 
 // 引入布局层
 import Layout from '@/layout';
-import emptyLayout from '../emptyLayout';
 
 // 主入口路由(需嵌套上左右整体布局)
 const v3Routes = [
@@ -518,23 +517,7 @@ const v3Routes = [
       }
     ]
   },
-  { path: '*', redirect: '/404', hidden: true },
-  /*{
-    path: '/',
-    component: emptyLayout,
-    redirect: '/',
-    name: 'emptyLayout',
-    meta: { title: '回放-剪辑台', icon: 'el-icon-s-custom' },
-    hidden: true,
-    children: [
-      {
-        path: 'videoTailoring',
-        name: 'videoTailoring',
-        component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue'),
-        meta: { title: '回放-剪辑台', icon: 'table' },
-      }
-    ]
-  }*/
+  { path: '*', redirect: '/404', hidden: true }
 ];
 
 const router = new VueRouter({
