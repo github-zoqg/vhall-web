@@ -19,10 +19,10 @@ const v3Routes = [
   {
     path: '/videoTailoring',
     name: 'videoTailoring',
-    component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue')
+    component: () => import('@/views/LiveModule/PlayBack/videoTailoring')
   },
   {
-    path: '/404',
+    path: '/warning/:str(\\d+)',
     component: () => import('@/views/PlatformModule/Error/index'),
     hidden: true
   },
@@ -517,7 +517,7 @@ const v3Routes = [
       }
     ]
   },
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/warning/400', hidden: true }
 ];
 
 const router = new VueRouter({
