@@ -11,7 +11,6 @@ import 'nprogress/nprogress.css';
 
 // 系统通用重置样式
 import '@/common/css/index.less';
-import '@/common/css/index.less'; // global css
 
 
 // 工具类引入

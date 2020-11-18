@@ -14,13 +14,15 @@
       <ul class="panel__left">
         <template>
           <li class="comp__group__title"><label>基本组件</label></li>
-          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '1')" :key="`comp1Item${item.component_id}`" @click.prevent.stop="addShowComps(item)">
+          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '1')"
+              :key="`comp1Item${item.component_id}`" @click.prevent.stop="addShowComps(item)" draggable="true" @dragstart="dragCompLabel($event, item.component_id)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
         </template>
         <template>
           <li class="comp__group__title"><label>功能组件</label></li>
-          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '2')" :key="`comp2Item${item.component_id}`" @click.prevent.stop="addShowComps(item)">
+          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '2')"
+              :key="`comp2Item${item.component_id}`" @click.prevent.stop="addShowComps(item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
           <li class="comp__item comp__item--disabled"><span class="el-icon-s-home"></span><span>尽请期待</span></li>
@@ -31,18 +33,31 @@
         <ul class="el__tabs__box">
           <li :class="tabType === 'app' ? 'active': ''" @click.prevent.stop="setTabHandler('app')">移动端</li>
           <li :class="tabType === 'pc' ? 'active': ''" @click.prevent.stop="setTabHandler('pc')">电脑端</li>
-          <!-- 滑动块 -->
-          <span :class="`el__tab__link ${tabType}`"></span>
+          <template>
+            <!-- 滑动块 -->
+            <span :class="`el__tab__link ${tabType}`"></span>
+          </template>
         </ul>
         <!-- 内容区域---PC -->
         <div class="panel__pc" v-show="tabType === 'pc'">
 1123
         </div>
         <!-- 内容区域---app -->
+        <!--拖放：
+          拖动的对象，需要设置draggable属性为true(draggable="true"),
+          a元素需要href，img元素需要src。
+          1、被拖对象：dragstart事件，被拖动的元素，开始拖放触发
+          2、被拖对象：drag事件，被拖放的元素，拖放过程中
+          3、经过对象：dragenter事件，拖放过程中鼠标经过的元素，被拖放的元素“开始”进入其它元素范围内（刚进入）
+          4、经过对象：dragover事件，拖放过程中鼠标经过的元素，被拖放的元素正在本元素范围内移动(一直)
+          5、经过对象：dragleave事件，拖放过程中鼠标经过的元素，被拖放的元素离开本元素范围
+          6、目标地点：drop事件，拖放的目标元素，其他元素被拖放到本元素中
+          7、被拖对象：dragend事件，拖放的对象元素，拖放操作结束
+       -->
         <div class="panel__app" v-show="tabType === 'app'">
           <div class="app__left">
             <div class="app__title">
-              <img src="../../common/images/custom-tab/video-bg-new-h5.png" />
+              <img src="../../common/images/custom-tab/video-bg-new-h5.png" alt=""/>
             </div>
             <div class="app__menu">
               <!-- 左翻 -->
@@ -56,7 +71,7 @@
                 <ul class="app__menu__list">
                   <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'">
                     <div class="menu__item__title" >{{ item.name }}</div>
-                    <ul class="app__menu__btns">
+                    <ul class="app__menu__btn">
                       <li>重命名</li>
                       <li>右移</li>
                       <li>左移</li>
@@ -84,10 +99,10 @@
               </div>
             </div>
             <!-- 编辑区域 -->
-            <div class="edit__draggable">
-              <div data-unit-type="6" class="show-comp-template active" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins" @drop="drop($event, ins)" @dragover="allowDrop($event, ins)">
+            <div class="edit__draggable" @drop="dropCompLabel($event)" @dragover="allowDropCompLabel($event)">
+              <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins" @drop="drop($event, ins)" @dragover="allowDrop($event, ins)">
                 <!-- 图文 -->
-                <div class="img-txt" v-if="item.show_type === 'img-txt'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                <div :data-unit-type="item.component_id" class="img-txt" v-if="item.show_type === 'img-txt'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
                   <show-img-txt @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-txt>
                 </div>
                 <!-- 二维码 -->
@@ -129,6 +144,7 @@
           <div class="app__right">
             <!-- 组件标题 -->
             <div class="comp__edit__title">{{unitComp.name}}</div>
+            <!-- 编辑区域引入 -->
             <unit-img-txt elName="imgTxtEditor" defaultText="默认图文" v-if="unitComp.show_type === 'img-txt'"></unit-img-txt>
             <unit-rq-code v-if="unitComp.show_type === 'rq-code'"/>
             <unit-video v-if="unitComp.show_type === 'video'"/>
@@ -315,6 +331,17 @@ export default {
         params: tempVo.params
       };
     },
+    dropCompLabel(eve, index) {
+      console.log(`dropCompLabel ${index}拖拽对象移动停止触发~~~`);
+      eve.preventDefault();
+    },
+    allowDropCompLabel(eve, index) {
+      console.log(`allowDropCompLabel ${index}触发`);
+      eve.preventDefault();
+    },
+    dragCompLabel(eve, index) {
+      console.log(eve, index);
+    },
     // drop 当拖拽对象移动停止时触发，执行拖拽后位置变更效果（目标前插入）；注意：暂时只针对大块处理，让其拖拽可移动，通过splice进行删除或者在某个位置插入数据
     drop(eve, index) {
       console.log('drop 拖拽对象移动停止触发~~~');
@@ -329,7 +356,7 @@ export default {
       eve.preventDefault();
     },
     drag(eve, index) {
-      console.log(`drap ${index} 触发`);
+      console.log(`drag ${index} 触发`);
     },
     showCompsItemDel(eve, index) {
       this.$confirm(`确认删除该项？`).then(res => {
@@ -342,12 +369,6 @@ export default {
       }).catch(() => {
         // this.$message.info('已取消');
       });
-    },
-    rightKeyContent(eve) {
-      return false;
-    },
-    setIsActiveItem(item) {
-      item.isActive = !item.isActive;
     }
   },
   created() {
@@ -358,6 +379,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../common/css/common.less';
 .title--cus-tab {
   .flex-display();
   .justify(space-between);
@@ -523,7 +545,7 @@ export default {
   position: relative;
   .menu__item__title {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     position: relative;
@@ -532,7 +554,7 @@ export default {
   &.active {
     .menu__item__title{
       font-size: 14px;
-      font-family: PingFangSC-Medium, PingFang SC;
+      font-family: @fontMedium;
       font-weight: 500;
       color: #FB3A32;
       &::after {
@@ -547,7 +569,7 @@ export default {
     }
   }
 }
-.app__menu__btns {
+.app__menu__btn {
   display: none;
   position: absolute;
   left: 0;
@@ -565,6 +587,9 @@ export default {
   .justify(space-between);
 }
 
+.edit__draggable {
+  min-height: 460px;
+}
 /*面板设置*/
 .show-comp-template {
   position: relative;
@@ -575,6 +600,15 @@ export default {
   min-height: 32px;
   margin: 10px;
   &.active, &:hover {
+    cursor: pointer;
+    -webkit-transition: border .3s;
+    transition: border .3s;
+    border: 1px dashed #58ABFF;
+    background: rgba(88,171,255,0.1);
+  }
+  /*排行榜组件-特殊*/
+  &.rank {
+    background-image: url(../../common/images/custom-tab/rank-bg.png) !important;
     cursor: pointer;
     -webkit-transition: border .3s;
     transition: border .3s;

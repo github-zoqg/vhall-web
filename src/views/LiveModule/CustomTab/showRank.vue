@@ -1,5 +1,5 @@
 <template>
-  <div class="unit-templete ranking-list active" title="排行榜">
+  <div  data-unit-type="9" class="unit-templete ranking-list active" title="排行榜">
     <i class="menu-icon del"></i>
     <div class="ranking-title">
       <div class="rank-menu fl">
