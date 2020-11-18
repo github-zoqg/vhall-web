@@ -15,6 +15,9 @@ export const sessionOrLocal = {
   removeItem: (key, saveType = 'sessionStorage') => {
     if (!key) return;
     window[saveType].removeItem(key);
+  },
+  clear: (saveType = 'sessionStorage') => {
+    window[saveType].clear();
   }
 };
 // 判断是否IE

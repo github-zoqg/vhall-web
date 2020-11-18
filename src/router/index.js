@@ -11,8 +11,16 @@ import emptyLayout from '../emptyLayout';
 const v3Routes = [
   {
     path: '/login',
-    component: () => import('@/views/PlatformModule/Login/index'),
-    hidden: true // 是否需要整体面板
+    component: () => import('@/views/login')
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/register')
+  },
+  {
+    path: '/videoTailoring',
+    name: 'videoTailoring',
+    component: () => import('@/views/LiveModule/PlayBack/videoTailoring.vue')
   },
   {
     path: '/404',
@@ -511,7 +519,7 @@ const v3Routes = [
     ]
   },
   { path: '*', redirect: '/404', hidden: true },
-  {
+  /*{
     path: '/',
     component: emptyLayout,
     redirect: '/',
@@ -526,7 +534,7 @@ const v3Routes = [
         meta: { title: '回放-剪辑台', icon: 'table' },
       }
     ]
-  }
+  }*/
 ];
 
 const router = new VueRouter({

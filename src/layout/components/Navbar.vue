@@ -28,7 +28,7 @@
       <div class="right-menu-item">
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
-            <img src="../../common/images/avatar.png" class="user-avatar">
+            <img src="../../common/images/avatar.png" class="user-avatar" alt="" />
             <span>微吼直播</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -84,8 +84,24 @@ export default {
       sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
       this.$EventBus.$emit('hamburger', this.sidebar.opened);
     },
-    async logout() {
-      alert('退出');
+    logout() {
+      /*this.$fetch('loginOut', {}).then(res =>{
+        if(res && res.code === 200 && res.data) {
+          sessionOrLocal.clear();
+          this.$router.push({
+            path: '/login'
+          });
+        } else {
+          this.$message.error(res.msg || '退出失败');
+        }
+      }).catch(e=>{
+        console.log(e);
+        this.$message.error('退出失败');
+      });*/
+      sessionOrLocal.clear();
+      this.$router.push({
+        path: '/login'
+      });
     }
   },
   created() {
@@ -95,6 +111,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../common/css/index.less';
 .navbar {
   height: 64px;
   padding: 15px 17px;
@@ -126,7 +143,7 @@ export default {
     margin-right: 16px;
     &:first-child {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1384FF;
     }
@@ -150,7 +167,7 @@ export default {
   }
   span {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;

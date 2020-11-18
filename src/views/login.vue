@@ -104,7 +104,6 @@ export default {
       this.$fetch('loginInfo', this.loginForm).then(res => {
         sessionOrLocal.set('token', res.data.token);
         sessionOrLocal.set('userInfo', res.data);
-
       });
     }
   }
