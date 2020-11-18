@@ -22,7 +22,7 @@ const v3Routes = [
     component: () => import('@/views/LiveModule/PlayBack/videoTailoring')
   },
   {
-    path: '/warning/:str(\\d+)',
+    path: '/warning/:str(\.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Error/index'),
     hidden: true
   },

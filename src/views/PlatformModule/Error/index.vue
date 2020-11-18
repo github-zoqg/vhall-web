@@ -7,8 +7,12 @@
     <div class="container">
       <div class="left-section">
         <div class="inner-content">
-          <h1 class="heading">{{$route.params.str}}</h1>
-          <p class="subheading">您访问的页面不存在或暂时无法访问，您可以通过以下方式进行操作。</p>
+          <h1 v-if="$route.params.str !== 'sysUnder' && $route.params.str !== 'network'" class="heading">{{$route.params.str || ''}}</h1>
+          <h1 v-else class="heading">>_<</h1>
+          <!-- 具体文案 -->
+          <p class="subheading" v-if="$route.params.str === 'sysUnder'">系统维护中</p>
+          <p class="subheading" v-else-if="$route.params.str === 'network'">网络异常，请稍后再试。</p>
+          <p class="subheading" v-else>您访问的页面不存在或暂时无法访问，您可以通过以下方式进行操作。</p>
           <p class="index-btn"><el-button @click.prevent.stop="toReturn">返回首页</el-button></p>
         </div>
       </div>
