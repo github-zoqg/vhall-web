@@ -14,7 +14,8 @@
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
-            :restPic="handleChange"
+            :restPic="true"
+            @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <p slot="tip">最佳尺寸750*1624<br />支持jpg、png、bmp</p>
           </upload>
@@ -102,8 +103,9 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
-    handleChange(file) {
-      this.handleuploadSuccess(file);
+    handleFileChange(file) {
+      console.log(file);
+      // this.handleuploadSuccess(file);
     }
   }
 };

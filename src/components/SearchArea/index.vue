@@ -128,7 +128,7 @@ export default {
 <style lang="less" scoped>
   .search-area{
     position: relative;
-    margin-top: 15px;
+    // margin-top: 5px;
     /*选择框重置*/
       /deep/.el-input__inner{
         border-radius: 18px;

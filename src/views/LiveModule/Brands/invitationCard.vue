@@ -11,14 +11,14 @@
       >
       </el-switch>
       <div class="invitation-look">
-        <span>扫码查看</span>
+        <span @click="code">扫码查看</span>
         <span>本地预览</span>
       </div>
     </div>
     <div class="invitation-from">
       <div class="form-data">
-        <el-form ref="formData" :model="formInvitation" label-width="100px">
-          <el-form-item label="邀请卡背景">
+        <el-form ref="formData" :model="formInvitation" label-width="82px">
+          <el-form-item label="背景">
             <div class="data-img">
               <img src="@/common/images/v35-webinar.png" alt="" />
               <span class="choseImg" @click="changeImg">重新选择</span>
@@ -34,7 +34,7 @@
               </p>
             </div>
           </el-form-item>
-          <el-form-item label="邀请卡标题">
+          <el-form-item label="标题">
             <el-input
               v-model="formInvitation.title"
               maxlength="16"
@@ -59,7 +59,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="活动地点">
+          <el-form-item label="地点">
             <el-input
               v-model="formInvitation.adress"
               maxlength="20"
@@ -67,7 +67,7 @@
               style="width: 320px"
             ></el-input>
           </el-form-item>
-          <el-form-item label="活动简介">
+          <el-form-item label="简介">
             <el-input
               style="width: 320px"
               v-model="formInvitation.introduction"
@@ -90,7 +90,79 @@
       </div>
       <div class="invitation-show">
         <p>移动端预览</p>
-        <div class="show-img"></div>
+        <div class="show-img" v-if="false">
+          <div class="show-container">
+            <div class="show-header">
+              <div class="show-avator"></div>
+              <p>微吼直播</p>
+              <p>邀请你一起看直播</p>
+            </div>
+            <div class="show-text">
+              <h1>遇见生活—生活方<br>式生活方式面面观</h1>
+              <p>2020北京国际家具展暨智能生活节于6月14-17日在北京中国国际会展中心（新馆）盛大召开。</p>
+              <div class="show-time">
+                <p>2020-11-26 14:30</p>
+                <p>北京 中国国际会展中心</p>
+              </div>
+            </div>
+            <div class="show-footer">
+              <div class="show-code"></div>
+              <div class="show-action">
+                <p>扫 / 描 / 二 / 维 / 码</p>
+                <h1>立 即 参 与 活 动</h1>
+                <p>长按保存图片后分享</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="watch-img" v-if="false">
+          <div class="watch-bg">
+            <div class="watch-header">
+              <div class="watch-avator"></div>
+              <p>微吼直播</p>
+              <p>邀请你一起看直播</p>
+            </div>
+          </div>
+          <div class="watch-text">
+            <h1>遇见生活—生活方式面 面观</h1>
+            <p>2020北京国际家具展暨智能生活节于6月14-17日在北接京中国国际会展中心盛大召开。</p>
+            <div class="watch-footer">
+              <div class="watch-code"></div>
+              <div class="watch-action">
+                <p>扫码观看视频</p>
+                <h1>2020-11-26 14:30</h1>
+                <h1>中国国际会展中心</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="look-img">
+            <div class="look-header">
+              <div class="look-avator"></div>
+              <p>微吼直播</p>
+              <p>邀请你一起看直播</p>
+            </div>
+            <div class="look-text">
+              <h1>遇见生活—生活方<br>式生活方式面面观</h1>
+              <p>2020北京国际家具展暨智能生活节于6月14-17日在北京中国国际会展中心（新馆）盛大召开。</p>
+            </div>
+            <div class="look-time">
+              <span></span>
+              <p>时间</p>
+              <p>2020-11-26 14:30</p>
+              <span></span>
+              <p>地点</p>
+              <p>北京 中国国际会展中心</p>
+            </div>
+            <div class="look-footer">
+              <div class="look-code"></div>
+              <div class="look-action">
+                <p>扫 / 描 / 二 / 维 / 码</p>
+                <h1>立 即 参 与 活 动</h1>
+                <p>长按保存图片后分享</p>
+              </div>
+            </div>
+        </div>
       </div>
       <div class="sureBtn">
         <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -128,6 +200,9 @@ export default {
   methods: {
     changeImg() {
       this.$refs.background.dialogVisible = true;
+    },
+    code() {
+      this.$router.push({path: '/code'});
     },
     showMethods(items) {
        this.showList.map(item => {
@@ -176,8 +251,8 @@ export default {
     position: relative;
   }
   .form-data {
-    flex: 1;
     padding: 10px 0 10px;
+    margin-right: 100px;
   }
   .data-img {
     width: 320px;
@@ -257,11 +332,259 @@ export default {
     }
     .show-img {
       width: 330px;
-      height: 622px;
+      // height: 980px;
       border-radius: 4px;
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: cover;
+      .show-container{
+        margin: 50px 24px;
+        width: 282px;
+        background: #fff;
+        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+        .show-header{
+          padding: 20px 24px;
+          text-align: center;
+          .show-avator{
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            margin: auto;
+            margin-bottom: 4px;
+          }
+          p{
+            padding: 0;
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+            line-height: 18px;
+          }
+        }
+        .show-text{
+          padding: 15px 24px 30px 24px;
+          text-align: center;
+          h1{
+            padding: 0;
+            font-size: 26px;
+            color:#1A1A1A;
+            font-weight: 600;
+            line-height: 40px;
+          }
+          p{
+            font-size: 14px;
+            color:#1A1A1A;
+            font-weight: 400;
+            line-height: 20px;
+            padding: 0 0 5px 0;
+          }
+          .show-time{
+            margin-top: 10px;
+            p{
+              padding:0;
+              color: #666;
+              line-height: 20px;
+            }
+          }
+        }
+        .show-footer{
+          display: flex;
+          padding: 20px 24px 24px 32px;
+          border-top: 1px dashed #ccc;
+          .show-code{
+            width: 60px;
+            height: 60px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            margin-left: 10px;
+          }
+          .show-action{
+            h1{
+              padding:0;
+              font-size: 14px;
+              color:#1A1A1A;
+              font-weight: 600;
+              line-height: 30px;
+            }
+            p{
+              padding:0;
+              font-size: 12px;
+              color:#666;
+              font-weight: 400;
+            }
+          }
+        }
+      }
+    }
+    .watch-img{
+    width: 330px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+    .watch-bg{
+      height: 360px;
+      background-image: url('../../../common/images/v35-webinar.png');
+      background-size: cover;
+      .watch-header{
+          padding: 20px 24px;
+          text-align: center;
+          .watch-avator{
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            margin: auto;
+            margin-bottom: 4px;
+          }
+          p{
+            padding: 0;
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+            line-height: 18px;
+          }
+        }
+    }
+    .watch-text{
+      padding: 10px 20px 24px 24px;
+      h1{
+        padding:0;
+        font-size: 28px;
+        color: #1A1A1A;
+        line-height: 40px;
+        font-weight: 500;
+      }
+      p{
+        padding:0;
+        font-size: 14px;
+        color: #666;
+        line-height: 22px;
+        font-weight: 400;
+      }
+      .watch-footer{
+          display: flex;
+          padding-top: 25px;
+          // padding: 20px 24px 24px 32px;
+          .watch-code{
+            width: 60px;
+            height: 60px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            margin-left: 10px;
+          }
+          .watch-action{
+            h1{
+              padding:0;
+              font-size: 14px;
+              color:#1A1A1A;
+              font-weight: 400;
+              line-height: 20px;
+            }
+            p{
+              padding:0;
+              font-size: 12px;
+              color:#666;
+              font-weight: 400;
+              line-height: 20px;
+            }
+          }
+        }
+    }
+    }
+    .look-img{
+      width: 330px;
+      color:#fff;
+      border-radius: 4px;
+      border: 1px solid #E2E2E2;
+      background-image: url('../../../common/images/v35-webinar.png');
+      background-size: cover;
+      .look-header{
+        padding: 20px 24px;
+        text-align: center;
+        .look-avator{
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 1px solid #ccc;
+          margin: auto;
+          margin-bottom: 4px;
+        }
+        p{
+          padding: 0;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 18px;
+          color:#fff;
+        }
+      }
+      .look-text{
+        width: 282px;
+        // padding: 15px 24px 30px 24px;
+        text-align: center;
+        border: 4px solid #fff;
+        border-radius: 4px;
+        margin: auto;
+        margin-top: 10px;
+        padding: 20px 0;
+        h1{
+          padding: 0;
+          font-size: 26px;
+          font-weight: 600;
+          line-height: 40px;
+        }
+        p{
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          color:#fff;
+          padding: 5px 15px;
+        }
+      }
+      .look-time{
+        margin-top: 20px;
+        padding-left: 24px;
+        p{
+          padding:0;
+          line-height: 22px;
+          color:#fff;
+        }
+        span{
+          display: inline-block;
+          width: 24px;
+          height: 2px;
+          background: #fff;
+        }
+      }
+      .look-footer{
+        display: flex;
+        width: 250px;
+        margin: 30px auto;
+        background: #000;
+        border-radius: 4px;
+        opacity: 0.2;
+        padding: 10px;
+        .look-code{
+          width: 60px;
+          height: 60px;
+          border: 1px solid #ccc;
+          margin-right: 10px;
+          margin-left: 10px;
+        }
+        .look-action{
+          h1{
+            padding:0;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 30px;
+          }
+          p{
+            padding:0;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 400;
+          }
+        }
+      }
     }
     // height: 200px;
   }
@@ -290,13 +613,14 @@ export default {
         border-radius: 20px;
         border: 1px solid #ccc;
         margin-left: 12px;
+        cursor: pointer;
       }
     }
   }
   .sureBtn {
     position: absolute;
-    bottom: 32px;
-    left: 45%;
+    bottom: 20px;
+    left: 110px;
     /deep/.el-button {
       padding: 9px 60px;
       border-radius: 20px;

@@ -20,6 +20,11 @@ const v3Routes = [
     hidden: true
   },
   {
+    path: '/code',
+    component: () => import('@/views/LiveModule/Brands/components/invitationCode'),
+    hidden: true
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/home',
@@ -164,9 +169,9 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: 'wordSet/:str(\\d+)',
-        component: () => import('@/views/LiveModule/MaterialSet/wordSet'),
-        name: 'wordSet',
+        path: 'word/:str(\\d+)',
+        component: () => import('@/views/MaterialModule/word'),
+        name: 'word',
         meta:{ title: '直播—文档', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
@@ -178,9 +183,9 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: 'questionSet/:str(\\d+)',
-        component: () => import('@/views/LiveModule/MaterialSet/questionSet'),
-        name: 'questionSet',
+        path: 'question/:str(\\d+)',
+        component: () => import('@/views/MaterialModule/question'),
+        name: 'question',
         meta:{ title: '直播—问卷', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
@@ -192,9 +197,9 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: 'giftSet/:str(\\d+)',
-        component: () => import('@/views/LiveModule/MaterialSet/giftSet'),
-        name: 'giftSet',
+        path: 'gift/:str(\\d+)',
+        component: () => import('@/views/MaterialModule/gift'),
+        name: 'gift',
         meta:{ title: '直播—礼物', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
