@@ -8,12 +8,22 @@
     <el-scrollbar class="scrollbar">
       <div class="background-list">
         <div class="list-item">
-          <el-upload class="upload-demo" action="">
+          <upload
+            v-model="imageUrl"
+            :on-success="handleuploadSuccess"
+            :on-progress="uploadProcess"
+            :on-error="uploadError"
+            :on-preview="uploadPreview"
+            :restPic="handleChange"
+            :before-upload="beforeUploadHnadler">
+            <p slot="tip">最佳尺寸750*1624<br />支持jpg、png、bmp</p>
+          </upload>
+          <!-- <el-upload class="upload-demo" action="">
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
               最佳尺寸750*1624<br />支持jpg、png、bmp
             </div>
-          </el-upload>
+          </el-upload> -->
           <!-- <img src="@/common/images/logo.png" alt="" /> -->
         </div>
         <div class="list-item list-imgs is-success" v-for="(item, index) in fileList" :key="index">
@@ -22,16 +32,6 @@
           </label>
           <img :src="item.url" alt="" @click="choseBackground(item)"/>
         </div>
-        <!-- <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div>
-        <div class="list-item"></div> -->
       </div>
     </el-scrollbar>
     <div class="sureChose">
@@ -43,11 +43,13 @@
   </el-dialog>
 </template>
 <script>
+import upload from '@/components/Upload/main';
 export default {
   data() {
     return {
       dialogVisible: false,
       advertisement: {},
+      imageUrl: '',
       fileList: [
         {
           isChecked: true,
@@ -63,12 +65,45 @@ export default {
       ],
     };
   },
+  components: {
+    upload
+  },
   methods: {
     choseBackground(items) {
       this.fileList.map(item => {
         item.isChecked = false;
         items.isChecked = true;
       });
+    },
+    handleuploadSuccess(res, file) {
+      console.log(res, file);
+      this.imageUrl = URL.createObjectURL(file.raw);
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`封面上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
+    handleChange(file) {
+      this.handleuploadSuccess(file);
     }
   }
 };

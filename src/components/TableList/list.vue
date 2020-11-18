@@ -161,10 +161,7 @@ export default {
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current;
-      this.pageInfo.pos = parseInt(current * 10 - 10);
-      if (current == 1) {
-        this.pageInfo.pos = 0;
-      }
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
       this.$emit('getTableList', this.pageInfo);
     },
     // 复选框操作
