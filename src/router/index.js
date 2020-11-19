@@ -5,10 +5,11 @@ Vue.use(VueRouter);
 
 // 引入布局层
 import Layout from '@/layout';
+import emptyLayout from '@/layout/emptyLayout';
 
 // 主入口路由(需嵌套上左右整体布局)
 const v3Routes = [
-  { path: '*', redirect: '/404', hidden: true },
+  // { path: '*', redirect: '/404', hidden: true },
   {
     path: '/login',
     component: () => import('@/views/PlatformModule/Login/index'),
@@ -445,7 +446,44 @@ const v3Routes = [
     component: Layout,
     name: 'Css',
     meta: { title: '样式Demo', icon: 'el-icon-s-help' }
-  }
+  },
+
+  {
+    path: '/emptyLayout',
+    component: emptyLayout,
+    name: 'Live',
+    redirect: '/',
+    hidden: true,
+    meta: { title: '直播管理', icon: 'el-icon-video-camera' },
+    children: [
+      {
+        path: '/live/room/:il_id',
+        component: () => import('@/views/LiveModule/Room'),
+        name: 'LiveRoom',
+        meta: { title: '直播间' },
+      },
+      {
+        path: '/live/watch/:il_id',
+        component: () => import('@/views/LiveModule/Room/watchWrap'),
+        name: 'LiveRoom',
+        meta: { title: '观看直播' },
+      }
+    ]
+  },
+  // {
+  //   path: '/live/room/:il_id',
+  //   component: emptyLayout,
+  //   name: 'Live',
+  //   meta: { title: '直播管理', icon: 'el-icon-video-camera' },
+  //   children: [
+  //     {
+  //       path: '/',
+  //       component: () => import('@/views/LiveModule/Room'),
+  //       name: 'LiveRoom',
+  //       meta: { title: '直播间' },
+  //     }
+  //   ]
+  // }
 ];
 
 const router = new VueRouter({

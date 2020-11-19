@@ -88,6 +88,16 @@ const apis = {
   liveIncomeDetailList: ['/104/v3/finances/income/live/details/list', 'GET', 'mock'], // 直播收益详情列表
   packetIncomeList: ['/104/v3/finances/income/red-packet/list', 'GET', 'mock'], // 红包收益
   accountList: ['/104/v3/finances/withdraw/list', 'GET', 'mock'], // 提现明细
+
+  // 直播间内
+  initiatorInfo: ['/101/v3/interacts/room/get-room-base-info', 'POST', 'mock'], // 获取房间信息 jian.chang
+  getInitiatorReportInfo: ['/api/vss/initiator/report-info', 'POST', 'mock'], // 获取上报信息 jian.chang
+  // 观看页
+  vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
+  newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
+  goodsInfo: ['/domian/api/webinar/v1/webinar/goods-info', 'POST'], // 商品推荐 jian.chang
+  keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
+  getReportInfo: ['/domian/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
 };
 
 const getApi = api => {

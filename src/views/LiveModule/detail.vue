@@ -44,7 +44,7 @@
             <span>25</span>
             <i>秒</i>
           </p>
-          <el-button round type="primary">发起直播</el-button>
+          <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
     </el-row>
@@ -102,6 +102,9 @@ export default {
       }
     };
   },
+  created(){
+    // console.log(this.$route.params.str);
+  },
   filters: {
     unitCovert(val) {
       val = Number(val);
@@ -122,6 +125,10 @@ export default {
       }else{
         console.log(item);
       }
+    },
+    toRoom(){
+      const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+      window.open(href);
     }
   }
 };

@@ -60,7 +60,7 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="开播" placement="top">
-                <i class="el-icon-video-camera"></i>
+                <i class="el-icon-video-camera" @click="toRoom(item.webinar_id)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="回放" placement="top">
                 <i class="el-icon-s-promotion"></i>
@@ -167,6 +167,10 @@ export default {
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
+    },
+    toRoom(id){
+      const { href } = this.$router.resolve({path: `/live/room/${id}`});
+      window.open(href);
     }
   },
   filters: {
