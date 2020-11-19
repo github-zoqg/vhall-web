@@ -1,18 +1,17 @@
 <template>
   <div class="components-container">
-    <div>
-    </div>
-    <div class="editor-content" v-html="content" />
-    <div class="editor-content" v-html="content2" />
-
+    {{content}}
+    <v-editor :isReturn=true @returnChange="sendData1" ref="unitImgTxtEditor" :value="content"></v-editor>
+    {{content2}}
+    <v-editor :isReturn=true @returnChange="sendData2" ref="unitImgTxtEditor" :value="content2"></v-editor>
   </div>
 </template>
 
 <script>
-
+import VEditor from '@/components/Tinymce';
 export default {
   name: 'TinymceDemo',
-  components: {  },
+  components: { VEditor },
   data() {
     return {
       content:
@@ -20,6 +19,14 @@ export default {
       content2:
         `第二个编辑器`
     };
+  },
+  methods: {
+    sendData1(content) {
+     this.content = content;
+    },
+    sendData2(content) {
+      this.content2 = content;
+    }
   }
 };
 </script>
