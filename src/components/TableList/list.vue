@@ -142,7 +142,7 @@ export default {
   watch: {
     manageTableData: {
       handler: function (oldData) {
-        console.log(oldData[0].uploadObj, 'watch变化');
+        // console.log(oldData[0].uploadObj, 'watch变化');
         this.isUpdate = Math.random() * 100;
       },
       immediate: false,
