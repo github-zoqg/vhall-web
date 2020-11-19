@@ -31,7 +31,7 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="468px">
-    <el-form :model="formData" ref="ruleForm">
+    <el-form :model="formData" ref="ruleForm" label-width="100px">
       <el-form-item label="图片上传">
         <upload
           class="giftUpload"
