@@ -100,6 +100,12 @@ const apis = {
   goodsInfo: ['/domian/api/webinar/v1/webinar/goods-info', 'POST'], // 商品推荐 jian.chang
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getReportInfo: ['/domian/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
+
+  //开发设置
+  getAppList: ['/100/v3/users/app-keys/get-list', 'POST', 'mock'], // 获取应用列表 jian.chang
+  createApp: ['/100/v3/users/app-keys/create', 'POST', 'mock'], // 创建应用 jian.chang
+  getAppInfo: ['/100/v3/users/app-keys/get-info', 'POST', 'mock'], // 获取应用详情 jian.chang
+  modifyApp: ['/100/v3/users/app-keys/edit', 'POST', 'mock'], // 修改应用 jian.chang
 };
 
 const getApi = api => {

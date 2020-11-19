@@ -375,10 +375,38 @@ const v3Routes = [
         meta:{ title: '聊天严禁词', icon: '' , activeMenu: '/setting/info'},
         hidden: true
       },
+      // {
+      //   path: '/dev/:str(\\d+)',
+      //   component: () => import('@/views/SettingModule/dev'),
+      //   name: 'dev',
+      //   meta:{ title: '开发设置', icon: '' , activeMenu: '/setting/info'},
+      //   hidden: true
+      // },
       {
-        path: '/dev/:str(\\d+)',
-        component: () => import('@/views/SettingModule/dev'),
-        name: 'dev',
+        path: '/dev/add',
+        component: () => import('@/views/SettingModule/Development/appInfo'),
+        name: 'devAdd',
+        meta:{ title: '新增应用', icon: '' , activeMenu: '/setting/info', action: 'add'},
+        hidden: true
+      },
+      {
+        path: '/dev/:appId(\\d+)',
+        component: () => import('@/views/SettingModule/Development/appInfo'),
+        name: 'devModify',
+        meta:{ title: '应用修改', icon: '' , activeMenu: '/setting/info', action: 'modify'},
+        hidden: true
+      },
+      {
+        path: '/devDetail/:appId(\\d+)',
+        component: () => import('@/views/SettingModule/Development/appInfo'),
+        name: 'devDetail',
+        meta:{ title: '应用详情', icon: '' , activeMenu: '/setting/info', action: 'detail'},
+        hidden: true
+      },
+      {
+        path: '/dev/list',
+        component: () => import('@/views/SettingModule/Development/list'),
+        name: 'devlIST',
         meta:{ title: '开发设置', icon: '' , activeMenu: '/setting/info'},
         hidden: true
       },

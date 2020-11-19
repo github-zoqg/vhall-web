@@ -19,7 +19,7 @@ export default {
       operas: {
         "基本设置": [
           { icon: '', title: '聊天严禁词', subText: '设置聊天过滤严禁词', path: '/setting-chat' },
-          { icon: '', title: '开发设置', subText: '设置API接口信息' , path: '/setting-dev'},
+          { icon: '', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'},
           { icon: '', title: '控制台标志', subText: '设置控制台的品牌标识' , path: '/setting-logo'}
         ],
       }
