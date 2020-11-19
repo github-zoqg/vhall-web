@@ -20,7 +20,8 @@
           <template v-for="(item, key) in setOptions">
             <section class="block" :key="key">{{key}}</section>
             <li :class="{item: true, active: setItem.name && questionArr.some(qes=> qes.name == setItem.name)}" v-for="setItem in item" :key="setItem.label" @click="addFiled(setItem)">
-              <i :class="setItem.icon"></i>{{setItem.label}}
+              <!-- <icon :class="setItem.icon"></icon> -->
+              <icon :icon-class="setItem.icon">{{setItem.label}}</icon>
             </li>
           </template>
         </ul>
@@ -32,6 +33,7 @@
     </div>
     <shareDialog ref="share"></shareDialog>
     <themeSet ref="theme"></themeSet>
+    <icon icon-class="icon_xingbie">12345</icon>
   </div>
 </template>
 
@@ -57,7 +59,7 @@ export default {
       rightComponent: 'fieldSet',
       setOptions: {
         "基本信息": [
-          {icon: 'el-icon-user-solid', label: "姓名", name: 'name'},
+          {icon: 'saasicon_xingming', label: "姓名", name: 'name'},
           {icon: 'el-icon-male', label: "性别", name: 'gender'},
           {icon: 'el-icon-phone', label: "手机", name: 'phone'},
           {icon: 'el-icon-message', label: "邮箱", name: 'email'},

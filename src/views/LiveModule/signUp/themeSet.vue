@@ -1,5 +1,5 @@
 <template>
-  <el-dialog
+  <VhallDialog
     title="主题设置"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
@@ -20,7 +20,7 @@
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="dialogVisible = false" round size="medium">保存</el-button>
     </span>
-  </el-dialog>
+  </VhallDialog>
 </template>
 
 <script>

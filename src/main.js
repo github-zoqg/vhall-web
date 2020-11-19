@@ -6,6 +6,7 @@ import { copy } from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
+import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
 import vhallSaas from './tangram/buTemplates/index.js';
 Vue.use(ElementUI);
@@ -37,8 +38,10 @@ Vue.prototype.$copyText = copy;
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
+import VhallDialog from '@/components/Dialog';
 import '@/components/RemoteScript';
 Vue.component('SPagination',SPagination);
+Vue.component('VhallDialog',VhallDialog); // 弹框
 Vue.component('tableList',tableList);  // 表格区域
 Vue.component('searchArea',searchArea); // 搜索区域
 
