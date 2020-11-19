@@ -169,6 +169,7 @@ export default {
       cids: [], // 动态容器
       currentCid: '', // 当前正在展示的容器id
       isSetRole: -1, // 重新设置的新的角色
+      VhallMsgSdk: !!window.VhallMsg
     };
   },
   components: { PencilControlBar, PaginationBar },
@@ -449,6 +450,7 @@ export default {
         : null;
       this.cids = [];
       let res = await this.docSDK.getContainerInfo(params);
+      console.log('loadRemote', res);
       // res.data会返回空数组或者一个对象，所以需要判断，应该是后端（朱俊亚）优化
       if (res instanceof Array && !res.length) {
         this.docInfo.docContainerShow = true;
@@ -958,11 +960,15 @@ export default {
         this.$EventBus.$emit('docInfo', this.docInfo);
         let cid = this.docSDK.createUUID('document');
         this.cids.push(cid);
-        await this.$nextTick();
-        this.initWidth();
-        this.initContainer('document', cid, this.documentId, true);
-        this.docSDK.loadDoc({ docId: this.documentId, id: cid });
-        this.activeContainer(cid);
+        this.$forceUpdate();
+        // await
+        this.$nextTick(()=>{
+          this.initWidth();
+          this.initContainer('document', cid, this.documentId, true);
+          this.docSDK.loadDoc({ docId: this.documentId, id: cid });
+          this.activeContainer(cid);
+        });
+
       }
     },
     // 激活容器，设置默认画笔颜色

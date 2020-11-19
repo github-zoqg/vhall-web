@@ -5,6 +5,7 @@ Vue.use(VueRouter);
 
 // 引入布局层
 import Layout from '@/layout';
+import emptyLayout from '@/layout/emptyLayout';
 
 // 主入口路由(需嵌套上左右整体布局)
 const v3Routes = [
@@ -519,6 +520,27 @@ const v3Routes = [
         name: 'css-demo',
         component: () => import('@/views/PlatformModule/cssDemo'),
         meta: { title: 'Tinymce富文本', icon: 'el-icon-s-home' }
+      }
+    ]
+  },
+  {
+    path: '/emptyLayout',
+    component: emptyLayout,
+    name: 'emptyLayout',
+    redirect: '/',
+    hidden: true,
+    children: [
+      {
+        path: '/live/room/:il_id',
+        component: () => import('@/views/LiveModule/Room'),
+        name: 'LiveRoom',
+        meta: { title: '直播间' },
+      },
+      {
+        path: '/live/watch/:il_id',
+        component: () => import('@/views/LiveModule/Room/watchWrap'),
+        name: 'LiveRoom',
+        meta: { title: '观看直播' },
       }
     ]
   },

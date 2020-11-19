@@ -13,7 +13,7 @@
               删除
             </span>
             <span v-if="!!$props.restPic">
-              <i class="el-icon-refresh-left" @click.stop="refresh"></i>
+              <i class="el-icon-refresh-left" @click="refresh($event)"></i>
               <br/>
               重置
             </span>
@@ -73,7 +73,7 @@ export default {
       default: ''
     },
     restPic: {
-      type: Function,
+      type: [Function, Boolean],
       default: null
     }
   },
@@ -114,8 +114,11 @@ export default {
     deletes(){
       this.$emit('input', '');
     },
-    refresh(){
-      this.restPic();
+    refresh(event){
+      if(typeof this.restPic == "function"){
+        this.restPic();
+        event.stopPropagation();
+      }
     }
   },
   watch: {

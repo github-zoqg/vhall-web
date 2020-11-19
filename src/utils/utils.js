@@ -65,3 +65,28 @@ export function calculateNetworkStatus (status) {
   }
   return netWorkStatus;
 }
+
+export function copy(text){
+  return new Promise((resolve, reject)=>{
+    const inputEl = document.createElement('input');
+    inputEl.type = 'text';
+    inputEl.value = text;
+    inputEl.style.height = "0px";
+    inputEl.style.position = "fixed";
+    document.documentElement.appendChild(inputEl);
+    inputEl.select();
+    try {
+      let result = document.execCommand('copy');
+      if(result){
+        resolve();
+      }else{
+        reject(new Error('浏览器暂不支持复制功能，请升级浏览器'));
+      }
+
+    } catch (error) {
+      reject(error);
+    }
+    document.documentElement.removeChild(inputEl);
+  });
+
+}

@@ -37,6 +37,13 @@ module.exports = {
       '/api/upload':{
         target: 'https://test-zhike.vhall.com/',
         changeOrigin: true
+      },
+      '/domian':{
+        target: 'https://t-webinar.e.vhall.com/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/domian': ''
+        }
       }
     }
   },
