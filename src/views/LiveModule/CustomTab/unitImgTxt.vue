@@ -6,20 +6,25 @@
     {{content}}
     <br/>
     {{contentVal}}
+
+    <v-editor height="220" ref="editor" :tinyVal="desc" class="editor-wrap"></v-editor>
   </div>
 </template>
 
 <script>
 import Tinymce from '@/components/Tinymce';
+import VEditor from '@/components/EditorTinymce/editor';
 export default {
   name: "unitImgTxt.vue",
-  components: { Tinymce },
+  components: { Tinymce, VEditor },
   data() {
     return {
       content: '',
       contentVal: '',
       compVo: {},
-      showCompId: null
+      showCompId: null,
+      desc: '',
+      descCount: 0
     };
   },
   methods: {
