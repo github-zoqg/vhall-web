@@ -104,7 +104,7 @@ export default {
       //   this.$refs.unitTextLinkForm.resetFields();
       // }
       let compVo = JSON.parse(compVoStr);
-      if (compVo.compInfo && compVo.compInfo.imageSrc !== '') {
+      if (compVo.compInfo && compVo.compInfo.imageSrc !== '' && compVo.compInfo.imageSrc !== null && compVo.compInfo.imageSrc !== undefined) {
         this.unitImgLinkForm.imageSrc = compVo.compInfo.imageSrc;
         this.unitImgLinkForm.src = compVo.compInfo.src;
       } else {

@@ -8,8 +8,8 @@
         inactive-color="#CECECE">
       </el-switch>
       <span class="leve3_title title--999">请输入邀请榜的活动规则</span>
+      <v-editor ref="invEditor"></v-editor>
     </div>
-    <tinymce v-model="invContent" :height="300" menubar='false' v-if="invStatus"/>
     <div class="switch__box">
       <label class="leve3_title label__r12">排行榜</label>
       <el-switch
@@ -18,16 +18,16 @@
         inactive-color="#CECECE">
       </el-switch>
       <span class="leve3_title title--999">请输入打赏榜的活动规则</span>
+      <v-editor ref="topEditor"></v-editor>
     </div>
-    <tinymce v-model="topContent" :height="300" menubar='false' v-if="invStatus"/>
   </div>
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce';
+import VEditor from '@/components/Tinymce';
 export default {
   name: "unitRank.vue",
-  components: { Tinymce },
+  components: { VEditor },
   data() {
     return {
       invStatus: true,

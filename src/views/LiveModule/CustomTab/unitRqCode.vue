@@ -101,7 +101,7 @@ export default {
       //   this.$refs.unitRQCodeForm.resetFields();
       // }
       let compVo = JSON.parse(compVoStr);
-      if (compVo.compInfo && compVo.compInfo.imageSrc !== '' && compVo.compInfo.isDefault === false) {
+      if (compVo.compInfo && compVo.compInfo.imageSrc !== '' && compVo.compInfo.imageSrc !== null && compVo.compInfo.imageSrc !== undefined && compVo.compInfo.isDefault === false) {
         this.unitRQCodeForm.imageSrc = compVo.compInfo.imageSrc;
         this.unitRQCodeForm.hrc = compVo.compInfo.hrc;
       } else {

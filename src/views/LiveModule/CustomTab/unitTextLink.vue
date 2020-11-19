@@ -48,7 +48,7 @@
         //   this.$refs.unitTextLinkForm.resetFields();
         // }
         let compVo = JSON.parse(compVoStr);
-        if (compVo.compInfo && compVo.compInfo.text !== '') {
+        if (compVo.compInfo && compVo.compInfo.text !== '' && compVo.compInfo.text !== null && compVo.compInfo.text !== undefined) {
           this.unitTextLinkForm.text = compVo.compInfo.text;
           this.unitTextLinkForm.src = compVo.compInfo.src;
         } else {

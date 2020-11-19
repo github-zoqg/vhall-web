@@ -56,6 +56,22 @@ const i18n = new VueI18n({
   }
 });
 window.i18n = i18n;
+
+import tinymce from 'tinymce';
+import VueTinymce from '@packy-tang/vue-tinymce';
+//样式
+import 'tinymce/skins/content/default/content.min.css';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+//主题
+import 'tinymce/themes/silver';
+//插件
+import 'tinymce/plugins/image'; //图片插件
+import 'tinymce/plugins/quickbars';//快速栏插件
+import 'tinymce/plugins/fullscreen';//全屏插件
+Vue.prototype.$tinymce = tinymce;
+Vue.use(VueTinymce);
+
 new Vue({
   router,
   i18n,

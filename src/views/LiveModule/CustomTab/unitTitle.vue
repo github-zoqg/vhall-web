@@ -36,8 +36,15 @@ export default {
     * 参数2： index 当前展示部分组件下标 */
     initDataComp(compVoStr, index) {
       console.log('标题区，每次show区域选中，右侧编辑区域变化', index);
+      // if(this.unitTextLinkForm) {
+      //   this.$refs.unitTextLinkForm.resetFields();
+      // }
       let compVo = JSON.parse(compVoStr);
-      this.unitTitleForm.title = '';
+      if (compVo.compInfo && compVo.compInfo.title !== '' && compVo.compInfo.title !== null && compVo.compInfo.title !== undefined) {
+        this.unitTitleForm.title = compVo.compInfo.title;
+      } else {
+        this.unitTitleForm.title = '';
+      }
       // 默认组件类别 和 组件名称
       this.unitTitleForm.component_id = compVo.component_id;
       this.unitTitleForm.msg = compVo.name;
