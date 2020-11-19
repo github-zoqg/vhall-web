@@ -1,11 +1,21 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+import EventBus from './utils/Events';
+import { copy } from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
+// 七巧板组件库，直播间内使用
+import vhallSaas from './tangram/buTemplates/index.js';
 Vue.use(ElementUI);
-
+Vue.use(vhallSaas, {
+  config: {
+    playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
+  },
+  baseUrl: "https://d-vss.vhall.com",
+  buHost: "https://t.e.vhall.com"
+});
 // 页面加载进度样式
 import 'nprogress/nprogress.css';
 
@@ -20,8 +30,8 @@ import fetchData from './api/fetch';
 Vue.prototype.$fetch = fetchData;
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
-Vue.prototype.$EventBus = new Vue();
-// import './permission';
+Vue.prototype.$EventBus = EventBus;
+Vue.prototype.$copyText = copy;
 
 // 组件扩展
 import SPagination from '@/components/Spagination/main';

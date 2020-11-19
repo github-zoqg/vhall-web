@@ -43,6 +43,19 @@ module.exports = {
     直播当天请访问此页面观看直播: '直播当天请访问此页面观看直播',
     预约成功: '预约成功',
     您的信息不在白名单中: '您的信息不在白名单中',
-    没有白名单: '没有白名单'
+    没有白名单: '没有白名单',
+    setHostTips: ' set to be the host',
+    host: 'Host',
+    compatabilityTipA: 'Live Broadcast cannot be smoothly played in current browser, Chrome is recommended.',
+    compatabilityTipB: '当前浏览器版本较低，请升级浏览器版本或使用Chrome浏览器',
+    downloadBrowser: 'Download here',
+    // saas-popup组件相关
+    okText: 'OK',
+    tipText: 'Remind',
+    clickToPlay: 'Click and watch the Webinar',
+    cancelText: 'Cancel',
+    confirmText: 'Confirm',
+    retryText: 'Retry',
+    knowText: 'OK'
   }
 };

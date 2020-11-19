@@ -231,7 +231,7 @@ export default {
       }
       return isType && isLt2M;
     },
-    resetBanner(){
+    resetBanner(event){
       this.imageUrl= '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png';
     }
   },

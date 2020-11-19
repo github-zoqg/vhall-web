@@ -167,6 +167,10 @@ export default {
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
+    },
+    toRoom(id){
+      const { href } = this.$router.resolve({path: `/live/room/${id}`});
+      window.open(href);
     }
   },
   filters: {
