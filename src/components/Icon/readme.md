@@ -6,3 +6,5 @@ className 元素类名，可自定义设置字体大小，颜色等样式，覆�
 
 # 已注册为全局组件，可直接使用 例:
 <icon icon-class="saasicon_zhiwu"></icon>
+
+# 每次图标变更，需下载新的js文件替换iconfont.js内容
