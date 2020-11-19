@@ -104,7 +104,7 @@
                    @drop.prevent.stop="drop($event, ins)" @dragover.prevent.stop="allowDrop($event, ins)" @click.prevent.stop="selectShowComp(item, ins)">
                 <!-- 图文 -->
                 <div class="img-txt" v-if="item.show_type === 'img-txt'" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-img-txt :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-img-txt>
+                  <div class="content" v-html="item.compInfo && item.compInfo.content ? item.compInfo.content : item.compInfo.content"></div>
                 </div>
                 <!-- 二维码 -->
                 <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
@@ -155,7 +155,7 @@
             <!-- 组件标题 -->
             <div class="comp__edit__title">{{unitComp.name}}</div>
             <!-- 编辑区域引入 -->
-            <unit-img-txt ref="img-txt-unit-dom" elName="imgTxtEditor" defaultText="默认图文" v-if="unitComp.show_type === 'img-txt'" @cxtChangeInfo="editChange"></unit-img-txt>
+            <unit-img-txt ref="img-txt-unit-dom" v-if="unitComp.show_type === 'img-txt'" @cxtChangeInfo="editChange"></unit-img-txt>
             <unit-rq-code ref="rq-code-unit-dom" v-if="unitComp.show_type === 'rq-code'" @cxtChangeInfo="editChange"/>
             <unit-video ref="video-unit-dom" v-if="unitComp.show_type === 'video'"/>
             <unit-special ref="special-unit-dom" v-if="unitComp.show_type === 'special'"/>
@@ -174,7 +174,6 @@
 import env from '@/api/env';
 import PageTitle from '@/components/PageTitle';
 // 展示区
-import ShowImgTxt from  './CustomTab/showImgTxt.vue';
 import ShowVideo from  './CustomTab/showVideo.vue';
 import ShowSpecial from  './CustomTab/showSpecial.vue';
 import ShowRank from  './CustomTab/showRank.vue';
@@ -192,7 +191,6 @@ export default {
   name: "customTab.vue",
   components: {
     PageTitle,
-    ShowImgTxt,
     ShowVideo,
     ShowSpecial,
     ShowRank,
@@ -371,7 +369,8 @@ export default {
       // 分割线： {content: "{component_id: 8, msg: '分割线'}", type: 'hr', compIndex: 0 }
       // 图文链： {content: "{component_id: 6, msg: '图片链', imageSrc: '图片返回后地址，不带域名',src: '路径' }", type: 'img-link', compIndex: 0 }
       // 二维码： {content: "{component_id: 2, msg: '二维码', imageSrc: '//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605', "hrc":"//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605", ,"isDefault":true }", type: 'img-link', compIndex: 0 }
-      if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code') {
+      // 图文： {content: "{component_id: 1, msg: '图文', content: '<p>是否哈佛哈哈</p>'}", type: 'img-txt', compIndex: 0}
+      if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code' || saveItem.type === 'img-txt') {
         this.modShowHtmlList[saveItem.compIndex].compInfo = JSON.parse(saveItem.content);
         sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
       }
@@ -436,7 +435,12 @@ export default {
   }
 };
 </script>
-
+<style>
+.content img {
+  max-width: 100%;
+  height: auto;
+}
+</style>
 <style lang="less" scoped>
 @import '../../common/css/common.less';
 .title--cus-tab {
@@ -695,6 +699,11 @@ export default {
     background-position: 100% 100%;
     margin: 8px auto 0 auto;
     z-index: 5;
+  }
+  .content {
+    line-height: 1.5;
+    color: #666;
+    font-size: 12px;
   }
   .line {
     display: block;

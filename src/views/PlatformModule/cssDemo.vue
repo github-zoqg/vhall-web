@@ -1,9 +1,6 @@
 <template>
   <div class="components-container">
     <div>
-      <tinymce v-model="content" :height="300"/>
-      <tinymce v-model="content2" :height="300" menubar='false' />
-
     </div>
     <div class="editor-content" v-html="content" />
     <div class="editor-content" v-html="content2" />
@@ -12,11 +9,10 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce';
 
 export default {
   name: 'TinymceDemo',
-  components: { Tinymce },
+  components: {  },
   data() {
     return {
       content:
