@@ -50,6 +50,13 @@
                 height="40"
               />
             </div>
+            <div v-else-if="item.key === 'watch'">
+              <el-switch
+                v-model="scope.row.watch"
+                active-color="#ff4949"
+                inactive-color="#ccc">
+              </el-switch>
+            </div>
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
                 <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
@@ -62,6 +69,7 @@
           label="操作"
           align="center"
           v-if="isHandle"
+          width="width"
         >
           <template slot-scope="scope">
             <el-button
@@ -125,6 +133,10 @@ export default {
     needPagination: {
       type: Boolean,
       default: true,
+    },
+    width: {
+      type: Number,
+      default: 200,
     },
   },
   watch: {
