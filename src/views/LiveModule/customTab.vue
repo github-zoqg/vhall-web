@@ -372,8 +372,7 @@ export default {
       // 图文链： {content: "{component_id: 6, msg: '图片链', imageSrc: '图片返回后地址，不带域名',src: '路径' }", type: 'img-link', compIndex: 0 }
       // 二维码： {content: "{component_id: 2, msg: '二维码', imageSrc: '//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605', "hrc":"//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605", ,"isDefault":true }", type: 'img-link', compIndex: 0 }
       if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code') {
-        let compInfo = JSON.parse(saveItem.content);
-        this.modShowHtmlList[saveItem.compIndex].compInfo = compInfo;
+        this.modShowHtmlList[saveItem.compIndex].compInfo = JSON.parse(saveItem.content);
         sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
       }
     },

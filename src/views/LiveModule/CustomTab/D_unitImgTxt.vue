@@ -110,6 +110,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../../common/css/common.less';
 .editor__u{
   position: relative;
   padding: 0 0 40px 0;
@@ -121,7 +122,7 @@ export default {
     bottom: 10px;
     right: 10px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
