@@ -4,6 +4,7 @@
     <v-editor :isReturn=true @returnChange="sendData1" ref="unitImgTxtEditor" :value="content"></v-editor>
     {{content2}}
     <v-editor :isReturn=true @returnChange="sendData2" ref="unitImgTxtEditor" :value="content2"></v-editor>
+    <v-editor></v-editor>
   </div>
 </template>
 

@@ -40,7 +40,7 @@
         </ul>
         <!-- 内容区域---PC -->
         <div class="panel__pc" v-show="tabType === 'pc'">
-1123
+          1123
         </div>
         <!-- 内容区域---app -->
         <!--拖放：
@@ -65,7 +65,7 @@
               <!-- 右翻 -->
               <span class="app__menu__arrow el-icon-arrow-right"></span>
               <!-- 添加菜单 -->
-              <span class="add-menu">+</span>
+              <span class="add-menu" @click.prevent.stop="addCustomHandle">+</span>
               <!-- 菜单列表 -->
               <div class="panel__app__menu">
                 <ul class="app__menu__list">
@@ -145,7 +145,28 @@
                 </div>
                 <!-- 排行榜 -->
                 <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-rank :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-rank>
+                  <div content="rank-show">
+                    <div class="ranking-title"  v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
+                      <div class="rank-menu fl">
+                        <span :class="rankType === 'reward' ? 'opacityHide' : 'opacityShow'" v-show="item.compInfo && !!(item.compInfo.inSwitch)" @click.stop="showInOrRewardPanel('inv')">邀请榜</span>
+                        <span :class="rankType !== 'reward' ? 'opacityHide' : 'opacityShow'" v-show="item.compInfo && !!(item.compInfo.rewardSwitch)" @click.stop="showInOrRewardPanel('reward')">打赏榜</span>
+                      </div>
+                      <span class="bang-rule fr">排行榜规则</span>
+                    </div>
+                    <div class="ranking-box"  v-if="item.compInfo && ( !!(item.compInfo.inSwitch) || !!(item.compInfo.rewardSwitch))">
+                      <!-- 两个开关都开启状态下，展示inContent；只有任意一个开关开启，展示当前值 v-if="item.compInfo && ( !!(item.compInfo.inSwitch) === false && !!(item.compInfo.rewardSwitch) === true)" -->
+                      <div class="rank-con" v-html="item.compInfo && item.compInfo.rewardContent ? item.compInfo.rewardContent : ''"
+                           v-show="rankType === 'reward'" ></div>
+                      <div class="rank-con" v-html="item.compInfo && item.compInfo.inContent ? item.compInfo.inContent : ''"
+                           v-show="rankType === 'inv'"></div>
+                    </div>
+                    <div class="rank-band" v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
+                      <img src="//cnstatic01.e.vhall.com/static/images/menu/bang01.png" alt=""
+                           v-show="rankType === 'inv'"/>
+                      <img src="//cnstatic01.e.vhall.com/static/images/menu/bang02.png" alt=""
+                           v-show="rankType === 'reward'"/>
+                    </div>
+                  </div>
                 </div>
                 <i class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></i>
               </div>
@@ -162,11 +183,20 @@
             <unit-text-link ref="text-link-unit-dom" v-if="unitComp.show_type === 'text-link'" @cxtChangeInfo="editChange"/>
             <unit-img-link ref="img-link-unit-dom" v-if="unitComp.show_type === 'img-link'"  @cxtChangeInfo="editChange"/>
             <unit-title ref="title-unit-dom" v-if="unitComp.show_type === 'title'" @cxtChangeInfo="editChange"/>
-            <unit-rank ref="rank-unit-dom" v-if="unitComp.show_type === 'rank'"/>
+            <unit-rank ref="rank-unit-dom" v-if="unitComp.show_type === 'rank'" @cxtChangeInfo="editChange"/>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 新增菜单（弹出框）-->
+    <VhallDialog
+      title="新增菜单"
+      :visible.sync="addCustomVisbile"
+      :close-on-click-modal="false"
+      width="30%">
+       111
+    </VhallDialog>
   </div>
 </template>
 
@@ -176,7 +206,6 @@ import PageTitle from '@/components/PageTitle';
 // 展示区
 import ShowVideo from  './CustomTab/showVideo.vue';
 import ShowSpecial from  './CustomTab/showSpecial.vue';
-import ShowRank from  './CustomTab/showRank.vue';
 // 编辑区
 import UnitImgTxt from  './CustomTab/unitImgTxt.vue';
 import UnitRqCode from  './CustomTab/unitRqCode.vue';
@@ -193,7 +222,6 @@ export default {
     PageTitle,
     ShowVideo,
     ShowSpecial,
-    ShowRank,
     UnitImgTxt,
     UnitRqCode,
     UnitVideo,
@@ -209,11 +237,13 @@ export default {
       compList: [],
       tabType: 'app', // pc 电脑端；app 移动端
       customMenus: [],
+      addCustomVisbile: false,
       menuTabIndex: 0,
       modShowHtmlList: [], // 展示模块中创建的组件push进入的数据集合。但删除的时候，组件编号顺序变化情况需关注。
       compIndex: 0, // 统计当前组件属于数据集合中第几个
       unitComp: {}, // 当前操作面板, 同compList中单个内容
-      env: env
+      env: env,
+      rankType: 'inv' // 邀请榜单切换
     };
   },
   computed: {
@@ -299,6 +329,12 @@ export default {
         this.customMenus = [];
       });*/
     },
+    addCustomHandle() {
+      this.addCustomVisbile = true;
+    },
+    sendCustomHandle() {
+
+    },
     // 左侧按钮拖拽-创建组件A1
     dropCompLabel(eve) {
       console.log(`dropCompLabel拖拽对象移动停止触发~~~`);
@@ -335,6 +371,9 @@ export default {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg};
       } else if (item.compType === 'rq-code') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, isDefault:true};
+      } else if (item.compType === 'rank') {
+        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, inSwitch: 1, inContent: '', rewardSwitch: 1, rewardContent: ''};
+        unitComp.rankType = 'inv';
       }
       this.modShowHtmlList.push(unitComp);
       sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
@@ -364,15 +403,19 @@ export default {
     },
     // 右侧编辑区修改，通知左侧展示区域
     editChange(saveItem) {
-      // 文字链格式： { content: "{component_id: 1, msg: '文字链', text: '文本', src: '文件链路径'}",type: 'text-link', compIndex: 0 }
+      // 文字链格式： { content: "{component_id: 5, msg: '文字链', text: '文本', src: '文件链路径'}",type: 'text-link', compIndex: 0 }
       // 标题格式： { content: "{component_id: 7, msg: '标题', title: '默认标123题'}",type: 'title', compIndex: 0 }
       // 分割线： {content: "{component_id: 8, msg: '分割线'}", type: 'hr', compIndex: 0 }
       // 图文链： {content: "{component_id: 6, msg: '图片链', imageSrc: '图片返回后地址，不带域名',src: '路径' }", type: 'img-link', compIndex: 0 }
       // 二维码： {content: "{component_id: 2, msg: '二维码', imageSrc: '//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605', "hrc":"//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/468888605", ,"isDefault":true }", type: 'img-link', compIndex: 0 }
       // 图文： {content: "{component_id: 1, msg: '图文', content: '<p>是否哈佛哈哈</p>'}", type: 'img-txt', compIndex: 0}
-      if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code' || saveItem.type === 'img-txt') {
+      // 排行榜：  {content: "{"component_id":9,"msg":"排行榜","inSwitch":"1","rewardSwitch":"0","inContent":"邀请榜文案","rewardContent":"排行榜文案"}", rankType: 'inv', type: 'rank', compIndex: 0}
+      if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code' || saveItem.type === 'img-txt' || saveItem.type === 'rank') {
         this.modShowHtmlList[saveItem.compIndex].compInfo = JSON.parse(saveItem.content);
         sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
+        if (saveItem.type === 'rank') {
+          this.rankType = saveItem.rankType;
+        }
       }
     },
     // 组件返回结果
@@ -428,6 +471,11 @@ export default {
         // this.$message.info('已取消');
       });
     },
+    // 切换邀请卡榜单
+    showInOrRewardPanel(type) {
+      alert(1);
+      this.rankType = type;
+    }
   },
   created() {
     this.getCompList();
@@ -677,6 +725,71 @@ export default {
     transition: border .3s;
     border: 1px dashed #58ABFF;
     background: rgba(88,171,255,0.1);
+    .fl {
+      float: left;
+    }
+    .fr {
+      float: right;
+    }
+    .ranking-title {
+      display: block;
+      margin: 0 0 0 20px;
+      color: #fff;
+      height: 20px;
+    }
+    .rank-menu {
+      margin-left: -18px;
+    }
+    .opacityHide {
+      opacity: 0.8;
+    }
+    .opacityShow {
+      opacity: 1;
+    };
+    .ranking-box {
+      clear: both;
+      background-color: #f2f2f2;
+      min-height: 0;
+      margin: 20px 0 6px 0;
+    }
+    .rank-con {
+      display: block;
+      margin: 0 10px;
+      padding: 10px 0;
+      font-size: 12px;
+      color: #666;
+    }
+    .rank-band {
+      padding: 10px 0;
+      background-color: #fff;
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+    .menu-cont {
+      min-height: 460px;
+      display: none;
+      width: 100%;
+    }
+    .bang-rule:after {
+      content: '';
+      display: inline-block;
+      -webkit-transform: rotate(-90deg);
+      -ms-transform: rotate(-90deg);
+      transform: rotate(-90deg);
+      transition: -webkit-transform .2s;
+      -webkit-transition: -webkit-transform .2s;
+      transition: transform .2s, -webkit-transform .2s;
+      width: 12px;
+      height: 12px;
+      background-image: url(../../common/images/custom-tab/arror-detail.png);
+      background-size: cover;
+      background-position: 100% 100%;
+      margin-left: 7px;
+      vertical-align: -1px;
+    }
+
   }
   .num-icon {
     display: inline-block;
