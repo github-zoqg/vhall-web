@@ -65,18 +65,18 @@
               <!-- 右翻 -->
               <span class="app__menu__arrow el-icon-arrow-right"></span>
               <!-- 添加菜单 -->
-              <span class="add-menu" @click.prevent.stop="addCustomHandle">+</span>
+              <span class="add-menu" @click.prevent.stop="menuSetHandle(null, null, 'add')">+</span>
               <!-- 菜单列表 -->
               <div class="panel__app__menu">
                 <ul class="app__menu__list">
                   <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'">
                     <div class="menu__item__title" >{{ item.name }}</div>
                     <ul class="app__menu__btn">
-                      <li>重命名</li>
-                      <li>右移</li>
-                      <li>左移</li>
-                      <li>右边新增菜单</li>
-                      <li>左边新增菜单</li>
+                      <li @click.prevent.stop="menuSetHandle(item, ins, 'reName')">重命名</li>
+                      <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')">右移</li>
+                      <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')">左移</li>
+                      <li @click.prevent.stop="menuSetHandle(item, ins, 'right')">右边新增菜单</li>
+                      <li @click.prevent.stop="menuSetHandle(item, ins, 'left')">左边新增菜单</li>
                       <li>
                         <div class="checkbox-item">
                           <el-checkbox />
@@ -195,7 +195,15 @@
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
       width="30%">
-       111
+      <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="120px">
+        <el-form-item label="菜单名称：" prop="name">
+          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="4" show-word-limit/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.prevent.stop="addCustomVisible = false">取 消</el-button>
+        <el-button type="primary" @click.prevent.stop="sendCustomHandle">确 定</el-button>
+      </div>
     </VhallDialog>
   </div>
 </template>
@@ -238,6 +246,14 @@ export default {
       tabType: 'app', // pc 电脑端；app 移动端
       customMenus: [],
       addCustomVisbile: false,
+      addCustomForm: {
+        name: null
+      },
+      addCustomFormRules: {
+        name: [
+          { required: true, message: '请输入菜单名称', trigger: 'blur' }
+        ]
+      },
       menuTabIndex: 0,
       modShowHtmlList: [], // 展示模块中创建的组件push进入的数据集合。但删除的时候，组件编号顺序变化情况需关注。
       compIndex: 0, // 统计当前组件属于数据集合中第几个
@@ -329,11 +345,34 @@ export default {
         this.customMenus = [];
       });*/
     },
-    addCustomHandle() {
+    // 左、右移动菜单
+    moveMenuHandle(item, ins, type) {
+      // type === 'left' 左侧移动一个；type === 'right' 右侧移动一个
+    },
+    // 左、右添加菜单
+    menuSetHandle(item, ins, type) {
+      // type === 'left' 左侧添加一个；type === 'right' 右侧添加一个
+      if (type === 'add'){
+        this.addCustomForm.showTitle = '新增菜单';
+      } else if (type === 'reName') {
+        this.addCustomForm.showTitle = '重命名';
+        this.addCustomForm.name = item.name;
+      } else if (type === 'right') {
+        this.addCustomForm.showTitle = '新增菜单';
+      } else if (type === 'left') {
+        this.addCustomForm.showTitle = '新增菜单';
+      }
+      this.addCustomForm.showType = type;
       this.addCustomVisbile = true;
     },
+    // 保存菜单结果
     sendCustomHandle() {
-
+      this.$refs.addCustomForm.validate((valid) => {
+        if (valid) {
+          this.$message.success('新增成功');
+          this.customMenus();
+        }
+      });
     },
     // 左侧按钮拖拽-创建组件A1
     dropCompLabel(eve) {
