@@ -23,7 +23,7 @@ const v3Routes = [
     component: () => import('@/views/LiveModule/PlayBack/videoTailoring')
   },
   {
-    path: '/warning/:str(\.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
+    path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Error/index'),
     hidden: true
   },
@@ -580,7 +580,7 @@ const v3Routes = [
       {
         path: '/subscribe/:id',
         name: 'list',
-        component: () => import('@/views/LiveModule/Subscribe'),
+        component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '预约' }
       },
     ]
