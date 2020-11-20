@@ -1,6 +1,6 @@
 <template>
-    <span :class="['iconContainer', svgClass]">
-        <svg :class="svgClass" aria-hidden="true">
+    <span :class="['iconContainer', className]">
+        <svg class="svg-icon" aria-hidden="true">
             <use :xlink:href="iconName"></use>
         </svg>
         <slot></slot>
@@ -23,13 +23,6 @@ export default {
   computed: {
     iconName() {
       return `#${this.iconClass}`;
-    },
-    svgClass() {
-      if (this.className) {
-        return 'svg-icon ' + this.className;
-      } else {
-        return 'svg-icon';
-      }
     }
   }
 };

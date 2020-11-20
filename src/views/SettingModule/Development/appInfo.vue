@@ -1,6 +1,6 @@
 <template>
   <div  v-loading="fetching" element-loading-text="努力加载中">
-    <PageTitle title="应用修改"></PageTitle>
+    <PageTitle :title="pageTitle"></PageTitle>
 
     <el-form :model="appForm" ref="appForm" label-width="200px">
       <template v-for="(node, index) in nodesData">
@@ -174,6 +174,13 @@ export default {
   computed:{
     action(){
       return this.$route.meta.action;
+    },
+    pageTitle(){
+      if(this.action == 'modify'){
+        return '应用修改';
+      }else{
+        return '应用详情';
+      }
     }
   },
   methods: {
@@ -239,11 +246,12 @@ export default {
       if(this.action == 'modify'){
         this.getAppInfo();
         this.$route.meta.action="detail";
+        this.$route.meta.title= this.pageTitle;
       }
     },
     modify(){
-      console.log('修改');
-      this.$route.meta.action="modify";
+      this.$route.meta.action = "modify";
+      this.$route.meta.title= this.pageTitle;
     }
   }
 };
@@ -252,6 +260,9 @@ export default {
 <style lang="less" scoped>
   .el-form{
     position: relative;
+  }
+  .el-form-item{
+    width: 600px;
   }
   .subject{
     font-size: 20px;
