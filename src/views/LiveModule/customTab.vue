@@ -5,7 +5,7 @@
         <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       </page-title>
       <div>
-        <el-button type="primary" round>预览</el-button>
+        <el-button type="primary" round @click.prevent.stop="saveCustomTab">保存</el-button>
         <el-link type="info" :underline=false href="http://www.vhall.com/saas/doc/1457.html" target="_blank" class="link__left">使用帮助</el-link>
       </div>
     </div>
@@ -69,17 +69,17 @@
               <!-- 菜单列表 -->
               <div class="panel__app__menu">
                 <ul class="app__menu__list">
-                  <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'">
-                    <div class="menu__item__title" >{{ item.name }}</div>
-                    <ul class="app__menu__btn">
+                  <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"  @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)">
+                    <div class="menu__item__title" >{{ item.name }} {{item.isShow}}</div>
+                    <ul class="app__menu__btn" v-show="item.isShow">
                       <li @click.prevent.stop="menuSetHandle(item, ins, 'reName')">重命名</li>
-                      <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')">右移</li>
-                      <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')">左移</li>
+                      <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')" v-if="ins !== customMenus.length-1">右移</li>
+                      <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')" v-if="ins !== 0">左移</li>
                       <li @click.prevent.stop="menuSetHandle(item, ins, 'right')">右边新增菜单</li>
                       <li @click.prevent.stop="menuSetHandle(item, ins, 'left')">左边新增菜单</li>
-                      <li>
+                      <li v-if="item.status === 3 || item.status === 4">
                         <div class="checkbox-item">
-                          <el-checkbox />
+                          <el-checkbox :checked="item.status === 4" @change="changeMenuStatusHandle(item, ins)"/>
                           <div class="menu__item__status">
                             预告/结束显示
                             <el-tooltip>
@@ -91,8 +91,8 @@
                           </div>
                         </div>
                       </li>
-                      <li>删除</li>
-                      <li>显示</li>
+                      <li v-if="item.status === 3 || item.status === 4" @click.prevent.stop="delMenuHandle(ins)">删除</li>
+                      <li v-if="item.status === 1 || item.status === 2" @click.prevent.stop="changeMenuStatusHandle(item, ins)">{{item.status === 1 ? '隐藏' : '显示'}}</li>
                     </ul>
                   </li>
                 </ul>
@@ -191,7 +191,7 @@
 
     <!-- 新增菜单（弹出框）-->
     <VhallDialog
-      title="新增菜单"
+      :title="addCustomForm.showTitle"
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
       width="30%">
@@ -330,11 +330,34 @@ export default {
       this.compList = list;
     },
     customMenuList() {
-      this.customMenus = [
-        {"name":"\u6587\u6863","type":2,"status":1,"doc_id":0,"doc_name":""},
-        {"name":"\u804a\u5929","type":3,"status":1,"welcome_content":""},
-        {"name":"\u7b80\u4ecb","type":4,"status":1}
+      let menuList = [
+        {
+          "name": "\u804a\u5929",
+          "type": 3,
+          "status": 1
+        },
+        {
+          "name": "\u7b80\u4ecb",
+          "type": 4,
+          "status": 1
+        },
+        {
+          "name": "\u63a8\u8350",
+          "type": 6,
+          "status": 1
+        },
+        {
+          "name":"测试11",
+          "type":1,
+          "status":3,
+          "components": []
+        }
       ];
+      menuList.map(item => {
+        item.isShow = false;
+        return item;
+      });
+      this.customMenus = menuList;
      /* this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
@@ -345,6 +368,13 @@ export default {
         this.customMenus = [];
       });*/
     },
+    showHoverMenu(item, flag) {
+      item.isShow = flag;
+    },
+    // 删除菜单
+    delMenuHandle(ins) {
+      this.customMenus.splice(ins, 1);
+    },
     // 左、右移动菜单
     moveMenuHandle(item, ins, type) {
       // type === 'left' 左侧移动一个；type === 'right' 右侧移动一个
@@ -354,23 +384,75 @@ export default {
       // type === 'left' 左侧添加一个；type === 'right' 右侧添加一个
       if (type === 'add'){
         this.addCustomForm.showTitle = '新增菜单';
+        this.addCustomForm.menuIndex = this.customMenus.length;
       } else if (type === 'reName') {
         this.addCustomForm.showTitle = '重命名';
         this.addCustomForm.name = item.name;
+        this.addCustomForm.menuIndex = ins;
       } else if (type === 'right') {
         this.addCustomForm.showTitle = '新增菜单';
+        this.addCustomForm.menuIndex = ins;
       } else if (type === 'left') {
         this.addCustomForm.showTitle = '新增菜单';
+        this.addCustomForm.menuIndex = ins;
       }
       this.addCustomForm.showType = type;
       this.addCustomVisbile = true;
     },
+    changeMenuStatusHandle(item, ins) {
+      console.log(ins);
+      if(item.status === 3) {
+        item.status = 4;
+      } else if (item.status === 4) {
+        item.status = 3;
+      } else if (item.status === 2) {
+        item.status = 1;
+      } else if (item.status === 1) {
+        item.status = 2;
+      }
+    },
     // 保存菜单结果
     sendCustomHandle() {
+      // 原有菜单不可删除，状态只有1 和 2； 新增自定义菜单状态默认3，预告显示status为4；
       this.$refs.addCustomForm.validate((valid) => {
         if (valid) {
-          this.$message.success('新增成功');
-          this.customMenus();
+          if (this.addCustomForm.showType === 'add') {
+            // 某位添加菜单
+            this.customMenus.push({
+              name: this.addCustomForm.name,
+              type: 1,
+              status: 3, // 1显示,2隐藏,3直播回放显示,4预告结束显示
+              components: []
+            });
+          } else if (this.addCustomForm.showType === 'reName') {
+            // 当前菜单，文案修改
+            this.customMenus[this.addCustomForm.menuIndex].name = this.addCustomForm.name;
+          } else if (this.addCustomForm.showType === 'right') {
+            // 右侧新增菜单：若是最后一个，右侧添加；若非最后一个，数组插入
+            if (this.addCustomForm.menuIndex === this.customMenus.length -1) {
+              this.customMenus.push({
+                name: this.addCustomForm.name,
+                type: 1,
+                status: 3, // 1显示,2隐藏,3直播回放显示,4预告结束显示
+                components: []
+              });
+            } else {
+              this.customMenus.splice(this.addCustomForm.menuIndex + 1, 0, {
+                name: this.addCustomForm.name,
+                type: 1,
+                status: 3, // 1显示,2隐藏,3直播回放显示,4预告结束显示
+                components: []
+              });
+            }
+          } else if (this.addCustomForm.showType === 'left') {
+            this.customMenus.splice(this.addCustomForm.menuIndex, 0, {
+              name: this.addCustomForm.name,
+              type: 1,
+              status: 3, // 1显示,2隐藏,3直播回放显示,4预告结束显示
+              components: []
+            });
+          }
+          this.saveCustomTab();
         }
       });
     },
@@ -460,7 +542,6 @@ export default {
     // 组件返回结果
     getShowCompInfo(showCompStr, ins) {
     },
-
     allowDropCompLabel(eve) {
       console.log(`allowDropCompLabel触发`);
       eve.preventDefault();
@@ -514,6 +595,27 @@ export default {
     showInOrRewardPanel(type) {
       alert(1);
       this.rankType = type;
+    },
+    saveCustomTab() {
+      let params = {
+        webinar_id: this.$route.params.str,
+        save_type: 2,
+        menus: this.customMenus
+      };
+      this.$fetch('customMenuSave', {
+        request_data: JSON.stringify(params)
+      }).then(res =>{
+        if(res && res.code === 200 && res.data) {
+          this.$message.success('保存成功');
+          this.addCustomVisbile = false;
+          this.customMenuList();
+        } else {
+          this.$message.error(res.msg || '保存失败');
+        }
+      }).catch(e=>{
+        console.log(e);
+        this.$message.error('保存失败');
+      });
     }
   },
   created() {
@@ -720,7 +822,6 @@ export default {
   }
 }
 .app__menu__btn {
-  display: none;
   position: absolute;
   left: 0;
   top: 35px;
