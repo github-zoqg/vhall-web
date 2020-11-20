@@ -10,8 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
-      <el-button class="head-btn batch-del">批量删除</el-button>
+      <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
+      <el-button round class="head-btn batch-del">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'

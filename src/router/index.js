@@ -68,7 +68,7 @@ const v3Routes = [
         path: 'vodEdit',
         name: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: {webniarType: 'live', title: '创建点播', icon: 'table' , activeMenu: '/live/list'},
+        meta: {webniarType: 'vod', title: '创建点播', icon: 'table' , activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -170,7 +170,7 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/posterCard/:str(\\d+)',
+        path: 'posterCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/posterCard'),
         name: 'posterCard',
         meta:{ title: '品牌—开屏海报', icon: '' , activeMenu: '/live/list'},
@@ -209,6 +209,13 @@ const v3Routes = [
         component: () => import('@/views/LiveModule/MaterialSet/productSet'),
         name: 'productSet',
         meta:{ title: '直播—商品', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'addProduct/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/components/addProduct'),
+        name: 'addProduct',
+        meta:{ title: '直播—新建商品', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -276,11 +283,11 @@ const v3Routes = [
         meta: { title: '专题列表', icon: 'table' }
       },
       {
-        path: 'detail/:str(\\d+)',
-        name: 'detail',
-        component: () => import('@/views/SpecialModule/detail'),
+        path: 'edit',
+        name: 'edit',
+        component: () => import('@/views/SpecialModule/edit'),
         meta: { title: '创建专题', icon: 'table' }
-      },
+      }
     ]
   },
   {
@@ -393,13 +400,6 @@ const v3Routes = [
         path: '/dev/:appId(\\d+)',
         component: () => import('@/views/SettingModule/Development/appInfo'),
         name: 'devModify',
-        meta:{ title: '应用修改', icon: '' , activeMenu: '/setting/info', action: 'modify'},
-        hidden: true
-      },
-      {
-        path: '/devDetail/:appId(\\d+)',
-        component: () => import('@/views/SettingModule/Development/appInfo'),
-        name: 'devDetail',
         meta:{ title: '应用详情', icon: '' , activeMenu: '/setting/info', action: 'detail'},
         hidden: true
       },
@@ -576,7 +576,13 @@ const v3Routes = [
         component: () => import('@/views/LiveModule/Room/watchWrap'),
         name: 'LiveRoom',
         meta: { title: '观看直播' },
-      }
+      },
+      {
+        path: '/subscribe/:id',
+        name: 'list',
+        component: () => import('@/views/LiveModule/Subscribe'),
+        meta: { title: '预约' }
+      },
     ]
   },
   { path: '*', redirect: '/warning/400', hidden: true }

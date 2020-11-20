@@ -10,9 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" class="head-btn set-upload" @click="addGift">新建礼物</el-button>
-      <el-button class="head-btn set-upload">资料库</el-button>
-      <el-button class="head-btn set-upload">批量删除</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
+      <el-button round class="head-btn set-upload">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="'请输入礼物名称'"

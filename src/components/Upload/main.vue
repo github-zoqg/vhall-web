@@ -7,6 +7,11 @@
         <div v-if="value">
           <img :src="value" class="avatar">
           <div class="mask">
+            <span v-if="!!$props.restPic">
+              <i class="el-icon-collection"></i>
+              <br/>
+              封面
+            </span>
             <span>
               <i class="el-icon-delete" @click.stop="deletes"></i>
               <br/>
@@ -168,7 +173,7 @@ export default {
     display: none;
     span{
       &:nth-child(2){
-        margin-left: 30px;
+        margin: 0  20px;
       }
       i{
         color: #fff;

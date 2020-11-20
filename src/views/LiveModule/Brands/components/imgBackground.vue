@@ -1,5 +1,5 @@
 <template>
-  <el-dialog
+  <VhallDialog
     title="添加封面背景"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
@@ -19,13 +19,6 @@
             :before-upload="beforeUploadHnadler">
             <p slot="tip">最佳尺寸750*1624<br />支持jpg、png、bmp</p>
           </upload>
-          <!-- <el-upload class="upload-demo" action="">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              最佳尺寸750*1624<br />支持jpg、png、bmp
-            </div>
-          </el-upload> -->
-          <!-- <img src="@/common/images/logo.png" alt="" /> -->
         </div>
         <div class="list-item list-imgs is-success" v-for="(item, index) in fileList" :key="index">
           <label class="img-tangle" v-if="item.isChecked">
@@ -41,7 +34,7 @@
       >
       <el-button @click="dialogVisible = false" size="medium">取消</el-button>
     </div>
-  </el-dialog>
+  </VhallDialog>
 </template>
 <script>
 import upload from '@/components/Upload/main';
