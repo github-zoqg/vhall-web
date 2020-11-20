@@ -81,6 +81,7 @@
   </div>
 </template>
 <script>
+console.log(1)
 import upload from '@/components/Upload/main';
 export default {
   data() {
