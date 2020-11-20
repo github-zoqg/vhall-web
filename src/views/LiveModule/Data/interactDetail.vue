@@ -3,27 +3,29 @@
     <div class="title-data">
       <span>{{ title }}</span>
     </div>
-    <search-area
-      ref="searchArea"
-      :searchAreaLayout="searchAreaLayout"
-      :placeholder="placeholder"
-      @onSearchFun="getTableList('search')"
-      @onExportData="exportData"
-      @deletedChecked="deletedChecked"
-      >
-    </search-area>
-    <table-list
-      ref="tableList"
-      :manageTableData="tableList"
-      :tabelColumnLabel="tabelColumn"
-      :tableRowBtnFun="tableRowBtnFun"
-      :isCheckout="isCheckout"
-      :totalNum="totalNum"
-      @changeTableCheckbox="changeTableCheckbox"
-      @onHandleBtnClick="onHandleBtnClick"
-      @getTableList="getTableList"
-      >
-    </table-list>
+    <el-card>
+      <search-area
+        ref="searchArea"
+        :searchAreaLayout="searchAreaLayout"
+        :placeholder="placeholder"
+        @onSearchFun="getTableList('search')"
+        @onExportData="exportData"
+        @deletedChecked="deletedChecked"
+        >
+      </search-area>
+      <table-list
+        ref="tableList"
+        :manageTableData="tableList"
+        :tabelColumnLabel="tabelColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :isCheckout="isCheckout"
+        :totalNum="totalNum"
+        @changeTableCheckbox="changeTableCheckbox"
+        @onHandleBtnClick="onHandleBtnClick"
+        @getTableList="getTableList"
+        >
+      </table-list>
+    </el-card>
   </div>
 </template>
 <script>

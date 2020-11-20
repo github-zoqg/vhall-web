@@ -170,7 +170,7 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/posterCard/:str(\\d+)',
+        path: 'posterCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/posterCard'),
         name: 'posterCard',
         meta:{ title: '品牌—开屏海报', icon: '' , activeMenu: '/live/list'},
@@ -209,6 +209,13 @@ const v3Routes = [
         component: () => import('@/views/LiveModule/MaterialSet/productSet'),
         name: 'productSet',
         meta:{ title: '直播—商品', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'addProduct/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/components/addProduct'),
+        name: 'addProduct',
+        meta:{ title: '直播—新建商品', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -276,11 +283,11 @@ const v3Routes = [
         meta: { title: '专题列表', icon: 'table' }
       },
       {
-        path: 'detail/:str(\\d+)',
-        name: 'detail',
-        component: () => import('@/views/SpecialModule/detail'),
+        path: 'edit',
+        name: 'edit',
+        component: () => import('@/views/SpecialModule/edit'),
         meta: { title: '创建专题', icon: 'table' }
-      },
+      }
     ]
   },
   {

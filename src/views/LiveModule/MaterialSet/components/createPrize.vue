@@ -48,6 +48,7 @@
               <i class="el-icon-check"></i>
             </label>
            </div>
+         </div>
        </el-scrollbar>
        <div class="btnSure">
         <span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span>

@@ -27,7 +27,7 @@ export default {
   props: {
     isStatus: {
       type: Number,
-      default: 1,
+      default: 2,
     },
   },
 };
@@ -66,13 +66,17 @@ export default {
     i {
       font-size: 12px;
       padding-right: 3px;
+      vertical-align: top;
+      padding-top: 3px;
+      color: #fff;
     }
     b {
       display: inline-block;
       font-size: 12px;
       font-family: PingFangSC-Regular, PingFang SC;
       color: #fff;
-      line-height: 18px;
+      vertical-align: top;
+      // line-height: 18px;
     }
   }
   .grayColor {

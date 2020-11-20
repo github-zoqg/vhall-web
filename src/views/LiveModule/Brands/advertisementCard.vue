@@ -5,8 +5,8 @@
     </div>
     <div class="advertisement-main">
       <div class="search-data">
-        <el-button type="primary" @click="createAdvise('advise')">创建</el-button>
-        <el-button class="head-btn set-upload" @click="createAdvise('data')">资料库</el-button>
+        <el-button type="primary" @click="createAdvise()">创建</el-button>
+        <el-button class="head-btn set-upload" @click="createCenter()">资料库</el-button>
         <el-button class="head-btn set-upload">批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model="searchTitle" placeholder="请输入标题"></el-input>
@@ -28,6 +28,7 @@
           >
         </table-list>
       </el-card>
+
       <create-advise ref="advise"></create-advise>
       <data-box ref="data"></data-box>
     </div>
@@ -35,7 +36,6 @@
 </template>
 <script>
 import createAdvise from './components/createAdvise';
-import dataBox from './components/dataCenter';
 export default {
   data() {
     return {
@@ -82,6 +82,10 @@ export default {
           methodName: 'edit'
         },
         {
+          name: '复制',
+          methodName: 'cope'
+        },
+        {
           name: '删除',
           methodName: 'delete'
         }
@@ -90,8 +94,7 @@ export default {
     };
   },
   components: {
-    createAdvise,
-    dataBox
+    createAdvise
   },
   methods: {
     getTableList() {
@@ -111,8 +114,11 @@ export default {
     changeTableCheckbox(val) {
       console.log(val);
     },
-    createAdvise(ref) {
-      this.$refs[ref].dialogVisible = true;
+    createAdvise() {
+      this.$refs.advise.dialogVisible = true;
+    },
+    createCenter() {
+      this.$refs.advise.dialogAdverVisible = true;
     }
   }
 };
@@ -143,12 +149,12 @@ export default {
     .searchTitle{
       float: right;
       width: 200px;
-    }
-    /deep/.el-button{
-      border-radius: 20px;
-    }
-    /deep/.el-input__inner{
-      border-radius: 20px;
+      /deep/.el-button{
+        border-radius: 20px;
+      }
+      /deep/.el-input__inner{
+        border-radius: 20px;
+      }
     }
   }
 }

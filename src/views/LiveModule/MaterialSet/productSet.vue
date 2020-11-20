@@ -10,8 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" class="head-btn set-upload" @click="addGift">新建礼物</el-button>
-      <el-button class="head-btn set-upload">批量删除</el-button>
+      <el-button type="primary" @click="addGift">创建</el-button>
+      <el-button>批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="'请输入商品名称'"
@@ -26,47 +26,15 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
-    <el-dialog
-    title="新建礼物"
-    :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
-    width="468px">
-    <el-form :model="formData" ref="ruleForm" label-width="100px">
-      <el-form-item label="图片上传">
-        <upload
-          class="giftUpload"
-          v-model="imageUrl"
-          :on-success="handleuploadSuccess"
-          :on-progress="uploadProcess"
-          :on-error="uploadError"
-          :on-preview="uploadPreview"
-          :before-upload="beforeUploadHnadler">
-          <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
-        </upload>
-      </el-form-item>
-       <el-form-item label="礼物名称">
-          <el-input v-model="formData.title" maxlength="10" show-word-limit style="width:336px"></el-input>
-      </el-form-item>
-       <el-form-item label="礼物价格">
-          <el-input v-model="formData.title" maxlength="10" show-word-limit prefix-icon="el-icon-meney" style="width:336px"></el-input>
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
-      <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
-    </span>
-  </el-dialog>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import upload from '@/components/Upload/main';
 export default {
   name: "prize",
   data() {
     return {
-      dialogVisible: false,
       formData: {},
       imageUrl: '',
       total: 100,
@@ -125,8 +93,7 @@ export default {
     };
   },
   components: {
-    PageTitle,
-    upload
+    PageTitle
   },
   methods: {
     onHandleBtnClick(val) {
@@ -162,7 +129,7 @@ export default {
     },
     // 新建礼物
     addGift() {
-      this.dialogVisible = true;
+      this.$router.push({name: 'addProduct'});
     }
   },
 };

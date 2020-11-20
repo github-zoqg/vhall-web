@@ -14,27 +14,32 @@
       </el-tooltip>
     </div>
     <title-data :isStatus="status"></title-data>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="直播" name="live"></el-tab-pane>
-      <el-tab-pane label="回放" name="relive"></el-tab-pane>
-      <search-area
-        ref="searchArea"
-        :placeholder="placeholder"
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
-        >
-      </search-area>
-      <table-list
-      ref="tableList"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isHandle="isHandle"
-        :totalNum="totalNum"
-        @changeTableCheckbox="changeTableCheckbox"
-        @getTableList="getTableList"
-      >
-    </table-list>
-    </el-tabs>
+    <el-card>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="直播" name="live"></el-tab-pane>
+        <el-tab-pane label="回放" name="relive"></el-tab-pane>
+        <div class="search">
+          <search-area
+            ref="searchArea"
+            :placeholder="placeholder"
+            :searchAreaLayout="searchAreaLayout"
+            @onSearchFun="getTableList('search')"
+            >
+          </search-area>
+        </div>
+        <table-list
+          ref="tableList"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isHandle="isHandle"
+          :totalNum="totalNum"
+          @changeTableCheckbox="changeTableCheckbox"
+          @getTableList="getTableList"
+          >
+        </table-list>
+      </el-tabs>
+    </el-card>
+
   </div>
 </template>
 <script>
@@ -42,7 +47,7 @@ import titleData from './components/title';
 export default {
   data() {
     return {
-      status: 1,
+      status: 2,
       totalNum: 100,
       isHandle: false,
       activeName: 'live',
@@ -101,17 +106,14 @@ export default {
         {
           label: '用户信息',
           key: 'user',
-          width: 120
         },
         {
           label: '手机号',
           key: 'phone',
-          width: 120
         },
         {
           label: '邮箱',
           key: 'emails',
-          width: 150
         },
         {
           label: '进入时间',
@@ -120,22 +122,18 @@ export default {
         {
           label: '观看时长（分）',
           key: 'timer',
-          width: 120
         },
         {
           label: '观看终端',
           key: 'revice',
-           width: 100
         },
          {
           label: '地理位置',
           key: 'area',
-          width: 100
         },
         {
           label: 'IP地址',
           key: 'ip',
-          width: 120
         }
       ]
     };
@@ -179,6 +177,9 @@ export default {
   }
   /deep/.el-button.is-circle {
     padding: 3px;
+  }
+  .search{
+    margin-top: 30px;
   }
   .title-data {
     margin: 20px 0;
