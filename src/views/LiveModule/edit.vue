@@ -1,7 +1,7 @@
 <template>
   <div class="editBox">
     <pageTitle :title="`创建${webniarTypeToZH}`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" v-loading="loading">
+    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
       :rules="[
         { required: true, message: '请输入直播标题', trigger: 'blur' },
@@ -41,7 +41,7 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode=3' :class="{active: liveMode== 3}">
+          <div @click='liveMode=3' :class="{active: liveMode== 3, disabled: true}">
             <el-container class='model'>
               <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
@@ -59,6 +59,7 @@
               </el-container>
             </el-container>
             <p class="desc">互动直播</p>
+            <span class="notAllow">未开通</span>
           </div>
           <div @click='liveMode=1' :class="{active: liveMode== 1}">
             <el-container class='model'>
@@ -176,10 +177,13 @@
         :active-text="limitCapacityDesc">
       </el-switch>
       <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput"></el-input>
-      <p class="btnGroup">
+      <el-form-item class="btnGroup">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" round>取消</el-button>
-      </p>
+      </el-form-item>
+      <!-- <p class="btnGroup">
+
+      </p> -->
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
   </div>
@@ -373,6 +377,7 @@ export default {
       color: #1A1A1A;
       pointer-events: none;
       user-select: none;
+      margin: 0 20px;
     }
     /deep/ .el-switch__label--right{
       color: #999999;
@@ -380,13 +385,13 @@ export default {
       user-select: none;
     }
   }
-  .el-form-item{
-    width: 100%;
-    max-width: 640px;
+  /deep/ .el-form-item{
+    // width: 100%;
+    max-width: 660px;
   }
-  /deep/ .el-form-item__label{
-    float: none;
-  }
+  // /deep/ .el-form-item__label{
+  //   float: none;
+  // }
   .line{
     text-align: center;
     width: 20px;
@@ -396,10 +401,18 @@ export default {
     justify-content: space-between;
     >div{
       height: 112px;
-      width: 200px;
+      width: 180px;
       border-radius: 4px;
       border: 1px solid #CCCCCC;
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      &.disabled{
+        pointer-events: none;
+        .notAllow{
+          display: block;
+        }
+      }
       &.active{
         border-color: #FB3A32;
         .block{
@@ -415,6 +428,19 @@ export default {
             height: 13px;
           }
         }
+      }
+      .notAllow{
+        position: absolute;
+        color: #727272;
+        bottom: -24px;
+        right: -32px;
+        background: #F2F2F2;
+        font-size: 10px;
+        line-height: normal;
+        padding: 5px 20px;
+        padding-bottom: 39px;
+        transform: rotate(-45deg);
+        display: block;
       }
     }
     .model{
@@ -481,7 +507,7 @@ export default {
     line-height: 20px;
   }
   .btnGroup{
-    text-align: center;
+    // text-align: center;
     margin-top: 40px;
     .el-button{
       color:#FB3A32;

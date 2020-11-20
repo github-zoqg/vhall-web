@@ -68,7 +68,7 @@ const v3Routes = [
         path: 'vodEdit',
         name: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: {webniarType: 'live', title: '创建点播', icon: 'table' , activeMenu: '/live/list'},
+        meta: {webniarType: 'vod', title: '创建点播', icon: 'table' , activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -393,13 +393,6 @@ const v3Routes = [
         path: '/dev/:appId(\\d+)',
         component: () => import('@/views/SettingModule/Development/appInfo'),
         name: 'devModify',
-        meta:{ title: '应用修改', icon: '' , activeMenu: '/setting/info', action: 'modify'},
-        hidden: true
-      },
-      {
-        path: '/devDetail/:appId(\\d+)',
-        component: () => import('@/views/SettingModule/Development/appInfo'),
-        name: 'devDetail',
         meta:{ title: '应用详情', icon: '' , activeMenu: '/setting/info', action: 'detail'},
         hidden: true
       },
@@ -569,7 +562,13 @@ const v3Routes = [
         component: () => import('@/views/LiveModule/Room/watchWrap'),
         name: 'LiveRoom',
         meta: { title: '观看直播' },
-      }
+      },
+      {
+        path: '/subscribe/:id',
+        name: 'list',
+        component: () => import('@/views/LiveModule/Subscribe'),
+        meta: { title: '预约' }
+      },
     ]
   },
   { path: '*', redirect: '/warning/400', hidden: true }

@@ -131,8 +131,7 @@ export default {
       });
     },
     viewApp(val){
-      console.log('查看', val, `/dev/${val.id}`);
-      this.$router.push({path: `/devDetail/${val.rows.id}`});
+      this.$router.push({path: `/dev/${val.rows.id}`});
     },
     stopApp(val){
       this.$confirm('是否确认停用APP？', '提示', {
