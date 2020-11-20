@@ -16,6 +16,9 @@ export default {
 html{
   height: 100%;
 }
+body {
+  margin: 0 0!important;
+}
 #app{
   height: 100%;
 }

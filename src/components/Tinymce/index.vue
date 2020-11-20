@@ -1,6 +1,5 @@
 <template>
   <div>
-    <br/>
     <vue-tinymce v-model="content" :setting="setting" @change="sendContent"></vue-tinymce>
   </div>
 </template>

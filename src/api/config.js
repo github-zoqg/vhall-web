@@ -66,10 +66,12 @@ const apis = {
   // 账户管理
   userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
   getSonInfo: ['/100/v3/users/child/get-head-info', 'POST', 'mock'], // 子账号tab页头部信息接口 Jia.li
-  getSonList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 获取子账号信息 Jia.li
-  sonAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 子账号创建 Jia.li
-  sonDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 子账号删除 Jia.li
-  sonEdit: ['/99/v3/webinars/audience/put-group', 'POST', 'mock'], // 子账号修改 Jia.li
+  childExport: ['/100/v3/users/child/export', 'POST', 'mock'], // 子账号列表导出接口 Jia.li
+  getChildCount: ['/100/v3/users/child/count', 'POST', 'mock'], // 获取子账号个数接口 Jia.li
+  getSonList: ['/100/v3/users/child/get-list', 'POST', 'mock'], // 获取子账号信息 Jia.li
+  sonAdd: ['/100/v3/users/child/create', 'POST', 'mock'], // 子账号创建 Jia.li
+  sonDel: ['/100/v3/users/child/delete', 'POST', 'mock'], // 子账号删除 Jia.li
+  sonEdit: ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号修改 Jia.li
   getRoleList: ['/100/v3/users/user-role/list', 'POST', 'mock'], // 角色-用户-获取 Jia.li
   roleAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 角色创建 Jia.li
   roleDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 角色删除 Jia.li
@@ -106,6 +108,14 @@ const apis = {
   createApp: ['/100/v3/users/app-keys/create', 'POST', 'mock'], // 创建应用 jian.chang
   getAppInfo: ['/100/v3/users/app-keys/get-info', 'POST', 'mock'], // 获取应用详情 jian.chang
   modifyApp: ['/100/v3/users/app-keys/edit', 'POST', 'mock'], // 修改应用 jian.chang
+
+  // 账户管理
+  homeInfoGet: ['/100/v3/users/homepage/get-info', 'POST', 'mock'], // 个人主页查询接口 Jia.li
+  homeInfoEdit: ['/100/v3/users/homepage/edit', 'POST', 'mock'], // 个人主页更新接口 Jia.li
+  checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
+  resetPassword: ['/100/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回接口 Jia.li
+  bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
+
 };
 
 const getApi = api => {

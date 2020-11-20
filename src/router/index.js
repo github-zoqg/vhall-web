@@ -494,17 +494,24 @@ const v3Routes = [
         meta: { title: '个人主页', icon: 'table' }
       },
       {
+        path: 'homeSetInfo/:str(\\d+)',
+        component: () => import('@/views/AccountModule/homeSetInfo'),
+        name: 'homeSetInfo',
+        meta:{ title: '设置', icon: 'table' , activeMenu: '/account/home'},
+        hidden: true
+      },
+      {
         path: '/allocation/:str(\\d+)',
         component: () => import('@/views/AccountModule/allocation'),
         name: 'allocation',
-        meta:{ title: '用量分配', icon: 'table' , activeMenu: '/finance/son'},
+        meta:{ title: '用量分配', icon: 'table' , activeMenu: '/account/son'},
         hidden: true
       },
       {
         path: '/sonDetail/:str(\\d+)',
         component: () => import('@/views/AccountModule/sonDetail'),
         name: 'sonDetail',
-        meta:{ title: '子账号详情', icon: 'table' , activeMenu: '/finance/son'},
+        meta:{ title: '子账号详情', icon: 'table' , activeMenu: '/account/son'},
         hidden: true
       }
     ]
