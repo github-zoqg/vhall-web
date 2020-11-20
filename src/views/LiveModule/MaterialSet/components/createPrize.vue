@@ -72,7 +72,7 @@
          </div>
        </el-scrollbar>
        <div class="btnSure">
-        <span>当前选中 <b>2</b> 件奖品</span>
+        <span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span>
         <el-button type="primary" @click="surePrize" round size="medium">确 定</el-button>
         <el-button @click="cancelPeize" round size="medium">取 消</el-button>
        </div>
@@ -87,6 +87,7 @@ export default {
     return {
       dialogVisible: false,
       dialogPrizeVisible: false,
+      checkedList: [],
       prizeForm: {
         imageUrl: '',
         name: ''
@@ -100,7 +101,7 @@ export default {
         {
           name: '请输入奖品名称1',
           type: '001',
-          isChecked: true
+          isChecked: false
         },
         {
           name: '请输入奖品名称2',
@@ -150,6 +151,9 @@ export default {
     },
     choisePrize(item) {
       item.isChecked = !item.isChecked;
+      let arr = [];
+      arr = this.list.filter(items => items.isChecked);
+      this.checkedList = arr;
     }
   }
 };
