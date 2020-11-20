@@ -25,20 +25,6 @@
         >
       </search-area>
     </div>
-    <!-- <div class="head-operat">
-      <el-upload
-        :accept="accept"
-        inputName="file"
-        class="upload-demo"
-        action="https://t.e.vhall.com/account/docupload"
-        :file-list="fileList">
-        <el-button size="small" type="primary">点击上传</el-button>
-      </el-upload>
-      <el-button type="primary">批量删除</el-button>
-      <span class="searchTitle">
-        <el-input v-model="formParams.wordName" placeholder="请输入文档名称" @change="changeName" clearable></el-input>
-      </span>
-    </div> -->
     <el-card class="word-list">
       <table-list
         ref="tableListWord"
