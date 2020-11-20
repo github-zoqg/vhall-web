@@ -48,28 +48,6 @@
               <i class="el-icon-check"></i>
             </label>
            </div>
-           <div class="prize-item">
-             <img src="@/common/images/avatar.jpg" alt="">
-             <div class="prize-title">
-               <h1>HUAWEI多屏协同</h1>
-               <p>JP0001</p>
-             </div>
-           </div>
-           <div class="prize-item">
-             <img src="@/common/images/avatar.jpg" alt="">
-             <div class="prize-title">
-               <h1>HUAWEI多屏协同</h1>
-               <p>JP0001</p>
-             </div>
-           </div>
-           <div class="prize-item">
-             <img src="@/common/images/avatar.jpg" alt="">
-             <div class="prize-title">
-               <h1>HUAWEI多屏协同</h1>
-               <p>JP0001</p>
-             </div>
-           </div>
-         </div>
        </el-scrollbar>
        <div class="btnSure">
         <span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span>
