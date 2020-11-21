@@ -201,7 +201,14 @@ const v3Routes = [
         path: 'question/:str(\\d+)',
         component: () => import('@/views/MaterialModule/question'),
         name: 'question',
-        meta:{ title: '直播—问卷', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—问卷', icon: '', name: 'live', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'addQuestion',
+        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        name: 'addQuestion',
+        meta:{ title: '直播—新建问卷', icon: '' , name: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -313,7 +320,14 @@ const v3Routes = [
         path: 'question',
         name: 'question',
         component: () => import('@/views/MaterialModule/question'),
-        meta: { title: '问卷', icon: 'table' }
+        meta: { title: '问卷', name: 'material', icon: 'table' }
+      },
+      {
+        path: 'addQuestion',
+        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        name: 'addQuestion',
+        meta:{ title: '新建问卷', icon: 'table', name: 'material' },
+        hidden: true
       },
       {
         path: 'prize',
