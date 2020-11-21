@@ -213,8 +213,9 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-  /deep/.el-button--text {
+  /deep/.el-button.el-button--text {
     color: #1A1A1A;
+    border: 0;
     &:hover{
       color: #FB3A32;
     }

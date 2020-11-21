@@ -58,7 +58,7 @@ const apis = {
   playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
   playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
   //首页
-  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）
+  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
   // 登录
   loginInfo: ['/logins/v3/users/user/login', 'POST'],
   //数据中心
