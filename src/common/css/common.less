@@ -329,6 +329,76 @@
   width: 10%;
   line-height: 28px;
 }
+
+/*-----------------------------------------按钮组 ---------------------------------------------*/
+.el-button {
+  /* 默认按钮 */
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  line-height: 20px;
+  border: 1px solid #CCCCCC;
+  padding: 9px 48px;
+  color: #666666;
+}
+button.el-button.el-button--medium {
+  /* 中等按钮 */
+  border: 1px solid #CCCCCC;
+  padding: 4px 24px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #666666;
+  line-height: 26px;
+}
+.el-button.is-round {
+  border-radius: 20px;
+  padding: 9px 48px;
+}
+button.el-button.el-button--small {
+  /*小型按钮*/
+  border: 1px solid #CCCCCC;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #676767;
+  line-height: 20px;
+}
+button.el-button.el-button--mini {
+  /*迷你按钮 26Height*/
+  border: 1px solid #CCCCCC;
+  padding: 2px 16px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #666666;
+  line-height: 20px;
+}
+button.el-button.el-button--primary {
+  /*primary 按钮*/
+  background: #FB3A32;
+  color: #FFFFFF;
+  border: 1px solid #FB3A32;
+  &:hover {
+    background: #FC615B;
+    border: 1px solid #FC615B;
+  }
+  &:active {
+    background: #E2332C;
+    border: 1px solid #E2332C;
+  }
+  &.is-disabled {
+    background: #F09D99;
+    border: 1px solid #F09D99;
+    cursor: not-allowed;
+    &:hover, &:active{
+      background: #F09D99;
+      border: 1px solid #F09D99;
+    }
+  }
+}
+/*--------------------------------------------------------------------------------------*/
 /*-----------------------------------------绑定/修改--卡片 开始 ---------------------------------------------*/
 .comp-card-one {
   .flex-display();
@@ -460,3 +530,4 @@
 /deep/.el-form-item {
   margin-bottom: 24px;
 }
+

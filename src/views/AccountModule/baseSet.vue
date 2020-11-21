@@ -26,9 +26,9 @@
       <el-form-item label="您的职业：" prop="position">
         <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" maxlength="15" />
       </el-form-item>
-      <div class="save-btn">
+      <el-form-item>
         <el-button type="primary" round @click.prevent.stop="baseSetSave">保 存</el-button>
-      </div>
+      </el-form-item>
     </el-form>
   </div>
 </template>
