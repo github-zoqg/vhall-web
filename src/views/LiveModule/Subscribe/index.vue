@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+
     <section class="watchContainer">
       <div class="area">
         <div class="topInfo">
@@ -19,7 +20,15 @@
             </span>
             <span class="right iconBtn">
               <icon icon-class="saasyijianfankui" @click.native="$refs.feedBack.dialogVisible = true">反馈</icon>
-              <icon icon-class="saasfenxiang">分享直播</icon>
+              <el-popover
+                placement="bottom-end"
+                trigger="click">
+                <div>
+                  <share slot="content" url="http://t-webinar.e.vhall.com/658143687"></share>
+                </div>
+                <icon icon-class="saasfenxiang" slot="reference">分享直播</icon>
+              </el-popover>
+
               <i class="focusBtn" @click="focusHandler">关注</i>
               <i class="focusCount">{{focusCount}}</i>
             </span>
@@ -59,37 +68,59 @@
       </div>
     </section>
 
-    <div class="foot area">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="用户管理" name="desc">子的世界很小，关于夏天，他想来想去，都只有你。当杨树的浓荫再也遮挡不住发热的甲壳，虫子的心也开始滚烫起来，蠢蠢欲动。他知道，夏天来了，夏天——这个想去爱你并开始去爱你的季节，如期而至。对于人来说，阳光之于夏天，就是大汗淋漓的热烈和疯狂奔跑的酣畅，对于虫子来说，毋庸置疑，你就是他的整个夏天。没有你的日子，你不能想象他是多么的聒噪，你不来，烦恼就像麻雀捕食一样，紧紧的揪住了他的心，好像被捕食的是他自己，撕心裂肺，又一脸蒙逼。红日当头时，他会想，没有了你的夏天，是否还像干柴勾起的大火那般熊熊欲燃。有时候，夏天那么盛大，盛大得像极了黄昏的晚霞，就算虫子的两只瞳孔决裂了，也装不下一个零头。有时候，夏天那么高远，他用尽咬牙切齿的力气，也只是从地面飞到了树冠，身心俱疲。飞累了，他就在狗尾巴草上歇一会儿，昂着尖尖的小脑袋，对着天，开始骂娘。看不出来，虫子有时候也会爆粗口，只不过谁也不知道，骂完了，他的眼睛里总是噙着一汪流不出来的水。</el-tab-pane>
-        <el-tab-pane label="配置管理" name="second">自定义配置管理</el-tab-pane>
-      </el-tabs>
-    </div>
-    <div class="foot area">
-      <el-tabs v-model="activeName2" @tab-click="handleClick">
-        <el-tab-pane label="活动推荐" name="activity">
-          <ul class="activity" ref="activityUL">
-            <li>
-              <div class="imgBox">
-                <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-              </div>
-              <p class="activityName"><span>最多可输入30个文字</span></p>
-            </li>
-            <li v-for=" i in  10" :key="i">
-              <div class="imgBox">
-                <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-              </div>
-              <p class="activityName"><span>最多可输入30个文字，单行居中对齐折行文字左对齐</span></p>
-            </li>
-          </ul>
-          <span class="operaBtn left" @click="activityMove('left')">
-            <i class="el-icon-arrow-left"></i>
+    <div :class="{area: true, product: productFlag}">
+      <div class="flex1">
+        <el-tabs class="foot" v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="用户管理" name="desc">子的世界很小，关于夏天，他想来想去，都只有你。当杨树的浓荫再也遮挡不住发热的甲壳，虫子的心也开始滚烫起来，蠢蠢欲动。他知道，夏天来了，夏天——这个想去爱你并开始去爱你的季节，如期而至。对于人来说，阳光之于夏天，就是大汗淋漓的热烈和疯狂奔跑的酣畅，对于虫子来说，毋庸置疑，你就是他的整个夏天。没有你的日子，你不能想象他是多么的聒噪，你不来，烦恼就像麻雀捕食一样，紧紧的揪住了他的心，好像被捕食的是他自己，撕心裂肺，又一脸蒙逼。红日当头时，他会想，没有了你的夏天，是否还像干柴勾起的大火那般熊熊欲燃。有时候，夏天那么盛大，盛大得像极了黄昏的晚霞，就算虫子的两只瞳孔决裂了，也装不下一个零头。有时候，夏天那么高远，他用尽咬牙切齿的力气，也只是从地面飞到了树冠，身心俱疲。飞累了，他就在狗尾巴草上歇一会儿，昂着尖尖的小脑袋，对着天，开始骂娘。看不出来，虫子有时候也会爆粗口，只不过谁也不知道，骂完了，他的眼睛里总是噙着一汪流不出来的水。</el-tab-pane>
+          <el-tab-pane label="配置管理" name="second">自定义配置管理</el-tab-pane>
+        </el-tabs>
+
+        <el-tabs class="foot" v-model="activeName2" @tab-click="handleClick">
+          <el-tab-pane label="活动推荐" name="activity">
+            <ul class="activity" ref="activityUL">
+              <li>
+                <div class="imgBox">
+                  <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
+                </div>
+                <p class="activityName"><span>最多可输入30个文字</span></p>
+              </li>
+              <li v-for=" i in  10" :key="i">
+                <div class="imgBox">
+                  <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
+                </div>
+                <p class="activityName"><span>最多可输入30个文字，单行居中对齐折行文字左对齐</span></p>
+              </li>
+            </ul>
+            <span class="operaBtn left" @click="activityMove('left')">
+              <i class="el-icon-arrow-left"></i>
+            </span>
+            <span class="operaBtn right" @click="activityMove('right')">
+              <i class="el-icon-arrow-right"></i>
+            </span>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+      <div v-if="productFlag" class="fixWidth">
+        <div class="productImg">
+          <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
+        </div>
+        <p class="title">手持无绳擦地机机器人扫地人扫地器人扫地人</p>
+
+        <p class="price">
+          <span>
+            ￥699.00
           </span>
-          <span class="operaBtn right" @click="activityMove('right')">
-            <i class="el-icon-arrow-right"></i>
+          <span>
+            ￥<i>900.00</i>
           </span>
-        </el-tab-pane>
-      </el-tabs>
+        </p>
+
+        <p class="desc">
+          这种模拟人手擦地的高频率震动，搭配两片拖布，效果相当于1分钟里擦了地板1000次，清洁力是一般手动拖地的60-80倍。
+        </p>
+        <el-button type="primary" class="fullBut">即将发售</el-button>
+        <el-button type="text" class="textBtn">去店铺<i class="el-icon-arrow-right"></i></el-button>
+      </div>
     </div>
     <feedBack ref="feedBack"></feedBack>
   </div>
@@ -97,6 +128,7 @@
 
 <script>
 import feedBack from './feedBack';
+import share from '@/components/Share';
 export default {
   data(){
     return {
@@ -112,7 +144,8 @@ export default {
       focusCount: 10,
       subscribe_count: 0,
       activeName: 'desc',
-      activeName2: 'activity'
+      activeName2: 'activity',
+      productFlag: true
     };
   },
   created(){
@@ -188,7 +221,8 @@ export default {
     }
   },
   components: {
-    feedBack
+    feedBack,
+    share
   }
 };
 </script>
@@ -377,6 +411,7 @@ export default {
         text-align: center;
         margin-top: 6px;
         height: 40px;
+        line-height: 20px;
         span{
           display: inline-block;
           text-align: left;
@@ -387,6 +422,7 @@ export default {
   /deep/ .el-tab-pane{
     overflow: hidden;
     position: relative;
+    line-height: 26px;
   }
   .operaBtn{
     display: inline-block;
@@ -414,6 +450,71 @@ export default {
     &.right{
       right: -24px;
       text-indent: 4px;
+    }
+  }
+  .flex1{
+
+  }
+  .fixWidth{
+    padding: 20px;
+    border: 1px solid #D2D2D2;
+    display: inline-block;
+    width: 300px;
+    box-sizing: border-box;
+    margin-top: 20px;
+    margin-left: 20px;
+    vertical-align: top;
+    .productImg{
+      width: 100%;
+      height: 254px;
+      img{
+        height: 100%;
+        width: 100%;
+      }
+    }
+    .title{
+      font-size: 19px;
+      color: #333;
+      font-weight: bold;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 40px;
+    }
+    .price{
+      span:nth-child(1){
+        font-size: 24px;
+        color: #FC5659;
+      }
+      span:nth-child(2){
+        font-size: 18px;
+        color:#D2D2D2;
+        i{
+          text-decoration: line-through;
+          font-style: normal;
+        }
+      }
+    }
+    .desc{
+      font-size: 14px;
+      color: #666;
+      margin-top: 20px;
+    }
+    .fullBut{
+      width: 100%;
+      margin-top: 20px;
+    }
+    .textBtn{
+      width: 100%;
+      color: #FC5659;
+      text-align: center;
+    }
+  }
+  .product{
+    .flex1{
+      display: inline-block;
+      width: calc(100% - 320px);
     }
   }
 </style>
