@@ -10,7 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload">新建</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
+      <el-button round v-if="$route.meta.title==='直播—问卷'">资料库</el-button>
       <el-button round class="head-btn batch-del">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
@@ -80,6 +81,9 @@ export default {
   components: {
     PageTitle
   },
+  created() {
+    console.log(this.$route, '1232435234534565365');
+  },
   methods: {
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -116,6 +120,10 @@ export default {
     changeTableCheckbox(val) {
       console.log(val);
     },
+    addQuestion() {
+      this.$router.push({
+        path: `/${this.$route.meta.name}/addQuestion`});
+    }
   },
 };
 </script>

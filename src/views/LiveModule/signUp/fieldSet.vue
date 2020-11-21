@@ -3,14 +3,14 @@
     <!-- v-model="list" -->
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
-      <p class="label">表单名称（必填）</p>
-      <el-input maxlength="50" show-word-limit placeholder="请输入表单标题"></el-input>
+      <p class="label">{{ title==='准备—报名表单' ? '表单名称（必填）' : '问卷名称'}}</p>
+      <el-input maxlength="50" show-word-limit :placeholder="title==='准备—报名表单' ? '请输入表单标题' : '请输入问卷标题'"></el-input>
     </section>
     <section class="viewItem">
-      <p class="label">表单简介</p>
-      <el-input maxlength="500" show-word-limit placeholder="请输入表单简介" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
+      <p class="label">{{ title==='准备—报名表单' ? '表单简介' : '问卷简介'}}</p>
+      <el-input maxlength="500" show-word-limit :placeholder="title==='准备—报名表单' ? '请输入表单简介' : '请输入问卷简介'" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
     </section>
-    <section class="viewItem">
+    <section class="viewItem" v-if="title==='准备—报名表单'">
       <p class="label">表单头图</p>
       <upload
         v-model="imageUrl"
@@ -108,6 +108,9 @@
         </li>
       </transition-group>
     </draggable>
+    <section class="viewItem sureBtn" v-if="title !=='准备—报名表单'">
+      <el-button round type="primary">保存</el-button>
+    </section>
   </div>
 </template>
 
@@ -132,6 +135,10 @@ export default {
       radio: 3,
       imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png'
     };
+  },
+  created() {
+    this.title = this.$route.meta.title;
+    // console.log(this.$route.meta, '000000000000000000');
   },
   computed: {
     dragOptions() {
@@ -322,6 +329,12 @@ export default {
     }
     .selectInput{
       margin-bottom: 16px;
+    }
+  }
+  .sureBtn{
+    text-align: center;
+    .el-button{
+      padding: 12px 50px;
     }
   }
   .flip-list-move {

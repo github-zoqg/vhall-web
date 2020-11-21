@@ -49,6 +49,7 @@ export default {
   color: #1A1A1A;
   font-size: 22px;
   font-weight: 600;
+  margin-right: 8px;
 }
 .titleBox{
   margin-top: 20px;

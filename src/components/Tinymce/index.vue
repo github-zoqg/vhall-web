@@ -1,6 +1,5 @@
 <template>
   <div>
-    <br/>
     <vue-tinymce v-model="content" :setting="setting" @change="sendContent"></vue-tinymce>
   </div>
 </template>
@@ -18,6 +17,11 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    toolbar: {
+      type: String,
+      required: false,
+      default: 'fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | image | fullscreen'
     },
     height: {
       type: [Number, String],
@@ -61,7 +65,7 @@ export default {
       setting: {
         selector: `#${this.tinymceId}`,
         plugins: 'preview fullscreen image link hr indent2em lineheight wordcount',
-        toolbar: 'fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | image | fullscreen',
+        toolbar: this.toolbar,
         quickbars_selection_toolbar: "removeformat | bold italic underline strikethrough | fontsizeselect forecolor backcolor",
         // 引入汉化组件
         language_url: require('../../../public/tinymce/langs/zh_CN.js'),

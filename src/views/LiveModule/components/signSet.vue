@@ -147,6 +147,9 @@ export default {
 }
 .sign--set--left {
   width: 50%;
+  /deep/.el-form-item__label {
+    line-height: 40px;
+  }
 }
 .brand--preview {
   width: calc(50% - 48px);

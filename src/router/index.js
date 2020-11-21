@@ -23,7 +23,7 @@ const v3Routes = [
     component: () => import('@/views/LiveModule/PlayBack/videoTailoring')
   },
   {
-    path: '/warning/:str(\.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
+    path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Error/index'),
     hidden: true
   },
@@ -201,7 +201,14 @@ const v3Routes = [
         path: 'question/:str(\\d+)',
         component: () => import('@/views/MaterialModule/question'),
         name: 'question',
-        meta:{ title: '直播—问卷', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—问卷', icon: '', name: 'live', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'addQuestion',
+        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        name: 'addQuestion',
+        meta:{ title: '直播—新建问卷', icon: '' , name: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -313,7 +320,14 @@ const v3Routes = [
         path: 'question',
         name: 'question',
         component: () => import('@/views/MaterialModule/question'),
-        meta: { title: '问卷', icon: 'table' }
+        meta: { title: '问卷', name: 'material', icon: 'table' }
+      },
+      {
+        path: 'addQuestion',
+        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        name: 'addQuestion',
+        meta:{ title: '新建问卷', icon: 'table', name: 'material' },
+        hidden: true
       },
       {
         path: 'prize',
@@ -494,17 +508,24 @@ const v3Routes = [
         meta: { title: '个人主页', icon: 'table' }
       },
       {
+        path: 'homeSetInfo/:str(\\d+)',
+        component: () => import('@/views/AccountModule/homeSetInfo'),
+        name: 'homeSetInfo',
+        meta:{ title: '设置', icon: 'table' , activeMenu: '/account/home'},
+        hidden: true
+      },
+      {
         path: '/allocation/:str(\\d+)',
         component: () => import('@/views/AccountModule/allocation'),
         name: 'allocation',
-        meta:{ title: '用量分配', icon: 'table' , activeMenu: '/finance/son'},
+        meta:{ title: '用量分配', icon: 'table' , activeMenu: '/account/son'},
         hidden: true
       },
       {
         path: '/sonDetail/:str(\\d+)',
         component: () => import('@/views/AccountModule/sonDetail'),
         name: 'sonDetail',
-        meta:{ title: '子账号详情', icon: 'table' , activeMenu: '/finance/son'},
+        meta:{ title: '子账号详情', icon: 'table' , activeMenu: '/account/son'},
         hidden: true
       }
     ]
@@ -573,7 +594,7 @@ const v3Routes = [
       {
         path: '/subscribe/:id',
         name: 'list',
-        component: () => import('@/views/LiveModule/Subscribe'),
+        component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '预约' }
       },
     ]
