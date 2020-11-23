@@ -16,7 +16,7 @@
           </template>
         </ul>
         <div class="rightView">
-          <fieldSet :questionArr="questionArr"></fieldSet>
+          <fieldSet :questionArr="questionArr" ref="question"></fieldSet>
           <!-- <component :is="rightComponent" :questionArr="questionArr"></component> -->
           <!-- <i class="closeBtn" v-show="rightComponent=='signUpForm'" @click="rightComponent='fieldSet'">&times;</i> -->
         </div>

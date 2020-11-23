@@ -6,7 +6,7 @@
       </div>
     </pageTitle>
     <div class="detail" @click="accountDetail">账单明细</div>
-    <el-row :gutter="20">
+    <el-row :gutter="10">
       <el-col :span="12">
         <el-card class="live-come">
           <h3>直播收益</h3>
@@ -63,12 +63,14 @@
       <el-tabs v-model="activeIndex" @tab-click="handleClick">
         <el-tab-pane label="直播收益明细" name="1"></el-tab-pane>
         <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
-        <search-area
-          ref="searchIncome"
-          :searchAreaLayout="searchAccount"
-          @onSearchFun="getIncomeList('search')"
-        >
-        </search-area>
+        <div class="search-income">
+          <search-area
+            ref="searchIncome"
+            :searchAreaLayout="searchAccount"
+            @onSearchFun="getIncomeList('search')"
+          >
+          </search-area>
+        </div>
         <table-list
           ref="tableIncome"
           :manageTableData="tableList"
@@ -300,8 +302,11 @@ export default {
     // 账单明细
     accountDetail() {
       this.$router.push({
-        name: 'accountDetail'
+        name: 'orderDetail'
       });
+      // this.$router.push({
+      //   name: 'accountDetail'
+      // });
     }
   },
 };
@@ -376,6 +381,9 @@ export default {
   }
   .listTab {
     margin-top: 24px;
+    .search-income{
+      margin-top: 24px;
+    }
   }
   }
 </style>
