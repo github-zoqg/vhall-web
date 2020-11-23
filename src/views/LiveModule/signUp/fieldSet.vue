@@ -3,14 +3,14 @@
     <!-- v-model="list" -->
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
-      <p class="label">{{ title==='准备—报名表单' ? '表单名称（必填）' : '问卷名称'}}</p>
-      <el-input maxlength="50" show-word-limit :placeholder="title==='准备—报名表单' ? '请输入表单标题' : '请输入问卷标题'"></el-input>
+      <p class="label">{{ routeName==='signup' ? '表单名称（必填）' : '问卷名称'}}</p>
+      <el-input maxlength="50" show-word-limit :placeholder="routeName==='signup' ? '请输入表单标题' : '请输入问卷标题'" v-model="designation"></el-input>
     </section>
     <section class="viewItem">
-      <p class="label">{{ title==='准备—报名表单' ? '表单简介' : '问卷简介'}}</p>
-      <el-input maxlength="500" show-word-limit :placeholder="title==='准备—报名表单' ? '请输入表单简介' : '请输入问卷简介'" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
+      <p class="label">{{ routeName==='signup' ? '表单简介' : '问卷简介'}}</p>
+      <el-input maxlength="500" v-model="introduction" show-word-limit :placeholder="routeName==='signup' ? '请输入表单简介' : '请输入问卷简介'" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
     </section>
-    <section class="viewItem" v-if="title==='准备—报名表单'">
+    <section class="viewItem" v-if="routeName==='signup'">
       <p class="label">表单头图</p>
       <upload
         v-model="imageUrl"
@@ -108,8 +108,8 @@
         </li>
       </transition-group>
     </draggable>
-    <section class="viewItem sureBtn" v-if="title !=='准备—报名表单'">
-      <el-button round type="primary">保存</el-button>
+    <section class="viewItem sureBtn" v-if="routeName !=='signup'">
+      <el-button round type="primary" @click="sureQuestionnaire">保存</el-button>
     </section>
   </div>
 </template>
@@ -130,6 +130,8 @@ export default {
   },
   data(){
     return {
+      // designation: '', //名称
+      // introduction: '', // 简介
       drag: false,
       signUpSwtich: false,
       radio: 3,
@@ -137,8 +139,7 @@ export default {
     };
   },
   created() {
-    this.title = this.$route.meta.title;
-    // console.log(this.$route.meta, '000000000000000000');
+    this.routeName = this.$route.name;
   },
   computed: {
     dragOptions() {
@@ -148,9 +149,23 @@ export default {
         disabled: false,
         ghostClass: "ghost"
       };
+    },
+    designation() {
+      return this.$route.name === 'addQuestion' ? '问卷名称' : '';
+    },
+    introduction() {
+      return this.$route.name === 'addQuestion' ? '问卷简介' : '';
     }
   },
   methods: {
+    // 保存问卷
+    sureQuestionnaire() {
+      if (!this.questionArr.length) {
+        this.$message.error('请添加题目');
+      }
+      console.log(this.questionArr);
+      // this.$emit("sureBtn", )
+    },
     addOption(data, other){
       let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
       let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
