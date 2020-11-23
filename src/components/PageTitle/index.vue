@@ -52,7 +52,10 @@ export default {
   margin-right: 8px;
 }
 .titleBox{
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   margin-bottom: 32px;
+}
+.el-icon-question {
+  color: #666666;
 }
 </style>

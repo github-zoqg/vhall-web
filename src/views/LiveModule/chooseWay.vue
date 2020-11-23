@@ -15,7 +15,7 @@
           <p>可进行多人连麦</p>
           <p>需要使用chrome浏览器</p>
         </div> -->
-        <div :class="chooseType == 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
+        <div :class="chooseType === 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
           <p class="choose-p"></p>
           <p class="f-20"><label class="beta-label" style="font-weight: 400">客户端发起</label></p>
           <p>功能更为强大，支持多种视频采集卡</p>
@@ -29,7 +29,7 @@
         </div> -->
       </div>
       <div class="choose-btn">
-        <el-button type="primary" round>发起直播</el-button>
+        <el-button type="primary" round @click.prevent.stop="openRoom">发起直播</el-button>
         <iframe src="vhalllive:\/\/vhalllive?stream_name=936719661&stream_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdHJlYW1uYW1lIjoiOTM2NzE5NjYxIn0.DC3w81q1Cxez0gC3P19LxelRhB4pk5uHMv-1jI1GPiI&msg_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE3MzQyNzQiLCJuYW1lIjoidHR0dHR0dCIsInJvb20iOiI5MzY3MTk2NjEiLCJyb2xlIjoiaG9zdCIsInVpZCI6IjE2NDIyNjgwIiwidHJhY2tJZCI6IjIyNDU5NTUiLCJkZXZpY2Vfc3RhdHVzIjoxfQ.KQx_qyRZzYMHj7Te9ulB1F0eIhYUPsjID42U_Q0PQGw&hide_logo=0" class="hide" frameborder="0" scrolling="no" id="start_live">发起直播</iframe>
       </div>
       <div class="v-download" v-if="chooseType === 'client'">
@@ -54,6 +54,14 @@ export default {
   methods: {
     changeChoose(type) {
       this.chooseType = type;
+    },
+    // 发起直播
+    openRoom() {
+      if (this.chooseType === 'browser') {
+        // 浏览器发起-跳转至发起页面
+        const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+        window.open(href);
+      }
     }
   },
   create() {
@@ -65,6 +73,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../common/css/common.less';
 .choose__way__main {
 }
 .select-way {

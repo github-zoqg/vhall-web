@@ -3,7 +3,6 @@
     <pageTitle title="观看限制">
       <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
-        <!--可联系客服开通“单点观看”功能，即开启付费后，一个账号仅允许同时一台设备观看直播。-->
       </div>
     </pageTitle>
     <!-- 内容区域 -->
@@ -30,7 +29,7 @@
                 <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
                 <span class="ctx-span">元</span>
               </div>-->
-              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99">
+              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
@@ -61,7 +60,7 @@
           <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="100px">
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
-                <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个">
+                <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
                   <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}</strong>个</span>
@@ -98,7 +97,7 @@
             </el-form-item>
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
-                <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个">
+                <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
                   <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}</strong>个</span>
@@ -131,7 +130,7 @@
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
           <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="100px">
             <el-form-item label="观看密码" prop="password">
-              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码"></el-input>
+              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="8"></el-input>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
               <div class="switch__box">
@@ -192,8 +191,10 @@
         </div>
       </div>
       <!-- 保存 -->
-      <div class="btn--center">
-        <el-button type="primary" class="length152" round @click.prevent.stop="viewerSetSave">保 存</el-button>
+      <div class="save-btn">
+        <el-form label-width="100px">
+          <el-button type="primary" class="length152" round @click.prevent.stop="viewerSetSave">保 存</el-button>
+        </el-form>
       </div>
     </div>
   </div>
@@ -265,7 +266,7 @@ export default {
       payFormRules: {
         fee: [
           { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: !/^\d{0,6}\.{0,1}(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'},
+          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'},
           { validator: checkFee, trigger: 'blur' }
         ]
       },
@@ -288,7 +289,7 @@ export default {
         ],
         fee: [
           { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: /^\d{0,6}\.{0,1}(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'}
+          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'}
         ]
       },
       pwdForm: {
@@ -425,6 +426,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../common/css/common.less';
 .viewer-rules {
   .layout--right--main();
   min-height: 544px;
@@ -432,10 +434,10 @@ export default {
 }
 .viewer-rules-content {
   margin-top: 32px;
-  height: 353px;
+  /*height: 353px;*/
   /deep/.el-form-item__label {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
   }
@@ -463,7 +465,7 @@ export default {
 .viewer-rules-ctx--0 {
   p {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
@@ -483,7 +485,7 @@ export default {
     border: 0;
     background: #ffffff;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
     padding: 0 0;
@@ -550,13 +552,13 @@ export default {
   }
   /deep/.el-input-group__append {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
   }
   .inline-count {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
     line-height: 20px;
@@ -573,7 +575,7 @@ export default {
     border-radius: 20px;
     border: 1px solid #FB3A32;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #FB3A32;
     line-height: 20px;
@@ -592,9 +594,12 @@ export default {
       line-height: 24px;
       background: #F7F7F7;
       border-radius: 16px;
+      &:last-child {
+        background: #ffffff;
+      }
       span {
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666666;
         line-height: 24px;
@@ -612,7 +617,7 @@ export default {
     border: 1px solid #FB3A32;
     a {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #FB3A32;
       line-height: 24px;
@@ -622,7 +627,38 @@ export default {
     }
   }
 }
-.btn--center {
-  text-align: center;
+/deep/.btn-relative {
+  position: relative;
+  .el-input__inner {
+    padding: 0 36px 0 12px;
+  }
+  /deep/.el-input-group__append {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20px!important;
+  }
+  &.btn-two {
+    /deep/.el-input-group__append {
+      width: 52px!important;
+      height: 40px;
+      background: #F7F7F7;
+      border-radius: 0 4px 4px 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      line-height: 38px;
+      text-align: center;
+      padding: 0 0;
+      margin: 0 0;
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #666666;
+    }
+  }
+}
+.save-btn {
+  margin-top: 40px;
 }
 </style>

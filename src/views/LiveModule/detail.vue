@@ -127,6 +127,7 @@ export default {
       }
     },
     toRoom(){
+      // 跳转至发起页面
       const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
       window.open(href);
     }

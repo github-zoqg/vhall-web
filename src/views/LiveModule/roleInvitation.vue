@@ -26,10 +26,10 @@
         </div>
         <el-form label-width="38px" class="role-card-content">
           <el-form-item label="链接">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234"></el-input>
+            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
           </el-form-item>
           <el-form-item label="口令">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234">
+            <el-input placeholder="173245" class="btn-relative btn-two">
               <template slot="append">编辑</template>
             </el-input>
           </el-form-item>
@@ -66,10 +66,10 @@
         </div>
         <el-form label-width="38px" class="role-card-content">
           <el-form-item label="链接">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234"></el-input>
+            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
           </el-form-item>
           <el-form-item label="口令">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234">
+            <el-input placeholder="173245"  class="btn-relative btn-two">
               <template slot="append">编辑</template>
             </el-input>
           </el-form-item>
@@ -115,10 +115,10 @@
         </div>
         <el-form label-width="38px" class="role-card-content">
           <el-form-item label="链接">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234"></el-input>
+            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
           </el-form-item>
           <el-form-item label="口令">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234">
+            <el-input placeholder="173245" class="btn-relative btn-two">
               <template slot="append">编辑</template>
             </el-input>
           </el-form-item>
@@ -185,6 +185,7 @@ export default {
   margin-bottom: 24px;
   border: 1px dashed #EEEEEE;
   padding: 32px 32px;
+  background: #FFFFFF;
   &:nth-child(2n) {
     margin-right: 0;
     margin-left: 12px;
@@ -226,7 +227,39 @@ export default {
   /deep/.el-input__inner {
     height: 40px;
   }
-  /deep/.el-input-group__append, /deep/.el-input-group__prepend {
+  /deep/.btn-relative {
+    position: relative;
+    cursor: pointer;
+    .el-input__inner {
+      padding: 0 36px 0 12px;
+    }
+    /deep/.el-input-group__append {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 20px!important;
+    }
+    &.btn-two {
+      /deep/.el-input-group__append {
+        width: 52px!important;
+        height: 40px;
+        background: #F7F7F7;
+        border-radius: 0 4px 4px 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        line-height: 38px;
+        text-align: center;
+        padding: 0 0;
+        margin: 0 0;
+        font-size: 14px;
+        font-family: @fontRegular;
+        font-weight: 400;
+        color: #666666;
+      }
+    }
+  }
+  /*/deep/.el-input-group__append, /deep/.el-input-group__prepend {
     width: 52px;
     height: 40px;
     background: #F7F7F7;
@@ -241,7 +274,7 @@ export default {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-left: 0;
-  }
+  }*/
   /deep/.el-form-item {
     margin-bottom: 16px;
     &:last-child {
