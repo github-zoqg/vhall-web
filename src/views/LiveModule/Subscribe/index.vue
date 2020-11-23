@@ -70,10 +70,7 @@
 
     <div :class="{area: true, product: productFlag}">
       <div class="flex1">
-        <el-tabs class="foot" v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="用户管理" name="desc">子的世界很小，关于夏天，他想来想去，都只有你。当杨树的浓荫再也遮挡不住发热的甲壳，虫子的心也开始滚烫起来，蠢蠢欲动。他知道，夏天来了，夏天——这个想去爱你并开始去爱你的季节，如期而至。对于人来说，阳光之于夏天，就是大汗淋漓的热烈和疯狂奔跑的酣畅，对于虫子来说，毋庸置疑，你就是他的整个夏天。没有你的日子，你不能想象他是多么的聒噪，你不来，烦恼就像麻雀捕食一样，紧紧的揪住了他的心，好像被捕食的是他自己，撕心裂肺，又一脸蒙逼。红日当头时，他会想，没有了你的夏天，是否还像干柴勾起的大火那般熊熊欲燃。有时候，夏天那么盛大，盛大得像极了黄昏的晚霞，就算虫子的两只瞳孔决裂了，也装不下一个零头。有时候，夏天那么高远，他用尽咬牙切齿的力气，也只是从地面飞到了树冠，身心俱疲。飞累了，他就在狗尾巴草上歇一会儿，昂着尖尖的小脑袋，对着天，开始骂娘。看不出来，虫子有时候也会爆粗口，只不过谁也不知道，骂完了，他的眼睛里总是噙着一汪流不出来的水。</el-tab-pane>
-          <el-tab-pane label="配置管理" name="second">自定义配置管理</el-tab-pane>
-        </el-tabs>
+        <custoMenu></custoMenu>
 
         <el-tabs class="foot" v-model="activeName2" @tab-click="handleClick">
           <el-tab-pane label="活动推荐" name="activity">
@@ -129,6 +126,7 @@
 <script>
 import feedBack from './feedBack';
 import share from '@/components/Share';
+import custoMenu from '../components/customMenuView';
 export default {
   data(){
     return {
@@ -222,7 +220,8 @@ export default {
   },
   components: {
     feedBack,
-    share
+    share,
+    custoMenu
   }
 };
 </script>
@@ -419,11 +418,6 @@ export default {
       }
     }
   }
-  /deep/ .el-tab-pane{
-    overflow: hidden;
-    position: relative;
-    line-height: 26px;
-  }
   .operaBtn{
     display: inline-block;
     width: 50px;
@@ -509,6 +503,7 @@ export default {
       width: 100%;
       color: #FC5659;
       text-align: center;
+      border: 0 none;
     }
   }
   .product{
