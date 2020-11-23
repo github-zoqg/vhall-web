@@ -115,7 +115,7 @@ const v3Routes = [
       },
       {
         path: 'virtual/:str(\\d+)',
-        component: () => import('@/views/LiveModule/viewerRules'),
+        component: () => import('@/views/LiveModule/virtual'),
         name: 'virtual',
         meta:{ title: '准备—虚拟人数', icon: '' , activeMenu: '/live/list'},
         hidden: true

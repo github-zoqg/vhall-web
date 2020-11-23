@@ -11,8 +11,8 @@
       </el-switch>
     </pageTitle>
     <!-- 模式选择 -->
-    <div class="panel__virtual">
-      <div class="edit-full-cover" v-show="!virtualSwitch"></div>
+    <div class="pre--full-mask">
+      <div class="pre--full-cover" v-show="!virtualSwitch"></div>
       <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="180px">
         <el-form-item label="生效模式：" prop="model">
           <el-radio-group v-model="virtualForm.model">
@@ -188,18 +188,5 @@ export default {
 }
 .save-btn {
   text-align: center;
-}
-.panel__virtual {
-  position: relative;
-}
-.edit-full-cover {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: rgba(255,255,255,0.5);
-  z-index: 9;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="角色设置">
+    <pageTitle title="角色邀请">
       <div slot="content">
         1、互动直播中，通过网页端和客户端登录的主持人和嘉宾，都可以进行连麦互动；<br/>
         2、权限控制可调整嘉宾和助理在直播中的功能；<br/>
@@ -8,143 +8,147 @@
       </div>
       <el-switch
         class="el-role-switch"
-        v-model="roleSwtich"
+        v-model="roleSwitch"
+        @change="updateSwitch"
         active-color="#FB3A32"
         inactive-color="#CECECE"
         active-text="开启后，可邀请特殊角色加入直播">
       </el-switch>
     </pageTitle>
     <!-- 角色邀请卡片 -->
-    <div class="role-card-list">
-      <!-- 主持人 -->
-      <div class="role-card">
-        <div class="role-card-head">
-          <div class="title--box">
-            <label class="title--label role1">主持人</label>
+    <div :class="!roleSwitch ? ' pre--full-mask' : 'role-card-list'">
+      <div class="pre--full-cover" v-show="!roleSwitch"></div>
+      <div>
+        <!-- 主持人 -->
+        <div class="role-card">
+          <div class="role-card-head">
+            <div class="title--box">
+              <label class="title--label role1">主持人</label>
+            </div>
+            <p class="role-remark">主持人发起直播，进行推流、文档演示等操作</p>
           </div>
-          <p class="role-remark">主持人发起直播，进行推流、文档演示等操作</p>
-        </div>
-        <el-form label-width="38px" class="role-card-content">
-          <el-form-item label="链接">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
-          </el-form-item>
-          <el-form-item label="口令">
-            <el-input placeholder="173245" class="btn-relative btn-two">
-              <template slot="append">编辑</template>
-            </el-input>
-          </el-form-item>
-        </el-form>
-        <div class="role-card-qx-content">
-          <div class="role-qx-title">
-            <label>主持人权限</label>
+          <el-form label-width="38px" class="role-card-content">
+            <el-form-item label="链接">
+              <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
+            </el-form-item>
+            <el-form-item label="口令">
+              <el-input placeholder="173245" class="btn-relative btn-two">
+                <template slot="append">编辑</template>
+              </el-input>
+            </el-form-item>
+          </el-form>
+          <div class="role-card-qx-content">
+            <div class="role-qx-title">
+              <label>主持人权限</label>
+            </div>
+            <div class="role-qx-list">
+              主持人作为主办方，拥有最高权限
+            </div>
           </div>
-          <div class="role-qx-list">
-            主持人作为主办方，拥有最高权限
-          </div>
-        </div>
-        <div>
-          <el-button type="primary" round>邀请</el-button>
-        </div>
-      </div>
-      <!-- 嘉宾 -->
-      <div class="role-card">
-        <div class="role-card-head">
-          <div class="title--box">
-            <label class="title--label role2">嘉宾</label>
-            <el-tooltip>
-              <div slot="content">
-                1、嘉宾可凭口令进入直播间；<br/>
-                2、互动直播中，通过网页端和客户端登录的主持人和<br/>
-                <span style="padding-left:20px;">嘉宾，都可以进行连麦；</span><br />
-                3、每个直播间最多可以登录10位嘉宾；<br/>
-                4、直播中无法修改嘉宾权限。
-              </div>
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-          </div>
-          <p class="role-remark">嘉宾可进行推流，嘉宾切换、文档演示等操作</p>
-        </div>
-        <el-form label-width="38px" class="role-card-content">
-          <el-form-item label="链接">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
-          </el-form-item>
-          <el-form-item label="口令">
-            <el-input placeholder="173245"  class="btn-relative btn-two">
-              <template slot="append">编辑</template>
-            </el-input>
-          </el-form-item>
-        </el-form>
-        <div class="role-card-qx-content">
-          <div class="role-qx-title">
-            <label>主持人权限</label>
-            <el-button size="mini" round>保存</el-button>
-          </div>
-          <div class="role-qx-list">
-            <el-checkbox>问答</el-checkbox>
-            <el-checkbox>分享</el-checkbox>
-            <el-checkbox>公告</el-checkbox>
-            <el-checkbox>成员管理</el-checkbox>
-            <el-checkbox>文档白板</el-checkbox>
-            <el-checkbox>问卷</el-checkbox>
-            <el-checkbox>全员签到</el-checkbox>
-            <el-checkbox>抽奖</el-checkbox>
-            <el-checkbox>聊天过滤</el-checkbox>
-            <el-checkbox>全员禁言</el-checkbox>
+          <div>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText1)" class="copy-text">邀请</el-button>
           </div>
         </div>
-        <div>
-          <el-button type="primary" round>邀请</el-button>
-        </div>
+        <!-- 嘉宾 -->
+        <div class="role-card">
+          <div class="role-card-head">
+            <div class="title--box">
+              <label class="title--label role2">嘉宾</label>
+              <el-tooltip>
+                <div slot="content">
+                  1、嘉宾可凭口令进入直播间；<br/>
+                  2、互动直播中，通过网页端和客户端登录的主持人和<br/>
+                  <span style="padding-left:20px;">嘉宾，都可以进行连麦；</span><br />
+                  3、每个直播间最多可以登录10位嘉宾；<br/>
+                  4、直播中无法修改嘉宾权限。
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </div>
+            <p class="role-remark">嘉宾可进行推流，嘉宾切换、文档演示等操作</p>
+          </div>
+          <el-form label-width="38px" class="role-card-content">
+            <el-form-item label="链接">
+              <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
+            </el-form-item>
+            <el-form-item label="口令">
+              <el-input placeholder="173245"  class="btn-relative btn-two">
+                <template slot="append">编辑</template>
+              </el-input>
+            </el-form-item>
+          </el-form>
+          <div class="role-card-qx-content">
+            <div class="role-qx-title">
+              <label>主持人权限</label>
+              <el-button size="mini" round>保存</el-button>
+            </div>
+            <div class="role-qx-list">
+              <el-checkbox>问答</el-checkbox>
+              <el-checkbox>分享</el-checkbox>
+              <el-checkbox>公告</el-checkbox>
+              <el-checkbox>成员管理</el-checkbox>
+              <el-checkbox>文档白板</el-checkbox>
+              <el-checkbox>问卷</el-checkbox>
+              <el-checkbox>全员签到</el-checkbox>
+              <el-checkbox>抽奖</el-checkbox>
+              <el-checkbox>聊天过滤</el-checkbox>
+              <el-checkbox>全员禁言</el-checkbox>
+            </div>
+          </div>
+          <div>
+            <el-button type="primary" round>邀请</el-button>
+          </div>
 
-      </div>
-      <!-- 助理 -->
-      <div class="role-card">
-        <div class="role-card-head">
-          <div class="title--box">
-            <label class="title--label role3">助理</label>
-            <el-tooltip>
-              <div slot="content">
-                1、助理可凭口令进入直播间；<br />
-                2、每个直播间最多可以登录10位助理；<br />
-                3、直播中无法修改助理权限。
-              </div>
-              <i class="el-icon-question"></i>
-            </el-tooltip>
-          </div>
-          <p class="role-remark">助理不可推流，可进行聊天过滤、观众管理等操作</p>
         </div>
-        <el-form label-width="38px" class="role-card-content">
-          <el-form-item label="链接">
-            <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
-          </el-form-item>
-          <el-form-item label="口令">
-            <el-input placeholder="173245" class="btn-relative btn-two">
-              <template slot="append">编辑</template>
-            </el-input>
-          </el-form-item>
-        </el-form>
-        <div class="role-card-qx-content">
-          <div class="role-qx-title">
-            <label>主持人权限</label>
-            <el-button size="mini" round>保存</el-button>
+        <!-- 助理 -->
+        <div class="role-card">
+          <div class="role-card-head">
+            <div class="title--box">
+              <label class="title--label role3">助理</label>
+              <el-tooltip>
+                <div slot="content">
+                  1、助理可凭口令进入直播间；<br />
+                  2、每个直播间最多可以登录10位助理；<br />
+                  3、直播中无法修改助理权限。
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </div>
+            <p class="role-remark">助理不可推流，可进行聊天过滤、观众管理等操作</p>
           </div>
-          <div class="role-qx-list">
-            <el-checkbox>问答</el-checkbox>
-            <el-checkbox>分享</el-checkbox>
-            <el-checkbox>公告</el-checkbox>
-            <el-checkbox>成员管理</el-checkbox>
-            <el-checkbox>文档白板</el-checkbox>
-            <el-checkbox>问卷</el-checkbox>
-            <el-checkbox>全员签到</el-checkbox>
-            <el-checkbox>抽奖</el-checkbox>
-            <el-checkbox>聊天过滤</el-checkbox>
-            <el-checkbox>全员禁言</el-checkbox>
+          <el-form label-width="38px" class="role-card-content">
+            <el-form-item label="链接">
+              <el-input placeholder="https://t.e.vhall.com/mywebinar/host-login/394637234" readonly></el-input>
+            </el-form-item>
+            <el-form-item label="口令">
+              <el-input placeholder="173245" class="btn-relative btn-two">
+                <template slot="append">编辑</template>
+              </el-input>
+            </el-form-item>
+          </el-form>
+          <div class="role-card-qx-content">
+            <div class="role-qx-title">
+              <label>主持人权限</label>
+              <el-button size="mini" round>保存</el-button>
+            </div>
+            <div class="role-qx-list">
+              <el-checkbox>问答</el-checkbox>
+              <el-checkbox>分享</el-checkbox>
+              <el-checkbox>公告</el-checkbox>
+              <el-checkbox>成员管理</el-checkbox>
+              <el-checkbox>文档白板</el-checkbox>
+              <el-checkbox>问卷</el-checkbox>
+              <el-checkbox>全员签到</el-checkbox>
+              <el-checkbox>抽奖</el-checkbox>
+              <el-checkbox>聊天过滤</el-checkbox>
+              <el-checkbox>全员禁言</el-checkbox>
+            </div>
           </div>
-        </div>
-        <div>
-          <el-button type="primary" round>邀请</el-button>
-        </div>
+          <div>
+            <el-button type="primary" round>邀请</el-button>
+          </div>
 
+        </div>
       </div>
     </div>
   </div>
@@ -152,15 +156,102 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import Clipboard from 'clipboard';
 export default {
   name: 'embedCard.vue',
   components: {
-    PageTitle
+    PageTitle,
   },
   data() {
     return {
-      roleSwtich: false
+      roleSwitch: false,
+      privilegeVo: null,
+      urlText: {
+        one: '',
+        two: '',
+        three: ''
+      }
     };
+  },
+  computed: {
+    urlText1: function() {
+      return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.liveVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
+              直播名称：${this.liveVo.subject}
+              直播ID：${this.liveVo.id}
+              开始时间：${this.liveVo.start_time}
+              主持人口令：${this.liveVo && this.liveVo.host_password ? this.liveVo.host_password : '未设置'}
+              加入链接：${'/mywebinar/host-login/'+ this.liveVo.id }`;
+    }
+  },
+  methods: {
+    updateSwitch() {
+      let roleSwitch = this.roleSwitch; // 目标
+      this.roleSwitch = !roleSwitch;
+      this.$fetch('privilegeOpen', {
+        webinar_id: this.$route.params.str,
+        is_privilege: Number(roleSwitch)
+      }).then(res => {
+        if (res && res.code === 200 && res.data.is_privilege === 1) {
+          this.$message.success('开启成功');
+          this.roleSwitch = !this.roleSwitch;
+          // 获取 getPrivilegeInfo 活动角色配置接口
+        }else if (res && res.code === 200 && res.data.is_privilege === 0) {
+          this.$message.success('关闭成功');
+          this.roleSwitch = !this.roleSwitch;
+          // 获取 getPrivilegeInfo 活动角色配置接口
+        } else if (res && res.code === 200 && res.data.type === 1) {
+          this.$message.error('直播中不能设置该功能');
+        } else if (res && res.code === 1001) {
+          this.$message.error('直播中不能设置该功能');
+        } else {
+          this.$message.error(res.msg || roleSwitch ? `开启失败` : `开启失败`);
+        }
+      }).catch(er => {
+        console.log(er);
+        this.$message.error(roleSwitch ? `开启失败，` : `开启失败`);
+      });
+    },
+    getPrivilegeInfo() {
+      this.$fetch('privilegeInfo', {
+        webinar_id: this.$route.params.str,
+      }).then(res => {
+          res && res.code === 200 && res.data ? this.privilegeVo = res.data : this.privilegeVo = {};
+      }).catch(e => {
+        console.log(e);
+        this.privilegeVo = {};
+      });
+    },
+    async getLiveInfo() {
+      await this.$fetch('getWebinarInfo', {
+        webinar_id: this.$route.params.str,
+        user_id: '1330'
+      }).then(res => {
+        res && res.code === 200 && res.data ? this.liveVo = res.data : this.liveVo = {};
+      }).catch(e => {
+        console.log(e);
+        this.liveVo = {};
+      });
+      this.getPrivilegeInfo();
+    },
+    copy(text) {
+      let clipboard = new Clipboard('.copy-text', {
+        text: () => text
+      });
+      clipboard.on('success', () => {
+        this.$message.success('复制成功');
+        // 释放内存
+        clipboard.destroy();
+      });
+      clipboard.on('error', () => {
+        this.$message.error('复制失败，暂不支持自动复制');
+        // 释放内存
+        clipboard.destroy();
+      });
+    }
+  },
+  created() {
+    // 根据ID获取活动信息
+    this.getLiveInfo();
   }
 };
 </script>
@@ -186,6 +277,7 @@ export default {
   border: 1px dashed #EEEEEE;
   padding: 32px 32px;
   background: #FFFFFF;
+  vertical-align: middle;
   &:nth-child(2n) {
     margin-right: 0;
     margin-left: 12px;
@@ -246,7 +338,7 @@ export default {
         background: #F7F7F7;
         border-radius: 0 4px 4px 0;
         position: absolute;
-        right: 0;
+        right: -1px;
         top: 0;
         line-height: 38px;
         text-align: center;
