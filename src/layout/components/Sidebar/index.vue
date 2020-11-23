@@ -58,10 +58,25 @@ export default {
       return sessionOrLocal.get('sidebarLogo') || false;
     }
   },
+  methods: {
+    getUserInfo() {
+      // 控制台-账户信息页需要，所有页面都依赖
+      this.$fetch('getInfo', {
+        scene_id: 2
+      }).then(res =>{
+        if(res.code === 200 && res.data) {
+          sessionOrLocal.set('account_info', JSON.stringify(res.data));
+        } else {
+          sessionOrLocal.set('account_info', null);
+        }
+      });
+    }
+  },
   mounted() {
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
     });
+    this.getUserInfo();
   },
   destroyed() {
   }

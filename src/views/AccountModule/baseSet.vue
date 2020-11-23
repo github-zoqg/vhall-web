@@ -21,13 +21,13 @@
         </upload>
       </el-form-item>
       <el-form-item label="公司名称：" prop="company">
-        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.position" maxlength="30" />
+        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" maxlength="30" />
       </el-form-item>
       <el-form-item label="您的职业：" prop="position">
         <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" maxlength="15" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" round @click.prevent.stop="baseSetSave">保 存</el-button>
+        <el-button type="primary" class="length152" round @click.prevent.stop="baseSetSave">保 存</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -35,6 +35,7 @@
 
 <script>
 import Upload from '@/components/Upload/main';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "baseSet.vue",
   components: {
@@ -61,7 +62,8 @@ export default {
         position: [
           { max: 15, message: '最多可输入15个字符', trigger: 'blur' },
         ],
-      }
+      },
+      accountInfo: null
     };
   },
   methods: {
@@ -107,6 +109,11 @@ export default {
       console.log('uploadPreview', file);
     },
     initComp() {
+      let account_info = sessionOrLocal.get('account_info');
+      if(account_info !== null) {
+        let accountInfo = JSON.parse(account_info);
+        this.baseSetForm = accountInfo;
+      }
     },
     // 保存
     baseSetSave() {
