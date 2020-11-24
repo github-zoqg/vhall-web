@@ -28,11 +28,9 @@
         </div>
       </div>
     </el-scrollbar>
-    <div class="sureChose">
-      <el-button type="primary" @click="dialogVisible = false" size="medium"
-        >选择</el-button
-      >
-      <el-button @click="dialogVisible = false" size="medium">取消</el-button>
+    <div slot="footer" class="dialog-footer">
+      <el-button round @click.prevent.stop="dialogVisible = false">取 消</el-button>
+      <el-button round type="primary" @click.prevent.stop="dialogVisible">选 择</el-button>
     </div>
   </VhallDialog>
 </template>
@@ -104,18 +102,6 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-/deep/.el-dialog__body {
-  padding: 20px 22px 20px 20px;
-}
-/deep/.el-dialog__header {
-  padding: 20px 24px 10px;
-}
-/deep/.el-dialog__headerbtn {
-  right: 35px;
-}
-/deep/.el-dialog {
-  padding-bottom: 60px;
-}
 .background-list {
   // border: 1px solid #ccc;
   max-height: 300px;
@@ -159,13 +145,12 @@ export default {
     }
   }
 }
-.sureChose {
-  margin-top: 24px;
-  float: right;
-  /deep/.el-button {
-    padding: 10px 33px;
-    border-radius: 20px;
-  }
+/deep/.el-dialog__footer{
+  text-align: left;
+}
+.dialog-footer {
+  padding-top: 24px;
+  // float: left;
 }
 </style>
 

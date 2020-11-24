@@ -7,28 +7,56 @@
         </el-form-item>
         <el-form-item label="商品图片" prop="imgUrl">
           <div class="imgList">
-            <div class="img-item">
-              <div class="img-item" v-for="(item, index) in flieList" :key="index">
-                <upload
-                  class="giftUpload"
-                  v-model="item.url"
-                  :restPic="true"
-                  >
-                </upload>
-                <!-- <img :src="item.url" alt=""> -->
-              </div>
+            <div class="img-item" v-for="(item, index) in flieList" :key="index">
+              <span class="cover-item" v-if="item.cover">封面</span>
+              <!-- <img :src="item.url" alt="" v-if="item.url"> -->
               <upload
                 class="giftUpload"
-                v-model="form.imageUrl"
-                :on-success="handleuploadSuccess"
+                v-model="item.url"
+                :on-success="productLoadSuccess"
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
                 :restPic="true"
-                :before-upload="beforeUploadHnadler">
+                :coverPic="!item.cover"
+                @delete="formDelete(item)"
+                @coverPage="coverPage(item)"
+                >
                 <p slot="tip">上传图片</p>
               </upload>
             </div>
+            <div class="img-item" v-if="flieList.length<4">
+               <upload
+                class="giftUpload"
+                :on-success="productLoadSuccess"
+                :on-progress="uploadProcess"
+                :on-error="uploadError"
+                :on-preview="uploadPreview"
+                :restPic="true"
+                >
+                <p slot="tip">上传图片</p>
+              </upload>
+            </div>
+              <!-- <div class="img-item" v-for="(item, index) in flieList" :key="index">
+                <div class="hover-item">
+                  <p><i class="el-icon-collection"></i><br/>封面</p>
+                  <p><i class="el-icon-delete"></i><br/>删除</p>
+                </div>
+                <span class="cover-item" v-if="item.cover">封面</span>
+                <img :src="item.url" alt="">
+              </div>
+              <div class="img-item" v-if="flieList.length<4">
+                <upload
+                  class="giftUpload"
+                  :on-success="productLoadSuccess"
+                  :on-progress="uploadProcess"
+                  :on-error="uploadError"
+                  :on-preview="uploadPreview"
+                  :restPic="true"
+                  >
+                  <p slot="tip">上传图片</p>
+                </upload>
+              </div> -->
           </div>
           <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，尺寸：600*600</p>
         </el-form-item>
@@ -82,19 +110,24 @@ export default {
         link: [
           { required: true, message: '请输入商品链接', trigger: 'blur' }
         ]
-      }
+      },
     };
   },
+  // watch: {
+
+  // },
   components: {
     upload
   },
   methods: {
-    handleUploadSuccess(res, file){
+    productLoadSuccess(res, file){
       console.log(res, file);
       this.form.imageUrl = URL.createObjectURL(file.raw);
       this.flieList.push({
-        url: this.form.imageUrl
+        url: this.form.imageUrl,
+        cover: false
       });
+      this.flieList[0].cover = true;
       console.log(this.flieList);
     },
     beforeUploadHandler(file){
@@ -134,6 +167,22 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+    // 删除
+    formDelete(opt) {
+      this.flieList.map((item, index) => {
+        if (item.url === opt.url) {
+          this.flieList.splice(index, 1);
+        }
+      });
+      let length = this.flieList.length;
+      if (opt.cover) {
+          this.flieList[length-1].cover = true;
+        }
+    },
+    coverPage(item) {
+      this.flieList.map(item => item.cover = false);
+      item.cover = true;
+    },
     onSubmit() {
       console.log("111111111111");
     }
@@ -148,7 +197,7 @@ export default {
     /deep/.el-form{
       width: 50%;
     }
-    /deep/.el-form-item {
+    .el-form-item {
       margin-bottom: 32px;
       i{
         font-style: normal;
@@ -159,23 +208,61 @@ export default {
     /deep/.el-upload--picture-card{
       height: 148px;
     }
-    /deep/.el-button {
-      padding: 12px 61px;
-    }
     .imgList{
       display: flex;
       height: 150px;
-      justify-content: space-between;
+      // justify-content: space-between;
       align-items: center;
       .img-item{
-        width: 148px;
-        height: 148px;
+        width: 150px;
+        height: 150px;
         border: 4px;
-        // border: 1px solid #ccc;
-        // overflow: hidden;
+        position: relative;
+        // border: 1px dashed #ccc;
+        margin-right: 10px;
+        cursor: pointer;
+        .cover-item{
+          z-index: 100;
+          position: absolute;
+          top:0;
+          left:0;
+          background: #FB3A32;
+          border-radius: 4px 0 12px 0;
+          color: #fff;
+          font-size: 12px;
+          display: inline-block;
+          text-align: center;
+          width: 32px;
+          line-height: 22px;
+          height: 22px;
+        }
         img{
           width: 148px;
           height: 148px;
+        }
+        .hover-item{
+          position: absolute;
+          height: 150px;
+          width: 150px;
+          top:0;
+          left:0;
+          z-index: 10;
+          background:rgba(0, 0, 0, 0.6);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #fff;
+          i{
+            font-size: 28px;
+            color: #fff;
+          }
+          // display: none;
+          // &::hover{
+          //   display: block;
+          // }
+        }
+        &::hover .hover-item{
+          display: block;
         }
       }
     }
