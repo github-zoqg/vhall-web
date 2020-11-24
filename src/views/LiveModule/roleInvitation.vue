@@ -16,7 +16,7 @@
       </el-switch>
     </pageTitle>
     <!-- 角色邀请卡片 -->
-    <div :class="!roleSwitch ? ' pre--full-mask' : 'role-card-list'">
+    <div :class="!roleSwitch ? 'role-card-list pre--full-mask' : 'role-card-list'">
       <div class="pre--full-cover" v-show="!roleSwitch"></div>
       <div>
         <!-- 主持人 -->
@@ -50,7 +50,7 @@
           </div>
         </div>
         <!-- 嘉宾 -->
-        <div class="role-card">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
@@ -96,12 +96,11 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" round>邀请</el-button>
+            <el-button type="primary" v-preventReClick @click.prevent="copy(urlText2)" class="copy-text">邀请</el-button>
           </div>
-
         </div>
         <!-- 助理 -->
-        <div class="role-card">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.assistant">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role3">助理</label>
@@ -132,7 +131,7 @@
               <el-button size="mini" round>保存</el-button>
             </div>
             <div class="role-qx-list">
-              <el-checkbox>问答</el-checkbox>
+              <el-checkbox v>问答</el-checkbox>
               <el-checkbox>分享</el-checkbox>
               <el-checkbox>公告</el-checkbox>
               <el-checkbox>成员管理</el-checkbox>
@@ -145,9 +144,8 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" round>邀请</el-button>
+            <el-button type="primary" v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
           </div>
-
         </div>
       </div>
     </div>
@@ -181,6 +179,22 @@ export default {
               开始时间：${this.liveVo.start_time}
               主持人口令：${this.liveVo && this.liveVo.host_password ? this.liveVo.host_password : '未设置'}
               加入链接：${'/mywebinar/host-login/'+ this.liveVo.id }`;
+    },
+    urlText2: function() {
+      return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.liveVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
+              直播名称：${this.liveVo.subject}
+              直播ID：${this.liveVo.id}
+              开始时间：${this.liveVo.start_time}
+              嘉宾口令：${this.liveVo && this.liveVo.guest_password ? this.liveVo.guest_password : '未设置'}
+              加入链接：${'/mywebinar/login/'+ this.liveVo.id }`;
+    },
+    urlText3: function() {
+      return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.liveVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
+              直播名称：${this.liveVo.subject}
+              直播ID：${this.liveVo.id}
+              开始时间：${this.liveVo.start_time}
+              助理口令：${this.liveVo && this.liveVo.assistant_password ? this.liveVo.assistant_password : '未设置'}
+              加入链接：${'/mywebinar/login/'+ this.liveVo.id }`;
     }
   },
   methods: {
