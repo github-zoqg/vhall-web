@@ -44,7 +44,18 @@ Vue.component('SPagination',SPagination);
 Vue.component('VhallDialog',VhallDialog); // 弹框
 Vue.component('tableList',tableList);  // 表格区域
 Vue.component('searchArea',searchArea); // 搜索区域
-
+Vue.directive('preventReClick', {    // 限制按钮重复点击
+  inserted: function (el, binding) {
+    el.addEventListener('click', () => {
+      if (!el.disabled) {
+        el.disabled = true;
+        setTimeout(() => {
+          el.disabled = false;
+        }, binding.value || 3000);
+      }
+    });
+  }
+});
 // 国际化
 import VueI18n from 'vue-i18n';
 Vue.use(VueI18n);

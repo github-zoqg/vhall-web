@@ -15,7 +15,7 @@
           <p>可进行多人连麦</p>
           <p>需要使用chrome浏览器</p>
         </div> -->
-        <div :class="chooseType == 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
+        <div :class="chooseType === 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
           <p class="choose-p"></p>
           <p class="f-20"><label class="beta-label" style="font-weight: 400">客户端发起</label></p>
           <p>功能更为强大，支持多种视频采集卡</p>
@@ -80,6 +80,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../../common/css/common.less';
 .choose__way__main {
 }
 .select-way {

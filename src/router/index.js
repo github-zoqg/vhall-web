@@ -115,7 +115,7 @@ const v3Routes = [
       },
       {
         path: 'virtual/:str(\\d+)',
-        component: () => import('@/views/LiveModule/viewerRules'),
+        component: () => import('@/views/LiveModule/virtual'),
         name: 'virtual',
         meta:{ title: '准备—虚拟人数', icon: '' , activeMenu: '/live/list'},
         hidden: true
@@ -272,6 +272,13 @@ const v3Routes = [
         component: () => import('@/views/LiveModule/Data/interactDetail'),
         name: 'interactionDetail',
         meta:{ title: '查看数据', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: '/lookSingleQuestion',
+        component: () => import('@/views/LiveModule/Data/lookSingleQuestion'),
+        name: 'lookSingleQuestion',
+        meta:{ title: '查看问卷详情', icon: '' , activeMenu: '/live/list'},
         hidden: true
       }
     ]
@@ -470,14 +477,21 @@ const v3Routes = [
         path: '/infoDetail/:str(\\d+)',
         component: () => import('@/views/FinanceModule/infoDetail'),
         name: 'infoDetail',
-        meta:{ title: '账单明细', icon: '' , activeMenu: '/finance/info'},
+        meta:{ title: '账单明细', icon: '' , activeMenu: '/finance/income'},
         hidden: true
       },
       {
-        path: '/accountDetail/:str(\\d+)',
+        path: '/accountDetail',
         component: () => import('@/views/FinanceModule/accountDetail'),
-        name: 'infoDetail',
-        meta:{ title: '提现明细', icon: '' , activeMenu: '/finance/info'},
+        name: 'accountDetail',
+        meta:{ title: '提现明细', icon: '' , activeMenu: '/finance/income'},
+        hidden: true
+      },
+      {
+        path: '/orderDetail',
+        component: () => import('@/views/FinanceModule/orderDetail'),
+        name: 'orderDetail',
+        meta:{ title: '订单支付', icon: '' , activeMenu: '/finance/income'},
         hidden: true
       }
     ]

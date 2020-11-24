@@ -14,7 +14,7 @@
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
-        <el-card>
+        <el-card class="serach-line">
           <search-area
             ref="searchArea"
             :searchAreaLayout="searchAreaLayout"
@@ -32,7 +32,7 @@
         </div>
         <i class="el-icon-question"></i>
       </el-tooltip>
-      <el-card>
+      <el-card class="serach-line">
         <search-area
             ref="searchAccount"
             :searchAreaLayout="searchAccount"
@@ -239,6 +239,10 @@ export default {
       text-align: left;
       position: relative;
       margin-top: 20px;
+      .serach-line{
+        padding-top: 14px;
+        padding-bottom: 24px;
+      }
       span {
         display: inline-block;
         font-size: 16px;

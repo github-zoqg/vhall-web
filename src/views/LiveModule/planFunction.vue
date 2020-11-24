@@ -157,7 +157,7 @@ export default {
   min-height: 190px;
   background: @background_white;
   border-radius: 4px;
-  margin: 0 auto 25px auto;
+  margin: 0 auto 24px auto;
 }
 .div__view__title {
   padding-top: 32px;
@@ -170,9 +170,11 @@ export default {
 }
 ul {
   li {
+    display: block;
     list-style-type: none;
     margin-top: 32px;
     margin-left: 80px;
+    line-height: 20px;
   }
   padding-bottom: 32px;
 }

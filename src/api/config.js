@@ -1,29 +1,58 @@
 const apis = {
   // 资料管理
   datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
-  dataVideoList: ['/99/v3/webinars/videos/get-video-list', 'POST', 'mock'], //音视频列表
-  dataVideoupdate: ['/99/v3/webinars/videos/put-video', 'POST', 'mock'], //音视频编辑
-  dataVideoDel: ['/99/v3/webinars/videos/del-video', 'POST', 'mock'], //音视频删除
-  dataVideoAdd: ['/99/v3/webianrs/videos/post-video', 'POST', 'mock'], //音视频列表
+  dataVideoList: ['/99/v3/webinars/videos/get-list', 'POST', 'mock'], //音视频列表
+  dataVideoupdate: ['/99/v3/webinars/videos/edit', 'POST', 'mock'], //音视频编辑
+  dataVideoDel: ['/99/v3/webinars/videos/delete', 'POST', 'mock'], //音视频删除
+  dataVideoAdd: ['/99/v3/webianrs/videos/create', 'POST', 'mock'], //音视频列表
 
   // 直播模块
-  createLive: ['/99/v3/webinars/webinar/post-webinar', 'POST', 'mock'], // 创建直播 jian.chang
+  createLive: ['/99/v3/webinars/webinar/create', 'POST', 'mock'], // 活动创建/直播创建 jian.chang
   liveList: ['/99/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang
+  getWebinarInfo: ['/99/v3/webinars/webinar/info', 'POST', 'mock'], // 查询活动基础信息接口
+  liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改
+  liveDel: ['/99/v3/webinars/webinar/del-webinars', 'POST', 'mock'], // 活动删除
+  demandCreate: ['/99/v3/webinars/webinar/create-demand', 'POST', 'mock'], // 点播创建
+
+  // 专题
+  subjectCreate: ['/99/v3/webinars/subject/create', 'POST', 'mock'], // 专题创建
+  subjectList: ['/99/v3/webinars/subject/get-list', 'POST', 'mock'], // 专题列表
+  subjectEdit: ['/99/v3/webinars/subject/edit', 'POST', 'mock'], // 专题修改
+  subjectInfo: ['/99/v3/webinars/subject/info', 'POST', 'mock'], // 获取专题详情接口(专题预览)
+  subjectDel: ['/99/v3/webinars/subject/delete', 'POST', 'mock'], // 专题删除接口
+  // 角色邀请
+  privilegeInfo:  ['/99/v3/webinars/privilege/info', 'POST', 'mock'], // 获取活动角色配置接口
+  privilegeOpen:  ['/99/v3/webinars/privilege/open-privilege', 'POST', 'mock'], // 开启关闭角色开关
+  privilegeEdit:  ['/99/v3/webinars/privilege/edit-pass', 'POST', 'mock'], // 角色密码修改接口 TODO 口令修改？
+  privilegePrem:  ['/99/v3/webinars/privilege/edit-premission', 'POST', 'mock'], // 角色邀请——权限修改接口
+
+  // 第三方K值模块
+  kidAuthInfo:  ['/99/v3/webinars/auth/info', 'POST', 'mock'], // 获取单个活动K值详情接口
+  kidAuthEdit:  ['/99/v3/webinars/auth/edit', 'POST', 'mock'], // 单个活动K值设置修改接口
+
+
+  // 暖场视频
+  warmCreate: ['/99/v3/webinars/warm/create', 'POST', 'mock'], // 添加暖场视频
+  warnInfo: ['/99/v3/webinars/warm/info', 'POST', 'mock'], // 获取暖场视频详情接口
+  warnDelete: ['/99/v3/webinars/warm/delete', 'POST', 'mock'], // 删除暖场视频
+  warnEdit: ['/99/v3/webinars/warm/edit', 'POST', 'mock'], // 修改暖场视频封面图片接口
+
   // 功能配置
   planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li
   planFunctionEdit: ['/102/config-type/up_config', 'POST', 'mock'], // 修改配置项 jia.li
   // 观看限制
-  audienceGet: ['/99/v3/webinars/audience/get-audience', 'POST', 'mock'], // 获取白名单分组列表 Jia.li
-  postGroupAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 白名单创建分组 Jia.li
-  postGroupDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 白名单删除分组 Jia.li
-  postGroupEdit: ['/99/v3/webinars/audience/put-group', 'POST', 'mock'], // 白名单分组重命名 Jia.li
+  audienceGet: ['/99/v3/webinars/audience/get-group-list', 'POST', 'mock'], // 获取白名单分组列表 Jia.li
+  postGroupAdd: ['/99/v3/webinars/audience/create-group', 'POST', 'mock'], // 白名单创建分组 Jia.li
+  postGroupDel: ['/99/v3/webinars/audience/delete-group', 'POST', 'mock'], // 白名单删除分组 Jia.li
+  postGroupEdit: ['/99/v3/webinars/audience/edit-group', 'POST', 'mock'], // 白名单分组重命名 Jia.li
   viewerList: ['/99/v3/webinars/audience/get-group-audience', 'POST', 'mock'], // 白名单根据分组获取观众列表 jia.li
-  viewerAdd: ['/99/v3/webinars/audience/post-audience', 'POST', 'mock'],// 白名单添加观众至分组 jia.li
+  viewerAdd: ['/99/v3/webinars/audience/create', 'POST', 'mock'],// 白名单添加观众至分组 jia.li
   viewerImport: ['/99/v3/webinars/audience/post-excel-audience', 'POST', 'mock'],// 白名单导入观众至分组 jia.li
-  viewerEdit: ['/99/v3/webinars/audience/put-audience', 'POST', 'mock'],// 白名单观众信息修改 jia.li
-  viewerDel: ['/99/v3/webinars/audience/del-audience', 'POST', 'mock'],// 白名单观众-批量删除 jia.li
+  viewerEdit: ['/99/v3/webinars/audience/edit', 'POST', 'mock'],// 白名单观众信息修改 jia.li
+  viewerDel: ['/99/v3/webinars/audience/delete-audience', 'POST', 'mock'],// 白名单观众-批量删除 jia.li
   viewerSetGet: ['/99/v3/webinars/webinar/get-webinar-verify', 'POST', 'mock'],// 获取活动观看限制接口 jia.li
-  viewerSetSave: ['/99/v3/webinars/verify/post-verify', 'POST', 'mock'],// 观看限制保存接口 jia.li
+  viewerInfo: ['/99/v3/webinars/audience/info', 'POST', 'mock'],// 白名单观众详情获取 jia.li
+  viewerSetSave: ['/99/v3/webinars/verify/save', 'POST', 'mock'],// 观看限制保存接口 jia.li
   fCodeExecute: ['/99/v3/webinars/webinar/post-generate-fcode', 'POST', 'mock'],// 生成验证码 jia.li
   // 自定义菜单
   menuTplList: ['/101/v3/menu-components/list', 'POST', 'mock'], // 控制台-组件列表接口 jia.li
@@ -73,9 +102,9 @@ const apis = {
   sonDel: ['/100/v3/users/child/delete', 'POST', 'mock'], // 子账号删除 Jia.li
   sonEdit: ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号修改 Jia.li
   getRoleList: ['/100/v3/users/user-role/list', 'POST', 'mock'], // 角色-用户-获取 Jia.li
-  roleAdd: ['/99/v3/webinars/audience/post-group', 'POST', 'mock'], // 角色创建 Jia.li
-  roleDel: ['/99/v3/webinars/audience/del-group', 'POST', 'mock'], // 角色删除 Jia.li
-  roleEdit: ['/99/v3/webinars/audience/put-group', 'POST', 'mock'], // 角色编辑 Jia.li
+  roleAdd: ['', 'POST', 'mock'], // 角色创建 Jia.li
+  roleDel: ['', 'POST', 'mock'], // 角色删除 Jia.li
+  roleEdit: ['', 'POST', 'mock'], // 角色编辑 Jia.li
   //财务中心
   getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
   orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
@@ -117,7 +146,6 @@ const apis = {
   checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
   resetPassword: ['/100/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回接口 Jia.li
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
-
 };
 
 const getApi = api => {

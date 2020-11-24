@@ -11,7 +11,7 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
-      <el-button round v-if="$route.meta.title==='直播—问卷'">资料库</el-button>
+      <el-button round v-if="$route.meta.title==='直播—问卷'" @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
@@ -26,11 +26,15 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
+    <pre-question ref="isPreQuestion"></pre-question>
+    <base-question ref="dataBase"></base-question>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import preQuestion from './preQuestion';
+import baseQuestion from './questionBase';
 export default {
   name: "question",
   data() {
@@ -79,7 +83,9 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    preQuestion,
+    baseQuestion
   },
   created() {
     console.log(this.$route, '1232435234534565365');
@@ -103,6 +109,7 @@ export default {
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制
     cope(that, {rows}) {
@@ -123,6 +130,9 @@ export default {
     addQuestion() {
       this.$router.push({
         path: `/${this.$route.meta.name}/addQuestion`});
+    },
+    dataBase() {
+      this.$refs.dataBase.dataBaseVisible = true;
     }
   },
 };
