@@ -117,7 +117,7 @@ export default {
   },
   methods: {
     levelVersion(title) {
-      if (this.$route.name === 'home') {
+      if (this.$route.name === 'Home') {
         this.$router.push({
           name: 'info'
         });
@@ -132,7 +132,7 @@ export default {
       });
     },
     buyVersion(type) {
-      if (this.$route.name === 'home') {
+      if (this.$route.name === 'Home') {
         this.$router.push({
           name: 'info'
         });
@@ -170,6 +170,7 @@ export default {
     p {
       font-size: 14px;
       color: #999;
+      cursor: pointer;
     }
     i{
       color: #000;

@@ -10,7 +10,7 @@
 
     <!-- 操作栏 -->
     <div class="operaBox">
-      <el-button type="primary" round @click="$router.push({path:'/special/edit'})">创建专题</el-button>
+      <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
       <div class="searchBox">
         <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
           <el-option
@@ -22,6 +22,7 @@
         </el-select>
         <el-input
           placeholder="请输入专题标题"
+          clearable
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
@@ -51,26 +52,18 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                <router-link :to="'chooseWay/' + item.webinar_id" target="_blank"><i class="el-icon-edit-outline"></i></router-link>
+                <i class="el-icon-edit-outline" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
+                <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
                 <i class="el-icon-reading"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
-                <i class="el-icon-share" @click.prevent.stop="toDetail(item.webinar_id)"></i>
+                <i class="el-icon-share" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
-                <i class="el-icon-delete"></i>
+                <i class="el-icon-delete" @click="detele(item.id)"></i>
               </el-tooltip>
-              <!-- <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)">
-                <i class="el-icon-more"></i>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>数据报告</el-dropdown-item>
-                  <el-dropdown-item>互动统计</el-dropdown-item>
-                  <el-dropdown-item>用户统计</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown> -->
             </p>
           </div>
           <transition name="el-zoom-in-bottom">
@@ -80,29 +73,24 @@
       </el-col>
     </el-row>
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
+    <share ref="share"></share>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import share from './components/share';
 export default {
   data() {
     return {
       liveStatus: 0,
       orderBy: 1,
       keyWords: '',
-      pageSize: 10,
+      pageSize: 12,
       pageNum: 1,
+      pos: 0,
       totalElement: 0,
       liveDropDownVisible: false,
-      statusOptions: [
-        { label: '全部', value: 0 },
-        { label: '预告', value: 2 },
-        { label: '直播', value: 1 },
-        { label: '结束', value: 3 },
-        { label: '点播', value: 4 },
-        { label: '回访', value: 5 }
-      ],
       orderOptions: [
         { label: '按创建时间排序', value: 1 },
         { label: '按最后直播时间排序', value: 2 }
@@ -113,6 +101,7 @@ export default {
   },
   components: {
     PageTitle,
+    share
   },
   created() {
     this.getLiveList();
@@ -120,46 +109,68 @@ export default {
   methods: {
     searchHandler() {
       this.pageNum = 1;
+      this.pos = 0;
       this.getLiveList();
       console.log('searchHandler');
     },
-    dropDownVisibleChange(item) {
-      // this.liveDropDownVisible = visible
-      this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);
-    },
     currentChangeHandler(current) {
       this.pageNum = current;
+      this.pos = parseInt((current - 1) * 10);
+      console.log(this.pos, this.pageNum);
       this.getLiveList();
     },
     getLiveList(){
       const data = {
-        pos: this.pageNum,
-        // user_id: 1330,
+        pos: this.pos,
+        user_id: '16421841',
         limit: this.pageSize,
         title: this.keyWords,
         order_type: this.orderBy,
-        webinar_type: this.liveStatus
       };
       this.loading = true;
       console.log(data);
-      this.$fetch('liveList', data, {"Content-Type": "application/x-www-form-urlencoded", "need_sign": 0, platform: 'pc', token: 'cc'}).then(res=>{
+      this.$fetch('subjectList', data, {"Content-Type": "application/x-www-form-urlencoded", "need_sign": 0, platform: 'pc', token: 'cc'}).then(res=>{
         console.log(res);
         this.liveList = res.data.list;
-        this.totalElement = res.data.total;
+        // this.totalElement = res.data.total;
+        this.totalElement = 100;
       }).catch(error=>{
-        this.$message.error(`获取直播列表失败,${error.errmsg || error.message}`);
+        this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);
         console.log(error);
       }).finally(()=>{
         this.loading = false;
       });
     },
-    toDetail(id) {
-      this.$router.push({path: `/live/detail/${id}`});
+    // 删除
+    detele(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.trueDetele(id);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
-    toRoom(id){
-      const { href } = this.$router.resolve({path: `/live/room/${id}`});
-      window.open(href);
-    }
+    trueDetele(id) {
+      this.$fetch('subjectDel', {subject_ids: id}).then(res=>{
+        this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(error=>{
+          this.$message.error(`删除失败，${error.message}`);
+        }).finally(()=>{
+          this.loading = false;
+        });
+    },
+    toShare(id) {
+      this.$refs.share.dialogVisible = true;
+    },
   },
   filters: {
     liveTag(val) {
@@ -235,7 +246,7 @@ export default {
       float: right;
       .el-select{
         &:nth-child(1){
-          width: 120px;
+          width: 200px;
           margin-right: 20px;
         }
       }

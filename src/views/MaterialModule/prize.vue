@@ -10,7 +10,7 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload">新建</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="createPrize">新建</el-button>
       <el-button round class="head-btn batch-del">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
@@ -20,16 +20,21 @@
         >
       </search-area>
     </div>
-    <el-card class="question-list">
+    <el-card class="question-list" v-if="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
+    <div class="prize-no" v-else>
+      <el-button type="primary" @click="createPrize" round>新建奖品</el-button>
+    </div>
+    <create-prize ref="createPrize"></create-prize>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import createPrize from '../LiveModule/MaterialSet/components/createPrize';
 export default {
   name: "prize",
   data() {
@@ -78,7 +83,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    createPrize
   },
   methods: {
     onHandleBtnClick(val) {
@@ -112,6 +118,9 @@ export default {
     changeTableCheckbox(val) {
       console.log(val);
     },
+    createPrize() {
+      this.$refs.createPrize.dialogVisible = true;
+    }
   },
 };
 </script>
@@ -145,6 +154,11 @@ export default {
         }
       }
     }
+  }
+  .prize-no{
+    // height: calc(100vh - 260px);
+    text-align: center;
+    margin-top: 208px;
   }
 }
 </style>

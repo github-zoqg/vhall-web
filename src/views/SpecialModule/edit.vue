@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle title="创建专题"></pageTitle>
+    <pageTitle :title="`${$route.query.title}专题`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="120px">
       <el-form-item label="专题标题:" prop="title">
         <el-input v-model="formData.title" limit='100'></el-input>
@@ -16,7 +16,7 @@
           <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
-      <el-form-item label="专题简介:" prop="text">
+      <el-form-item label="专题简介:" required>
         <editor ref="editor"></editor>
       </el-form-item>
       <el-form-item label="预约人数:">
@@ -43,8 +43,8 @@
           :active-text="homeDesc">
         </el-switch>
       </el-form-item>
-      <el-form-item label="专题目录:" required>
-         <el-button size="small" round>添加</el-button>
+      <el-form-item label="专题目录:">
+         <el-button size="small">添加</el-button>
       </el-form-item>
       <p class="btnGroup">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
@@ -92,23 +92,21 @@ export default {
       formData: {
         title: '',
       },
+      subject_id: '',
       reservation: false,
       hot: false,
       home: false,
       loading: false,
-      imageUrl: '',
+      imageUrl: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/7e/65/7e651ca254943327ab8d7d133ed2d778.jpg',
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
-        ],
-        text: [
-          { required: true, message: '请输入专题简介', trigger: 'blur' }
         ]
       }
     };
   },
   created(){
-    console.log(this.$route);
+    console.log(this.$route.query.title, '111111111111111111');
   },
   methods: {
     handleuploadSuccess(res, file){
@@ -144,19 +142,21 @@ export default {
           let data = {
             subject: this.formData.title,
             introduction: this.$refs.editor.editor.txt.html(),
-            category: 2,
-            img_url: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/7e/65/7e651ca254943327ab8d7d133ed2d778.jpg',
+            img_url: this.imageUrl,
             is_private: Boolean(this.home),
-            is_open: Boolean(this.home),
             hide_appointment: Boolean(this.reservation),
             hide_pv: Boolean(this.hot),
+            id: this.$route.query.id || '',
+            webinar_ids: '777666555'
           };
           this.loading = true;
-          this.$fetch('createLive', data).then(res=>{
+          let url = this.$route.query.title === '创建' ? 'subjectCreate' : 'subjectEdit';
+          this.$fetch(url, data).then(res=>{
+            this.subject_id = res.data.subject_id;
             this.$message.success(`创建成功`);
             console.log(res);
             setTimeout(()=>{
-              this.$router.push({name: 'liveList'});
+              this.$router.push({name: 'Special'});
             }, 500);
           }).catch(error=>{
             this.$message.error(`创建失败，${error.message}`);
@@ -164,8 +164,6 @@ export default {
             this.loading = false;
           });
           console.log(data);
-          // createLive
-          // alert('submit!');
         } else {
           this.$message.error('请完善必填字段');
           document.documentElement.scrollTop = 0;

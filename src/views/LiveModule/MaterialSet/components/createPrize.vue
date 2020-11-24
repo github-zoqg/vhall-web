@@ -1,6 +1,6 @@
 <template>
   <div class="prize-create">
-    <el-dialog
+    <VhallDialog
       title="创建奖品"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
@@ -23,11 +23,11 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round size="medium" :disabled="!prizeForm.name">确 定</el-button>
-        <el-button @click="cancelPeize" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.name">确 定</el-button>
+        <el-button @click.prevent.stop="dialogVisible = false" round>取 消</el-button>
       </span>
-    </el-dialog>
-    <el-dialog
+    </VhallDialog>
+    <VhallDialog
       title="资料库选择"
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
@@ -50,13 +50,13 @@
            </div>
          </div>
        </el-scrollbar>
-       <div class="btnSure">
-        <span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span>
-        <el-button type="primary" @click="surePrize" round size="medium">确 定</el-button>
-        <el-button @click="cancelPeize" round size="medium">取 消</el-button>
+       <div class="prize-check"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
+       <div class="dialog-footer">
+        <el-button type="primary" @click="surePrize" round>确 定</el-button>
+        <el-button @click.prevent.stop="dialogPrizeVisible = false" round>取 消</el-button>
        </div>
      </div>
-    </el-dialog>
+    </VhallDialog>
   </div>
 </template>
 <script>
@@ -206,7 +206,7 @@ export default {
         }
       }
     }
-    .btnSure{
+    .prize-check{
      span{
        color: #666;
        padding-right: 250px;
@@ -214,7 +214,7 @@ export default {
          color: #FB3A32;
        }
      }
-      margin-top: 24px;
+      margin: 12px 0 24px 0;
     }
   }
 }

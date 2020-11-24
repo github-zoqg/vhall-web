@@ -349,10 +349,10 @@ const v3Routes = [
         meta: { title: '观众', icon: 'table' }
       },
       {
-        path: 'advert',
-        name: 'advert',
-        component: () => import('@/views/MaterialModule/advert'),
-        meta: { title: '广告推荐', icon: 'table' }
+        path: 'advertCard',
+        name: 'advertCard',
+        component: () => import('@/views/LiveModule/Brands/advertisementCard'),
+        meta: { title: '广告推荐', icon: 'table', name: 'material' }
       },
       {
         path: 'gift',
@@ -379,7 +379,7 @@ const v3Routes = [
         path: 'live',
         name: 'live',
         component: () => import('@/views/StatisticsModule/dataLive'),
-        meta: { title: '直播数据', icon: 'table' }
+        meta: { title: '活动数据', icon: 'table' }
       }
     ]
   },

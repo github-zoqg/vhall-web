@@ -5,7 +5,7 @@
       <el-row type="flex" class="row-center" justify="space-between">
         <el-col :span="5">
           <div class="center-item" @click="toCreateLive">
-            <p></p>
+            <p><icon icon-class="saasicon_zhibo"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>

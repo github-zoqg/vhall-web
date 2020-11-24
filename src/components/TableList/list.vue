@@ -15,7 +15,7 @@
         align="left"
         v-if="isCheckout"
       />
-      <template v-if="totalNum > 10">
+      <template v-if="totalNum > 0">
         <el-table-column
           align="left"
           v-for="(item, index) in tabelColumnLabel"
@@ -97,7 +97,7 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-show="needPagination && totalNum"
+      v-show="needPagination && totalNum > 9"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
