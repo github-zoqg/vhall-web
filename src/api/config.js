@@ -8,7 +8,7 @@ const apis = {
 
   // 直播模块
   createLive: ['/99/v3/webinars/webinar/post-webinar', 'POST', 'mock'], // 创建直播 jian.chang
-  liveList: ['/99/v3/webinars/webinar/get-webinar-list', 'POST', 'mock'], // 获取直播列表 jian.chang
+  liveList: ['/99/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang
   // 功能配置
   planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li
   planFunctionEdit: ['/102/config-type/up_config', 'POST', 'mock'], // 修改配置项 jia.li

@@ -98,7 +98,7 @@
         </el-tabs>
       </div>
       <div v-if="productFlag" class="fixWidth">
-        <div class="productImg">
+        <div class="productImg" @click="$refs.productDialog.dialogVisible = true">
           <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
         </div>
         <p class="title">手持无绳擦地机机器人扫地人扫地器人扫地人</p>
@@ -120,6 +120,7 @@
       </div>
     </div>
     <feedBack ref="feedBack"></feedBack>
+    <productDialog ref="productDialog"></productDialog>
   </div>
 </template>
 
@@ -127,6 +128,7 @@
 import feedBack from './feedBack';
 import share from '@/components/Share';
 import custoMenu from '../components/customMenuView';
+import productDialog from './productDialog';
 export default {
   data(){
     return {
@@ -221,7 +223,8 @@ export default {
   components: {
     feedBack,
     share,
-    custoMenu
+    custoMenu,
+    productDialog
   }
 };
 </script>
@@ -461,6 +464,7 @@ export default {
     .productImg{
       width: 100%;
       height: 254px;
+      cursor: pointer;
       img{
         height: 100%;
         width: 100%;

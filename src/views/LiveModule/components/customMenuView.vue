@@ -5,14 +5,14 @@
         这是直播间简介
       </template>
       <template v-else-if="item.type ==1 && !!item.details">
-        <template v-for="compontent in item.details" >
+        <template v-for="(compontent, compontentindex) in item.details" >
           <!-- 图文 -->
           <div :key="`${item.id}${compontent.id}`" v-if="compontent.component_id ==1" v-html="compontent.content"></div>
           <!-- 二维码 -->
           <img :key="`${item.id}${compontent.id}`" v-else-if="compontent.component_id ==2" :src="compontent.imageSrc" alt="二维码加载失败" class="custom_qrcode">
 
           <!-- 直播 || 专题-->
-          <ul :key="`${item.id}${compontent.component_id}`" v-else-if="compontent.component_id == 3 || compontent.component_id == 4" class="lives">
+          <ul :key="`${item.id}${compontent.component_id}-${compontentindex}`" v-else-if="compontent.component_id == 3 || compontent.component_id == 4" class="lives">
             <li v-for="live in compontent.items" :key="live.id">
               <div class="cover">
                 <img :src="live.img_url || '//t-alistatic01.e.vhall.com/static/img/video_default.png'" alt="封面加载失败">
@@ -32,23 +32,31 @@
             </li>
           </ul>
           <!-- 文字链接 -->
-          <a :key="`${item.id}${compontent.id}`" v-else-if="compontent.component_id == 5" :href="compontent.src" target="_blank" class="textLink">{{compontent.text}}</a>
+          <a :key="`${item.id}${compontent.component_id}`" v-else-if="compontent.component_id == 5" :href="compontent.src" target="_blank" class="textLink">{{compontent.text}}</a>
 
           <!-- 图片链接 -->
-          <a :key="`${item.id}${compontent.id}`" v-else-if="compontent.component_id == 6" :href="compontent.src" target="_blank" class="textLink">
+          <a :key="`${item.id}${compontent.component_id}`" v-else-if="compontent.component_id == 6" :href="compontent.src" target="_blank" class="textLink">
             <img :src="compontent.imageSrc" alt="图片加载失败">
           </a>
           <!-- 标题 -->
-          <h5 class="customTitle" :key="`${item.id}${compontent.id}`" v-else-if="compontent.component_id == 7">{{compontent.title}}</h5>
+          <h5 class="customTitle" :key="`${item.id}${compontent.component_id}`" v-else-if="compontent.component_id == 7">{{compontent.title}}</h5>
           <!-- 分割线 -->
-          <div class="splitLine" :key="`${item.id}${compontent.id}`" v-else-if="compontent.component_id == 8"></div>
+          <div class="splitLine" :key="`${item.id}${compontent.component_id}`" v-else-if="compontent.component_id == 8"></div>
           <!-- 排行榜 -->
-          <div class="rank" :key="`${item.id}${compontent.id}`" v-else-if="compontent.component_id == 9">
+          <div class="rank" :key="`${item.id}${compontent.component_id}`" v-else-if="compontent.component_id == 9">
             <p class="rankTitle">
               <span :class="{active: rankActive ==0}" @click="rankActive=0">邀请榜</span>
               <span :class="{active: rankActive ==1}" @click="rankActive=1">打赏榜</span>
-              <span class="right">排行榜规则 <i class="el-icon-arrow-down"></i></span>
+              <span class="right" @click="rankRuleShow=!rankRuleShow">排行榜规则 <i :class="{'el-icon-arrow-down': true, ruleActive: rankRuleShow}"></i></span>
             </p>
+            <transition name="el-fade-in">
+              <p class="desc" v-show="rankRuleShow" v-html="rankActive ==0? compontent.inContent : compontent.rewardContent"></p>
+            </transition>
+            <div class="emptyRank">
+              <icon icon-class="saasshafa"></icon>
+              <p>当前{{emptyRankText}}，快去抢沙发吧~</p>
+            </div>
+
           </div>
         </template>
         <!-- <div  v-if="item.">
@@ -66,11 +74,21 @@ export default {
       activeName: "0",
       menus: [],
       fetching: false,
-      rankActive: 0
+      rankActive: 0,
+      rankRuleShow: false
     };
   },
   created(){
     this.getMenuList();
+  },
+  computed: {
+    emptyRankText(){
+      if(this.rankActive==0){
+        return '您还没邀请人';
+      }else{
+        return '还没有人打赏';
+      }
+    }
   },
   filters: {
     statusFilter(item){
@@ -270,6 +288,20 @@ export default {
     width: 400px;
     padding: 10px;
     background: url("https://t-alistatic01.e.vhall.com/static/images/menu/rank-bg.png?v=MgM36HIN839xqrAGtTXHJg%3D%3D");
+    .desc{
+      padding: 10px;
+      background: #fff;
+    }
+    .emptyRank{
+      text-align: center;
+      background-color: #fff;
+      padding: 80px 0;
+      margin-top: 10px;
+      .iconContainer{
+        font-size: 50px;
+        color: #999;
+      }
+    }
   }
   .rankTitle{
     span{
@@ -286,6 +318,12 @@ export default {
       float: right;
       margin-right: 0;
       opacity: 1;
+      i{
+        transition: all .2s linear;
+      }
+      .ruleActive{
+        transform: rotate(-180deg);
+      }
     }
   }
 </style>
