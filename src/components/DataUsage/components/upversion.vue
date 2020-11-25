@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog
+    <VhallDialog
       :title="title === '升级'? '升级并发套餐' : '购买扩展包'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
@@ -53,8 +53,8 @@
           1.购买扩展包后，观众人数达到并发上限时，仍允许观众进入<br />2.扩展包用尽后观众达到并发上限将不再允许进入，请合理购买
         </div>
       </div>
-    </el-dialog>
-    <el-dialog
+    </VhallDialog>
+    <VhallDialog
       :title="'购买' + title"
       :visible.sync="dialogBuyVisible"
       :close-on-click-modal="false"
@@ -90,7 +90,6 @@
           type="primary"
           @click="buyProfessional"
           round
-          size="medium"
           :disabled="!checked"
           >结算</el-button
         >
@@ -104,7 +103,7 @@
           1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包<br />3、自启用之日起，购买的流量包有效期为一年 <br />4、流量包到期后自动失效
         </div>
       </div>
-    </el-dialog>
+    </VhallDialog>
   </div>
 </template>
 <script>
@@ -345,7 +344,7 @@ export default {
   display: flex;
   padding-left: 20px;
   line-height: 20px;
-  margin-top: 10px;
+  padding: 10px 0;
   .speak {
     padding-right: 10px;
   }

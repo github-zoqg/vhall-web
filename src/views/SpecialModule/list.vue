@@ -56,7 +56,7 @@
                 <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
-                <i class="el-icon-reading"></i>
+                <i class="el-icon-reading" @click="specialDetail"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
                 <i class="el-icon-share" @click.prevent.stop="toShare(item.id)"></i>
@@ -171,6 +171,10 @@ export default {
     toShare(id) {
       this.$refs.share.dialogVisible = true;
     },
+    // 预览页面
+    specialDetail() {
+      this.$router.push({path:'/special/detail'});
+    }
   },
   filters: {
     liveTag(val) {

@@ -11,8 +11,16 @@
       >
       </el-switch>
       <div class="invitation-look">
-        <span @click="code">扫码查看</span>
-        <span>本地预览</span>
+        <el-popover
+            placement="bottom"
+            trigger="hover"
+           >
+           <div class="invitation-code">
+            <img :src="qrcode" alt="">
+          </div>
+            <el-button round slot="reference">扫码查看</el-button>
+        </el-popover>
+        <el-button round>本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -90,7 +98,7 @@
       </div>
       <div class="invitation-show">
         <p>移动端预览</p>
-        <div class="show-img" v-if="false">
+        <div class="show-img" v-if="isShow==='first'">
           <div class="show-container">
             <div class="show-header">
               <div class="show-avator"></div>
@@ -106,7 +114,9 @@
               </div>
             </div>
             <div class="show-footer">
-              <div class="show-code"></div>
+              <div class="show-code">
+                <img :src="qrcode" alt="">
+              </div>
               <div class="show-action">
                 <p>扫 / 描 / 二 / 维 / 码</p>
                 <h1>立 即 参 与 活 动</h1>
@@ -115,7 +125,7 @@
             </div>
           </div>
         </div>
-        <div class="watch-img" v-if="false">
+        <div class="watch-img" v-else-if="isShow==='second'">
           <div class="watch-bg">
             <div class="watch-header">
               <div class="watch-avator"></div>
@@ -127,7 +137,7 @@
             <h1>遇见生活—生活方式面 面观</h1>
             <p>2020北京国际家具展暨智能生活节于6月14-17日在北接京中国国际会展中心盛大召开。</p>
             <div class="watch-footer">
-              <div class="watch-code"></div>
+              <div class="watch-code"><img :src="qrcode" alt=""></div>
               <div class="watch-action">
                 <p>扫码观看视频</p>
                 <h1>2020-11-26 14:30</h1>
@@ -136,7 +146,7 @@
             </div>
           </div>
         </div>
-        <div class="look-img">
+        <div class="look-img" v-else>
             <div class="look-header">
               <div class="look-avator"></div>
               <p>微吼直播</p>
@@ -155,7 +165,7 @@
               <p>北京 中国国际会展中心</p>
             </div>
             <div class="look-footer">
-              <div class="look-code"></div>
+              <div class="look-code"><img :src="qrcode" alt=""></div>
               <div class="look-action">
                 <p>扫 / 描 / 二 / 维 / 码</p>
                 <h1>立 即 参 与 活 动</h1>
@@ -173,26 +183,42 @@
 </template>
 <script>
 import addBackground from './components/imgBackground';
+import QRcode from 'qrcode';
 export default {
   data() {
     return {
       invitation: true,
+      qrcode: '',
+      isShow: 'first',
+      link: 'http://172.16.11.8/room/invitation',
       formInvitation: {},
       showList: [
         {
           url: '@/common/images/v35-webinar.png',
-          isCheck: true
+          isCheck: true,
+          show: 'first'
         },
         {
           url: '@/common/images/v35-webinar.png',
-          isCheck: false
+          isCheck: false,
+          show: 'second'
         },
         {
           url: '@/common/images/v35-webinar.png',
-          isCheck: false
+          isCheck: false,
+          show: 'third'
         }
       ]
     };
+  },
+  created(){
+    QRcode.toDataURL(
+      this.link,
+      (err, url) => {
+        console.log(err, url);
+        this.qrcode = url;
+      }
+    );
   },
   components: {
     addBackground
@@ -205,6 +231,7 @@ export default {
       this.$router.push({path: '/code'});
     },
     showMethods(items) {
+      this.isShow = items.show;
        this.showList.map(item => {
         item.isCheck = false;
         items.isCheck = true;
@@ -332,7 +359,6 @@ export default {
     }
     .show-img {
       width: 330px;
-      // height: 980px;
       border-radius: 4px;
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
@@ -369,14 +395,14 @@ export default {
             font-size: 26px;
             color:#1A1A1A;
             font-weight: 600;
-            line-height: 40px;
+            line-height: 37px;
           }
           p{
             font-size: 14px;
             color:#1A1A1A;
             font-weight: 400;
             line-height: 20px;
-            padding: 0 0 5px 0;
+            padding: 2px 0 5px 0;
           }
           .show-time{
             margin-top: 10px;
@@ -394,9 +420,12 @@ export default {
           .show-code{
             width: 60px;
             height: 60px;
-            border: 1px solid #ccc;
             margin-right: 10px;
             margin-left: 10px;
+            img{
+              width: 60px;
+              height: 60px;
+            }
           }
           .show-action{
             h1{
@@ -404,7 +433,7 @@ export default {
               font-size: 14px;
               color:#1A1A1A;
               font-weight: 600;
-              line-height: 30px;
+              line-height: 20px;
             }
             p{
               padding:0;
@@ -417,34 +446,34 @@ export default {
       }
     }
     .watch-img{
-    width: 330px;
-    border-radius: 8px;
-    background: #FFFFFF;
-    box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
-    .watch-bg{
-      height: 360px;
-      background-image: url('../../../common/images/v35-webinar.png');
-      background-size: cover;
-      .watch-header{
-          padding: 20px 24px;
-          text-align: center;
-          .watch-avator{
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1px solid #ccc;
-            margin: auto;
-            margin-bottom: 4px;
+      width: 330px;
+      border-radius: 8px;
+      background: #FFFFFF;
+      box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+      .watch-bg{
+        height: 360px;
+        background-image: url('../../../common/images/v35-webinar.png');
+        background-size: cover;
+        .watch-header{
+            padding: 20px 24px;
+            text-align: center;
+            .watch-avator{
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              border: 1px solid #ccc;
+              margin: auto;
+              margin-bottom: 4px;
+            }
+            p{
+              padding: 0;
+              font-size: 14px;
+              color: #666;
+              font-weight: 400;
+              line-height: 18px;
+            }
           }
-          p{
-            padding: 0;
-            font-size: 14px;
-            color: #666;
-            font-weight: 400;
-            line-height: 18px;
-          }
-        }
-    }
+      }
     .watch-text{
       padding: 10px 20px 24px 24px;
       h1{
@@ -466,11 +495,14 @@ export default {
           padding-top: 25px;
           // padding: 20px 24px 24px 32px;
           .watch-code{
-            width: 60px;
-            height: 60px;
-            border: 1px solid #ccc;
+            width: 67px;
+            height: 67px;
             margin-right: 10px;
             margin-left: 10px;
+            img{
+              width: 67px;
+              height: 67px;
+            }
           }
           .watch-action{
             h1{
@@ -558,7 +590,7 @@ export default {
       .look-footer{
         display: flex;
         width: 250px;
-        margin: 30px auto;
+        margin: 30px 24px;
         background: #000;
         border-radius: 4px;
         opacity: 0.2;
@@ -566,9 +598,12 @@ export default {
         .look-code{
           width: 60px;
           height: 60px;
-          border: 1px solid #ccc;
           margin-right: 10px;
           margin-left: 10px;
+          img{
+            width: 60px;
+            height: 60px;
+          }
         }
         .look-action{
           h1{
@@ -586,7 +621,6 @@ export default {
         }
       }
     }
-    // height: 200px;
   }
   .title-data {
     margin-bottom: 32px;
@@ -604,16 +638,17 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
-      span {
-        font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
-        font-weight: 400;
-        color: #666;
-        padding: 5px 20px;
-        border-radius: 20px;
-        border: 1px solid #ccc;
-        margin-left: 12px;
-        cursor: pointer;
+      /deep/.el-button:last-child{
+        margin-left: 10px;
+      }
+      .invitation-code{
+        width: 200px;
+        height: 190px;
+        text-align: center;
+        img{
+          width: 190px;
+          height: 190px;
+        }
       }
     }
   }

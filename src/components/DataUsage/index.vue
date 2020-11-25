@@ -28,7 +28,7 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.concurrency_extend || userInfo.arrears.extend  }}</h2>
-          <p v-if="this.$route.name!='home'" @click="goAccountDetail">账单明细</p>
+          <p class="account" v-if="this.$route.name!='Home'" @click="goAccountDetail">账单明细</p>
         </div>
       </el-col>
     </el-row>
@@ -53,7 +53,7 @@
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
-          <p @click="goAccountDetail" v-if="this.$route.name!='home'">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="this.$route.name!='Home'">账单明细</p>
         </div>
       </el-col>
       <el-col :span="9" v-else>
@@ -78,7 +78,7 @@
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
-          <p @click="goAccountDetail" v-if="this.$route.name!='home'">账单明细</p>
+          <p @click="goAccountDetail" v-if="this.$route.name!='Home'" class="account">账单明细</p>
         </div>
       </el-col>
     </el-row>
@@ -99,7 +99,7 @@ export default {
   watch: {
     userInfo: {
       handler() {
-        this.userInfo.edition = '2';
+        // this.userInfo.edition = '2';
       }
     }
   },
@@ -119,7 +119,7 @@ export default {
     levelVersion(title) {
       if (this.$route.name === 'Home') {
         this.$router.push({
-          name: 'info'
+          name: 'Finance'
         });
       } else {
         this.$refs.levelVersion.dialogVisible = true;
@@ -134,7 +134,7 @@ export default {
     buyVersion(type) {
       if (this.$route.name === 'Home') {
         this.$router.push({
-          name: 'info'
+          name: 'Finance'
         });
       } else {
         this.title = type === '1' ? '专业版' : '流量版';
@@ -157,6 +157,7 @@ export default {
     text-align: left;
     height: 140px;
     padding: 32px 0;
+    position: relative;
     .level {
       border: 1px solid #FB3A32;
       font-size: 12px;
@@ -183,6 +184,13 @@ export default {
       line-height: 30px;
       font-weight: bold;
       padding: 6px 0 8px 0;
+    }
+    .account{
+      position: absolute;
+      top: 30px;
+      right:0;
+      color: #3562FA;
+      font-size: 14px;
     }
   }
 }
