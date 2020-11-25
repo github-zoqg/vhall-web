@@ -26,8 +26,14 @@ src
 --------ItemCard 简介卡片入口
 --------MenuItem 菜单导航组件
 --------Header 头部公共导航
-
-
+--------Icon 阿里iconfont
+--------PageTitle 页面头部标题
+--------Dialog 弹窗
+--------Player 播放器
+--------Doc 文档
+--------Player_1 播放器（待删除）
+--------Share 分享
+--------Upload 上传
 --------Pagination 分页组件（待删除）
 --------Sidebar 左侧菜单导航组件
 --------Spagination 分页组件
@@ -35,6 +41,7 @@ src
 ----layout
 --------baseLayout.vue 基础布局 默认包含header和侧边导航栏
 --------baseLayout.vue 空白布局 不默认包含任何内容
+----tangram（tangram不在以依赖形式安装，而是将相关文件复制到项目里面，此文件夹为原tangram项目）
 ----router 路由
 ----utils
 --------enumeration.js 常量、枚举，用于页面展示反显
@@ -48,6 +55,24 @@ src
 --------weChat.js
 ----views
 --------LiveModule 直播模块
+------------Room（文件夹，原发起端与观看端，移植到项目里面，这版不做修改）
+------------signUp（文件夹，报名表单相关页面）
+----------------fieldSet.vue 报名表单设置页面
+----------------mian.vue 首页，包含左侧题型设置与右侧ui显示
+----------------shareDialog.vue 独立表单设置页面
+----------------signUpForm.vue 表单预览页面
+----------------themeSet.vue 主题设置页面
+----------------util.js 题型数据
+------------Subscribe（文件夹，预约相关）
+----------------associatedDoc.vue 关联文档弹框
+----------------chapter.vue 打点页
+----------------list.vue 回放列表
+----------------previewChapter.vue 预览打点弹框
+----------------videoTailoring.vue 剪辑台
+------------PlayBack（文件夹，回放相关）
+----------------feedBack.vue 反馈弹框
+----------------index.vue 预约页
+----------------productDialog.vue 产品弹框
 ------------customTab.vue 自定义组件
 ------------detail.vue 直播详情
 ------------edit.vue 编辑/基本信息
@@ -102,4 +127,4 @@ package.json
 README.md
 vue.config.js
 
-富文本编辑器为wangEdtior，已将编辑器封装成组件，位置：components/WangEdtior/，直接引用即可
+富文本编辑器为wangEdtior，已将编辑器封装成组件，位置：components/WangEdtior/，直接引用即可 [废弃，应该替换成tinymce]
