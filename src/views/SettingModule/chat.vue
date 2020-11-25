@@ -59,12 +59,12 @@
     <!-- 添加关键词 -->
     <VhallDialog width="350px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body>
       <div class="chat-add-dialog-content">
-        <el-form :model="addForm" ref="addForm" label-width="54px">
-          <el-form-item label="严禁词">
+        <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
+          <el-form-item label="严禁词" prop="name">
             <el-input
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
               :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
-              v-model="addForm.name"
+              v-model.trim="addForm.name"
               :maxlength="addForm.executeType === 'add' ? 1000 : 20"
               show-word-limit
             />
@@ -136,9 +136,27 @@ export default {
         name: null,
         type: 'add',
       },
+      addFormRules: {
+        name: [
+          { required: true, message: '请输入关键词', trigger: 'blur' },
+          { maxlength: 1000, message: '最多可输入1000个字符', trigger: 'blur' }
+        ]
+      },
+      editFormRules: {
+        name: [
+          { required: true, message: '请输入关键词', trigger: 'blur' },
+          { maxlength: 20, message: '单个严禁词可输入1~20个字符', trigger: 'blur' }
+        ]
+      },
       // 批量添加关键词
       multiUploadShow: false
     };
+  },
+  computed: {
+    dynamicRules() {
+      console.log(this.addForm);
+      return this.addForm.executeType === 'add' ? this.addFormRules : this.editFormRules;
+    }
   },
   methods: {
     getKeywordList() {
@@ -199,7 +217,12 @@ export default {
     },
     // 关键词新增 or 关键词修改
     keywordSend() {
-
+      // addForm.executeType
+      this.$refs.addForm.validate((valid) => {
+        if (valid) {
+          alert('验证通过！！！');
+        }
+      });
     },
     // 删除
     keywordDel(that, { rows }) {
@@ -328,6 +351,9 @@ export default {
   padding-bottom: 2px;
 }
 .chat-add-dialog-content {
+  /deep/.el-form-item__label:before {
+    display: none;
+  }
   overflow: hidden;
   /deep/.el-textarea__inner {
     padding: 8px 12px;
