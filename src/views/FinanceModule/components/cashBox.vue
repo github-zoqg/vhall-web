@@ -42,7 +42,7 @@
         </div>
       </div>
       <div class="nextBtn">
-        <el-button type="primary" round size="medium" :disabled="!code"
+        <el-button type="primary" round  :disabled="!code"
           >下一步</el-button
         >
       </div>
@@ -89,7 +89,7 @@
         </el-form-item>
       </el-form>
       <div class="nextBtn">
-        <el-button type="primary" round size="medium">确认</el-button>
+        <el-button type="primary" round>确认</el-button>
       </div>
     </el-dialog>
   </div>

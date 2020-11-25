@@ -127,7 +127,9 @@ export default {
         url: this.form.imageUrl,
         cover: false
       });
-      this.flieList[0].cover = true;
+      if (!this.flieList.some(item => item.cover)) {
+        this.flieList[0].cover = true;
+      }
       console.log(this.flieList);
     },
     beforeUploadHandler(file){
@@ -175,7 +177,7 @@ export default {
         }
       });
       let length = this.flieList.length;
-      if (opt.cover) {
+      if (length > 0 && opt.cover) {
           this.flieList[length-1].cover = true;
         }
     },
@@ -263,7 +265,7 @@ export default {
         }
         &::hover .hover-item{
           display: block;
-        }
+         }
       }
     }
     .imgText{
