@@ -5,19 +5,6 @@
         1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
-    <!-- <div class="title-data">
-      <span>{{ $route.name }}</span>
-      <el-tooltip effect="dark" placement="right-start">
-        <div slot="content">
-          1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
-        </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
-      </el-tooltip>
-    </div> -->
     <el-card class="box-card">
       <search-area
         ref="searchArea"
@@ -166,7 +153,7 @@ export default {
 <style lang="less" scoped >
 .data-live{
   /deep/.el-card__body{
-    padding: 5px 24px 51px 24px;
+    padding: 24px 32px;
   }
 }
 </style>

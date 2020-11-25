@@ -34,7 +34,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">保存</el-button>
+              <el-button type="primary" round>保存</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -80,8 +80,11 @@ export default {
   .offical-show{
     .show-on{
       position: absolute;
-      top: 65px;
+      top: 42px;
       left: 200px;
+      /deep/.el-switch__label.is-active{
+        color: #1a1a1a;
+      }
     }
     .form-phone{
       display: flex;
@@ -92,7 +95,7 @@ export default {
       margin-right: 200px;
       /deep/.el-button{
         margin-top: 100px;
-        padding: 12px 45px;
+        // padding: 10px 45px;
       }
     }
     .official-phone{

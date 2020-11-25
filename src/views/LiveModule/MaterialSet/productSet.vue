@@ -10,8 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" @click="addGift">创建</el-button>
-      <el-button>批量删除</el-button>
+      <el-button type="primary" @click="addGift" round>创建</el-button>
+      <el-button round>批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="'请输入商品名称'"

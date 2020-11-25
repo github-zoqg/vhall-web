@@ -23,10 +23,10 @@
         <el-input v-model="advertisement.link" placeholder="请输入广告链接"></el-input>
       </el-form-item>
     </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
-        <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
-      </span>
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="dialogVisible = false" round>确 定</el-button>
+      <el-button @click="dialogVisible = false" round>取 消</el-button>
+    </span>
     </VhallDialog>
     <VhallDialog
       title="选择广告推荐"
@@ -48,8 +48,8 @@
         </el-scrollbar>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogAdverVisible = false" round size="medium">确 定</el-button>
-        <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="dialogAdverVisible = false" round>确 定</el-button>
+        <el-button @click="dialogAdverVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
   </div>

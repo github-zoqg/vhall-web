@@ -59,7 +59,7 @@
                   添加字段
                 </div>
                 <el-form-item>
-                  <el-button type="primary">保存</el-button>
+                  <el-button type="primary" round>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -71,7 +71,7 @@
                   <p><el-input v-model="formData.phone" placeholder="请输入手机号" style="width:242px"></el-input></p>
                   <p><el-input v-model="formData.phone" placeholder="请输入地址" style="width:242px"></el-input></p>
                 </div>
-                <div class="sureBtn"><el-button type="primary">确定</el-button></div>
+                <div class="sureBtn"><el-button type="primary" round>确定</el-button></div>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@
                     <el-input v-model="formData.text" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary">保存</el-button>
+                  <el-button type="primary" round>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -144,8 +144,8 @@
             </table-list>
           </div>
           <div class="prize-no" v-else>
-            <el-button type="primary" @click="createPrize">新建奖品</el-button>
-            <el-button>资料库</el-button>
+            <el-button type="primary" @click="createPrize" round>新建奖品</el-button>
+            <el-button round>资料库</el-button>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -327,8 +327,6 @@ export default {
         }
       }
       /deep/.el-button{
-        padding: 12px 61px;
-        border-radius: 20px;
         margin-top: 25px;
       }
     }
@@ -372,8 +370,6 @@ export default {
         .sureBtn{
           text-align: center;
           /deep/.el-button{
-            padding: 12px 61px;
-            border-radius: 20px;
             margin-top: 25px;
           }
         }
@@ -439,13 +435,6 @@ export default {
     height: calc(100vh - 260px);
     text-align: center;
     margin-top: 268px;
-    /deep/.el-button{
-      padding: 12px 47px;
-      border-radius: 20px;
-    }
-    .el-button+.el-button{
-      margin-left: 16px;
-    }
   }
 }
 </style>
