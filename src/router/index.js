@@ -301,6 +301,13 @@ const v3Routes = [
         name: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
         meta: { title: '创建专题', icon: 'table' }
+      },
+      {
+        path: 'detail',
+        name: 'detail',
+        component: () => import('@/views/SpecialModule/components/preShow'),
+        meta: { title: '专题详情', icon: 'table', activeMenu: '/special/list'},
+        hidden: true
       }
     ]
   },
@@ -397,7 +404,7 @@ const v3Routes = [
         meta: { title: '设置中心', icon: 'el-icon-setting' }
       },
       {
-        path: 'chat/:str(\\d+)',
+        path: '/chat/:str(\\d+)',
         component: () => import('@/views/SettingModule/chat'),
         name: 'chat',
         meta:{ title: '聊天严禁词', icon: '' , activeMenu: '/setting/info'},
@@ -432,7 +439,7 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: 'logo/:str(\\d+)',
+        path: '/logo/:str(\\d+)',
         component: () => import('@/views/SettingModule/logo'),
         name: 'logo',
         meta:{ title: '控制台标志', icon: '' , activeMenu: '/setting/info'},
@@ -565,7 +572,7 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: 'downloadList',
+        path: '/downloadList',
         component: () => import('@/views/PlatformModule/download'),
         name: 'downloadList',
         meta: {title: '下载中心', icon: 'table'}
@@ -613,7 +620,7 @@ const v3Routes = [
       },
     ]
   },
-  { path: '*', redirect: '/warning/404', hidden: true }
+  { path: '*', redirect: '/warning/400', hidden: true }
 ];
 
 const router = new VueRouter({
