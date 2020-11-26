@@ -25,11 +25,14 @@
       tag="ul"
       handle=".moveBtn"
       v-bind="dragOptions"
+      v-model="renderQuestion"
+      @change="sortChange"
       @start="drag = true"
       @end="drag = false"
     >
+    <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
-        <li class="viewItem" v-for="(item, index) in questionArr" :key="index">
+        <li class="viewItem" v-for="(item, index) in renderQuestion" :key="index">
           <p class="label">
             <!-- {{item.required ? '（必填）' : ''}} -->
             <template v-if="!item.labelEditable">
@@ -128,6 +131,15 @@ export default {
       default: ()=> []
     }
   },
+  watch:{
+    questionArr: {
+      handler(newVal){
+        this.renderQuestion = newVal;
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   data(){
     return {
       // designation: '', //名称
@@ -135,7 +147,8 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png'
+      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png',
+      renderQuestion: []
     };
   },
   created() {
@@ -255,6 +268,10 @@ export default {
     },
     resetBanner(event){
       this.imageUrl= '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png';
+    },
+    sortChange(val, arr){
+      console.log('sortChange-->', this.renderQuestion);
+      this.$emit('update:questionArr', this.renderQuestion);
     }
   },
 };
