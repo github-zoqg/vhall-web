@@ -195,13 +195,20 @@
           :class="assistantType == 'doc' ? 'assistantStyle' : ''"
         >
           <!-- 签到 -->
-          <sign-in
+          <!-- <sign-in
             v-if="roomInfo.room_id"
             ref="signin"
             :vss_token="vssToken"
             :room_id="roomInfo.room_id"
             :masterEnd="true"
-          ></sign-in>
+          ></sign-in> -->
+          <NewSignIn
+            v-if="roomInfo.room_id"
+            ref="signin"
+            :vss_token="vssToken"
+            :room_id="roomInfo.room_id"
+            :masterEnd="true"
+          ></NewSignIn>
 
           <!-- 转播 -->
           <popup
@@ -1321,7 +1328,8 @@ import Doc from '@/components/Doc';
 import Mediasettings from '../../libs/media-settings';
 import VirtualAudience from '../../libs/virtualAudience';
 import Question from '../../libs/question/saas';
-import SignIn from '../../libs/saas-signin';
+// import SignIn from '../../libs/saas-signin/index copy';
+import NewSignIn from '../../libs/saas-signin';
 import Popup from '../../libs/saas-popup';
 import SassAlert from '../../libs/saas-popup/alert';
 import Rebroadcast from '../../libs/rebroadcast';
@@ -1433,7 +1441,7 @@ export default {
     Mediasettings,
     VirtualAudience,
     Question,
-    SignIn,
+    NewSignIn,
     Popup,
     Rebroadcast,
     Qa,

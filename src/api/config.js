@@ -132,7 +132,7 @@ const apis = {
 
   // 直播间内
   initiatorInfo: ['/101/v3/interacts/room/get-room-base-info', 'POST', 'mock'], // 获取房间信息 jian.chang
-  getInitiatorReportInfo: ['/api/vss/initiator/report-info', 'POST', 'mock'], // 获取上报信息 jian.chang
+  getInitiatorReportInfo: ['/domian/api/vss/initiator/report-info', 'POST'], // 获取上报信息 jian.chang
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang

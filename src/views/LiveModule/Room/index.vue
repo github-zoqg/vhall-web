@@ -31,6 +31,7 @@
 import VhallReport from '@/components/VhallReport/main';
 import { browserSupport } from '@/utils/getBrowserType';
 import chrome from './chrome';
+import DATA from './data';
 import tip from './tip';
 export default {
   components: { chrome, tip },
@@ -86,78 +87,14 @@ export default {
       }, 1000 * 60 * 30);
     },
     getUserinfo() {
-      this.$fetch('initiatorInfo', { webinar_id: this.il_id })
-        .then(res => {
-          if (res.code != 200) {
-            // eslint-disable-next-line no-return-assign
-            return this.tipMsg = res.msg;
-          }
-          const mockResult = {
-            cut_record_status: 3,
-            doc_low_priority: 0,
-            document_id: "b1ef443f",
-            document_page: 2,
-            domains:{
-              static: "t-alistatic01.e.vhall.com",
-              upload: "//t-alistatic01.e.vhall.com/upload",
-              web: "//t.e.vhall.com",
-              webinar: "//t-webinar.e.vhall.com",
-            },
-            free_tip: 0,
-            hd_definition: "360",
-            host_uid: "16422750",
-            is_interact: 0,
-            is_privilege: 0,
-            is_recording: 0,
-            layout: 3,
-            live_domain_customization: "",
-            live_time: 0,
-            params_verify_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2NDIyNzUwIiwicGhvbmUiOiIxMzU4MTg3NTQzMyIsIm5pY2tfbmFtZSI6InMxNjU4Mjk2MCIsImpvaW5fdWlkIjoiMTczNTU0NSJ9.52jSbxkDxgMGl4E8KNTUixMBhR_duradqdyt4uNdeZw",
-            permission: [
-              100001,
-              100003,
-              100004,
-              100005,
-              100008,
-              100009,
-              100011,
-              100012,
-              100013,
-              100014,
-              100015,
-              100016,
-              100017,
-              100019,
-              100020,
-              100021,
-              100022,
-              100023,
-              100026,
-              100027,
-              100028,
-              100029,
-              100030,
-            ],
-            push_definition: "360",
-            qa_open: 0,
-            record_notice: 3,
-            record_tip: 1,
-            report_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXBvcnRfd2ViaW5hcl9pZCI6IjU2MTc1MjMxNyIsInJlcG9ydF93ZWJpbmFyX3VzZXJfaWQiOiIxNzM1NTQ1In0.MhgZ12GrimJ4RBQt1BC8JkoxMc8vgPnwRH_oq7CzKgU",
-            room_id: "lss_8018578c",
-            share_id: "u-16422750",
-            speaker_max_num: 6,
-            user:{
-              avatar: "",
-              join_id: 287326,
-              nick_name: "s16582960",
-              saas_join_id: 1735545,
-              third_party_user_id: "16422750"
-            },
-            vss_token: "access:fd8d3653:fe9a45245f9d171e",
-            webinar_id: "561752317"
-          };
-          res.data = mockResult;
-          console.log('getInfo-->', res);
+      // this.$fetch('initiatorInfo', { webinar_id: this.il_id })
+      //   .then(res => {
+      //     if (res.code != 200) {
+      //       // eslint-disable-next-line no-return-assign
+      //       return this.tipMsg = res.msg;
+      //     }
+          const mockResult = window.a.data;
+          console.warn(mockResult);
           this.shareId = mockResult.share_id;
           this.userInfo = mockResult.user;
           this.roomId = mockResult.room_id;
@@ -193,11 +130,12 @@ export default {
           // 初始化数据上报
           this.initVHallReport(mockResult);
           //   sessionStorage.setItem('vhall-vsstoken',res.data.vss_token)
-        })
-        .catch(err => {
-          this.codeError = err.msg;
-          console.log('catch', err);
-        });
+        // })
+        // .catch(err => {
+        //   this.codeError = err.msg;
+        //   console.log('catch', err);
+        // });
+
     },
     // 打点录制
     recordFun(data) {
