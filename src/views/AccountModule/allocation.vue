@@ -7,7 +7,7 @@
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <el-button round @click.prevent.stop="multiAllocShow = true" class="panel-btn length104">批量分配</el-button>
+        <el-button round @click.prevent.stop="multiAllocShow = true" class="panel-btn length104" size="medium">批量分配</el-button>
         <!-- 固定分配 -->
         <div v-if="tabType === 'regular'" class="regular-ctx">
           <p>每个子账号可单独分配用量，所有用量之和不能大于可分配用量</p>
@@ -71,24 +71,29 @@
       <!-- 右侧名片 -->
       <div class="ac__allocation__panel--right">
         <div class="ac__allocation--user">
+          <h1 class="title">可用资源</h1>
           <img src="../../common/images/avatar.jpg" alt="" />
-          <p>XXXX的主页</p>
-          <p>粉丝数： 100010</p>
+          <p class="result_val">1016.34</p>
+          <p class="unit">当前可分配流量（GB）</p>
+          <p class="date">有效期至2023-07-31</p>
         </div>
-        <div class="ac__allocation--info">
-          </div>
+        <ul class="ac__allocation--info">
+          <li>提示：</li>
+          <li><span>1、</span><span>动态分配方式：所有子账户共用所有可用的并发或流量，无需为单个账户分配</span></li>
+          <li><span>2、</span><span>固定分配方式：请为每个子账号分配用量，所有账号用量之和不能大于可分配用量</span></li>
+        </ul>
       </div>
     </div>
     <!-- 批量分配-弹出框 -->
-    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group">
+    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="468px">
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="120px">
         <el-form-item label="分配数量：" prop="count">
           <el-input v-model.trim="multiAllocForm.count" auto-complete="off" placeholder="请输入分配数量"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.prevent.stop="multiAllocShow = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary"  size="medium" round>确 定</el-button>
+        <el-button @click.prevent.stop="multiAllocShow = false"  size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -261,22 +266,58 @@
     padding: 24px 24px;
   }
   .ac__allocation--user {
-    text-align: center;
+    .title {
+      font-size: 16px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 22px;
+    }
+    p {
+      text-align: center;
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #999999;
+      line-height: 20px;
+    }
     img {
       display: block;
       margin: 0 auto;
-      width: 120px;
-      height: 120px;
-      border: 1px solid #E2E2E2;
-      border-radius: 100%;
+      width: 62px;
+      height: 62px;
+      margin-top: 29px;
     }
-    p {
-      font-size: 14px;
-      font-family: @fontRegular;
-      font-weight: 400;
-      color: #666666;
-      line-height: 20px;
+    .result_val {
+      font-size: 36px;
+      font-family: DINAlternate-Bold, DINAlternate;
+      font-weight: bold;
+      color: #1A1A1A;
+      line-height: 42px;
+      margin-top: 24px;
+    }
+    .date {
       margin-top: 10px;
+    }
+  }
+  .ac__allocation--info {
+    border-top: 1px solid #E6E6E6;
+    margin-top: 24px;
+    padding-top: 22px;
+    li {
+      font-size: 12px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #999999;
+      line-height: 17px;
+      span {
+        display: inline-block;
+        vertical-align: top;
+        width: 20px;
+        &:last-child {
+          width: calc(100% - 20px);
+        }
+      }
     }
   }
   .ac__allocation__panel--left {
@@ -285,6 +326,9 @@
     height: auto;
     background: #FFFFFF;
     position: relative;
+    .el-button {
+      margin-top: 3px;
+    }
   }
   .panel-btn {
     position: absolute;
