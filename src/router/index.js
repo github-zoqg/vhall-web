@@ -301,6 +301,13 @@ const v3Routes = [
         name: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
         meta: { title: '创建专题', icon: 'table' }
+      },
+      {
+        path: 'detail',
+        name: 'detail',
+        component: () => import('@/views/SpecialModule/components/preShow'),
+        meta: { title: '专题详情', icon: 'table', activeMenu: '/special/list'},
+        hidden: true
       }
     ]
   },
