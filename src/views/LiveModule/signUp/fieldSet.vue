@@ -29,7 +29,7 @@
       @end="drag = false"
     >
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
-        <li class="viewItem" v-for="(item, index) in questionArr" :key="index">
+        <li class="viewItem" v-for="(item, index) in questionArr" :key="'kes_' + index">
           <p class="label">
             <!-- {{item.required ? '（必填）' : ''}} -->
             <template v-if="!item.labelEditable">

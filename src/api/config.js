@@ -101,6 +101,10 @@ const apis = {
   sonAdd: ['/100/v3/users/child/create', 'POST', 'mock'], // 子账号创建 Jia.li
   sonDel: ['/100/v3/users/child/delete', 'POST', 'mock'], // 子账号删除 Jia.li
   sonEdit: ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号修改 Jia.li
+  sonDetailGet:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号详情 Jia.li
+  allocSave:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号-用量分配-保存分配方式 Jia.li
+  allocMoreGet:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号-用量分配-可分配数量获取 Jia.li
+  allocSetVal:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
   getRoleList: ['/100/v3/users/user-role/list', 'POST', 'mock'], // 角色-用户-获取 Jia.li
   roleAdd: ['', 'POST', 'mock'], // 角色创建 Jia.li
   roleDel: ['', 'POST', 'mock'], // 角色删除 Jia.li

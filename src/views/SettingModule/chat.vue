@@ -71,29 +71,42 @@
           </el-form-item>
         </el-form>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click.prevent.stop="keywordSend" size="mini" round>确 定</el-button>
+          <el-button type="primary" v-preventReClick @click.prevent.stop="keywordSend" size="mini" round>确 定</el-button>
           <el-button @click="addShow = false" size="mini" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
     <!-- 批量上传 -->
-    <el-dialog
-      width="30%"
-      title="内层 Dialog"
-      :visible.sync="multiUploadShow"
-      append-to-body>
-      待调用组件~~~
-    </el-dialog>
+    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body>
+      <div class="upload-dialog-content">
+        <file-upload
+          v-model="fileUrl"
+          :on-success="uploadSuccess"
+          :on-progress="uploadProcess"
+          :on-error="uploadError"
+          :on-preview="uploadPreview"
+          :before-upload="beforeUploadHandler">
+          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到4条数据</p>
+          <p slot="tip" v-else>请使用模版上传文件</p>
+        </file-upload>
+        <div class="dialog-right-btn">
+          <el-button type="primary" @click="multiUploadShow = false" size="mini" round>确 定</el-button>
+          <el-button @click="multiUploadShow = false" size="mini" round>取 消</el-button>
+        </div>
+      </div>
+    </VhallDialog>
 
   </div>
 </template>
 
 <script>
+import FileUpload from '@/components/FileUpload/main';
 import PageTitle from '@/components/PageTitle';
 export default {
   name: "chat.vue",
   components: {
-    PageTitle
+    PageTitle,
+    FileUpload
   },
   data() {
     return {
@@ -149,7 +162,9 @@ export default {
         ]
       },
       // 批量添加关键词
-      multiUploadShow: false
+      multiUploadShow: false,
+      fileUrl: '', // 文件地址
+      fileResult: '' // 文件上传结果
     };
   },
   computed: {
@@ -159,6 +174,7 @@ export default {
     }
   },
   methods: {
+    // 获取关键字
     getKeywordList() {
       this.$fetch('getKeywordList', this.query).then(res =>{
         res = {
@@ -193,6 +209,7 @@ export default {
         };
       });
     },
+    // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
     },
@@ -211,6 +228,15 @@ export default {
     // 编辑
     keywordEdit(that, { rows }) {
       that.addShow = true;
+      that.$nextTick(() => {
+        try{
+          if (that.$refs.addForm) {
+            that.$refs.addForm.resetFields();
+          }
+        }catch (e){
+          console.log(e);
+        }
+      });
       that.addForm.executeType = 'edit';
       that.addForm.id = rows.id;
       that.addForm.name = rows.name;
@@ -220,7 +246,23 @@ export default {
       // addForm.executeType
       this.$refs.addForm.validate((valid) => {
         if (valid) {
-          alert('验证通过！！！');
+          this.$fetch(this.addForm.executeType === 'add' ? 'multiKeywordAdd' : 'multiKeywordEdit', this.addForm.executeType === 'add' ? {
+            keywords: this.addForm.name
+          } : {
+            keyword_id: this.addForm.id ,
+            keyword: this.addForm.name
+          }).then(res =>{
+             if(res && res.code === 200) {
+               this.$message.success('保存成功！');
+               this.addShow = false;
+               this.getKeywordList(); // 刷新列表数据
+             } else {
+               this.$message.error(res.msg || '保存失败！');
+             }
+          }).catch(e => {
+            console.log(e);
+            this.$message.error('保存失败！');
+          });
         }
       });
     },
@@ -268,6 +310,15 @@ export default {
     // 打开新增弹出框
     addKeywordShow() {
       this.addShow = true;
+      this.$nextTick(() => {
+        try{
+          if (this.$refs.addForm) {
+            this.$refs.addForm.resetFields();
+          }
+        }catch (e){
+          console.log(e);
+        }
+      });
       this.addForm.executeType = 'add';
       this.addForm.id = null;
       this.addForm.name = null;
@@ -285,8 +336,40 @@ export default {
       });
       this.downloadHref = 'http://www.baidu.com'; // TODO 后续去除
     },
+    // 下载模板
     downloadHrefHandle() {
       window.open(this.downloadHref);
+    },
+    // 文件上传成功
+    uploadSuccess(res, file){
+      console.log(res, file);
+      this.fileUrl = URL.createObjectURL(file.raw);
+      this.fileResult = 'success';
+    },
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['csv', 'xls', 'xlsx'];
+      let nameArr = file.name.split('.');
+      const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`文件上传失败`);
+      this.fileResult = 'error';
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
     }
   },
   created() {
@@ -371,6 +454,9 @@ export default {
     color: #999999;
     line-height: 20px;
   }
+}
+.upload-dialog-content {
+  overflow: hidden;
 }
 .dialog-right-btn {
   text-align: right;
