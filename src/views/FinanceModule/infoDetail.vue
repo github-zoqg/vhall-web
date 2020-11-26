@@ -9,12 +9,14 @@
       <el-tabs v-model="activeIndex" @tab-click="handleClick">
         <el-tab-pane label="购买明细" name="1"></el-tab-pane>
         <el-tab-pane label="开通明细" name="2"></el-tab-pane>
-        <search-area
-          ref="searchDetail"
-          :searchAreaLayout="searchDetail"
-          @onSearchFun="getDetailList('search')"
-        >
-        </search-area>
+        <div class="search-box">
+          <search-area
+            ref="searchDetail"
+            :searchAreaLayout="searchDetail"
+            @onSearchFun="getDetailList('search')"
+          >
+          </search-area>
+        </div>
         <table-list
           ref="tableDetail"
           :manageTableData="tableList"
@@ -126,6 +128,7 @@ export default {
           amount: '123,000',
           content: '哈哈哈哈',
           status: '1',
+          statusText: '成功',
           source: '直播',
           start_time: '2020-10-01',
           end_time: '2021-10-01'
@@ -138,6 +141,7 @@ export default {
           amount: '111,000',
           content: '开始讲课',
           status: '2',
+          statusText: '失败',
           source: '录播',
           start_time: '2020-01-01',
           end_time: '2021-01-01'
@@ -148,22 +152,18 @@ export default {
         {
           label: '订单编号',
           key: 'order_id',
-          width: 120
         },
         {
           label: '交易时间',
           key: 'create_time',
-          width: 120
         },
         {
           label: '订单类型',
           key: 'type',
-          width: 100
         },
         {
           label: '交易金额',
           key: 'amount',
-          width: 120,
         },
         {
           label: '购买内容',
@@ -172,22 +172,18 @@ export default {
         {
           label: '订单状态',
           key: 'status',
-          width: 200
         },
         {
           label: '来源',
           key: 'source',
-          width: 100
         },
         {
           label: '启用日期',
           key: 'start_time',
-          width: 120
         },
         {
           label: '失效日期',
           key: 'end_time',
-          width: 120
         }
       ],
       tableRowBtnFun: [
@@ -250,6 +246,10 @@ export default {
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
+        let tableList = res.data.list;
+        tableList.map(item=> {
+          item.statusText = item.status== 1 ? '成功' : '失败';
+        });
         // this.tableList = res.data.list;
       }).catch(e=>{
         console.log(e);
@@ -293,6 +293,9 @@ export default {
   .account-income{
     .el-card__body{
       padding: 5px 24px 51px 24px;
+    }
+    .search-box{
+      padding-top: 30px;
     }
   }
 </style>

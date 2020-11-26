@@ -86,7 +86,7 @@
         </table-list>
       </el-tabs>
     </el-card>
-    <cash-box :type="1" ref="cashBox"></cash-box>
+    <cash-box ref="cashBox"></cash-box>
   </div>
 </template>
 
@@ -289,7 +289,13 @@ export default {
     },
     cash(title) {
       console.log(title);
-      this.$refs.cashBox.dialogCashVisible = true;
+      let flag = 2;
+      // 1 未绑定微信   2绑定微信
+      if (flag === 1) {
+         this.$refs.cashBox.dialogVisible = true;
+      } else if (flag === 2) {
+        this.$refs.cashBox.dialogCashVisible = true;
+      }
     },
     detail(that, { rows }) {
       that.$router.push({

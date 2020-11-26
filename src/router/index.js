@@ -29,7 +29,7 @@ const v3Routes = [
   },
   {
     path: '/code',
-    component: () => import('@/views/LiveModule/Brands/components/invitationCode'),
+    component: () => import('@/views/FinanceModule/components/weixin'),
     hidden: true
   },
   {
@@ -481,10 +481,10 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/infoDetail/:str(\\d+)',
+        path: '/infoDetail',
         component: () => import('@/views/FinanceModule/infoDetail'),
         name: 'infoDetail',
-        meta:{ title: '账单明细', icon: '' , activeMenu: '/finance/income'},
+        meta:{ title: '账单明细', icon: '' , activeMenu: '/finance/info'},
         hidden: true
       },
       {

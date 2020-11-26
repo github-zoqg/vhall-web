@@ -4,15 +4,20 @@
       <span>{{ title }}</span>
     </div>
     <el-card>
-      <search-area
-        ref="searchArea"
-        :searchAreaLayout="searchAreaLayout"
-        :placeholder="placeholder"
-        @onSearchFun="getTableList('search')"
-        @onExportData="exportData"
-        @deletedChecked="deletedChecked"
-        >
-      </search-area>
+      <div class="search-box" v-if="title==='聊天' || title==='问答'">
+        <search-area
+          ref="searchArea"
+          :searchAreaLayout="searchAreaLayout"
+          :placeholder="placeholder"
+          @onSearchFun="getTableList('search')"
+          @onExportData="exportData"
+          @deletedChecked="deletedChecked"
+          >
+        </search-area>
+      </div>
+      <div class="search-box" v-else>
+        <el-button round> 导出数据</el-button>
+      </div>
       <table-list
         ref="tableList"
         :manageTableData="tableList"
@@ -407,8 +412,8 @@ export default {
     font-weight: 600;
     color: #1a1a1a;
   }
-  .button-tip {
-    vertical-align: top;
-  }
+}
+.search-box{
+  margin-bottom: 20px;
 }
 </style>
