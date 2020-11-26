@@ -11,10 +11,10 @@
       </el-input>
       <el-select placeholder="全部" round  v-model="query.type">
         <el-option
-          v-for="item in []"
-          :key="item.value+item.label"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in roleList"
+          :key="'v_' + item.id"
+          :label="item.role_name"
+          :value="item.id">
         </el-option>
       </el-select>
     </div>
@@ -57,10 +57,10 @@
         <el-form-item label="账号角色：" prop="roleType">
           <el-select placeholder="请选择角色" round  v-model="sonForm.roleType">
             <el-option
-              v-for="item in []"
-              :key="item.value+item.label"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.role_name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -97,6 +97,7 @@ export default {
         pos: 0,
         limit: 1000
       },
+      roleList: [],
       sonDao: {
         total: 0,
         list: []
@@ -343,8 +344,28 @@ export default {
         };
       });
     },
+    async getRoleList() {
+      this.$fetch('sonRoleList', {
+        role_name: '',
+        pos: 0,
+        limit: 11
+      }).then(res => {
+        console.log(res && res.code === 200 && res.data && res.data.list)
+        if (res && res.code === 200 && res.data) {
+          this.roleList = res.data.list || [];
+        } else {
+          this.roleList = [];
+        }
+        if (this.roleList.length > 0) {
+          this.getSonList();
+        }
+      }).catch(e => {
+        console.log(e);
+        this.roleList = [];
+      });
+    },
     initComp() {
-      this.getSonList();
+      this.getRoleList(); // 获取可选角色列表
     }
   }
 };

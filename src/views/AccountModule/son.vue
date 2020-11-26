@@ -62,16 +62,6 @@ export default {
       console.log(tab, event);
       this.$refs[`${this.tabType}Comp`].initComp();
     },
-    getRoleInfo() {
-      this.$fetch('getSonInfo', {
-        user_id: 1
-      }).then(res => {
-        this.sonInfo = res && res.code === 200 && res.data ? res.data : null;
-      }).catch(e => {
-        console.log(e);
-        this.sonInfo = null;
-      });
-    },
     getSonInfo() {
       this.$fetch('getSonInfo', {
         user_id: 1
@@ -83,7 +73,6 @@ export default {
       });
     },
     async initPage() {
-      await this.getRoleInfo();// 根据用户ID获取可选角色列表
       this.getSonInfo();// 获取子账号统计信息
     }
   },
