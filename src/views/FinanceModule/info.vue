@@ -7,14 +7,14 @@
       <version-info :userInfo="userInfo"></version-info>
     </div>
     <div class="statistical-line">
-        <span>用量统计</span>
+        <el-card class="serach-line">
+          <span>用量统计</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
-        <el-card class="serach-line">
           <search-area
             ref="searchArea"
             :searchAreaLayout="searchAreaLayout"
@@ -25,35 +25,46 @@
         </el-card>
     </div>
     <div class="statistical-line">
-      <span>消费账单</span>
-      <el-tooltip effect="dark" placement="right-start">
-        <div slot="content">
-          1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
-        </div>
-        <i class="el-icon-question"></i>
-      </el-tooltip>
       <el-card class="serach-line">
+        <span>消费账单</span>
+        <el-tooltip effect="dark" placement="right-start">
+          <div slot="content">
+            1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
+          </div>
+          <i class="el-icon-question"></i>
+        </el-tooltip>
         <search-area
             ref="searchAccount"
             :searchAreaLayout="searchAccount"
             @onSearchFun="getAccountList('search')"
         >
         </search-area>
-      <el-row type="flex" class="row-bg" justify="space-around">
-        <el-col :span="9">
+      <div class="content-grid">
+        <div class="content-item">
           <div class="grid-content">
-            <h1>100</h1>
             <p>累计直播（个）</p>
+            <h1>100</h1>
           </div>
-        </el-col>
-        <el-col :span="9">
+        </div>
+        <div class="content-item">
           <div class="grid-content">
-            <h1>12345</h1>
             <p>最高并发（方）</p>
-            <span class="open">展开</span>
+            <h1>12345</h1>
           </div>
-        </el-col>
-      </el-row>
+        </div>
+         <div class="content-item">
+          <div class="grid-content">
+            <p>累计使用流量(GB)</p>
+            <h1>12345</h1>
+          </div>
+        </div>
+         <div class="content-item">
+          <div class="grid-content">
+            <p>回放使用流量(GB)</p>
+            <h1>12345</h1>
+          </div>
+        </div>
+      </div>
       <table-list
         ref="accountTableList"
         :manageTableData="tableList"
@@ -65,7 +76,8 @@
         >
       </table-list>
       </el-card>
-      </div>
+    </div>
+    <el-button :plain="true" @click="openPay">提示</el-button>
   </div>
 </template>
 
@@ -193,8 +205,9 @@ export default {
     };
   },
   mounted() {
-    this.userInfo = sessionOrLocal.get("userInfo");
-    this.lintData = sessionOrLocal.get("dataCenterInfo");
+    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
+    console.log(this.userInfo, '12324444444');
+    this.lintData = JSON.parse(sessionOrLocal.get("dataCenterInfo"));
   },
   methods: {
     getLineList(params) {
@@ -210,6 +223,19 @@ export default {
       let obj = Object.assign({}, pageInfo, formParams);
       console.log(obj);
     },
+    openPay() {
+       this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        onClose: close,
+        message: '<p style="color:#1A1A1A">您有流量欠费3004.32元未支付  <span onclick="payment" style="color:#FA9A32;cursor: pointer;padding-left:10px">立即支付</span></p>',
+        type: 'warning'
+      });
+    },
+    payment() {
+      console.log("111111111");
+    },
     goPayList() {
       this.$router.push({
         name: 'payOrder'
@@ -222,7 +248,7 @@ export default {
 <style lang="less" scoped>
 .finance-info{
   /deep/.el-card__body{
-    padding: 10px 20px;
+    padding: 24px;
   }
   .title-data {
       margin: 10px 0 20px 0;
@@ -239,32 +265,41 @@ export default {
       text-align: left;
       position: relative;
       margin-top: 20px;
-      .serach-line{
-        padding-top: 14px;
-        padding-bottom: 24px;
-      }
       span {
         display: inline-block;
         font-size: 16px;
         color: #1a1a1a;
         margin-bottom: 10px;
+        padding-bottom: 5px;
       }
     }
-    .row-bg{
-      height:200px;
+    .content-grid{
+      height:100px;
+      margin-bottom: 20px;
       background: #fff;
+      display: flex;
       align-items: center;
-      position: relative;
+      justify-content: space-between;
+      .content-item{
+        width: 24%;
+        background: #F7F7F7;
+        height:100px;
+        border-radius: 4px;
+        // margin: 22px auto;
+      }
       .grid-content{
-        span{
-          position: absolute;
-          background: #fb3a32;
-          top: 10px;
-          right:10px;
-          padding: 5px 10px;
-          border-radius: 10px;
-          color:#fff;
+        margin: 22px 60px;
+        text-align: left;
+        h1{
+          font-size: 28px;
+          color: #1A1A1A;
+          line-height: 32px;
+          font-weight: bold;
+        }
+        p{
           font-size: 14px;
+          color: #999;
+          line-height: 20px;
         }
       }
     }

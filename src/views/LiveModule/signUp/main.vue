@@ -26,7 +26,7 @@
           </template>
         </ul>
         <div class="rightView">
-          <component :is="rightComponent" :questionArr="questionArr"></component>
+          <component :is="rightComponent" :questionArr.sync="questionArr"></component>
           <i class="closeBtn" v-show="rightComponent=='signUpForm'" @click="rightComponent='fieldSet'">&times;</i>
         </div>
       </div>
