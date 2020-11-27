@@ -38,24 +38,34 @@
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
     <!-- 添加观众/ 观众修改 -->
-    <el-dialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false' class="dialog__group">
+    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
+                 width="680px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
-        <el-form-item label="批量创建：" prop="isMulti" v-if="sonDialog.type === 'add'">
+        <el-form-item label="批量创建：" prop="is_batch" v-if="sonDialog.type === 'add'">
           <el-switch
-            v-model="sonForm.isMulti"
+            v-model="sonForm.is_batch"
+            :active-value="1"
+            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
           >
           </el-switch>
         </el-form-item>
+        <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
+          <el-input v-model.trim="sonForm.nums" autocomplete="off" class="btn-relative no-border">
+            <template  slot="append">
+              当前可创建子账号数量23个
+            </template>
+          </el-input>
+        </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入帐号昵称" :maxlength="30" :minlength="1" show-word-limit/>
         </el-form-item>
-        <el-form-item label="预设密码：" prop="industry">
-          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="请输入数字、大小写英文（长度1-12个字符）" :maxlength="12" :minlength="1"/>
+        <el-form-item label="预设密码：" prop="password">
+          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入12个字符" :maxlength="12" :minlength="1"/>
         </el-form-item>
-        <el-form-item label="账号角色：" prop="roleType">
-          <el-select placeholder="请选择角色" round  v-model="sonForm.roleType">
+        <el-form-item label="账号角色：" prop="role_id">
+          <el-select placeholder="请选择角色" round  v-model="sonForm.role_id">
             <el-option
               v-for="item in roleList"
               :key="item.id"
@@ -65,19 +75,21 @@
           </el-select>
         </el-form-item>
         <el-form-item label="手机号码：">
-          <el-input v-model.trim="sonForm.phone" auto-complete="off"/>
-          <el-button>重置</el-button>
+          <el-input v-model.trim="sonForm.phone" autocomplete="off" placeholder="请输入手机号" class="btn-relative">
+            <el-button class="no-border" size="mini" slot="append">重置</el-button>
+          </el-input>
         </el-form-item>
         <el-form-item label="邮箱地址：">
-          <el-input v-model.trim="sonForm.email" auto-complete="off"/>
-          <el-button>重置</el-button>
+          <el-input v-model.trim="sonForm.email" autocomplete="off" placeholder="请输入手机号" class="btn-relative">
+            <el-button class="no-border" size="mini" slot="append">重置</el-button>
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="sonDialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="sonSaveSend('sonForm')">确 定</el-button>
+        <el-button type="primary" v-preventReClick @click="sonSaveSend('sonForm')" size="medium" round>确 定</el-button>
+        <el-button @click="sonDialog.visible = false" size="medium" round>取 消</el-button>
       </div>
-    </el-dialog>
+    </VhallDialog>
     <!-- 添加子账号 -->
   </div>
 </template>
@@ -88,6 +100,12 @@ export default {
   name: "sonList.vue",
   components: {
     NullPage
+  },
+  props: {
+    vipType: {
+      type: [Number, String],
+      default: 0
+    }
   },
   data() {
     return {
@@ -154,14 +172,21 @@ export default {
         formLabelWidth: '100px'
       },
       sonForm: {
-        isMulti: false,
+        is_batch: 0,
+        nums: null,
         nick_name: '',
         password: '',
-        roleType: '',
+        role_id: '',
         phone: '',
         email: ''
       },
       sonFormRules: {
+        password: [
+          { required: true, message: '请输入预设密码', trigger: 'blur' }
+        ],
+        role_id: [
+          { required: true, message: '请输入账号角色', trigger: 'blur' }
+        ]
       },
     };
   },
@@ -181,7 +206,7 @@ export default {
     toAllocationPage() {
       // 1表示并发
       this.$router.push({
-        path: `/allocation/1`,
+        path: `/allocation/${this.vipType}`,
       });
     },
     // 批量选择
