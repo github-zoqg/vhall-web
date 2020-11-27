@@ -6,20 +6,21 @@
       :row-key="setRowKeyFun"
       @selection-change="handleTableCheckbox"
       max-height="450"
-      :header-cell-style="{background:'#f7f7f7',color:'#666'}"
+      :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
     >
       <el-table-column
         :reserve-selection="true"
         type="selection"
         width="55"
-        align="center"
+        align="left"
         v-if="isCheckout"
       />
-      <template v-if="totalNum">
+      <template v-if="totalNum > 0">
         <el-table-column
-          align="center"
+          align="left"
           v-for="(item, index) in tabelColumnLabel"
           :key="index"
+          :width="item.width"
           :label="item.label"
         >
           <template slot-scope="scope">
@@ -42,22 +43,35 @@
                 <span>{{ scope.row.transcode_status_text }}</span>
               </p>
             </div>
-            <img
-              :src="scope.row.img"
-              width="40"
-              height="40"
-              v-else-if="item.key === 'img'"
-            />
-            <span v-else>{{ scope.row[item.key] || '-' }}</span>
+            <div v-else-if="item.key === 'img'">
+              <img
+                :src="scope.row.img"
+                width="40"
+                height="40"
+              />
+            </div>
+            <div v-else-if="item.key === 'watch'">
+              <el-switch
+                v-model="scope.row.watch"
+                active-color="#ff4949"
+                inactive-color="#ccc">
+              </el-switch>
+            </div>
+            <div v-else-if="item.key === 'status'" class="status-show">
+              <p>
+                <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
+                {{ scope.row.statusText }}</p>
+            </div>
+            <p v-else class="text">{{ scope.row[item.key] || '-' }}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="操作"
           align="center"
-          :width="width"
           v-if="isHandle"
+          width="width"
         >
-          <template slot-scope="scope" v-if="scope.row.id > 0">
+          <template slot-scope="scope">
             <el-button
               v-for="(item, index) in tableRowBtnFun"
               :key="index"
@@ -83,7 +97,7 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-show="needPagination && totalNum"
+      v-show="needPagination && totalNum > 9"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
@@ -97,7 +111,8 @@ export default {
     return {
       pageInfo: {
         pageNum: 1,
-        pageSize: 10,
+        pos: 0,
+        limit: 10,
       },
       isUpdate: 0,
     };
@@ -115,20 +130,19 @@ export default {
       type: Boolean,
       default: true,
     },
-    width: {
-      type: Number,
-      require: false,
-      default: 200,
-    },
     needPagination: {
       type: Boolean,
       default: true,
+    },
+    width: {
+      type: Number,
+      default: 200,
     },
   },
   watch: {
     manageTableData: {
       handler: function (oldData) {
-        console.log(oldData[0].uploadObj, 'watch变化');
+        // console.log(oldData[0].uploadObj, 'watch变化');
         this.isUpdate = Math.random() * 100;
       },
       immediate: false,
@@ -159,6 +173,7 @@ export default {
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
       this.$emit('getTableList', this.pageInfo);
     },
     // 复选框操作
@@ -190,38 +205,65 @@ export default {
     background-color: #FB3A32;
   }
   /deep/.el-table td, .el-table th{
-    padding: 14px 0;
+    padding: 10px 0 9px 0;
   }
-  /deep/.el-button--text {
+  .text{
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  /deep/.el-button.el-button--text {
     color: #1A1A1A;
+    border: 0;
     &:hover{
       color: #FB3A32;
     }
-    /deep/.el-button.text--default {
-      margin-right: 20px;
-      color: #999999;
-      font-size: 14px;
-      &:last-child {
-        margin-right: 0;
-      }
-      &:hover {
-        color: #5d81fb;
-        &:after {
-          border-bottom: 1px solid #5d81fb;
-        }
-      }
-      &:active {
-        color: #3157e1;
-        &:after {
-          border-bottom: 1px solid #3157e1;
-        }
-      }
-      &:disabled {
-        color: #9db3fc;
-        &:after {
-          border-bottom: 1px solid #9db3fc;
-        }
-      }
+    // /deep/.el-button.text--default {
+    //   margin-right: 20px;
+    //   color: #999999;
+    //   font-size: 14px;
+    //   &:last-child {
+    //     margin-right: 0;
+    //   }
+    //   &:hover {
+    //     color: #5d81fb;
+    //     &:after {
+    //       border-bottom: 1px solid #5d81fb;
+    //     }
+    //   }
+    //   &:active {
+    //     color: #3157e1;
+    //     &:after {
+    //       border-bottom: 1px solid #3157e1;
+    //     }
+    //   }
+    //   &:disabled {
+    //     color: #9db3fc;
+    //     &:after {
+    //       border-bottom: 1px solid #9db3fc;
+    //     }
+    //   }
+    // }
+  }
+  .status-show{
+    span{
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 5px;
+      margin-top: -3px;
+    }
+    .active-success {
+      background: #14BA6A;
+    }
+    .active-error {
+      background: #FB3A32;
+    }
+    .active-waiting {
+      background: #FA9A32;
     }
   }
 }

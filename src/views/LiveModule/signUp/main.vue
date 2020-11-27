@@ -20,23 +20,25 @@
           <template v-for="(item, key) in setOptions">
             <section class="block" :key="key">{{key}}</section>
             <li :class="{item: true, active: setItem.name && questionArr.some(qes=> qes.name == setItem.name)}" v-for="setItem in item" :key="setItem.label" @click="addFiled(setItem)">
-              <i :class="setItem.icon"></i>{{setItem.label}}
+              <!-- <icon :class="setItem.icon"></icon> -->
+              <icon :icon-class="setItem.icon">{{setItem.label}}</icon>
             </li>
           </template>
         </ul>
         <div class="rightView">
-          <component :is="rightComponent" :questionArr="questionArr"></component>
+          <component :is="rightComponent" :questionArr.sync="questionArr"></component>
           <i class="closeBtn" v-show="rightComponent=='signUpForm'" @click="rightComponent='fieldSet'">&times;</i>
         </div>
       </div>
     </div>
     <shareDialog ref="share"></shareDialog>
     <themeSet ref="theme"></themeSet>
+    <icon icon-class="icon_xingbie">12345</icon>
   </div>
 </template>
 
 <script>
-import pageTitle from '../components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
 import signUpForm from './signUpForm';
@@ -44,7 +46,7 @@ import themeSet from './themeSet';
 import {getfiledJson} from './util';
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     fieldSet,
     shareDialog,
     themeSet,
@@ -57,7 +59,7 @@ export default {
       rightComponent: 'fieldSet',
       setOptions: {
         "基本信息": [
-          {icon: 'el-icon-user-solid', label: "姓名", name: 'name'},
+          {icon: 'saasicon_xingming', label: "姓名", name: 'name'},
           {icon: 'el-icon-male', label: "性别", name: 'gender'},
           {icon: 'el-icon-phone', label: "手机", name: 'phone'},
           {icon: 'el-icon-message', label: "邮箱", name: 'email'},

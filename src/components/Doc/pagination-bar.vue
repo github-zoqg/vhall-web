@@ -1,35 +1,35 @@
 <template>
-  <div class="vh-doc-pager" id="doc-pager">
+  <div class="vhall-doc-pager" id="doc-pager">
     <!-- <div class="first-page" title="上一页" @click="handlePage('prePage')"></div> -->
-    <div class="vh-iconfont  vh-icon-previous" :title="'上一步'" @click="handlePage('prevStep')"></div>
-    <div class="vh-doc-pager--number">
-      <span class="vh-doc-pager--index">{{ pageInfo.pageIndex }}</span>
-      <span class="vh-doc-pager-split">/</span>
-      <span class="vh-doc-pager--total">{{ pageInfo.total }}</span>
+    <div v-if="!disablePagechange" class="iconfont iconzuofanye" title="上一步" @click="handlePage('prevStep')"></div>
+    <div class="page-number">
+      <span class="page-index">{{pageInfo.pageIndex}}</span>
+      <span class="page-split">/</span>
+      <span class="page-total">{{pageInfo.total}}</span>
     </div>
-    <div class="vh-iconfont  vh-icon-next" :title="'下一步'" @click="handlePage('nextStep')"></div>
+    <div v-if="!disablePagechange" class="iconfont iconyoufanye" title="下一步" @click="handlePage('nextStep')"></div>
     <div
-      class="vh-iconfont vh-icon-zoom-in"
-      :title="'放大'"
-      :class="{ active: docToolActive == 'zoomIn' }"
+      class="iconfont iconfangda"
+      title="放大"
+      :class="{active:docToolActive == 'zoomIn'}"
       @click="handlePage('zoomIn')"
     ></div>
     <div
-      class="vh-iconfont  vh-icon-zoom-out"
-      :title="'缩小'"
-      :class="{ active: docToolActive == 'zoomOut' }"
+      class="iconfont iconsuoxiao"
+      title="缩小"
+      :class="{active:docToolActive == 'zoomOut'}"
       @click="handlePage('zoomOut')"
     ></div>
     <div
-      class="vh-iconfont vh-icon-zoom-reset"
-      :title="'还原'"
-      :class="{ active: docToolActive == 'zoomReset' }"
+      class="iconfont iconhuanyuan"
+      title="还原"
+      :class="{active:docToolActive == 'zoomReset'}"
       @click="handlePage('zoomReset')"
     ></div>
     <div
-      class="vh-iconfont  vh-icon-move"
-      :title="'移动'"
-      :class="{ active: docToolActive == 'move' }"
+      class="iconfont iconyidong"
+      title="移动"
+      :class="{active:docToolActive == 'move'}"
       @click="handlePage('move')"
     ></div>
     <!-- <div class="last-page" title="下一页" @click="handlePage('nextPage')"></div> -->
@@ -37,11 +37,7 @@
 </template>
 <script>
 export default {
-  data () {
-    return {
-      docToolActive: ''
-    };
-  },
+  inject: ['docToolStatus'],
   props: {
     pageInfo: {
       default () {
@@ -51,16 +47,20 @@ export default {
         };
       }
     },
-    isKeyEvent: { // 翻页是否监听键盘事件
-      type: Boolean,
-      default: true,
-      required: false
+    disablePagechange: {
+      required: false,
+      default: false
+    }
+  },
+  computed: {
+    docToolActive () {
+      return this.docToolStatus.docToolActive;
     }
   },
   methods: {
     handlePage (type) {
       if (['zoomIn', 'zoomOut', 'zoomReset', 'move'].includes(type)) {
-        this.docToolActive = type;
+        this.docToolStatus.docToolActive = type;
         this.$emit('handlePage', type);
       } else if (!(
         (this.pageInfo.pageIndex <= 1 && type == 'prevStep') ||
@@ -68,35 +68,79 @@ export default {
       )) {
         this.$emit('handlePage', type);
       }
-    },
+    }
   }
 };
 </script>
 <style lang="less">
-.vh-doc-pager {
-  display: flex;
+.vhall-doc-pager {
+  user-select: none;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 10px;
-  padding: 3px 16px;
-  background: rgba(0, 0, 0, 0.6);
+  bottom: 20px;
+  padding: 7px 16px;
+  background: rgba(0, 0, 0, 0.8);
   border-radius: 30px;
+  display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #F7F7F7;
+  color: #f4f4f4;
   line-height: 1;
   font-size: 14px;
-  user-select: none;
-  z-index: 5;
-  .vh-iconfont {
-    font-size: 20px;
-    color: #F7F7F7;
+  & > div {
     padding: 7px 10px;
-    cursor: pointer;
-    &:hover {
-      color: #1E90FF;
+    &.active {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      color: #fc5659;
     }
   }
+  .iconfont {
+    cursor: pointer;
+    &:hover{
+      color: #fc5659;
+    }
+  }
+  // .first-page {
+  //   width: 10px;
+  //   height: 10px;
+  //   background: url('../../common/images/doc-pager-first-page.png')
+  //     no-repeat;
+  //   background-size: 10px 10px;
+  //   cursor: pointer;
+  // }
+  // .prev-page {
+  //   width: 10px;
+  //   height: 10px;
+  //   background: url('../../common/images/doc-pager-prev-page.png')
+  //     no-repeat;
+  //   background-size: 10px 10px;
+  //   cursor: pointer;
+  // }
+  .page-number {
+    .page-index {
+    }
+    .page-split {
+    }
+    .page-total {
+    }
+  }
+  // .next-page {
+  //   width: 10px;
+  //   height: 10px;
+  //   background: url('../../common/images/doc-pager-next-page.png')
+  //     no-repeat;
+  //   background-size: 10px 10px;
+  //   cursor: pointer;
+  // }
+  // .last-page {
+  //   width: 10px;
+  //   height: 10px;
+  //   background: url('../../common/images/doc-pager-last-page.png')
+  //     no-repeat;
+  //   background-size: 10px 10px;
+  //   cursor: pointer;
+  // }
 }
 </style>

@@ -3,185 +3,205 @@
     <pageTitle title="观看限制">
       <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
-        <!--可联系客服开通“单点观看”功能，即开启付费后，一个账号仅允许同时一台设备观看直播。-->
       </div>
     </pageTitle>
     <!-- 内容区域 -->
-    <el-tabs v-model="form.verify" type="card" @tab-click="handleClick">
-      <el-tab-pane label="免费" name="0">
-        <p>观看无需任何验证，即可观看直播</p>
-      </el-tab-pane>
-      <el-tab-pane label="付费" name="3">
-        <!-- 付费表单-->
-        <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="100px">
-          <el-form-item label="付费金额" prop="fee">
-            <el-input v-model.number="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
-          </el-form-item>
-          <el-form-item label="试看">
-            <div class="switch__box">
-              <el-switch
-                v-model="form.is_preview"
-                active-color="#FB3A32"
-                inactive-color="#CECECE">
-              </el-switch>
-              <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-            </div>
-          </el-form-item>
-          <el-form-item label="试看时长" v-show="form.is_preview">
-            <el-select v-model="form.preview_time" placeholder="请选择">
-              <el-option
-                v-for="item in timeOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="邀请码（原F码）" name="4">
-        <!-- 邀请码（原F码）-->
-        <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="100px">
-          <el-form-item label="生成邀请码" prop="nums">
-            <div class="fCode__flex">
-              <el-input v-model.number="fCodeForm.nums" autocomplete="off" placeholder="1-1000"></el-input><i class='unit'>个</i>
-              <el-button @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
-              <span>（已生成{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}个）</span>
-              <el-button>下载邀请码</el-button>
-            </div>
-          </el-form-item>
-          <el-form-item label="试看">
-            <div class="switch__box">
-              <el-switch
-                v-model="form.is_preview"
-                active-color="#FB3A32"
-                inactive-color="#CECECE">
-              </el-switch>
-              <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-            </div>
-          </el-form-item>
-          <el-form-item label="试看时长" v-show="form.is_preview">
-            <el-select v-model="form.preview_time" placeholder="请选择">
-              <el-option
-                v-for="item in timeOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="付费/邀请码" name="6">
-        <!-- 付费/邀请码 -->
-        <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="100px">
-          <el-form-item label="付费金额" prop="fee">
-            <el-input v-model.number="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
-          </el-form-item>
-          <el-form-item label="生成邀请码" prop="nums">
-            <div class="fCode__flex">
-              <el-input v-model.number="fCodePayForm.nums" autocomplete="off" placeholder="1-1000"></el-input><i class='unit'>个</i>
-              <el-button @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
-              <span>（已生成{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}个）</span>
-              <el-button>下载邀请码</el-button>
-            </div>
-          </el-form-item>
-          <el-form-item label="试看">
-            <div class="switch__box">
-              <el-switch
-                v-model="form.is_preview"
-                active-color="#FB3A32"
-                inactive-color="#CECECE">
-              </el-switch>
-              <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-            </div>
-          </el-form-item>
-          <el-form-item label="试看时长" v-show="form.is_preview">
-            <el-select v-model="form.preview_time" placeholder="请选择">
-              <el-option
-                v-for="item in timeOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="密码" name="1">
-        <!-- 密码-->
-        <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="100px">
-          <el-form-item label="观看密码" prop="password">
-            <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码"></el-input>
-          </el-form-item>
-          <el-form-item label="试看">
-            <div class="switch__box">
-              <el-switch
-                v-model="form.is_preview"
-                active-color="#FB3A32"
-                inactive-color="#CECECE">
-              </el-switch>
-              <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-            </div>
-          </el-form-item>
-          <el-form-item label="试看时长" v-show="form.is_preview">
-            <el-select v-model="form.preview_time" placeholder="请选择">
-              <el-option
-                v-for="item in timeOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="白名单" name="2">
-        <ul class="tab__white tab__white__group">
-          <li class="tab__label--show">
-            <label>选择观众组</label>
-          </li>
-          <li :class="['tab__btn--solid', {'active': whiteIds.includes(item.id)}]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
-            <span>{{item.subject}}</span>
-          </li>
-          <li class="tab__btn--dashed">
-            <router-link target="_blank" :to="{path:'/material-viewer'}"><i class="el-icon-plus"></i>添加观众分组</router-link>
-          </li>
-        </ul>
-        <div class="switch__box">
-          <label class="leve3_title label__r12">试看</label>
-          <el-switch
-            v-model="form.is_preview"
-            active-color="#FB3A32"
-            inactive-color="#CECECE">
-          </el-switch>
-          <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+    <div class="viewer-rules">
+      <el-radio-group v-model="form.verify" @change="handleClick">
+        <el-radio :label="0">免费</el-radio>
+        <el-radio :label="3">付费</el-radio>
+        <el-radio :label="4">邀请码（原F码）</el-radio>
+        <el-radio :label="6">付费/邀请码</el-radio>
+        <el-radio :label="1">密码</el-radio>
+        <el-radio :label="2">白名单</el-radio>
+      </el-radio-group>
+      <!-- 选值区域 -->
+      <div class="viewer-rules-content">
+        <!-- 免费 0 -->
+        <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
+          <p>观看无需任何验证，即可观看直播</p>
         </div>
-        <ul class="tab__white tab__white__time">
-          <li class="tab__label--show">
-            <label>试看时长</label>
-          </li>
-          <li class="tab__select">
-            <el-select v-model="form.preview_time" placeholder="请选择">
-              <el-option
-                v-for="item in timeOption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </li>
-        </ul>
-      </el-tab-pane>
-    </el-tabs>
-    <el-row>
-      <el-button @click.prevent.stop="viewerSetSave">保 存</el-button>
-    </el-row>
+        <!-- 付费 3 -->
+        <div v-show="Number(form.verify) === 3" class="viewer-rules-ctx--3">
+          <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="100px">
+            <el-form-item label="付费金额" prop="fee">
+              <!--<div class="rules-ctx-inline">
+                <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
+                <span class="ctx-span">元</span>
+              </div>-->
+              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative">
+                <template slot="append">元</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="试看" class="switch__height">
+              <div class="switch__box">
+                <el-switch
+                  v-model="form.is_preview"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE">
+                </el-switch>
+                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看时长" v-show="form.is_preview">
+              <el-select v-model="form.preview_time" placeholder="请选择">
+                <el-option
+                  v-for="item in timeOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 邀请码（原F码）4-->
+        <div v-show="Number(form.verify) === 4" class="viewer-rules-ctx--4">
+          <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="100px">
+            <el-form-item label="生成邀请码" prop="nums">
+              <div class="fCode__flex">
+                <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
+                  <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
+                </el-input>
+                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}</strong>个</span>
+                <el-button class="down-btn" round>下载邀请码</el-button>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看" class="switch__height">
+              <div class="switch__box">
+                <el-switch
+                  v-model="form.is_preview"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE">
+                </el-switch>
+                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看时长" v-show="form.is_preview">
+              <el-select v-model="form.preview_time" placeholder="请选择">
+                <el-option
+                  v-for="item in timeOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 付费/邀请码 6 -->
+        <div v-show="Number(form.verify) === 6" class="viewer-rules-ctx--6">
+          <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="100px">
+            <el-form-item label="付费金额" prop="fee">
+              <el-input v-model.number="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
+            </el-form-item>
+            <el-form-item label="生成邀请码" prop="nums">
+              <div class="fCode__flex">
+                <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
+                  <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
+                </el-input>
+                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}</strong>个</span>
+                <el-button class="down-btn" round>下载邀请码</el-button>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看" class="switch__height">
+              <div class="switch__box">
+                <el-switch
+                  v-model="form.is_preview"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE">
+                </el-switch>
+                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看时长" v-show="form.is_preview">
+              <el-select v-model="form.preview_time" placeholder="请选择">
+                <el-option
+                  v-for="item in timeOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 密码 1 -->
+        <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
+          <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="100px">
+            <el-form-item label="观看密码" prop="password">
+              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="8"></el-input>
+            </el-form-item>
+            <el-form-item label="试看" class="switch__height">
+              <div class="switch__box">
+                <el-switch
+                  v-model="form.is_preview"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE">
+                </el-switch>
+                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看时长" v-show="form.is_preview">
+              <el-select v-model="form.preview_time" placeholder="请选择">
+                <el-option
+                  v-for="item in timeOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+        <!-- 白名单 2 -->
+        <div v-show="Number(form.verify) === 2" class="viewer-rules-ctx--2">
+          <el-form label-width="100px">
+            <el-form-item label="选择观众组">
+              <ul class="tab__white tab__white__group">
+                <li :class="['tab__btn--solid', {'active': whiteIds.includes(item.id)}]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
+                  <span>{{item.subject}}</span>
+                </li>
+                <li class="tab__btn--dashed">
+                  <router-link target="_blank" :to="{path:'/material-viewer'}"><i class="el-icon-plus"></i>添加观众组</router-link>
+                </li>
+              </ul>
+            </el-form-item>
+            <el-form-item label="试看" class="switch__height">
+              <div class="switch__box">
+                <el-switch
+                  v-model="form.is_preview"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE">
+                </el-switch>
+                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+              </div>
+            </el-form-item>
+            <el-form-item label="试看时长" v-show="form.is_preview">
+              <el-select v-model="form.preview_time" placeholder="请选择">
+                <el-option
+                  v-for="item in timeOption"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+      <!-- 保存 -->
+      <div class="save-btn">
+        <el-form label-width="100px">
+          <el-button type="primary" class="length152" round @click.prevent.stop="viewerSetSave">保 存</el-button>
+        </el-form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import PageTitle from '@/views/LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
 export default {
   name: 'viewerRules.vue',
@@ -194,6 +214,17 @@ export default {
         return callback(new Error('生成数量不能为空'));
       } else if (value > 1000 || value < 1) {
         return callback(new Error('生成数量1~1000'));
+      } else {
+        callback();
+      }
+    };
+    let checkFee = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请按正确格式填写，如10.00'));
+      } else if (isNaN(value)) {
+        return callback(new Error('请按正确格式填写，如10.00'));
+      } else if (parseFloat(value) < 0.01 || parseFloat(value) > 99999.99) {
+        return callback(new Error('请按正确格式填写，如10.00'));
       } else {
         callback();
       }
@@ -235,7 +266,8 @@ export default {
       payFormRules: {
         fee: [
           { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: !/^\d{0,6}\.{0,1}(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'}
+          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'},
+          { validator: checkFee, trigger: 'blur' }
         ]
       },
       fCodeForm: {
@@ -257,7 +289,7 @@ export default {
         ],
         fee: [
           { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: /^\d{0,6}\.{0,1}(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'}
+          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'}
         ]
       },
       pwdForm: {
@@ -394,27 +426,239 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.fCode__flex {
-  display: flex;
-  justify-content: flex-start;
+@import '../../common/css/common.less';
+.viewer-rules {
+  .layout--right--main();
+  min-height: 544px;
+  padding: 49px 56px 40px 56px;
 }
-.tab__white {
-  display: flex;
-  justify-content: flex-start;
-  li {
-    list-style-type: none;
+.viewer-rules-content {
+  margin-top: 32px;
+  /*height: 353px;*/
+  /deep/.el-form-item__label {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #1A1A1A;
+  }
+  /deep/.el-input {
+    width: 320px;
+  }
+  /deep/.el-input__inner {
+    height: 40px;
+  }
+  /deep/.el-form-item {
+    margin-bottom: 32px;
+  }
+  /deep/.el-form-item.switch__height {
+    margin-bottom: 16px;
+    /deep/.el-form-item__label {
+      height: 20px;
+      line-height: 20px;
+    }
+    /deep/.el-form-item__content {
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+}
+.viewer-rules-ctx--0 {
+  p {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
+  }
+}
+.viewer-rules-ctx--3 {
+  /deep/.el-input {
+    width: 320px;
+  }
+  /deep/.el-input__inner {
+    height: 40px;
+    border-radius: 4px;
+  }
+  /deep/.el-input-group__append {
+    width: 38px;
     text-align: center;
-    padding: 5px 5px;
+    border: 0;
+    background: #ffffff;
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #1A1A1A;
+    padding: 0 0;
+  }
+  .rules-ctx-inline {
+    width: 320px;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+    line-height: 40px;
+    /deep/.el-input {
+      width: calc(100% - 38px);
+      display: inline-block;
+      vertical-align: middle;
+      margin-top: -4px;
+      color: #999999;
+    }
+    /deep/.el-input__inner {
+      border: 0;
+      padding: 0 12px;
+      margin-right: 12px;
+    }
+    .ctx-span {
+      width: 38px;
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      margin-top: -4px;
+    }
+    &:hover {
+      border-color: #999999;
+      /deep/.el-input {
+        color: #999999;
+      }
+    }
+    &:active {
+      border-color: #CCCCCC;
+      /deep/.el-input {
+        color: #1A1A1A;
+      }
+    }
+    &.is-disabled {
+      border-color: #E6E6E6;
+      cursor: not-allowed;
+      /deep/.el-input {
+        color: #B3B3B3;
+      }
+    }
+    &.invalid {
+      border-color: #FB3A32;
+      /deep/.el-input {
+        color: #FB3A32;
+      }
+    }
+  }
+}
+.viewer-rules-ctx--4, .viewer-rules-ctx--6, .viewer-rules-ctx--1 {
+  /deep/.el-input {
+    width: 320px;
+  }
+  /deep/.el-input__inner {
+    height: 40px;
+    border-radius: 4px;
+  }
+  /deep/.el-input-group__append {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #1A1A1A;
+  }
+  .inline-count {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #1A1A1A;
+    line-height: 20px;
+    margin-left: 8px;
     margin-right: 24px;
+    strong {
+      color: #FB3A32;
+      margin: 0 8px;
+    }
+  }
+  .down-btn {
+    width: 118px;
+    height: 40px;
+    border-radius: 20px;
+    border: 1px solid #FB3A32;
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #FB3A32;
+    line-height: 20px;
+    text-align: center;
+    padding: 0 0;
   }
 }
-.tab__btn--solid {
-  border: 1px solid #d2d2d2;
-  &.active{
-    border: 1px solid red;
+.viewer-rules-ctx--2 {
+  .tab__white {
+    li {
+      display: inline-block;
+      list-style-type: none;
+      text-align: center;
+      padding: 3px 16px;
+      margin-right: 12px;
+      line-height: 24px;
+      background: #F7F7F7;
+      border-radius: 16px;
+      &:last-child {
+        background: #ffffff;
+      }
+      span {
+        font-size: 14px;
+        font-family: @fontRegular;
+        font-weight: 400;
+        color: #666666;
+        line-height: 24px;
+      }
+    }
+  }
+  .tab__btn--solid {
+    border: 1px solid #F7F7F7;
+    &.active{
+      border-color: #FB3A32;
+    }
+  }
+  .tab__btn--dashed {
+    border-radius: 16px;
+    border: 1px solid #FB3A32;
+    a {
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #FB3A32;
+      line-height: 24px;
+      i {
+        margin-right: 3px;
+      }
+    }
   }
 }
-.tab__btn--dashed {
-  border: 1px dashed #d2d2d2;
+/deep/.btn-relative {
+  position: relative;
+  .el-input__inner {
+    padding: 0 36px 0 12px;
+  }
+  /deep/.el-input-group__append {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 20px!important;
+  }
+  &.btn-two {
+    /deep/.el-input-group__append {
+      width: 52px!important;
+      height: 40px;
+      background: #F7F7F7;
+      border-radius: 0 4px 4px 0;
+      position: absolute;
+      right: 0;
+      top: 0;
+      line-height: 38px;
+      text-align: center;
+      padding: 0 0;
+      margin: 0 0;
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #666666;
+    }
+  }
+}
+.save-btn {
+  margin-top: 40px;
 }
 </style>

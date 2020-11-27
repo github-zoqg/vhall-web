@@ -17,25 +17,25 @@
       <div class="account__panel--right">
         <div class="account--user">
           <img src="../../common/images/avatar.jpg" class="user-advert" />
-          <p class="account--title">微吼直播主持人</p>
-          <p class="account--notice">市场运营总监</p>
+          <p class="account--title">{{accountInfo && accountInfo.nick_name ? accountInfo.nick_name : '--'}}</p>
+          <p class="account--notice">{{accountInfo && accountInfo.position ? accountInfo.position : '--'}}</p>
         </div>
         <ul class="account--show">
           <li>
             <label>账号</label>
-            <p>S22152705</p>
+            <p>{{accountInfo && accountInfo.name ? accountInfo.name : '--'}}</p>
           </li>
           <li>
             <label>公司</label>
-            <p>北京微吼时代科技有限公司</p>
+            <p>{{accountInfo && accountInfo.company ? accountInfo.company : '--'}}</p>
           </li>
           <li>
             <label>电话</label>
-            <p>135 **** 0987</p>
+            <p>{{accountInfo && accountInfo.phone ? `${accountInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '--'}}</p>
           </li>
           <li>
             <label>邮箱</label>
-            <p>zhong***wang@vhall.com</p>
+            <p>{{accountInfo && accountInfo.email ? `${accountInfo.email.replace(/(?<=.{2})[^@]+(?=.{2}@)/,"*****")}`: '--'}}</p>
           </li>
         </ul>
       </div>
@@ -44,10 +44,11 @@
 </template>
 
 <script>
-import PageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import BaseSet from '../AccountModule/baseSet';
 import ValidSet from '../AccountModule/validSet';
 import AccountSet from '../AccountModule/accountSet';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'info.vue',
   components: {
@@ -58,8 +59,9 @@ export default {
   },
   data() {
     return {
-      tabType: null
-    }
+      tabType: null,
+      accountInfo: null
+    };
   },
   methods: {
     handleClick(tab, event) {
@@ -68,6 +70,11 @@ export default {
     }
   },
   mounted() {
+    let account_info = sessionOrLocal.get('account_info');
+    if(account_info !== null) {
+      this.accountInfo = JSON.parse(account_info);
+    }
+
     this.tabType = 'baseSet';
     this.$refs[`baseSetComp`].initComp();
   }

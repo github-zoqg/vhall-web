@@ -7,13 +7,18 @@
         <div v-if="value">
           <img :src="value" class="avatar">
           <div class="mask">
+            <span v-if="!!$props.coverPic">
+              <i class="el-icon-collection" @click.stop="coverPage"></i>
+              <br/>
+              封面
+            </span>
             <span>
               <i class="el-icon-delete" @click.stop="deletes"></i>
               <br/>
               删除
             </span>
             <span v-if="!!$props.restPic">
-              <i class="el-icon-refresh-left" @click.stop="refresh"></i>
+              <i class="el-icon-refresh-left" @click="refresh($event)"></i>
               <br/>
               重置
             </span>
@@ -66,15 +71,23 @@ export default {
       "show-file-list": {
         type: Boolean,
         default: false
-      }
+      },
     }),
     value: {
       type: String,
       default: ''
     },
     restPic: {
-      type: Function,
+      type: [Function, Boolean],
       default: null
+    },
+    coverPic: {
+      type: Boolean,
+      default: false
+    },
+    'on-success': {
+      type: Function,
+      default: ()=>{}
     }
   },
   created(){
@@ -85,7 +98,7 @@ export default {
       console.log('heqhwhqhwhd ', response, file, fileList, this.onSuccess);
       console.log(this.$props);
       this.$emit('input', URL.createObjectURL(file.raw));
-      this.imageUrl = URL.createObjectURL(file.raw);
+      // this.imageUrl = URL.createObjectURL(file.raw);
       this.onSuccess(response, file, fileList);
       // this.$emit('on-success', args)
     },
@@ -112,10 +125,16 @@ export default {
     //   // this.$emit('on-change', args)
     // },
     deletes(){
-      this.$emit('input', '');
+      this.$emit('delete', '');
     },
-    refresh(){
-      this.restPic();
+    coverPage() {
+      this.$emit('coverPage', '');
+    },
+    refresh(event){
+      if(typeof this.restPic == "function"){
+        this.restPic();
+        event.stopPropagation();
+      }
     }
   },
   watch: {
@@ -165,7 +184,7 @@ export default {
     display: none;
     span{
       &:nth-child(2){
-        margin-left: 30px;
+        margin: 0  10px;
       }
       i{
         color: #fff;

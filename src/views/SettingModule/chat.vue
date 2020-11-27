@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import PageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 export default {
   name: "chat.vue",
   components: {
@@ -129,7 +129,7 @@ export default {
       },
       // 批量添加关键词
       multiUploadShow: false
-    }
+    };
   },
   methods: {
     getKeywordList() {
@@ -150,7 +150,7 @@ export default {
             ],
             "total": 100
           }
-        }
+        };
         this.keyWordDao = res && res.code === 200 && res.data && res.data.list ? res.data : {
           total: 0,
           list: []
@@ -176,7 +176,7 @@ export default {
     },
     // 批量选择
     checkMoreRow(val) {
-      console.log(val)
+      console.log(val);
       this.ids = val.map(item => {
         return item.id;
       });
@@ -257,7 +257,7 @@ export default {
     this.getKeywordList();
     this.getKeywordTemplate();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

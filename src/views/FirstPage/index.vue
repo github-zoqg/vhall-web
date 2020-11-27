@@ -4,61 +4,61 @@
       <data-usage :userInfo="userInfo"></data-usage>
       <el-row type="flex" class="row-center" justify="space-between">
         <el-col :span="5">
-          <div class="center-item">
-            <p></p>
+          <div class="center-item" @click="toCreateLive">
+            <p><icon icon-class="saasicon_zhibo"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toUploadWord">
             <p></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toBrandSet">
             <p></p>
             <h3>品牌设置</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toDataInfo">
             <p></p>
             <h3>账号数据</h3>
           </div>
         </el-col>
         <el-col :span="5">
-          <div class="center-item">
+          <div class="center-item" @click="toFinanceInfo">
             <p></p>
             <h3>财务总览</h3>
           </div>
         </el-col>
       </el-row>
       <div class="row-list">
-        <p class="list-title">直播列表</p>
+        <p class="list-title">数据统计</p>
         <el-row type="flex" class="row-buttom" justify="space-around">
           <el-col :span="6">
             <div class="buttom-item">
               <p>活动总数</p>
-              <h2>88888888</h2>
+              <h2>{{ mainKeyData.webinar_count}}</h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看次数</p>
-              <h2>550</h2>
+              <h2>{{ mainKeyData.watch_times}}</h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看人数</p>
-              <h2>550</h2>
+              <h2>{{ mainKeyData.watch_number}}</h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看时长(分)</p>
-              <h2>55:00:00</h2>
+              <h2>{{ mainKeyData.watch_duration}}</h2>
             </div>
           </el-col>
         </el-row>
@@ -67,7 +67,7 @@
         <div class="line-tip">
           <p>用量统计</p>
         </div>
-        <line-echarts></line-echarts>
+        <line-echarts :lineDataList="lineDataList"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">
@@ -88,23 +88,60 @@
 <script>
 import LineEcharts from '@/components/Echarts/lineEcharts.vue';
 import DataUsage from '@/components/DataUsage/index.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
-      userInfo: {}
+      userInfo: {},
+      mainKeyData: {},
+      lineDataList: []
     };
   },
   components: {
     LineEcharts,
     DataUsage
   },
-  created() {
+  mounted() {
     this.getUserVersion();
+    this.getLiveList();
   },
   methods: {
+    // 页面跳转
+     toCreateLive(){
+      this.$router.push({path: `/live/edit`});
+    },
+    // 上传文档
+    toUploadWord(){
+      this.$router.push({path: `/material/word`});
+    },
+    // 品牌设置
+    toBrandSet(){
+      this.$router.push({path: `/live/brandSet/795704919`});
+    },
+    // 数据中心-数据总览
+    toDataInfo(){
+      this.$router.push({path: `/data/info`});
+    },
+    // 财务中心-财务总览
+    toFinanceInfo(){
+      this.$router.push({path: `/finance/info`});
+    },
     getUserVersion() {
-      this.$fetch('getInfo', {}).then(res =>{
+      let params = {
+        user_id: '16417099'
+      };
+      this.$fetch('getVersionInfo', params).then(res =>{
         this.userInfo = res.data;
+        sessionOrLocal.set('userInfo', this.userInfo);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    getLiveList() {
+      this.$fetch('getDataCenterInfo').then(res =>{
+        this.mainKeyData = res.data.key_data;
+        this.lineDataList = res.data.trend.live;
+        sessionOrLocal.set('dataCenterInfo', this.lineDataList);
       }).catch(e=>{
         console.log(e);
       });
@@ -118,6 +155,7 @@ export default {
     max-width: 1374px;
     height: 100%;
     display: flex;
+    overflow: hidden;
     /deep/.el-col-5{
       width: 18.8%;
     }

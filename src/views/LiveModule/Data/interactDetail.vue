@@ -3,27 +3,34 @@
     <div class="title-data">
       <span>{{ title }}</span>
     </div>
-    <search-area
-      ref="searchArea"
-      :searchAreaLayout="searchAreaLayout"
-      :placeholder="placeholder"
-      @onSearchFun="getTableList('search')"
-      @onExportData="exportData"
-      @deletedChecked="deletedChecked"
-      >
-    </search-area>
-    <table-list
-      ref="tableList"
-      :manageTableData="tableList"
-      :tabelColumnLabel="tabelColumn"
-      :tableRowBtnFun="tableRowBtnFun"
-      :isCheckout="isCheckout"
-      :totalNum="totalNum"
-      @changeTableCheckbox="changeTableCheckbox"
-      @onHandleBtnClick="onHandleBtnClick"
-      @getTableList="getTableList"
-      >
-    </table-list>
+    <el-card>
+      <div class="search-box" v-if="title==='聊天' || title==='问答'">
+        <search-area
+          ref="searchArea"
+          :searchAreaLayout="searchAreaLayout"
+          :placeholder="placeholder"
+          @onSearchFun="getTableList('search')"
+          @onExportData="exportData"
+          @deletedChecked="deletedChecked"
+          >
+        </search-area>
+      </div>
+      <div class="search-box" v-else>
+        <el-button round> 导出数据</el-button>
+      </div>
+      <table-list
+        ref="tableList"
+        :manageTableData="tableList"
+        :tabelColumnLabel="tabelColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :isCheckout="isCheckout"
+        :totalNum="totalNum"
+        @changeTableCheckbox="changeTableCheckbox"
+        @onHandleBtnClick="onHandleBtnClick"
+        @getTableList="getTableList"
+        >
+      </table-list>
+    </el-card>
   </div>
 </template>
 <script>
@@ -41,6 +48,10 @@ export default {
           liveName: "哈哈哈哈哈", //昵称
           wacthPeople: '123',
           wacthNum: '124',
+          num: '1',
+          people: '20',
+          title: '今天周一',
+          content: '我是问卷1',
           timeLang: '30:00:00'
         },
         {
@@ -49,6 +60,10 @@ export default {
           liveName: '嘻嘻嘻',
           wacthPeople: '111',
           wacthNum: '222',
+          title: '明天周二',
+          num: '2',
+          people: '30',
+          content: '我是问卷2',
           timeLang: '50:00:00'
         }
       ],
@@ -245,7 +260,7 @@ export default {
         {
           name: '查看',
           methodName: 'lookDetail',
-          path: '/look-data',
+          path: '/lookSingleQuestion',
         }
       ],
       searchAreaLayout:[],
@@ -351,6 +366,7 @@ export default {
       }
     },
     onHandleBtnClick(val) {
+      console.log(val);
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
@@ -376,12 +392,17 @@ export default {
     },
     exportData() {
       console.log("111111111111", '请导出数据');
+    },
+    // 问卷查看
+    lookDetail(that, val) {
+      console.log(val.rows);
+      that.$router.push({path: val.path});
     }
   }
 };
 </script>
 <style lang="less">
-  .title-data {
+.title-data {
   margin: 20px 0;
   text-align: left;
   line-height: 30px;
@@ -391,8 +412,8 @@ export default {
     font-weight: 600;
     color: #1a1a1a;
   }
-  .button-tip {
-    vertical-align: top;
-  }
+}
+.search-box{
+  margin-bottom: 20px;
 }
 </style>

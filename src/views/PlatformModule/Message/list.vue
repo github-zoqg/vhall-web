@@ -2,32 +2,34 @@
   <div>
     <pageTitle title='消息中心'></pageTitle>
     <!-- 有消息内容 -->
-    <div v-if="msgDao.total > 0">
-      <div class="">
-        <el-button type="primary" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-        <el-button round @click.prevent.stop="executeUseRead">标记为已读</el-button>
+    <div class="message-list">
+      <div v-if="msgDao.total > 0">
+          <div class="message--title">
+          <el-button type="primary" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
+          <el-button round @click.prevent.stop="executeUseRead">标记为已读</el-button>
+        </div>
+        <!-- 表格与分页 -->
+        <table-list
+          ref="msgTable"
+          :isHandle=true
+          :manageTableData="msgDao.list"
+          :tabelColumnLabel="msgTableColumn"
+          :totalNum="msgDao.total"
+          :tableRowBtnFun="tableRowBtnFun"
+          @getTableList="getMsgList"
+          @changeTableCheckbox="checkMoreRow"
+          @onHandleBtnClick="onHandleBtnClick"
+        >
+        </table-list>
       </div>
-      <!-- 表格与分页 -->
-      <table-list
-        ref="msgTable"
-        :isHandle=true
-        :manageTableData="msgDao.list"
-        :tabelColumnLabel="msgTableColumn"
-        :totalNum="msgDao.total"
-        :tableRowBtnFun="tableRowBtnFun"
-        @getTableList="getMsgList"
-        @changeTableCheckbox="checkMoreRow"
-        @onHandleBtnClick="onHandleBtnClick"
-      >
-      </table-list>
+      <!-- 无消息内容 -->
+      <null-page v-else></null-page>
     </div>
-    <!-- 无消息内容 -->
-    <null-page v-else></null-page>
   </div>
 </template>
 
 <script>
-import PageTitle from '../../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import NullPage from '../Error/nullPage.vue';
 export default {
   name: 'msgList.vue',
@@ -75,7 +77,7 @@ export default {
         }
       ],
       ids: []
-    }
+    };
   },
   methods: {
     // 表格操作列回调函数， val表示每行
@@ -173,14 +175,14 @@ export default {
     },
     // 批量选择
     checkMoreRow(val) {
-      console.log(val)
+      console.log(val);
       this.ids = val.map(item => {
         return item.id;
       });
     },
     // 标记为已读取
     executeUseRead() {
-      console.log(this.ids)
+      console.log(this.ids);
       if (!(this.ids && this.ids.length > 0)) {
         this.$message.error('请至少选择一条信息标记为已读');
       } else {
@@ -228,9 +230,16 @@ export default {
   created() {
     this.getMsgList();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
-
+.message-list {
+  .layout--right--main();
+  .min-height();
+  .padding41-40();
+}
+.message--title {
+  margin-bottom: 24px;
+}
 </style>

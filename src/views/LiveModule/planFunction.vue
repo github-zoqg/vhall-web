@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import PageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 export default {
   name: "planFunction",
   components: {
@@ -92,7 +92,7 @@ export default {
           }
         ]
       ]
-    }
+    };
   },
   methods: {
     changeStatus(callback, item) {
@@ -100,48 +100,48 @@ export default {
         webinar_id: this.$route.params.str,
         needKey: item.type,
         value: callback
-      }
-      console.log('当前参数传递：', params)
+      };
+      console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
-        console.log(res)
+        console.log(res);
         this.$message({
           message:  `${callback ? '开启' : '关闭'} ${item.key_name} 成功`,
           type: 'success'
         });
       }).catch(e => {
-        console.log(e)
+        console.log(e);
         this.$message({
           message: `操作失败`,
           type: 'failure'
         });
-      })
+      });
     },
     planSuccessRender (data) {
-      console.log(data)
+      console.log(data);
     },
     planErrorRender(err) {
       this.$message({
         message: `获取数据异常${err}`,
         type: 'failure'
       });
-      this.keyList = null
+      this.keyList = null;
     },
     // 获取可配置选项
     planFunctionGet() {
       this.$fetch('planFunctionGet', {}).then(res=>{
-        console.log(res)
+        console.log(res);
         // 数据渲染
-        res && res.code == 200 && res.data ?  this.planSuccessRender(res.data) : this.planErrorRender(null)
+        res && res.code == 200 && res.data ?  this.planSuccessRender(res.data) : this.planErrorRender(null);
       }).catch(err =>{
-        console.log(err)
-        this.planErrorRender(err)
-      })
+        console.log(err);
+        this.planErrorRender(err);
+      });
     },
   },
   created() {
-    this.planFunctionGet()
+    this.planFunctionGet();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -157,7 +157,7 @@ export default {
   min-height: 190px;
   background: @background_white;
   border-radius: 4px;
-  margin: 0 auto 25px auto;
+  margin: 0 auto 24px auto;
 }
 .div__view__title {
   padding-top: 32px;
@@ -170,9 +170,11 @@ export default {
 }
 ul {
   li {
+    display: block;
     list-style-type: none;
     margin-top: 32px;
     margin-left: 80px;
+    line-height: 20px;
   }
   padding-bottom: 32px;
 }

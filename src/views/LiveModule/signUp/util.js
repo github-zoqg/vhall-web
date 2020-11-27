@@ -77,6 +77,21 @@ let filedJson = {
       }
     ]
   },
+  inputs: {
+    "label": "小结",
+    "required": false,
+    "bottomBtn": ["delete", "move", "requireSwtich"],
+    "type": "input",
+    value:'',
+    "nodes": [
+      {
+        "props": {
+          placeholder: '请输入总结'
+        },
+        "value":""
+      }
+    ]
+  },
   privacy: {
 
   }
@@ -101,6 +116,16 @@ export function getfiledJson({name, type}){
         json.nodes[0].props.placeholder='请输入手机号';
         json = Object.assign(json, {
           label: '手机号',
+          "required": true,
+          "bottomBtn": ["move", "phoneValid"],
+        });
+
+        break;
+        case 'birthday':
+        json = JSON.parse(JSON.stringify(filedJson['input']));
+        json.nodes[0].props.placeholder='请输入生日';
+        json = Object.assign(json, {
+          label: '生日',
           "required": true,
           "bottomBtn": ["move", "phoneValid"],
         });
@@ -140,6 +165,16 @@ export function getfiledJson({name, type}){
         });
 
         break;
+        case 'industry':
+        json = JSON.parse(JSON.stringify(filedJson['input']));
+        json.nodes[0].props.placeholder='请输入行业名称';
+        json = Object.assign(json, {
+          label: '行业',
+          "required": true,
+          "bottomBtn": ["delete", "move", "requireSwtich"],
+        });
+
+        break;
 
       case 'regional':
         json = JSON.parse(JSON.stringify(filedJson['select']));
@@ -169,6 +204,28 @@ export function getfiledJson({name, type}){
           "required": true,
           // "bottomBtn": [,"delete", "move", "requireSwtich"],
           "nodes": ["首席执行官/总经理", "市场总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
+            return {
+              props: {
+                disabled: item !='其他',
+                placeholder: "选项",
+                class: ['selectInput']
+              },
+              canRemove: true,
+              "value": item
+            };
+          })
+        });
+
+        break;
+
+        case 'educational':
+        json = JSON.parse(JSON.stringify(filedJson['select']));
+
+        json = Object.assign(json, {
+          label: '教育水平',
+          "required": true,
+          // "bottomBtn": [,"delete", "move", "requireSwtich"],
+          "nodes": ["博士", "研究生", "本科", "专科", "其他"].map(item=>{
             return {
               props: {
                 disabled: item !='其他',

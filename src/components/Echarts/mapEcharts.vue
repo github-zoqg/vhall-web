@@ -35,16 +35,17 @@ export default {
   watch: {
     areaDataList: {
       handler(data) {
+        console.log(data, '2222222222222222');
         this.initMapEcharts(data);
       }
     }
   },
   mounted() {
-    // this.initMapEcharts();
+    this.initMapEcharts(this.areaDataList);
   },
   methods: {
     initMapEcharts(data) {
-      console.log(data);
+      console.log(data, '11111111111111111111');
       // this.mapDataList = [];
       // let that = this;
       let mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
@@ -60,7 +61,7 @@ export default {
         },
         visualMap: {
           min: 0,
-          max: data.max_number,
+          max: data.max_number || 100,
           left: '10',
           top: 'bottom',
           type: 'continuous',

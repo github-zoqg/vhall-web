@@ -10,8 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
-      <el-button class="head-btn batch-del">批量删除</el-button>
+      <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
+      <el-button round class="head-btn batch-del">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -20,9 +20,11 @@
         >
       </search-area>
     </div>
-    <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-      :isCheckout="isCheckout" :isHandle="true" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
-    </table-list>
+    <el-card class="video-list">
+      <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
+        :isCheckout="isCheckout" :isHandle="true" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
+      </table-list>
+    </el-card>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
@@ -32,7 +34,7 @@
   </div>
 </template>
 <script>
-import pageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 export default {
   name: 'video.vue',
@@ -76,7 +78,7 @@ export default {
     };
   },
   components: {
-    pageTitle,
+    PageTitle,
     VideoPreview,
   },
   created() {
@@ -89,6 +91,7 @@ export default {
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       if (params === 'search') {
         pageInfo.pageNum= 1;
+        pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
         // this.$refs.tableList.clearSelect();
       }
@@ -217,44 +220,48 @@ export default {
         }
       });
     },
-    operating(_data){
-      console.log('列表操作',_data);
-       if(_data.type == 'update'){
-         this.$prompt('', '编辑',{
+    // 编辑
+    update(that, { rows }) {
+      that.$prompt('', '编辑',{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           inputPlaceholder: '请输入名称'
         }).then(({ value }) => {
           let flag = Boolean(value.match(/^[ ]*$/));
           if(!flag && value!=null){
-            this.$fetch('dataVideoupdate', {video_id: _data.rows.id, user_id: '1333', file_name: value}).then(res=>{
+            that.$fetch('dataVideoupdate', {video_id: _data.rows.id, user_id: '1333', file_name: value}).then(res=>{
               console.warn('成功', res);
-                this.$message({
+                that.$message({
                   type: 'success',
                   message: '修改成功'
                 });
             });
           }
         }).catch(() => {});
-       }else if(_data.type == 'del'){
-          this.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除?', '提示', {
+    },
+    del(that, { rows }) {
+      that.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
             center: true
           }).then(() => {
-            this.$fetch('dataVideoDel', {video_ids: _data.rows.id, user_id: '1333'}).then(res=>{
+            that.$fetch('dataVideoDel', {video_ids: _data.rows.id, user_id: '1333'}).then(res=>{
               console.warn('成功', res);
-                this.$message({
+                that.$message({
                   type: 'success',
                   message: '删除成功'
                 });
             });
           }).catch(() => {});
-       }else if(_data.type == 'preview'){
-        //  this.videoParam 进本信息
-         this.showDialog = true;
-       }
+    },
+    preview(that, { rows }) {
+      //  this.videoParam 进本信息
+      this.showDialog = true;
+    },
+    operating(val){
+      let methodsCombin = this.$options.methods;
+      methodsCombin[val.type](this, val);
     },
     select(item){
       console.log('列表选中', item);
@@ -275,6 +282,13 @@ export default {
 <style lang="less" scoped>
 .video-wrap{
   height: 100%;
+  width: 100%;
+  .video-list{
+    width: 100%;
+  }
+  /deep/.el-card__body{
+    padding: 0 0 30px 0;
+  }
   ::v-deep .el-dialog__header{
     padding-top: 10px;
   }
@@ -294,6 +308,7 @@ export default {
     }
   }
   .head-operat{
+    margin-bottom: 20px;
     .head-btn{
       display: inline-block;
     }

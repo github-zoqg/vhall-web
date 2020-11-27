@@ -12,8 +12,8 @@ const mixins = {
           'updateAppMessageShareData',
           'updateTimelineShareData'
         ]
-      }
-      wx.config({ ...params, ...initData })
+      };
+      wx.config({ ...params, ...initData });
       wx.ready(() => {
         wx.updateAppMessageShareData({
           title: shareData.title, // 分享标题
@@ -22,20 +22,20 @@ const mixins = {
           imgUrl: shareData.imgUrl, // 分享图标
           success() {
             // 设置成功
-            this.$toast('分享成功')
+            this.$toast('分享成功');
           }
-        })
+        });
         wx.updateTimelineShareData({
           title: shareData.title, // 分享标题
           link: shareData.link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
           imgUrl: shareData.imgUrl, // 分享图标
           success() {
             // 设置成功
-            this.$toast('分享成功')
+            this.$toast('分享成功');
           }
-        })
-      })
+        });
+      });
     }
   }
-}
-export default mixins
+};
+export default mixins;

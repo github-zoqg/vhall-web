@@ -10,8 +10,8 @@
 
     <!-- 操作栏 -->
     <div class="operaBox">
-      <el-button type="primary" round>创建直播</el-button>
-      <el-button round>创建点播</el-button>
+      <el-button type="primary" round @click="$router.push({path:'/live/edit'})">创建直播</el-button>
+      <el-button round @click="$router.push({path:'/live/vodEdit'})">创建点播</el-button>
       <div class="searchBox">
         <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
           <el-option
@@ -60,7 +60,7 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="开播" placement="top">
-                <i class="el-icon-video-camera"></i>
+                <router-link :to="'chooseWay/' + item.webinar_id" target="_blank"><i class="el-icon-video-camera"></i></router-link>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="回放" placement="top">
                 <i class="el-icon-s-promotion"></i>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import pageTitle from './components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 export default {
   data() {
     return {
@@ -124,7 +124,7 @@ export default {
     };
   },
   components: {
-    pageTitle,
+    PageTitle,
   },
   created() {
     this.getLiveList();
@@ -166,7 +166,11 @@ export default {
       });
     },
     toDetail(id) {
-      this.$router.push({path: `/live-detail/${id}`});
+      this.$router.push({path: `/live/detail/${id}`});
+    },
+    toRoom(id){
+      const { href } = this.$router.resolve({path: `/live/room/${id}`});
+      window.open(href);
     }
   },
   filters: {

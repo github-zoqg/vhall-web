@@ -17,12 +17,14 @@
             ref="doc"
             :webinarId="roomInfo.webinar_id"
             docPermissionId="no"
-            :roleName="2"
+            :isInteract="true"
+            :roleType="2"
             :roomId="roomInfo.room_id"
             :channelId="roomInfo.channel_id"
             :appId="roomInfo.app_id"
             :token="roomInfo.paas_access_token"
             :liveStatus="2"
+            :joinId="roomInfo.joinId"
             :accountId="roomInfo.third_party_user_id"
             :isVod="true"
           ></doc>
@@ -135,7 +137,7 @@
 </template>
 <script>
 // import player from '../Player'; // 回放组件
-import doc from '../Doc'; // 文档组件
+import doc from '../Doc/watch-doc'; // 文档组件
 import Tailoring from './components/tailoring'; // 剪裁整体功能组件
 import { formatTime } from './js/format';
 export default {
@@ -223,6 +225,20 @@ export default {
         this.cutTimeList = cutTimeList;
         this.$forceUpdate();
       });
+      this.$EventBus.$on('docInfo', docInfo => {
+        console.debug('docInfo', docInfo);
+        if (this.docReady != docInfo.showContainer) {
+          window.dispatchEvent(new Event('resize'));
+        }
+        this.docReady = docInfo.showContainer;
+      });
+      this.$EventBus.$on('watchDocShow', flag => {
+        console.log('watchDocShow', flag);
+        if (this.docReady != flag) {
+          window.dispatchEvent(new Event('resize'));
+        }
+        this.docReady = flag;
+      });
 
       // 监听文档初始化及是否显示
       this.$EventBus.$on('component_doc_info', docInfo => {
@@ -247,7 +263,7 @@ export default {
       });
 
       // 监听文档初始化完成
-      this.$EventBus.$on('component_docSDK_ready', async () => {
+      this.$EventBus.$on('docSDK_ready', async () => {
         this.showVideo = true;
         await this.initSDK().catch(err=>this.$message.error(`${err.message}!x{${err.code}}`));
         this.showTailoring = true;

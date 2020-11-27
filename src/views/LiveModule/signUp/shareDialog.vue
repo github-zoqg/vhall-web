@@ -1,5 +1,5 @@
 <template>
-  <el-dialog
+  <VhallDialog
     title="分享"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
@@ -45,7 +45,7 @@
       <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
       <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
     </span>
-  </el-dialog>
+  </VhallDialog>
 </template>
 
 <script>

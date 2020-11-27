@@ -6,8 +6,8 @@ const qqShare = {
         title: data.title || '微吼直播',
         desc: data.desc || '微吼直播',
         image_url: data.imgUrl
-      })
+      });
     }
   }
-}
-export default qqShare
+};
+export default qqShare;

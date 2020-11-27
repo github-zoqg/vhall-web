@@ -2,28 +2,28 @@ const path = require('path');
 // function resolve (dir) {
 // return path.join(__dirname, dir)
 // // }
-/*
-let publicPath = null;
+let publicPath = './';
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
-    publicPath = '//cnstatic01.e.vhall.com/saas-wap/';
+    publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/';
     break;
   case 'test':
-    publicPath = '//t-alistatic01.e.vhall.com/saas-wap/';
+    publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/';
     break;
   case 'pre':
-    publicPath = '//preview-static.e.vhall.com/saas-wap/';
+    publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/';
     break;
   case 'development':
-    publicPath = '/room/';
+    publicPath = './';
   // eslint-disable-next-line no-fallthrough
   default:
-    publicPath = '/room/';
-}*/
+    publicPath = './';
+}
+console.log( publicPath, process.env.VUE_APP_NODE_ENV);
 module.exports = {
-  publicPath: './',
+  publicPath: publicPath,
   assetsDir: './static',
-  // lintOnSave: false,
+  lintOnSave: true,
   devServer: {
     proxy: {
       '/mock': {
@@ -37,6 +37,13 @@ module.exports = {
       '/api/upload':{
         target: 'https://test-zhike.vhall.com/',
         changeOrigin: true
+      },
+      '/domian':{
+        target: 'https://t-webinar.e.vhall.com/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/domian': ''
+        }
       }
     }
   },

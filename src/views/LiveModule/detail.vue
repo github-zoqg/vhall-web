@@ -44,7 +44,7 @@
             <span>25</span>
             <i>秒</i>
           </p>
-          <el-button round type="primary">发起直播</el-button>
+          <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
     </el-row>
@@ -53,11 +53,11 @@
 </template>
 
 <script>
-import pageTitle from './components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 export default {
   components: {
-    pageTitle,
+    PageTitle,
     ItemCard
   },
   data(){
@@ -65,42 +65,45 @@ export default {
       msg: '',
       operas: {
         '准备': [
-          { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/setting-chat' },
-          { icon: '', title: '功能配置', subText: '编辑直播功能配置', path: `/plan-function/${this.$route.params.str}` },
-          { icon: '', title: '观看限制', subText: '设置直播观看限制', path: '/setting-chat' },
-          { icon: '', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: '/setting-chat' },
-          { icon: '', title: '暖场视频', subText: '开启后设置暖场视频', path: '/setting-chat' },
-          { icon: '', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/virtual/${this.$route.params.str}`},
-          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息', path: '/signup'},
-          { icon: '', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: '/embed-card' },
+          { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
+          { icon: '', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
+          { icon: '', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
+          { icon: '', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
+          { icon: '', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
+          { icon: '', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
+          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
+          { icon: '', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
         ],
         '品牌': [
-          { icon: '', title: '品牌设置', subText: '设置观看页品牌信息' },
-          { icon: '', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/custom-tab/${this.$route.params.str}` },
-          { icon: '', title: '播放器设置', subText: '设置直播跑马灯水印' },
-          { icon: '', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: '/invitation-card' },
-          { icon: '', title: '广告推荐', subText: '设置观看页广告位信息',  path: '/advertisement-card'},
-          { icon: '', title: '公众号展示', subText: '设置观看页展示公众号', path: '/official-card' },
-          { icon: '', title: '开屏海报', subText: '设置观看页的开屏海报', path: '/poster-card' },
+          { icon: '', title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`},
+          { icon: '', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
+          { icon: '', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
+          { icon: '', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
+          { icon: '', title: '广告推荐', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
+          { icon: '', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
+          { icon: '', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
         ],
         '直播': [
-          { icon: '', title: '文档', subText: '直播中使用文档演示' },
-          { icon: '', title: '抽奖', subText: '直播中发起抽奖活跃气氛' },
-          { icon: '', title: '问卷', subText: '创建问卷收集信息' },
-          { icon: '', title: '商品', subText: '直播中展示商品给观众' },
-          { icon: '', title: '礼物', subText: '直播中观众发送的礼物' },
+          { icon: '', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
+          { icon: '', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
+          { icon: '', title: '问卷', subText: '创建问卷收集信息', path: `/live/question/${this.$route.params.str}` },
+          { icon: '', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
+          { icon: '', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
         ],
         '回放': [
-          { icon: '', title: '回放管理', subText: '管理直播回放内容', path:`/playback/list/${this.$route.params.str}` },
-          { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
+          { icon: '', title: '回放管理', subText: '管理直播回放内容', path: `/live/playback/${this.$route.params.str}` },
+          // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         '数据': [
-          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: '/reports-data' },
-          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: '/interaction-data' },
-          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: '/user-data' },
+          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: '/reportsData' },
+          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: '/interactionData' },
+          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: '/userData' },
         ]
       }
     };
+  },
+  created(){
+    // console.log(this.$route.params.str);
   },
   filters: {
     unitCovert(val) {
@@ -122,6 +125,11 @@ export default {
       }else{
         console.log(item);
       }
+    },
+    toRoom(){
+      // 跳转至发起页面
+      const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+      window.open(href);
     }
   }
 };

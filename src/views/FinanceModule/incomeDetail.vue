@@ -1,14 +1,11 @@
 <template>
   <div class="income-detail">
     <div class="title-data">
-      <span>收益详情</span>
+      <p>收益详情</p>
     </div>
-    <el-card class="box-card">
-      <p>这里是活动名称</p>
-      <span>直播时间：2020-09-09 10:00:00  </span>
-    </el-card>
-    <el-card class="box-card">
-      <span>收益明细</span>
+    <title-data></title-data>
+    <el-card class="box-income">
+      <p>收益明细</p>
       <search-area
         ref="incomeDetils"
         :searchAreaLayout="searchDetail"
@@ -21,7 +18,6 @@
         :tabelColumnLabel="tabelColumn"
         :isCheckout="isCheckout"
         :isHandle="isHandle"
-        :width="120"
         :totalNum="totalNum"
         @getTableList="getIncomeDetailList"
         >
@@ -31,26 +27,25 @@
 </template>
 
 <script>
-// import tableList from '@/components/DataList/list.vue';
-// import searchArea from '@/components/SearchArea/index.vue';
+import titleData from '../LiveModule/Data/components/title';
 export default {
   name: "income",
   data() {
     return {
-      activeIndex: '1',
       totalNum: 1000,
       searchDetail: [
         {
           type: '2',
-          key: "searchDate"
+          key: "searchTime"
         },
         {
-          type: '2',
-          key: "payType",
+          type: '3',
+          key: "pay_type",
+          placeholder: '请选择付费类型',
           options: [
             {
               label: '礼物',
-              value: '1'
+              value: '13'
             },
             {
               label: '门票',
@@ -58,7 +53,7 @@ export default {
             },
             {
               label: '打赏',
-              value: '3'
+              value: '5'
             },
           ]
         }
@@ -67,98 +62,133 @@ export default {
       isHandle: false,
       tableList: [
         {
-          no: '1',
-          time: '2020-09-17',
-          type: '支付宝',
-          money: '123,000',
-          content: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
-          status: '1',
-          source: '直播',
-          onDate: '2020-10-01',
-          outDate: '2021-10-01'
+          pay_time: '2020-09-17',
+          pay_type: '5',
+          pay_fee: '123,000',
+          nickname: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
+          id: '1',
+          is_enter: '否',
+          phone:'11122233345',
         },
         {
-          no: '1',
-          time: '2020-01-17',
-          type: '微信',
-          money: '111,000',
-          content: '哈哈减肥吧开始讲课',
-          status: '2',
-          source: '录播',
-          onDate: '2020-01-01',
-          outDate: '2021-01-01'
+          pay_time: '2020-01-17',
+          pay_type: '2',
+          pay_fee: '111,000',
+          nickname: '哈哈减肥吧开始讲课',
+          id: '2',
+          phone:'12345678900',
+          is_enter: '是',
         }
       ],
       tabelColumn: [
         {
           label: '用户昵称',
-          key: 'no',
-          width: 120
+          key: 'nickname',
         },
         {
           label: '手机号',
-          key: 'time',
-          width: 240
+          key: 'phone',
+          width: 120
         },
         {
           label: '付费金额',
-          key: 'type',
-          width: 100
+          key: 'pay_fee',
+          width: 150
         },
         {
           label: '付费类型',
-          key: 'money',
+          key: 'type',
           width: 120,
         },
         {
           label: '支付时间',
-          key: 'content',
-          width: 120
+          key: 'pay_time',
+          width: 150,
         },
         {
           label: '是否参会',
-          key: 'status',
-          width: 120
+          key: 'is_enter',
+          width: 100
         }
       ]
     };
   },
-  // components: {
-  //   tableList,
-  //   searchArea
-  // },
+  components: {
+   titleData
+  },
+  mounted() {
+    this.getIncomeDetailList();
+    console.log(this.$route.query.webinar_id);
+  },
   methods: {
-    onHandleBtnClick(val) {
-      let methodsCombin = this.$options.methods;
-      methodsCombin[val.type](this, val);
-    },
-    handleClick(tab) {
-      this.activeIndex = tab.name;
-    },
     getIncomeDetailList(params) {
-      let pageInfo = this.$refs.incomeDetils.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchIncome.searchParams; //获取搜索参数
+      let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
+      let formParams = this.$refs.incomeDetils.searchParams; //获取搜索参数
+      let paramsObj = {};
       if (params === 'search') {
         pageInfo.pageNum= 1;
+        pageInfo.pos = 1;
       }
-      let obj = Object.assign({}, pageInfo, formParams);
+       for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      paramsObj.user_id = '16417099';
+      paramsObj.webinar_id = this.$route.query.webinar_id;
+      let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
-    }
+      this.$fetch('liveIncomeDetailList', obj).then(res =>{
+        this.rowsList();
+        console.log(res);
+        // this.totalNum = res.data.total;
+        // this.tableList = res.data.list;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    rowsList() {
+      this.tableList.map(item => {
+        item.type = item.pay_type == '2' ? '门票': item.pay_type == '5' ? '打赏' : '礼物';
+      });
+      console.log(this.tableList);
+      // .map(item => {"red_packet": item.red_packet_type == '1' ? '固定金额': '拼手气' })
+    },
   },
 };
 </script>
 
 <style lang="less" scoped>
   .income-detail{
+    // height: 100%;
     .title-data {
       margin: 10px 0 20px 0;
       text-align: left;
-      line-height: 30px;
-      span{
+      p{
         font-size: 22px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
         color: #1a1a1a;
+        padding-bottom: 4px;
+      }
+    }
+    .box-card .el-card__body{
+      padding: 0;
+    }
+    .box-income .el-card__body{
+      padding: 24px;
+    }
+    .box-income{
+      // height: calc(100% - 194px);
+      margin-top: 24px;
+      p{
+        padding-bottom: 7px;
+        font-size: 16px;
+        color:#1A1A1A;
+        font-weight: 400px;
       }
     }
   }

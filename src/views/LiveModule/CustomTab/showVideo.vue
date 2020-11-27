@@ -1,83 +1,57 @@
 <template>
-  <div unit-type="3" class="unit-templet video active" title="直播">
-    <ul class="list-content">
-      <li class="v35-activity-card mb">
-        <i class="menu-icon del"></i>
-        <div class="card-top">
-          <span class='card-status sub'>empty($accountconfig['ui.change_webinar_notice'])?'预告':$accountconfig['ui.change_webinar_notice'];</span>
-          <span class="card-status playback">回放</span>
-          <span class='card-status live'>直播</span>
-          <span class='card-status end'>结束</span>
-          <span class='card-status demand'>点播</span>
-          <span class='card-status playback'>回放</span>
-          <a>
-            <img class="live-play-icon" src="//cnstatic01.e.vhall.com/static/img/mobile/play_.png">
-            <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png">
-            <div class="num">
-              <div class="view_num"><i class="num-icon view-icon-h5-2"></i>66</div>
-              <span class="card-type">付费</span>
-              <span class='card-type hide'>免费</span>
-              <span class='card-type'>密码</span>
-              <span class='card-type'>白名单</span>
-              <span class='card-type'>付费</span>
-              <span class='card-type'>邀请码</span>
-              <span class='card-type'>注册表单</span>
-              <span class='card-type'>付费/邀请码</span>
-            </div>
-          </a>
-        </div>
-        <div class="card-bottom">
-          <p class="title">直播示例</p>
-          <p class="info">
-            <time>2018-06-28 16:00</time>
-          </p>
-        </div>
-      </li>
-    </ul>
-    <i class="menu-icon del"></i>
-  </div>
+  <ul class="list-content">
+    <li class="v35-activity-card mb">
+      <i class="menu-icon del"></i>
+      <div class="card-top">
+        <span class='card-status sub'>预告</span>
+        <span class="card-status playback">回放</span>
+        <span class='card-status live'>直播</span>
+        <span class='card-status end'>结束</span>
+        <span class='card-status demand'>点播</span>
+        <span class='card-status playback'>回放</span>
+        <a>
+          <img class="live-play-icon" src="//cnstatic01.e.vhall.com/static/img/mobile/play_.png" alt="" />
+          <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png" alt="" />
+          <div class="num">
+            <div class="view_num"><i class="num-icon view-icon-h5-2"></i>66</div>
+            <span class="card-type">付费</span>
+            <span class='card-type hide'>免费</span>
+            <span class='card-type'>密码</span>
+            <span class='card-type'>白名单</span>
+            <span class='card-type'>付费</span>
+            <span class='card-type'>邀请码</span>
+            <span class='card-type'>注册表单</span>
+            <span class='card-type'>付费/邀请码</span>
+          </div>
+        </a>
+      </div>
+      <div class="card-bottom">
+        <p class="title">直播示例</p>
+        <p class="info">
+          <time>2018-06-28 16:00</time>
+        </p>
+      </div>
+    </li>
+  </ul>
 </template>
 
 <script>
 export default {
-name: "showImgLink.vue"
-}
+  name: "showImgLink.vue",
+  props: {
+    // 当前展示组件下标
+    p_show_comps_index: {
+      type: Number
+    },
+    // 组件专属ID
+    component_id: {
+      type: Number
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
-.unit-templet {
-  position: relative;
-  box-sizing: border-box;
-  border: dashed 1px #eee;
-  padding: 5px;
-  margin: 10px 10px;
-  word-wrap: break-word;
-  &.active,&:hover {
-    cursor: pointer;
-    -webkit-transition: border .3s;
-    transition: border .3s;
-    border: 1px dashed #58ABFF;
-    background: rgba(88,171,255,0.1);
-  }
-  .content {
-    line-height: 1.5;
-    color: #666;
-    font-size: 12px;
-  }
-}
-.del {
-  position: absolute;
-  display: block;
-  top: -20px;
-  right: -10px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-image: url(../../../common/images/custom-tab/delete_icon.png) !important;
-  background-size: cover;
-  background-position: 100% 100%;
-  margin: 8px auto 0 auto;
-}
 .list-content {
   .flex-display();
   .justify(space-between);

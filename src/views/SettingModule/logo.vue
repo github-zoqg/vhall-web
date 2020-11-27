@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import PageTitle from '../LiveModule/components/pageTitle';
+import PageTitle from '@/components/PageTitle';
 import NoAuth from '../PlatformModule/Error/noAuth.vue';
 import Upload from '@/components/Upload/main';
 export default {
@@ -37,7 +37,7 @@ export default {
       logoForm: {
         logoUrl: ''
       }
-    }
+    };
   },
   methods: {
     handleUploadSuccess(res, file){
@@ -68,7 +68,7 @@ export default {
       console.log('uploadPreview', file);
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

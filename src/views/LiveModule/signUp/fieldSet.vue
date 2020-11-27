@@ -3,14 +3,14 @@
     <!-- v-model="list" -->
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
-      <p class="label">表单名称（必填）</p>
-      <el-input maxlength="50" show-word-limit placeholder="请输入表单标题"></el-input>
+      <p class="label">{{ routeName==='signup' ? '表单名称（必填）' : '问卷名称'}}</p>
+      <el-input maxlength="50" show-word-limit :placeholder="routeName==='signup' ? '请输入表单标题' : '请输入问卷标题'" v-model="designation"></el-input>
     </section>
     <section class="viewItem">
-      <p class="label">表单简介</p>
-      <el-input maxlength="500" show-word-limit placeholder="请输入表单简介" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
+      <p class="label">{{ routeName==='signup' ? '表单简介' : '问卷简介'}}</p>
+      <el-input maxlength="500" v-model="introduction" show-word-limit :placeholder="routeName==='signup' ? '请输入表单简介' : '请输入问卷简介'" type="textarea" :autosize="{ minRows: 5 }" resize=none></el-input>
     </section>
-    <section class="viewItem">
+    <section class="viewItem" v-if="routeName==='signup'">
       <p class="label">表单头图</p>
       <upload
         v-model="imageUrl"
@@ -25,11 +25,14 @@
       tag="ul"
       handle=".moveBtn"
       v-bind="dragOptions"
+      v-model="renderQuestion"
+      @change="sortChange"
       @start="drag = true"
       @end="drag = false"
     >
+    <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
-        <li class="viewItem" v-for="(item, index) in questionArr" :key="index">
+        <li class="viewItem" v-for="(item, index) in renderQuestion" :key="index">
           <p class="label">
             <!-- {{item.required ? '（必填）' : ''}} -->
             <template v-if="!item.labelEditable">
@@ -108,6 +111,9 @@
         </li>
       </transition-group>
     </draggable>
+    <section class="viewItem sureBtn" v-if="routeName !=='signup'">
+      <el-button round type="primary" @click="sureQuestionnaire">保存</el-button>
+    </section>
   </div>
 </template>
 
@@ -125,13 +131,28 @@ export default {
       default: ()=> []
     }
   },
+  watch:{
+    questionArr: {
+      handler(newVal){
+        this.renderQuestion = newVal;
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   data(){
     return {
+      // designation: '', //名称
+      // introduction: '', // 简介
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png'
+      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png',
+      renderQuestion: []
     };
+  },
+  created() {
+    this.routeName = this.$route.name;
   },
   computed: {
     dragOptions() {
@@ -141,9 +162,23 @@ export default {
         disabled: false,
         ghostClass: "ghost"
       };
+    },
+    designation() {
+      return this.$route.name === 'addQuestion' ? '问卷名称' : '';
+    },
+    introduction() {
+      return this.$route.name === 'addQuestion' ? '问卷简介' : '';
     }
   },
   methods: {
+    // 保存问卷
+    sureQuestionnaire() {
+      if (!this.questionArr.length) {
+        this.$message.error('请添加题目');
+      }
+      console.log(this.questionArr);
+      // this.$emit("sureBtn", )
+    },
     addOption(data, other){
       let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
       let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
@@ -231,8 +266,12 @@ export default {
       }
       return isType && isLt2M;
     },
-    resetBanner(){
+    resetBanner(event){
       this.imageUrl= '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png';
+    },
+    sortChange(val, arr){
+      console.log('sortChange-->', this.renderQuestion);
+      this.$emit('update:questionArr', this.renderQuestion);
     }
   },
 };
@@ -322,6 +361,12 @@ export default {
     }
     .selectInput{
       margin-bottom: 16px;
+    }
+  }
+  .sureBtn{
+    text-align: center;
+    .el-button{
+      padding: 12px 50px;
     }
   }
   .flip-list-move {
