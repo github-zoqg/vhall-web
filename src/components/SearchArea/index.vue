@@ -43,7 +43,7 @@
             :value="opt.value"
           />
         </el-select>
-        <el-button v-else-if="item.type==6" @click="searchList" class="search">查询</el-button>
+        <el-button v-else-if="item.type==6" @click="searchList" class="search" round>查询</el-button>
         <!-- 输入框 -->
         <el-input v-model="searchParams[item.key]" suffix-icon="el-icon-search" :placeholder="placeholder" style="width: 180px" v-else @change="changeDate"></el-input>
 
@@ -80,7 +80,7 @@ export default {
       ],
       searchParams: {
         searchIsTime: '1',
-        searchVersion: 1
+        type: 1
       }
     };
   },
@@ -145,11 +145,11 @@ export default {
       /deep/.el-range-editor .el-range-input {
         background: transparent;
       }
-      .el-button{
-        margin-right: 24px;
-        border-radius: 18px;
-        padding: 10px 20px;
-      }
+      // .el-button{
+      //   margin-right: 24px;
+      //   border-radius: 18px;
+      //   padding: 10px 20px;
+      // }
       .el-form--inline .el-form-item {
           margin-right: 16px;
           margin-bottom: 20px;

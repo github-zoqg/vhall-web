@@ -18,7 +18,7 @@
           <search-area
             ref="searchArea"
             :searchAreaLayout="searchAreaLayout"
-            @onSearchFun="getLineList('search')"
+            @onSearchFun="getLineList()"
           >
           </search-area>
           <lint-charts :lineDataList="lintData"></lint-charts>
@@ -39,29 +39,43 @@
             @onSearchFun="getAccountList('search')"
         >
         </search-area>
-      <div class="content-grid">
-        <div class="content-item">
+      <div class="content-grid" v-if="userInfo.edition == '2'">
+         <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
-            <h1>100</h1>
+            <h1>{{ trendData.webinar_num }}</h1>
+          </div>
+        </div>
+         <div class="grid-item">
+          <div class="grid-content">
+            <p>最高并发（方）</p>
+            <h1>{{ trendData.max_uv }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="content-grid" v-else>
+        <div class="content-item">
+          <div class="grid-content">
+            <p>累计活动（个）</p>
+            <h1>{{ trendData.webinar_num | numFormat }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>最高并发（方）</p>
-            <h1>12345</h1>
+            <p>累计使用流量（GB）</p>
+            <h1>{{ trendData.total_flow | numFormat }}</h1>
           </div>
         </div>
-         <div class="content-item">
+        <div class="content-item">
           <div class="grid-content">
-            <p>累计使用流量(GB)</p>
-            <h1>12345</h1>
+            <p>直播使用流量（GB）</p>
+            <h1>{{ trendData.live_flow | numFormat }}</h1>
           </div>
         </div>
-         <div class="content-item">
+        <div class="content-item">
           <div class="grid-content">
-            <p>回放使用流量(GB)</p>
-            <h1>12345</h1>
+            <p>回放使用流量（GB）</p>
+            <h1>{{ trendData.vod_flow | numFormat }}</h1>
           </div>
         </div>
       </div>
@@ -77,7 +91,6 @@
       </table-list>
       </el-card>
     </div>
-    <el-button :plain="true" @click="openPay">提示</el-button>
   </div>
 </template>
 
@@ -85,6 +98,7 @@
 import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import { sessionOrLocal } from '@/utils/utils';
+import { numFormat } from '@/utils/filter';
 export default {
   name: "financeInfo",
   components: {
@@ -95,17 +109,24 @@ export default {
     return {
       userInfo: {},
       lintData: [],
+      trendData: {
+        webinar_num: 12345678,
+        total_flow: 901234567,
+        live_flow: 212321478,
+        vod_flow: 1231234434
+      },
       time: '',
       dataValue: '',
       totalNum: 1000,
+      status: true,
       searchAreaLayout: [
         {
           type: "2",
-          key: "searchDate",
+          key: "searchTime",
         },
         {
           type: "3",
-          key: "searchVersion",
+          key: "type",
           options: [
             {
               label: '主账号',
@@ -121,11 +142,11 @@ export default {
       searchAccount:[
         {
           type: "2",
-          key: "searchDate",
+          key: "searchTime",
         },
         {
           type: "3",
-          key: "searchVersion",
+          key: "type",
           options: [
             {
               label: '主账号',
@@ -134,6 +155,10 @@ export default {
             {
               label: '主账号+子账号',
               value: 2
+            },
+            {
+              label: '子账号',
+              value: 3
             }
           ]
         },
@@ -141,104 +166,151 @@ export default {
           key: "searchAccount"
         }
       ],
-      dataList: [
-        {
-          value: '1',
-          label: '主账号'
-        },
-        {
-          value: '2',
-          label: '主账号+子账号'
-        }
-      ],
       isCheckout: false,
       isHandle: false,
       tableList: [
         {
-          liveId: '1',
-          costTime: '2020-09-17',
-          liveTitle: '哈哈哈',
-          wacthPeople: '123',
-          wacthNum: '124',
-          timeLang: '30:00:00'
+          webinar_id: '1',
+          pay_date: '2020-09-17',
+          subject: '哈哈哈',
+          typePay: '123',
+          webinar_max_uv: '124',
+          typeText: '主账号'
         },
         {
-          liveId: '2',
-          costTime: '2021-09-17',
-          liveTitle: 'xixiiii',
-          wacthPeople: '111',
-          wacthNum: '222',
-          timeLang: '50:00:00'
+          webinar_id: '2',
+          pay_date: '2021-09-17',
+          subject: 'xixiiii',
+          typePay: '111',
+          webinar_max_uv: '222',
+          typeText: '主账号'
         }
       ],
       tabelColumn: [
         {
           label: '消费时间',
-          key: 'costTime',
-          width: 120
+          key: 'pay_date',
         },
         {
           label: '活动ID',
-          key: 'liveId',
-          width: 120
+          key: 'webinar_id',
         },
         {
           label: '活动名称',
-          key: 'liveTitle',
+          key: 'subject',
         },
         {
           label: '消费类型',
-          key: 'wacthPeople',
-          width: 120
+          key: 'typePay',
         },
         {
           label: '账号类型',
-          key: 'wacthNum',
-          width: 120
+          key: 'typeText',
         },
         {
           label: '最高并发（方）',
-          key: 'timeLang',
-          width: 200
+          key: 'webinar_max_uv',
         }
       ]
     };
   },
-  mounted() {
-    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
-    console.log(this.userInfo, '12324444444');
-    this.lintData = JSON.parse(sessionOrLocal.get("dataCenterInfo"));
+  filters:{
+    numFormat: numFormat
   },
-  methods: {
-    getLineList(params) {
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      console.log(formParams, params);
-    },
-    getAccountList(params) {
-      let pageInfo = this.$refs.accountTableList.pageInfo;
-      let formParams = this.$refs.searchArea.searchAccount; //获取搜索参数
-      if (params === 'search') {
-        pageInfo.pageNum= 1;
-      }
-      let obj = Object.assign({}, pageInfo, formParams);
-      console.log(obj);
-    },
-    openPay() {
-       this.$message({
+  created() {
+    if (this.status) {
+      let that = this;
+      let vm = this.$message({
         showClose: true,
         duration: 0,
         dangerouslyUseHTMLString: true,
-        onClose: close,
-        message: '<p style="color:#1A1A1A">您有流量欠费3004.32元未支付  <span onclick="payment" style="color:#FA9A32;cursor: pointer;padding-left:10px">立即支付</span></p>',
+        message: '<p style="color:#1A1A1A">您有流量欠费3004.32元未支付  <span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">立即支付</span></p>',
         type: 'warning'
       });
+      let open = document.querySelector('#openList');
+      open.addEventListener('click', function(e){
+        vm.close();
+        that.$router.push({
+          name: 'payOrder'
+        });
+      });
+    }
+  },
+  mounted() {
+    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
+    console.log(this.userInfo, '1111111111111');
+    this.lintData = JSON.parse(sessionOrLocal.get("dataCenterInfo"));
+  },
+  methods: {
+    // 用量统计数据
+    getLineList(params) {
+      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      let paramsObj = {
+        account_id: '1234455'
+      };
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      let obj = Object.assign({}, paramsObj);
+      this.getFlowTrend(obj);
     },
-    payment() {
-      console.log("111111111");
+    getFlowTrend(obj) {
+      let url = this.userInfo.edition == 2 ? 'getTrendInfo' : 'getFlowInfo';
+      this.$fetch(url, obj).then(res =>{
+        this.lintData = res.data.list;
+      }).catch(e=>{
+        console.log(e);
+      });
     },
-    goPayList() {
-      this.$router.push({
-        name: 'payOrder'
+    // 获取并发-最高
+    getOnlinePay() {
+      let url = this.userInfo.edition == 2 ? 'getOnlinePay' : 'getFlowPay';
+      this.$fetch(url, obj).then(res =>{
+        this.trendData = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    // 获取消费账单列表
+    getAccountList(params) {
+      let pageInfo = this.$refs.accountTableList.pageInfo;
+      let formParams = this.$refs.searchArea.searchAccount; //获取搜索参数
+      let paramsObj = {
+        account_id: '1234455'
+      };
+      if (params === 'search') {
+        pageInfo.pos= 0;
+        pageInfo.pageNum = 1;
+      }
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      let obj = Object.assign({}, pageInfo, paramsObj);
+      console.log(obj);
+      this.getDataList(obj);
+      this.getOnlinePay(obj);
+    },
+    getDataList(obj) {
+      let url = this.userInfo.edition == 2 ? 'getAccountList' : 'getBusinessList';
+      this.$fetch(url, obj).then(res =>{
+        let costList = res.data.list;
+        costList.map(item => {
+          item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
+          item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
+        });
+        this.tableList = costList;
+      }).catch(e=>{
+        console.log(e);
       });
     }
   }
@@ -274,18 +346,24 @@ export default {
       }
     }
     .content-grid{
+      width: 100%;
       height:100px;
       margin-bottom: 20px;
       background: #fff;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-around;
       .content-item{
         width: 24%;
         background: #F7F7F7;
         height:100px;
         border-radius: 4px;
-        // margin: 22px auto;
+      }
+      .grid-item{
+        width: 49%;
+        background: #F7F7F7;
+        height:100px;
+        border-radius: 4px;
       }
       .grid-content{
         margin: 22px 60px;

@@ -96,7 +96,7 @@
           <div class="base-main">
             <i class="el-icon-document"></i>
             <div class="base-text">
-              <span>聊天</span>
+              <span>问答</span>
               <h1>351</h1>
             </div>
           </div>

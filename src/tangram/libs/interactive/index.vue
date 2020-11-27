@@ -308,6 +308,14 @@ export default {
         if (this.$SDKINSTANCE) {
           resolve(this.$SDKINSTANCE);
         } else {
+          console.warn({
+              accountId: this.accountId, // 第三方用户ID，必填     *不能是中文
+              inavId: this.inavId, // 房间ID，必填
+              appId: this.appId, // 应用ID，必填
+              token: this.token, // access_token，必填
+              role: this.role,
+              roomId: this.roomId // 如需开启旁路，必填
+            }, '查询初始化的值');
           VhallRTC.createInstance(
             {
               accountId: this.accountId, // 第三方用户ID，必填     *不能是中文
