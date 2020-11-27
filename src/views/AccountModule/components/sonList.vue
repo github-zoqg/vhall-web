@@ -48,6 +48,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            @change="sonCountGetHandle"
           >
           </el-switch>
         </el-form-item>
@@ -59,7 +60,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
-          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入帐号昵称" :maxlength="30" :minlength="1" show-word-limit/>
+          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
         </el-form-item>
         <el-form-item label="预设密码：" prop="password">
           <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入12个字符" :maxlength="12" :minlength="1"/>
@@ -75,13 +76,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="手机号码：">
-          <el-input v-model.trim="sonForm.phone" autocomplete="off" placeholder="请输入手机号" class="btn-relative">
-            <el-button class="no-border" size="mini" slot="append">重置</el-button>
+          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceHolder" class="btn-relative" :maxlength="30" disabled>
+            <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="邮箱地址：">
-          <el-input v-model.trim="sonForm.email" autocomplete="off" placeholder="请输入手机号" class="btn-relative">
-            <el-button class="no-border" size="mini" slot="append">重置</el-button>
+          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="sonForm.email ? '' : '无需填写，由子账号自行绑定，父账号可进行重置'" class="btn-relative" :maxlength="30" disabled>
+            <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
           </el-input>
         </el-form-item>
       </el-form>
@@ -227,6 +228,15 @@ export default {
           }
         });
       }
+    },
+    // 获取子账号个数
+    sonCountGetHandle() {
+      this.$fetch('sonCountGet', {}).then(res =>{
+        this.sonCountVo = res && res.code === 200 ? res.data || {} : (this.$message.error(res.msg || '获取子账号个数失败') );
+      }).catch(e => {
+        console.log(e);
+        this.sonCountVo = {};
+      });
     },
     // 删除单条消息数据
     sonDel(that, { rows }) {
@@ -375,7 +385,7 @@ export default {
         pos: 0,
         limit: 11
       }).then(res => {
-        console.log(res && res.code === 200 && res.data && res.data.list)
+        console.log(res && res.code === 200 && res.data && res.data.list);
         if (res && res.code === 200 && res.data) {
           this.roleList = res.data.list || [];
         } else {
@@ -389,8 +399,20 @@ export default {
         this.roleList = [];
       });
     },
+    // 重置选项
+    resetPhoneOrEmail(type){
+      this.sonForm[type] = '';
+    },
     initComp() {
       this.getRoleList(); // 获取可选角色列表
+    }
+  },
+  computed: {
+    phonePlaceholder() {
+      return this.sonForm.phone ? '' : '无需填写，由子账号自行绑定，父账号可进行重置';
+    },
+    emailPlaceholder() {
+      return this.sonForm.email ? '' : '无需填写，由子账号自行绑定，父账号可进行重置';
     }
   }
 };
