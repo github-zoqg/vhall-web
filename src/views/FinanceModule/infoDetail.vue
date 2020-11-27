@@ -50,32 +50,32 @@ export default {
         },
         {
           type: '3',
-          key: "type",
+          key: "orderType",
           placeholder: '请选择订单类型',
           options: [
             {
               label: '专业版',
-              value: '1'
+              value: 13
             },
             {
               label: '流量版',
-              value: '2'
+              value: 11
             },
             {
               label: '无极版',
-              value: '3'
+              value: 17
             },
             {
               label: '并发包',
-              value: '4'
+              value: 10
             },
             {
               label: '扩展包',
-              value: '5'
+              value: 12
             },
             {
-              label: '结清并发欠费',
-              value: '6'
+              label: '并发预充值',
+              value: 16
             }
           ]
         },
@@ -85,16 +85,24 @@ export default {
           placeholder: '请选择订单状态',
           options: [
             {
-              label: '失败',
-              value: '1'
+              label: '未使用',
+              value: 0
             },
              {
-              label: '成功',
-              value: '0'
+              label: '使用中',
+              value: 1
             },
              {
-              label: '成功',
-              value: '2'
+              label: '已用完',
+              value: 2
+            },
+            {
+              label: '已过期 ',
+              value: 3
+            },
+            {
+              label: '已废弃',
+              value: 4
             },
           ]
         },
@@ -104,12 +112,16 @@ export default {
           placeholder: '请选择订单来源',
           options: [
             {
-              label: '下单购买',
-              value: '1'
+              label: '开通购买',
+              value: 1
             },
             {
-              label: '人工购买',
-              value: '2'
+              label: '注册赠送',
+              value: 3
+            },
+             {
+              label: '试用赠送',
+              value: 4
             }
           ]
         },

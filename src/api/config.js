@@ -89,9 +89,25 @@ const apis = {
   //首页
   getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
   // 登录
-  loginInfo: ['/logins/v3/users/user/login', 'POST'],
+  loginInfo: ['/logins/v3/users/user/login', 'POST'],  //登录接口
+  loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
+  loginCheck: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
+  sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口
+  register: ['/v3/users/user/register', 'POST'],  //注册接口
+
   //数据中心
   getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
+
+  // 直播-数据报告
+  getStatisticsinfo: ['/103/v3/data-center/webinar-statistics-info', 'GET', 'mock'], //获取活动数据下报告
+  getMaxuv: ['/103/v3/data-center/webinar-max-uv', 'GET', 'mock'], //获取活动最高并发
+  getHeat: ['/103/v3/data-center/webinar-heat', 'GET', 'mock'], //获取活动热度
+  getProvinceinfo: ['/103/v3/data-center/webinar-province-info', 'GET', 'mock'], //获取活动省份统计
+  getDeviceinfo: ['/103/v3/data-center/webinar-device-info', 'GET', 'mock'], //获取活动设备信息
+  getBrowserinfo: ['/103/v3/data-center/webinar-browser-info', 'GET', 'mock'], //获取活动浏览器信息
+  getDateUvinfo: ['/103/v3/data-center/webinar-date-uv', 'GET', 'mock'], //获取观看人数趋势
+
+
   // 账户管理
   userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
   getSonInfo: ['/100/v3/users/child/get-head-info', 'POST', 'mock'], // 子账号tab页头部信息接口 Jia.li
@@ -129,6 +145,9 @@ const apis = {
   accountList: ['/104/v3/finances/withdraw/list', 'GET', 'mock'], // 提现明细
   weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定
   callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
+  withdrawalPhoneCode: ['/104/v3/finances/withdraw/phone-code', 'POST', 'mock'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
+  withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
+
 
   // 直播间内
   initiatorInfo: ['/101/v3/interacts/room/get-room-base-info', 'POST', 'mock'], // 获取房间信息 jian.chang

@@ -12,7 +12,7 @@
       @onSearchFun="getDataList('search')"
       >
     </search-area>
-    <main-data :titleType="titleType"></main-data>
+    <main-data :mainKeyData="mainKeyData" :titleType="titleType" :highData="highMax"></main-data>
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
@@ -24,10 +24,10 @@
           <i class="el-icon-question"></i>
         </el-tooltip>
         <div class="changeOption">
-          <span :class="isActive ? 'span-active' : ''">直播</span>
-          <span :class="isActive ? '' : 'span-active'">回放</span>
+          <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
+          <span :class="isActive ? '' : 'span-active'" @click="changeTime('回放')">回放</span>
         </div>
-        <lint-charts></lint-charts>
+        <lint-charts :lineDataList="lineDataList"></lint-charts>
       </div>
       <div class="statistical-map">
         <div class="map-title">
@@ -37,14 +37,14 @@
             <i class="el-icon-question"></i>
           </el-tooltip>
         </div>
-        <map-charts></map-charts>
+        <map-charts :areaDataList="areaDataList"></map-charts>
       </div>
       <el-row class="statistical-ter">
         <el-col :span="12"
-          ><div class="bg-purple"><ter-charts :isTerBar="1"></ter-charts></div
+          ><div class="bg-purple"><ter-charts :isTerBar="1" :terDataList="deviceDataList"></ter-charts></div
         ></el-col>
         <el-col :span="12"
-          ><div class="bg-purple"><ter-charts :isTerBar="2"></ter-charts></div
+          ><div class="bg-purple"><ter-charts :isTerBar="2" :terDataList="browerDataList"></ter-charts></div
         ></el-col>
       </el-row>
     </el-card>
@@ -60,7 +60,15 @@ import PageTitle from '@/components/PageTitle';
 export default {
   data() {
     return {
-      titleType: '点播',
+      titleType: '直播',
+      mainKeyData: {},
+      allDataList: {},
+      lineDataList: [],
+      areaDataList: {},
+      highMax: 0,
+      webianr_id: '',
+      deviceDataList: [],
+      browerDataList: [],
       isActive: 1,
       timeData: [
         {
@@ -150,11 +158,17 @@ export default {
   },
   created() {
     this.searchAreaLayout = this.searchLayout;
+    this.getBaseData();
+    this.getHighUv();
+    this.getTrendData();
+    this.getProvinceData();
+    this.getDeviceData();
+    this.getBrowerData();
   },
   methods: {
-    changeTime(item) {
-      this.isActive = parseInt(item.active);
-    },
+    // changeTime(item) {
+    //   this.isActive = parseInt(item.active);
+    // },
     getDataList(params) {
       let searchData = this.$refs.searchArea.searchParams;
       if (parseInt(searchData.searchIsTime) === 2) {
@@ -164,7 +178,73 @@ export default {
       }
       console.log(params);
       console.log(searchData);
-    }
+    },
+    getBaseData() {
+      let params = {
+        switch_id: 0
+      };
+      this.$fetch('getStatisticsinfo', params).then(res => {
+        this.mainKeyData = res.data;
+        console.log(res.data, '1111');
+      });
+    },
+    getHighUv() {
+      let params = {
+        switch_id: 0
+      };
+      this.$fetch('getMaxuv', params).then(res => {
+        this.highMax = res.data.max_onlines;
+        this.webianr_id = res.data.webianr_id;
+      });
+    },
+    getTrendData() {
+      let params = {
+        switch_id: 0
+      };
+      this.$fetch('getDateUvinfo', params).then(res => {
+         console.log(res.data, '22222');
+        this.allDataList = res.data;
+        this.lineDataList = this.allDataList.live;
+        console.log(this.lineDataList, '22222');
+      });
+    },
+    getProvinceData() {
+      let params = {
+        switch_id: 0
+      };
+      this.$fetch('getProvinceinfo', params).then(res => {
+        this.areaDataList = res.data;
+        console.log(res.data, '333333');
+      });
+    },
+    getDeviceData() {
+      let params = {
+        switch_id: 0
+      };
+      this.$fetch('getDeviceinfo', params).then(res => {
+        this.deviceDataList = res.data.list;
+        console.log(res.data, '333333');
+      });
+    },
+    getBrowerData() {
+      let params = {
+        switch_id: 0
+      };
+      this.$fetch('getBrowserinfo', params).then(res => {
+        this.browerDataList = res.data.list;
+        console.log(res.data, '333333');
+      });
+    },
+    changeTime(title) {
+      if (title === '直播') {
+        this.isActive = true;
+        this.lineDataList = this.allDataList.live;
+      } else {
+        this.isActive = false;
+        this.lineDataList = this.allDataList.record;
+      }
+
+    },
   },
 };
 </script>
@@ -174,7 +254,7 @@ export default {
   padding: 0;
 }
 .statistical-data {
-  // margin-top: 24px;
+  margin-top: 24px;
   .statistical-title {
     text-align: left;
     font-size: 16px;
@@ -186,6 +266,7 @@ export default {
 .statistical-line {
     text-align: left;
     padding-bottom: 10px;
+    position: relative;
     span {
       font-size: 16px;
       color: #666666;
