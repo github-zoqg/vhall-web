@@ -53,19 +53,19 @@
       width="400px"
     >
       <div class="money">
-        <p>可用金额<span>￥40.00</span></p>
+        <p>可用金额<span>￥{{ availableMoney }}</span></p>
       </div>
-      <el-form label-width="85px">
-        <el-form-item label="提现金额">
+      <el-form label-width="70px" :model="withdrawForm" :rules="rules" ref="withdrawForm">
+        <el-form-item label="提现金额" prop="money">
           <el-input
-            v-model="money"
+            v-model="withdrawForm.money"
             style="width: 265px"
             placeholder="请输入提现金额"
           ></el-input>
         </el-form-item>
-        <el-form-item label="动态密码">
+        <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
-            <el-input v-model="code" style="width: 150px"></el-input>
+            <el-input v-model="withdrawForm.code" style="width: 150px"></el-input>
             <span @click="getCode"><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i>{{ codeBtnWord }}</span>
           </div>
           <!-- <el-input v-model="code" style="width: 150px"></el-input>
@@ -88,7 +88,7 @@
         </el-form-item>
       </el-form>
       <div class="nextBtn">
-        <el-button type="primary" round>确认</el-button>
+        <el-button type="primary" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -98,19 +98,41 @@ import QRcode from 'qrcode';
 export default {
   // props: ['type'],
   data() {
+    let validateMoney = (rule, value, callback) => {
+      setTimeout(() => {
+          if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
+            callback(new Error('请输入数字值'));
+          } else {
+            if (value > parseInt(this.availableMoney)) {
+              callback(new Error('提现值必须小于可用金额'));
+            } else {
+              callback();
+            }
+          }
+        }, 1000);
+    };
     return {
       dialogVisible: false,
       dialogChangeVisible: false,
       dialogCashVisible: false,
-      code: '',
-      money: '',
+      withdrawForm: {
+        code: '',
+        money: '',
+      },
+      code: "",
       checked: false,
+      availableMoney: 40.00,
       waitTime: 60,
       codeBtnWord: '获取验证码',
       getCodeBtnDisable: true,
       qrcode: '',
       phone: 12345678910,
       link: 'http://172.16.11.8/finance/income',
+      rules: {
+        money: [
+          { validator: validateMoney, trigger: 'blur'  }
+        ]
+      }
     };
   },
   filters: {
@@ -132,8 +154,21 @@ export default {
       if (!this.getCodeBtnDisable) {
         return;
       }
+      this.$fetch('withdrawalPhoneCode').then(res => {
+        console.log(res.data, '234324536536');
+      });
       console.log('1111111111111');
       this.phoneTimer();
+    },
+    withdraw() {
+      this.$refs['withdrawForm'].validate((valid) => {
+          if (valid) {
+            console.log('验证通过');
+          } else {
+            console.log('验证未通过');
+            return false;
+          }
+        });
     },
     phoneTimer() {
       const that = this;

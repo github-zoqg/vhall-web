@@ -1,7 +1,7 @@
 
 const digitsRE = /(\d{3})(?=\d)/g;
 
-export default (value, currency = '元', decimals = 2) => {
+export const formatMoney = (value,  decimals = 2) => {
   value = parseFloat(value);
   if (!value && value !== 0) return '';
   const stringified = Math.abs(value).toFixed(decimals);
@@ -10,6 +10,6 @@ export default (value, currency = '元', decimals = 2) => {
   const head = i > 0 ? ($int.slice(0, i) + ($int.length > 3 ? ',' : '')) : '';
   const $float = decimals ? stringified.slice(-1 - decimals) : '';
   const sign = value < 0 ? '-' : '';
-  return `${sign}${head}${$int.slice(i).replace(digitsRE, '$1,')}${$float} ${currency}`;
+  return `${sign}${head}${$int.slice(i).replace(digitsRE, '$1,')}${$float}`;
 };
 

@@ -5,7 +5,7 @@
         1.账户收益包含直播收益和红包收益<br>2.直播收益：观众对主办方打赏的金额，包含门票、打赏、礼物道具<br>3.红包收益：作为观众身份抢到主办方发送的红包，以及主办方发送红包后未被领取完，会退款到红包收益
       </div>
     </pageTitle>
-    <div class="detail" @click="accountDetail">账单明细</div>
+    <div class="detail" @click="accountDetail">提现明细</div>
     <el-row :gutter="10">
       <el-col :span="12">
         <el-card class="live-come">
@@ -76,8 +76,6 @@
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
           :isCheckout="isCheckout"
-          :isHandle="isHandle"
-          :width="120"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
           @onHandleBtnClick="onHandleBtnClick"
@@ -110,7 +108,6 @@ export default {
         }
       ],
       isCheckout: false,
-      isHandle: true,
       tableList: [
         {
           webinar_id: '1',
@@ -142,7 +139,6 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
-          width: 120
         },
         {
           label: '标题',
@@ -151,7 +147,6 @@ export default {
         {
           label: '总收益',
           key: 'total_income',
-          width: 120
         },
         {
           label: '门票收益',
@@ -161,19 +156,16 @@ export default {
         {
           label: '打赏收益',
           key: 'reward_income',
-          width: 120
         },
         {
           label: '礼物收益',
           key: 'gifts_income',
-          width: 120
         }
       ],
       meneyColumns: [
         {
           label: '活动id',
           key: 'webinar_id',
-          width: 120
         },
         {
           label: '标题',
@@ -182,22 +174,18 @@ export default {
         {
           label: '发红包用户',
           key: 'red_packet_user',
-          width: 200
         },
         {
           label: '红包类型',
           key: 'red_packet',
-          width: 120,
         },
         {
           label: '领取时间',
           key: 'created_at',
-          width: 150
         },
         {
           label: '领取金额',
           key: 'money',
-          width: 120
         }
       ],
       tableRowBtnFun: [
@@ -307,12 +295,12 @@ export default {
     },
     // 账单明细
     accountDetail() {
-      this.$router.push({
-        name: 'orderDetail'
-      });
       // this.$router.push({
-      //   name: 'accountDetail'
+      //   name: 'orderDetail'
       // });
+      this.$router.push({
+        name: 'accountDetail'
+      });
     }
   },
 };
