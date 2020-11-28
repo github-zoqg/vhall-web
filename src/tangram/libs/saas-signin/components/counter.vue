@@ -54,11 +54,12 @@ export default {
   margin-top: 26px;
   &-btn {
     width: 160px;
-    margin-bottom: 39px;
+    // margin-bottom: 39px;
     background: #FC5659;
     color: #fff;
   }
   > p {
+    margin-top: 34px;
     font-size: 12px;
     color: #888;
   }
