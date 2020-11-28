@@ -6,6 +6,8 @@ const apis = {
   dataVideoDel: ['/99/v3/webinars/videos/delete', 'POST', 'mock'], //音视频删除
   dataVideoAdd: ['/99/v3/webianrs/videos/create', 'POST', 'mock'], //音视频列表
 
+  shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
+
   // 直播模块
   createLive: ['/99/v3/webinars/webinar/create', 'POST', 'mock'], // 活动创建/直播创建 jian.chang
   liveList: ['/99/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang

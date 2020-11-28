@@ -1,12 +1,12 @@
 <template>
-  <div class="question-wrap">
-    <pageTitle title="礼物">
+  <div class="gift-wrap">
+    <pageTitle title="礼物管理">
       <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
+        1.支持自定义创建35个礼物, 支持创建免费礼物
         <br>
-        2.上蔟韩视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
+        2.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
         <br>
-        3.上传的视频，不支持剪辑和下载
+        3.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
@@ -17,20 +17,65 @@
         :placeholder="'请输入礼物名称'"
         :isExports='false'
         :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
+        @onSearchFun="searchName('search')"
         >
       </search-area>
     </div>
-    <el-card class="question-list">
-      <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-       :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
-      </table-list>
+    <el-card class="gift-list">
+      <el-table
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        ref="multipleTable"
+        :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          :reserve-selection="true"
+          type="selection"
+          width="55"
+          align="left"
+        />
+        <!-- <el-table-column width="55">
+          <template slot-scope="scope">
+            <span class="check-box-row">
+              <el-checkbox v-model="scope.row.isChecked" @change="selectCheck(scope.$index)"></el-checkbox>
+            </span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="图片">
+          <template slot-scope="scope">
+            <img class="gift-cover" :src="scope.row.img">
+            <!--TODO:-->
+            <!-- <img class="gift-cover" :src="defaultImgHost + scope.row.img"> -->
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" prop="name" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column label="价格" prop="price" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope" v-if="scope.row.source_status == 1">
+            <el-button class="btns" type="text" @click="handleEditAward(scope.row)">编辑</el-button>
+            <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- <table-list
+        ref="tableList"
+        :manageTableData="tableData"
+        :tabelColumnLabel="tabelColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :totalNum="total"
+        @onHandleBtnClick='onHandleBtnClick'
+        @getTableList="getTableList"
+        @changeTableCheckbox="changeTableCheckbox">
+      </table-list> -->
     </el-card>
     <el-dialog
-    title="新建礼物"
-    :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
-    width="468px">
+      title="新建礼物"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="468px">
     <el-form :model="formData" ref="ruleForm">
       <el-form-item label="图片上传">
         <upload
@@ -96,27 +141,93 @@ export default {
       tableRowBtnFun: [
        {name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
-      tableData: [
+      tableData: [ // TODO:
         {
-          watch: false,
+          gift_id: 1,
           name: '请输入000',
           price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+          source_status: '1'
         },
         {
-          watch: true,
+          gift_id: 2,
           name: '请输入111',
           price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+          source_status: '0'
+        },
+        {
+          gift_id: 3,
+          name: '请输入111',
+          price: '99.99',
+          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+          source_status: '0'
+        },
+        {
+          gift_id: 4,
+          name: '请输入111',
+          price: '99.99',
+          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+          source_status: '0'
+        },
+        {
+          gift_id: 5,
+          name: '请输入111',
+          price: '99.99',
+          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+          source_status: '0'
+        },
+        {
+          gift_id: 61,
+          name: '请输入111',
+          price: '99.99',
+          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+          source_status: '0'
         }
-      ]
+      ],
+      searchParams: {
+        gift_name: '',
+        page_size: 10,
+        page: 1
+      },
+      selectIds:[],
+      defaultImgHost: process.env.upload + '/'
     };
   },
   components: {
     PageTitle,
     upload
   },
+  created() {
+    // this.getTableList()
+  },
   methods: {
+    // 获取礼物劣列表
+    getTableList () {
+      this.$fetch(shareGiftList, {
+        ...this.searchParams
+      }).then((res) => {
+        if (res.code == 200 && res.data) {
+          this.tableData = res.data.list
+        }
+      })
+    },
+    // 处理批量操作
+    handleSelectionChange (val) {
+      let ids = []
+      val.length > 0 && val.forEach((item, index) => {
+        ids.push(item.gift_id)
+      })
+      this.selectIds = ids
+      // this.$refs.multipleTable.clearSelection()
+    },
+    handleEnterGiftName () {
+
+    },
+    searchName (val) {
+      console.log(1111, this.searchAreaLayout[0], val)
+    },
+
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
@@ -153,12 +264,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.question-wrap{
+.gift-wrap{
   height: 100%;
   width: 100%;
-  .question-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     width: 100%;
     padding: 32px 24px;
@@ -183,6 +291,16 @@ export default {
           width: 100%;
           height: 100%;
         }
+      }
+    }
+  }
+  .gift-list{
+    width: 100%;
+    /deep/.el-table{
+      .gift-cover{
+        display: inline-block;
+        width: 100px;
+        height: 100px;
       }
     }
   }
