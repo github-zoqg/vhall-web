@@ -1,8 +1,8 @@
 <template>
-    <VhallDialog :visible.sync="showSignin" width="468px" center title="签到" append-to-body ref="dialog" >
-      <div class="sign-wrap">
+    <VhallDialog class="sign-wrap" :visible.sync="showSignin" width="468px" center title="签到" append-to-body ref="dialog" >
+      <!-- <div class="sign-wrap"> -->
         <Counter
-          @close-sign="showConfirm = true"
+          @close-sign="closeAutoSignin"
           :autoSign="signInfo.autoSign"
           :title="signInfo.signTip"
           :total="total"
@@ -14,7 +14,7 @@
           <SigninSet v-if="showSet" @start="startSign"></SigninSet>
         </template>
         <signinResult v-if="showResult" @restartsign="resetSignState"></signinResult>
-      </div>
+      <!-- </div> -->
     </VhallDialog>
 </template>
 
@@ -28,7 +28,6 @@ export default {
   data() {
     return {
       showSignin: false,
-      showConfirm: false,
       signInfo: null,
       remaining: 0,
       timer: null
@@ -42,11 +41,16 @@ export default {
       this.showSignin = true;
     },
     closeAutoSignin() {
-      this.showConfirm = false;
-      this.showSignin = false;
-      this.$refs.dialog.$children[0].$once('closed', () =>
-        this.resetSignState()
-      );
+      this.$confirm('您将取消自动签到，确认关闭？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        center: true
+      }).then(() => {
+        this.showSignin = false;
+        this.$refs.dialog.$children[0].$once('closed', () =>
+          this.resetSignState()
+        );
+      }).catch(() => {});
     },
     startSign(state) {
       this.$vhallFetch('signin', {
@@ -114,9 +118,28 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.sign-wrap {
-  width: 360px;
-  margin: 32px auto 0;
-  padding-bottom: 32px;
+ .sign-wrap{
+  ::v-deep.el-dialog__header{
+    padding: 0;
+    margin-bottom: 34px;
+    box-shadow: 0px 1px 0px 0px #E2E2E2;
+    .el-dialog__headerbtn{
+      top: 20px;
+    }
+    .el-dialog__title{
+      font-size: 16px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      height: 48px;
+      line-height: 48px;
+      color: #222222;
+    }
+  }
+  ::v-deep.el-dialog__body{
+    padding: 0 32px 34px;
+  }
+  ::v-deep.el-message-box--center .el-message-box__header{
+    padding-top: 15px;
+  }
 }
 </style>
