@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog
+    <VhallDialog
       title="提现"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
@@ -8,19 +8,20 @@
     >
       <div class="box-wei">
         <div class="img-box">
-          <div class="isUntime">
+          <img :src="qrcode" alt="">
+          <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
             <p>点击重新加载</p>
-          </div>
+          </div> -->
         </div>
         <p>您还未绑定账号，请先绑定</p>
       </div>
       <div class="nextBtn">
-        <el-button type="primary" round size="medium">立即绑定</el-button>
+        <el-button type="primary" round>立即绑定</el-button>
       </div>
-    </el-dialog>
-    <el-dialog
+    </VhallDialog>
+    <VhallDialog
       title="更改绑定微信"
       :visible.sync="dialogChangeVisible"
       :close-on-click-modal="false"
@@ -30,24 +31,22 @@
         <h3>
           为了保障您的账号安全，请验证进行安全验证，手机号是当前账号绑定的手机号
         </h3>
-        <div class="code-data">
-          <span>动态密码</span>
-          <el-input placeholder="验证码" v-model="code" style="width: 150px">
-          </el-input>
-          <b class="code" @click="getCode"
-            ><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i
-            >{{ codeBtnWord }}</b
-          >
-          <p>已向绑定手机号159****3421发送验证码</p>
-        </div>
+        <el-form label-width="85px">
+           <el-form-item label="动态密码">
+            <div class="inputCode">
+              <el-input v-model="code" style="width: 150px"></el-input>
+              <span @click="getCode"><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i>{{ codeBtnWord }}</span>
+            </div>
+            <p class="codeTitle">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
+          </el-form-item>
+        </el-form>
       </div>
       <div class="nextBtn">
-        <el-button type="primary" round  :disabled="!code"
-          >下一步</el-button
-        >
+        <el-button type="primary" round @click="nextBinding"  :disabled="!code"
+          >下一步</el-button>
       </div>
-    </el-dialog>
-    <el-dialog
+    </VhallDialog>
+    <VhallDialog
       title="提现申请"
       :visible.sync="dialogCashVisible"
       :close-on-click-modal="false"
@@ -74,12 +73,12 @@
             ><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i
             >{{ codeBtnWord }}</b
           > -->
-          <p class="codeTitle">已向绑定手机号159****3421发送验证码</p>
+          <p class="codeTitle">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
         </el-form-item>
         <el-form-item label="到账账户">
           <div class="live-box">
             <img src="../../../common/images/logo.png" alt="" /> 微吼直播
-            <span>更改</span>
+            <span @click="changeBinding">更改</span>
           </div>
           <div class="xieyi">
             <el-checkbox v-model="checked"
@@ -91,12 +90,13 @@
       <div class="nextBtn">
         <el-button type="primary" round>确认</el-button>
       </div>
-    </el-dialog>
+    </VhallDialog>
   </div>
 </template>
 <script>
+import QRcode from 'qrcode';
 export default {
-  props: ['type'],
+  // props: ['type'],
   data() {
     return {
       dialogVisible: false,
@@ -108,7 +108,24 @@ export default {
       waitTime: 60,
       codeBtnWord: '获取验证码',
       getCodeBtnDisable: true,
+      qrcode: '',
+      phone: 12345678910,
+      link: 'http://172.16.11.8/finance/income',
     };
+  },
+  filters: {
+    filterPhone (value) {
+      return  String(value).replace( /([0-9]{3})([0-9]{4})([0-9]{4})/,"$1****$3");
+    }
+  },
+  created(){
+    QRcode.toDataURL(
+      this.link,
+      (err, url) => {
+        console.log(err, url);
+        this.qrcode = url;
+      }
+    );
   },
   methods: {
     getCode() {
@@ -137,6 +154,14 @@ export default {
         }
       }, 1000);
     },
+    changeBinding() {
+      this.dialogChangeVisible = true;
+      this.dialogCashVisible = false;
+    },
+    nextBinding() {
+      this.dialogChangeVisible = false;
+      this.dialogVisible = true;
+    }
   },
 };
 </script>
@@ -183,14 +208,16 @@ export default {
     }
   }
   .code-data {
+    // display: flex;
     padding: 0 10px;
+    border: 1px solid #ccc;
     span {
       padding-right: 10px;
       color: #1a1a1a;
       font-weight: 600;
     }
     p {
-      padding-left: 48px;
+      // padding-left: 48px;
       line-height: 20px;
       color: #666;
     }
@@ -274,7 +301,7 @@ export default {
 }
 .nextBtn {
   text-align: center;
-  padding-top: 30px;
+  padding: 20px;
   .el-button {
     padding: 10px 38px;
   }

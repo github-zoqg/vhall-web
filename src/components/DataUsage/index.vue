@@ -128,7 +128,7 @@ export default {
     },
     goAccountDetail() {
       this.$router.push({
-        name: 'infoDetail'
+        path: '/infoDetail'
       });
     },
     buyVersion(type) {

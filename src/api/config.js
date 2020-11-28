@@ -120,6 +120,12 @@ const apis = {
 
   //财务中心
   getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
+  getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
+  getFlowInfo: ['/104/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
+  getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单
+  getFlowPay: ['/104/v3/business-total/user-flow-pay', 'GET', 'mock'],  //获取流量-消费账单
+  getAccountList: ['/104/v3/business-total/user-online-pay-detail', 'GET', 'mock'], //获取财务总览-并发-消费账单  接口参数少一个字段(标题)
+  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单   接口参数少一个字段(标题)
   orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
   orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
   orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
@@ -134,10 +140,12 @@ const apis = {
   liveIncomeDetailList: ['/104/v3/finances/income/live/details/list', 'GET', 'mock'], // 直播收益详情列表
   packetIncomeList: ['/104/v3/finances/income/red-packet/list', 'GET', 'mock'], // 红包收益
   accountList: ['/104/v3/finances/withdraw/list', 'GET', 'mock'], // 提现明细
+  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定
+  callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
 
   // 直播间内
   initiatorInfo: ['/101/v3/interacts/room/get-room-base-info', 'POST', 'mock'], // 获取房间信息 jian.chang
-  getInitiatorReportInfo: ['/api/vss/initiator/report-info', 'POST', 'mock'], // 获取上报信息 jian.chang
+  getInitiatorReportInfo: ['/domian/api/vss/initiator/report-info', 'POST'], // 获取上报信息 jian.chang
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
