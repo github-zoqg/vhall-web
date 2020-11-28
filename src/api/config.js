@@ -7,6 +7,10 @@ const apis = {
   dataVideoAdd: ['/99/v3/webianrs/videos/create', 'POST', 'mock'], //音视频列表
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
+  editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
+  createGiftInfo: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 创建共享库礼品信息
+  deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
+
 
   // 直播模块
   createLive: ['/99/v3/webinars/webinar/create', 'POST', 'mock'], // 活动创建/直播创建 jian.chang
