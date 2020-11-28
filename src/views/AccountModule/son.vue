@@ -4,9 +4,9 @@
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
       <div class="top-item">
-        <p>总并发（方）</p>
+        <p>{{sonInfo && sonInfo.vipInfo && sonInfo.vipInfo.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
         <p>
-          <count-to :startVal="0" :endVal="sonInfo.total" :duration="1500" v-if="sonInfo && sonInfo.total > 0"></count-to>
+          <count-to :startVal="0" :endVal="sonInfo && sonInfo.vipInfo && sonInfo.vipInfo.type > 0 ? Number(sonInfo.vipInfo.total_flow) : Number(sonInfo.vipInfo.total)" :duration="1500" v-if="sonInfo.vipInfo !== null && (sonInfo.vipInfo.total > 0 || sonInfo.vipInfo.total_flow > 0)"></count-to>
           <span v-else>0</span>
         </p>
       </div>
@@ -32,7 +32,7 @@
         <el-tab-pane label="角色" name="roleList"></el-tab-pane>
       </el-tabs>
       <!-- 列表区域 -->
-      <son-list ref="sonListComp" v-show="tabType === 'sonList'"></son-list>
+      <son-list ref="sonListComp" v-show="tabType === 'sonList'" :vipType="sonInfo.vipInfo.type"></son-list>
       <role-list ref="roleListComp" v-show="tabType === 'roleList'"></role-list>
     </div>
   </div>
@@ -53,24 +53,16 @@ export default {
   },
   data() {
     return {
-      tabType: null,
-      sonInfo: null
+      tabType: 'sonList',
+      sonInfo: {
+        vipInfo: {}
+      }
     };
   },
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
       this.$refs[`${this.tabType}Comp`].initComp();
-    },
-    getRoleInfo() {
-      this.$fetch('getSonInfo', {
-        user_id: 1
-      }).then(res => {
-        this.sonInfo = res && res.code === 200 && res.data ? res.data : null;
-      }).catch(e => {
-        console.log(e);
-        this.sonInfo = null;
-      });
     },
     getSonInfo() {
       this.$fetch('getSonInfo', {
@@ -83,7 +75,6 @@ export default {
       });
     },
     async initPage() {
-      await this.getRoleInfo();// 根据用户ID获取可选角色列表
       this.getSonInfo();// 获取子账号统计信息
     }
   },
@@ -92,7 +83,9 @@ export default {
   },
   mounted() {
     this.tabType = 'sonList';
-    this.$refs[`sonListComp`].initComp();
+    this.$nextTick(() => {
+      this.$refs[`sonListComp`].initComp();
+    });
   }
 };
 </script>

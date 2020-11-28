@@ -3,17 +3,35 @@
     <pageTitle title="子账号信息"></pageTitle>
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
-      <ul>
-        <li>账号ID：v16421616</li>
-        <li>账号昵称：火锅</li>
-        <li>账号角色：默认角色</li>
-        <li>用量分配：并发（动态）</li>
-        <li>手机号码：13390871423</li>
-        <li>邮箱地址：--</li>
-      </ul>
       <div class="top-item">
-        <el-button>复制信息</el-button>
+        <el-button size="mini" round  v-preventReClick @click.prevent="copy(sonText)" class="copy-text">复制信息</el-button>
       </div>
+      <ul>
+        <li>
+          <p>账号ID：</p>
+          <h3>{{ sonVo && sonVo.child_id ? sonVo.child_id : '' }}</h3>
+        </li>
+        <li>
+          <p>账号昵称：</p>
+          <h3>{{ sonVo.nick_name }}</h3>
+        </li>
+        <li>
+          <p>账号角色：</p>
+          <h3>{{ sonVo.role_name }}</h3>
+        </li>
+        <li>
+          <p>用量分配：</p>
+          <h3>{{ sonVo.vip_Info.type > 0 ? '流量' : '并发' }}（{{sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定'}}）</h3>
+        </li>
+        <li>
+          <p>手机号码：</p>
+          <h3>{{ sonVo.phone }}</h3>
+        </li>
+        <li>
+          <p>邮箱地址：</p>
+          <h3>{{ sonVo.email }}</h3>
+        </li>
+      </ul>
     </div>
     <div class="page--son">
       <!-- 子账号Tab区域 -->
@@ -32,6 +50,7 @@
 import PageTitle from '@/components/PageTitle';
 import DateData from './components/dateData';
 import LiveData from './components/liveData';
+import Clipboard from 'clipboard';
 export default {
   name: 'sonDetail.vue',
   components: {
@@ -42,22 +61,69 @@ export default {
   data() {
     return {
       tabType: null,
+      sonVo: {
+        child_id: '',
+        is_dynamic: null,
+        vip_Info: {}
+      }
     };
+  },
+  computed: {
+    sonText: function () {
+      return `账号：${this.sonVo.child_id || '暂无'}
+密码：${this.sonVo.password || '暂无'}
+请登录www.vhall.com，选择账号登录，首次登录请修改密码、绑定手机号后进行使用`;
+    }
   },
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
       this.$refs[`${this.tabType}Comp`].initComp();
+    },
+    sonDetailGet() {
+      this.$fetch('sonDetailGet', {}).then(res=>{
+        if (res && res.code === 200) {
+          this.sonVo = res.data || {
+            vip_Info: {}
+          };
+        } else {
+          this.sonVo = {
+            vip_Info: {}
+          };
+        }
+      }).catch(e=>{
+        console.log(e);
+        this.sonVo = {
+          vip_Info: {}
+        };
+      });
+    },
+    copy(text) {
+      let clipboard = new Clipboard('.copy-text', {
+        text: () => text
+      });
+      clipboard.on('success', () => {
+        this.$message.success('复制成功');
+        // 释放内存
+        clipboard.destroy();
+      });
+      clipboard.on('error', () => {
+        this.$message.error('复制失败，暂不支持自动复制');
+        // 释放内存
+        clipboard.destroy();
+      });
     }
   },
   mounted() {
     this.tabType = 'dateData';
     this.$refs[`dateDataComp`].initComp();
+    this.sonDetailGet();// 获取子账号详情
   }
 };
 </script>
 
 <style lang="less" scoped>
+@import '../../common/css/common.less';
 .page--son {
   .layout--right--main();
   .min-height();
@@ -65,14 +131,23 @@ export default {
 .title--flex--top {
   .layout--right--main();
   .min-height--header();
-  .flex-display();
-  .justify(space-between);
-  .align(center);
+  ul {
+    display: block;
+    margin: 32px auto;
+    width: calc(100% - 64px);
+    li {
+      width: 33.3%;
+      display: inline-block;
+      vertical-align: top;
+      margin-bottom: 24px;
+    }
+  }
   text-align: left;
   margin-bottom: 24px;
   .top-item {
-    width: 33%;
-    padding-left: 40px;
+    text-align: right;
+    margin-right: 24px;
+    margin-top: 24px;
   }
   p {
     font-size: @font_size_14;

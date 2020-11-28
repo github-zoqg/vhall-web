@@ -11,22 +11,22 @@
       </el-input>
       <el-select placeholder="全部" round  v-model="query.type">
         <el-option
-          v-for="item in []"
-          :key="item.value+item.label"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in roleList"
+          :key="'v_' + item.id"
+          :label="item.role_name"
+          :value="item.id">
         </el-option>
       </el-select>
     </div>
     <!-- 有消息内容 -->
-    <div v-if="sonDao.total > 0">
+    <div v-if="sonDao && sonDao.total > 0">
       <!-- 表格与分页 -->
       <table-list
         ref="sonTab"
         :isHandle=true
         :manageTableData="sonDao.list"
         :tabelColumnLabel="sonTableColumn"
-        :totalNum="sonDao.total"
+        :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
         @getTableList="getSonList"
@@ -38,46 +38,56 @@
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
     <!-- 添加观众/ 观众修改 -->
-    <el-dialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false' class="dialog__group">
+    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
+                 width="680px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
-        <el-form-item label="批量创建：" prop="isMulti" v-if="sonDialog.type === 'add'">
+        <el-form-item label="批量创建：" prop="is_batch" v-if="sonDialog.type === 'add'">
           <el-switch
-            v-model="sonForm.isMulti"
+            v-model="sonForm.is_batch"
+            :active-value="1"
+            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            @change="sonCountGetHandle"
           >
           </el-switch>
         </el-form-item>
+        <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
+          <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
+          <span>当前可创建子账号数量23个</span>
+        </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
-          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入帐号昵称" :maxlength="30" :minlength="1" show-word-limit/>
+          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
         </el-form-item>
-        <el-form-item label="预设密码：" prop="industry">
-          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="请输入数字、大小写英文（长度1-12个字符）" :maxlength="12" :minlength="1"/>
+        <el-form-item label="预设密码：" prop="password">
+          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入12个字符" :maxlength="12" :minlength="1"/>
         </el-form-item>
-        <el-form-item label="账号角色：" prop="roleType">
-          <el-select placeholder="请选择角色" round  v-model="sonForm.roleType">
+        <el-form-item label="账号角色：" prop="role_id">
+          <el-select placeholder="请选择角色" round  v-model="sonForm.role_id">
             <el-option
-              v-for="item in []"
-              :key="item.value+item.label"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.role_name"
+              :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="手机号码：">
-          <el-input v-model.trim="sonForm.phone" auto-complete="off"/>
-          <el-button>重置</el-button>
+          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative" :maxlength="30" disabled>
+            <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
+          </el-input>
         </el-form-item>
         <el-form-item label="邮箱地址：">
-          <el-input v-model.trim="sonForm.email" auto-complete="off"/>
-          <el-button>重置</el-button>
+          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative" :maxlength="30" disabled>
+            <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="sonDialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="sonSaveSend('sonForm')">确 定</el-button>
+        <el-button type="primary" v-preventReClick @click="sonSaveSend('sonForm')" size="medium" round>确 定</el-button>
+        <el-button @click="sonDialog.visible = false" size="medium" round>取 消</el-button>
       </div>
-    </el-dialog>
+    </VhallDialog>
     <!-- 添加子账号 -->
   </div>
 </template>
@@ -89,6 +99,12 @@ export default {
   components: {
     NullPage
   },
+  props: {
+    vipType: {
+      type: [Number, String],
+      default: 0
+    }
+  },
   data() {
     return {
       query: {
@@ -97,6 +113,7 @@ export default {
         pos: 0,
         limit: 1000
       },
+      roleList: [],
       sonDao: {
         total: 0,
         list: []
@@ -105,7 +122,7 @@ export default {
       sonTableColumn: [
         {
           label: '账号ID',
-          key: 'account_id',
+          key: 'child_id',
           width: 200
         },
         {
@@ -120,12 +137,12 @@ export default {
         },
         {
           label: '角色',
-          key: 'roleStr',
+          key: 'role_name',
           width: 200
         },
         {
           label: '用量分配',
-          key: 'typeStr',
+          key: 'rond',
           width: 200
         }
       ],
@@ -153,14 +170,27 @@ export default {
         formLabelWidth: '100px'
       },
       sonForm: {
-        isMulti: false,
+        is_batch: 0,
+        nums: null,
         nick_name: '',
         password: '',
-        roleType: '',
+        role_id: '',
         phone: '',
         email: ''
       },
       sonFormRules: {
+        nick_name: [
+          { required: true, message: '请输入账号昵称', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入预设密码', trigger: 'blur' }
+        ],
+        role_id: [
+          { required: true, message: '请输入账号角色', trigger: 'blur' }
+        ],
+        nums: [
+          { required: true, message: '请填写账号数量', trigger: 'blur' }
+        ]
       },
     };
   },
@@ -173,14 +203,14 @@ export default {
     // 跳转消息详情页
     toSonDetail(that, { rows }) {
       that.$router.push({
-        path: `/sonDetail/${rows.account_id}`,
+        path: `/sonDetail/${rows.child_id}`,
       });
     },
     // 跳转到用量分配
     toAllocationPage() {
       // 1表示并发
       this.$router.push({
-        path: `/allocation/1`,
+        path: `/allocation/${this.vipType}`,
       });
     },
     // 批量选择
@@ -201,6 +231,15 @@ export default {
           }
         });
       }
+    },
+    // 获取子账号个数
+    sonCountGetHandle() {
+      this.$fetch('sonCountGet', {}).then(res =>{
+        this.sonCountVo = res && res.code === 200 ? res.data || {} : (this.$message.error(res.msg || '获取子账号个数失败') );
+      }).catch(e => {
+        console.log(e);
+        this.sonCountVo = {};
+      });
     },
     // 删除单条消息数据
     sonDel(that, { rows }) {
@@ -254,22 +293,24 @@ export default {
     // 编辑子账号
     editSonShow(that, { rows }) {
       try{
-        if (this.$refs.sonForm) {
-          this.$refs.sonForm.resetFields();
+        if (that.$refs.sonForm) {
+          that.$refs.sonForm.resetFields();
         }
       }catch (e){
         console.log(e);
       }
-      this.sonDialog.type = 'edit';
-      this.sonDialog.title = '修改子账号';
-      this.sonDialog.row = rows;
-      this.$set(this.sonForm, 'isMulti', rows.isMulti);
-      this.$set(this.sonForm, 'nick_name', rows.nick_name);
-      this.$set(this.sonForm, 'password', rows.password);
-      this.$set(this.sonForm, 'roleType', rows.roleType);
-      this.$set(this.sonForm, 'phone', rows.phone);
-      this.$set(this.sonForm, 'email', rows.email);
-      this.sonDialog.visible = true;
+      that.sonDialog.type = 'edit';
+      that.sonDialog.title = '修改子账号';
+      that.sonDialog.row = rows;
+      that.$set(that.sonForm, 'is_batch', rows.is_batch);
+      that.$set(that.sonForm, 'nick_name', rows.nick_name);
+      that.$set(that.sonForm, 'password', '');
+      that.$set(that.sonForm, 'role_id', rows.role_id);
+      that.$set(that.sonForm, 'role_name', rows.role_name);
+      that.$set(that.sonForm, 'nums', rows.nums);
+      that.$set(that.sonForm, 'phone', rows.phone);
+      that.$set(that.sonForm, 'email', rows.email);
+      that.sonDialog.visible = true;
     },
     // 添加子账号 or 修改子账号
     sonSaveSend() {
@@ -300,39 +341,12 @@ export default {
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
         limit: pageInfo.pageSize
       }).then(res =>{
-        res = {
-          "code": 200,
-          "msg": "查询成功",
-          "data": {
-            "list": [{
-              "account_id": 1,
-              "nick_name": "昵称111111",
-              "phone": "18310410964",
-              "type": 1,
-              "role": 1
-            },{
-              "account_id": 2,
-              "nick_name": "昵称2222",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            },{
-              "account_id": 3,
-              "nick_name": "昵称33333",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            }],
-            "total": 50
-          }
-        };
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
         };
         (dao.list||[]).map(item => {
-          item.roleStr = ['默认角色', '角色1'][item['role']];
-          item.typeStr = ['并发（动态）' ,'并发（固定）'][item['type']];
+          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : '固定'}）`;
         });
         this.sonDao = dao;
       }).catch(e=>{
@@ -343,8 +357,40 @@ export default {
         };
       });
     },
+    async getRoleList() {
+      this.$fetch('sonRoleList', {
+        role_name: '',
+        pos: 0,
+        limit: 11
+      }).then(res => {
+        console.log(res && res.code === 200 && res.data && res.data.list);
+        if (res && res.code === 200 && res.data) {
+          this.roleList = res.data.list || [];
+        } else {
+          this.roleList = [];
+        }
+        if (this.roleList.length > 0) {
+          this.getSonList();
+        }
+      }).catch(e => {
+        console.log(e);
+        this.roleList = [];
+      });
+    },
+    // 重置选项
+    resetPhoneOrEmail(type){
+      this.sonForm[type] = '';
+    },
     initComp() {
-      this.getSonList();
+      this.getRoleList(); // 获取可选角色列表
+    }
+  },
+  computed: {
+    phonePlaceholder() {
+      return this.sonForm.phone ? '' : '无需填写，由子账号自行绑定，父账号可进行重置';
+    },
+    emailPlaceholder() {
+      return this.sonForm.email ? '' : '无需填写，由子账号自行绑定，父账号可进行重置';
     }
   }
 };

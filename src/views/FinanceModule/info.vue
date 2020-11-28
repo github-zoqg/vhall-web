@@ -57,25 +57,25 @@
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
-            <h1>{{ trendData.webinar_num | numFormat }}</h1>
+            <h1>{{ trendData.webinar_num | formatMoney }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>累计使用流量（GB）</p>
-            <h1>{{ trendData.total_flow | numFormat }}</h1>
+            <h1>{{ trendData.total_flow | formatMoney }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>直播使用流量（GB）</p>
-            <h1>{{ trendData.live_flow | numFormat }}</h1>
+            <h1>{{ trendData.live_flow | formatMoney }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>回放使用流量（GB）</p>
-            <h1>{{ trendData.vod_flow | numFormat }}</h1>
+            <h1>{{ trendData.vod_flow | formatMoney }}</h1>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@
 import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import { sessionOrLocal } from '@/utils/utils';
-import { numFormat } from '@/utils/filter';
+import { formatMoney } from '@/utils/filter';
 export default {
   name: "financeInfo",
   components: {
@@ -215,7 +215,7 @@ export default {
     };
   },
   filters:{
-    numFormat: numFormat
+    formatMoney
   },
   created() {
     if (this.status) {

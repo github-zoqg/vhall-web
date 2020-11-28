@@ -77,6 +77,9 @@ export default {
           withdraw_fee: '123,000',
           account: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
           id: '1',
+          status: 1,
+          type: '直播',
+          statusText: '成功',
           withdraw_status: '1',
           actual_fee: '12456',
           service_fee:'111245',
@@ -88,7 +91,10 @@ export default {
           withdraw_fee: '111,000',
           account: '哈哈减肥吧开始讲课',
           id: '2',
-          service_fee:'12345',
+          status: 2,
+          type: '红包',
+          statusText: '红包',
+          service_fee:'失败',
           actual_fee: '444444',
         }
       ],
@@ -100,32 +106,26 @@ export default {
         {
           label: '平台分成',
           key: 'service_fee',
-          width: 120
         },
         {
           label: '申请金额',
           key: 'withdraw_fee',
-          width: 150
         },
         {
           label: '提现类型',
           key: 'type',
-          width: 120,
         },
         {
           label: '提现状态',
           key: 'status',
-          width: 120,
         },
         {
           label: '申请时间',
           key: 'created_at',
-          width: 150,
         },
         {
           label: '实际金额',
           key: 'actual_fee',
-          width: 100
         }
       ]
     };

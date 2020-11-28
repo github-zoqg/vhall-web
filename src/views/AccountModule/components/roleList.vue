@@ -4,58 +4,104 @@
     <div class="role--list--search">
       <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-input placeholder="搜索角色名称">
+      <el-input placeholder="搜索角色名称" v-model.trim="role_name">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
     </div>
     <!-- 有消息内容 -->
     <div v-if="roleDao.total > 0">
       <!-- 表格与分页 -->
-      <table-list
+      <son-role-table
+        class="son-role-table"
         ref="roleTab"
         :isHandle=true
+        :isMultiCheck=true
         :manageTableData="roleDao.list"
         :tabelColumnLabel="roleTableColumn"
         :totalNum="roleDao.total"
         :tableRowBtnFun="tableRowBtnFun"
-        :needPagination=true
+        :needPagination=false
         @getTableList="getRoleList"
         @changeTableCheckbox="checkMoreRow"
         @onHandleBtnClick="onHandleBtnClick"
       >
-      </table-list>
+      </son-role-table>
     </div>
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
-    <el-dialog
-      width="30%"
-      :visible.sync="addShow"
-      :title="addForm.executeType === 'edit' ? '编辑角色' : '创建角色'"
+    <VhallDialog
+      width="680px"
+      :visible.sync="roleDialogVisible"
+      :title="roleForm.executeType === 'edit' ? '编辑角色' : '创建角色'"
       append-to-body>
-      1111111111
+      <el-form :model="roleForm" ref="roleForm" :rules="roleFormRules" label-width="120px">
+        <el-form-item label="角色名称：" prop="role_name">
+          <el-input type="text" placeholder="请输入角色名称" v-model="roleForm.role_name" maxlength="15" show-word-limit />
+        </el-form-item>
+        <el-form-item label="备注信息：" prop="remark">
+          <el-input type="text" placeholder="请输入备注信息" v-model="roleForm.remark" maxlength="30" show-word-limit />
+        </el-form-item>
+        <el-form-item label="权限分配：">
+          <div class="switch__box">
+            <label class="leve3_title label__r12">直播管理：</label>
+            <el-switch
+              v-model="roleForm.permission_webinar"
+              disabled
+              :active-value="1"
+              :inactive-value="0"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+            >
+            </el-switch>
+            <span class="leve3_title title--999">允许创建、设置以及发起直播，默认权限不可取消</span>
+          </div>
+          <div class="switch__box">
+            <label class="leve3_title label__r12">内容管理：</label>
+            <el-switch
+              v-model="roleForm.permission_content"
+              :active-value="1"
+              :inactive-value="0"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+            >
+            </el-switch>
+            <span class="leve3_title title--999">控制子账号是否可生成回放及管理内容</span>
+          </div>
+          <div class="switch__box">
+            <label class="leve3_title label__r12">数据管理：</label>
+            <el-switch
+              v-model="roleForm.permission_data"
+              :active-value="1"
+              :inactive-value="0"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+            >
+            </el-switch>
+            <span class="leve3_title title--999">控制子账号是否可查看直播/点播的数据及信息</span>
+          </div>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-          <el-button @click="addShow = false">取 消</el-button>
-          <el-button type="primary" @click.prevent.stop="executeRoleSend">确 定</el-button>
-        </span>
-    </el-dialog>
+        <el-button type="primary" @click.prevent.stop="executeRoleSend" size="medium" round>确 定</el-button>
+        <el-button @click="roleDialogVisible = false" size="medium" round>取 消</el-button>
+      </span>
+    </VhallDialog>
     <!-- 添加子账号 -->
   </div>
 </template>
 
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import SonRoleTable from '@/components/TableList/sonRoleTable.vue';
 export default {
   name: "roleList.vue",
   components: {
-    NullPage
+    NullPage,
+    SonRoleTable
   },
   data() {
     return {
-      query: {
-        keyword: '',
-        pos: 0,
-        limit: 1000
-      },
+      role_name: '',
       roleDao: {
         total: 0,
         list: []
@@ -69,32 +115,44 @@ export default {
         },
         {
           label: '关联账号',
-          key: 'account',
+          key: 'child_count',
           width: 200
         },
         {
           label: '备注',
-          key: 'desc',
+          key: 'remark',
           width: 200
         }
       ],
       tableRowBtnFun: [
         {
           name: "编辑",
-          methodName: 'roleEdit'
+          methodName: 'roleEdit',
+          hidePattern: 'is_default'
         },
         {
           name: "删除",
-          methodName: 'roleDel'
+          methodName: 'roleDel',
+          hidePattern: 'is_default'
         }
       ],
       ids: [],
-      addShow: false,
-      addForm: {
+      roleDialogVisible: false,
+      roleForm: {
         id: null,
         name: null,
         type: 'add',
+        role_name: '',
+        remark: '',
+        permission_webinar: 1, // 直播管理开关 1开 0关闭
+        permission_content: 1, // 内容管理开关 1开 0关闭
+        permission_data: 1 // 数据管理 1开 0关闭
       },
+      roleFormRules: {
+        role_name: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ]
+      }
     };
   },
   methods: {
@@ -128,13 +186,13 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        that.$fetch('roleDel', {
-          msg_id: rows.account_id
+        that.$fetch('sonRoleDel', {
+          ids: rows.id
         }).then(res => {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.getRoleList();
+            that.initComp();
           }else {
             that.$message({
               type: 'error',
@@ -152,63 +210,58 @@ export default {
       });
     },
     // 编辑子账号
-    roleEdit(that, { rows }) {
-      that.addShow = true;
-      that.addForm.executeType = 'edit';
-      that.addForm.id = rows.id;
-      that.addForm.name = rows.name;
+    async roleEdit(that, { rows }) {
+      that.roleDialogVisible = true;
+      that.roleForm.executeType = 'edit';
+      that.$fetch('sonRoleGet', {
+        id: rows.id
+      }).then(res =>{
+        if (res && res.code === 200 && res.data) {
+          that.roleForm = Object.assign(that.roleForm, res.data);
+        } else {
+          that.$message.error(res.msg || '获取角色信息失败');
+        }
+      }).catch( e =>{
+        console.log(e);
+        that.$message.error('获取角色信息失败');
+      });
     },
     // 创建子账号
     addRole() {
-      this.addShow = true;
-      this.addForm.executeType = 'add';
-      this.addForm.id = null;
-      this.addForm.name = null;
+      this.roleDialogVisible = true;
+      this.roleForm.executeType = 'add';
+      this.roleForm.id = null;
     },
     // 子账号信息新增 or 修改
-    executeRoleSend() {},
+    executeRoleSend() {
+      this.$refs.roleForm.validate((valid) => {
+        if (valid) {
+          this.$fetch(this.roleForm.executeType === 'add' ? 'sonRoleAdd' : 'sonRoleEdit', this.roleForm).then(res =>{
+            if (res && res.code === 200) {
+              this.$message.success('操作成功');
+              this.roleDialogVisible = false;
+              this.initComp();
+            } else {
+              this.$message.error(res.msg || '操作失败');
+            }
+          }).catch( e =>{
+            console.log(e);
+            this.$message.error('操作失败');
+          });
+        }
+      });
+    },
     // 获取列表数据
-    getRoleList(pageInfo = {pageNum: 1, pageSize: 10}) {
-      this.$fetch('getRoleList', {
-        user_id: '1111',
-        pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize
+    getRoleList() {
+      this.$fetch('sonRoleList', {
+        role_name: this.role_name,
+        pos: 0,
+        limit: 11
       }).then(res =>{
-        res = {
-          "code": 200,
-          "msg": "查询成功",
-          "data": {
-            "list": [{
-              "account_id": 1,
-              "nick_name": "昵称111111",
-              "phone": "18310410964",
-              "type": 1,
-              "role": 1
-            },{
-              "account_id": 2,
-              "nick_name": "昵称2222",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            },{
-              "account_id": 3,
-              "nick_name": "昵称33333",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            }],
-            "total": 50
-          }
-        };
-        let dao =  res && res.code === 200 && res.data ? res.data : {
+        this.roleDao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
         };
-        (dao.list||[]).map(item => {
-          item.roleStr = ['默认角色', '角色1'][item['role']];
-          item.typeStr = ['并发（动态）' ,'并发（固定）'][item['type']];
-        });
-        this.roleDao = dao;
       }).catch(e=>{
         console.log(e);
         this.roleDao = {

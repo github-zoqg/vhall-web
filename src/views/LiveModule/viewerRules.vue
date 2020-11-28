@@ -191,7 +191,7 @@
         </div>
       </div>
       <!-- 保存 -->
-      <div class="save-btn">
+      <div class="save-margin-top40">
         <el-form label-width="100px">
           <el-button type="primary" class="length152" round @click.prevent.stop="viewerSetSave">保 存</el-button>
         </el-form>
@@ -657,8 +657,5 @@ export default {
       color: #666666;
     }
   }
-}
-.save-btn {
-  margin-top: 40px;
 }
 </style>

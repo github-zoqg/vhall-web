@@ -281,13 +281,17 @@
     </div>
     <!-- POP 事件弹出层显示区域 -->
     <!-- 签到 -->
-    <Signin
+    <!-- <Signin
       v-if="roomInfo.room_id"
       :vss_token="vssToken"
       :room_id="roomInfo.room_id"
       :masterEnd="false"
-    ></Signin>
-
+    ></Signin> -->
+    <Signin
+      v-if="roomInfo.room_id"
+      :vss_token="vssToken"
+      :room_id="roomInfo.room_id"
+      :masterEnd="false"></Signin>
     <!-- 不是单视频嵌入时 ，渲染问卷模块 -->
     <template v-if="!isEmbedVideo">
     <popup
@@ -411,7 +415,8 @@ import question from '../../libs/question/saas'; // 问卷
 import reward from '../../libs/reward'; // 打赏
 import lottery from '../../libs/lottery'; // 抽奖
 import playbill from '../../libs/playbill'; // 开屏海报
-import Signin from '../../libs/saas-signin'; // 签到
+// import Signin from '../../libs/saas-signin'; // 签到
+import Signin from '../../libs/saas-signin/watchSigin'; // 签到
 import qa from '../../libs/qa';
 import Popup from '../../libs/saas-popup'; // 弹窗
 import getCoupon from '../../libs/redcoupon/openRedCoupon'; // 接红包
@@ -630,6 +635,7 @@ export default {
   computed: {},
 
   created () {
+    console.warn(this.roomId, 'this.roomId');
     this.userInfo = JSON.parse(sessionStorage.getItem('user'));
     const vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
 
