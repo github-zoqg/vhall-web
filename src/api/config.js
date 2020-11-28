@@ -136,7 +136,7 @@ const apis = {
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsInfo: ['/domian/api/webinar/v1/webinar/goods-info', 'POST'], // 商品推荐 jian.chang
+  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 jian.chang
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getReportInfo: ['/domian/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
   getCustomMenuInfo: ['/domian/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
