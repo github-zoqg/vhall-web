@@ -11,14 +11,17 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         style="width: 240px"
+        :clearable=false
+        @change="queryList"
       />
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword">
+      <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList()">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
-      <el-button size="medium" round>导出</el-button>
+      <el-button size="medium" round>导出数据</el-button>
     </div>
     <!-- 数据 -->
     <div class="list--data">
+      {{dataDao}}
       <table-list
         ref="sonTab"
         :isHandle=false
@@ -27,7 +30,7 @@
         :tabelColumnLabel="sonTableColumn"
         :totalNum="dataDao.total"
         :needPagination=true
-        @getTableList="getLiveData"
+        @getTableList="getUserPayDetail"
         v-if="dataDao.total > 0"
       >
       </table-list>
@@ -46,9 +49,13 @@ export default {
   },
   data() {
     return {
+      sonVo: null,
       query: {
-        timeStr: '',
-        keyword: ''
+        title: '',
+        timeStr: null,
+        pos: 0,
+        limit: 10,
+        pageNumber: 1
       },
       dataDao: {
         total: 0,
@@ -58,12 +65,12 @@ export default {
       sonTableColumn: [
         {
           label: '直播ID',
-          key: 'live_id',
+          key: 'webinar_id',
           width: 200
         },
         {
           label: '直播标题',
-          key: 'title',
+          key: 'subject',
           width: 'auto'
         },
         {
@@ -80,45 +87,53 @@ export default {
     };
   },
   methods: {
-    getLiveData(pageInfo = {pageNum: 1, pageSize: 10}) {
-      this.$fetch('getMsgList', {
-        user_id: '1111',
-        pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize
-      }).then(res =>{
-        res = {
-          "code": 200,
-          "msg": "查询成功",
-          "data": {
-            "list": [{
-              "account_id": 1,
-              "nick_name": "昵称111111",
-              "phone": "18310410964",
-              "type": 1,
-              "role": 1
-            }],
-            "total": 50
-          }
-        };
-        let dao =  res && res.code === 200 && res.data ? res.data : {
-          total: 0,
-          list: []
-        };
-        (dao.list||[]).map(item => {
-          item.roleStr = ['默认角色', '角色1'][item['role']];
-          item.typeStr = ['并发（动态）' ,'并发（固定）'][item['type']];
-        });
-        this.dataDao = dao;
+    queryList() {
+      this.query.pos = 0;
+      this.query.pageNumber = 0;
+      this.query.limit = 10;
+      this.getUserPayDetail();
+    },
+    getUserPayDetail() {
+      let params = {
+        account_id: this.$route.params.id, // b端账号id
+        type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
+        title: this.query.title,
+        pos: this.query.pos,
+        limit: this.query.limit
+      };
+      if (this.timeStr) {
+        params.start_time = this.query.timeStr[0] || '';
+        params.end_time = this.query.timeStr[1] || '';
+      }
+      /*this.$fetch(this.sonVo.vip_Info.type > 0 ? 'getBusinessList' : 'getAccountList', params).then(res=>{
+        if (res && res.code === 200 && res.data) {
+          this.dataDao = res.data;
+        }
       }).catch(e=>{
         console.log(e);
-        this.dataDao = {
-          total: 0,
-          list: []
-        };
-      });
+      });*/
+      this.dataDao = {
+        total: 10,
+        "list":[
+          {
+            "pay_date": "2020-09-15", //消费时间
+            "webinar_id": 202009, //活动id
+            "subject": "测试", //活动名称
+            "pay_type": "2", //消费类型（1：并发 2：流量）
+            "type": "1", //账号类型（1：父账号 2：父账号+子账号3:子账号）
+            "webinar_flow": 10 //消耗量
+          }
+        ]
+      };
     },
-    initComp() {
-      this.getLiveData();
+    initComp(sonVo) {
+      this.sonVo = sonVo;
+      // 初始化设置日期为最近一周
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      this.query.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.getUserPayDetail();
     }
   }
 };
