@@ -19,14 +19,14 @@
       </el-select>
     </div>
     <!-- 有消息内容 -->
-    <div v-if="sonDao.total > 0">
+    <div v-if="sonDao && sonDao.total > 0">
       <!-- 表格与分页 -->
       <table-list
         ref="sonTab"
         :isHandle=true
         :manageTableData="sonDao.list"
         :tabelColumnLabel="sonTableColumn"
-        :totalNum="sonDao.total"
+        :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
         @getTableList="getSonList"
@@ -53,11 +53,8 @@
           </el-switch>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
-          <el-input v-model.trim="sonForm.nums" autocomplete="off" class="btn-relative no-border">
-            <template  slot="append">
-              当前可创建子账号数量23个
-            </template>
-          </el-input>
+          <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
+          <span>当前可创建子账号数量23个</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
@@ -76,12 +73,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="手机号码：">
-          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceHolder" class="btn-relative" :maxlength="30" disabled>
+          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative" :maxlength="30" disabled>
             <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="邮箱地址：">
-          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="sonForm.email ? '' : '无需填写，由子账号自行绑定，父账号可进行重置'" class="btn-relative" :maxlength="30" disabled>
+          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative" :maxlength="30" disabled>
             <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
           </el-input>
         </el-form-item>
@@ -125,7 +122,7 @@ export default {
       sonTableColumn: [
         {
           label: '账号ID',
-          key: 'account_id',
+          key: 'child_id',
           width: 200
         },
         {
@@ -140,12 +137,12 @@ export default {
         },
         {
           label: '角色',
-          key: 'roleStr',
+          key: 'role_name',
           width: 200
         },
         {
           label: '用量分配',
-          key: 'typeStr',
+          key: 'rond',
           width: 200
         }
       ],
@@ -182,11 +179,17 @@ export default {
         email: ''
       },
       sonFormRules: {
+        nick_name: [
+          { required: true, message: '请输入账号昵称', trigger: 'blur' }
+        ],
         password: [
           { required: true, message: '请输入预设密码', trigger: 'blur' }
         ],
         role_id: [
           { required: true, message: '请输入账号角色', trigger: 'blur' }
+        ],
+        nums: [
+          { required: true, message: '请填写账号数量', trigger: 'blur' }
         ]
       },
     };
@@ -200,7 +203,7 @@ export default {
     // 跳转消息详情页
     toSonDetail(that, { rows }) {
       that.$router.push({
-        path: `/sonDetail/${rows.account_id}`,
+        path: `/sonDetail/${rows.child_id}`,
       });
     },
     // 跳转到用量分配
@@ -290,22 +293,24 @@ export default {
     // 编辑子账号
     editSonShow(that, { rows }) {
       try{
-        if (this.$refs.sonForm) {
-          this.$refs.sonForm.resetFields();
+        if (that.$refs.sonForm) {
+          that.$refs.sonForm.resetFields();
         }
       }catch (e){
         console.log(e);
       }
-      this.sonDialog.type = 'edit';
-      this.sonDialog.title = '修改子账号';
-      this.sonDialog.row = rows;
-      this.$set(this.sonForm, 'isMulti', rows.isMulti);
-      this.$set(this.sonForm, 'nick_name', rows.nick_name);
-      this.$set(this.sonForm, 'password', rows.password);
-      this.$set(this.sonForm, 'roleType', rows.roleType);
-      this.$set(this.sonForm, 'phone', rows.phone);
-      this.$set(this.sonForm, 'email', rows.email);
-      this.sonDialog.visible = true;
+      that.sonDialog.type = 'edit';
+      that.sonDialog.title = '修改子账号';
+      that.sonDialog.row = rows;
+      that.$set(that.sonForm, 'is_batch', rows.is_batch);
+      that.$set(that.sonForm, 'nick_name', rows.nick_name);
+      that.$set(that.sonForm, 'password', '');
+      that.$set(that.sonForm, 'role_id', rows.role_id);
+      that.$set(that.sonForm, 'role_name', rows.role_name);
+      that.$set(that.sonForm, 'nums', rows.nums);
+      that.$set(that.sonForm, 'phone', rows.phone);
+      that.$set(that.sonForm, 'email', rows.email);
+      that.sonDialog.visible = true;
     },
     // 添加子账号 or 修改子账号
     sonSaveSend() {
@@ -336,39 +341,12 @@ export default {
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
         limit: pageInfo.pageSize
       }).then(res =>{
-        res = {
-          "code": 200,
-          "msg": "查询成功",
-          "data": {
-            "list": [{
-              "account_id": 1,
-              "nick_name": "昵称111111",
-              "phone": "18310410964",
-              "type": 1,
-              "role": 1
-            },{
-              "account_id": 2,
-              "nick_name": "昵称2222",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            },{
-              "account_id": 3,
-              "nick_name": "昵称33333",
-              "phone": "18310410964",
-              "role": 1,
-              "type": 1
-            }],
-            "total": 50
-          }
-        };
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
         };
         (dao.list||[]).map(item => {
-          item.roleStr = ['默认角色', '角色1'][item['role']];
-          item.typeStr = ['并发（动态）' ,'并发（固定）'][item['type']];
+          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : '固定'}）`;
         });
         this.sonDao = dao;
       }).catch(e=>{
