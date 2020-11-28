@@ -36,7 +36,7 @@
             <template slot="append">分</template>
           </el-input>
         </el-form-item>
-        <div class="save-btn">
+        <div class="save-margin-top40">
           <el-button type="primary" @click.prevent.stop="virtualSetSave">保 存</el-button>
         </div>
       </el-form>

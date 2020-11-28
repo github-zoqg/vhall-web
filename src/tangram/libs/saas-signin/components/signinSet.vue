@@ -49,14 +49,12 @@
         <i class="el-icon-question"></i>
       </el-tooltip>
     </el-form-item>
-    <el-form-item class="start-btn">
-      <el-button
-        type="danger"
-        class="start-btn-core"
-        @click="$emit('start', form)"
-        >开始签到</el-button
-      >
-    </el-form-item>
+    <el-button
+      type="danger"
+      class="start-btn-core start-btn"
+      @click="$emit('start', form)"
+      >开始签到</el-button
+    >
   </el-form>
 </template>
 
@@ -69,7 +67,7 @@ export default {
       defaultText: tipText,
       form: {
         signTip: tipText,
-        duration: 30,
+        duration: 4,
         autoSign: false,
         interval: 900
       },
@@ -132,7 +130,6 @@ export default {
   /deep/ .el-form-item {
     margin-right: 0;
   }
-
   > * {
     display: block;
   }
@@ -142,16 +139,10 @@ export default {
 }
 .start-btn {
   text-align: center;
-  &-core {
-    width: 160px;
-    background: #FC5659;
-  }
-  ::v-deep .el-button{
-    box-shadow: 0px 8px 32px 0px rgba(34, 34, 34, 0.24);
-    border-radius: 8px;
-    color: #FFFFFF;
-  }
-
+  margin: 0 auto;
+  width: 160px;
+  background: #FC5659;
+  color: #fff;
 }
 .tip-content {
   line-height: 18px;

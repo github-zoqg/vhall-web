@@ -62,7 +62,7 @@ export default {
     },
     goLive(){
       if(this.chooseType =='client'){
-        this.scheme = 'vhalllive:\/\/vhalllive?stream_name=936719661&stream_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdHJlYW1uYW1lIjoiOTM2NzE5NjYxIn0.DC3w81q1Cxez0gC3P19LxelRhB4pk5uHMv-1jI1GPiI&msg_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE3MzQyNzQiLCJuYW1lIjoidHR0dHR0dCIsInJvb20iOiI5MzY3MTk2NjEiLCJyb2xlIjoiaG9zdCIsInVpZCI6IjE2NDIyNjgwIiwidHJhY2tJZCI6IjIyNDU5NTUiLCJkZXZpY2Vfc3RhdHVzIjoxfQ.KQx_qyRZzYMHj7Te9ulB1F0eIhYUPsjID42U_Q0PQGw&hide_logo=0';
+        this.scheme = 'vhalllive://vhalllive?stream_name=936719661&stream_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdHJlYW1uYW1lIjoiOTM2NzE5NjYxIn0.DC3w81q1Cxez0gC3P19LxelRhB4pk5uHMv-1jI1GPiI&msg_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE3MzQyNzQiLCJuYW1lIjoidHR0dHR0dCIsInJvb20iOiI5MzY3MTk2NjEiLCJyb2xlIjoiaG9zdCIsInVpZCI6IjE2NDIyNjgwIiwidHJhY2tJZCI6IjIyNDU5NTUiLCJkZXZpY2Vfc3RhdHVzIjoxfQ.KQx_qyRZzYMHj7Te9ulB1F0eIhYUPsjID42U_Q0PQGw&hide_logo=0';
         setTimeout(()=>{
           this.scheme = '';
         }, 300);

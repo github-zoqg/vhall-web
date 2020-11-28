@@ -18,7 +18,6 @@
         :tabelColumnLabel="tabelColumn"
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
-        :isHandle="isHandle"
         :totalNum="totalNum"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
@@ -39,7 +38,6 @@ export default {
     return {
       isCheckout: false,
       totalNum: 1000,
-      isHandle: true,
       tableList: [
         {
           id: '1',
@@ -60,27 +58,27 @@ export default {
         {
           label: '活动ID',
           key: 'id',
-          width: 100
+          width: 150,
         },
         {
           label: '活动标题',
           key: 'liveTitle',
-          width: 400
+          // width: 240,
         },
         {
           label: '观看人数',
           key: 'wacthPeople',
-          width: 120
+          width: 150,
         },
         {
           label: '观看次数',
           key: 'wacthNum',
-          width: 120
+          width: 150,
         },
         {
           label: '观看时长（分）',
           key: 'timeLang',
-          width: 150
+          width: 150,
         }
       ],
       tableRowBtnFun: [
@@ -106,7 +104,7 @@ export default {
         },
         {
           type: "2",
-          key: "searchDate",
+          key: "searchTime",
         },
         {
           type: "",
@@ -123,12 +121,24 @@ export default {
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
-        pageInfo.pageNum= 1;
-        // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
+       let paramsObj = {
+        account_id: '1234455'
+      };
+       if (params === 'search') {
+          pageInfo.pageNum= 1;
+          pageInfo.pos= 0;
+          // 如果搜索是有选中状态，取消选择
+          // this.$refs.tableList.clearSelect();
+        }
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
       }
-      let obj = Object.assign({}, pageInfo, formParams);
+      let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
     },
     dataReport(that, val) {
@@ -138,13 +148,6 @@ export default {
           id: val.rows.id
         }
       });
-    },
-    //复选框操作
-    changeTableCheckbox(val) {
-      // let len = val.length;
-      // let idList = [];
-      // this.selectedTableItem.map(item => idList.push(item.mrId));
-      this.selectedTableItem = val;
     }
   }
 };

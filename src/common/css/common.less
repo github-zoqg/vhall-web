@@ -218,6 +218,12 @@
   background: #eef2ff
 }
 
+.save-margin-top40 {
+  margin-top: 40px;
+}
+.save-margin-top24 {
+  margin-top: 24px;
+}
 /*左侧导航重置*/
 .el-menu-reset.el-menu {
   .el-menu-item, .el-submenu__title {
@@ -337,6 +343,14 @@
   color: #666666;
   line-height: 20px;
 }
+/*-----------------------------------------文本框placeholder 样式重置 ---------------------------------------------*/
+::-webkit-input-placeholder,:-moz-placeholder, ::-moz-placeholder, :-ms-input-placeholder{ /* WebKit, Blink, Edge */
+  font-size: @font_size_14;
+  font-family: @fontRegular;
+  font-weight: 400;
+  color: #999999;
+  line-height: 20px;
+}
 /*-----------------------------------------按钮组 ---------------------------------------------*/
 .length152 {
   min-width: 152px;
@@ -401,6 +415,30 @@ button.el-button.el-button--primary {
   border: 1px solid #FB3A32;
   &:hover {
     background: #FC615B;
+    border: 1px solid #FC615B;
+  }
+  &:active {
+    background: #E2332C;
+    border: 1px solid #E2332C;
+  }
+  &.is-disabled {
+    background: #F09D99;
+    border: 1px solid #F09D99;
+    cursor: not-allowed;
+    &:hover, &:active{
+      background: #F09D99;
+      border: 1px solid #F09D99;
+    }
+  }
+}
+button.el-button.el-button--white-primary {
+  /*白色-primary 按钮*/
+  background: #FFFFFF;
+  color: #FB3A32;
+  border: 1px solid #FB3A32;
+  &:hover {
+    background: #FC615B;
+    color: #FFFFFF;
     border: 1px solid #FC615B;
   }
   &:active {
@@ -576,4 +614,33 @@ button.el-button.el-button--primary {
   left: 0;
   background: rgba(255,255,255,0.5);
   z-index: 9;
+}
+/*-----------------------------------------重置$confirm-确认提示弹出框 开始 ---------------------------------------------*/
+.el-message-box {
+  .el-message-box__header {
+    padding: 24px 32px;
+  }
+  .el-message-box__title {
+    font-size: 20px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #1A1A1A;
+    line-height: 28px;
+  }
+  .el-message-box__headerbtn {
+    top: 30px;
+    right: 32px;
+    .el-message-box__close {
+      color: #666666;
+    }
+  }
+  .el-message-box__content {
+    padding: 0 32px;
+  }
+  .el-message-box__btns {
+    padding: 24px 32px;
+    .el-button {
+      border-radius: 20px;
+    }
+  }
 }

@@ -179,9 +179,7 @@ export default {
     }
   }
 }
-
 .save-btn {
-  text-align: center;
   margin: 40px auto;
 }
 </style>

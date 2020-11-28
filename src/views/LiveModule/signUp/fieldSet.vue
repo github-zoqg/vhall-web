@@ -30,7 +30,7 @@
       @start="drag = true"
       @end="drag = false"
     >
-    <!-- 加上v-model即可排序后实时更新数据 -->
+      <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
         <li class="viewItem" v-for="(item, index) in renderQuestion" :key="index">
           <p class="label">
@@ -278,160 +278,160 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .viewItem{
-    margin-bottom: 16px;
-    .label{
-      font-size: 16px;
-      color: #1A1A1A;
-      margin-bottom: 9px;
-      // text-indent: 8px;
-    }
-    .noFull{
-      width: calc(100% - 40px);
-    }
-    padding: 20px 24px;
-    background: #fff;
-    .el-checkbox-group{
-      width: 100%;
-      padding-left: 20px;
-      .el-checkbox{
-        display: block;
-        margin-top: 20px;
-      }
-      /deep/ .el-checkbox__label{
-        width: 100%;
-      }
-      .el-checkbox:last-child{
-        margin-right: 30px;
-      }
-    }
-    .el-radio-group{
-      width: 100%;
-      padding-left: 20px;
-      .el-radio{
-        display: block;
-        margin-top: 20px;
-      }
-      .el-radio:last-child{
-        margin-right: 30px;
-      }
-    }
-    .bottomBtn{
-      margin-top: 23px;
-      text-align: right;
-      overflow: hidden;
-      .addBtn{
-        float: left;
-          i{
-            margin-left: 0px;
-            color: #3562FA;
-            font-weight: bold;
-            font-size: 14px;
-
-          }
-        .el-button{
-          margin-left: 0;
-        }
-        .line{
-          width: 2px;
-          height: 13px;
-          background: #999999;
-          display: inline-block;
-          margin: 0 12px;
-          vertical-align: middle;
-        }
-      }
-      .moveBtn{
-        cursor: move;
-      }
-      i{
-        font-size: 18px;
-        color: #666666;
-        margin-left: 25px;
-        cursor: pointer;
-      }
-      .swtich{
-        vertical-align: text-top;
-        margin-left: 25px;
-      }
-      /deep/ .el-switch__label{
-        font-size: 14px;
-        color: #666666;
-      }
-    }
-    .selectInput{
-      margin-bottom: 16px;
-    }
-  }
-  .sureBtn{
-    text-align: center;
-    .el-button{
-      padding: 12px 50px;
-    }
-  }
-  .flip-list-move {
-    transition: transform 0.5s;
-  }
-  .no-move {
-    transition: transform 0s;
-  }
-  .ghost {
-    opacity: 0.5;
-    background: #c8ebfb;
-  }
-  .list-group {
-    min-height: 20px;
-  }
-  .list-group-item {
-    cursor: move;
-  }
-  .list-group-item i {
-    cursor: pointer;
-  }
-  .radioInput:not(.noFull){
-    /deep/ .el-input__inner{
-      border-color: transparent !important;
-      &:focus{
-        background: #F7F7F7;
-        /deep/ & + .el-input__suffix .el-input__count{
-          visibility: visible;
-        }
-      }
-    }
-    /deep/ .el-input__count{
-      visibility: hidden;
-    }
-
-
-  }
-  .radioInput,.selectInput{
-    &:hover .removeIcon{
-      display: inline-block;
-    }
-  }
-  .removeIcon{
-    font-weight: bold;
+.viewItem{
+  margin-bottom: 16px;
+  .label{
     font-size: 16px;
-    color: #666666;
-    vertical-align: middle;
-    display: none;
-    line-height: 34px;
-    cursor: pointer;
+    color: #1A1A1A;
+    margin-bottom: 9px;
+    // text-indent: 8px;
   }
-  .previewPrivacy{
-    font-size: 14px;
-    color: #666;
-    p{
-      margin: 16px 0 8px 0;
+  .noFull{
+    width: calc(100% - 40px);
+  }
+  padding: 20px 24px;
+  background: #fff;
+  .el-checkbox-group{
+    width: 100%;
+    padding-left: 20px;
+    .el-checkbox{
+      display: block;
+      margin-top: 20px;
     }
-    a{
+    /deep/ .el-checkbox__label{
+      width: 100%;
+    }
+    .el-checkbox:last-child{
+      margin-right: 30px;
+    }
+  }
+  .el-radio-group{
+    width: 100%;
+    padding-left: 20px;
+    .el-radio{
+      display: block;
+      margin-top: 20px;
+    }
+    .el-radio:last-child{
+      margin-right: 30px;
+    }
+  }
+  .bottomBtn{
+    margin-top: 23px;
+    text-align: right;
+    overflow: hidden;
+    .addBtn{
+      float: left;
+      i{
+        margin-left: 0px;
+        color: #3562FA;
+        font-weight: bold;
+        font-size: 14px;
+
+      }
+      .el-button{
+        margin-left: 0;
+      }
+      .line{
+        width: 2px;
+        height: 13px;
+        background: #999999;
+        display: inline-block;
+        margin: 0 12px;
+        vertical-align: middle;
+      }
+    }
+    .moveBtn{
+      cursor: move;
+    }
+    i{
+      font-size: 18px;
+      color: #666666;
+      margin-left: 25px;
+      cursor: pointer;
+    }
+    .swtich{
+      vertical-align: text-top;
+      margin-left: 25px;
+    }
+    /deep/ .el-switch__label{
+      font-size: 14px;
+      color: #666666;
+    }
+  }
+  .selectInput{
+    margin-bottom: 16px;
+  }
+}
+.sureBtn{
+  text-align: center;
+  .el-button{
+    padding: 12px 50px;
+  }
+}
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.no-move {
+  transition: transform 0s;
+}
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+.list-group {
+  min-height: 20px;
+}
+.list-group-item {
+  cursor: move;
+}
+.list-group-item i {
+  cursor: pointer;
+}
+.radioInput:not(.noFull){
+  /deep/ .el-input__inner{
+    border-color: transparent !important;
+    &:focus{
+      background: #F7F7F7;
+      /deep/ & + .el-input__suffix .el-input__count{
+        visibility: visible;
+      }
+    }
+  }
+  /deep/ .el-input__count{
+    visibility: hidden;
+  }
+
+
+}
+.radioInput,.selectInput{
+  &:hover .removeIcon{
+    display: inline-block;
+  }
+}
+.removeIcon{
+  font-weight: bold;
+  font-size: 16px;
+  color: #666666;
+  vertical-align: middle;
+  display: none;
+  line-height: 34px;
+  cursor: pointer;
+}
+.previewPrivacy{
+  font-size: 14px;
+  color: #666;
+  p{
+    margin: 16px 0 8px 0;
+  }
+  a{
+    color: #337ab7;
+    &:link{
       color: #337ab7;
-      &:link{
-        color: #337ab7;
-      }
-      &:active{
-        color: #337ab7;
-      }
+    }
+    &:active{
+      color: #337ab7;
     }
   }
+}
 </style>
