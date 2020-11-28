@@ -97,7 +97,12 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div v-if="productFlag" class="fixWidth">
+      <products
+        v-if="productFlag"
+        @sellGoodsInfo="sellGoodsInfo"
+        :goodsList="goodsList"
+      ></products>
+      <!-- <div v-if="productFlag" class="fixWidth">
         <div class="productImg" @click="$refs.productDialog.dialogVisible = true">
           <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
         </div>
@@ -117,10 +122,13 @@
         </p>
         <el-button type="primary" class="fullBut">即将发售</el-button>
         <el-button type="text" class="textBtn">去店铺<i class="el-icon-arrow-right"></i></el-button>
-      </div>
+      </div> -->
     </div>
     <feedBack ref="feedBack"></feedBack>
-    <productDialog ref="productDialog"></productDialog>
+    <!-- <productDialog ref="productDialog"></productDialog> -->
+    <div class="shade" v-if="shadeShow"></div>
+    <!-- 商品详情的弹窗 -->
+    <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
   </div>
 </template>
 
@@ -128,8 +136,17 @@
 import feedBack from './feedBack';
 import share from '@/components/Share';
 import custoMenu from '../components/customMenuView';
-import productDialog from './productDialog';
+// import productDialog from '../components/productDialog';
+import goodsPop from '../Room/rankList/goodsPop';
+import products from '../components/products';
 export default {
+  components: {
+    feedBack,
+    share,
+    custoMenu,
+    goodsPop,
+    products
+  },
   data(){
     return {
       title: '预约',
@@ -145,11 +162,16 @@ export default {
       subscribe_count: 0,
       activeName: 'desc',
       activeName2: 'activity',
-      productFlag: true
+      productFlag: true,
+      goodsList: [],
+      goodInfo: {},
+      shadeShow: false,
+      goodsPopShow: false,
     };
   },
   created(){
     setInterval(this.remainTimes, 1*1000);
+    this.getGoodsInfo();
   },
   methods:{
     remainTimes(){
@@ -203,7 +225,48 @@ export default {
       }
       el.style.transform = `translateX(${currentDistance}px)`;
       console.log(offset);
-    }
+    },
+    // 点击商品获得详细的信息
+    sellGoodsInfo(goodInfo) {
+      this.goodInfo = goodInfo;
+      // window.vhallReport.report('GOOD_RECOMMEND', {
+      //   event: moment().format('YYYY-MM-DD HH:mm'),
+      //   market_tools_id: this.goodInfo.goods_id,
+      //   // 浏览
+      //   market_tools_status: 0
+      // });
+      this.shadeShow = true;
+      this.goodsPopShow = true;
+    },
+    // 商品推荐
+    getGoodsInfo() {
+      this.$fetch('goodsList', {
+        // webinar_id: this.$route.params.il_id
+        webinar_id: 171205460
+      }).then(res => {
+        if (res.code == 200) {
+          this.productFlag = true;
+          this.goodsList = res.data.goods_list;
+          this.goodsList
+            && this.goodsList.length
+            && (this.goodInfo = res.data.goods_list[0]);
+
+          this.goodsList.forEach(good => {
+            good.goodImage = `
+              ${this.imageDomin}/
+              ${
+                good.img_list.find(img => img.is_cover).img_url
+              }
+            `;
+          });
+        }
+      });
+    },
+    // 关闭详情弹窗事件
+    closeGoodPop() {
+      this.shadeShow = false;
+      this.goodsPopShow = false;
+    },
   },
   filters: {
     webinarTypeToText(val){
@@ -220,20 +283,23 @@ export default {
       return str;
     }
   },
-  components: {
-    feedBack,
-    share,
-    custoMenu,
-    productDialog
-  }
 };
 </script>
 
 <style lang="less" scoped>
   .wrap{
     // margin: -1rem;
+    .shade {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #2d2d2d;
+      opacity: 0.5;
+      z-index: 3;
+    }
   }
-  .area{
+  .area {
     width: 1220px;
     margin: 0 auto;
   }
@@ -513,7 +579,7 @@ export default {
   .product{
     .flex1{
       display: inline-block;
-      width: calc(100% - 320px);
+      width: calc(84% - 78px);
     }
   }
 </style>
