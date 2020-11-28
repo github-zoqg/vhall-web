@@ -6,6 +6,12 @@ const apis = {
   dataVideoDel: ['/99/v3/webinars/videos/delete', 'POST', 'mock'], //音视频删除
   dataVideoAdd: ['/99/v3/webianrs/videos/create', 'POST', 'mock'], //音视频列表
 
+  shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
+  editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
+  createGiftInfo: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 创建共享库礼品信息
+  deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
+
+
   // 直播模块
   createLive: ['/99/v3/webinars/webinar/create', 'POST', 'mock'], // 活动创建/直播创建 jian.chang
   liveList: ['/99/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang
@@ -168,7 +174,7 @@ const apis = {
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsInfo: ['/domian/api/webinar/v1/webinar/goods-info', 'POST'], // 商品推荐 jian.chang
+  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 jian.chang
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getReportInfo: ['/domian/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
   getCustomMenuInfo: ['/domian/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang

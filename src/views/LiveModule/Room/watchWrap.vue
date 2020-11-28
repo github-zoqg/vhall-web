@@ -590,33 +590,11 @@
               </div>
             </div>
             <!-- 布局修改 -->
-            <div v-if="sellGoodsShow" class="sell-goods">
-              <div class="sell-image" @click="sellGoodsInfo">
-                <img :src="goodsImage" alt />
-              </div>
-              <h3 :title="goodsInfo.name" class="sell-title">
-                {{ goodsInfo.name }}
-              </h3>
-              <span style="color:#FC5659;font-size:24px;">
-                ￥{{ goodsInfo.discount_price }} &nbsp;
-                <span
-                  style="color: #D2D2D2; font-size: 18px;text-decoration:line-through;"
-                  >￥{{ goodsInfo.price }}</span
-                >
-              </span>
-              <p class="sell-info" :title="goodsInfo.description">
-                {{ goodsInfo.description }}
-              </p>
-              <el-button @click="comeSelling" class="selling"
-                >即将发售</el-button
-              >
-              <a
-                :href="goodsInfo.shop_url"
-                v-if="goodsInfo.shop_url"
-                class="go-store"
-                >去店铺 ></a
-              >
-            </div>
+            <products
+              v-if="sellGoodsShow"
+              @sellGoodsInfo="sellGoodsInfo"
+              :goodsList="goodsList"
+            ></products>
           </div>
           <div class="footer inner-center tac">
             <div class="about-us">
@@ -651,7 +629,7 @@
     </div>
     <div class="shade" @click="shadeClick" v-if="shadeShow"></div>
     <!-- 商品详情的弹窗 -->
-    <goodsPop v-if="goodsPopShow" :goodsAllInfo="goodsInfo"></goodsPop>
+    <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
     <popup
       :visible="showOfficialAccountQRCode"
       :width="'340px'"
@@ -692,6 +670,7 @@ import QRcode from 'qrcode';
 import chrome from './chrome';
 import CustomTab from './custom-tab';
 import tip from './tip';
+import products from '../components/products';
 import { isIE } from '@/utils/utils';
 export default {
   data() {
@@ -723,7 +702,7 @@ export default {
       briefShow: false,
       activeAdviceShow: false, // 活动推荐的显示
       skipHostUrl: '', // 主办方跳转路径
-      sellGoodsShow: false, // 商品推荐的显示
+      sellGoodsShow: true, // 商品推荐的显示
       smsErrorMsgShow: false, // 短信的错误提示
       errorMsgShow: false, // 错误信息的提示
       smsErrorMessage: '', // 短信的错误提示
@@ -768,8 +747,8 @@ export default {
       attentionShow: false,
       modulesInfo: {}, // 模块的显示
       activeInfo: {}, // 活动信息
-      goodsImage: '',
-      goodsInfo: {}, // 商品信息
+      goodInfo: {}, // 商品信息
+      goodsList: [], // 商品列表
       hostInfo: {}, // host信息
       userShow: true,
       activeIndex: 0,
@@ -820,7 +799,8 @@ export default {
     goodsPop,
     chrome,
     CustomTab,
-    tip
+    tip,
+    products
   },
   created() {
     this.$loadingStatus = this.$loading({
@@ -922,15 +902,21 @@ export default {
       }, 1000 * 60 * 30);
     },
     // 点击商品获得详细的信息
-    sellGoodsInfo() {
+    sellGoodsInfo(goodInfo) {
+      this.goodInfo = goodInfo;
       window.vhallReport.report('GOOD_RECOMMEND', {
         event: moment().format('YYYY-MM-DD HH:mm'),
-        market_tools_id: this.goodsInfo.id,
+        market_tools_id: this.goodInfo.goods_id,
         // 浏览
         market_tools_status: 0
       });
       this.shadeShow = !this.shadeShow;
       this.goodsPopShow = !this.goodsPopShow;
+    },
+    // 关闭详情弹窗事件
+    closeGoodPop() {
+      this.shadeShow = false;
+      this.goodsPopShow = false;
     },
     // 简介的描述
     decripeMenu(msg) {
@@ -1023,8 +1009,7 @@ export default {
       QRcode.toDataURL(
         `https://${window.location.host}/mywebinar/invite-card/${this.roominfo.webinar_id}/${this.saasJoinId}`,
         (err, url) => {
-          if (err) {
-          }
+          if (err) { return; }
           // this.wechatPay = true
           this.qrCodeImg = url;
         }
@@ -1341,10 +1326,6 @@ export default {
         }
       });
     },
-    // 即将发售
-    comeSelling() {
-      window.location.href = this.goodsInfo.url;
-    },
     // 关注
     attention() {
       if (this.roominfo.auth.length == undefined) {
@@ -1368,16 +1349,25 @@ export default {
     },
     // 商品推荐
     getGoodsInfo() {
-      this.$fetch('goodsInfo', {
-        webinar_id: this.$route.params.il_id
+      this.$fetch('goodsList', {
+        // webinar_id: this.$route.params.il_id
+        webinar_id: 171205460
       }).then(res => {
-        console.log('goodsInfo', res);
-        return;
         if (res.code == 200) {
           this.sellGoodsShow = true;
-          this.goodsInfo = res.data;
-          this.goodsImage = `${this.imageDomin}/${this.goodsInfo.img_list &&
-            this.goodsInfo.img_list.find(img => img.is_cover).img}`;
+          this.goodsList = res.data.goods_list;
+          this.goodsList
+            && this.goodsList.length
+            && (this.goodInfo = res.data.goods_list[0]);
+
+          this.goodsList.forEach(good => {
+            good.goodImage = `
+              ${this.imageDomin}/
+              ${
+                good.img_list.find(img => img.is_cover).img_url
+              }
+            `;
+          });
         }
       });
     },
@@ -1993,8 +1983,8 @@ export default {
 
     .bottom-content {
       margin: 0 auto;
-      padding-left: 80px;
-      padding-right: 80px;
+      // padding-left: 80px;
+      // padding-right: 80px;
       overflow: hidden;
       display: flex;
       max-width: 1480px;
@@ -2490,77 +2480,6 @@ export default {
         div:last-of-type {
           margin-right: 0;
         }
-      }
-    }
-
-    .sell-goods {
-      /* width: 234px; */
-      height: 400px;
-      margin-left: 15px;
-      width: 16%;
-      padding: 30px;
-      float: right;
-      background: #fff;
-      margin-top: 20px;
-      margin-bottom: 40px;
-      border: 1px solid #d2d2d2;
-      cursor: pointer;
-      .sell-image {
-        display: block;
-        margin: 0 auto;
-
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-
-      .sell-title {
-        font-size: 19px;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        font-family: PingFangSC-Semibold;
-        font-weight: 600;
-        color: rgba(51, 51, 51, 1);
-        line-height: 26px;
-        word-break: break-all;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-
-      .sell-info {
-        font-size: 14px;
-        line-height: 20px;
-        font-family: PingFangSC-Regular;
-        font-weight: 400;
-        color: rgba(102, 102, 102, 1);
-        margin-top: 20px;
-        margin-bottom: 20px;
-        max-width: 230px;
-        word-break: break-all;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .selling {
-        width: 100%;
-        height: 30px;
-        line-height: 8px;
-        background: rgba(252, 86, 89, 1);
-        color: #fff;
-        font-size: 12px;
-        border: none;
-      }
-
-      .go-store {
-        display: block;
-        color: rgba(252, 86, 89, 1);
-        font-size: 12px;
-        width: 50px;
-        margin: 0 auto;
-        margin-top: 20px;
       }
     }
   }

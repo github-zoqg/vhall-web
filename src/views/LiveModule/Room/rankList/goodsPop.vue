@@ -27,7 +27,7 @@
   </div>
 </template>
 <script>
-import moment from 'moment'
+import moment from 'moment';
 export default {
   props: {
     goodsAllInfo: {
@@ -38,13 +38,13 @@ export default {
     return {
       bigImageUrl: '',
       dominImage: ''
-    }
+    };
   },
   created () {
-    this.dominImage = sessionStorage.getItem('imageDomin')
+    this.dominImage = sessionStorage.getItem('imageDomin');
     this.bigImageUrl = `${this.dominImage}/${
       this.goodsAllInfo.img_list[0].img
-    }`
+    }`;
   },
 
   mounted () {},
@@ -52,7 +52,7 @@ export default {
   methods: {
     // 关闭弹窗
     closeDialog () {
-      this.$parent.sellGoodsInfo()
+      this.$emit('closeGoodPop');
     },
     // 立即购买
     nowPurchase () {
@@ -61,25 +61,25 @@ export default {
         market_tools_id: this.goodsAllInfo.id,
         // 点击购买
         market_tools_status: 1
-      })
-      window.location.href = this.goodsAllInfo.url
+      });
+      window.location.href = this.goodsAllInfo.good_url;
     },
     // 切换图片按钮
     changeBigImage (item, index) {
-      this.bigImageUrl = `${this.dominImage}/${item.img}`
-      const [...selectPhoto] = document.querySelectorAll('.mini-image')
+      this.bigImageUrl = `${this.dominImage}/${item.img}`;
+      const [...selectPhoto] = document.querySelectorAll('.mini-image');
       selectPhoto.map((item, index) => {
-        item.style.border = 'none'
-      })
-      selectPhoto[index].style.border = '1px solid #fc5659'
+        item.style.border = 'none';
+      });
+      selectPhoto[index].style.border = '1px solid #fc5659';
     }
   }
-}
+};
 </script>
 <style lang="less">
   .vhall-goods-dialog {
     width: 750px;
-    height: 360px;
+    height: 400px;
     position: fixed;
     top: 0;
     bottom: 0;
