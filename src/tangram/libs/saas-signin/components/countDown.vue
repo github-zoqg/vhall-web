@@ -53,7 +53,7 @@ export default {
     },
     consume: {
       type: [Number, String],
-      default: 29
+      default: 10
     },
     radius: {
       type: [Number],

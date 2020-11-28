@@ -45,7 +45,7 @@
             </div>
            <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.max_onlines}}</h3>
+          <h3>{{ highData || mainKeyData.max_onlines }}</h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -127,6 +127,10 @@ export default {
     titleType: {
       type: String,
       default: '直播'
+    },
+    highData: {
+      type: Number,
+      default: 0
     },
     mainKeyData: {
       type: Object
