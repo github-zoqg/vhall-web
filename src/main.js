@@ -22,7 +22,7 @@ import 'nprogress/nprogress.css';
 
 // 系统通用重置样式
 import '@/common/css/index.less';
-
+Vue.prototype.$img = require('./common/images/small.png');
 
 // 工具类引入
 import moment from 'moment'; // 日期格式化
