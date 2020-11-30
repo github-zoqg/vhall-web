@@ -1,7 +1,7 @@
 <template>
   <div class="data-center">
     <div class="main-center">
-      <data-usage :userInfo="userInfo"></data-usage>
+      <data-usage></data-usage>
       <el-row type="flex" class="row-center" justify="space-between">
         <el-col :span="5">
           <div class="center-item" @click="toCreateLive">
@@ -102,7 +102,7 @@ export default {
     DataUsage
   },
   mounted() {
-    this.getUserVersion();
+    // this.getUserVersion();
     this.getLiveList();
   },
   methods: {
@@ -126,17 +126,17 @@ export default {
     toFinanceInfo(){
       this.$router.push({path: `/finance/info`});
     },
-    getUserVersion() {
-      let params = {
-        user_id: '16417099'
-      };
-      this.$fetch('getVersionInfo', params).then(res =>{
-        this.userInfo = res.data;
-        sessionOrLocal.set('userInfo', this.userInfo);
-      }).catch(e=>{
-        console.log(e);
-      });
-    },
+    // getUserVersion() {
+    //   let params = {
+    //     user_id: '16417099'
+    //   };
+    //   this.$fetch('getVersionInfo', params).then(res =>{
+    //     this.userInfo = res.data;
+    //     sessionOrLocal.set('userInfo', this.userInfo);
+    //   }).catch(e=>{
+    //     console.log(e);
+    //   });
+    // },
     getLiveList() {
       this.$fetch('getDataCenterInfo').then(res =>{
         this.mainKeyData = res.data.key_data;

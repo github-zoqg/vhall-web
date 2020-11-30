@@ -87,25 +87,23 @@
 </template>
 <script>
 import upVersion from './components/upversion';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
-  props: {
-    userInfo:{
-      type: Object
-      // default: () => {
-      //   return {flow:{},arrears:{},concurrency:{}};
-      // }
-    }
-  },
-  watch: {
-    userInfo: {
-      handler() {
-        // this.userInfo.edition = '2';
-      }
-    }
-  },
+  // watch: {
+  //   userId: {
+  //     handler() {
+  //       this.getVersion();
+  //     }
+  //   }
+  // },
   data() {
     return {
       title: '流量包',
+      userInfo: {
+        concurrency: {},
+        flow: {},
+        arrears: {}
+      },
       concurrentPrice: {}
     };
   },
@@ -113,9 +111,17 @@ export default {
     upVersion
   },
   created() {
-    console.log(this.$route.name);
+    this.userId = JSON.parse(sessionOrLocal.get(userId));
+    this.getVersion();
   },
   methods: {
+    getVersion() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        this.userInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
     levelVersion(title) {
       if (this.$route.name === 'Home') {
         this.$router.push({

@@ -15,7 +15,7 @@ const v3Routes = [
   },
   {
     path: '/register',
-    component: () => import('@/views/register')
+    component: () => import('@/views/login')
   },
   {
     path: '/videoTailoring',
@@ -227,7 +227,7 @@ const v3Routes = [
       },
       {
         path: 'gift/:str(\\d+)',
-        component: () => import('@/views/MaterialModule/gift'),
+        component: () => import('@/views/LiveModule/MaterialSet/giftSet'),
         name: 'gift',
         meta:{ title: '直播—礼物', icon: '' , activeMenu: '/live/list'},
         hidden: true
