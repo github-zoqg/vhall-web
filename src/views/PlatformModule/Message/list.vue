@@ -89,7 +89,8 @@ export default {
     msgDel(that, { rows }) {
       that.$confirm('是否要删除选中的消息？', '提示', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box'
       }).then(() => {
         that.$fetch('msgDel', {
           msg_id: rows.id
@@ -188,7 +189,8 @@ export default {
       } else {
         this.$confirm('是否要标记选中内容为已读？', '提示', {
           confirmButtonText: '确定',
-          cancelButtonText: '取消'
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
         }).then(() => {
           this.$fetch('msgDel', {
             msg_id: this.ids.join(',')

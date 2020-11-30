@@ -88,5 +88,4 @@ export function copy(text){
     }
     document.documentElement.removeChild(inputEl);
   });
-
 }

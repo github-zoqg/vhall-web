@@ -184,7 +184,8 @@ export default {
     roleDel(that, { rows }) {
       that.$confirm('当前角色已绑定账号，确定删除？', '提示', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box'
       }).then(() => {
         that.$fetch('sonRoleDel', {
           ids: rows.id

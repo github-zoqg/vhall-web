@@ -61,7 +61,6 @@ export default {
   methods: {
     getUserInfo() {
       // 控制台-账户信息页需要，所有页面都依赖
-      debugger;
       this.$fetch('getInfo', {
         scene_id: 2
       }).then(res =>{
