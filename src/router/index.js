@@ -171,7 +171,7 @@ const v3Routes = [
       },
       {
         path: 'posterCard/:str(\\d+)',
-        component: () => import('@/views/LiveModule/Brands/posterCard'),
+        component: () => import('@/views/LiveModule/Brands/officialCard'),
         name: 'posterCard',
         meta:{ title: '品牌—开屏海报', icon: '' , activeMenu: '/live/list'},
         hidden: true

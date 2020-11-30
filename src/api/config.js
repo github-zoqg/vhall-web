@@ -12,6 +12,36 @@ const apis = {
   deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
   liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
 
+  //广告推荐
+  getAdvList: ['/101/v3/interacts/recommend-adv/get-adv-list', 'GET', 'mock'], //获取广告列表
+  getActivityList: ['/101/v3/interacts/recommend-adv/database-to-activity', 'POST', 'mock'], //从资料库保存到活动
+  createAdv: ['/101/v3/interacts/recommend-adv/create-adv', 'POST', 'mock'], //创建广告
+  updateAdv: ['/101/v3/interacts/recommend-adv/update-adv', 'POST', 'mock'], //编辑广告
+  deleteAdv: ['/101/v3/interacts/recommend-adv/batch-delete-adv', 'POST', 'mock'], //批量删除广告
+  viewAdv: ['/101/v3/interacts/recommend-adv/view-adv', 'GET', 'mock'], //查看单条广告详情
+
+  //播放器设置
+  setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯
+  setWatermark: ['/101/v3/interacts/players/set-watermark-config', 'POST', 'mock'], //从资料库保存到活动
+  getScrolling: ['/101/v3/interacts/players/get-scrolling-screen-config', 'GET', 'mock'], //观看端_获取跑马灯设置配置信息
+  getWatermark: ['/101/v3/interacts/players/get-watermark-config', 'GET', 'mock'], //观看端_获取水印设置
+
+  //公众号 开屏海报
+  setPublicInfo: ['/101/v3/interacts/adv/set-public-account-config-info', 'POST', 'mock'], //保存公众号展示配置
+  getPublicInfo: ['/101/v3/interacts/adv/get-public-account-config-info', 'GET', 'mock'], //获取公众号展示配置信息
+  setPosterInfo: ['/101/v3/interacts/adv/set-screen-poster-config-info', 'POST', 'mock'], //保存开屏海报配置
+  getPosterInfo: ['/101/v3/interacts/adv/get-screen-poster-config-info', 'GET', 'mock'], //获取开屏海报配置信息
+  getScreenPublicInfo: ['/101/v3/interacts/adv/watch-get-public-account', 'GET', 'mock'], //直播设置_观看端_获取公众号广告
+  getScreenPosterInfo: ['/101/v3/interacts/adv/watch-get-screen-poster', 'GET', 'mock'], //直播设置_观看端_获取开屏海报
+
+ //  邀请卡
+ getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
+ setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
+ editCardStatus: ['/101/v3/interacts/invite-card/edit', 'POST', 'mock'], //修改邀请卡信息
+ createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
+ createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
+ getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
+ getTopList: ['/101/v3/interacts/invite-card/get-top-list', 'POST', 'mock'], //获取邀请榜
 
 
   // 直播模块
@@ -82,20 +112,20 @@ const apis = {
   uploadKeywordAdd: ['/101/v3/interacts/keyword/upload-file-and-create', 'POST', 'mock'], // 上传关键词文件并添加关键词 jia.li
   getKeywordTemplate: ['/101/v3/interacts/keyword/get-template-url', 'POST', 'mock'], // 获取关键词模板地址 jia.li
   // 消息管理
-  getMsgList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 站内消息列表接口 jia.li
-  msgDel: ['/102/v3/msgs/msg/delete', 'POST', 'mock'], // 站内消息删除接口 jia.li
-  getMsgInfo: ['/102/v3/msgs/msg/get-info', 'POST', 'mock'], // 站内消息详情接口 jia.li
-  getUnreadNum: ['/102/v3/msgs/msg/unread-num', 'POST', 'mock'], // 查询消息未读数 jia.li
-  executeUseRead: ['/102/v3/msgs/msg/use-read', 'POST', 'mock'], // 标记已读 jia.li
+  getMsgList: ['/102/v3/commons/msgcenter/list', 'POST', 'mock'], // 站内消息列表接口 jia.li
+  msgDel: ['/102/v3/commons/msgcenter/delete', 'POST', 'mock'], // 站内消息删除接口 jia.li
+  getMsgInfo: ['/102/v3/commons/msgcenter/get-info', 'POST', 'mock'], // 站内消息详情接口 jia.li
+  getUnreadNum: ['/102/v3/commons/msgcenter/unread-num', 'POST', 'mock'], // 查询消息未读数 jia.li
+  executeUseRead: ['/102/v3/commons/msgcenter/batch-read', 'POST', 'mock'], // 标记已读 jia.li
   // 文件上传(图片)
-  uploadImage: ['/102/v3/uploads/upload/index', 'POST', 'mock'], // 文件上传（图片） jia.li
+  uploadImage: ['/102/v3/commons/upload/index', 'POST', 'mock'], // 文件上传（图片） jia.li
 
   // 回放模块
   playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang
   playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
   playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
   //首页
-  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
+  getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
   // 登录
   loginInfo: ['/logins/v3/users/user/login', 'POST'],  //登录接口
   loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
@@ -149,7 +179,7 @@ const apis = {
   getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单
   getFlowPay: ['/104/v3/business-total/user-flow-pay', 'GET', 'mock'],  //获取流量-消费账单
   getAccountList: ['/104/v3/business-total/user-online-pay-detail', 'GET', 'mock'], //获取财务总览-并发-消费账单  接口参数少一个字段(标题)
-  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单   接口参数少一个字段(标题)
+  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]   接口参数少一个字段(标题)
   orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
   orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
   orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
@@ -194,6 +224,13 @@ const apis = {
   checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
   resetPassword: ['/100/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回接口 Jia.li
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
+
+  // 下载中心
+  downloadedEdit: ['/100/v3/users/homepage/get-info', 'POST', 'mock'], // 下载中心-删除修改为已下载
+  downloadedDel: ['/102/v3/commons/downcenter/delete', 'POST', 'mock'], // 下载中心-删除
+  downloadedList: ['/102/v3/commons/downcenter/list', 'POST', 'mock'], // 下载中心-列表
+  downloadedReload: ['/102/v3/commons/downcenter/regenerate', 'POST', 'mock'], // 下载中心-重新生成 Jia.li
+
 };
 
 const getApi = api => {

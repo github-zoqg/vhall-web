@@ -398,6 +398,7 @@
     <div class="vhall-kick-out" v-if="roomInfo.role_name != 2 && this.playerType != 'vod'">
       <h1>{{`正在使用${roleNameMap[this.roomInfo.role_name]}身份参与活动，无法进行观看，建议清除浏览器cookie后再进行访问`}}</h1>
     </div>
+    <playbill v-if="false"></playbill>
   </div>
 </template>
 <script>

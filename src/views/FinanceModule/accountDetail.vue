@@ -143,7 +143,7 @@ export default {
       let paramsObj = {};
       if (params === 'search') {
         pageInfo.pageNum= 1;
-        pageInfo.pos = 1;
+        pageInfo.pos = 0;
       }
        for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {

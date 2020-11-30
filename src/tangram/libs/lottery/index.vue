@@ -1,5 +1,6 @@
 <template>
-  <div class="vhall-lottery" v-if="payoff">
+  <div class="vhall-lottery">
+     <!-- v-if="payoff" -->
     <!-- <div style="cursor:pointer;" @click = 'lotteryShow'>抽奖</div> -->
     <div class="payment-dialog" @click="closeUserList">
       <div class="payment-title" :class="lottHeadStyle?'lottery-headleft':'lottery-right'">
@@ -7,9 +8,10 @@
         <span v-show="closeShow" class="payment-title--close iconfont iconguanbi" @click="close"></span>
       </div>
       <!-- 发起抽奖 -->
-      <div class="lottery-dialog-content" v-if="lotteryContentShow">
-        <el-form ref="form" label-width="120px" size="mini" :style="{width: '450px'}">
-          <el-form-item label="参与抽奖人员:">
+      <div class="lottery-dialog-content" v-if='false'>
+         <!-- v-if="lotteryContentShow" -->
+        <el-form ref="form" label-width="100px" :style="{width: '450px'}">
+          <el-form-item label="参与条件">
             <el-select
               style="width: 280px;"
               @change="lotteryChange"
@@ -24,23 +26,79 @@
                 :value="item.value"
               ></el-option>
             </el-select>
+            <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
+              <div slot="content">
+                1、全体参会者：所有参会的观众拥有参与抽奖的资格<br>
+                2、参与签到的用户：参与签到的观众有参与抽奖的资格<br>
+                3、参与问卷的用户：参与问卷填写的观众有参与抽奖的资格<br>
+                4、口令抽奖：开始抽奖后，观众收到抽奖提示，需要输入主办方指定的口令后才能参抽奖
+              </div>
+              <icon icon-class="saaswenhao"></icon>
+            </el-tooltip>
+          </el-form-item>
+          <el-form-item label="参与口令" v-show="joinLottery == 4">
+            <el-input  maxlength="15" show-word-limit style="width: 280px;" v-model="participationPass" placeholder="有趣的口令会带来更多互动"></el-input>
+          </el-form-item>
+          <el-form-item label="选择奖品">
+            <el-select
+              style="width: 280px;"
+              @change="lotteryChange"
+              v-model="joinLottery"
+              placeholder="默认奖品"
+            >
+              <el-option
+                style="width: 280px;"
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+            <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
+              <div slot="content">
+                1、请在控制台-直播管理-抽奖中进行创建<br>
+                2、选择提前设置好的奖品，抽奖结束后中奖结果将显示设置的奖品图片
+              </div>
+              <icon icon-class="saaswenhao"></icon>
+            </el-tooltip>
+          </el-form-item>
+          <el-form-item label="中奖人数" style="margin-bottom:0px">
+            <el-input style="width: 280px;" v-model="prizeNum" placeholder="请输入中奖人数"></el-input>
             <div class="lottery-payment">
-              有
-              <span>{{ getPrizeCount }}</span>人可参与抽奖，已中奖者不再参与抽奖
+              <span>{{ getPrizeCount }}</span>人参与抽奖
             </div>
           </el-form-item>
-          <el-form-item label="中奖人数:">
-            <el-input style="width: 210px;" v-model="prizeNum" placeholder="请输入中奖人数"></el-input>
-          </el-form-item>
-          <el-form-item label="预设中奖:" class="lottery-preset">
-            <el-input v-model="userKeywords" style="width: 210px;" placeholder="请输入用户名"></el-input>
-            <el-button @click="lotterySearch" class="lottery-search">搜索</el-button>
-            <ul v-if="userListShow" class="user-list">
+          <el-form-item label="预设中奖" class="lottery-preset">
+            <el-input v-model="userKeywords" style="width: 280px;" placeholder="请输入用户名">
+              <el-button slot="append"  @click="lotterySearch">搜索</el-button>
+            </el-input>
+             <!-- v-if="userListShow" -->
+            <ul class="user-list">
               <li v-for="(item,index) in userList" :key="index">
                 {{ item.nickname }}
                 <span @click="selector(item,index)">选择</span>
               </li>
             </ul>
+          </el-form-item>
+          <el-form-item size="mini" label="重复中奖" class="repeat-winning">
+            <el-switch
+              v-model="repeatWinning"
+              active-color="#FC5659"
+              inactive-color="#CECECE">
+            </el-switch>
+            <span>
+             开启后，已中奖者可再次参与抽奖
+            </span>
+          </el-form-item>
+          <el-form-item label="中奖名单" class="repeat-winning">
+            <el-switch
+              v-model="WinningList"
+              active-color="#FC5659"
+              inactive-color="#CECECE">
+            </el-switch>
+            <span>
+             开启后，抽奖结束后显示中奖名单
+            </span>
           </el-form-item>
           <ul v-if="userButtonShow" class="user-lists">
             <li v-for="(item,index) in chooseList" :key="index">
@@ -48,48 +106,70 @@
               <span class="iconfont iconguanbi" @click="chooseClose(item,index)"></span>
             </li>
           </ul>
-          <!-- <el-form-item> -->
-          <el-button @click="startReward" class="lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
-          <!-- </el-form-item> -->
+          <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
         </el-form>
       </div>
       <!-- 趣味抽奖 -->
-      <div class="prize-pending" v-if="prizeShow">
+      <div class="prize-pending"  v-if="prizeShow">
         <img src="../../assets/lottery-loading.gif" alt />
         <p>正在进行抽奖...</p>
-        <el-button v-if="prizeEnd" @click="endLottery" class="prize-pending-button">结束抽奖</el-button>
+        <el-button v-if="prizeEnd" @click="endLottery" :disabled='disabledTime!=0' class="common-but lottery-end">
+          结束抽奖 <span v-if="disabledTime!=0">({{disabledTime}}s) </span>
+        </el-button>
       </div>
       <!-- 抽奖结果 -->
-      <div class="lottery-result" v-if="lotteryResultShow">
-        <ul>
-          <li
-            class="awardBgColor"
-            v-for="(item,index) in lotteryEndResult"
-            :key="index"
-          >{{ item.lottery_user_nickname }}</li>
-        </ul>
-        <div v-show="lotteryChatShow" class="lottery-chat">
-          <p>恭喜您中奖了！</p>
-          <p>您已填写过个人信息，请等待主办方联系</p>
-        </div>
+      <div class="lottery-result">
+         <!-- v-if="lotteryResultShow" -->
+         <!-- 抽奖结果  权限角色 -->
+         <template v-if="false">
+            <div class="result-img">
+              <img :src="$img" alt="">
+              <p>黑碳科技立体电子魔方</p>
+            </div>
+            <div class="result-table">
+                <div class="result-table-head">
+                  <strong>中奖名单</strong>
+                </div>
+                <ul>
+                  <li class="awardBgColor"
+                    v-for="(item,index) in lotteryEndResult"
+                    :key="index">
+                    <img :src="$img" alt="" />
+                    <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
+                  </li>
+                </ul>
+                <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
+            </div>
+         </template>
+         <!-- 抽奖结果  观众 -->
+         <template v-if="true">
+           <!-- lotteryChatShow -->
+            <div class="lottery-chat Audience-lottery">
+              <div class="Audience-one">
+                <img class="title-img" :src="$img" alt="">
+                <p :class="{'winning-status': isWinning}">{{ audienceText }}</p>
+              </div>
+              <!-- 领奖信息 -->
+              <div class="recive-prize" v-if="reciveAwardShow">
+                <el-form ref="forms" size="mini" class="form-style">
+                  <el-form-item>
+                    <el-input style="width: 200px;" v-model="reciveInfo.name" placeholder="请输入姓名"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-input style="width: 200px;" v-model="reciveInfo.tel" placeholder="请输入手机号"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-input style="width: 200px;" v-model="reciveInfo.remarks" placeholder="请输入备注（如地址等）"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button @click="submitInfo" class="reward-submmit">提交</el-button>
+                  </el-form-item>
+                </el-form>
+              </div>
+              <el-button @click="getAward" class="common-but">{{ getReward }}</el-button>
+            </div>
+         </template>
         <el-button v-if="reciveRewardShow" @click="getAward" class="lottery-reward">{{ getReward }}</el-button>
-      </div>
-      <!-- 领奖信息 -->
-      <div class="recive-prize" v-if="reciveAwardShow">
-        <el-form ref="forms" size="mini" class="form-style">
-          <el-form-item>
-            <el-input style="width: 200px;" v-model="reciveInfo.name" placeholder="请输入姓名"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input style="width: 200px;" v-model="reciveInfo.tel" placeholder="请输入手机号"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input style="width: 200px;" v-model="reciveInfo.remarks" placeholder="请输入备注（如地址等）"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="submitInfo" class="reward-submmit">提交</el-button>
-          </el-form-item>
-        </el-form>
       </div>
     </div>
   </div>
@@ -146,15 +226,32 @@ export default {
         {
           value: '3',
           label: '参与签到的用户'
+        },
+        {
+          value: '4',
+          label: '口令抽奖'
         }
       ],
       payoff: false,
       hasAward: false,
-      startButtonDisabled: false // 开始按钮禁用状态
+      startButtonDisabled: false, // 开始按钮禁用状态
+      WinningList: false, // 中奖名单
+      repeatWinning: false ,// 重复中奖
+      participationPass: '', // 口令
+      disabledTime: 5, // 5秒禁止点击
+      audienceText: '很遗憾，您与大奖擦肩而过，感谢您的参与！',
+      isWinning: true
     };
   },
 
-  created () {},
+  created () {
+  this.disTimeSet = setInterval(() => {
+    this.disabledTime--;
+    if(this.disabledTime<=0){
+      clearInterval(this.disTimeSet);
+    }
+  }, 1000);
+  },
 
   mounted () {},
   watch: {
@@ -180,13 +277,6 @@ export default {
           this.lotteryEndResult = res.data.lottery_users;
           this.prizeShow = false;
           this.lotteryResultShow = true;
-          const lotteryTitle = document.querySelector('.payment-title--text');
-          lotteryTitle.style.color = '#444';
-          const lotterySuccess = document.querySelector('.payment-dialog');
-          lotterySuccess.style.background = '#fff';
-          const paymentTitle = document.querySelector('.payment-title');
-          paymentTitle.style.background = '#f4f4f4';
-          paymentTitle.style.borderBottom = '1px solid #d9d9d9';
         }
       });
     },
@@ -228,49 +318,57 @@ export default {
     },
     // 开始抽奖
     startReward () {
-      if (this.prizeNum > this.getPrizeCount) {
-        this.$message.customerror('中奖人数不可以大于参与抽奖人员数');
-        return;
-      }
-      if (!/^[1-9]\d*$/.test(this.prizeNum)) {
-        this.$message.customerror('中奖人数只能为正整数');
-        return;
-      }
-      let deliverId = [];
-      if (this.chooseList) {
-        this.chooseList.map(item => {
-          deliverId.push(item.account_id);
-        });
-        deliverId = deliverId.join(',');
-      } else {
-        deliverId = null;
-      }
-      this.startButtonDisabled = true;
-      this.$vhallFetch('add', {
-        vss_token: this.vssToken,
-        room_id: this.roomId,
-        lottery_type: this.joinLottery,
-        lottery_number: this.prizeNum,
-        lottery_user_ids: deliverId
-      }).then(res => {
-        this.startButtonDisabled = false;
-        if (res.code === 200) {
-          console.log(res);
-          this.lotteryInfo = res.data;
-          this.lotteryContentShow = false;
-          this.prizeShow = true;
-          // alert('dialogtitle')
-          console.log('dialogtitle>>>>>>>>>>>>>', this.dialogTitle);
-          this.dialogTitle = '趣味抽奖！';
-          this.closeShow = false;
-          // EventBus.$on('lottery_push', msg => {
-          //   console.log('eeeeeeeeee', msg)
-          //   console.log('发起成功！！！')
-          // })
-        }
-      }).catch(() => {
-        this.startButtonDisabled = false;
-      });
+      this.prizeShow = true;
+
+      // if (this.prizeNum > this.getPrizeCount) {
+      //   this.$message.customerror('中奖人数不可以大于参与抽奖人员数');
+      //   return;
+      // }
+      // if (!/^[1-9]\d*$/.test(this.prizeNum)) {
+      //   this.$message.customerror('中奖人数只能为正整数');
+      //   return;
+      // }
+      // let deliverId = [];
+      // if (this.chooseList) {
+      //   this.chooseList.map(item => {
+      //     deliverId.push(item.account_id);
+      //   });
+      //   deliverId = deliverId.join(',');
+      // } else {
+      //   deliverId = null;
+      // }
+      // this.startButtonDisabled = true;
+      // this.$vhallFetch('add', {
+      //   vss_token: this.vssToken,
+      //   room_id: this.roomId,
+      //   lottery_type: this.joinLottery,
+      //   lottery_number: this.prizeNum,
+      //   lottery_user_ids: deliverId
+      // }).then(res => {
+      //   this.startButtonDisabled = false;
+      //   if (res.code === 200) {
+      //     console.log(res);
+      //     this.lotteryInfo = res.data;
+      //     this.lotteryContentShow = false;
+      //     this.prizeShow = true;
+              // this.disTimeSet = setInterval(() => {
+              //   this.disabledTime--;
+              // if(this.disabledTime<=0){
+              //   clearInterval(this.disTimeSet)
+              // }
+              // }, 1000);
+      //     // alert('dialogtitle')
+      //     console.log('dialogtitle>>>>>>>>>>>>>', this.dialogTitle);
+      //     this.dialogTitle = '趣味抽奖！';
+      //     this.closeShow = false;
+      //     // EventBus.$on('lottery_push', msg => {
+      //     //   console.log('eeeeeeeeee', msg)
+      //     //   console.log('发起成功！！！')
+      //     // })
+      //   }
+      // }).catch(() => {
+      //   this.startButtonDisabled = false;
+      // });
     },
     // 关闭
     close () {
@@ -299,8 +397,8 @@ export default {
     },
     // 点击下拉框改变可参与的人数
     lotteryChange (value) {
-      console.log('value', value);
-      this.getLotteryCount();
+      console.log('选择方式变化value', value);
+      // this.getLotteryCount();
     },
     // 点击抽奖
     lotteryShow () {
@@ -361,15 +459,6 @@ export default {
         this.reciveAwardShow = true;
         this.dialogTitle = '请填写个人信息，方便主办方联系您！';
         this.lotteryResultShow = false;
-        const lotteryTitle = document.querySelector('.payment-title--text');
-        lotteryTitle.style.color = '#444';
-        const lotterySuccess = document.querySelector('.payment-dialog');
-        lotterySuccess.style.background = '#fff';
-        const paymentTitle = document.querySelector('.payment-title');
-        paymentTitle.style.background = '#f4f4f4';
-        paymentTitle.style.borderBottom = '1px solid #d9d9d9';
-        const titleCloses = document.querySelector('.payment-title--close');
-        titleCloses.style.color = '#666';
       }
     },
     // 抽奖结果通知
@@ -410,41 +499,14 @@ export default {
             console.log('lotteryEndResult', this.lotteryEndResult);
             this.reciveRewardShow = true;
             this.dialogTitle = '恭喜您中奖了！';
-            const lotteryTitle = document.querySelector('.payment-title--text');
-            lotteryTitle.style.color = '#fff';
-            const lotterySuccess = document.querySelector('.payment-dialog');
-            lotterySuccess.style.background = '#ff3333';
-            const paymentTitle = document.querySelector('.payment-title');
-            paymentTitle.style.background = '#ff3333';
-            paymentTitle.style.borderBottom = '1px solid #ff3333';
             if (awardUserId.lottery_user_phone) {
               this.hasAward = true;
               this.lotteryChatShow = true;
               this.getReward = '确定';
-              this.$nextTick(() => {
-                const lotteryList = document.querySelector('.lottery-result ul');
-                lotteryList.style.marginBottom = 0;
-              });
             }
-            this.$nextTick(() => {
-              // const awardBgColor = document.getElementsByClassName('.awardBgColor');
-              const awardBgColor = document.querySelector('.awardBgColor');
-              console.log('awaaa', awardBgColor);
-              awardBgColor.style.background = '#da3030';
-              awardBgColor.style.color = '#fff';
-              const titleClose = document.querySelector('.payment-title--close');
-              titleClose.style.color = '#fff';
-            });
           } else {
-            const lotteryTitle = document.querySelector('.payment-title--text');
-            lotteryTitle.style.color = '#444';
-            const lotterySuccess = document.querySelector('.payment-dialog');
-            lotterySuccess.style.background = '#fff';
-            const paymentTitle = document.querySelector('.payment-title');
-            paymentTitle.style.background = '#f4f4f4';
-            paymentTitle.style.borderBottom = '1px solid #d9d9d9';
-            this.dialogTitle = '很遗憾,您没有中奖！';
-            this.reciveRewardShow = false;
+            // this.dialogTitle = '很遗憾,您没有中奖！';
+            // this.reciveRewardShow = false;
           }
         }
       });
@@ -452,8 +514,8 @@ export default {
   }
 };
 </script>
-<style lang="less">
-.vhall-lottery {
+<style lang="less" scope>
+.vhall-lottery /deep/{
   position: fixed;
   top: 0;
   left: 0;
@@ -462,8 +524,11 @@ export default {
   z-index: 30;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 100;
+  .el-form-item__label{
+    color: #555;
+  }
   .payment-dialog {
-    width: 600px;
+    width: 468px;
     position: fixed;
     left: 50%;
     margin-left: -300px;
@@ -520,41 +585,39 @@ export default {
       padding: 30px 15px 25px 15px;
       display: flex;
       justify-content: center;
+      .repeat-winning{
+        margin-bottom: 12px;;
+        .el-switch{
+          margin-right: 8px;
+        }
+        span{
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #555555;
+          line-height: 20px;
+        }
+      }
     }
 
     .lottery-payment {
       font-size: 12px;
       color: #444;
-
+      margin-bottom: 0;
       span {
         color: #eb6663;
       }
     }
-    .lottery-preset{
-      .el-form-item__content{
-        display: flex;
-        button{
-          margin-left: 8px;
-        }
-      }
-    }
-    .lottery-search {
+    .el-input-group__append{
+      padding: 0;
+      color: #555555;
       width: 63px;
-      height: 30px;
-      border: 0px;
-      color: #fff;
-      border-radius: 4px;
-      background: #fc5659;
-      height: 28px;
-      vertical-align: middle;
       &:hover {
-        background: #c51f1d;
+        color: #fff;
+        background: #fc5659;
       }
     }
-
     .lottery-start {
-      width: 355px;
-      height: 40px;
       color: #fff;
       background: #fc5659;
       display: block;
@@ -638,68 +701,107 @@ export default {
       }
     }
     .prize-pending {
+      text-align: center;
+      margin-bottom: 32px;
       img {
         display: block;
-        width: 272px;
-        height: 272px;
-        margin: 15px auto;
+        width: 222px;
+        height: 222px;
+        margin: 30px auto 15px;
       }
-
       p {
         width: 100%;
         text-align: center;
         font-size: 18px;
         color: #444;
-        padding: 30px 0;
-      }
-
-      &-button {
-        display: block;
-        width: 462px;
-        height: 51px;
-        color: #fff;
-        background: #eb6663;
-        font-size: 20px;
-        margin: 0 auto;
-        border-radius: 8px;
-        margin-top: 10px;
-        margin-bottom: 16px;
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #FC5659;
+        margin-bottom: 24px;
+        line-height: 18px;
       }
     }
 
     .lottery-result {
-      ul {
-        width: 390px;
+      background: #fff;
+      margin-bottom: 32px;
+      .result-img{
+        text-align: center;
+        img{
+          width: 80px;
+          height: 80px;
+          margin: 32px auto 8px;
+          border-radius: 50%;
+        }
+        p{
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #222222;
+          line-height: 22px;
+          margin-bottom: 12px;
+        }
+      }
+      .result-table-head{
+        text-align: center;
+        background: #F5F5F5;
+        width: 396px;
+        line-height: 42px;
         margin: 0 auto;
-        padding: 23px 20px;
+        border-radius: 8px 8px 0px 0px;
+        border-bottom: 1px solid #fff;
+      }
+      ul {
+        width: 396px;
+        margin: 0 auto;
         margin-bottom: 16px;
         max-height: 500px;
         overflow-y: auto;
+        background: #F5F5F5;
         li {
-          width: 390px;
+          width: 240px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          height: 44px;
-          line-height: 44px;
-          background: #e9e9e9;
-          text-align: center;
-          color: #444;
-          border-radius: 5px;
-          font-size: 16px;
-          margin-top: 10px;
+          height: 42px;
+          padding-left: 20px;
+          line-height: 42px;
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #222222;
+          img{
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            border-radius: 50%;
+            margin-right: 8px;
+          }
         }
       }
 
       .lottery-chat {
         width: 100%;
         text-align: center;
-        margin-bottom: 28px;
-        p {
-          width: 100%;
-          text-align: center;
-          color: #ffc217;
-          font-size: 12px;
+        .Audience-one{
+          img{
+            margin: 42px auto 24px;
+            display: block;
+            width: 100px;
+            height: 100px;
+          }
+          p{
+            font-size: 16px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #222222;
+            line-height: 22px;
+            margin-bottom: 48px;
+          }
+          .winning-status{
+            color: #FC5659;
+          }
         }
       }
       .lottery-reward {
