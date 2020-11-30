@@ -16,7 +16,7 @@
             trigger="hover"
            >
            <div class="invitation-code">
-            <img :src="qrcode" alt="">
+            <img :src="showCode" alt="">
           </div>
             <el-button round slot="reference">扫码查看</el-button>
         </el-popover>
@@ -34,8 +34,8 @@
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
-              <p v-for="(item, index) in showList" :key="index" :class="item.isCheck ? 'isActiveColor' : ''">
-                <label class="img-tangle" v-show="item.isCheck">
+              <p v-for="(item, index) in showList" :key="index" :class="item.show_type == formInvitation.show_type ? 'isActiveColor' : ''">
+                <label class="img-tangle" v-show="item.show_type == formInvitation.show_type">
                   <i class="el-icon-check"></i>
                 </label>
                 <img :src="item.url" alt="" @click="showMethods(item)"/>
@@ -52,7 +52,7 @@
           </el-form-item>
           <el-form-item label="主办方">
             <el-input
-              v-model="formInvitation.mainHost"
+              v-model="formInvitation.company"
               maxlength="10"
               show-word-limit
               style="width: 320px"
@@ -61,7 +61,7 @@
           <el-form-item label="时间">
             <el-date-picker
               style="width: 320px"
-              v-model="formInvitation.time"
+              v-model="formInvitation.webinar_date"
               type="datetime"
               placeholder="选择时间"
             >
@@ -69,7 +69,7 @@
           </el-form-item>
           <el-form-item label="地点">
             <el-input
-              v-model="formInvitation.adress"
+              v-model="formInvitation.location"
               maxlength="20"
               show-word-limit
               style="width: 320px"
@@ -78,7 +78,7 @@
           <el-form-item label="简介">
             <el-input
               style="width: 320px"
-              v-model="formInvitation.introduction"
+              v-model="formInvitation.desciption"
               type="textarea"
               maxlength="45"
               :autosize="{ minRows: 5 }"
@@ -86,14 +86,14 @@
               show-word-limit
             ></el-input>
           </el-form-item>
-          <!-- <el-form-item label="隐藏水印">
+          <el-form-item label="隐藏水印">
                 <el-switch
-                  v-model="formInvitation.hideWaterMark"
-                  active-color="#13ce66"
+                  v-model="formInvitation.is_show_watermark"
+                  active-color="#FB3A32"
                   inactive-color="#ccc"
                 >
                 </el-switch>
-              </el-form-item> -->
+              </el-form-item>
         </el-form>
       </div>
       <div class="invitation-show">
@@ -189,41 +189,87 @@ export default {
     return {
       invitation: true,
       qrcode: '',
+      showCode: '',
+      link: 'http://e.vhall.com/mywebinar/invite-card/923464350/1734888',
       isShow: 'first',
-      link: 'http://172.16.11.8/room/invitation',
-      formInvitation: {},
+      formInvitation: {
+        show_type: 1,
+        img_type: 0,
+        is_show_watermark: false
+      },
       showList: [
         {
           url: '@/common/images/v35-webinar.png',
           isCheck: true,
+          show_type: 1,
           show: 'first'
         },
         {
           url: '@/common/images/v35-webinar.png',
           isCheck: false,
+          show_type: 2,
           show: 'second'
         },
         {
           url: '@/common/images/v35-webinar.png',
           isCheck: false,
+          show_type: 3,
           show: 'third'
         }
       ]
     };
   },
+  watch: {
+    invitation() {
+      if (this.invitation) {
+        this.getInviteCardInfo();
+      }
+    }
+  },
   created(){
-    QRcode.toDataURL(
+     QRcode.toDataURL(
       this.link,
       (err, url) => {
         console.log(err, url);
-        this.qrcode = url;
+        this.showCode = url;
       }
-    );
+     );
+    this.isInviteCard();
   },
   components: {
     addBackground
   },
   methods: {
+    isInviteCard() {
+      let params = {
+        webinar_id: '923464350',
+        room_id: 'ls_123423',
+        status: this.invitation ? 1 : 0
+      };
+      this.$fetch('setCardStatus', params).then(res => {
+        console.log(res.data, '1111111111');
+      });
+    },
+    getInviteCardInfo() {
+      let params = {
+        webinar_id: '923464350',
+        room_id: 'ls_123423'
+      };
+      this.$fetch('getCardDetailInfo', params).then(res => {
+        this.formInvitation = res.data.invite_card;
+        this.formInvitation.is_show_watermark = res.data.invite_card.is_show_watermark === 1 ? false : true;
+        this.getShowCode(res.data.invite_qr_url);
+      });
+    },
+    getShowCode(link) {
+      QRcode.toDataURL(
+      link,
+      (err, url) => {
+        console.log(err, url);
+        this.qrcode = url;
+      }
+    );
+    },
     changeImg() {
       this.$refs.background.dialogVisible = true;
     },
@@ -231,14 +277,20 @@ export default {
       this.$router.push({path: '/code'});
     },
     showMethods(items) {
-      this.isShow = items.show;
-       this.showList.map(item => {
-        item.isCheck = false;
-        items.isCheck = true;
-      });
+      this.formInvitation.show_type = items.show_type;
     },
+    // 修改邀请卡信息
     onSubmit() {
-      console.log("保存数据");
+      let ids = {
+        webinar_id: '923464350',
+        room_id: 'ls_123423',
+        welcome_txt: '欢迎'
+      };
+      let obj = Object.assign({}, ids, this.formInvitation);
+      this.$fetch('editCardStatus', obj).then(res => {
+       console.log(res.data, "保存数据");
+      });
+      // console.log("保存数据");
     }
   }
 };

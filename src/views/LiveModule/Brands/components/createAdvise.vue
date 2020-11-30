@@ -1,30 +1,37 @@
 <template>
   <div class="dialog-box">
     <VhallDialog
-      title="创建广告推荐"
+      :title="`${title}广告推荐`"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
       <el-form label-width="80px" :model="advertisement" :rules="rules">
-      <el-form-item label="推广图片" prop="imgUrl">
+      <el-form-item label="推广图片" prop="img_url">
         <div class="img-box">
+          <!-- <img :src="advertisement.img_url" alt="" v-if=""> -->
            <upload
               class="giftUpload"
-              v-model="advertisement.imgUrl"
+              v-model="advertisement.img_url"
+              :on-success="uploadAdvSuccess"
+              :on-progress="uploadProcess"
+              :on-error="uploadError"
+              :on-preview="uploadPreview"
+              @handleFileChange="handleFileChange"
+              :before-upload="beforeUploadHnadler"
               >
               <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
             </upload>
         </div>
       </el-form-item>
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="advertisement.title" maxlength="15" show-word-limit placeholder="请输入广告标题"></el-input>
+      <el-form-item label="标题" prop="subject">
+        <el-input v-model="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></el-input>
       </el-form-item>
-      <el-form-item label="链接" prop="link">
-        <el-input v-model="advertisement.link" placeholder="请输入广告链接"></el-input>
+      <el-form-item label="链接" prop="url">
+        <el-input v-model="advertisement.url" placeholder="请输入广告链接"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round>确 定</el-button>
+      <el-button type="primary" @click="createAdv" round>确 定</el-button>
       <el-button @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
@@ -73,7 +80,10 @@ export default {
           { type: 'date', required: true, message: '请输入广告链接', trigger: 'blur' }
         ],
       },
-      advertisement: {},
+      advertisement: {
+        is_sync: 0,
+        img_url: ''
+      },
       adList: [
         {
           name: '1多屏协同戴森多功能吸尘器时日五',
@@ -106,15 +116,98 @@ export default {
       ]
     };
   },
+  props: {
+    title:{
+      type: String,
+      default: '创建'
+    },
+    advInfo:{
+      type: Object
+    }
+  },
   components: {
     upload
   },
+  watch: {
+    title() {
+      if (this.title === '编辑') {
+        this.advertisement.img_url = this.advInfo.img_url;
+        this.advertisement.subject = this.advInfo.subject;
+        this.advertisement.url = this.advInfo.url;
+      } else {
+        this.advertisement = {};
+      }
+    }
+  },
+  created() {
+    if(this.dialogAdverVisible) {
+      // this.activityData();
+    }
+  },
   methods: {
+    createAdv() {
+      this.$confirm('是否同步到资料库?', '提示', {
+          confirmButtonText: '同步',
+          cancelButtonText: '不同步',
+          type: 'warning'
+        }).then(() => {
+          this.advertisement.is_sync = 0;
+          this.createAdvAndsync();
+        }).catch(() => {
+         this.advertisement.is_sync = 1;
+         this.createAdvAndsync();
+        });
+    },
+    createAdvAndsync() {
+      let url = this.title === '编辑' ? 'updateAdv' : 'createAdv';
+      this.$fetch(url, this.advertisement).then(res => {
+        if (res.msg === 'success' && res.code === 200) {
+          this.dialogVisible = false;
+          this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
+        }
+      });
+    },
+    activityData() {
+      // this.$fetch('getActivityList').then(res => {
+      //   this.adList
+      // });
+    },
     choiseAdvisetion(items) {
       this.adList.map(item => {
        item.isChecked = false;
        items.isChecked = true;
       });
+    },
+    uploadAdvSuccess(res, file) {
+      console.log(res, file);
+      this.advertisement.img_url = URL.createObjectURL(file.raw);
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`图片上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
+    handleFileChange(file) {
+      console.log(file);
+      // this.handleuploadSuccess(file);
     }
   }
 };
