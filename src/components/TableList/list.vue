@@ -45,9 +45,16 @@
             </div>
             <div v-else-if="item.key === 'img'">
               <img
+                class="imgs"
                 :src="scope.row.img"
                 width="40"
                 height="40"
+              />
+            </div>
+            <div v-else-if="item.key === 'img_url'">
+              <img
+                :src="scope.row.img_url"
+               class="advImg"
               />
             </div>
             <div v-else-if="item.key === 'watch'">
@@ -194,9 +201,13 @@ export default {
 </script>
 <style lang="less" scoped>
 .data-list {
-  /deep/.cell img {
+  /deep/.cell .imgs {
     width: 100px;
     height: 100px;
+  }
+   /deep/.cell .advImg {
+    width: 142px;
+    height: 80px;
   }
   /deep/.el-table {
     margin-bottom: 30px;

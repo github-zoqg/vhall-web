@@ -9,7 +9,7 @@
               <el-form :model="formHorse" ref="ruleForm" label-width="100px">
                 <el-form-item label="跑马灯">
                   <el-switch
-                    v-model="formHorse.isOn"
+                    v-model="scrolling_open"
                     active-color="#ff4949"
                     inactive-color="#ccc"
                     :active-text="horseLampText"
@@ -17,21 +17,21 @@
                   </el-switch>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-radio v-model="formHorse.type" label="1" :disabled="!formHorse.isOn">固定文本</el-radio>
-                  <el-radio v-model="formHorse.type" label="2" :disabled="!formHorse.isOn">固定文本+观看者ID和昵称</el-radio>
+                  <el-radio v-model="formHorse.text_type" label="1" :disabled="!scrolling_open">固定文本</el-radio>
+                  <el-radio v-model="formHorse.text_type" label="2" :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                 </el-form-item>
                 <el-form-item label="固定文本">
                   <el-input
                     v-model="formHorse.text"
                     placeholder="版权所有，盗版必究"
-                    :disabled="!formHorse.isOn"
+                    :disabled="!scrolling_open"
                     maxlength="20"
                     show-word-limit
                   ></el-input>
                 </el-form-item>
-                <el-form-item label="透明度"><el-slider v-model="formHorse.transparency" :disabled="!formHorse.isOn" style="width:350px"></el-slider><span class="isNum">{{formHorse.transparency}}%</span></el-form-item>
+                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:350px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="字体大小">
-                  <el-select v-model="formHorse.fontSize" placeholder="请选择" :disabled="!formHorse.isOn">
+                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
                     <el-option
                       v-for="item in fontList"
                       :key="item.value"
@@ -41,25 +41,25 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="移动速度">
-                  <el-radio v-model="formHorse.speed" label="1" :disabled="!formHorse.isOn">慢</el-radio>
-                  <el-radio v-model="formHorse.speed" label="2" :disabled="!formHorse.isOn">中</el-radio>
-                  <el-radio v-model="formHorse.speed" label="3" :disabled="!formHorse.isOn">快</el-radio>
+                  <el-radio v-model="formHorse.speed" label="1" :disabled="!scrolling_open">慢</el-radio>
+                  <el-radio v-model="formHorse.speed" label="2" :disabled="!scrolling_open">中</el-radio>
+                  <el-radio v-model="formHorse.speed" label="3" :disabled="!scrolling_open">快</el-radio>
                 </el-form-item>
                 <el-form-item label="显示位置">
-                  <el-radio v-model="formHorse.position" label="1" :disabled="!formHorse.isOn">上</el-radio>
-                  <el-radio v-model="formHorse.position" label="2" :disabled="!formHorse.isOn">中</el-radio>
-                  <el-radio v-model="formHorse.position" label="3" :disabled="!formHorse.isOn">下</el-radio>
+                  <el-radio v-model="formHorse.position" label="1" :disabled="!scrolling_open">上</el-radio>
+                  <el-radio v-model="formHorse.position" label="2" :disabled="!scrolling_open">中</el-radio>
+                  <el-radio v-model="formHorse.position" label="3" :disabled="!scrolling_open">下</el-radio>
                 </el-form-item>
                 <el-form-item label="间隔时间">
                    <el-input
-                    v-model="formHorse.intervalTime"
-                    :disabled="!formHorse.isOn"
+                    v-model="formHorse.interval"
+                    :disabled="!scrolling_open"
                     placeholder="1~300">
                     <i slot="suffix">秒</i>
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :disabled="!formHorse.isOn">保存</el-button>
+                  <el-button type="primary" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -74,7 +74,7 @@
               <el-form :model="formWatermark" ref="ruleForm" label-width="100px">
                 <el-form-item label="水印">
                    <el-switch
-                    v-model="formWatermark.isOn"
+                    v-model="watermark_open"
                     active-color="#ff4949"
                     inactive-color="#ccc"
                     :active-text="waterMarkText"
@@ -84,13 +84,13 @@
                 <el-form-item label="水印图片">
                   <upload
                     class="giftUpload"
-                    v-model="formWatermark.imageUrl"
+                    v-model="formWatermark.img_url"
                     :on-success="handleuploadSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
                     :on-preview="uploadPreview"
                     :before-upload="beforeUploadHnadler"
-                    :disabled="!formWatermark.isOn"
+                    :disabled="!watermark_open"
                   >
                     <p slot="tip">
                       推荐尺寸：240*240px，小于2MB <br />
@@ -99,17 +99,17 @@
                   </upload>
                 </el-form-item>
                 <el-form-item label="水印位置">
-                  <el-radio v-model="formWatermark.position" label="1" :disabled="!formWatermark.isOn">左上角</el-radio>
-                  <el-radio v-model="formWatermark.position" label="2" :disabled="!formWatermark.isOn">右上角</el-radio>
-                  <el-radio v-model="formWatermark.position" label="3" :disabled="!formWatermark.isOn">左下角</el-radio>
-                  <el-radio v-model="formWatermark.position" label="4" :disabled="!formWatermark.isOn">右下角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" label="1" :disabled="!watermark_open">左上角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" label="2" :disabled="!watermark_open">右上角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" label="3" :disabled="!watermark_open">左下角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" label="4" :disabled="!watermark_open">右下角</el-radio>
                 </el-form-item>
                 <el-form-item label="透明度">
-                  <el-slider v-model="formWatermark.transparency" style="width: 350px" :disabled="!formWatermark.isOn"></el-slider>
-                  <span class="isNum">{{formWatermark.transparency}}%</span>
+                  <el-slider v-model="formWatermark.img_alpha" style="width: 350px" :disabled="!watermark_open"></el-slider>
+                  <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :disabled="!formWatermark.isOn">保存</el-button>
+                  <el-button type="primary" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -168,19 +168,21 @@ export default {
   data() {
     return {
       activeName: 'first',
+      scrolling_open: true,
+      watermark_open: true,
       formHorse: {
-        isOn: true,
-        type: '2',
-        fontSize: 20,
+        color: '#fff',
+        text_type: '2',
+        size: 20,
         speed: '2',
         position: '2',
-        transparency: 50
+        alpha: 50
       },
       fontList: [],
       formWatermark: {
-        isOn: true,
-        position: '1',
-        transparency: 80
+        img_position: '1',
+        img_url: '',
+        img_alpha: 80
       },
       formOther: {
         progress: true,
@@ -201,14 +203,14 @@ export default {
   },
    computed: {
     horseLampText(){
-      if(this.formHorse.isOn){
+      if(this.scrolling_open){
         return '已开启，文字以跑马灯的形式出现在播放器画面中';
       }else{
         return "开启后，文字将以跑马灯的形式出现在播放器画面中";
       }
     },
     waterMarkText(){
-      if(this.formWatermark.isOn){
+      if(this.watermark_open){
         return '已开启，可在播放器画面中添加水印';
       }else{
         return "开启后，可在播放器画面中添加水印";
@@ -247,15 +249,57 @@ export default {
         num = num + 2;
       }
     },
+    // 保存跑马灯
+    preFormHorse() {
+      this.formHorse.interval = this.formHorse.interval || 20;
+      this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
+      this.formHorse.scrolling_open = this.scrolling_open ? 1 : 0;
+      this.$fetch('setScrolling',this.formHorse).then(res => {
+         console.log(res.data, '111111111111');
+      });
+      // console.log(this.formHorse, '111111111111');
+    },
+    // 保存水印
+    preWatermark() {
+      this.formWatermark.img_url = this.formWatermark.img_url || 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100';
+      this.formWatermark.watermark_open = this.watermark_open ? 1 : 0;
+      this.$fetch('setWatermark',this.formWatermark).then(res => {
+         console.log(res.data, '22222222222222222');
+      });
+    },
+     uploadAdvSuccess(res, file) {
+      console.log(res, file);
+      this.formWatermark.img_url = URL.createObjectURL(file.raw);
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`封面上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
+    handleFileChange(file) {
+      console.log(file);
+      // this.handleuploadSuccess(file);
+    },
     handleClick(tab) {
       this.activeName = tab.name;
-    },
-    changeType(items) {
-      this.prizeImg = items.url;
-      this.typeList.map((item) => {
-        item.isChecked = false;
-        items.isChecked = true;
-      });
     },
   },
 };
