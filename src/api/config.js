@@ -127,7 +127,7 @@ const apis = {
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
   // 登录
-  loginInfo: ['/logins/v3/users/user/login', 'POST'],  //登录接口
+  loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口
   loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
   loginCheck: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
   sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口

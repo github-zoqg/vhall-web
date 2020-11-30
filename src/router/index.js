@@ -15,7 +15,7 @@ const v3Routes = [
   },
   {
     path: '/register',
-    component: () => import('@/views/register')
+    component: () => import('@/views/login')
   },
   {
     path: '/videoTailoring',
