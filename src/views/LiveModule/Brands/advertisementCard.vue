@@ -7,27 +7,26 @@
       <div class="search-data">
         <el-button type="primary" @click="createAdvise()" round>创建</el-button>
         <el-button class="head-btn set-upload" round @click="createCenter()" v-if="$route.meta.title==='品牌—广告推荐'">资料库</el-button>
-        <el-button class="head-btn set-upload" round>批量删除</el-button>
+        <el-button class="head-btn set-upload" round @click="allDelete">批量删除</el-button>
         <span class="searchTitle">
-          <el-input v-model="searchTitle" placeholder="请输入标题"></el-input>
+          <el-input v-model="paramsObj.keyword" placeholder="请输入标题"></el-input>
         </span>
       </div>
       <el-card>
          <table-list
-          ref="tableListBox"
+          ref="tableList"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
+          :restPic="true"
           @onHandleBtnClick="onHandleBtnClick"
-          @getTableList="getTableList"
+          @getTableList="getAdvTableList"
           @changeTableCheckbox="changeTableCheckbox"
           >
         </table-list>
       </el-card>
-
-      <create-advise ref="advise"></create-advise>
-      <data-box ref="data"></data-box>
+      <create-advise ref="advise" :title="title" :advInfo="advInfo"></create-advise>
     </div>
   </div>
 </template>
@@ -36,30 +35,35 @@ import createAdvise from './components/createAdvise';
 export default {
   data() {
     return {
-      searchTitle: '',
+      title: '创建',
+      advInfo: {},
+      adv_ids: [],
+      paramsObj: {
+        keyword: ''
+      },
       totalNum: 100,
       tableList: [
         {
-          img: '@/common/images/v35-webinar.png',
-          title: '标题1111',
+          img_url: '@/common/images/v35-webinar.png',
+          subject: '标题1111',
           url: 'http://vhall.com',
-          time: "2020-10-10",
+          created_at: "2020-10-10",
         },
         {
-          img: '@/common/images/v35-webinar.png',
-          title: '标题22222',
+          img_url: '@/common/images/v35-webinar.png',
+          subject: '标题22222',
           url: 'http://vhall.com',
-          time: "2020-10-12",
+          created_at: "2020-10-12",
         }
       ],
       tabelColumn: [
        {
           label: '图片',
-          key: 'img',
+          key: 'img_url',
         },
         {
           label: '标题',
-          key: 'title',
+          key: 'subject',
         },
         {
           label: '链接',
@@ -67,7 +71,7 @@ export default {
         },
         {
           label: '创建时间',
-          key: 'time',
+          key: 'created_at',
         }
       ],
       tableRowBtnFun:[
@@ -90,25 +94,53 @@ export default {
   components: {
     createAdvise
   },
+  mounted() {
+    this.getAdvTableList();
+  },
   methods: {
-    getTableList() {
-      let pageInfo = this.$refs.tableListBox.pageInfo;
-      console.log(pageInfo);
+    getAdvTableList() {
+      let pageInfo = this.$refs.tableList.pageInfo;
+      if (this.paramsObj.keyword) {
+        pageInfo.pageNum = 1;
+        pageInfo.pos = 0;
+        this.$refs.tableList.clearSelect();
+      }
+      this.paramsObj.webinar_id = '123123';
+      let obj = Object.assign({}, pageInfo, this.paramsObj);
+      console.log(obj);
+      this.$fetch('getAdvList', obj).then(res => {
+        // this.totalNum = res.data.total;
+        this.tableList = res.data.adv_list;
+        console.log(res.data, '111111111111111111');
+      });
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    edit(that, row) {
-      console.log(row, '编辑');
+    edit(that, { rows }) {
+      that.title = '编辑';
+      that.advInfo = rows;
+      console.log(that.advInfo, '00000000000000');
+      that.$refs.advise.dialogVisible = true;
     },
     delete(that, row) {
       console.log(row, '删除');
     },
+    allDelete() {
+      this.$fetch('deleteAdv', this.adv_ids).then(res => {
+         if (res.msg === 'success' && res.code === 200) {
+          this.$message.success('删除成功');
+        }
+      });
+    },
     changeTableCheckbox(val) {
       console.log(val);
+      this.adv_ids = val.map(item => item.id);
     },
-    createAdvise() {
+    createAdvise(title) {
+      this.title = '创建';
+      this.advInfo = {};
       this.$refs.advise.dialogVisible = true;
     },
     createCenter() {
