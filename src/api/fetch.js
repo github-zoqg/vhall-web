@@ -1,10 +1,11 @@
 import 'whatwg-fetch';
 import qs from 'qs';
 import getApi from './config';
+import Env from './env';
+
 
 export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url);
-
   let [api, method, mock] = config;
   if (!api) throw TypeError('api 未定义');
 
@@ -54,7 +55,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
-    credentials: 'same-origin', // include, *same-origin, omit
+    credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
   if (method === 'POST') {
@@ -63,7 +64,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
+  } else {
+    api = `${Env.BASE_URL}${api}`;
   }
+  console.log(api);
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
