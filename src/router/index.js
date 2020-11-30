@@ -624,7 +624,7 @@ const v3Routes = [
 ];
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: v3Routes
 });
