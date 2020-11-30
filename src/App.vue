@@ -20,6 +20,7 @@ body {
   margin: 0 0!important;
 }
 #app{
+  min-width: 1366px;
   height: 100%;
 }
 </style>

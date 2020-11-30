@@ -15,6 +15,7 @@ let staticLinkVo = {
   aliQr: '//aliqr.e.vhall.com/qr.png?t=',
 };
 let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
+let BASE_URL;
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -22,6 +23,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
+    BASE_URL = 'https://t-saas-dispatch.vhall.com';
     break;
   case 'test':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -29,6 +31,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
+    BASE_URL = 'https://t-saas-dispatch.vhall.com';
     break;
   case 'pre':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -36,6 +39,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
+    BASE_URL = 'https://t-saas-dispatch.vhall.com/';
     break;
   case 'development':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -43,6 +47,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
+    BASE_URL = 'https://t-saas-dispatch.vhall.com';
     break;
   default:
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -50,6 +55,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     uploadImgUrl = 'http://otp.cdinfotech.top/file/upload_images';
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
+    BASE_URL = 'https://t-saas-dispatch.vhall.com';
 }
 export default {
   fileBaseUrl,
@@ -57,5 +63,6 @@ export default {
   uploadImgUrl,
   staticLinkVo,
   staticBaseUrl,
-  roomWatchUrl
+  roomWatchUrl,
+  BASE_URL
 };
