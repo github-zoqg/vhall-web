@@ -791,11 +791,11 @@ export default {
     };
   },
 
+    // invited, 需要补充
+    // reward,
   components: {
     swiper,
     swiperSlide,
-    invited,
-    reward,
     goodsPop,
     chrome,
     CustomTab,
