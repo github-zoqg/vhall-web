@@ -23,7 +23,7 @@ console.log( publicPath, process.env.VUE_APP_NODE_ENV);
 module.exports = {
   publicPath: publicPath,
   assetsDir: './static',
-  lintOnSave: true,
+  lintOnSave: false,
   devServer: {
     proxy: {
       '/mock': {

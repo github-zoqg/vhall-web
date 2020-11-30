@@ -9,7 +9,7 @@ export default {
     return {
       isCollapse: false
     };
-  },
+  }
 };
 </script>
 <style lang="less">
