@@ -22,42 +22,20 @@
 
 <script>
 export default {
-  name: "bindPhoneOrEmail.vue",
+  name: "validSetDialog.vue",
   data() {
     return {
       title: '',
       visible: false,
-      vo: {
-        dialog: 'phone',
-        dialogIsEdit: false
-      },
-      form: {
-        account: '', // 邮箱或者手机号
-        code: '', // 验证码
-      },
-      formRules: {}
-    };
-  },
-  methods: {
-    initComp(vo) {
-      console.log('当前是否展示！！！', vo);
-      this.vo = vo;
-      if(vo.dialogType === 'phone') {
-        this.title = vo.dialogIsEdit ? '修改密保手机' : '关联手机号';
-      }else if(vo.dialogType === 'email') {
-        this.title = vo.dialogIsEdit ? '修改关联邮箱' : '关联邮箱';
+      validate: {
+        type: 1, // 发送类型： 1手机；2邮箱
+        data:
       }
-      this.visible = true;
-    }
+    };
   }
 };
 </script>
 
-<style lang="less" scoped>
-/deep/.el-dialog__footer {
-  text-align: center;
-}
-/deep/.el-button.dialog-btn {
-  padding: 4px 24px!important;
-}
+<style scoped>
+
 </style>
