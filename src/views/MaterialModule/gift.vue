@@ -109,14 +109,13 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 
 export default {
-  name: "prize",
+  name: "gift",
   data() {
     return {
       total: 100,

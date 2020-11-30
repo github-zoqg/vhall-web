@@ -10,6 +10,8 @@ const apis = {
   editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
   createGiftInfo: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 创建共享库礼品信息
   deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
+  liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
+
 
 
   // 直播模块

@@ -227,7 +227,7 @@ const v3Routes = [
       },
       {
         path: 'gift/:str(\\d+)',
-        component: () => import('@/views/MaterialModule/gift'),
+        component: () => import('@/views/LiveModule/MaterialSet/giftSet'),
         name: 'gift',
         meta:{ title: '直播—礼物', icon: '' , activeMenu: '/live/list'},
         hidden: true
