@@ -42,7 +42,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let headers = {
     // 'Content-Type': 'application/json'
   };
-  headers.token = 'sfsfsd';
+  headers.token = token;
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();
     for (let key in data) {
