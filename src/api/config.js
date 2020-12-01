@@ -147,7 +147,7 @@ const apis = {
 
 
   // 账户管理
-  userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
+  userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
   getSonInfo: ['/100/v3/users/child/get-head-info', 'POST', 'mock'], // 子账号tab页头部信息接口 Jia.li
   childExport: ['/100/v3/users/child/export', 'POST', 'mock'], // 子账号列表导出接口 Jia.li
   getSonList: ['/100/v3/users/child/get-list', 'POST', 'mock'], // 获取子账号列表信息 Jia.li

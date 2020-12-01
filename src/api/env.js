@@ -13,6 +13,7 @@ let staticBaseUrl; // 静态图片展示地址
 let staticLinkVo = {
   kf: 'http://webim.qiao.baidu.com//im/index?siteid=113762&ucid=2052738',
   aliQr: '//aliqr.e.vhall.com/qr.png?t=',
+  uploadBaseUrl: '//t-alistatic01.e.vhall.com/upload/'
 };
 let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
 let BASE_URL;

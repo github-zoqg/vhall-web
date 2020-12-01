@@ -4,7 +4,7 @@
     v-bind="$props"
     :headers="{token: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc`}"
     :data="{
-      path: 'img_url',
+      path: 'sys/img_url',
       type: 'image',
     }"
     name="resfile"

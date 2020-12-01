@@ -70,7 +70,7 @@ export default {
     }
   },
   mounted() {
-    let account_info = sessionOrLocal.get('account_info');
+    let account_info = sessionOrLocal.get('userInfo');
     if(account_info !== null) {
       this.accountInfo = JSON.parse(account_info);
     }

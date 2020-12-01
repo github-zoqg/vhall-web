@@ -3,14 +3,14 @@
     <div class="sidebar-logo-container" :class="{'collapse':!sidebar.opened}">
       <transition name="sidebarLogoFade">
         <router-link v-if="!sidebar.opened" key="collapse" class="sidebar-logo-link" to="/">
-          <img v-if="logo" src="../../../common/images/logo.png" class="sidebar-logo">
+          <img v-if="logo" :src="logo" class="sidebar-logo">
         </router-link>
         <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-          <img v-if="logo" src="../../../common/images/logo.png" class="sidebar-logo">
+          <img v-if="logo" :src="logo" class="sidebar-logo">
         </router-link>
       </transition>
       <!-- 是否收缩按钮 -->
-      <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+      <hamburger :is-active="sidebar.opened" :class="`hamburger-container ${sidebar.opened ? 'right' : 'left' }`" @toggleClick="toggleSideBar" />
     </div>
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -33,6 +33,7 @@
 <script>
 import SidebarItem from './SidebarItem';
 import Hamburger from '../Hamburger/index.vue';
+import Env from '@/api/env.js';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   components: {
@@ -45,7 +46,7 @@ export default {
         opened: true,
         withoutAnimation: false
       },
-      logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
+      logo: null
     };
   },
   computed: {
@@ -70,25 +71,15 @@ export default {
       this.sidebar.opened = !this.sidebar.opened;
       sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
       this.$EventBus.$emit('hamburger', this.sidebar.opened);
-    },
-    getUserInfo() {
-      // 控制台-账户信息页需要，所有页面都依赖
-      this.$fetch('getInfo', {
-        scene_id: 2
-      }).then(res =>{
-        if(res.code === 200 && res.data) {
-          sessionOrLocal.set('account_info', JSON.stringify(res.data));
-        } else {
-          sessionOrLocal.set('account_info', null);
-        }
-      });
     }
   },
   mounted() {
+    // 从缓存中获取控制台图片
+    let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+    this.logo = userInfo.user_extends ? Env.staticLinkVo.uploadBaseUrl + userInfo.user_extends.logo : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
     });
-    this.getUserInfo();
   },
   destroyed() {
   }
@@ -129,11 +120,17 @@ export default {
 /*收缩按钮部分*/
 .hamburger-container {
   position: absolute;
-  right: 0;
+  top: calc(50% - 16px);
   line-height: 32px;
   height: 32px;
   cursor: pointer;
   transition: background .3s;
   -webkit-tap-highlight-color:transparent;
+  &.right {
+    right: 0;
+  }
+  &.left {
+    left: 0;
+  }
 }
 </style>

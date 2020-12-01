@@ -109,7 +109,7 @@ export default {
       console.log('uploadPreview', file);
     },
     initComp() {
-      let account_info = sessionOrLocal.get('account_info');
+      let account_info = sessionOrLocal.get('userInfo');
       if(account_info !== null) {
         let accountInfo = JSON.parse(account_info);
         this.baseSetForm = accountInfo;
