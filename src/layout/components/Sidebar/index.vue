@@ -24,7 +24,7 @@
         mode="vertical"
         class="el-menu-reset"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path"/>
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -71,6 +71,9 @@ export default {
       this.sidebar.opened = !this.sidebar.opened;
       sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
       this.$EventBus.$emit('hamburger', this.sidebar.opened);
+    },
+    changeImg() {
+      console.log(111111111111);
     }
   },
   mounted() {

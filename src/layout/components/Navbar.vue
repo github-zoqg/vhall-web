@@ -9,18 +9,24 @@
       </div>
       <!-- 帮助中心 -->
       <div class="right-menu-item">
-        <i class="el-icon-message-solid"></i>
+        <span>
+             <icon icon-class="saasicon_help_m"></icon>
+          </span>
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
         <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload > 0">
-          <i class="el-icon-message-solid" @click.prevent.stop="toDownloadPage"></i>
+          <span @click.prevent.stop="toDownloadPage">
+             <icon icon-class="saasicon_download"></icon>
+          </span>
         </el-badge>
       </div>
       <!-- 消息中心 -->
       <div class="right-menu-item">
         <el-badge :value="unread_num" :max="99" class="item" :hidden="!unread_num>0">
-          <i class="el-icon-message-solid" @click.prevent.stop="toMsgPage"></i>
+          <span @click.prevent.stop="toMsgPage">
+             <icon icon-class="saasicon_bell_m"></icon>
+          </span>
         </el-badge>
       </div>
       <div class="right-menu-item">
