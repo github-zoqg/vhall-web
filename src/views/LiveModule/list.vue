@@ -46,7 +46,7 @@
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
           <div class="top">
-            <span class="liveTag">{{item | liveTag}}</span>
+            <span class="liveTag"><label class="live-status"><img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
               {{item.pv | unitCovert}}
@@ -316,6 +316,14 @@ export default {
           border-radius: 20px;
           position: relative;
           z-index: 2;
+        }
+        .live-status{
+         padding: 5px;
+          img{
+            margin:6px 7px;
+            width: 8px;
+            height: 8px;
+          }
         }
         .hot{
           position: absolute;

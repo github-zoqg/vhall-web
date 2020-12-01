@@ -30,6 +30,7 @@
               <el-input
                 placeholder="请输入密码"
                 maxlength="30"
+                type="password"
                 v-model="loginForm.password">
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                 <i slot="suffix" class="el-input__icon el-icon-view"></i>
@@ -130,6 +131,7 @@
                 <el-input
                   placeholder="设置密码(6-30个字符)"
                   maxlength="30"
+                  type="password"
                   v-model="registerForm.password">
                   <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                   <i slot="suffix" class="el-input__icon el-icon-view"></i>
@@ -235,7 +237,7 @@ export default {
       if (this.checkMobile() && this.mobileKey) {
         this.$fetch('sendCode', {
           type: 1,
-          phone: this.dynamicForm.phoneNumber,
+          data: this.dynamicForm.phoneNumber,
           validate: this.mobileKey,
           scene_id: 7
         }).then(() => {

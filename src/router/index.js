@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import NProgress from 'nprogress';
+// import NProgress from 'nprogress';
 Vue.use(VueRouter);
 
 // 引入布局层
@@ -16,6 +16,10 @@ const v3Routes = [
   {
     path: '/register',
     component: () => import('@/views/login')
+  },
+  {
+    path: '/forgetPassword',
+    component: () => import('@/views/forgetPassword')
   },
   {
     path: '/videoTailoring',
@@ -635,12 +639,12 @@ const router = new VueRouter({
   scrollBehavior: () => ({ y: 0 }),
   routes: v3Routes
 });
-router.beforeEach((to, from, next) => {
-  NProgress.start();
-  next();
-});
-router.afterEach(transition => {
-  console.log(transition);
-  NProgress.done();
-});
+// router.beforeEach((to, from, next) => {
+//   NProgress.start();
+//   next();
+// });
+// router.afterEach(transition => {
+//   console.log(transition);
+//   NProgress.done();
+// });
 export default router;
