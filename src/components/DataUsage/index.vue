@@ -89,13 +89,13 @@
 import upVersion from './components/upversion';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
-  // watch: {
-  //   userId: {
-  //     handler() {
-  //       this.getVersion();
-  //     }
-  //   }
-  // },
+  watch: {
+    userId: {
+      handler() {
+        this.getVersion();
+      }
+    }
+  },
   data() {
     return {
       title: '流量包',
@@ -111,12 +111,12 @@ export default {
     upVersion
   },
   created() {
-    this.userId = JSON.parse(sessionOrLocal.get(userId));
-    this.getVersion();
+    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+    // this.getVersion();
   },
   methods: {
     getVersion() {
-      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+      this.$fetch('getVersionInfo', { user_id: this.userInfo.user_id}).then(res => {
         this.userInfo = res.data;
       }).catch(e=>{
         console.log(e);
