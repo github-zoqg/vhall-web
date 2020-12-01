@@ -173,7 +173,7 @@ const apis = {
 
 
   //财务中心
-  getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
+  getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息
   getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
   getFlowInfo: ['/104/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
   getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单

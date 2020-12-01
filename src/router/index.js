@@ -46,6 +46,19 @@ const v3Routes = [
     ]
   },
   {
+    path: '/home',
+    component: Layout,
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import('@/views/FirstPage/index.vue'),
+        meta: { title: '首页', icon: 'el-icon-s-home' }
+      }
+    ]
+  },
+  {
     path: '/live',
     component: Layout,
     redirect: '/live/list',

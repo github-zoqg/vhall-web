@@ -103,7 +103,7 @@ export default {
   },
   mounted() {
     // this.getUserVersion();
-    this.getLiveList();
+    // this.getLiveList();
   },
   methods: {
     // 页面跳转
