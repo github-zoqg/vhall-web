@@ -9,6 +9,8 @@
           <img v-if="logo" src="../../../common/images/logo.png" class="sidebar-logo">
         </router-link>
       </transition>
+      <!-- 是否收缩按钮 -->
+      <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     </div>
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -30,9 +32,13 @@
 
 <script>
 import SidebarItem from './SidebarItem';
+import Hamburger from '../Hamburger/index.vue';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
-  components: { SidebarItem },
+  components: {
+    SidebarItem,
+    Hamburger
+  },
   data() {
     return {
       sidebar: {
@@ -59,6 +65,12 @@ export default {
     }
   },
   methods: {
+    // 开启或者关闭 左侧导航部分
+    toggleSideBar() {
+      this.sidebar.opened = !this.sidebar.opened;
+      sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
+      this.$EventBus.$emit('hamburger', this.sidebar.opened);
+    },
     getUserInfo() {
       // 控制台-账户信息页需要，所有页面都依赖
       this.$fetch('getInfo', {
@@ -113,5 +125,15 @@ export default {
       margin-right: 0;
     }
   }
+}
+/*收缩按钮部分*/
+.hamburger-container {
+  position: absolute;
+  right: 0;
+  line-height: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: background .3s;
+  -webkit-tap-highlight-color:transparent;
 }
 </style>

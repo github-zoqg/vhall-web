@@ -57,7 +57,6 @@ export function customTabCompType(type) {
   return filter(type,types);
 }
 
-
 function filter(type,types){
 	if(!type){
 		return types;

@@ -118,7 +118,7 @@ const apis = {
   getUnreadNum: ['/102/v3/commons/msgcenter/unread-num', 'POST', 'mock'], // 查询消息未读数 jia.li
   executeUseRead: ['/102/v3/commons/msgcenter/batch-read', 'POST', 'mock'], // 标记已读 jia.li
   // 文件上传(图片)
-  uploadImage: ['/102/v3/commons/upload/index', 'POST', 'mock'], // 文件上传（图片） jia.li
+  uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li
 
   // 回放模块
   playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang

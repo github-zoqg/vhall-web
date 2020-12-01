@@ -42,7 +42,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let headers = {
     // 'Content-Type': 'application/json'
   };
-  headers.token = token;
+  headers.token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc";
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();
     for (let key in data) {

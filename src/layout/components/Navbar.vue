@@ -1,7 +1,5 @@
 <template>
   <div class="navbar">
-    <!-- 是否收缩按钮 -->
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     <!-- 面包屑 -->
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
@@ -44,13 +42,11 @@
 
 <script>
 import Breadcrumb from './Breadcrumb/index.vue';
-import Hamburger from './Hamburger/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
 
 export default {
   components: {
-    Breadcrumb,
-    Hamburger
+    Breadcrumb
   },
   data() {
     return {
@@ -77,12 +73,6 @@ export default {
         console.log(e);
         this.unread_num = 0;
       });
-    },
-    // 开启或者关闭 左侧导航部分
-    toggleSideBar() {
-      this.sidebar.opened = !this.sidebar.opened;
-      sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
-      this.$EventBus.$emit('hamburger', this.sidebar.opened);
     },
     logout() {
       /*this.$fetch('loginOut', {}).then(res =>{
@@ -118,14 +108,6 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-}
-.hamburger-container {
-  line-height: 32px;
-  height: 32px;
-  float: left;
-  cursor: pointer;
-  transition: background .3s;
-  -webkit-tap-highlight-color:transparent;
 }
 .breadcrumb-container {
   float: left;
