@@ -11,7 +11,7 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" @click="addGift" round>创建</el-button>
-      <el-button round>批量删除</el-button>
+      <el-button round @click="batchDel">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="'请输入商品名称'"
@@ -22,8 +22,18 @@
       </search-area>
     </div>
     <el-card class="question-list">
-      <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-       :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
+      <table-list
+        ref="tableList"
+        :manageTableData="tableData"
+        :tabelColumnLabel="tabelColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :width="btnsWidth"
+        :totalNum="total"
+        @onHandleBtnClick='onHandleBtnClick'
+        @getTableList="getTableList"
+        @changeTableCheckbox="changeTableCheckbox"
+        @switchChange="onSwitchChange"
+      >
       </table-list>
     </el-card>
   </div>
@@ -37,16 +47,18 @@ export default {
     return {
       formData: {},
       imageUrl: '',
-      total: 100,
+      checkedGoodsId: '',
+      total: 16,
+      btnsWidth: 230,
       searchAreaLayout: [
         {
-          questionName: ''
+          key: 'questionName'
         }
       ],
       tabelColumn: [
         {
           label: '商品ID',
-          key: 'id',
+          key: 'good_id',
         },
         {
           label: '图片',
@@ -62,7 +74,7 @@ export default {
         },
         {
           label: '优惠价',
-          key: 'solePrice',
+          key: 'discount_price',
         },
         {
           label: '上下架',
@@ -72,30 +84,43 @@ export default {
       tableRowBtnFun: [
        {name:'编辑', methodName: 'edit'},{name:'复制', methodName: 'cope'},{name:'删除', methodName: 'del'}
       ],
-      tableData: [
-        {
-          id: '12',
-          solePrice: '49.99',
-          watch: false,
-          name: '请输入000',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        },
-        {
-          id: '13',
-          watch: true,
-          name: '请输入111',
-          solePrice: '59.99',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ]
+      tableData: []
     };
   },
   components: {
     PageTitle
   },
+  mounted() {
+    this.getTableList();
+  },
   methods: {
+    onSwitchChange(option) {
+      if(option.watch) {
+        // 上架处理
+        this.$fetch('goodsEnable', {
+          webinar_id: this.$route.params.str,
+          goods_id: option.good_id
+        }).then(res => {
+          this.$message.success("上架设置成功！");
+          console.log(res);
+        }).catch(err => {
+          this.$message.error("上架设置失败！");
+          console.log(err);
+        });
+      } else {
+        // 下架处理
+        this.$fetch('goodsDisable', {
+          webinar_id: this.$route.params.str,
+          goods_id: option.good_id
+        }).then(res => {
+          this.$message.success("下架设置成功！");
+          console.log(res);
+        }).catch(err => {
+          this.$message.error("下架设置失败！");
+          console.log(err);
+        });
+      }
+    },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
@@ -107,25 +132,90 @@ export default {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
+        this.$refs.tableList.clearSelect();
       }
-      let obj = Object.assign({}, pageInfo, formParams);
+      let obj = {
+        ...pageInfo,
+        keyword: formParams.questionName,
+        webinar_id: this.$route.params.str
+      };
+      this.$fetch('goodsGet', obj).then(res => {
+        this.tableData = res.data.goods_list;
+        this.addCover();
+      }).catch(e => {
+        console.log(e);
+      });
+    },
+    // 为每个商品设置显示的封面
+    addCover() {
+      this.tableData.length &&
+      this.tableData.forEach(item => {
+        item.img = item.img_list.find(item => item.is_cover) > -1 ?
+          item.img_list.find(item => item.is_cover).img_url :
+          item.img_list[0].img_url;
+      });
     },
     // 复制
     cope(that, {rows}) {
-      console.log('复制', rows);
+      that.$fetch('goodsCopy', {
+        webinar_id: that.$route.params.str,
+        goods_id: rows.good_id
+      }).then(res => {
+        that.$message.success("复制成功！");
+        that.getTableList();
+        console.log(res);
+      }).catch(err => {
+        that.$message.error("复制失败！");
+        console.log(err);
+      });
     },
     // 编辑
     edit(that, {rows}) {
-      console.log('编辑', rows);
+      that.$router.push({
+        name: 'editProduct',
+        query: {
+          goodId: rows.good_id
+        }
+      });
     },
     // 删除
     del(that, {rows}) {
-      console.log('删除', rows);
+      that.$fetch('goodsBatchDel', {
+        webinar_id: that.$route.params.str,
+        goods_id: rows.good_id
+      }).then(res => {
+        that.$message.success("删除成功！");
+        that.getTableList();
+        console.log(res);
+      }).catch(err => {
+        that.$message.error("删除失败！");
+        console.log(err);
+      });
     },
     // 选中
     changeTableCheckbox(val) {
       console.log(val);
+      val &&
+      val.length &&
+      (this.checkedGoodsId = val.reduce((accumulator, currentItem) => {
+        return accumulator + currentItem.good_id + ',';
+      }, ''));
+      this.checkedGoodsId = this.checkedGoodsId.substring(0, this.checkedGoodsId.length - 1);
+    },
+    // 批量删除
+    batchDel() {
+      this.$fetch('goodsBatchDel', {
+        webinar_id: this.$route.params.str,
+        goods_id: this.checkedGoodsId
+      }).then(res => {
+        this.$message.success("批量删除成功！");
+        this.checkedGoodsId = '',
+        this.getTableList();
+        console.log(res);
+      }).catch(err => {
+        this.$message.error("批量删除失败！");
+        console.log(err);
+      });
     },
     // 新建礼物
     addGift() {

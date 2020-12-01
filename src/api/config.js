@@ -75,6 +75,19 @@ const apis = {
   warnDelete: ['/99/v3/webinars/warm/delete', 'POST', 'mock'], // 删除暖场视频
   warnEdit: ['/99/v3/webinars/warm/edit', 'POST', 'mock'], // 修改暖场视频封面图片接口
 
+  // 商品
+  goodsGet: ['/101/v3/interacts/goods/get-webinar-goods-list', 'GET', 'mock'], // 获取活动下商品列表
+  goodsEnable: ['/101/v3/interacts/goods/enable-webinar-goods', 'POST', 'mock'], // 商品上架
+  goodsDisable: ['/101/v3/interacts/goods/disable-webinar-goods', 'POST', 'mock'], // 商品下架
+  goodsCopy: ['/101/v3/interacts/goods/clone-goods', 'POST', 'mock'], // 复制一个商品
+  goodsInfoGet: ['/101/v3/interacts/goods/get-webinar-goods-info', 'GET', 'mock'], // 查看活动下某个商品详情
+  goodsCreate: ['/101/v3/interacts/goods/create-goods', 'POST', 'mock'], // 新建活动展示商品
+  goodsUpdate: ['/101/v3/interacts/goods/update-goods', 'POST', 'mock'], // 更新商品信息
+  goodsImgIdCreate: ['/101/v3/interacts/goods/generate-goods-image-id', 'POST', 'mock'], // 生成商品图片ID
+  goodsBatchDel: ['/101/v3/interacts/goods/batch-delete-goods', 'POST', 'mock'], // 批量删除活动商品
+  goodsImgDel: ['/101/v3/interacts/goods/delete-goods-img', 'POST', 'mock'], // 删除活动商品图片
+  goodsSetCover: ['/101/v3/interacts/goods/set-goods-cover', 'POST', 'mock'], // 设置商品默认封面
+
   // 功能配置
   planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li
   planFunctionEdit: ['/102/config-type/up_config', 'POST', 'mock'], // 修改配置项 jia.li
@@ -206,7 +219,7 @@ const apis = {
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 jian.chang
+  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getReportInfo: ['/domian/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
   getCustomMenuInfo: ['/domian/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
