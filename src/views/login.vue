@@ -285,7 +285,7 @@ export default {
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
-        window.sessionStorage.setItem('token', JSON.stringify(res.data.token));
+        window.sessionStorage.setItem('token', res.data.token);
         this.$router.push({path: '/'});
       });
     },

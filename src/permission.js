@@ -10,7 +10,7 @@ const whiteList = ['/login', '/register'];
 router.beforeEach((to, from, next) => {
     NProgress.start();
     let token = window.sessionStorage.getItem('token');
-    if (JSON.parse(token)) {
+    if (token) {
       // 已登录不准跳转登录页
       console.log('11111111', to.path, '当前页面');
       if (to.path === '/login') {

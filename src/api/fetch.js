@@ -10,7 +10,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
   sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc");
-  const token = JSON.parse(window.sessionStorage.getItem('token')) || null;
+  const token = window.sessionStorage.getItem('token') || null;
   const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
   let data = Object.assign({vc_cookie, platform: 17, need_sign: 1}, data1);
   let formData = null;
