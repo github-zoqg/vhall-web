@@ -3,7 +3,7 @@
     <div class="date__query__form">
       <!-- 日期选择器 -->
       <el-date-picker
-        v-model="searchForm.timeStr"
+        v-model="timeStr"
         value-format="yyyy-MM-dd"
         type="daterange"
         range-separator="至"
@@ -33,15 +33,19 @@ export default {
         }
       ],
       myChart: null,
-      searchForm: {
-        timeStr: ''
-      }
+      timeStr: null
     };
   },
   mounted() {
   },
   methods: {
     initComp() {
+      // 初始化设置日期为最近一周
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      // 按时间查询
       this.getDateInfo();
     },
     getDateInfo() {

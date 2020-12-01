@@ -7,6 +7,7 @@ import { copy } from './utils/utils';
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
+import './permission';
 // 七巧板组件库，直播间内使用
 import vhallSaas from './tangram/buTemplates/index.js';
 Vue.use(ElementUI);
@@ -33,7 +34,6 @@ Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 Vue.prototype.$EventBus = EventBus;
 Vue.prototype.$copyText = copy;
-
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';

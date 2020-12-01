@@ -32,8 +32,8 @@
         <el-tab-pane label="角色" name="roleList"></el-tab-pane>
       </el-tabs>
       <!-- 列表区域 -->
-      <son-list ref="sonListComp" v-show="tabType === 'sonList'" :vipType="sonInfo.vipInfo.type"></son-list>
-      <role-list ref="roleListComp" v-show="tabType === 'roleList'"></role-list>
+      <son-list ref="sonListComp" v-if="tabType === 'sonList'" :vipType="sonInfo.vipInfo.type"></son-list>
+      <role-list ref="roleListComp" v-if="tabType === 'roleList'"></role-list>
     </div>
   </div>
 </template>

@@ -40,8 +40,8 @@
         <el-tab-pane label="直播统计" name="liveData"></el-tab-pane>
       </el-tabs>
       <!-- 列表区域 -->
-      <date-data ref="dateDataComp" v-show="tabType === 'dateData'"></date-data>
-      <live-data ref="liveDataComp" v-show="tabType === 'liveData'"></live-data>
+      <date-data ref="dateDataComp" v-if="tabType === 'dateData'"></date-data>
+      <live-data ref="liveDataComp" v-if="tabType === 'liveData'"></live-data>
     </div>
   </div>
 </template>
@@ -60,7 +60,7 @@ export default {
   },
   data() {
     return {
-      tabType: null,
+      tabType: 'dateData',
       sonVo: {
         child_id: '',
         is_dynamic: null,
@@ -78,7 +78,9 @@ export default {
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
-      this.$refs[`${this.tabType}Comp`].initComp();
+      this.$nextTick(() => {
+        this.$refs[`${this.tabType}Comp`].initComp(this.sonVo);
+      });
     },
     sonDetailGet() {
       this.$fetch('sonDetailGet', {}).then(res=>{
@@ -86,6 +88,9 @@ export default {
           this.sonVo = res.data || {
             vip_Info: {}
           };
+          if (this.sonVo.vip_Info) {
+            this.getUserPayDetail();
+          }
         } else {
           this.sonVo = {
             vip_Info: {}
@@ -96,6 +101,21 @@ export default {
         this.sonVo = {
           vip_Info: {}
         };
+      });
+    },
+    getUserPayDetail() {
+      this.$fetch(this.sonVo.vip_Info.type > 0 ? 'getBusinessList' : 'getAccountList', {
+        account_id: 1231, // b端账号id
+        type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
+      }).then(res=>{
+        let costList = res.data.list;
+        costList.map(item => {
+          item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
+          item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
+        });
+        this.tableList = costList;
+      }).catch(e=>{
+        console.log(e);
       });
     },
     copy(text) {

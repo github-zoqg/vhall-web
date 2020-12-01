@@ -153,10 +153,14 @@ function is360 () {
 // 测试mime
 function _mime (option, value) {
   let mimeTypes = navigator.mimeTypes || [];
-  for (let mt of mimeTypes) {
-    if (mimeTypes[mt][option] === value) {
-      return true;
+  try {
+    for (let mt of mimeTypes) {
+      if (mimeTypes[mt][option] === value) {
+        return true;
+      }
     }
+  } catch (error) {
+    return false;
   }
   return false;
 }

@@ -108,15 +108,15 @@ export default {
   data(){
     return {
       playerProps: {
-        accountId: 16422750,
+        accountId: 16422680,
         nickName: '123',
         appId: 'fd8d3653',
-        token: 'access:fd8d3653:c1b02f653cc7fabf',
+        token: 'access:fd8d3653:a5dcd89f25b9edf4',
         type: 'vod',
-        roomId: 'lss_8018578c',
+        roomId: 'lss_42c46e82',
         channel_id: 'ch_93f8b149',
         vodOption: {
-          recordId: '40fc09d4'
+          recordId: 'b6211362'
         },
         openPlayerUI: false,
         playerInfo: {}
@@ -171,10 +171,7 @@ export default {
       // setTimeout(()=>{
         this.docSDKReady = true;
       // }, 3000);
-
-
       this.docsdk = docsdk;
-      this.docsdk;
       this.docsdk.on(window.VHDocSDK.Event.PAGE_CHANGE, event => {
         /* event内容
         {
@@ -243,6 +240,7 @@ export default {
       this.$confirm('删除后章节不可恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
         type: 'warning'
       }).then(()=>{
         this.tableData = this.tableData.filter(item=>{

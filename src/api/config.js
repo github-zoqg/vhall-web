@@ -10,6 +10,8 @@ const apis = {
   editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
   createGiftInfo: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 创建共享库礼品信息
   deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
+  liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
+
   //广告推荐
   getAdvList: ['/101/v3/interacts/recommend-adv/get-adv-list', 'GET', 'mock'], //获取广告列表
   getActivityList: ['/101/v3/interacts/recommend-adv/database-to-activity', 'POST', 'mock'], //从资料库保存到活动
@@ -123,22 +125,22 @@ const apis = {
   uploadKeywordAdd: ['/101/v3/interacts/keyword/upload-file-and-create', 'POST', 'mock'], // 上传关键词文件并添加关键词 jia.li
   getKeywordTemplate: ['/101/v3/interacts/keyword/get-template-url', 'POST', 'mock'], // 获取关键词模板地址 jia.li
   // 消息管理
-  getMsgList: ['/102/v3/msgs/msg/list', 'POST', 'mock'], // 站内消息列表接口 jia.li
-  msgDel: ['/102/v3/msgs/msg/delete', 'POST', 'mock'], // 站内消息删除接口 jia.li
-  getMsgInfo: ['/102/v3/msgs/msg/get-info', 'POST', 'mock'], // 站内消息详情接口 jia.li
-  getUnreadNum: ['/102/v3/msgs/msg/unread-num', 'POST', 'mock'], // 查询消息未读数 jia.li
-  executeUseRead: ['/102/v3/msgs/msg/use-read', 'POST', 'mock'], // 标记已读 jia.li
+  getMsgList: ['/102/v3/commons/msgcenter/list', 'POST', 'mock'], // 站内消息列表接口 jia.li
+  msgDel: ['/102/v3/commons/msgcenter/delete', 'POST', 'mock'], // 站内消息删除接口 jia.li
+  getMsgInfo: ['/102/v3/commons/msgcenter/get-info', 'POST', 'mock'], // 站内消息详情接口 jia.li
+  getUnreadNum: ['/102/v3/commons/msgcenter/unread-num', 'POST', 'mock'], // 查询消息未读数 jia.li
+  executeUseRead: ['/102/v3/commons/msgcenter/batch-read', 'POST', 'mock'], // 标记已读 jia.li
   // 文件上传(图片)
-  uploadImage: ['/102/v3/uploads/upload/index', 'POST', 'mock'], // 文件上传（图片） jia.li
+  uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li
 
   // 回放模块
   playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang
   playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
   playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
   //首页
-  getInfo: ['/100/v3/users/user/get-info', 'POST', 'mock'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
+  getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
   // 登录
-  loginInfo: ['/logins/v3/users/user/login', 'POST'],  //登录接口
+  loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口
   loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
   loginCheck: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
   sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口
@@ -158,7 +160,7 @@ const apis = {
 
 
   // 账户管理
-  userEdit: ['/100/v3/users/user/edit', 'POST', 'mock'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
+  userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志）
   getSonInfo: ['/100/v3/users/child/get-head-info', 'POST', 'mock'], // 子账号tab页头部信息接口 Jia.li
   childExport: ['/100/v3/users/child/export', 'POST', 'mock'], // 子账号列表导出接口 Jia.li
   getSonList: ['/100/v3/users/child/get-list', 'POST', 'mock'], // 获取子账号列表信息 Jia.li
@@ -184,13 +186,13 @@ const apis = {
 
 
   //财务中心
-  getVersionInfo: ['/104/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
+  getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息
   getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
   getFlowInfo: ['/104/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
   getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单
   getFlowPay: ['/104/v3/business-total/user-flow-pay', 'GET', 'mock'],  //获取流量-消费账单
   getAccountList: ['/104/v3/business-total/user-online-pay-detail', 'GET', 'mock'], //获取财务总览-并发-消费账单  接口参数少一个字段(标题)
-  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单   接口参数少一个字段(标题)
+  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]   接口参数少一个字段(标题)
   orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
   orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
   orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
@@ -235,6 +237,13 @@ const apis = {
   checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
   resetPassword: ['/100/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回接口 Jia.li
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
+
+  // 下载中心
+  downloadedEdit: ['/100/v3/users/homepage/get-info', 'POST', 'mock'], // 下载中心-删除修改为已下载
+  downloadedDel: ['/102/v3/commons/downcenter/delete', 'POST', 'mock'], // 下载中心-删除
+  downloadedList: ['/102/v3/commons/downcenter/list', 'POST', 'mock'], // 下载中心-列表
+  downloadedReload: ['/102/v3/commons/downcenter/regenerate', 'POST', 'mock'], // 下载中心-重新生成 Jia.li
+
 };
 
 const getApi = api => {

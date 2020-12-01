@@ -721,7 +721,11 @@ export default {
       eve.dataTransfer.setData('showCompIndex', index);
     },
     showCompsItemDel(eve, index) {
-      this.$confirm(`确认删除该项？`).then(res => {
+      this.$confirm(`确认删除该项？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box'
+      }).then(res => {
         console.log('删除', res);
         this.modShowHtmlList.splice(index, 1);
         // 每次删除后，默认展示可编辑面板为第一个

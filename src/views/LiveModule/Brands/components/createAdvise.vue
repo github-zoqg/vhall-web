@@ -149,6 +149,7 @@ export default {
       this.$confirm('是否同步到资料库?', '提示', {
           confirmButtonText: '同步',
           cancelButtonText: '不同步',
+          customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
           this.advertisement.is_sync = 0;

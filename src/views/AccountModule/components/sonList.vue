@@ -245,6 +245,7 @@ export default {
     sonDel(that, { rows }) {
       that.$confirm('正在直播或有未提现收益的账号不会被删除，确定删除？', '提示', {
         confirmButtonText: '确定',
+        customClass: 'zdy-message-box',
         cancelButtonText: '取消'
       }).then(() => {
         that.$fetch('sonDel', {

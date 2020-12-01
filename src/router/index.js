@@ -15,7 +15,7 @@ const v3Routes = [
   },
   {
     path: '/register',
-    component: () => import('@/views/register')
+    component: () => import('@/views/login')
   },
   {
     path: '/videoTailoring',
@@ -34,6 +34,19 @@ const v3Routes = [
   },
   {
     path: '/',
+    component: Layout,
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: () => import('@/views/FirstPage/index.vue'),
+        meta: { title: '首页', icon: 'el-icon-s-home' }
+      }
+    ]
+  },
+  {
+    path: '/home',
     component: Layout,
     redirect: '/home',
     children: [
@@ -234,7 +247,7 @@ const v3Routes = [
       },
       {
         path: 'gift/:str(\\d+)',
-        component: () => import('@/views/MaterialModule/gift'),
+        component: () => import('@/views/LiveModule/MaterialSet/giftSet'),
         name: 'gift',
         meta:{ title: '直播—礼物', icon: '' , activeMenu: '/live/list'},
         hidden: true
@@ -411,7 +424,7 @@ const v3Routes = [
         meta: { title: '设置中心', icon: 'el-icon-setting' }
       },
       {
-        path: '/chat/:str(\\d+)',
+        path: 'chat/:str(\\d+)',
         component: () => import('@/views/SettingModule/chat'),
         name: 'chat',
         meta:{ title: '聊天严禁词', icon: '' , activeMenu: '/setting/info'},
@@ -446,7 +459,7 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/logo/:str(\\d+)',
+        path: 'logo/:str(\\d+)',
         component: () => import('@/views/SettingModule/logo'),
         name: 'logo',
         meta:{ title: '控制台标志', icon: '' , activeMenu: '/setting/info'},
