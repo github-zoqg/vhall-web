@@ -45,7 +45,7 @@ const apis = {
 
 
   // 直播模块
-  createLive: ['/99/v3/webinars/webinar/create', 'POST', 'mock'], // 活动创建/直播创建 jian.chang
+  createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
   liveList: ['/99/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang
   getWebinarInfo: ['/99/v3/webinars/webinar/info', 'POST', 'mock'], // 查询活动基础信息接口
   liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改
@@ -201,8 +201,8 @@ const apis = {
 
 
   // 直播间内
-  initiatorInfo: ['/101/v3/interacts/room/get-room-base-info', 'POST', 'mock'], // 获取房间信息 jian.chang
-  getInitiatorReportInfo: ['/domian/api/vss/initiator/report-info', 'POST'], // 获取上报信息 jian.chang
+  initiatorInfo: ['/v3/webinars/live/init', 'POST'], // 获取房间信息 jian.chang √
+  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'POST'], // 获取上报信息 jian.chang √
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang

@@ -9,7 +9,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let [api, method, mock] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
-  sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc");
+  sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
   const token = window.sessionStorage.getItem('token') || null;
   const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
   let data = Object.assign({vc_cookie, platform: 17, need_sign: 1}, data1);
