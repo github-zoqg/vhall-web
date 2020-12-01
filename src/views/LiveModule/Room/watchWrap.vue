@@ -803,10 +803,10 @@ export default {
     products
   },
   created() {
-    this.$loadingStatus = this.$loading({
-      background: 'rgba(0,0,0,0.5)',
-      text: '加载中'
-    });
+    // this.$loadingStatus = this.$loading({
+    //   background: 'rgba(0,0,0,0.5)',
+    //   text: '加载中'
+    // });
   },
   computed: {
     showOnline() {
@@ -1269,7 +1269,7 @@ export default {
           this.fetchMenuContent(index, menu);
         }
       } else {
-        const fmenu = this.menuList[0];
+        let fmenu = this.menuList[0];
         if (index == 0 && fmenu.type == 1) {
           this.fetchMenuContent(0, fmenu);
         }
@@ -1309,7 +1309,7 @@ export default {
         ...this.$route.query
       }).then(res => {
         if (res.code == 200) {
-          this.menuData = res.data || [];
+          this.menuData = res.data.list || [];
           if (this.menuData && this.menuData.length) {
             const chat = this.menuData.find(d => d.type == 3) || {};
             this.chatShow = chat.status || '';
@@ -1321,7 +1321,8 @@ export default {
             }
           });
           this.$nextTick(() => {
-            this.activeClick(0);
+            // TODO: 临时关闭
+            // this.activeClick(0);
           });
         }
       });
@@ -1400,6 +1401,7 @@ export default {
     // 获取用户信息
     getUerInfo() {
       this.$fetch('vssInfo', {
+        platform: 'pc',
         webinar_id: this.$route.params.il_id,
         ...this.$route.query
       }).then(res => {
