@@ -59,6 +59,7 @@
             </div>
             <div v-else-if="item.key === 'watch'">
               <el-switch
+                @change="switchChange(scope.row)"
                 v-model="scope.row.watch"
                 active-color="#ff4949"
                 inactive-color="#ccc">
@@ -76,7 +77,7 @@
           label="操作"
           align="center"
           v-if="isHandle"
-          width="width"
+          :width="width"
         >
           <template slot-scope="scope">
             <el-button
@@ -161,6 +162,11 @@ export default {
     // console.log('manageTableData', this.manageTableData);
   },
   methods: {
+    // 开关状态切换的回调
+    switchChange(option) {
+      this.$emit('switchChange', option);
+      console.log(option);
+    },
     isImg(_data) {
       if (['.png', '.jpg', 'jpeg'].includes(_data.substr(-4))) {
         return true;

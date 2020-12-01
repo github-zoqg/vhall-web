@@ -226,6 +226,13 @@ const v3Routes = [
         hidden: true
       },
       {
+        path: 'editProduct/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/components/addProduct'),
+        name: 'editProduct',
+        meta:{ title: '直播—编辑商品', icon: '' , activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'gift/:str(\\d+)',
         component: () => import('@/views/MaterialModule/gift'),
         name: 'gift',

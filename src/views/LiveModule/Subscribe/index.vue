@@ -252,12 +252,15 @@ export default {
             && (this.goodInfo = res.data.goods_list[0]);
 
           this.goodsList.forEach(good => {
-            good.goodImage = `
-              ${this.imageDomin}/
-              ${
-                good.img_list.find(img => img.is_cover).img_url
-              }
-            `;
+            const imgUrl = good.img_list.find(img => img.is_cover === '1');
+            if (imgUrl) {
+              good.goodImage = `
+                ${this.imageDomin}/
+                ${
+                  good.img_list.find(img => img.is_cover === '1').img_url
+                }
+              `;
+            }
           });
         }
       });
