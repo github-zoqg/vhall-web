@@ -16,7 +16,7 @@
       <!-- 右侧名片 -->
       <div class="account__panel--right">
         <div class="account--user">
-          <img src="../../common/images/avatar.jpg" class="user-advert" />
+          <icon icon-class="saaszizhanghao_tubiao" style="font-size: 56px;"></icon>
           <p class="account--title">{{accountInfo && accountInfo.nick_name ? accountInfo.nick_name : '--'}}</p>
           <p class="account--notice">{{accountInfo && accountInfo.position ? accountInfo.position : '--'}}</p>
         </div>
