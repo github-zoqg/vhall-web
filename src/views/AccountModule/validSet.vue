@@ -12,7 +12,7 @@
         </li>
       </ul>
       <div class="card--blue">
-        <el-button type="text" @click.prevent.stop="pwdShowHandle()">{{accountInfo && accountInfo.has_password>0 ? '修改' : '设置'}}</el-button>
+        <el-button type="text" @click.prevent.stop="bindShowHandle('pwd')">{{accountInfo && accountInfo.has_password>0 ? '修改' : '设置'}}</el-button>
       </div>
     </div>
     <div class="comp-card-one">
@@ -35,24 +35,19 @@
         <el-button type="text" @click.prevent.stop="bindShowHandle('email')">{{ accountInfo && accountInfo.email ? '修改' : '设置' }}</el-button>
       </div>
     </div>
-    <!-- 绑定邮箱/手机号 -->
-    <bind-phone-or-email  ref="bindPhoneOrEmail"></bind-phone-or-email>
-    <!-- 修改密码 -->
-    <set-password ref="setPassword" @changeOk="changeOkHandle"></set-password>
-
+    <!-- 绑定邮箱/手机号/修改密码 -->
+    <valid-set-dialog ref="validSetDialog" @changeOk="changeOkHandle"></valid-set-dialog>
   </div>
 </template>
 
 <script>
 import {sessionOrLocal} from "@/utils/utils";
-import BindPhoneOrEmail from './components/bindPhoneOrEmail';
-import SetPassword from  './components/setPassword';
+import ValidSetDialog from  './components/validSetDialog';
 
 export default {
   name: "validSet.vue",
   components: {
-    SetPassword,
-    BindPhoneOrEmail
+    ValidSetDialog
   },
   data() {
     return {
@@ -69,22 +64,8 @@ export default {
       }
     },
     bindShowHandle(type) {
-      let dialogIsEdit = false;
-      if (type === 'email') {
-        dialogIsEdit = this.accountInfo.email !== null && this.accountInfo.email !== undefined && this.accountInfo.email !== '';
-      }else if (type === 'phone') {
-        dialogIsEdit = this.accountInfo.phone !== null && this.accountInfo.phone !== undefined && this.accountInfo.phone !== '';
-      }
       this.$nextTick(() => {
-        this.$refs.bindPhoneOrEmail.initComp({
-          dialogIsEdit: dialogIsEdit,
-          dialogType: type
-        });
-      });
-    },
-    pwdShowHandle() {
-      this.$nextTick(() => {
-        this.$refs.setPassword.initComp(this.accountInfo);
+        this.$refs.validSetDialog.initComp(this.accountInfo, type);
       });
     },
     changeOkHandle() {
