@@ -41,20 +41,7 @@ const v3Routes = [
         path: 'home',
         name: 'Home',
         component: () => import('@/views/FirstPage/index.vue'),
-        meta: { title: '首页', icon: 'el-icon-s-home' }
-      }
-    ]
-  },
-  {
-    path: '/home',
-    component: Layout,
-    redirect: '/home',
-    children: [
-      {
-        path: 'home',
-        name: 'Home',
-        component: () => import('@/views/FirstPage/index.vue'),
-        meta: { title: '首页', icon: 'el-icon-s-home' }
+        meta: { title: '首页', icon: 'saasel-icon-v3-home', level: 1 }
       }
     ]
   },
@@ -63,19 +50,19 @@ const v3Routes = [
     component: Layout,
     redirect: '/live/list',
     name: 'Live',
-    meta: { title: '直播管理', icon: 'el-icon-video-camera' },
+    meta: { title: '直播管理', icon: 'saasel-icon-v3-lives', level: 1 },
     children: [
       {
         path: 'list',
         name: 'list',
         component: () => import('@/views/LiveModule/list'),
-        meta: { title: '直播列表', icon: 'table' }
+        meta: { title: '直播列表', level: 2 }
       },
       {
         path: 'edit',
         name: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: {webniarType: 'live', title: '创建直播', icon: 'table' , activeMenu: '/live/list'}
+        meta: {webniarType: 'live', title: '创建直播', level: 2, activeMenu: '/live/list'}
       },
       {
         path: 'vodEdit',
@@ -301,25 +288,25 @@ const v3Routes = [
     component: Layout,
     redirect: '/special/list',
     name: 'Special',
-    meta: { title: '专题管理', icon: 'el-icon-set-up' },
+    meta: { title: '专题管理', icon: 'saasel-icon-v3-projects', level: 1 },
     children: [
       {
         path: 'list',
         name: 'list',
         component: () => import('@/views/SpecialModule/list'),
-        meta: { title: '专题列表', icon: 'table' }
+        meta: { title: '专题列表', level: 2, activeMenu: '/special/list' }
       },
       {
         path: 'edit',
         name: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
-        meta: { title: '创建专题', icon: 'table' }
+        meta: { title: '创建专题', level: 2, activeMenu: '/special/list' }
       },
       {
         path: 'detail',
         name: 'detail',
         component: () => import('@/views/SpecialModule/components/preShow'),
-        meta: { title: '专题详情', icon: 'table', activeMenu: '/special/list'},
+        meta: { title: '专题详情', level: 2 , activeMenu: '/special/list'},
         hidden: true
       }
     ]
@@ -329,7 +316,7 @@ const v3Routes = [
     component: Layout,
     redirect: '/material/word',
     name: 'Material',
-    meta: { title: '资料管理', icon: 'el-icon-menu' },
+    meta: { title: '资料管理', icon: 'saasel-icon-v3-datas', level: 1 },
     children: [
       {
         path: 'word',
@@ -387,7 +374,7 @@ const v3Routes = [
     component: Layout,
     redirect: '/data/info',
     name: 'Data',
-    meta: { title: '数据中心', icon: 'el-icon-data-analysis' },
+    meta: { title: '数据中心', icon: 'saasel-icon-v3-charts' },
     children: [
       {
         path: 'info',
@@ -408,13 +395,13 @@ const v3Routes = [
     component: Layout,
     redirect: '/setting/info',
     name: 'Setting',
-    meta: { title: '设置中心', icon: 'el-icon-setting' },
+    meta: { title: '设置中心', icon: '' },
     children: [
       {
         path: 'info',
         name: 'info',
         component: () => import('@/views/SettingModule/setting.vue'),
-        meta: { title: '设置中心', icon: 'el-icon-setting' }
+        meta: { title: '设置中心', icon: 'saasel-icon-v3-settings' }
       },
       {
         path: 'chat/:str(\\d+)',
@@ -465,7 +452,7 @@ const v3Routes = [
     component: Layout,
     redirect: '/finance/info',
     name: 'Finance',
-    meta: { title: '财务中心', icon: 'el-icon-postcard' },
+    meta: { title: '财务中心', icon: 'saasel-icon-v3-financial' },
     children: [
       {
         path: 'info',
@@ -521,7 +508,7 @@ const v3Routes = [
     component: Layout,
     redirect: '/account/info',
     name: 'Account',
-    meta: { title: '账户管理', icon: 'el-icon-s-custom' },
+    meta: { title: '账户管理', icon: 'saasel-icon-v3-account' },
     children: [
       {
         path: 'info',

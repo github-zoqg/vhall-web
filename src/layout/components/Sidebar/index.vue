@@ -24,7 +24,7 @@
         mode="vertical"
         class="el-menu-reset"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path"/>
       </el-menu>
     </el-scrollbar>
   </div>
@@ -76,7 +76,9 @@ export default {
   mounted() {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-    this.logo = userInfo.user_extends ? Env.staticLinkVo.uploadBaseUrl + userInfo.user_extends.logo : '';
+    // TODO 临时模拟，后期需删除
+    userInfo.user_extends.logo = 'sys/img_url/e9/76/e9769042dd3762356798ef53adb35272.jpg';
+    this.logo = userInfo.user_extends ? Env.staticLinkVo.uploadBaseUrl + (userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
     });
@@ -103,12 +105,11 @@ export default {
   overflow: hidden;
   & .sidebar-logo-link {
     width: 224px;
-    height: 54px;
-    margin: 5px auto;
+    height: 64px;
     text-align: center;
     & .sidebar-logo {
       height: 100%;
-      width: auto;
+      width: 100%;
     }
   }
   &.collapse {
