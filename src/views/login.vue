@@ -29,6 +29,7 @@
             <el-form-item prop="password">
               <el-input
                 placeholder="请输入密码"
+                maxlength="30"
                 v-model="loginForm.password">
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                 <i slot="suffix" class="el-input__icon el-icon-view"></i>
@@ -39,7 +40,7 @@
             </div>
             <el-form-item class="login-checked">
               <el-checkbox v-model="remember">自动登录</el-checkbox>
-              <span>忘记密码</span>
+              <span @click="forgetPassword">忘记密码</span>
             </el-form-item>
             <div class="login-just">
               现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
@@ -47,8 +48,8 @@
             <div class="login-other">
               其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
               <div class="other-img" v-show="!isOpenOther">
-                <img src="../common/images/icon/qq.png" alt="">
-                <img src="../common/images/icon/wechat.png" alt="">
+                <img src="../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t.e.vhall.com/auth/login')">
+                <img src="../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t.e.vhall.com/auth/login')">
                 <img src="../common/images/icon/weibo.png" alt="">
               </div>
             </div>
@@ -152,19 +153,9 @@
 </template>
 <script>
 import footerSection from '../components/Footer/index';
-import { sessionOrLocal } from '../utils/utils';
+// import { sessionOrLocal } from '../utils/utils';
 export default {
   data() {
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'));
-      } else {
-        if (!(/^(\w){6,20}$/.test(value))) {
-          callback(new Error('请输入正确的密码'));
-        }
-        callback();
-      }
-    };
     var validatePhone = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入手机号'));
@@ -179,7 +170,6 @@ export default {
       remember: 0,
       isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
-        remember: 0,
         account: '',
         password: ''
       },
@@ -192,7 +182,7 @@ export default {
           { required: true, message: '请输入账号', trigger: 'blur' }
         ],
         password: [
-          { validator: validatePass, trigger: 'blur' }
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ],
         phoneNumber: [
           { validator: validatePhone, trigger: 'blur' }
@@ -226,9 +216,17 @@ export default {
     openOther() {
       this.isOpenOther = !this.isOpenOther;
     },
+    thirdLogin(url) {
+      window.location.href = url;
+    },
+    // 忘记密码
+    forgetPassword() {
+      this.$router.push({path: '/forgetPassword'});
+    },
     changeLogin(index) {
       this.isActive = parseInt(index);
-      this.callCaptcha();
+      this.isActive === 1 ? this.$refs['dynamicForm'].resetFields() : this.$refs['loginForm'].resetFields();
+      // this.callCaptcha();
       this.showCaptcha = false;
       this.errorMsgShow = '';
     },
@@ -248,7 +246,6 @@ export default {
     // 账号登录
     loginAccount() {
       if (this.isLogin) {
-        this.loginForm.remember = this.remember ? 1 : 0;
         this.login(this.loginForm);
       } else {
         this.$refs.loginForm.validate((valid) => {
@@ -279,13 +276,17 @@ export default {
       this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
         if (res.data.check_result) {
           this.isLogin = true;
+        } else {
+          this.login(this.loginForm);
         }
       });
     },
     login(params) {
       params.captcha = this.mobileKey;
+      params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
-        sessionOrLocal.set('token', JSON.stringify(res.data.token));
+        window.sessionStorage.setItem('token', JSON.stringify(res.data.token));
+        this.$router.push({path: '/'});
       });
     },
     registerAccount() {

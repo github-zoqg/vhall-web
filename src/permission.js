@@ -9,21 +9,32 @@ NProgress.configure({ showSpinner: false });
 const whiteList = ['/login', '/register'];
 router.beforeEach((to, from, next) => {
     NProgress.start();
-    if (JSON.parse(sessionOrLocal.get('token'))) {
-      console.log('1111111111111');
-      // next();
+    let token = window.sessionStorage.getItem('token');
+    if (JSON.parse(token)) {
+      // 已登录不准跳转登录页
+      console.log('11111111', to.path, '当前页面');
+      if (to.path === '/login') {
+          next({ path: '/' });
+          NProgress.done();
+          return;
+      }
+      // 登录状态跳转非登录页面
       //存在token
       // 获取用户信息
       fetch('getInfo', {scene_id: 2}).then(res => {
-        sessionOrLocal.set('userInfo', JSON.stringify(res.data));
-        sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        if(res.code === 200 && res.data) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+        } else {
+          sessionOrLocal.set('userInfo', null);
+        }
         next();
       }).catch(e=>{
         console.log(e);
+        NProgress.done();
       });
     } else {
       // token不存在时跳转
-      console.log('222222222', to.path, '当前页面');
+      console.log('4444444', to.path, '当前页面');
       whiteList.includes(to.path) ? next() : next({path: '/login'});
       // if(to.name != 'login'){
       //   next({path: '/login'});
