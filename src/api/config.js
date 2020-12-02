@@ -219,9 +219,6 @@ const apis = {
   withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
 
 
-  // 直播间内
-  initiatorInfo: ['/v3/webinars/live/init', 'POST'], // 获取房间信息 jian.chang √
-  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'POST'], // 获取上报信息 jian.chang √
   // 观看页
   vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
   newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
@@ -280,18 +277,21 @@ const apis = {
   watchInlineInit: ['/v3/webinars/watch/inline-init', 'GET'], // 初始化直播间-嵌入
   sendReportInfo: ['/v3/webinars/watch/get-report-info', 'GET'], // 获取上报信息
 
+  // 直播间内 -- 发起端
+  initiatorInfo: ['/v3/webinars/live/init', 'GET'], // 获取房间信息 jian.chang √
+  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √
+  liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 √
+  getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态
+
   // 发起端-活动
   getJoinUrl: ['/v3/webinars/live/get-url', 'GET'], // 获取参会地址 •••
   getRoleUrl: ['/v3/webinars/live/get-role-url', 'GET'], // 获取嘉宾/助理参会地址（openApi）•••
   roleLogin: ['/v3/webinars/live/role-login', 'GET'], // 口令用户登录验证
   roleLogout: ['/v3/webinars/live/role-logout', 'POST'], // 口令用户退出 •••
   getStreamPushAddress: ['/v3/webinars/live/get-stream-push-address', 'GET'], // 获取推流地址 •••
-  liveInit: ['/v3/webinars/live/init', 'GET'], // 初始化直播间 •••
   liveClientInit: ['/v3/webinars/live/client-init', 'GET'], // 初始化直播间（客户端） •••
   liveStart: ['/v3/webinars/live/start', 'POST'], // 开始直播 •••
   liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播 •••
-  liveGetReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 •••
-  liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 •••
   rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 •••
   rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 •••
   rebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 •••

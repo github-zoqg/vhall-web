@@ -2,7 +2,7 @@
   <chrome v-if="downloadChrome" :type="'master'"></chrome>
   <tip v-else-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="publish-wrap">
-    <vhall-saas
+    <!-- <vhall-saas
       :roomId="roomId"
       :ilId="il_id"
       :vssToken="vss_token"
@@ -22,7 +22,7 @@
       :shareId="shareId"
       :docLowPriority="docLowPriority"
       :recordTip="recordTip"
-    ></vhall-saas>
+    ></vhall-saas> -->
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="chatSdkLoadHandler"></remote-script>
     <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="interactionSdkLoadHandler"></remote-script>
   </div>
@@ -72,7 +72,7 @@ export default {
   methods: {
     heartbeatLink() {
       setTimeout(() => {
-        this.$fetch('heartbeat', {})
+        this.$fetch('liveHeartBeat', {})
           .then(() => {
             this.heartbeatLink();
             console.log('心跳检测成功');
@@ -83,12 +83,12 @@ export default {
           });
       }, 1000 * 60 * 30);
     },
-    getUserinfo() {
+  getUserinfo() {
       this.$fetch('initiatorInfo', { webinar_id: this.il_id })
-        .then(res => {
-          console.warn(res.data, 7777777777777777777777777777777777777777777);
-          if (res.code != 200) {
+        .then(async res => {
+          console.warn(res, '正常信息');
             console.warn(res.msg, 8888888888888888888888888);
+          if (res.code != 200) {
             // eslint-disable-next-line no-return-assign
             return this.tipMsg = res.msg;
           }
@@ -102,7 +102,7 @@ export default {
           this.saas_join_id = mockResult.join_info.join_id;
           this.params_verify_token = mockResult.join_info.interact_token;
           this.permission = mockResult.permission;
-
+          await this.getTools(mockResult.interact.room_id);
           this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
           this.domains = {
             ...mockResult.domains || {},  // ??? 云俊 返回
@@ -126,10 +126,22 @@ export default {
           // 初始化数据上报
           this.initVHallReport(mockResult);
         }).catch(err => {
-          this.tipMsg = err.msg;
-          this.codeError = err.msg;
+          // this.tipMsg = err.msg;
+          // this.codeError = err.msg;
           console.log('catch', err);
         });
+    },
+    getTools(roomId){
+      return new Promise((resolve, reject) => {
+        this.$fetch('getToolStatus', {room_id: roomId}).then(res=>{
+          console.warn(res);
+          resolve();
+        }).catch(err=>{
+          console.warn(err, 'catch');
+          // reject();
+          resolve();
+        });
+      });
     },
     // 打点录制
     recordFun(data) {

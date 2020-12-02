@@ -31,7 +31,7 @@ module.exports = {
         changeOrigin: true
       },
       '/v3': {
-        target: 'https://t-saas-dispatch.vhall.com',
+        target: 'http://t-saas-dispatch.vhall.com',
         changeOrigin: true
       },
       '/account': {
@@ -39,11 +39,11 @@ module.exports = {
         changeOrigin: true
       },
       '/api/upload':{
-        target: 'https://test-zhike.vhall.com/',
+        target: 'http://test-zhike.vhall.com/',
         changeOrigin: true
       },
       '/domian':{
-        target: 'https://t-webinar.e.vhall.com/',
+        target: 'http://t-webinar.e.vhall.com/',
         changeOrigin: true,
         pathRewrite: {
           '^/domian': ''
