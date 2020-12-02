@@ -18,16 +18,12 @@
               {{ liveDetailInfo.subject }}
             </p>
             <p class="subColor">活动时间：{{ liveDetailInfo.actual_start_time }}</p>
-            <p class="subColor">观看限制：
-              <span class="tag" v-if="liveDetailInfo.verify==0">免费</span>
-              <span class="tag" v-if="liveDetailInfo.verify==1">密码</span>
-              <span class="tag" v-if="liveDetailInfo.verify==2">白名单</span>
-              <span class="tag" v-if="liveDetailInfo.verify==3">付费活动</span>
-              <span class="tag" v-if="liveDetailInfo.verify==4">F码</span>
-              <span class="tag" v-if="liveDetailInfo.verify==5">报名表单</span>
+            <p class="subColor" v-if="!liveDetailInfo.verify">观看限制：
+              <!-- <span class="tag">{{ liveDetailInfo.verify | }}</span> -->
+              <!-- <span class="tag" v-else>报名表单</span> -->
             </p>
             <p class="">
-              <el-button round size="mini">恢复预告</el-button>
+              <el-button round size="mini" v-if="['3', '5'].includes(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-button round type="primary" size="mini">扫码</el-button>
               <el-button round size="mini">查看</el-button>
             </p>

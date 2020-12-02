@@ -258,21 +258,21 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/reportsData',
+        path: '/reportsData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         name: 'reportsData',
         meta:{ title: '数据报告', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/interactionData',
+        path: '/interactionData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/interactData'),
         name: 'interactionData',
         meta:{ title: '互动统计', icon: '' , activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/userData',
+        path: '/userData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/userData'),
         name: 'userData',
         meta:{ title: '用户统计', icon: '' , activeMenu: '/live/list'},

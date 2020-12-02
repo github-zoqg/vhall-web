@@ -23,7 +23,7 @@ router.beforeEach((to, from, next) => {
       // 获取用户信息
       fetch('getInfo', {scene_id: 2}).then(res => {
         if(res.code === 200 && res.data) {
-          // getVersion(res.data.user_id);
+          getVersion(res.data.user_id);
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
           sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
         } else {
