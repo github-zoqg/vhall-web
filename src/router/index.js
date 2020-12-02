@@ -576,7 +576,7 @@ const v3Routes = [
         meta: {title: '消息中心', icon: 'table'}
       },
       {
-        path: '/msgDetail/:str(\\d+)',
+        path: 'msgDetail/:str(\\d+)',
         component: () => import('@/views/PlatformModule/Message/detail'),
         name: 'msgDetail',
         meta: {title: '消息详情', icon: 'table', activeMenu: '/other/msgList'},
@@ -631,7 +631,7 @@ const v3Routes = [
       },
     ]
   },
-  { path: '*', redirect: '/warning/400', hidden: true }
+  { path: '*', redirect: '/warning/404', hidden: true }
 ];
 
 const router = new VueRouter({

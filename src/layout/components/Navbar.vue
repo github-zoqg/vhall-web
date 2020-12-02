@@ -100,6 +100,9 @@ export default {
       });
     }
   },
+  mounted() {
+    this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
+  },
   created() {
     this.getUnreadNum();
   }

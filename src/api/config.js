@@ -128,11 +128,11 @@ const apis = {
   uploadKeywordAdd: ['/101/v3/interacts/keyword/upload-file-and-create', 'POST', 'mock'], // 上传关键词文件并添加关键词 jia.li
   getKeywordTemplate: ['/101/v3/interacts/keyword/get-template-url', 'POST', 'mock'], // 获取关键词模板地址 jia.li
   // 消息管理
-  getMsgList: ['/v3/commons/msgcenter/list', 'POST'], // 站内消息列表接口 jia.li •••
-  msgDel: ['/v3/commons/msgcenter/delete', 'POST'], // 站内消息删除接口 jia.li •••
-  getMsgInfo: ['/v3/commons/msgcenter/get-info', 'POST'], // 站内消息详情接口 jia.li •••
-  getUnreadNum: ['/v3/commons/msgcenter/unread-num', 'POST'], // 查询消息未读数 jia.li •••
-  executeUseRead: ['/v3/commons/msgcenter/batch-read', 'POST'], // 标记已读 jia.li •••
+  getMsgList: ['/v3/commons/msgcenter/list', 'POST'], // 站内消息列表接口 jia.li  √
+  msgDel: ['/v3/commons/msgcenter/delete', 'POST'], // 站内消息删除接口 jia.li  √
+  getMsgInfo: ['/v3/commons/msgcenter/get-info', 'POST'], // 站内消息详情接口 jia.li  √
+  getUnreadNum: ['/v3/commons/msgcenter/unread-num', 'POST'], // 查询消息未读数 jia.li  √
+  executeUseRead: ['/v3/commons/msgcenter/batch-read', 'POST'], // 标记已读 jia.li  √
   // 文件上传(图片)
   uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 

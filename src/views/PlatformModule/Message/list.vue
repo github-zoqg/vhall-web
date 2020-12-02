@@ -48,7 +48,7 @@ export default {
         {
           label: '标题',
           key: 'title',
-          width: 200
+          width: 'auto'
         },
         {
           label: '接收时间',
@@ -98,6 +98,7 @@ export default {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
+            that.$refs.msgTable.clearSelect();
             that.getMsgList();
           }else {
             that.$message({
@@ -118,14 +119,14 @@ export default {
     // 跳转消息详情页
     toMsgDetail(that, { rows }) {
       that.$router.push({
-        path: `/msg-detail/${rows.id}`,
+        path: `/other/msgDetail/${rows.msg_id}`,
       });
     },
     // 获取消息中心列表数据
-    getMsgList(pageInfo = {pageNum: 1, pageSize: 10}) {
+    getMsgList(pageInfo = {pageNum: 1,pos: 0, limit: 10}) {
       this.$fetch('getMsgList', {
-        pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize
+        pos: pageInfo.pos,
+        limit: pageInfo.limit
       }).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
@@ -162,13 +163,17 @@ export default {
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
         }).then(() => {
-          this.$fetch('msgDel', {
+          this.$fetch('executeUseRead', {
             msg_id: this.ids.join(',')
           }).then(res => {
             if(res && res.code === 200) {
               this.$message.success(`操作成功`);
               this.ids = [];
+              this.$refs.msgTable.clearSelect();
+              // 重新从第一页查询
               this.getMsgList();
+              // 通知右上角导航，需要更新未度消息
+              this.$EventBus.$emit('saas_vs_msg_count', true);
             }else {
               this.$message({
                 type: 'error',

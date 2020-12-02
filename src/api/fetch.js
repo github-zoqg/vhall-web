@@ -9,8 +9,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let [api, method, mock] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
-  // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
-  const token = window.sessionStorage.getItem('token') || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8';
+  sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
+  const token = window.sessionStorage.getItem('token') || 'saas_v3_token';
   const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
   let data = Object.assign({vc_cookie, platform: 17, need_sign: 1}, data1);
   let formData = null;
@@ -33,12 +33,13 @@ export default function fetchData(url, data1 = {}, header = {}) {
   }
 
   let headers = {
-    platform: 17
+    platform: 17,
+    token
     // 'Content-Type': 'application/json'
   };
-  /*if(!api.includes('users/user/login-check') && !api.includes('v3/users/user/login')) {
+  if(!api.includes('users/user/login-check') && !api.includes('v3/users/user/login')) {
     headers.token = token;
-  }*/
+  }
   // headers.token = token;
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();
