@@ -27,7 +27,7 @@
             <i class="el-icon-question"></i>
           </el-tooltip>
           </p>
-          <h2>{{ userInfo.concurrency.concurrency_extend || userInfo.arrears.extend  }}</h2>
+          <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend  }}</h2>
           <p class="account" v-if="this.$route.name!='Home'" @click="goAccountDetail">账单明细</p>
         </div>
       </el-col>
@@ -111,12 +111,12 @@ export default {
     upVersion
   },
   created() {
-    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-    // this.getVersion();
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    this.getVersion();
   },
   methods: {
     getVersion() {
-      this.$fetch('getVersionInfo', { user_id: this.userInfo.user_id}).then(res => {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
       }).catch(e=>{
         console.log(e);

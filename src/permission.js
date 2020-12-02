@@ -1,7 +1,7 @@
 import router from './router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import fetch from './api/fetch';
+import fetchData from './api/fetch';
 import { sessionOrLocal } from './utils/utils';
 
 NProgress.configure({ showSpinner: false });
@@ -21,9 +21,10 @@ router.beforeEach((to, from, next) => {
       // 登录状态跳转非登录页面
       //存在token
       // 获取用户信息
-      fetch('getInfo', {scene_id: 2}).then(res => {
-        if(res.code === 200 && res.data) {
-          getVersion(res.data.user_id);
+     fetchData('getInfo', {scene_id: 2}).then(res => {
+        // debugger;
+        if(res.code === 200) {
+          console.log('222222', to.path, '当前页面');
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
           sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
         } else {
@@ -38,22 +39,9 @@ router.beforeEach((to, from, next) => {
       // token不存在时跳转
       console.log('4444444', to.path, '当前页面');
       whiteList.includes(to.path) ? next() : next({path: '/login'});
-      // if(to.name != 'login'){
-      //   next({path: '/login'});
-      // }else{
-      //   next();
-      // }
       NProgress.done();
     }
 });
-// 保存版本信息
-function getVersion(id) {
-  fetch('getVersionInfo', { user_id: id}).then(res => {
-    sessionOrLocal.set('versionInfo', JSON.stringify(res.data));
-  }).catch(e=>{
-    console.log(e);
-  });
-}
 router.afterEach(() => {
     NProgress.done();
 });
