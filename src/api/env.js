@@ -26,7 +26,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'https://t-saas-findc.vhall.com';
+    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   case 'test':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -35,7 +35,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'https://t-saas-findc.vhall.com';
+    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   case 'pre':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -44,7 +44,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com/';
-    BASE_URL_DATA = 'https://t-saas-findc.vhall.com';
+    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   case 'development':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -53,7 +53,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'https://t-saas-findc.vhall.com';
+    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   default:
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -62,7 +62,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'https://t-saas-findc.vhall.com';
+    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
 }
 export default {
   fileBaseUrl,
