@@ -51,14 +51,18 @@ export default {
 .sunjectInner{
   display: flex;
   background: #fff;
-  width: 348px;
+  width: 330px;
   height: 110px;
   align-items: center;
   margin-bottom: 24px;
-  padding-right: 24px;
+  margin-right: 18px;
   box-sizing: border-box;
   background-clip: content-box;
   cursor: pointer;
+  border: 2px solid transparent;
+  &:hover{
+    border: 2px solid #FB3A32;
+  }
   .icon{
     width: 56px;
     height: 56px;

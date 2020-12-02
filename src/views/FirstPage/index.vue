@@ -104,7 +104,7 @@ export default {
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     // this.versionInfo = JSON.parse(sessionOrLocal.get('versionInfo'));
-    // this.getLiveList();
+    this.getLiveList();
   },
   methods: {
     // 页面跳转
@@ -140,7 +140,7 @@ export default {
     // },
     getLiveList() {
       let params = {
-        account_id: this.userInfo.user_id,
+        account_id: this.userId,
         type: 1
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{

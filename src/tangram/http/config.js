@@ -79,7 +79,7 @@ const Apis = {
   startrecord: ['/api/webinar/v1/webinar/startrecord', 'POST', 't.e'], // 开始录制
   stoprecord: ['/api/webinar/v1/webinar/stoprecord', 'POST', 't.e'], // 结束录制
   createrecord: ['/api/webinar/v1/webinar/createrecord', 'POST', 't.e'], // 创建录制
-  heartbeat: ['/api/vss/initiator/heartbeat', 'POST', 't.e'], // 心跳检测
+  // heartbeat: ['/api/vss/initiator/heartbeat', 'POST', 't.e'], // 心跳检测
   updatesurvey: ['/api/webinar/v1/webinar/update-survey', 'POST', 't.e'], // 更新问卷
   setDesktop: ['/cmpt/inav/set-desktop', 'POST'], // 开启桌面共享自动最大化
   getHistoryMsgNew: ['/cmpt/chat/list', 'POST'], // 获取历史消息
@@ -87,6 +87,6 @@ const Apis = {
   updateBaseNum: ['/api/vss/initiator/update-base-num', 'POST', 't.e'], // 更新虚拟观众
   startBaseNum: ['/api/vss/initiator/start-base-num', 'POST', 't.e'], // 开始虚拟观众脚本
   deleteMessage: ['/cmpt/chat/del-msg', 'POST'] // 删除消息
-}
+};
 
-export default Apis
+export default Apis;

@@ -68,13 +68,14 @@
               <el-tooltip class="item" effect="dark" content="详情" placement="top">
                 <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
               </el-tooltip>
-              <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)">
+              <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
                 <i class="el-icon-more"></i>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>数据报告</el-dropdown-item>
-                  <el-dropdown-item>互动统计</el-dropdown-item>
-                  <el-dropdown-item>用户统计</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
+                  <el-dropdown-item command='/reportsData'>数据报告</el-dropdown-item>
+                  <el-dropdown-item command='/interactionData'>互动统计</el-dropdown-item>
+                  <el-dropdown-item command='/userData'>用户统计</el-dropdown-item>
+                  <el-dropdown-item command='/edit'>用户统计</el-dropdown-item>
+                  <el-dropdown-item command='删除'>删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </p>
@@ -106,6 +107,7 @@ export default {
       pageSize: 10,
       pageNum: 1,
       pagePos: 0,
+      webinarId: 0,
       totalElement: 0,
       liveDropDownVisible: false,
       statusOptions: [
@@ -140,6 +142,15 @@ export default {
     dropDownVisibleChange(item) {
       // this.liveDropDownVisible = visible
       this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);
+      console.log(item, "1111111111");
+      this.webinarId = item.webinar_id;
+    },
+    commandMethod(command) {
+      if (command === '删除') {
+        console.log("111111111111111");
+      } else {
+        this.$router.push({path: `${command}/${this.webinarId}`});
+      }
     },
     currentChangeHandler(current) {
       this.pageNum = current;

@@ -9,9 +9,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let [api, method, mock] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
+  // 此token不要删除  --  直播间需要使用   我将你们的token进行注释了
   sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
-  const token = window.sessionStorage.getItem('token') || 'saas_v3_token';
-  const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
+  // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
+  const token = window.sessionStorage.getItem('token') || null;
   let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
   let formData = null;
 
@@ -77,7 +78,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
       this.$router.push({
         path: '/error'
       });
-    } else if (res.code >= 200 && res.code < 600) {
+    } else if (res.code >= 1700 && res.code < 10000 || res.code === 200) {
       return res;
     } else {
       return Promise.reject(res);

@@ -10,40 +10,8 @@ export default {
   data() {
     return {
       isActive: true,
-      visitDateList: [
-        '2020-10-01',
-        '2020-10-02',
-        '2020-10-03',
-        '2020-10-04',
-        '2020-10-05',
-        '2020-10-06',
-        '2020-10-07',
-        '2020-10-08',
-        '2020-10-09',
-        '2020-10-10',
-        '2020-10-11',
-        '2020-10-12',
-        '2020-10-13',
-        '2020-10-14',
-        '2020-10-15',
-      ],
-      visitValueList: [
-        '100',
-        '12',
-        '123',
-        '1',
-        '200',
-        '230',
-        '100',
-        '56',
-        '87',
-        '34',
-        '280',
-        '40',
-        '99',
-        '156',
-        '255',
-      ],
+      visitDateList: [],
+      visitValueList: [],
     };
   },
   mounted() {
@@ -61,9 +29,10 @@ export default {
       let visitDataDate = [];
       let visitDataValue = [];
       data.map(item => {
-        visitDataDate.push(item.time);
+        visitDataDate.push(item.date);
         visitDataValue.push(item.value);
       });
+      console.log(visitDataDate, visitDataValue);
       // let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
       let options = {

@@ -19,15 +19,11 @@
             </p>
             <p class="subColor">活动时间：{{ liveDetailInfo.actual_start_time }}</p>
             <p class="subColor">观看限制：
-              <span class="tag" v-if="liveDetailInfo.verify==0">免费</span>
-              <span class="tag" v-if="liveDetailInfo.verify==1">密码</span>
-              <span class="tag" v-if="liveDetailInfo.verify==2">白名单</span>
-              <span class="tag" v-if="liveDetailInfo.verify==3">付费活动</span>
-              <span class="tag" v-if="liveDetailInfo.verify==4">F码</span>
-              <span class="tag" v-if="liveDetailInfo.verify==5">报名表单</span>
+              <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
+              <!-- <span class="tag">报名表单</span> -->
             </p>
             <p class="">
-              <el-button round size="mini">恢复预告</el-button>
+              <el-button round size="mini" v-if="['3', '5'].includes(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-button round type="primary" size="mini">扫码</el-button>
               <el-button round size="mini">查看</el-button>
             </p>
@@ -36,8 +32,8 @@
       </el-col>
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24">
         <div class="inner liveTime">
-          <p class="subColor">距离直播开始还有</p>
-          <p class="mainColor">
+          <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
+          <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
             <span>10</span>
             <i>天</i>
             <span>08</span>
@@ -47,6 +43,7 @@
             <span>25</span>
             <i>秒</i>
           </p>
+          <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
@@ -99,9 +96,9 @@ export default {
           // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         '数据': [
-          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: '/reportsData' },
-          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: '/interactionData' },
-          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: '/userData' },
+          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: `/reportsData${this.$route.params.str}` },
+          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: `/interactionData${this.$route.params.str}` },
+          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: `/userData${this.$route.params.str}` },
         ]
       }
     };
