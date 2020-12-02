@@ -245,10 +245,10 @@ const apis = {
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
 
   // 下载中心
-  downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 •••
-  downloadedDel: ['/v3/commons/downcenter/delete', 'POST'], // 下载中心-删除 •••
-  downloadedList: ['/v3/commons/downcenter/list', 'POST'], // 下载中心-列表 •••
-  downloadedReload: ['/v3/commons/downcenter/regenerate', 'POST'], // 下载中心-重新生成 Jia.li •••
+  downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √
+  downloadedDel: ['/v3/commons/downcenter/delete', 'POST'], // 下载中心-删除 √
+  downloadedList: ['/v3/commons/downcenter/list', 'POST'], // 下载中心-列表 √
+  downloadedReload: ['/v3/commons/downcenter/regenerate', 'POST'], // 下载中心-重新生成 Jia.li •••需真实流程才可测试
 
   // 报名表单
   getFormEnableStatus: ['/v3/webinars/registration-form/get-form-enable-status', 'POST', 'mock'], // 获取活动报名表单开启状态

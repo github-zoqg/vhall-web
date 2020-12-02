@@ -2,7 +2,7 @@
 	<div class="download">
     <pageTitle title="下载中心"></pageTitle>
     <div class="download-ctx">
-      <div v-show="docDao.total > 0">
+      <div v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
         <!-- 搜索 -->
         <div class="list--search">
           <el-button size="medium" plain round @click.prevent.stop="multiDownload">批量下载</el-button>
@@ -15,10 +15,10 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             style="margin-left: 24px;width: 240px"
-            @change="getTableList"
+            @change="getTableList(null)"
           />
-          <el-input placeholder="搜索文件名称" v-model.trim="file_name">
-            <i class="el-icon-search el-input__icon" slot="suffix" @click="getTableList"></i>
+          <el-input placeholder="搜索文件名称" v-model.trim="file_name" @change="getTableList(null)">
+            <i class="el-icon-search el-input__icon" slot="suffix"></i>
           </el-input>
         </div>
         <el-table
@@ -62,8 +62,9 @@
             width="260"
             show-overflow-tooltip>
             <template slot-scope="scope">
+              <!-- v-if="Number(scope.row.file_status) === 2" -->
               <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">下载</el-button>
-              <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
+              <el-button size="mini" type="text"  @click="resetDownload(scope.row)">重新生成</el-button>
               <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
             </template>
           </el-table-column>
@@ -126,6 +127,7 @@ export default {
     },
     multiDownload() {
       let arr = this.selectRows;
+      let that = this;
       if (!(this.selectRows && this.selectRows.length > 0)) {
         this.$message.error('请至少选择一条下载记录');
       } else {
@@ -134,10 +136,29 @@ export default {
           window.open('http://t-alistatic01.e.vhall.com/upload/sys/exel_url/75/20/7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx');
           if(index === arr.length - 1) {
             window.clearInterval(interDown);
+            // 最后一次结束后，批量状态修改
+            let ids = arr.map(item => {
+              return item.dow_task_id;
+            });
+            that.downloadedEdit(ids.join(','));
           }
           index ++;
         }, 3000);
       }
+    },
+    downloadedEdit(dow_task_ids) {
+      let params = {
+        dow_task_ids: dow_task_ids // 可能多个可能单个
+      };
+      this.$fetch('downloadedEdit', this.$params(params)).then(res =>{
+        if (res && res.code === 200) {
+          this.getTableList(null);
+        } else {
+          // this.$message.error(res.msg || '状态修改失败');
+        }
+      }).then(e => {
+        // this.$message.error('修改状态失败');
+      });
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {
@@ -149,7 +170,10 @@ export default {
         pageNumber: this.pageNumber
       });
     },
-    getTableList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
+    getTableList(pageInfo) {
+      if(!pageInfo) {
+        pageInfo = {pos: 0, limit: 10, pageNumber: 1};
+      }
       let params = {
         start_time: this.timeStr[0] || '',
         end_time: this.timeStr[1] || '',
@@ -169,10 +193,9 @@ export default {
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
           // TODO 下载地址，模拟用后续删除
-          item.file_name = '7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx';
           item.dow_url = 'http://t-alistatic01.e.vhall.com/upload/sys/exel_url/75/20/7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx';
         });
-        this.docDao = dao;
+        this.docDao =  dao;
       }).catch(e=>{
         console.log(e);
         this.docDao = {
@@ -184,9 +207,28 @@ export default {
     // 下载
     download(rows) {
       window.open(rows.dow_url, "_blank");
+      this.downloadedEdit(rows.dow_task_id);
     },
     // 重新生成
-    resetDownload(rows) {},
+    async resetDownload(rows) {
+      // 第一步，拿取其余服务接口请求地址
+      let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
+      if(result.code === 200 && result.data) {
+        fetch(result.send_url, {
+          method: result.request_method, // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors',
+          credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
+          headers: {
+            platform: 17,
+            token
+          },
+          body: result.select_json
+        }).then(res => {
+          console.log('发送成功~~~~~~~');
+          console.log(res);
+        }).catch(e => {});
+      }
+    },
     // 删除某条下载任务
     delDownload(rows) {
       let that = this;
