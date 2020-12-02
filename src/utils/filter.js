@@ -38,3 +38,24 @@ export const unitCovert = (val) => {
   }
 };
 
+export const limitTag = (val) => {
+  // verify  0 免费 1 密码，2 白名单，3 付费活动, 4 F码
+  const limitStr = ['免费', '密码',  '白名单', '付费活动', 'F码'];
+  let str = limitStr[val];
+  return str;
+};
+
+export const limitText = (val) => {
+  // webinar_state  1直播 2预约 3结束 4点播 5回放
+  const liveTypeStr = ['', '已经开播', '距离直播开始还有', '', '', ''];
+  let str = liveTypeStr[val];
+  return str;
+};
+
+export const liveText = (val) => {
+  // webinar_state  1直播 2预约 3结束 4点播 5回放
+  const liveTypeStr = ['', '直播正在进行', '倒计时', '直播已结束', '观众等待中', '已设置回放'];
+  let str = liveTypeStr[val];
+  return str;
+};
+

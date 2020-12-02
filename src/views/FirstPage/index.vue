@@ -140,7 +140,7 @@ export default {
     // },
     getLiveList() {
       let params = {
-        account_id: this.userInfo.user_id,
+        account_id: this.userId,
         type: 1
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
