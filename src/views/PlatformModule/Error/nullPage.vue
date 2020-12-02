@@ -1,7 +1,7 @@
 <template>
   <div class="null-page">
      <img src="../../../common/images/v35-webinar.png" />
-     <p>暂无消息</p>
+     <p>暂无数据</p>
   </div>
 </template>
 

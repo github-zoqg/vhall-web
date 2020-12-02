@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       msgDao: {
-        total: 12,
+        total: 0,
         list: []
       },
       isHandle: false, // 是否有操作项
