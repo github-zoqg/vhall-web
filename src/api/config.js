@@ -53,11 +53,11 @@ const apis = {
   demandCreate: ['/99/v3/webinars/webinar/create-demand', 'POST', 'mock'], // 点播创建
 
   // 专题
-  subjectCreate: ['/99/v3/webinars/subject/create', 'POST', 'mock'], // 专题创建  •••
-  subjectList: ['/99/v3/webinars/subject/get-list', 'POST', 'mock'], // 专题列表  •••
-  subjectEdit: ['/99/v3/webinars/subject/edit', 'POST', 'mock'], // 专题修改  •••
-  subjectInfo: ['/99/v3/webinars/subject/info', 'POST', 'mock'], // 获取专题详情接口(专题预览)  •••
-  subjectDel: ['/99/v3/webinars/subject/delete', 'POST', 'mock'], // 专题删除接口 •••
+  subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建 √
+  subjectList: ['/v3/webinars/subject/get-list', 'POST'], // 专题列表 √有问题
+  subjectEdit: ['/v3/webinars/subject/edit', 'POST'], // 专题修改  •••
+  subjectInfo: ['/v3/webinars/subject/info', 'POST'], // 获取专题详情接口(专题预览)  •••
+  subjectDel: ['/v3/webinars/subject/delete', 'POST'], // 专题删除接口 •••
   // 角色邀请
   privilegeInfo:  ['/v3/webinars/privilege/info', 'POST'], // 获取活动角色配置接口 •••
   privilegeOpen:  ['/v3/webinars/privilege/open-privilege', 'POST'], // 开启关闭角色开关 •••
@@ -103,7 +103,7 @@ const apis = {
   viewerDel: ['/v3/webinars/audience/delete-audience', 'POST'],// 白名单观众-批量删除 jia.li •••
   viewerSetGet: ['/v3/webinars/webinar/get-webinar-verify', 'POST'],// 获取活动观看限制接口 jia.li •••
   viewerInfo: ['/v3/webinars/audience/info', 'POST'],// 白名单观众详情获取 jia.li •••
-  viewerSetSave: ['/v3/webinars/verify/save'],// 观看限制保存接口 jia.li •••
+  viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li •••
   fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li •••
   // 自定义菜单
   menuTplList: ['/101/v3/menu-components/list', 'POST', 'mock'], // 控制台-组件列表接口 jia.li

@@ -3,7 +3,7 @@
     class="avatar-uploader"
     v-bind="$props"
     :headers="{token: token}"
-    :data=save_data
+    :data=saveData
     name="resfile"
     :on-success='handleuploadSuccess'>
       <div class="box">

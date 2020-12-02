@@ -129,7 +129,7 @@ export default {
       };
       this.loading = true;
       console.log(data);
-      this.$fetch('subjectList', data, {"Content-Type": "application/x-www-form-urlencoded", "need_sign": 0, platform: 'pc', token: 'cc'}).then(res=>{
+      this.$fetch('subjectList', this.$params(data)).then(res=>{
         console.log(res);
         this.liveList = res.data.list;
         // this.totalElement = res.data.total;
@@ -142,7 +142,7 @@ export default {
       });
     },
     // 删除
-    detele(id) {
+    delete(id) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
