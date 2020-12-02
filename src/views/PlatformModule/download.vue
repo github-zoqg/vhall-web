@@ -62,9 +62,8 @@
             width="260"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              <!-- v-if="Number(scope.row.file_status) === 2" -->
               <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">下载</el-button>
-              <el-button size="mini" type="text"  @click="resetDownload(scope.row)">重新生成</el-button>
+              <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
               <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
             </template>
           </el-table-column>
