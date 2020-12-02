@@ -37,6 +37,8 @@
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE">
                 </el-switch>
@@ -71,6 +73,8 @@
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE">
                 </el-switch>
@@ -108,6 +112,8 @@
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE">
                 </el-switch>
@@ -136,6 +142,8 @@
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE">
                 </el-switch>
@@ -171,6 +179,8 @@
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE">
                 </el-switch>
@@ -255,8 +265,8 @@ export default {
         password: '', // 观看密码
         white_id: '', // 白名单-观众组字符拼接串
         fee: null, // 付费金额,
-        is_preview: 5, // 是否开启试看（1-试看；0-否；）
-        preview_time: null, // 试看时长-分钟计
+        is_preview: 0, // 是否开启试看（1-试看；0-否；）
+        preview_time: 5, // 试看时长-分钟计
       },
       whiteIds: [],
       groupList: [],
@@ -318,9 +328,9 @@ export default {
       this.$fetch('viewerSetGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        res && res.code === 200 && res.data ? this.viewerDao = res.data.data : this.viewerDao = {};
+        res && res.code === 200 && res.data ? this.viewerDao = res.data : this.viewerDao = {};
         // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
-        this.form.verify = this.viewerDao.verify;
+        this.form.verify = res.data.verify || 0;
       }).catch(err=>{
         console.log(err);
         this.viewerDao = {};
@@ -346,10 +356,14 @@ export default {
           return;
         }
         params = Object.assign(this.form, {white_id: this.whiteIds.join(',')});
+      } else if (formName === '') {
+        flag = true; // 免费不验证
+        params = Object.assign(this.form);
       }
       if (flag) {
         console.log('当前保存参数存储：' + JSON.stringify(params));
-        this.$fetch('viewerSetSave', params).then(res => {
+        debugger;
+        this.$fetch('viewerSetSave', this.$params(params)).then(res => {
           console.log(res);
           if (res && res.code === 200) {
             this.$message.success('设置成功');

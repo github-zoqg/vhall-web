@@ -79,217 +79,217 @@ const v3Routes = [
         path: 'detail/:str(\\d+)',
         component: () => import('@/views/LiveModule/detail'),
         name: 'detail',
-        meta:{ title: '直播详情', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播详情' , activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'chooseWay/:str(\\d+)',
         component: () => import('@/views/LiveModule/chooseWay'),
         name: 'chooseWay',
-        meta:{ title: '选择发起方式', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '选择发起方式', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'signup/:str(\\d+)',
         component: () => import('@/views/LiveModule/signUp/main'),
         name: 'signup',
-        meta:{ title: '准备—报名表单', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—报名表单', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'viewerRules/:str(\\d+)',
         component: () => import('@/views/LiveModule/viewerRules'),
         name: 'viewerRules',
-        meta:{ title: '准备—观看限制', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—观看限制', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'roleInvitation/:str(\\d+)',
         component: () => import('@/views/LiveModule/roleInvitation'),
         name: 'roleInvitation',
-        meta:{ title: '准备—角色邀请', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—角色邀请', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'planFunction/:str(\\d+)',
         component: () => import('@/views/LiveModule/planFunction'),
         name: 'planFunction',
-        meta:{ title: '准备—功能配置', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—功能配置', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'virtual/:str(\\d+)',
         component: () => import('@/views/LiveModule/virtual'),
         name: 'virtual',
-        meta:{ title: '准备—虚拟人数', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—虚拟人数', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'warm/:str(\\d+)',
         component: () => import('@/views/LiveModule/warm'),
         name: 'warm',
-        meta:{ title: '准备—暖场视频', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—暖场视频', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'embedCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/embedCard'),
         name: 'embedCard',
-        meta:{ title: '准备—推广嵌入', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '准备—推广嵌入', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'brandSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/brandSet'),
         name: 'brandSet',
-        meta:{ title: '品牌—品牌设置', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—品牌设置', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'playerSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/playerSet'),
         name: 'playerSet',
-        meta:{ title: '品牌—播放器设置', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—播放器设置', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'invCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/invitationCard'),
         name: 'invCard',
-        meta:{ title: '品牌—邀请卡', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—邀请卡', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'advertCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
         name: 'advertCard',
-        meta:{ title: '品牌—广告推荐', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—广告推荐', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'officialCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/officialCard'),
         name: 'officialCard',
-        meta:{ title: '品牌—公众号展示', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—公众号展示', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'posterCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/officialCard'),
         name: 'posterCard',
-        meta:{ title: '品牌—开屏海报', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—开屏海报', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'customTab/:str(\\d+)',
         component: () => import('@/views/LiveModule/customTab'),
         name: 'customTab',
-        meta:{ title: '品牌—自定义菜单', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '品牌—自定义菜单', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'word/:str(\\d+)',
         component: () => import('@/views/MaterialModule/word'),
         name: 'word',
-        meta:{ title: '直播—文档', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—文档', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'prizeSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/prizeSet'),
         name: 'prizeSet',
-        meta:{ title: '直播—抽奖', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—抽奖', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'question/:str(\\d+)',
         component: () => import('@/views/MaterialModule/question'),
         name: 'question',
-        meta:{ title: '直播—问卷', icon: '', name: 'live', activeMenu: '/live/list'},
+        meta:{ title: '直播—问卷', name: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'addQuestion',
         component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
         name: 'addQuestion',
-        meta:{ title: '直播—新建问卷', icon: '' , name: 'live', activeMenu: '/live/list'},
+        meta:{ title: '直播—新建问卷', name: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'productSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/productSet'),
         name: 'productSet',
-        meta:{ title: '直播—商品', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—商品', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'addProduct/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/components/addProduct'),
         name: 'addProduct',
-        meta:{ title: '直播—新建商品', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—新建商品', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'editProduct/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/components/addProduct'),
         name: 'editProduct',
-        meta:{ title: '直播—编辑商品', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—编辑商品', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'gift/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/giftSet'),
         name: 'gift',
-        meta:{ title: '直播—礼物', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '直播—礼物', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'playback/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/list'),
         name: 'playback',
-        meta:{ title: '回放-回放管理', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '回放-回放管理', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'chapter/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/chapter'),
         name: 'chapter',
-        meta:{ title: '回放-章节打点', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '回放-章节打点', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: '/reportsData',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         name: 'reportsData',
-        meta:{ title: '数据报告', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '数据报告', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: '/interactionData',
         component: () => import('@/views/LiveModule/Data/interactData'),
         name: 'interactionData',
-        meta:{ title: '互动统计', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '互动统计', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: '/userData',
         component: () => import('@/views/LiveModule/Data/userData'),
         name: 'userData',
-        meta:{ title: '用户统计', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '用户统计', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: '/interactionDetail',
         component: () => import('@/views/LiveModule/Data/interactDetail'),
         name: 'interactionDetail',
-        meta:{ title: '查看数据', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '查看数据',  activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: '/lookSingleQuestion',
         component: () => import('@/views/LiveModule/Data/lookSingleQuestion'),
         name: 'lookSingleQuestion',
-        meta:{ title: '查看问卷详情', icon: '' , activeMenu: '/live/list'},
+        meta:{ title: '查看问卷详情', activeMenu: '/live/list'},
         hidden: true
       }
     ]
@@ -333,50 +333,50 @@ const v3Routes = [
         path: 'word',
         name: 'word',
         component: () => import('@/views/MaterialModule/word'),
-        meta: { title: '文档', icon: 'table' }
+        meta: { title: '文档' }
       },
       {
         path: 'video',
         name: 'video',
         component: () => import('@/views/MaterialModule/video'),
-        meta: { title: '音视频', icon: 'table' }
+        meta: { title: '音视频'}
       },
       {
         path: 'question',
         name: 'question',
         component: () => import('@/views/MaterialModule/question'),
-        meta: { title: '问卷', name: 'material', icon: 'table' }
+        meta: { title: '问卷', name: 'material'}
       },
       {
         path: 'addQuestion',
         component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
         name: 'addQuestion',
-        meta:{ title: '新建问卷', icon: 'table', name: 'material' },
+        meta:{ title: '新建问卷', name: 'material' },
         hidden: true
       },
       {
         path: 'prize',
         name: 'prize',
         component: () => import('@/views/MaterialModule/prize'),
-        meta: { title: '奖品', icon: 'table' }
+        meta: { title: '奖品'}
       },
       {
         path: 'viewer',
         name: 'viewer',
         component: () => import('@/views/MaterialModule/viewer'),
-        meta: { title: '观众', icon: 'table' }
+        meta: { title: '观众'}
       },
       {
         path: 'advertCard',
         name: 'advertCard',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
-        meta: { title: '广告推荐', icon: 'table', name: 'material' }
+        meta: { title: '广告推荐', name: 'material' }
       },
       {
         path: 'gift',
         name: 'gift',
         component: () => import('@/views/MaterialModule/gift'),
-        meta: { title: '礼物', icon: 'table' }
+        meta: { title: '礼物'}
       }
     ]
   },
@@ -391,13 +391,13 @@ const v3Routes = [
         path: 'info',
         name: 'info',
         component: () => import('@/views/StatisticsModule/dataInfo'),
-        meta: { title: '数据总览', icon: 'table' }
+        meta: { title: '数据总览'}
       },
       {
         path: 'live',
         name: 'live',
         component: () => import('@/views/StatisticsModule/dataLive'),
-        meta: { title: '活动数据', icon: 'table' }
+        meta: { title: '活动数据'}
       }
     ]
   },
@@ -406,7 +406,7 @@ const v3Routes = [
     component: Layout,
     redirect: '/setting/info',
     name: 'Setting',
-    meta: { title: '设置中心', icon: '' },
+    meta: { title: '设置中心'},
     children: [
       {
         path: 'info',
@@ -418,7 +418,7 @@ const v3Routes = [
         path: 'chat/:str(\\d+)',
         component: () => import('@/views/SettingModule/chat'),
         name: 'chat',
-        meta:{ title: '聊天严禁词', icon: '' , activeMenu: '/setting/info'},
+        meta:{ title: '聊天严禁词', activeMenu: '/setting/info'},
         hidden: true
       },
       // {
@@ -432,28 +432,28 @@ const v3Routes = [
         path: '/dev/add',
         component: () => import('@/views/SettingModule/Development/appInfo'),
         name: 'devAdd',
-        meta:{ title: '新增应用', icon: '' , activeMenu: '/setting/info', action: 'add'},
+        meta:{ title: '新增应用', activeMenu: '/setting/info', action: 'add'},
         hidden: true
       },
       {
         path: '/dev/:appId(\\d+)',
         component: () => import('@/views/SettingModule/Development/appInfo'),
         name: 'devModify',
-        meta:{ title: '应用详情', icon: '' , activeMenu: '/setting/info', action: 'detail'},
+        meta:{ title: '应用详情', activeMenu: '/setting/info', action: 'detail'},
         hidden: true
       },
       {
         path: '/dev/list',
         component: () => import('@/views/SettingModule/Development/list'),
         name: 'devlIST',
-        meta:{ title: '开发设置', icon: '' , activeMenu: '/setting/info'},
+        meta:{ title: '开发设置', activeMenu: '/setting/info'},
         hidden: true
       },
       {
         path: 'logo/:str(\\d+)',
         component: () => import('@/views/SettingModule/logo'),
         name: 'logo',
-        meta:{ title: '控制台标志', icon: '' , activeMenu: '/setting/info'},
+        meta:{ title: '控制台标志', activeMenu: '/setting/info'},
         hidden: true
       }
     ]
@@ -469,47 +469,47 @@ const v3Routes = [
         path: 'info',
         name: 'info',
         component: () => import('@/views/FinanceModule/info'),
-        meta: { title: '财务总览', icon: 'table' }
+        meta: { title: '财务总览'}
       },
       {
         path: 'income',
         name: 'income',
         component: () => import('@/views/FinanceModule/income'),
-        meta: { title: '账户收益', icon: 'table' }
+        meta: { title: '账户收益'}
       },
       {
         path: '/incomeDetail/:str(\\d+)',
         component: () => import('@/views/FinanceModule/incomeDetail'),
         name: 'incomeDetail',
-        meta:{ title: '收益详情', icon: '' , activeMenu: '/finance/info'},
+        meta:{ title: '收益详情', activeMenu: '/finance/info'},
         hidden: true
       },
       {
         path: '/payOrder',
         component: () => import('@/views/FinanceModule/payList'),
         name: 'payOrder',
-        meta:{ title: '购买列表', icon: '' , activeMenu: '/finance/info'},
+        meta:{ title: '购买列表', activeMenu: '/finance/info'},
         hidden: true
       },
       {
         path: '/infoDetail',
         component: () => import('@/views/FinanceModule/infoDetail'),
         name: 'infoDetail',
-        meta:{ title: '账单明细', icon: '' , activeMenu: '/finance/info'},
+        meta:{ title: '账单明细', activeMenu: '/finance/info'},
         hidden: true
       },
       {
         path: '/accountDetail',
         component: () => import('@/views/FinanceModule/accountDetail'),
         name: 'accountDetail',
-        meta:{ title: '提现明细', icon: '' , activeMenu: '/finance/income'},
+        meta:{ title: '提现明细', activeMenu: '/finance/income'},
         hidden: true
       },
       {
         path: '/orderDetail',
         component: () => import('@/views/FinanceModule/orderDetail'),
         name: 'orderDetail',
-        meta:{ title: '订单支付', icon: '' , activeMenu: '/finance/income'},
+        meta:{ title: '订单支付', activeMenu: '/finance/income'},
         hidden: true
       }
     ]
@@ -525,39 +525,39 @@ const v3Routes = [
         path: 'info',
         name: 'info',
         component: () => import('@/views/AccountModule/info'),
-        meta: { title: '账户信息', icon: 'table' }
+        meta: { title: '账户信息'}
       },
       {
         path: 'son',
         name: 'son',
         component: () => import('@/views/AccountModule/son'),
-        meta: { title: '子账号管理', icon: 'table' }
+        meta: { title: '子账号管理'}
       },
       {
         path: 'home',
         name: 'home',
         component: () => import('@/views/AccountModule/home'),
-        meta: { title: '个人主页', icon: 'table' }
+        meta: { title: '个人主页'}
       },
       {
         path: 'homeSetInfo/:str(\\d+)',
         component: () => import('@/views/AccountModule/homeSetInfo'),
         name: 'homeSetInfo',
-        meta:{ title: '设置', icon: 'table' , activeMenu: '/account/home'},
+        meta:{ title: '设置', activeMenu: '/account/home'},
         hidden: true
       },
       {
         path: '/allocation/:str(\\d+)',
         component: () => import('@/views/AccountModule/allocation'),
         name: 'allocation',
-        meta:{ title: '用量分配', icon: 'table' , activeMenu: '/account/son'},
+        meta:{ title: '用量分配', activeMenu: '/account/son'},
         hidden: true
       },
       {
         path: '/sonDetail/:str(\\d+)',
         component: () => import('@/views/AccountModule/sonDetail'),
         name: 'sonDetail',
-        meta:{ title: '子账号详情', icon: 'table' , activeMenu: '/account/son'},
+        meta:{ title: '子账号详情', activeMenu: '/account/son'},
         hidden: true
       }
     ]

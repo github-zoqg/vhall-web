@@ -2,27 +2,19 @@
   <el-upload
     class="file-uploader"
     v-bind="$props"
+    :headers="{token: token}"
+    :data=saveData
+    name="resfile"
     :on-success='uploadSuccess'>
       <div class="box">
-        <div v-if="value">
-          <div class="mask">
-            <span v-if="!!$props.coverPic">
-              <i class="el-icon-collection" @click.stop="coverPage"></i>
-              <br/>
-              封面
-            </span>
-            <span>
-              <i class="el-icon-delete" @click.stop="deletes"></i>
-              <br/>
-              删除
-            </span>
-            <span v-if="!!$props.restPic">
-              <i class="el-icon-refresh-left" @click="refresh($event)"></i>
-              <br/>
-              重置
-            </span>
+        <a href="javascript:;" class="a-upload mr10" v-if="value">
+          <i class="img"></i>
+          <p class="file-name" style="color: rgb(136, 136, 136);">{{saveData.force_name}}</p>
+          <div class="change-txt">
+            <p id="right" style="display: block;" >上传成功，共检测到5条有效数据</p>
+            <p id="error"></p>
           </div>
-        </div>
+        </a>
         <div v-else class="noPic">
           <i class="el-icon-upload"></i>
           <div class="tips">
@@ -35,16 +27,26 @@
 
 <script>
 import {Upload} from 'element-ui';
+import Env from '@/api/env.js';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data(){
     return {
+      token: sessionOrLocal.get('token')
     };
   },
   props: {
     ...Object.assign(Upload.props, {
+      saveData: {
+        type: Object,
+        default: {
+          path: 'sys/material_url',
+          type: 'exel', // (image,video,app,exe,doc,exel,audio,csv	)
+        }
+      },
       action: {
         type: String,
-        default: "/mock/user/picupload"
+        default: `${Env.BASE_URL}/v3/commons/upload/index`
       },
       "list-type": {
         type: String,
@@ -93,11 +95,16 @@ export default {
   },
   methods: {
     uploadSuccess(response, file, fileList){
-      console.log('文件上传 ', response, file, fileList, this.onSuccess);
-      console.log(this.$props);
-      this.$emit('input', URL.createObjectURL(file.raw));
-      this.onSuccess(response, file, fileList);
-      // this.$emit('on-success', args)
+      console.log('heqhwhqhwhd ', response, file, fileList, this.onSuccess);
+      if(response.code !== 200) {
+        this.$message.error(response.msg || '上传失败');
+      } else {
+        console.log(this.$props);
+        // this.$emit('input', URL.createObjectURL(file.raw));
+        // this.imageUrl = URL.createObjectURL(file.raw);
+        this.onSuccess(response, file, fileList);
+        // this.$emit('on-success', args)
+      }
     },
     // uploadProcess(event, file, fileList){
     //   this['on-progress'](event, file, fileList);
@@ -193,5 +200,42 @@ export default {
     color: #999;
     text-align: center;
     line-height: 16px;
+  }
+
+  .a-upload {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    line-height: 28px;
+    text-align: center;
+    cursor: initial;
+    border: solid 1px #E2E2E2;
+    color: #222;
+    border-radius: 2px;
+    background-color: #F7F7F7;
+    overflow: hidden;
+  }
+  .a-upload .img {
+    display: inline-block;
+    width: 62px;
+    height: 62px;
+    margin-top: 12px;
+    background: url(../../common/images/temp/associate-csv.png) no-repeat;
+    background-size: cover;
+    cursor: initial;
+  }
+  .a-upload .file-name {
+    color: #999;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: -5px;
+  }
+  .a-upload #right {
+    display: none;
+    font-weight: 400;
+    margin-top: -5px;
+    color: #888;
+    font-size: 14px;
   }
 </style>
