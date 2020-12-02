@@ -176,6 +176,7 @@ export default {
       findStep: 3,
       time: 60,
       isType: 'phone',
+      codeKey: 0,
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身

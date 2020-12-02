@@ -46,7 +46,7 @@ const apis = {
 
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
-  liveList: ['/99/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang •••
+  liveList: ['/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang
   getWebinarInfo: ['/v3/webinars/webinar/info', 'POST', 'mock'], // 查询活动基础信息接口 •••
   liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改 •••
   liveDel: ['/99/v3/webinars/webinar/delete', 'POST', 'mock'], // 活动删除 •••
@@ -153,7 +153,7 @@ const apis = {
   register: ['/v3/users/user/register', 'POST'],  //注册接口
 
   //数据中心
-  getDataCenterInfo: ['/103/v3/data-center/account-all-data', 'GET', 'mock'], //获取账户下的总数据
+  getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET', 'data'], //获取账户下的总数据
 
   // 直播-数据报告
   getStatisticsinfo: ['/103/v3/data-center/webinar-statistics-info', 'GET', 'mock'], //获取活动数据下报告
@@ -192,7 +192,7 @@ const apis = {
 
 
   //财务中心
-  getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息
+  getVersionInfo: ['/v3/fin/account/info', 'GET', 'data'],  //获取用户版本信息
   getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
   getFlowInfo: ['/104/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
   getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单

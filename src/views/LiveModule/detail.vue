@@ -5,23 +5,26 @@
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24">
         <div class="inner">
           <div class="thumb">
-            <img src="../../common/images/v35-webinar.png" alt="">
-            <span class="liveTag">dqwdqwld</span>
+            <img :src="liveDetailInfo.img_url" alt="">
+            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
-              {{3000 | unitCovert}}
+              {{ liveDetailInfo.hide_pv | unitCovert }}
             </span>
           </div>
 
           <div class="info">
             <p class="mainColor font-20">
-              创想聚能艾瑞年对高峰会议既定终结会议攀登巅峰
+              {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：2020-10-09 09:30:00</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.actual_start_time }}</p>
             <p class="subColor">观看限制：
-              <span class="tag">白名单</span>
-              <span class="tag">付费</span>
-              <span class="tag">观看限制</span>
+              <span class="tag" v-if="liveDetailInfo.verify==0">免费</span>
+              <span class="tag" v-if="liveDetailInfo.verify==1">密码</span>
+              <span class="tag" v-if="liveDetailInfo.verify==2">白名单</span>
+              <span class="tag" v-if="liveDetailInfo.verify==3">付费活动</span>
+              <span class="tag" v-if="liveDetailInfo.verify==4">F码</span>
+              <span class="tag" v-if="liveDetailInfo.verify==5">报名表单</span>
             </p>
             <p class="">
               <el-button round size="mini">恢复预告</el-button>
@@ -63,6 +66,7 @@ export default {
   data(){
     return {
       msg: '',
+      liveDetailInfo: {},
       operas: {
         '准备': [
           { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
@@ -104,21 +108,34 @@ export default {
   },
   created(){
     // console.log(this.$route.params.str);
+    this.getLiveDetail(this.$route.params.str);
   },
-  filters: {
-    unitCovert(val) {
-      val = Number(val);
-      if (isNaN(val)) return 0;
-      if (val > 1e5 && val < 1e8) {
-        return `${(val / 1e4).toFixed(2)}万`;
-      } else if (val > 1e8) {
-        return `${(val / 1e8).toFixed(2)}亿`;
-      } else {
-        return val;
-      }
-    },
-  },
+  // filters: {
+  //   unitCovert(val) {
+  //     val = Number(val);
+  //     if (isNaN(val)) return 0;
+  //     if (val > 1e5 && val < 1e8) {
+  //       return `${(val / 1e4).toFixed(2)}万`;
+  //     } else if (val > 1e8) {
+  //       return `${(val / 1e8).toFixed(2)}亿`;
+  //     } else {
+  //       return val;
+  //     }
+  //   },
+  // },
   methods: {
+    getLiveDetail(id) {
+      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+        this.liveDetailInfo = res.data;
+        this.liveDetailInfo.webinar_state = 1;
+        console.log(res);
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      }).finally(()=>{
+        this.loading = false;
+      });
+    },
     blockHandler(item){
       if(item.path){
         this.$router.push({path: item.path});
@@ -181,6 +198,7 @@ export default {
       }
       .liveTag{
         background: rgba(0,0,0, .7);
+        // background: rgba(247, 245, 245, 0.7);
         color: #fff;
         font-size: 12px;
         padding: 2px 9px;
@@ -188,6 +206,13 @@ export default {
         position: absolute;
         top: 12px;
         left: 12px;
+        .live-status{
+          img{
+            margin-right:4px;
+            width: 8px;
+            height: 8px;
+          }
+        }
       }
       .hot{
         position: absolute;

@@ -288,6 +288,7 @@ export default {
       params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
         window.sessionStorage.setItem('token', res.data.token);
+        console.log("我是未登录页面");
         this.$router.push({path: '/'});
       });
     },
