@@ -219,7 +219,6 @@
                 :roomId="roominfo.room_id"
                 :ilId="roominfo.webinar_id"
                 :vssToken="roominfo.vss_token"
-                :vssJoinId="joinId"
                 :saasJoinId="saasJoinId"
                 :qaStatus="open_question"
                 :userChatId="userChatId"
@@ -419,9 +418,13 @@
                       >
                     </el-form-item>
                   </el-form>
-                  <div
+                  <!-- <div
                     class="bottom-login"
                     v-if="bottomLoginInfo && roominfo.open_huawei != 1"
+                  > -->
+                  <div
+                    class="bottom-login"
+                    v-if="bottomLoginInfo"
                   >
                     <p class="rightnow-reg">
                       <span>现在注册，就送20G流量</span>
@@ -529,7 +532,6 @@
                         :changeRules="changeRules"
                         :rewardListClick="rewardListClick"
                         :invitedTopClick="invitedTopClick"
-                        :joinId="joinId"
                         :domains="roominfo.domains"
                       >
                       </custom-tab>
@@ -759,7 +761,6 @@ export default {
       userChatId: null,
       nickName: null,
       roominfo: { modules: { initiator: {}, header: {} }, auth: {}, host: {} }, // 房间信息
-      joinId: null,
       topicData: ['美食', '周邊', '樓宇'],
       swiperOption: {
         slidesPerView: 4,
@@ -791,11 +792,11 @@ export default {
     };
   },
 
+    // invited, 需要补充
+    // reward,
   components: {
     swiper,
     swiperSlide,
-    invited,
-    reward,
     goodsPop,
     chrome,
     CustomTab,
@@ -939,11 +940,12 @@ export default {
     },
     // 点击注册
     registerClick() {
-      if (this.roominfo.open_huawei == 1) {
-        window.location.href = `${this.webDominUrl}/auth/register?isHuawei=true`; // v4.9.4 华为定制，注册的时候短信登录需要带标识
-      } else {
-        window.location.href = `${this.webDominUrl}/auth/register`;
-      }
+      window.location.href = `${this.webDominUrl}/auth/register`;
+      // if (this.roominfo.open_huawei == 1) {
+      //   window.location.href = `${this.webDominUrl}/auth/register?isHuawei=true`; // v4.9.4 华为定制，注册的时候短信登录需要带标识
+      // } else {
+      //   window.location.href = `${this.webDominUrl}/auth/register`;
+      // }
     },
     // 在线人数的显示
     passShow() {
@@ -1100,7 +1102,7 @@ export default {
           phone: this.ruleForm.usernames,
           type: 1,
           captcha: this.phoneKey,
-          channel: this.roominfo.open_huawei == 1 ? 'huawei' : '' // 华为账号特有参数 v4.9.4
+          // channel: this.roominfo.open_huawei == 1 ? 'huawei' : '' // 华为账号特有参数 v4.9.4
         },
         {
           'X-Requested-With': 'XMLHttpRequest'
@@ -1398,6 +1400,186 @@ export default {
         }
       });
     },
+    // TODO:
+    async newGetInfo () {
+      let stars = await this.getTotalLike() // 获取总点赞数
+      let ads = await this.getAdsInfo() // 活动下所有推荐
+      let marquee = await this.getMarqueenInfo() // 跑马灯
+      let water = await this.getWaterInfo() // 获取水印信息
+      let skinInfo = await this.getSkin() // 获取皮肤
+      this.$fetch('vssInfo', {
+        webinar_id: this.$route.params.il_id,
+        visitor: '',
+        record_id: '',
+        share_id: '',
+        invite: '',
+        wx_url: ''
+      }).then(res => {
+        let webinar = {},
+            vss_token = '',
+            advs = ads,
+            auth = [], // TODO: 未登录返回空数组，登录后返回用户信息 头像昵称id父id
+            base_online_num = 0,
+            base_pv = 0,
+            domains = {},
+            hd_definition = '',
+            host = {},
+            is_replay = 0,
+            modules = {},
+            open_question = 0,
+            paas_record_id = '', // TODO
+            player = {},
+            push_definition = '',
+            record_history_time = '',
+            report_extra = '',
+            report_token = '',
+            room_id = '',
+            saas_chat = {},
+            share_id = '',
+            skin = {},
+            user = {}
+
+        if (res.code == 200 && res.data) {
+          webinar = res.data.webinar
+          webinar.image_url = res.data.webinar.img_url
+          webinar.is_interact = res.data.webinar.mode == 3 ? 1 : 0,
+          webinar.like = stars
+          webinar.pv = res.data.pv
+        }
+        vss_token = data.interact.interact_token
+        base_online_num = res.data.watch_online_num // TODO:
+        base_pv = res.data.watch_stat_num
+        domains = {
+          api: null,
+          static: res.data.urls.static_url,
+          upload: res.data.urls.upload_url,
+          web: res.data.urls.web_url
+        }
+        // 房间互动工具状态
+        let interactiveInfo = await this.queryRoomInterInfo(res.data.interact.room_id)
+        hd_definition = interactiveInfo.definition
+        push_definition = interactiveInfo.definition
+        host = {
+          id: res.data.webinar.userinfo.id,
+          nick_name: res.data.webinar.userinfo.nick_name,
+          avatar: res.data.webinar.userinfo.avatar
+        }
+        is_replay = 0 ? 1 : 2 // TODO: 重播
+        modules = {
+          account_center: {},
+          adv: {},
+          attention: {},
+          barrage: {},
+          chat_history: {},
+          chat_login: {},
+          child_user: {},
+          gift: {},
+          header: {},
+          commit_question: {},
+          initiator: {show: res.data.config.hide_initiator},
+          logo: {show: res.data.config.self_help.swf_dfsid.ishiddenlogo},
+          my_message: {},
+          online: {show: res.data.ui.hide_watch_online},
+          order_panel: {},
+          pv: {show: res.data.config.ui.hide_watch_pv},
+          redpacket: {},
+          reg: {},
+          reward: {},
+          search_download: {show: interactiveInfo.question_status},
+          webinar_status: {show: res.data.webinar.type}
+        } // TODO:
+        open_question = interactiveInfo.question_status
+        paas_record_id = '' // TODO:
+        player = {
+          default_definition: interactiveInfo.definition,
+          scrolling_text: marquee,
+          watermark: water,
+          hls: 0 // TODO:
+        },
+        record_history_time = "" // TODO:
+        report_extra = res.data.report_data.report_extra
+        report_token = '' // TODO:
+        room_id = res.data.interact.room_id
+        saas_chat = {} // TODO:
+        share_id = '' // TODO:
+        skin = {
+          skin_json_pc : skinInfo.skin_style_code_pc,
+          skin_json_wap: skinInfo.skin_style_code_wap
+        }
+        user = {
+          avatar: res.data.join_info.avata,
+          nick_name: res.data.join_info.nickname,
+          role_name: 2,
+          saas_join_id: res.data.join_info.join_id,
+          third_party_user_id: res.data.join_info.third_party_user_id,
+          is_gag: res.data.join_info.avata,
+          is_kick: res.data.join_info.avata,
+          is_gag: res.data.join_info.avata
+        }
+      })
+    },
+    // 获取皮肤
+    getSkin () {
+      this.$fetch('getSkin', {
+        webinar_id: this.$route.parmas.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          return res.data
+        }
+      })
+    },
+    // 获取总点赞数
+    getTotalLike () {
+      this.$fetch('likeTotal', {
+        'interact-token': 'asdasdasd',
+        // token: 'adsasdasd'
+      }).then((res) => {
+        if (res.code == 200) {
+          return res.data.total
+        }
+      })
+    },
+    // 获取活动广告信息
+    getAdsInfo () {
+      this.$fetch('queryAdsInfo', {
+        webinar_id: this.$route.params.il_id,
+        pos: 0,
+        limit: 50
+      }).then(res => {
+        if (res.code == 200 && res.data.adv_list) {
+          return res.data.adv_list
+        }
+      })
+    },
+    // 获取房间活动状态
+    queryRoomInterInfo (id) {
+      this.$fetch('queryRoomInterInfo', {
+        room_id: id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          return res.data
+        }
+      })
+    },
+    // 获取跑马灯信息
+    getMarqueenInfo () {
+      this.$fetch('getScrolling', {
+        webinar_id: this.$route.params.il_id
+      }).thne(res => {
+        if (res.code == 200 && res.data) {
+          return res.data
+        }
+      })
+    },
+    getWaterInfo () {
+      this.$fetch('getWatermark', {
+        webinar_id: this.$route.params.il_id
+      }).thne(res => {
+        if (res.code == 200 && res.data) {
+          return res.data
+        }
+      })
+    },
     // 获取用户信息
     getUerInfo() {
       this.$fetch('vssInfo', {
@@ -1419,7 +1601,6 @@ export default {
           if (this.roominfo.modules && this.roominfo.modules.barrage) {
             this.roominfo.player.barrage = this.roominfo.modules.barrage.hide;
           }
-          this.joinId = this.roominfo.user.join_id;
           this.userInfo = this.roominfo.user;
           this.userChatId = this.roominfo.user.third_party_user_id;
           this.saasJoinId = res.data.user.saas_join_id;

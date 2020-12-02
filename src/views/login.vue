@@ -2,25 +2,34 @@
   <div class="login">
     <div class="login-main">
       <div class="login-header"></div>
-      <div class="login-form">
+      <div class="login-form" v-if="$route.path==='/login'">
         <div class="login-navs">
-          <span @click="accountLogin('1')" :style="isActive == 1 ? 'color: #f33' : 'color: #333'">账号登录</span>
-          <span @click="accountLogin('2')" :style="isActive == 2 ? 'color: #f33' : 'color: #333'">快捷登录</span>
+          <span @click="changeLogin('1')" :style="isActive == 1 ? 'color: #f33' : 'color: #333'">账号登录</span>
+          <span @click="changeLogin('2')" :style="isActive == 2 ? 'color: #f33' : 'color: #333'">快捷登录</span>
           <em class="login-float-bar" :style="isActive == 1 ? 'left: 0' : 'left: 50%'"></em>
         </div>
         <div class="login-line"></div>
-        <div class="form-items" v-if="isActive===1">
-          <el-form ref="form" :model="loginForm">
-            <el-form-item>
+        <div class="form-items" v-if="isActive===1" >
+          <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
+            <el-form-item prop="account">
               <el-input
                 placeholder="请输入账号"
                 v-model="loginForm.account">
                 <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
               </el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-show="isLogin">
+              <div id="loginCaptcha">
+                <el-input
+                  v-model="loginForm.text">
+                </el-input>
+              </div>
+              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+            </el-form-item>
+            <el-form-item prop="password">
               <el-input
                 placeholder="请输入密码"
+                maxlength="30"
                 v-model="loginForm.password">
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                 <i slot="suffix" class="el-input__icon el-icon-view"></i>
@@ -31,40 +40,108 @@
             </div>
             <el-form-item class="login-checked">
               <el-checkbox v-model="remember">自动登录</el-checkbox>
-              <span>忘记密码</span>
+              <span @click="forgetPassword">忘记密码</span>
             </el-form-item>
             <div class="login-just">
-              现在注册，就送20G流量<span>立即注册</span>
+              现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
             </div>
             <div class="login-other">
               其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
               <div class="other-img" v-show="!isOpenOther">
-                <img src="../common/images/icon/qq.png" alt="">
-                <img src="../common/images/icon/wechat.png" alt="">
+                <img src="../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t.e.vhall.com/auth/login')">
+                <img src="../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t.e.vhall.com/auth/login')">
                 <img src="../common/images/icon/weibo.png" alt="">
               </div>
             </div>
           </el-form>
         </div>
         <div class="form-items" v-if="isActive===2">
-          <el-form ref="form" :model="loginForm">
-            <el-form-item>
+          <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
+            <el-form-item prop="phoneNumber">
               <el-input
-                placeholder="请输入内容"
-                v-model="loginForm.name">
+                placeholder="请输入手机号"
+                maxlength="11"
+                v-model="dynamicForm.phoneNumber">
                 <i slot="prefix" class="el-input__icon el-icon-mobile-phone"></i>
               </el-input>
             </el-form-item>
             <el-form-item>
-              <el-input
-                placeholder="请输入内容"
-                v-model="loginForm.age">
-                <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-              </el-input>
+              <div id="loginCaptcha">
+                <el-input
+                  v-model="dynamicForm.text">
+                </el-input>
+              </div>
+              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+            </el-form-item>
+            <el-form-item prop="dynamic_code">
+              <div class="code">
+                <el-input
+                style="width:200px"
+                  placeholder="动态密码"
+                  v-model="dynamicForm.dynamic_code">
+                  <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+                </el-input>
+                <span @click="getDyCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+              </div>
+              <!-- <p class="errorText" v-show="errorMsgShow.dycode"><i class="el-icon-error"></i>验证码错误</p> -->
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary">登&nbsp;&nbsp;&nbsp;录</el-button>
+              <el-button type="primary" @click="loginDynamic">登&nbsp;&nbsp;&nbsp;录</el-button>
             </div>
+          </el-form>
+        </div>
+      </div>
+      <div class="login-form" v-else>
+        <div class="login-navs">
+          <span>欢迎注册</span>
+        </div>
+        <div class="login-line"></div>
+        <div class="form-items">
+          <el-form ref="registerForm" :model="registerForm" :rules="loginRules">
+              <el-form-item prop="phone">
+                <el-input
+                  placeholder="请输入手机号"
+                  maxlength="11"
+                  v-model="registerForm.phone">
+                  <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <div id="registerCaptcha">
+                  <el-input
+                    v-model="registerForm.text">
+                  </el-input>
+                </div>
+                <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+              </el-form-item>
+              <el-form-item prop="code">
+                <div class="code">
+                  <el-input
+                  style="width:200px"
+                    placeholder="动态密码"
+                    v-model="registerForm.code">
+                    <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+                  </el-input>
+                  <span @click="getDyCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                </div>
+                <!-- <p class="errorText" v-show="errorMsgShow.dycode"><i class="el-icon-error"></i>验证码错误</p> -->
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input
+                  placeholder="设置密码(6-30个字符)"
+                  maxlength="30"
+                  v-model="registerForm.password">
+                  <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+                  <i slot="suffix" class="el-input__icon el-icon-view"></i>
+                </el-input>
+              </el-form-item>
+              <div class="login-btn">
+                <el-button type="primary" @click="registerAccount" :disabled="!registerForm.checked">立 即 注 册</el-button>
+              </div>
+              <el-form-item class="login-checked register-checked">
+                <el-checkbox v-model="registerForm.checked">同意遵守<b style="color: #4da1ff">《服务条款》</b></el-checkbox>
+                <span @click="$router.push({path: '/login'})">去登录</span>
+              </el-form-item>
           </el-form>
         </div>
       </div>
@@ -76,14 +153,53 @@
 </template>
 <script>
 import footerSection from '../components/Footer/index';
-import { sessionOrLocal } from '../utils/utils';
+// import { sessionOrLocal } from '../utils/utils';
 export default {
   data() {
+    var validatePhone = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入手机号'));
+      } else {
+        if (!(/^1[0-9]{10}$/.test(value))) {
+          callback(new Error('请输入正确的手机号'));
+        }
+        callback();
+      }
+    };
     return {
       remember: 0,
+      isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
-        remember: 0
+        account: '',
+        password: ''
       },
+      dynamicForm: {phoneNumber: ''},
+      registerForm: {
+        agree: 1
+      },
+      loginRules: {
+        account: [
+          { required: true, message: '请输入账号', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        phoneNumber: [
+          { validator: validatePhone, trigger: 'blur' }
+        ],
+        dynamic_code: [
+          { required: true, message: '请输入短信验证码', trigger: 'blur' }
+        ],
+        phone: [
+          { validator: validatePhone, trigger: 'blur' }
+        ]
+      },
+      showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
+      captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
+      mobileKey: '', // 云盾值
+      captcha: null, // 云盾本身
+      errorMsgShow: '',
+      time: 60,
       isActive: 1,
       isOpenOther: true
     };
@@ -91,21 +207,147 @@ export default {
   components: {
     footerSection
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.callCaptcha();
+    });
+  },
   methods: {
     openOther() {
       this.isOpenOther = !this.isOpenOther;
     },
-    accountLogin(index) {
-      this.isActive = parseInt(index);
+    thirdLogin(url) {
+      window.location.href = url;
     },
-    // 登录
+    // 忘记密码
+    forgetPassword() {
+      this.$router.push({path: '/forgetPassword'});
+    },
+    changeLogin(index) {
+      this.isActive = parseInt(index);
+      this.isActive === 1 ? this.$refs['dynamicForm'].resetFields() : this.$refs['loginForm'].resetFields();
+      // this.callCaptcha();
+      this.showCaptcha = false;
+      this.errorMsgShow = '';
+    },
+    getDyCode() {
+      // 获取短信验证码
+      if (this.checkMobile() && this.mobileKey) {
+        this.$fetch('sendCode', {
+          type: 1,
+          phone: this.dynamicForm.phoneNumber,
+          validate: this.mobileKey,
+          scene_id: 7
+        }).then(() => {
+          this.countDown();
+        });
+      }
+    },
+    // 账号登录
     loginAccount() {
-      this.loginForm.remember = this.remember ? 1 : 0;
-      this.$fetch('loginInfo', this.loginForm).then(res => {
-        sessionOrLocal.set('token', res.data.token);
-        sessionOrLocal.set('userInfo', res.data);
+      if (this.isLogin) {
+        this.login(this.loginForm);
+      } else {
+        this.$refs.loginForm.validate((valid) => {
+          if (valid) {
+            this.checkedAccount();
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      }
+    },
+    // 快捷登录
+    loginDynamic() {
+      this.$refs.dynamicForm.validate((valid) => {
+        if (valid) {
+          let params = this.dynamicForm;
+          params.account = this.dynamicForm.phoneNumber;
+          // this.login(params);
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
       });
-    }
+    },
+    // 登录账号锁定检测
+    checkedAccount() {
+      this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
+        if (res.data.check_result) {
+          this.isLogin = true;
+        } else {
+          this.login(this.loginForm);
+        }
+      });
+    },
+    login(params) {
+      params.captcha = this.mobileKey;
+      params.remember = this.remember ? 1 : 0;
+      this.$fetch('loginInfo', params).then(res => {
+        window.sessionStorage.setItem('token', JSON.stringify(res.data.token));
+        this.$router.push({path: '/'});
+      });
+    },
+    registerAccount() {
+      this.registerForm.captcha = this.mobileKey;
+      this.$fetch('register', this.registerForm).then(res => {
+        console.log(res.data, this.registerForm, '注册完成');
+      });
+    },
+     /**
+     * 倒计时函数
+     */
+    countDown() {
+      if (this.time) {
+        this.time--;
+        setTimeout(() => {
+          this.countDown();
+        }, 1000);
+      } else {
+        this.time = 60;
+      }
+    },
+    /**
+     * 校验手机号
+     */
+    checkMobile() {
+      return /^1[0-9]{10}$/.test(this.dynamicForm.phoneNumber);
+    },
+    checkPassWord() {
+      return /^(\w){6,20}$/.test(this.loginForm.password);
+    },
+    /**
+     * 初始化网易易盾图片验证码
+     */
+    callCaptcha() {
+      const that = this;
+      // eslint-disable-next-line
+      initNECaptcha({
+        captchaId: this.captchakey,
+        element: `#${this.$route.path==='/login' ? 'loginCaptcha' : 'registerCaptcha'}`,
+        mode: 'float',
+        onReady(instance) {
+          console.log('instance', instance);
+        },
+        onVerify(err, data) {
+          if (data) {
+            that.mobileKey = data.validate;
+            that.showCaptcha = true;
+            console.log('data>>>', data);
+          } else {
+            that.loginForm.captcha = '';
+            that.dynamicForm.captcha = '';
+            console.log('errr>>>', err);
+            that.errorMsgShow = true;
+          }
+        },
+        onload(instance) {
+          console.log('onload', instance);
+          that.captcha = instance;
+        }
+      });
+    },
   }
 };
 </script>
@@ -140,6 +382,9 @@ export default {
         background-color: #fff;
         border-radius: 4px;
         min-height: 400px;
+        .el-form-item{
+          margin-bottom: 18px;
+        }
         .login-navs{
           position: relative;
           line-height: 54px;
@@ -188,9 +433,9 @@ export default {
         .form-items{
           padding: 0 50px;
           padding-top: 37px;
-          .el-input__inner{
+          /deep/.el-input__inner{
             border-radius: 2px 0 0 2px;
-            height: 38px;
+            height: 40px;
           }
           .el-input--prefix .el-input__inner {
             padding-left: 40px;
@@ -211,6 +456,9 @@ export default {
               cursor: pointer;
               color: #666;
             }
+          }
+          .register-checked{
+            padding-bottom: 20px;
           }
           .login-just{
             text-align: center;
@@ -242,6 +490,37 @@ export default {
               }
             }
           }
+          .errorText{
+            line-height: 20px;
+            color:#fc5659;
+            font-size: 12px;
+            i{
+              color: #fc5659;
+              padding-right: 5px;
+            }
+          }
+        }
+      }
+    }
+    .code{
+      border-radius: 4px;
+      border: 1px solid #CCC;
+      // height: 36px;
+      /deep/.el-input__inner{
+        width: 210px;
+        border: 0;
+        // line-height: 36px;
+      }
+      span{
+        // float: right;
+        background: #dedede;
+        padding: 6px 12px;
+        border-radius: 2px;
+        color: #fff;
+        height: 36px;
+        cursor: pointer;
+        &.isLoginActive{
+          background: #fc5659;
         }
       }
     }

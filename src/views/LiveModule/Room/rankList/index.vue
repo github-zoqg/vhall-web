@@ -30,9 +30,6 @@ export default {
     ilId: {
       required: true
     },
-    vssJoinId: {
-      required: true
-    },
     staticDomain: {
       required: true,
       default: ''
@@ -54,9 +51,9 @@ export default {
     // 获取邀请列表
     getInviteList () {
       this.$fetch('inviteTop', {
-        webinar_id: this.ilId,
-        // webinar_id: 997553721,
-        join_id: this.vssJoinId
+        // room_id: this.ilId, // lss_id TODO:
+        pos: 0,
+        limit: 100
       }).then(res => {
         if (res.code == 200) {
           this.inviteInfo = res.data.list;

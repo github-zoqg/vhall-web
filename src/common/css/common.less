@@ -473,11 +473,19 @@ button.el-button.el-button--white-primary {
   padding: 20px 24px;
   width: 100%;
   margin-bottom: 32px;
-  img {
+  .pwd--circle {
     width: 40px;
     height: 40px;
-    background: @default_background_color;
     border-radius: 100%;
+    &.blue {
+      background: #EBEFFF;
+    }
+    &.orange {
+      background: #FFF5EB;
+    }
+    &.green {
+      background: #E8F8F0;
+    }
   }
   .ul--son--card {
     margin-left: 16px;
@@ -507,8 +515,16 @@ button.el-button.el-button--white-primary {
     font-size: @font_size_14;
     font-family: @fontRegular;
     font-weight: 400;
-    color: @default--normal;
     line-height: 20px;
+    &.level_high {
+      color: #3562FA;
+    }
+    &.level_center {
+      color: #FA9A32;
+    }
+    &.level_min {
+      color: #FB3A32;
+    }
   }
   .card--blue {
     margin-left: auto;
@@ -616,7 +632,38 @@ button.el-button.el-button--white-primary {
   z-index: 9;
 }
 /*-----------------------------------------重置$confirm-确认提示弹出框 开始 ---------------------------------------------*/
-.el-message-box {
+.zdy-message-box {
+  .el-message-box__header {
+    padding: 24px 32px;
+  }
+  .el-message-box__title {
+    font-size: 20px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #1A1A1A;
+    line-height: 28px;
+  }
+  .el-message-box__headerbtn {
+    top: 30px;
+    right: 32px;
+    .el-message-box__close {
+      color: #666666;
+    }
+  }
+  .el-message-box__content {
+    padding: 0 32px;
+  }
+  .el-message-box__btns {
+    padding: 24px 32px;
+    .el-button {
+      border-radius: 20px;
+    }
+  }
+}
+.zdy-alert-box {
+  &.el-message-box--center {
+    padding-bottom: 0;
+  }
   .el-message-box__header {
     padding: 24px 32px;
   }
@@ -665,4 +712,10 @@ button.el-button.el-button--white-primary {
   font-weight: 400;
   color: #FFFFFF;
   line-height: 18px;
+}
+.beforeStar:before{
+  content:"*" ;
+  color:red;
+  position: absolute;
+  left: -15px;
 }

@@ -127,7 +127,7 @@ const apis = {
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
   // 登录
-  loginInfo: ['/logins/v3/users/user/login', 'POST'],  //登录接口
+  loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口
   loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
   loginCheck: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
   sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口
@@ -170,24 +170,22 @@ const apis = {
   sonResourcesGet: ['/v3/user-vip/get-dist-resources', 'POST', 'mock'], // 获取账号可分配资源 Jia.li
   sonResourcesSave: ['/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
 
-
-
   //财务中心
-  getVersionInfo: ['/v3/finances/account/info', 'GET', 'mock'],  //获取用户版本信息
-  getTrendInfo: ['/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
-  getFlowInfo: ['/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
-  getOnlinePay: ['/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单
-  getFlowPay: ['/v3/business-total/user-flow-pay', 'GET', 'mock'],  //获取流量-消费账单
-  getAccountList: ['/v3/business-total/user-online-pay-detail', 'GET', 'mock'], //获取财务总览-并发-消费账单  接口参数少一个字段(标题)
-  getBusinessList: ['/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]   接口参数少一个字段(标题)
-  orderProfessional: ['/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
-  orderFlow: ['/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
-  orderUpgrade: ['/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
-  orderExtend: ['/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
-  payOrder: ['/v3/finances/pay', 'POST', 'mock'], // 支付订单
-  buyDetail: ['/v3/finances/order/list', 'GET', 'mock'], // 购买明细
-  deleteDetail: ['/v3/finances/order/delete', 'GET', 'mock'], // 删除购买明细
-  orderDetail: ['/v3/finances/admin-order/list', 'GET', 'mock'], // 开通明细
+  getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息
+  getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
+  getFlowInfo: ['/104/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
+  getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单
+  getFlowPay: ['/104/v3/business-total/user-flow-pay', 'GET', 'mock'],  //获取流量-消费账单
+  getAccountList: ['/104/v3/business-total/user-online-pay-detail', 'GET', 'mock'], //获取财务总览-并发-消费账单  接口参数少一个字段(标题)
+  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]   接口参数少一个字段(标题)
+  orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
+  orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
+  orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
+  orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
+  payOrder: ['/104/v3/finances/pay', 'POST', 'mock'], // 支付订单
+  buyDetail: ['/104/v3/finances/order/list', 'GET', 'mock'], // 购买明细
+  deleteDetail: ['/104/v3/finances/order/delete', 'GET', 'mock'], // 删除购买明细
+  orderDetail: ['/104/v3/finances/admin-order/list', 'GET', 'mock'], // 开通明细
   //财务收益
   incomeInfo: ['/v3/finances/income', 'GET', 'mock'], // 账户收益总览
   liveIncomeList: ['/v3/finances/income/live/list', 'GET', 'mock'], // 直播收益
@@ -233,6 +231,13 @@ const apis = {
   downloadedList: ['/v3/commons/downcenter/list', 'POST', 'mock'], // 下载中心-列表
   downloadedReload: ['/v3/commons/downcenter/regenerate', 'POST', 'mock'], // 下载中心-重新生成 Jia.li
 
+  // 观看端
+  vssInfo: ['/v3/webinars/watch/init', 'GET'], // 观看端初始化
+  likeTotal: ['/v3/interacts/like/get-room-like', 'POST'], // 房间内点赞总数
+  queryAdsInfo: ['/v3/interacts/recommend-adv/watch-get-adv-list', 'GET'], // 获取广告信息
+  queryRoomInterInfo: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间互动工具状态
+  inviteTop: ['/v3/interacts/invite-card/get-list', 'POST'], // 邀请列表
+  getSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 获取皮肤
 };
 
 const getApi = api => {

@@ -5,6 +5,7 @@
     <el-form :model="logoForm" ref="logoForm">
       <el-form-item label="标志替换：">
         <upload
+          class="upload__avatar"
           v-model="logoForm.logoUrl"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
@@ -62,7 +63,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`标志上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -72,5 +73,36 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+  /* 图片上传 */
+  .upload__avatar {
+    /deep/.el-upload--picture-card {
+      width: 180px;
+      height: 180px;
+      border: 1px solid #CCCCCC;
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
+    /deep/.box > div {
+      width: 180px;
+      height: 180px;
+    }
+    &.withMore {
+      /deep/.el-upload--picture-card {
+        img {
+          width: 100%;
+          height: auto;
+        }
+      }
+    }
+    &.heightMore {
+      /deep/.el-upload--picture-card {
+        img {
+          width: auto;
+          height: 100%;
+        }
+      }
+    }
+  }
 </style>

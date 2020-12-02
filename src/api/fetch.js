@@ -8,9 +8,9 @@ export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url);
   let [api, method, mock] = config;
   if (!api) throw TypeError('api 未定义');
-
-  const token = sessionStorage.getItem('token') || 'vsstoken';
-  const vc_cookie = localStorage.getItem('vc_cookie') || '';
+  // TODO 临时用大龙Token，后续删除
+  const token = JSON.parse(window.sessionStorage.getItem('token')) || "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc";
+  const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
   let data;
   if (token) {
     data = Object.assign(  { token, vc_cookie, platform: 'pc', need_sign: 1 },
@@ -40,9 +40,11 @@ export default function fetchData(url, data1 = {}, header = {}) {
   }
 
   let headers = {
+    platform: 17,
+    token
     // 'Content-Type': 'application/json'
   };
-
+  // headers.token = token;
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();
     for (let key in data) {

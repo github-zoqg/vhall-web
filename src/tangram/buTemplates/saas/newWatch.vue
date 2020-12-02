@@ -465,7 +465,7 @@ export default {
     },
 
     vssJoinId: {
-      required: true
+      required: false
     },
 
     userChatId: {
