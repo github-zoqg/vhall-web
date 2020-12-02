@@ -25,6 +25,11 @@ import 'nprogress/nprogress.css';
 import '@/common/css/index.less';
 Vue.prototype.$img = require('./common/images/small.png');
 
+//过滤器
+import * as filters from './utils/filter';
+Object.keys(filters).forEach(key=>{
+  Vue.filter(key, filters[key]);    //插入过滤器名和对应方法
+});
 // 工具类引入
 import moment from 'moment'; // 日期格式化
 import { getParams } from './utils/general';

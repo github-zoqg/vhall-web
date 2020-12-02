@@ -23,7 +23,9 @@ router.beforeEach((to, from, next) => {
       // 获取用户信息
       fetch('getInfo', {scene_id: 2}).then(res => {
         if(res.code === 200 && res.data) {
+          // getVersion(res.data.user_id);
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
         } else {
           sessionOrLocal.set('userInfo', null);
         }
@@ -44,6 +46,14 @@ router.beforeEach((to, from, next) => {
       NProgress.done();
     }
 });
+// 保存版本信息
+function getVersion(id) {
+  fetch('getVersionInfo', { user_id: id}).then(res => {
+    sessionOrLocal.set('versionInfo', JSON.stringify(res.data));
+  }).catch(e=>{
+    console.log(e);
+  });
+}
 router.afterEach(() => {
     NProgress.done();
 });

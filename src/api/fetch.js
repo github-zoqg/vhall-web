@@ -12,7 +12,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc");
   const token = window.sessionStorage.getItem('token') || null;
   const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
-  let data = Object.assign({vc_cookie, platform: 17, need_sign: 1}, data1);
+  let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
   let formData = null;
 
   if (method === 'GET' && data) {
@@ -57,8 +57,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
     option.body = formData || qs.stringify(data); // body data type must match "Content-Type" header
   }
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
-  if (mock) {
+  if (mock == 'mock') {
     api = `/mock${api}`;
+  } else if(mock == 'data') {
+    api = `${Env.BASE_URL_DATA}${api}`;
   } else {
     api = `${Env.BASE_URL}${api}`;
   }
