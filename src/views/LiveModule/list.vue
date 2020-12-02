@@ -105,6 +105,7 @@ export default {
       keyWords: '',
       pageSize: 10,
       pageNum: 1,
+      pagePos: 0,
       totalElement: 0,
       liveDropDownVisible: false,
       statusOptions: [
@@ -128,6 +129,7 @@ export default {
   },
   created() {
     this.getLiveList();
+    // Cast to number failed for value "v3" at path "_id" for model "project"
   },
   methods: {
     searchHandler() {
@@ -141,11 +143,12 @@ export default {
     },
     currentChangeHandler(current) {
       this.pageNum = current;
+      this.pagePos = parseInt((current - 1) * this.pageSize);
       this.getLiveList();
     },
     getLiveList(){
       let data = {
-        pos: this.pageNum,
+        pos: this.pagePos,
         limit: this.pageSize,
         order_type: this.orderBy,
         webinar_type: this.liveStatus

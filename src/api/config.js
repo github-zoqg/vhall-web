@@ -46,7 +46,7 @@ const apis = {
 
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
-  liveList: ['/v3/webinars/webinar/get-list', 'POST', 'mock'], // 获取直播列表 jian.chang
+  liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang
   getWebinarInfo: ['/v3/webinars/webinar/info', 'POST', 'mock'], // 查询活动基础信息接口 •••
   liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改 •••
   liveDel: ['/99/v3/webinars/webinar/delete', 'POST', 'mock'], // 活动删除 •••
