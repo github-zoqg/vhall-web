@@ -84,6 +84,7 @@
 </template>
 
 <script>
+import 'whatwg-fetch';
 import PageTitle from '@/components/PageTitle';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 export default {
@@ -103,7 +104,7 @@ export default {
         total: 0,
         list: []
       },
-      ids: []
+      selectRows: []
     };
   },
   methods: {
@@ -119,10 +120,23 @@ export default {
       return Number(row.file_status) === 1;
     },
     setRowKeyFun() {},
+    // 批量勾选
+    handleSelectionChange(val){
+      this.selectRows = val;
+    },
     multiDownload() {
-      if (!(this.ids && this.ids.length > 0)) {
+      let arr = this.selectRows;
+      if (!(this.selectRows && this.selectRows.length > 0)) {
         this.$message.error('请至少选择一条下载记录');
       } else {
+        let index = 0;
+        let interDown = setInterval(function() {
+          window.open('http://t-alistatic01.e.vhall.com/upload/sys/exel_url/75/20/7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx');
+          if(index === arr.length - 1) {
+            window.clearInterval(interDown);
+          }
+          index ++;
+        }, 3000);
       }
     },
     // 页码改变按钮事件
@@ -155,6 +169,7 @@ export default {
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
           // TODO 下载地址，模拟用后续删除
+          item.file_name = '7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx';
           item.dow_url = 'http://t-alistatic01.e.vhall.com/upload/sys/exel_url/75/20/7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx';
         });
         this.docDao = dao;
@@ -166,21 +181,9 @@ export default {
         };
       });
     },
-    handleSelectionChange(val){
-      this.ids = val.map(item => {
-        return item.dow_url;
-      });
-    },
     // 下载
     download(rows) {
-      let dowUrls = rows.dow_url.split(',');
-      if(dowUrls.length > 1) {
-        dowUrls.forEach(arr => {
-          window.open(arr, "_blank");
-        });
-      } else {
-        window.open(rows.dow_url, "_blank");
-      }
+      window.open(rows.dow_url, "_blank");
     },
     // 重新生成
     resetDownload(rows) {},
