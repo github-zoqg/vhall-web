@@ -2,11 +2,8 @@
   <el-upload
     class="avatar-uploader"
     v-bind="$props"
-    :headers="{token: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc`}"
-    :data="{
-      path: 'sys/img_url',
-      type: 'image',
-    }"
+    :headers="{token: token}"
+    :data=save_data
     name="resfile"
     :on-success='handleuploadSuccess'>
       <div class="box">
@@ -43,14 +40,23 @@
 <script>
 import {Upload} from 'element-ui';
 import Env from '@/api/env.js';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data(){
     return {
       imageUrl: '',
+      token: sessionOrLocal.get('token')
     };
   },
   props: {
     ...Object.assign(Upload.props, {
+      saveData: {
+        type: Object,
+        default: {
+          path: 'sys/img_url',
+          type: 'image',
+        }
+      },
       action: {
         type: String,
         default: `${Env.BASE_URL}/v3/commons/upload/index`

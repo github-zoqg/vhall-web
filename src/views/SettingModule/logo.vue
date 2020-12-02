@@ -7,6 +7,10 @@
         <upload
           class="upload__avatar"
           v-model="logoForm.logoUrl"
+          :saveData="{
+             path: 'sys/logo_url',
+             type: 'image',
+          }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"

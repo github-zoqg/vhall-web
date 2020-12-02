@@ -78,7 +78,11 @@
       <el-form-item :label="`${webniarTypeToZH}封面：`">
         <upload
           v-model="imageUrl"
-          :on-success="handleuploadSuccess"
+          :saveData="{
+             path: 'webinar/live_url',
+             type: 'image',
+          }"
+          :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
@@ -111,7 +115,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}简介：`">
-        <editor ref="editor"></editor>
+        <v-editor :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}类别：`" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
@@ -191,15 +195,17 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import editor from '@/components/WangEditor/main';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
+import VEditor from '@/components/Tinymce';
+import Env from "@/api/env";
+
 export default {
   components: {
     PageTitle,
-    editor,
     upload,
-    selectMedia
+    selectMedia,
+    VEditor
   },
   computed: {
     docSwtichDesc(){
@@ -269,6 +275,7 @@ export default {
         date1: '',
         date2: ''
       },
+      content: ``,
       docSwtich: false,
       reservation: false,
       online: false,
@@ -290,10 +297,16 @@ export default {
     console.log(this.$route);
   },
   methods: {
-    handleuploadSuccess(res, file){
+    sendData(content) {
+      this.content = content;
+    },
+    handleUploadSuccess(res, file) {
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
-      this.imageUrlTrue = res.data.file_url;
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.imageUrl =  Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+        this.imageUrlTrue = res.data.file_url;
+      }
     },
     beforeUploadHnadler(file){
       const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
@@ -322,7 +335,7 @@ export default {
       console.log(`${this.formData.date1} ${this.formData.date2}`);
       let data = {
         subject: this.formData.title, // 标题
-        introduction: this.$refs.editor.editor.txt.html(), // 简介
+        introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
@@ -344,7 +357,7 @@ export default {
             this.$message.success(`创建成功`);
             console.log(res);
             setTimeout(()=>{
-              this.$router.push({name: 'liveList'});
+              this.$router.push({path: '/live/list'});
             }, 500);
           }).catch(error=>{
             this.$message.error(`创建失败，${error.message}`);
