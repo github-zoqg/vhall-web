@@ -78,7 +78,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
       this.$router.push({
         path: '/error'
       });
-    } else if (res.code >= 200 && res.code < 600) {
+    } else if (res.code >= 10000 && res.code < 1700) {
       return res;
     } else {
       return Promise.reject(res);
