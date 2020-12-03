@@ -33,9 +33,10 @@ router.beforeEach((to, from, next) => {
         NProgress.done();
       });
     } else {
-      // token不存在时跳转
-      console.log('4444444', to.path, '当前页面');
-      whiteList.includes(to.path) ? next() : next({path: '/login'});
+      // token不存在时跳转 TODO:
+      // console.log('4444444', to.path, '当前页面');
+      next()
+      // whiteList.includes(to.path) ? next() : next({path: '/login'});
       // if(to.name != 'login'){
       //   next({path: '/login'});
       // }else{

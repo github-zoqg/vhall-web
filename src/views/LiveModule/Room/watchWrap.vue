@@ -1,6 +1,5 @@
 <template>
-  <chrome v-if="downloadChrome"> </chrome>
-  <tip v-else-if="tipMsg" :text="tipMsg"> </tip>
+  <tip v-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="watch-wrap">
     <header
       v-if="roominfo.modules"
@@ -781,14 +780,14 @@ export default {
       open_question: 0,
       privateChat: {},
       domains: {},
-      downloadChrome: false, // 是否下载chrome
       recordHistoryTime: '', // 播放器进度
       tipMsg: '', // vssinfo接口返回的错误信息
       showOfficialAccountQRCode: false,
       officialAccountImage: '',
       showOfficialAccountMiniQRCode: false,
       menuData: [],
-      isIE: isIE()
+      isIE: isIE(),
+      visitor: '' // 访客标识
     };
   },
 
@@ -822,7 +821,7 @@ export default {
   mounted() {
     window.EventBridge = this.$EventBus;
     this.$EventBus.$on('loaded', () => {
-      this.$loadingStatus.close();
+      // this.$loadingStatus.close();
       if (
         this.roominfo.modules &&
         this.roominfo.modules.adv &&
@@ -1049,6 +1048,7 @@ export default {
         '_blank'
       );
     },
+    // TODO:
     // 微信登录入口
     // 唤起图片验证码
     callCaptcha(element) {
@@ -1097,11 +1097,13 @@ export default {
     // 获取短信验证码
     getCaptha() {
       this.$fetch(
-        'randcodelogin',
+        'sendCode',
         {
-          phone: this.ruleForm.usernames,
+          data: this.ruleForm.usernames,
           type: 1,
-          captcha: this.phoneKey,
+          // captcha: this.phoneKey,
+          validate: '', // TODO:
+          scene_id: 7
           // channel: this.roominfo.open_huawei == 1 ? 'huawei' : '' // 华为账号特有参数 v4.9.4
         },
         {
@@ -1134,13 +1136,10 @@ export default {
         return;
       }
       this.$fetch(
-        'ajaxphonelogin',
+        'loginInfo',
         {
           account: this.ruleForm.usernames,
-          password: this.ruleForm.captchas
-        },
-        {
-          'X-Requested-With': 'XMLHttpRequest'
+          dynamic_code: this.ruleForm.captchas
         }
       ).then(res => {
         console.log('res', res);
@@ -1169,16 +1168,19 @@ export default {
         ? (this.accountChecked = 'remember')
         : (this.accountChecked = null);
       this.$fetch(
-        'login',
+        'loginInfo',
         {
           account: this.ruleForm.username,
           password: this.ruleForm.password,
           captcha: this.phoneKey,
-          remember: this.accountChecked
+          remember: this.accountChecked,
+          dynamic_code: '', // TODO: 快捷登录必传
+          visitor_id: '', //
+          sso_token: '' // sso服务生成的token（实现新、老控制台的同步登录用）
         },
-        {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+        // {
+        //   'X-Requested-With': 'XMLHttpRequest'
+        // }
       )
         .then(res => {
           console.log('ssss>>>>>>res', res);
@@ -1210,7 +1212,7 @@ export default {
       })
         .then(res => {
           if (res.code == 200) {
-            if (res.data) {
+            if (res.data.check_result == 1) {
               this.photoCpathaShow = true;
               this.callCaptcha('#photoCaptcha');
               if (this.phoneKey) {
@@ -1264,7 +1266,8 @@ export default {
     },
 
     // 点击活动
-    activeClick(index, menu) {
+    activeClick(index) {
+      let menu  = this.menuList[index]
       this.activeIndex = index;
       if (menu && menu.components) {
         if (menu.type == 1) {
@@ -1278,7 +1281,8 @@ export default {
       }
     },
 
-    fetchMenuContent(index, menu) {
+    fetchMenuContent(index) {
+      let menu = this.menuList[index]
       const params = {
         menu_id: menu.id
       };
@@ -1289,8 +1293,6 @@ export default {
         }
       });
     },
-    // 向右滑
-    arrowRight() {},
     fullScreen() {
       var docElm = document.querySelector('.seeding-content');
       // W3C
@@ -1307,8 +1309,7 @@ export default {
     // 获取菜单列表
     getMenuList() {
       this.$fetch('newWebinarMenus', {
-        webinar_id: this.$route.params.il_id,
-        ...this.$route.query
+        webinar_id: this.$route.params.il_id
       }).then(res => {
         if (res.code == 200) {
           this.menuData = res.data.list || [];
@@ -1323,8 +1324,7 @@ export default {
             }
           });
           this.$nextTick(() => {
-            // TODO: 临时关闭
-            // this.activeClick(0);
+            this.activeClick(0);
           });
         }
       });
@@ -1332,29 +1332,33 @@ export default {
     // 关注
     attention() {
       if (this.roominfo.auth.length == undefined) {
-        this.$fetch('attention', {
-          at_id: this.hostInfo.id,
-          webinar_id: this.$route.params.il_id
-        }).then(res => {
-          if (res.code == 200) {
-            if (res.data.fans != this.attentionAccount) {
+        if (this.attentionContent = '关注' || this.attentionContent == '') {
+          this.$fetch('attention', {
+            at_id: this.hostInfo.id,
+          }).then(res => {
+            if (res.code == 200) {
               this.followStyle = false;
               this.attentionContent = '已关注';
-            } else {
+            }
+          })
+        } else {
+          this.$fetch('notAttention', {
+            at_id: this.hostInfo.id,
+          }).then(res => {
+            if (res.code == 200) {
               this.followStyle = true;
               this.attentionContent = '关注';
             }
-          }
-        });
+          })
+        }
       } else {
         this.callLogin();
       }
     },
     // 商品推荐
     getGoodsInfo() {
-      this.$fetch('goodsList', {
-        // webinar_id: this.$route.params.il_id
-        webinar_id: 171205460
+      this.$fetch('getWatchGoodsList', {
+        webinar_id: this.$route.params.il_id
       }).then(res => {
         if (res.code == 200) {
           this.sellGoodsShow = true;
@@ -1387,8 +1391,8 @@ export default {
      * @author Sean
      */
     chatFilter() {
-      this.$fetch('keywordsList', {
-        user_id: this.roominfo.host.id
+      this.$fetch('getWatchFilterWords', {
+        room_id: this.$route.params.il_id
       }).then(res => {
         console.log(
           'saas action info::',
@@ -1396,17 +1400,12 @@ export default {
           `get datas: ${res}`
         );
         if (res.code == 200) {
-          this.chatFilterData = res.data;
+          this.chatFilterData = res.data.list;
         }
       });
     },
     // TODO:
-    async newGetInfo () {
-      let stars = await this.getTotalLike() // 获取总点赞数
-      let ads = await this.getAdsInfo() // 活动下所有推荐
-      let marquee = await this.getMarqueenInfo() // 跑马灯
-      let water = await this.getWaterInfo() // 获取水印信息
-      let skinInfo = await this.getSkin() // 获取皮肤
+    getUerInfo () {
       this.$fetch('vssInfo', {
         webinar_id: this.$route.params.il_id,
         visitor: '',
@@ -1415,106 +1414,392 @@ export default {
         invite: '',
         wx_url: ''
       }).then(res => {
-        let webinar = {},
-            vss_token = '',
-            advs = ads,
-            auth = [], // TODO: 未登录返回空数组，登录后返回用户信息 头像昵称id父id
-            base_online_num = 0,
-            base_pv = 0,
-            domains = {},
-            hd_definition = '',
-            host = {},
-            is_replay = 0,
-            modules = {},
-            open_question = 0,
-            paas_record_id = '', // TODO
-            player = {},
-            push_definition = '',
-            record_history_time = '',
-            report_extra = '',
-            report_token = '',
-            room_id = '',
-            saas_chat = {},
-            share_id = '',
-            skin = {},
-            user = {}
+        if (res.code == 10008) {
+          // 未登录
+          window.location.href = '/login'
+        } else if (res.code == 200 && res.data) {
+          this.handleRoomInfo(res.data)
+        } else if (res.code == 123456) { // TODO: 对应老接口301
+          // --------------------
+          // 知客 SAAS 融合 相关业务
+          // -------——-----------
+          this.$EventBus.$emit('loaded');
+          window.localStorage.setItem('zhike_refer', window.document.referrer);
+          window.location.replace(res.data.url);
+        } else {
+          this.$EventBus.$emit('loaded');
+          this.tipMsg = res.msg;
+        }
+      })
+    },
+    async handleRoomInfo (roomData) {
+      let stars = await this.getTotalLike() // 获取总点赞数
+      let ads = await this.getAdsInfo() // 活动下所有推荐
+      let marquee = await this.getMarqueenInfo() // 跑马灯
+      let water = await this.getWaterInfo() // 获取水印信息
+      let skinInfo = await this.getSkin() // 获取皮肤
+      let publickAdv = await this.getPublisAdv() // 获取公众号广告
+      let userInfo = await this.getUserInfo()
+      let interactiveInfo = await this.queryRoomInterInfo(roomData.interact.room_id)
+      let data = roomData
 
-        if (res.code == 200 && res.data) {
-          webinar = res.data.webinar
-          webinar.image_url = res.data.webinar.img_url
-          webinar.is_interact = res.data.webinar.mode == 3 ? 1 : 0,
-          webinar.like = stars
-          webinar.pv = res.data.pv
-        }
-        vss_token = data.interact.interact_token
-        base_online_num = res.data.watch_online_num // TODO:
-        base_pv = res.data.watch_stat_num
-        domains = {
-          api: null,
-          static: res.data.urls.static_url,
-          upload: res.data.urls.upload_url,
-          web: res.data.urls.web_url
-        }
-        // 房间互动工具状态
-        let interactiveInfo = await this.queryRoomInterInfo(res.data.interact.room_id)
-        hd_definition = interactiveInfo.definition
-        push_definition = interactiveInfo.definition
-        host = {
-          id: res.data.webinar.userinfo.id,
-          nick_name: res.data.webinar.userinfo.nick_name,
-          avatar: res.data.webinar.userinfo.avatar
-        }
-        is_replay = 0 ? 1 : 2 // TODO: 重播
-        modules = {
-          account_center: {},
-          adv: {},
-          attention: {},
-          barrage: {},
-          chat_history: {},
-          chat_login: {},
-          child_user: {},
-          gift: {},
-          header: {},
-          commit_question: {},
-          initiator: {show: res.data.config.hide_initiator},
-          logo: {show: res.data.config.self_help.swf_dfsid.ishiddenlogo},
-          my_message: {},
-          online: {show: res.data.ui.hide_watch_online},
-          order_panel: {},
-          pv: {show: res.data.config.ui.hide_watch_pv},
-          redpacket: {},
-          reg: {},
-          reward: {},
-          search_download: {show: interactiveInfo.question_status},
-          webinar_status: {show: res.data.webinar.type}
-        } // TODO:
-        open_question = interactiveInfo.question_status
-        paas_record_id = '' // TODO:
-        player = {
-          default_definition: interactiveInfo.definition,
-          scrolling_text: marquee,
-          watermark: water,
-          hls: 0 // TODO:
+      let webinar = {},
+          vss_token = '',
+          advs = ads,
+          auth = {},
+          base_online_num = 0,
+          base_pv = 0,
+          domains = {},
+          hd_definition = '',
+          host = {},
+          is_replay = 0,
+          modules = {},
+          open_question = 0,
+          paas_record_id = '', // TODO:
+          player = {},
+          push_definition = '',
+          record_history_time = '',
+          report_extra = '',
+          room_id = '',
+          saas_chat = {},
+          share_id = '',
+          skin = {},
+          user = {}
+      webinar = data.webinar
+      webinar.image_url = data.webinar.img_url
+      webinar.is_interact = data.webinar.mode == 3 ? 1 : 0,
+      webinar.like = stars
+      webinar.pv = data.pv.num
+      this.visitor = data.visitor_id
+      open_question = interactiveInfo.question_status
+      report_extra = res.data.report_data.report_extra
+      vss_token = data.interact.interact_token
+      room_id = res.data.interact.room_id
+
+      skin = {
+        skin_json_pc : skinInfo.skin_style_code_pc,
+        skin_json_wap: skinInfo.skin_style_code_wap
+      }
+      auth = {
+        avatar: data.join_info.avata,
+        id: userInfo.user_id,
+        nick_name: data.join_info.nickname,
+        parent_id: userInfo.parent_id == 0 ? '' : userInfo.parent_id,
+      }
+      user = {
+        avatar: res.data.join_info.avata,
+        nick_name: res.data.join_info.nickname,
+        role_name: 2,
+        saas_join_id: res.data.join_info.join_id,
+        third_party_user_id: res.data.join_info.third_party_user_id,
+        is_gag: res.data.join_info.avata,
+        is_kick: res.data.join_info.avata,
+        is_gag: res.data.join_info.avata
+      }
+      domains = {
+        static: data.urls.static_url,
+        upload: data.urls.upload_url,
+        web: data.urls.web_url,
+        webinar: '//' + document.domain
+      }
+
+      hd_definition = interactiveInfo.hd_definition
+      push_definition = interactiveInfo.push_definition
+      host = {
+        id: data.webinar.userinfo.id,
+        nick_name: data.webinar.userinfo.nick_name,
+        avatar: data.webinar.userinfo.avatar
+      }
+      base_online_num = data.online.num
+      base_pv = data.pv.num
+      is_replay = data.webinar.type == 5 ? 2 : 1
+      paas_record_id = '' // TODO:
+      record_history_time = "" // TODO:
+      saas_chat = {} // TODO:
+      share_id = '' // TODO:
+      water = JSON.parse(water)
+      marquee = JSON.parse(marquee)
+      if (water.img_url) {
+        water.img_url += domains.upload + '/' + water.img_url
+      }
+      player = {
+        default_definition: interactiveInfo.definition, // TODO:
+        scrolling_text: marquee,
+        watermark: water,
+        hls: 0 // TODO:
+      }
+      let text = ''
+      switch (data.webinar.type) {
+        case 1:
+          text = '直播'
+          break;
+        case 2:
+          text = '预约'
+          break;
+        case 3:
+          text = '结束'
+          break;
+        case 4:
+          text = '点播'
+          break;
+        case 5:
+          text = '回放'
+          break;
+      }
+      modules = {
+        header: {},// TODO: 头部信息
+        initiator: {show: res.data.config.hide_initiator},// TODO: 主办方
+        adv: {
+          public: publickAdv['public-account'] // 公众号广告
         },
-        record_history_time = "" // TODO:
-        report_extra = res.data.report_data.report_extra
-        report_token = '' // TODO:
-        room_id = res.data.interact.room_id
-        saas_chat = {} // TODO:
-        share_id = '' // TODO:
-        skin = {
-          skin_json_pc : skinInfo.skin_style_code_pc,
-          skin_json_wap: skinInfo.skin_style_code_wap
+        attention: {show: data.follow, count:data.attentioned_count},// 关注 人数和显示
+        barrage: {},// TODO: 弹幕
+        logo: {},// TODO:
+        online: {show: data.online.show}, // 在线人数
+        reg: {show: data.webinar.reg_form}, // 报名表单
+        pv: {show: data.pv.show}, // 热度
+        webinar_status: {show: data.webinar.type, text: text}, // 直播状态
+        // commit_question: {show: , num: },// TODO:
+        my_message: {show, num} // TODO: 我的消息显示
+      }
+      this.roominfo = {
+        webinar,
+        open_question,
+        report_extra,
+        vss_token,
+        room_id,
+        skin,
+        user,
+        domains,
+        hd_definition,
+        push_definition,
+        host,
+        base_online_num,
+        base_pv,
+        is_replay,
+        paas_record_id,
+        record_history_time,
+        saas_chat,
+        share_id,
+        player,
+        modules
+      }
+      if (this.roominfo.modules && this.roominfo.modules.barrage) {
+        this.roominfo.player.barrage = this.roominfo.modules.barrage.hide // TODO:
+      }
+      this.userInfo = user
+      this.userChatId = user.third_party_user_id
+      this.saasJoinId = user.saas_join_id
+      this.open_question = open_question
+      // 获取所有的主域名
+      this.webDominUrl = domains.web
+      this.webinarDominUrl = domains.webinar
+      // 图片地址
+      this.imageDominStatic = domains.static
+      // 获取关注数
+      this.attentionAccount = modules.attention.count
+      // 获取主办方的路径
+      // 获取pv的观看数
+      this.roomUser.pvCount = data.pv.num
+      sessionStorage.setItem(
+        'defaultMainscreenDefinition',
+        push_definition || ''
+      );
+      sessionStorage.setItem(
+        'defaultSmallscreenDefinition',
+        hd_definition || ''
+      );
+      this.baseRoomUser.baseOnlineNum = Number(base_online_num);
+      sessionStorage.setItem(
+        'baseOnlineNumber',
+        Number(base_online_num)
+      );
+      this.baseRoomUser.basePv = Number(res.data.base_pv)
+      if (advs.length > 0) {
+        this.activeAdviceShow = true
+        this.menuButton(advs)
+      } else {
+        this.activeAdviceShow = false
+      }
+      if (this.roominfo.auth.length == undefined) {
+        this.userHeadImage = auth.avatar
+        this.userShow = false
+        this.myprincipal = `${this.webDominUrl}/user/home/${auth.id}`
+      } else {
+        this.userHeadImage = null
+        this.userShow = true
+      }
+
+      this.hostInfo = host
+      this.roominfo.webinar_id = data.webinar.id
+      this.activeInfo = webinar
+      this.privateChat = saas_chat
+      this.domains = domains
+      sessionStorage.setItem('vhall-vsstoken', vss_token)
+
+      // 获取图片的主域路径
+      this.imageDomin = domains.upload
+      // 存取图片的主要路径，给七巧板用
+      sessionStorage.setItem('imageDomin', this.imageDomin)
+      // 存取用户信息给七巧板用
+      let deliverUser = user
+      deliverUser.account_id = user.third_party_user_id
+      sessionStorage.setItem('user', JSON.stringify(deliverUser))
+      // 存取VssToke
+      sessionStorage.setItem('vhall-vsstoken', vss_token)
+      sessionStorage.setItem('moduleShow', JSON.stringify(this.roominfo))
+
+      // 头条的显示
+      this.headerShow = this.roominfo.modules.header.show;
+      // 关注的显示
+      this.roominfo.modules.attention.show == 1
+        ? (this.attentionShow = true)
+        : (this.attentionShow = false);
+      // logo的显示
+      this.roominfo.modules.logo.show == 1
+        ? (this.companyLogoShow = true)
+        : (this.companyLogoShow = false);
+      // 在线人数的显示
+      this.roominfo.modules.online.show == 1
+        ? (this.onlineShow = true)
+        : (this.onlineShow = false);
+      // 观看次数的显示
+      this.roominfo.modules.pv.show == 1
+        ? (this.pvShow = true)
+        : (this.pvShow = false);
+      // 注册的显示
+      this.roominfo.modules.reg.show == 1
+        ? (this.regShow = true)
+        : (this.regShow = false);
+      // 主办方直播图标的显示
+      this.roominfo.modules.webinar_status.show == 1
+        ? (this.iconPlayShow = true)
+        : (this.iconPlayShow = false);
+
+      // 提交问题的显示不显示
+      if (this.roominfo.modules.commit_question) {
+        if (this.roominfo.modules.commit_question.show == 1) {
+          if (this.roominfo.modules.commit_question.num != 0) {
+            this.submitQuestionShow = true;
+            this.submitQuestionNum = this.roominfo.modules.commit_question.num;
+          } else {
+            this.submitQuestionShow = false;
+          }
         }
-        user = {
-          avatar: res.data.join_info.avata,
-          nick_name: res.data.join_info.nickname,
-          role_name: 2,
-          saas_join_id: res.data.join_info.join_id,
-          third_party_user_id: res.data.join_info.third_party_user_id,
-          is_gag: res.data.join_info.avata,
-          is_kick: res.data.join_info.avata,
-          is_gag: res.data.join_info.avata
+      }
+      // w我的消息的显示
+      if (this.roominfo.modules.my_message) {
+        if (this.roominfo.modules.my_message.show == 1) {
+          if (this.roominfo.modules.my_message.num != 0) {
+            this.myMessageShow = true;
+            this.myMessageNum = this.roominfo.modules.my_message.num;
+          } else {
+            this.myMessageShow = false;
+          }
+        }
+      }
+      this.iconPlay = this.roominfo.modules.webinar_status.text;
+      if (this.roominfo.modules.webinar_status.text == '回放') {
+        this.$nextTick(() => {
+          const seedingContent = document.querySelector('.seeding-icon');
+          if (seedingContent) {
+            seedingContent.style.background = '#2ab804';
+          }
+        });
+      } else if (this.roominfo.modules.webinar_status.text == '点播') {
+        this.$nextTick(() => {
+          const seedingContent = document.querySelector('.seeding-icon');
+          if (seedingContent) {
+            seedingContent.style.background = '#ff8834';
+          }
+        });
+      }
+
+      //  @author  Sean
+      // 自定义 页面皮肤 初始化 相关逻辑
+      //
+      if (skin.skin_json_pc) {
+        this.$nextTick(() => {
+          try {
+            // 背景颜色
+            const bgColor = document.querySelector('.back-content');
+            const footerColor = document.querySelector('.bottom-bgColor');
+            // 页面颜色
+            const follow = document.querySelector('.follow');
+            const fullScreen = document.querySelector('.full-screen');
+            const activeHead = document.querySelector('.active-second h3');
+            const activeIntroduce = document.querySelector(
+              '.active-introduce h3'
+            );
+            // 背景图片
+            const bgContent = document.querySelector('.watch-middle-cotent');
+            if (skin.skin_json_pc.background) {
+              bgContent.style.background = `url(${this.imageDomin}/${skin.skin_json_pc.background}) no-repeat 100% 100%`;
+              bgContent.style.backgroundSize = `cover`;
+            }
+            if (skin.skin_json_pc.logo) {
+              this.logoShow = true;
+              this.skinLogo = `${this.imageDomin}/${skin.skin_json_pc.logo}`;
+            } else {
+              this.logoShow = false;
+            }
+            bgColor.style.background = skin.skin_json_pc.bgColor.substring(
+              3
+            );
+            footerColor.style.background = skin.skin_json_pc.bgColor.substring(
+              3
+            );
+            if (follow) {
+              follow.style.background = skin.skin_json_pc.pageStyle.substring(
+                3
+              );
+            }
+            fullScreen.style.background = skin.skin_json_pc.pageStyle.substring(
+              3
+            );
+            if (activeHead) {
+              activeHead.style.borderBottomColor = skin.skin_json_pc.pageStyle.substring(
+                3
+              );
+            }
+            activeIntroduce.style.borderBottomColor = skin.skin_json_pc.pageStyle.substring(
+              3
+            );
+          } catch (error) {
+            console.error(error);
+          }
+        });
+      }
+      // 获取 推荐商品数据
+      this.getGoodsInfo();
+      // end
+
+      this.chatFilter(); // 聊天过滤接口
+
+      this.skipHostUrl = `${this.webDominUrl}/user/home/${host.id}`;
+      // this.recordHistoryTime = res.data.record_history_time; // TODO:
+      // 初始化数据上报
+      this.initVHallReport();
+      // 初始化邀请卡
+      this.invitePartner();
+    },
+    // 获取用户信息
+    getUserInfo () {
+      this.$fetch('getInfo', {
+        scene_id: 2 // 观看端为2 返回parent_id = 0 或者id
+      }).then(res => {
+        if (res.code == 200) {
+          return res.data
+        }
+      })
+    },
+    // 获取公众号广告
+    getPublisAdv () {
+      this.$fetch('getPublicAdv', {
+        webinar_id: this.$route.parmas.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          return res.data
         }
       })
     },
@@ -1581,249 +1866,251 @@ export default {
       })
     },
     // 获取用户信息
-    getUerInfo() {
-      this.$fetch('vssInfo', {
-        platform: 'pc',
-        webinar_id: this.$route.params.il_id,
-        ...this.$route.query
-      }).then(res => {
-        if (res.code == 205) {
-          window.location.href = '/auth/login';
-        }
+    // getUerInfo() {
+    //   this.$fetch('vssInfo', {
+    //     platform: 'pc',
+    //     webinar_id: this.$route.params.il_id,
+    //     ...this.$route.query
+    //   }).then(res => {
+    //     if (res.code == 205) {
+    //       window.location.href = '/auth/login';
+    //     }
 
-        if (res.code == 200) {
-          if (res.data.player.watermark) {
-            // 如果有水印重置图片url
-            res.data.player.watermark.img_url =
-              res.data.domains.upload + '/' + res.data.player.watermark.img_url;
-          }
-          this.roominfo = res.data;
-          if (this.roominfo.modules && this.roominfo.modules.barrage) {
-            this.roominfo.player.barrage = this.roominfo.modules.barrage.hide;
-          }
-          this.userInfo = this.roominfo.user;
-          this.userChatId = this.roominfo.user.third_party_user_id;
-          this.saasJoinId = res.data.user.saas_join_id;
-          this.open_question = res.data.open_question;
-          // 获取所有的主域名
-          this.webDominUrl = res.data.domains.web;
-          this.webinarDominUrl = res.data.domains.webinar;
-          // 图片地址
-          this.imageDominStatic = res.data.domains.static;
-          // 获取关注数
-          this.attentionAccount = res.data.modules.attention.count;
-          // 获取主办方的路径
-          // 获取pv的观看数
-          this.roomUser.pvCount = res.data.webinar.pv;
-          sessionStorage.setItem(
-            'defaultMainscreenDefinition',
-            res.data.push_definition || ''
-          );
-          sessionStorage.setItem(
-            'defaultSmallscreenDefinition',
-            res.data.hd_definition || ''
-          );
-          this.baseRoomUser.baseOnlineNum = Number(res.data.base_online_num);
-          sessionStorage.setItem(
-            'baseOnlineNumber',
-            this.baseRoomUser.baseOnlineNum
-          );
-          this.baseRoomUser.basePv = Number(res.data.base_pv);
-          if (res.data.advs.length > 0) {
-            this.activeAdviceShow = true;
-            this.menuButton(res.data.advs);
-          } else {
-            this.activeAdviceShow = false;
-          }
-          console.log('roominfo', this.roominfo.auth.length);
-          if (this.roominfo.auth.length == undefined) {
-            this.userHeadImage = this.roominfo.auth.avatar;
-            this.userShow = false;
-            this.myprincipal = `${this.webDominUrl}/user/home/${this.roominfo.auth.id}`;
-          } else {
-            this.userHeadImage = null;
-            this.userShow = true;
-          }
-          this.hostInfo = this.roominfo.host;
-          this.roominfo.webinar_id = res.data.webinar.id;
-          this.activeInfo = res.data.webinar;
-          this.privateChat = res.data.saas_chat;
-          this.domains = res.data.domains;
-          sessionStorage.setItem('vhall-vsstoken', this.roominfo.vss_token);
+    //     if (res.code == 200) {
+    //       if (res.data.player.watermark) {
+    //         // 如果有水印重置图片url
+    //         res.data.player.watermark.img_url =
+    //           res.data.domains.upload + '/' + res.data.player.watermark.img_url;
+    //       }
+    //       this.roominfo = res.data;
 
-          // 获取图片的主域路径
-          this.imageDomin = res.data.domains.upload;
-          // 存取图片的主要路径，给七巧板用
-          sessionStorage.setItem('imageDomin', this.imageDomin);
-          // 存取用户信息给七巧板用
-          let deliverUser = res.data.user;
-          deliverUser.account_id = res.data.user.third_party_user_id;
-          // console.log('deliverssssssssssssss', deliverUser)
+    //       if (this.roominfo.modules && this.roominfo.modules.barrage) {
+    //         this.roominfo.player.barrage = this.roominfo.modules.barrage.hide;
+    //       }
+    //       this.userInfo = this.roominfo.user;
+    //       this.userChatId = this.roominfo.user.third_party_user_id;
+    //       this.saasJoinId = res.data.user.saas_join_id;
+    //       this.open_question = res.data.open_question;
+    //       // 获取所有的主域名
+    //       this.webDominUrl = res.data.domains.web;
+    //       this.webinarDominUrl = res.data.domains.webinar;
+    //       // 图片地址
+    //       this.imageDominStatic = res.data.domains.static;
+    //       // 获取关注数
+    //       this.attentionAccount = res.data.modules.attention.count;
+    //       // 获取主办方的路径
+    //       // 获取pv的观看数
+    //       this.roomUser.pvCount = res.data.webinar.pv;
+    //       sessionStorage.setItem(
+    //         'defaultMainscreenDefinition',
+    //         res.data.push_definition || ''
+    //       );
+    //       sessionStorage.setItem(
+    //         'defaultSmallscreenDefinition',
+    //         res.data.hd_definition || ''
+    //       );
+    //       this.baseRoomUser.baseOnlineNum = Number(res.data.base_online_num);
+    //       sessionStorage.setItem(
+    //         'baseOnlineNumber',
+    //         this.baseRoomUser.baseOnlineNum
+    //       );
+    //       this.baseRoomUser.basePv = Number(res.data.base_pv);
+    //       if (res.data.advs.length > 0) {
+    //         this.activeAdviceShow = true;
+    //         this.menuButton(res.data.advs);
+    //       } else {
+    //         this.activeAdviceShow = false;
+    //       }
+    //       console.log('roominfo', this.roominfo.auth.length);
+    //       if (this.roominfo.auth.length == undefined) {
+    //         this.userHeadImage = this.roominfo.auth.avatar;
+    //         this.userShow = false;
+    //         this.myprincipal = `${this.webDominUrl}/user/home/${this.roominfo.auth.id}`;
+    //       } else {
+    //         this.userHeadImage = null;
+    //         this.userShow = true;
+    //       }
+    //       this.hostInfo = this.roominfo.host;
+    //       this.roominfo.webinar_id = res.data.webinar.id;
+    //       this.activeInfo = res.data.webinar;
+    //       this.privateChat = res.data.saas_chat;
+    //       this.domains = res.data.domains;
+    //       sessionStorage.setItem('vhall-vsstoken', this.roominfo.vss_token);
 
-          sessionStorage.setItem('user', JSON.stringify(deliverUser));
-          // 存取VssToke
-          sessionStorage.setItem('vhall-vsstoken', res.data.vss_token);
-          // 模块的显示与否
-          // if( this.roominfo.modules.attention.follow){
-          // }
-          sessionStorage.setItem('moduleShow', JSON.stringify(this.roominfo));
-          // 头条的显示
-          this.headerShow = this.roominfo.modules.header.show;
-          // 关注的显示
-          this.roominfo.modules.attention.show == 1
-            ? (this.attentionShow = true)
-            : (this.attentionShow = false);
-          // logo的显示
-          this.roominfo.modules.logo.show == 1
-            ? (this.companyLogoShow = true)
-            : (this.companyLogoShow = false);
-          // 在线人数的显示
-          this.roominfo.modules.online.show == 1
-            ? (this.onlineShow = true)
-            : (this.onlineShow = false);
-          // 观看次数的显示
-          this.roominfo.modules.pv.show == 1
-            ? (this.pvShow = true)
-            : (this.pvShow = false);
-          // 注册的显示
-          this.roominfo.modules.reg.show == 1
-            ? (this.regShow = true)
-            : (this.regShow = false);
-          // 主办方直播图标的显示
-          this.roominfo.modules.webinar_status.show == 1
-            ? (this.iconPlayShow = true)
-            : (this.iconPlayShow = false);
-          // 提交问题的显示不显示
-          if (this.roominfo.modules.commit_question) {
-            if (this.roominfo.modules.commit_question.show == 1) {
-              if (this.roominfo.modules.commit_question.num != 0) {
-                this.submitQuestionShow = true;
-                this.submitQuestionNum = this.roominfo.modules.commit_question.num;
-              } else {
-                this.submitQuestionShow = false;
-              }
-            }
-          }
-          // w我的消息的显示
-          if (this.roominfo.modules.my_message) {
-            if (this.roominfo.modules.my_message.show == 1) {
-              if (this.roominfo.modules.my_message.num != 0) {
-                this.myMessageShow = true;
-                this.myMessageNum = this.roominfo.modules.my_message.num;
-              } else {
-                this.myMessageShow = false;
-              }
-            }
-          }
-          this.iconPlay = this.roominfo.modules.webinar_status.text;
-          if (this.roominfo.modules.webinar_status.text == '回放') {
-            this.$nextTick(() => {
-              const seedingContent = document.querySelector('.seeding-icon');
-              if (seedingContent) {
-                seedingContent.style.background = '#2ab804';
-              }
-            });
-          } else if (this.roominfo.modules.webinar_status.text == '点播') {
-            this.$nextTick(() => {
-              const seedingContent = document.querySelector('.seeding-icon');
-              if (seedingContent) {
-                seedingContent.style.background = '#ff8834';
-              }
-            });
-          }
-          //  @author  Sean
-          // 自定义 页面皮肤 初始化 相关逻辑
-          //
-          if (res.data.skin.skin_json_pc) {
-            this.$nextTick(() => {
-              try {
-                // 背景颜色
-                const bgColor = document.querySelector('.back-content');
-                const footerColor = document.querySelector('.bottom-bgColor');
-                // 页面颜色
-                const follow = document.querySelector('.follow');
-                const fullScreen = document.querySelector('.full-screen');
-                const activeHead = document.querySelector('.active-second h3');
-                const activeIntroduce = document.querySelector(
-                  '.active-introduce h3'
-                );
-                // 背景图片
-                const bgContent = document.querySelector('.watch-middle-cotent');
-                if (res.data.skin.skin_json_pc.background) {
-                  bgContent.style.background = `url(${this.imageDomin}/${res.data.skin.skin_json_pc.background}) no-repeat 100% 100%`;
-                  bgContent.style.backgroundSize = `cover`;
-                }
-                if (res.data.skin.skin_json_pc.logo) {
-                  this.logoShow = true;
-                  this.skinLogo = `${this.imageDomin}/${res.data.skin.skin_json_pc.logo}`;
-                } else {
-                  this.logoShow = false;
-                }
-                bgColor.style.background = res.data.skin.skin_json_pc.bgColor.substring(
-                  3
-                );
-                footerColor.style.background = res.data.skin.skin_json_pc.bgColor.substring(
-                  3
-                );
-                if (follow) {
-                  follow.style.background = res.data.skin.skin_json_pc.pageStyle.substring(
-                    3
-                  );
-                }
-                fullScreen.style.background = res.data.skin.skin_json_pc.pageStyle.substring(
-                  3
-                );
-                if (activeHead) {
-                  activeHead.style.borderBottomColor = res.data.skin.skin_json_pc.pageStyle.substring(
-                    3
-                  );
-                }
-                activeIntroduce.style.borderBottomColor = res.data.skin.skin_json_pc.pageStyle.substring(
-                  3
-                );
-              } catch (error) {
-                console.error(error);
-              }
-            });
-          }
+    //       // 获取图片的主域路径
+    //       this.imageDomin = res.data.domains.upload;
+    //       // 存取图片的主要路径，给七巧板用
+    //       sessionStorage.setItem('imageDomin', this.imageDomin);
+    //       // 存取用户信息给七巧板用
+    //       let deliverUser = res.data.user;
+    //       deliverUser.account_id = res.data.user.third_party_user_id;
+    //       // console.log('deliverssssssssssssss', deliverUser)
 
-          // 获取 推荐商品数据
-          this.getGoodsInfo();
-          // end
+    //       sessionStorage.setItem('user', JSON.stringify(deliverUser));
+    //       // 存取VssToke
+    //       sessionStorage.setItem('vhall-vsstoken', res.data.vss_token);
+    //       // 模块的显示与否
+    //       // if( this.roominfo.modules.attention.follow){
+    //       // }
+    //       sessionStorage.setItem('moduleShow', JSON.stringify(this.roominfo));
 
-          this.chatFilter(); // 聊天过滤接口
+    //       // 头条的显示
+    //       this.headerShow = this.roominfo.modules.header.show;
+    //       // 关注的显示
+    //       this.roominfo.modules.attention.show == 1
+    //         ? (this.attentionShow = true)
+    //         : (this.attentionShow = false);
+    //       // logo的显示
+    //       this.roominfo.modules.logo.show == 1
+    //         ? (this.companyLogoShow = true)
+    //         : (this.companyLogoShow = false);
+    //       // 在线人数的显示
+    //       this.roominfo.modules.online.show == 1
+    //         ? (this.onlineShow = true)
+    //         : (this.onlineShow = false);
+    //       // 观看次数的显示
+    //       this.roominfo.modules.pv.show == 1
+    //         ? (this.pvShow = true)
+    //         : (this.pvShow = false);
+    //       // 注册的显示
+    //       this.roominfo.modules.reg.show == 1
+    //         ? (this.regShow = true)
+    //         : (this.regShow = false);
+    //       // 主办方直播图标的显示
+    //       this.roominfo.modules.webinar_status.show == 1
+    //         ? (this.iconPlayShow = true)
+    //         : (this.iconPlayShow = false);
+    //       // 提交问题的显示不显示
+    //       if (this.roominfo.modules.commit_question) {
+    //         if (this.roominfo.modules.commit_question.show == 1) {
+    //           if (this.roominfo.modules.commit_question.num != 0) {
+    //             this.submitQuestionShow = true;
+    //             this.submitQuestionNum = this.roominfo.modules.commit_question.num;
+    //           } else {
+    //             this.submitQuestionShow = false;
+    //           }
+    //         }
+    //       }
+    //       // w我的消息的显示
+    //       if (this.roominfo.modules.my_message) {
+    //         if (this.roominfo.modules.my_message.show == 1) {
+    //           if (this.roominfo.modules.my_message.num != 0) {
+    //             this.myMessageShow = true;
+    //             this.myMessageNum = this.roominfo.modules.my_message.num;
+    //           } else {
+    //             this.myMessageShow = false;
+    //           }
+    //         }
+    //       }
+    //       this.iconPlay = this.roominfo.modules.webinar_status.text;
+    //       if (this.roominfo.modules.webinar_status.text == '回放') {
+    //         this.$nextTick(() => {
+    //           const seedingContent = document.querySelector('.seeding-icon');
+    //           if (seedingContent) {
+    //             seedingContent.style.background = '#2ab804';
+    //           }
+    //         });
+    //       } else if (this.roominfo.modules.webinar_status.text == '点播') {
+    //         this.$nextTick(() => {
+    //           const seedingContent = document.querySelector('.seeding-icon');
+    //           if (seedingContent) {
+    //             seedingContent.style.background = '#ff8834';
+    //           }
+    //         });
+    //       }
+    //       //  @author  Sean
+    //       // 自定义 页面皮肤 初始化 相关逻辑
+    //       //
+    //       if (res.data.skin.skin_json_pc) {
+    //         this.$nextTick(() => {
+    //           try {
+    //             // 背景颜色
+    //             const bgColor = document.querySelector('.back-content');
+    //             const footerColor = document.querySelector('.bottom-bgColor');
+    //             // 页面颜色
+    //             const follow = document.querySelector('.follow');
+    //             const fullScreen = document.querySelector('.full-screen');
+    //             const activeHead = document.querySelector('.active-second h3');
+    //             const activeIntroduce = document.querySelector(
+    //               '.active-introduce h3'
+    //             );
+    //             // 背景图片
+    //             const bgContent = document.querySelector('.watch-middle-cotent');
+    //             if (res.data.skin.skin_json_pc.background) {
+    //               bgContent.style.background = `url(${this.imageDomin}/${res.data.skin.skin_json_pc.background}) no-repeat 100% 100%`;
+    //               bgContent.style.backgroundSize = `cover`;
+    //             }
+    //             if (res.data.skin.skin_json_pc.logo) {
+    //               this.logoShow = true;
+    //               this.skinLogo = `${this.imageDomin}/${res.data.skin.skin_json_pc.logo}`;
+    //             } else {
+    //               this.logoShow = false;
+    //             }
+    //             bgColor.style.background = res.data.skin.skin_json_pc.bgColor.substring(
+    //               3
+    //             );
+    //             footerColor.style.background = res.data.skin.skin_json_pc.bgColor.substring(
+    //               3
+    //             );
+    //             if (follow) {
+    //               follow.style.background = res.data.skin.skin_json_pc.pageStyle.substring(
+    //                 3
+    //               );
+    //             }
+    //             fullScreen.style.background = res.data.skin.skin_json_pc.pageStyle.substring(
+    //               3
+    //             );
+    //             if (activeHead) {
+    //               activeHead.style.borderBottomColor = res.data.skin.skin_json_pc.pageStyle.substring(
+    //                 3
+    //               );
+    //             }
+    //             activeIntroduce.style.borderBottomColor = res.data.skin.skin_json_pc.pageStyle.substring(
+    //               3
+    //             );
+    //           } catch (error) {
+    //             console.error(error);
+    //           }
+    //         });
+    //       }
 
-          this.skipHostUrl = `${this.webDominUrl}/user/home/${this.roominfo.host.id}`;
-          this.recordHistoryTime = res.data.record_history_time;
-          // 初始化数据上报
-          this.initVHallReport(res.data.report_token);
-          // 初始化邀请卡
-          this.invitePartner();
-        } else if (res.code == 301) {
-          // --------------------
-          // 知客 SAAS 融合 相关业务
-          // -------——-----------
-          this.$EventBus.$emit('loaded');
-          window.localStorage.setItem('zhike_refer', window.document.referrer);
-          window.location.replace(res.data.url);
-        } else if (res.code == 210) {
-          this.$EventBus.$emit('loaded');
-          this.kickOutSass = true;
-        } else {
-          this.$EventBus.$emit('loaded');
-          this.tipMsg = res.msg;
-        }
-      });
-    },
+    //       // 获取 推荐商品数据
+    //       this.getGoodsInfo();
+    //       // end
+
+    //       this.chatFilter(); // 聊天过滤接口
+
+    //       this.skipHostUrl = `${this.webDominUrl}/user/home/${this.roominfo.host.id}`;
+    //       this.recordHistoryTime = res.data.record_history_time;
+    //       // 初始化数据上报
+    //       this.initVHallReport();
+    //       // 初始化邀请卡
+    //       this.invitePartner();
+    //     } else if (res.code == 301) {
+    //       // --------------------
+    //       // 知客 SAAS 融合 相关业务
+    //       // -------——-----------
+    //       this.$EventBus.$emit('loaded');
+    //       window.localStorage.setItem('zhike_refer', window.document.referrer);
+    //       window.location.replace(res.data.url);
+    //     } else if (res.code == 210) {
+    //       this.$EventBus.$emit('loaded');
+    //       this.kickOutSass = true;
+    //     } else {
+    //       this.$EventBus.$emit('loaded');
+    //       this.tipMsg = res.msg;
+    //     }
+    //   });
+    // },
 
     /**
      * @description 数据上报  init 方法
-     *
+     *TODO: 上报信息缺少字段等待添加
      */
     initVHallReport() {
       this.$fetch('getReportInfo', {
-        report_token: this.roominfo.report_token,
-        vss_token: this.roominfo.vss_token
+        webinar_id: this.$route.params.il_id,
+        visitor: this.visitor
       }).then(res => {
         window.vhallReport = new VhallReport({
           ...res.data,

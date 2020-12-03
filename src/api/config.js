@@ -203,12 +203,12 @@ const apis = {
   getInitiatorReportInfo: ['/api/vss/initiator/report-info', 'POST'], // 获取上报信息 jian.chang
   // 观看页
   // vssInfo: ['/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
-  vssInfo: ['/v3/users/user/get-info', 'POST'], // 获取房间信息 jian.chang
+  // vssInfo: ['/v3/users/user/get-info', 'POST'], // 获取房间信息 jian.chang
   // newWebinarMenus: ['/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
   goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 jian.chang
   keywordsList: ['/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
-  getReportInfo: ['/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
+  getReportInfo: ['/v3/webinars/watch/get-report-info', 'GET'], // 获取房间上报信息 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
 
 
@@ -238,6 +238,12 @@ const apis = {
   queryRoomInterInfo: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间互动工具状态
   inviteTop: ['/v3/interacts/invite-card/get-list', 'POST'], // 邀请列表
   getSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 获取皮肤
+  getPublicAdv: ['/v3/interacts/adv/watch-get-public-account', 'GET'], // 获取公众号广告
+  getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
+  attention: ['/v3/users/attentions/create', 'POST'], // 关注
+  notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
+  getWatchGoodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 获取观看端商品列表
+  getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
 };
 
 const getApi = api => {
