@@ -379,7 +379,6 @@ export default {
     // 获取观众分组列表
     audienceGet() {
       let params = {
-        user_id: 1333,
         pos: 0,
         limit: 1000, // TODO 默认分组查询1000条
       };
