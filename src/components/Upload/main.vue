@@ -4,11 +4,11 @@
     v-bind="$props"
     :headers="{token: token}"
     :data=saveData
-    name="resfile"
+    name="resFile"
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="picValue" class="avatar">
+          <img :src="picValue" class="avatar" alt="" />
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
@@ -52,9 +52,11 @@ export default {
     ...Object.assign(Upload.props, {
       saveData: {
         type: Object,
-        default: {
-          path: 'sys/img_url',
-          type: 'image',
+        default: function() {
+          return {
+            path: 'sys/img_url',
+            type: 'image',
+          };
         }
       },
       action: {
