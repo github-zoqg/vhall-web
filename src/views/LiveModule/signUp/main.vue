@@ -7,6 +7,7 @@
           v-model="signUpSwtich"
           active-color="#FB3A32"
           inactive-color="#CECECE"
+          @change="switchRegForm"
           :active-text="signUpSwtichDesc">
         </el-switch>
         <div class="headBtnGroup">
@@ -19,21 +20,48 @@
         <ul class="options">
           <template v-for="(item, key) in setOptions">
             <section class="block" :key="key">{{key}}</section>
-            <li :class="{item: true, active: setItem.name && questionArr.some(qes=> qes.name == setItem.name)}" v-for="setItem in item" :key="setItem.label" @click="addFiled(setItem)">
-              <!-- <icon :class="setItem.icon"></icon> -->
-              <icon :icon-class="setItem.icon">{{setItem.label}}</icon>
+            <li
+              :class="{
+                item: true, active: item.name &&
+                questionArr.some(qes => qes.name == item.name)
+              }"
+              v-for="item in item"
+              :key="item.label"
+              @click="addFiled(item)"
+            >
+              <!-- <icon :class="item.icon"></icon> -->
+              <icon :icon-class="item.icon">{{item.label}}</icon>
             </li>
           </template>
         </ul>
         <div class="rightView">
-          <component :is="rightComponent" :questionArr.sync="questionArr"></component>
-          <i class="closeBtn" v-show="rightComponent=='signUpForm'" @click="rightComponent='fieldSet'">&times;</i>
+          <!-- 表单编辑组件 -->
+          <fieldSet
+            ref="fieldSet"
+            :baseInfo="baseInfo"
+            v-show="rightComponent == 'fieldSet'"
+            :questionArr.sync="questionArr"
+            @setBaseInfo="setBaseInfo"
+          ></fieldSet>
+          <!-- 表单预览组件 -->
+          <signUpForm
+            v-show="rightComponent == 'signUpForm'"
+            :questionArr.sync="questionArr"
+            @closePreview="closePreview"
+          ></signUpForm>
         </div>
       </div>
     </div>
-    <shareDialog ref="share"></shareDialog>
-    <themeSet ref="theme"></themeSet>
-    <icon icon-class="icon_xingbie">12345</icon>
+    <shareDialog
+      :baseInfo="baseInfo"
+      @setBaseInfo="setBaseInfo"
+      ref="share"
+    ></shareDialog>
+    <themeSet
+      :baseInfo="baseInfo"
+      @setBaseInfo="setBaseInfo"
+      ref="theme"
+    ></themeSet>
   </div>
 </template>
 
@@ -54,7 +82,17 @@ export default {
   },
   data(){
     return {
+      webinar_id: this.$route.params.str,
       signUpSwtich: false,
+      baseInfo: {
+        is_independent_link: 0,
+        form_theme_color: 'red',
+        form_tab_verify_title: '验证',
+        form_tab_register_title: '用户报名',
+        form_title: '',
+        form_introduce: '',
+        form_cover: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png'
+      },
       radio: 3,
       rightComponent: 'fieldSet',
       setOptions: {
@@ -85,16 +123,192 @@ export default {
       }else{
         return '开启后，观看直播需要填写报名信息';
       }
+    },
+    ques() {
+      return this.questionArr.map(item => {
+        if (item) {
+          return item;
+        }
+      });
     }
   },
   created(){
     this.addFiled(this.setOptions["基本信息"][0]);
     this.addFiled(this.setOptions["基本信息"][2]);
+    console.log(this.questionArr);
   },
   methods: {
-    addFiled(info){
-      this.questionArr.push(getfiledJson({name: info.name, type: info.type}));
+    // 切换组件
+    closePreview() {
+      this.rightComponent='fieldSet';
     },
+    // 获取表单基本信息
+    getBaseInfo() {
+      this.$fetch('regFromGet', {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        if (res.code === 200) {
+          this.baseInfo = res.data;
+          this.signUpSwtich = res.data.enable_status;
+        }
+      }).catch(err => {
+        this.$message.error(`报名表单${ behaviour }失败！`);
+        console.log(err);
+      });
+    },
+    // 获取表单题目列表
+    getQuestionList() {
+      this.$fetch('regQListGet', {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        console.log(res);
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    // 开启\关闭报名表单开关
+    switchRegForm(value) {
+      const url = value ? 'regFromEnable' : 'regFromDisable';
+      const behaviour = value ? '开启' : '关闭';
+      this.$fetch(url, {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        if (res.code === 200) {
+          this.$message.success(`报名表单${ behaviour }成功！`);
+        } else {
+          this.$message.error(`报名表单${ behaviour }失败！`);
+        }
+        console.log(res);
+      }).catch(err => {
+        this.$message.error(`报名表单${ behaviour }失败！`);
+        console.log(err);
+      });
+    },
+    // 更改表单基本信息的方法（通用）
+    setBaseInfo(options, callback) {
+      this.baseInfo = {
+        ...this.baseInfo,
+        ...options,
+      };
+      this.$fetch('regFromUpdate', {
+        webinar_id: this.webinar_id,
+        ...options
+      }).then(res => {
+        console.log(res);
+        callback && callback();
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    // 添加题目方法（通用）
+    addFiled(info){
+      const filedJson = getfiledJson({name: info.name, type: info.type});
+      // 默认添加题目不需要调用添加接口，直接 push 渲染页面
+      if (info.name === 'phone' || info.name === 'name') {
+        this.questionArr.push({
+          ...filedJson,
+          question_id: Math.floor(Math.random() * 10000)
+        });
+        // 这个 if ,等接口通了可以删除，不用判断直接 return
+        if(info) {
+          return false;
+        }
+      }
+      //*************接口调通删除 */
+      const questionsLength = this.questionArr.length;
+      const lastQuestion = this.questionArr[questionsLength - 1];
+      if (lastQuestion.label === '隐私声明') {
+        // 如果最后一个选项是隐私协议，新题目插到倒数第三位
+        this.questionArr.splice(questionsLength - 2, 0, {
+          ...filedJson,
+          question_id: Math.floor(Math.random() * 10000)
+        });
+      } else if(lastQuestion.label === '手机号') {
+        // 如果添加的是隐私声明，直接push
+        if (filedJson.label === '隐私声明') {
+          this.questionArr.push({
+            ...filedJson,
+            question_id: Math.floor(Math.random() * 10000)
+          });
+          return false;
+        }
+        // 如果最后一个是手机号题目，新题目插到倒数第二位
+        this.questionArr.splice(questionsLength - 1, 0, {
+          ...filedJson,
+          question_id: Math.floor(Math.random() * 10000)
+        });
+      }
+      if(info) {
+        return false;
+      }
+      //*************接口调通删除 */
+
+      // 添加的是隐私协议
+      if (name === 'privacy') {
+        this.addPrivacy();
+      }
+      // 添加的是题目
+      const options = {
+        webinar_id: this.webinar_id,
+        type: filedJson.reqType,
+        default_type: filedJson.default_type,
+        subject: filedJson.label,
+        is_must: filedJson.required ? 1 : 0,
+        options: JSON.stringify(filedJson.options) || JSON.stringify({ notNull: true })
+      };
+      this.$fetch('regQAdd', options).then(res => {
+        if (res.code === 200) {
+          // 提交成功，添加到数组中
+          console.log(this.questionArr);
+          const questionsLength = this.questionArr.length;
+          const lastQuestion = this.questionArr[questionsLength - 1];
+          if (lastQuestion.label !== '手机号') {
+            // 如果最后一个选项是隐私协议，新题目插到倒数第三位
+            this.questionArr.splice(questionsLength - 3, 0, {
+              ...filedJson,
+              question_id: res.data.question_id || Math.floor(Math.random() * 10000)
+            });
+          } else {
+            // 如果最后一个是手机号题目，新题目插到倒数第二位
+            this.questionArr.splice(questionsLength - 2, 0, {
+              ...filedJson,
+              question_id: res.data.question_id || Math.floor(Math.random() * 10000)
+            });
+          }
+          this.questionArr.push();
+          console.log(this.questionArr);
+          // 更新题目顺序
+          let question_ids = this.questionArr.reduce((acc, curr) => {
+            return acc + curr.question_id + ',';
+          }, '');
+          question_ids.substring(0, question_ids.length - 1);
+          this.$fetch('regQSort', {
+            webinar_id: this.webinar_id,
+            question_ids
+          }).then(res => {
+            console.log(res);
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    // 添加一个隐私协议
+    addPrivacy() {
+      const options = {
+        webinar_id: this.webinar_id,
+        content: '我们根据《隐私声明》保护您填写的所有信息',
+        color_text: '《隐私声明》',
+        url: ''
+      };console.log(res);
+      this.$fetch('regRrivacyAdd', options).then(res => {
+        // TODO: 给所有关于隐私协议的 node 都添加 privacy_id ,更新和删除的时候需要用到
+        console.log(res);
+      }).catch(err => console.log(err));
+    },
+    // 打开 dialog 方法（通用）
     openDialog(ref){
       this.$refs[ref].dialogVisible = true;
     }
@@ -147,23 +361,9 @@ export default {
       }
     }
     .rightView{
+      display: flex;
       flex: 1;
-      position: relative;
-      .closeBtn{
-        width: 32px;
-        height: 32px;
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 28px;
-        color: #fff;
-        position: absolute;
-        right: 50px;
-        top: 16px;
-        font-size: 32px;
-        text-align: center;
-        line-height: 26px;
-        font-style: normal;
-        cursor: pointer;
-      }
+      justify-content: center;
     }
   }
 

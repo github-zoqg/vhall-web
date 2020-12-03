@@ -7,29 +7,32 @@
     <div class="content">
       <p>
         <span class="title">
-          开启独立表单
+          独立表单
+          <el-switch
+            class="smallSwtich"
+            :width='28'
+            :height="16"
+            v-model="shareSwtich"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="switchExtraForm"
+          >
+          </el-switch>
           <el-tooltip
             content="">
               <pre slot="content">开启独立报名功能后，可为报名表单
 生成独立的链接地址。通过分享链接
 ，用户填写报名表单后就能观看直播
 和回放。注意：只有活动观看限制设
-置为“免费”时，该功能才能生效！</pre>
+置为“免费”时，该功能才能生效！
+              </pre>
             <i class="el-icon-question"></i>
           </el-tooltip>
-          <el-switch
-              class="smallSwtich"
-              :width='28'
-              :height="16"
-              v-model="shareSwtich"
-              active-color="#FB3A32"
-              inactive-color="#CECECE">
-            </el-switch>
         </span>
       </p>
       <p class="">
-        <span>链接地址：</span>
-        <el-input placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
+        <span>链接地址</span>
+        <el-input style="width: 433px" placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
           <el-button slot="append" @click="copy">复制</el-button>
         </el-input>
 
@@ -50,6 +53,14 @@
 
 <script>
 export default {
+  created() {
+    console.log(this);
+  },
+  props: {
+    baseInfo: {
+      type: Object,
+    }
+  },
   data(){
     return {
       dialogVisible: false,
@@ -57,12 +68,27 @@ export default {
       link: 'https://t.e.vhall.com/'
     };
   },
+  watch:{
+    baseInfo: {
+      handler(newVal){
+        console.log(this.baseInfo);
+        this.shareSwtich = !!this.baseInfo.is_independent_link;
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   methods: {
     copy(){
       const input = document.getElementById('linkBox');
       input.select();
       document.execCommand('copy');
       this.$message.success('复制成功');
+    },
+    // 独立表单开关事件
+    switchExtraForm(value) {
+      const val = value ? 1 : 0;
+      this.$emit('setBaseInfo', { is_independent_link: val } );
     }
   }
 };
