@@ -1,4 +1,6 @@
 // session存储（设置、获取、删除）
+import Env from "@/api/env";
+
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
@@ -113,4 +115,19 @@ export function dealObjectValue(obj){
     }
   }
   return param;
+}
+
+/**
+ * domainCovert
+ **/
+export function domainCovert(baseDomain, url) {
+  // 若value包含域名，自动反显；
+  // 若value不包含域名，拼接展示。
+  if (url === '' || url === undefined || url === null) {
+    return url;
+  } else if(url.indexOf(baseDomain) !== -1) {
+    return url;
+  } else {
+    return `${baseDomain}${url}`;
+  }
 }

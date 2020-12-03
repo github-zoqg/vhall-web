@@ -32,8 +32,8 @@
       <div class="right-menu-item">
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
-            <img src="../../common/images/avatar.png" class="user-avatar" alt="" />
-            <span>微吼直播</span>
+            <img :src="avatarImgUrl" class="user-avatar" alt="" />
+            <span>{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
             <el-dropdown-item divided @click.native="logout">
@@ -49,6 +49,7 @@
 <script>
 import Breadcrumb from './Breadcrumb/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
+import Env from "@/api/env";
 
 export default {
   components: {
@@ -61,7 +62,9 @@ export default {
         withoutAnimation: false // 左侧导航是否动画
       },
       unread_num: 0,
-      isDownload: 0
+      isDownload: 0,
+      avatarImgUrl: '',
+      userInfo: null
     };
   },
   // inject: [],
@@ -98,10 +101,23 @@ export default {
       this.$router.push({
         path: '/login'
       });
+    },
+    updateAccount(account) {
+      this.userInfo = account;
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
+    // 账号信息展示
+    let userInfo = sessionOrLocal.get('userInfo');
+    if(userInfo !== null) {
+      this.userInfo = JSON.parse(userInfo);
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    }
+    // 监听消息变化
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
+    // 监听用户信息变化
+    this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
   },
   created() {
     this.getUnreadNum();

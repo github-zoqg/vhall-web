@@ -8,11 +8,16 @@
         <upload
           :class="'upload__avatar ' + imgType"
           v-model="baseSetForm.avatar"
+          :saveData="{
+             path: 'webinars/img_url',
+             type: 'image',
+          }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
+          :before-upload="beforeUploadHandler"
+          @delete="baseSetForm.avatar = ''">
           <div slot="tip">
             <p>推荐尺寸：100*100px</p>
             <p>图片不超过100K</p>
@@ -36,6 +41,7 @@
 <script>
 import Upload from '@/components/Upload/main';
 import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   name: "baseSet.vue",
   components: {
@@ -69,7 +75,7 @@ export default {
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.baseSetForm.avatar = res.data.file_url || '';
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -119,10 +125,19 @@ export default {
     baseSetSave() {
       this.$refs.baseSetForm.validate((valid) => {
         if(valid) {
-          this.$fetch('userEdit', this.baseSetForm).then(res => {
+          let params = {
+            nick_name: this.baseSetForm.nick_name,
+            avatar: this.baseSetForm.avatar,
+            company: this.baseSetForm.company,
+            position: this.baseSetForm.position
+          };
+          // 昵称、头像、公司、职位 可修改
+          this.$fetch('userEdit', params).then(res => {
             console.log(res);
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
+              // 更新账户信息
+              this.getAccountInfo();
             } else {
               this.$message.error(res.msg || '保存基本设置失败');
             }
@@ -130,6 +145,19 @@ export default {
             console.log(err);
             this.$message.error('保存基本设置失败');
           });
+        }
+      });
+    },
+    getAccountInfo() {
+      this.$fetch('getInfo', {
+        scene_id: 2
+      }).then(res =>{
+        if(res.code === 200 && res.data) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+          this.$EventBus.$emit('saas_vs_account_change', res.data);
+        } else {
+          this.$message.error(res.msg);
         }
       });
     }

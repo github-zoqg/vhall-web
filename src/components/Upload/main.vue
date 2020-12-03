@@ -8,7 +8,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="value" class="avatar">
+          <img :src="picValue" class="avatar">
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
@@ -101,6 +101,11 @@ export default {
     'on-success': {
       type: Function,
       default: ()=>{}
+    }
+  },
+  computed: {
+    picValue: function() {
+      return this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.value);
     }
   },
   created(){
