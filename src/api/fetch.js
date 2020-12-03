@@ -72,13 +72,14 @@ export default function fetchData(url, data1 = {}, header = {}) {
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
+    console.log(res, '请求结果');
     // || res.code === 500
     if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
       this.$router.push({
         path: '/error'
       });
-    } else if (res.code >= 1700 && res.code < 10000 || res.code === 200) {
+    } else if (res.code >= 10000 && res.code < 17000 || res.code === 200) {
       return res;
     } else {
       return Promise.reject(res);
