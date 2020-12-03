@@ -1,5 +1,5 @@
 <template>
-  <div class="data-live">
+  <div class="data-live" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle :title="$route.meta.title">
       <div slot="content">
         1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
@@ -19,6 +19,7 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :totalNum="totalNum"
+        :width="320"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
       >
@@ -37,48 +38,29 @@ export default {
   data() {
     return {
       isCheckout: false,
-      totalNum: 1000,
-      tableList: [
-        {
-          id: '1',
-          liveTitle: "哈哈哈哈哈哈哈哈哈哈哈喜喜iiii哈哈哈哈哈哈哈哈哈",
-          wacthPeople: '123',
-          wacthNum: '124',
-          timeLang: '30:00:00'
-        },
-        {
-          id: '2',
-          liveTitle: '嘻嘻嘻',
-          wacthPeople: '111',
-          wacthNum: '222',
-          timeLang: '50:00:00'
-        }
-      ],
+      totalNum: 0,
+      loading: true,
+      tableList: [],
       tabelColumn: [
         {
           label: '活动ID',
-          key: 'id',
-          width: 150,
+          key: 'webinar_id',
         },
         {
           label: '活动标题',
-          key: 'liveTitle',
-          // width: 240,
+          key: 'subject',
         },
         {
           label: '观看人数',
-          key: 'wacthPeople',
-          width: 150,
+          key: 'total_watch_number',
         },
         {
           label: '观看次数',
-          key: 'wacthNum',
-          width: 150,
+          key: 'total_watch_times',
         },
         {
           label: '观看时长（分）',
-          key: 'timeLang',
-          width: 150,
+          key: 'watch_duration',
         }
       ],
       tableRowBtnFun: [
@@ -108,10 +90,13 @@ export default {
         },
         {
           type: "",
-          key: "searchTitle",
+          key: "title",
         }
       ],
     };
+  },
+  mounted() {
+    this.getTableList();
   },
   methods: {
     onHandleBtnClick(val) {
@@ -121,14 +106,10 @@ export default {
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-       let paramsObj = {
-        account_id: '1234455'
-      };
+       let paramsObj = {};
        if (params === 'search') {
           pageInfo.pageNum= 1;
           pageInfo.pos= 0;
-          // 如果搜索是有选中状态，取消选择
-          // this.$refs.tableList.clearSelect();
         }
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -140,12 +121,27 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
+      this.getLiveList(obj);
+    },
+     getLiveList(data){
+      this.loading = true;
+      console.log(data);
+      this.$fetch('getActiveDataList', data).then(res=>{
+        this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+      }).catch(error=>{
+        this.$message.error(`获取活动列表失败,${error.errmsg || error.message}`);
+        console.log(error);
+      }).finally(()=>{
+        this.loading = false;
+      });
     },
     dataReport(that, val) {
+      let id = val.rows.webinar_id;
       that.$router.push({
-        path: val.path,
+        path: `${val.path}/${id}`,
         query: {
-          id: val.rows.id
+          type: val.rows.webinar_state
         }
       });
     }

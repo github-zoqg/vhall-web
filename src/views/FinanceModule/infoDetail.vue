@@ -37,6 +37,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "income",
   data() {
@@ -54,24 +55,36 @@ export default {
           placeholder: '请选择订单类型',
           options: [
             {
-              label: '专业版',
-              value: 13
+              label: '结清并发欠费',
+              value: 7
             },
             {
-              label: '流量版',
-              value: 11
-            },
-            {
-              label: '无极版',
-              value: 17
+              label: '结清流量欠费,',
+              value: 8
             },
             {
               label: '并发包',
               value: 10
             },
             {
+              label: '流量包',
+              value: 11
+            },
+            {
               label: '扩展包',
               value: 12
+            },
+            {
+              label: '专业版',
+              value: 13
+            },
+            {
+              label: '回放流量包',
+              value: 14
+            },
+            {
+              label: '免费回放流量包',
+              value: 15
             },
             {
               label: '并发预充值',
@@ -210,6 +223,7 @@ export default {
     PageTitle
   },
   mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.tabelColumn = this.tabelColumns;
     this.getDetailList();
   },
@@ -239,7 +253,9 @@ export default {
     getDetailList(params) {
       let pageInfo = this.$refs.tableDetail.pageInfo; //获取分页信息
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
-      let paramsObj = {};
+      let paramsObj = {
+        user_id: this.userId
+      };
       if (params === 'search') {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
@@ -252,7 +268,7 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.user_id = '16417099';
+      paramsObj.type = paramsObj.orderType < 7  ? paramsObj.orderType : 7;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
@@ -262,20 +278,18 @@ export default {
         tableList.map(item=> {
           item.statusText = item.status== 1 ? '成功' : '失败';
         });
-        // this.tableList = res.data.list;
       }).catch(e=>{
         console.log(e);
       });
     },
     delete(that, val) {
-      let userId = val.order_id;
       that.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
+          customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteList(userId);
+          that.deleteList(val.order_id);
         }).catch(() => {
           that.$message({
             type: 'info',
@@ -285,7 +299,6 @@ export default {
     },
     deleteList(id) {
        this.$fetch('deleteDetail', {id: id}).then(res =>{
-        console.log(res.data);
         this.$message({
           type: 'success',
           message: '删除成功!'

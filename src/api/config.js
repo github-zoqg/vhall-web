@@ -46,8 +46,8 @@ const apis = {
 
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
-  liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang
-  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口 •••
+  liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
+  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口 √
   liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改 •••
   liveDel: ['/99/v3/webinars/webinar/delete', 'POST', 'mock'], // 活动删除 •••
   demandCreate: ['/99/v3/webinars/webinar/create-demand', 'POST', 'mock'], // 点播创建
@@ -158,16 +158,17 @@ const apis = {
   register: ['/v3/users/user/register', 'POST'],  //注册接口
 
   //数据中心
-  getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET', 'data'], //获取账户下的总数据
+  getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET', 'data'], //获取账户下的总数据  数据总览
+  getActiveDataList: ['/v3/webinars/webinar/get-data-list', 'POST'], //活动数据列表接口   活动数据
 
   // 直播-数据报告
-  getStatisticsinfo: ['/103/v3/data-center/webinar-statistics-info', 'GET', 'mock'], //获取活动数据下报告
-  getMaxuv: ['/103/v3/data-center/webinar-max-uv', 'GET', 'mock'], //获取活动最高并发
-  getHeat: ['/103/v3/data-center/webinar-heat', 'GET', 'mock'], //获取活动热度
-  getProvinceinfo: ['/103/v3/data-center/webinar-province-info', 'GET', 'mock'], //获取活动省份统计
-  getDeviceinfo: ['/103/v3/data-center/webinar-device-info', 'GET', 'mock'], //获取活动设备信息
-  getBrowserinfo: ['/103/v3/data-center/webinar-browser-info', 'GET', 'mock'], //获取活动浏览器信息
-  getDateUvinfo: ['/103/v3/data-center/webinar-date-uv', 'GET', 'mock'], //获取观看人数趋势
+  getStatisticsinfo: ['/v3/data-center/webinar-statistics-info', 'GET', 'data'], //获取活动数据下报告
+  getMaxuv: ['/v3/data-center/webinar-max-uv', 'GET', 'data'], //获取活动最高并发
+  getHeat: ['/v3/data-center/webinar-heat', 'GET', 'data'], //获取活动热度
+  getProvinceinfo: ['/v3/data-center/webinar-province-info', 'GET', 'data'], //获取活动省份统计
+  getDeviceinfo: ['/v3/data-center/webinar-device-info', 'GET', 'data'], //获取活动设备信息
+  getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET', 'data'], //获取活动浏览器信息
+  getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET', 'data'], //获取观看人数趋势
 
 
   // 账户管理
@@ -195,28 +196,29 @@ const apis = {
   sonResourcesSave: ['/104/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
 
   //财务中心
-  getVersionInfo: ['/v3/fin/account/info', 'GET', 'data'],  //获取用户版本信息
-  getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
-  getFlowInfo: ['/104/v3/business-total/user-flow-trend', 'GET', 'mock'],  //获取用量统计数据-流量
-  getOnlinePay: ['/104/v3/business-total/user-online-pay-maxuv', 'GET', 'mock'],  //获取并发-消费账单
-  getFlowPay: ['/104/v3/business-total/user-flow-pay', 'GET', 'mock'],  //获取流量-消费账单
-  getAccountList: ['/104/v3/business-total/user-online-pay-detail', 'GET', 'mock'], //获取财务总览-并发-消费账单  接口参数少一个字段(标题)
-  getBusinessList: ['/104/v3/business-total/user-flow-pay-detail', 'GET', 'mock'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]   接口参数少一个字段(标题)
-  orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
-  orderFlow: ['/104/v3/finances/order/flow', 'POST', 'mock'], // 流量包购买
-  orderUpgrade: ['/104/v3/finances/order/upgrade', 'POST', 'mock'], // 升级并发
-  orderExtend: ['/104/v3/finances/order/extend', 'POST', 'mock'], // 购买扩展包
-  payOrder: ['/104/v3/finances/pay', 'POST', 'mock'], // 支付订单
-  buyDetail: ['/104/v3/finances/order/list', 'GET', 'mock'], // 购买明细
-  deleteDetail: ['/104/v3/finances/order/delete', 'GET', 'mock'], // 删除购买明细
-  orderDetail: ['/104/v3/finances/admin-order/list', 'GET', 'mock'], // 开通明细
+  getVersionInfo: ['/v3/fin/account/info', 'GET', 'data'],  //获取用户版本信息 √
+  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //获取用量统计数据-并发
+  getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取用量统计数据-流量
+  getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET', 'data'],  //获取并发-消费账单
+  getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
+  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET', 'data'], //获取财务总览-并发-消费账单
+  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET', 'data'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
+  // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
+  orderFlow: ['/v3/fin/order/flow', 'POST', 'data'], // 流量包购买
+  orderUpgrade: ['/v3/fin/order/upgrade', 'POST', 'data'], // 升级并发
+  orderExtend: ['/v3/fin/order/extend', 'POST', 'data'], // 购买扩展包
+  orderInfo: ['/v3/fin/order/info', 'GET', 'data'], // 获取订单详情
+  payOrder: ['/v3/fin/pay', 'POST', 'data'], // 支付订单
+  buyDetail: ['/v3/fin/order/list', 'GET', 'data'], // 账单明细 - 购买明细
+  deleteDetail: ['/v3/fin/order/delete', 'GET', 'data'], // 删除购买明细
+  orderDetail: ['/v3/fin/admin-order/list', 'GET', 'data'], // 账单明细 - 开通明细
 
   //财务收益
-  incomeInfo: ['/104/v3/finances/income', 'GET', 'mock'], // 账户收益总览
-  liveIncomeList: ['/104/v3/finances/income/live/list', 'GET', 'mock'], // 直播收益
-  liveIncomeDetailList: ['/104/v3/finances/income/live/details/list', 'GET', 'mock'], // 直播收益详情列表
-  packetIncomeList: ['/104/v3/finances/income/red-packet/list', 'GET', 'mock'], // 红包收益
-  accountList: ['/104/v3/finances/withdraw/list', 'GET', 'mock'], // 提现明细
+  incomeInfo: ['/v3/fin/income', 'GET', 'data'], // 账户收益总览
+  liveIncomeList: ['/v3/fin/income/live/list', 'GET', 'data'], // 直播收益
+  liveIncomeDetailList: ['/v3/fin/income/live/details/list', 'GET', 'data'], // 直播收益详情列表
+  packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET', 'data'], // 红包收益
+  accountList: ['/v3/fin/withdraw/list', 'GET', 'data'], // 提现明细
   weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定
   callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
   withdrawalPhoneCode: ['/104/v3/finances/withdraw/phone-code', 'POST', 'mock'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)

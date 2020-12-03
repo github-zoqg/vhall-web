@@ -91,6 +91,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import cashBox from './components/cashBox';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "income",
   data() {
@@ -202,6 +203,7 @@ export default {
   },
   created() {
     this.tabelColumn = this.liveColumns;
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
   },
   mounted() {
     this.getIncomeInfo();
@@ -220,7 +222,7 @@ export default {
   },
   methods: {
     getIncomeInfo() {
-      this.$fetch('incomeInfo', {user_id: '16417099'}).then(res =>{
+      this.$fetch('incomeInfo', {user_id: this.userId}).then(res =>{
         this.incomeInfo = res.data;
       }).catch(e=>{
         console.log(e);
@@ -253,23 +255,24 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.user_id = '16417099';
+      paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
       let url = this.activeIndex == '1' ? "liveIncomeList" : "packetIncomeList";
       this.$fetch(url, obj).then(res =>{
+        this.totalNum = res.data.total;
         if (this.activeIndex == '2') {
-            this.rowsList();
+            this.rowsList(res.data.list);
+        } else {
+          this.tableList = res.data.list;
         }
         console.log(res);
-        // this.totalNum = res.data.total;
-        // this.tableList = res.data.list;
       }).catch(e=>{
         console.log(e);
       });
     },
-    rowsList() {
-      this.tableList.map(item => {
+    rowsList(data) {
+      this.tableList = data.map(item => {
         item.red_packet = item.red_packet_type == '1' ? '固定金额': '拼手气';
       });
       console.log(this.tableList);
