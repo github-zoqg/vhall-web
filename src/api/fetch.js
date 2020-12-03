@@ -72,7 +72,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
-    console.log(res, '请求结果');
     // || res.code === 500
     if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
