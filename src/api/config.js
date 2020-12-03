@@ -64,6 +64,29 @@ const apis = {
   privilegeEdit:  ['/v3/webinars/privilege/edit-pass', 'POST'], // 角色密码修改接口（口令修改） •••
   privilegePrem:  ['/v3/webinars/privilege/edit-premission', 'POST'], // 角色邀请——权限修改接口 •••
 
+  // 报名表单
+  regFromGet: ['/v3/webinars/registration-form/get-form-base-info', 'GET'], // 获取表单基本信息
+  regFromStatusGet: ['/v3/webinars/registration-form/get-form-enable-status', 'GET'], // 获取表单开启状态
+  regFromUpdate: ['/v3/webinars/registration-form/update', 'POST'], // 更新表单基本信息
+  regFromEnable: ['/v3/webinars/registration-form/enable', 'POST'], // 报名表单开启
+  regFromDisable: ['/v3/webinars/registration-form/disable', 'POST'], // 报名表单关闭
+  regQAdd: ['/v3/webinars/registration-form/create-question', 'POST'], // 增加一个报名表单题目
+  regQSort: ['/v3/webinars/registration-form/set-form-question-order', 'POST'], // 表单题目重新排序
+  regQEdit: ['/v3/webinars/registration-form/update-question', 'POST'], // 编辑报名表单中的一个题目信息
+  regQDelete: ['/v3/webinars/registration-form/delete-question', 'POST'], // 删除一个报名表单题目
+  regQListGet: ['/v3/webinars/registration-form/get-form-question-list', 'POST'], // 获取报名表单中的题目列表
+  regQOptionAdd: ['/v3/webinars/registration-form/create-question-item', 'POST'], // 增加一个新的选项
+  regQOptionUpdate: ['/v3/webinars/registration-form/update-question-item', 'POST'], // 更新题目的选项信息
+  regQOptionDelete: ['/v3/webinars/registration-form/delete-question-item', 'POST'], // 删除一个选项
+  regRrivacyAdd: ['/v3/webinars/registration-form/create-privacy-protocol', 'POST'], // 新建一个隐私协议
+  regRrivacyUpdate: ['/v3/webinars/registration-form/update-privacy-protocol', 'POST'], // 更新隐私协议配置
+  regRrivacyDelete: ['/v3/webinars/registration-form/delete-privacy-protocol', 'POST'], // 删除一个隐私协议
+  regUserCheck: ['/v3/webinars/registration-form/check-is-registered', 'POST'], // 检查是否为已报名用户
+  regSendVerifyCode: ['/v3/webinars/registration-form/send-verify-code', 'POST'], // 发送手机验证码
+  regAnswerSubmit: ['/v3/webinars/registration-form/submit', 'POST'], // 提交报名表单答案
+  regVisiterCheck: ['/v3/webinars/registration-form/get-visiter-register-status', 'POST'], // 查询某个访客是否已经报过名
+  verifyOpenLink: ['/v3/webinars/registration-form/verify-open-link', 'GET'], // 检查报名表单是否开启独立链接以及独立链接是否有效
+
   // 第三方K值模块
   kidAuthInfo:  ['/v3/webinars/auth/info', 'POST'], // 获取单个活动K值详情接口 •••
   kidAuthEdit:  ['/v3/webinars/auth/edit', 'POST'], // 单个活动K值设置修改接口 •••
@@ -287,7 +310,7 @@ const apis = {
   // 授权模块
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••
   weixinShareAuth: ['/v3/commons/auth/weixin-share', 'GET'], // 微信分享接口 •••
-  qqAuth: ['/v3/commons/auth/qq', 'GET'], // QQ授权接口 ••• 
+  qqAuth: ['/v3/commons/auth/qq', 'GET'], // QQ授权接口 •••
 
   // 观看端-活动
   watchAuth: ['/v3/webinars/watch/auth', 'POST'], // 观看授权

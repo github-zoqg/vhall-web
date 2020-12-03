@@ -18,13 +18,29 @@
     <el-input v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名"></el-input>
     <el-input v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证"></el-input>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round size="medium">保存</el-button>
+      <el-button type="primary" @click="save" round size="medium">保存</el-button>
     </span>
   </VhallDialog>
 </template>
 
 <script>
 export default {
+  props: {
+    baseInfo: {
+      type: Object,
+    }
+  },
+  watch:{
+    baseInfo: {
+      handler(newVal){
+        this.colorIndex = newVal.form_theme_color;
+        this.title2 = newVal.form_tab_verify_title;
+        this.title1 = newVal.form_tab_register_title;
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   data(){
     return {
       dialogVisible: false,
@@ -35,7 +51,16 @@ export default {
     };
   },
   methods: {
-    copy(){
+    save() {
+      const options = {
+        form_theme_color: this.colorIndex,
+        form_tab_verify_title: this.title2,
+        form_tab_register_title: this.title1
+      };
+      const that = this;
+      this.$emit('setBaseInfo', options, () => { that.dialogVisible = false; });
+    },
+    copy() {
       const input = document.getElementById('linkBox');
       input.select();
       document.execCommand('copy');

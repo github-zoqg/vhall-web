@@ -14,7 +14,9 @@ let filedJson = {
           {"value": ""}
         ]
       }
-    ]
+    ],
+    reqType: 2,
+    default_type: '',
   },
   checkBox: {
     "label": "多选题",
@@ -31,7 +33,9 @@ let filedJson = {
           {"value": ""}
         ]
       }
-    ]
+    ],
+    reqType: 3,
+    default_type: '',
   },
   select: {
     "label": "下拉题",
@@ -60,7 +64,9 @@ let filedJson = {
         canRemove: true,
         "value":""
       }
-    ]
+    ],
+    reqType: 4,
+    default_type: '',
   },
   input: {
     "label": "问答题",
@@ -75,7 +81,9 @@ let filedJson = {
         },
         "value":""
       }
-    ]
+    ],
+    reqType: 1,
+    default_type: '',
   },
   inputs: {
     "label": "小结",
@@ -107,7 +115,10 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '名字',
           "required": true,
-          "bottomBtn": ["move"],
+          "bottomBtn": [],
+          reqType: 0,
+          default_type: 1,
+          subject: '名字'
         });
 
         break;
@@ -117,11 +128,14 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '手机号',
           "required": true,
-          "bottomBtn": ["move", "phoneValid"],
+          "bottomBtn": ["phoneValid"],
+          reqType: 0,
+          default_type: 2,
+          subject: '手机号'
         });
 
         break;
-        case 'birthday':
+      case 'birthday':
         json = JSON.parse(JSON.stringify(filedJson['input']));
         json.nodes[0].props.placeholder='请输入生日';
         json = Object.assign(json, {
@@ -141,6 +155,9 @@ export function getfiledJson({name, type}){
           label: '性别',
           "required": false,
           "bottomBtn": ["delete", "move", "requireSwtich"],
+          reqType: 0,
+          default_type: 4,
+          subject: '性别'
         });
 
         break;
@@ -151,6 +168,9 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '邮箱',
           "required": true,
+          reqType: 0,
+          default_type: 3,
+          subject: '邮箱'
         });
 
         break;
@@ -162,10 +182,13 @@ export function getfiledJson({name, type}){
           label: '公司',
           "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
+          options: {
+            type: 7,
+          }
         });
 
         break;
-        case 'industry':
+      case 'industry':
         json = JSON.parse(JSON.stringify(filedJson['input']));
         json.nodes[0].props.placeholder='请输入行业名称';
         json = Object.assign(json, {
@@ -191,7 +214,15 @@ export function getfiledJson({name, type}){
               },
               "value":""
             };
-          })
+          }),
+          reqType: 5,
+          default_type: '',
+          options: {
+            show_country: 0,
+            show_province: 1,
+            show_city: 1,
+            show_district: 1
+          }
         });
 
         break;
@@ -203,7 +234,7 @@ export function getfiledJson({name, type}){
           label: '职务',
           "required": true,
           // "bottomBtn": [,"delete", "move", "requireSwtich"],
-          "nodes": ["首席执行官/总经理", "市场总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
+          "nodes": ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
             return {
               props: {
                 disabled: item !='其他',
@@ -213,12 +244,17 @@ export function getfiledJson({name, type}){
               canRemove: true,
               "value": item
             };
-          })
+          }),
+          options: {
+            item_list: ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"],
+            question_subject: '职务',
+            immutable: true
+          }
         });
 
         break;
 
-        case 'educational':
+      case 'educational':
         json = JSON.parse(JSON.stringify(filedJson['select']));
 
         json = Object.assign(json, {
@@ -245,16 +281,18 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '隐私声明',
           "required": true,
-          "bottomBtn": ["delete", "move", "requireSwtich"],
+          "bottomBtn": ["delete", "requireSwtich"],
           privacy: true,
           "nodes": [
             {
+              "key": "content",
               "props": {
                 class: ['radioInput']
               },
               "value":"我们根据《隐私声明》保护您填写的所有信息"
             },
             {
+              "key": "color_text",
               "props": {
                 class: ['radioInput'],
                 placeholder: '请输入第一行中可点击跳转得文字'
@@ -263,12 +301,15 @@ export function getfiledJson({name, type}){
               privacyAdd: true
             },
             {
+              "key": "url",
               "props": {
                 placeholder: '跳转链接（可选）'
               },
               "value":""
             },
-          ]
+          ],
+          reqType: 6,
+          default_type: '',
         });
         break;
 
