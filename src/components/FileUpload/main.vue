@@ -11,7 +11,7 @@
           <i class="img"></i>
           <p class="file-name" style="color: rgb(136, 136, 136);">{{fileName}}</p>
           <div class="change-txt">
-            <p id="right">上传成功，共检测到{{saveData.result.success_count}}条有效数据</p>
+            <p id="right">上传成功，共检测到{{result.success_count}}条有效数据</p>
             <p id="error"></p>
           </div>
         </a>
@@ -85,6 +85,15 @@ export default {
     coverPic: {
       type: Boolean,
       default: false
+    },
+    result: {
+      type: Object,
+      default: function() {
+        return {
+          success_count: 0,
+          failure_count: 0
+        };
+      }
     },
     'on-success': {
       type: Function,

@@ -42,13 +42,14 @@
         </div>
         <!-- 操作栏 -->
         <table-list
-          ref="msgTable"
+          ref="chatTable"
           :isHandle=true
           :manageTableData="keyWordDao.list"
           :tabelColumnLabel="tableColumn"
           :totalNum="keyWordDao.total"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
+          :max-height="275"
           @getTableList="getKeywordList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
@@ -81,6 +82,11 @@
       <div class="upload-dialog-content">
         <file-upload
           v-model="fileUrl"
+          :saveData="{
+             path: pathUrl,
+             type: 'exel'
+          }"
+          :result="importResult"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -102,6 +108,7 @@
 <script>
 import FileUpload from '@/components/FileUpload/main';
 import PageTitle from '@/components/PageTitle';
+import Env from "@/api/env";
 export default {
   name: "chat.vue",
   components: {
@@ -164,36 +171,26 @@ export default {
       // 批量添加关键词
       multiUploadShow: false,
       fileUrl: '', // 文件地址
-      fileResult: '' // 文件上传结果
+      fileResult: '', // 文件上传结果
+      importResult: {
+        fail_count: 0,
+        success_count: 0
+      }
     };
   },
   computed: {
     dynamicRules() {
       console.log(this.addForm);
       return this.addForm.executeType === 'add' ? this.addFormRules : this.editFormRules;
+    },
+    pathUrl: function() {
+      return `sys/${window.sessionStorage.getItem('userId')}_v3_${new Date().getTime()}`;
     }
   },
   methods: {
     // 获取关键字
     getKeywordList() {
       this.$fetch('getKeywordList', this.query).then(res =>{
-        res = {
-          "code":200,
-          "msg":"success",
-          "data":{
-            "list":[
-              {"id":4514628094337192,"user_id":-7953428073147252,"name":"!b$","created_at":"1978-03-10 16:11:36","updated_at":"1976-02-01 06:17:05"},
-              {"id":2657730129258440,"user_id":3339650132788128,"name":"6JP3pn","created_at":"1971-09-24 23:14:34","updated_at":"1985-01-08 08:53:52", "isEdit": false},
-              {"id":7264203787179592,"user_id":-4228398043365332,"name":"AQyq^dz","created_at":"2008-07-31 07:22:11","updated_at":"1996-09-23 10:17:31", "isEdit": false},
-              {"id":8129603401981776,"user_id":-6395470898044532,"name":"M35","created_at":"2010-10-26 04:42:41","updated_at":"2000-04-28 22:21:21", "isEdit": false},
-              {"id":4514628094337193,"user_id":-7953428073147252,"name":"!b$123","created_at":"1978-03-10 16:11:36","updated_at":"1976-02-01 06:17:05", "isEdit": false},
-              {"id":2657730129258440,"user_id":3339650132788128,"name":"6JP3pn","creat.el-dialog--centered_at":"1971-09-24 23:14:34","updated_at":"1985-01-08 08:53:52", "isEdit": false},
-              {"id":7264203787179592,"user_id":-4228398043365332,"name":"AQyq^dz","created_at":"2008-07-31 07:22:11","updated_at":"1996-09-23 10:17:31", "isEdit": false},
-              {"id":8129603401981776,"user_id":-6395470898044532,"name":"M35","created_at":"2010-10-26 04:42:41","updated_at":"2000-04-28 22:21:21", "isEdit": true}
-            ],
-            "total": 100
-          }
-        };
         this.keyWordDao = res && res.code === 200 && res.data && res.data.list ? res.data : {
           total: 0,
           list: []
@@ -233,13 +230,13 @@ export default {
           if (that.$refs.addForm) {
             that.$refs.addForm.resetFields();
           }
+          that.addForm.executeType = 'edit';
+          that.$set(that.addForm, 'id', rows.id);
+          that.$set(that.addForm, 'name', rows.name);
         }catch (e){
           console.log(e);
         }
       });
-      that.addForm.executeType = 'edit';
-      that.addForm.id = rows.id;
-      that.addForm.name = rows.name;
     },
     // 关键词新增 or 关键词修改
     keywordSend() {
@@ -278,6 +275,7 @@ export default {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
+            that.$refs.chatTable.clearSelect();
             that.getKeywordList();
           }else {
             that.$message({
@@ -330,11 +328,12 @@ export default {
     // 获取模板下载地址
     getKeywordTemplate() {
       this.$fetch('getKeywordTemplate', {}).then(res =>{
-        this.downloadHref = res && res.code === 200 && res.data.url ? res.data.url : '';
+        if(res && res.code === 200) {
+          this.downloadHref = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, res.data.url || '');
+        }
       }).catch(e => {
         console.log(e);
       });
-      this.downloadHref = 'http://www.baidu.com'; // TODO 后续去除
     },
     // 下载模板
     downloadHrefHandle() {
@@ -343,8 +342,17 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
-      this.fileUrl = URL.createObjectURL(file.raw);
-      this.fileResult = 'success';
+      if (res.data.file_url) {
+        this.fileUrl = res.data.file_url;
+        // 文件上传成功，保存信息
+        this.$fetch('uploadKeywordAdd', {
+          file: res.data.file_url
+        }).then(resV => {
+          resV.code === 200 ? this.importResult = resV.data : null;
+        }).catch(e => {
+          this.$message.error('导入聊天严禁词信息失败！');
+        });
+      }
     },
     beforeUploadHandler(file){
       console.log(file);

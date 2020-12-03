@@ -104,7 +104,7 @@ const apis = {
   viewerDel: ['/v3/webinars/audience/delete-audience', 'POST'],// 白名单观众-批量删除 jia.li  √
   viewerSetGet: ['/v3/webinars/webinar/get-webinar-verify', 'POST'],// 获取活动观看限制接口 jia.li  √
   viewerInfo: ['/v3/webinars/audience/info', 'POST'],// 白名单观众详情获取 jia.li •••【控制台未用到】
-  viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li •••
+  viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li  √
   fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li •••
   // 自定义菜单
   menuTplList: ['/101/v3/menu-components/list', 'POST', 'mock'], // 控制台-组件列表接口 jia.li
@@ -113,22 +113,22 @@ const apis = {
   webinarCMenuList: ['/101/v3/webinar-menus/list', 'POST', 'mock'], // 观看端-菜单列表接口 jia.li
   webinarCMenuGet: ['/101/v3/webinar-menus/info', 'POST', 'mock'], // 观看端-单个菜单详情接口 jia.li
   // 虚拟人数
-  virtualSetSave: ['/v3/webinars/virtual/edit', 'POST', 'mock'], // 控制台-编辑虚拟人数配置 jia.li
-  virtualGet: ['/v3/webinars/virtual/info', 'GET'], // 控制台-获取虚拟人数配置 jia.li
-  virtualClientGet: ['/v3/webinars/virtual/get-base', 'GET'], // 发起端-获取虚拟观众基数
-  virtualClientStart: ['/v3/webinars/virtual/start', 'GET'], // 发起端-开始增加虚拟观众
-  virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众
-  virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li
+  virtualSetSave: ['/v3/webinars/virtual/add', 'POST'], // 控制台-编辑虚拟人数配置 jia.li  √
+  virtualGet: ['/v3/webinars/virtual/info', 'GET'], // 控制台-获取虚拟人数配virtual置 jia.li  √
+  virtualClientGet: ['/v3/webinars/virtual/get-base', 'GET'], // 发起端-获取虚拟观众基数 •••
+  virtualClientStart: ['/v3/webinars/virtual/start', 'GET'], // 发起端-开始增加虚拟观众 •••
+  virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众 •••
+  // virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li •••废弃
 
   // 关键词
-  getKeywordList: ['/101/v3/interacts/keyword/get-list', 'POST', 'mock'], // 获取关键词列表[控制台调用] jia.li
-  getAllKeywordList: ['/101/v3/interacts/keyword/get-all', 'POST', 'mock'], // 获取所有关键词列表[观看端/发起端调用] jia.li
-  multiKeywordAdd: ['/101/v3/interacts/keyword/batch-create', 'POST', 'mock'], // 添加关键词-可批量 jia.li
-  multiKeywordEdit: ['/101/v3/interacts/keyword/edit', 'POST', 'mock'], // 修改关键词 jia.li
-  multiKeywordDel: ['/101/v3/interacts/keyword/batch-delete', 'POST', 'mock'], // 批量删除关键词 jia.li
-  checkUploadKeyword: ['/101/v3/interacts/keyword/check-upload-file', 'POST', 'mock'], // 校验上传文件可以上传的关键词 jia.li
-  uploadKeywordAdd: ['/101/v3/interacts/keyword/upload-file-and-create', 'POST', 'mock'], // 上传关键词文件并添加关键词 jia.li
-  getKeywordTemplate: ['/101/v3/interacts/keyword/get-template-url', 'POST', 'mock'], // 获取关键词模板地址 jia.li
+  getKeywordList: ['/v3/interacts/keyword/get-list', 'POST'], // 获取关键词列表[控制台调用] jia.li  √
+  getAllKeywordList: ['/v3/interacts/keyword/get-all', 'POST'], // 获取所有关键词列表[观看端/发起端调用] jia.li  √
+  multiKeywordAdd: ['/v3/interacts/keyword/batch-create', 'POST'], // 添加关键词-可批量 jia.li  √
+  multiKeywordEdit: ['/v3/interacts/keyword/edit', 'POST'], // 修改关键词 jia.li  √
+  multiKeywordDel: ['/v3/interacts/keyword/batch-delete', 'POST'], // 批量删除关键词 jia.li  √
+  checkUploadKeyword: ['/v3/interacts/keyword/check-upload-file', 'POST'], // 校验上传文件可以上传的关键词 jia.li •••暂时不用
+  uploadKeywordAdd: ['/v3/interacts/keyword/upload-file-and-create', 'POST'], // 上传关键词文件并添加关键词 jia.li
+  getKeywordTemplate: ['/v3/interacts/keyword/get-template-url', 'POST'], // 获取关键词模板地址 jia.li  √
 
   // 消息管理
   getMsgList: ['/v3/commons/msgcenter/list', 'POST'], // 站内消息列表接口 jia.li  √
@@ -172,25 +172,25 @@ const apis = {
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
-  getSonInfo: ['/100/v3/users/child/get-head-info', 'POST', 'mock'], // 子账号tab页头部信息接口 Jia.li  √
-  childExport: ['/100/v3/users/child/export', 'POST', 'mock'], // 子账号列表导出接口 Jia.li
-  getSonList: ['/100/v3/users/child/get-list', 'POST', 'mock'], // 获取子账号列表信息 Jia.li
-  sonExport: ['/100/v3/users/child/export', 'POST', 'mock'], // 子账号列表导出 Jia.li
-  sonAdd: ['/100/v3/users/child/create', 'POST', 'mock'], // 子账号创建 Jia.li
-  sonDel: ['/100/v3/users/child/delete', 'POST', 'mock'], // 子账号删除 Jia.li
-  sonEdit: ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号修改 Jia.li
-  sonCountGet: ['/100/v3/users/child/count', 'POST', 'mock'], // 获取子账号个数 Jia.li
-  sonDetailGet:  ['/100/v3/users/child/get-info', 'POST', 'mock'], // 子账号详情 Jia.li
-  allocSave:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号-用  量分配-保存分配方式 Jia.li
-  allocMoreGet:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号-用量分配-可分配数量获取 Jia.li
-  allocSetVal:  ['/100/v3/users/child/edit', 'POST', 'mock'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
-  getRoleList: ['/100/v3/users/user-role/list', 'POST', 'mock'], // 角色-用户-获取 Jia.li
-  sonRoleAdd: ['/100/v3/users/child-role/create', 'POST', 'mock'], // 子账号-角色创建 Jia.li
-  sonRoleDel: ['/100/v3/users/child-role/delete', 'POST', 'mock'], // 子账号-角色删除 Jia.li
-  sonRoleEdit: ['/100/v3/users/child-role/edit', 'POST', 'mock'], // 子账号-角色编辑 Jia.li
-  sonRoleGet: ['/100/v3/users/child-role/get-info', 'POST', 'mock'], // 子账号-角色-详情查询 Jia.li
-  sonRoleList: ['/100/v3/users/child-role/get-list', 'POST', 'mock'], // 子账号-角色-列表查询 Jia.li
-  sonRolePermission: ['/100/v3/users/child-role/get-list', 'POST', 'mock'], // 子账号权限查询接口 Jia.li
+  getSonInfo: ['/v3/users/child/get-head-info', 'POST'], // 子账号tab页头部信息接口 Jia.li  √
+  childExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出接口 Jia.li
+  getSonList: ['/v3/users/child/get-list', 'POST'], // 获取子账号列表信息 Jia.li
+  sonExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出 Jia.li
+  sonAdd: ['/v3/users/child/create', 'POST'], // 子账号创建 Jia.li
+  sonDel: ['/v3/users/child/delete', 'POST'], // 子账号删除 Jia.li
+  sonEdit: ['/v3/users/child/edit', 'POST'], // 子账号修改 Jia.li
+  sonCountGet: ['/v3/users/child/count', 'POST'], // 获取子账号个数 Jia.li
+  sonDetailGet:  ['/v3/users/child/get-info', 'POST'], // 子账号详情 Jia.li
+  allocSave:  ['/v3/users/child/edit', 'POST'], // 子账号-用  量分配-保存分配方式 Jia.li
+  allocMoreGet:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-可分配数量获取 Jia.li
+  allocSetVal:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
+  getRoleList: ['/v3/users/user-role/list', 'POST'], // 角色-用户-获取 Jia.li
+  sonRoleAdd: ['/v3/users/child-role/create', 'POST'], // 子账号-角色创建 Jia.li
+  sonRoleDel: ['/v3/users/child-role/delete', 'POST'], // 子账号-角色删除 Jia.li
+  sonRoleEdit: ['/v3/users/child-role/edit', 'POST'], // 子账号-角色编辑 Jia.li
+  sonRoleGet: ['/v3/users/child-role/get-info', 'POST'], // 子账号-角色-详情查询 Jia.li
+  sonRoleList: ['/v3/users/child-role/get-list', 'POST'], // 子账号-角色-列表查询 Jia.li
+  sonRolePermission: ['/v3/users/child-role/get-list', 'POST'], // 子账号权限查询接口 Jia.li
   sonResourcesGet: ['/104/v3/user-vip/get-dist-resources', 'POST', 'mock'], // 获取账号可分配资源 Jia.li
   sonResourcesSave: ['/104/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
 
@@ -229,8 +229,8 @@ const apis = {
   modifyApp: ['/100/v3/users/app-keys/edit', 'POST', 'mock'], // 修改应用 jian.chang
 
   // 账户管理
-  homeInfoGet: ['/100/v3/users/homepage/get-info', 'POST', 'mock'], // 个人主页查询接口 Jia.li
-  homeInfoEdit: ['/100/v3/users/homepage/edit', 'POST', 'mock'], // 个人主页更新接口 Jia.li
+  homeInfoGet: ['/100/v3/users/homepage/get-info', 'POST', 'mock'], // 个人主页查询接口 Jia.li •••
+  homeInfoEdit: ['/100/v3/users/homepage/edit', 'POST', 'mock'], // 个人主页更新接口 Jia.li •••
   checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
   resetPassword: ['/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回/设置密码接口
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li

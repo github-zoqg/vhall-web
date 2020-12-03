@@ -112,8 +112,8 @@
           :saveData="{
              path: pathUrl,
              type: 'exel',
-             result: importResult
           }"
+          :result="importResult"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"

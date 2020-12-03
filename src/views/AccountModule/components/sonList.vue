@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span>当前可创建子账号数量23个</span>
+          <span>当前可创建子账号数量23个 {{roleList}}</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
@@ -63,7 +63,7 @@
           <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入12个字符" :maxlength="12" :minlength="1"/>
         </el-form-item>
         <el-form-item label="账号角色：" prop="role_id">
-          <el-select placeholder="请选择角色" round  v-model="sonForm.role_id">
+          <el-select placeholder="请选择角色" clearable round  v-model="sonForm.role_id">
             <el-option
               v-for="item in roleList"
               :key="item.id"
@@ -187,7 +187,7 @@ export default {
           { required: true, message: '请输入预设密码', trigger: 'blur' }
         ],
         role_id: [
-          { required: true, message: '请输入账号角色', trigger: 'blur' }
+          { required: true, message: '请输入账号角色', trigger: 'change' }
         ],
         nums: [
           { required: true, message: '请填写账号数量', trigger: 'blur' }
@@ -320,7 +320,7 @@ export default {
         if (valid) {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
           let params = Object.assign(this.sonDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.sonDialog.row.id, group_id: this.query.group_id }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
             res && res.code === 200 ? this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`) : this.$message({
               type: 'error',
               message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
@@ -338,11 +338,14 @@ export default {
     },
     // 获取列表数据
     getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
-      this.$fetch('getSonList', {
+      let params = {
+        role_id: this.sonForm.role_id,
         user_id: sessionOrLocal.get('userId'),
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize
-      }).then(res =>{
+        limit: pageInfo.pageSize,
+        scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
+      };
+      this.$fetch('getSonList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
