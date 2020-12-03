@@ -197,8 +197,21 @@ export default {
       true
     );
 
-    // if (!this.masterEnd) {
-    this.$vhallFetch('getQAHistroy', {
+    // this.$vhallFetch('getQAHistroy', {
+    //   webinar_id: this.webinarId,
+    //   join_id: this.joinId
+    // })
+    //   .then((res = {data: []}) => {
+    //     const list = res.data.map((h) => {
+    //       return {...h, content: this.emojiToText(h.content)};
+    //     });
+    //     this.msgList = list;
+    //     if (this.msgList.length && !this.masterEnd) {
+    //       this.$parent.qaVisible = true;
+    //     }
+    //   })
+    //   .catch(res => {});
+      this.$vhallFetch('getQAHistroy', {
       webinar_id: this.webinarId,
       join_id: this.joinId
     })
