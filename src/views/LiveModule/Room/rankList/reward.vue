@@ -30,9 +30,6 @@ export default {
     ilId: {
       required: true
     },
-    vssJoinId: {
-      required: true
-    },
     staticDomain: {
       required: true,
       default: ''
@@ -55,10 +52,10 @@ export default {
   methods: {
     // 获取邀请列表
     getrewardList () {
-      this.$fetch('awardsTop', {
-        webinar_id: this.ilId,
-        // webinar_id: 897614986,
-        join_id: this.vssJoinId
+      this.$fetch('getCardList', {
+        // room_id: this.ilId, // lss_id TODO:
+        pos: 0,
+        limit: 100
       }).then((res) => {
         if (res.code == 200) {
           this.rewardInfo = res.data.list;

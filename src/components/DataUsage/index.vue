@@ -99,6 +99,7 @@ export default {
   data() {
     return {
       title: '流量包',
+      versionType: 1,
       userInfo: {
         concurrency: {},
         flow: {},
@@ -118,6 +119,8 @@ export default {
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
+        this.versionType = res.data.edition;
+        sessionOrLocal.set('versionType', JSON.stringify(res.data.edition));
       }).catch(e=>{
         console.log(e);
       });
@@ -130,6 +133,7 @@ export default {
       } else {
         this.$refs.levelVersion.dialogVisible = true;
         this.title = title;
+         this.concurrentPrice = this.versionType == '2' ? this.userInfo.concurrency : this.userInfo.flow;
       }
     },
     goAccountDetail() {
@@ -144,7 +148,7 @@ export default {
         });
       } else {
         this.title = type === '1' ? '专业版' : '流量版';
-        this.concurrentPrice = this.userInfo.edition == '2' ? this.userInfo.concurrency : this.userInfo.flow;
+        this.concurrentPrice = this.versionType == '2' ? this.userInfo.concurrency : this.userInfo.flow;
         this.$refs.levelVersion.dialogBuyVisible = true;
       }
     }

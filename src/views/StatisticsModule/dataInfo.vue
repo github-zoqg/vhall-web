@@ -1,5 +1,5 @@
 <template>
-  <div class="data-info">
+  <div class="data-info" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle :title="$route.meta.title">
       <div slot="content">
         1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
@@ -58,6 +58,7 @@ import lintCharts from '@/components/Echarts/lineEcharts';
 import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import PageTitle from '@/components/PageTitle';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'dataInfo',
   components: {
@@ -70,13 +71,14 @@ export default {
   data() {
     return {
       isActive: true,
+      loading: true,
       searchAreaLayout: [
         {
           type: '1',
         },
         {
           type: '2',
-          key: 'searchDate',
+          key: 'searchTime',
         },
         {
           type: '3',
@@ -103,13 +105,27 @@ export default {
     };
   },
   mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getDataList();
   },
   methods: {
     getDataList() {
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      let paramsObj = {
+        account_id: this.userId
+      };
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      let obj = Object.assign({}, paramsObj);
       console.log(formParams);
-      this.getAllCenterData(formParams);
+      this.loading = true;
+      this.getAllCenterData(obj);
     },
     // 获取总数据
     getAllCenterData(params) {
@@ -123,6 +139,8 @@ export default {
         this.deviceDataList = this.allDataList.device.list;
       }).catch(e=>{
         console.log(e);
+      }).finally(()=>{
+        this.loading = false;
       });
     },
     changeTime(title) {

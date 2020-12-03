@@ -79,9 +79,7 @@ export default {
   mounted() {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-    // TODO 临时模拟，后期需删除
-    userInfo.user_extends.logo = 'sys/img_url/e9/76/e9769042dd3762356798ef53adb35272.jpg';
-    this.logo = userInfo.user_extends ? Env.staticLinkVo.uploadBaseUrl + (userInfo.user_extends.logo || '') : '';
+    this.logo = userInfo.user_extends ? this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
     });

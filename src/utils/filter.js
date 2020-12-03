@@ -26,6 +26,12 @@ export const liveTag = (val) => {
     }
     return str;
 };
+export const actionText = (val) => {
+  // webinar_state  1直播 2预约 3结束 4点播 5回放
+  const liveTypeStr = ['', '直播', '预约', '结束', '点播', '回放'];
+  let str = liveTypeStr[val];
+  return str;
+};
 export const unitCovert = (val) => {
   val = Number(val);
   if (isNaN(val)) return 0;
@@ -36,6 +42,12 @@ export const unitCovert = (val) => {
   } else {
     return val;
   }
+};
+export const orderTypeText = (val) => {
+  // val  7-结清并发欠费,8-结清流量欠费,10-并发包,11-流量包12-扩展包，13-专业版 ，14回放流量包，15-免费回放流量包，16-并发预充值
+  const orderList = ['结清并发欠费', '结清流量欠费', '', '并发包', '流量包12', '扩展包', '专业版', '回放流量包', '免费回放流量包', '并发预充值'];
+  let text = orderList[val - 7];
+  return text;
 };
 
 export const limitTag = (val) => {

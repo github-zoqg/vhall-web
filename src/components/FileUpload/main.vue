@@ -9,9 +9,9 @@
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="img"></i>
-          <p class="file-name" style="color: rgb(136, 136, 136);">{{saveData.force_name}}</p>
+          <p class="file-name" style="color: rgb(136, 136, 136);">{{fileName}}</p>
           <div class="change-txt">
-            <p id="right" style="display: block;" >上传成功，共检测到5条有效数据</p>
+            <p id="right">上传成功，共检测到{{result.success_count}}条有效数据</p>
             <p id="error"></p>
           </div>
         </a>
@@ -32,7 +32,8 @@ import {sessionOrLocal} from "@/utils/utils";
 export default {
   data(){
     return {
-      token: sessionOrLocal.get('token')
+      token: sessionOrLocal.get('token'),
+      fileName: null
     };
   },
   props: {
@@ -85,6 +86,15 @@ export default {
       type: Boolean,
       default: false
     },
+    result: {
+      type: Object,
+      default: function() {
+        return {
+          success_count: 0,
+          failure_count: 0
+        };
+      }
+    },
     'on-success': {
       type: Function,
       default: ()=>{}
@@ -96,6 +106,7 @@ export default {
   methods: {
     uploadSuccess(response, file, fileList){
       console.log('heqhwhqhwhd ', response, file, fileList, this.onSuccess);
+      this.fileName = file.name;
       if(response.code !== 200) {
         this.$message.error(response.msg || '上传失败');
       } else {
@@ -141,7 +152,14 @@ export default {
       }
     }
   },
-  watch: {
+  filters: {
+    typeStr: function(str) {
+      if(this.saveData.force_name !== null) {
+        return '.xls';
+      } else{
+        return '';
+      }
+    }
   }
 };
 </script>
@@ -232,7 +250,6 @@ export default {
     margin-top: -5px;
   }
   .a-upload #right {
-    display: none;
     font-weight: 400;
     margin-top: -5px;
     color: #888;

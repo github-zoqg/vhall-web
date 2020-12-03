@@ -74,7 +74,7 @@
                   <el-dropdown-item command='/reportsData'>数据报告</el-dropdown-item>
                   <el-dropdown-item command='/interactionData'>互动统计</el-dropdown-item>
                   <el-dropdown-item command='/userData'>用户统计</el-dropdown-item>
-                  <el-dropdown-item command='/edit'>用户统计</el-dropdown-item>
+                  <el-dropdown-item command='/edit'>复制</el-dropdown-item>
                   <el-dropdown-item command='删除'>删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -107,7 +107,7 @@ export default {
       pageSize: 10,
       pageNum: 1,
       pagePos: 0,
-      webinarId: 0,
+      webinarInfo: {},
       totalElement: 0,
       liveDropDownVisible: false,
       statusOptions: [
@@ -140,16 +140,14 @@ export default {
       console.log('searchHandler');
     },
     dropDownVisibleChange(item) {
-      // this.liveDropDownVisible = visible
       this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);
-      console.log(item, "1111111111");
-      this.webinarId = item.webinar_id;
+      this.webinarInfo = item.webinar_id;
     },
     commandMethod(command) {
       if (command === '删除') {
         console.log("111111111111111");
       } else {
-        this.$router.push({path: `${command}/${this.webinarId}`});
+        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {type: this.webinarInfo.webinar_state }});
       }
     },
     currentChangeHandler(current) {

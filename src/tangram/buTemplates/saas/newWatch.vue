@@ -151,13 +151,13 @@
             <div class="table-praise">
               <praise :roomId="roomId" :times="roomInfo.like"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show && roomInfo.role_name != 4 && roomInfo.role_name != 3 && bizInfo.open_huawei != 1">
+            <div class="table-reward" v-if="userModules.reward.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <reward :roomId="roomId"></reward>
             </div>
-            <div class="table-gift" v-if="userModules.gift.show && roomInfo.role_name != 4 && roomInfo.role_name != 3 && bizInfo.open_huawei != 1">
+            <div class="table-gift" v-if="userModules.gift.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <gift :roomId="roomId" :vssToken="vssToken"></gift>
             </div>
-            <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3 && bizInfo.open_huawei != 1">
+            <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <getCoupon
                 v-if="roomInfo.room_id"
                 :vss_token="vssToken"
@@ -465,7 +465,7 @@ export default {
     },
 
     vssJoinId: {
-      required: true
+      required: false
     },
 
     userChatId: {
@@ -506,7 +506,7 @@ export default {
     },
     bizInfo: { // 业务层信息（主要是配置相关信息）
       required: true,
-      default: {modules: {initiator: {}, header: {}}, auth: {}, host: {}}
+      default: {report_extra: '', paas_record_id: ''}
     }
   },
 

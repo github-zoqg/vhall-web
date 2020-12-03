@@ -158,12 +158,12 @@ export default {
   },
   created() {
     this.searchAreaLayout = this.searchLayout;
-    this.getBaseData();
-    this.getHighUv();
-    this.getTrendData();
-    this.getProvinceData();
-    this.getDeviceData();
-    this.getBrowerData();
+    this.getBaseData(this.$route.params.str);
+    this.getHighUv(this.$route.params.str);
+    this.getTrendData(this.$route.params.str);
+    this.getProvinceData(this.$route.params.str);
+    this.getDeviceData(this.$route.params.str);
+    this.getBrowerData(this.$route.params.str);
   },
   methods: {
     // changeTime(item) {
@@ -179,60 +179,61 @@ export default {
       console.log(params);
       console.log(searchData);
     },
-    getBaseData() {
+    getBaseData(id) {
       let params = {
-        switch_id: 0
+        switch_id: 0,
+        webinar_id: id
       };
       this.$fetch('getStatisticsinfo', params).then(res => {
         this.mainKeyData = res.data;
         console.log(res.data, '1111');
       });
     },
-    getHighUv() {
+    getHighUv(id) {
       let params = {
-        switch_id: 0
+        switch_id: 0,
+        webinar_id: id
       };
       this.$fetch('getMaxuv', params).then(res => {
-        this.highMax = res.data.max_onlines;
+        this.highMax = res.data.max_onlines || '';
         this.webianr_id = res.data.webianr_id;
       });
     },
-    getTrendData() {
+    getTrendData(id) {
       let params = {
-        switch_id: 0
+        switch_id: 0,
+        webinar_id: id
       };
       this.$fetch('getDateUvinfo', params).then(res => {
-         console.log(res.data, '22222');
         this.allDataList = res.data;
         this.lineDataList = this.allDataList.live;
-        console.log(this.lineDataList, '22222');
       });
     },
-    getProvinceData() {
+    getProvinceData(id) {
       let params = {
-        switch_id: 0
+        switch_id: 0,
+        webinar_id: id
       };
       this.$fetch('getProvinceinfo', params).then(res => {
         this.areaDataList = res.data;
-        console.log(res.data, '333333');
       });
     },
-    getDeviceData() {
+    getDeviceData(id) {
       let params = {
-        switch_id: 0
+        switch_id: 0,
+        webinar_id: id
       };
       this.$fetch('getDeviceinfo', params).then(res => {
         this.deviceDataList = res.data.list;
-        console.log(res.data, '333333');
       });
     },
-    getBrowerData() {
+    getBrowerData(id) {
       let params = {
-        switch_id: 0
+        switch_id: 0,
+        webinar_id: id
       };
       this.$fetch('getBrowserinfo', params).then(res => {
         this.browerDataList = res.data.list;
-        console.log(res.data, '333333');
       });
     },
     changeTime(title) {

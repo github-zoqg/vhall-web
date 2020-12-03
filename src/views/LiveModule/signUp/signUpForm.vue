@@ -4,15 +4,20 @@
       <img src="//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png" alt="">
     </header>
     <article>
-      <h1 class="pageTitle">微吼直播_SASS产品发布会观看报名_微吼SaaS产品发布会</h1>
+      <h1 class="pageTitle">{{ $parent.$refs.fieldSet.form_title }}</h1>
       <div :class="['tabs', colorIndex]">
         <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
         <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
       </div>
       <!-- 表单块 -->
       <template>
-        <el-form>
-          <el-form-item v-for="(formItem, formIndex) in questionArr" :key="formIndex" :label="`${formIndex}.${formItem.label}`" :required="!!formItem.required">
+        <el-form v-show="tabs==1">
+          <el-form-item
+            v-for="(formItem, formIndex) in renderQuestionArr"
+            :key="formIndex"
+            :label="formItem.label === '隐私声明' ? '' : `${formIndex < 9 ? `0${ formIndex + 1 }` : formIndex + 1}.${formItem.label}`"
+            :required="!!formItem.required"
+          >
             <!-- 单选类型 -->
             <template v-if="formItem.type=='select'">
               <el-select v-model="formItem.value" placeholder="请选择">
@@ -25,11 +30,11 @@
               </el-select>
             </template>
             <!-- 隐私声明 -->
-            <template v-else-if="formItem.name=='privacy'">
+            <!-- <template v-else-if="formItem.name=='privacy'">
               <el-checkbox v-model="formItem.value">
                 <p v-html="privacyFormatter(formItem.nodes)"></p>
               </el-checkbox>
-            </template>
+            </template> -->
             <template v-for="(nodes, nodeIndex) in formItem.nodes" v-else>
               <el-input v-if="formItem.type=='input'"  :key="`${formIndex}-${nodeIndex}`" v-model="nodes.value" v-bind="nodes.props"></el-input>
               <!-- 单选类型 -->
@@ -55,19 +60,60 @@
               </el-checkbox-group>
             </template>
           </el-form-item>
+          <el-form-item>
+            <div id="setCaptcha">
+              <el-input  v-model.trim="form.imgCode"> </el-input>
+            </div>
+            <p class="errorText" v-show="errorMsgShow">图形码错误</p>
+          </el-form-item>
+          <el-form-item key="code" prop="code">
+            <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
+              <el-button class="no-border" size="mini" slot="append" @click="getDyCode('phone')">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+            </el-input>
+          </el-form-item>
+          <el-form-item
+            v-if="privacyItem"
+            :required="!!privacyItem.required"
+          >
+            <!-- 隐私声明 -->
+            <template>
+              <el-checkbox v-model="privacyItem.value">
+                <p v-html="privacyFormatter(privacyItem.nodes)"></p>
+              </el-checkbox>
+            </template>
+          </el-form-item>
         </el-form>
       </template>
       <!-- 表单块 -->
 
       <!-- 验证块 -->
       <template>
-        <div>
-
-        </div>
+        <el-form v-show="tabs==2">
+          <el-form-item
+            required
+            label="请输入报名时您填写的手机号"
+          >
+            <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入手机号"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <div id="setCaptcha1">
+              <el-input  v-model.trim="form.imgCode"> </el-input>
+            </div>
+            <p class="errorText" v-show="errorMsgShow">验证失败，请重试</p>
+          </el-form-item>
+          <el-form-item key="code" prop="code">
+            <el-input v-model.trim="form.code" auto-complete="off" placeholder="验证码">
+              <el-button class="no-border" size="mini" slot="append" @click="getDyCode('phone')">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+            </el-input>
+          </el-form-item>
+        </el-form>
       </template>
       <!-- 验证块 -->
     </article>
-
+    <i
+      class="closeBtn"
+      @click="closePreview"
+    >&times;</i>
   </div>
 </template>
 
@@ -81,14 +127,53 @@ export default {
   },
   data(){
     return{
+      time: 60,
+      form: {
+        imgCode: '',
+        code: ''
+      },
       colorIndex: 'red',
-      tabs: 1
+      tabs: 1,
+      showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
+      captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
+      mobileKey: '', // 云盾值
+      captcha: null, // 云盾本身
+      errorMsgShow: ''
     };
+  },
+  computed: {
+    renderQuestionArr() {
+      return this.questionArr.filter(item => {
+        return item.label !== '隐私声明';
+        // if(item.label !== '隐私声明'){
+        //   return item;
+        // } else {
+        //   return false;
+        // }
+      });
+    },
+    privacyItem() {
+      if (this.questionArr[this.questionArr.length - 1].label === '隐私声明') {
+        return this.questionArr[this.questionArr.length - 1];
+      }
+      return false;
+    }
   },
   created(){
     console.log(this.questionArr);
   },
+  mounted() {
+    this.callCaptcha('#setCaptcha');
+    this.callCaptcha('#setCaptcha1');
+    console.log(this.renderQuestionArr);
+  },
   methods: {
+    closePreview() {
+      this.$emit('closePreview');
+    },
+    getDyCode() {
+
+    },
     privacyFormatter(item){
       let text = JSON.parse(JSON.stringify(item[0].value));
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
@@ -105,6 +190,37 @@ export default {
 
       return text;
     },
+    /**
+     * 初始化网易易盾图片验证码
+     */
+    callCaptcha(id) {
+      const that = this;
+      // eslint-disable-next-line
+      initNECaptcha({
+        captchaId: that.captchakey,
+        element: id,
+        mode: 'float',
+        onReady(instance) {
+          console.log('instance', instance);
+        },
+        onVerify(err, data) {
+          if (data) {
+            that.mobileKey = data.validate;
+            that.showCaptcha = true;
+            console.log('data>>>', data);
+            that.errorMsgShow = '';
+          } else {
+            that.captcha = '';
+            console.log('errr>>>', err);
+            that.errorMsgShow = true;
+          }
+        },
+        onload(instance) {
+          console.log('onload', instance);
+          that.captcha = instance;
+        }
+      });
+    },
   }
 };
 </script>
@@ -120,6 +236,7 @@ export default {
     width: 840px;
     background: #fff;
     padding-bottom: 90px;
+    position: relative;
   }
   header{
     width: 100%;
@@ -186,6 +303,21 @@ export default {
   }
   article{
     padding: 0 75px;
+  }
+  .closeBtn{
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 28px;
+    color: #fff;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    font-size: 32px;
+    text-align: center;
+    line-height: 26px;
+    font-style: normal;
+    cursor: pointer;
   }
   /deep/ .el-form-item__label{
     float: none;

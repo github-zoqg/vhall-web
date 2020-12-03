@@ -68,7 +68,7 @@ export default {
           text: ['high', 'low'],
           calculable: true,
           color: ['#fb3a32', '#ff6250', '#ffd5c1', '#fff8e1', '#fff'],
-          show: true,
+          show: false,
         },
         series: [
           {

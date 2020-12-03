@@ -254,11 +254,11 @@ export default {
     },
     // 获取列表数据
     getRoleList() {
-      this.$fetch('sonRoleList', {
+      this.$fetch('sonRoleList', this.$params({
         role_name: this.role_name,
         pos: 0,
         limit: 11
-      }).then(res =>{
+      })).then(res =>{
         this.roleDao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
