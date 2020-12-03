@@ -30,7 +30,15 @@ router.beforeEach((to, from, next) => {
         } else {
           sessionOrLocal.set('userInfo', null);
         }
-        next();
+        // 获取子账号数据
+       fetchData('sonCountGet', {}).then(res =>{
+         if( res && res.code === 200) {
+           sessionOrLocal.set('SAAS_V3_SON_VO', JSON.stringify(res.data || {}));
+         }
+         next();
+       }).catch(e => {
+         NProgress.done();
+       });
       }).catch(e=>{
         console.log(e);
         NProgress.done();
