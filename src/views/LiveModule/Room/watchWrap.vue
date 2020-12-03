@@ -1357,7 +1357,7 @@ export default {
     },
     // 商品推荐
     getGoodsInfo() {
-      this.$fetch('getWatchGoodsList', {
+      this.$fetch('goodsList', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
         if (res.code == 200) {
@@ -1406,7 +1406,7 @@ export default {
     },
     // TODO:
     getUerInfo () {
-      this.$fetch('vssInfo', {
+      this.$fetch('watchInit', {
         webinar_id: this.$route.params.il_id,
         visitor: '',
         record_id: '',
@@ -1795,7 +1795,7 @@ export default {
     },
     // 获取公众号广告
     getPublisAdv () {
-      this.$fetch('getPublicAdv', {
+      this.$fetch('getScreenPublicInfo', {
         webinar_id: this.$route.parmas.il_id
       }).then(res => {
         if (res.code == 200 && res.data) {
@@ -2108,7 +2108,7 @@ export default {
      *TODO: 上报信息缺少字段等待添加
      */
     initVHallReport() {
-      this.$fetch('getReportInfo', {
+      this.$fetch('sendReportInfo', {
         webinar_id: this.$route.params.il_id,
         visitor: this.visitor
       }).then(res => {

@@ -2,6 +2,9 @@
   <el-upload
     class="avatar-uploader"
     v-bind="$props"
+    :headers="{token: token}"
+    :data=saveData
+    name="resfile"
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
@@ -36,17 +39,27 @@
 
 <script>
 import {Upload} from 'element-ui';
+import Env from '@/api/env.js';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data(){
     return {
       imageUrl: '',
+      token: sessionOrLocal.get('token')
     };
   },
   props: {
     ...Object.assign(Upload.props, {
+      saveData: {
+        type: Object,
+        default: {
+          path: 'sys/img_url',
+          type: 'image',
+        }
+      },
       action: {
         type: String,
-        default: "/mock/user/picupload"
+        default: `${Env.BASE_URL}/v3/commons/upload/index`
       },
       "list-type": {
         type: String,
@@ -96,11 +109,15 @@ export default {
   methods: {
     handleuploadSuccess(response, file, fileList){
       console.log('heqhwhqhwhd ', response, file, fileList, this.onSuccess);
-      console.log(this.$props);
-      this.$emit('input', URL.createObjectURL(file.raw));
-      // this.imageUrl = URL.createObjectURL(file.raw);
-      this.onSuccess(response, file, fileList);
-      // this.$emit('on-success', args)
+      if(response.code !== 200) {
+        this.$message.error(response.msg || '上传失败');
+      } else {
+        console.log(this.$props);
+        // this.$emit('input', URL.createObjectURL(file.raw));
+        // this.imageUrl = URL.createObjectURL(file.raw);
+        this.onSuccess(response, file, fileList);
+        // this.$emit('on-success', args)
+      }
     },
     // uploadProcess(event, file, fileList){
     //   this['on-progress'](event, file, fileList);
@@ -116,7 +133,6 @@ export default {
     // },
     // beforeUploadHandler(file){
     //   console.log(file);
-    //   return true
     //   // this['before-upload'](file);
     //   // this.$emit('before-upload', args)
     // },
@@ -170,7 +186,7 @@ export default {
       }
     }
     img{
-      // width: 100%;
+      width: 100%;
       height: 100%;
     }
   }

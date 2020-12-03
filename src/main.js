@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import EventBus from './utils/Events';
-import { copy } from './utils/utils';
+import { copy, dealObjectValue } from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
@@ -25,6 +25,11 @@ import 'nprogress/nprogress.css';
 import '@/common/css/index.less';
 Vue.prototype.$img = require('./common/images/small.png');
 
+//过滤器
+import * as filters from './utils/filter';
+Object.keys(filters).forEach(key=>{
+  Vue.filter(key, filters[key]);    //插入过滤器名和对应方法
+});
 // 工具类引入
 import moment from 'moment'; // 日期格式化
 import { getParams } from './utils/general';
@@ -34,6 +39,8 @@ Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 Vue.prototype.$EventBus = EventBus;
 Vue.prototype.$copyText = copy;
+Vue.prototype.$params = dealObjectValue;
+
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';

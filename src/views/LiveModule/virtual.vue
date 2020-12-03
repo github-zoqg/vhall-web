@@ -142,7 +142,7 @@ export default {
     // 虚拟人数开关
     setVirtualSwitch() {
       this.virtualSwitch = !this.virtualSwitch;
-      this.$fetch('virtualSwitchSet', {
+      this.$fetch('virtualSetSave', {
         virtualSwitch: !this.virtualSwitch
       }).then(res => {
         console.log(res);

@@ -9,9 +9,9 @@
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button round @click.prevent.stop="importFileShow = true">导入观众</el-button>
-          <el-button type="primary" round @click.prevent.stop="viewerDialogShow(null)">新增观众</el-button>
-          <el-button round @click.prevent.stop="viewerDel">批量删除</el-button>
+          <el-button round @click.prevent.stop="importFileShow = true" size="medium">导入观众</el-button>
+          <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
+          <el-button round @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
           <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
           <el-link :href="downloadUrl" v-else>下载模板</el-link>
           <div class="searchBox">
@@ -21,63 +21,28 @@
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
-                @click="viewerList(0)">
+                @click="viewerList">
               </i>
             </el-input>
           </div>
         </div>
         <!-- 操作栏 -->
-
-        <el-table
+        <table-list
+          ref="viewerTable"
+          :manageTableData="viewerDao.list"
+          :tabelColumnLabel="tableColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :isCheckout="isCheckout"
+          :isHandle="isHandle"
+          :totalNum="viewerDao.total"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="viewerList"
+          @changeTableCheckbox="handleSelectionChange"
           v-if="viewerDao && viewerDao.total > 0"
-          ref="multipleTable"
-          :data="viewerDao.data"
-          tooltip-effect="dark"
-          style="width: 100%"
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            type="selection"
-            width="55">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="姓名"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            prop="industry"
-            label="行业"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            prop="email"
-            label="邮箱"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            prop="phone"
-            label="手机"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            prop="job_number"
-            label="工号"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            prop="other"
-            label="其他"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            width="200"
-            label="操作">
-            <template slot-scope="scope">
-              <el-button type="text" size="small" @click.stop="viewerDialogShow(scope.row)">修改</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-
+        >
+        </table-list>
+        <!-- 无消息内容 -->
+        <null-page v-else></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
@@ -86,7 +51,7 @@
             <span class="group__button__title" @mouseover="item.showHover = true" @mouseout="item.showHover = false">{{ item.subject }}</span>
             <div class="group__tap" v-show="item.showHover"  @mouseover="item.showHover = true" @mouseout="item.showHover = false">
               <div class="group_button__rename" @click.prevent.stop="addGroupDialogShow(item)">重命名</div>
-              <div class="group_button__delete" @click.prevent.stop="postGroupDel">删除</div>
+              <div class="group_button__delete" @click.prevent.stop="postGroupDel(item)">删除</div>
             </div>
           </li>
         </ul>
@@ -97,7 +62,7 @@
       </div>
     </div>
     <!-- 添加分组/ 重命名分组 -->
-    <el-dialog :title="groupDialog.title" :visible.sync="groupDialog.visible" :lock-scroll='false' class="dialog__group">
+    <VhallDialog :title="groupDialog.title" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
       <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" :label-width="groupDialog.formLabelWidth">
         <el-form-item label="分组名：" prop="subject">
           <el-input v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
@@ -105,12 +70,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="groupDialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="postGroupSend('groupForm')">确 定</el-button>
+        <el-button type="primary" @click="postGroupSend('groupForm')" round size="medium">确 定</el-button>
+        <el-button @click="groupDialog.visible = false" round size="medium">取 消</el-button>
       </div>
-    </el-dialog>
+    </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
-    <el-dialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' class="dialog__group">
+    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="680px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名：" prop="name">
           <el-input v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（1-30个字符）" :maxlength="30"
@@ -134,64 +99,93 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="viewerDialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="viewerSend('viewerForm')">确 定</el-button>
+        <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
+        <el-button type="primary" @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
       </div>
-    </el-dialog>
+    </VhallDialog>
     <!-- 导入观众excel -->
-    <el-dialog title="导入观众" :visible.sync="importFileShow" :lock-scroll='false' class="dialog__group">
-      <div class="files-btn-wrap">
-        <input
-          type="file"
-          class="upload-input"
-          id="upId"
-          name="upId"
-          @change="viewerImport"
-        />
-        <div
-          class="upload-wrap"
-        >
-          <label for="upId" class="upload-btn-label">
-            <span class="upload-btn">上传</span>
-          </label>
-        </div>
-      </div>
-      <div class="item file">
-        <a href="javascript:;" class="a-upload mr10">
-          <i class="img"></i>
-          <p class="file-name" style="color: rgb(136, 136, 136);">{{this.file && this.file.name ? this.file.name : '请使用模版文件上传'}}</p>
-          <div class="change-txt" v-show="importResult && importResult.success > 0">
-            <p id="right" style="display: block;" >上传成功，共检测到{{importResult.success}}条有效数据</p>
-            <p id="error"></p>
+    <VhallDialog width="468px" title="导入观众" :visible.sync="importFileShow" append-to-body>
+      <div class="upload-dialog-content">
+        <file-upload
+          v-model="fileUrl"
+          :saveData="{
+             path: 'sys/material_url',
+             type: 'exel',
+             force_name: '观众模板.xlsx'
+          }"
+          :on-success="uploadSuccess"
+          :on-progress="uploadProcess"
+          :on-error="uploadError"
+          :on-preview="uploadPreview"
+          :before-upload="beforeUploadHandler">
+          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到4条数据</p>
+          <p slot="tip" v-else>请使用模版上传文件</p>
+        </file-upload>
+        <div class="dialog-right-btn">
+          <div class="dialog-right-btn">
+            <el-button type="primary" @click="importFileShow = false" size="mini" round>确 定</el-button>
+            <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
           </div>
-        </a>
-        <div class="progress">
-          <div style="width: 100%;"></div>
         </div>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="importFileShow = false">取 消</el-button>
-        <el-button type="primary">保 存</el-button>
-      </div>
-    </el-dialog>
-
+    </VhallDialog>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import env from '@/api/env';
+import {sessionOrLocal} from "@/utils/utils";
+import NullPage from '../PlatformModule/Error/nullPage.vue';
+import FileUpload from '@/components/FileUpload/main';
+import Env from "@/api/env";
 
 export default {
   name: "viewer",
   components: {
-    PageTitle
+    NullPage,
+    PageTitle,
+    FileUpload
   },
   data() {
     return {
+      isCheckout: true,
+      isHandle: true,
+      tableColumn: [
+        {
+          label: '姓名',
+          key: 'name',
+        },
+        {
+          label: '行业',
+          key: 'industry',
+        },
+        {
+          label: '邮箱',
+          key: 'email',
+        },
+        {
+          label: '手机号',
+          key: 'phone',
+        },
+        {
+          label: '工号',
+          key: 'job_number',
+        },
+        {
+          label: '其它',
+          key: 'other',
+        }
+      ],
+      tableRowBtnFun: [
+        {
+          name: '修改',
+          methodName: 'viewerDialogShow'
+        },
+      ],
       query: {
         keyword: '',
-        group_id: '',
+        group_id: null,
         pos: 0, // 当前第n页
         limit: 10 // 每页多少条
       },
@@ -264,9 +258,10 @@ export default {
         ]
       },
       multipleSelection: [],
-      downloadUrl: `${ env.fileBaseUrl }/download/audience.xlsx`,
+      downloadUrl: `${ env.staticLinkVo.tmplDownloadUrl }/download/audience.xlsx`,
       importFileShow: false,
-      file: null,
+      fileUrl: '', // 文件地址
+      fileResult: '', // 文件上传结果
       importResult: {
         fail: 0,
         success: 0
@@ -274,6 +269,11 @@ export default {
     };
   },
   methods: {
+    // 表格操作列回调函数， val表示每行
+    onHandleBtnClick(val) {
+      let methodsCombin = this.$options.methods;
+      methodsCombin[val.type](this, val);
+    },
     // 复选
     handleSelectionChange(val) {
       this.multipleSelection = val;
@@ -303,11 +303,11 @@ export default {
     // 获取白名单分组列表
     audienceGet() {
       let params = {
-        user_id: 1333,
+        user_id: sessionOrLocal.get('userId'),
         pos: 0,
         limit: 1000, // TODO 默认分组查询1000条
       };
-      this.$fetch('audienceGet', params).then(res => {
+      this.$fetch('audienceGet', this.$params(params)).then(res => {
         res && res.code === 200 && res.data && res.data.list ? this.groupList = res.data.list.map(item => {
           item.showHover = false;
           return item;
@@ -333,11 +333,17 @@ export default {
           if (this.groupDialog.type !== 'add') {
             params.group_id = this.groupDialog.row.id;
           }
-          this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', params).then(res => {
-            res && res.code === 200 ? this.$message.success(`${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`) : this.$message({
-              type: 'error',
-              message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`
-            });
+          this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
+            if(res && res.code === 200) {
+              this.$message.success(`${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`);
+              // 刷新数据
+              this.audienceGet();
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`
+              });
+            }
             this.groupDialog.visible = false;
           }).catch(e => {
             console.log(e);
@@ -350,17 +356,25 @@ export default {
       });
     },
     // 白名单删除分组
-    postGroupDel() {
+    postGroupDel(item) {
       this.$confirm('是否确认删除当前分组', '删除组', {
-        confirmButtonText: '删除',
+        confirmButtonText: '确认',
         cancelButtonText: '取消'
       }).then(() => {
-        let params = {};
-        this.$fetch('postGroupDel', params).then(res => {
-          res && res.code === 200 ? this.$message.success(`删除分组-操作成功`) : this.$message({
-            type: 'error',
-            message: res.msg || '删除分组-操作失败'
-          });
+        let params = {
+          group_ids: item.id
+        };
+        this.$fetch('postGroupDel', this.$params(params)).then(res => {
+          if(res && res.code === 200) {
+            this.$message.success(`删除分组-操作成功`);
+            // 重查分组列表
+            this.audienceGet();
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.msg || '删除分组-操作失败'
+            });
+          }
         }).catch(e => {
           console.log(e);
           this.$message({
@@ -372,9 +386,9 @@ export default {
       });
     },
     // 白名单根据分组获取观众列表
-    viewerList(post = 0) {
-      this.query.pos = post;
-      this.$fetch('viewerList', this.query).then(res => {
+    viewerList(pageInfo = {pos: 0, pageNum: 1, pageSize: 10}) {
+      this.query.pos = pageInfo.pos;
+      this.$fetch('viewerList', this.$params(this.query)).then(res => {
         res && res.code === 200 && res.data && res.data.total > 0 ? this.viewerDao = res.data : this.viewerDao = {
           total: 0,
           data: []
@@ -387,37 +401,42 @@ export default {
         };
       });
     },
+    // 创建观众
+    viewerDialogAdd() {
+      this.viewerDialogShow(this, {rows: null});
+    },
     // 展示观众修改
-    viewerDialogShow(item) {
+    viewerDialogShow(that, { rows }) {
+      let item = rows;
       try{
-        if (this.$refs.viewerForm) {
-          this.$refs.viewerForm.resetFields();
+        if (that.$refs.viewerForm) {
+          that.$refs.viewerForm.resetFields();
         }
       }catch (e){
         console.log(e);
       }
       if(item) { // 观众信息修改
-        this.viewerDialog.type = 'edit';
-        this.viewerDialog.title = '观众信息修改';
-        this.viewerDialog.row = item;
-        this.$set(this.viewerForm, 'name', item.name);
-        this.$set(this.viewerForm, 'industry', item.industry);
-        this.$set(this.viewerForm, 'phone', item.phone);
-        this.$set(this.viewerForm, 'job_number', item.job_number);
-        this.$set(this.viewerForm, 'email', item.email);
-        this.$set(this.viewerForm, 'other', item.other);
-        this.viewerDialog.visible = true;
+        that.viewerDialog.type = 'edit';
+        that.viewerDialog.title = '观众信息修改';
+        that.viewerDialog.row = item;
+        that.$set(that.viewerForm, 'name', item.name);
+        that.$set(that.viewerForm, 'industry', item.industry);
+        that.$set(that.viewerForm, 'phone', item.phone);
+        that.$set(that.viewerForm, 'job_number', item.job_number);
+        that.$set(that.viewerForm, 'email', item.email);
+        that.$set(that.viewerForm, 'other', item.other);
+        that.viewerDialog.visible = true;
       } else { // 添加观众
-        this.viewerDialog.type = 'add';
-        this.viewerDialog.title = '添加观众';
-        this.viewerDialog.row = null;
-        this.$set(this.viewerForm, 'name', '');
-        this.$set(this.viewerForm, 'industry', '');
-        this.$set(this.viewerForm, 'phone', '');
-        this.$set(this.viewerForm, 'job_number', '');
-        this.$set(this.viewerForm, 'email', '');
-        this.$set(this.viewerForm, 'other', '');
-        this.viewerDialog.visible = true;
+        that.viewerDialog.type = 'add';
+        that.viewerDialog.title = '添加观众';
+        that.viewerDialog.row = null;
+        that.$set(that.viewerForm, 'name', '');
+        that.$set(that.viewerForm, 'industry', '');
+        that.$set(that.viewerForm, 'phone', '');
+        that.$set(that.viewerForm, 'job_number', '');
+        that.$set(that.viewerForm, 'email', '');
+        that.$set(that.viewerForm, 'other', '');
+        that.viewerDialog.visible = true;
       }
     },
     // 白名单添加观众至分组 or 白名单观众信息修改
@@ -426,12 +445,18 @@ export default {
         if (valid) {
           console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
           let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
-          this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', params).then(res => {
-            res && res.code === 200 ? this.$message.success(`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`) : this.$message({
-              type: 'error',
-              message: res.msg || `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`
-            });
-            this.viewerDialog.visible = false;
+          this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
+            if(res && res.code === 200) {
+              this.$message.success(`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`);
+              this.viewerDialog.visible = false;
+              // 重查当前分组下观众信息
+              this.viewerList();
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.msg || `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`
+              });
+            }
           }).catch(e => {
             console.log(e);
             this.$message({
@@ -442,31 +467,6 @@ export default {
         }
       });
     },
-    // 白名单导入观众至分组
-    viewerImport(e) {
-      this.file = e.target.files[0];
-      let params = {
-        path: this.file.name,
-        resfile: this.file,
-        type: 'excel'
-      };
-      this.$fetch('viewerImport', params, {
-        'Content-Type': 'multipart/form-data'
-      }).then(res => {
-        res && res.code === 200 && res.data ? this.importResult = res.data : this.importResult = {
-          fail: 0,
-          success: 0
-        };
-        console.log(res);
-      }).catch(e => {
-        console.log(e);
-        this.importResult = {
-          fail: 0,
-          success: 0
-        };
-      });
-    },
-    viewerImportError() {},
     // 白名单观众-批量删除
     viewerDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
@@ -481,11 +481,16 @@ export default {
           this.$fetch('viewerDel', {
             audience_ids: ids.join(',')
           }).then(res => {
-            res && res.code === 200 ? this.$message.success(`删除观众-操作成功`) : this.$message({
-              type: 'error',
-              message: res.msg || '删除观众-操作失败'
-            });
-            this.viewerList(0);
+            if(res && res.code === 200) {
+              this.$message.success(`删除观众-操作成功`);
+              this.$refs.viewerTable.clearSelect();
+              this.viewerList();
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.msg || '删除观众-操作失败'
+              });
+            }
           }).catch(e => {
             console.log(e);
             this.$message({
@@ -505,7 +510,71 @@ export default {
     // 每次改变，重新查询观众信息
     changeViewerList(item) {
       this.query.group_id = item.id;
-      this.viewerList(0);
+      this.viewerList();
+    },
+    // 文件上传成功
+    uploadSuccess(res, file){
+      console.log(res, file);
+      if (res.data.file_url) {
+        this.fileUrl = res.data.file_url;
+        // 文件上传成功，保存信息
+      /*  this.$fetch('userEdit', {
+          logo: res.data.file_url
+        }).then(resV => {
+          this.logoForm.logoUrl = resV.code === 200 ? Env.staticLinkVo.uploadBaseUrl + res.data.file_url : '';
+        }).catch(e => {
+          this.$message.error('保存设置失败！');
+        });*/
+      }
+    },
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['csv', 'xls', 'xlsx'];
+      let nameArr = file.name.split('.');
+      const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传文件大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`文件上传失败`);
+      this.fileResult = 'error';
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
+    // 白名单导入观众至分组
+    viewerImport(e) {
+      this.file = e.target.files[0];
+      let params = {
+        path: this.file.name,
+        resfile: this.file,
+        type: 'excel'
+      };
+      this.$fetch('viewerImport', this.$params(params), {
+        'Content-Type': 'multipart/form-data'
+      }).then(res => {
+        res && res.code === 200 && res.data ? this.importResult = res.data : this.importResult = {
+          fail: 0,
+          success: 0
+        };
+        console.log(res);
+      }).catch(e => {
+        console.log(e);
+        this.importResult = {
+          fail: 0,
+          success: 0
+        };
+      });
     },
   },
   created() {
@@ -549,7 +618,9 @@ export default {
 }
 .table__container {
   width: calc(100% - 256px);
-  // background: #FFFFFF;
+  .padding41-40();
+  padding-bottom: 40px;
+  background: #FFFFFF;
   min-height: 500px;
 }
 .row__container {
@@ -637,67 +708,12 @@ export default {
   margin: 0;
   height: 36px;
 }
-.upload-btn-label {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 68px;
-  height: 32px;
-  background: #1D2049;
-  border-radius: 4px;
-  line-height: 33px;
-  position: relative;
-  &.disabled {
-    cursor: not-allowed;
-    background: #D2D2D2;
-  }
-}
-.upload-btn {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #FFFFFF;
-  line-height: 20px;
-}
-.item.file {
-  position: relative;
-}
-.a-upload {
-  position: relative;
-  display: inline-block;
-  width: 377px;
-  height: 140px;
-  padding: 4px 10px;
-  line-height: 28px;
-  text-align: center;
-  cursor: initial;
-  border: solid 1px #E2E2E2;
-  color: #222;
-  border-radius: 2px;
-  background-color: #F7F7F7;
+.upload-dialog-content {
   overflow: hidden;
 }
-.a-upload .img {
-  display: inline-block;
-  width: 62px;
-  height: 62px;
-  margin-top: 12px;
-  background: url(../../common/images/temp/associate-csv.png) no-repeat;
-  background-size: cover;
-  cursor: initial;
-}
-.a-upload .file-name {
-  color: #999;
-  font-size: 14px;
-  font-weight: 400;
-  margin-top: -5px;
-}
-.a-upload #right {
-  display: none;
-  font-weight: 400;
-  margin-top: -5px;
-  color: #888;
-  font-size: 14px;
+.dialog-right-btn {
+  text-align: right;
+  margin-bottom: 24px;
+  margin-top: 24px;
 }
 </style>

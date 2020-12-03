@@ -2,7 +2,7 @@
   <chrome v-if="downloadChrome" :type="'master'"></chrome>
   <tip v-else-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="publish-wrap">
-    <vhall-saas
+    <!-- <vhall-saas
       :roomId="roomId"
       :ilId="il_id"
       :vssToken="vss_token"
@@ -22,7 +22,7 @@
       :shareId="shareId"
       :docLowPriority="docLowPriority"
       :recordTip="recordTip"
-    ></vhall-saas>
+    ></vhall-saas> -->
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="chatSdkLoadHandler"></remote-script>
     <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="interactionSdkLoadHandler"></remote-script>
   </div>
@@ -62,10 +62,7 @@ export default {
   },
   beforeCreate() {},
   created() {
-    // this.$set(this.userInfo, 'token', 'vhall');
-    // this.getInav();
     if (!browserSupport()) return;
-    // this.getUserinfo();
   },
 
   mounted() {
@@ -75,7 +72,7 @@ export default {
   methods: {
     heartbeatLink() {
       setTimeout(() => {
-        this.$fetch('heartbeat', {})
+        this.$fetch('liveHeartBeat', {})
           .then(() => {
             this.heartbeatLink();
             console.log('心跳检测成功');
@@ -86,56 +83,65 @@ export default {
           });
       }, 1000 * 60 * 30);
     },
-    getUserinfo() {
-      // this.$fetch('initiatorInfo', { webinar_id: this.il_id })
-      //   .then(res => {
-      //     if (res.code != 200) {
-      //       // eslint-disable-next-line no-return-assign
-      //       return this.tipMsg = res.msg;
-      //     }
-          const mockResult = window.a.data;
-          console.warn(mockResult);
+  getUserinfo() {
+      this.$fetch('initiatorInfo', { webinar_id: this.il_id })
+        .then(async res => {
+          console.warn(res, '正常信息');
+            console.warn(res.msg, 8888888888888888888888888);
+          if (res.code != 200) {
+            // eslint-disable-next-line no-return-assign
+            return this.tipMsg = res.msg;
+          }
+          const mockResult = res.data;
           this.shareId = mockResult.share_id;
-          this.userInfo = mockResult.user;
-          this.roomId = mockResult.room_id;
-          this.vss_token = mockResult.vss_token;
-          this.joinId = mockResult.user.join_id;
-          this.third_party_user_id = mockResult.user.third_party_user_id;
+          this.userInfo = mockResult.join_info;
+          this.roomId = mockResult.interact.room_id;
+          this.vss_token = mockResult.interact.paas_access_token;
+          this.third_party_user_id = mockResult.join_info.third_party_user_id;
+          // this.joinId = mockResult.join_info.join_id; // 暂时移除
+          this.saas_join_id = mockResult.join_info.join_id;
+          this.params_verify_token = mockResult.join_info.interact_token;
           this.permission = mockResult.permission;
-          this.qaStatus = mockResult.qa_open;
-          this.params_verify_token = mockResult.params_verify_token;
-          this.saas_join_id = mockResult.user.saas_join_id;
+          await this.getTools(mockResult.interact.room_id);
+          this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
           this.domains = {
-            ...mockResult.domains,
+            ...mockResult.domains || {},  // ??? 云俊 返回
             custom: mockResult.live_domain_customization
           };
-          this.duration = mockResult.live_time;
-          this.is_interact = mockResult.is_interact;
-          this.document_id = mockResult.document_id;
+          this.duration = mockResult.webinar.live_time;
+          this.is_interact = mockResult.webinar.mode == 3  ? 1 : 0 ; // 做一下判断 ??? mode 直播模式：1-音频、2-视频、3-互动
+          this.document_id = mockResult.webinar.document_id;
           this.cut_record_status = mockResult.cut_record_status;
-          this.record_notice = mockResult.record_notice; // 设置默认回放视频提示
-          this.docLowPriority = mockResult.doc_low_priority;
+          this.record_notice = mockResult.record_notice || 3; // 设置默认回放视频提示 ???
+          this.docLowPriority = mockResult.doc_low_priority || 0;// ???  互动工具
           this.recordTip = mockResult.record_tip;
-          sessionStorage.setItem(
-            'vhall_domain',
-            JSON.stringify(mockResult.domains)
-          );
-          sessionStorage.setItem('host_uid', JSON.stringify(mockResult.host_uid));
-          sessionStorage.setItem('user', JSON.stringify(mockResult.user));
-          sessionStorage.setItem('vss_token', mockResult.vss_token);
-          sessionStorage.setItem('roomId', mockResult.room_id);
-          sessionStorage['vhall-vsstoken'] = mockResult.vss_token;
-          sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');
-          sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');
+          sessionStorage.setItem('vhall_domain',JSON.stringify(mockResult.domains));
+          sessionStorage.setItem('host_uid', JSON.stringify(mockResult.join_info.third_party_user_id));
+          sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
+          sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
+          sessionStorage.setItem('roomId', mockResult.interact.room_id);
+          sessionStorage['vhall-vsstoken'] = mockResult.join_info.interact_token;
+          sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
+          sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???
           // 初始化数据上报
           this.initVHallReport(mockResult);
-          //   sessionStorage.setItem('vhall-vsstoken',res.data.vss_token)
-        // })
-        // .catch(err => {
-        //   this.codeError = err.msg;
-        //   console.log('catch', err);
-        // });
-
+        }).catch(err => {
+          // this.tipMsg = err.msg;
+          // this.codeError = err.msg;
+          console.log('catch', err);
+        });
+    },
+    getTools(roomId){
+      return new Promise((resolve, reject) => {
+        this.$fetch('getToolStatus', {room_id: roomId}).then(res=>{
+          console.warn(res);
+          resolve();
+        }).catch(err=>{
+          console.warn(err, 'catch');
+          // reject();
+          resolve();
+        });
+      });
     },
     // 打点录制
     recordFun(data) {
@@ -149,8 +155,8 @@ export default {
     },
     initVHallReport(roominfo) {
       this.$fetch('getInitiatorReportInfo', {
-        report_token: roominfo.report_token,
-        vss_token: roominfo.vss_token
+        vss_token: roominfo.interact.paas_access_token,
+        webinar_id: roominfo.webinar.id
       }).then(res => {
         window.vhallReport = new VhallReport({
           ...res.data,

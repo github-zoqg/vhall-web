@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     initComp() {
-      let account_info = sessionOrLocal.get('account_info');
+      let account_info = sessionOrLocal.get('userInfo');
       if(account_info !== null) {
         let accountInfo = JSON.parse(account_info);
         this.accountInfo = accountInfo;
@@ -74,14 +74,15 @@ export default {
         scene_id: 2
       }).then(res =>{
         if(res.code === 200 && res.data) {
-          sessionOrLocal.set('account_info', JSON.stringify(res.data));
-          let account_info = sessionOrLocal.get('account_info');
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+          let account_info = sessionOrLocal.get('userInfo');
           if(account_info !== null) {
             let accountInfo = JSON.parse(account_info);
             this.accountInfo = accountInfo;
           }
         } else {
-          sessionOrLocal.set('account_info', null);
+          this.$message.error(res.msg);
         }
       });
     }

@@ -5,31 +5,31 @@
       <el-row type="flex" class="row-center" justify="space-between">
         <el-col :span="5">
           <div class="center-item" @click="toCreateLive">
-            <p><icon icon-class="saasicon_zhibo"></icon></p>
+            <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="center-item" @click="toUploadWord">
-            <p></p>
+            <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="center-item" @click="toBrandSet">
-            <p></p>
+            <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>品牌设置</h3>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="center-item" @click="toDataInfo">
-            <p></p>
+            <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>账号数据</h3>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="center-item" @click="toFinanceInfo">
-            <p></p>
+            <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务总览</h3>
           </div>
         </el-col>
@@ -102,8 +102,9 @@ export default {
     DataUsage
   },
   mounted() {
-    // this.getUserVersion();
-    // this.getLiveList();
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    // this.versionInfo = JSON.parse(sessionOrLocal.get('versionInfo'));
+    this.getLiveList();
   },
   methods: {
     // 页面跳转
@@ -138,10 +139,14 @@ export default {
     //   });
     // },
     getLiveList() {
-      this.$fetch('getDataCenterInfo').then(res =>{
+      let params = {
+        account_id: this.userId,
+        type: 1
+      };
+      this.$fetch('getDataCenterInfo', params).then(res =>{
         this.mainKeyData = res.data.key_data;
         this.lineDataList = res.data.trend.live;
-        sessionOrLocal.set('dataCenterInfo', this.lineDataList);
+        // sessionOrLocal.set('dataCenterInfo', this.lineDataList);
       }).catch(e=>{
         console.log(e);
       });
@@ -172,6 +177,7 @@ export default {
         padding-top: 38px;
         text-align: center;
         cursor: pointer;
+        border: 2px solid transparent;
         &:hover{
           border: 2px solid #FB3A32;
         }
@@ -179,7 +185,12 @@ export default {
           width: 30px;
           height: 30px;
           margin: auto;
-          border: 1px solid #ccc;
+          // border: 1px solid #ccc;
+          /deep/.svg-icon{
+            font-size: 32px;
+            fill: #FB3A32 !important;
+            // vertical-align: top;
+          }
         }
         h3{
           font-size: 16px;

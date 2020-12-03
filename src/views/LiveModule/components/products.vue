@@ -3,30 +3,30 @@
     <el-carousel
       :autoplay="false"
       arrow="hover"
-      height="515px"
+      height="453px"
       indicator-position="none"
       :loop="false"
     >
-      <el-carousel-item v-for="good in goodsList" :key="good.goods_id">
+      <el-carousel-item v-for="good in goodsListOn" :key="good.goods_id">
         <div class="sell-goods-item">
           <div class="sell-image" @click="sellGoodsInfo(good)">
-            <img src="http://yapi.vhall.domain/api/user/avatar?uid=1187" alt />
+            <img src="https://cn.vuejs.org/images/logo.png" alt />
           </div>
           <h3 :title="good.name" class="sell-title">
             {{ good.name }}
           </h3>
           <span style="color:#FC5659;font-size:24px;">
-            ￥{{ 90 || good.discount_price }} &nbsp;
+            ￥{{ good.discount_price }} &nbsp;
             <span
               style="color: #D2D2D2; font-size: 18px;text-decoration:line-through;"
-              >￥{{ 100 || good.price }}</span
+              >￥{{ good.price }}</span
             >
           </span>
           <p class="sell-info" :title="good.description">
             {{ good.description }}
           </p>
           <el-button @click="comeSelling(good)" class="selling"
-            >即将发售</el-button
+            >{{ '即将发售' }}</el-button
           >
           <a
             :href="good.shop_url"
@@ -45,6 +45,13 @@
     props: {
       goodsList: Array,
     },
+    computed: {
+      goodsListOn () {
+        return this.goodsList.filter((good) => {
+          return good.status;
+        });
+      }
+    },
     methods: {
       sellGoodsInfo(good) {
         this.$emit('sellGoodsInfo', good);
@@ -60,7 +67,7 @@
 <style lang="less" scoped>
   .sell-goods {
     /* width: 234px; */
-    height: 515px;
+    height: 453px;
     margin-left: 15px;
     width: calc(16% + 60px);
     float: right;

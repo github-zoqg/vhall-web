@@ -57,6 +57,25 @@ export function customTabCompType(type) {
   return filter(type,types);
 }
 
+/*
+ *公共参数platform含义
+ */
+export function platform(type) {
+  const types = [
+    {code:0,text:'iosAPP',key:'ios_app'},
+    {code:1,text:'androidAPP',key:'android_app'},
+    {code:4,text:'iosSDK',key:'ios_sdk'},
+    {code:5,text:'androidSDK',key:'android_sdk'},
+    {code:6,text:'pc客户端小助手',key:'pc_sdk'},
+    {code:7,text:'h5播放器pc浏览器端',key:'h5_pc'},
+    {code:9,text:'微信小程序',key:'chat'},
+    {code:10,text:'h5播放器wap端',key:'h5_wap'},
+    {code:15,text:'OpenApi',key:'open_api'},
+    {code:16,text:'admin后台',key:'admin'},
+    {code:16,text:'控制台',key:'console'}
+  ];
+  return filter(type,types);
+}
 
 function filter(type,types){
 	if(!type){

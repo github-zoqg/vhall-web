@@ -22,7 +22,7 @@
             <el-form-item prop="date2" :rules="[
               { required: true, message: '请选择直播开始时间', trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" value-format="HH:mm:ss" v-model="formData.date2" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%;"></el-time-picker>
             </el-form-item>
           </el-col>
         <!-- </el-row> -->
@@ -78,7 +78,11 @@
       <el-form-item :label="`${webniarTypeToZH}封面：`">
         <upload
           v-model="imageUrl"
-          :on-success="handleuploadSuccess"
+          :saveData="{
+             path: 'webinar/live_url',
+             type: 'image',
+          }"
+          :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
@@ -111,7 +115,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}简介：`">
-        <editor ref="editor"></editor>
+        <v-editor :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}类别：`" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
@@ -191,15 +195,17 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import editor from '@/components/WangEditor/main';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
+import VEditor from '@/components/Tinymce';
+import Env from "@/api/env";
+
 export default {
   components: {
     PageTitle,
-    editor,
     upload,
-    selectMedia
+    selectMedia,
+    VEditor
   },
   computed: {
     docSwtichDesc(){
@@ -269,6 +275,7 @@ export default {
         date1: '',
         date2: ''
       },
+      content: ``,
       docSwtich: false,
       reservation: false,
       online: false,
@@ -282,6 +289,7 @@ export default {
       tagIndex: 0,
       loading: false,
       imageUrl: '',
+      imageUrlTrue:'',
       selectMedia: null
     };
   },
@@ -289,12 +297,18 @@ export default {
     console.log(this.$route);
   },
   methods: {
-    handleuploadSuccess(res, file){
+    sendData(content) {
+      this.content = content;
+    },
+    handleUploadSuccess(res, file) {
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.imageUrl =  Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+        this.imageUrlTrue = res.data.file_url;
+      }
     },
     beforeUploadHnadler(file){
-      console.log(file);
       const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
       const isType = typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -317,31 +331,33 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
+      console.log(this.imageUrl, '------------');
+      console.log(`${this.formData.date1} ${this.formData.date2}`);
+      let data = {
+        subject: this.formData.title, // 标题
+        introduction: this.content, // 简介
+        start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
+        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
+        category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
+        img_url: this.imageUrlTrue, // 封面图 `//t-alistatic01.e.vhall.com/upload/${this.imageUrlTrue}`
+        is_private: Number(this.home), // 是否在个人主页显示
+        // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
+        hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否
+        is_adi_watch_doc: Number(this.docSwtich),// 观众是否可预览文档 1 是 0 否
+        hide_appointment: Number(this.reservation),// 是否显示预约人数 1 是 0 否
+        hide_pv: Number(this.hot),// 是否显示活动热度 1 是 0 否
+        webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
+        is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
+      };
+      console.log(data, 'data-------------');
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let data = {
-            subject: this.formData.title,
-            introduction: this.$refs.editor.editor.txt.html(),
-            start_date: this.formData.date1,
-            start_time: this.formData.date2,
-            webinar_type: this.liveMode,
-            category: 2,
-            img_url: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/7e/65/7e651ca254943327ab8d7d133ed2d778.jpg',
-            is_private: Boolean(this.home),
-            is_open: Boolean(this.home),
-            hide_watch: Boolean(this.online),
-            is_adi_watch_doc: Boolean(this.docSwtich),
-            hide_appointment: Boolean(this.reservation),
-            hide_pv: Boolean(this.hot),
-            is_capacity: Boolean(this.capacity),
-            webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0
-          };
           this.loading = true;
           this.$fetch('createLive', data).then(res=>{
             this.$message.success(`创建成功`);
             console.log(res);
             setTimeout(()=>{
-              this.$router.push({name: 'liveList'});
+              this.$router.push({path: '/live/list'});
             }, 500);
           }).catch(error=>{
             this.$message.error(`创建失败，${error.message}`);
@@ -349,8 +365,6 @@ export default {
             this.loading = false;
           });
           console.log(data);
-          // createLive
-          // alert('submit!');
         } else {
           this.$message.error('请完善必填字段');
           document.documentElement.scrollTop = 0;

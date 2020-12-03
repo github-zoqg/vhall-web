@@ -7,6 +7,10 @@
         <upload
           class="upload__avatar"
           v-model="logoForm.logoUrl"
+          :saveData="{
+             path: 'sys/logo_url',
+             type: 'image',
+          }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -25,6 +29,7 @@
 import PageTitle from '@/components/PageTitle';
 import NoAuth from '../PlatformModule/Error/noAuth.vue';
 import Upload from '@/components/Upload/main';
+import Env from '@/api/env.js';
 export default {
   name: "logo.vue",
   components: {
@@ -41,9 +46,18 @@ export default {
     };
   },
   methods: {
-    handleUploadSuccess(res, file){
+    handleUploadSuccess(res, file) {
       console.log(res, file);
-      this.logoForm.logoUrl = URL.createObjectURL(file.raw);
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.$fetch('userEdit', {
+          logo: res.data.file_url
+        }).then(resV => {
+          this.logoForm.logoUrl = resV.code === 200 ? Env.staticLinkVo.uploadBaseUrl + res.data.file_url : '';
+        }).catch(e => {
+          this.$message.error('保存设置失败！');
+        });
+      }
     },
     beforeUploadHandler(file){
       console.log(file);

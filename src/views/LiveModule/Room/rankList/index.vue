@@ -50,7 +50,7 @@ export default {
   methods: {
     // 获取邀请列表
     getInviteList () {
-      this.$fetch('inviteTop', {
+      this.$fetch('getCardList', {
         // room_id: this.ilId, // lss_id TODO:
         pos: 0,
         limit: 100

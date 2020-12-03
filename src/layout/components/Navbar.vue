@@ -1,7 +1,5 @@
 <template>
   <div class="navbar">
-    <!-- 是否收缩按钮 -->
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
     <!-- 面包屑 -->
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
@@ -11,18 +9,24 @@
       </div>
       <!-- 帮助中心 -->
       <div class="right-menu-item">
-        <i class="el-icon-message-solid"></i>
+        <span>
+             <icon icon-class="saasicon_help_m"></icon>
+          </span>
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
         <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload > 0">
-          <i class="el-icon-message-solid" @click.prevent.stop="toDownloadPage"></i>
+          <span @click.prevent.stop="toDownloadPage">
+             <icon icon-class="saasicon_download"></icon>
+          </span>
         </el-badge>
       </div>
       <!-- 消息中心 -->
       <div class="right-menu-item">
         <el-badge :value="unread_num" :max="99" class="item" :hidden="!unread_num>0">
-          <i class="el-icon-message-solid" @click.prevent.stop="toMsgPage"></i>
+          <span @click.prevent.stop="toMsgPage">
+             <icon icon-class="saasicon_bell_m"></icon>
+          </span>
         </el-badge>
       </div>
       <div class="right-menu-item">
@@ -44,13 +48,11 @@
 
 <script>
 import Breadcrumb from './Breadcrumb/index.vue';
-import Hamburger from './Hamburger/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
 
 export default {
   components: {
-    Breadcrumb,
-    Hamburger
+    Breadcrumb
   },
   data() {
     return {
@@ -78,12 +80,6 @@ export default {
         this.unread_num = 0;
       });
     },
-    // 开启或者关闭 左侧导航部分
-    toggleSideBar() {
-      this.sidebar.opened = !this.sidebar.opened;
-      sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
-      this.$EventBus.$emit('hamburger', this.sidebar.opened);
-    },
     logout() {
       /*this.$fetch('loginOut', {}).then(res =>{
         if(res && res.code === 200 && res.data) {
@@ -104,6 +100,9 @@ export default {
       });
     }
   },
+  mounted() {
+    this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
+  },
   created() {
     this.getUnreadNum();
   }
@@ -118,14 +117,6 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-}
-.hamburger-container {
-  line-height: 32px;
-  height: 32px;
-  float: left;
-  cursor: pointer;
-  transition: background .3s;
-  -webkit-tap-highlight-color:transparent;
 }
 .breadcrumb-container {
   float: left;

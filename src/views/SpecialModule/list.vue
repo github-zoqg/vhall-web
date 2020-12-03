@@ -38,17 +38,17 @@
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
           <div class="top">
-            <span class="liveTag">{{item | liveTag}}</span>
+           <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="el-icon-view"></i>
-              {{item.pv | unitCovert}}
+              {{item.view_num | unitCovert}}
             </span>
-            <img :src="item.img_url" alt="">
+            <img :src="item.cover" alt="">
           </div>
           <div class="bottom">
             <div class="">
-              <p class="liveTitle">{{item.subject}}</p>
-              <p class="liveTime">{{item.start_time}}</p>
+              <p class="liveTitle">{{item.title}}</p>
+              <p class="liveTime">{{item.created_at}}</p>
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
@@ -62,7 +62,7 @@
                 <i class="el-icon-share" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
-                <i class="el-icon-delete" @click="detele(item.id)"></i>
+                <i class="el-icon-delete" @click="deleteHandle(item.id)"></i>
               </el-tooltip>
             </p>
           </div>
@@ -129,7 +129,7 @@ export default {
       };
       this.loading = true;
       console.log(data);
-      this.$fetch('subjectList', data, {"Content-Type": "application/x-www-form-urlencoded", "need_sign": 0, platform: 'pc', token: 'cc'}).then(res=>{
+      this.$fetch('subjectList', this.$params(data)).then(res=>{
         console.log(res);
         this.liveList = res.data.list;
         // this.totalElement = res.data.total;
@@ -142,13 +142,13 @@ export default {
       });
     },
     // 删除
-    detele(id) {
+    deleteHandle(id) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.trueDetele(id);
+          this.trueDelete(id);
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -156,7 +156,7 @@ export default {
           });
         });
     },
-    trueDetele(id) {
+    trueDelete(id) {
       this.$fetch('subjectDel', {subject_ids: id}).then(res=>{
         this.$message({
             type: 'success',

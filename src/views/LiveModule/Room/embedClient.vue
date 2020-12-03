@@ -594,7 +594,7 @@ export default {
     },
     // 获取用户信息
     getUerInfo() {
-      this.$fetch('vssInfo', {
+      this.$fetch('watchInit', {
         webinar_id: this.$route.params.il_id,
         is_inline: '1',
         ...this.$route.query
@@ -800,7 +800,7 @@ export default {
       })
     },
     initVHallReport() {
-      this.$fetch('getReportInfo', {
+      this.$fetch('sendReportInfo', {
         report_token: this.roominfo.report_token,
         vss_token: this.roominfo.vss_token
       }).then(res => {

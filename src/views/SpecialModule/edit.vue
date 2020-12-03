@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle :title="`${$route.query.title}专题`"></pageTitle>
+    <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="120px">
       <el-form-item label="专题标题:" prop="title">
         <el-input v-model="formData.title" limit='100'></el-input>
@@ -8,7 +8,11 @@
       <el-form-item label="专题封面:">
         <upload
           v-model="imageUrl"
-          :on-success="handleuploadSuccess"
+          :saveData="{
+             path: 'webinar/live_url',
+             type: 'image',
+          }"
+          :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
@@ -17,11 +21,13 @@
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
-        <editor ref="editor"></editor>
+        <v-editor :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
          <el-switch
           v-model="reservation"
+          :active-value="1"
+          :inactive-value="0"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           :active-text="reservationDesc">
@@ -30,6 +36,8 @@
       <el-form-item label="活动热度:">
         <el-switch
           v-model="hot"
+          :active-value="1"
+          :inactive-value="0"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           :active-text="hotDesc">
@@ -38,6 +46,8 @@
       <el-form-item label="关联主页:">
         <el-switch
           v-model="home"
+          :active-value="1"
+          :inactive-value="0"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           :active-text="homeDesc">
@@ -56,35 +66,25 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import editor from '@/components/WangEditor/main';
 import upload from '@/components/Upload/main';
+import VEditor from '@/components/Tinymce';
+import Env from "@/api/env";
+
 export default {
   components: {
     PageTitle,
-    editor,
+    VEditor,
     upload,
   },
   computed: {
     reservationDesc(){
-      if(this.reservation){
-        return '关闭后，观看端将隐藏预约人数';
-      }else{
-        return "已关闭，观看端已隐藏预约人数";
-      }
+      return this.reservation ?  '关闭后，观看端将隐藏预约人数' : '已关闭，观看端已隐藏预约人数';
     },
     hotDesc(){
-      if(this.hot){
-        return '关闭后，观看端将隐藏活动热度';
-      }else{
-        return "已关闭，观看端已隐藏活动热度";
-      }
+      return this.hot ? '关闭后，观看端将隐藏活动热度' : "已关闭，观看端已隐藏活动热度";
     },
     homeDesc(){
-      if(this.home){
-        return '关闭后，该直播将不在个人主页显示';
-      }else{
-        return "已关闭，该直播已不在个人主页显示";
-      }
+      return this.home ? '关闭后，该直播将不在个人主页显示' : "已关闭，该直播已不在个人主页显示";
     }
   },
   data(){
@@ -97,7 +97,10 @@ export default {
       hot: false,
       home: false,
       loading: false,
-      imageUrl: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/7e/65/7e651ca254943327ab8d7d133ed2d778.jpg',
+      imageUrl: '',
+      imageUrlTrue:'',
+      content: '',
+      webinarIds: ['726319166'],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
@@ -109,9 +112,16 @@ export default {
     console.log(this.$route.query.title, '111111111111111111');
   },
   methods: {
-    handleuploadSuccess(res, file){
+    sendData(content) {
+      this.content = content;
+    },
+    handleUploadSuccess(res, file){
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.imageUrl =  Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+        this.imageUrlTrue = res.data.file_url;
+      }
     },
     beforeUploadHnadler(file){
       console.log(file);
@@ -141,17 +151,16 @@ export default {
         if (valid) {
           let data = {
             subject: this.formData.title,
-            introduction: this.$refs.editor.editor.txt.html(),
+            introduction: this.content,
             img_url: this.imageUrl,
-            is_private: Boolean(this.home),
-            hide_appointment: Boolean(this.reservation),
-            hide_pv: Boolean(this.hot),
-            id: this.$route.query.id || '',
-            webinar_ids: '777666555'
+            is_private: this.home,
+            hide_appointment: this.reservation,
+            hide_pv: this.hot,
+            webinar_ids: this.webinarIds.join(',')
           };
           this.loading = true;
-          let url = this.$route.query.title === '创建' ? 'subjectCreate' : 'subjectEdit';
-          this.$fetch(url, data).then(res=>{
+          let url = this.$route.query.title === '编辑' ? 'subjectEdit' : 'subjectCreate';
+          this.$fetch(url, this.$params(data)).then(res=>{
             this.subject_id = res.data.subject_id;
             this.$message.success(`创建成功`);
             console.log(res);

@@ -9,17 +9,11 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let [api, method, mock] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
-  const token = JSON.parse(window.sessionStorage.getItem('token')) || "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY3OTM3ODUsImV4cCI6MTYwOTM4NTc4NSwidXNlcl9pZCI6MTY0MjI2OTl9.7ncNpEXX1Vtp2igEkC5473goISW82ntjRLhMnDx-XBc";
-  const vc_cookie = window.localStorage.getItem('vc_cookie') || '';
-  let data;
-  if (token) {
-    data = Object.assign(  { token, vc_cookie, platform: 'pc', need_sign: 1 },
-      data1
-    );
-  } else {
-    data = Object.assign({ vc_cookie, platform: 'pc', need_sign: 1}, data1);
-  }
-
+  // 此token不要删除  --  直播间需要使用   我将你们的token进行注释了
+  sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
+  // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
+  const token = window.sessionStorage.getItem('token') || null;
+  let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
   let formData = null;
 
   if (method === 'GET' && data) {
@@ -44,6 +38,9 @@ export default function fetchData(url, data1 = {}, header = {}) {
     token
     // 'Content-Type': 'application/json'
   };
+  if(!api.includes('users/user/login-check') && !api.includes('v3/users/user/login')) {
+    headers.token = token;
+  }
   // headers.token = token;
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();
@@ -64,8 +61,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
     option.body = formData || qs.stringify(data); // body data type must match "Content-Type" header
   }
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
-  if (mock) {
+  if (mock == 'mock') {
     api = `/mock${api}`;
+  } else if(mock == 'data') {
+    api = `${Env.BASE_URL_DATA}${api}`;
   } else {
     api = `${Env.BASE_URL}${api}`;
   }
@@ -74,12 +73,12 @@ export default function fetchData(url, data1 = {}, header = {}) {
     return res.json();
   }).then(res => {
     // || res.code === 500
-    if (res.code === 404 || res.code === 403 ) {
+    if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
       this.$router.push({
         path: '/error'
       });
-    }else if (res.code >= 200 && res.code < 600) {
+    } else if (res.code >= 10000 && res.code < 17000 || res.code === 200) {
       return res;
     } else {
       return Promise.reject(res);

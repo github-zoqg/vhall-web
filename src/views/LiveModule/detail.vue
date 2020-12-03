@@ -5,26 +5,25 @@
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24">
         <div class="inner">
           <div class="thumb">
-            <img src="../../common/images/v35-webinar.png" alt="">
-            <span class="liveTag">dqwdqwld</span>
+            <img :src="liveDetailInfo.img_url" alt="">
+            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
-              {{3000 | unitCovert}}
+              {{ liveDetailInfo.hide_pv | unitCovert }}
             </span>
           </div>
 
           <div class="info">
             <p class="mainColor font-20">
-              创想聚能艾瑞年对高峰会议既定终结会议攀登巅峰
+              {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：2020-10-09 09:30:00</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.actual_start_time }}</p>
             <p class="subColor">观看限制：
-              <span class="tag">白名单</span>
-              <span class="tag">付费</span>
-              <span class="tag">观看限制</span>
+              <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
+              <!-- <span class="tag">报名表单</span> -->
             </p>
             <p class="">
-              <el-button round size="mini">恢复预告</el-button>
+              <el-button round size="mini" v-if="['3', '5'].includes(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-button round type="primary" size="mini">扫码</el-button>
               <el-button round size="mini">查看</el-button>
             </p>
@@ -33,8 +32,8 @@
       </el-col>
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24">
         <div class="inner liveTime">
-          <p class="subColor">距离直播开始还有</p>
-          <p class="mainColor">
+          <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
+          <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
             <span>10</span>
             <i>天</i>
             <span>08</span>
@@ -44,6 +43,7 @@
             <span>25</span>
             <i>秒</i>
           </p>
+          <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
@@ -63,6 +63,7 @@ export default {
   data(){
     return {
       msg: '',
+      liveDetailInfo: {},
       operas: {
         '准备': [
           { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
@@ -95,30 +96,43 @@ export default {
           // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         '数据': [
-          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: '/reportsData' },
-          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: '/interactionData' },
-          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: '/userData' },
+          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: `/reportsData${this.$route.params.str}` },
+          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: `/interactionData${this.$route.params.str}` },
+          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: `/userData${this.$route.params.str}` },
         ]
       }
     };
   },
   created(){
     // console.log(this.$route.params.str);
+    this.getLiveDetail(this.$route.params.str);
   },
-  filters: {
-    unitCovert(val) {
-      val = Number(val);
-      if (isNaN(val)) return 0;
-      if (val > 1e5 && val < 1e8) {
-        return `${(val / 1e4).toFixed(2)}万`;
-      } else if (val > 1e8) {
-        return `${(val / 1e8).toFixed(2)}亿`;
-      } else {
-        return val;
-      }
-    },
-  },
+  // filters: {
+  //   unitCovert(val) {
+  //     val = Number(val);
+  //     if (isNaN(val)) return 0;
+  //     if (val > 1e5 && val < 1e8) {
+  //       return `${(val / 1e4).toFixed(2)}万`;
+  //     } else if (val > 1e8) {
+  //       return `${(val / 1e8).toFixed(2)}亿`;
+  //     } else {
+  //       return val;
+  //     }
+  //   },
+  // },
   methods: {
+    getLiveDetail(id) {
+      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+        this.liveDetailInfo = res.data;
+        this.liveDetailInfo.webinar_state = 1;
+        console.log(res);
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      }).finally(()=>{
+        this.loading = false;
+      });
+    },
     blockHandler(item){
       if(item.path){
         this.$router.push({path: item.path});
@@ -181,6 +195,7 @@ export default {
       }
       .liveTag{
         background: rgba(0,0,0, .7);
+        // background: rgba(247, 245, 245, 0.7);
         color: #fff;
         font-size: 12px;
         padding: 2px 9px;
@@ -188,6 +203,13 @@ export default {
         position: absolute;
         top: 12px;
         left: 12px;
+        .live-status{
+          img{
+            margin-right:4px;
+            width: 8px;
+            height: 8px;
+          }
+        }
       }
       .hot{
         position: absolute;

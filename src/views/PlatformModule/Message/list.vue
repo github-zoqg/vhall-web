@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       msgDao: {
-        total: 12,
+        total: 0,
         list: []
       },
       isHandle: false, // 是否有操作项
@@ -48,11 +48,11 @@ export default {
         {
           label: '标题',
           key: 'title',
-          width: 200
+          width: 'auto'
         },
         {
           label: '接收时间',
-          key: 'create_at',
+          key: 'created_at',
           width: 200
         },
         {
@@ -93,11 +93,12 @@ export default {
         customClass: 'zdy-message-box'
       }).then(() => {
         that.$fetch('msgDel', {
-          msg_id: rows.id
+          msg_id: rows.msg_id
         }).then(res => {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
+            that.$refs.msgTable.clearSelect();
             that.getMsgList();
           }else {
             that.$message({
@@ -118,52 +119,22 @@ export default {
     // 跳转消息详情页
     toMsgDetail(that, { rows }) {
       that.$router.push({
-        path: `/msg-detail/${rows.id}`,
+        path: `/other/msgDetail/${rows.msg_id}`,
       });
     },
     // 获取消息中心列表数据
-    getMsgList(pageInfo = {pageNum: 1, pageSize: 10}) {
+    getMsgList(pageInfo = {pageNum: 1,pos: 0, limit: 10}) {
       this.$fetch('getMsgList', {
-        user_id: '1111',
-        pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize
+        pos: pageInfo.pos,
+        limit: pageInfo.limit
       }).then(res =>{
-        res = {
-          "code": 200,
-          "msg": "查询成功",
-          "data": {
-            "list": [{
-              "id": 1,
-              "title": "这个是一个标题",
-              "content": "这里啥内容都有",
-              "create_at": "2019-12-15",
-              "msg_status": "0",
-              "msg_type": "1"
-            },{
-              "id": 2,
-              "title": "这个是一个标题2",
-              "content": "这里啥内容都有2",
-              "create_at": "2019-12-15",
-              "msg_status": "0",
-              "msg_type": "1"
-            },{
-              "id": 3,
-              "title": "这个是一个标题3",
-              "content": "这里啥内容都有3",
-              "create_at": "2019-12-15",
-              "msg_status": "0",
-              "msg_type": "1"
-            }],
-            "total": 50
-          }
-        };
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
         };
         (dao.list||[]).map(item => {
-          item.msgTypeStr = ['' ,'财务消息'][item['msg_type']];
-          item.msgStatusStr = ['未读', '已读'][item['msg_status']];
+          item.msgTypeStr = ['' ,'财务消息', '用户消息', '活动消息'][item['msg_type']]; // 1.财务消息2.用户消息3.活动消息
+          item.msgStatusStr = ['未读', '已读'][item['msg_status']]; // 消息状态0未读1已读
         });
         this.msgDao = dao;
       }).catch(e=>{
@@ -178,7 +149,7 @@ export default {
     checkMoreRow(val) {
       console.log(val);
       this.ids = val.map(item => {
-        return item.id;
+        return item.msg_id;
       });
     },
     // 标记为已读取
@@ -192,13 +163,17 @@ export default {
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
         }).then(() => {
-          this.$fetch('msgDel', {
+          this.$fetch('executeUseRead', {
             msg_id: this.ids.join(',')
           }).then(res => {
             if(res && res.code === 200) {
               this.$message.success(`操作成功`);
               this.ids = [];
+              this.$refs.msgTable.clearSelect();
+              // 重新从第一页查询
               this.getMsgList();
+              // 通知右上角导航，需要更新未度消息
+              this.$EventBus.$emit('saas_vs_msg_count', true);
             }else {
               this.$message({
                 type: 'error',
@@ -223,7 +198,7 @@ export default {
       } else {
         this.msgDel(this, {
           rows: {
-            id: this.ids.join(',')
+            msg_id: this.ids.join(',')
           }
         });
       }

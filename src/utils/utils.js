@@ -89,3 +89,28 @@ export function copy(text){
     document.documentElement.removeChild(inputEl);
   });
 }
+
+/**
+ *  判断传入参数的类型，以字符串的形式返回
+ **/
+export function dataType(obj){
+  if (obj === null) return "Null";
+  if (obj === undefined) return "Undefined";
+  return Object.prototype.toString.call(obj).slice(8,-1);
+}
+
+/**
+ * 处理对象参数值，排除对象参数值为”“、null、undefined，并返回一个新对象
+ **/
+export function dealObjectValue(obj){
+  let param = {};
+  if ( obj === null || obj === undefined || obj === "" ) return param;
+  for ( let key in obj ){
+    if (dataType(obj[key]) === "Object" ){
+      param[key] = dealObjectValue(obj[key]);
+    }else if(obj[key] !== null && obj[key] !== undefined && obj[key] !== ""){
+      param[key] = obj[key];
+    }
+  }
+  return param;
+}
