@@ -276,10 +276,14 @@ export default {
     // 登录账号锁定检测
     checkedAccount() {
       this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
-        if (res.data.check_result) {
-          this.isLogin = true;
+        if (res && res.code === 200) {
+          if (res.data.check_result) {
+            this.isLogin = true;
+          } else {
+            this.login(this.loginForm);
+          }
         } else {
-          this.login(this.loginForm);
+          this.$message.error(res.msg || '登录验证失败');
         }
       });
     },
@@ -287,9 +291,13 @@ export default {
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
-        window.sessionStorage.setItem('token', res.data.token);
-        console.log("我是未登录页面");
-        this.$router.push({path: '/'});
+        if(res && res.code === 200) {
+          window.sessionStorage.setItem('token', res.data.token);
+          console.log("我是未登录页面");
+          this.$router.push({path: '/'});
+        } else {
+          this.$message.error(res.msg || '登录失败！');
+        }
       });
     },
     registerAccount() {

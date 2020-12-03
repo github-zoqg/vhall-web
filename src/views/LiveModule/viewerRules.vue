@@ -362,7 +362,6 @@ export default {
       }
       if (flag) {
         console.log('当前保存参数存储：' + JSON.stringify(params));
-        debugger;
         this.$fetch('viewerSetSave', this.$params(params)).then(res => {
           console.log(res);
           if (res && res.code === 200) {
