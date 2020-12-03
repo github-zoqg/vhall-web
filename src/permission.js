@@ -31,14 +31,12 @@ router.beforeEach((to, from, next) => {
           sessionOrLocal.set('userInfo', null);
         }
         // 获取子账号数据
-       fetchData('sonCountGet', {}).then(res =>{
-         if( res && res.code === 200) {
-           sessionOrLocal.set('SAAS_V3_SON_VO', JSON.stringify(res.data || {}));
+       fetchData('sonCountGet', {}).then(result => {
+         if( result && result.code === 200) {
+           sessionOrLocal.set(SAAS_V3_COL.KEY_1, JSON.stringify(result.data || {}));
          }
-         next();
-       }).catch(e => {
-         NProgress.done();
-       });
+       }).catch(e=> {});
+       next();
       }).catch(e=>{
         console.log(e);
         NProgress.done();

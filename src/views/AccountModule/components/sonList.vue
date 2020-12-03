@@ -94,6 +94,7 @@
 
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "sonList.vue",
   components: {
@@ -338,7 +339,7 @@ export default {
     // 获取列表数据
     getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
       this.$fetch('getSonList', {
-        user_id: '1111',
+        user_id: sessionOrLocal.get('userId'),
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
         limit: pageInfo.pageSize
       }).then(res =>{
@@ -358,6 +359,7 @@ export default {
         };
       });
     },
+    // 查询所有可选择角色列表，加上默认最多可查询出11个
     async getRoleList() {
       this.$fetch('sonRoleList', {
         role_name: '',

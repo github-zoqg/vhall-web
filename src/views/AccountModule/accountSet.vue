@@ -1,7 +1,7 @@
 <template>
   <div class="account-set">
     <div class="comp-card-one">
-      <img src="../../common/images/icon/qq.png" />
+      <icon icon-class="saasicon_qq" style="font-size: 40px;"></icon>
       <ul class="ul--son--card">
         <li><label class="card--bold">绑定QQ</label></li>
         <li><label class="card--txt">当前尚未绑定QQ</label></li>
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div class="comp-card-one">
-      <img src="../../common/images/icon/wechat.png" />
+      <icon icon-class="saasicon_wechat" style="font-size: 40px;"></icon>
       <ul class="ul--son--card">
         <li><label class="card--bold">绑定微信</label></li>
         <li><label class="card--txt">当前尚未绑定微信</label></li>

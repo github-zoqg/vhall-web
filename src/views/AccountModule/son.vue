@@ -43,6 +43,7 @@ import PageTitle from '@/components/PageTitle';
 import SonList from './components/sonList';
 import RoleList from './components/roleList';
 import CountTo from 'vue-count-to';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'son.vue',
   components: {
@@ -64,9 +65,10 @@ export default {
       console.log(tab, event);
       this.$refs[`${this.tabType}Comp`].initComp();
     },
+    // 子账号Tab头部内容
     getSonInfo() {
       this.$fetch('getSonInfo', {
-        user_id: 1
+        user_id: sessionOrLocal.get('userId')
       }).then(res => {
         this.sonInfo = res && res.code === 200 && res.data ? res.data : null;
       }).catch(e => {
