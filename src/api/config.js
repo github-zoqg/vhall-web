@@ -34,14 +34,14 @@ const apis = {
   getScreenPublicInfo: ['/101/v3/interacts/adv/watch-get-public-account', 'GET', 'mock'], //直播设置_观看端_获取公众号广告
   getScreenPosterInfo: ['/101/v3/interacts/adv/watch-get-screen-poster', 'GET', 'mock'], //直播设置_观看端_获取开屏海报
 
- //  邀请卡
- getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
- setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
- editCardStatus: ['/101/v3/interacts/invite-card/edit', 'POST', 'mock'], //修改邀请卡信息
- createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
- createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
- getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
- getTopList: ['/101/v3/interacts/invite-card/get-top-list', 'POST', 'mock'], //获取邀请榜
+  //  邀请卡
+  getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
+  setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
+  editCardStatus: ['/101/v3/interacts/invite-card/edit', 'POST', 'mock'], //修改邀请卡信息
+  createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
+  createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
+  getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
+  getTopList: ['/101/v3/interacts/invite-card/get-top-list', 'POST', 'mock'], //获取邀请榜
 
 
   // 直播模块
@@ -91,6 +91,7 @@ const apis = {
   // 功能配置
   planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li
   planFunctionEdit: ['/102/config-type/up_config', 'POST', 'mock'], // 修改配置项 jia.li
+
   // 观看限制
   audienceGet: ['/v3/webinars/audience/get-group-list', 'POST'], // 获取白名单分组列表 Jia.li  √
   postGroupAdd: ['/v3/webinars/audience/create-group', 'POST'], // 白名单创建分组 Jia.li  √
@@ -117,6 +118,7 @@ const apis = {
   virtualClientGet: ['/v3/webinars/virtual/get-base', 'GET'], // 发起端-获取虚拟观众基数
   virtualClientStart: ['/v3/webinars/virtual/start', 'GET'], // 发起端-开始增加虚拟观众
   virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众
+  virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li
 
   // 关键词
   getKeywordList: ['/101/v3/interacts/keyword/get-list', 'POST', 'mock'], // 获取关键词列表[控制台调用] jia.li
@@ -127,12 +129,14 @@ const apis = {
   checkUploadKeyword: ['/101/v3/interacts/keyword/check-upload-file', 'POST', 'mock'], // 校验上传文件可以上传的关键词 jia.li
   uploadKeywordAdd: ['/101/v3/interacts/keyword/upload-file-and-create', 'POST', 'mock'], // 上传关键词文件并添加关键词 jia.li
   getKeywordTemplate: ['/101/v3/interacts/keyword/get-template-url', 'POST', 'mock'], // 获取关键词模板地址 jia.li
+
   // 消息管理
   getMsgList: ['/v3/commons/msgcenter/list', 'POST'], // 站内消息列表接口 jia.li  √
   msgDel: ['/v3/commons/msgcenter/delete', 'POST'], // 站内消息删除接口 jia.li  √
   getMsgInfo: ['/v3/commons/msgcenter/get-info', 'POST'], // 站内消息详情接口 jia.li  √
   getUnreadNum: ['/v3/commons/msgcenter/unread-num', 'POST'], // 查询消息未读数 jia.li  √
   executeUseRead: ['/v3/commons/msgcenter/batch-read', 'POST'], // 标记已读 jia.li  √
+
   // 文件上传(图片)
   uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 
@@ -145,6 +149,7 @@ const apis = {
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页
+
   // 登录
   loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口
   loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
@@ -189,8 +194,6 @@ const apis = {
   sonResourcesGet: ['/104/v3/user-vip/get-dist-resources', 'POST', 'mock'], // 获取账号可分配资源 Jia.li
   sonResourcesSave: ['/104/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
 
-
-
   //财务中心
   getVersionInfo: ['/v3/fin/account/info', 'GET', 'data'],  //获取用户版本信息
   getTrendInfo: ['/104/v3/business-total/user-online-trend', 'GET', 'mock'],  //获取用量统计数据-并发
@@ -207,6 +210,7 @@ const apis = {
   buyDetail: ['/104/v3/finances/order/list', 'GET', 'mock'], // 购买明细
   deleteDetail: ['/104/v3/finances/order/delete', 'GET', 'mock'], // 删除购买明细
   orderDetail: ['/104/v3/finances/admin-order/list', 'GET', 'mock'], // 开通明细
+
   //财务收益
   incomeInfo: ['/104/v3/finances/income', 'GET', 'mock'], // 账户收益总览
   liveIncomeList: ['/104/v3/finances/income/live/list', 'GET', 'mock'], // 直播收益
@@ -217,16 +221,6 @@ const apis = {
   callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
   withdrawalPhoneCode: ['/104/v3/finances/withdraw/phone-code', 'POST', 'mock'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
   withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
-
-
-  // 观看页
-  vssInfo: ['/domian/watchapi/vssInfo', 'POST'], // 获取房间信息 jian.chang
-  newWebinarMenus: ['/domian/api/webinar/v1/webinar/webinar-menus-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
-  keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
-  getReportInfo: ['/domian/watchapi/reportInfo', 'POST'], // 获取房间Id jian.chang
-  getCustomMenuInfo: ['/domian/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
-
 
   //开发设置
   getAppList: ['/100/v3/users/app-keys/get-list', 'POST', 'mock'], // 获取应用列表 jian.chang
@@ -270,13 +264,6 @@ const apis = {
   openApiWebinarAdd: ['/v3/webianrs/openapi_webinars/post-webinar', 'POST'], // 音视频添加
   openApiWebinarEdit: ['/v3/webianrs/openapi_webinars/put-webinar', 'POST'], // 音视频删除
 
-  // 观看端-活动
-  watchAuth: ['/v3/webinars/watch/auth', 'POST'], // 观看授权
-  watchInit: ['/v3/webinars/watch/init', 'GET'], // 初始化直播间
-  watchSDKInit: ['/v3/webinars/watch/sdk-init', 'GET'], // 初始化直播间(sdk)
-  watchInlineInit: ['/v3/webinars/watch/inline-init', 'GET'], // 初始化直播间-嵌入
-  sendReportInfo: ['/v3/webinars/watch/get-report-info', 'GET'], // 获取上报信息
-
   // 直播间内 -- 发起端
   initiatorInfo: ['/v3/webinars/live/init', 'GET'], // 获取房间信息 jian.chang √
   getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √
@@ -300,8 +287,28 @@ const apis = {
   // 授权模块
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••
   weixinShareAuth: ['/v3/commons/auth/weixin-share', 'GET'], // 微信分享接口 •••
-  qqAuth: ['/v3/commons/auth/qq', 'GET'], // QQ授权接口 •••
+  qqAuth: ['/v3/commons/auth/qq', 'GET'], // QQ授权接口 ••• 
 
+  // 观看端-活动
+  watchAuth: ['/v3/webinars/watch/auth', 'POST'], // 观看授权
+  watchInit: ['/v3/webinars/watch/init', 'GET'], // 初始化直播间
+  watchSDKInit: ['/v3/webinars/watch/sdk-init', 'GET'], // 初始化直播间(sdk)
+  watchInlineInit: ['/v3/webinars/watch/inline-init', 'GET'], // 初始化直播间-嵌入
+  sendReportInfo: ['/v3/webinars/watch/get-report-info', 'GET'], // 获取上报信息
+
+  // 观看端
+  likeTotal: ['/v3/interacts/like/get-room-like', 'POST'], // 房间内点赞总数
+  queryAdsInfo: ['/v3/interacts/recommend-adv/watch-get-adv-list', 'GET'], // 获取广告信息
+  queryRoomInterInfo: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间互动工具状态
+  getSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 获取皮肤
+  getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
+  attention: ['/v3/users/attentions/create', 'POST'], // 关注
+  notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
+  getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
+  newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
+  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
+  keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
+  getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
 };
 
 const getApi = api => {

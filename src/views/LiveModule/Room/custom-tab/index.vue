@@ -119,13 +119,11 @@
           <div class="rank-box">
             <div class="inviteBillboard">
               <invited
-                :vssJoinId="joinId"
                 :ilId="roominfo.webinar_id"
                 v-if="topShow"
                 :staticDomain="domains.static"
               ></invited>
               <reward
-                :vssJoinId="joinId"
                 :ilId="roominfo.webinar_id"
                 v-if="!topShow"
                 :staticDomain="domains.static"
@@ -155,9 +153,6 @@ export default {
     components: {
       required: true,
       default: () => ({})
-    },
-    joinId: {
-      required: true
     },
     topShow: {
       required: true
