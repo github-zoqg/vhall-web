@@ -4,7 +4,7 @@
       <span>财务总览</span>
     </div>
     <div class="version-info">
-      <version-info :userInfo="userInfo"></version-info>
+      <version-info></version-info>
     </div>
     <div class="statistical-line">
         <el-card class="serach-line">
@@ -39,7 +39,7 @@
             @onSearchFun="getAccountList('search')"
         >
         </search-area>
-      <div class="content-grid" v-if="userInfo.edition == '2'">
+      <div class="content-grid" v-if="versionType == 2">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
@@ -107,7 +107,6 @@ export default {
   },
   data() {
     return {
-      userInfo: {},
       lintData: [],
       trendData: {
         webinar_num: 12345678,
@@ -116,9 +115,10 @@ export default {
         vod_flow: 1231234434
       },
       time: '',
+      versionType:2,
       dataValue: '',
       totalNum: 1000,
-      status: true,
+      status: false,
       searchAreaLayout: [
         {
           type: "2",
@@ -163,7 +163,7 @@ export default {
           ]
         },
         {
-          key: "searchAccount"
+          key: "subject"
         }
       ],
       isCheckout: false,
@@ -237,16 +237,17 @@ export default {
     }
   },
   mounted() {
-    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
-    console.log(this.userInfo, '1111111111111');
-    this.lintData = JSON.parse(sessionOrLocal.get("dataCenterInfo"));
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    this.getLineList();
+    this.getAccountList();
   },
   methods: {
     // 用量统计数据
     getLineList(params) {
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       let paramsObj = {
-        account_id: '1234455'
+        account_id: this.userId
       };
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -260,7 +261,7 @@ export default {
       this.getFlowTrend(obj);
     },
     getFlowTrend(obj) {
-      let url = this.userInfo.edition == 2 ? 'getTrendInfo' : 'getFlowInfo';
+      let url = this.versionType == 2 ? 'getTrendInfo' : 'getFlowInfo';
       this.$fetch(url, obj).then(res =>{
         this.lintData = res.data.list;
       }).catch(e=>{
@@ -268,8 +269,8 @@ export default {
       });
     },
     // 获取并发-最高
-    getOnlinePay() {
-      let url = this.userInfo.edition == 2 ? 'getOnlinePay' : 'getFlowPay';
+    getOnlinePay(obj) {
+      let url = this.versionType == 2 ? 'getOnlinePay' : 'getFlowPay';
       this.$fetch(url, obj).then(res =>{
         this.trendData = res.data;
       }).catch(e=>{
@@ -281,7 +282,8 @@ export default {
       let pageInfo = this.$refs.accountTableList.pageInfo;
       let formParams = this.$refs.searchArea.searchAccount; //获取搜索参数
       let paramsObj = {
-        account_id: '1234455'
+        account_id: this.userId,
+        type: 1
       };
       if (params === 'search') {
         pageInfo.pos= 0;
@@ -301,9 +303,10 @@ export default {
       this.getOnlinePay(obj);
     },
     getDataList(obj) {
-      let url = this.userInfo.edition == 2 ? 'getAccountList' : 'getBusinessList';
+      let url = this.versionType == 2 ? 'getAccountList' : 'getBusinessList';
       this.$fetch(url, obj).then(res =>{
         let costList = res.data.list;
+        // this.totalNum =
         costList.map(item => {
           item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
           item.typePay = item.pay_type == 1 ? '并发 ' : '流量';

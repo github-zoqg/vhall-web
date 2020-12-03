@@ -30,13 +30,13 @@ const Apis = {
   createQuestion: ['/cmpt/question/create', 'POST'], // 创建问卷
   updateQuestion: ['/cmpt/question/update', 'POST'], // 修改问卷
   getSpecialUsers: ['/cmpt/inav/get-special-list', 'POST'], // 获取踢出列表
-  getRoomStatus: ['/cmpt/room/get-attributes', 'POST'], // 获取房间属性：是否开关文档/白板/举手
+  getRoomStatus: ['/cmpt/room/get-attributes', 'POST'], // 获取房间属性：是否开关文档/白板/举手 ×
   like: ['/cmpt/room/like', 'POST'], // 点赞
   signin: ['/cmpt/sign/add', 'POST'], // 发起签到
   getUserList: ['/cmpt/sign/records-get', 'POST'], // 获取签到用户列表
   clientSignin: ['/cmpt/sign/in', 'POST'], // 用户签到
-  getRebroadcastList: ['/cmpt/rebroadcast/lists', 'POST'], // 获取转播列表
-  getRebroadcastPreviewInfo: ['/cmpt/rebroadcast/preview', 'POST'], // 获取转播预览信息
+  getRebroadcastList: ['/cmpt/rebroadcast/lists', 'POST'], // 获取转播列表 ×
+  getRebroadcastPreviewInfo: ['/cmpt/rebroadcast/preview', 'POST'], // 获取转播预览信息 ×
   rebroadcast: ['/cmpt/rebroadcast/start', 'POST'], // 转播
   stopRebroadcast: ['/cmpt/rebroadcast/stop', 'POST'], // 转播
   reward: ['/cmpt/reward/give', 'POST'], // 打赏

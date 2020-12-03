@@ -161,26 +161,35 @@ export default {
     },
     getList () {
       this.loading = true;
-      this.$vhallFetch('getRebroadcastList', {
-        room_id: this.roomId,
-        vss_token: this.vssToken,
+      this.$fetch('rebroadcastList',{
+        webinar_id: this.webinar_id,
         subject: this.input
-      })
-        .then(res => {
+      }).then(res=>{
           this.loading = false;
           this.list = res.data ? res.data.list : [];
-        })
-        .catch(error => {
+      }).catch(err=>{
           this.loading = false;
           console.log(error);
-        });
+      });
+      // this.$vhallFetch('getRebroadcastList', {
+      //   room_id: this.roomId,
+      //   vss_token: this.vssToken,
+      //   subject: this.input
+      // })
+      //   .then(res => {
+      //     this.loading = false;
+      //     this.list = res.data ? res.data.list : [];
+      //   })
+      //   .catch(error => {
+      //     this.loading = false;
+      //     console.log(error);
+      //   });
     },
     getPreviewInfo (id) {
-      this.$vhallFetch('getRebroadcastPreviewInfo', {
-        source_room_id: id,
-        vss_token: this.vssToken
-      })
-        .then(res => {
+      this.$fetch('rebroadcastPreview',{
+        webinar_id: this.webinar_id,
+        source_id: id,
+      }).then(res => {
           this.webinar = res.data;
           this.token = this.webinar.paas_access_token;
           this.appId = this.webinar.app_id;
@@ -192,6 +201,22 @@ export default {
         .catch(error => {
           console.log(error);
         });
+      // this.$vhallFetch('getRebroadcastPreviewInfo', {
+      //   source_room_id: id,
+      //   vss_token: this.vssToken
+      // })
+      //   .then(res => {
+      //     this.webinar = res.data;
+      //     this.token = this.webinar.paas_access_token;
+      //     this.appId = this.webinar.app_id;
+      //     this.accountId = this.webinar.third_party_user_id;
+      //     this.recordId = this.webinar.record_id;
+      //     this.docUrl = res.data.document_url;
+      //     this.$refs.preview.initSDK();
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
     },
     toggleLocalStream (value) {
       this.localStream = value;

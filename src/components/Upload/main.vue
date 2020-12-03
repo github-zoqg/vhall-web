@@ -52,12 +52,10 @@ export default {
     ...Object.assign(Upload.props, {
       saveData: {
         type: Object,
-        default: function() {
-          return {
-            path: 'sys/img_url',
-            type: 'image',
-          };
-        }
+        default: () => ({
+          path: 'sys/img_url',
+          type: 'image',
+        })
       },
       action: {
         type: String,
@@ -67,10 +65,10 @@ export default {
         type: String,
         default: "picture-card"
       },
-      'on-progress': {
-        type: Function,
-        default: ()=> this.uploadProcess
-      },
+      // 'on-progress': {
+      //   type: Function,
+      //   default: ()=> this.uploadProcess
+      // },
       'on-error': {
         type: Function,
         default: ()=> this.uploadError

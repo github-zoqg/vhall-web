@@ -2,7 +2,7 @@
   <chrome v-if="downloadChrome" :type="'master'"></chrome>
   <tip v-else-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="publish-wrap">
-    <!-- <vhall-saas
+    <vhall-saas
       :roomId="roomId"
       :ilId="il_id"
       :vssToken="vss_token"
@@ -22,7 +22,9 @@
       :shareId="shareId"
       :docLowPriority="docLowPriority"
       :recordTip="recordTip"
-    ></vhall-saas> -->
+      :rootActive='rootActive'
+      :roomStatus='roomStatus'
+    ></vhall-saas>
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="chatSdkLoadHandler"></remote-script>
     <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="interactionSdkLoadHandler"></remote-script>
   </div>
@@ -37,6 +39,8 @@ export default {
   components: { chrome, tip },
   data() {
     return {
+      rootActive:{}, // 活动信息
+      roomStatus:{}, // 房间信息
       roomId: '',
       il_id: this.$route.params.il_id,
       vss_token: '',
@@ -57,7 +61,7 @@ export default {
       downloadChrome: !browserSupport(),
       docLowPriority: '', // 文档转换优先级
       recordTip: '', // 是否弹出默认回放弹框
-      tipMsg: '' // info接口返回的错误信息
+      tipMsg: '', // info接口返回的错误信息
     };
   },
   beforeCreate() {},
@@ -86,13 +90,13 @@ export default {
   getUserinfo() {
       this.$fetch('initiatorInfo', { webinar_id: this.il_id })
         .then(async res => {
-          console.warn(res, '正常信息');
-            console.warn(res.msg, 8888888888888888888888888);
           if (res.code != 200) {
             // eslint-disable-next-line no-return-assign
             return this.tipMsg = res.msg;
           }
           const mockResult = res.data;
+          this.rootActive = res.data;
+          await this.getTools(mockResult.interact.room_id);
           this.shareId = mockResult.share_id;
           this.userInfo = mockResult.join_info;
           this.roomId = mockResult.interact.room_id;
@@ -102,11 +106,18 @@ export default {
           this.saas_join_id = mockResult.join_info.join_id;
           this.params_verify_token = mockResult.join_info.interact_token;
           this.permission = mockResult.permission;
-          await this.getTools(mockResult.interact.room_id);
+          this.permission = [100001,100003,100004,100005,100008,100009,100011,100012,100013,100014,100015,100016,100017,100018,100019,100020,100021,100022,100023,100026,100027,100028,100029,100030];
+          console.log(this.roomStatus, 123);
           this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
           this.domains = {
             ...mockResult.domains || {},  // ??? 云俊 返回
             custom: mockResult.live_domain_customization
+          };
+          let localDomain = {
+            'static':mockResult.domains.static_url ,
+            'upload': mockResult.domains.upload_url,
+            'web': mockResult.domains.web_url,
+            'webinar': "//t-webinar.e.vhall.com"
           };
           this.duration = mockResult.webinar.live_time;
           this.is_interact = mockResult.webinar.mode == 3  ? 1 : 0 ; // 做一下判断 ??? mode 直播模式：1-音频、2-视频、3-互动
@@ -115,7 +126,7 @@ export default {
           this.record_notice = mockResult.record_notice || 3; // 设置默认回放视频提示 ???
           this.docLowPriority = mockResult.doc_low_priority || 0;// ???  互动工具
           this.recordTip = mockResult.record_tip;
-          sessionStorage.setItem('vhall_domain',JSON.stringify(mockResult.domains));
+          sessionStorage.setItem('vhall_domain',JSON.stringify(localDomain));
           sessionStorage.setItem('host_uid', JSON.stringify(mockResult.join_info.third_party_user_id));
           sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
           sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
@@ -123,22 +134,20 @@ export default {
           sessionStorage['vhall-vsstoken'] = mockResult.join_info.interact_token;
           sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
           sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???
+          sessionStorage.setItem('interact_token', mockResult.interact.interact_token);
           // 初始化数据上报
           this.initVHallReport(mockResult);
         }).catch(err => {
-          // this.tipMsg = err.msg;
-          // this.codeError = err.msg;
           console.log('catch', err);
         });
     },
     getTools(roomId){
       return new Promise((resolve, reject) => {
         this.$fetch('getToolStatus', {room_id: roomId}).then(res=>{
-          console.warn(res);
+          this.roomStatus = res.data;
           resolve();
         }).catch(err=>{
           console.warn(err, 'catch');
-          // reject();
           resolve();
         });
       });

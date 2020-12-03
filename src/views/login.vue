@@ -14,6 +14,7 @@
             <el-form-item prop="account">
               <el-input
                 placeholder="请输入账号"
+                clearable
                 v-model="loginForm.account">
                 <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
               </el-input>
@@ -30,6 +31,7 @@
               <el-input
                 placeholder="请输入密码"
                 maxlength="30"
+                clearable
                 type="password"
                 v-model="loginForm.password">
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
@@ -62,6 +64,7 @@
               <el-input
                 placeholder="请输入手机号"
                 maxlength="11"
+                clearable
                 v-model="dynamicForm.phoneNumber">
                 <i slot="prefix" class="el-input__icon el-icon-mobile-phone"></i>
               </el-input>
@@ -79,6 +82,7 @@
                 <el-input
                 style="width:200px"
                   placeholder="动态密码"
+                  clearable
                   v-model="dynamicForm.dynamic_code">
                   <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                 </el-input>
@@ -103,6 +107,7 @@
                 <el-input
                   placeholder="请输入手机号"
                   maxlength="11"
+                  clearable
                   v-model="registerForm.phone">
                   <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
                 </el-input>
@@ -120,6 +125,7 @@
                   <el-input
                   style="width:200px"
                     placeholder="动态密码"
+                    clearable
                     v-model="registerForm.code">
                     <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                   </el-input>
@@ -131,6 +137,7 @@
                 <el-input
                   placeholder="设置密码(6-30个字符)"
                   maxlength="30"
+                  clearable
                   type="password"
                   v-model="registerForm.password">
                   <i slot="prefix" class="el-input__icon el-icon-lock"></i>
@@ -247,18 +254,14 @@ export default {
     },
     // 账号登录
     loginAccount() {
-      if (this.isLogin) {
-        this.login(this.loginForm);
-      } else {
-        this.$refs.loginForm.validate((valid) => {
-          if (valid) {
-            this.checkedAccount();
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      }
+      this.$refs.loginForm.validate((valid) => {
+        if (valid) {
+          this.checkedAccount();
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     },
     // 快捷登录
     loginDynamic() {
@@ -266,7 +269,7 @@ export default {
         if (valid) {
           let params = this.dynamicForm;
           params.account = this.dynamicForm.phoneNumber;
-          // this.login(params);
+          this.login(params);
         } else {
           console.log('error submit!!');
           return false;
@@ -277,7 +280,7 @@ export default {
     checkedAccount() {
       this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
         if (res && res.code === 200) {
-          if (res.data.check_result) {
+          if (res.data.check_result && !this.mobileKey) {
             this.isLogin = true;
           } else {
             this.login(this.loginForm);

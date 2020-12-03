@@ -14,6 +14,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
   const token = window.sessionStorage.getItem('token') || '';
   let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
+  const interact_token = window.sessionStorage.getItem('interact_token') || null;
   let formData = null;
 
   if (method === 'GET' && data) {
@@ -35,6 +36,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
 
   let headers = {
     platform: 17,
+    'interact-token': interact_token,
     token: token
     // 'Content-Type': 'application/json'
   };
