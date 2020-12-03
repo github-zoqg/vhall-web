@@ -12,7 +12,7 @@
       </div>
       <p class="shareText">
         <span>分享链接：</span>
-        <el-input placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox" style="width:200px">
+        <el-input placeholder="请输入内容" v-model.trim="url" class="input-with-select" :id="linkId" style="width:200px" disabled>
         </el-input>
         <label  @click="copy">复制</label>
       </p>
@@ -38,7 +38,7 @@
       </div>
       <p class="shareText">
         <span>分享链接：</span>
-        <el-input placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox" style="width:200px">
+        <el-input placeholder="请输入内容" v-model="url" class="input-with-select" :id="linkId" style="width:200px" disabled>
         </el-input>
         <label  @click="copy">复制</label>
       </p>
@@ -55,18 +55,22 @@ export default {
       qrcode: '',
       dialogVisible: false,
       specialVisible: false,
-      link: 'https://t.e.vhall.com/'
     };
   },
   props: {
     url:{
       type: String,
       required: true
+    },
+    linkId: {
+      type: String,
+      required: true,
+      default: 'linkBox'
     }
   },
    created(){
     QRcode.toDataURL(
-      this.link,
+      this.url,
       (err, url) => {
         console.log(err, url);
         this.qrcode = url;
@@ -75,7 +79,7 @@ export default {
   },
   methods: {
     copy(){
-      const input = document.getElementById('linkBox');
+      const input = document.getElementById(this.linkId);
       input.select();
       document.execCommand('copy');
       this.$message.success('复制成功');

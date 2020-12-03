@@ -27,6 +27,11 @@ const v3Routes = [
     component: () => import('@/views/LiveModule/PlayBack/videoTailoring')
   },
   {
+    path: '/special/detail',
+    name: 'detail',
+    component: () => import('@/views/SpecialModule/components/preShow')
+  },
+  {
     path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Error/index'),
     hidden: true
@@ -312,13 +317,6 @@ const v3Routes = [
         name: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
         meta: { title: '创建专题', level: 2, activeMenu: '/special/list' }
-      },
-      {
-        path: 'detail',
-        name: 'detail',
-        component: () => import('@/views/SpecialModule/components/preShow'),
-        meta: { title: '专题详情', level: 2 , activeMenu: '/special/list'},
-        hidden: true
       }
     ]
   },

@@ -43,7 +43,7 @@
               <i class="el-icon-view"></i>
               {{item.view_num | unitCovert}}
             </span>
-            <img :src="item.cover" alt="">
+            <img :src="item.cover || 'https://t-alistatic01.e.vhall.com/static/img/v35-subject.png'" alt="">
           </div>
           <div class="bottom">
             <div class="">
@@ -56,7 +56,7 @@
                 <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
-                <i class="el-icon-reading" @click="specialDetail"></i>
+                <i class="el-icon-reading" @click="specialDetail(item)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
                 <i class="el-icon-share" @click.prevent.stop="toShare(item.id)"></i>
@@ -73,13 +73,14 @@
       </el-col>
     </el-row>
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
-    <share ref="share"></share>
+    <share ref="share" :url="shareUrl" linkId="linkShareBox" v-if="shareUrl"></share>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import share from './components/share';
+import Env from '@/api/env.js';
 export default {
   data() {
     return {
@@ -97,6 +98,7 @@ export default {
       ],
       loading: true,
       liveList: [],
+      shareUrl: null
     };
   },
   components: {
@@ -115,14 +117,13 @@ export default {
     },
     currentChangeHandler(current) {
       this.pageNum = current;
-      this.pos = parseInt((current - 1) * 10);
+      this.pos = parseInt((current - 1) * this.pageSize);
       console.log(this.pos, this.pageNum);
       this.getLiveList();
     },
     getLiveList(){
       const data = {
         pos: this.pos,
-        user_id: '16421841',
         limit: this.pageSize,
         title: this.keyWords,
         order_type: this.orderBy,
@@ -132,8 +133,7 @@ export default {
       this.$fetch('subjectList', this.$params(data)).then(res=>{
         console.log(res);
         this.liveList = res.data.list;
-        // this.totalElement = res.data.total;
-        this.totalElement = 100;
+        this.totalElement = res.data.total;
       }).catch(error=>{
         this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -158,22 +158,28 @@ export default {
     },
     trueDelete(id) {
       this.$fetch('subjectDel', {subject_ids: id}).then(res=>{
-        this.$message({
+        if(res && res.code === 200) {
+          this.$message({
             type: 'success',
             message: '删除成功!'
           });
-        }).catch(error=>{
-          this.$message.error(`删除失败，${error.message}`);
-        }).finally(()=>{
-          this.loading = false;
-        });
+          // 刷新列表
+          this.searchHandler();
+        }
+      }).catch(error=>{
+        this.$message.error(`删除失败，${error.message}`);
+      }).finally(()=>{
+        this.loading = false;
+      });
     },
     toShare(id) {
+      this.shareUrl = `${Env.staticLinkVo.WEB_SHARE_URL}/special/detail?id=${id}`;
       this.$refs.share.dialogVisible = true;
     },
     // 预览页面
-    specialDetail() {
-      this.$router.push({path:'/special/detail'});
+    specialDetail(item) {
+      let routeData = this.$router.resolve({ path: '/special/detail', query: {  id: item.id } });
+      window.open(routeData.href, '_blank');
     }
   },
   filters: {
