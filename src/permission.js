@@ -6,7 +6,7 @@ import { sessionOrLocal } from './utils/utils';
 
 NProgress.configure({ showSpinner: false });
 
-const whiteList = ['/login', '/register'];
+const whiteList = ['/login', '/register', '/forgetPassword'];
 router.beforeEach((to, from, next) => {
     NProgress.start();
     let token = window.sessionStorage.getItem('token');
@@ -44,7 +44,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // token不存在时跳转
       console.log('4444444', to.path, '当前页面');
-      whiteList.includes(to.path) ? next() : next({path: '/login'});
+      whiteList.includes(to.path) || to.path.indexOf('/user/home') !== -1? next() : next({path: '/login'});
       NProgress.done();
     }
 });

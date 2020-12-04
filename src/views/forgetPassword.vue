@@ -1,21 +1,6 @@
 <template>
   <div class="forget-password">
-    <header class="commen-header">
-      <nav class="navbar nav-top" role="navigation">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/"
-            ><img
-              src="//cnstatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012"
-              width="80"
-              style="margin-right: 67px"
-          /></a>
-        </div>
-        <div class="collapse navbar-collapse">
-          <a href="https://t-saas-dispatch.vhall.com/login" class="login">登录</a>
-          <a href="https://t-saas-dispatch.vhall.com/register" class="register">注册</a>
-        </div>
-      </nav>
-    </header>
+    <OldHeader></OldHeader>
     <div class="container">
       <div class="find-my-pwd">
         <h3>找回密码</h3>
@@ -151,9 +136,13 @@
   </div>
 </template>
 <script>
+import OldHeader from '@/components/OldHeader';
 export default {
+  components: {
+    OldHeader
+  },
   data() {
-     var validatePhone = (rule, value, callback) => {
+     let validatePhone = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -163,7 +152,7 @@ export default {
         callback();
       }
     };
-    var validatePossword = (rule, value, callback) => {
+    let validatePossword = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'));
         } else if (value !== this.loginRules.password) {
@@ -333,51 +322,6 @@ export default {
 <style lang="less" scoped>
 .forget-password {
   background: #f8f8f8;
-  .commen-header {
-    margin-bottom: 60px;
-    background-color: #fff;
-    height: 60px;
-    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.08);
-    // padding-top: 15px;
-    .nav-top {
-      height: 60px;
-      margin: 0 auto;
-      width: 960px;
-      border: none;
-      display: flex;
-      justify-content: space-between;
-    }
-    .navbar{
-      position: relative;
-      min-height: 50px;
-      margin-bottom: 20px;
-      border: 1px solid transparent;
-    }
-    .navbar-header{
-      padding-top: 7px;
-      // line-height: 50px;
-    }
-    .collapse{
-      padding-top: 16px;
-      a{
-        padding: 5px 15px;
-        display: inline-block;
-        background-color: #fcfcfc;
-        -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        border: 1px solid #d0cdcd;
-        color: #555;
-        font-size: 14px;
-      }
-      .register{
-        background: #e33836;
-        color: #fff;
-        border-color: #e33836;
-        margin-left: 20px;
-      }
-    }
-  }
   .container{
     width: 960px;
     padding: 0 15px;

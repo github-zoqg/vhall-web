@@ -6,6 +6,7 @@ Vue.use(VueRouter);
 // 引入布局层
 import Layout from '@/layout';
 import emptyLayout from '@/layout/emptyLayout';
+import {sessionOrLocal} from "@/utils/utils";
 
 // 主入口路由(需嵌套上左右整体布局)
 const v3Routes = [
@@ -30,6 +31,19 @@ const v3Routes = [
     path: '/special/detail',
     name: 'detail',
     component: () => import('@/views/SpecialModule/components/preShow')
+  },
+  {
+    path: '/user/home/:str(\\d+)',
+    name: 'userHome',
+    component: () => import('@/views/UserHome/home'),
+    meta: { title: '个人主页'}
+  },
+  {
+    path: '/user/home/set/:str(\\d+)',
+    component: () => import('@/views/UserHome/homeSetInfo'),
+    name: 'homeSet',
+    meta:{ title: '设置'},
+    hidden: true
   },
   {
     path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
@@ -532,17 +546,8 @@ const v3Routes = [
         meta: { title: '子账号管理'}
       },
       {
-        path: 'home',
-        name: 'home',
-        component: () => import('@/views/AccountModule/home'),
-        meta: { title: '个人主页'}
-      },
-      {
-        path: 'homeSetInfo/:str(\\d+)',
-        component: () => import('@/views/AccountModule/homeSetInfo'),
-        name: 'homeSetInfo',
-        meta:{ title: '设置', activeMenu: '/account/home'},
-        hidden: true
+        path: `http://localhost:8080/#/user/home/${sessionOrLocal.get('userId')}`,
+        meta: { title: '个人主页' }
       },
       {
         path: '/allocation/:str(\\d+)',
