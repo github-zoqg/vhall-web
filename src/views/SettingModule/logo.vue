@@ -15,7 +15,8 @@
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
+          :before-upload="beforeUploadHandler"
+          @delete="logoForm.logoUrl = ''">
           <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>

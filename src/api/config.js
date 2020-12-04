@@ -21,18 +21,18 @@ const apis = {
   viewAdv: ['/101/v3/interacts/recommend-adv/view-adv', 'GET', 'mock'], //查看单条广告详情
 
   //播放器设置
-  setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯
-  setWatermark: ['/101/v3/interacts/players/set-watermark-config', 'POST', 'mock'], //从资料库保存到活动
-  getScrolling: ['/101/v3/interacts/players/get-scrolling-screen-config', 'GET', 'mock'], //观看端_获取跑马灯设置配置信息
-  getWatermark: ['/101/v3/interacts/players/get-watermark-config', 'GET', 'mock'], //观看端_获取水印设置
+  setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯 •••
+  setWatermark: ['/101/v3/interacts/players/set-watermark-config', 'POST', 'mock'], //从资料库保存到活动 •••
+  getScrolling: ['/101/v3/interacts/players/get-scrolling-screen-config', 'GET', 'mock'], //观看端_获取跑马灯设置配置信息 •••
+  getWatermark: ['/101/v3/interacts/players/get-watermark-config', 'GET', 'mock'], //观看端_获取水印设置 •••
 
   //公众号 开屏海报
-  setPublicInfo: ['/101/v3/interacts/adv/set-public-account-config-info', 'POST', 'mock'], //保存公众号展示配置
-  getPublicInfo: ['/101/v3/interacts/adv/get-public-account-config-info', 'GET', 'mock'], //获取公众号展示配置信息
-  setPosterInfo: ['/101/v3/interacts/adv/set-screen-poster-config-info', 'POST', 'mock'], //保存开屏海报配置
-  getPosterInfo: ['/101/v3/interacts/adv/get-screen-poster-config-info', 'GET', 'mock'], //获取开屏海报配置信息
-  getScreenPublicInfo: ['/101/v3/interacts/adv/watch-get-public-account', 'GET', 'mock'], //直播设置_观看端_获取公众号广告
-  getScreenPosterInfo: ['/101/v3/interacts/adv/watch-get-screen-poster', 'GET', 'mock'], //直播设置_观看端_获取开屏海报
+  setPublicInfo: ['/v3/interacts/adv/set-public-account-config-info', 'POST'], //保存公众号展示配置  •••接口有问题
+  getPublicInfo: ['/v3/interacts/adv/get-public-account-config-info', 'GET'], //获取公众号展示配置信息 •••接口有问题
+  setPosterInfo: ['/v3/interacts/adv/set-screen-poster-config-info', 'POST'], //保存开屏海报配置 •••接口有问题
+  getPosterInfo: ['/v3/interacts/adv/get-screen-poster-config-info', 'GET'], //获取开屏海报配置信息 •••接口有问题
+  getScreenPublicInfo: ['/v3/interacts/adv/watch-get-public-account', 'GET'], //直播设置_观看端_获取公众号广告 •••接口有问题
+  getScreenPosterInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], //直播设置_观看端_获取开屏海报 •••接口有问题
 
   //  邀请卡
   getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
@@ -254,8 +254,9 @@ const apis = {
   modifyApp: ['/100/v3/users/app-keys/edit', 'POST', 'mock'], // 修改应用 jian.chang
 
   // 账户管理
-  homeInfoGet: ['/100/v3/users/homepage/get-info', 'POST', 'mock'], // 个人主页查询接口 Jia.li •••
-  homeInfoEdit: ['/100/v3/users/homepage/edit', 'POST', 'mock'], // 个人主页更新接口 Jia.li •••
+  homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li •••
+  homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li •••
+  homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li •••
   checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
   resetPassword: ['/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回/设置密码接口
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
@@ -293,7 +294,7 @@ const apis = {
   initiatorInfo: ['/v3/webinars/live/init', 'GET'], // 获取房间信息 jian.chang √
   getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √
   liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 √
-  getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态
+  getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态 √
 
   // 发起端-活动
   getJoinUrl: ['/v3/webinars/live/get-url', 'GET'], // 获取参会地址 •••
@@ -302,9 +303,10 @@ const apis = {
   roleLogout: ['/v3/webinars/live/role-logout', 'POST'], // 口令用户退出 •••
   getStreamPushAddress: ['/v3/webinars/live/get-stream-push-address', 'GET'], // 获取推流地址 •••
   liveClientInit: ['/v3/webinars/live/client-init', 'GET'], // 初始化直播间（客户端） •••
-  liveStart: ['/v3/webinars/live/start', 'POST'], // 开始直播 •••
-  liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播 •••
-  rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 •••
+  liveStart: ['/v3/webinars/live/start', 'POST'], // 开始直播 √
+  onlineUserList :['/interacts/chat-user/get-online-list', 'POST'], // 获取在线用户列表
+  liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播 ×  接口有问题
+  rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 不知有何用处
   rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 •••
   rebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 •••
   rebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 •••
@@ -313,6 +315,16 @@ const apis = {
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••
   weixinShareAuth: ['/v3/commons/auth/weixin-share', 'GET'], // 微信分享接口 •••
   qqAuth: ['/v3/commons/auth/qq', 'GET'], // QQ授权接口 •••
+
+  // 品牌设置
+  getInterWebinarTag: ['/v3/interacts/webinar-tag/get-webinar-tag', 'POST'], // 获取活动标记 Jia.li
+  setInterWebinarTag: ['/v3/interacts/webinar-tag/set-webinar-tag', 'POST'], // 保存和创建活动标记 Jia.li
+  watchInterGetWebinarTag: ['/v3/interacts/webinar-tag/watch-get-webinar-tag', 'GET'], // 获取活动标记-观看端 Jia.li
+  setSkinWebinarSkin: ['/v3/interacts/skin/set-webinar-skin', 'POST'], // 设置活动的默认皮肤 Jia.li
+  skinCreate: ['/v3/interacts/skin/create', 'POST'], // 新建自定义皮肤 Jia.li
+  getInterWebinarSkin: ['/v3/interacts/skin/get-webinar-skin', 'GET'], // 获取活动启用皮肤的信息详情 Jia.li
+  skinUpdate: ['/v3/interacts/skin/update', 'POST'], // 更新自定义皮肤信息 Jia.li
+  watchGetWebinarSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 观看端-获取皮肤 Jia.li
 
   // 观看端-活动
   watchAuth: ['/v3/webinars/watch/auth', 'POST'], // 观看授权

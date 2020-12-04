@@ -254,6 +254,9 @@ export default {
     splited: {
       required: false, // 分屏状态
       default: false
+    },
+    webinadId: {
+      required: true // 活动id
     }
   },
 
@@ -650,8 +653,9 @@ export default {
     async startLive (status) {
       return this.$streamPush().then(() => {
         if (status != 1) {
-          return this.$vhallFetch('startLive', {
-            room_id: this.roomId
+          return this.$fetch('liveStart', {
+            webinar_id: this.webinadId,
+            start_type: 4
           }).then(() => {
             if (this.role == VhallRTC.MASTER) {
               setTimeout(() => {
@@ -693,9 +697,9 @@ export default {
         })
 
         .then(() => {
-          return this.$vhallFetch('stopLive', {
-            room_id: this.roomId,
-            end_type: 0
+          return this.$fetch('liveEnd', {
+            webinar_id: this.webinadId,
+            end_type: 1
           }).then(() => {
             EventBus.$emit('endLive');
             // 广播 直播结束
@@ -711,9 +715,9 @@ export default {
               () => {}
             );
           });
-          return this.$vhallFetch('stopLive', {
-            room_id: this.roomId,
-            end_type: 0
+          return this.$fetch('liveEnd', {
+            webinar_id: this.webinadId,
+            end_type: 1
           }).then(() => {
             EventBus.$emit('endLive');
             // 广播 直播结束

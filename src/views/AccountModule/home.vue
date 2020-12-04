@@ -7,6 +7,9 @@
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
+        <el-button class="panel-btn2 length104" type="primary" size="medium" round @click.prevent.stop="toHomeSetInfo">设置</el-button>
+        <el-button class="panel-btn length104" size="medium" round>分享</el-button>
+
         <div class="search">
           <div class="search-query">
             <el-input
@@ -56,10 +59,6 @@
           <img src="../../common/images/avatar.jpg" alt="" />
           <p>XXXX的主页</p>
           <p>粉丝数： 100010</p>
-          <div class="ac__btn">
-            <el-button type="primary" round @click.prevent.stop="toHomeSetInfo">设置</el-button>
-            <el-button round>分享</el-button>
-          </div>
         </div>
         <div class="ac__home--info">
           <p class="ac__home--title"></p>
@@ -294,6 +293,20 @@ export default {
   min-height: 612px;
   height: auto;
   background: #FFFFFF;
+  position: relative;
+  .el-button {
+    margin-top: 3px;
+  }
+}
+.panel-btn {
+  position: absolute;
+  right: 32px;
+  top: 6px;
+}
+.panel-btn2 {
+  position: absolute;
+  right: 150px;
+  top: 6px;
 }
 .search {
   margin-top: 20px;

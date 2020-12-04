@@ -1,5 +1,5 @@
 <template>
-  <div class="room-container" :class="assistantType ? 'assistantStyle' : ''">
+  <div class="room-container cxs" :class="assistantType ? 'assistantStyle' : ''">
     <div class="main-wrap"
          :class="{'full-screen-doc':isDocFullscreen}"
          v-if="roomReady && !isKicked" ref="mainWrap">
@@ -23,8 +23,9 @@
         <div class="vhall-header-right">
           <div
             class="vhall-main-area-tools--doc-control"
-            v-if="roomInfo.room_id"
+            v-if="roomInfo.interact.room_id"
           ></div>
+          <!-- {{permission}} -->
           <record
             v-auth="100020"
             @recordFun="recordFun"
@@ -35,7 +36,7 @@
             class="vhall-room-connect vhall-room-operation non-selectable"
             style="width: 120px; margin-right: 20px"
             v-if="
-              roomInfo.role_name == 4 &&
+              roomInfo.join_info.role_name == 4 &&
                 status == 1 &&
                 !isBanned &&
                 envCheckResult
@@ -60,20 +61,20 @@
             </div>
             <div
               class="vhall-room-play vhall-room-operation"
-              v-if="roomInfo.role_name == '1' && isPublishing && stopping"
+              v-if="roomInfo.join_info.role_name == '1' && isPublishing && stopping"
             >
               正在结束...
             </div>
             <div
-              class="vhall-room-play vhall-room-operation"
-              v-if="roomInfo.role_name == '1' && !isPublishing && !starting"
+              class="vhall-room-play vhall-room-operation ly-cxs"
+              v-if="roomInfo.join_info.role_name == '1' && !isPublishing && !starting"
               @click="push(1)"
             >
               开始直播
             </div>
             <div
               class="vhall-room-play vhall-room-operation"
-              v-if="roomInfo.role_name == '1' && !isPublishing && starting && status != 1"
+              v-if="roomInfo.join_info.role_name == '1' && !isPublishing && starting && status != 1"
             >
               正在启动...
             </div>
@@ -83,7 +84,7 @@
             <div
               class="vhall-room-play vhall-room-operation"
               @click="ReDetection"
-              v-if="roomInfo.role_name != 3"
+              v-if="roomInfo.join_info.role_name != 3"
             >
               重新检测
             </div>
@@ -101,13 +102,13 @@
               <div class="vhall-user-frame" v-if="!(isEmbed && roleName == 3)">
                 <div class="vhall-user-frame-head">
                   <span class="vhall-user-type">{{ roleMap[roleName] }}</span>
-                  <span class="vhall-user-name">{{ userInfo.nick_name }}</span>
+                  <span class="vhall-user-name">{{ userInfo.nickname }}</span>
                 </div>
                 <div class="vhall-user-frame-bottom">
                   <div
                     :class="{ disable: thirdPartyMobild || screensharing }"
                     v-if="
-                      roomInfo.role_name == '1' || roomInfo.role_name == '4'
+                      roomInfo.join_info.role_name == '1' || roomInfo.join_info.role_name == '4'
                     "
                     class="vhall-user-mediasetting"
                     :title="(screensharing || thirdPartyMobild) ? '桌面共享和第三方推流过程中不可用' : ''"
@@ -118,8 +119,8 @@
                   </div>
                   <div
                     v-if="
-                      (roomInfo.role_name == '1' ||
-                        roomInfo.role_name == '4') &&
+                      (roomInfo.join_info.role_name == '1' ||
+                        roomInfo.join_info.role_name == '4') &&
                         permission.includes(100025) &&
                         !isEmbed
                     "
@@ -185,7 +186,7 @@
           v-if="!assistantType && thirdPartyMobild && NoDocShow && roleName != 3"
         >
           <thirdParty
-            :roomId="roomInfo.room_id"
+            :roomId="roomInfo.interact.room_id"
             :vssToken="vssToken"
           ></thirdParty>
         </div>
@@ -196,17 +197,17 @@
         >
           <!-- 签到 -->
           <!-- <sign-in
-            v-if="roomInfo.room_id"
+            v-if="roomInfo.interact.room_id"
             ref="signin"
             :vss_token="vssToken"
-            :room_id="roomInfo.room_id"
+            :room_id="roomInfo.interact.room_id"
             :masterEnd="true"
           ></sign-in> -->
           <NewSignIn
-            v-if="roomInfo.room_id"
+            v-if="roomInfo.interact.room_id"
             ref="signin"
             :vss_token="vssToken"
-            :room_id="roomInfo.room_id"
+            :room_id="roomInfo.interact.room_id"
             :masterEnd="true"
           ></NewSignIn>
 
@@ -224,7 +225,7 @@
               :webinar_id="ilId"
               :params_verify_token="params_verify_token"
               @onClose="closeRebroadcast"
-              :roomId="roomInfo.room_id"
+              :roomId="roomInfo.interact.room_id"
               :vssToken="vssToken"
               :status="status"
               ref="rebroadcast"
@@ -242,12 +243,12 @@
           >
             <question
               :ilId="ilId"
-              :roomId="roomInfo.room_id"
-              :appId="roomInfo.app_id"
-              :accountId="roomInfo.account_id"
-              :accessToken="roomInfo.paas_access_token"
+              :roomId="roomInfo.interact.room_id"
+              :appId="roomInfo.interact.paas_app_id"
+              :accountId="roomInfo.webinar.userinfo.user_id"
+              :accessToken="roomInfo.interact.paas_access_token"
               :isEmbed="isEmbed"
-              :roleName="roomInfo.role_name"
+              :roleName="roomInfo.join_info.role_name"
               ref="questionarie"
             ></question>
           </popup>
@@ -284,7 +285,7 @@
           <popup :visible="RedPacketVisible" :header-show="false">
             <redcoupon
               @onClose="closeRedPacketPopup"
-              :roomId="roomInfo.room_id"
+              :roomId="roomInfo.interact.room_id"
               :vssToken="vssToken"
               :assistantType="assistantType"
             ></redcoupon>
@@ -292,7 +293,7 @@
           <!-- 红包未领取完 -->
           <popup :visible="hadEnvelopeVisible" :header-show="false">
             <hadEnvelope
-              :room_id="roomInfo.room_id"
+              :room_id="roomInfo.interact.room_id"
               @onClose="closeRedPacketPopup"
               @ContinueSendRed="ContinueSendRed"
               @cancelSendRed="cancelSendRed"
@@ -327,7 +328,7 @@
               :isInteract="isInteract"
               :layout="layout"
               :vssToken="vssToken"
-              :roomId="roomInfo.room_id"
+              :roomId="roomInfo.interact.room_id"
               :visible="mediaSettingVisible"
               :status="status"
               @close="closeMediaSettings"
@@ -358,7 +359,7 @@
               'vhall-tools',
               'vhall-docs',
               isDocEnabled ? 'enabled' : '',
-              doc_permission != roomInfo.third_party_user_id || screensharing
+              doc_permission != roomInfo.join_info.third_party_user_id || screensharing
                 ? 'disable'
                 : ''
             ]"
@@ -374,7 +375,7 @@
               'vhall-tools',
               'vhall-whiteboard',
               isWhiteBoardEnabled ? 'enabled' : '',
-              doc_permission != roomInfo.third_party_user_id || screensharing
+              doc_permission != roomInfo.join_info.third_party_user_id || screensharing
                 ? 'disable'
                 : ''
             ]"
@@ -389,14 +390,14 @@
               disable:
                 thirdPartyMobild ||
                 status != 1 ||
-                doc_permission != roomInfo.third_party_user_id ||
+                doc_permission != roomInfo.join_info.third_party_user_id ||
                 splited
                 ,
               enabled: screensharing
             }"
             @click="shareScreen"
             v-show="layout != 2"
-            v-if="roomInfo.role_name != 3"
+            v-if="roomInfo.join_info.role_name != 3"
           >
             <!-- 助理， 不能发起桌面共享 -->
             <i class="iconfont iconzhuomiangongxiang"></i>
@@ -471,13 +472,13 @@
         <div class="vhall-main-area--content" ref="mainArea">
           <!-- 订阅流区域 -->
           <streams
-            :style="roomInfo.role_name == 3 ? 'height: 0' : ''"
+            :style="roomInfo.join_info.role_name == 3 ? 'height: 0' : ''"
             v-if="!assistantType"
             v-show="rebroadcast == '' || rebroadcast == 'rebroadcastEnd'"
             :speakerList="speakerList"
-            :accountId="roomInfo.third_party_user_id"
-            :roomId="roomInfo.room_id"
-            :roleName="roomInfo.role_name"
+            :accountId="roomInfo.join_info.third_party_user_id"
+            :roomId="roomInfo.interact.room_id"
+            :roleName="roomInfo.join_info.role_name"
             :isDocShow="isDocShow"
             :mainScreen="mainScreen"
             :miniElement="miniElement"
@@ -486,26 +487,28 @@
             :layout="layout"
           >
             <!-- 互动区域 -->
+
             <Interactive
-              v-if="roomInfo.third_party_user_id && roomInfo.app_id && !thirdPartyMobild && splitStatus == 2 && speakerList"
+              v-if="roomInfo.join_info.third_party_user_id && roomInfo.interact.paas_app_id && !thirdPartyMobild && splitStatus == 2 && speakerList"
               :mainScreen="mainScreen"
               :miniElement="miniElement"
               :isDocShow="isDocShow"
-              :inavId="roomInfo.inav_id"
-              :roomId="roomInfo.room_id"
-              :appId="roomInfo.app_id"
-              :accountId="roomInfo.third_party_user_id"
-              :ownerId="roomInfo.account_id"
-              :nickName="userInfo.nick_name"
-              :token="roomInfo.paas_access_token"
+              :inavId="roomInfo.interact.inav_id"
+              :roomId="roomInfo.interact.room_id"
+              :appId="roomInfo.interact.paas_app_id"
+              :accountId="roomInfo.join_info.third_party_user_id"
+              :ownerId="roomInfo.webinar.userinfo.user_id"
+              :nickName="userInfo.nickname"
+              :token="roomInfo.interact.paas_access_token"
               :vssToken="vssToken"
               :speakerList="speakerList"
               :role="role"
-              :roleName="roomInfo.role_name"
+              :roleName="roomInfo.join_info.role_name"
               :layout="layout"
               :status="status"
               :isInteract="isInteract"
               :splited="splited"
+              :webinadId='ilId'
               ref="interactive"
             ></Interactive>
           </streams>
@@ -513,19 +516,19 @@
           <player
             v-if="status == 1 &&
               !assistantType &&
-                ((roomInfo.paas_access_token &&
+                ((roomInfo.interact.paas_access_token &&
                   rebroadcast != '' &&
                   rebroadcast != 'rebroadcastEnd') ||
-                  roomInfo.role_name == 3)
+                  roomInfo.join_info.role_name == 3)
             "
-            :appId="roomInfo.app_id"
+            :appId="roomInfo.interact.paas_app_id"
             :playerInfo="{disableDanmu: true, barrage: '1'}"
             :class="miniElement == 'video' ? 'vhall-miniBox' : ''"
-            :accountId="roomInfo.third_party_user_id"
-            :token="roomInfo.paas_access_token"
+            :accountId="roomInfo.join_info.third_party_user_id"
+            :token="roomInfo.interact.paas_access_token"
             :type="'live'"
             :id="'xxx'"
-            :liveOption="{ roomId: roomInfo.room_id, type: 'flv' }"
+            :liveOption="{ roomId: roomInfo.interact.room_id, type: 'flv' }"
             :isAudio="rebroadcastLayout == 2 || roomInfo.layout == 2"
             :vodControllerShow="true"
             :isMini="true"
@@ -575,10 +578,10 @@
           >
             <!-- 文档列表 -->
             <doc-list
-              v-if="(!assistantType || (assistantType && assistantType == 'doc')) && doc_permission == roomInfo.third_party_user_id"
-              :accountId="roomInfo.third_party_user_id"
+              v-if="(!assistantType || (assistantType && assistantType == 'doc')) && doc_permission == roomInfo.join_info.third_party_user_id"
+              :accountId="roomInfo.join_info.third_party_user_id"
               :isEnjoy="false"
-              :roomId="roomInfo.room_id"
+              :roomId="roomInfo.interact.room_id"
               :permission="permission"
               :vssToken="vssToken"
               :docLowPriority="docLowPriority"
@@ -606,12 +609,12 @@
             </SassAlert>
             <!-- 桌面共享显示区 -->
             <share-screen
-              v-if="!assistantType && roomInfo.role_name != 3"
-              :ownerId="roomInfo.account_id"
+              v-if="!assistantType && roomInfo.join_info.role_name != 3"
+              :ownerId="roomInfo.webinar.userinfo.user_id"
               :mainScreen="mainScreen"
               :splited="splited"
-              :accountId="roomInfo.third_party_user_id"
-              :roleName="roomInfo.role_name"
+              :accountId="roomInfo.join_info.third_party_user_id"
+              :roleName="roomInfo.join_info.role_name"
               :class="miniElement == 'doc' ? 'vhall-miniBox vhall-saas-miniArea' : ''"
             ></share-screen>
 
@@ -626,11 +629,11 @@
               }"
               v-if="rebroadcast && rebroadcast != 'rebroadcastEnd'"
               :channel-id="roomInfo.channel_id"
-              :roomId="roomInfo.room_id"
-              :joinId="roomInfo.third_party_user_id + '7890'"
-              :appId="roomInfo.app_id"
+              :roomId="roomInfo.interact.room_id"
+              :joinId="roomInfo.join_info.third_party_user_id + '7890'"
+              :appId="roomInfo.interact.paas_app_id"
               :roleType="2"
-              :token="roomInfo.paas_access_token"
+              :token="roomInfo.interact.paas_access_token"
               :isVod="false"
               :isMini="miniElement == 'doc'"
               :rebroadcastChannelId="rebroadcastChannelId"
@@ -648,13 +651,13 @@
               "
               :webinarId="ilId"
               :docPermissionId="doc_permission"
-              :roleName="roomInfo.role_name"
-              :room-id="roomInfo.room_id"
+              :roleName="roomInfo.join_info.role_name"
+              :room-id="roomInfo.interact.room_id"
               :channel-id="roomInfo.channel_id"
-              :appId="roomInfo.app_id"
-              :token="roomInfo.paas_access_token"
+              :appId="roomInfo.interact.paas_app_id"
+              :token="roomInfo.interact.paas_access_token"
               :live-status="status"
-              :accountId="roomInfo.third_party_user_id"
+              :accountId="roomInfo.join_info.third_party_user_id"
               :documentId="documentId"
               :rebroadcast="rebroadcast"
               :isInteract="isInteract"
@@ -1118,15 +1121,15 @@
               <chat-component
                 ref="chat"
                 @chatUpdata="chatUpdata"
-                v-if="roomInfo.account_id"
+                v-if="roomInfo.webinar.userinfo.user_id"
                 :splited="splitStatus == 1"
-                :appId="roomInfo.app_id"
+                :appId="roomInfo.interact.paas_app_id"
                 :channelId="roomInfo.channel_id"
-                :roleName="roomInfo.role_name"
-                :roomId="roomInfo.room_id"
-                :userId="roomInfo.third_party_user_id"
+                :roleName="roomInfo.join_info.role_name"
+                :roomId="roomInfo.interact.room_id"
+                :userId="roomInfo.join_info.third_party_user_id"
                 :vssToken="vssToken"
-                :token="roomInfo.paas_access_token"
+                :token="roomInfo.interact.paas_access_token"
                 :isBanned="isBanned"
                 :allBanned="allBanned"
                 :webinarId="ilId"
@@ -1140,7 +1143,7 @@
               v-if="!assistantType"
               v-show="tabIndex == 2"
             >
-              <notice :roomId="roomInfo.room_id"></notice>
+              <notice :roomId="roomInfo.interact.room_id"></notice>
             </div>
             <div
               v-auth="100013"
@@ -1152,11 +1155,11 @@
                 ref="saasMember"
                 @memberUpdata="memberUpdata"
                 :speakerList="speakerList"
-                :roomId="roomInfo.room_id"
+                :roomId="roomInfo.interact.room_id"
                 :PorpAllowHandup="allowHandup"
                 :docPermissionId="doc_permission"
-                :userId="roomInfo.third_party_user_id"
-                :roleName="roomInfo.role_name"
+                :userId="roomInfo.join_info.third_party_user_id"
+                :roleName="roomInfo.join_info.role_name"
                 :isInteract="isInteract"
                 :status="status"
               ></saas-member>
@@ -1279,7 +1282,7 @@
         </SassAlert>
         <media-check
           ref="mediaCheck"
-          :roleName="roomInfo.role_name"
+          :roleName="roomInfo.join_info.role_name"
           :layout="layout"
         ></media-check>
         <SassAlert
@@ -1288,7 +1291,7 @@
           @onCancel="streamendErrorPopupClose"
         >
          <div slot="content">
-            <span>{{`因设备问题导致${this.roomInfo.role_name== 1 ? '直播' : '连麦'}中断，请检查设备`}}</span>
+            <span>{{`因设备问题导致${this.roomInfo.join_info.role_name== 1 ? '直播' : '连麦'}中断，请检查设备`}}</span>
           </div>
         </SassAlert>
         <SassAlert
@@ -1303,7 +1306,7 @@
       </div>
       <lottery
         v-if="!assistantType || (assistantType && assistantType == 'doc')"
-        :roomId="roomInfo.room_id"
+        :roomId="roomInfo.interact.room_id"
         :vssToken="vssToken"
         ref="lotterySon"
       ></lottery>
@@ -1322,8 +1325,8 @@ import moment from 'moment';
 import ChatComponent from '../../libs/chat';
 import Interactive from '../../libs/interactive';
 import streams from '../../libs/interactive/remoteStreams';
-import DocList from '../../libs/doc-list';
-import Doc from '@/components/Doc';
+// import DocList from '../../libs/doc-list';
+// import Doc from '@/components/Doc';
 // import this.$EventBus from '@/utils/Events';
 import Mediasettings from '../../libs/media-settings';
 import VirtualAudience from '../../libs/virtualAudience';
@@ -1345,6 +1348,7 @@ import notice from '../../libs/notice'; // 公告
 import thirdParty from '../../libs/thirdParty'; // 第三方发起
 import liveEnd from '../../libs/liveEnd'; // 直播结束
 import jiabinMixin from './mixin/jiabin';
+import start from './start';
 import player from '../../libs/player/index'; // 直播结束
 import shareScreen from '../../libs/desktopScreen';
 import { assitantMixin } from './mixin/assitantMixin';
@@ -1428,15 +1432,20 @@ export default {
     },
     recordTip: {
       required: true
-    }
-  },
+    },
+    rootActive:{
+      required: true
+    },
+    roomStatus: {
+      required: true
+    }},
   components: {
     SassAlert,
     hadEnvelope,
     Interactive,
     streams,
-    DocList,
-    Doc,
+    // DocList,
+    // Doc,
     ChatComponent,
     Mediasettings,
     VirtualAudience,
@@ -1452,18 +1461,19 @@ export default {
     share,
     notice,
     thirdParty,
-    liveEnd,
+    // liveEnd,
     player,
     shareScreen,
-    WatchDoc,
+    // WatchDoc,
     ImageLoader,
     MediaCheck
   },
 
-  mixins: [jiabinMixin, assitantMixin, checkMixin],
+  mixins: [jiabinMixin, assitantMixin, checkMixin, start],
 
   data () {
     return {
+      acxs: '7889999',
       chatTip: false,
       memberTip: false,
       assistantType: '',
@@ -1573,7 +1583,7 @@ export default {
         4: '嘉宾'
       },
 
-      envCheckResult: false,
+      envCheckResult: true, // false  先修改
       envChecked: false,
       isDocShow: true,
       mainScreen: '',
@@ -1663,7 +1673,7 @@ export default {
     }
     this.assistantType = this.$route.query.assistantType;
     this.assistantPlugin = this.$route.query.plugin;
-    console.log('=======this.assistantType======', this.assistantType);
+    console.log('=======this.assistantType======', this.assistantType, this.permission);
   },
 
   mounted () {
@@ -1708,8 +1718,7 @@ export default {
     this.initThirdPermis();
     const setFullscreen = () => {
       const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement;
-      if (fullscreenElement) {
-      } else {
+      if (fullscreenElement) {} else {
         this.isFullscreen = false;
         this.isDocFullscreen = false;
         this.moveTool();
@@ -1748,18 +1757,18 @@ export default {
       this.isDocEnabled = true;
       this.isWhiteBoardEnabled = false;
       // 结束直播时当前主讲人不是主持人， 就设置为主持人
-      if (this.doc_permission != this.roomInfo.account_id) {
-        this.doc_permission = this.roomInfo.account_id;
+      if (this.doc_permission != this.roomInfo.webinar.userinfo.user_id) {
+        this.doc_permission = this.roomInfo.webinar.userinfo.user_id;
       }
       // 结束直播时 更新当前 speakerList
       this.speakerList = this.speakerList.filter(item => {
-        return item.account_id == this.roomInfo.account_id;
+        return item.account_id == this.roomInfo.webinar.userinfo.user_id;
       });
       this.$refs.mediasettingsRef.selectedRate = '';
       sessionStorage.setItem('speakerDefinition', '');
       sessionStorage.setItem('selectedRate', '');
       // 结束直播时如果问答是开启状态，发起关闭问答接口
-      if (this.isQAEnabled && this.roomInfo.role_name == 1) {
+      if (this.isQAEnabled && this.roomInfo.join_info.role_name == 1) {
         this.enableQA(1);
       }
       window.clearInterval(this.durationInterval);
@@ -1767,10 +1776,10 @@ export default {
       this.starting = false;
       this.stopping = false;
       this.liveDuration = '';
-      if (this.roomInfo.role_name == 4) {
-        sessionStorage.setItem(`MEDIACHECK_FINISH_${this.roomInfo.room_id}`, '');
+      if (this.roomInfo.join_info.role_name == 4) {
+        sessionStorage.setItem(`MEDIACHECK_FINISH_${this.roomInfo.interact.room_id}`, '');
       }
-      if (this.roomInfo.role_name == 4 || this.roomInfo.role_name == 3) {
+      if (this.roomInfo.join_info.role_name == 4 || this.roomInfo.join_info.role_name == 3) {
         this.$message.warning('直播已结束');
       }
     });
@@ -1854,7 +1863,7 @@ export default {
       this.docVisibleToAudience = docInfo.showInWatch;
       if (
         this.isDocEnabled &&
-        this.doc_permission == this.roomInfo.third_party_user_id &&
+        this.doc_permission == this.roomInfo.join_info.third_party_user_id &&
         this.status != 2 && this.permission.includes(100030)
       ) {
         this.$nextTick(() => {
@@ -1971,8 +1980,8 @@ export default {
 
     this.$EventBus.$on('vrtc_speaker_switch', msg => {
       if (
-        this.roomInfo.third_party_user_id == msg.room_join_id &&
-        this.roomInfo.account_id == this.roomInfo.third_party_user_id
+        this.roomInfo.join_info.third_party_user_id == msg.room_join_id &&
+        this.roomInfo.webinar.userinfo.user_id == this.roomInfo.join_info.third_party_user_id
       ) {
         // 主持人被设置成为主讲人。 自动跳过提示
         this.docVisibleToAudience = this.docVisibleToAudience;
@@ -1996,7 +2005,7 @@ export default {
         role = '嘉宾';
       }
 
-      if (this.roomInfo.role_name == 1) {
+      if (this.roomInfo.join_info.role_name == 1) {
         this.$message({
           message: `收到 ${role} [${msg.nick_name}] 的上麦申请`,
           type: 'success'
@@ -2013,7 +2022,7 @@ export default {
         this.docVisibleToAudience
       ) {
         this.$vhallFetch('setDesktop', {
-          room_id: this.roomInfo.room_id,
+          room_id: this.roomInfo.interact.room_id,
           status: '1'
         });
       }
@@ -2028,7 +2037,7 @@ export default {
         this.docVisibleToAudience
       ) {
         this.$vhallFetch('setDesktop', {
-          room_id: this.roomInfo.room_id,
+          room_id: this.roomInfo.interact.room_id,
           status: '0'
         });
       }
@@ -2042,7 +2051,7 @@ export default {
     // 结束直播清空上麦列表
     this.$EventBus.$on('live_over', msg => {
       this.speakerList = this.speakerList.filter(item => {
-        return item.account_id == this.roomInfo.account_id;
+        return item.account_id == this.roomInfo.webinar.userinfo.user_id;
       });
     });
 
@@ -2178,7 +2187,7 @@ export default {
     });
     // 房间链接出错事件
     this.$EventBus.$on('MEDIACHECK_FINISH', (e) => {
-      sessionStorage.setItem(`MEDIACHECK_FINISH_${this.roomInfo.room_id}`, 'yes');
+      sessionStorage.setItem(`MEDIACHECK_FINISH_${this.roomInfo.interact.room_id}`, 'yes');
       sessionStorage.setItem('selectedVideoDeviceId', e.selectedVideoDeviceId || '');
       sessionStorage.setItem('selectedAudioDeviceId', e.selectedAudioDeviceId || '');
     });
@@ -2236,6 +2245,7 @@ export default {
     } else {
       console.error('聊天过滤地址没有localStorage的vhall_domain');
     }
+
   },
   watch: {
     roomId (newVal) {
@@ -2396,8 +2406,8 @@ export default {
       this.UpperVisible = false;
       if (flag == 1) return;
       let data = {
-        receive_account_id: this.roomInfo.third_party_user_id,
-        room_id: this.roomInfo.room_id
+        receive_account_id: this.roomInfo.join_info.third_party_user_id,
+        room_id: this.roomInfo.interact.room_id
       };
       this.$vhallFetch('rejectInvite', data).catch(error => {
         console.error('拒绝上麦邀请接口错误', error);
@@ -2471,75 +2481,77 @@ export default {
       this.thirdPartyMobild = false;
       this.NoDocShow = false;
     },
-    async getInavInfo () {
-      await this.$vhallFetch('getRoomStatus', {
-        room_id: this.roomId
-      }, {}, false).then((res) => {
-        this.speakerList = res.data.speaker_list;
-
-        sessionStorage.setItem('speakerDefinition', res.data.stream.definition || '');
-        sessionStorage.setItem('screenDefinition', res.data.stream.screen_definition || '');
-      });
-
-      this.$vhallFetch('getInavInfo', {
-        room_id: this.roomId
-      })
-        .then(async res => {
-          console.log('vss roomInfo', res);
-          this.roomInfo = res.data;
+    getInavInfo () {
+      console.warn(this.roomStatus, 'roomStatus*************');
+      // res.data.stream.definition--speakerDefinition  不确定是否使用  先存'' res.data.stream.screen_definition --screenDefinition
+      sessionStorage.setItem('speakerDefinition','');
+      sessionStorage.setItem('screenDefinition', '');
+      console.warn(this.rootActive, 'this.rootActive*************');
+      this.$fetch('initiatorInfo', {
+        webinar_id: this.webinar_id
+      }).then(async res => {
+          // this.roomInfo = res.data;
+          this.roomInfo = this.rootActive;
           this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-          this.webinar_id = res.data.webinar_id;
+
           this.status = res.data.status;
+          this.status = 0; // 0|待直播/预约,1|直播中,2|直播结束
           this.isPublishing = this.status == 1;
-          this.isQAEnabled = this.qaStatus == 1;
+          this.isQAEnabled = this.qaStatus == 1; // ??
           this.roleName = res.data.role_name;
+
           this.layout = res.data.layout;
           this.localDuration = this.duration;
-
+          this.getbroadcast(); // 获取插播列表
 
           if (this.status == 1) {
             this.virtualAudienceCanUse = true;
           }
           // 媒体检测
-          const mediacheckStatus = sessionStorage.getItem(`MEDIACHECK_FINISH_${this.roomInfo.room_id}`);
-          if (this.roomInfo.role_name == 1) {
+          const mediacheckStatus = sessionStorage.getItem(`MEDIACHECK_FINISH_${this.roomInfo.interact.room_id}`);
+          console.warn('cxs----设备检测', mediacheckStatus,this.roomInfo.interact.room_id, this.roomInfo.join_info.role_name);
+          if (this.roomInfo.join_info.role_name == 1) {
+            console.warn('cxs--设备检测---',!this.assistantType, mediacheckStatus != 'yes', this.status != 1 );
             if (!this.assistantType && mediacheckStatus != 'yes' && this.status != 1) {
-              this.popAlertCheckVisible = true;
+              // this.popAlertCheckVisible = true;
             }
-          } else if (this.roomInfo.role_name == 4 && mediacheckStatus != 'no') {
+          } else if (this.roomInfo.join_info.role_name == 4 && mediacheckStatus != 'no') {
             if (!this.assistantType && mediacheckStatus != 'yes') {
               this.popAlertCheckVisible = true;
             }
           }
-          await this.getUserStatus();
+          this.isBanned = this.roomStatus.is_banned == 1;
+          this.isKicked = this.roomStatus.is_kicked == 1;
           this.getRoomStatus();
           let context = {
-            nickname: this.userInfo.nick_name, // 昵称
+            nickname: this.userInfo.nickname, // 昵称
             avatar: this.userInfo.avatar
-              ? `https:${this.userInfo.avatar}`
+              ? `${this.userInfo.avatar}`
               : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
             // pv: 100, // pv
-            role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
+            role_name: this.roomInfo.join_info.role_name, // 角色 1主持人2观众3助理4嘉宾
             device_type: '2', // 设备类型 1手机端 2PC 0未检测
             device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
             is_banned: this.isBanned // 是否禁言 1是0否
           };
           let opt = {
-            appId: this.roomInfo.app_id,
-            third_party_user_id: this.roomInfo.third_party_user_id,
-            channelId: this.roomInfo.channel_id,
+            appId: this.roomInfo.interact.paas_app_id,
+            third_party_user_id: this.third_party_user_id,
+            channelId: this.roomInfo.interact.channel_id,
             context: JSON.stringify(context),
-            token: this.roomInfo.paas_access_token,
+            token: this.roomInfo.interact.paas_access_token,
             hide: this.$route.query.hide == 1
           };
+          console.warn('cxs----', opt);
           VhallChat.createInstance(
             opt,
             chat => {
               window.chatSDK = chat.message;
               this.roomReady = true;
+              console.warn('cxs---1-', opt);
               this.$loadingStus.close();
               this.$EventBus.$on('sdkReady', () => {
-                if (!this.assistantType && this.roomInfo.role_name != 3) {
+                if (!this.assistantType && this.roomInfo.join_info.role_name != 3) {
                   this.vhallChecking();
                 }
               });
@@ -2601,59 +2613,48 @@ export default {
         });
     },
     /**
-     * 得到用户状态是否被禁言/踢出
-     */
-    getUserStatus () {
-      return new Promise((resolve, reject) => {
-        let data = {
-          room_id: this.roomInfo.room_id,
-          account_id: this.roomInfo.third_party_user_id
-        };
-        this.$vhallFetch('getUserStatus', data).then(res => {
-          this.isBanned = res.data.is_banned == '1';
-          this.isKicked = res.data.is_kicked == '1';
-          resolve();
-        });
-      });
-    },
-    /**
      * 获取房间状态，是否开启文档/白板/举手/主讲人...
      */
     getRoomStatus () {
-      return this.$vhallFetch('getRoomStatus', {
-        room_id: this.roomId
-      }, {}, false)
-        .then(res => {
-          if (res.data.start_type == 4) {
-            this.startType = 4;
-            this.thirdPartyMobild = true;
-            this.$EventBus.$emit('startLive');
+      console.warn(this.roomStatus, '8888');
+      let _data = this.roomStatus;
+      if (_data.start_type == 4) {
+        this.startType = 4;
+        this.thirdPartyMobild = true;
+        this.$EventBus.$emit('startLive');
+      }
+      this.allowHandup = Boolean(_data.is_handsup);
+      this.allBanned = _data.all_banned == 1;
+      this.doc_permission = _data.doc_permission; // 当前主讲人
+      this.mainScreen = _data.main_screen;
+      this.speakerList = _data.speaker_list || [];
+      this.speakerList = [{
+        account_id:"16421384",
+        audio:1,
+        nick_name:"吃不胖小陈",
+        role_name:1,
+        video:1
+      }];
+      this.rebroadcast = (_data.rebroadcast && _data.rebroadcast.room_id) || '';
+      this.rebroadcast = '';
+      this.rebroadcastChannelId = (_data.rebroadcast && _data.rebroadcast.channel_id) || '';
+      this.rebroadcastChannelId = '';
+      console.log(this.speakerList);
+      if(typeof this.speakerList === 'object' && this.speakerList.length!=0){
+        this.speakerList.forEach(item => {
+          if (item.account_id == this.roomInfo.join_info.third_party_user_id) {
+            this.isApplying = true;
           }
-          this.allowHandup = Boolean(res.data.is_handsup);
-          this.allBanned = res.data.all_banned == 1;
-          this.doc_permission = res.data.doc_permission; // 当前主讲人
-          this.mainScreen = res.data.main_screen;
-          this.speakerList = res.data.speaker_list || [];
-          this.rebroadcast = (res.data.rebroadcast && res.data.rebroadcast.room_id) || '';
-          this.rebroadcastChannelId = (res.data.rebroadcast && res.data.rebroadcast.channel_id) || '';
-
-          this.speakerList.forEach(item => {
-            if (item.account_id == this.roomInfo.third_party_user_id) {
-              this.isApplying = true;
-            }
-          });
-
-          console.log('嘉宾是否已经上麦', this.isApplying);
-          const layout = sessionStorage.getItem('layout') || res.data.stream.layout || ''; // 布局先从本地获取
-          sessionStorage.setItem('layout', layout);
-        })
-        .then(() => {
-          // 动态切换主显示 区域
-          this.$EventBus.$on('vrtc_big_screen_set', e => {
-            this.mainScreen = e.room_join_id;
-          });
-          // 动态切换主显示 区域结束
         });
+      }
+
+      // console.log('嘉宾是否已经上麦', this.isApplying);
+      const layout = sessionStorage.getItem('layout') || _data.layout || ''; // 布局先从本地获取
+      sessionStorage.setItem('layout', layout);
+      // 动态切换主显示
+      this.$EventBus.$on('vrtc_big_screen_set', e => {
+        this.mainScreen = e.room_join_id;
+      });
     },
     /**
      * @param {Number} flag -是否清零计时器 flag为1的时候清零
@@ -2667,13 +2668,18 @@ export default {
       }
       this.starting = true;
       this.stopping = false;
+      alert(12);
+      console.warn('this.thirdPartyBtn && this.thirdPartyMobild', this.thirdPartyBtn, this.thirdPartyMobild);
       // 第三方发起推流
       if (this.thirdPartyBtn && this.thirdPartyMobild) {
-        this.$vhallFetch('startLive', {
-          room_id: this.roomInfo.room_id,
+        this.$fetch('liveStart', {
+          webinar_id: this.webinar_id,
           start_type: 4
         }).then(() => {
+          alert(13);
           this.$EventBus.$emit('startLive');
+        }).catch(err=>{
+          alert(14);
         });
       } else {
         if (flag == 1) {
@@ -2702,8 +2708,8 @@ export default {
       this.starting = false;
       // 第三方发起停止直播
       if (this.thirdPartyBtn && this.thirdPartyMobild) {
-        return this.$vhallFetch('stopLive', {
-          room_id: this.roomInfo.room_id,
+        return this.$fetch('liveEnd', {
+          webinar_id: this.webinar_id,
           end_type: 4
         }).then(() => {
           // this.localDuration = 0
@@ -2713,8 +2719,8 @@ export default {
       } else if (this.rebroadcast) {
         if (this.rebroadcast == 'rebroadcastEnd') {
           // 转播结束后停止直播
-          this.$vhallFetch('stopLive', {
-            room_id: this.roomInfo.room_id,
+          this.$fetch('liveEnd', {
+            webinar_id: this.webinar_id,
             end_type: 4
           }).then(() => {
             this.rebroadcast = '';
@@ -2725,15 +2731,15 @@ export default {
         } else {
           // 转播中停止直播
           this.$vhallFetch('stopRebroadcast', {
-            room_id: this.roomInfo.room_id,
+            room_id: this.roomInfo.interact.room_id,
             vss_token: this.vssToken,
             source_room_id: this.rebroadcast
           }).then(() => {
             this.rebroadcast = '';
             this.$refs.rebroadcast.rebroadcastingRoomId = '';
             this.$refs.rebroadcast.getList();
-            this.$vhallFetch('stopLive', {
-              room_id: this.roomInfo.room_id,
+            this.$fetch('liveEnd', {
+              webinar_id: this.webinar_id,
               end_type: 4
             }).then(() => {
               // this.localDuration = 0
@@ -2744,7 +2750,7 @@ export default {
         }
       } else {
         this.$vhallFetch('setDesktop', { // 直播结束后条用视频最小化接口
-          room_id: this.roomInfo.room_id,
+          room_id: this.roomInfo.interact.room_id,
           status: '0'
         });
 
@@ -2904,7 +2910,7 @@ export default {
         });
     },
     showDoc () {
-      if (this.doc_permission != this.roomInfo.third_party_user_id) {
+      if (this.doc_permission != this.roomInfo.join_info.third_party_user_id) {
         this.$message.error({ message: `您不是主讲人不能使用该功能` });
         return;
       }
@@ -2925,7 +2931,7 @@ export default {
       this.NoDocShow = false;
     },
     showWhiteBoard () {
-      if (this.doc_permission != this.roomInfo.third_party_user_id) {
+      if (this.doc_permission != this.roomInfo.join_info.third_party_user_id) {
         this.$message.error({ message: `您不是主讲人不能使用该功能` });
         return;
       }
@@ -2961,7 +2967,7 @@ export default {
       if (this.thirdPartyMobild || this.status != 1) {
         return;
       }
-      if (this.doc_permission != this.roomInfo.third_party_user_id) {
+      if (this.doc_permission != this.roomInfo.join_info.third_party_user_id) {
         this.$message.error({ message: `您不是主讲人不能使用该功能` });
         return;
       }
@@ -3299,7 +3305,7 @@ export default {
     popAlertCheckClose () {
       this.popAlertCheckVisible = false;
       this.$nextTick(() => {
-        this.popAlertCheckConfirmVisible = true;
+        // this.popAlertCheckConfirmVisible = true;
       }, 1000);
       const list = document.getElementsByTagName('video');
       for (let item of list) {
@@ -3316,7 +3322,7 @@ export default {
     },
     popAlertCheckConfirm () {
       this.popAlertCheckConfirmVisible = false;
-      sessionStorage.setItem(`MEDIACHECK_FINISH_${this.roomInfo.room_id}`, 'no');
+      sessionStorage.setItem(`MEDIACHECK_FINISH_${this.roomInfo.interact.room_id}`, 'no');
     },
     popAlertCheckConfirmClose () {
       this.popAlertCheckConfirmVisible = false;

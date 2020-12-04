@@ -1,7 +1,7 @@
 <template>
   <div>
     <pageTitle title="设置"></pageTitle>
-    <div content="home--set--info">
+    <div class="home--set--info">
       <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
         <el-form-item label="主页标题：" prop="title">
           <el-input type="text" placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" maxlength="30" show-word-limit />
@@ -48,6 +48,8 @@
           <div class="switch__box">
             <el-switch
               v-model="homeSetInfoForm.show_share"
+              :active-value="1"
+              :inactive-value="0"
               active-color="#FB3A32"
               inactive-color="#CECECE"
               :active-text="homeSetInfoForm.show_share ? '关闭后，主页分享按钮将隐藏' : '已关闭，主页分享按钮已隐藏'"
@@ -59,6 +61,8 @@
           <div class="switch__box">
             <el-switch
               v-model="homeSetInfoForm.show_webinar_list"
+              :active-value="1"
+              :inactive-value="0"
               active-color="#FB3A32"
               inactive-color="#CECECE"
               :active-text="homeSetInfoForm.show_webinar_list ? '关闭后，主页将隐藏【直播】列表' : '已关闭，主页已隐藏【直播】列表'"
@@ -70,6 +74,8 @@
           <div class="switch__box">
             <el-switch
               v-model="homeSetInfoForm.show_subject"
+              :active-value="1"
+              :inactive-value="0"
               active-color="#FB3A32"
               inactive-color="#CECECE"
               :active-text="homeSetInfoForm.show_subject ? '关闭后，主页将隐藏【专题】列表' : '已关闭，主页已隐藏【专题】列表'"
@@ -91,6 +97,7 @@
 import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "homeSetInfo.vue",
   components: {
@@ -106,9 +113,9 @@ export default {
         homepage_avatar: '',
         content: '',
         img_url: '', // 背景图片
-        show_share: true, // 分享
-        show_webinar_list: true, // 直播列表展示：0不展示 1展示
-        show_subject: true, // 专题展示：0不展示 1展示
+        show_share: 0, // 分享
+        show_webinar_list: 0, // 直播列表展示：0不展示 1展示
+        show_subject: 0, // 专题展示：0不展示 1展示
         title: ''
       },
       homeSetInfoFormRules: {
@@ -212,7 +219,7 @@ export default {
     save() {
       this.$refs.homeSetInfoForm.validate((valid) => {
         if(valid) {
-          this.$fetch('userEdit', this.homeSetInfoForm).then(res => {
+          this.$fetch('homeInfoCreate', this.homeSetInfoForm).then(res => {
             console.log(res);
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
@@ -225,12 +232,34 @@ export default {
           });
         }
       });
+    },
+    homeInfoGet() {
+      this.$fetch('homeInfoGet', {
+        home_user_id: sessionOrLocal.get('userId')
+      }).then(res => {
+        console.log(res);
+        if (res && res.code === 200) {
+          let { homepage_info } = res.data;
+          this.homeSetInfoForm = homepage_info;
+        } else {
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
     }
+  },
+  created() {
+    this.homeInfoGet();
   }
 };
 </script>
 
 <style lang="less" scoped>
+.home--set--info {
+  .layout--right--main();
+  .padding41-40();
+  .min-height();
+}
 /* 图片上传 */
 .upload__avatar {
   /deep/.el-upload--picture-card {

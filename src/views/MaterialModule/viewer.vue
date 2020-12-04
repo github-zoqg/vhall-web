@@ -532,7 +532,7 @@ export default {
       console.log(res, file);
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
-        // 文件上传成功，保存信息
+        // 文件上传成功，导入观众
         this.$fetch('viewerImport', {
           file_url: res.data.file_url,
           group_id: this.query.group_id
@@ -572,30 +572,6 @@ export default {
       this.importFileShow = false;
       // 刷新列表数据
       this.viewerList();
-    },
-    // 白名单导入观众至分组
-    viewerImport(e) {
-      this.file = e.target.files[0];
-      let params = {
-        path: this.file.name,
-        resfile: this.file,
-        type: 'excel'
-      };
-      this.$fetch('viewerImport', this.$params(params), {
-        'Content-Type': 'multipart/form-data'
-      }).then(res => {
-        res && res.code === 200 && res.data ? this.importResult = res.data : this.importResult = {
-          fail: 0,
-          success: 0
-        };
-        console.log(res);
-      }).catch(e => {
-        console.log(e);
-        this.importResult = {
-          fail: 0,
-          success: 0
-        };
-      });
     },
   },
   created() {

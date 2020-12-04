@@ -4,35 +4,46 @@
     <div class="show-on">
       <el-switch
         v-model="status"
+        :active-value="1"
+        :inactive-value="0"
         active-color="#ff4949"
         inactive-color="#ccc"
         :active-text="activeTitle"
-        >
+        @change="updateSwitch"
+      >
       </el-switch>
     </div>
-    <el-card>
+    <div :class="!status ? 'pre--full-mask' : ''">
+      <div class="pre--full-cover" v-show="!status"></div>
+      <el-card>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="80px">
             <el-form-item label="二维码">
               <div class="img-box">
                 <upload
-                    class="giftUpload"
-                    v-model="img"
-                    :on-success="uploadAdvSuccess"
-                    :on-progress="uploadProcess"
-                    :on-error="uploadError"
-                    :on-preview="uploadPreview"
-                    @handleFileChange="handleFileChange"
-                    :before-upload="beforeUploadHnadler"
-                    >
-                    <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
-                  </upload>
+                  class="giftUpload"
+                  v-model="img"
+                  :saveData="{
+                     path: 'webinars/img_url',
+                     type: 'image',
+                  }"
+                  :on-success="uploadAdvSuccess"
+                  :on-progress="uploadProcess"
+                  :on-error="uploadError"
+                  :on-preview="uploadPreview"
+                  @handleFileChange="handleFileChange"
+                  :before-upload="beforeUploadHnadler"
+                  @delete="img = ''">
+                  <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
+                </upload>
               </div>
             </el-form-item>
             <el-form-item label="自动弹出" v-if="title==='公众号展示'">
             <el-switch
-              v-model="alert_type"
+              v-model="shutdown_type"
+              :active-value="1"
+              :inactive-value="0"
               active-color="#ff4949"
               inactive-color="#ccc"
               :active-text="activeTitle"
@@ -54,18 +65,21 @@
         </div>
       </div>
     </el-card>
+    </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
+import Env from '@/api/env.js';
 export default {
   data() {
     return {
       img: '',
       url: '',
-      status: false,
-      alert_type: true
+      imgShowUrl: '',
+      status: 0,
+      shutdown_type: 0
     };
   },
   computed: {
@@ -80,7 +94,7 @@ export default {
       }
     },
     autoUpText(){
-      if(this.alert_type){
+      if(this.shutdown_type){
         return '已开启，进入活动页公众中自动展示';
       }else{
         return "开启后，进入活动页公众中自动展示";
@@ -95,14 +109,45 @@ export default {
     this.getData();
   },
   methods: {
+    // 修改公众号状态
+    updateSwitch() {
+      let status = this.status; // 目标
+      this.status = Number(status) === 1 ? 1 : 0;
+      this.$fetch('setPosterInfo', {
+        webinar_id: this.$route.params.str,
+        status: status,
+        img: 'afs',
+        shutdown_type: this.shutdown_type || 0
+      }).then(res => {
+        if (res && res.code === 200 && status) {
+          this.$message.success('开启成功');
+          this.status = 1;
+          this.getData();
+        }else if (res && res.code === 200 && !status) {
+          alert(1);
+          this.$message.success('关闭成功');
+          this.status = 0;
+          this.getData();
+        } else {
+          this.$message.error(res.msg || status ? `开启失败` : `关闭失败`);
+        }
+      }).catch(er => {
+        console.log(er);
+        this.$message.error(status ? `开启失败，` : `关闭失败`);
+      });
+    },
     getData() {
-      let url = this.title === '公众号展示' ? 'getPublicInfo': 'getPosterInfo';
-      this.$fetch(url, {webinar_id: '2345234523'}).then(res => {
-        this.img = res.data.img;
-        this.url = res.data.url || '';
-        this.status = res.data.status === 0 ? true : false;
-        this.alert_type = res.data.alert_type === 0 ? true : false;
-        console.log(res.data, '111111111111');
+      this.$fetch(this.title === '公众号展示' ? 'getPublicInfo': 'getPosterInfo', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        if(res && res.code === 200) {
+          this.img = res.data.img;
+          this.url = res.data.url || '';
+          this.status = res.data.status;
+          this.shutdown_type = res.data.shutdown_type;
+        }
+      }).catch(e => {
+        console.log(e);
       });
     },
     preSure() {
@@ -111,19 +156,22 @@ export default {
       obj.img = this.img;
       obj.status = this.status ? 0 : 1;
       if (this.title === '公众号展示') {
-        obj.alert_type = this.alert_type ? 0 : 1;
+        obj.shutdown_type = this.shutdown_type ? 0 : 1;
         url = 'setPublicInfo';
       } else {
         obj.url = this.url;
         url = 'setPosterInfo';
       }
+      console.log(obj);
       this.$fetch(url, obj).then(res => {
          console.log(res.data, '111111111111');
       });
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
-      this.img = URL.createObjectURL(file.raw);
+      this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      // 触发验证
+      // this.$refs.signSetForm.validateField('img');
     },
     beforeUploadHnadler(file){
       console.log(file);
