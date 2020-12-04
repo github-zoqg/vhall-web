@@ -29,33 +29,16 @@
                 </el-option>
               </el-select>
             </template>
-            <!-- 隐私声明 -->
-            <!-- <template v-else-if="formItem.name=='privacy'">
-              <el-checkbox v-model="formItem.value">
-                <p v-html="privacyFormatter(formItem.nodes)"></p>
-              </el-checkbox>
-            </template> -->
             <template v-for="(nodes, nodeIndex) in formItem.nodes" v-else>
               <el-input v-if="formItem.type=='input'"  :key="`${formIndex}-${nodeIndex}`" v-model="nodes.value" v-bind="nodes.props"></el-input>
               <!-- 单选类型 -->
               <el-radio-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='radio'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-radio v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
-                  <!-- "其他"
-                  <br/>
-                  <el-input maxlength="50" v-if="!!radioItem.other" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" ></el-input> -->
-                  <!-- {{radioItem.other ? "其他" : ''}}
-                  <el-input maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" ></el-input> -->
-                  <!-- <br/> -->
                 </el-radio>
               </el-radio-group>
               <!-- 多选类型 -->
               <el-checkbox-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='checkBox'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-checkbox v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
-                  <!-- {{radioItem.other ? "其他" : ''}}
-                  <el-input maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
-                    <i class="el-icon-remove-outline removeIcon" slot="suffix" @click="deleteOptions(node.children, raionIndex)"></i>
-                  </el-input> -->
-                  <!-- <br/> -->
                 </el-checkbox>
               </el-checkbox-group>
             </template>
@@ -107,7 +90,7 @@
             </el-input>
           </el-form-item>
         </el-form>
-        <el-button round type="primary">{{ tabs == 1 ? '报名' : '提交' }}</el-button>
+        <el-button round type="primary" @click="submitForm">{{ tabs == 1 ? '报名' : '提交' }}</el-button>
       </template>
       <!-- 验证块 -->
     </article>
@@ -151,11 +134,6 @@ export default {
     renderQuestionArr() {
       return this.questionArr.filter(item => {
         return item.label !== '隐私声明';
-        // if(item.label !== '隐私声明'){
-        //   return item;
-        // } else {
-        //   return false;
-        // }
       });
     },
     privacyItem() {
@@ -176,6 +154,19 @@ export default {
   methods: {
     closePreview() {
       this.$emit('closePreview');
+    },
+    submitForm() {
+      if(this.tabs === 1) {
+        this.submitSignUp();
+      }else {
+        this.submitVerify();
+      }
+    },
+    submitSignUp() {
+      console.log("提交报名表单");
+    },
+    submitVerify() {
+      console.log("提交验证");
     },
     getDyCode() {
 

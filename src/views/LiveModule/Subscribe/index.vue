@@ -310,6 +310,9 @@ export default {
   .area {
     width: 1220px;
     margin: 0 auto;
+    @media screen and (min-width: 1366px) {
+      width: 1480px;
+    }
   }
   .watchContainer{
     padding: 10px 0 20px;
@@ -522,9 +525,6 @@ export default {
       right: -24px;
       text-indent: 4px;
     }
-  }
-  .flex1{
-
   }
   .fixWidth{
     padding: 20px;
