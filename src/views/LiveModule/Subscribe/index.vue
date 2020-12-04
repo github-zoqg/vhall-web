@@ -129,6 +129,8 @@
     <div class="shade" v-if="shadeShow"></div>
     <!-- 商品详情的弹窗 -->
     <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
+    <!-- 报名表单 -->
+    <signUpForm v-if="!isSignUp" @closeSignUp="isSignUp = true"></signUpForm>
   </div>
 </template>
 
@@ -139,13 +141,15 @@ import custoMenu from '../components/customMenuView';
 // import productDialog from '../components/productDialog';
 import goodsPop from '../Room/rankList/goodsPop';
 import products from '../components/products';
+import signUpForm from './signUpForm';
 export default {
   components: {
     feedBack,
     share,
     custoMenu,
     goodsPop,
-    products
+    products,
+    signUpForm
   },
   data(){
     return {
@@ -167,6 +171,7 @@ export default {
       goodInfo: {},
       shadeShow: false,
       goodsPopShow: false,
+      isSignUp: true,
     };
   },
   created(){
@@ -204,7 +209,7 @@ export default {
     },
     // 预约
     subscribe(){
-
+      this.isSignUp = false;
     },
     handleClick(){
 

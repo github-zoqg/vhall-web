@@ -218,6 +218,7 @@
 <script>
 import draggable from "vuedraggable";
 import upload from '@/components/Upload/main';
+import Env from "@/api/env";
 export default {
   components:{
     draggable,
@@ -258,7 +259,7 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png',
+      imageUrl: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png',
       renderQuestion: []
     };
   },
@@ -479,10 +480,12 @@ export default {
     // },
     productLoadSuccess(res, file) {
       console.log(res, file);
-      // 图片url
-      const url = URL.createObjectURL(file.raw);
-      this.imageUrl = url;
-      this.$emit('setBaseInfo', { form_cover: this.imageUrl });
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.imageUrl = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+        console.log(this.imageUrl);
+        this.$emit('setBaseInfo', { form_cover: res.data.file_url });
+      }
     },
     // 删除头图
     deleteBanner() {
@@ -491,7 +494,7 @@ export default {
     },
     // 重置头图
     resetBanner(event){
-      this.imageUrl= '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png';
+      this.imageUrl= 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
       this.$emit('setBaseInfo', { form_cover: this.imageUrl });
     },
     // 题目顺序修改

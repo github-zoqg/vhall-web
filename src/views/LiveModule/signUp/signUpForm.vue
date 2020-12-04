@@ -1,10 +1,10 @@
 <template>
   <div class="signUpForm">
     <header>
-      <img src="//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png" alt="">
+      <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
     </header>
     <article>
-      <h1 class="pageTitle">{{ $parent.$refs.fieldSet.form_title }}</h1>
+      <h1 class="pageTitle">{{ baseInfo.form_title }}</h1>
       <div :class="['tabs', colorIndex]">
         <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
         <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
@@ -107,6 +107,7 @@
             </el-input>
           </el-form-item>
         </el-form>
+        <el-button round type="primary">{{ tabs == 1 ? '报名' : '提交' }}</el-button>
       </template>
       <!-- 验证块 -->
     </article>
@@ -118,15 +119,20 @@
 </template>
 
 <script>
+import Env from "@/api/env";
 export default {
   props:{
     questionArr: {
       type: Array,
       default: ()=> []
+    },
+    baseInfo: {
+      type: Object,
     }
   },
   data(){
     return{
+      Env: Env,
       time: 60,
       form: {
         imgCode: '',

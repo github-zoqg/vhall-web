@@ -45,6 +45,7 @@
           ></fieldSet>
           <!-- 表单预览组件 -->
           <signUpForm
+            :baseInfo="baseInfo"
             v-show="rightComponent == 'signUpForm'"
             :questionArr.sync="questionArr"
             @closePreview="closePreview"
@@ -91,7 +92,7 @@ export default {
         form_tab_register_title: '用户报名',
         form_title: '',
         form_introduce: '',
-        form_cover: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png'
+        form_cover: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'
       },
       radio: 3,
       rightComponent: 'fieldSet',
