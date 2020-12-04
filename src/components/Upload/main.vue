@@ -4,7 +4,7 @@
     v-bind="$props"
     :headers="{token: token}"
     :data=saveData
-    name="resFile"
+    name="resfile"
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
