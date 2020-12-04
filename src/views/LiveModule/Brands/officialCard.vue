@@ -1,7 +1,7 @@
 <template>
   <div class="offical-show">
     <pageTitle :title="title"></pageTitle>
-    <div class="show-on">
+    <!--<div class="show-on">
       <el-switch
         v-model="status"
         :active-value="1"
@@ -12,13 +12,13 @@
         @change="updateSwitch"
       >
       </el-switch>
-    </div>
-    <div :class="!status ? 'pre--full-mask' : ''">
-      <div class="pre--full-cover" v-show="!status"></div>
+    </div>-->
+   <!-- <div :class="!status ? 'pre&#45;&#45;full-mask' : ''">
+      <div class="pre&#45;&#45;full-cover" v-show="!status"></div>-->
       <el-card>
       <div class="form-phone">
         <div class="official-form">
-          <el-form label-width="80px">
+          <el-form label-width="120px">
             <el-form-item label="二维码">
               <div class="img-box">
                 <upload
@@ -39,14 +39,25 @@
                 </upload>
               </div>
             </el-form-item>
+            <el-form-item :label="title">
+              <el-switch
+                v-model="status"
+                :active-value="1"
+                :inactive-value="0"
+                active-color="#ff4949"
+                inactive-color="#ccc"
+                :active-text="activeTitle"
+              >
+              </el-switch>
+            </el-form-item>
             <el-form-item label="自动弹出" v-if="title==='公众号展示'">
-            <el-switch
-              v-model="shutdown_type"
-              :active-value="1"
-              :inactive-value="0"
-              active-color="#ff4949"
-              inactive-color="#ccc"
-              :active-text="activeTitle"
+              <el-switch
+                v-model="alert_type"
+                :active-value="1"
+                :inactive-value="0"
+                active-color="#ff4949"
+                inactive-color="#ccc"
+                :active-text="activeTitle"
               >
               </el-switch>
             </el-form-item>
@@ -65,7 +76,7 @@
         </div>
       </div>
     </el-card>
-    </div>
+  <!--  </div>-->
   </div>
 </template>
 <script>
@@ -79,7 +90,7 @@ export default {
       url: '',
       imgShowUrl: '',
       status: 0,
-      shutdown_type: 0
+      alert_type: 0
     };
   },
   computed: {
@@ -94,7 +105,7 @@ export default {
       }
     },
     autoUpText(){
-      if(this.shutdown_type){
+      if(this.alert_type){
         return '已开启，进入活动页公众中自动展示';
       }else{
         return "开启后，进入活动页公众中自动展示";
@@ -109,7 +120,7 @@ export default {
     this.getData();
   },
   methods: {
-    // 修改公众号状态
+   /* // 修改公众号状态
     updateSwitch() {
       let status = this.status; // 目标
       this.status = Number(status) === 1 ? 1 : 0;
@@ -117,7 +128,7 @@ export default {
         webinar_id: this.$route.params.str,
         status: status,
         img: 'afs',
-        shutdown_type: this.shutdown_type || 0
+        alert_type: this.alert_type || 0
       }).then(res => {
         if (res && res.code === 200 && status) {
           this.$message.success('开启成功');
@@ -135,7 +146,7 @@ export default {
         console.log(er);
         this.$message.error(status ? `开启失败，` : `关闭失败`);
       });
-    },
+    },*/
     getData() {
       this.$fetch(this.title === '公众号展示' ? 'getPublicInfo': 'getPosterInfo', {
         webinar_id: this.$route.params.str
@@ -144,7 +155,7 @@ export default {
           this.img = res.data.img;
           this.url = res.data.url || '';
           this.status = res.data.status;
-          this.shutdown_type = res.data.shutdown_type;
+          this.alert_type = res.data.alert_type;
         }
       }).catch(e => {
         console.log(e);
@@ -156,15 +167,21 @@ export default {
       obj.img = this.img;
       obj.status = this.status ? 0 : 1;
       if (this.title === '公众号展示') {
-        obj.shutdown_type = this.shutdown_type ? 0 : 1;
+        obj.alert_type = this.alert_type ? 0 : 1;
         url = 'setPublicInfo';
       } else {
         obj.url = this.url;
         url = 'setPosterInfo';
       }
+      obj.webinar_id = this.$route.params.str;
       console.log(obj);
       this.$fetch(url, obj).then(res => {
-         console.log(res.data, '111111111111');
+        if(res && res.code === 200) {
+          this.$message.success('保存成功');
+          this.getData();
+        } else {
+          this.$message.error(res.msg || '保存失败');
+        }
       });
     },
     uploadAdvSuccess(res, file) {

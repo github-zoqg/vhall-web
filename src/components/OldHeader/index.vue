@@ -11,8 +11,8 @@
           <div class=""  v-if="isLogin">
             <el-dropdown @command="handleCommand">
               <span class="el-dropdown-link">
-                <img  class="head" src="//t-alistatic01.e.vhall.com/static/img/head50.png" alt="" />
-                <span class="textofover">ttttttt</span>
+                <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
+                <span class="textofover">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
                 <span class="caret"></span>
               </span>
               <el-dropdown-menu slot="dropdown">
@@ -21,8 +21,8 @@
             </el-dropdown>
           </div>
           <div class=""  v-if="!isLogin">
-            <el-button size="mini" round>登录</el-button>
-            <el-button type="primary" size="mini" round>注册</el-button>
+            <el-button size="mini" round @click="toLoginPageHandle">登录</el-button>
+            <el-button type="primary" size="mini" round @click="toRegisterHandle">注册</el-button>
           </div>
         </div>
       </div>
@@ -32,15 +32,28 @@
 
 <script>
 import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 
 export default {
   name: "index.vue",
   data() {
     return {
-      isLogin: null
+      isLogin: null,
+      userInfo: null,
+      avatarImgUrl: null
     };
   },
   methods: {
+    toLoginPageHandle() {
+      this.$router.push({
+        path: '/login'
+      });
+    },
+    toRegisterHandle() {
+      this.$router.push({
+        path: '/register'
+      });
+    },
     handleCommand(command) {
       if(command === 'loginOut') {
         this.loginOut();
@@ -50,18 +63,27 @@ export default {
       sessionOrLocal.clear();
       // 更新当前页面
       this.isLogin = false;
+    },
+    updateAccount(account) {
+      this.userInfo = account;
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
     let userInfo  = sessionOrLocal.get('userInfo');
+    if(userInfo !== null) {
+      this.userInfo = JSON.parse(userInfo);
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    }
     this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '';
+    this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
   }
 };
 </script>
 
 <style lang="less" scoped>
 header.commen-header {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   height: 60px;
   background-color: #ffffff;
   .nav-top {
@@ -74,7 +96,6 @@ header.commen-header {
     position: relative;
     min-height: 50px;
     margin-bottom: 20px;
-    border: 1px solid transparent;
   }
   .navbar-header {
     float: left;
