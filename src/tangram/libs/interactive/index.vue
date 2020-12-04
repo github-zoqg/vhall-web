@@ -654,7 +654,7 @@ export default {
         if (status != 1) {
           return this.$fetch('liveStart', {
             webinar_id: this.webinadId,
-            start_type: 4
+            start_type: 1
           }).then(() => {
             if (this.role == VhallRTC.MASTER) {
               setTimeout(() => {

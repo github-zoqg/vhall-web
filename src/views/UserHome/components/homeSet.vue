@@ -8,6 +8,10 @@
         <upload
           :class="'upload__avatar ' + avatarImgType"
           v-model="homeSetInfoForm.homepage_avatar"
+          :saveData="{
+             path: 'webinars/img_url',
+             type: 'image',
+          }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -30,6 +34,10 @@
         <upload
           :class="'upload__bg__avatar ' + imgType"
           v-model="homeSetInfoForm.img_url"
+          :saveData="{
+             path: 'webinars/img_url',
+             type: 'image',
+          }"
           :on-success="handleUploadSuccessBg"
           :on-progress="uploadProcessBg"
           :on-error="uploadErrorBg"
@@ -223,11 +231,26 @@ export default {
     saveHandle() {
       this.$refs.homeSetInfoForm.validate((valid) => {
         if(valid) {
-          this.$fetch(this.homeSetInfoForm.id ? 'homeInfoEdit' : 'homeInfoCreate', this.homeSetInfoForm).then(res => {
+          let params = {
+            img_url: this.$parseURL(this.homeSetInfoForm.img_url).path,
+            homepage_avatar: this.$parseURL(this.homeSetInfoForm.homepage_avatar).path,
+            content: this.homeSetInfoForm.content,
+            show_share: this.homeSetInfoForm.show_share, // 分享
+            show_webinar_list: this.homeSetInfoForm.show_webinar_list, // 直播列表展示：0不展示 1展示
+            show_subject: this.homeSetInfoForm.show_subject, // 专题展示：0不展示 1展示
+            title: this.homeSetInfoForm.title
+          };
+          if(this.homeSetInfoForm.id) {
+            params.id = this.homeSetInfoForm.id;
+          }
+          this.$fetch(this.homeSetInfoForm.id ? 'homeInfoEdit' : 'homeInfoCreate', params).then(res => {
             console.log(res);
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
-              this.homeInfoGet();
+              // 回到前一个页面
+              this.$router.push({
+                path: `/user/home/${this.$route.params.str}`
+              });
             } else {
               this.$message.error(res.msg || '保存基本设置失败');
             }
@@ -250,6 +273,7 @@ export default {
           let { homepage_info } = res.data;
           homepage_info.homepage_avatar = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
           homepage_info.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
+          console.log(homepage_info.imgShowUrl );
           this.homeSetInfoForm = homepage_info;
         } else {
         }

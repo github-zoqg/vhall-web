@@ -305,11 +305,11 @@ const apis = {
   liveClientInit: ['/v3/webinars/live/client-init', 'GET'], // 初始化直播间（客户端） •••
   liveStart: ['/v3/webinars/live/start', 'POST'], // 开始直播 √
   onlineUserList :['/interacts/chat-user/get-online-list', 'POST'], // 获取在线用户列表
-  liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播 ×  接口有问题
-  rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 不知有何用处
-  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 •••
-  rebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 •••
-  rebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 •••
+  liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播  √
+  rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 √
+  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 未知
+  v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 未知
+  v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 未知
 
   // 授权模块
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••

@@ -19,7 +19,6 @@ const Apis = {
   agreeInvite: ['/cmpt/inav/agree-invite', 'POST'], // 同意上麦邀请
   cancleApply: ['/cmpt/inav/cancel-apply', 'POST'], // 同意上麦邀请
 
-  getInavUsers: ['/cmpt/inav/get-online-list', 'POST'], // 获取在线
   getKickedUsers: ['/cmpt/inav/get-kicked-list', 'POST'], // 获取踢出列表
   questionList: ['/cmpt/question/list', 'POST'],
   publicQuestion: ['/cmpt/question/publish', 'POST'], // 发布问卷
