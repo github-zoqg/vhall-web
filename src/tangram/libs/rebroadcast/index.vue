@@ -124,6 +124,7 @@ export default {
   },
   watch: {
     visible (newvalue) {
+      console.warn(newvalue, '转播');
       if (!newvalue) {
         this.current = '';
         this.rebroadcastingRoomId = '';
@@ -167,6 +168,7 @@ export default {
       }).then(res=>{
           this.loading = false;
           this.list = res.data ? res.data.list : [];
+          console.warn('获取转播列表准确------', res);
       }).catch(err=>{
           this.loading = false;
           console.log(error);

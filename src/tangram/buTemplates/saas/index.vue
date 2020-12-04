@@ -9,8 +9,8 @@
 
       <div v-if="!assistantType" class="vhall-header">
         <div class="vhall-header-left">
-          <div class="vhall-room-name" :title="roomInfo.subject">
-            {{ roomInfo.subject || '房间名称' }}
+          <div class="vhall-room-name" :title="roomInfo.webinar.subject">
+            {{ roomInfo.webinar.subject || '房间名称' }}
           </div>
           <div class="vhall-room-id-container">
             <div class="vhall-room-id-icon">ID</div>
@@ -181,6 +181,7 @@
         class="vhall-main-area"
         :class="assistantType ? 'assistantStyle' : ''"
       >
+      {{!assistantType}}{{thirdPartyMobild}}{{NoDocShow}}{{roleName != 3}}
         <div
           class="thirdParty-warp"
           v-if="!assistantType && thirdPartyMobild && NoDocShow && roleName != 3"
@@ -196,13 +197,6 @@
           :class="assistantType == 'doc' ? 'assistantStyle' : ''"
         >
           <!-- 签到 -->
-          <!-- <sign-in
-            v-if="roomInfo.interact.room_id"
-            ref="signin"
-            :vss_token="vssToken"
-            :room_id="roomInfo.interact.room_id"
-            :masterEnd="true"
-          ></sign-in> -->
           <NewSignIn
             v-if="roomInfo.interact.room_id"
             ref="signin"
@@ -221,9 +215,7 @@
           >
             <rebroadcast
               :visible="rebroadcastVisible"
-              v-if="params_verify_token"
               :webinar_id="ilId"
-              :params_verify_token="params_verify_token"
               @onClose="closeRebroadcast"
               :roomId="roomInfo.interact.room_id"
               :vssToken="vssToken"
@@ -1718,6 +1710,7 @@ export default {
     this.initThirdPermis();
     const setFullscreen = () => {
       const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement;
+      console.warn('fullscreenElement--', fullscreenElement);
       if (fullscreenElement) {} else {
         this.isFullscreen = false;
         this.isDocFullscreen = false;
@@ -2493,16 +2486,15 @@ export default {
           // this.roomInfo = res.data;
           this.roomInfo = this.rootActive;
           this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-
           this.status = res.data.status;
-          this.status = 0; // 0|待直播/预约,1|直播中,2|直播结束
+          this.status = 1; // 0|待直播/预约,1|直播中,2|直播结束
           this.isPublishing = this.status == 1;
           this.isQAEnabled = this.qaStatus == 1; // ??
           this.roleName = res.data.role_name;
 
           this.layout = res.data.layout;
           this.localDuration = this.duration;
-          this.getbroadcast(); // 获取插播列表
+          this.v3Getbroadcast(); // 获取插播列表
 
           if (this.status == 1) {
             this.virtualAudienceCanUse = true;
