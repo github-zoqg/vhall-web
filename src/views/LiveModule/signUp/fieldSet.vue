@@ -338,16 +338,23 @@ export default {
         const options = {
           item_id: node.item_id,
           subject: node.value,
-          question_id: item.question_id
+          question_id: question.question_id
         };
         this.optionEdit(options);
       }
       if (isPrivacy) {
-        const options = {
+        let options = {
           webinar_id: this.webinar_id,
           privacy_id: node.privacy_id,
-          [node.key]: node.value
         };
+        question.nodes.forEach(item => {
+          if (item.privacy_id === node.privacy_id){
+            options = {
+              ...options,
+              [item.key]: item.value
+            };
+          }
+        });
         // 更改隐私协议
         this.$fetch('regRrivacyUpdate', options)
           .then(res => console.log(res))
