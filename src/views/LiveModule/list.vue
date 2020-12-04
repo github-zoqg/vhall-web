@@ -51,7 +51,7 @@
               <i class="el-icon-view"></i>
               {{item.pv | unitCovert}}
             </span>
-            <img :src="item.img_url" alt="">
+            <img :src="`${imgBaseUrl}${item.img_url}`" alt="">
           </div>
           <div class="bottom">
             <div class="">
@@ -98,12 +98,14 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import Env from "@/api/env";
 export default {
   data() {
     return {
       liveStatus: 0,
       orderBy: 1,
       keyWords: '',
+      imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       pageSize: 10,
       pageNum: 1,
       pagePos: 0,
@@ -141,11 +143,22 @@ export default {
     },
     dropDownVisibleChange(item) {
       this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);
-      this.webinarInfo = item.webinar_id;
+      this.webinarInfo = item;
     },
     commandMethod(command) {
       if (command === '删除') {
-        console.log("111111111111111");
+         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+         this.deleteLive();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       } else {
         this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {type: this.webinarInfo.webinar_state }});
       }
@@ -160,15 +173,12 @@ export default {
         pos: this.pagePos,
         limit: this.pageSize,
         order_type: this.orderBy,
+        title: this.keyWords,
         webinar_type: this.liveStatus
       };
-      if (this.keyWords) {
-        data.title = this.keyWords;
-      }
       this.loading = true;
       console.log(data);
-      this.$fetch('liveList', data).then(res=>{
-        console.log(res);
+      this.$fetch('liveList', this.$params(data)).then(res=>{
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
       }).catch(error=>{
@@ -176,6 +186,12 @@ export default {
         console.log(error);
       }).finally(()=>{
         this.loading = false;
+      });
+    },
+    deleteLive() {
+      this.$fetch('liveDel', {webinar_ids: this.webinarInfo.webinar_id}).then(res => {
+        this.$message.success('删除成功');
+        this.getLiveList();
       });
     },
     toDetail(id) {

@@ -127,6 +127,9 @@ export default {
       getCodeBtnDisable: true,
       qrcode: '',
       phone: 12345678910,
+      captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
+      mobileKey: '', // 云盾值
+      captcha: null, // 云盾本身
       link: 'http://172.16.11.8/finance/income',
       rules: {
         money: [
@@ -134,11 +137,6 @@ export default {
         ]
       }
     };
-  },
-  filters: {
-    filterPhone (value) {
-      return  String(value).replace( /([0-9]{3})([0-9]{4})([0-9]{4})/,"$1****$3");
-    }
   },
   created(){
     QRcode.toDataURL(
@@ -196,7 +194,38 @@ export default {
     nextBinding() {
       this.dialogChangeVisible = false;
       this.dialogVisible = true;
-    }
+    },
+     /**
+     * 初始化网易易盾图片验证码
+     */
+    callCaptcha() {
+      const that = this;
+      // eslint-disable-next-line
+      initNECaptcha({
+        captchaId: this.captchakey,
+        element: "#payCaptcha",
+        mode: 'float',
+        onReady(instance) {
+          console.log('instance', instance);
+        },
+        onVerify(err, data) {
+          if (data) {
+            that.mobileKey = data.validate;
+            that.showCaptcha = true;
+            console.log('data>>>', data);
+          } else {
+            that.loginForm.captcha = '';
+            that.dynamicForm.captcha = '';
+            console.log('errr>>>', err);
+            that.errorMsgShow = true;
+          }
+        },
+        onload(instance) {
+          console.log('onload', instance);
+          that.captcha = instance;
+        }
+      });
+    },
   },
 };
 </script>

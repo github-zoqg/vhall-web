@@ -2,10 +2,10 @@
   <div class="detailBox">
     <pageTitle title='直播详情'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
-      <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24">
+      <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
         <div class="inner">
           <div class="thumb">
-            <img :src="liveDetailInfo.img_url" alt="">
+            <img :src="`${imgBaseUrl}${liveDetailInfo.img_url}`" alt="">
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
@@ -23,7 +23,7 @@
               <!-- <span class="tag">报名表单</span> -->
             </p>
             <div class="action-look">
-              <el-button round size="mini" v-if="['3', '5'].includes(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;">恢复预告</el-button>
               <el-popover
                   placement="bottom"
                   trigger="hover"
@@ -50,7 +50,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24">
+      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
         <div class="inner liveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
@@ -76,6 +76,7 @@
 import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 import QRcode from 'qrcode';
+import Env from "@/api/env";
 export default {
   components: {
     PageTitle,
@@ -84,50 +85,51 @@ export default {
   data(){
     return {
       msg: '',
+      imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       liveDetailInfo: {},
       showCode: '',
-      link: 'http://e.vhall.com/mywebinar/invite-card/923464350/1734888',
+      link: `${Env.BASE_URL}/live/watch/${this.$route.params.str}`,
       operas: {
         '准备': [
-          { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
-          { icon: '', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
-          { icon: '', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
-          { icon: '', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
-          { icon: '', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
-          { icon: '', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
-          { icon: '', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
-          { icon: '', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
+          { icon: 'saasicon_shangchuanwendang-copy', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
+          { icon: 'saasicon_pinpaishezhi-copy', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
+          { icon: 'saasicon_shangchuanwendang-copy', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
+          { icon: 'saasicon_pinpaishezhi-copy', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
         ],
         '品牌': [
-          { icon: '', title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`},
-          { icon: '', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
-          { icon: '', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
-          { icon: '', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
-          { icon: '', title: '广告推荐', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
-          { icon: '', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
-          { icon: '', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
+          { icon: 'saasicon_pinpaishezhi-copy', title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`},
+          { icon: 'saasicon_caiwuzonglan-copy', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
+          { icon: 'saasicon_shangchuanwendang-copy', title: '广告推荐', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
         ],
         '直播': [
-          { icon: '', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
-          { icon: '', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
-          { icon: '', title: '问卷', subText: '创建问卷收集信息', path: `/live/question/${this.$route.params.str}` },
-          { icon: '', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
-          { icon: '', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
+          { icon: 'saasicon_shangchuanwendang-copy', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
+          { icon: 'saasicon_pinpaishezhi-copy', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '问卷', subText: '创建问卷收集信息', path: `/live/question/${this.$route.params.str}` },
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
+          { icon: 'saasicon_caiwuzonglan-copy', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
         ],
         '回放': [
-          { icon: '', title: '回放管理', subText: '管理直播回放内容', path: `/live/playback/${this.$route.params.str}` },
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '回放管理', subText: '管理直播回放内容', path: `/live/playback/${this.$route.params.str}` },
           // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         '数据': [
-          { icon: '', title: '数据报告', subText: '统计直播基本数据', path: `/reportsData${this.$route.params.str}` },
-          { icon: '', title: '互动统计', subText: '统计直播互动工具数据', path: `/interactionData${this.$route.params.str}` },
-          { icon: '', title: '用户统计', subText: '统计直播观众详细数据', path: `/userData${this.$route.params.str}` },
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '数据报告', subText: '统计直播基本数据', path: `/reportsData${this.$route.params.str}` },
+          { icon: 'saasicon_shangchuanwendang-copy', title: '互动统计', subText: '统计直播互动工具数据', path: `/interactionData${this.$route.params.str}` },
+          { icon: 'saasicon_caiwuzonglan-copy', title: '用户统计', subText: '统计直播观众详细数据', path: `/userData${this.$route.params.str}` },
         ]
       }
     };
   },
   created(){
-    // console.log(this.$route.params.str);
+    // console.log(this.link, '1111111111111111');
     this.getLiveDetail(this.$route.params.str);
   },
   // filters: {
@@ -147,7 +149,6 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
-        this.liveDetailInfo.webinar_state = 1;
         this.getCode();
         console.log(res);
       }).catch(error=>{
@@ -177,7 +178,7 @@ export default {
     },
     blockHandler(item){
       if(item.path){
-        this.$router.push({path: item.path});
+        this.$router.push({path: item.path, query: {id:this.$route.params.str}});
       }else{
         console.log(item);
       }
@@ -197,6 +198,9 @@ export default {
   // min-width: 756px;
   flex-wrap: wrap;
   justify-content: space-between;
+  .active{
+    width: 100%;
+  }
   .inner{
     background: #fff;
     width: 100%;

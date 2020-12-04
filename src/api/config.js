@@ -1,10 +1,10 @@
 const apis = {
   // 资料管理
   datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
-  dataVideoList: ['/99/v3/webinars/videos/get-list', 'POST', 'mock'], //音视频列表
-  dataVideoupdate: ['/99/v3/webinars/videos/edit', 'POST', 'mock'], //音视频编辑
-  dataVideoDel: ['/99/v3/webinars/videos/delete', 'POST', 'mock'], //音视频删除
-  dataVideoAdd: ['/99/v3/webianrs/videos/create', 'POST', 'mock'], //音视频列表
+  dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表
+  dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
+  dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
+  createVideo: ['/v3/webinars/videos/create', 'POST'], //音视频添加
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
   editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
@@ -47,10 +47,10 @@ const apis = {
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
-  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口 √
-  liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改 •••
-  liveDel: ['/99/v3/webinars/webinar/delete', 'POST', 'mock'], // 活动删除 •••
-  demandCreate: ['/99/v3/webinars/webinar/create-demand', 'POST', 'mock'], // 点播创建
+  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口        接口少了一个字段
+  liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
+  liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
+  demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
 
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建 √
@@ -227,6 +227,7 @@ const apis = {
   getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET', 'data'], //获取财务总览-并发-消费账单
   getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET', 'data'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
+  orderArrears: ['/v3/fin/order/arrears', 'POST', 'data'], // 财务总览-补缴欠费
   orderFlow: ['/v3/fin/order/flow', 'POST', 'data'], // 流量包购买
   orderUpgrade: ['/v3/fin/order/upgrade', 'POST', 'data'], // 升级并发
   orderExtend: ['/v3/fin/order/extend', 'POST', 'data'], // 购买扩展包

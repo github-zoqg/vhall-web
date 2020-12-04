@@ -85,13 +85,13 @@ const v3Routes = [
         path: 'edit',
         name: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: {webniarType: 'live', title: '创建直播', level: 2, activeMenu: '/live/list'}
+        meta: {webniarType: 'live', title: '创建直播', level: 2, activeMenu: '/live/edit'}
       },
       {
         path: 'vodEdit',
         name: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: {webniarType: 'vod', title: '创建点播', icon: 'table' , activeMenu: '/live/list'},
+        meta: {webniarType: 'vod', title: '创建点播', icon: 'table' , activeMenu: '/live/edit'},
         hidden: true
       },
       {
