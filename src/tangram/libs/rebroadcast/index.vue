@@ -4,7 +4,7 @@
       <div class="vhall-searchbar">
         <span class="mylive">
           我的直播
-          <i></i>
+          <i class="saasicon_help_m"></i>
           <div class="tips">暂只支持转播直播</div>
         </span>
         <div class="search-right">
@@ -24,17 +24,17 @@
         <div
           v-for="item in list"
           v-bind="item"
-          :key="item.room_id"
-          :class="item.isStream||current == item.room_id?'rebroadcasting item-container':'item-container'"
-          @click="select(item.room_id)"
+          :key="item.id"
+          :class="item.is_stream||current == item.id?'rebroadcasting item-container':'item-container'"
+          @click="select(item.id)"
         >
-          <i v-show="item.isStream == 1" class="broadcasting">转播中</i>
+          <i v-show="item.is_stream == 1" class="broadcasting">转播中</i>
           <div class="item-logo">
             <img
-              :src="item.cover_image||'//t-alistatic01.e.vhall.com/static/img/video_default_nologo.png'"
+              :src="item.img_url||'//t-alistatic01.e.vhall.com/static/img/video_default_nologo.png'"
               class="mCS_img_loaded"
             />
-            <i v-show="item.status == 1">直播</i>
+            <i>直播</i>
           </div>
           <div class="item-content">
             <div class="broadcast-title">{{item.subject}}</div>
@@ -54,7 +54,7 @@
           :token="token"
           :type="'live'"
           :poster="posterUrl"
-          :liveOption="{roomId:current,type:'flv'}"
+          :liveOption="{roomId:this.roomId,type:'flv'}"
           :playerInfo="{}"
           :controller="'disabled'"
           :isAudio="webinar.layout==2"
@@ -95,7 +95,6 @@
 </template>
 <script>
 import Player from '../player';
-import EventBus from '@/utils/Events';
 export default {
   name: 'rebroadcast',
   components: { Player },
@@ -152,8 +151,8 @@ export default {
       this.rebroadcastingRoomId = '';
       window.setTimeout(() => {
         this.current = id;
-        const currentItem = this.list.find(item => item.room_id == this.current);
-        this.posterUrl = currentItem.cover_image || this.posterUrl;
+        const currentItem = this.list.find(item => item.id == this.current);
+        this.posterUrl = currentItem.img_url || this.posterUrl;
         if (currentItem.isStream == 1) {
           this.rebroadcastingRoomId = this.current;
         }
@@ -164,7 +163,8 @@ export default {
       this.loading = true;
       this.$fetch('rebroadcastList',{
         webinar_id: this.webinar_id,
-        subject: this.input
+        subject: this.input,
+        limit: 100
       }).then(res=>{
           this.loading = false;
           this.list = res.data ? res.data.list : [];
@@ -173,115 +173,90 @@ export default {
           this.loading = false;
           console.log(error);
       });
-      // this.$vhallFetch('getRebroadcastList', {
-      //   room_id: this.roomId,
-      //   vss_token: this.vssToken,
-      //   subject: this.input
-      // })
-      //   .then(res => {
-      //     this.loading = false;
-      //     this.list = res.data ? res.data.list : [];
-      //   })
-      //   .catch(error => {
-      //     this.loading = false;
-      //     console.log(error);
-      //   });
     },
     getPreviewInfo (id) {
       this.$fetch('rebroadcastPreview',{
         webinar_id: this.webinar_id,
         source_id: id,
       }).then(res => {
+          console.warn('选中转播 id', res);
           this.webinar = res.data;
           this.token = this.webinar.paas_access_token;
-          this.appId = this.webinar.app_id;
           this.accountId = this.webinar.third_party_user_id;
-          this.recordId = this.webinar.record_id;
           this.docUrl = res.data.document_url;
+          this.appId = this.webinar.paas_app_id;
+// 暂时缺少
+          this.recordId = this.webinar.record_id;
+
           this.$refs.preview.initSDK();
         })
         .catch(error => {
           console.log(error);
         });
-      // this.$vhallFetch('getRebroadcastPreviewInfo', {
-      //   source_room_id: id,
-      //   vss_token: this.vssToken
-      // })
-      //   .then(res => {
-      //     this.webinar = res.data;
-      //     this.token = this.webinar.paas_access_token;
-      //     this.appId = this.webinar.app_id;
-      //     this.accountId = this.webinar.third_party_user_id;
-      //     this.recordId = this.webinar.record_id;
-      //     this.docUrl = res.data.document_url;
-      //     this.$refs.preview.initSDK();
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
     },
     toggleLocalStream (value) {
       this.localStream = value;
     },
     pushLocalStream () {
-      EventBus.$emit('rebroadcastPushStream');
+      this.$EventBus.$emit('rebroadcastPushStream');
       this.$emit('onClose');
     },
     rebroadcast () {
-      if (!this.$refs.preview || !this.$refs.preview.$PLAYER) return this.$message.error('拉流中或者拉流失败！');
+      // if (!this.$refs.preview || !this.$refs.preview.$PLAYER) return this.$message.error('拉流中或者拉流失败！');
       if (this.status != 1) return this.$message('请先开始直播！');
-      this.$vhallFetch('rebroadcast', {
-        room_id: this.roomId,
-        vss_token: this.vssToken,
-        source_room_id: this.current
-      })
-        .then(res => {
-          this.rebroadcastingRoomId = this.current;
-          this.getList();
-          EventBus.$emit('rebroadcastStart', {
-            roomId: this.roomId,
-            vssToken: this.vssToken,
-            sourceRoomId: this.current,
-            recordId: this.webinar.record_id,
-            token: this.webinar.paas_access_token,
-            accountId: this.webinar.third_party_user_id,
-            appId: this.webinar.app_id,
-            layout: this.webinar.layout,
-            liveOption: { roomId: this.current, type: 'flv' },
-            channelId: this.webinar.channel_id
-          });
-          if (res.code == 200) {
-            this.$emit('onClose');
-            this.$message.success('转播成功！');
-          } else {
-            this.$message.error('转播失败！');
-          }
-        })
-        .catch(error => {
-          this.$message.error('转播失败！');
-          console.log(error);
+      this.$fetch('v3RebroadcastStart', {
+        webinar_id: this.webinar_id,
+        source_id: this.current
+      }).then(res=>{
+        console.warn('v3RebroadcastStart', res);
+        this.rebroadcastingRoomId = this.current;
+        this.getList();
+
+        this.$EventBus.$emit('rebroadcastStart', {
+          roomId: this.roomId,
+          // vssToken: this.vssToken,
+          sourceRoomId: this.current,
+          recordId: this.webinar.record_id, // ??
+          token: this.webinar.paas_access_token,
+          accountId: this.webinar.third_party_user_id,
+          appId: this.webinar.paas_app_id, // ??
+          layout: this.webinar.layout, // ?
+          liveOption: { roomId: this.roomId, type: 'flv' },
+          channelId: this.webinar.channel_id // ??
         });
+        if (res.code == 200) {
+          this.$emit('onClose');
+          this.$message.success('转播成功！');
+        } else {
+          this.$message.error('转播失败！');
+        }
+      }).catch(err=>{
+        console.warn('v3RebroadcastStart', err);
+        this.$message.error('转播失败！');
+      });
+
     },
     stopRebroadcast () {
-      this.$vhallFetch('stopRebroadcast', {
+      this.$fetch('v3RebroadcastStop', {
         room_id: this.roomId,
-        vss_token: this.vssToken,
-        source_room_id: this.rebroadcastingRoomId
+        webinar_id: this.webinar_id,
+        source_id: this.rebroadcastingRoomId
       })
         .then(res => {
+          console.warn('v3RebroadcastStop', res);
           this.rebroadcastingRoomId = '';
           if (!this.localStream) {
             this.pushStreamSeperately = true;
           }
           this.getList();
-          EventBus.$emit('rebroadcastStop', {
+          this.$EventBus.$emit('rebroadcastStop', {
             roomId: this.roomId,
-            vssToken: this.vssToken,
+            // vssToken: this.vssToken,
             sourceRoomId: this.current,
-            recordId: this.webinar.record_id,
+            recordId: this.webinar.record_id, // ??
             token: this.webinar.paas_access_token,
             accountId: this.webinar.third_party_user_id,
-            appId: this.webinar.app_id,
+            appId: this.webinar.paas_app_id, // ??
             localStream: this.localStream
           });
           if (res.code == 200) {
@@ -292,6 +267,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
+        console.warn('v3RebroadcastStop', err);
           this.$message('停止转播失败！');
         });
     }
@@ -318,7 +294,7 @@ export default {
       & > .mylive {
         display: inline-block;
         line-height: 32px;
-        width: 125px;
+        width: 110px;
         text-align: left;
         position: relative;
         font-size: 14px;
@@ -331,8 +307,7 @@ export default {
           top: 10px;
           left: 66px;
           cursor: pointer;
-          //   background: url(../../../images/vhall3.0/keywords/icon.png?v=6KG2Q2KeHF2BSgAcOiXZvQ%3D%3D)
-          //     no-repeat -2px -2px;
+
         }
         & > .tips {
           background-color: rgba(51, 51, 51, 0.8);
@@ -341,11 +316,11 @@ export default {
           z-index: 999;
           color: #fff;
           font-size: 12px;
-          width: 100px;
+          width: 120px;
           border-radius: 4px;
-          top: 0px;
+          top: 28px;
           display: none;
-          left: 90px;
+          left: -20px;
           padding: 0 10px;
         }
       }
@@ -363,6 +338,7 @@ export default {
           display: inline-block;
           margin-bottom: 0;
           font-size: 12px;
+          margin-right: 10px;
           font-weight: 400;
           text-align: center;
           white-space: nowrap;
@@ -391,6 +367,7 @@ export default {
           height: 30px;
           border-radius: 2px;
           color: #666666;
+          font-size: 12px;
           background-image: url('../../public/saas/images/account-file-search.png');
           background-repeat: no-repeat;
           padding-left: 35px;
@@ -641,6 +618,14 @@ export default {
           color: #c62020;
         }
       }
+    }
+  }
+}
+.mylive{
+  &:hover{
+    color: red !important;
+    .tips{
+      display: block !important;
     }
   }
 }

@@ -213,6 +213,7 @@
             :width="'830px'"
             :title="'转播'"
           >
+          <!-- rebroadcastVisible -->
             <rebroadcast
               :visible="rebroadcastVisible"
               :webinar_id="ilId"
@@ -1317,8 +1318,8 @@ import moment from 'moment';
 import ChatComponent from '../../libs/chat';
 import Interactive from '../../libs/interactive';
 import streams from '../../libs/interactive/remoteStreams';
-// import DocList from '../../libs/doc-list';
-// import Doc from '@/components/Doc';
+import DocList from '../../libs/doc-list';
+import Doc from '@/components/Doc';
 // import this.$EventBus from '@/utils/Events';
 import Mediasettings from '../../libs/media-settings';
 import VirtualAudience from '../../libs/virtualAudience';
@@ -1436,8 +1437,8 @@ export default {
     hadEnvelope,
     Interactive,
     streams,
-    // DocList,
-    // Doc,
+    DocList,
+    Doc,
     ChatComponent,
     Mediasettings,
     VirtualAudience,
