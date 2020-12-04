@@ -121,6 +121,7 @@ export default {
         this.userInfo = res.data;
         this.versionType = res.data.edition;
         sessionOrLocal.set('versionType', JSON.stringify(res.data.edition));
+        sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
       }).catch(e=>{
         console.log(e);
       });

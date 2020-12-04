@@ -22,13 +22,13 @@
     </div>
     <el-card class="video-list">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-        :isCheckout="isCheckout" :isHandle="true" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
+       @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="240" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
     </el-card>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
-        <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
+      <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
       </el-dialog>
     </template>
   </div>
@@ -36,6 +36,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'video.vue',
   data() {
@@ -46,7 +47,7 @@ export default {
       videoParam: {},
       // 表格
       tableData: [],
-      isCheckout: true,
+      checkedList: [],
       tableRowBtnFun: [{name:'预览', methodName: 'preview'},{name:'编辑', methodName: 'update'},{name:'删除', methodName: 'del'}],
       tabelColumn: [
         {
@@ -72,7 +73,7 @@ export default {
       searchAreaLayout: [
         {
           type: "",
-          key: "searchTitle",
+          key: "title",
         }
       ],
     };
@@ -81,8 +82,9 @@ export default {
     PageTitle,
     VideoPreview,
   },
-  created() {
-    this.getList();
+  mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getTableList();
     this.initUpload();
   },
   methods: {
@@ -93,7 +95,7 @@ export default {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
+        this.$refs.tableList.clearSelect();
       }
       let obj = Object.assign({}, pageInfo, formParams);
       this.getList(obj);
@@ -140,7 +142,8 @@ export default {
         });
       },res=>{
         console.log(res, '成功');
-        // this.createVod(file, 'name');
+        console.log(res, 11111);
+        this.createVod(res.file);
       },err=>{
         console.log(err, '失败');
         this.tableData.shift();
@@ -148,8 +151,9 @@ export default {
         this.$message.error('本地上传失败');
       });
     },
-    createVod(_file,name){
-      this.UploadSDK.createDemand({ file: _file, fileName: name},(res)=>{
+    createVod(_file){
+      console.log(_file, '0000000000000000');
+      this.UploadSDK.createDemand({ file: _file, fileName: _file.name},(res)=>{
         this.tableData.forEach((ele)=>{
           if(ele.id == _file.id){
             ele.uploadObj = {
@@ -160,10 +164,9 @@ export default {
           }
         });
         console.warn(res);
-
-        // this.$fetch('dataVideoAdd', {video_id: res.recordId, user_id: 1333, filename: name, file_type: _file.type, file_size: _file.size}).then(res=>{
-        //   console.log(res, '上传成功');
-        // });
+        this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
+          console.log(res, '上传成功');
+        });
       },err=>{
         console.warn(err, '上传失败');
         this.tableData.shift();
@@ -183,14 +186,9 @@ export default {
         console.warn(err, '上传demo初始化失败');
       });
     },
-    getList(){
-      let data = {
-        user_id: '1333',
-        pos: 0,
-        limit: 12,
-        title: ''
-      };
-      this.$fetch('dataVideoList', data).then(res=>{
+    getList(obj){
+      obj.user_id = this.userId;
+      this.$fetch('dataVideoList', this.$params(obj)).then(res=>{
         if(res.code == 200){
           this.total = res.data.total;
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
@@ -229,7 +227,7 @@ export default {
         }).then(({ value }) => {
           let flag = Boolean(value.match(/^[ ]*$/));
           if(!flag && value!=null){
-            that.$fetch('dataVideoupdate', {video_id: _data.rows.id, user_id: '1333', file_name: value}).then(res=>{
+            that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, file_name: value}).then(res=>{
               console.warn('成功', res);
                 that.$message({
                   type: 'success',
@@ -246,7 +244,7 @@ export default {
             type: 'warning',
             center: true
           }).then(() => {
-            that.$fetch('dataVideoDel', {video_ids: _data.rows.id, user_id: '1333'}).then(res=>{
+            that.$fetch('dataVideoDel', {video_ids: rows.id, user_id:  this.userId}).then(res=>{
               console.warn('成功', res);
                 that.$message({
                   type: 'success',
@@ -263,8 +261,9 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    select(item){
-      console.log('列表选中', item);
+    changeTableCheckbox(item) {
+      this.checkedList.filter(item => item.id);
+      console.log(this.checkedList, '1231423543253');
     },
     pageSizeChange(page){
       console.log(page);

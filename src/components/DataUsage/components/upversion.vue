@@ -191,31 +191,30 @@ export default {
       });
     },
     payFlowList() {
-      this.tableList = [];
       let params = {
         user_id: this.userId,
         number: this.flows
       };
       this.$fetch('orderFlow', params).then(res =>{
         this.goPayList(res.data.order_id);
+        this.flows = 500;
       }).catch(e=>{
         console.log(e);
       });
     },
     payUpgradeList() {
-      this.tableList = [];
       let params = {
         user_id: this.userId,
         number: this.number
       };
       this.$fetch('orderUpgrade', params).then(res =>{
         this.goPayList(res.data.order_id);
+        this.number = 120;
       }).catch(e=>{
         console.log(e);
       });
     },
     payExtentList() {
-      this.tableList = [];
       let params = {
         user_id: this.userId,
         number: this.number
