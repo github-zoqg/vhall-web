@@ -4,9 +4,12 @@
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
       <div class="top-item">
-        <p>{{sonInfo && sonInfo.vipInfo && sonInfo.vipInfo.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
+        <p>{{sonInfo && sonInfo.vip_info && sonInfo.vip_info.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
         <p>
-          <count-to :startVal="0" :endVal="sonInfo && sonInfo.vipInfo && sonInfo.vipInfo.type > 0 ? Number(sonInfo.vipInfo.total_flow) : Number(sonInfo.vipInfo.total)" :duration="1500" v-if="sonInfo.vipInfo !== null && (sonInfo.vipInfo.total > 0 || sonInfo.vipInfo.total_flow > 0)"></count-to>
+          <count-to :startVal="0"
+                    :endVal="vipTotal"
+                    :duration="1500"
+                    v-if="vipTotal > 0"></count-to>
           <span v-else>0</span>
         </p>
       </div>
@@ -32,7 +35,7 @@
         <el-tab-pane label="角色" name="roleList"></el-tab-pane>
       </el-tabs>
       <!-- 列表区域 -->
-      <son-list ref="sonListComp" v-if="tabType === 'sonList'" :vipType="sonInfo.vipInfo.type"></son-list>
+      <son-list ref="sonListComp" v-if="tabType === 'sonList' && sonInfo && sonInfo.vip_info" :vipType="sonInfo.vip_info.type"></son-list>
       <role-list ref="roleListComp" v-if="tabType === 'roleList'"></role-list>
     </div>
   </div>
@@ -43,6 +46,7 @@ import PageTitle from '@/components/PageTitle';
 import SonList from './components/sonList';
 import RoleList from './components/roleList';
 import CountTo from 'vue-count-to';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'son.vue',
   components: {
@@ -54,38 +58,47 @@ export default {
   data() {
     return {
       tabType: 'sonList',
-      sonInfo: {
-        vipInfo: {}
-      }
+      sonInfo: null
     };
+  },
+  computed: {
+    vipTotal: function() {
+      if (this.sonInfo !== null && this.sonInfo.vip_info !== null) {
+        return this.sonInfo.vip_info.type > 0 ? Number(this.sonInfo.vip_info.total_flow) : Number(this.sonInfo.vip_info.total);
+      } else {
+        return 0;
+      }
+    }
   },
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
-      this.$refs[`${this.tabType}Comp`].initComp();
-    },
-    getSonInfo() {
-      this.$fetch('getSonInfo', {
-        user_id: 1
-      }).then(res => {
-        this.sonInfo = res && res.code === 200 && res.data ? res.data : null;
-      }).catch(e => {
-        console.log(e);
-        this.sonInfo = null;
+      this.$nextTick(() => {
+        this.$refs[`${this.tabType}Comp`].initComp();
       });
     },
-    async initPage() {
+    // 子账号Tab头部内容
+    getSonInfo() {
+      this.$fetch('getSonInfo', {
+        user_id: sessionOrLocal.get('userId')
+      }).then(res => {
+        if(res && res.code === 200) {
+          this.sonInfo = res.data;
+          this.tabType = 'sonList';
+          this.$nextTick(() => {
+            this.$refs[`sonListComp`].initComp();
+          });
+        }
+      }).catch(e => {
+        console.log(e);
+      });
+    },
+    initPage() {
       this.getSonInfo();// 获取子账号统计信息
     }
   },
   created() {
     this.initPage();
-  },
-  mounted() {
-    this.tabType = 'sonList';
-    this.$nextTick(() => {
-      this.$refs[`sonListComp`].initComp();
-    });
   }
 };
 </script>

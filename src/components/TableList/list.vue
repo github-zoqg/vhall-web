@@ -5,7 +5,7 @@
       :data="manageTableData"
       :row-key="setRowKeyFun"
       @selection-change="handleTableCheckbox"
-      max-height="450"
+      :max-height="maxHeight"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
     >
       <el-table-column
@@ -146,6 +146,10 @@ export default {
       type: Number,
       default: 200,
     },
+    maxHeight: {
+      type: [Number, String],
+      default: 450,
+    }
   },
   watch: {
     manageTableData: {

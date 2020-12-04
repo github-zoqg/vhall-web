@@ -3,49 +3,34 @@
     <h1>订单支付</h1>
     <el-card class="pay-main">
       <h2>订单信息</h2>
-      <el-table
-        :data="tableList"
-        :header-cell-style="{background:'#f7f7f7',color:'#666',height: '56px'}"
-        style="width: 100%">
-        <el-table-column
-          prop="name"
-          label="物品名称"
-          >
-        </el-table-column>
-        <el-table-column
-          prop="content"
-          label="购买内容"
-          >
-        </el-table-column>
-        <el-table-column
-          prop="type"
-          label="订单类型"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="fee"
-          label="金额"
-          width="180">
-        </el-table-column>
-      </el-table>
-      <div class="total">
-        <p>总金额: <span>￥{{totalFee}}.00</span> </p>
+      <div class="table-order table-order_1">
+        <div class="order-item">商品名称</div>
+        <div class="order-item">购买内容</div>
+        <div class="order-item">订单类型</div>
+        <div class="order-item">金额</div>
+      </div>
+      <div class="table-order">
+        <div class="order-item">{{ payInfo.type | orderTypeText }}套餐</div>
+        <div class="order-item">{{ payInfo.content }}</div>
+        <div class="order-item">{{ payInfo.type | orderTypeText }}</div>
+        <div class="order-item">{{ payInfo.amount }}</div>
+      </div>
+      <div class="table-order_2">
+        <p>总金额：<span>￥{{ payInfo.amount }}</span></p>
       </div>
       <div class="pay-method">
           <p>支付方式</p>
           <div class="pay-list">
-            <div class="pay-item" v-for="(item, index) in payList" :key="index" @click="changeColor(item)" :class="item.isChecked ? 'isActive' : ''">
-              <label class="img-tangle" v-show="item.isChecked">
+            <div class="pay-item">
+              <label class="img-tangle">
                 <i class="el-icon-check"></i>
               </label>
-              <img src="../../common/images/v35-webinar.png" alt="">
             </div>
-            <!-- <div class="pay-item" :class="isChecked ? '' : 'isActive'" @click="changeColor('wechat')">
-               <label class="img-tangle" v-show="!isChecked" >
+            <div class="pay-item">
+               <label class="img-tangle">
                 <i class="el-icon-check"></i>
               </label>
-              <img src="../../common/images/v35-webinar.png" alt="">
-            </div> -->
+            </div>
           </div>
           <el-dialog
             :visible.sync="dialogBuyVisible"
@@ -71,37 +56,25 @@ export default {
       isChecked: true,
       dialogBuyVisible: false,
       totalFee: 0,
-      payList: [
-        {
-          img: '../../common/images/v35-webinar.png',
-          type: 'alipay',
-          isChecked: true
-        },
-        {
-          img: '../../common/images/v35-webinar.png',
-          type: 'wechat',
-          isChecked: false
-        }
-      ],
+      payInfo: {},
       tableList: []
     };
   },
   created() {
-    if (this.$route.query.type == '1') {
-      // 专业版
-      this.payProfessionalList();
-    } else if (this.$route.query.type == '2') {
-      //流量版
-      this.payFlowList();
-    }else if (this.$route.query.type == '3') {
-      //升级并发
-      this.payUpgradeList();
-    } else {
-      //购买扩展买
-      this.payExtentList();
-    }
+    this.getPayDetail();
   },
   methods: {
+    getPayDetail() {
+      let params = {
+        user_id: this.$route.query.userId,
+        order_id: this.$route.query.orderId
+      };
+      this.$fetch('orderInfo', params).then(res =>{
+        this.payInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
     changeColor(item) {
       this.payList.map(items => {
         items.isChecked = false;
@@ -114,85 +87,6 @@ export default {
       };
       this.$fetch('payOrder', params).then(res =>{
         console.log(res.data);
-      }).catch(e=>{
-        console.log(e);
-      });
-    },
-    payProfessionalList() {
-      this.tableList = [];
-      let params = {
-        user_id: this.$route.query.userId
-      };
-      this.$fetch('orderProfessional', params).then(res =>{
-        this.totalFee = res.data.total_fee;
-        this.tableList.push({
-          id: res.data.order_id,
-          name: res.data.product_name,
-          content: res.data.content,
-          type: res.data.type,
-          fee: res.data.total_fee
-        });
-        console.log(res.data);
-      }).catch(e=>{
-        console.log(e);
-      });
-    },
-    payFlowList() {
-      this.tableList = [];
-      let params = {
-        user_id: this.$route.query.userId,
-        number: this.$route.query.number
-      };
-      this.$fetch('orderFlow', params).then(res =>{
-        this.totalFee = res.data.total_fee;
-        this.tableList.push({
-          id: res.data.order_id,
-          name: res.data.product_name,
-          content: res.data.content,
-          type: res.data.type,
-          fee: res.data.total_fee
-        });
-        // console.log(res.data);
-      }).catch(e=>{
-        console.log(e);
-      });
-    },
-    payUpgradeList() {
-      this.tableList = [];
-      let params = {
-        user_id: this.$route.query.userId,
-        number: this.$route.query.number
-      };
-      this.$fetch('orderUpgrade', params).then(res =>{
-        this.totalFee = res.data.total_fee;
-        this.tableList.push({
-          id: res.data.order_id,
-          name: res.data.product_name,
-          content: res.data.content,
-          type: res.data.type,
-          fee: res.data.total_fee
-        });
-        // console.log(res.data);
-      }).catch(e=>{
-        console.log(e);
-      });
-    },
-    payExtentList() {
-      this.tableList = [];
-      let params = {
-        user_id: this.$route.query.userId,
-        number: this.$route.query.number
-      };
-      this.$fetch('orderExtend', params).then(res =>{
-        this.totalFee = res.data.total_fee;
-        this.tableList.push({
-          id: res.data.order_id,
-          name: res.data.product_name,
-          content: res.data.content,
-          type: res.data.type,
-          fee: res.data.total_fee
-        });
-        // console.log(res.data);
       }).catch(e=>{
         console.log(e);
       });
@@ -225,6 +119,40 @@ export default {
         font-size: 16px;
         font-weight: 400px;
         padding-bottom: 24px;
+      }
+      .table-order{
+        padding: 0 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: left;
+        background: #Ffff;
+        .order-item{
+          height: 56px;
+          line-height: 56px;
+          width: 25%;
+          color: #1A1A1A;
+        }
+      }
+      .table-order_1{
+        width: 100%;
+        background: #F7F7F7;
+        .order-item{
+          color: #666666;
+        }
+      }
+      .table-order_2{
+         background: #F7F7F7;
+         height: 56px;
+         p{
+          float: right;
+          height: 56px;
+          line-height: 56px;
+          padding-right: 40px;
+          span{
+            color: #FB3A32;
+            font-weight: bold;
+          }
+        }
       }
       .total{
         background: #F7F7F7;

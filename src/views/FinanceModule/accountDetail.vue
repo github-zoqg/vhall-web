@@ -24,6 +24,7 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -134,6 +135,7 @@ export default {
     PageTitle
   },
   mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getDetailList();
   },
   methods: {
@@ -153,20 +155,20 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.user_id = '16417099';
+      paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
       this.$fetch('accountList', obj).then(res =>{
-        this.rowsList();
+        this.rowsList(res.data.list);
         console.log(res);
-        // this.totalNum = res.data.total;
+        this.totalNum = res.data.total;
         // this.tableList = res.data.list;
       }).catch(e=>{
         console.log(e);
       });
     },
-    rowsList() {
-      this.tableList.map(item => {
+    rowsList(data) {
+      this.tableList = data.map(item => {
         item.type = item.withdraw_type == '1' ? '红包': '直播';
         item.statusText = item.withdraw_status == '1' ? '成功': item.pay_type == '2' ? '失败' : '审核中';
         item.status = item.withdraw_status;

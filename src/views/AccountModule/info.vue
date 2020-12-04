@@ -16,26 +16,27 @@
       <!-- 右侧名片 -->
       <div class="account__panel--right">
         <div class="account--user">
-          <icon icon-class="saaszizhanghao_tubiao" style="font-size: 56px;"></icon>
-          <p class="account--title">{{accountInfo && accountInfo.nick_name ? accountInfo.nick_name : '--'}}</p>
-          <p class="account--notice">{{accountInfo && accountInfo.position ? accountInfo.position : '--'}}</p>
+          <!--<icon icon-class="saaszizhanghao_tubiao" style="font-size: 56px;"></icon>-->
+          <img :src="avatarImgUrl" class="image-avatar" alt=""/>
+          <p class="account--title">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</p>
+          <p class="account--notice">{{userInfo && userInfo.position ? userInfo.position : '--'}}</p>
         </div>
         <ul class="account--show">
           <li>
             <label>账号</label>
-            <p>{{accountInfo && accountInfo.name ? accountInfo.name : '--'}}</p>
+            <p>{{userInfo && userInfo.name ? userInfo.name : '--'}}</p>
           </li>
           <li>
             <label>公司</label>
-            <p>{{accountInfo && accountInfo.company ? accountInfo.company : '--'}}</p>
+            <p>{{userInfo && userInfo.company ? userInfo.company : '--'}}</p>
           </li>
           <li>
             <label>电话</label>
-            <p>{{accountInfo && accountInfo.phone ? `${accountInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '--'}}</p>
+            <p>{{userInfo && userInfo.phone ? `${userInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '--'}}</p>
           </li>
           <li>
             <label>邮箱</label>
-            <p>{{accountInfo && accountInfo.email ? `${accountInfo.email.replace(/(?<=.{2})[^@]+(?=.{2}@)/,"*****")}`: '--'}}</p>
+            <p>{{userInfo && userInfo.email ? `${userInfo.email.replace(/(?<=.{2})[^@]+(?=.{2}@)/,"*****")}`: '--'}}</p>
           </li>
         </ul>
       </div>
@@ -49,6 +50,7 @@ import BaseSet from '../AccountModule/baseSet';
 import ValidSet from '../AccountModule/validSet';
 import AccountSet from '../AccountModule/accountSet';
 import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   name: 'info.vue',
   components: {
@@ -60,21 +62,27 @@ export default {
   data() {
     return {
       tabType: null,
-      accountInfo: null
+      userInfo: null,
+      avatarImgUrl: ''
     };
   },
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
       this.$refs[`${this.tabType}Comp`].initComp();
+    },
+    updateAccount(account) {
+      this.userInfo = account;
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
-    let account_info = sessionOrLocal.get('userInfo');
-    if(account_info !== null) {
-      this.accountInfo = JSON.parse(account_info);
+    let userInfo = sessionOrLocal.get('userInfo');
+    if(userInfo !== null) {
+      this.userInfo = JSON.parse(userInfo);
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-
+    this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     this.tabType = 'baseSet';
     this.$refs[`baseSetComp`].initComp();
   }

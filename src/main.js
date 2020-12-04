@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import EventBus from './utils/Events';
-import { copy, dealObjectValue } from './utils/utils';
+import { copy, dealObjectValue, domainCovert } from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
@@ -40,7 +40,13 @@ Vue.config.productionTip = false;
 Vue.prototype.$EventBus = EventBus;
 Vue.prototype.$copyText = copy;
 Vue.prototype.$params = dealObjectValue;
-
+Vue.prototype.$domainCovert = domainCovert;
+window.SAAS_V3_COL = {
+  KEY_1: 'SAAS_V3_SON_VO', // 子账号个数
+  KEY_2: 'SAAS_V3_PID', // 用户ID
+  KEY_3: 'SAAS_V3_BASE64', // 控制台token
+  KEY_4: 'SAAS_V3_UO', // 用户对象
+};
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';

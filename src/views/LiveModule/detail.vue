@@ -22,11 +22,31 @@
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
             </p>
-            <p class="">
+            <div class="action-look">
               <el-button round size="mini" v-if="['3', '5'].includes(liveDetailInfo.webinar_state)">恢复预告</el-button>
-              <el-button round type="primary" size="mini">扫码</el-button>
-              <el-button round size="mini">查看</el-button>
-            </p>
+              <el-popover
+                  placement="bottom"
+                  trigger="hover"
+                  style="margin-right:15px"
+                >
+                <div class="invitation-code">
+                  <p>活动观看页</p>
+                  <img :src="showCode" alt="">
+                  <p><el-button round type="primary">下载二维码</el-button></p>
+                </div>
+                  <el-button round size="mini" slot="reference">扫码</el-button>
+              </el-popover>
+               <el-popover
+                  placement="bottom"
+                  trigger="hover"
+                >
+                <div class="invitation-code">
+                  <p>直播观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
+                  <p style="margin-top:20px;text-align: center;"><el-button round size="mini" type="primary" @click="doCopy">复制</el-button><el-button round size="mini" type="primary">打开页面</el-button></p>
+                </div>
+                  <el-button round size="mini" slot="reference">查看</el-button>
+              </el-popover>
+            </div>
           </div>
         </div>
       </el-col>
@@ -55,6 +75,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
+import QRcode from 'qrcode';
 export default {
   components: {
     PageTitle,
@@ -64,6 +85,8 @@ export default {
     return {
       msg: '',
       liveDetailInfo: {},
+      showCode: '',
+      link: 'http://e.vhall.com/mywebinar/invite-card/923464350/1734888',
       operas: {
         '准备': [
           { icon: '', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
@@ -125,12 +148,31 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         this.liveDetailInfo.webinar_state = 1;
+        this.getCode();
         console.log(res);
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
       }).finally(()=>{
         this.loading = false;
+      });
+    },
+    // 获取扫码查看
+    getCode() {
+      QRcode.toDataURL(
+      this.link,
+      (err, url) => {
+        console.log(err, url);
+        this.showCode = url;
+      }
+     );
+    },
+    // 复制
+    doCopy () {
+      this.$copyText(this.link).then(e => {
+        this.$message.success('复制成功！');
+      }).catch(error=>{
+        this.$message.error('复制失败！');
       });
     },
     blockHandler(item){

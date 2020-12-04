@@ -3,62 +3,76 @@
     <div class="sign--set--main">
       <div class="sign--set--left">
         <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="94px">
-          <el-form-item label="主办方信息">
+          <el-form-item label="主办方信息" prop="organizers_status">
             <div class="switch__box">
               <el-switch
-                v-model="signSetForm.switchMoe"
+                v-model="signSetForm.organizers_status"
+                :active-value="1"
+                :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.switchMoe ? '关闭后，观看端主办方信息，个人主页入口和关注按钮将被隐藏' : '已关闭，观看端主办方信息，个人主页入口和关注按钮已被隐藏'"
+                :active-text="signSetForm.organizers_status ? '关闭后，观看端主办方信息，个人主页入口和关注按钮将被隐藏' : '已关闭，观看端主办方信息，个人主页入口和关注按钮已被隐藏'"
               >
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="版权信息">
+          <el-form-item label="版权信息" prop="reserved_status">
             <div class="switch__box">
               <el-switch
-                v-model="signSetForm.switchAoe"
+                v-model="signSetForm.reserved_status"
+                :active-value="1"
+                :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.switchAoe ? '关闭后，观看端的底部版权信息降被隐藏' : '已关闭，观看端的底部版权信息已被隐藏'"
+                :active-text="signSetForm.reserved_status ? '关闭后，观看端的底部版权信息降被隐藏' : '已关闭，观看端的底部版权信息已被隐藏'"
               >
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="观看端标志">
+          <el-form-item label="观看端标志" prop="view_status">
             <div class="switch__box">
               <el-switch
-                v-model="signSetForm.switchClient"
+                v-model="signSetForm.view_status"
+                :active-value="1"
+                :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.switchClient ? '关闭后，观看端的标志将被隐藏' : '已关闭，观看端的标志已被隐藏'"
+                :active-text="signSetForm.view_status ? '关闭后，观看端的标志将被隐藏' : '已关闭，观看端的标志已被隐藏'"
               >
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="标志替换：" prop="avatar">
+          <el-form-item label="标志替换：" prop="logo_url">
             <upload
-              :class="'upload__sign heightMore'"
-              v-model="signSetForm.avatar"
+              class="upload__sign heightMore"
+              v-model="signSetForm.logo_url"
+              :saveData="{
+                 path: 'webinars/sign_set_url',
+                 type: 'image',
+              }"
               :on-success="handleUploadSuccess"
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
-              :before-upload="beforeUploadHandler">
+              :before-upload="beforeUploadHandler"
+              @delete="resetLogoUrl">
               <div slot="tip">
                 <p>最佳尺寸：240*78px</p>
                 <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
-            <p>开启时支持更换品牌标志</p>
+            <p class="p-notice">开启时支持更换品牌标志</p>
+          </el-form-item>
+          <el-form-item label="标志链接" prop="skip_url">
+            <el-input v-model.trim="signSetForm.skip_url" />
+          </el-form-item>
+          <el-form-item label="">
+            <el-button type="primary" round @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
       </div>
       <!-- 预览区域 -->
       <brand-set-preview ref="brandSetPreviewComp" class="brand--preview"></brand-set-preview>
-    </div>
-    <div class="btnGroup">
-      <el-button type="primary" round @click.prevent.stop="signSetSave">保 存</el-button>
     </div>
   </div>
 </template>
@@ -66,6 +80,7 @@
 <script>
 import Upload from '@/components/Upload/main';
 import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
+import Env from "@/api/env";
 export default {
   name: "signSet.vue",
   components: {
@@ -75,19 +90,28 @@ export default {
   data() {
     return {
       signSetForm: {
-        switchMoe: null,
-        switchAoe: null,
-        switchClient: null,
-        avatar: '',
+        organizers_status: 0,
+        reserved_status: 0,
+        view_status: 0,
+        logo_url: null,
+        skip_url: null
       },
       signSetFormRules: {
+        logo_url: [
+          { required: true, message: '请选择标志', trigger: ['blur', 'change'] }
+        ],
+        skip_url: [
+          { required: true, message: '请填写标志链接', trigger: ['blur', 'change'] }
+        ]
       }
     };
   },
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.signSetForm.logo_url = res.data.file_url;
+      // 触发验证
+      this.$refs.signSetForm.validateField('logo_url');
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -109,19 +133,56 @@ export default {
       console.log('uploadError', err, file, fileList);
       this.$message.error(`封面上传失败`);
     },
+    resetLogoUrl() {
+      this.$nextTick(()=> {
+        this.signSetForm.logoUrl = '';
+      });
+    },
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+    // 获取活动标记记录
+    getSignInfo() {
+      this.$fetch('getInterWebinarTag', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        console.log(res);
+        if (res && res.code === 200) {
+          this.signSetForm = res.data || {
+            organizers_status: 0,
+            reserved_status: 0,
+            view_status: 0,
+            logo_url: null,
+            skip_url: null
+          };
+          this.$EventBus.$emit('SAAS_V3_SIGN_PREVIEW', this.signSetForm);
+        } else {
+          this.signSetForm = {
+            organizers_status: 0,
+            reserved_status: 0,
+            view_status: 0,
+            logo_url: null,
+            skip_url: null
+          };
+        }
+      }).catch(err=>{
+        console.log(err);
+      });
+    },
     initComp() {
+      this.getSignInfo();// 获取活动标志内容
     },
     // 保存
     signSetSave() {
       this.$refs.signSetForm.validate((valid) => {
         if(valid) {
-          this.$fetch('userEdit', this.signSetForm).then(res => {
+          let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
+          this.$fetch('setInterWebinarTag', params).then(res => {
             console.log(res);
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
+              // 重新获取数据
+              this.getSignInfo();
             } else {
               this.$message.error(res.msg || '保存基本设置失败');
             }
@@ -161,6 +222,20 @@ export default {
 }
 /deep/.el-form-item {
   margin-bottom: 32px;
+}
+/deep/.el-switch__label {
+  color: #999999;
+}
+/deep/.el-switch__label.is-active {
+  color: #999999;
+}
+.p-notice {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #999999;
+  line-height: 20px;
+  margin-top: 12px;
 }
 /* 标志上传 */
 .upload__sign {

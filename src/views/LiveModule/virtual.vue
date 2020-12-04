@@ -1,44 +1,34 @@
 <template>
   <div>
     <pageTitle title="虚拟人数">
-      <el-switch
-        class="switch"
-        v-model="virtualSwitch"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        :active-text="virtualSwitch ? '开启后，观看端将显示真实数据+虚拟数据' : '已开启，观看端显示真实数据+虚拟数据'"
-        @change="setVirtualSwitch">
-      </el-switch>
+      <div slot="content">
+        1.人数：当前在线人数<br />2.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
+      </div>
     </pageTitle>
     <!-- 模式选择 -->
-    <div class="pre--full-mask">
-      <div class="pre--full-cover" v-show="!virtualSwitch"></div>
-      <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="180px">
-        <el-form-item label="生效模式：" prop="model">
-          <el-radio-group v-model="virtualForm.model">
-            <el-radio :label="1">立即生效</el-radio>
-            <el-radio :label="2">分时生效</el-radio>
-          </el-radio-group>
-          <p>注：保存后在真实数据基础上立即增加设置虚拟数据，建议直播中使用</p>
-        </el-form-item>
-        <el-form-item label="增加观看人数至：" prop="pv">
-          <el-input type="text" v-model="virtualForm.pv" placeholder="请输入1-999999之间正整数">
-            <template slot="append">人</template>
+    <div class="virtual-ctx">
+      <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="180px" width="360px">
+        <el-form-item label="人数增加：" prop="pv">
+          <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
+            <el-button class="no-border" size="mini" slot="append">人</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="增加热度至：" prop="online_num">
-          <el-input type="text" v-model="virtualForm.online_num" placeholder="热度不小于观看人数，且不超过999999">
-            <template slot="append">人</template>
+        <el-form-item label="热度增加：" prop="online">
+          <el-input  autocomplete="off" v-model.trim="virtualForm.online" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two">
+            <el-button class="no-border" size="mini" slot="append">人</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="执行时间：" prop="time" v-if="this.virtualForm.model === '2'">
-          <el-input type="text" v-model="virtualForm.time" placeholder="限制设置1-120分钟">
-            <template slot="append">分</template>
-          </el-input>
+        <el-form-item>
+          <div class="notice">
+            <p>提示：</p>
+            <p>1.保存成功后，观看页将在真实数据基础上立即增加设置的虚拟数据</p>
+            <p>2.活动重复开播，需要重新设置虚拟人数才能生效</p>
+            <p>3.控制台设置虚拟人数将会立即生效，直播间设置虚拟人数将会模拟真实场景逐渐累加数据，请按需使用</p>
+          </div>
         </el-form-item>
-        <div class="save-margin-top40">
-          <el-button type="primary" @click.prevent.stop="virtualSetSave">保 存</el-button>
-        </div>
+        <el-form-item label="">
+          <el-button type="primary" @click.prevent.stop="virtualSetSave" round>保 存</el-button>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -58,10 +48,10 @@ export default {
         return callback(new Error('请输入1~999,999之间的正整数'));
       } else if (!/^([1-9][0-9]{0,5})$/.test(value)) {
         return callback(new Error('请输入1~999,999之间的正整数'));
-      } else if (this.virtualForm.online_num > 0 && pvCount < Number(this.virtualForm.online_num)) {
+      } else if (this.virtualForm.online > 0 && pvCount < Number(this.virtualForm.online)) {
         return callback(new Error('热度不能大于观看人数的80%'));
       } else {
-        if (this.virtualForm.online_num !== '') {
+        if (this.virtualForm.online !== '') {
           this.$refs.virtualForm.clearValidate('online_num');
         }
         callback();
@@ -82,34 +72,17 @@ export default {
         callback();
       }
     };
-    let checkTime = (rule, value, callback) => {
-      if(this.virtualForm.model === '2') {
-        if (isNaN(value) || value < 1 || value > 120) {
-          return callback(new Error('请输入1-120之间的正整数'));
-        } else {
-          callback();
-        }
-      } else {
-        callback();
-      }
-    };
     return {
-      virtualSwitch: false,
       virtualForm: {
-        model: "1",
-        pv: null,
-        online_num: null,
-        time: null
+        pv: null, // pv
+        online: null // 在线人数
       },
       virtualFormRules: {
         pv: [
           { validator: checkPv, trigger: 'blur' }
         ],
-        online_num: [
+        online: [
           { validator: checkOnlineNum, trigger: 'blur' }
-        ],
-        time: [
-          { validator: checkTime, trigger: 'blur' }
         ]
       }
     };
@@ -117,54 +90,41 @@ export default {
   methods: {
     // 获取虚拟人数信息状态
     getVirtualInfo() {
-      this.$fetch('virtualGet', this.virtualForm).then(res => {
+      this.$fetch('virtualGet', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
+          res.data.pv = res.data.pv === 0 ? null : res.data.pv;
+          res.data.online = res.data.online === 0 ? null : res.data.online;
           this.virtualForm = res.data;
         } else {
           this.virtualForm = {
-            model: "1",
             pv: null,
-            online_num: null,
-            time: null
+            online: null
           };
         }
       }).catch(err=>{
         console.log(err);
         this.virtualForm = {
-          model: "1",
           pv: null,
-          online_num: null,
-          time: null
+          online: null
         };
-      });
-    },
-    // 虚拟人数开关
-    setVirtualSwitch() {
-      this.virtualSwitch = !this.virtualSwitch;
-      this.$fetch('virtualSetSave', {
-        virtualSwitch: !this.virtualSwitch
-      }).then(res => {
-        console.log(res);
-        if (res && res.code === 200) {
-          this.$message.success(!this.virtualSwitch ? '开启成功' : '关闭成功');
-        } else {
-          this.$message.error(res.msg || !this.virtualSwitch ? '开启失败' : '关闭失败');
-        }
-      }).catch(err=>{
-        console.log(err);
-        this.$message.error(!this.virtualSwitch ? '开启失败' : '关闭失败');
       });
     },
     // 虚拟人数设置保存
     virtualSetSave() {
       this.$refs.virtualForm.validate((valid) => {
         if(valid) {
-          this.$fetch('virtualSetSave', this.virtualForm).then(res => {
-            console.log(res);
+          let params = {
+            webinar_id: this.$route.params.str,
+            pv: this.virtualForm.pv,
+            online: this.virtualForm.online
+          };
+          this.$fetch('virtualSetSave', params).then(res => {
             if (res && res.code === 200) {
               this.$message.success('设置成功');
-              this.initPage();
+              this.getVirtualInfo();
             } else {
               this.$message.error(res.msg || '设置失败');
             }
@@ -183,10 +143,20 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.switch {
-  margin-left: 8px;
+.virtual-ctx {
+  .layout--right--main;
+  .padding41-40;
+  .min-height;
 }
-.save-btn {
-  text-align: center;
+/deep/.el-input {
+  width: 600px;
+}
+.notice {
+  p {
+    font-size: 12px;
+    color: #999999;
+    margin: 0 0;
+    line-height: 20px;
+  }
 }
 </style>

@@ -29,10 +29,10 @@ export default {
       let visitDataDate = [];
       let visitDataValue = [];
       data.map(item => {
-        visitDataDate.push(item.date);
+        visitDataDate.push(item.time);
         visitDataValue.push(item.value);
       });
-      console.log(visitDataDate, visitDataValue);
+      // console.log(visitDataDate, visitDataValue);
       // let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
       let options = {

@@ -10,8 +10,11 @@
       <!--PC预览,begin-->
       <div class="pc" v-show="switchType === 'pc'">
         <div :class="`skin-preview preview-${switchType} ${bgColorType}`">
+          <div></div>
           <div class="header">
-            <img src="../../../common/images/skin/black/header.png">
+            <div class="img-logo">
+              <img :src="logoUrl" alt="" v-if="logoUrl && signSetVo.view_status > 0"/>
+            </div>
           </div>
           <div class="player">
             <div class="player-content">
@@ -97,18 +100,31 @@
 </template>
 
 <script>
+import Env from "@/api/env";
+
 export default {
   name: "brandSetPreview.vue",
   data() {
     return {
       switchType: 'pc',
-      bgColorType: 'black'
+      bgColorType: 'black',
+      signSetVo: null,
+      logoUrl: null
     };
   },
   methods: {
     changeSwitch(type) {
       this.switchType = type;
+    },
+    signSetVoInfo(vo) {
+      this.$nextTick(() => {
+        this.signSetVo = vo;
+        this.logoUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.signSetVo.logo_url);
+      });
     }
+  },
+  mounted() {
+    this.$EventBus.$on('SAAS_V3_SIGN_PREVIEW', this.signSetVoInfo);
   }
 };
 </script>
@@ -156,11 +172,16 @@ export default {
     height: 117px;
     border: none;
     margin-bottom: -91px;
-    img {
-      margin: 0;
-      padding: 0;
-      width: 443px;
+    .img-logo {
+      width: 100%;
       height: 27px;
+      background: #ffffff;
+      img {
+        margin: 0 0 0 20px;
+        padding: 0;
+        width: auto;
+        height: 27px;
+      }
     }
   }
   .player {

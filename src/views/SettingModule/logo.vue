@@ -8,14 +8,15 @@
           class="upload__avatar"
           v-model="logoForm.logoUrl"
           :saveData="{
-             path: 'sys/logo_url',
+             path: 'webinars/img_url',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
+          :before-upload="beforeUploadHandler"
+          @delete="logoForm.logoUrl = ''">
           <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
@@ -30,6 +31,7 @@ import PageTitle from '@/components/PageTitle';
 import NoAuth from '../PlatformModule/Error/noAuth.vue';
 import Upload from '@/components/Upload/main';
 import Env from '@/api/env.js';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "logo.vue",
   components: {
@@ -82,6 +84,10 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     }
+  },
+  created() {
+    let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+    this.logoForm.logoUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '');
   }
 };
 </script>

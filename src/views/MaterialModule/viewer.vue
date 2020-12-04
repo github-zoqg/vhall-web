@@ -9,7 +9,7 @@
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button round @click.prevent.stop="importFileShow = true" size="medium">导入观众</el-button>
+          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
           <el-button round @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
           <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
@@ -35,6 +35,7 @@
           :isCheckout="isCheckout"
           :isHandle="isHandle"
           :totalNum="viewerDao.total"
+          maxHeight="100%"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
@@ -109,10 +110,10 @@
         <file-upload
           v-model="fileUrl"
           :saveData="{
-             path: 'sys/material_url',
+             path: pathUrl,
              type: 'exel',
-             force_name: '观众模板.xlsx'
           }"
+          :result="importResult"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -123,7 +124,7 @@
         </file-upload>
         <div class="dialog-right-btn">
           <div class="dialog-right-btn">
-            <el-button type="primary" @click="importFileShow = false" size="mini" round>确 定</el-button>
+            <el-button type="primary" @click="reloadViewerList" size="mini" round>确 定</el-button>
             <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
           </div>
         </div>
@@ -263,10 +264,15 @@ export default {
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
       importResult: {
-        fail: 0,
-        success: 0
+        fail_count: 0,
+        success_count: 0
       }
     };
+  },
+  computed: {
+    pathUrl: function() {
+       return `sys/${window.sessionStorage.getItem('userId')}_v3_${new Date().getTime()}`;
+    }
   },
   methods: {
     // 表格操作列回调函数， val表示每行
@@ -401,6 +407,15 @@ export default {
         };
       });
     },
+    // 打开导入观众弹出框
+    importViewerOpen() {
+      this.importFileShow = true;
+      this.fileUrl = null;
+      this.importResult = {
+        fail_count: 0,
+        success_count: 0
+      };
+    },
     // 创建观众
     viewerDialogAdd() {
       this.viewerDialogShow(this, {rows: null});
@@ -517,14 +532,15 @@ export default {
       console.log(res, file);
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
-        // 文件上传成功，保存信息
-      /*  this.$fetch('userEdit', {
-          logo: res.data.file_url
+        // 文件上传成功，导入观众
+        this.$fetch('viewerImport', {
+          file_url: res.data.file_url,
+          group_id: this.query.group_id
         }).then(resV => {
-          this.logoForm.logoUrl = resV.code === 200 ? Env.staticLinkVo.uploadBaseUrl + res.data.file_url : '';
+          resV.code === 200 ? this.importResult = resV.data : null;
         }).catch(e => {
-          this.$message.error('保存设置失败！');
-        });*/
+          this.$message.error('导入观众信息失败！');
+        });
       }
     },
     beforeUploadHandler(file){
@@ -552,29 +568,10 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
-    // 白名单导入观众至分组
-    viewerImport(e) {
-      this.file = e.target.files[0];
-      let params = {
-        path: this.file.name,
-        resfile: this.file,
-        type: 'excel'
-      };
-      this.$fetch('viewerImport', this.$params(params), {
-        'Content-Type': 'multipart/form-data'
-      }).then(res => {
-        res && res.code === 200 && res.data ? this.importResult = res.data : this.importResult = {
-          fail: 0,
-          success: 0
-        };
-        console.log(res);
-      }).catch(e => {
-        console.log(e);
-        this.importResult = {
-          fail: 0,
-          success: 0
-        };
-      });
+    reloadViewerList() {
+      this.importFileShow = false;
+      // 刷新列表数据
+      this.viewerList();
     },
   },
   created() {

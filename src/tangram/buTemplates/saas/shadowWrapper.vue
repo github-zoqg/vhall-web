@@ -1,7 +1,8 @@
 <template>
-  <div class="vhall-split-wrapbox">
+  <div class="vhall-split-wrapbox cxs">
     <publisher
        v-if="!!roomId && permission && !isSplited && splitStatus != 0"
+       v-bind="$attrs"
       :splitStatus="splitStatus"
       :roomId="roomId"
       :shareId="shareId"
@@ -29,6 +30,7 @@
 
     <shadow-view
       v-if="isSplited == 1 && !!roomId "
+       v-bind="$attrs"
       :splitStatus="splitStatus"
       :roomId="roomId"
       :ilId="ilId"

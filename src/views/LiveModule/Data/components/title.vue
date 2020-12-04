@@ -2,22 +2,22 @@
   <el-card class="container-box">
     <div class="flex-item">
       <div class="box-item">
-        <img src="@/common/images/v35-webinar.png" alt="" />
+        <img :src="liveDetailInfo.img_url" alt="" />
       </div>
       <div class="box-title">
-        <div class="title-status" v-if="isStatus === 1">
-          <i class="el-icon-share"></i>
+        <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
+          <img src="../../../../common/images/live.gif" alt="">
           <b>直播</b>
         </div>
         <div class="title-status grayColor" v-else>
-          <b>{{ isStatus === 2 ? '回放' : '结束' }}</b>
+          <b>{{ liveDetailInfo.webinar_state | actionText }}</b>
         </div>
         <div class="title-text">
           <p>
-            直播名称当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据,直播名称当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
+            {{ liveDetailInfo.subject }}
           </p>
         </div>
-        <div class="box-time">直播时间：2020-10-28 18:00:00</div>
+        <div class="box-time">直播时间：{{ liveDetailInfo.start_time }}</div>
       </div>
     </div>
   </el-card>
@@ -30,6 +30,24 @@ export default {
       default: 2,
     },
   },
+  data() {
+    return {
+      liveDetailInfo: {}
+    };
+  },
+  mounted() {
+    this.getLiveDetail(this.$route.params.str);
+  },
+  methods: {
+    getLiveDetail(id) {
+      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+        this.liveDetailInfo = res.data;
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      });
+    },
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -63,12 +81,13 @@ export default {
     text-align: center;
     background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
     border-radius: 10px;
-    i {
-      font-size: 12px;
-      padding-right: 3px;
+    img {
+      height: 8px;
+      width: 8px;
       vertical-align: top;
-      padding-top: 3px;
-      color: #fff;
+      margin: 5px;
+      background: #fff;
+      transform: rotate(180deg)
     }
     b {
       display: inline-block;

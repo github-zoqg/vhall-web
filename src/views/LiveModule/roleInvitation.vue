@@ -9,6 +9,8 @@
       <el-switch
         class="el-role-switch"
         v-model="roleSwitch"
+        :active-value="1"
+        :inactive-value="0"
         @change="updateSwitch"
         active-color="#FB3A32"
         inactive-color="#CECECE"
@@ -188,7 +190,8 @@ export default {
       }
     };
     return {
-      roleSwitch: false,
+      roleSwitch: null,
+      webinarVo: {},
       privilegeVo: {
         host_password: '',
         guest_password: '',
@@ -215,56 +218,58 @@ export default {
   computed: {
     urlText1: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
-              直播名称：${this.privilegeVo.subject}
-              直播ID：${this.privilegeVo.webinar_id}
-              开始时间：${this.privilegeVo.start_time}
-              主持人口令：${this.privilegeVo && this.privilegeVo.host_password ? this.privilegeVo.host_password : '未设置'}
-              加入链接：${'/mywebinar/host-login/'+ this.privilegeVo.webinar_id }`;
+直播名称：${this.privilegeVo.subject}
+直播ID：${this.privilegeVo.webinar_id}
+开始时间：${this.privilegeVo.start_time}
+主持人口令：${this.privilegeVo && this.privilegeVo.host_password ? this.privilegeVo.host_password : '未设置'}
+加入链接：${'/mywebinar/host-login/'+ this.privilegeVo.webinar_id }`;
     },
     urlText2: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
-              直播名称：${this.privilegeVo.subject}
-              直播ID：${this.privilegeVo.webinar_id}
-              开始时间：${this.privilegeVo.start_time}
-              嘉宾口令：${this.privilegeVo && this.privilegeVo.guest_password ? this.privilegeVo.guest_password : '未设置'}
-              加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+直播名称：${this.privilegeVo.subject}
+直播ID：${this.privilegeVo.webinar_id}
+开始时间：${this.privilegeVo.start_time}
+嘉宾口令：${this.privilegeVo && this.privilegeVo.guest_password ? this.privilegeVo.guest_password : '未设置'}
+加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
     },
     urlText3: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
-              直播名称：${this.privilegeVo.subject}
-              直播ID：${this.privilegeVo.webinar_id}
-              开始时间：${this.privilegeVo.start_time}
-              助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
-              加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+直播名称：${this.privilegeVo.subject}
+直播ID：${this.privilegeVo.webinar_id}
+开始时间：${this.privilegeVo.start_time}
+助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
+加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
     }
   },
   methods: {
     updateSwitch() {
       let roleSwitch = this.roleSwitch; // 目标
-      this.roleSwitch = !roleSwitch;
-      this.$fetch('privilegeOpen', {
-        webinar_id: this.$route.params.str,
-        is_privilege: Number(roleSwitch)
-      }).then(res => {
-        if (res && res.code === 200 && res.data.is_privilege === 1) {
-          this.$message.success('开启成功');
-          this.roleSwitch = !this.roleSwitch;
-          // 获取 getPrivilegeInfo 活动角色配置接口
-        }else if (res && res.code === 200 && res.data.is_privilege === 0) {
-          this.$message.success('关闭成功');
-          this.roleSwitch = !this.roleSwitch;
-          // 获取 getPrivilegeInfo 活动角色配置接口
-        } else if (res && res.code === 200 && res.data.type === 1) {
-          this.$message.error('直播中不能设置该功能');
-        } else if (res && res.code === 1001) {
-          this.$message.error('直播中不能设置该功能');
-        } else {
-          this.$message.error(res.msg || roleSwitch ? `开启失败` : `开启失败`);
-        }
-      }).catch(er => {
-        console.log(er);
-        this.$message.error(roleSwitch ? `开启失败，` : `开启失败`);
-      });
+      this.roleSwitch = Number(!roleSwitch);
+      if(this.webinarVo.webinar_state === 1) {
+        // 如果為~直播中
+        this.$message.error('直播中不能设置该功能');
+      } else {
+        this.$fetch('privilegeOpen', {
+          webinar_id: this.$route.params.str,
+          is_privilege: roleSwitch
+        }).then(res => {
+          if (res && res.code === 200 && Number(res.data.is_privilege) === 1) {
+            this.$message.success('开启成功');
+            this.roleSwitch = Number(!this.roleSwitch);
+            // 获取 getPrivilegeInfo 活动角色配置接口
+            this.getPrivilegeInfo();
+          }else if (res && res.code === 200 && Number(res.data.is_privilege) === 0) {
+            this.$message.success('关闭成功');
+            // 获取 getPrivilegeInfo 活动角色配置接口
+            this.getPrivilegeInfo();
+          } else {
+            this.$message.error(res.msg || roleSwitch ? `开启失败` : `开启失败`);
+          }
+        }).catch(er => {
+          console.log(er);
+          this.$message.error(roleSwitch ? `开启失败，` : `开启失败`);
+        });
+      }
     },
     privilegeEditHandle() {
       // type = 0 助理；1 嘉宾；2 主持人。
@@ -302,6 +307,7 @@ export default {
       this.pwdForm.keyName = keyName;
       this.pwdForm.type = type;
     },
+    // 保存權限
     savePremHandle(keyName) {
       let keysObj = this.privilegeVo.permission_data[keyName];
       let {keys,values} = Object;
@@ -312,10 +318,12 @@ export default {
       });
       obj.webinar_id = this.$route.params.str;
       obj.type = keyName === 'assistant' ? 0 : 1; // 0 助理 1 嘉宾
+      obj.webinar_type = this.privilegeVo.webinar_type; // 活动类型 1:音频 2:视频 3:互动
       // console.log(obj);
       this.$fetch('privilegePrem', obj).then(res => {
         if(res && res.code === 200) {
           this.$message.success('保存成功');
+          this.getPrivilegeInfo();
         } else {
           this.$message.error(res.msg || '保存失败');
         }
@@ -328,7 +336,12 @@ export default {
       this.$fetch('privilegeInfo', {
         webinar_id: this.$route.params.str,
       }).then(res => {
-          res && res.code === 200 && res.data ? this.privilegeVo = res.data : this.privilegeVo = {};
+          if(res && res.code === 200 && res.data) {
+            this.privilegeVo = res.data;
+            this.roleSwitch = res.data.is_privilege;
+          } else {
+            this.privilegeVo = {};
+          }
       }).catch(e => {
         console.log(e);
         this.privilegeVo = {};
@@ -348,11 +361,28 @@ export default {
         // 释放内存
         clipboard.destroy();
       });
+    },
+    async getWebinarInfo() {
+      await this.$fetch('getWebinarInfo', {
+        webinar_id: this.$route.params.str,
+      }).then(res => {
+        if(res && res.code === 200 && res.data) {
+          res.data.webinar_state = 1; // TODO 模擬直播中狀態
+          this.webinarVo = res.data || {};
+        } else {
+          this.webinarVo = {};
+        }
+      }).catch(e => {
+        console.log(e);
+        this.webinarVo = {};
+      });
+      // 根据ID获取活动-角色配置信息
+      this.getPrivilegeInfo();
     }
   },
   created() {
-    // 根据ID获取活动信息
-    this.getPrivilegeInfo();
+    // 根據活動ID獲取活動信息
+    this.getWebinarInfo();
   }
 };
 </script>

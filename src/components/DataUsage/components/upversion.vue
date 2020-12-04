@@ -9,14 +9,14 @@
       <el-form label-width="85px">
         <el-form-item label="套餐单价">
           <div class="img-box">
-            <h3>{{ title === '升级'? '￥60.00' : '￥40.00'}}</h3>
+            <h3>{{ title === '升级'?  `￥${ concurrentPrice.concurrency_fee }` : `￥${ concurrentPrice.extend_fee }`}}</h3>
             <p>{{ title === '升级'? '元/人/月' : '元/人'}}</p>
             <span>{{ title === '升级'? '升级套餐' : '扩展包'}}</span>
           </div>
         </el-form-item>
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
           <el-input v-model="number" style="width: 398px"
-            ><template slot="append">人</template></el-input
+            oninput="this.value=this.value.replace(/[^\d]/g, '')"><template slot="append">人</template></el-input
           >
           <p class="inputNums">当前并发20人 20-99999</p>
         </el-form-item>
@@ -24,7 +24,7 @@
           <div class="informtion">
             <div class="inform-pay">
               <h3>支付金额: <b>{{ title === '升级'? concurrentPrice.concurrency_fee * number :  concurrentPrice.extend_fee * number }}</b></h3>
-              <p>有效期10个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
+              <p>有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
             </div>
             <div class="xieyi">
               <el-checkbox v-model="checked"
@@ -107,6 +107,7 @@
   </div>
 </template>
 <script>
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   props: ['title', 'concurrentPrice'],
   data() {
@@ -151,6 +152,9 @@ export default {
       }
     }
   },
+  created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
+  },
   methods: {
     choseVersion(items) {
       this.flows = items.numFlow;
@@ -162,27 +166,66 @@ export default {
     // 升级扩展、并发
     orderExtent() {
       // type 3:升级并发  4:购买扩展包
-      this.$router.push({
-        name: 'payOrder',
-        query: {
-          type: this.title == '升级' ? 3 : 4,
-          userId: 16417099,
-          number: this.number
-        }
-      });
+      if (this.number < this.concurrentPrice.total_concurrency) {
+        this.$message.error('需要大于当前并发人数');
+        return;
+      }
+      if (this.title == '升级') {
+        this.payUpgradeList();
+      } else {
+        this.payExtentList();
+      }
     },
     // 购买专业版、流量
     buyProfessional() {
       // type 1:购买专业版  2:购买流量版
+      this.payFlowList();
+    },
+    goPayList(id) {
       this.$router.push({
         name: 'payOrder',
         query: {
-          type: this.title == '专业版' ? 1 : 2,
-          userId: 16417099,
-          number: this.flows
+          userId: this.userId,
+          orderId:  id
         }
       });
-    }
+    },
+    payFlowList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.userId,
+        number: this.flows
+      };
+      this.$fetch('orderFlow', params).then(res =>{
+        this.goPayList(res.data.order_id);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    payUpgradeList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.userId,
+        number: this.number
+      };
+      this.$fetch('orderUpgrade', params).then(res =>{
+        this.goPayList(res.data.order_id);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    payExtentList() {
+      this.tableList = [];
+      let params = {
+        user_id: this.userId,
+        number: this.number
+      };
+      this.$fetch('orderExtend', params).then(res =>{
+       this.goPayList(res.data.order_id);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
   }
 };
 </script>

@@ -8,7 +8,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="value" class="avatar">
+          <img :src="picValue" class="avatar" alt="" />
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
@@ -52,10 +52,10 @@ export default {
     ...Object.assign(Upload.props, {
       saveData: {
         type: Object,
-        default: {
+        default: () => ({
           path: 'sys/img_url',
           type: 'image',
-        }
+        })
       },
       action: {
         type: String,
@@ -65,10 +65,10 @@ export default {
         type: String,
         default: "picture-card"
       },
-      'on-progress': {
-        type: Function,
-        default: ()=> this.uploadProcess
-      },
+      // 'on-progress': {
+      //   type: Function,
+      //   default: ()=> this.uploadProcess
+      // },
       'on-error': {
         type: Function,
         default: ()=> this.uploadError
@@ -101,6 +101,11 @@ export default {
     'on-success': {
       type: Function,
       default: ()=>{}
+    }
+  },
+  computed: {
+    picValue: function() {
+      return this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.value);
     }
   },
   created(){
