@@ -45,9 +45,6 @@ export default {
     },
     atList: {
       required: true
-    },
-    interactToken: {
-      type: String
     }
   },
   data () {
@@ -82,7 +79,6 @@ export default {
     EventBus.$on('assistantKickoutCallback', msg => {
       if (msg.type == 0) return;
       this.$fetch('setKickOut', {
-        'interact-token': this.interactToken,
         room_id: this.roomId,
         receive_account_id: msg.data.room_join_id,
         status: 1
@@ -114,7 +110,6 @@ export default {
     getUserStatus () {
       return new Promise((resolve, reject) => {
         this.$fetch('getToolStatus', {
-          'interact-token': this.interactToken,
           room_id: this.roomId
         }).then(res => {
           resolve(res.data);
@@ -127,7 +122,6 @@ export default {
     setBanned () {
       let nextStatus = this.userStatus.is_banned ? 0 : 1;
       this.$fetch('setBanned', {
-        'interact-token': this.interactToken,
         receive_account_id: this.accountId,
         status: nextStatus,
         room_id: this.roomId
@@ -152,7 +146,6 @@ export default {
       })
         .then(() => {
           this.$fetch('setKickOut', {
-            'interact-token': this.interactToken,
             room_id: this.roomId,
             receive_account_id: this.accountId,
             status: nextStatus

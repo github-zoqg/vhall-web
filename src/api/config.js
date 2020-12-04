@@ -364,13 +364,34 @@ const apis = {
   setAllBanned: ['/v3/interacts/chat-user/set-all-banned', 'POST'], // 设置全体禁言
   setKickOut: ['/v3/interacts/chat-user/set-kicked', 'POST'], // 踢出取消踢出
   setBanned: ['/v3/interacts/chat-user/set-banned', 'POST'], // 设置禁言
-
+  getHistoryQaMsg: ['/v3/interacts/qa/get-webinar-history-questions', 'POST'], // 获取历史问答记录
+  sendQaMsg: ['/v3/interacts/qa/submit-one-question', 'POST'], // 发送问答
+  getBannedList: ['/v3/interacts/chat-user/get-banned-list', 'POST'], // 获取禁言列表
+  getKickList: ['/v3/interacts/chat-user/get-kicked-list', 'POST'], // 获取踢出列表
+  getOnlineList: ['/v3/interacts/chat-user/get-online-list', 'POST'], // 获取在线列表
   // 礼物
   sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
 
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
+
+  // 打赏
+  seadAwardMsg: ['/v3/interacts/reward/create-user-reward', 'POST'], // 打赏
+  getQeustionList: ['/v3/vss/survey/list-webinar-survey', 'POST'], // 获取问卷列表
+
+  // 抽奖
+  saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息 
+  // 问卷
+  submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
+
+  // 开平海报
+  getPlaybillInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报信息
+  // 互动
+  setMainScreen: ['/v3/interacts/room/set-main-screen', 'POST'], // 设置主屏
+  setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
+  setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
+  allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
   
 };
 

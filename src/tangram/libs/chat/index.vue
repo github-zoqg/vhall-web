@@ -43,7 +43,6 @@
         :roomId="roomId"
         :webinarId="webinarId"
         :allBanned="allBanned"
-        :interactToken="interactToken"
         ref="chatFilter"
         :chatFilterUrl="chatFilterUrl"
         :isAssistant='assistantType'
@@ -103,7 +102,7 @@
       </div>
     </div>
     <img-preview ref="imgPreview" :imgs="previewImgList"></img-preview>
-    <chat-user-control :roomId="roomId" :userId="userId" :reply="reply" :deleteMsg="deleteMsg" :atUser="atUser" :atList="atList" :interactToken="interactToken"></chat-user-control>
+    <chat-user-control :roomId="roomId" :userId="userId" :reply="reply" :deleteMsg="deleteMsg" :atUser="atUser" :atList="atList"></chat-user-control>
   </div>
 </template>
 <script>
@@ -189,9 +188,6 @@ export default {
     showControl: {
       type: Boolean,
       default: true
-    },
-    interactToken: {
-      required: true
     },
     plugin: {
       type: Object,
@@ -533,7 +529,6 @@ export default {
     // 获取历史消息
     getHistoryMsg () {
       this.$fetch('getHistoryChat', {
-        'interact-token': this.interactToken,
         room_id: this.roomId,
         start_time: '',
         pos: Number(this.curr_page )* 50,
@@ -647,7 +642,6 @@ export default {
       }) || {};
       setTimeout(() => {
         this.$fetch('deleteMsg', {
-          'interact-token': this.interactToken,
           channel_id: msgToDelete.channel,
           msg_id: msgToDelete.msgId,
           room_id: this.roomId

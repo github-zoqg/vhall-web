@@ -90,9 +90,6 @@ export default {
     vss_token: {
       required: true
     },
-    token: {
-      required: true
-    },
     red_packet_uuid: {
       required: true
     },
@@ -111,7 +108,6 @@ export default {
         red_packet_uuid: this.red_packet_uuid
       };
       this.$fetch('redPackInfo', {
-        'interact-token': this.token,
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid
       }).then((res) => { // 我的红包信息
@@ -146,7 +142,6 @@ export default {
         order: 'created_at'
       };
       this.$fetch('redEnvCollectionRecord', {
-        'interact-token': this.token,
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid,
         order: 'created_at',
@@ -204,7 +199,6 @@ export default {
       if (((container.offsetHeight + container.scrollTop) > (container.scrollHeight)) && !this.scrollLock) {
         this.page = this.page + 1;
         this.$fetch('redEnvCollectionRecord', {
-          'interact-token': this.token,
           room_id: this.room_id,
           red_packet_uuid: this.red_packet_uuid,
           order: 'created_at',

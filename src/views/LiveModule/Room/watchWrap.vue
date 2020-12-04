@@ -1287,7 +1287,7 @@ export default {
     },
     async handleRoomInfo (roomData) {
       let configList = await this.getConfigList(roomData.webinar.userinfo.user_id) // 获取观看端配置项
-      let stars = await this.getTotalLike() // 获取总点赞数
+      let stars = await this.getTotalLike(roomData.interact.room_id) // 获取总点赞数
       let ads = await this.getAdsInfo() // 活动下所有推荐
       let marquee = await this.getMarqueenInfo() // 跑马灯
       let water = await this.getWaterInfo() // 获取水印信息
@@ -1311,7 +1311,7 @@ export default {
           is_replay = 0,
           modules = {},
           open_question = 0,
-          paas_record_id = '', // TODO:
+          paas_record_id = '',
           player = {},
           push_definition = '',
           record_history_time = '',
@@ -1447,8 +1447,7 @@ export default {
         saas_chat,
         share_id,
         player,
-        modules,
-        'interact-token': data.interact['interact_token']
+        modules
       }
       if (this.roominfo.modules && this.roominfo.modules.barrage) {
         this.roominfo.player.barrage = this.roominfo.modules.barrage.hide
@@ -1498,6 +1497,7 @@ export default {
       // 存取VssToke
       sessionStorage.setItem('vhall-vsstoken', vss_token)
       sessionStorage.setItem('moduleShow', JSON.stringify(this.roominfo))
+      sessionStorage.setItem('interact_token', data.interact.interact_token)
       // 关注的显示
       this.roominfo.modules.attention.show == 1
         ? (this.attentionShow = true)
@@ -1667,10 +1667,9 @@ export default {
       })
     },
     // 获取总点赞数
-    getTotalLike () {
+    getTotalLike (id) {
       this.$fetch('likeTotal', {
-        'interact-token': 'asdasdasd',
-        // token: 'adsasdasd'
+        room_id: id
       }).then((res) => {
         if (res.code == 200) {
           return res.data.total

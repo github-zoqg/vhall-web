@@ -196,22 +196,8 @@ export default {
       },
       true
     );
-
-    // this.$vhallFetch('getQAHistroy', {
-    //   webinar_id: this.webinarId,
-    //   join_id: this.joinId
-    // })
-    //   .then((res = {data: []}) => {
-    //     const list = res.data.map((h) => {
-    //       return {...h, content: this.emojiToText(h.content)};
-    //     });
-    //     this.msgList = list;
-    //     if (this.msgList.length && !this.masterEnd) {
-    //       this.$parent.qaVisible = true;
-    //     }
-    //   })
-    //   .catch(res => {});
-      this.$vhallFetch('getQAHistroy', {
+    // TODO:
+    this.$fetch('getHistoryQaMsg', {
       webinar_id: this.webinarId,
       join_id: this.joinId
     })
@@ -313,7 +299,8 @@ export default {
             this.inputStatus.placeholder = '说点什么吧';
           }
         } else {
-          this.$vhallFetch('sendQuestion', {
+          // TODO:
+          this.$fetch('sendQaMsg', {
             webinar_id: this.webinarId,
             content: this.inputValue,
             join_id: this.joinId

@@ -50,9 +50,6 @@ export default {
     },
     isAssistant: {
       required: true
-    },
-    interactToken: {
-      required: true
     }
   },
   data () {
@@ -99,7 +96,6 @@ export default {
     },
     setAllBanned (flag) {
       this.$fetch('setAllBanned', {
-        'interact-token': this.interactToken,
         room_id: this.roomId,
         status: flag ? 1 : 0
       }).catch(error => {

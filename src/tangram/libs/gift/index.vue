@@ -93,9 +93,6 @@ export default {
     },
     vssToken: {
       required: true
-    },
-    interactToken: {
-      type: String
     }
   },
   data () {
@@ -221,8 +218,7 @@ export default {
     praise () {
       this.$fetch('like', {
         room_id: this.roomId,
-        num: this.times,
-        'interact-token': this.interactToken
+        num: this.times
       }).then((res) => {
         if (res.code === 200) {
           console.log(res)

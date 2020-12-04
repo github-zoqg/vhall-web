@@ -153,10 +153,11 @@ export default {
         this.customMoney = '金额格式错误';
         return;
       }
-
       let data = {
+        webinar_id: '',
+        room_id: this.roomId,
         reward_amount: money,
-        room_id: this.roomId
+        open_id: ''
       };
       if (this.radio == 1) {
         Object.assign(data, {
@@ -169,16 +170,20 @@ export default {
           service_code: 'QR_PAY'
         });
       }
-      this.$vhallFetch('reward', {...data, describe: this.rewardWord}).then(res => {
+      // TODO:
+      this.$fetch('seadAwardMsg', {
+        ...data,
+        describe: this.rewardWord
+      }).then(res => {
         if (res.code === 200) {
           if (this.radio == 1) {
             let link = document.createElement('a');
-            link.href = res.data.pay_data;
+            link.href = res.data.pay_data.url;
             link.target = '_blank';
             link.click();
           } else {
             QRcode.toDataURL(
-              res.data.pay_data,
+              res.data.pay_data.url,
               (err, url) => {
                 this.wechatPay = true;
                 this.wechatPayImg = url;

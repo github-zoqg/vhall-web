@@ -133,7 +133,8 @@ export default {
     },
     praise () {
       window.vhallReport.report('PRAISE');
-      this.$vhallFetch('like', {
+      // TODO:
+      this.$fetch('like', {
         room_id: this.roomId,
         num: this.timess
       }).then(res => {

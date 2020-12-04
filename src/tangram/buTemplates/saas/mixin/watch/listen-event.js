@@ -283,16 +283,14 @@ export const listenEvent = {
         if (msg.room_join_id == this.roomInfo.third_party_user_id) {
           // 更新上麦人员列表
           let speakList = await this.$fetch('speakList', {
-            room_id: this.bizInfo.room_id,
-            'interact-token': this.bizInfo['interact-token']
+            room_id: this.bizInfo.room_id
           }).then(res => {
             if (res.code == 200 && res.data.list) {
               return res.data.list
             }
           })
           await this.$fetch('queryRoomInterInfo', {
-            room_id: this.bizInfo.room_id,
-            'interact-token': this.bizInfo['interact-token']
+            room_id: this.bizInfo.room_id
           }).then(res => {
             this.mainScreen = res.data.main_screen
             this.speakerList = speakList
@@ -301,8 +299,7 @@ export const listenEvent = {
           this.handShow = false; // 上麦按钮关闭
           this.lowerWheat = true; // 上麦的状态
           this.$fetch('speakOn', { // 上麦接口成功后出发vrtc_connect_success消息，监听到该消息后手动维护speakerList，渲染互动组件 互动组件初始化互动sdk后 执行autorepushstream方法判断该用户是否已上麦，若已上麦就开始推流
-            room_id: this.bizInfo.room_id,
-            'interact-token': this.bizInfo['interact-token']
+            room_id: this.bizInfo.room_id
           }).then(() => {
             this.interactiveShow = true;
             this.loading = true;

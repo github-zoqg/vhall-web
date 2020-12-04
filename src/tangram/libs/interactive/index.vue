@@ -597,13 +597,12 @@ export default {
         muteDevice = 2;
         status = this.videoMuteStatus ? 0 : 1;
       }
-
-      this.$vhallFetch('muteDevic', {
+      // TODO:
+      this.$fetch('setRoomDevice', {
         room_id: this.roomId,
+        receive_account_id: this.accountId,
         device: muteDevice,
         status: status,
-        account_Id: this.accountId,
-        receive_account_id: this.accountId
       });
     },
 
@@ -837,9 +836,8 @@ export default {
      */
     async speakOn () {
       return new Promise((resolve, reject) => {
-        return this.$vhallFetch('speakOn', {
-          room_id: this.roomId,
-          receive_account_id: this.accountId
+        return this.$fetch('speakOn', {
+          room_id: this.roomId
         }).then(async () => {
           this.audioMuteStatus = false; // 修复13329
           this.videoMuteStatus = false; // 修复13329
@@ -861,11 +859,12 @@ export default {
      * 下麦 - 动作
      * @param { String } accountId
      * @return { Promise }
+     * TODO:
+     * 
      */
     speakOff (accountId) {
-      return this.$vhallFetch('speakOff', {
-        room_id: this.roomId,
-        receive_account_id: accountId || this.accountId
+      return this.$fetch('speakOff', {
+        room_id: this.roomId
       }).then(() => {
         if (this.accountId == this.mainScreen && this.roleName == 4) {
           this.setOwner(this.ownerId);
@@ -1632,19 +1631,20 @@ export default {
         const mainScreenStream = mainScreenUser.streams.find(s => s.streamType == 2) || {};
         if (!mainScreenStream.streamId) return EventBus.$emit('BIGSCREENSET_FAILED');
       }
-      this.$vhallFetch('setMainScreen', {
+      // TODO:
+      this.$fetch('setMainScreen', {
         receive_account_id: accountId || this.accountId,
         room_id: this.roomId
       });
-
-      this.$vhallFetch('setSpeaker', {
+      // TODO:
+      this.$fetch('setSpeaker', {
         receive_account_id: accountId || this.accountId,
         room_id: this.roomId
       });
     },
-
+    // TODO:
     setMainScreen (status) {
-      this.$vhallFetch('setMainScreen', {
+      this.$fetch('setMainScreen', {
         receive_account_id: this.accountId,
         room_id: this.roomId
       });
