@@ -98,6 +98,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import Env from '@/api/env.js';
 export default {
   data() {
     return {
@@ -169,10 +170,19 @@ export default {
       console.log(data);
       this.$fetch('liveList', data).then(res=>{
         console.log(res);
-        this.liveList = res.data.list;
-        this.totalElement = res.data.total;
+        if (res && res.code === 200) {
+          let list = res.data.list;
+          list.map(item => {
+            item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
+          });
+          this.liveList = res.data.list;
+          this.totalElement = res.data.total;
+        } else {
+          this.liveList = [];
+          this.totalElement = 0;
+        }
       }).catch(error=>{
-        this.$message.error(`获取直播列表失败,${error.errmsg || error.message}`);
+        // this.$message.error(`获取直播列表失败,${error.msg || error.message}`);
         console.log(error);
       }).finally(()=>{
         this.loading = false;

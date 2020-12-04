@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import EventBus from './utils/Events';
-import { copy, dealObjectValue, domainCovert } from './utils/utils';
+import { copy, dealObjectValue, domainCovert, parseURL } from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
@@ -39,8 +39,9 @@ Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 Vue.prototype.$EventBus = EventBus;
 Vue.prototype.$copyText = copy;
-Vue.prototype.$params = dealObjectValue;
-Vue.prototype.$domainCovert = domainCovert;
+Vue.prototype.$params = dealObjectValue; //去除空值参数转换
+Vue.prototype.$domainCovert = domainCovert;// 添加域名
+Vue.prototype.$parseURL = parseURL; // 去除域名//t-alistatic01.e.vhall.com/upload/
 window.SAAS_V3_COL = {
   KEY_1: 'SAAS_V3_SON_VO', // 子账号个数
   KEY_2: 'SAAS_V3_PID', // 用户ID

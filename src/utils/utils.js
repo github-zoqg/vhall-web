@@ -131,3 +131,14 @@ export function domainCovert(baseDomain, url) {
     return `${baseDomain}${url}`;
   }
 }
+
+/**
+ * parseURL 路径转换 去除//t-alistatic01.e.vhall.com/upload/
+ **/
+export function parseURL(url) {
+  let a = document.createElement('a');
+  a.href = url;
+  return {
+    path: a.pathname.replace(/^([^\/])/,'/$1').replace('upload/', '')
+  };
+}

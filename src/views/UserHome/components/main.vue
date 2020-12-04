@@ -26,23 +26,29 @@
         </el-input>
       </div>
     </div>
-    <!-- 专题列表 -->
+    <!-- 专题列表 or  专题列表 -->
     <div class="live-panel">
       <el-row :gutter="40" class="lives">
-        <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
+        <!--:xs="24" :sm="12" :md="12" :lg="8" :xl="6"
+        col-lg-*  一般用于大屏设备（min-width：1200px）
+        col-md-*  一般用于中屏设备（min-width：992px）
+        col-sm-*  一般用于小屏设备（min-width：768px）
+        col-xs  -*用于超小型设备（max-width：768px）
+        -->
+        <el-col class="liveItem":xs="24" :sm="12" :md="12" :lg="8" :xl="8" v-for="(item, index) in dataList" :key="index">
           <div class="inner">
             <div class="top">
-              <span class="liveTag">{{item | liveTag}}</span>
-              <span class="hot">
-                    <i class="el-icon-view"></i>
-                    {{item.pv | unitCovert}}
-                  </span>
-              <img :src="item.img_url" alt="">
+              <span class="liveTag" v-if="tabType === 'live'">
+                <label class="live-status" v-if="item.webinar_state == 1">
+                <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label>{{item | liveTag}}
+              </span>
+              <span class="hot"><i class="el-icon-view"></i>{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</span>
+              <img :src="item.img_url" alt="" />
             </div>
             <div class="bottom">
               <div class="">
-                <p class="liveTitle">{{item.subject}}</p>
-                <p class="liveTime">{{item.start_time}}</p>
+                <p class="liveTitle">{{tabType === 'live' ? item.subject : item.title}}</p>
+                <p class="liveTime">{{tabType === 'live' ? item.start_time : item.created_at}}</p>
               </div>
             </div>
             <transition name="el-zoom-in-bottom">
@@ -52,13 +58,13 @@
         </el-col>
       </el-row>
     </div>
-    <SPagination :total="tabList[0].total" :page-size='query.limit' :current-page='query.pageNumber' @current-change="changeHandle" align="center"></SPagination>
-    <!-- 直播列表 -->
+    <SPagination :total="tabType === 'live' ? tabList[0].total : tabList[1].total" :page-size='query.limit' :current-page='query.pageNumber' @current-change="changeHandle" align="center"></SPagination>
   </div>
 </template>
 
 <script>
 import Share from '@/components/Share';
+import Env from "@/api/env";
 export default {
   name: "list.vue",
   components: {
@@ -119,7 +125,7 @@ export default {
     getLiveList(){
       const params = {
         pos: this.query.pos,
-        user_id: 1330,
+        user_id: this.$route.params.str,
         limit: this.query.limit,
         title: this.query.keyword,
         order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
@@ -127,10 +133,18 @@ export default {
         need_flash: 0 // 是否需要flash数据 0 否 1 是
       };
       this.loading = true;
-      this.$fetch('liveList', params).then(res=>{
-        console.log(res);
-        this.dataList = res.data.list;
-        this.tabList[0].total = 50; //  res.data.total;
+      this.$fetch('liveList', this.$params(params)).then(res=>{
+        if (res && res.code === 200) {
+          let list = res.data.list;
+          list.map(item => {
+            item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
+          });
+          this.dataList = res.data.list;
+          this.tabList[0].total = res.data.total;
+        } else {
+          this.dataList = [];
+          this.tabList[0].total = 0;
+        }
       }).catch(error=>{
         console.log(error);
         this.dataList = [];
@@ -143,16 +157,18 @@ export default {
     getSpecialList(){
       const params = {
         pos: this.query.pos,
-        user_id: 1330,
+        user_id: this.$route.params.str,
         limit: this.query.limit,
         title: this.query.keyword,
-        order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
-        webinar_states: this.liveStatus, // 直播状态 默认为0 可以传入多个值 使用逗号分隔  0 全部 2 预告 1 直播 3 结束 5 回放 4 点播
-        need_flash: 0 // 是否需要flash数据 0 否 1 是
+        order_type: 1 // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
       };
       this.loading = true;
-      this.$fetch('liveList', params).then(res=>{
+      this.$fetch('subjectList', this.$params(params)).then(res=>{
         console.log(res);
+        let list = res.data.list;
+        list.map(item => {
+          item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
+        });
         this.dataList = res.data.list;
         this.tabList[1].total = res.data.total;
       }).catch(error=>{
@@ -167,40 +183,24 @@ export default {
     toHomeSetInfo() {
       this.$emit('showSet', true);
     },
-  },
-  filters: {
-    liveTag(val) {
-      /**
-       * type  1预约 2直播 3回放 4点播 5结束
-       * is_interact 是否互动
-       *
-       * type: 0直播  1点播  2回放
-       * status：0互动直播  1音频直播 2视频直播
-       */
-      const liveTypeStr = ['', '预约', '直播', '回放', '点播', '结束'];
-      const liveStatusStr = ['互动直播', '音频直播', '视频直播'];
-      let str = liveTypeStr[val.type];
-      if (val.type != 4) {
-        str += ` | ${liveStatusStr[val.is_interact]}`;
+    toPageHandle(item) {
+      let routerStr = `/subscribe/${item.webinar_id}`;
+      // webinar_state =》 1 直播  2 预告  3 结束 4 点播 5 回放 [live/watch 观看页；live/room 发起页；subscribe 预告/结束页]
+      if (item.webinar_state === 1) {
+        routerStr = `/live/watch/${item.webinar_id}`;
+      } else if  (item.webinar_state === 2) {
+        routerStr = `/subscribe/${item.webinar_id}`;
+      } else if  (item.webinar_state === 3) {
+        routerStr = `/subscribe/${item.webinar_id}`;
+      } else if  (item.webinar_state === 4) {
+        routerStr = `/subscribe/${item.webinar_id}`;
+      } else if  (item.webinar_state === 5) {
+        routerStr = `/live/watch/${item.webinar_id}`;
       }
-      return str;
-    },
-    unitCovert(val) {
-      val = Number(val);
-      if (isNaN(val)) return 0;
-      if (val > 1e5 && val < 1e8) {
-        return `${(val / 1e4).toFixed(2)}万`;
-      } else if (val > 1e8) {
-        return `${(val / 1e8).toFixed(2)}亿`;
-      } else {
-        return val;
-      }
-    },
-    subLiveTitle(str) {
-      if (typeof str == 'string') {
-        str = `${str.substring(0, 32)}...`;
-      }
-      return str;
+      let routeData = this.$router.resolve({
+        path: routerStr
+      });
+      window.open(routeData.href, '_blank');
     }
   },
   mounted() {
@@ -306,6 +306,14 @@ export default {
         border-radius: 20px;
         position: relative;
         z-index: 2;
+      }
+      .live-status{
+        padding: 5px;
+        img{
+          margin:6px 7px;
+          width: 8px;
+          height: 8px;
+        }
       }
       .hot{
         position: absolute;
