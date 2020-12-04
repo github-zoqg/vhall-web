@@ -110,13 +110,14 @@ export default {
           console.log(this.roomStatus, 123);
           this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
           this.domains = {
-            ...mockResult.domains || {},  // ??? 云俊 返回
+            ...mockResult.urls || {},  // ??? 云俊 返回
             custom: mockResult.live_domain_customization
           };
+          console.log(mockResult, 88888);
           let localDomain = {
-            'static':mockResult.domains.static_url ,
-            'upload': mockResult.domains.upload_url,
-            'web': mockResult.domains.web_url,
+            'static':mockResult.urls.static_url ,
+            'upload': mockResult.urls.upload_url,
+            'web': mockResult.urls.web_url,
             'webinar': "//t-webinar.e.vhall.com"
           };
           this.duration = mockResult.webinar.live_time;
