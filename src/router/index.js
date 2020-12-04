@@ -36,7 +36,8 @@ const v3Routes = [
     path: '/user/home/:str(\\d+)',
     name: 'userHome',
     component: () => import('@/views/UserHome/home'),
-    meta: { title: '个人主页'}
+    meta: { title: '个人主页'},
+    hidden: true
   },
   {
     path: '/user/home/set/:str(\\d+)',
