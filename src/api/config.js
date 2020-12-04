@@ -309,10 +309,35 @@ const apis = {
   goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
+  getConfigList: ['/v3/users/permission/get-config-list', 'POST'], // 获取观看端配置项
+  getDefinitionConfig: ['/v3/interacts/players/get-clarity-default', 'POST'], // 获取默认清晰度配置项
+  agreeInvite: ['/v3/interacts/inav-user/agree-invite', 'POST'], // 用户同意上麦
+  rejectInvite: ['/v3/interacts/inav-user/reject-invite', 'POST'], // 用户拒绝上麦
+  speakOn: ['/v3/interacts/inav-user/speak', 'POST'], // 用户上麦
+  speakOff: ['/v3/interacts/inav-user/nospeak', 'POST'], // 用户下麦
+  redPackInfo: ['/v3/interacts/redpacket/get-redpacket-status', 'POST'], // 获取红包信息
+  applySpeakOn: ['/v3/interacts/inav-user/apply', 'POST'], // 用户申请上麦
+  cancelApplySpeakOn: ['/v3/interacts/inav-user/cancel-apply', 'POST'], // 用户取消上麦申请
+  speakList: ['/v3/interacts/inav/get-speak-list', 'POST'], // 上下麦列表
+  redEnvCollectionRecord: ['/v3/interacts/redpacket/get-redpacket-partition-recorder', 'POST'], // 红包领取记录
+
+  // 聊天
+  getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息
+  deleteMsg: ['/v3/interacts/chat/delete-message', 'POST'], // 删除聊天消息
+  setAllBanned: ['/v3/interacts/chat-user/set-all-banned', 'POST'], // 设置全体禁言
+  setKickOut: ['/v3/interacts/chat-user/set-kicked', 'POST'], // 踢出取消踢出
+  setBanned: ['/v3/interacts/chat-user/set-banned', 'POST'], // 设置禁言
+
+  // 礼物
+  sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
+  giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
+
+  // 点赞
+  like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
+  
 };
 
 const getApi = api => {
   return apis[api] && apis[api];
 };
-
 export default getApi;

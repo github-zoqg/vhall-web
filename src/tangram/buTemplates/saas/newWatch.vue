@@ -1,10 +1,7 @@
 <template>
   <!--
-
         小屏幕 显示区域 给相应的DOM 元素 增加 class name: vhall-saas-miniArea
-
   -->
-
   <div id="vhall-saas-watchbox" class="vhall-saas-watchbox" v-if="init">
     <!-- 主显示区域 -->
     <div class="vhall-saas-watchbox__mainContent" v-loading='loading && !watchDocShow' element-loading-background="#2d2d2d" v-if="!isKicked">
@@ -155,7 +152,7 @@
               <reward :roomId="roomId"></reward>
             </div>
             <div class="table-gift" v-if="userModules.gift.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
-              <gift :roomId="roomId" :vssToken="vssToken"></gift>
+              <gift :roomId="roomId" :vssToken="vssToken" :interactToken='interactToken'></gift>
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <getCoupon
@@ -165,6 +162,7 @@
                 :red_packet_uuid="redPacketUuid"
                 :authInfo="authInfo"
                 :isHavePacket="isHavePacket"
+                :token="bizInfo['interact-token']"
                 @NoLogin="NoLogin"
               ></getCoupon>
             </div>
@@ -263,6 +261,7 @@
             :playerType="playerType"
             :chatFilterData="chatFilterData"
             :chatFilterUrl="''"
+            :interactToken="bizInfo['interact-token']"
             @pushBarrage="pushBarrage"
             ref="ChatRef"
           ></chat>
@@ -442,11 +441,6 @@ export default {
     chatShow: {
       required: true
     },
-    descripe: {
-      required: false,
-      default: () => {}
-    },
-
     roomId: {
       type: [String],
       required: true
@@ -629,14 +623,11 @@ export default {
       },
       selfOnline: 0,
       poster: '',
-      streamendErrorPopupVisible: false // stream-end事件提示
+      streamendErrorPopupVisible: false, // stream-end事件提示
+      layout: 0
     };
   },
-
-  computed: {},
-
   created () {
-    console.warn(this.roomId, 'this.roomId');
     this.userInfo = JSON.parse(sessionStorage.getItem('user'));
     const vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
 
@@ -649,7 +640,6 @@ export default {
     // 存取是否登录的标识
     sessionStorage.setItem('authInfo', JSON.stringify(this.authInfo));
   },
-
   watch: {
     roomId (newVal) {
       if (!newVal) {
@@ -662,7 +652,6 @@ export default {
       }
     }
   },
-
   mounted () {
     this.getInavInfo();
     this.redPacketInit();
@@ -679,11 +668,209 @@ export default {
     }
   },
   methods: {
+    getSpeakList () {
+      this.$fetch('speakList', {
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
+      }).then(res => {
+        if (res.code == 200 && res.data.list) {
+          return res.data.list
+        }
+      })
+    },
+    async getRoomStatus () {
+      let speakList = await this.getSpeakList()
+      this.$fetch('queryRoomInterInfo', {
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.layout = res.data.layout
+          this.mainScreen = res.data.main_screen
+          this.allBanned = res.data.all_banned == 1
+          this.handDownShow = false
+          if (res.data.is_handsup == 1) {
+            this.handShow = true;
+            this.statusHand = true;
+          } else {
+            this.handShow = false;
+            this.statusHand = false;
+          }
+          // 初始化文档状态 end
+          this.speakerList = speakList;
+          this.rebroadcastChannelId = res.data.rebroadcast && res.data.rebroadcast.channel_id; // TODO: rebroadcast
+          let isApply = findIndex(this.speakerList, {
+            account_id: this.roomInfo.third_party_user_id
+          })
+          if (isApply > -1 && this.roomInfo.role_name != 1) {
+            this.interactiveShow = true;
+            this.loading = true;
+          }
+          this.handShow = Boolean(res.data.is_handsup);
+          window.EventBridge.$emit('loaded');
+          this.init = true;
+          this.isDesktop = res.data.is_desktop;
+          setTimeout(() => {
+            if (this.isPlayback || this.interactiveShow || !this.watchDocShow) return;
+            if (res.data.is_desktop == 1) {
+              // 桌面共享状态
+              if (this.miniElemt == 'video') {
+                this.miniElemtChange();
+              }
+            } else if (res.data.is_desktop == 0) {
+              if (this.miniElemt == 'doc') {
+                this.miniElemtChange();
+              }
+            }
+          }, 4000);
+          sessionStorage.setItem('speakerDefinition', res.data.definition || '');
+        }
+      }).catch (e => {
+        console.log(e);
+      })
+    },
+    async getInavInfo () {
+      await this.getRoomStatus()
+      this.userInfo = JSON.parse(sessionStorage.getItem('user'))
+      let inavInfo = {
+        account_id: this.bizInfo.host.id,
+        app_id: this.bizInfo.app_id,
+        channel_id: this.bizInfo.channel_id,
+        inav_id: this.bizInfo.inav_id,
+        introduction: this.bizInfo.introduction,
+        layout: this.layout,
+        like: this.bizInfo.webinar.like,
+        paas_access_token: this.bizInfo.paas_access_token,
+        record_id: this.bizInfo.paas_record_id,
+        role_name: 2,
+        room_id: this.bizInfo.room_id,
+        status: this.bizInfo.webinar.type,
+        subject: this.bizInfo.webinar.subject,
+        third_party_user_id: this.bizInfo.user.third_party_user_id
+      }
+      this.roomInfo = inavInfo
+
+      this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
+      this.shareUrl = `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+      this.$emit('descripe', this.roomInfo.introduction);
+      if (this.roomInfo.status == 1 && this.FIRST && this.roomInfo.role_name == 2) {
+        this.PopAlert.visible = true;
+        this.FIRST = false;
+      }
+      if (
+        this.isInteract == 1 &&
+        this.roomInfo.status == 1 &&
+        this.checkBrowser
+      ) {
+        this.settingWatchShow = true;
+        this.settingShow = true;
+      } else {
+        this.settingWatchShow = false;
+        this.settingShow = false;
+      }
+      // 聊天模块的显示与否 1--显示 2--隐藏 3--直播回放显示 4--预告结束显示
+      if (this.chatShow == 2) {
+        this.chatStatusShow = false;
+        this.sideStatusShow = false;
+        this.changeTab(2);
+      } else {
+        this.chatStatusShow = true;
+      }
+      // 主屏ID
+      // 跳转到相对应的直播 0--预约 1--直播 2--结束 回放2&&record_id不为空
+      if (inavInfo.status == 2 && inavInfo.record_id == '') {
+        // 跳转到直播结束
+        // window.location.href = `/${this.ilId}`
+      } else if ((inavInfo.status == 2 || inavInfo.status == 0) && inavInfo.record_id != '') {
+        // 回放
+        this.playerType = 'vod';
+        this.vodOption['recordId'] = this.roomInfo.record_id;
+        this.vodOption['defaultDefinition'] = 'same';
+        this.playerLiveOption = {};
+      } else {
+        // 直播
+        this.playerType = 'live';
+        this.vodOption = {};
+        this.playerLiveOption = {
+          type: this.playerInfo.hls || isIE() ? 'hls' : 'flv',
+          roomId: this.roomInfo.room_id
+        };
+      }
+      let vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
+      this.isBanned = this.bizInfo.user.is_gag == 1
+      this.isKicked = this.bizInfo.user.is_kick == 1
+      let context = {
+        nickname: this.userInfo.nick_name, // 昵称
+        avatar: this.userInfo.avatar
+          ? `https:${this.userInfo.avatar}`
+          : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
+        pv: vssInfo.webinar.pv, // pv
+        role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
+        device_type: '2', // 设备类型 1手机端 2PC 3SDK
+        device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
+        is_banned: this.isBanned, // 是否禁言 1是0否
+        audience: true
+      };
+      sessionStorage.setItem('vhall_chat_context', JSON.stringify(context));
+      const opt = {
+        appId: this.roomInfo.app_id,
+        accountId: this.roomInfo.third_party_user_id,
+        channelId: this.roomInfo.channel_id,
+        context: JSON.stringify(context),
+        token: this.roomInfo.paas_access_token,
+        client: 'pc_browser'
+      };
+      if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
+        this.init = true;
+        window.EventBridge.$emit('loaded');
+        return;
+      }
+      VhallChat.createInstance(
+        opt,
+        chat => {
+          this.getRoomStatus();
+          this.addSocketsListener();
+          window.chatSDK = chat.message;
+          console.log('chatSDK is Ready');
+
+          if (this.isEmbedVideo) {
+            this.embedBarrage();
+            this.initNotice();
+          }
+          setTimeout(() => {
+            if (this.isInteract == 1 && this.playerType == 'live') {
+              this.vhallChecking();
+            }
+          }, 1500);
+          chat.message.join(msg => {
+            // 将join放在实例化处是因为--放在聊天组件内，会因sockit消息快慢问题 偶发丢失join消息
+            console.warn('kict_obj---------------------', vssInfo);
+            if (vssInfo.sso_mark) {
+              if (msg.sender_id == vssInfo.user.third_party_user_id) {
+                this.selfOnline++;
+              }
+              console.log(msg.sender_id == vssInfo.user.third_party_user_id, '关于有时候手机进入不会顶掉当前账户-----', this.selfOnline);
+              if (this.selfOnline > 1) {
+                window.location.href = vssInfo.kick_out_url;
+              }
+            }
+            if (this.isPlayback) {
+              if (msg.context.role_name != 1) {
+                this.$emit('onlineJoin', msg);
+              }
+            } else {
+              this.$emit('onlineJoin', msg);
+            }
+          });
+        },
+        err => {
+          console.error('聊天SDK实例化失败', err);
+        }
+      );
+    },
     WarchBackEnd (val) {
       this.playIng = !val;
     },
-    // 监听设置保存
-    watchSettingClose () {},
     // 是否创建过
     vhallCheckStatus (msg) {
       console.log('msg>>>>>>>>>>>>>>>>>>>>', msg);
@@ -694,7 +881,6 @@ export default {
       this.mediaSettingVisible = true;
     },
     closeMediaSettings () {
-      // this.$refs.mediasettingsRef.destoryPreview()
       this.mediaSettingVisible = false;
     },
     // 邀请上下麦
@@ -725,19 +911,21 @@ export default {
         this.handDownShow = true;
       }
       this.UpperVisible = false;
-      this.$vhallFetch('agreeInvite', {
-        receive_account_id: this.upperMsg.room_join_id,
-        room_id: this.roomInfo.room_id
+      this.$fetch('agreeInvite', {
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
       });
-      this.$vhallFetch('speakOn', { // 上麦接口成功后出发vrtc_connect_success消息，监听到该消息后手动维护speakerList，渲染互动组件 互动组件初始化互动sdk后 执行autorepushstream方法判断该用户是否已上麦，若已上麦就开始推流
-        room_id: this.roomInfo.room_id,
-        receive_account_id: this.roomInfo.third_party_user_id
+      this.$fetch('speakOn', { // 上麦接口成功后出发vrtc_connect_success消息，监听到该消息后手动维护speakerList，渲染互动组件 互动组件初始化互动sdk后 执行autorepushstream方法判断该用户是否已上麦，若已上麦就开始推流
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
       }).then(async () => {
-        await this.$vhallFetch('getRoomStatus', { // 上麦之前获取房间内音视频禁用状态 bug15469
-          room_id: this.roomId
+        let speakList = await this.getSpeakList()
+        await this.$fetch('queryRoomInterInfo', { // 上麦之前获取房间内音视频禁用状态 bug15469
+          room_id: this.bizInfo.room_id,
+          'interact-token': this.bizInfo['interact-token']
         }).then(res => {
-          this.mainScreen = res.data.main_screen;
-          this.speakerList = res.data.speaker_list;
+          this.mainScreen = res.data.main_screen
+          this.speakerList = speakList
         });
         this.interactiveShow = true;
         this.loading = true;
@@ -754,12 +942,11 @@ export default {
     refuseUpper (flag) {
       this.UpperVisible = false;
       if (flag == 1) return;
-      let data = {
-        receive_account_id: this.upperMsg.room_join_id,
-        room_id: this.roomInfo.room_id
-      };
       // 取消上麦
-      this.$vhallFetch('rejectInvite', data).catch(error => {
+      this.$fetch('rejectInvite', {
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
+      }).catch(error => {
         console.error('拒绝上麦邀请接口错误', error);
       });
     },
@@ -819,171 +1006,24 @@ export default {
     NoLogin () {
       this.$emit('NoLogin');
     },
-    loginTest () {
-      // this.$emit('NoLogin')
-      this.$parent.callLogin();
-    },
     redPacketInit () {
       // 如果 是单视频嵌入 跳过 - 获取上次红包信息
       if (this.isEmbedVideo) return;
-
       const obj = {
         vss_token: this.vssToken,
         room_id: this.roomId
       };
-      this.$vhallFetch('getPacketLastInfo', obj).then(res => {
+      this.$fetch('redPackInfo', {
+        room_id: this.bizInfo.room_id,
+        red_packet_uuid: this.redPacketUuid
+      }).then(res => {
         if (res.data.status == 1) {
           // 有红包
-          this.redPacketUuid = res.data.red_packet_uuid;
-          this.isHavePacket = res.data.get_user_count != res.data.number;
+          this.redPacketUuid = res.data.red_packet.red_packet_uuid;
+          this.isHavePacket = res.data.red_packet.get_user_count != res.data.red_packet.number;
           this.redPacketShowBut = true;
           this.status = res.data.status;
         }
-      });
-    },
-    async getInavInfo () {
-      try {
-        await this.$vhallFetch('getRoomStatus', {
-          room_id: this.roomId
-        }, {}, false).then(res => {
-          this.speakerList = res.data.speaker_list;
-          sessionStorage.setItem('speakerDefinition', res.data.stream.definition || '');
-        });
-      } catch (e) {
-        console.log(e);
-      }
-
-      this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-      return this.$vhallFetch('getInavInfo', {
-        room_id: this.roomId
-      }).then(async res => {
-        // debugger;
-        console.log(res.data);
-        this.roomInfo = res.data;
-        const bizRecordId = this.bizInfo.paas_record_id;
-        if (bizRecordId) {
-          this.roomInfo.record_id = bizRecordId;
-        }
-        this.isPlayback = res.data.status === 2 && res.data.record_id !== '';
-        this.shareUrl = `https:${this.domains.webinar}/room/watch/${this.ilId}`;
-        this.$emit('descripe', this.roomInfo.introduction);
-        if (this.roomInfo.status == 1 && this.FIRST && this.roomInfo.role_name == 2) {
-          this.PopAlert.visible = true;
-          this.FIRST = false;
-        }
-        if (
-          this.isInteract == 1 &&
-          this.roomInfo.status == 1 &&
-          this.checkBrowser
-        ) {
-          this.settingWatchShow = true;
-          this.settingShow = true;
-        } else {
-          this.settingWatchShow = false;
-          this.settingShow = false;
-        }
-        // 聊天模块的显示与否 1--显示 2--隐藏 3--直播回放显示 4--预告结束显示
-        if (this.chatShow == 2) {
-          this.chatStatusShow = false;
-          this.sideStatusShow = false;
-          this.changeTab(2);
-        } else {
-          this.chatStatusShow = true;
-        }
-        // 主屏ID
-        // 跳转到相对应的直播 0--预约 1--直播 2--结束 回放2&&record_id不为空
-        if (res.data.status == 2 && res.data.record_id == '') {
-          // 跳转到直播结束
-          // window.location.href = `/${this.ilId}`
-        } else if ((res.data.status == 2 || res.data.status == 0) && res.data.record_id != '') {
-          // 回放
-          this.playerType = 'vod';
-          this.vodOption['recordId'] = this.roomInfo.record_id;
-          this.vodOption['defaultDefinition'] = 'same';
-          this.playerLiveOption = {};
-        } else {
-          // 直播
-          this.playerType = 'live';
-          this.vodOption = {};
-          this.playerLiveOption = {
-            type: this.playerInfo.hls || isIE() ? 'hls' : 'flv',
-            roomId: this.roomInfo.room_id
-          };
-        }
-
-        let vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
-        await this.getUserStatus();
-        // if (this.roomInfo.role_name != 2) return
-        let context = {
-          nickname: this.userInfo.nick_name, // 昵称
-          avatar: this.userInfo.avatar
-            ? `https:${this.userInfo.avatar}`
-            : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-          pv: vssInfo.webinar.pv, // pv
-          role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
-          device_type: '2', // 设备类型 1手机端 2PC 3SDK
-          device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
-          is_banned: this.isBanned, // 是否禁言 1是0否
-          audience: true
-        };
-        sessionStorage.setItem('vhall_chat_context', JSON.stringify(context));
-        const opt = {
-          appId: this.roomInfo.app_id,
-          accountId: this.roomInfo.third_party_user_id,
-          channelId: this.roomInfo.channel_id,
-          context: JSON.stringify(context),
-          token: this.roomInfo.paas_access_token,
-          client: 'pc_browser'
-        };
-        console.log(opt);
-        if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
-          this.init = true;
-          window.EventBridge.$emit('loaded');
-          return;
-        }
-        VhallChat.createInstance(
-          opt,
-          chat => {
-            this.getRoomStatus();
-            this.addSocketsListener();
-            window.chatSDK = chat.message;
-            console.log('chatSDK is Ready');
-
-            if (this.isEmbedVideo) {
-              this.embedBarrage();
-              this.initNotice();
-            }
-            setTimeout(() => {
-              console.log('issaasdasdadasd>>>>', this.isInteract);
-              if (this.isInteract == 1 && this.playerType == 'live') {
-                this.vhallChecking();
-              }
-            }, 1500);
-            chat.message.join(msg => {
-              // 将join放在实例化处是因为--放在聊天组件内，会因sockit消息快慢问题 偶发丢失join消息
-              console.warn('kict_obj---------------------', vssInfo);
-              if (vssInfo.sso_mark) {
-                if (msg.sender_id == vssInfo.user.third_party_user_id) {
-                  this.selfOnline++;
-                }
-                console.log(msg.sender_id == vssInfo.user.third_party_user_id, '关于有时候手机进入不会顶掉当前账户-----', this.selfOnline);
-                if (this.selfOnline > 1) {
-                  window.location.href = vssInfo.kick_out_url;
-                }
-              }
-              if (this.isPlayback) {
-                if (msg.context.role_name != 1) {
-                  this.$emit('onlineJoin', msg);
-                }
-              } else {
-                this.$emit('onlineJoin', msg);
-              }
-            });
-          },
-          err => {
-            console.error('聊天SDK实例化失败', err);
-          }
-        );
       });
     },
 
@@ -1011,72 +1051,6 @@ export default {
         //   msg.data.text_content = textToEmojiText(msg.data.text_content)
         // }
         EventBus.$emit('receiveMsg', msg);
-      });
-    },
-
-    /**
-     * 得到用户状态是否被禁言/踢出
-     */
-    getUserStatus () {
-      return new Promise((resolve, reject) => {
-        let data = {
-          room_id: this.roomInfo.room_id,
-          account_id: this.roomInfo.third_party_user_id
-        };
-        this.$vhallFetch('getUserStatus', data).then(res => {
-          this.isBanned = res.data.is_banned == '1';
-          this.isKicked = res.data.is_kicked == '1';
-          resolve();
-        });
-      });
-    },
-    /**
-     * 获取房间状态，受否开启文档/白板/举手
-     */
-    getRoomStatus () {
-      return this.$vhallFetch('getRoomStatus', {
-        room_id: this.roomId
-      }, {}, false).then(res => {
-        this.mainScreen = res.data.main_screen;
-        this.allBanned = res.data.all_banned == 1;
-        console.log('主屏ID', this.mainScreen);
-        this.handDownShow = false;
-        if (res.data.is_handsup == 1) {
-          this.handShow = true;
-          this.statusHand = true;
-        } else {
-          this.handShow = false;
-          this.statusHand = false;
-        }
-        // 初始化文档状态 end
-        this.speakerList = res.data.speaker_list;
-        this.rebroadcastChannelId = res.data.rebroadcast && res.data.rebroadcast.channel_id;
-        let isApply = findIndex(this.speakerList, {
-          account_id: this.roomInfo.third_party_user_id
-        });
-
-        console.log('刷新重新上麦', this.roomInfo, isApply);
-        if (isApply > -1 && this.roomInfo.role_name != 1) {
-          this.interactiveShow = true;
-          this.loading = true;
-        }
-        this.handShow = Boolean(res.data.is_handsup);
-        window.EventBridge.$emit('loaded');
-        this.init = true;
-        this.isDesktop = res.data.is_desktop;
-        setTimeout(() => {
-          if (this.isPlayback || this.interactiveShow || !this.watchDocShow) return;
-          if (res.data.is_desktop == '1') {
-            // 桌面共享状态
-            if (this.miniElemt == 'video') {
-              this.miniElemtChange();
-            }
-          } else if (res.data.is_desktop == '0') {
-            if (this.miniElemt == 'doc') {
-              this.miniElemtChange();
-            }
-          }
-        }, 4000);
       });
     },
     toggleShare () {
@@ -1129,7 +1103,10 @@ export default {
       this.repeatStatus = true;
       if (isMic) {
         // 上麦状态
-        this.$vhallFetch('apply', data).then(res => {
+        this.$fetch('applySpeakOn', {
+          room_id: this.bizInfo.room_id,
+          'interact-token': this.bizInfo['interact-token']
+        }).then(res => {
           this.repeatStatus = false;
           if (res.code == 200) {
             this.timer = 30;
@@ -1150,8 +1127,9 @@ export default {
           }
         });
       } else {
-        this.$vhallFetch('cancleApply', {
-          room_id: that.roomId
+        this.$fetch('cancelApplySpeakOn', {
+          room_id: this.bizInfo.room_id,
+          'interact-token': this.bizInfo['interact-token']
         }).then(res => {
           this.repeatStatus = false;
           if (res.code == 200) {
@@ -1165,8 +1143,9 @@ export default {
     },
     // 取消用户上麦
     cancelApply (timeouts) {
-      this.$vhallFetch('cancleApply', {
-        room_id: this.roomId
+      this.$fetch('cancelApplySpeakOn', {
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
       }).then(res => {
         if (res.code == 200) {
           this.lowerWheat = true; // 上麦的状态
@@ -1180,9 +1159,9 @@ export default {
     },
     // 用户下麦
     downMic () {
-      this.$vhallFetch('speakOff', {
-        room_id: this.roomId,
-        receive_account_id: this.roomInfo.third_party_user_id
+      this.$fetch('speakOff', {
+        room_id: this.bizInfo.room_id,
+        'interact-token': this.bizInfo['interact-token']
       }).then(res => {
         if (res.code == 200) {
           // this.lowerWheat = true
@@ -1216,15 +1195,6 @@ export default {
 };
 </script>
 <style lang="less">
-// .vhall-mainScreen {
-//   .vhall-subStream-box--pophover {
-//     background: none;
-//     display: none;
-//     top: auto;
-//     bottom: 0;
-//   }
-// }
-
 // 重构后。 观看端魔板样式
 .vhall-saas-watchbox {
   position: relative;
@@ -1232,7 +1202,6 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  /* min-height: 434px; */
   .vhall-kick-out {
     text-align: center;
     position: fixed;
@@ -1343,9 +1312,6 @@ export default {
       position: relative;
       height: 168px;
       width: 100%;
-
-      /* background: url('../../assets/small.png') no-repeat;
-      background-size: 100% 100%; */
       .mask {
         opacity: 0;
         height: 100%;
@@ -1393,15 +1359,6 @@ export default {
         width: 100%;
         height: 100%;
       }
-      /*.iconquanping {*/
-      /*  cursor: pointer;*/
-      /*  font-size: 13px;*/
-      /*  left: 10px;*/
-      /*  position: absolute;*/
-      /*  z-index: 10;*/
-      /*  top: 10px;*/
-      /*  color: #fff;*/
-      /*}*/
     }
 
     .vhall-saas-chatsbox {
@@ -1441,9 +1398,7 @@ export default {
 
       &__content {
         flex: 1;
-        // height: 100%;
         box-sizing: border-box;
-        // padding-bottom: 32px;
       }
     }
   }
@@ -1513,8 +1468,6 @@ export default {
 
 <style lang="less" scoped>
 .player-funct {
-  // width: 100%;
-  // flex: 1;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -1545,8 +1498,6 @@ export default {
   .player-hand {
     cursor: pointer;
     color: #fff;
-    // float: left;
-    /* margin-left: 470px; */
     margin-left: 28%;
     width: 104px;
     height: 30px;
@@ -1576,7 +1527,6 @@ export default {
       float: right;
       margin-top: 7px;
       cursor: pointer;
-      /* margin-right: 16px; */
     }
     .table-reward {
       width: 66px;

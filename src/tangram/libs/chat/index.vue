@@ -43,6 +43,7 @@
         :roomId="roomId"
         :webinarId="webinarId"
         :allBanned="allBanned"
+        :interactToken="interactToken"
         ref="chatFilter"
         :chatFilterUrl="chatFilterUrl"
         :isAssistant='assistantType'
@@ -102,7 +103,7 @@
       </div>
     </div>
     <img-preview ref="imgPreview" :imgs="previewImgList"></img-preview>
-    <chat-user-control :roomId="roomId" :userId="userId" :reply="reply" :deleteMsg="deleteMsg" :atUser="atUser" :atList="atList"></chat-user-control>
+    <chat-user-control :roomId="roomId" :userId="userId" :reply="reply" :deleteMsg="deleteMsg" :atUser="atUser" :atList="atList" :interactToken="interactToken"></chat-user-control>
   </div>
 </template>
 <script>
@@ -188,6 +189,9 @@ export default {
     showControl: {
       type: Boolean,
       default: true
+    },
+    interactToken: {
+      required: true
     },
     plugin: {
       type: Object,
@@ -528,21 +532,22 @@ export default {
     },
     // 获取历史消息
     getHistoryMsg () {
-      let data = {
+      this.$fetch('getHistoryChat', {
+        'interact-token': this.interactToken,
         room_id: this.roomId,
-        curr_page: this.page,
-        page_size: 50 // 所有端统一显示50条
-      };
-      this.$vhallFetch('getHistoryMsgNew', data).then(res => {
+        start_time: '',
+        pos: Number(this.curr_page )* 50,
+        limit: 50
+      }).then(res => {
         if (res.data.length) {
-          let list = res.data
+          let list = res.data.list
             .map(item => {
               if (item.data.text_content) {
                 item.data.text_content = textToEmojiText(item.data.text_content);
               }
               if (item.context.atList && item.context.atList.length && item.data.text_content) {
                 item.context.atList.forEach((a) => {
-                  item.data.text_content = item.data.text_content.replace(`***${a.nickName}`, `@${a.nickName}`);
+                  item.data.text_content = item.data.text_content.replace(`***${a.nick_name}`, `@${a.nick_name}`);
                 });
               }
               return new Msg({
@@ -554,7 +559,7 @@ export default {
                 roleName: item.role_name,
                 sendTime: item.date_time,
                 content: item.data,
-                replyMsg: item.context.replyMsg,
+                replyMsg: item.context.reply_msg,
                 atList: item.context.atList,
                 msgId: item.msg_id,
                 channel: item.channel_id,
@@ -640,9 +645,13 @@ export default {
       const msgToDelete = this.chatList.find((chatMsg) => {
         return chatMsg.count == count;
       }) || {};
-      const params = {channel_id: msgToDelete.channel, msg_id: msgToDelete.msgId, room_id: this.roomId};
       setTimeout(() => {
-        this.$vhallFetch('deleteMessage', params).then(res => {
+        this.$fetch('deleteMsg', {
+          'interact-token': this.interactToken,
+          channel_id: msgToDelete.channel,
+          msg_id: msgToDelete.msgId,
+          room_id: this.roomId
+        }).then(res => {
           this.chatList = this.chatList.filter((chatMsg) => {
             return chatMsg.count != count;
           });

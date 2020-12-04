@@ -140,24 +140,24 @@ export const listenEvent = {
         this.getWatchUpperMsg(msg);
       });
 
-      // 问卷推送
+      // 问卷推送 TODO: 永正
       EventBus.$on('questionnaire_push', msg => {
-        this.$vhallFetch('checkSurvey', {
-          survey_id: msg.questionnaire_id,
-          user_id: this.roomInfo.third_party_user_id,
-          webinar_id: this.ilId
-        }).then(res => {
-          if (res.code == 200) {
-            const time = 1000;
-            let step = Math.floor(Math.random() * 10);
-            step = step > 5 ? 5 : step;
-            console.log('time step', step);
-            setTimeout(() => {
-              this.showQA = true;
-              this.$refs.questions.contentQuestion(msg.questionnaire_id);
-            }, step * time);
-          }
-        });
+        // this.$vhallFetch('checkSurvey', {
+        //   survey_id: msg.questionnaire_id,
+        //   user_id: this.roomInfo.third_party_user_id,
+        //   webinar_id: this.ilId
+        // }).then(res => {
+        //   if (res.code == 200) {
+        //     const time = 1000;
+        //     let step = Math.floor(Math.random() * 10);
+        //     step = step > 5 ? 5 : step;
+        //     console.log('time step', step);
+        //     setTimeout(() => {
+        //       this.showQA = true;
+        //       this.$refs.questions.contentQuestion(msg.questionnaire_id);
+        //     }, step * time);
+        //   }
+        // });
       });
       // 上麦成功
       EventBus.$on('vrtc_connect_success', msg => {
@@ -243,26 +243,26 @@ export const listenEvent = {
         this.mainScreen = e.data.room_join_id;
       });
 
-      // 观众查看问卷
+      // 观众查看问卷 TODO: 永正
       EventBus.$on('questionnaireCheck', questionnaireId => {
-        this.$vhallFetch('checkSurvey', {
-          survey_id: questionnaireId,
-          user_id: this.roomInfo.third_party_user_id,
-          webinar_id: this.ilId
-        }).then(res => {
-          if (res.code == 200) {
-            this.showQA = true;
-            setTimeout(() => {
-              this.$refs.questions.chatPreview(questionnaireId, false);
-            }, 200);
-          } else {
-            this.showQA = true;
-            console.log('checksss>>>>>>>>>>>>>');
-            setTimeout(() => {
-              this.$refs.questions.chatPreview(questionnaireId, true);
-            }, 200);
-          }
-        });
+        // this.$vhallFetch('checkSurvey', {
+        //   survey_id: questionnaireId,
+        //   user_id: this.roomInfo.third_party_user_id,
+        //   webinar_id: this.ilId
+        // }).then(res => {
+        //   if (res.code == 200) {
+        //     this.showQA = true;
+        //     setTimeout(() => {
+        //       this.$refs.questions.chatPreview(questionnaireId, false);
+        //     }, 200);
+        //   } else {
+        //     this.showQA = true;
+        //     console.log('checksss>>>>>>>>>>>>>');
+        //     setTimeout(() => {
+        //       this.$refs.questions.chatPreview(questionnaireId, true);
+        //     }, 200);
+        //   }
+        // });
       });
       // 监听直播开启
       EventBus.$on('startPlay', msg => {
@@ -282,18 +282,27 @@ export const listenEvent = {
       EventBus.$on('vrtc_connect_agree', async (msg) => {
         if (msg.room_join_id == this.roomInfo.third_party_user_id) {
           // 更新上麦人员列表
-          await this.$vhallFetch('getRoomStatus', {
-            room_id: this.roomId
+          let speakList = await this.$fetch('speakList', {
+            room_id: this.bizInfo.room_id,
+            'interact-token': this.bizInfo['interact-token']
           }).then(res => {
-            this.mainScreen = res.data.main_screen;
-            this.speakerList = res.data.speaker_list;
-          });
+            if (res.code == 200 && res.data.list) {
+              return res.data.list
+            }
+          })
+          await this.$fetch('queryRoomInterInfo', {
+            room_id: this.bizInfo.room_id,
+            'interact-token': this.bizInfo['interact-token']
+          }).then(res => {
+            this.mainScreen = res.data.main_screen
+            this.speakerList = speakList
+          })
           this.handDownShow = true; // 下麦按钮的显示
           this.handShow = false; // 上麦按钮关闭
           this.lowerWheat = true; // 上麦的状态
-          this.$vhallFetch('speakOn', { // 上麦接口成功后出发vrtc_connect_success消息，监听到该消息后手动维护speakerList，渲染互动组件 互动组件初始化互动sdk后 执行autorepushstream方法判断该用户是否已上麦，若已上麦就开始推流
-            room_id: this.roomInfo.room_id,
-            receive_account_id: this.roomInfo.third_party_user_id
+          this.$fetch('speakOn', { // 上麦接口成功后出发vrtc_connect_success消息，监听到该消息后手动维护speakerList，渲染互动组件 互动组件初始化互动sdk后 执行autorepushstream方法判断该用户是否已上麦，若已上麦就开始推流
+            room_id: this.bizInfo.room_id,
+            'interact-token': this.bizInfo['interact-token']
           }).then(() => {
             this.interactiveShow = true;
             this.loading = true;

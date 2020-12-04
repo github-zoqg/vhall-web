@@ -45,6 +45,9 @@ export default {
     },
     atList: {
       required: true
+    },
+    interactToken: {
+      type: String
     }
   },
   data () {
@@ -78,8 +81,13 @@ export default {
     // 监听客户端踢出操作
     EventBus.$on('assistantKickoutCallback', msg => {
       if (msg.type == 0) return;
-      this.$vhallFetch('setKicked', msg.data).then(() => {
-        EventBus.$emit('kicked_in_chat', {nextStatus: msg.data.nextStatus, accountId: this.accountId});
+      this.$fetch('setKickOut', {
+        'interact-token': this.interactToken,
+        room_id: this.roomId,
+        receive_account_id: msg.data.room_join_id,
+        status: 1
+      }).then(() => {
+        EventBus.$emit('kicked_in_chat', {nextStatus: 1, accountId: this.accountId});
       });
     });
   },
@@ -105,11 +113,10 @@ export default {
      */
     getUserStatus () {
       return new Promise((resolve, reject) => {
-        let data = {
-          room_id: this.roomId,
-          account_id: this.accountId
-        };
-        this.$vhallFetch('getUserStatus', data).then(res => {
+        this.$fetch('getToolStatus', {
+          'interact-token': this.interactToken,
+          room_id: this.roomId
+        }).then(res => {
           resolve(res.data);
         });
       });
@@ -119,12 +126,12 @@ export default {
      */
     setBanned () {
       let nextStatus = this.userStatus.is_banned ? 0 : 1;
-      let data = {
+      this.$fetch('setBanned', {
+        'interact-token': this.interactToken,
         receive_account_id: this.accountId,
         status: nextStatus,
         room_id: this.roomId
-      };
-      this.$vhallFetch('setBanned', data);
+      });
     },
     /**
      * 踢出/取消踢出
@@ -134,11 +141,6 @@ export default {
       let confirmText = nextStatus
         ? '您确定要执行踢出操作？'
         : '您确定要执行取消踢出操作？';
-      let data = {
-        receive_account_id: this.accountId,
-        status: nextStatus,
-        room_id: this.roomId
-      };
       if (this.assistantType) {
         return EventBus.$emit('assistantKickout', {...data, confirmText, roleName: this.roleName});
       }
@@ -149,7 +151,12 @@ export default {
         center: true
       })
         .then(() => {
-          this.$vhallFetch('setKicked', data).then(() => {
+          this.$fetch('setKickOut', {
+            'interact-token': this.interactToken,
+            room_id: this.roomId,
+            receive_account_id: this.accountId,
+            status: nextStatus
+          }).then(() => {
             EventBus.$emit('kicked_in_chat', {nextStatus, accountId: this.accountId});
           });
         })

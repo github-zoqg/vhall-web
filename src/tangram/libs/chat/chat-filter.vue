@@ -50,6 +50,9 @@ export default {
     },
     isAssistant: {
       required: true
+    },
+    interactToken: {
+      required: true
     }
   },
   data () {
@@ -95,11 +98,11 @@ export default {
       this.chatFilterShow = !this.chatFilterShow;
     },
     setAllBanned (flag) {
-      let data = {
-        type: flag ? 1 : 0,
-        room_id: this.roomId
-      };
-      this.$vhallFetch('setAllBanned', data).catch(error => {
+      this.$fetch('setAllBanned', {
+        'interact-token': this.interactToken,
+        room_id: this.roomId,
+        status: flag ? 1 : 0
+      }).catch(error => {
         console.error('全体禁言接口失败', error);
       });
     },

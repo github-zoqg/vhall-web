@@ -90,6 +90,9 @@ export default {
     vss_token: {
       required: true
     },
+    token: {
+      required: true
+    },
     red_packet_uuid: {
       required: true
     },
@@ -107,13 +110,17 @@ export default {
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid
       };
-      this.$vhallFetch('myPacketLastInfo', obj).then((res) => { // 我的红包信息
+      this.$fetch('redPackInfo', {
+        'interact-token': this.token,
+        room_id: this.room_id,
+        red_packet_uuid: this.red_packet_uuid
+      }).then((res) => { // 我的红包信息
         this.initCompleted = true;
         const data = res.data;
         this.getpacketCreateObj = data.red_packet; // 红包信息
         if (data.status == 1) { // 我已抢到红包
           this.isSuccessRed = true;
-          this.myAmount = data.amount;
+          this.myAmount = this.getpacketCreateObj.amount;
         } else { // 我没抢到红包
           if (data.red_packet.number == data.red_packet.get_user_count) { // 如果红包数量和领红包人数相等，说明已抢光
             this.emptyRefCoupon = true;
@@ -138,7 +145,14 @@ export default {
         red_packet_uuid: this.red_packet_uuid,
         order: 'created_at'
       };
-      this.$vhallFetch('getRecordsPacket', obj).then((res) => {
+      this.$fetch('redEnvCollectionRecord', {
+        'interact-token': this.token,
+        room_id: this.room_id,
+        red_packet_uuid: this.red_packet_uuid,
+        order: 'created_at',
+        pos: 0,
+        limit: 10
+      }).then((res) => {
         this.isSuccessRed = true; // 显示金额
         this.looEeverybody = true; // 显示记录
         this.getpacketCreateObj = res.data.red_packet;
@@ -160,7 +174,7 @@ export default {
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid
       };
-      this.$vhallFetch('getpacketCreate', obj).then((res) => { // 抢红包
+      this.$fetch('getpacketCreate', obj).then((res) => { // 抢红包
         this.opening = false;
         console.log(res, 66666);
         if (res.data.status == 0) {
@@ -189,14 +203,14 @@ export default {
       const container = this.$refs.packetList;
       if (((container.offsetHeight + container.scrollTop) > (container.scrollHeight)) && !this.scrollLock) {
         this.page = this.page + 1;
-        const obj = {
-          vss_token: this.vss_token,
+        this.$fetch('redEnvCollectionRecord', {
+          'interact-token': this.token,
           room_id: this.room_id,
           red_packet_uuid: this.red_packet_uuid,
-          page: this.page,
-          order: 'created_at'
-        };
-        this.$vhallFetch('getRecordsPacket', obj).then((res) => {
+          order: 'created_at',
+          pos: this.page * 10,
+          limit: 10
+        }).then((res) => {
           if ((res.data.list && !res.data.list.length) || !res.data.list) {
             this.scrollLock = true;
           } else {
