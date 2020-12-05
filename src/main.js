@@ -90,6 +90,7 @@ import 'tinymce/skins/ui/oxide/skin.min.css';
 import 'tinymce/skins/ui/oxide/content.min.css';
 //主题
 import 'tinymce/themes/silver';
+import 'tinymce/icons/default/icons.min.js';
 //插件
 import 'tinymce/plugins/image'; //图片插件
 import 'tinymce/plugins/quickbars';//快速栏插件
