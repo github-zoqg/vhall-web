@@ -52,7 +52,7 @@ const apis = {
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
-  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口        接口少了一个字段
+  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
@@ -198,6 +198,8 @@ const apis = {
   getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET', 'data'], //获取活动浏览器信息
   getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET', 'data'], //获取观看人数趋势
 
+  // 直播-用户统计
+  getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET', 'data'], //获取用户观看详情
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
@@ -248,10 +250,10 @@ const apis = {
   liveIncomeDetailList: ['/v3/fin/income/live/details/list', 'GET', 'data'], // 直播收益详情列表
   packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET', 'data'], // 红包收益
   accountList: ['/v3/fin/withdraw/list', 'GET', 'data'], // 提现明细
-  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定
-  callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
-  withdrawalPhoneCode: ['/104/v3/finances/withdraw/phone-code', 'POST', 'mock'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
-  withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
+  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定  微信授权
+  callbackUserInfo: ['/v3/users/oauth/callback', 'POST'], // 绑定之后获取用户信息
+  withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST', 'data'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
+  withdrawal: ['/v3/fin/withdraw', 'POST', 'data'], // 提现
 
   //开发设置
   getAppList: ['/v3/users/appkeys/get-list', 'POST'], // 获取应用信息列表接口 jian.chang •••
