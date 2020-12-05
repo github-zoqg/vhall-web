@@ -26,7 +26,7 @@
           <el-button @click="cancel('appForm')" round>取消</el-button>
         </el-form-item>
         <div class="right" v-if="action=='detail'">
-          <img src="../../../common/images/v35-webinar.png" alt="">
+          <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="">
           <el-button type="primary" @click="modify" round>修改</el-button>
         </div>
       </el-form>
@@ -36,12 +36,14 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import Env from '@/api/env.js';
 export default {
   components: {
     PageTitle,
   },
   data(){
     return {
+      env: Env,
       appForm: {
         app_name: '',
         sign_type: 1, // 加密算法
@@ -51,9 +53,10 @@ export default {
         signature: '', //Android 签名
         package_name: '', // Android 包名
         bundle_id: '', //ios bundle_id,
-        APPKey: '21786da084260b1f11865fcabec99383',
-        SecretKey: '084b3bed63805562435610ef02dc745d',
-        APP_SecretKey: 'fd30d88cc19a9bc0134d51ceec17f3e2'
+        APPKey: '',
+        SecretKey: '',
+        APP_SecretKey: '',
+        qr_code_string: ''
       },
       nodesData: [
         {
@@ -76,17 +79,16 @@ export default {
         {
           nodeType: 'text',
           label: 'APPKey',
-          modelKey: 'APPKey',
-          value: '21786da084260b1f11865fcabec99383'
+          modelKey: 'app_key',
         },
         {
           nodeType: 'text',
-          modelKey: 'SecretKey',
+          modelKey: 'secret_key',
           label: 'SecretKey（API使用）',
         },
         {
           nodeType: 'text',
-          modelKey: 'APP_SecretKey',
+          modelKey: 'app_secret_key',
           label: 'App SecretKey（SDK使用）',
         },
         {
@@ -224,7 +226,8 @@ export default {
       this.$fetch('getAppInfo', {id: this.$route.params.appId}).then(res => {
         console.log('getAppInfo', res);
         const resVo = res.data;
-        this.appForm.app_name = resVo.app_name;
+        this.appForm = resVo;
+        /*this.appForm.app_name = resVo.app_name;
         this.appForm.sign_type = resVo.sign_type;
         this.appForm.callback_webinar_status = resVo.callback_webinar_status;
         this.appForm.callback_play_download = resVo.callback_play_download;
@@ -232,6 +235,7 @@ export default {
         this.appForm.signature = resVo.signature;
         this.appForm.package_name = resVo.package_name;
         this.appForm.bundle_id = resVo.bundle_id;
+        this.appForm.qr_code_string = resVo.qr_code_string;*/
       }).catch(error=>{
         console.log(error);
         this.$message.error(`获取应用信息失败，${error.$message}`);

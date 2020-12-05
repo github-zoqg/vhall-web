@@ -139,6 +139,6 @@ export function parseURL(url) {
   let a = document.createElement('a');
   a.href = url;
   return {
-    path: a.pathname.replace(/^([^\/])/,'/$1').replace('upload/', '')
+    path: a.pathname.replace(/^([^\/])/,'/$1').replace('/upload/', '')
   };
 }

@@ -26,9 +26,9 @@
         :before-upload="beforeUploadHandler"
         :on-preview="uploadPreview"
       >
-        <el-button round type="primary">上传</el-button>
+        <el-button round type="primary" size="medium">上传</el-button>
       </el-upload>
-      <el-button round class="head-btn batch-del">批量删除</el-button>
+      <el-button round @click.prevent.stop="wordMultiDel" size="medium">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -79,7 +79,7 @@ export default {
       tabelColumn: [
         {
           label: '文档名称',
-          key: 'wordName',
+          key: 'file_name',
         },
         {
           label: '进度',
@@ -110,8 +110,7 @@ export default {
           key: "searchTitle",
         }
       ],
-      fileList: [],
-      accept: 'png|jpg|jpeg|bmp|gif|doc|mp4',
+      multipleSelection: [],
       showDialog: false,
       docParam: {}
     };
@@ -155,9 +154,30 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+    // 批量删除
+    wordMultiDel() {
+      if (this.multipleSelection && this.multipleSelection.length > 0) {
+        this.$confirm('是否确认删除', '删除提示', {
+          confirmButtonText: '删除',
+          cancelButtonText: '取消'
+        }).then(() => {
+          let ids = this.multipleSelection.map(item => {
+            return item.document_id;
+          });
+          this.deleteSend({
+            document_id: ids.join(',')
+          })
+        }).catch(() => {
+        });
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请至少选择一条记录进行删除'
+        });
+      }
+    },
     // 获取文档列表数据
     getTableWordList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
-      console.log(obj);
       let params = {
         pos: pageInfo.pos,
         limit: pageInfo.limit,
@@ -187,19 +207,19 @@ export default {
     // 删除
     deleteHandle(that, { rows }) {
       console.log('删除', rows);
-        that.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          that.deleteSend(rows);
-        }).catch(() => {
-          that.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
+      that.$confirm(this.$route.params.str ? '确认删除？' : '该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        that.deleteSend(rows);
+      }).catch(() => {
+        that.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
     },
     deleteSend(rows) {
       let params = {
@@ -210,6 +230,8 @@ export default {
       this.$fetch('delWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.$message.success('删除成功');
+          this.$refs.tableListWord.clearSelect();
+          this.initPage();
         } else {
           this.$message.error(res.msg || '删除失败');
         }
@@ -222,6 +244,7 @@ export default {
     // 选中
     changeTableCheckbox(val) {
       console.log(val);
+      this.multipleSelection = val;
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -235,9 +258,14 @@ export default {
 </script>
 <style lang="less" scoped>
 .btn-upload {
+  display: inline-block;
+  margin-right: 16px;
   /deep/.el-upload {
-    display: inline-block;
-    margin-right: 16px;
+    width: auto;
+    height: auto;
+    line-height: unset;
+    background: transparent;
+    border: none;
   }
 }
 .video-wrap {

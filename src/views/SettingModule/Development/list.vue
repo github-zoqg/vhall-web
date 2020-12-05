@@ -86,7 +86,7 @@ export default {
     };
   },
   created(){
-    this.getTableList({pos: 0});
+    this.initPage();
   },
   components: {
     PageTitle,
@@ -104,7 +104,7 @@ export default {
       this.$fetch('createApp', {}).then(res => {
         console.log('getAppList', res);
         if(res && res.code === 200) {
-          this.$router.push({path: `/dev/${res.data.id}`});
+          this.$router.push({path: `/dev/${res.data.result}`});
         } else {
           this.$message.error(res.msg || '创建失败');
         }
@@ -117,21 +117,15 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    getTableList(params) {
-      if (params && params === 'search') {
-        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-        pageInfo.pageNum= 1;
-        // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
-      }
-      // let obj = Object.assign({}, pageInfo);
+    initPage() {
+      this.getTableList();
+    },
+    getTableList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
       this.fetching = true;
-      this.$fetch('getAppList', {pos: params.pos, limit: 10}).then(res => {
+      this.$fetch('getAppList', pageInfo).then(res => {
         console.log('getAppList', res);
         if(res && res.code === 200) {
           let list = res.data.list || [];
-          list[0].status = 1;
-          list[1].status = 0;
           list.map(item => {
             item.statusStr = ['已停用', '已启用'][item.status];
           });
@@ -182,8 +176,11 @@ export default {
         status: status
       }).then(res =>{
         if (res && res.code === 200) {
-          that.$message.success(['停用','启用','删除'][status]);
+          this.$message.success(['停用','启用','删除'][status]);
+          // 刷新数据
+          this.initPage();
         } else {
+          this.$message.success(res.msg);
         }
       }).catch( e =>{
       });
