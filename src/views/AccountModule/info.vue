@@ -82,9 +82,9 @@ export default {
       this.userInfo = JSON.parse(userInfo);
       this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-    this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     this.tabType = 'baseSet';
     this.$refs[`baseSetComp`].initComp();
+    this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
   }
 };
 </script>

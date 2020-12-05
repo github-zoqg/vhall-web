@@ -33,7 +33,6 @@
 import VhallReport from '@/components/VhallReport/main';
 import { browserSupport } from '@/utils/getBrowserType';
 import chrome from './chrome';
-import DATA from './data';
 import tip from './tip';
 export default {
   components: { chrome, tip },
@@ -94,8 +93,7 @@ export default {
             // eslint-disable-next-line no-return-assign
             return this.tipMsg = res.msg;
           }
-          const mockResult = res.data;
-          this.rootActive = res.data;
+          const mockResult =  this.rootActive = res.data;
           await this.getTools(mockResult.interact.room_id);
           this.shareId = mockResult.share_id;
           this.userInfo = mockResult.join_info;
@@ -104,6 +102,7 @@ export default {
           this.third_party_user_id = mockResult.join_info.third_party_user_id;
           // this.joinId = mockResult.join_info.join_id; // 暂时移除
           this.saas_join_id = mockResult.join_info.join_id;
+          var a = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2NDIxMzg0IiwicGhvbmUiOiIxMzc4MzQ1MTAyMyIsIm5pY2tfbmFtZSI6Ilx1NTQwM1x1NGUwZFx1ODBkNlx1NWMwZlx1OTY0OCIsImpvaW5fdWlkIjoiMTczNjI2NyJ9.SZ2CgHUBoGFRN7v-NscO90ZbOJtprgItBE-HhYoV4vc';
           this.params_verify_token = mockResult.join_info.interact_token;
           this.permission = mockResult.permission;
           this.permission = [100001,100003,100004,100005,100008,100009,100011,100012,100013,100014,100015,100016,100017,100018,100019,100020,100021,100022,100023,100026,100027,100028,100029,100030];

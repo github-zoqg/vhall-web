@@ -4,7 +4,7 @@
       <p class="subject">{{index}}</p>
       <div class="subjectOuter">
         <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
-          <i class="icon"></i>
+          <icon class="icon" icon-class="saasicon_shangchuanwendang-copy"></icon>
           <div class="desc">
             <p class="mainText">{{opera.title}}</p>
             <p class="subText">{{opera.subText}}</p>
@@ -66,10 +66,16 @@ export default {
   .icon{
     width: 56px;
     height: 56px;
-    background: #FB3A32;
-    margin-right: 20px;
+    // background: #FB3A32;
+    margin-right: 15px;
     border-radius: 50%;
     margin-left: 35px;
+    // border: 1px solid #ccc;
+  }
+  /deep/.svg-icon{
+    text-align: center;
+    font-size: 50px;
+    vertical-align: top;
   }
   .desc{
     .mainText{

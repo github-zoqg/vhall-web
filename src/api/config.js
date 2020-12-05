@@ -1,10 +1,10 @@
 const apis = {
   // 资料管理
   datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
-  dataVideoList: ['/99/v3/webinars/videos/get-list', 'POST', 'mock'], //音视频列表
-  dataVideoupdate: ['/99/v3/webinars/videos/edit', 'POST', 'mock'], //音视频编辑
-  dataVideoDel: ['/99/v3/webinars/videos/delete', 'POST', 'mock'], //音视频删除
-  dataVideoAdd: ['/99/v3/webianrs/videos/create', 'POST', 'mock'], //音视频列表
+  dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表
+  dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
+  dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
+  createVideo: ['/v3/webinars/videos/create', 'POST'], //音视频添加
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
   editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
@@ -47,10 +47,10 @@ const apis = {
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
-  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口 √
-  liveEdit: ['/99/v3/webinars/webinar/edit', 'POST', 'mock'], // 活动修改 •••
-  liveDel: ['/99/v3/webinars/webinar/delete', 'POST', 'mock'], // 活动删除 •••
-  demandCreate: ['/99/v3/webinars/webinar/create-demand', 'POST', 'mock'], // 点播创建
+  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口        接口少了一个字段
+  liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
+  liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
+  demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
 
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建 √
@@ -227,6 +227,7 @@ const apis = {
   getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET', 'data'], //获取财务总览-并发-消费账单
   getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET', 'data'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
+  orderArrears: ['/v3/fin/order/arrears', 'POST', 'data'], // 财务总览-补缴欠费
   orderFlow: ['/v3/fin/order/flow', 'POST', 'data'], // 流量包购买
   orderUpgrade: ['/v3/fin/order/upgrade', 'POST', 'data'], // 升级并发
   orderExtend: ['/v3/fin/order/extend', 'POST', 'data'], // 购买扩展包
@@ -305,11 +306,11 @@ const apis = {
   liveClientInit: ['/v3/webinars/live/client-init', 'GET'], // 初始化直播间（客户端） •••
   liveStart: ['/v3/webinars/live/start', 'POST'], // 开始直播 √
   onlineUserList :['/interacts/chat-user/get-online-list', 'POST'], // 获取在线用户列表
-  liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播 ×  接口有问题
-  rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 不知有何用处
-  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 •••
-  rebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 •••
-  rebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 •••
+  liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播  √
+  rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 √
+  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 未知
+  v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 未知
+  v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 未知
 
   // 授权模块
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••
@@ -346,10 +347,56 @@ const apis = {
   goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
+  getConfigList: ['/v3/users/permission/get-config-list', 'POST'], // 获取观看端配置项
+  getDefinitionConfig: ['/v3/interacts/players/get-clarity-default', 'POST'], // 获取默认清晰度配置项
+  agreeInvite: ['/v3/interacts/inav-user/agree-invite', 'POST'], // 用户同意上麦
+  rejectInvite: ['/v3/interacts/inav-user/reject-invite', 'POST'], // 用户拒绝上麦
+  speakOn: ['/v3/interacts/inav-user/speak', 'POST'], // 用户上麦
+  speakOff: ['/v3/interacts/inav-user/nospeak', 'POST'], // 用户下麦
+  redPackInfo: ['/v3/interacts/redpacket/get-redpacket-status', 'POST'], // 获取红包信息
+  applySpeakOn: ['/v3/interacts/inav-user/apply', 'POST'], // 用户申请上麦
+  cancelApplySpeakOn: ['/v3/interacts/inav-user/cancel-apply', 'POST'], // 用户取消上麦申请
+  speakList: ['/v3/interacts/inav/get-speak-list', 'POST'], // 上下麦列表
+  redEnvCollectionRecord: ['/v3/interacts/redpacket/get-redpacket-partition-recorder', 'POST'], // 红包领取记录
+
+  // 聊天
+  getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息
+  deleteMsg: ['/v3/interacts/chat/delete-message', 'POST'], // 删除聊天消息
+  setAllBanned: ['/v3/interacts/chat-user/set-all-banned', 'POST'], // 设置全体禁言
+  setKickOut: ['/v3/interacts/chat-user/set-kicked', 'POST'], // 踢出取消踢出
+  setBanned: ['/v3/interacts/chat-user/set-banned', 'POST'], // 设置禁言
+  getHistoryQaMsg: ['/v3/interacts/qa/get-webinar-history-questions', 'POST'], // 获取历史问答记录
+  sendQaMsg: ['/v3/interacts/qa/submit-one-question', 'POST'], // 发送问答
+  getBannedList: ['/v3/interacts/chat-user/get-banned-list', 'POST'], // 获取禁言列表
+  getKickList: ['/v3/interacts/chat-user/get-kicked-list', 'POST'], // 获取踢出列表
+  getOnlineList: ['/v3/interacts/chat-user/get-online-list', 'POST'], // 获取在线列表
+  // 礼物
+  sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
+  giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
+
+  // 点赞
+  like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
+
+  // 打赏
+  seadAwardMsg: ['/v3/interacts/reward/create-user-reward', 'POST'], // 打赏
+  getQeustionList: ['/v3/vss/survey/list-webinar-survey', 'POST'], // 获取问卷列表
+
+  // 抽奖
+  saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息 
+  // 问卷
+  submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
+
+  // 开平海报
+  getPlaybillInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报信息
+  // 互动
+  setMainScreen: ['/v3/interacts/room/set-main-screen', 'POST'], // 设置主屏
+  setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
+  setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
+  allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
+  
 };
 
 const getApi = api => {
   return apis[api] && apis[api];
 };
-
 export default getApi;

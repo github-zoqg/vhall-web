@@ -1,7 +1,7 @@
 <template>
  <div class="home-main">
    <OldHeader></OldHeader>
-   <div class="v-head-bg" style="background: url(//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png) repeat-x rgb(49, 49, 49);">
+   <div class="v-head-bg" :style="`background: url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) repeat-x rgb(49, 49, 49);`">
      <div class="v-head-img"></div>
    </div>
    <div class="home-main-container">
@@ -15,13 +15,13 @@
        <!-- 右侧名片 -->
        <div class="ac__home__panel--right">
          <div class="ac__home--user">
-           <img src="../../common/images/avatar.jpg" alt="" />
-           <p>XXXX的主页</p>
-           <p>粉丝数： 100010</p>
+           <img :src="avatarImgUrl" alt="" />
+           <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
+           <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>
          </div>
          <div class="ac__home--info">
            <p class="ac__home--title"></p>
-           <p class="ac__home--notice">小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！</p>
+           <p class="ac__home--notice" v-html="content"></p>
          </div>
        </div>
      </div>
@@ -34,6 +34,8 @@ import PageTitle from '@/components/PageTitle';
 import OldHeader from '@/components/OldHeader';
 import HomeMain from './components/main.vue';
 import HomeSet from './components/homeSet.vue';
+import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   name: 'info.vue',
   components: {
@@ -44,14 +46,52 @@ export default {
   },
   data() {
     return {
-      isSetShow: false
+      isSetShow: false,
+      userHomeVo: null,
+      attentioned_count: 0,
+      follow: 0,
+      content: `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`,
+      avatarImgUrl: null,
+      userInfo: null
     };
   },
   methods: {
     showSetHandle(type) {
       this.isSetShow = type;
+    },
+    getHomePageInfo() {
+      this.$fetch('homeInfoGet', {
+        home_user_id: sessionOrLocal.get('userId')
+      }).then(res => {
+        console.log(res);
+        if (res && res.code === 200) {
+          // 粉丝数、是否关注、主页信息
+          let {attentioned_count, follow, homepage_info } = res.data;
+          homepage_info.homepage_avatar = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
+          homepage_info.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
+          this.userHomeVo = homepage_info;
+          this.attentioned_count = attentioned_count;
+          this.follow = follow;
+          this.content = homepage_info.content;
+        } else {
+          this.userHomeVo = null;
+        }
+      }).catch(err=>{
+        console.log(err);
+        this.userHomeVo = null;
+      });
     }
   },
+  created() {
+    this.getHomePageInfo();
+  },
+  mounted() {
+    let userInfo  = sessionOrLocal.get('userInfo');
+    if(userInfo !== null) {
+      this.userInfo = JSON.parse(userInfo);
+      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    }
+  }
 };
 </script>
 

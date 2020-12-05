@@ -442,6 +442,7 @@ export default {
       console.log('valll', val);
     },
     // 提交领奖人信息
+    // TODO:
     submitInfo () {
       console.log('ssssss', this.deliverItem);
       if (!this.reciveInfo.tel || !this.reciveInfo.name) return this.$message.customerror('手机号与姓名不能为空');
@@ -449,8 +450,7 @@ export default {
       const regs = /^1(3|4|5|6|7|8|9)\d{9}$/;
       if (!regs.test(phone)) return this.$message.customerror('手机号格式错误');
       // lotteryAward
-      this.$vhallFetch('lotteryAward', {
-        vss_token: this.vssToken,
+      this.$fetch('saveLotteryInfo', {
         room_id: this.roomId,
         lottery_id: this.deliverItem.lottery_id,
         lottery_user_name: this.reciveInfo.name,
@@ -458,7 +458,6 @@ export default {
         lottery_user_remark: this.reciveInfo.remarks
       }).then(res => {
         if (res.code === 200) {
-          console.log(res);
           this.reciveAwardShow = false;
           this.payoff = false;
           this.reciveInfo = {};

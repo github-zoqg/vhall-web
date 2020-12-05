@@ -133,12 +133,12 @@ export default {
     pay () {
       let serviceCode;
       this.radio === 'ALIPAY' ? serviceCode = 'CASHIER' : serviceCode = 'QR_PAY';
-      this.$vhallFetch('send', {
-        vss_token: this.vssToken,
+      this.$fetch('sendGift', {
         gift_id: this.itemInfo.id,
-        channel: this.radio,
         service_code: serviceCode,
+        channel: this.radio,
         room_id: this.roomId
+        // open_id
       }).then((res) => {
         if (res.code === 200) {
           // console.log(res)
@@ -165,12 +165,10 @@ export default {
     // 获取礼物列表
     getList () {
       // list
-      this.$vhallFetch('list', {
-        vss_token: this.vssToken,
+      this.$fetch('giftList', {
         room_id: this.roomId
       }).then((res) => {
         if (res.code === 200) {
-          console.log(res)
           this.giftContentControl = !this.giftContentControl
           this.imageInfo = res.data ? res.data.list : []
           console.log('礼物列表',this.giftContentControl);
@@ -218,8 +216,8 @@ export default {
       }
     },
     praise () {
-      this.$vhallFetch('like', {
-        webinar_id: this.roomId,
+      this.$fetch('like', {
+        room_id: this.roomId,
         num: this.times
       }).then((res) => {
         if (res.code === 200) {

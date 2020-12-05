@@ -9,8 +9,8 @@
 
       <div v-if="!assistantType" class="vhall-header">
         <div class="vhall-header-left">
-          <div class="vhall-room-name" :title="roomInfo.subject">
-            {{ roomInfo.subject || '房间名称' }}
+          <div class="vhall-room-name" :title="roomInfo.webinar.subject">
+            {{ roomInfo.webinar.subject || '房间名称' }}
           </div>
           <div class="vhall-room-id-container">
             <div class="vhall-room-id-icon">ID</div>
@@ -196,13 +196,6 @@
           :class="assistantType == 'doc' ? 'assistantStyle' : ''"
         >
           <!-- 签到 -->
-          <!-- <sign-in
-            v-if="roomInfo.interact.room_id"
-            ref="signin"
-            :vss_token="vssToken"
-            :room_id="roomInfo.interact.room_id"
-            :masterEnd="true"
-          ></sign-in> -->
           <NewSignIn
             v-if="roomInfo.interact.room_id"
             ref="signin"
@@ -219,11 +212,10 @@
             :width="'830px'"
             :title="'转播'"
           >
+          <!-- rebroadcastVisible -->
             <rebroadcast
               :visible="rebroadcastVisible"
-              v-if="params_verify_token"
               :webinar_id="ilId"
-              :params_verify_token="params_verify_token"
               @onClose="closeRebroadcast"
               :roomId="roomInfo.interact.room_id"
               :vssToken="vssToken"
@@ -1325,8 +1317,8 @@ import moment from 'moment';
 import ChatComponent from '../../libs/chat';
 import Interactive from '../../libs/interactive';
 import streams from '../../libs/interactive/remoteStreams';
-// import DocList from '../../libs/doc-list';
-// import Doc from '@/components/Doc';
+import DocList from '../../libs/doc-list';
+import Doc from '@/components/Doc';
 // import this.$EventBus from '@/utils/Events';
 import Mediasettings from '../../libs/media-settings';
 import VirtualAudience from '../../libs/virtualAudience';
@@ -1444,8 +1436,8 @@ export default {
     hadEnvelope,
     Interactive,
     streams,
-    // DocList,
-    // Doc,
+    DocList,
+    Doc,
     ChatComponent,
     Mediasettings,
     VirtualAudience,
@@ -1718,6 +1710,7 @@ export default {
     this.initThirdPermis();
     const setFullscreen = () => {
       const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement;
+      console.warn('fullscreenElement--', fullscreenElement);
       if (fullscreenElement) {} else {
         this.isFullscreen = false;
         this.isDocFullscreen = false;
@@ -2490,19 +2483,23 @@ export default {
       this.$fetch('initiatorInfo', {
         webinar_id: this.webinar_id
       }).then(async res => {
-          // this.roomInfo = res.data;
           this.roomInfo = this.rootActive;
           this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-
-          this.status = res.data.status;
-          this.status = 0; // 0|待直播/预约,1|直播中,2|直播结束
+          // 因早期设置值不同  进行根源影射   更换接口时产生的问题  备注勿删
+          if(this.rootActive.webinar.type == 1){
+            this.status = 1;
+          }else if(this.rootActive.webinar.type == 2){
+            this.status = 0;
+          }else{
+           this.status = 2;
+          }
           this.isPublishing = this.status == 1;
           this.isQAEnabled = this.qaStatus == 1; // ??
-          this.roleName = res.data.role_name;
+          this.isQAEnabled = this.roomStatus.question_status == 1; // ??
+          this.roleName = this.rootActive.join_info.role_name;
 
-          this.layout = res.data.layout;
+          this.layout =  this.roomStatus.layout;
           this.localDuration = this.duration;
-          this.getbroadcast(); // 获取插播列表
 
           if (this.status == 1) {
             this.virtualAudienceCanUse = true;
@@ -2628,17 +2625,10 @@ export default {
       this.doc_permission = _data.doc_permission; // 当前主讲人
       this.mainScreen = _data.main_screen;
       this.speakerList = _data.speaker_list || [];
-      this.speakerList = [{
-        account_id:"16421384",
-        audio:1,
-        nick_name:"吃不胖小陈",
-        role_name:1,
-        video:1
-      }];
-      this.rebroadcast = (_data.rebroadcast && _data.rebroadcast.room_id) || '';
-      this.rebroadcast = '';
-      this.rebroadcastChannelId = (_data.rebroadcast && _data.rebroadcast.channel_id) || '';
-      this.rebroadcastChannelId = '';
+      if(this.rootActive && this.rootActive.rebroadcast ){
+        this.rebroadcast =  this.rootActive.rebroadcast.room_id || '';
+        this.rebroadcastChannelId = this.rootActive.rebroadcast.channel_id || '';
+      }
       console.log(this.speakerList);
       if(typeof this.speakerList === 'object' && this.speakerList.length!=0){
         this.speakerList.forEach(item => {

@@ -70,4 +70,9 @@ export const liveText = (val) => {
   let str = liveTypeStr[val];
   return str;
 };
+//转化电话号码为131****8085
+export const filterPhone = (value) => {
+  return  String(value).replace( /([0-9]{3})([0-9]{4})([0-9]{4})/,"$1****$3");
+};
+
 
