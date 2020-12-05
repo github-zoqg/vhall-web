@@ -137,7 +137,7 @@ export default {
       });
     },
     privacyItem() {
-      if (this.questionArr[this.questionArr.length - 1].label === '隐私声明') {
+      if (this.questionArr.length > 0 && this.questionArr[this.questionArr.length - 1].label === '隐私声明') {
         return this.questionArr[this.questionArr.length - 1];
       }
       return false;

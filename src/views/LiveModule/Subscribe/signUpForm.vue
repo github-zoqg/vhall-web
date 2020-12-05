@@ -276,10 +276,10 @@
           }
         ],
         baseInfo: {
-          "is_independent_link": 0,
-          "form_theme_color": "red",
-          "form_tab_verify_title": "验证",
-          "form_tab_register_title": "用户报名",
+          "open_link": 0,
+          "theme_color": "red",
+          "tab_verify_title": "验证",
+          "tab_form_title": "用户报名",
           "form_title": "ddassd",
           "form_introduce": "",
           "form_cover": "sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png"

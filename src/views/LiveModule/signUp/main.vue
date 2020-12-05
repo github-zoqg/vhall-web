@@ -86,13 +86,13 @@ export default {
       webinar_id: this.$route.params.str,
       signUpSwtich: false,
       baseInfo: {
-        is_independent_link: 0,
-        form_theme_color: 'red',
-        form_tab_verify_title: '验证',
-        form_tab_register_title: '用户报名',
-        form_title: '',
-        form_introduce: '',
-        form_cover: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'
+        open_link: 0,
+        theme_color: 'red',
+        tab_verify_title: '验证',
+        tab_form_title: '用户报名',
+        title: '',
+        intro: '',
+        cover: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'
       },
       radio: 3,
       rightComponent: 'fieldSet',
@@ -134,8 +134,8 @@ export default {
     }
   },
   created(){
-    this.addFiled(this.setOptions["基本信息"][0]);
-    this.addFiled(this.setOptions["基本信息"][2]);
+    this.getBaseInfo();
+    this.getQuestionList();
     console.log(this.questionArr);
   },
   methods: {
@@ -150,7 +150,7 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
-          this.signUpSwtich = res.data.enable_status;
+          this.signUpSwtich = res.data.enable_status === '0' ? false : true;
         }
       }).catch(err => {
         this.$message.error(`报名表单${ behaviour }失败！`);
@@ -159,9 +159,68 @@ export default {
     },
     // 获取表单题目列表
     getQuestionList() {
+      function compare(property){
+        return function(a,b){
+          var value1 = a[property];
+          var value2 = b[property];
+          return value1 - value2;
+        };
+      }
       this.$fetch('regQListGet', {
         webinar_id: this.webinar_id
       }).then(res => {
+        // 按照 order_num 从小到大排序
+        const list = res.data.ques_list.sort(compare('order_num'));
+        console.log(list);
+        list.forEach(element => {
+          // 如果是姓名、手机、邮箱、性别
+          if (element.type === 0) {
+            switch (element.default_type) {
+              // 姓名
+              case 1:
+                this.addFiled(this.setOptions["基本信息"][0], element);
+                break;
+              // 手机
+              case 2:
+                this.addFiled(this.setOptions["基本信息"][2], element);
+                break;
+              // 邮箱
+              case 3:
+                this.addFiled(this.setOptions["基本信息"][3], element);
+                break;
+              // 性别
+              case 4:
+                this.addFiled(this.setOptions["基本信息"][1], element);
+                break;
+            }
+          } else if (element.type === 1) {
+            if (element.subject === '公司') {
+              this.addFiled(this.setOptions["基本信息"][5], element);
+              return false;
+            }
+            // 问答题
+            this.addFiled(this.setOptions["题目类型"][2], element);
+          } else if (element.type === 2) {
+            // 单选
+            this.addFiled(this.setOptions["题目类型"][0], element);
+          } else if (element.type === 3) {
+            // 多选
+            this.addFiled(this.setOptions["题目类型"][1], element);
+          } else if (element.type === 4) {
+            if (element.subject === '职务') {
+              this.addFiled(this.setOptions["基本信息"][6], element);
+              return false;
+            }
+            // 下拉
+            this.addFiled(this.setOptions["题目类型"][3], element);
+          } else if (element.type === 5) {
+            // 地域
+            this.addFiled(this.setOptions["基本信息"][4], element);
+          } else if (element.type === 6) {
+            // 隐私
+            this.addFiled(this.setOptions["题目类型"][4], element);
+          }
+        });
         console.log(res);
       }).catch(err => {
         console.log(err);
@@ -202,87 +261,189 @@ export default {
       });
     },
     // 添加题目方法（通用）
-    addFiled(info){
-      const filedJson = getfiledJson({name: info.name, type: info.type});
-      // 默认添加题目不需要调用添加接口，直接 push 渲染页面
-      if (info.name === 'phone' || info.name === 'name') {
-        this.questionArr.push({
+    addFiled(info, opts){
+      let mergeObj;
+      let filedJson = getfiledJson({name: info.name, type: info.type});
+      // 如果 opts 存在，为初始化赋值
+      if (opts) {
+        mergeObj = {
+          question_id: opts.id,
+          reqType: opts.type,
+          default_type: opts.default_type,
+          label: opts.subject,
+          order_num: opts.order_num,
+          options: JSON.parse(opts.options),
+          required: !!opts.is_must,
+          phoneValide: !!(JSON.parse(opts.options) && JSON.parse(opts.options).open_verify)
+        };
+        filedJson = {
           ...filedJson,
-          question_id: Math.floor(Math.random() * 10000)
-        });
-        // 这个 if ,等接口通了可以删除，不用判断直接 return
-        if(info) {
-          return false;
-        }
-      }
-      //*************接口调通删除 */
-      const questionsLength = this.questionArr.length;
-      const lastQuestion = this.questionArr[questionsLength - 1];
-      if (lastQuestion.label === '隐私声明') {
-        // 如果最后一个选项是隐私协议，新题目插到倒数第三位
-        this.questionArr.splice(questionsLength - 2, 0, {
-          ...filedJson,
-          question_id: Math.floor(Math.random() * 10000)
-        });
-      } else if(lastQuestion.label === '手机号') {
-        // 如果添加的是隐私声明，直接push
-        if (filedJson.label === '隐私声明') {
-          this.questionArr.push({
-            ...filedJson,
-            question_id: Math.floor(Math.random() * 10000)
+          ...mergeObj
+        };
+        console.log(opts.subject, JSON.parse(opts.options));
+        if ((info.type === 'radio' || info.type === 'checkBox') && opts.items && opts.items.length) {
+          opts.items.forEach((item, index) => {
+            console.log('..............', filedJson.nodes, filedJson.nodes[0]);
+            const length = filedJson.nodes[0].children.length;
+            if (index < length) {
+              filedJson.nodes[0].children[index].item_id = item.id;
+              filedJson.nodes[0].children[index].value = item.subject;
+              filedJson.nodes[0].children[index].question_id = item.ques_id;
+              filedJson.nodes[0].children[index].type = item.type;
+              filedJson.nodes[0].children[index].other = !!item.type;
+            } else {
+              filedJson.nodes[0].children.push({
+                item_id: item.id,
+                value: item.subject,
+                question_id: item.ques_id,
+                type: item.type,
+                other: !!item.type
+              });
+            }
           });
-          return false;
+        } else if (info.name === 'duty' || info.type === 'select' && opts.items && opts.items.length) {
+          opts.items.forEach((item, index) => {
+            const length = filedJson.nodes.length;
+            if (index < length) {
+              filedJson.nodes[index].item_id = item.id;
+              filedJson.nodes[index].value = item.subject;
+              filedJson.nodes[index].question_id = item.ques_id;
+              filedJson.nodes[index].type = item.type;
+            } else {
+              filedJson.nodes.push({
+                ...JSON.parse(JSON.stringify(filedJson.nodes[index - 1])),
+                item_id: item.id,
+                value: item.subject,
+                question_id: item.ques_id,
+                type: item.type
+              });
+            }
+          });
+        } else if (info.name === 'privacy' && opts.options && opts.options.length) {
+          const optsOptions = JSON.parse(opts.options);
+          const optsOptions0 = JSON.parse(optsOptions[0].options);
+          const optsOptions1 = optsOptions.length === 2 ? JSON.parse(optsOptions[1].options) : false;
+          filedJson.nodes[0].value = optsOptions0.content;
+          filedJson.nodes[1].value = optsOptions0.color_text;
+          filedJson.nodes[2].value = optsOptions0.url;
+          if (optsOptions1) {
+            filedJson.nodes[3] = JSON.parse(JSON.stringify(filedJson.nodes[1]));
+            filedJson.nodes[4] = JSON.parse(JSON.stringify(filedJson.nodes[2]));
+            filedJson.nodes[3].value = optsOptions1.privacy_info;
+            filedJson.nodes[3].privacy_id = optsOptions1.privacy_id;
+            filedJson.nodes[4].value = optsOptions1.privacy_link;
+            filedJson.nodes[4].privacy_id = optsOptions1.privacy_id;
+            filedJson.nodes[3].privacyAdd = false;
+            filedJson.nodes[3].canRemove = true;
+          }
         }
-        // 如果最后一个是手机号题目，新题目插到倒数第二位
-        this.questionArr.splice(questionsLength - 1, 0, {
-          ...filedJson,
-          question_id: Math.floor(Math.random() * 10000)
-        });
-      }
-      if(info) {
+        console.log(filedJson);
+        this.questionArr.push(filedJson);
         return false;
       }
-      //*************接口调通删除 */
 
-      // 添加的是隐私协议
-      if (name === 'privacy') {
-        this.addPrivacy();
-      }
+      // 默认添加题目不需要调用添加接口，直接 push 渲染页面
+      // if (info.name === 'phone' || info.name === 'name') {
+      //   this.questionArr.push({
+      //     ...filedJson,
+      //     question_id: Math.floor(Math.random() * 10000)
+      //   });
+      //   // 这个 if ,等接口通了可以删除，不用判断直接 return
+      //   if(info) {
+      //     return false;
+      //   }
+      // }
+
       // 添加的是题目
-      const options = {
+      let options = {
         webinar_id: this.webinar_id,
         type: filedJson.reqType,
         default_type: filedJson.default_type,
         subject: filedJson.label,
         is_must: filedJson.required ? 1 : 0,
-        options: JSON.stringify(filedJson.options) || JSON.stringify({ notNull: true })
+        options: JSON.stringify(filedJson.options)
       };
+      // 添加的是隐私声明
+      if (info.name === 'privacy') {
+        console.log(options.options);
+        const tempOpts = options.options ? JSON.parse(options.options) : {};
+        console.log(tempOpts);
+        options.options = JSON.stringify({
+          ...tempOpts,
+          content: '我们根据《隐私声明》保护您填写的所有信息',
+          color_text: '《隐私声明》',
+          url: ''
+        });
+      }
       this.$fetch('regQAdd', options).then(res => {
         if (res.code === 200) {
           // 提交成功，添加到数组中
-          console.log(this.questionArr);
           const questionsLength = this.questionArr.length;
           const lastQuestion = this.questionArr[questionsLength - 1];
-          if (lastQuestion.label !== '手机号') {
-            // 如果最后一个选项是隐私协议，新题目插到倒数第三位
-            this.questionArr.splice(questionsLength - 3, 0, {
-              ...filedJson,
-              question_id: res.data.question_id || Math.floor(Math.random() * 10000)
+          if ((info.type === 'radio' || info.type === 'checkBox') && res.data.items && res.data.items.length) {
+            res.data.items.forEach((item, index) => {
+              console.log('..............', filedJson.nodes, filedJson.nodes[0]);
+              const length = filedJson.nodes[0].children.length;
+              if (index < length) {
+                filedJson.nodes[0].children[index].item_id = item.id;
+                filedJson.nodes[0].children[index].value = item.subject;
+                filedJson.nodes[0].children[index].question_id = item.ques_id;
+                filedJson.nodes[0].children[index].type = item.type;
+                filedJson.nodes[0].children[index].other = !!item.type;
+              } else {
+                filedJson.nodes[0].children.push({
+                  item_id: item.id,
+                  value: item.subject,
+                  question_id: item.ques_id,
+                  type: item.type,
+                  other: !!item.type
+                });
+              }
             });
-          } else {
-            // 如果最后一个是手机号题目，新题目插到倒数第二位
-            this.questionArr.splice(questionsLength - 2, 0, {
-              ...filedJson,
-              question_id: res.data.question_id || Math.floor(Math.random() * 10000)
+          } else if ((info.name === 'duty' || info.type === 'select') && res.data.items && res.data.items.length) {
+            res.data.items.forEach((item, index) => {
+              const length = filedJson.nodes.length;
+              if (index < length) {
+                filedJson.nodes[index].item_id = item.id;
+                filedJson.nodes[index].value = item.subject;
+                filedJson.nodes[index].question_id = item.ques_id;
+                filedJson.nodes[index].type = item.type;
+              } else {
+                filedJson.nodes.push({
+                  ...JSON.parse(JSON.stringify(filedJson.node[index - 1])),
+                  item_id: item.id,
+                  value: item.subject,
+                  question_id: item.ques_id,
+                  type: item.type
+                });
+              }
             });
           }
-          this.questionArr.push();
-          console.log(this.questionArr);
-          // 更新题目顺序
+          if (lastQuestion.label === '隐私声明') {
+            // 如果最后一个选项是隐私协议，新题目插到倒数第三位
+            this.questionArr.splice(questionsLength - 2, 0, {
+              ...filedJson,
+              question_id: res.data.id
+            });
+          } else if(lastQuestion.label === '手机') {
+            // 如果添加的是隐私声明，直接push
+            if (filedJson.label === '隐私声明') {
+              this.questionArr.push({
+                ...filedJson,
+                question_id: res.data.id,
+              });
+            } else {
+              // 如果最后一个是手机号题目，新题目插到倒数第二位
+              this.questionArr.splice(questionsLength - 1, 0, {
+                ...filedJson,
+                question_id: res.data.id
+              });
+            }
+          }
           let question_ids = this.questionArr.reduce((acc, curr) => {
             return acc + curr.question_id + ',';
           }, '');
-          question_ids.substring(0, question_ids.length - 1);
+          question_ids = question_ids.substring(0, question_ids.length - 1);
           this.$fetch('regQSort', {
             webinar_id: this.webinar_id,
             question_ids
