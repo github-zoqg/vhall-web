@@ -131,7 +131,8 @@ export function getfiledJson({name, type}){
           "bottomBtn": ["phoneValid"],
           reqType: 0,
           default_type: 2,
-          subject: '手机号'
+          subject: '手机号',
+          phoneValide: true
         });
 
         break;

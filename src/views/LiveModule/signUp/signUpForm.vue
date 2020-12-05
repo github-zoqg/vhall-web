@@ -1,10 +1,10 @@
 <template>
   <div class="signUpForm">
     <header>
-      <img src="//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png" alt="">
+      <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
     </header>
     <article>
-      <h1 class="pageTitle">{{ $parent.$refs.fieldSet.form_title }}</h1>
+      <h1 class="pageTitle">{{ baseInfo.form_title }}</h1>
       <div :class="['tabs', colorIndex]">
         <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
         <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
@@ -29,33 +29,16 @@
                 </el-option>
               </el-select>
             </template>
-            <!-- 隐私声明 -->
-            <!-- <template v-else-if="formItem.name=='privacy'">
-              <el-checkbox v-model="formItem.value">
-                <p v-html="privacyFormatter(formItem.nodes)"></p>
-              </el-checkbox>
-            </template> -->
             <template v-for="(nodes, nodeIndex) in formItem.nodes" v-else>
               <el-input v-if="formItem.type=='input'"  :key="`${formIndex}-${nodeIndex}`" v-model="nodes.value" v-bind="nodes.props"></el-input>
               <!-- 单选类型 -->
               <el-radio-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='radio'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-radio v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
-                  <!-- "其他"
-                  <br/>
-                  <el-input maxlength="50" v-if="!!radioItem.other" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" ></el-input> -->
-                  <!-- {{radioItem.other ? "其他" : ''}}
-                  <el-input maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" ></el-input> -->
-                  <!-- <br/> -->
                 </el-radio>
               </el-radio-group>
               <!-- 多选类型 -->
               <el-checkbox-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='checkBox'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-checkbox v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
-                  <!-- {{radioItem.other ? "其他" : ''}}
-                  <el-input maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
-                    <i class="el-icon-remove-outline removeIcon" slot="suffix" @click="deleteOptions(node.children, raionIndex)"></i>
-                  </el-input> -->
-                  <!-- <br/> -->
                 </el-checkbox>
               </el-checkbox-group>
             </template>
@@ -107,6 +90,7 @@
             </el-input>
           </el-form-item>
         </el-form>
+        <el-button round type="primary" @click="submitForm">{{ tabs == 1 ? '报名' : '提交' }}</el-button>
       </template>
       <!-- 验证块 -->
     </article>
@@ -118,15 +102,20 @@
 </template>
 
 <script>
+import Env from "@/api/env";
 export default {
   props:{
     questionArr: {
       type: Array,
       default: ()=> []
+    },
+    baseInfo: {
+      type: Object,
     }
   },
   data(){
     return{
+      Env: Env,
       time: 60,
       form: {
         imgCode: '',
@@ -145,15 +134,10 @@ export default {
     renderQuestionArr() {
       return this.questionArr.filter(item => {
         return item.label !== '隐私声明';
-        // if(item.label !== '隐私声明'){
-        //   return item;
-        // } else {
-        //   return false;
-        // }
       });
     },
     privacyItem() {
-      if (this.questionArr[this.questionArr.length - 1].label === '隐私声明') {
+      if (this.questionArr.length > 0 && this.questionArr[this.questionArr.length - 1].label === '隐私声明') {
         return this.questionArr[this.questionArr.length - 1];
       }
       return false;
@@ -170,6 +154,19 @@ export default {
   methods: {
     closePreview() {
       this.$emit('closePreview');
+    },
+    submitForm() {
+      if(this.tabs === 1) {
+        this.submitSignUp();
+      }else {
+        this.submitVerify();
+      }
+    },
+    submitSignUp() {
+      console.log("提交报名表单");
+    },
+    submitVerify() {
+      console.log("提交验证");
     },
     getDyCode() {
 
