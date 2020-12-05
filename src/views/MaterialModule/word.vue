@@ -28,7 +28,7 @@
       >
         <el-button round type="primary" size="medium">上传</el-button>
       </el-upload>
-      <el-button round @click.prevent.stop="wordMultiDel" size="medium">批量删除</el-button>
+      <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -52,8 +52,8 @@
     </el-card>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
-        <doc-preview ref="videoPreview" :docParam='docParam'></doc-preview>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+        <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>
     </template>
   </div>
@@ -68,10 +68,6 @@ export default {
   data() {
     return {
       token: sessionOrLocal.get('token'),
-      saveData: {
-        path: 'webinar/document',
-        type: 1, // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
-      },
       actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
       formParams: {},
       totalNum: 0,
@@ -91,7 +87,7 @@ export default {
         },
         {
           label: '上传时间',
-          key: 'time',
+          key: 'created_at',
         }
       ],
       tableRowBtnFun: [
@@ -112,12 +108,28 @@ export default {
       ],
       multipleSelection: [],
       showDialog: false,
-      docParam: {}
+      docParam: null
     };
   },
   components: {
     PageTitle,
     DocPreview
+  },
+  computed: {
+    saveData: function() {
+      let data = {
+        path: 'webinar/document',
+        type: 1, // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
+      }
+      if(this.$route.params.str) {
+        // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
+        data.type = 0;
+        data.webinar_id = this.$route.params.str;
+      } else {
+        data.type = 1;
+      }
+      return data;
+    },
   },
   methods: {
     uploadSuccess(res, file, fileList){
@@ -126,6 +138,7 @@ export default {
         this.$message.error(res.msg || '上传失败');
       } else {
         // 判断文件上传情况
+        this.initPage();
       }
     },
     beforeUploadHandler(file){
@@ -162,10 +175,10 @@ export default {
           cancelButtonText: '取消'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
-            return item.document_id;
+            return item.id;
           });
           this.deleteSend({
-            document_id: ids.join(',')
+            id: ids.join(',')
           })
         }).catch(() => {
         });
@@ -182,7 +195,8 @@ export default {
         pos: pageInfo.pos,
         limit: pageInfo.limit,
         keyword: this.formParams.keyword,
-        type: 1
+        type: 1,
+        webinar_id: this.$route.params.str
       };
       this.$fetch(this.$route.params.str ? 'getWebinarWordList' : 'getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
@@ -203,11 +217,12 @@ export default {
     preShow(that, { rows }) {
       console.log('预览', rows);
       that.showDialog = true;
+      that.docParam = rows;
     },
     // 删除
     deleteHandle(that, { rows }) {
       console.log('删除', rows);
-      that.$confirm(this.$route.params.str ? '确认删除？' : '该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
+      that.$confirm(that.$route.params.str ? '该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？' : '确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
@@ -223,7 +238,7 @@ export default {
     },
     deleteSend(rows) {
       let params = {
-        ids: rows.document_id,
+        ids: rows.id,
         tag: this.$route.params.str ? 1 : 2,
         webinar_id: this.$route.params.str
       };
@@ -253,6 +268,9 @@ export default {
     initPage() {
       this.getTableWordList();
     }
+  },
+  created() {
+    this.initPage();
   }
 };
 </script>

@@ -15,6 +15,7 @@ let staticLinkVo = {
   aliQr: '//aliqr.e.vhall.com/qr.png?t=',
   uploadBaseUrl: '//t-alistatic01.e.vhall.com/upload/', // 图片上传后回显域名（后期字段变化）
   tmplDownloadUrl: '//t-alistatic01.e.vhall.com/static', // 原有静态模板下载地址
+  wordShowUrl: '//cnstatic01.e.vhall.com/document', // 文档上传后预览地址-通过hash
   WEB_SHARE_URL: '//http://t.e.vhall.com/v3/#'
 };
 let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
