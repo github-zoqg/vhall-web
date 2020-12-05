@@ -1,6 +1,11 @@
 const apis = {
   // 资料管理
-  datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
+  getWordList: ['/v3/interacts/document/get-shared-document-list', 'GET'], //获取文档列表
+  getWebinarWordList: ['/v3/interacts/document/get-webinar-document-list', 'POST'], //获取活动下文档列表
+  getWordDetail: ['/v3/interacts/document/detail', 'POST'], //获取文档详情
+  asyncWordInfo: ['/v3/interacts/document/clone-from-shared-document', 'POST'], // 同步文档
+  delWordList: ['/v3/interacts/document/batch-remove-reference', 'POST'], //删除文档
+
   dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表
   dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
   dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
@@ -383,7 +388,7 @@ const apis = {
   getQeustionList: ['/v3/vss/survey/list-webinar-survey', 'POST'], // 获取问卷列表
 
   // 抽奖
-  saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息 
+  saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
 
@@ -394,7 +399,7 @@ const apis = {
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
-  
+
 };
 
 const getApi = api => {
