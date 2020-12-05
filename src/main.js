@@ -2,6 +2,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import EventBus from './utils/Events';
+import baseObj from './api/env'
+console.log(baseObj)
 import { copy, dealObjectValue, domainCovert, parseURL } from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
@@ -15,7 +17,7 @@ Vue.use(vhallSaas, {
   config: {
     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
   },
-  baseUrl: "https://d-vss.vhall.com",
+  baseUrl: baseObj.BASE_URL,
   buHost: "https://t.e.vhall.com"
 });
 // 页面加载进度样式
@@ -24,7 +26,6 @@ import 'nprogress/nprogress.css';
 // 系统通用重置样式
 import '@/common/css/index.less';
 Vue.prototype.$img = require('./common/images/small.png');
-
 //过滤器
 import * as filters from './utils/filter';
 Object.keys(filters).forEach(key=>{

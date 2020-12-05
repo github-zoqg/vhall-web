@@ -36,7 +36,7 @@
                 ></i>
                 <!-- 显示条件：被禁言 -->
                 <i
-                  v-show="user.is_banned"
+                  v-show="user.is_banned == 1"
                   class="vhall-member-user--control--user-icon iconfont iconjinyan"
                   style="color:#cccccc;"
                 ></i>
@@ -767,7 +767,8 @@ export default {
       if (this.searchUserInput) {
         Object.assign(data, { nickname: this.searchUserInput });
       }
-      this.$vhallFetch('getOnlineUsers', data).then(res => {
+      this.$fetch('getOnlineList', data).then(res => {
+        console.warn('当前在线人员列表', res)
         this.$refs.scroll.finishPullUp();
         if (this.isRefesh) {
           this.onlineUsers = this._sortUsers(res.data.list);

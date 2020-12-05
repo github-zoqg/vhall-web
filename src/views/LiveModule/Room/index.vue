@@ -207,7 +207,7 @@ a {
 }
 .publish-wrap {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   min-width: 1200px;
   overflow: hidden;
 }

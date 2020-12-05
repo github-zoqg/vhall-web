@@ -70,6 +70,7 @@ const eventMixin = {
             msgId: msg.msg_id,
             channel: msg.channel
           });
+          console.warn('回显个人发的消息---', data)
           this.chatList.push(data);
         }
         // 禁言某个用户
