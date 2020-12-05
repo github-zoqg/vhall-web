@@ -388,7 +388,6 @@ export default {
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
       };
-      console.log(params, '000000000000000000000000');
       console.log(data, 'data-------------');
       this.$refs[formName].validate((valid) => {
         if (valid) {
