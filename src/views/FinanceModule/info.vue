@@ -99,6 +99,7 @@ import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import { sessionOrLocal } from '@/utils/utils';
 import { formatMoney } from '@/utils/filter';
+// import { getCountDownTime } from '@/utils/general';
 export default {
   name: "financeInfo",
   components: {
@@ -118,7 +119,8 @@ export default {
       versionType:2,
       dataValue: '',
       totalNum: 1000,
-      status: false,
+      vm: {},
+      status: JSON.parse(sessionOrLocal.get("arrears")).total_fee,
       searchAreaLayout: [
         {
           type: "2",
@@ -214,33 +216,31 @@ export default {
       ]
     };
   },
+  watch: {
+    status() {
+      if (this.status) {
+        this.initPayMessage();
+      }
+    }
+  },
   filters:{
     formatMoney
   },
-  created() {
-    if (this.status) {
-      let that = this;
-      let vm = this.$message({
-        showClose: true,
-        duration: 0,
-        dangerouslyUseHTMLString: true,
-        message: '<p style="color:#1A1A1A">您有流量欠费3004.32元未支付  <span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">立即支付</span></p>',
-        type: 'warning'
-      });
-      let open = document.querySelector('#openList');
-      open.addEventListener('click', function(e){
-        vm.close();
-        that.$router.push({
-          name: 'payOrder'
-        });
-      });
-    }
-  },
   mounted() {
+    if (this.status) {
+      this.initPayMessage();
+    }
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     this.getLineList();
     this.getAccountList();
+    // console.log(getCountDownTime('2020-12-04 11:00:00'));
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.status) {
+      this.vm.close();
+    }
+    next();
   },
   methods: {
     // 用量统计数据
@@ -314,6 +314,38 @@ export default {
         this.tableList = costList;
       }).catch(e=>{
         console.log(e);
+      });
+    },
+    getOrderArrear() {
+      let params = {
+        user_id: this.userId,
+        type: this.versionType == 2 ? 2 : 1
+      };
+      this.$fetch('orderArrears', params).then(res =>{
+        this.$router.push({
+          name: 'payOrder',
+          query: {
+            userId: this.userId,
+            orderId: res.data.order_id
+          }
+        });
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    initPayMessage() {
+      let that = this;
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        message: '<p style="color:#1A1A1A">您有流量欠费' + that.status + '元未支付  <span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">立即支付</span></p>',
+        type: 'warning'
+      });
+      let open = document.querySelector('#openList');
+      open.addEventListener('click', function(e){
+        that.vm.close();
+        that.getOrderArrear();
       });
     }
   }

@@ -13,7 +13,7 @@
         type="selection"
         width="55"
         align="left"
-        v-if="isCheckout"
+        v-if="isCheckout && totalNum > 0"
       />
       <template v-if="totalNum > 0">
         <el-table-column
@@ -35,6 +35,7 @@
                 }}</span>
                 <el-progress
                   :percentage="scope.row.uploadObj.num"
+                  v-if="scope.row.uploadObj.num != 100"
                 ></el-progress>
               </p>
               <!-- {{scope.row}} -->
@@ -226,7 +227,7 @@ export default {
     background-color: #FB3A32;
   }
   /deep/.el-table td, .el-table th{
-    padding: 10px 0 9px 0;
+    padding: 15px 0;
   }
   .text{
       width: 100%;

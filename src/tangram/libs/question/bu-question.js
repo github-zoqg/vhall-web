@@ -213,12 +213,7 @@ export default {
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, data => {
         console.log('提交问卷成功', data);
-        // this.$parent.questionClose();
         this.$emit('onCloses', '111111');
-        // debugger;
-        this.addSurveyQuestion(data.answer);
-        // data  回答Id
-        // naire_id  问卷Id
         this.submitQuestion(data.naire_id, data.data, data.report);
       });
 
@@ -344,25 +339,15 @@ export default {
             break;
         }
       });
-
-      this.$vhallFetch('submitQuestion', {
-        question_id: questionId,
+      // TODO:
+      this.$fetch('submitQuestion', {
+        survey_id: questionId,
         room_id: this.roomId,
-        answer_id: answerId,
-        extend: JSON.stringify(quesData)
+        answers: JSON.stringify(quesData)
       }).then(res => {
         this.showPreview = false;
         this.isDoListcShow = false;
       });
-    },
-    // 直播中答题接口
-    addSurveyQuestion (res) {
-      this.$vhallFetch('addSurvey', {
-        survey_id: this.questionnaireId,
-        user_id: this.userId,
-        webinar_id: this.ilId,
-        res: res
-      }).then(res => {});
     },
     // content样式修改
     contentQuestion (questionId) {

@@ -58,7 +58,7 @@ export default {
     nowPurchase () {
       window.vhallReport.report('GOOD_RECOMMEND', {
         event: moment().format('YYYY-MM-DD HH:mm'),
-        market_tools_id: this.goodsAllInfo.id,
+        market_tools_id: this.goodsAllInfo.good_id,
         // 点击购买
         market_tools_status: 1
       });
@@ -66,7 +66,7 @@ export default {
     },
     // 切换图片按钮
     changeBigImage (item, index) {
-      this.bigImageUrl = `${this.dominImage}/${item.img}`;
+      this.bigImageUrl = `${this.dominImage}/${item.img_url}`;
       const [...selectPhoto] = document.querySelectorAll('.mini-image');
       selectPhoto.map((item, index) => {
         item.style.border = 'none';

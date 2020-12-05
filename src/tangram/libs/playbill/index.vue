@@ -56,17 +56,17 @@ export default {
     },
     // 是否需要展示开屏海报
     showPlaybill () {
-      this.$vhallFetch('playbill', {
+      this.$fetch('getPlaybillInfo', {
         webinar_id: this.ilId
       }).then(res => {
         if (res.code === 200) {
-          if (res.data.posters.img) {
+          if (res.data['screen-posters'].img) {
             this.imgUrl = `${sessionStorage.getItem('imageDomin')}/${
-              res.data.posters.img
+              res.data['screen-posters'].img
             }`;
             this.billShow = true;
             this.closeTimes();
-            if (res.data.public.webinar_id) {
+            if (res.data['screen-posters'].status == 0) {
               this.qrCodeShows = true;
               this.qrCodeInfo = res.data.public;
               this.invitePartner(res.data.public);

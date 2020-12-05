@@ -163,15 +163,6 @@ export default {
     rulesShow: {
       required: true
     },
-    changeRules: {
-      required: true
-    },
-    rewardListClick: {
-      required: true
-    },
-    invitedTopClick: {
-      required: true
-    },
     domains: {
       default: () => {
         return {};
@@ -201,6 +192,15 @@ export default {
     }
   },
   methods: {
+    changeRules () {
+      this.$emit('changeRules')
+    },
+    invitedTopClick () {
+      this.$emit('invitedTopClick')
+    },
+    rewardListClick () {
+      this.$emit('rewardListClick')
+    },
     getLiveLabel(arr) {
       return arr.reduce((acc, curr, index) => {
         let liveColor = '';
