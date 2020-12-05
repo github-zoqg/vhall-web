@@ -107,8 +107,7 @@ export default {
       webinar: {},
       input: '',
       localStream: false,
-      posterUrl:
-        '//t-alistatic01.e.vhall.com/static/img/video_default_nologo.png',
+      posterUrl: '//t-alistatic01.e.vhall.com/static/img/video_default_nologo.png',
       rebroadcastingRoomId: '', // 转播中的roomID
       appId: '',
       accountId: '',
@@ -153,7 +152,7 @@ export default {
         this.current = id;
         const currentItem = this.list.find(item => item.id == this.current);
         this.posterUrl = currentItem.img_url || this.posterUrl;
-        if (currentItem.isStream == 1) {
+        if (currentItem.is_stream == 1) {
           this.rebroadcastingRoomId = this.current;
         }
         this.getPreviewInfo(id);
@@ -185,9 +184,7 @@ export default {
           this.accountId = this.webinar.third_party_user_id;
           this.docUrl = res.data.document_url;
           this.appId = this.webinar.paas_app_id;
-// 暂时缺少
-          this.recordId = this.webinar.record_id;
-
+          this.recordId = this.webinar.paas_record_id;
           this.$refs.preview.initSDK();
         })
         .catch(error => {
@@ -202,7 +199,7 @@ export default {
       this.$emit('onClose');
     },
     rebroadcast () {
-      // if (!this.$refs.preview || !this.$refs.preview.$PLAYER) return this.$message.error('拉流中或者拉流失败！');
+      if (!this.$refs.preview || !this.$refs.preview.$PLAYER) return this.$message.error('拉流中或者拉流失败！');
       if (this.status != 1) return this.$message('请先开始直播！');
       this.$fetch('v3RebroadcastStart', {
         webinar_id: this.webinar_id,
@@ -253,10 +250,10 @@ export default {
             roomId: this.roomId,
             // vssToken: this.vssToken,
             sourceRoomId: this.current,
-            recordId: this.webinar.record_id, // ??
+            recordId: this.webinar.paas_record_id,
             token: this.webinar.paas_access_token,
             accountId: this.webinar.third_party_user_id,
-            appId: this.webinar.paas_app_id, // ??
+            appId: this.webinar.paas_app_id,
             localStream: this.localStream
           });
           if (res.code == 200) {
@@ -267,7 +264,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-        console.warn('v3RebroadcastStop', err);
+          console.warn('v3RebroadcastStop', err);
           this.$message('停止转播失败！');
         });
     }
@@ -623,7 +620,6 @@ export default {
 }
 .mylive{
   &:hover{
-    color: red !important;
     .tips{
       display: block !important;
     }

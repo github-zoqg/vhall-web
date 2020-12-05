@@ -1,35 +1,36 @@
 const uploadMixin = {
-  data () {
+  data() {
     return {
       imgUrls: []
     }
   },
   computed: {
-    uploadActive () {
+    uploadActive() {
       return this.imgUrls.length
     }
   },
   methods: {
-    onExceed () {
+    onExceed(res) {
+      console.log(res, 77777)
       if (this.inputStatus.disable) {
-        this.$message.error('您已被禁言');
+        this.$message.error('您已被禁言')
         return false
       }
       if (this.uploadActive >= 4) {
-        this.$message.error('一次最多上传4张图片');
+        this.$message.error('一次最多上传4张图片')
         return false
       }
       return true
     },
-    uploadSuccess (res) {
-      console.log('======上传成功========')
-      this.imgUrls.push(`${res.data.host}/${res.data.name}`)
+    uploadSuccess(res) {
+      console.log('======上传成功========', res)
+      this.imgUrls.push(res.data.domain_url)
     },
-    uploadError (err) {
+    uploadError(err) {
       console.error('======上传聊天图片失败======')
       console.log(err)
     },
-    deleteImg (index) {
+    deleteImg(index) {
       this.imgUrls.splice(index, 1)
     }
   }

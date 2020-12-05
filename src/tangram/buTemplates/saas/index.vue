@@ -620,7 +620,7 @@
                 'vhall-miniBox vhall-saas-miniArea': miniElement == 'doc'
               }"
               v-if="rebroadcast && rebroadcast != 'rebroadcastEnd'"
-              :channel-id="roomInfo.channel_id"
+              :channel-id="roomInfo.interact.channel_id"
               :roomId="roomInfo.interact.room_id"
               :joinId="roomInfo.join_info.third_party_user_id + '7890'"
               :appId="roomInfo.interact.paas_app_id"
@@ -645,7 +645,7 @@
               :docPermissionId="doc_permission"
               :roleName="roomInfo.join_info.role_name"
               :room-id="roomInfo.interact.room_id"
-              :channel-id="roomInfo.channel_id"
+              :channel-id="roomInfo.interact.channel_id"
               :appId="roomInfo.interact.paas_app_id"
               :token="roomInfo.interact.paas_access_token"
               :live-status="status"
@@ -1116,7 +1116,7 @@
                 v-if="roomInfo.webinar.userinfo.user_id"
                 :splited="splitStatus == 1"
                 :appId="roomInfo.interact.paas_app_id"
-                :channelId="roomInfo.channel_id"
+                :channelId="roomInfo.interact.channel_id"
                 :roleName="roomInfo.join_info.role_name"
                 :roomId="roomInfo.interact.room_id"
                 :userId="roomInfo.join_info.third_party_user_id"
@@ -1135,7 +1135,7 @@
               v-if="!assistantType"
               v-show="tabIndex == 2"
             >
-              <notice :roomId="roomInfo.interact.room_id"></notice>
+              <notice :roomId="roomInfo.interact.room_id" :channel_id='roomInfo.interact.channel_id'></notice>
             </div>
             <div
               v-auth="100013"

@@ -366,7 +366,7 @@ const apis = {
   redEnvCollectionRecord: ['/v3/interacts/redpacket/get-redpacket-partition-recorder', 'POST'], // 红包领取记录
 
   // 聊天
-  getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息
+  getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息 √
   deleteMsg: ['/v3/interacts/chat/delete-message', 'POST'], // 删除聊天消息
   setAllBanned: ['/v3/interacts/chat-user/set-all-banned', 'POST'], // 设置全体禁言
   setKickOut: ['/v3/interacts/chat-user/set-kicked', 'POST'], // 踢出取消踢出
@@ -399,7 +399,8 @@ const apis = {
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
-
+  // 发起端所有新增
+  v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST']
 };
 
 const getApi = api => {
