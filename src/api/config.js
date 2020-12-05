@@ -1,6 +1,11 @@
 const apis = {
   // 资料管理
-  datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
+  getWordList: ['/v3/interacts/document/get-shared-document-list', 'GET'], //获取文档列表
+  getWebinarWordList: ['/v3/interacts/document/get-webinar-document-list', 'POST'], //获取活动下文档列表
+  getWordDetail: ['/v3/interacts/document/detail', 'POST'], //获取文档详情
+  asyncWordInfo: ['/v3/interacts/document/clone-from-shared-document', 'POST'], // 同步文档
+  delWordList: ['/v3/interacts/document/batch-remove-reference', 'POST'], //删除文档
+
   dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表
   dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
   dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
@@ -13,12 +18,12 @@ const apis = {
   liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
 
   //广告推荐
-  getAdvList: ['/101/v3/interacts/recommend-adv/get-adv-list', 'GET', 'mock'], //获取广告列表
-  getActivityList: ['/101/v3/interacts/recommend-adv/database-to-activity', 'POST', 'mock'], //从资料库保存到活动
-  createAdv: ['/101/v3/interacts/recommend-adv/create-adv', 'POST', 'mock'], //创建广告
-  updateAdv: ['/101/v3/interacts/recommend-adv/update-adv', 'POST', 'mock'], //编辑广告
-  deleteAdv: ['/101/v3/interacts/recommend-adv/batch-delete-adv', 'POST', 'mock'], //批量删除广告
-  viewAdv: ['/101/v3/interacts/recommend-adv/view-adv', 'GET', 'mock'], //查看单条广告详情
+  getAdvList: ['/v3/interacts/recommend-adv/get-adv-list', 'GET'], //获取广告列表 •••
+  advSaveToWebinar: ['/v3/interacts/recommend-adv/database-to-activity', 'POST'], //从资料库保存到活动 •••
+  createAdv: ['/v3/interacts/recommend-adv/create-adv', 'POST'], //创建广告 •••
+  updateAdv: ['/v3/interacts/recommend-adv/update-adv', 'POST'], //编辑广告 •••
+  deleteAdv: ['/v3/interacts/recommend-adv/batch-delete-adv', 'POST'], //批量删除广告 •••
+  viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
   //播放器设置
   setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯 •••
@@ -174,8 +179,8 @@ const apis = {
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
 
   // 登录
-  loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口
-  loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口
+  loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口  √
+  loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口  √
   loginCheck: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
   sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口
   register: ['/v3/users/user/register', 'POST'],  //注册接口
@@ -249,15 +254,16 @@ const apis = {
   withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
 
   //开发设置
-  getAppList: ['/100/v3/users/app-keys/get-list', 'POST', 'mock'], // 获取应用列表 jian.chang
-  createApp: ['/100/v3/users/app-keys/create', 'POST', 'mock'], // 创建应用 jian.chang
-  getAppInfo: ['/100/v3/users/app-keys/get-info', 'POST', 'mock'], // 获取应用详情 jian.chang
-  modifyApp: ['/100/v3/users/app-keys/edit', 'POST', 'mock'], // 修改应用 jian.chang
+  getAppList: ['/v3/users/appkeys/get-list', 'POST'], // 获取应用信息列表接口 jian.chang •••
+  createApp: ['/v3/users/appkeys/create', 'POST'], // 创建应用 jian.chang •••
+  getAppInfo: ['/v3/users/appkeys/get-info', 'POST'], // 获取应用详情 jian.chang •••
+  modifyApp: ['/v3/users/appkeys/edit', 'POST'], // 修改应用 jian.chang •••
+  appEditStatus: ['/v3/users/appkeys/set-status', 'POST'], // 修改应用状态（0停用 1启用 2删除） jian.chang •••
 
   // 账户管理
-  homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li •••
-  homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li •••
-  homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li •••
+  homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li √字段未同步
+  homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li √
+  homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li √字段未同步
   checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
   resetPassword: ['/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回/设置密码接口
   bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
@@ -336,7 +342,7 @@ const apis = {
 
   // 观看端
   likeTotal: ['/v3/interacts/like/get-room-like', 'POST'], // 房间内点赞总数
-  queryAdsInfo: ['/v3/interacts/recommend-adv/watch-get-adv-list', 'GET'], // 获取广告信息
+  queryAdsInfo: ['/v3/interacts/recommend-adv/watch-get-adv-list', 'GET'], // 获取广告信息 •••
   queryRoomInterInfo: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间互动工具状态
   getSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 获取皮肤
   getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
@@ -360,7 +366,7 @@ const apis = {
   redEnvCollectionRecord: ['/v3/interacts/redpacket/get-redpacket-partition-recorder', 'POST'], // 红包领取记录
 
   // 聊天
-  getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息
+  getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息 √
   deleteMsg: ['/v3/interacts/chat/delete-message', 'POST'], // 删除聊天消息
   setAllBanned: ['/v3/interacts/chat-user/set-all-banned', 'POST'], // 设置全体禁言
   setKickOut: ['/v3/interacts/chat-user/set-kicked', 'POST'], // 踢出取消踢出
@@ -393,7 +399,8 @@ const apis = {
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
-
+  // 发起端所有新增
+  v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST']
 };
 
 const getApi = api => {

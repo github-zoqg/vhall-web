@@ -7,7 +7,6 @@ const Apis = {
   switchDoc: ['/cmpt/room/switch-doc', 'POST'], // 开启关闭文档
   deleteDoc: ['/cmpt/document/delete', 'POST'], // 删除文档
   uploadDoc: ['/cmpt/document/upload', 'POST'], // 上传文档
-  getOnlineUsers: ['/cmpt/inav/get-online-list', 'POST'], // 获取在线
   allowApply: ['/cmpt/inav/set-handsup', 'POST'], // 允许-上麦操作
   noSpeak: ['/cmpt/inav/nospeak', 'POST'], // 下麦
   apply: ['/cmpt/inav/apply', 'POST'], // 申请上麦
@@ -58,7 +57,6 @@ const Apis = {
   getRecordsPacket: ['/cmpt/redpacket/records-get', 'POST'], // 获取红包领取记录
   getPacketLastInfo: ['/cmpt/redpacket/get-last-info', 'POST'], // 获取房间内最新的一个红包信息
   myPacketLastInfo: ['/cmpt/redpacket/get-my-info', 'POST'], // 获取房间内最新的红包我抢到红包信息
-  sendNotice: ['/cmpt/inav/send-notice', 'POST'], // 发送公告
   inviteMic: ['/cmpt/inav/invite', 'POST'], // 主持人邀请上麦
   rejectInvite: ['/cmpt/inav/reject-invite', 'POST'], // 拒绝上麦邀请
   setBanned: ['/cmpt/inav/set-banned', 'POST'], // 禁言/取消禁言某个用户

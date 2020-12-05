@@ -77,6 +77,35 @@ export function platform(type) {
   return filter(type,types);
 }
 
+/*
+ * 文件格式类型
+ * [doc => application/msword]
+ * [docx => application/vnd.openxmlformats-officedocument.wordprocessingml.document]
+ * [xls => application/vnd.ms-excel]
+ * [xlsx => application/vnd.openxmlformats-officedocument.spreadsheetml.sheet]
+ * [ppt => application/vnd.ms-powerpoint]
+ * [pptx => application/vnd.openxmlformats-officedocument.presentationml.presentation]
+ * [jpeg => image/jpeg]
+ * [jpg => image/jpeg]
+ * [png => image/png]
+ * [bmp => image/bmp]
+ */
+export function fileUploadType(type) {
+  const types = [
+    {code:0,text:'application/msword',key:'doc'},
+    {code:1,text:'application/vnd.openxmlformats-officedocument.wordprocessingml.document',key:'docx'},
+    {code:4,text:'application/vnd.ms-excel',key:'xls'},
+    {code:5,text:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',key:'xlsx'},
+    {code:6,text:'application/vnd.ms-powerpoint',key:'ppt'},
+    {code:7,text:'application/vnd.openxmlformats-officedocument.presentationml.presentation',key:'pptx'},
+    {code:9,text:'image/jpeg',key:'jpeg'},
+    {code:10,text:'image/jpeg',key:'jpg'},
+    {code:15,text:'image/png',key:'png'},
+    {code:16,text:'image/bmp',key:'bmp'}
+  ];
+  return filter(type,types);
+}
+
 function filter(type,types){
 	if(!type){
 		return types;

@@ -367,7 +367,6 @@ export default {
         webinar_id: this.$route.params.str,
       }).then(res => {
         if(res && res.code === 200 && res.data) {
-          res.data.webinar_state = 1; // TODO 模擬直播中狀態
           this.webinarVo = res.data || {};
         } else {
           this.webinarVo = {};

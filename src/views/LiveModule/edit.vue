@@ -41,7 +41,7 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode=3' :class="{active: liveMode== 3, disabled: true}">
+          <div @click='liveMode=3' :class="{active: liveMode== 3}">
             <el-container class='model'>
               <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
@@ -388,7 +388,6 @@ export default {
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
       };
-      console.log(params, '000000000000000000000000');
       console.log(data, 'data-------------');
       this.$refs[formName].validate((valid) => {
         if (valid) {

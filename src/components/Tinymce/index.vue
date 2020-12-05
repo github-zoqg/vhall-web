@@ -68,7 +68,7 @@ export default {
         toolbar: this.toolbar,
         quickbars_selection_toolbar: "removeformat | bold italic underline strikethrough | fontsizeselect forecolor backcolor",
         // 引入汉化组件
-        language_url: require('../../../public/tinymce/langs/zh_CN.js'),
+        language_url: './tinymce/langs/zh_CN.js',
         language: 'zh_CN',
         height: this.height || 300,
         menubar: false, // 隐藏菜单
