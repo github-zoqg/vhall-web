@@ -166,11 +166,11 @@ export default {
     // 升级扩展、并发
     orderExtent() {
       // type 3:升级并发  4:购买扩展包
-      if (this.number < this.concurrentPrice.total_concurrency) {
-        this.$message.error('需要大于当前并发人数');
-        return;
-      }
       if (this.title == '升级') {
+         if (this.number < this.concurrentPrice.total_concurrency) {
+          this.$message.error('需要大于当前并发人数');
+          return;
+        }
         this.payUpgradeList();
       } else {
         this.payExtentList();
@@ -186,7 +186,7 @@ export default {
         name: 'payOrder',
         query: {
           userId: this.userId,
-          orderId:  id
+          orderId: id
         }
       });
     },
@@ -199,6 +199,7 @@ export default {
         this.goPayList(res.data.order_id);
         this.flows = 500;
       }).catch(e=>{
+        this.dialogBuyVisible = false;
         console.log(e);
       });
     },
@@ -211,6 +212,7 @@ export default {
         this.goPayList(res.data.order_id);
         this.number = 120;
       }).catch(e=>{
+        this.dialogVisible = false;
         console.log(e);
       });
     },
@@ -222,6 +224,7 @@ export default {
       this.$fetch('orderExtend', params).then(res =>{
        this.goPayList(res.data.order_id);
       }).catch(e=>{
+        this.dialogVisible = false;
         console.log(e);
       });
     },

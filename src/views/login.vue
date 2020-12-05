@@ -309,7 +309,7 @@ export default {
         console.log(res.data, this.registerForm, '注册完成');
       });
     },
-     /**
+    /**
      * 倒计时函数
      */
     countDown() {

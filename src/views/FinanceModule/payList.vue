@@ -24,7 +24,12 @@
       <div class="table-order_2">
         <p>总金额：<span>￥{{ payInfo.amount }}</span></p>
       </div>
-      <div class="pay-method">
+      <div class="pay-over-time" v-if="time=== '0:0'">
+        <p><img src="//t-alistatic01.e.vhall.com/static/images/vhall3.0/pay-fail.png" alt=""></p>
+        <p>支付超时</p>
+        <span @click="repurchase">重新购买</span>
+      </div>
+      <div class="pay-method" v-if="time != '0:0'">
           <p>支付方式</p>
           <div class="pay-list">
             <div class="pay-item" @click="changeColor('1')" :class="isChecked == '1' ? 'isActive' : ''">
@@ -50,7 +55,7 @@
           >
           <div class="isPay">
             <div class="reBtn">
-              <span class="first-span" @click="dialogBuyVisible='false'">选择其他支付方式</span>
+              <span class="first-span" @click="dialogBuyVisible=false">选择其他支付方式</span>
               <span class="second-span" @click="finishPay">完成支付</span>
             </div>
           </div>
@@ -70,7 +75,7 @@
           </el-dialog>
       </div>
     </el-card>
-    <div class="down-time" v-if="!time">
+    <div class="down-time" v-if="time != '0:0'">
       <p><i class="el-icon-warning-outline"></i> 请在<span>{{ time }}</span>内完成支付</p>
     </div>
   </div>
@@ -85,16 +90,14 @@ export default {
       dialogBuyVisible: false,
       dialogweiXinVisible: false,
       link: '',
-      payCode: '30:00',
+      payCode: '',
       time:'0:0',
-      vm: {},
       payInfo: {},
       arrearInfo: {} //欠费订单
     };
   },
   created() {
     this.getPayDetail();
-    console.log(this.time, '00000000');
   },
   methods: {
     getPayDetail() {
@@ -105,9 +108,6 @@ export default {
       this.$fetch('orderInfo', params).then(res =>{
         this.payInfo = res.data;
         this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.expire_time.replace(/-/g,'/'));
-        // this.time = diffToTime(nowTime.replace(/-/g,'/') , endTime.replace(/-/g,'/'));
-        // this.initPayMessage();
-        // this.arrearInfo
       }).catch(e=>{
         console.log(e);
       });
@@ -130,12 +130,11 @@ export default {
         let limit3 = limit2 % (60 * 1000);
         let second = Math.floor(limit3 / 1000);
         this.time = `${minute}:${second}`;
-        if (this.time === '0:0') {
-          this.$message.error('支付超时');
-        }
         if (diff) {
-          // console.log('diffTime', diffTime);
           let diffSetTime = window.setTimeout(() => {
+            if (this.time === '0:0') {
+              this.$message.error('支付超时');
+            }
             this.downTime(targetStart, targetEnd);
             window.clearTimeout(diffSetTime);
           }, 1000);
@@ -176,14 +175,9 @@ export default {
         }
       );
     },
-    initPayMessage() {
-      let that = this;
-      this.vm = this.$message({
-        showClose: true,
-        duration: 0,
-        dangerouslyUseHTMLString: true,
-        message: '<p>请在' + that.time + '内完成支付</p>',
-        type: 'error'
+    repurchase() {
+      this.$router.push({
+        path: '/finance'
       });
     },
     finishPay() {
@@ -195,33 +189,42 @@ export default {
 <style lang="less" scoped>
   .pay-list{
     color: #1A1A1A;
-     .el-table td, .el-table th{
-        height: 56px;
-      }
-      .down-time{
-        position: fixed;
-        width: 100%;
-        top: 20px;
-        left: 0px;
-        p{
-          height: 39px;
-          line-height: 39px;
-          width: 400px;
-          text-align: center;
-          background: #fc5659;
-          color:#fff;
-          font-size: 14px;
-          margin: auto;
-          i{
-            font-size: 20px;
-            vertical-align: middle;
-          }
-          span{
-            font-size: 16px;
+    .el-table td, .el-table th{
+      height: 56px;
+    }
+    .down-time{
+      position: fixed;
+      width: 100%;
+      top: 20px;
+      left: 0px;
+      p{
+        height: 39px;
+        line-height: 39px;
+        width: 400px;
+        text-align: center;
+        background: #fc5659;
+        color:#fff;
+        font-size: 14px;
+        margin: auto;
+        i{
+          font-size: 20px;
+          vertical-align: middle;
+        }
+        span{
+          font-size: 16px;
 
-          }
         }
       }
+    }
+    .pay-over-time{
+      text-align: center;
+      margin-top: 20px;
+      span{
+        font-size: 12px;
+        color: #FB3A32;
+        cursor: pointer;
+      }
+    }
     h1{
       font-size: 22px;
       font-family: PingFangSC-Semibold, PingFang SC;
@@ -328,6 +331,7 @@ export default {
       }
     }
     .isPay{
+      padding-bottom: 30px;
       p{
         text-align: center;
       }
