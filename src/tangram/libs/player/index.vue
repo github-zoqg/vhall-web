@@ -20,8 +20,8 @@
       </div>
     </div>
      <!-- 语言为英语的时候 不显示更改后的倍速和清晰度 -->
-    <div v-if="poster!=''" class="poster_img_box">
-      <img :src="poster" alt="">
+    <div v-if="sonPoster!=''" class="poster_img_box">
+      <img :src="sonPoster" alt="">
     </div>
     <div class="Tips" :class="{'TipsOpcity': changeQuality || changeSpeed}">
       {{$t('message.switchSpeed')}}
@@ -209,7 +209,6 @@ export default {
       default: {}
     }
   },
-
   data () {
     return {
       TimesShow: false,
@@ -255,7 +254,8 @@ export default {
       isFullscreen: false,
       loading: false, // 卡顿显示加载
       lang: this.$route.query.lang,
-      isIE: isIE()
+      isIE: isIE(),
+      sonPoster: this.poster
     };
   },
   watch: {
@@ -707,8 +707,8 @@ export default {
      *  开始播放旁路
      */
     play () {
-      if (this.poster != '') {
-        this.poster = '';
+      if (this.sonPoster != '') {
+        this.sonPoster = '';
       }
       this.$PLAYER && this.$PLAYER.play();
       if (this.isIE) {

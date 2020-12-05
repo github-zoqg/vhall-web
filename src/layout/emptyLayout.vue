@@ -14,4 +14,9 @@ export default {
 };
 </script>
 
-<style lang='less' scoped></style>
+<style lang='less' scoped>
+.emptyWrapper{
+  width: 100%;
+  height: 100%;
+}
+</style>
