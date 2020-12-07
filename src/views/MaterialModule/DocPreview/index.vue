@@ -6,7 +6,7 @@
     </ul>
     <div class="del_imgBox">
       <div class="imgBox">
-        <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`" :class="['imgHidden', {'imgShow': activeIns === sIndex}]" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`">
+        <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`">
       </div>
       <img class="imgLoading" :src="`${env.staticLinkVo.tmplDownloadUrl}/images/delFlash/load.gif`" style="display: none;">
       <p class="arrow" style="display: block;">
@@ -96,25 +96,25 @@ export default {
   width: calc(100% - 140px);
   display: inline-block;
   height: 540px;
+  img {
+    height: 100%;
+  }
+  &.imgHidden {
+    display: none;
+  }
+  &.imgShow {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 .del_imgBox .imgBox {
   width: 100%;
   height: 100%;
   background: white;
   position: relative;
-}
-.imgHidden {
-  display: none;
-}
-.imgShow {
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-.del_imgBox .imgBox img {
-  height: 100%;
 }
 .imgLoading {
   width: 40px!important;
