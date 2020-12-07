@@ -85,7 +85,7 @@
                   <upload
                     class="giftUpload"
                     v-model="formWatermark.img_url"
-                    :on-success="handleuploadSuccess"
+                    :on-success="uploadAdvSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
                     :on-preview="uploadPreview"
@@ -163,6 +163,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
+import Env from "@/api/env";
 export default {
   name: 'prizeSet',
   data() {
@@ -257,7 +258,6 @@ export default {
       this.$fetch('setScrolling',this.formHorse).then(res => {
          console.log(res.data, '111111111111');
       });
-      // console.log(this.formHorse, '111111111111');
     },
     // 保存水印
     preWatermark() {
@@ -267,9 +267,12 @@ export default {
          console.log(res.data, '22222222222222222');
       });
     },
-     uploadAdvSuccess(res, file) {
+    uploadAdvSuccess(res, file) {
       console.log(res, file);
-      this.formWatermark.img_url = URL.createObjectURL(file.raw);
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.formWatermark.img_url  = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      }
     },
     beforeUploadHnadler(file){
       console.log(file);

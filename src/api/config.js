@@ -10,6 +10,23 @@ const apis = {
   dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
   dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
   createVideo: ['/v3/webinars/videos/create', 'POST'], //音视频添加
+  getAppid: ['/v3/webinars/videos/get-appid', 'POST'], //获取appid接口
+
+  // 问卷
+  createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST', 'data'], //共享库_创建问卷
+  editQuestion: ['/v3/vss/survey/update-shared-survey', 'POST', 'data'], //共享库_编辑问卷
+  getQuestionList: ['/v3/vss/survey/list-shared-survey', 'GET', 'data'], //问卷列表
+  deleteQuestion: ['/v3/vss/survey/delete-shared-survey', 'POST', 'data'], //共享库_删除问卷
+  copyQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET', 'data'], //共享库-问卷复制
+
+  // 直播-问卷
+  createLiveQuestion: ['/v3/vss/survey/create-webinar-survey', 'POST', 'data'], //直播设置_创建问卷
+  editLiveQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST', 'data'], //直播设置_编辑问卷
+  getLiveQuestionList: ['/v3/vss/survey/list-webinar-survey', 'GET', 'data'], //直播设置_问卷列表
+  deleteLiveQuestion: ['/v3/vss/survey/delete-webinar-surveys', 'POST', 'data'], //直播设置_删除问卷
+  // copyLiveQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET', 'data'], //共享库-问卷复制
+  sharedLiveQuestion: ['/v3/vss/survey/clone-from-shared', 'POST', 'data'], //直播设置_从资料库添加
+
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
   editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息

@@ -13,20 +13,16 @@
       <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
       <el-button round v-if="$route.meta.title==='直播—问卷'" @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del">批量删除</el-button>
-      <search-area class="head-btn fr search"
-        ref="searchArea"
-        :isExports='false'
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
-        >
-      </search-area>
+      <div class="inputKey">
+        <el-input v-model="keyword" placeholder="请输入问卷名称"></el-input>
+      </div>
     </div>
     <el-card class="question-list">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
-    <pre-question ref="isPreQuestion"></pre-question>
+    <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question>
     <base-question ref="dataBase"></base-question>
   </div>
 </template>
@@ -35,32 +31,31 @@
 import PageTitle from '@/components/PageTitle';
 import preQuestion from './preQuestion';
 import baseQuestion from './questionBase';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "question",
   data() {
     return {
       total: 100,
-      searchAreaLayout: [
-        {
-          questionName: ''
-        }
-      ],
+      selectChecked: [],
+      keyword: '',
+      questionId: '',
       tabelColumn: [
         {
           label: '问卷ID',
-          key: 'id',
+          key: 'survey_id',
         },
         {
           label: '问卷名称',
-          key: 'name',
+          key: 'title',
         },
         {
           label: '更新时间',
-          key: 'time',
+          key: 'updated_at',
         },
         {
           label: '题目数量',
-          key: 'nums',
+          key: 'topic_num',
         }
       ],
       tableRowBtnFun: [
@@ -68,16 +63,16 @@ export default {
       ],
       tableData: [
         {
-          id: '12312413',
-          name: '请输入000',
-          time: '2020-10-03',
-          nums: 100
+          survey_id: '12312413',
+          title: '请输入000',
+          updated_at: '2020-10-03',
+          topic_num: 100
         },
         {
-          id: '1212345',
-          name: '请输入111',
-          time: '2020-10-12',
-          nums: 200
+          survey_id: '1212345',
+          title: '请输入111',
+          updated_at: '2020-10-12',
+          topic_num: 200
         }
       ]
     };
@@ -87,8 +82,9 @@ export default {
     preQuestion,
     baseQuestion
   },
-  created() {
-    console.log(this.$route, '1232435234534565365');
+  mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getTableList();
   },
   methods: {
     onHandleBtnClick(val) {
@@ -97,35 +93,76 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
+      let formParams = {
+        user_id: this.userId,
+        keyword: this.keyword
+      }
+      if (this.keyword) {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
+        this.$refs.tableList.clearSelect();
       }
       let obj = Object.assign({}, pageInfo, formParams);
+      this.$fetch('getQuestionList', this.$params(obj)).then(res => {
+        // this.total = res.data.total;
+        // console.log(res.data.list, '222222222222222222');
+      })
     },
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.questionId = rows.question_id;
       that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制
     cope(that, {rows}) {
       console.log('复制', rows);
+      this.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
+        this.$message.success('复制成功');
+      })
     },
     // 编辑
     edit(that, {rows}) {
       console.log('编辑', rows);
+      this.$router.push({
+        path: `/${this.$route.meta.name}/addQuestion`,
+        query: {
+          id: rows.question_id
+        }
+        }
+      );
     },
     // 删除
     del(that, {rows}) {
+      this.selectChecked = [];
+       this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.selectChecked.push(rows.question_id);
+          this.delete();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       console.log('删除', rows);
+    },
+    delete() {
+      this.$fetch('deleteQuestion', {survey_ids: this.selectChecked}).then(res => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      })
     },
     // 选中
     changeTableCheckbox(val) {
-      console.log(val);
+      this.selectChecked = val.map(val => val.question_id)
+      console.log(this.selectChecked);
     },
     addQuestion() {
       this.$router.push({
@@ -154,17 +191,12 @@ export default {
     .head-btn{
       display: inline-block;
     }
-    ::v-deep.set-upload{
-      position: relative;
-      span{
-        input{
-          position: absolute;
-          left: 0;
-          top: 0;
-          opacity: 0;
-          width: 100%;
-          height: 100%;
-        }
+    .inputKey{
+      float: right;
+      height: 35px;
+      width: 220px;
+      /deep/.el-input__inner{
+        border-radius: 18px;
       }
     }
   }

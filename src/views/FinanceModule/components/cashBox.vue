@@ -136,7 +136,7 @@ export default {
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
-      link: 'https://t-saas-dispatch.vhall.com/code',
+      link: 'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=http://t-webinar.e.vhall.com/779779002',
       rules: {
         money: [
           { validator: validateMoney, trigger: 'blur'  }
@@ -156,9 +156,6 @@ export default {
         this.qrcode = '';
       }
     }
-  },
-  created(){
-
   },
   methods: {
     // 获取用户微信昵称

@@ -178,7 +178,12 @@ export default {
     },
     blockHandler(item){
       if(item.path){
-        this.$router.push({path: item.path, query: {id:this.$route.params.str}});
+        if (item.path === '/live/edit') {
+          this.$router.push({path: item.path, query: {id:this.$route.params.str }});
+        } else {
+          this.$router.push({path: item.path});
+        }
+
       }else{
         console.log(item);
       }

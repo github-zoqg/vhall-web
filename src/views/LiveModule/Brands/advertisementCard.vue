@@ -10,7 +10,7 @@
         <el-button class="head-btn set-upload" round @click="allDelete(null)">批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model="paramsObj.keyword" placeholder="请输入标题"
-                    suffix-icon="el-icon-search" @change="initPage()"></el-input>
+          suffix-icon="el-icon-search" @change="initPage()"></el-input>
         </span>
       </div>
       <el-card>
@@ -87,9 +87,12 @@ export default {
     initPage() {
       this.getAdvTableList();
     },
-    getAdvTableList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
+    getAdvTableList() {
+       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       if (this.paramsObj.keyword) {
         this.$refs.tableList.clearSelect();
+        pageInfo.pos = 0;
+        pageInfo.pageSize = 1;
       }
       let params = {
         keyword: this.paramsObj.keyword,
@@ -101,7 +104,6 @@ export default {
       this.$fetch('getAdvList', this.$params(params)).then(res => {
         this.totalNum = res.data.total;
         this.tableList = res.data.adv_list;
-        console.log(res.data, '111111111111111111');
       });
     },
     onHandleBtnClick(val) {
@@ -111,7 +113,6 @@ export default {
     edit(that, { rows }) {
       that.title = '编辑';
       that.advInfo = rows;
-      console.log(that.advInfo, '00000000000000');
       that.$refs.adviseSonChild.dialogVisible = true;
     },
     delete(that, { rows }) {

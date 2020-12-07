@@ -85,7 +85,7 @@ export default {
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getTableList();
-    this.initUpload();
+    this.getVideoAppid();
   },
   methods: {
     getTableList(params){
@@ -112,6 +112,7 @@ export default {
       }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
       let name = beforeName.split('.m')[0];
+      console.log(name, '22222222222222222222222222');
       let onlyId = this.uploadId--;
       file.id = onlyId;
       if(!reg.test(name)){
@@ -128,6 +129,7 @@ export default {
         uploadObj: {}, // type：1   上传视频     2创建点播
         id: onlyId
       };
+      console.log(param, '33333333333333333');
       this.uploadList.unshift(param);
       this.tableData.unshift(param);
       this.UploadSDK.upload([file],(pro)=>{
@@ -141,7 +143,7 @@ export default {
           }
         });
       },res=>{
-        console.log(res, '成功');
+        console.log(res, '本地上传成功');
         console.log(res, 11111);
         this.createVod(res.file);
       },err=>{
@@ -152,20 +154,20 @@ export default {
       });
     },
     createVod(_file){
-      console.log(_file, '0000000000000000');
-      this.UploadSDK.createDemand({ file: _file, fileName: _file.name},(res)=>{
-        this.tableData.forEach((ele)=>{
-          if(ele.id == _file.id){
-            ele.uploadObj = {
-              type: 2,
-              test: '创建点播',
-              num: 100
-            };
-          }
-        });
-        console.warn(res);
+      this.UploadSDK.createDemand({ file: _file, fileName: 'name'},(res)=>{
+        // this.tableData.forEach((ele)=>{
+        //   if(ele.id == _file.id){
+        //     ele.uploadObj = {
+        //       type: 2,
+        //       test: '创建点播',
+        //       num: 100
+        //     };
+        //   }
+        // });
+        // console.warn(res);
         this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
           console.log(res, '上传成功');
+          this.getTableList();
         });
       },err=>{
         console.warn(err, '上传失败');
@@ -174,17 +176,24 @@ export default {
         this.$message.error('创建点播失败');
       });
     },
-    initUpload(){
+    initUpload(id, token){
       let option = {
-        appId: "d317f559", // appId
-        accountId: "zx", // 第三方用户id
-        token: "access:d317f559:75107dced08acdb1", // token
+        appId: id, // appId
+        accountId: this.userId, // 第三方用户id
+        token: token, // token
       };
       window.VhallUpload.createInstance(option, (res) => {
         this.UploadSDK = res.interface; // 创建成功
+        console.log(this.UploadSDK, '111111111111111')
       },err=>{
         console.warn(err, '上传demo初始化失败');
       });
+    },
+    getVideoAppid() {
+      this.$fetch('getAppid').then(res => {
+        // this.appId = res.data.app_id;
+        this.initUpload(res.data.app_id, res.data.access_token);
+      })
     },
     getList(obj){
       obj.user_id = this.userId;
