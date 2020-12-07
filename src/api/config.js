@@ -212,9 +212,9 @@ const apis = {
   sonEdit: ['/v3/users/child/edit', 'POST'], // 子账号修改 Jia.li
   sonCountGet: ['/v3/users/child/count', 'POST'], // 获取子账号个数 Jia.li
   sonDetailGet:  ['/v3/users/child/get-info', 'POST'], // 子账号详情 Jia.li
-  allocSave:  ['/v3/users/child/edit', 'POST'], // 子账号-用  量分配-保存分配方式 Jia.li
-  allocMoreGet:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-可分配数量获取 Jia.li
-  allocSetVal:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
+  allocSave:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-保存分配方式 Jia.li
+  allocMoreGet:  ['/v3/fin/user-vip/get-dist-resources', 'GET', 'data'], // 子账号-用量分配-可分配数量获取 Jia.li
+  allocSetVal:  ['/v3/fin/user-vip/dist-resources', 'POST', 'data'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
   getRoleList: ['/v3/users/user-role/list', 'POST'], // 角色-用户-获取 Jia.li
   sonRoleAdd: ['/v3/users/child-role/create', 'POST'], // 子账号-角色创建 Jia.li
   sonRoleDel: ['/v3/users/child-role/delete', 'POST'], // 子账号-角色删除 Jia.li

@@ -6,10 +6,10 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round >导出</el-button>
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword">
+      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @change="getSonList">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
-      <el-select placeholder="全部" round  v-model="query.type">
+      <el-select placeholder="全部" round  v-model="query.type" @change="getSonList">
         <el-option
           v-for="item in roleList"
           :key="'v_' + item.id"
@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span>当前可创建子账号数量23个 {{roleList}}</span>
+          <span>当前可创建子账号数量{{sonCountVo.available_num}}个 {{roleList}}</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
@@ -107,6 +107,16 @@ export default {
     }
   },
   data() {
+    let validNums = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入数量'));
+      } else {
+        if (value > this.sonCountVo.available_num) {
+          callback(new Error(`当前可创建子账号数量不能超过${this.sonCountVo.available_num}个`));
+        }
+        callback();
+      }
+    };
     return {
       query: {
         type: '',
@@ -190,7 +200,7 @@ export default {
           { required: true, message: '请输入账号角色', trigger: 'change' }
         ],
         nums: [
-          { required: true, message: '请填写账号数量', trigger: 'blur' }
+          { required: true, message: '请填写账号数量', validator: validNums, trigger: 'blur' }
         ]
       },
     };
@@ -218,7 +228,7 @@ export default {
     checkMoreRow(val) {
       console.log(val);
       this.ids = val.map(item => {
-        return item.account_id;
+        return item.child_id;
       });
     },
     // 批量删除
@@ -228,7 +238,7 @@ export default {
       } else {
         this.sonDel(this, {
           rows: {
-            id: this.ids.join(',')
+            child_id: this.ids.join(',')
           }
         });
       }
@@ -250,7 +260,7 @@ export default {
         cancelButtonText: '取消'
       }).then(() => {
         that.$fetch('sonDel', {
-          msg_id: rows.account_id
+          child_ids: rows.child_id
         }).then(res => {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
@@ -321,11 +331,17 @@ export default {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
           let params = Object.assign(this.sonDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.sonDialog.row.id, group_id: this.query.group_id }, this.sonForm);
           this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
-            res && res.code === 200 ? this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`) : this.$message({
-              type: 'error',
-              message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
-            });
-            this.sonDialog.visible = false;
+            if (res && res.code === 200) {
+              this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
+              this.sonDialog.visible = false;
+              // 新增成功后，重查列表
+              this.getSonList();
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
+              })
+            }
           }).catch(e => {
             console.log(e);
             this.$message({
