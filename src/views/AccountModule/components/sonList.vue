@@ -343,7 +343,7 @@ export default {
         user_id: sessionOrLocal.get('userId'),
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
         limit: pageInfo.pageSize,
-        scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
+        scene_id: 2 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
       this.$fetch('getSonList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
@@ -351,7 +351,17 @@ export default {
           list: []
         };
         (dao.list||[]).map(item => {
-          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : '固定'}）`;
+          if(item.vip_info.type > 0) {
+            if (item.is_dynamic > 0 ) {
+              // 流量动态
+              item.round = `流量动态`;
+            } else {
+              // 流量（XXXGB）
+
+            }
+          }
+
+          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
         this.sonDao = dao;
       }).catch(e=>{

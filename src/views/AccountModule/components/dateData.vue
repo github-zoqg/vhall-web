@@ -18,28 +18,23 @@
 
 <script>
 import Echarts from 'echarts';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'dateData.vue',
   data() {
     return {
-      lineDataList: [
-        {
-          time: '2020-11-07',
-          value: '50'
-        },
-        {
-          time: '2020-11-07',
-          value: '50'
-        }
-      ],
+      lineDataList: [],
       myChart: null,
-      timeStr: null
+      timeStr: null,
+      sonVo: null
     };
   },
   mounted() {
   },
   methods: {
-    initComp() {
+    initComp(sonVo) {
+      this.sonVo = sonVo;
+      console.log(sonVo, 'dateData');
       // 初始化设置日期为最近一周
       const end = new Date();
       const start = new Date();
@@ -48,18 +43,44 @@ export default {
       // 按时间查询
       this.getDateInfo();
     },
-    getDateInfo() {
-      // 样式重置
-      this.renderLineCharts();
-      this.$nextTick(() => {
-        if (this.myChart) {
-          this.myChart.resize();
+    getUserPayDetail() {
+      console.log(this.vip_info, 'this.vip_info')
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'userFlowTrend' : 'getTrendInfo', {
+        account_id: sessionOrLocal.get('userId'),
+        start_time: this.timeStr[0],
+        end_time: this.timeStr[1],
+        type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
+      }).then(res=>{
+        if (res && res.code === 200) {
+          let costList = res.data.list;
+          costList.map(item => {
+            item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
+            item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
+          });
+          this.tableList = costList;
+          this.renderLineCharts();
+          this.$nextTick(() => {
+            if (this.myChart) {
+              this.myChart.resize();
+            }
+          });
         }
+      }).catch(e=>{
+        console.log(e);
       });
+    },
+    getDateInfo() {
+      this.getUserPayDetail();
     },
     renderLineCharts() {
       this.myChart = Echarts.init(this.$refs.dateLineChartDom);
       // 指定图表的配置项和数据
+      let dateData = [], valData = [];
+      this.tableList.forEach(item => {
+        let {time, value} = item;
+        dateData.push(time);
+        valData.push(Number(value));
+      });
       //数据
       let options = {
         grid: {
@@ -129,7 +150,7 @@ export default {
               }
 
             },
-            data: ['2020-07-12', "2020-07-13", "2020-07-14", "2020-07-15", "2020-07-16", "2020-07-17", "2020-07-18"],
+            data: dateData,
           }
         ],
         series: [
@@ -137,7 +158,7 @@ export default {
             name: '并发',
             type: "line",
             smooth: true,
-            data: [22, 37, 51, 55, 32, 11, 1],
+            data: valData,
             itemStyle: {
               normal: {
                 borderWidth: 5,

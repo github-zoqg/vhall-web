@@ -587,7 +587,7 @@ const v3Routes = [
         hidden: true
       },
       {
-        path: '/downloadList',
+        path: 'downloadList',
         component: () => import('@/views/PlatformModule/download'),
         name: 'downloadList',
         meta: {title: '下载中心', icon: 'table'}

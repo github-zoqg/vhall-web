@@ -13,23 +13,23 @@
         </li>
         <li>
           <p>账号昵称：</p>
-          <h3>{{ sonVo.nick_name }}</h3>
+          <h3>{{ sonVo && sonVo.nick_name ? sonVo.nick_name : ''}}</h3>
         </li>
         <li>
           <p>账号角色：</p>
-          <h3>{{ sonVo.role_name }}</h3>
+          <h3>{{sonVo && sonVo.role_name  ? sonVo.role_name : ''}}</h3>
         </li>
         <li>
           <p>用量分配：</p>
-          <h3>{{ sonVo.vip_Info.type > 0 ? '流量' : '并发' }}（{{sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定'}}）</h3>
+          <h3>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定'}}）</h3>
         </li>
         <li>
           <p>手机号码：</p>
-          <h3>{{ sonVo.phone }}</h3>
+          <h3>{{sonVo &&  sonVo.phone ? sonVo.phone : ''  }}</h3>
         </li>
         <li>
           <p>邮箱地址：</p>
-          <h3>{{ sonVo.email }}</h3>
+          <h3>{{sonVo &&  sonVo.email ? sonVo.email : '' }}</h3>
         </li>
       </ul>
     </div>
@@ -62,9 +62,7 @@ export default {
     return {
       tabType: 'dateData',
       sonVo: {
-        child_id: '',
-        is_dynamic: null,
-        vip_Info: {}
+        vip_info: {}
       }
     };
   },
@@ -83,39 +81,21 @@ export default {
       });
     },
     sonDetailGet() {
-      this.$fetch('sonDetailGet', {}).then(res=>{
+      this.$fetch('sonDetailGet', {
+        child_id: this.$route.params.str
+      }).then(res=>{
         if (res && res.code === 200) {
-          this.sonVo = res.data || {
-            vip_Info: {}
-          };
-          if (this.sonVo.vip_Info) {
-            this.getUserPayDetail();
-          }
+          this.sonVo = res.data;
+          this.tabType = 'dateData';
+          this.$nextTick(() => {
+            this.$refs[`${this.tabType}Comp`].initComp(this.sonVo);
+          });
         } else {
-          this.sonVo = {
-            vip_Info: {}
-          };
+          this.sonVo = null;
         }
       }).catch(e=>{
         console.log(e);
-        this.sonVo = {
-          vip_Info: {}
-        };
-      });
-    },
-    getUserPayDetail() {
-      this.$fetch(this.sonVo.vip_Info.type > 0 ? 'getBusinessList' : 'getAccountList', {
-        account_id: 1231, // b端账号id
-        type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
-      }).then(res=>{
-        let costList = res.data.list;
-        costList.map(item => {
-          item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
-          item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
-        });
-        this.tableList = costList;
-      }).catch(e=>{
-        console.log(e);
+        this.sonVo = null;
       });
     },
     copy(text) {
@@ -135,8 +115,6 @@ export default {
     }
   },
   mounted() {
-    this.tabType = 'dateData';
-    this.$refs[`dateDataComp`].initComp();
     this.sonDetailGet();// 获取子账号详情
   }
 };
