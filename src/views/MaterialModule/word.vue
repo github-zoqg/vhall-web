@@ -78,16 +78,16 @@ export default {
           key: 'file_name',
         },
         {
-          label: '进度',
-          key: 'progress',
+          label: '上传时间',
+          key: 'created_at',
         },
         {
           label: '页码',
           key: 'page',
         },
         {
-          label: '上传时间',
-          key: 'created_at',
+          label: '进度',
+          key: 'progress',
         }
       ],
       tableRowBtnFun: [
@@ -137,6 +137,7 @@ export default {
       if(res.code !== 200) {
         this.$message.error(res.msg || '上传失败');
       } else {
+        this.$message.success('上传成功');
         // 判断文件上传情况
         this.initPage();
       }
@@ -201,6 +202,17 @@ export default {
       this.$fetch(this.$route.params.str ? 'getWebinarWordList' : 'getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.totalNum = res.data.total;
+          let list = res.data.list;
+          list.map(item => {
+            // 转换状态 0待转换 100转换中 200完成 500失败
+            let statusStr = {
+              0: '等待转码',
+              100: '转码中',
+              200: '转码完成',
+              500: '转码失败'
+            }
+            item.progress = statusStr[item.status];
+          })
           this.tableList = res.data.list;
         } else {
           this.totalNum = 0;

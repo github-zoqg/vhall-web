@@ -127,13 +127,11 @@ export default {
       tableRowBtnFun: [
         {
           name: "编辑",
-          methodName: 'roleEdit',
-          hidePattern: 'is_default'
+          methodName: 'roleEdit'
         },
         {
           name: "删除",
-          methodName: 'roleDel',
-          hidePattern: 'is_default'
+          methodName: 'roleDel'
         }
       ],
       ids: [],
