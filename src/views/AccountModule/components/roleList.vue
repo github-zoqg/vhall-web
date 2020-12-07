@@ -15,7 +15,8 @@
         class="son-role-table"
         ref="roleTab"
         :isHandle=true
-        :isMultiCheck=true
+        :isCheckout=true
+        :checkoutKey="'child_count'"
         :manageTableData="roleDao.list"
         :tabelColumnLabel="roleTableColumn"
         :totalNum="roleDao.total"
@@ -163,7 +164,13 @@ export default {
     checkMoreRow(val) {
       console.log(val);
       this.ids = val.map(item => {
-        return item.account_id;
+        if (item.child_count > 0) {
+          that.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
+            confirmButtonText: '我知道了'
+          });
+        } else {
+          return item.id;
+        }
       });
     },
     // 批量删除
@@ -180,33 +187,40 @@ export default {
     },
     // 删除单条消息数据
     roleDel(that, { rows }) {
-      that.$confirm('当前角色已绑定账号，确定删除？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
-      }).then(() => {
-        that.$fetch('sonRoleDel', {
-          ids: rows.id
-        }).then(res => {
-          if(res && res.code === 200) {
-            that.$message.success(`删除成功`);
-            that.ids = [];
-            that.initComp();
-          }else {
+      if (rows.child_count > 0) {
+        that.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
+          confirmButtonText: '我知道了'
+        });
+      } else {
+        that.$confirm('确定删除当前角色？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
+        }).then(() => {
+          that.$fetch('sonRoleDel', {
+            ids: rows.id
+          }).then(res => {
+            if(res && res.code === 200) {
+              that.$message.success(`删除成功`);
+              that.ids = [];
+              that.$refs.roleTab.clearSelect();
+              that.initComp();
+            }else {
+              that.$message({
+                type: 'error',
+                message: res.msg || '删除失败'
+              });
+            }
+          }).catch(e => {
+            console.log(e);
             that.$message({
               type: 'error',
-              message: res.msg || '删除失败'
+              message:  '删除失败'
             });
-          }
-        }).catch(e => {
-          console.log(e);
-          that.$message({
-            type: 'error',
-            message:  '删除失败'
           });
+        }).catch(() => {
         });
-      }).catch(() => {
-      });
+      }
     },
     // 编辑子账号
     async roleEdit(that, { rows }) {
@@ -230,6 +244,12 @@ export default {
       this.roleDialogVisible = true;
       this.roleForm.executeType = 'add';
       this.roleForm.id = null;
+      this.$nextTick(() => {
+        this.$refs.roleForm.resetFields();
+        // 开关重置
+        this.roleForm.permission_content = 1; // 内容管理开关 1开 0关闭
+        this.roleForm.permission_data = 1; // 数据管理 1开 0关闭
+      });
     },
     // 子账号信息新增 or 修改
     executeRoleSend() {

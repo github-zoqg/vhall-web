@@ -79,8 +79,6 @@
               size="mini"
               type="text"
               @click="handleBtnClick(scope, item)"
-              :disabled="item.hidePattern && !scope.row[item.hidePattern]"
-              :class="{'hide': item.hidePattern && !scope.row[item.hidePattern]}"
               >{{ item.name }}</el-button
             >
           </template>
@@ -128,6 +126,10 @@ export default {
     isCheckout: {
       type: Boolean,
       default: true,
+    },
+    checkoutKey: {
+      type: String,
+      default: 'status',
     },
     isHandle: {
       type: Boolean,
@@ -193,7 +195,11 @@ export default {
       this.$refs.elTable.clearSelection();
     },
     checkSelectable(row) {
-      return row.is_default > 0;
+      if(this.checkoutKey === 'child_count') {
+        return !(row.child_count > 0);
+      } else {
+        return true;
+      }
     }
   },
 };

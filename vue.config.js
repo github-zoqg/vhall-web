@@ -22,7 +22,7 @@ switch (process.env.VUE_APP_NODE_ENV) {
 console.log( publicPath, process.env.VUE_APP_NODE_ENV);
 module.exports = {
   publicPath: publicPath,
-  assetsDir: './static',
+  assetsDir: './static', // 设置放置打包生成的静态资源 (js、css、img、fonts) 的目录。
   lintOnSave: false,
   devServer: {
     proxy: {
