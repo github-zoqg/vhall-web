@@ -2,6 +2,7 @@ import 'whatwg-fetch';
 import qs from 'qs';
 import getApi from './config';
 import Env from './env';
+import { sessionOrLocal } from '../utils/utils';
 
 
 export default function fetchData(url, data1 = {}, header = {}) {
@@ -12,9 +13,9 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // 此token不要删除  --  直播间需要使用   我将你们的token进行注释了
   // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
   // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
-  const token = window.sessionStorage.getItem('token') || '';
+  const token = sessionOrLocal.get('token') || '';
   let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
-  const interact_token = window.sessionStorage.getItem('interact_token') || null;
+  const interact_token = sessionOrLocal.get('interact_token') || null;
   let formData = null;
 
   if (method === 'GET' && data) {

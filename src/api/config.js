@@ -360,7 +360,7 @@ const apis = {
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
   getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
+  goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
   getConfigList: ['/v3/users/permission/get-config-list', 'POST'], // 获取观看端配置项
@@ -401,7 +401,8 @@ const apis = {
   saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
-
+  // 签到
+  userSingin: ['/v3/interacts/sign/user-sign', 'POST'], // 用户签到
   // 开平海报
   getPlaybillInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报信息
   // 互动
