@@ -52,7 +52,7 @@ const v3Routes = [
     hidden: true
   },
   {
-    path: '/code',
+    path: '/bangWeixin',
     component: () => import('@/views/FinanceModule/components/weixin'),
     hidden: true
   },

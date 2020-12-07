@@ -4,7 +4,8 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="50%">
-      <div class="question-img"></div>
+      <div id="showQuestion"></div>
+      <!-- <div class="question-img"></div>
       <div class="question-title">
         <h1>问卷标题</h1>
         <p>问卷简介</p>
@@ -22,11 +23,13 @@
             <el-checkbox :label="opt.value" v-for="(opt, indexs) in item.nodes[0].children" :key="indexs"></el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-    </el-form>
+    </el-form> -->
     </VhallDialog>
 </template>
 <script>
+import { sessionOrLocal } from '@/utils/utils';
 export default {
+  props: ['questionId'],
   data() {
     return {
       dialogVisible: false,
@@ -86,6 +89,29 @@ export default {
       ]
     };
   },
+  mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    // this.initQuestion();
+  },
+  methods: {
+    initQuestion() {
+      let service = new VHall_Questionnaire_Service({
+        auth: {
+          appId: 'd317f559', //paas的应用id,必填
+          accountId: this.userId, //paas的第三方用户id,必填
+          token: 'vhall' //paas的授权token,必填
+        },
+        isLoadElementCss: true,
+        notify: true //是否开启消息提示，非必填,默认是true
+      });
+      service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
+        service.renderPagePC("#showQuestion", this.questionId, {
+          isPreview: true,
+          isPc: true
+        }); //预览
+      })
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

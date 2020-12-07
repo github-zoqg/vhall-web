@@ -49,7 +49,7 @@
         <el-scrollbar>
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <img :src="item.img_url" alt="">
+              <img :src="`${baseImgUrl}${item.img_url}`" alt="">
               <p>{{ item.subject }}</p>
               <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
@@ -74,6 +74,7 @@ export default {
       dialogVisible: false,
       dialogAdverVisible: false,
       advertisementTitle: '',
+      baseImgUrl: Env.staticLinkVo.uploadBaseUrl,
       rules: {
         subject: [
           { required: true, message: '请输入广告标题', trigger: 'blur' },
@@ -118,11 +119,11 @@ export default {
       }
     }
   },
-  created() {
-   /* if(this.dialogAdverVisible) {
-      this.activityData();
-    }*/
-  },
+  // created() {
+  //  /* if(this.dialogAdverVisible) {
+  //     this.activityData();
+  //   }*/
+  // },
   methods: {
     clearForm() {
       this.$set(this.advertisement, 'img_url', '');
@@ -138,7 +139,7 @@ export default {
           } else {
             // 资料库中广告推荐，默认不同步到资料库
             this.advertisement.is_sync = 0;
-            this.createAdvAndsync();
+            this.createAdvAndsync(0);
           }
         }
       });
@@ -151,13 +152,13 @@ export default {
           type: 'warning'
         }).then(() => {
           this.advertisement.is_sync = 1;
-          this.createAdvAndsync();
+          this.createAdvAndsync(1);
         }).catch(() => {
          this.advertisement.is_sync = 0;
-         this.createAdvAndsync();
+         this.createAdvAndsync(0);
         });
     },
-    createAdvAndsync() {
+    createAdvAndsync(type) {
       let url = this.title === '编辑' ? 'updateAdv' : 'createAdv';
       if(this.$route.params.str) {
         this.advertisement.webinar_id = this.$route.params.str;
@@ -165,6 +166,9 @@ export default {
       this.$fetch(url, this.advertisement).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
+          if (type) {
+            this.advSaveToWebinar(res.data.adv_info.adv_id);
+          }
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
           // 获取列表数据
           this.$emit('reload');
@@ -195,8 +199,14 @@ export default {
       });
     },
     // 从资料库保存到活动
-    advSaveToWebinar() {
-
+    advSaveToWebinar(id) {
+      let params = {
+        webinar_id: this.$route.params.str,
+        adv_ids: id
+      }
+      this.$fetch('advSaveToWebinar', params).then(res => {
+        this.$message.info(res.msg);
+      })
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
@@ -254,9 +264,9 @@ export default {
      .ad-list{
        display: flex;
        justify-content: space-between;
-       align-items: center;
+      //  align-items: center;
        flex-wrap: wrap;
-       height: 300px;
+       max-height: 300px;
        .ad-item{
          width: 165px;
          margin-bottom: 20px;
