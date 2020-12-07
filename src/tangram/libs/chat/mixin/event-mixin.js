@@ -37,6 +37,7 @@ const eventMixin = {
         if (msg.data.text_content) {
           msg.data.text_content = textToEmojiText(msg.data.text_content);
         }
+        console.log(111111111111111)
         EventBus.$emit('receiveMsg', msg);
         if (msg.data.type == 'text' || msg.data.type == 'image') {
           // 问答私聊消息，不添加到聊天列表里面
