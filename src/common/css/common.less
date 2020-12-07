@@ -719,3 +719,36 @@ button.el-button.el-button--white-primary {
   position: absolute;
   left: -15px;
 }
+
+/*模拟开关*/
+.zdy--switch {
+  display: block;
+  margin-bottom: 24px;
+  width: 160px;
+  height: 30px;
+  border-radius: 100px;
+  border: 1px solid #CCCCCC;
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    width: 50%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #666666;
+    cursor: pointer;
+    margin-left: -1px;
+    margin-top: -2px;
+    &:last-child {
+      margin-left: 1px;
+    }
+    &.active {
+      background: #FB3A32;
+      color: #FFFFFF;
+      border-radius: 15px;
+    }
+  }
+}

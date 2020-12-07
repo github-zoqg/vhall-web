@@ -37,7 +37,7 @@
     </div>
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
-    <!-- 添加观众/ 观众修改 -->
+    <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
                  width="680px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span>当前可创建子账号数量{{sonCountVo.available_num}}个</span>
+          <span v-if="sonCountVo.available_num">当前可创建子账号数量{{sonCountVo.available_num}}个</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
@@ -129,6 +129,7 @@ export default {
         total: 0,
         list: []
       },
+      sonCountVo: {},
       isHandle: false, // 是否有操作项
       sonTableColumn: [
         {
@@ -377,7 +378,7 @@ export default {
     // 获取列表数据
     getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
       let params = {
-        role_id: this.sonForm.role_id,
+        role_id: this.query.role_id,
         user_id: sessionOrLocal.get('userId'),
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
         limit: pageInfo.pageSize,

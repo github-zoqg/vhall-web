@@ -9,42 +9,50 @@
         <el-link type="info" :underline=false href="http://www.vhall.com/saas/doc/1457.html" target="_blank" class="link__left">使用帮助</el-link>
       </div>
     </div>
-    <!-- 菜单布局区域 -->
     <div class="panel__cus">
+      <!-- 左侧功能组件 -->
       <ul class="panel__left">
         <template>
           <li class="comp__group__title"><label>基本组件</label></li>
-          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '1')"
+          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => Number(cItem.type) === 1)"
               :key="`comp1Item${item.component_id}`" draggable="true" @dragstart="dragCompLabel($event, item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
         </template>
         <template>
           <li class="comp__group__title"><label>功能组件</label></li>
-          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => cItem.type === '2')"
+          <li :class="unitComp.compType === item.compType ? 'comp__item active' : 'comp__item'" v-for="item in compList.filter(cItem => Number(cItem.type) === 2)"
               :key="`comp2Item${item.component_id}`" draggable="true" @dragstart="dragCompLabel($event, item)">
             <span class="el-icon-s-home"></span><span>{{item.name}}</span>
           </li>
           <li class="comp__item comp__item--disabled"><span class="el-icon-s-home"></span><span>尽请期待</span></li>
         </template>
       </ul>
+      <!-- 右侧菜单预览 + 编辑区域 -->
       <div class="panel__right">
-        <!-- 选项卡 -->
-        <ul class="el__tabs__box2">
-          <li :class="tabType === 'app' ? 'active': ''" @click.prevent.stop="setTabHandler('app')">移动端</li>
-          <li :class="tabType === 'pc' ? 'active': ''" @click.prevent.stop="setTabHandler('pc')">电脑端</li>
-          <template>
-            <!-- 滑动块 -->
-            <span :class="`el__tab__link2 ${tabType}`"></span>
-          </template>
-        </ul>
+        <!-- 模拟开关 -->
+        <div class="zdy--switch">
+          <span :class="tabType === 'app' ? 'active' : ''"  @click.prevent.stop="setTabHandler('app')">手机预览</span>
+          <span :class="tabType === 'pc' ? 'active' : ''" @click.prevent.stop="setTabHandler('pc')">PC预览</span>
+        </div>
         <!-- 内容区域---PC -->
         <div class="panel__pc" v-show="tabType === 'pc'">
-          <img style="width: 100%;" src="../../common/images/custom-tab/pc_bg-new-h5.png" alt="" />
+          <!-- 浏览器头 -->
+          <nav class="browser-header">
+            <span class="circle-red"></span>
+            <span class="circle-orange"></span>
+            <span class="circle-green"></span>
+          </nav>
+          <!-- pc 广告头 -->
+          <div class="pc-advert">
+            <img src="../../common/images/custom-tab/pc_bg-new-h5.png" alt="" />
+          </div>
+          <el-tabs v-model="pcMenuIndex" @tab-click="handlePcMenuClick">
+            <el-tab-pane :type="item.type" :label="item.name" :name="'pc_menu_' + ins + '_' + item.type"
+                         v-for="(item, ins) in pcCustomMenus" :key="'pc_menu_' + ins + '_' + item.type">
+            </el-tab-pane>
+          </el-tabs>
           <div class="pc-content">
-            <el-tabs v-model="pcMenuIndex" @tab-click="handlePcMenuClick">
-              <el-tab-pane :type="item.type" :label="item.name" :name="'pc_menu_' + ins + '_' + item.type" v-for="(item, ins) in pcCustomMenus" :key="'pc_menu_' + ins + '_' + item.type"></el-tab-pane>
-            </el-tabs>
             <div class="pc-ctx-4" v-show="Number(pcMenuPanel) === 4">
               顶峰时期，Flash Player在全球有10亿次安装量，超过200万Flash开发者。如今，Flash因为封闭和能耗问题，并且Flash权限过高且运行黑盒，Chrome开始禁掉Flash。紧跟时代趋势，深切客户需求的，我们紧跟发展的步伐上线H5播放器功能！新版本不仅为企业客户降低了运营操作的成本，也通过提升观众用户的使用体验，来达到助力企业客户高效获客，轻松转化的目的。
             </div>
@@ -123,146 +131,140 @@
           </div>
         </div>
         <!-- 内容区域---app -->
-        <!--拖放：
-          拖动的对象，需要设置draggable属性为true(draggable="true"),
-          a元素需要href，img元素需要src。
-          1、被拖对象：dragstart事件，被拖动的元素，开始拖放触发
-          2、被拖对象：drag事件，被拖放的元素，拖放过程中
-          3、经过对象：dragenter事件，拖放过程中鼠标经过的元素，被拖放的元素“开始”进入其它元素范围内（刚进入）
-          4、经过对象：dragover事件，拖放过程中鼠标经过的元素，被拖放的元素正在本元素范围内移动(一直)
-          5、经过对象：dragleave事件，拖放过程中鼠标经过的元素，被拖放的元素离开本元素范围
-          6、目标地点：drop事件，拖放的目标元素，其他元素被拖放到本元素中
-          7、被拖对象：dragend事件，拖放的对象元素，拖放操作结束
-       -->
         <div class="panel__app" v-show="tabType === 'app'">
           <div class="app__left">
-            <div class="app__title">
-              <img src="../../common/images/custom-tab/video-bg-new-h5.png" alt=""/>
-            </div>
-            <div class="app__menu">
-              <!-- 左翻 -->
-              <span class="app__menu__arrow el-icon-arrow-left" @click.prevent.stop="movePxHandle('left')"></span>
-              <!-- 右翻 -->
-              <span class="app__menu__arrow el-icon-arrow-right" @click.prevent.stop="movePxHandle('right')"></span>
-              <!-- 添加菜单 -->
-              <span class="add-menu" @click.prevent.stop="menuSetHandle(null, null, 'add')">+</span>
-              <!-- 菜单列表 -->
-              <div class="panel__app__menu">
-                <ul class="app__menu__list" :style="{'marginLeft': marginLeft + 'px'}">
-                  <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"
-                      @click.prevent.stop="isOpenHoverHandle(item, ins)"  @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)"
-                  >
-                    <div class="menu__item__title" >{{ item.name }}</div>
-                    <div class="app__menu__panel" v-if="item.isOpen" v-show="item.isShow" :style="{left: (90*ins + marginLeft) + 'px'}" @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)">
-                      <ul class="app__menu__btn">
-                        <li @click.prevent.stop="menuSetHandle(item, ins, 'reName')">重命名</li>
-                        <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')" v-if="ins !== customMenus.length-1">右移</li>
-                        <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')" v-if="ins !== 0">左移</li>
-                        <li @click.prevent.stop="menuSetHandle(item, ins, 'right')">右边新增菜单</li>
-                        <li @click.prevent.stop="menuSetHandle(item, ins, 'left')">左边新增菜单</li>
-                        <li v-if="item.status === 3 || item.status === 4">
-                          <div class="checkbox-item">
-                            <el-checkbox :checked="item.status === 4" @change="changeMenuStatusHandle(item, ins)"/>
-                            <div class="menu__item__status">
-                              预告/结束显示
-                              <el-tooltip>
-                                <div slot="content">
-                                  勾选后，该直播为预告和结束状态时也会显示此菜单；不勾选则只在直播和回放状态显示。
-                                </div>
-                                <i class="el-icon-question"></i>
-                              </el-tooltip>
+            <section class="panel__preview">
+              <div class="app__menu">
+                <!-- 左翻 -->
+                <span class="app__menu__arrow el-icon-arrow-left" @click.prevent.stop="movePxHandle('left')"></span>
+                <!-- 右翻 -->
+                <span class="app__menu__arrow el-icon-arrow-right" @click.prevent.stop="movePxHandle('right')"></span>
+                <!-- 添加菜单 -->
+                <span class="add-menu" @click.prevent.stop="menuSetHandle(null, null, 'add')">+</span>
+                <!-- 菜单列表 -->
+                <div class="panel__app__menu">
+                  <ul class="app__menu__list" :style="{'marginLeft': marginLeft + 'px'}">
+                    <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"
+                        @click.prevent.stop="isOpenHoverHandle(item, ins)"  @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)"
+                    >
+                      <div class="menu__item__title" >{{ item.name }}</div>
+                      <div class="app__menu__panel" v-if="item.isOpen" v-show="item.isShow" :style="{left: (90*ins + marginLeft) + 'px'}" @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)">
+                        <ul class="app__menu__btn">
+                          <li @click.prevent.stop="menuSetHandle(item, ins, 'reName')">重命名</li>
+                          <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')" v-if="ins !== customMenus.length-1">右移</li>
+                          <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')" v-if="ins !== 0">左移</li>
+                          <li @click.prevent.stop="menuSetHandle(item, ins, 'right')">右边新增菜单</li>
+                          <li @click.prevent.stop="menuSetHandle(item, ins, 'left')">左边新增菜单</li>
+                          <li v-if="Number(item.status) === 3 || Number(item.status) === 4">
+                            <div class="checkbox-item">
+                              <el-checkbox :checked="Number(item.status) === 4" @change="changeMenuStatusHandle(item, ins)"/>
+                              <div class="menu__item__status">
+                                预告/结束显示
+                                <el-tooltip>
+                                  <div slot="content">
+                                    勾选后，该直播为预告和结束状态时也会显示此菜单；不勾选则只在直播和回放状态显示。
+                                  </div>
+                                  <i class="el-icon-question"></i>
+                                </el-tooltip>
+                              </div>
                             </div>
-                          </div>
-                        </li>
-                        <li v-if="item.status === 3 || item.status === 4" @click.prevent.stop="delMenuHandle(ins)">删除</li>
-                        <li v-if="item.status === 1 || item.status === 2" @click.prevent.stop="changeMenuStatusHandle(item, ins)">{{item.status === 1 ? '隐藏' : '显示'}}</li>
-                      </ul>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <!-- 聊天静态展示 -->
-            <static-chat v-if="Number(clickItem.type) === 3"></static-chat>
-            <!-- 简介静态展示 -->
-            <static-introduce v-else-if="Number(clickItem.type) === 4"></static-introduce>
-            <!-- 商品静态展示 -->
-            <static-product v-else-if="Number(clickItem.type) === 5"></static-product>
-            <!-- 推荐静态展示 -->
-            <static-advert v-else-if="Number(clickItem.type) === 6"></static-advert>
-            <!-- 自定义菜单编辑面板 -->
-            <div class="edit__draggable" @drop="dropCompLabel($event)" @dragover="allowDropCompLabel($event)" v-else>
-              <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins"
-                   @drop.prevent.stop="drop($event, ins)" @dragover.prevent.stop="allowDrop($event, ins)" @click.prevent.stop="selectShowComp(item, ins)">
-                <!-- 图文 -->
-                <div class="img-txt" v-if="item.show_type === 'img-txt'" draggable="true" @dragstart="drag($event, ins)" >
-                  <div class="content" v-html="item.compInfo && item.compInfo.content ? item.compInfo.content : item.compInfo.content"></div>
-                </div>
-                <!-- 二维码 -->
-                <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <img class="rq-code"
-                       :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str"
-                       :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str" alt="" />
-                </div>
-                <!-- 直播 -->
-                <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-video :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-video>
-                </div>
-                <!-- 专题 -->
-                <div class="special" v-if="item.show_type === 'special'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <show-special :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-special>
-                </div>
-                <!-- 文字链 -->
-                <div class="text-link" v-if="item.show_type === 'text-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <a :src="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''">{{item.compInfo && item.compInfo.text ? item.compInfo.text : '文字链'}}</a>
-                </div>
-                <!-- 图片链 -->
-                <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <!-- TODO 路径暂时用本地的不配置 env.staticBaseUrl + item.compInfo.imageSrc-->
-                  <a>
-                    <img class="img--ink--img"
-                         :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticBaseUrl + 'static/images/menu/image-unit.png'"
-                         :hrc="item.compInfo && item.compInfo.imageSrc ?  item.compInfo.imageSrc : ''"
-                         :tosrc="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''"
-                         alt=""/>
-                  </a>
-                </div>
-                <!-- 标题 -->
-                <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '标题'}}</h5>
-                </div>
-                <!-- 分割线 -->
-                <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <span class="line"></span>
-                </div>
-                <!-- 排行榜 -->
-                <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                  <div content="rank-show">
-                    <div class="ranking-title"  v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
-                      <div class="rank-menu fl">
-                        <span :class="rankType === 'reward' ? 'opacityHide' : 'opacityShow'" v-show="item.compInfo && !!(item.compInfo.inSwitch)" @click.stop="showInOrRewardPanel('inv')">邀请榜</span>
-                        <span :class="rankType !== 'reward' ? 'opacityHide' : 'opacityShow'" v-show="item.compInfo && !!(item.compInfo.rewardSwitch)" @click.stop="showInOrRewardPanel('reward')">打赏榜</span>
+                          </li>
+                          <li v-if="Number(item.status) === 3 || Number(item.status) === 4" @click.prevent.stop="delMenuHandle(ins)">删除</li>
+                          <li v-if="Number(item.status) === 1 || Number(item.status) === 2" @click.prevent.stop="changeMenuStatusHandle(item, ins)">{{item.status === 1 ? '隐藏' : '显示'}}</li>
+                        </ul>
                       </div>
-                      <span class="bang-rule fr">排行榜规则</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="panel__preview__ctx">
+                <!-- 文档静态展示 -->
+                <div class="static-doc" v-if="Number(clickItem.type) === 2">
+                  <img src="https://t-alistatic01.e.vhall.com/static/images/menu/doc-bg-new-h5.png">
+                </div>
+                <!-- 聊天静态展示 -->
+                <static-chat v-if="Number(clickItem.type) === 3"></static-chat>
+                <!-- 简介静态展示 -->
+                <static-introduce v-else-if="Number(clickItem.type) === 4"></static-introduce>
+                <!-- 商品静态展示 -->
+                <static-product v-else-if="Number(clickItem.type) === 5"></static-product>
+                <!-- 推荐静态展示 -->
+                <static-advert v-else-if="Number(clickItem.type) === 6"></static-advert>
+                <!-- 自定义菜单编辑面板 -->
+                <div class="edit__draggable" @drop="dropCompLabel($event)" @dragover="allowDropCompLabel($event)" v-else>
+                  <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins"
+                       @drop.prevent.stop="drop($event, ins)" @dragover.prevent.stop="allowDrop($event, ins)" @click.prevent.stop="selectShowComp(item, ins)">
+                    <!-- 图文 -->
+                    <div class="img-txt" v-if="item.show_type === 'img-txt'" draggable="true" @dragstart="drag($event, ins)" >
+                      <div class="content" v-html="item.compInfo && item.compInfo.content ? item.compInfo.content : item.compInfo.content"></div>
                     </div>
-                    <div class="ranking-box"  v-if="item.compInfo && ( !!(item.compInfo.inSwitch) || !!(item.compInfo.rewardSwitch))">
-                      <!-- 两个开关都开启状态下，展示inContent；只有任意一个开关开启，展示当前值 v-if="item.compInfo && ( !!(item.compInfo.inSwitch) === false && !!(item.compInfo.rewardSwitch) === true)" -->
-                      <div class="rank-con" v-html="item.compInfo && item.compInfo.rewardContent ? item.compInfo.rewardContent : ''"
-                           v-show="rankType === 'reward'" ></div>
-                      <div class="rank-con" v-html="item.compInfo && item.compInfo.inContent ? item.compInfo.inContent : ''"
-                           v-show="rankType === 'inv'"></div>
+                    <!-- 二维码 -->
+                    <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <img class="rq-code"
+                           :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str"
+                           :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str" alt="" />
                     </div>
-                    <div class="rank-band" v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
-                      <img src="//cnstatic01.e.vhall.com/static/images/menu/bang01.png" alt=""
-                           v-show="rankType === 'inv'"/>
-                      <img src="//cnstatic01.e.vhall.com/static/images/menu/bang02.png" alt=""
-                           v-show="rankType === 'reward'"/>
+                    <!-- 直播 -->
+                    <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <show-video :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-video>
                     </div>
+                    <!-- 专题 -->
+                    <div class="special" v-if="item.show_type === 'special'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <show-special :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-special>
+                    </div>
+                    <!-- 文字链 -->
+                    <div class="text-link" v-if="item.show_type === 'text-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <a :src="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''">{{item.compInfo && item.compInfo.text ? item.compInfo.text : '文字链'}}</a>
+                    </div>
+                    <!-- 图片链 -->
+                    <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <!-- TODO 路径暂时用本地的不配置 env.staticBaseUrl + item.compInfo.imageSrc-->
+                      <a>
+                        <img class="img--ink--img"
+                             :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticBaseUrl + 'static/images/menu/image-unit.png'"
+                             :hrc="item.compInfo && item.compInfo.imageSrc ?  item.compInfo.imageSrc : ''"
+                             :tosrc="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''"
+                             alt=""/>
+                      </a>
+                    </div>
+                    <!-- 标题 -->
+                    <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '标题'}}</h5>
+                    </div>
+                    <!-- 分割线 -->
+                    <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <span class="line"></span>
+                    </div>
+                    <!-- 排行榜 -->
+                    <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                      <div content="rank-show">
+                        <div class="ranking-title"  v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
+                          <div class="rank-menu fl">
+                            <span :class="rankType === 'reward' ? 'opacityHide' : 'opacityShow'" v-show="item.compInfo && !!(item.compInfo.inSwitch)" @click.stop="showInOrRewardPanel('inv')">邀请榜</span>
+                            <span :class="rankType !== 'reward' ? 'opacityHide' : 'opacityShow'" v-show="item.compInfo && !!(item.compInfo.rewardSwitch)" @click.stop="showInOrRewardPanel('reward')">打赏榜</span>
+                          </div>
+                          <span class="bang-rule fr">排行榜规则</span>
+                        </div>
+                        <div class="ranking-box"  v-if="item.compInfo && ( !!(item.compInfo.inSwitch) || !!(item.compInfo.rewardSwitch))">
+                          <!-- 两个开关都开启状态下，展示inContent；只有任意一个开关开启，展示当前值 v-if="item.compInfo && ( !!(item.compInfo.inSwitch) === false && !!(item.compInfo.rewardSwitch) === true)" -->
+                          <div class="rank-con" v-html="item.compInfo && item.compInfo.rewardContent ? item.compInfo.rewardContent : ''"
+                               v-show="rankType === 'reward'" ></div>
+                          <div class="rank-con" v-html="item.compInfo && item.compInfo.inContent ? item.compInfo.inContent : ''"
+                               v-show="rankType === 'inv'"></div>
+                        </div>
+                        <div class="rank-band" v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
+                          <img src="//cnstatic01.e.vhall.com/static/images/menu/bang01.png" alt=""
+                               v-show="rankType === 'inv'"/>
+                          <img src="//cnstatic01.e.vhall.com/static/images/menu/bang02.png" alt=""
+                               v-show="rankType === 'reward'"/>
+                        </div>
+                      </div>
+                    </div>
+                    <i class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></i>
                   </div>
                 </div>
-                <i class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></i>
               </div>
-            </div>
+            </section>
           </div>
           <div class="app__right">
             <!-- 组件标题 -->
@@ -286,15 +288,17 @@
       :title="addCustomForm.showTitle"
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
-      width="30%">
-      <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="120px">
-        <el-form-item label="菜单名称：" prop="name">
-          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="4" show-word-limit/>
+      width="280px"
+      class="add-menu-dialog"
+    >
+      <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="0">
+        <el-form-item prop="name">
+          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="8" show-word-limit/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.prevent.stop="addCustomVisbile = false">取 消</el-button>
-        <el-button type="primary" @click.prevent.stop="sendCustomHandle">确 定</el-button>
+        <el-button type="primary" @click.prevent.stop="sendCustomHandle" size="mini" round>确 定</el-button>
+        <el-button @click.prevent.stop="addCustomVisbile = false" size="mini" round>取 消</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -353,7 +357,7 @@ export default {
       },
       addCustomFormRules: {
         name: [
-          { required: true, message: '请输入菜单名称', trigger: 'blur' }
+          { required: true, maxlength: 8, message: '请输入菜单名称', trigger: 'blur' }
         ]
       },
       menuTabIndex: 0,
@@ -376,48 +380,21 @@ export default {
       };
     },
     pcCustomMenus() {
-      return this.customMenus.filter(item => {
-        return Number(item.type) === 1 || Number(item.type) === 4;
-      });
+      if (this.customMenus && this.customMenus.length > 0) {
+        return this.customMenus.filter(item => {
+          return Number(item.type) === 1 || Number(item.type) === 4;
+        });
+      } else {
+        return [];
+      }
     }
   },
   methods: {
+    // 匹配自定义菜单类型
     compCovert(component_id) {
-      let str = null;
-      switch (component_id) {
-        case 1:
-          str = 'img-txt';
-          break;
-        case 2:
-          str = 'rq-code';
-          break;
-        case 3:
-          str = 'video';
-          break;
-        case 4:
-          str = 'special';
-          break;
-        case 5:
-          str = 'text-link';
-          break;
-        case 6:
-          str = 'img-link';
-          break;
-        case 7:
-          str = 'title';
-          break;
-        case 8:
-          str = 'hr';
-          break;
-        case 9:
-          str = 'rank';
-          break;
-        default:
-          str = null;
-        break;
-      }
-      return str;
+      return ['', 'img-txt', 'rq-code', 'video', 'special', 'text-link', 'img-link', 'title', 'hr', 'rank'][component_id]
     },
+    // pc 或 wap 预览开关
     setTabHandler(tab) {
       this.tabType = tab;
       if(tab === 'pc') {
@@ -429,79 +406,79 @@ export default {
         this.pcMenuPanel = '';
       }
     },
+    // pc预览中-导航切换
     handlePcMenuClick(tab, event) {
       console.log(tab, event);
       let pcMenuIndex = this.pcMenuIndex;
       let arr = pcMenuIndex.split('_');
       this.pcMenuPanel = arr.length === 4 ? arr[3] : '';
     },
+    // 获取左侧组件列表
     getCompList() {
-      let list = [
-        {name: "图文", is_vip: 0, type: "1", component_id: 1},
-        {name: "二维码", is_vip: 0, type: "1", component_id: 2},
-        {name: "直播", is_vip: 0, type: "1", component_id: 3},
-        {name: "专题", is_vip: 0, type: "1", component_id: 4},
-        {name: "文字链", is_vip: 1, type: "1", component_id: 5},
-        {name: "图文链", is_vip: 1, type: "1", component_id: 6},
-        {name: "标题", is_vip: 1, type: "1", component_id: 7},
-        {name: "分割线", is_vip: 1, type: "1", component_id: 8},
-        {name: "排行榜", is_vip: 0, type: "2", component_id: 9}
-      ];
-      list.map(item => {
-        item.compType = this.compCovert(item.component_id);
-      });
-      this.compList = list;
-    },
-    customMenuList() {
-      let menuList = [
-        {
-          "name": "\u804a\u5929",
-          "type": 3,
-          "status": 1
-        },
-        {
-          "name": "\u7b80\u4ecb",
-          "type": 4,
-          "status": 1
-        },
-        {
-          "name": "\u63a8\u8350",
-          "type": 6,
-          "status": 1
-        },
-        {
-          "name":"测试11",
-          "type":1,
-          "status":3,
-          "components": []
+      this.$fetch('menuTplList', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        console.log(res);
+        if(res && res.code === 200) {
+          let list = res.data.list;
+          list.map(item => {
+            item.compType = this.compCovert(item.component_id);
+          });
+          console.log(list, 'this.compList');
+          this.compList = list;
+        } else {
+          this.compList = [];
         }
-      ];
-      menuList.map((item, ins) => {
-        item.isShow = false;
-        item.isOpen = ins <= 0;
-        return item;
+      }).catch(e => {
+        console.log(e);
       });
-      this.customMenus = menuList;
-      this.clickItem = menuList[0];
-      this.menuTabIndex = 0;
-     /* this.$fetch('customMenuList', {
+    },
+    // 获取当前活动下菜单列表数据
+    customMenuList() {
+      this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
-        res && res.code === 200 && res.data ? this.customMenus = res.data : this.customMenus = [];
-        console.log(res);
+        if(res && res.code === 200) {
+          let menuList = res.data.list;
+          menuList.map((item, ins) => {
+            item.isShow = false;
+            item.isOpen = ins <= 0;
+            return item;
+          });
+          this.customMenus = menuList;
+          if(menuList && menuList.length > 0) {
+            // 默认第一个菜单被选中
+            this.clickItem = menuList[0];
+            this.menuTabIndex = 0;
+            sessionOrLocal.set('menu_active', this.menuTabIndex);
+          }
+        } else {
+          this.customMenus = [];
+        }
       }).catch(error=>{
         console.log(error);
         this.customMenus = [];
-      });*/
+      });
     },
-    // 设置菜单点击后，是否可以通过hover选择二级菜单
+    // ，是否可以通过hover选择二级菜单
     isOpenHoverHandle(item, ins) {
+      // 保存原有数据
+      this.setCompToMenuSave()
+      // 某个点击开启的时候，之前的数据保存到customMenus里面。
       this.clickItem = item;
       this.menuTabIndex = ins;
+      sessionOrLocal.set('menu_active', this.menuTabIndex);
       // 某个开启，其余隐藏
       this.customMenus.map((item, cIns) => {
         cIns === ins ? item.isOpen = true : item.isOpen = false;
       });
+    },
+    setCompToMenuSave() {
+      let oldMenuActive = sessionOrLocal.get('menu_active');
+      let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
+      console.log(customTab_comp, 'customTab_comp');
+      this.customMenus[oldMenuActive].components = customTab_comp;
+      sessionOrLocal.removeItem('customTab_comp');
     },
     showHoverMenu(item, flag) {
       item.isShow = flag;
@@ -509,6 +486,8 @@ export default {
     // 删除菜单
     delMenuHandle(ins) {
       this.customMenus.splice(ins, 1);
+      // 存储删除后数据
+      this.saveCustomTab();
     },
     // 左右滑动一个移动菜单
     movePxHandle(type) {
@@ -529,6 +508,13 @@ export default {
     // 左、右移动菜单
     moveMenuHandle(item, ins, type) {
       // type === 'left' 左侧移动一个；type === 'right' 右侧移动一个
+      let arrs = this.customMenus;
+      // 先添加一个，在移除一个
+      if(type === 'left') {
+        arrs.splice(ins,1,...arrs.splice(ins-1,1,arrs[ins]));
+      } else if(type === 'right') {
+        arrs.splice(ins+1,1,...arrs.splice(ins,1,arrs[ins+1]));
+      }
     },
     // 左、右添加菜单
     menuSetHandle(item, ins, type) {
@@ -550,6 +536,7 @@ export default {
       this.addCustomForm.showType = type;
       this.addCustomVisbile = true;
     },
+    // 菜单隐藏 与 显示
     changeMenuStatusHandle(item, ins) {
       console.log(ins);
       if(item.status === 3) {
@@ -748,13 +735,13 @@ export default {
     },
     // 切换邀请卡榜单
     showInOrRewardPanel(type) {
-      alert(1);
       this.rankType = type;
     },
     saveCustomTab() {
+      // 获取customTab_comp，组装某个菜单要组装的内容
       let params = {
         webinar_id: this.$route.params.str,
-        save_type: 2,
+        save_type: 2, // 1--保存；2--保存+发布
         menus: this.customMenus
       };
       this.$fetch('customMenuSave', {
@@ -803,9 +790,10 @@ export default {
 }
 .panel__right {
   width: calc(100% - 140px);
-  min-height: 782px;
+  min-height: 904px;
   background: @background_white;
   border-radius: 4px;
+  padding: 26px 40px 40px 40px;
 }
 .comp__group__title {
   font-size: @font_size_16;
@@ -880,13 +868,31 @@ export default {
   .justify(space-between);
 }
 .app__left {
-  width: 382px;
+  /*width: 382px;
   margin-right: 16px;
   height: 661px;
-  overflow-y: auto;
+  overflow-y: auto;*/
+  width: 326px;
+  height: 631px;
+  background-image: url('../../common/images/h5-show-phone.png');
+  background-size: cover;
+  margin-top: -15px;
+  position: relative;
+  .panel__preview {
+    position: absolute;
+    top: 286px;
+    width: 290px;
+    left: 25px;
+  }
+  .panel__preview__ctx {
+    height: 275px;
+    overflow-y: auto;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
 }
 .app__right {
-  width: calc(100% - 64px);
+  width: calc(100% - 340px);
 }
 .comp__edit__title {
   margin-bottom: 32px;
@@ -902,7 +908,7 @@ export default {
   position: relative;
   height: 34px;
   line-height: 34px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 .app__menu__arrow {
   position: absolute;
@@ -986,6 +992,7 @@ export default {
   top: 0;
   background: transparent;
   padding-top: 36px;
+  z-index: 99;
 }
 .app__menu__btn {
   min-width: 136px;
@@ -1152,11 +1159,71 @@ export default {
   }
 }
 
-/*pc 面板*/
-.pc-ctx-4 {
-  margin: 10px 18px;
-  font-size: 12px;
-  color: #666;
-  line-height: 1.5;
+.add-menu-dialog {
+  /deep/.el-form-item {
+    margin-bottom: 0;
+  }
+}
+/*pc-预览*/
+.panel__pc {
+  min-height: 654px;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08), 0 0 8px 0 rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  .browser-header {
+    width: 100%;
+    background: #E0E0E0;
+    border-radius: 4px 4px 0 0;
+    height: auto;
+    line-height: 1;
+    span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin: 8px 8px 8px 0;
+      border-radius: 50%;
+      &:first-child {
+        margin-left: 18px;
+      }
+    }
+    span.circle-red {
+      background: #FF6059;
+      border: 0 solid #E7433B;
+    }
+    span.circle-orange {
+      background: #FFBE2F;
+      border: 0 solid #E2A820;
+    }
+    span.circle-green {
+      background: #28CA42;
+      border: 0px solid #17B32E;
+    }
+  }
+  .pc-advert {
+    img {
+      width: 100%;
+      display: block;
+      line-height: normal;
+      margin: 0 0;
+    }
+  }
+  .pc-content {
+    padding: 30px 24px 24px 24px;
+    /*简介4*/
+    .pc-ctx-4 {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 22px;
+    }
+  }
+}
+/*文档*/
+.static-doc {
+  img {
+    width: 100%;
+    height: auto;
+  }
 }
 </style>
