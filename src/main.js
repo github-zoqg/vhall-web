@@ -9,7 +9,7 @@ import { copy, dealObjectValue, domainCovert, parseURL } from './utils/utils';
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
-import './permission';
+// import './permission';
 // 七巧板组件库，直播间内使用
 import vhallSaas from './tangram/buTemplates/index.js';
 Vue.use(ElementUI);
@@ -36,6 +36,7 @@ import moment from 'moment'; // 日期格式化
 import { getParams } from './utils/general';
 import fetchData from './api/fetch';
 Vue.prototype.$fetch = fetchData;
+window.mom = moment
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 Vue.prototype.$EventBus = EventBus;

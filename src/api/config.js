@@ -1,6 +1,11 @@
 const apis = {
   // 资料管理
-  datadocList: ['/101/v3/interacts/document/get-shared-document-list', 'GET', 'mock'], //获取文档列表
+  getWordList: ['/v3/interacts/document/get-shared-document-list', 'GET'], //获取文档列表
+  getWebinarWordList: ['/v3/interacts/document/get-webinar-document-list', 'POST'], //获取活动下文档列表
+  getWordDetail: ['/v3/interacts/document/detail', 'POST'], //获取文档详情
+  asyncWordInfo: ['/v3/interacts/document/clone-from-shared-document', 'POST'], // 同步文档
+  delWordList: ['/v3/interacts/document/batch-remove-reference', 'POST'], //删除文档
+
   dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表
   dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
   dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
@@ -47,7 +52,7 @@ const apis = {
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
-  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口        接口少了一个字段
+  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
@@ -65,22 +70,22 @@ const apis = {
   privilegePrem:  ['/v3/webinars/privilege/edit-premission', 'POST'], // 角色邀请——权限修改接口  √
 
   // 报名表单
-  regFromGet: ['/v3/webinars/registration-form/get-form-base-info', 'GET'], // 获取表单基本信息
-  regFromStatusGet: ['/v3/webinars/registration-form/get-form-enable-status', 'GET'], // 获取表单开启状态
-  regFromUpdate: ['/v3/webinars/registration-form/update', 'POST'], // 更新表单基本信息
-  regFromEnable: ['/v3/webinars/registration-form/enable', 'POST'], // 报名表单开启
-  regFromDisable: ['/v3/webinars/registration-form/disable', 'POST'], // 报名表单关闭
-  regQAdd: ['/v3/webinars/registration-form/create-question', 'POST'], // 增加一个报名表单题目
-  regQSort: ['/v3/webinars/registration-form/set-form-question-order', 'POST'], // 表单题目重新排序
+  regFromGet: ['/v3/webinars/registration-form/get-form-base-info', 'GET'], // 获取表单基本信息  √
+  regFromStatusGet: ['/v3/webinars/registration-form/get-form-enable-status', 'GET'], // 获取表单开启状态 没用到
+  regFromUpdate: ['/v3/webinars/registration-form/update', 'POST'], // 更新表单基本信息  √
+  regFromEnable: ['/v3/webinars/registration-form/enable', 'POST'], // 报名表单开启  √
+  regFromDisable: ['/v3/webinars/registration-form/disable', 'POST'], // 报名表单关闭  √
+  regQAdd: ['/v3/webinars/registration-form/create-question', 'POST'], // 增加一个报名表单题目  √
+  regQSort: ['/v3/webinars/registration-form/set-form-question-order', 'POST'], // 表单题目重新排序  √
   regQEdit: ['/v3/webinars/registration-form/update-question', 'POST'], // 编辑报名表单中的一个题目信息
-  regQDelete: ['/v3/webinars/registration-form/delete-question', 'POST'], // 删除一个报名表单题目
-  regQListGet: ['/v3/webinars/registration-form/get-form-question-list', 'POST'], // 获取报名表单中的题目列表
-  regQOptionAdd: ['/v3/webinars/registration-form/create-question-item', 'POST'], // 增加一个新的选项
-  regQOptionUpdate: ['/v3/webinars/registration-form/update-question-item', 'POST'], // 更新题目的选项信息
-  regQOptionDelete: ['/v3/webinars/registration-form/delete-question-item', 'POST'], // 删除一个选项
-  regRrivacyAdd: ['/v3/webinars/registration-form/create-privacy-protocol', 'POST'], // 新建一个隐私协议
-  regRrivacyUpdate: ['/v3/webinars/registration-form/update-privacy-protocol', 'POST'], // 更新隐私协议配置
-  regRrivacyDelete: ['/v3/webinars/registration-form/delete-privacy-protocol', 'POST'], // 删除一个隐私协议
+  regQDelete: ['/v3/webinars/registration-form/delete-question', 'POST'], // 删除一个报名表单题目  √
+  regQListGet: ['/v3/webinars/registration-form/get-form-question-list', 'POST'], // 获取报名表单中的题目列表  √
+  regQOptionAdd: ['/v3/webinars/registration-form/create-question-item', 'POST'], // 增加一个新的选项  √
+  regQOptionUpdate: ['/v3/webinars/registration-form/update-question-item', 'POST'], // 更新题目的选项信息  √
+  regQOptionDelete: ['/v3/webinars/registration-form/delete-question-item', 'POST'], // 删除一个选项  √
+  regRrivacyAdd: ['/v3/webinars/registration-form/create-privacy-protocol', 'POST'], // 新建一个隐私协议  √
+  regRrivacyUpdate: ['/v3/webinars/registration-form/update-privacy-protocol', 'POST'], // 更新隐私协议配置  url字段为空字符串的时候会报错
+  regRrivacyDelete: ['/v3/webinars/registration-form/delete-privacy-protocol', 'POST'], // 删除一个隐私协议  √
   regUserCheck: ['/v3/webinars/registration-form/check-is-registered', 'POST'], // 检查是否为已报名用户
   regSendVerifyCode: ['/v3/webinars/registration-form/send-verify-code', 'POST'], // 发送手机验证码
   regAnswerSubmit: ['/v3/webinars/registration-form/submit', 'POST'], // 提交报名表单答案
@@ -193,6 +198,8 @@ const apis = {
   getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET', 'data'], //获取活动浏览器信息
   getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET', 'data'], //获取观看人数趋势
 
+  // 直播-用户统计
+  getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET', 'data'], //获取用户观看详情
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
@@ -243,10 +250,10 @@ const apis = {
   liveIncomeDetailList: ['/v3/fin/income/live/details/list', 'GET', 'data'], // 直播收益详情列表
   packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET', 'data'], // 红包收益
   accountList: ['/v3/fin/withdraw/list', 'GET', 'data'], // 提现明细
-  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定
-  callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
-  withdrawalPhoneCode: ['/104/v3/finances/withdraw/phone-code', 'POST', 'mock'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
-  withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
+  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定  微信授权
+  callbackUserInfo: ['/v3/users/oauth/callback', 'POST'], // 绑定之后获取用户信息
+  withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST', 'data'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
+  withdrawal: ['/v3/fin/withdraw', 'POST', 'data'], // 提现
 
   //开发设置
   getAppList: ['/v3/users/appkeys/get-list', 'POST'], // 获取应用信息列表接口 jian.chang •••
@@ -345,7 +352,7 @@ const apis = {
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
   getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
+  goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
   getConfigList: ['/v3/users/permission/get-config-list', 'POST'], // 获取观看端配置项
@@ -386,7 +393,8 @@ const apis = {
   saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
-
+  // 签到
+  userSingin: ['/v3/interacts/sign/user-sign', 'POST'], // 用户签到
   // 开平海报
   getPlaybillInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报信息
   // 互动
@@ -394,14 +402,12 @@ const apis = {
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
-
-
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'],
 
   // 签到
   v3CreateSifn: ['/v3/interacts/sign/create-and-push', 'POST'], // 创建签到
-  v3StopSifn: ['/v3/interacts/sign/set-end-sign', 'POST'], // 结束签到
+  v3StopSign: ['/v3/interacts/sign/set-end-sign', 'POST'], // 结束签到
   v3GetCurrentSign:['/v3/interacts/sign/get-doing-sign', 'POST'], // 获取当前活动正在的签到
   v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录
   v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数

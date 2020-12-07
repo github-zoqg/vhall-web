@@ -125,7 +125,6 @@ export default {
       }).catch(() => {});
     },
     allDelete(id) {
-      debugger;
       if(!id) {
         if(this.adv_ids.length <= 0) {
           this.$message.error('请至少选择一条记录删除');

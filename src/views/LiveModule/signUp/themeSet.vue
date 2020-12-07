@@ -33,9 +33,9 @@ export default {
   watch:{
     baseInfo: {
       handler(newVal){
-        this.colorIndex = newVal.form_theme_color;
-        this.title2 = newVal.form_tab_verify_title;
-        this.title1 = newVal.form_tab_register_title;
+        this.colorIndex = newVal.theme_color;
+        this.title2 = newVal.tab_form_title;
+        this.title1 = newVal.tab_verify_title;
       },
       deep: true,
       immediate: true
@@ -47,15 +47,15 @@ export default {
       tabs: 'title',
       title1: '用户报名',
       title2: '验证',
-      colorIndex: 'red'
+      colorIndex: 'red',
     };
   },
   methods: {
     save() {
       const options = {
-        form_theme_color: this.colorIndex,
-        form_tab_verify_title: this.title2,
-        form_tab_register_title: this.title1
+        theme_color: this.colorIndex,
+        tab_verify_title: this.title2,
+        tab_form_title: this.title1,
       };
       const that = this;
       this.$emit('setBaseInfo', options, () => { that.dialogVisible = false; });

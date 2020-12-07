@@ -116,7 +116,7 @@ export default {
   methods: {
     autoSignChange(value){
       console.warn('test----自动签到  改变值', value)
-      window.sessionStorage.setItem('isAutoSign', value)
+      // window.sessionStorage.setItem('isAutoSign', value)
     },
     tipFocus(e) {
       if (e.target.value === this.defaultText) {

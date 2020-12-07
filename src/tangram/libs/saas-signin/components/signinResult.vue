@@ -13,7 +13,7 @@
         <div class="result-table-item" v-for="(user, index) in signList" :key="index">
           <img :src="user.signer_avatar ? user.signer_avatar : defaultAvater" alt="" />
           <span class="nickname ellsips">{{user.signer_nickname}}</span>
-          <span class="time">{{user.created_at}}</span>
+          <span class="time">{{signTime(user.created_at)}}</span>
         </div>
       </div>
     </div>
@@ -47,16 +47,23 @@ export default {
       }
     }
   },
+  computed: {
+    signTime(){
+      return function(val){
+        return this.$moment(val).format('hh:mm')
+      }
+    }
+  },
   data() {
     return {
       signImg: require('../images/sign@2x.png'),
       signImgZero: require('../images/sign_zero@2x.png'),
       defaultAvater: '//cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png',
-      signTotal: 0,
+      signTotal: 10,
       signList: [
         {
           signer_nickname: '陈小帅',
-          created_at: ''
+          created_at: '2020-12-07 17:23:49'
         }
       ]
     };
@@ -70,9 +77,8 @@ export default {
     this.$fetch('v3GetSignList', _data).then(res=>{
       console.warn('获取当前活动的签到列表', res)
       if(res.code == 200){
-        this.signTotal = 1
-        // this.signTotal = res.data.total
-        // this.signList = res.data.list
+        this.signTotal = 10
+        this.signList = res.data.list
       }
     }).catch(err=>{
       console.warn('获取当前活动的签到列表', res)

@@ -1,6 +1,5 @@
 <template>
     <VhallDialog class="sign-wrap" :visible.sync="showSignin" width="468px" center title="签到" append-to-body ref="dialog" >
-      <!-- <div class="sign-wrap"> -->
         <Counter
           @close-sign="closeAutoSignin"
           :autoSign="signInfo.autoSign"
@@ -14,7 +13,6 @@
           <SigninSet v-if="showSet" @start="startSign"></SigninSet>
         </template>
         <signinResult v-if="showResult" @restartsign="resetSignState" :room_id='room_id' :signId='signId'></signinResult>
-      <!-- </div> -->
     </VhallDialog>
 </template>
 
@@ -31,7 +29,8 @@ export default {
       signInfo: null,
       remaining: 0,
       timer: null,
-      signId: ''
+      signId: '',
+      nowSignObj: ''
     };
   },
   methods: {
@@ -39,24 +38,32 @@ export default {
       console.log('closed');
     },
     openSignIn() {
-      // 根据本地是否开启自动签到展示相关信息
       const localAuto = window.sessionStorage.isAutoSign
-      console.warn('test---签到', localAuto)
-      if(localAuto){
+      if(localAuto == 'false'){
+        // 当获取的存储值为false 或者  根本取不到值的时候  都进行获取一次当前活动是含有签到信息
+        this.showSignin = true;
+      }else{
         this.$fetch('v3GetCurrentSign', {
           room_id: this.room_id
         }).then(res=>{
           console.warn('获取当前签到信息',res)
           if(res.code == 200){
-            this.showSignin = true;
+            if(res.data.id){
+              this.showSignin = true;
+              this.signInfo = res.data
+              this.nowSignObj = res.data
+              this.signInfo.autoSign = res.data.is_auto_sign == 1 ? true : false
+              this.remaining = res.data.show_time
+              console.warn('this.starting',this.starting, 'remaining', this.remaining, !!this.remaining)
+            }else{
+              this.showSignin = true;
+            }
           } else {
             this.$message.warning(res.msg)
           }
         }).catch(err=>{
           console.warn('获取当前签到的失败----', err)
         })
-      }else{
-        this.showSignin = true;
       }
     },
     closeAutoSignin() {
@@ -65,19 +72,26 @@ export default {
         cancelButtonText: '取消',
         center: true
       }).then(() => {
-        this.$fetch('v3StopSifn', {
-          room_id: this.room_id
-        }).then(res=>{
-          console.log('结束当前房间的签到成功-----',res)
+        this.endSignServe()
+      }).catch(() => {});
+    },
+    endSignServe(){
+      this.$fetch('v3StopSign', {
+        room_id: this.room_id
+      }).then(res=>{
+        console.log('结束当前房间的签到成功-----',res)
+        if(res.code == 200){
           window.sessionStorage.removeItem('isAutoSign')
           this.showSignin = false;
           this.$refs.dialog.$children[0].$once('closed', () =>
             this.resetSignState()
           );
-        }).catch(err=>{
-          console.warn('结束当前房间的签到失败-----',err)
-        })
-      }).catch(() => {});
+        }else{
+          this.$message.warning(res.msg)
+        }
+      }).catch(err=>{
+        console.warn('结束当前房间的签到失败-----',err)
+      })
     },
     startSign(state) {
       let _data = {
@@ -87,18 +101,19 @@ export default {
         is_auto_sign: Number(state.autoSign), // 是否自动发起签到，1自动，0取消自动，默认0
         auto_sign_time: state.interval // 自动发起签到的轮询定时时间，单位秒
       }
-      this.$fetch('v3CreateSifn', _data).then(res=>{
+      console.warn('签到satte-----',state, this.signInfo)
+      this.$fetch('v3CreateSifn', _data).then(res => {
         console.warn('创建签到',res)
         if(res.code == 200){
           if(state.autoSign){
             window.sessionStorage.setItem('isAutoSign', 'true')
           }
           this.signId = res.data.id
-          this.setSignState({
-            signInfo: state
-          });
+          this.setSignState({signInfo: state});
           this.setIntervalAction();
-        } else {
+        } else if(res.code == 13204){
+          this.endSignServe()
+        }else{
           this.$message.warning(res.msg)
         }
       }).catch(err=>{

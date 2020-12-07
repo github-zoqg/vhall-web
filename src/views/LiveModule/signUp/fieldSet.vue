@@ -8,21 +8,21 @@
         maxlength="50"
         show-word-limit
         placeholder="请输入表单标题"
-        v-model="form_title"
-        @change="baseInfoChange('form_title')"
+        v-model="title"
+        @change="baseInfoChange('title')"
       ></el-input>
     </section>
     <section class="viewItem">
       <p class="label">表单简介</p>
       <el-input
         maxlength="500"
-        v-model="form_introduce"
+        v-model="intro"
         show-word-limit
         placeholder="请输入表单简介"
         type="textarea"
         :autosize="{ minRows: 5 }"
         resize=none
-        @change="baseInfoChange('form_introduce')"
+        @change="baseInfoChange('intro')"
       ></el-input>
     </section>
     <section class="viewItem">
@@ -87,7 +87,7 @@
                 class="el-icon-circle-plus-outline removeIcon"
                 slot="suffix"
                 v-if="!!node.privacyAdd && item.nodes.length < 4"
-                @click="privacyAdd(item.nodes, nodeIndex)"
+                @click="privacyAdd(item.nodes, item)"
               ></i>
             </el-input>
             <!-- 单选类型 -->
@@ -218,6 +218,7 @@
 <script>
 import draggable from "vuedraggable";
 import upload from '@/components/Upload/main';
+import Env from "@/api/env";
 export default {
   components:{
     draggable,
@@ -242,9 +243,9 @@ export default {
     },
     baseInfo: {
       handler(newVal){
-        this.form_title = newVal.form_title;
-        this.form_introduce = newVal.form_introduce;
-        this.imageUrl = newVal.form_cover;
+        this.title = newVal.title;
+        this.intro = newVal.intro;
+        this.imageUrl = newVal.cover;
       },
       deep: true,
       immediate: true
@@ -253,12 +254,12 @@ export default {
   data(){
     return {
       webinar_id: this.$route.params.str,
-      form_title: '', // 基本信息——表单名称
-      form_introduce: '', // 基本信息——表单简介
+      title: '', // 基本信息——表单名称
+      intro: '', // 基本信息——表单简介
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png',
+      imageUrl: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png',
       renderQuestion: []
     };
   },
@@ -275,7 +276,7 @@ export default {
   methods: {
     // 保存表单
     sureQuestionnaire() {
-      if (!this.form_title) {
+      if (!this.title) {
         this.$message.error('请填写表单名称！');
       } else {
         this.$message.success('保存成功！');
@@ -283,7 +284,8 @@ export default {
     },
     // 添加一个题目选项
     addOption(data, other){
-      let itemType = 0;
+      console.log(data);
+      let itemType = other ? 1: 0;
       let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
       let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
       if(data.type == 'input'){
@@ -297,7 +299,6 @@ export default {
         }else{
           colneChild.props.class && (colneChild.props.class = colneChild.props.class.filter(item=> item!='noFull'));
         }
-
       }
       colneChild.props && (colneChild.props.disabled = false);
       colneChild.other = !!other;
@@ -307,7 +308,11 @@ export default {
         question_id: data.question_id,
         item_type: itemType
       }).then(res => {
-        options.push(colneChild);
+        options.push({
+          ...colneChild,
+          value: res.data.subject,
+          item_id: res.data.id
+        });
       }).catch(err => { console.log(err); });
     },
     // 题目属性改变（通用）
@@ -324,10 +329,11 @@ export default {
     },
     // 题目 title 改变
     subjectChange(question) {
-      console.log(question);
       this.questionEdit({
         question_id: question.question_id,
         subject: question.label,
+        options: JSON.stringify(question.options),
+        is_must: question.required ? 1 : 0
       });
     },
     // 下拉题目选项 subject 改变
@@ -337,20 +343,39 @@ export default {
         const options = {
           item_id: node.item_id,
           subject: node.value,
-          question_id: item.question_id
+          question_id: question.question_id
         };
         this.optionEdit(options);
       }
+      // 如果改变的是隐私声明
       if (isPrivacy) {
-        const options = {
-          webinar_id: this.webinar_id,
-          privacy_id: node.privacy_id,
-          [node.key]: node.value
-        };
-        // 更改隐私协议
-        this.$fetch('regRrivacyUpdate', options)
-          .then(res => console.log(res))
-          .catch(err => consoel.log(err));
+        // 如果更改默认添加的隐私声明，调用更新题目接口
+        if (!node.privacy_id) {
+          const options = {
+            question_id: question.question_id,
+            subject: question.label,
+            is_must: question.required ? 1 : 0,
+            options: JSON.stringify({
+              content: question.nodes[0].value,
+              color_text: question.nodes[1].value,
+              url: question.nodes[2].value,
+            })
+          };
+          this.questionEdit(options);
+        } else {
+          // 如果更改自定义添加的隐私声明，调用更新隐私协议的接口
+          let options = {
+            webinar_id: this.webinar_id,
+            privacy_id: node.privacy_id,
+            content: question.nodes[0].value,
+            color_text: question.nodes[3].value,
+            url: question.nodes[4].value,
+          };
+          // 更改隐私协议
+          this.$fetch('regRrivacyUpdate', options)
+            .then(res => console.log(res))
+            .catch(err => consoel.log(err));
+        }
       }
     },
     // 单选\多选题目选项 subject 改变
@@ -375,21 +400,32 @@ export default {
     },
     // 删除一个题目选项
     deleteOptions(item, index, type){
-      console.log(item, index, type);
       // 删除一个隐私协议选项
       if(type === 'privacy'){
         // 隐私协议删除两个元素 且不能有数量限制
-        console.log(123);
-        let reg = new RegExp(`(和${item.nodes[index].value})`);
+        let reg = new RegExp(`(和${item.nodes[3].value})`);
         item.nodes[0].value = item.nodes[0].value.replace(reg, '');
-        item.nodes.splice(index, 2);
-        console.log(item.nodes);
+
         // 删除隐私协议接口
         this.$fetch('regRrivacyDelete', {
           webinar_id: this.webinar_id,
           privacy_id: item.nodes[index].privacy_id
-        }).then(res => { console.log(res); })
-        .catch(err => { console.log(err); });
+        }).then(res => {
+          // 删除成功调用题目编辑接口更新 content
+          const options = {
+            question_id: item.question_id,
+            subject: item.label,
+            is_must: item.required ? 1 : 0,
+            options: JSON.stringify({
+              content: item.nodes[0].value,
+              color_text: item.nodes[1].value,
+              url: item.nodes[2].value,
+            })
+          };
+          this.questionEdit(options);
+        }).catch(err => { console.log(err); });
+
+        item.nodes.splice(index, 2);
         return;
       }else if(type === 'select') {
         if(item.nodes.length == 2){
@@ -403,7 +439,6 @@ export default {
           .catch(err => { console.log(err); });
         item.nodes.splice(index, 1);
       } else {
-        console.log(item);
         // 普通选项删除
         if(item.nodes[0].children.length == 2){
           return this.$message.error('请至少保留两个选项');
@@ -413,13 +448,13 @@ export default {
           item_id: item.nodes[0].children[index].item_id,
           question_id: item.question_id
         }).then(res => {
-          console.log(res);
           item.nodes[0].children.splice(index, 1);
         }).catch(err => { console.log(err); });
 
       }
     },
-    privacyAdd(nodes){
+    // 添加一个隐私协议
+    privacyAdd(nodes, question){
       let privacy1 = nodes[1].value;
       if(!privacy1 || !nodes[0].value.match(privacy1)){
         return this.$message.error('请完善可点击文字');
@@ -434,13 +469,27 @@ export default {
       nodes[0].value = nodes[0].value.replace(reg, `$1和${cloneNode.value}`);
       nodes.push(cloneNode);
       nodes.push(cloneNode2);
-      this.fetch('regRrivacyAdd', {
+      this.$fetch('regRrivacyAdd', {
         webinar_id: this.webinar_id,
-        content: '',
-        color_text: '',
-        url: ''
-      }).then(res => { console.log(res); })
-        .catch(err => { consoel.log(ree); });
+        content: nodes[0].value,
+        color_text: '《隐私声明2》',
+        url: 'http://localhost:8080/#/live/signup/337792152?id=337792152'
+      }).then(res => {
+        nodes[3].privacy_id = res.data.privacy_id;
+        nodes[4].privacy_id = res.data.privacy_id;
+        // 添加成功之后需要调用更新问题接口，更新问题的 content
+        const options = {
+          question_id: question.question_id,
+          subject: question.label,
+          is_must: question.required ? 1 : 0,
+          options: JSON.stringify({
+            content: nodes[0].value,
+            color_text: nodes[1].value,
+            url: nodes[2].value,
+          })
+        };
+        this.questionEdit(options);
+      }).catch(err => { consoel.log(ree); });
     },
     privacyFormatter(item){
       let text = JSON.parse(JSON.stringify(item[0].value));
@@ -453,10 +502,8 @@ export default {
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
-      console.log(item[3] &&item[3].value, text);
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-        console.log(reg);
         text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`);
       }else{
         item[3] && (item[3].value = '');
@@ -478,21 +525,21 @@ export default {
     //   return isType && isLt2M;
     // },
     productLoadSuccess(res, file) {
-      console.log(res, file);
-      // 图片url
-      const url = URL.createObjectURL(file.raw);
-      this.imageUrl = url;
-      this.$emit('setBaseInfo', { form_cover: this.imageUrl });
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.imageUrl = res.data.file_url;
+        this.$emit('setBaseInfo', { cover: res.data.file_url });
+      }
     },
     // 删除头图
     deleteBanner() {
       this.imageUrl = '';
-      this.$emit('setBaseInfo', { form_cover: this.imageUrl });
+      this.$emit('setBaseInfo', { cover: this.imageUrl });
     },
     // 重置头图
     resetBanner(event){
-      this.imageUrl= '//cnstatic01.e.vhall.com/static/images/signup-form/form-head-new1.png';
-      this.$emit('setBaseInfo', { form_cover: this.imageUrl });
+      this.imageUrl= 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
+      this.$emit('setBaseInfo', { cover: this.imageUrl });
     },
     // 题目顺序修改
     sortChange(val, arr){
@@ -502,7 +549,7 @@ export default {
       let question_ids = this.renderQuestion.reduce((acc, curr) => {
         return acc + curr.question_id + ',';
       }, '');
-      question_ids.substring(0, question_ids.length - 1);
+      question_ids = question_ids.substring(0, question_ids.length - 1);
       // console.log(question_ids);
       // console.log(question_ids.splice(question_ids.index, 1));
 
@@ -524,22 +571,22 @@ export default {
     },
     // 短信验证开关
     phoneSwitchChange(question) {
-      console.log(question);
       const options = {
         question_id: question.question_id,
-        options: {
+        options: JSON.stringify({
           open_verify: question.phoneValide ? 1 : 0
-        }
+        }),
+        subject: question.label,
+        is_must: question.required ? 1: 0
       };
-      console.log(question);
       this.questionEdit(options);
     },
     // 是否必填开关
     requiredSwitchChange(question) {
-      console.log(question);
       const options = {
         question_id: question.question_id,
-        is_must: question.required ? 1 : 0
+        is_must: question.required ? 1 : 0,
+        subject: question.label
       };
       this.questionEdit(options);
     }
