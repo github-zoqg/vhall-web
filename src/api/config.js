@@ -204,9 +204,8 @@ const apis = {
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
   getSonInfo: ['/v3/users/child/get-head-info', 'POST'], // 子账号tab页头部信息接口 Jia.li  √
-  childExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出接口 Jia.li
   getSonList: ['/v3/users/child/get-list', 'POST'], // 获取子账号列表信息 Jia.li
-  sonExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出 Jia.li
+  sonChildExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出 Jia.li
   sonAdd: ['/v3/users/child/create', 'POST'], // 子账号创建 Jia.li
   sonDel: ['/v3/users/child/delete', 'POST'], // 子账号删除 Jia.li
   sonEdit: ['/v3/users/child/edit', 'POST'], // 子账号修改 Jia.li

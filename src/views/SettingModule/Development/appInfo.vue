@@ -18,7 +18,7 @@
                 <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
               </el-radio-group>
             </template>
-            <span v-else>{{appForm[node.modelKey]}}</span>
+            <span v-else>{{['MD5', 'RSA'][appForm[node.modelKey]]}}</span>
           </el-form-item>
         </template>
         <el-form-item v-if="action!='detail'">
@@ -46,7 +46,7 @@ export default {
       env: Env,
       appForm: {
         app_name: '',
-        sign_type: 1, // 加密算法
+        sign_type: '0', // 加密算法
         callback_webinar_status: '', //直播状态URL：
         callback_play_download: '', //回放下载URL：
         callback_sdk_upload: '', //JSSDK上传视频完成URL：
@@ -131,8 +131,8 @@ export default {
           nodeType: 'radio',
           label: '',
           items: [
-            {label: 'MD5', value: 1},
-            {label: 'RSA', value: 2}
+            {label: 'MD5', value: '0'},
+            {label: 'RSA', value: '1'}
           ],
           modelKey: 'sign_type',
         },

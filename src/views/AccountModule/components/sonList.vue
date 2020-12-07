@@ -5,11 +5,11 @@
       <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建子账号</el-button>
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-button size="medium" round >导出</el-button>
+      <el-button size="medium" round @click="downloadHandle">导出</el-button>
       <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @change="getSonList">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
-      <el-select placeholder="全部" round  v-model="query.type" @change="getSonList">
+      <el-select placeholder="全部" round  v-model="query.role_id" @change="getSonList">
         <el-option
           v-for="item in roleList"
           :key="'v_' + item.id"
@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span>当前可创建子账号数量{{sonCountVo.available_num}}个 {{roleList}}</span>
+          <span>当前可创建子账号数量{{sonCountVo.available_num}}个</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
@@ -107,7 +107,7 @@ export default {
     }
   },
   data() {
-    let validNums = (rule, value, callback) => {
+    /*let validNums = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入数量'));
       } else {
@@ -116,10 +116,10 @@ export default {
         }
         callback();
       }
-    };
+    };*/
     return {
       query: {
-        type: '',
+        role_id: null,
         keyword: '',
         pos: 0,
         limit: 1000
@@ -200,7 +200,7 @@ export default {
           { required: true, message: '请输入账号角色', trigger: 'change' }
         ],
         nums: [
-          { required: true, message: '请填写账号数量', validator: validNums, trigger: 'blur' }
+          { required: true, message: '请填写账号数量', trigger: 'blur' }
         ]
       },
     };
@@ -242,6 +242,23 @@ export default {
           }
         });
       }
+    },
+    downloadHandle() {
+      let params = {
+        role_id: this.query.role_id,
+        keyword: this.query.keyword,
+        pos: 0,
+        limit: 999999, // TODO 跟大龙确定，传值大于0，后台下载依然是所有符合条件的全部数据
+      };
+      this.$fetch('sonChildExport', params).then(res=>{
+        if (res && res.code === 200) {
+          this.$message.success('下载申请成功，请去下载中心下载该项！');
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(e=>{
+        console.log(e);
+      });
     },
     // 获取子账号个数
     sonCountGetHandle() {
@@ -329,7 +346,12 @@ export default {
       this.$refs.sonForm.validate((valid) => {
         if (valid) {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
-          let params = Object.assign(this.sonDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.sonDialog.row.id, group_id: this.query.group_id }, this.sonForm);
+          let params = Object.assign(
+            this.sonDialog.type === 'add' ? {
+            } : {
+              id: this.sonDialog.row.id,
+              child_id: this.sonDialog.row.child_id
+            }, this.sonForm);
           this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
             if (res && res.code === 200) {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
