@@ -36,6 +36,7 @@ import moment from 'moment'; // 日期格式化
 import { getParams } from './utils/general';
 import fetchData from './api/fetch';
 Vue.prototype.$fetch = fetchData;
+window.mom = moment
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
 Vue.prototype.$EventBus = EventBus;
