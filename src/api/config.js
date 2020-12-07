@@ -400,7 +400,8 @@ const apis = {
   setBanned: ['/v3/interacts/chat-user/set-banned', 'POST'], // 设置禁言
   getHistoryQaMsg: ['/v3/interacts/qa/get-webinar-history-questions', 'POST'], // 获取历史问答记录
   sendQaMsg: ['/v3/interacts/qa/submit-one-question', 'POST'], // 发送问答
-  getBannedList: ['/v3/interacts/chat-user/get-banned-list', 'POST'], // 获取禁言列表
+  v3GetBannedList: ['/v3/interacts/chat-user/get-banned-list', 'POST'], // 获取禁言列表 √
+  v3GetKickedList: ['/v3/interacts/chat-user/get-kicked-list', 'POST'], // 获取踢出列表  √
   getKickList: ['/v3/interacts/chat-user/get-kicked-list', 'POST'], // 获取踢出列表
   getOnlineList: ['/v3/interacts/chat-user/get-online-list', 'POST'], // 获取在线列表
   // 礼物

@@ -77,7 +77,7 @@ export default {
     this.$fetch('v3GetSignList', _data).then(res=>{
       console.warn('获取当前活动的签到列表', res)
       if(res.code == 200){
-        this.signTotal = 10
+        this.signTotal = res.data.total
         this.signList = res.data.list
       }
     }).catch(err=>{

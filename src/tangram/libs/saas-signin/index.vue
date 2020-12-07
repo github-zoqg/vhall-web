@@ -53,7 +53,8 @@ export default {
               this.signInfo = res.data
               this.nowSignObj = res.data
               this.signInfo.autoSign = res.data.is_auto_sign == 1 ? true : false
-              this.remaining = res.data.show_time
+              this.remaining = res.data.auto_sign_time_ttl
+              this.setIntervalAction()
               console.warn('this.starting',this.starting, 'remaining', this.remaining, !!this.remaining)
             }else{
               this.showSignin = true;
@@ -77,10 +78,12 @@ export default {
     },
     endSignServe(){
       this.$fetch('v3StopSign', {
-        room_id: this.room_id
+        room_id: this.room_id,
+        sign_id: this.nowSignObj.id
       }).then(res=>{
         console.log('结束当前房间的签到成功-----',res)
         if(res.code == 200){
+          this.$message('关闭签到成功')
           window.sessionStorage.removeItem('isAutoSign')
           this.showSignin = false;
           this.$refs.dialog.$children[0].$once('closed', () =>
