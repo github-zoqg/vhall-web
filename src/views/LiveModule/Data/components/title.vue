@@ -2,7 +2,7 @@
   <el-card class="container-box">
     <div class="flex-item">
       <div class="box-item">
-        <img :src="liveDetailInfo.img_url" alt="" />
+       <img :src="`${imgBaseUrl}${liveDetailInfo.img_url}`" alt="">
       </div>
       <div class="box-title">
         <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
@@ -23,16 +23,12 @@
   </el-card>
 </template>
 <script>
+import Env from '@/api/env.js';
 export default {
-  props: {
-    isStatus: {
-      type: Number,
-      default: 2,
-    },
-  },
   data() {
     return {
-      liveDetailInfo: {}
+      liveDetailInfo: {},
+      imgBaseUrl: Env.staticLinkVo.uploadBaseUrl
     };
   },
   mounted() {

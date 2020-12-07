@@ -43,6 +43,9 @@ export default {
   props: {
     roomId: {
       required: true
+    },
+    channel_id:{
+      required: true
     }
   },
   data () {
@@ -84,15 +87,14 @@ export default {
     },
     sendNotice () {
       if (!this.NoticeVal) return this.$message.error('内容不能为空');
-      this.$vhallFetch('sendNotice', {
+      this.$fetch('v3SendNotice', {
         room_id: this.roomId,
-        content: this.NoticeVal
-      })
-        .then(res => {
+        channel_id: this.channel_id,
+        body: this.NoticeVal
+      }).then(res => {
           this.NoticeVal = '';
-        })
-        .catch(error => {
-          console.log(error);
+        }).catch(error => {
+          console.warn('发送公告消息----err',error);
         });
     }
   }

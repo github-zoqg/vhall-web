@@ -53,13 +53,14 @@
         <el-upload
           v-if="roleName != '2'"
           class="avatar-uploader"
-          :action="`${$baseUrl}/cmpt/chat/upload`"
+          :headers="{token: headToken}"
+          :action="`${$baseUrl}/v3/commons/upload/index`"
           :show-file-list="false"
-          name="file"
+          name="resfile"
           :before-upload="onExceed"
           :data="{
-            vss_token: vssToken,
-            room_id: roomId
+            path: `${roomId}/img`,
+            type: 'image'
           }"
           accept=".jpg, .jpeg, .png, .bmp"
           :on-success="uploadSuccess"
@@ -207,6 +208,7 @@ export default {
   },
   data () {
     return {
+      headToken:  window.sessionStorage.getItem('token') || '', // 请求token
       assistantType: this.$route.query.assistantType,
       placeholderDescribe: '', // placeholder的显示
       chatLoginStatus: false, // 聊天是否需要登录
@@ -247,7 +249,8 @@ export default {
       // 发送聊天间隔时间
       chatGap: 0,
       // 总在线人数
-      onlineUsers: 0
+      onlineUsers: 0,
+      curr_page: 0, // 当前页码条数
     };
   },
   components: {
@@ -407,8 +410,9 @@ export default {
           data.type = 'image';
         }
         let userInfo = JSON.parse(sessionStorage.getItem('user'));
+        console.warn('获取当前的本地用户信息', userInfo)
         let context = {
-          nickname: userInfo.nick_name, // 昵称
+          nickname: userInfo.nickname, // 昵称
           avatar: userInfo.avatar, // 头像
           role_name: this.roleName, // 角色 1主持人2观众3助理4嘉宾
           replyMsg: this.replyMsg, // 回复消息
@@ -466,6 +470,7 @@ export default {
             replyMsg: this.replyMsg,
             atList: this.atList
           });
+          console.warn('发起这发消息', tempData)
           this.chatList.push(tempData);
           if (!data.barrageTxt.includes('<img')) {
             this.$emit('pushBarrage', data.barrageTxt);
@@ -539,11 +544,11 @@ export default {
     getHistoryMsg () {
       this.$fetch('getHistoryChat', {
         room_id: this.roomId,
-        start_time: '',
         pos: Number(this.curr_page )* 50,
         limit: 50
       }).then(res => {
-        if (res.data.length) {
+        console.warn(res, '请求历时消息接口为空')
+        if (res.data.list.length) {
           let list = res.data.list
             .map(item => {
               if (item.data.text_content) {
@@ -578,6 +583,7 @@ export default {
               }
               return acc;
             }, []);
+          console.warn(list, '当前消息列表')
           this.chatList.unshift(...list);
         } else {
           this.scroll.finishPullDown();
@@ -808,8 +814,8 @@ p {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 81px;
-    margin-top: 10px;
+    bottom: 91px;
+    padding-top: 10px;
     .chat-content-scroll {
       height: 100%;
       position: relative;

@@ -1,10 +1,6 @@
 <template>
   <transition name="chat-filter-slide">
     <div class="chat-filter" v-show="chatFilterShow">
-      <!-- <p>
-        <input class="chat-filter-input" type="checkbox" id="tomaster" />
-        <label class="chat-filter-label" for="tomaster">只发给主持人</label>
-      </p>-->
       <p v-auth="100017" class="chat-banned-all">
         <input
           class="chat-filter-input"
@@ -59,24 +55,8 @@ export default {
       filterUrl: ''
     };
   },
-  // watch: {
-  //   bannedAll (newval) {
-  //     this.setAllBanned(newval)
-  //     this.toggleShow()
-  //   }
-  // },
   mounted () {
-    // let vhall_domain = window.sessionStorage.getItem('vhall_domain')
     this.filterUrl = this.chatFilterUrl;
-    // if (vhall_domain) {
-    //   vhall_domain = JSON.parse(vhall_domain)
-    //   this.filterUrl =
-    //     (this.$route.query.assistantType ? 'http:' : 'https:') +
-    //     `${vhall_domain.web}/room/authchat/${this.webinarId}`
-    // } else {
-    //   console.error('聊天过滤地址没有localStorage的vhall_domain')
-    // }
-
     // 全体禁言
     EventBus.$on('disable_all', () => {
       this.bannedAll = true;
@@ -89,7 +69,6 @@ export default {
   methods: {
     handleChange (e) {
       this.setAllBanned(e.target.checked);
-      // this.toggleShow()
     },
     toggleShow () {
       this.chatFilterShow = !this.chatFilterShow;

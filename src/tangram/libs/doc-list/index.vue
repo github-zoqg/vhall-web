@@ -444,7 +444,7 @@ export default {
       if (this.searchKey) {
         data.file_name = this.searchKey;
       }
-      this.$vhallFetch('getDocList', data).then(res => {
+      this.$fetch('getDocList', data).then(res => {
         if (res.code == 200) {
           this.docList = res.data.detail.map((item) => {
             let transformStr;

@@ -84,7 +84,19 @@ export function formateDate(timer) {
   let h = time.getHours();
   let mm = time.getMinutes();
   let s = time.getSeconds();
-  return y + '-' + mat(m) + '-' + mat(d) + ' ' + mat(h) + ':' + mat(mm) + ':' + mat(s);
+  return (
+    y +
+    '-' +
+    mat(m) +
+    '-' +
+    mat(d) +
+    ' ' +
+    mat(h) +
+    ':' +
+    mat(mm) +
+    ':' +
+    mat(s)
+  );
 }
 
 export function getRangeDays(value) {
@@ -106,9 +118,41 @@ export function getRangeDays(value) {
   }
 }
 
+export function diffToTime(targetStartDate, targetEndDate) {
+  let targetStart = new Date(targetStartDate);
+  let targetEnd = new Date(targetEndDate);
+  if (targetEnd.getTime() - targetStart.getTime() < 0) {
+    return false;
+  } else {
+    targetStart.setTime(targetStart.getTime() + 1000);
+    let diff = targetEnd.getTime() - targetStart.getTime();
+    let day = Math.floor(diff / (24 * 3600 * 1000));
+    let limit1 = diff % (24 * 3600 * 1000);
+    let hour = Math.floor(limit1 / (3600 * 1000));
+
+    let limit2 = limit1 % (3600 * 1000);
+    let minute = Math.floor(limit2 / (60 * 1000));
+
+    let limit3 = limit2 % (60 * 1000);
+    let second = Math.floor(limit3 / 1000);
+    if (diff) {
+      //
+      let diffTime = `${minute}:${second}`;
+      console.log('diffTime', diffTime);
+      let diffSetTime = window.setTimeout(() => {
+        diffToTime(targetStart, targetEnd);
+        window.clearTimeout(diffSetTime);
+      }, 1000);
+      return diffTime;
+    } else {
+      return false;
+    }
+  }
+}
+
 import moment from 'moment';
 // 最近7天、30天和90天
-export function getRangeDay () {
+export function getRangeDay() {
   let ret = [];
   let desc = ['最近7天', '最近30天', '最近90天'];
   let diffdays = [7, 30, 90];
@@ -116,7 +160,9 @@ export function getRangeDay () {
     ret.push({
       text: desc[index],
       value: [
-        moment().subtract(item, 'days').format('YYYY-MM-DD'),
+        moment()
+          .subtract(item, 'days')
+          .format('YYYY-MM-DD'),
         moment().format('YYYY-MM-DD')
       ]
     });

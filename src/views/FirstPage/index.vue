@@ -188,8 +188,6 @@ export default {
           // border: 1px solid #ccc;
           /deep/.svg-icon{
             font-size: 32px;
-            fill: #FB3A32 !important;
-            // vertical-align: top;
           }
         }
         h3{

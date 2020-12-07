@@ -5,7 +5,7 @@
       :data="manageTableData"
       :row-key="setRowKeyFun"
       @selection-change="handleTableCheckbox"
-      :max-height="maxHeight"
+      max-height="450"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
     >
       <el-table-column
@@ -13,7 +13,8 @@
         type="selection"
         width="55"
         align="left"
-        v-if="isCheckout && totalNum > 0"
+        :selectable="checkSelectable"
+        v-if="isCheckout"
       />
       <template v-if="totalNum > 0">
         <el-table-column
@@ -35,7 +36,6 @@
                 }}</span>
                 <el-progress
                   :percentage="scope.row.uploadObj.num"
-                  v-if="scope.row.uploadObj.num != 100"
                 ></el-progress>
               </p>
               <!-- {{scope.row}} -->
@@ -46,21 +46,13 @@
             </div>
             <div v-else-if="item.key === 'img'">
               <img
-                class="imgs"
                 :src="scope.row.img"
                 width="40"
                 height="40"
               />
             </div>
-            <div v-else-if="item.key === 'img_url'">
-              <img
-                :src="scope.row.img_url"
-               class="advImg"
-              />
-            </div>
             <div v-else-if="item.key === 'watch'">
               <el-switch
-                @change="switchChange(scope.row)"
                 v-model="scope.row.watch"
                 active-color="#ff4949"
                 inactive-color="#ccc">
@@ -78,17 +70,35 @@
           label="操作"
           align="center"
           v-if="isHandle"
-          :width="width"
+          width="width"
         >
           <template slot-scope="scope">
-            <el-button
+           <!-- <el-button
               v-for="(item, index) in tableRowBtnFun"
               :key="index"
               size="mini"
               type="text"
               @click="handleBtnClick(scope, item)"
+              :disabled="item.hidePattern && !scope.row[item.hidePattern]"
+              :class="{'hide': item.hidePattern && !scope.row[item.hidePattern]}"
               >{{ item.name }}</el-button
-            >
+            >-->
+            <el-button v-if="scope.row.status === 0" @click="handleBtnClick(scope, {
+              name: '启用',
+              methodName: 'restartApp'
+            })" size="mini" type="text">启用</el-button>
+            <el-button v-if="scope.row.status === 1" @click="handleBtnClick(scope, {
+              name: '停用',
+              methodName: 'stopApp'
+            })" size="mini" type="text">停用</el-button>
+            <el-button @click="handleBtnClick(scope, {
+              name: '删除',
+              methodName: 'deleteApp'
+            })" size="mini" type="text">删除</el-button>
+            <el-button @click="handleBtnClick(scope, {
+               name: '查看',
+               methodName: 'viewApp'
+            })" size="mini" type="text">查看</el-button>
           </template>
         </el-table-column>
       </template>
@@ -145,12 +155,8 @@ export default {
     },
     width: {
       type: Number,
-      default: 300,
+      default: 200,
     },
-    maxHeight: {
-      type: [Number, String],
-      default: 450,
-    }
   },
   watch: {
     manageTableData: {
@@ -167,11 +173,6 @@ export default {
     // console.log('manageTableData', this.manageTableData);
   },
   methods: {
-    // 开关状态切换的回调
-    switchChange(option) {
-      this.$emit('switchChange', option);
-      console.log(option);
-    },
     isImg(_data) {
       if (['.png', '.jpg', 'jpeg'].includes(_data.substr(-4))) {
         return true;
@@ -207,18 +208,17 @@ export default {
     clearSelect() {
       this.$refs.elTable.clearSelection();
     },
+    checkSelectable(row) {
+      return row.is_default > 0;
+    }
   },
 };
 </script>
 <style lang="less" scoped>
 .data-list {
-  /deep/.cell .imgs {
+  /deep/.cell img {
     width: 100px;
     height: 100px;
-  }
-   /deep/.cell .advImg {
-    width: 142px;
-    height: 80px;
   }
   /deep/.el-table {
     margin-bottom: 30px;
@@ -227,7 +227,7 @@ export default {
     background-color: #FB3A32;
   }
   /deep/.el-table td, .el-table th{
-    padding: 15px 0;
+    padding: 10px 0 9px 0;
   }
   .text{
       width: 100%;
@@ -288,5 +288,8 @@ export default {
       background: #FA9A32;
     }
   }
+}
+/deep/.el-button.hide {
+  visibility: hidden;
 }
 </style>

@@ -37,10 +37,12 @@ export default function fetchData(url, data1 = {}, header = {}) {
 
   let headers = {
     platform: 17,
-    'interact-token': interact_token,
     token: token
     // 'Content-Type': 'application/json'
   };
+  if(window.location.hash.indexOf('/live/room/') !== -1 || window.location.hash.indexOf('/live/watch/') !== -1) {
+    headers['interact-token']= interact_token;
+  }
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();
     for (let key in data) {

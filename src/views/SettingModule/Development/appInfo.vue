@@ -1,47 +1,49 @@
 <template>
   <div  v-loading="fetching" element-loading-text="努力加载中">
     <PageTitle :title="pageTitle"></PageTitle>
-
-    <el-form :model="appForm" ref="appForm" label-width="200px">
-      <template v-for="(node, index) in nodesData">
-        <p class="subject" v-if="node.subject" :key="index">{{node.label}}</p>
-        <el-form-item
-          v-else
-          :key="index"
-          :prop="node.modelKey"
-          :label="`${node.label}`"
-          :rules="node.validateRules || []"
-        >
-          <template v-if="action!='detail' && node.nodeType != 'text'">
-            <el-input v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></el-input>
-            <el-radio-group v-else-if="node.nodeType == 'radio'" v-model="appForm[node.modelKey]">
-              <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
-            </el-radio-group>
-          </template>
-          <span v-else>{{appForm[node.modelKey]}}</span>
-
+    <div class="app--info-ctx">
+      <el-form :model="appForm" ref="appForm" label-width="200px">
+        <template v-for="(node, index) in nodesData">
+          <p class="subject" v-if="node.subject" :key="index">{{node.label}}</p>
+          <el-form-item
+            v-else
+            :key="index"
+            :prop="node.modelKey"
+            :label="`${node.label}`"
+            :rules="node.validateRules || []"
+          >
+            <template v-if="action!='detail' && node.nodeType != 'text'">
+              <el-input v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></el-input>
+              <el-radio-group v-else-if="node.nodeType == 'radio'" v-model="appForm[node.modelKey]">
+                <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
+              </el-radio-group>
+            </template>
+            <span v-else>{{appForm[node.modelKey]}}</span>
+          </el-form-item>
+        </template>
+        <el-form-item v-if="action!='detail'">
+          <el-button type="primary" @click="submitForm('appForm')" round>保存</el-button>
+          <el-button @click="cancel('appForm')" round>取消</el-button>
         </el-form-item>
-      </template>
-      <el-form-item v-if="action!='detail'">
-        <el-button type="primary" @click="submitForm('appForm')" round>保存</el-button>
-        <el-button @click="cancel('appForm')" round>取消</el-button>
-      </el-form-item>
-      <div class="right" v-if="action=='detail'">
-        <img src="../../../common/images/v35-webinar.png" alt="">
-        <el-button type="primary" @click="modify" round>修改</el-button>
-      </div>
-    </el-form>
+        <div class="right" v-if="action=='detail'">
+          <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="">
+          <el-button type="primary" @click="modify" round>修改</el-button>
+        </div>
+      </el-form>
+    </div>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import Env from '@/api/env.js';
 export default {
   components: {
     PageTitle,
   },
   data(){
     return {
+      env: Env,
       appForm: {
         app_name: '',
         sign_type: 1, // 加密算法
@@ -51,9 +53,10 @@ export default {
         signature: '', //Android 签名
         package_name: '', // Android 包名
         bundle_id: '', //ios bundle_id,
-        APPKey: '21786da084260b1f11865fcabec99383',
-        SecretKey: '084b3bed63805562435610ef02dc745d',
-        APP_SecretKey: 'fd30d88cc19a9bc0134d51ceec17f3e2'
+        APPKey: '',
+        SecretKey: '',
+        APP_SecretKey: '',
+        qr_code_string: ''
       },
       nodesData: [
         {
@@ -76,17 +79,16 @@ export default {
         {
           nodeType: 'text',
           label: 'APPKey',
-          modelKey: 'APPKey',
-          value: '21786da084260b1f11865fcabec99383'
+          modelKey: 'app_key',
         },
         {
           nodeType: 'text',
-          modelKey: 'SecretKey',
+          modelKey: 'secret_key',
           label: 'SecretKey（API使用）',
         },
         {
           nodeType: 'text',
-          modelKey: 'APP_SecretKey',
+          modelKey: 'app_secret_key',
           label: 'App SecretKey（SDK使用）',
         },
         {
@@ -223,15 +225,17 @@ export default {
       this.fetching = true;
       this.$fetch('getAppInfo', {id: this.$route.params.appId}).then(res => {
         console.log('getAppInfo', res);
-        const respone = res.data;
-        this.appForm.app_name = respone.app_name;
-        this.appForm.sign_type = respone.sign_type;
-        this.appForm.callback_webinar_status = respone.callback_webinar_status;
-        this.appForm.callback_play_download = respone.callback_play_download;
-        this.appForm.callback_sdk_upload = respone.callback_sdk_upload;
-        this.appForm.signature = respone.signature;
-        this.appForm.package_name = respone.package_name;
-        this.appForm.bundle_id = respone.bundle_id;
+        const resVo = res.data;
+        this.appForm = resVo;
+        /*this.appForm.app_name = resVo.app_name;
+        this.appForm.sign_type = resVo.sign_type;
+        this.appForm.callback_webinar_status = resVo.callback_webinar_status;
+        this.appForm.callback_play_download = resVo.callback_play_download;
+        this.appForm.callback_sdk_upload = resVo.callback_sdk_upload;
+        this.appForm.signature = resVo.signature;
+        this.appForm.package_name = resVo.package_name;
+        this.appForm.bundle_id = resVo.bundle_id;
+        this.appForm.qr_code_string = resVo.qr_code_string;*/
       }).catch(error=>{
         console.log(error);
         this.$message.error(`获取应用信息失败，${error.$message}`);
@@ -245,12 +249,12 @@ export default {
     cancel(){
       if(this.action == 'modify'){
         this.getAppInfo();
-        this.$route.meta.action="detail";
+        this.$route.meta.action= 'detail';
         this.$route.meta.title= this.pageTitle;
       }
     },
     modify(){
-      this.$route.meta.action = "modify";
+      this.$route.meta.action = 'modify';
       this.$route.meta.title= this.pageTitle;
     }
   }
@@ -258,31 +262,35 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .el-form{
-    position: relative;
+.app--info-ctx {
+  .layout--right--main();
+  .padding41-40();
+}
+.el-form{
+  position: relative;
+}
+.el-form-item{
+  width: 600px;
+}
+.subject{
+  font-size: 20px;
+  color: #333333;
+  border-left: 4px solid #FB3A32;
+  line-height: 16px;
+  height: 18px;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  padding-left: 5px;
+}
+.right{
+  position: absolute;
+  right: 0;
+  top: 0;
+  img{
+    width: 170px;
+    height: 170px;
+    vertical-align: top;
+    margin-right: 60px;
   }
-  .el-form-item{
-    width: 600px;
-  }
-  .subject{
-    font-size: 20px;
-    color: #333333;
-    border-left: 4px solid #FB3A32;
-    line-height: 16px;
-    height: 18px;
-    margin-top: 32px;
-    margin-bottom: 12px;
-    padding-left: 5px;
-  }
-  .right{
-    position: absolute;
-    right: 0;
-    top: 0;
-    img{
-      width: 170px;
-      height: 170px;
-      vertical-align: top;
-      margin-right: 60px;
-    }
-  }
+}
 </style>

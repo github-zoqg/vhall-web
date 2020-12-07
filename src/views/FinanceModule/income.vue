@@ -84,7 +84,7 @@
         </table-list>
       </el-tabs>
     </el-card>
-    <cash-box ref="cashBox"></cash-box>
+    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type"></cash-box>
   </div>
 </template>
 
@@ -98,6 +98,9 @@ export default {
     return {
       activeIndex: '1',
       totalNum: 100,
+      money: 0,
+      phone: 0,
+      type: 0,
       incomeInfo: {},
       searchAccount: [
         {
@@ -204,6 +207,7 @@ export default {
   created() {
     this.tabelColumn = this.liveColumns;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
   },
   mounted() {
     this.getIncomeInfo();
@@ -276,17 +280,30 @@ export default {
         item.red_packet = item.red_packet_type == '1' ? '固定金额': '拼手气';
       });
       console.log(this.tableList);
-      // .map(item => {"red_packet": item.red_packet_type == '1' ? '固定金额': '拼手气' })
     },
     cash(title) {
-      console.log(title);
-      let flag = 2;
-      // 1 未绑定微信   2绑定微信
-      if (flag === 1) {
-         this.$refs.cashBox.dialogVisible = true;
-      } else if (flag === 2) {
-        this.$refs.cashBox.dialogCashVisible = true;
-      }
+      this.$refs.cashBox.dialogVisible = true;
+      // if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 2) {
+      //   this.$message.error('当前余额不足2元，不支持提现');
+      //   return false;
+      // }
+      // if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) < 2) {
+      //   this.$message.error('当前余额不足2元，不支持提现');
+      //   return false;
+      // }
+      // let flag = this.isBangWeixin();
+      // // 1 未绑定微信   2绑定微信
+      // if (flag) {
+      //   this.$refs.cashBox.dialogCashVisible = true;
+      //   this.phone = this.userInfo.phone;
+      //   this.money = this.title === '直播' ? this.incomeInfo.live_balance : this.incomeInfo.red_packet_balance;
+      //   this.type = this.title === '直播' ? 0 : 1;
+      // } else {
+      //   this.$refs.cashBox.dialogVisible = true;
+      // }
+    },
+    isBangWeixin() {
+      return this.userInfo.user_thirds.some(item => item.type == 3);
     },
     detail(that, { rows }) {
       that.$router.push({

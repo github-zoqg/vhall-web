@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle :title="`创建${webniarTypeToZH}`"></pageTitle>
+    <pageTitle :title="`${title}${webniarTypeToZH}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
       :rules="[
@@ -41,7 +41,7 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode=3' :class="{active: liveMode== 3, disabled: true}">
+          <div @click='liveMode=3' :class="{active: liveMode== 3}">
             <el-container class='model'>
               <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
@@ -258,6 +258,7 @@ export default {
       }
     },
     webniarType(){
+      console.log(this.$route.meta.webniarType, '12314324254235');
       return this.$route.meta.webniarType;
     },
     webniarTypeToZH(){
@@ -294,9 +295,47 @@ export default {
     };
   },
   created(){
+    if (this.$route.query.id) {
+      this.webinarId = this.$route.query.id;
+      this.title = '编辑';
+      // this.$route.meta.title = '编辑直播';
+      this.getLiveBaseInfo(this.$route.query.id);
+    } else {
+      this.title = '创建';
+      this.webinarId = '';
+    }
     console.log(this.$route);
   },
   methods: {
+    getLiveBaseInfo(id) {
+      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+        this.liveDetailInfo = res.data;
+        this.formData.title = this.liveDetailInfo.subject;
+        this.formData.date1 = this.liveDetailInfo.start_time;
+        this.formData.date2 = this.liveDetailInfo.start_time;
+        this.liveMode = this.liveDetailInfo.webinar_type;
+        this.imageUrl = Env.staticLinkVo.uploadBaseUrl + this.liveDetailInfo.img_url;
+        this.tagIndex = this.liveDetailInfo.category - 1;
+        this.home = Boolean(this.liveDetailInfo.is_private);
+        this.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
+        this.online = Boolean(this.liveDetailInfo.hide_watch);
+        this.reservation = Boolean(this.liveDetailInfo.hide_appointment);
+        this.$refs.unitImgTxtEditor.content = this.liveDetailInfo.introduction;
+        this.hot = Boolean(this.liveDetailInfo.hide_pv);
+        if (this.liveDetailInfo.webinar_curr_num) {
+          this.limitCapacity = this.liveDetailInfo.webinar_curr_num;
+          this.limitCapacitySwtich = true;
+        } else {
+          this.limitCapacitySwtich = false;
+        }
+        this.capacity = Boolean(this.liveDetailInfo.is_capacity);
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      }).finally(()=>{
+        this.loading = false;
+      });
+    },
     sendData(content) {
       this.content = content;
     },
@@ -331,9 +370,9 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      console.log(this.imageUrl, '------------');
-      console.log(`${this.formData.date1} ${this.formData.date2}`);
       let data = {
+        webinar_id: this.webinarId,
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
@@ -353,7 +392,13 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
-          this.$fetch('createLive', data).then(res=>{
+          let url;
+          if (this.webniarTypeToZH === '点播') {
+            url = 'demandCreate';
+          } else {
+            url = this.webinarId ? 'liveEdit' : 'createLive';
+          }
+          this.$fetch(url, this.$params(data)).then(res=>{
             this.$message.success(`创建成功`);
             console.log(res);
             setTimeout(()=>{

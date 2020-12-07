@@ -24,7 +24,7 @@ module.exports = {
     WeixinJSBridge: true
   },
   rules: {
-    semi: [1],
+    'semi': [0],
     'no-unused-vars': [0],
     'no-undef': [0],
     eqeqeq: [0],

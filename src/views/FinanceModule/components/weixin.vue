@@ -11,17 +11,17 @@ export default {
     };
   },
   created() {
-    // this.getUserInfo();
-    // if (this.$route.query.user_auth_key) {
-    //   this.getUserInfo();
-    // } else {
-    //   this.goBindingWeiXin();
-    // }
+    this.getUserInfo();
+    if (this.$route.query.user_auth_key) {
+      this.getUserInfo();
+    } else {
+      this.goBindingWeiXin();
+    }
   },
   methods: {
     goBindingWeiXin() {
       let params = {
-        jump_url: 'https://t.e.vhall.com/v3/#/code'
+        jump_url: 'https://t-saas-dispatch.vhall.com/code'
       };
       this.$fetch('weixinBinding', params).then(res => {
         console.log(res);

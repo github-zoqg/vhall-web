@@ -8,17 +8,17 @@
     >
       <div class="box-wei">
         <div class="img-box">
-          <img :src="qrcode" alt="">
+          <img :src="qrcode" alt="" v-if="qrcode">
           <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
             <p>点击重新加载</p>
           </div> -->
         </div>
-        <p>您还未绑定账号，请先绑定</p>
+        <p v-if="!qrcode">您还未绑定账号，请先绑定</p>
       </div>
-      <div class="nextBtn">
-        <el-button type="primary" round>立即绑定</el-button>
+      <div class="nextBtn" v-if="!qrcode">
+        <el-button type="primary" round @click="bangWeixin">立即绑定</el-button>
       </div>
     </VhallDialog>
     <VhallDialog
@@ -35,9 +35,9 @@
            <el-form-item label="动态密码">
             <div class="inputCode">
               <el-input v-model="code" style="width: 150px"></el-input>
-              <span @click="getCode"><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i>{{ codeBtnWord }}</span>
+              <span @click="getBangCode" class="isLoginActive">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
-            <p class="codeTitle">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
+            <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
           </el-form-item>
         </el-form>
       </div>
@@ -53,31 +53,35 @@
       width="400px"
     >
       <div class="money">
-        <p>可用金额<span>￥{{ availableMoney }}</span></p>
+        <p>可用金额<span>￥{{ money }}</span></p>
       </div>
       <el-form label-width="70px" :model="withdrawForm" :rules="rules" ref="withdrawForm">
         <el-form-item label="提现金额" prop="money">
           <el-input
             v-model="withdrawForm.money"
             style="width: 265px"
+            oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"
             placeholder="请输入提现金额"
           ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <div id="payCaptcha">
+            <el-input
+              v-model="withdrawForm.text">
+            </el-input>
+          </div>
+          <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
         </el-form-item>
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
             <el-input v-model="withdrawForm.code" style="width: 150px"></el-input>
-            <span @click="getCode"><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i>{{ codeBtnWord }}</span>
+            <span @click="getCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
-          <!-- <el-input v-model="code" style="width: 150px"></el-input>
-          <b class="code" @click="getCode"
-            ><i v-show="!getCodeBtnDisable">{{ waitTime }}s</i
-            >{{ codeBtnWord }}</b
-          > -->
-          <p class="codeTitle">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
+          <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone }}发送验证码</p>
         </el-form-item>
         <el-form-item label="到账账户">
           <div class="live-box">
-            <img src="../../../common/images/logo.png" alt="" /> 微吼直播
+            <img :src="userInfo.avatar" alt="" /> {{ nickName }}
             <span @click="changeBinding">更改</span>
           </div>
           <div class="xieyi">
@@ -96,14 +100,14 @@
 <script>
 import QRcode from 'qrcode';
 export default {
-  // props: ['type'],
+  props: ['money', 'type', 'userInfo'],
   data() {
     let validateMoney = (rule, value, callback) => {
       setTimeout(() => {
           if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
             callback(new Error('请输入数字值'));
           } else {
-            if (value > parseInt(this.availableMoney)) {
+            if (value > parseInt(this.money)) {
               callback(new Error('提现值必须小于可用金额'));
             } else {
               callback();
@@ -120,14 +124,19 @@ export default {
         money: '',
       },
       code: "",
+      phone: '',
+      nickName: '微吼直播',
+      errorMsgShow: false,
       checked: false,
-      availableMoney: 40.00,
-      waitTime: 60,
-      codeBtnWord: '获取验证码',
-      getCodeBtnDisable: true,
+      time: 60,
+      gettime: 60,
+      showCaptcha: false,
+      showCode: false,
       qrcode: '',
-      phone: 12345678910,
-      link: 'http://172.16.11.8/finance/income',
+      captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
+      mobileKey: '', // 云盾值
+      captcha: null, // 云盾本身
+      link: 'https://t-saas-dispatch.vhall.com/code',
       rules: {
         money: [
           { validator: validateMoney, trigger: 'blur'  }
@@ -135,68 +144,147 @@ export default {
       }
     };
   },
-  filters: {
-    filterPhone (value) {
-      return  String(value).replace( /([0-9]{3})([0-9]{4})([0-9]{4})/,"$1****$3");
+  watch: {
+    dialogCashVisible() {
+      if (this.dialogCashVisible) {
+        this.callCaptcha();
+        this.getWeinName();
+      }
+    },
+    dialogVisible() {
+      if (this.dialogVisible) {
+        this.qrcode = '';
+      }
     }
   },
   created(){
-    QRcode.toDataURL(
-      this.link,
-      (err, url) => {
-        console.log(err, url);
-        this.qrcode = url;
-      }
-    );
+
   },
   methods: {
-    getCode() {
-      if (!this.getCodeBtnDisable) {
-        return;
-      }
-      this.$fetch('withdrawalPhoneCode').then(res => {
-        console.log(res.data, '234324536536');
+    // 获取用户微信昵称
+    getWeinName() {
+      this.userInfo.user_thirds.map(item => {
+        if (item.type == 3) {
+          this.nickName = item.nick_name;
+        }
       });
-      console.log('1111111111111');
-      this.phoneTimer();
     },
+    // 获取绑定微信二维码
+    getBangWeinCode() {
+      QRcode.toDataURL(
+        this.link,
+        (err, url) => {
+          console.log(err, url);
+          this.qrcode = url;
+        }
+      );
+    },
+    // 提现短信验证码
+    getCode() {
+      if (this.mobileKey && this.withdrawForm.money) {
+        this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
+          this.phone = res.data.phone;
+          this.countDown();
+        });
+      }
+    },
+    // 提现
     withdraw() {
       this.$refs['withdrawForm'].validate((valid) => {
           if (valid) {
-            console.log('验证通过');
+            this.withdrawMoney();
           } else {
             console.log('验证未通过');
             return false;
           }
         });
     },
-    phoneTimer() {
-      const that = this;
-      that.waitTime--;
-      that.getCodeBtnDisable = false;
-      // this.codeBtnWord = `${this.waitTime}s 后重新获取`;
-      this.codeBtnWord = ` 后重新获取`;
-      console.log('获取时间的值2：' + this.waitTime);
-      const timer = setInterval(function () {
-        if (that.waitTime > 1) {
-          that.waitTime--;
-          that.codeBtnWord = ` 后重新获取`;
-        } else {
-          clearInterval(timer);
-          that.codeBtnWord = '获取验证码';
-          that.getCodeBtnDisable = true;
-          that.waitTime = 60;
-        }
-      }, 1000);
+    withdrawMoney() {
+      let params = {
+        user_id: this.userInfo.user_id,
+        verification_code: this.withdrawForm.code,
+        fee: this.withdrawForm.money,
+        type: this.type
+      };
+      this.$fetch('withdrawal', params).then(res => {
+       this.$message.success('提现成功');
+       this.dialogCashVisible = false;
+      });
+    },
+    // 绑定微信短信验证码
+    getBangCode() {
+      this.phone = this.userInfo.phone;
+      let params = {
+        type: 1,
+        data: this.userInfo.phone,
+        scene_id: 6
+      };
+      this.$fetch('sendCode', params).then(res => {
+        this.countDown();
+        console.log(res.data, '12300000000000000000');
+      //  this.$message.success('提现成功');
+      //  this.dialogCashVisible = false;
+      });
+    },
+    // 绑定微信
+    bangWeixin() {
+      this.getBangWeinCode();
+    },
+    /**
+     * 倒计时函数
+     */
+    countDown() {
+      if (this.time) {
+        this.time--;
+        setTimeout(() => {
+          this.countDown();
+        }, 1000);
+      } else {
+        this.time = 60;
+      }
     },
     changeBinding() {
+      this.qrcode = '';
       this.dialogChangeVisible = true;
       this.dialogCashVisible = false;
+      this.time = 60;
     },
     nextBinding() {
       this.dialogChangeVisible = false;
       this.dialogVisible = true;
-    }
+      this.time = 60;
+    },
+     /**
+     * 初始化网易易盾图片验证码
+     */
+    callCaptcha() {
+      const that = this;
+      // eslint-disable-next-line
+      initNECaptcha({
+        captchaId: this.captchakey,
+        element: "#payCaptcha",
+        mode: 'float',
+        onReady(instance) {
+          console.log('instance', instance);
+        },
+        onVerify(err, data) {
+          if (data) {
+            that.mobileKey = data.validate;
+            that.showCaptcha = true;
+            console.log('data>>>', data);
+            this.errorMsgShow = false;
+          } else {
+            that.mobileKey = '';
+            console.log('errr>>>', err);
+            that.errorMsgShow = true;
+          }
+        },
+        onload(instance) {
+          console.log('onload', instance);
+          that.captcha = instance;
+        }
+      });
+    },
   },
 };
 </script>
@@ -216,11 +304,16 @@ export default {
   color: #666;
 }
 .box-wei {
+  padding-bottom: 20px;
   .img-box {
     width: 132px;
     height: 132px;
     background: #f7f7f7;
     margin: 0 auto;
+    img{
+      width: 132px;
+      height: 132px;
+    }
   }
   h3 {
     color: #1a1a1a;
@@ -293,11 +386,15 @@ export default {
     color:#666666;
     vertical-align: top;
     cursor: pointer;
+    &.isLoginActive{
+      background: #fc5659;
+      color: #fff;
+    }
   }
-  i {
-    font-weight: normal;
-    color: #ff0000;
-  }
+  // i {
+  //   font-weight: normal;
+  //   color: #ff0000;
+  // }
 }
 .money {
   padding: 20px;

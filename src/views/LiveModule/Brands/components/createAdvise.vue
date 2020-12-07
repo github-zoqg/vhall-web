@@ -5,13 +5,17 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
-      <el-form label-width="80px" :model="advertisement" :rules="rules">
+      <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
       <el-form-item label="推广图片" prop="img_url">
         <div class="img-box">
           <!-- <img :src="advertisement.img_url" alt="" v-if=""> -->
            <upload
               class="giftUpload"
               v-model="advertisement.img_url"
+              :saveData="{
+                path: 'webinars/img_url',
+                type: 'image',
+              }"
               :on-success="uploadAdvSuccess"
               :on-progress="uploadProcess"
               :on-error="uploadError"
@@ -31,7 +35,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="createAdv" round>确 定</el-button>
+      <el-button type="primary" @click="saveAdviseHandle" round>确 定</el-button>
       <el-button @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
@@ -45,8 +49,8 @@
         <el-scrollbar>
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <img src="../../../../common/images/avatar.jpg" alt="">
-              <p>{{ item.name }}</p>
+              <img :src="item.img_url" alt="">
+              <p>{{ item.subject }}</p>
               <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
               </label>
@@ -55,7 +59,7 @@
         </el-scrollbar>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogAdverVisible = false" round>确 定</el-button>
+        <el-button type="primary" @click="advSaveToWebinar" round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -63,6 +67,7 @@
 </template>
 <script>
 import upload from '@/components/Upload/main';
+import Env from "@/api/env";
 export default {
   data() {
     return {
@@ -70,50 +75,23 @@ export default {
       dialogAdverVisible: false,
       advertisementTitle: '',
       rules: {
-        title: [
+        subject: [
           { required: true, message: '请输入广告标题', trigger: 'blur' },
         ],
-        imgUrl: [
+        img_url: [
           { required: true, message: '请选择推广图片', trigger: 'change' }
         ],
-        link: [
-          { type: 'date', required: true, message: '请输入广告链接', trigger: 'blur' }
+        url: [
+          { required: true,  message: '请输入广告链接', trigger: 'blur' }
         ],
       },
       advertisement: {
         is_sync: 0,
-        img_url: ''
+        img_url: '',
+        url: '',
+        subject: null
       },
-      adList: [
-        {
-          name: '1多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        },
-        {
-          name: '2多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        },
-        {
-          name: '3多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        },
-        {
-          name: '4多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        },
-        {
-          name: '5多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        },
-        {
-          name: '6多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        },
-        {
-          name: '7多屏协同戴森多功能吸尘器时日五',
-          isChecked: false
-        }
-      ]
+      adList: []
     };
   },
   props: {
@@ -131,20 +109,40 @@ export default {
   watch: {
     title() {
       if (this.title === '编辑') {
-        this.advertisement.img_url = this.advInfo.img_url;
-        this.advertisement.subject = this.advInfo.subject;
-        this.advertisement.url = this.advInfo.url;
+        this.$set(this.advertisement, 'img_url', this.advInfo.img_url);
+        this.$set(this.advertisement, 'subject', this.advInfo.subject);
+        this.$set(this.advertisement, 'url', this.advInfo.url);
+        this.$set(this.advertisement, 'adv_id', this.advInfo.adv_id);
       } else {
-        this.advertisement = {};
+        this.clearForm();
       }
     }
   },
   created() {
-    if(this.dialogAdverVisible) {
-      // this.activityData();
-    }
+   /* if(this.dialogAdverVisible) {
+      this.activityData();
+    }*/
   },
   methods: {
+    clearForm() {
+      this.$set(this.advertisement, 'img_url', '');
+      this.$set(this.advertisement, 'subject', '');
+      this.$set(this.advertisement, 'url', '');
+      this.$set(this.advertisement, 'adv_id', '');
+    },
+    saveAdviseHandle() {
+      this.$refs.advertisementForm.validate((valid) => {
+        if (valid) {
+          if (this.$route.params.str) {
+            this.createAdv();
+          } else {
+            // 资料库中广告推荐，默认不同步到资料库
+            this.advertisement.is_sync = 0;
+            this.createAdvAndsync();
+          }
+        }
+      });
+    },
     createAdv() {
       this.$confirm('是否同步到资料库?', '提示', {
           confirmButtonText: '同步',
@@ -152,26 +150,43 @@ export default {
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          this.advertisement.is_sync = 0;
+          this.advertisement.is_sync = 1;
           this.createAdvAndsync();
         }).catch(() => {
-         this.advertisement.is_sync = 1;
+         this.advertisement.is_sync = 0;
          this.createAdvAndsync();
         });
     },
     createAdvAndsync() {
       let url = this.title === '编辑' ? 'updateAdv' : 'createAdv';
+      if(this.$route.params.str) {
+        this.advertisement.webinar_id = this.$route.params.str;
+      }
       this.$fetch(url, this.advertisement).then(res => {
-        if (res.msg === 'success' && res.code === 200) {
+        if (res && res.code === 200) {
           this.dialogVisible = false;
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
+          // 获取列表数据
+          this.$emit('reload');
         }
       });
     },
     activityData() {
-      // this.$fetch('getActivityList').then(res => {
-      //   this.adList
-      // });
+      this.$fetch('getAdvList', this.$params({
+        keyword: this.advertisementTitle,
+        pos: 0,
+        limit: 6,
+      })).then(res => {
+        if(res && res.code === 200) {
+          let adList = res.data.adv_list;
+          adList.map(item => {
+            item.isChecked = false;
+          });
+          this.adList = adList;
+        } else {
+          this.adList = [];
+        }
+      });
     },
     choiseAdvisetion(items) {
       this.adList.map(item => {
@@ -179,9 +194,19 @@ export default {
        items.isChecked = true;
       });
     },
+    // 从资料库保存到活动
+    advSaveToWebinar() {
+
+    },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
-      this.advertisement.img_url = URL.createObjectURL(file.raw);
+      // this.advertisement.img_url = URL.createObjectURL(file.raw);
+      if (res.data.file_url) {
+        // 文件上传成功，保存信息
+        this.advertisement.img_url = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+        // 触发验证
+        this.$refs.advertisementForm.validateField('img_url');
+      }
     },
     beforeUploadHnadler(file){
       console.log(file);

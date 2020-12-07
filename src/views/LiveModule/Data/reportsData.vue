@@ -101,7 +101,7 @@ export default {
         },
         {
           type: "2",
-          key: "searchDate",
+          key: "searchTime",
         },
       ],
       searchArea: [
@@ -166,15 +166,21 @@ export default {
     this.getBrowerData(this.$route.params.str);
   },
   methods: {
-    // changeTime(item) {
-    //   this.isActive = parseInt(item.active);
-    // },
     getDataList(params) {
       let searchData = this.$refs.searchArea.searchParams;
+      let paramsObj = {};
       if (parseInt(searchData.searchIsTime) === 2) {
         this.searchAreaLayout = this.searchArea;
       } else {
         this.searchAreaLayout = this.searchLayout;
+      }
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
       }
       console.log(params);
       console.log(searchData);

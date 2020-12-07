@@ -72,7 +72,7 @@ export default {
     baseInfo: {
       handler(newVal){
         console.log(this.baseInfo);
-        this.shareSwtich = !!this.baseInfo.is_independent_link;
+        this.shareSwtich = !!this.baseInfo.open_link;
       },
       deep: true,
       immediate: true
@@ -88,7 +88,7 @@ export default {
     // 独立表单开关事件
     switchExtraForm(value) {
       const val = value ? 1 : 0;
-      this.$emit('setBaseInfo', { is_independent_link: val } );
+      this.$emit('setBaseInfo', { open_link: val } );
     }
   }
 };

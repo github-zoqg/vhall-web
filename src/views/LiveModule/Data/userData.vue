@@ -13,11 +13,11 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <title-data :isStatus="status"></title-data>
+    <title-data></title-data>
     <el-card>
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="直播" name="live"></el-tab-pane>
-        <el-tab-pane label="回放" name="relive"></el-tab-pane>
+        <el-tab-pane label="直播" name="1"></el-tab-pane>
+        <el-tab-pane label="回放" name="2"></el-tab-pane>
         <div class="search">
           <search-area
             ref="searchArea"
@@ -50,9 +50,87 @@ export default {
       status: 2,
       totalNum: 100,
       isHandle: false,
-      activeName: 'live',
+      activeName: '1',
       placeholder: '搜索用户昵称',
-      searchAreaLayout: [
+      searchAreaLayout: [],
+      tableList: [],
+      tabelColumn:[
+        {
+          label: '用户信息',
+          key: 'user',
+        },
+        {
+          label: '手机号',
+          key: 'phone',
+        },
+        {
+          label: '邮箱',
+          key: 'emails',
+        },
+        {
+          label: '进入时间',
+          key: 'join_time',
+        },
+        {
+          label: '观看时长（分）',
+          key: 'watch_duration',
+        },
+        {
+          label: '观看终端',
+          key: 'watch_type',
+        },
+         {
+          label: '地理位置',
+          key: 'watch_provice',
+        },
+        {
+          label: 'IP地址',
+          key: 'ip',
+        }
+      ],
+      searchArea:[
+         {
+          type: "3",
+          key: "searchIsTime",
+          options: [
+            {
+              label: '按时间筛选',
+              value: '1',
+            },
+            {
+              label: '按场次筛选',
+              value: '2',
+            },
+          ]
+        },
+        {
+          type: "3",
+          key: "searchOnce",
+          options: [
+            {
+              label: '全部',
+              value: '1',
+            },
+            {
+              label: '第1场',
+              value: '2',
+            },
+            {
+              label: '第2场',
+              value: '3',
+            },
+            {
+              label: '第3场',
+              value: '4',
+            },
+            {
+              label: '第4场',
+              value: '5',
+            },
+          ]
+        }
+      ],
+      searchLayout: [
         {
           type: "3",
           key: "searchIsTime",
@@ -72,68 +150,15 @@ export default {
         },
         {
           type: "2",
-          key: "searchDate",
+          key: "searchTime",
+        },
+        {
+          type: "7",
+          key: "merge_type",
+          name: '合并同一用户'
         },
         {
           key: "searchTitle",
-        }
-      ],
-      tableList: [
-        {
-          user: '张三',
-          icon: 'el-icon-s-tools',
-          ip: '1.119.193.26',
-          phone: '13701128773',
-          revice: "手机",
-          emails: 'w1h@vhall.com',
-          area: '北京',
-          time: '2020-09-08 00:00:13',
-          timer: '30:00:00'
-        },
-        {
-          user: '李四',
-          icon: 'el-icon-phone-outline',
-          ip: '1.119.193.26',
-          phone: '13701128773',
-          revice: "电脑",
-          emails: 'w1h@vhall.com',
-          area: '上海',
-          time: '2020-09-08 00:00:16',
-          timer: '50:00:00'
-        }
-      ],
-      tabelColumn:[
-        {
-          label: '用户信息',
-          key: 'user',
-        },
-        {
-          label: '手机号',
-          key: 'phone',
-        },
-        {
-          label: '邮箱',
-          key: 'emails',
-        },
-        {
-          label: '进入时间',
-          key: 'time',
-        },
-        {
-          label: '观看时长（分）',
-          key: 'timer',
-        },
-        {
-          label: '观看终端',
-          key: 'revice',
-        },
-         {
-          label: '地理位置',
-          key: 'area',
-        },
-        {
-          label: 'IP地址',
-          key: 'ip',
         }
       ]
     };
@@ -141,17 +166,46 @@ export default {
   components: {
     titleData
   },
+  mounted() {
+    this.getTableList();
+  },
   methods: {
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      if (parseInt(formParams.searchIsTime) === 2) {
+        this.searchAreaLayout = this.searchArea;
+      } else {
+        this.searchAreaLayout = this.searchLayout;
+      }
+      let paramsObj = {
+        switch_id: 0,
+        service_names: this.activeName,
+        webinar_id: this.$route.params.str
+      };
       if (params === 'search') {
         pageInfo.pageNum= 1;
+        pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
+        this.$refs.tableList.clearSelect();
       }
-      let obj = Object.assign({}, pageInfo, formParams);
-      console.log(obj);
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
+      paramsObj.merge_type = paramsObj.merge_type ? 1 : 2;
+      let obj = Object.assign({}, pageInfo, paramsObj);
+      this.getBaseUserInfo(obj);
+    },
+    getBaseUserInfo(params) {
+      this.$fetch('getUserBaseinfo', params).then(res => {
+        this.tableList = res.data.list;
+        // this.totalNum = res.data.total;
+      });
     },
     changeTableCheckbox(val) {
       console.log(val);
@@ -161,8 +215,8 @@ export default {
       // tab切换时搜索的值和分页的值都重置
       this.$refs.searchArea.searchParams = {};
       this.$refs.searchArea.searchParams.searchIsTime = '1',
-      this.$refs.searchArea.isActive = 1;
       this.$refs.tableList.pageInfo.pageNum = 1;
+      this.$refs.tableList.pageInfo.pos = 0;
       this.getTableList();
     }
   }

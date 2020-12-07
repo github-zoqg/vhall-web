@@ -181,7 +181,6 @@
         class="vhall-main-area"
         :class="assistantType ? 'assistantStyle' : ''"
       >
-      {{!assistantType}}{{thirdPartyMobild}}{{NoDocShow}}{{roleName != 3}}
         <div
           class="thirdParty-warp"
           v-if="!assistantType && thirdPartyMobild && NoDocShow && roleName != 3"
@@ -621,7 +620,7 @@
                 'vhall-miniBox vhall-saas-miniArea': miniElement == 'doc'
               }"
               v-if="rebroadcast && rebroadcast != 'rebroadcastEnd'"
-              :channel-id="roomInfo.channel_id"
+              :channel-id="roomInfo.interact.channel_id"
               :roomId="roomInfo.interact.room_id"
               :joinId="roomInfo.join_info.third_party_user_id + '7890'"
               :appId="roomInfo.interact.paas_app_id"
@@ -646,7 +645,7 @@
               :docPermissionId="doc_permission"
               :roleName="roomInfo.join_info.role_name"
               :room-id="roomInfo.interact.room_id"
-              :channel-id="roomInfo.channel_id"
+              :channel-id="roomInfo.interact.channel_id"
               :appId="roomInfo.interact.paas_app_id"
               :token="roomInfo.interact.paas_access_token"
               :live-status="status"
@@ -1117,7 +1116,7 @@
                 v-if="roomInfo.webinar.userinfo.user_id"
                 :splited="splitStatus == 1"
                 :appId="roomInfo.interact.paas_app_id"
-                :channelId="roomInfo.channel_id"
+                :channelId="roomInfo.interact.channel_id"
                 :roleName="roomInfo.join_info.role_name"
                 :roomId="roomInfo.interact.room_id"
                 :userId="roomInfo.join_info.third_party_user_id"
@@ -1136,7 +1135,7 @@
               v-if="!assistantType"
               v-show="tabIndex == 2"
             >
-              <notice :roomId="roomInfo.interact.room_id"></notice>
+              <notice :roomId="roomInfo.interact.room_id" :channel_id='roomInfo.interact.channel_id'></notice>
             </div>
             <div
               v-auth="100013"
@@ -2484,18 +2483,23 @@ export default {
       this.$fetch('initiatorInfo', {
         webinar_id: this.webinar_id
       }).then(async res => {
-          // this.roomInfo = res.data;
           this.roomInfo = this.rootActive;
           this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-          this.status = res.data.status;
-          this.status = 1; // 0|待直播/预约,1|直播中,2|直播结束
+          // 因早期设置值不同  进行根源影射   更换接口时产生的问题  备注勿删
+          if(this.rootActive.webinar.type == 1){
+            this.status = 1;
+          }else if(this.rootActive.webinar.type == 2){
+            this.status = 0;
+          }else{
+           this.status = 2;
+          }
           this.isPublishing = this.status == 1;
           this.isQAEnabled = this.qaStatus == 1; // ??
-          this.roleName = res.data.role_name;
+          this.isQAEnabled = this.roomStatus.question_status == 1; // ??
+          this.roleName = this.rootActive.join_info.role_name;
 
-          this.layout = res.data.layout;
+          this.layout =  this.roomStatus.layout;
           this.localDuration = this.duration;
-          this.v3Getbroadcast(); // 获取插播列表
 
           if (this.status == 1) {
             this.virtualAudienceCanUse = true;
@@ -2621,17 +2625,10 @@ export default {
       this.doc_permission = _data.doc_permission; // 当前主讲人
       this.mainScreen = _data.main_screen;
       this.speakerList = _data.speaker_list || [];
-      this.speakerList = [{
-        account_id:"16421384",
-        audio:1,
-        nick_name:"吃不胖小陈",
-        role_name:1,
-        video:1
-      }];
-      this.rebroadcast = (_data.rebroadcast && _data.rebroadcast.room_id) || '';
-      this.rebroadcast = '';
-      this.rebroadcastChannelId = (_data.rebroadcast && _data.rebroadcast.channel_id) || '';
-      this.rebroadcastChannelId = '';
+      if(this.rootActive && this.rootActive.rebroadcast ){
+        this.rebroadcast =  this.rootActive.rebroadcast.room_id || '';
+        this.rebroadcastChannelId = this.rootActive.rebroadcast.channel_id || '';
+      }
       console.log(this.speakerList);
       if(typeof this.speakerList === 'object' && this.speakerList.length!=0){
         this.speakerList.forEach(item => {
