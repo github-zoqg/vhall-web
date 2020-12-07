@@ -397,8 +397,14 @@ const apis = {
 
 
   // 发起端所有新增
-  v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST']
+  v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'],
 
+  // 签到
+  v3CreateSifn: ['/v3/interacts/sign/create-and-push', 'POST'], // 创建签到
+  v3StopSifn: ['/v3/interacts/sign/set-end-sign', 'POST'], // 结束签到
+  v3GetCurrentSign:['/v3/interacts/sign/get-doing-sign', 'POST'], // 获取当前活动正在的签到
+  v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录
+  v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数
 };
 
 const getApi = api => {

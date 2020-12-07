@@ -11,7 +11,7 @@
       ></el-input>
     </el-form-item>
     <el-form-item label="结束时长">
-      <el-select class="form-input" v-model="form.duration">
+      <el-select class="form-input" v-model="form.duration" popper-class='sign-select'>
         <el-option
           v-for="(opt, idx) in durationOps"
           :key="idx"
@@ -22,7 +22,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="自动签到">
-      <el-switch v-model="form.autoSign" active-color="#FC5659"></el-switch>
+      <el-switch @change="autoSignChange" v-model="form.autoSign" active-color="#FC5659"></el-switch>
       <el-tooltip placement="right">
         <div class="tip-content" slot="content">
           <div>1.默认关闭；</div>
@@ -33,7 +33,7 @@
       </el-tooltip>
     </el-form-item>
     <el-form-item label="间隔时长" v-show="form.autoSign">
-      <el-select class="form-input" v-model="form.interval">
+      <el-select class="form-input" v-model="form.interval" popper-class='sign-select'>
         <el-option
           v-for="(opt, idx) in intervalOps"
           :key="idx"
@@ -66,10 +66,10 @@ export default {
     return {
       defaultText: tipText,
       form: {
-        signTip: tipText,
-        duration: 4,
-        autoSign: false,
-        interval: 900
+        signTip: tipText, //签到提示语
+        duration: 30, // 签到显示的时间，单位秒，
+        autoSign: false, // 是否自动发起签到，1自动，0取消自动
+        interval: 10 // 自动发起签到的轮询定时时间，单位秒
       },
       durationOps: [
         {
@@ -95,6 +95,10 @@ export default {
       ],
       intervalOps: [
         {
+          value: 10,
+          label: 'test时间10秒'
+        },
+        {
           value: 300,
           label: '5分钟'
         },
@@ -110,6 +114,10 @@ export default {
     };
   },
   methods: {
+    autoSignChange(value){
+      console.warn('test----自动签到  改变值', value)
+      window.sessionStorage.setItem('isAutoSign', value)
+    },
     tipFocus(e) {
       if (e.target.value === this.defaultText) {
         this.form.signTip = '';

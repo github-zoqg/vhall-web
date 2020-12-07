@@ -13,7 +13,7 @@
         <template v-solt='footer'>
           <SigninSet v-if="showSet" @start="startSign"></SigninSet>
         </template>
-        <signinResult v-if="showResult" @restartsign="resetSignState"></signinResult>
+        <signinResult v-if="showResult" @restartsign="resetSignState" :room_id='room_id' :signId='signId'></signinResult>
       <!-- </div> -->
     </VhallDialog>
 </template>
@@ -30,7 +30,8 @@ export default {
       showSignin: false,
       signInfo: null,
       remaining: 0,
-      timer: null
+      timer: null,
+      signId: ''
     };
   },
   methods: {
@@ -38,7 +39,25 @@ export default {
       console.log('closed');
     },
     openSignIn() {
-      this.showSignin = true;
+      // 根据本地是否开启自动签到展示相关信息
+      const localAuto = window.sessionStorage.isAutoSign
+      console.warn('test---签到', localAuto)
+      if(localAuto){
+        this.$fetch('v3GetCurrentSign', {
+          room_id: this.room_id
+        }).then(res=>{
+          console.warn('获取当前签到信息',res)
+          if(res.code == 200){
+            this.showSignin = true;
+          } else {
+            this.$message.warning(res.msg)
+          }
+        }).catch(err=>{
+          console.warn('获取当前签到的失败----', err)
+        })
+      }else{
+        this.showSignin = true;
+      }
     },
     closeAutoSignin() {
       this.$confirm('您将取消自动签到，确认关闭？', '提示', {
@@ -46,23 +65,45 @@ export default {
         cancelButtonText: '取消',
         center: true
       }).then(() => {
-        this.showSignin = false;
-        this.$refs.dialog.$children[0].$once('closed', () =>
-          this.resetSignState()
-        );
+        this.$fetch('v3StopSifn', {
+          room_id: this.room_id
+        }).then(res=>{
+          console.log('结束当前房间的签到成功-----',res)
+          window.sessionStorage.removeItem('isAutoSign')
+          this.showSignin = false;
+          this.$refs.dialog.$children[0].$once('closed', () =>
+            this.resetSignState()
+          );
+        }).catch(err=>{
+          console.warn('结束当前房间的签到失败-----',err)
+        })
       }).catch(() => {});
     },
     startSign(state) {
-      this.$vhallFetch('signin', {
-        vss_token: this.vss_token,
-        show_time: '30',
-        room_id: this.room_id
-      }).then(res => {
+      let _data = {
+        room_id: this.room_id,
+        sign_tips: state.signTip, // 签到提示语
+        show_time: state.duration, // 签到显示的时间，单位秒，默认30
+        is_auto_sign: Number(state.autoSign), // 是否自动发起签到，1自动，0取消自动，默认0
+        auto_sign_time: state.interval // 自动发起签到的轮询定时时间，单位秒
+      }
+      this.$fetch('v3CreateSifn', _data).then(res=>{
+        console.warn('创建签到',res)
+        if(res.code == 200){
+          if(state.autoSign){
+            window.sessionStorage.setItem('isAutoSign', 'true')
+          }
+          this.signId = res.data.id
           this.setSignState({
             signInfo: state
           });
           this.setIntervalAction();
-        });
+        } else {
+          this.$message.warning(res.msg)
+        }
+      }).catch(err=>{
+        console.warn('创建签到错误----', err)
+      })
     },
     // 设置状态
     setSignState(state) {
