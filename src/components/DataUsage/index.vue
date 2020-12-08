@@ -28,7 +28,7 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.name!='Home'">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance'">账单明细</p>
         </div>
       </el-col>
     </el-row>
@@ -53,7 +53,7 @@
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="this.$route.name!='Home' && buttonList.includes('details ')">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance' && buttonList.includes('details ')">账单明细</p>
         </div>
       </el-col>
       <el-col :span="9" v-else>
@@ -78,7 +78,7 @@
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
-          <p @click="goAccountDetail" v-if="this.$route.name!='Home' && buttonList.includes('details ')" class="account">账单明细</p>
+          <p @click="goAccountDetail" v-if="this.$route.path==='/finance' && buttonList.includes('details ')" class="account">账单明细</p>
         </div>
       </el-col>
     </el-row>
@@ -129,9 +129,9 @@ export default {
       });
     },
     levelVersion(title) {
-      if (this.$route.name === 'Home') {
+      if (this.$route.path !== '/finance') {
         this.$router.push({
-          name: 'Finance'
+          path: '/finance'
         });
       } else {
         this.$refs.levelVersion.dialogVisible = true;
@@ -150,9 +150,9 @@ export default {
       });
     },
     buyVersion() {
-      if (this.$route.name === 'Home') {
+      if (this.$route.path === '/finance') {
         this.$router.push({
-          name: 'Finance'
+          path: '/finance'
         });
       } else {
         this.title = this.versionType == 1 ? '专业版' : '标准版';

@@ -1,6 +1,6 @@
 <template>
   <div class="question-wrap">
-    <pageTitle title="奖品">
+    <pageTitle title="奖品" v-if="$route.meta.title === '奖品'">
       <div slot="content">
         1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
         <br>
@@ -11,24 +11,26 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" round class="head-btn set-upload" @click="createPrize">新建</el-button>
-      <el-button round class="head-btn batch-del">批量删除</el-button>
+      <el-button round v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
+      <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
+        :placeholder="'请输入奖品名称'"
         :searchAreaLayout="searchAreaLayout"
         @onSearchFun="getTableList('search')"
         >
       </search-area>
     </div>
-    <el-card class="question-list" v-if="total">
+    <div class="question-list" v-if="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-    </el-card>
+    </div>
     <div class="prize-no" v-else>
       <el-button type="primary" @click="createPrize" round>新建奖品</el-button>
     </div>
-    <create-prize ref="createPrize"></create-prize>
+    <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo"></create-prize>
   </div>
 </template>
 
@@ -40,15 +42,16 @@ export default {
   data() {
     return {
       total: 100,
+      prizeInfo: {},
       searchAreaLayout: [
         {
-          questionName: ''
+          key: 'keyword'
         }
       ],
       tabelColumn: [
         {
-          label: '问卷ID',
-          key: 'id',
+          label: '奖品id',
+          key: 'prize_id',
         },
         {
           label: '奖品图片',
@@ -56,28 +59,29 @@ export default {
         },
         {
           label: '奖品名称',
-          key: 'name',
+          key: 'prize_name',
         },
         {
           label: '创建时间',
-          key: 'time',
+          key: 'create_time',
         }
       ],
       tableRowBtnFun: [
         {name:'复制', methodName: 'cope'} ,{name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
+      prizeChecked: [],
       tableData: [
         {
-          id: '12312413',
-          name: '请输入000',
-          time: '2020-10-03',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+          prize_id: '12312413',
+          prize_name: '请输入000',
+          create_time: '2020-10-03',
+          img_path: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
         },
         {
-          id: '1212345',
-          name: '请输入111',
-          time: '2020-10-12',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+          prize_id: '1212345',
+          prize_name: '请输入111',
+          create_time: '2020-10-12',
+          img_path: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
         }
       ]
     };
@@ -85,6 +89,9 @@ export default {
   components: {
     PageTitle,
     createPrize
+  },
+  mounted() {
+    this.getTableList();
   },
   methods: {
     onHandleBtnClick(val) {
@@ -97,29 +104,67 @@ export default {
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
+        this.$refs.tableList.clearSelect();
       }
+      formParams.source = 1;
       let obj = Object.assign({}, pageInfo, formParams);
+      console.log(obj, '111111111111');
+      this.tableData.map(item => {
+        item.img = item.img_path;
+      })
+      this.$fetch('getPrizeList', obj).then(res => {
+        console.log(res.data, '1111111111111');
+      })
     },
     // 复制
     cope(that, {rows}) {
-      console.log('复制', rows);
+      that.$fetch('copyPrize', {prize_id: rows.prize_id, source: 1}).then(res => {
+        that.$message.success('复制成功');
+        that.getTableList();
+      })
     },
     // 编辑
     edit(that, {rows}) {
-      console.log('编辑', rows);
+      that.$refs.createPrize.dialogVisible = true;
+      that.prizeInfo = rows;
+      console.log(that.prizeInfo, '0000000000000000000')
     },
     // 删除
     del(that, {rows}) {
-      console.log('删除', rows);
+      that.$confirm('确定要删除此奖品吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        that.allDelete(rows.prize_id);
+      }).catch(() => {});
+    },
+    allDelete(id) {
+      if (!id) {
+        if (this.prizeChecked.length < 1) {
+          this.$message.warning('请选择要删除的选项');
+        } else {
+          id = this.prizeChecked.join(',')
+        }
+      }
+      this.$fetch('delPrize', {prize_id: id, source: 1}).then(res=>{
+        this.getTableList();
+        this.$message.success('删除成功');
+      });
     },
     // 选中
     changeTableCheckbox(val) {
-      console.log(val);
+      this.prizeChecked = val.map(item => item.prize_id);
     },
+    // 创建奖品
     createPrize() {
+      this.$refs.tableList.clearSelect();
       this.$refs.createPrize.dialogVisible = true;
+    },
+    // 从资料库中选择
+    prizeMeterial() {
+      this.$refs.createPrize.dialogPrizeVisible = true;
     }
   },
 };

@@ -6,11 +6,25 @@ const apis = {
   asyncWordInfo: ['/v3/interacts/document/clone-from-shared-document', 'POST'], // 同步文档
   delWordList: ['/v3/interacts/document/batch-remove-reference', 'POST'], //删除文档
 
-  dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表
-  dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
-  dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
-  createVideo: ['/v3/webinars/videos/create', 'POST'], //音视频添加
-  getAppid: ['/v3/webinars/videos/get-appid', 'POST'], //获取appid接口
+  dataVideoList: ['/v3/webinars/videos/get-list', 'POST'], //音视频列表 √
+  dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑 √
+  dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除 √
+  createVideo: ['/v3/webinars/videos/create', 'POST'], //音视频添加 √
+  getAppid: ['/v3/webinars/videos/get-appid', 'POST'], //获取appid接口 √
+
+  // 资料管理 -奖品
+  createPrize: ['/v3/vss/lottery/create-prize', 'POST', 'data'], //资料管理-创建奖品
+  editPrize: ['/v3/vss/lottery/get-edit-prize-info', 'POST', 'data'], //资料管理-编辑奖品
+  getPrizeList: ['/v3/vss/lottery/get-prize-list', 'POST', 'data'], //资料管理-奖品列表
+  delPrize: ['/v3/vss/lottery/prize-del', 'POST', 'data'], //资料管理-删除
+  copyPrize: ['/v3/vss/lottery/prize-copy', 'POST', 'data'], //资料管理-复制
+
+  // 直播详情 -奖品设置
+  getLivePrizeInfo: ['/v3/vss/lottery/get-prize-info', 'GET', 'data'], //抽奖页-获取信息
+  savePrizepicture: ['/v3/vss/lottery/save-prize-image', 'POST', 'data'], //抽奖页-保存图片
+  savePrizeInfo: ['/v3/vss/lottery/save-prize-info', 'POST', 'data'], //抽奖页-保存信息
+  getDrawPrizeInfo: ['/v3/vss/lottery/get-draw-prize-info', 'GET', 'data'], //领奖页-获取信息
+  saveDrawPrizeInfo: ['/v3/vss/lottery/save-draw-prize', 'POST', 'data'], //领奖页-保存信息
 
   // 问卷
   createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST', 'data'], //共享库_创建问卷
@@ -35,11 +49,11 @@ const apis = {
   liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
 
   //广告推荐
-  getAdvList: ['/v3/interacts/recommend-adv/get-adv-list', 'GET'], //获取广告列表 •••
-  advSaveToWebinar: ['/v3/interacts/recommend-adv/database-to-activity', 'POST'], //从资料库保存到活动 •••
-  createAdv: ['/v3/interacts/recommend-adv/create-adv', 'POST'], //创建广告 •••
-  updateAdv: ['/v3/interacts/recommend-adv/update-adv', 'POST'], //编辑广告 •••
-  deleteAdv: ['/v3/interacts/recommend-adv/batch-delete-adv', 'POST'], //批量删除广告 •••
+  getAdvList: ['/v3/interacts/recommend-adv/get-adv-list', 'GET'], //获取广告列表 √
+  advSaveToWebinar: ['/v3/interacts/recommend-adv/database-to-activity', 'POST'], //从资料库保存到活动 √
+  createAdv: ['/v3/interacts/recommend-adv/create-adv', 'POST'], //创建广告 √
+  updateAdv: ['/v3/interacts/recommend-adv/update-adv', 'POST'], //编辑广告 √
+  deleteAdv: ['/v3/interacts/recommend-adv/batch-delete-adv', 'POST'], //批量删除广告 √
   viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
   //播放器设置

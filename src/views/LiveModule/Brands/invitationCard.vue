@@ -199,19 +199,19 @@ export default {
       },
       showList: [
         {
-          url: '@/common/images/v35-webinar.png',
+          url: '../../../common/images/invite-card/tmpl1.png',
           isCheck: true,
           show_type: 1,
           show: 'first'
         },
         {
-          url: '@/common/images/v35-webinar.png',
+          url: '../../../common/images/invite-card/tmpl2.png',
           isCheck: false,
           show_type: 2,
           show: 'second'
         },
         {
-          url: '@/common/images/v35-webinar.png',
+          url: '../../../common/images/invite-card/tmpl3.png',
           isCheck: false,
           show_type: 3,
           show: 'third'
