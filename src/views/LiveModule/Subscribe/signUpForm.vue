@@ -481,7 +481,7 @@
               webinar_id: this.webinar_id,
               phone: this.verifyForm.phone,
               verify_code: this.verifyForm.code,
-              visit_id: 12313 // 访客 ID 是什么？ 建辉沟通一下
+              visit_id: sessionStorage.getItem("visitor_id")
             }).then(res => {
               console.log(res);
               // 如果已经报名
