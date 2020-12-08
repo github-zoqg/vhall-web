@@ -450,9 +450,10 @@ export default {
         : null;
       this.cids = [];
       let res = await this.docSDK.getContainerInfo(params);
-      console.log('loadRemote', res);
+      console.warn('test----doc-----loadRemote', res);
       // res.data会返回空数组或者一个对象，所以需要判断，应该是后端（朱俊亚）优化
       if (res instanceof Array && !res.length) {
+        console.warn('后续朱俊雅的优化    人已走   查看是否是进入');
         this.docInfo.docContainerShow = true;
         this.$EventBus.$emit('docInfo', this.docInfo);
         return;
@@ -716,7 +717,7 @@ export default {
      */
     _initDocSDK () {
       let hide = this.$route.query.hide == 1;
-      let mode = this.roleName == 3 ? window.window.VHDocSDK.PlayMode.FLV : window.window.VHDocSDK.PlayMode.INTERACT;
+      let mode = this.roleName == 3 ? window.VHDocSDK.PlayMode.FLV : window.VHDocSDK.PlayMode.INTERACT;
       let opt = {
         accountId: this.accountId,
         roomId: this.roomId,
@@ -729,6 +730,7 @@ export default {
         hide,
         mode
       };
+      console.warn('test --- doc--', opt);
       let success = () => {
         this.docLoadComplete = false;
         if (this.hasDocPermission) {
@@ -739,18 +741,22 @@ export default {
           );
         }
         // 刷新时，如果在直播中会加载远端文档信息
+        console.warn('test---doc---初始化文档成功', this.roleName);
         if (this.roleName == 1) {
           if (this.rebroadcastChannelId) {
             this.docSDK.setAccountId({ accountId: this.accountId + '7890' });
             this.docInfo.showInWatch = false;
             this.$EventBus.$emit('docInfo', this.docInfo);
             this.docSDK.setRole(window.roleTypeMap[2]);
+            alert(1)
             this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.FLV);
+            alert(2)
             this.hasDocPermission = false;
           }
           this.loadRemote();
         } else {
           if (this.liveStatus == 1) {
+            alert(3)
             this.loadRemote();
           }
         }
