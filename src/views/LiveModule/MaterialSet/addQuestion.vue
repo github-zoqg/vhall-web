@@ -3,37 +3,23 @@
      <pageTitle title="新建问卷">
         <div class="headBtnGroup">
           <el-button round size="medium" @click="returnBack">返回</el-button>
-          <!-- $route.meta.name/material/addQuestion -->
         </div>
       </pageTitle>
-      <div class="settingBox">
-        <ul class="options">
-          <template v-for="(item, key) in setOptions">
-            <section class="block" :key="key">{{key}}</section>
-            <li :class="{item: true, active: setItem.name && questionArr.some(qes=> qes.name == setItem.name)}" v-for="setItem in item" :key="setItem.label" @click="addFiled(setItem)">
-              <icon :icon-class="setItem.icon">{{setItem.label}}</icon>
-            </li>
-          </template>
-        </ul>
-        <div class="rightView">
-          <fieldSet :questionArr="questionArr" ref="question"></fieldSet>
-          <!-- <component :is="rightComponent" :questionArr="questionArr"></component> -->
-          <!-- <i class="closeBtn" v-show="rightComponent=='signUpForm'" @click="rightComponent='fieldSet'">&times;</i> -->
-        </div>
+      <div id="settingBox">
       </div>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import fieldSet from '../signUp/fieldSet';
-import {getfiledJson} from '../signUp/util';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'question',
   data() {
     return {
       rightComponent: 'fieldSet',
       questionArr: [],
+      service: {},
       setOptions: {
         "基本信息": [
           {icon: 'saasicon_xingming', label: "姓名", name: 'name'},
@@ -57,14 +43,77 @@ export default {
   },
   components: {
     PageTitle,
-    fieldSet,
   },
-  created() {
-    console.log(this.$route.meta, '1111111111111111111');
+  mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.questionId = this.$route.query.id || '';
+    this.getVideoAppid();
   },
   methods: {
-    addFiled(info) {
-      this.questionArr.push(getfiledJson({name: info.name, type: info.type}));
+    getVideoAppid() {
+      this.$fetch('getAppid').then(res => {
+        this.initQuestion(res.data.app_id, res.data.access_token);
+      })
+    },
+    initQuestion(id, token) {
+      console.log(id, token);
+      let params = {};
+      let service = new VHall_Questionnaire_Service({
+        auth: {
+          appId: 'd317f559', //paas的应用id,必填
+          accountId: this.userId, //paas的第三方用户id,必填
+          token: 'vhall' //paas的授权token,必填
+        },
+        isLoadElementCss: true,
+        notify: true //是否开启消息提示，非必填,默认是true
+      });
+      service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
+        service.renderPageEdit("#settingBox", this.questionId);
+        // this.service.renderPagePC("#settingBox"); //预览
+      })
+      service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {
+        console.log("提交成功", data);
+        data.question_id = params.question_id;
+      });
+      service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
+        // params.question_id = data.question_id;
+        if (this.questionId) {
+          this.editQuest();
+        } else {
+          this.createQuest(data.question_id);
+        }
+
+        console.log('新建问卷成功', data);
+      })
+      // service.$on(VHall_Questionnaire_Const.EVENT.ADDQUESTION, data => {
+      //   // params.question_id = data.question_id;
+      //   console.log('新建问卷问题', data);
+      // })
+      // service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
+      //   // params.question_id = data.question_id;
+      //   console.log('更新问卷成功', data);
+      // })
+      // let button = document.querySelector('.save .el-button');
+      // button.addEventListener('click', (e) => {
+      //   this.submitFinish('提交');
+      // });
+      setTimeout(() => {
+        let text = document.querySelector('.text');
+        text.innerHTML = '';
+      }, 1000);
+    },
+    createQuest(id) {
+      this.$fetch('createQuestion', {survey_id: id}).then(res => {
+        console.log(res.data, "我是新增")
+      })
+    },
+    editQuest() {
+      this.$fetch('editQuestion', {survey_id: this.questionId}).then(res => {
+        console.log(res.data, "我是编辑")
+      })
+    },
+    submitFinish(data) {
+      console.log(data, '1111111111111');
     },
     returnBack() {
       this.$router.push({
@@ -81,63 +130,27 @@ export default {
     pointer-events: none;
     user-select: none;
   }
-  .swtich{
-    margin-left: 12px;
-    vertical-align: sub;
+  #settingBox /deep/ .control-area {
+    width: 185px;
+      .el-button{
+        border: 1px solid #FB3A32;
+        color:#FB3A32;
+      }
+    .categroys{
+      border-bottom: 1px dashed #FB3A32;
+      &:last-child{
+        border-bottom: 0;
+      }
+    }
+  }
+  #settingBox /deep/.create-wrap .save{
+    .el-button{
+      background: #FB3A32 !important;
+      border: none;
+    }
   }
   .headBtnGroup{
     float: right;
-  }
-  .titleBox{
-    line-height: 40px;
-  }
-  .settingBox{
-    display: flex;
-    .options{
-      width: 170px;
-      .block{
-        font-size: 16px;
-        color: #666666;
-        margin-bottom: 20px;
-      }
-      .item{
-        font-size: 14px;
-        color: #1A1A1A;
-        margin-bottom: 20px;
-        width: fit-content;
-        cursor: pointer;
-        &.active{
-          color: #FB3A32;
-          pointer-events: none;
-          i{
-            color: #FB3A32;
-          }
-        }
-        i{
-          margin-right: 4px;
-          color: #1A1A1A;
-        }
-      }
-    }
-    .rightView{
-      flex: 1;
-      position: relative;
-      .closeBtn{
-        width: 32px;
-        height: 32px;
-        background: rgba(0, 0, 0, 0.6);
-        border-radius: 28px;
-        color: #fff;
-        position: absolute;
-        right: 50px;
-        top: 16px;
-        font-size: 32px;
-        text-align: center;
-        line-height: 26px;
-        font-style: normal;
-        cursor: pointer;
-      }
-    }
   }
 
 </style>

@@ -4,6 +4,7 @@
   </div>
 </template>
 <script>
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -11,22 +12,9 @@ export default {
     };
   },
   created() {
-    // this.getUserInfo();
-    // if (this.$route.query.user_auth_key) {
-    //   this.getUserInfo();
-    // } else {
-    //   this.goBindingWeiXin();
-    // }
+    this.getUserInfo();
   },
   methods: {
-    goBindingWeiXin() {
-      let params = {
-        jump_url: 'https://t.e.vhall.com/v3/#/code'
-      };
-      this.$fetch('weixinBinding', params).then(res => {
-        console.log(res);
-      });
-    },
     getUserInfo(){
       let params = {
         key: this.$route.query.user_auth_key,
@@ -34,7 +22,9 @@ export default {
       };
       this.$fetch('callbackUserInfo', params).then(res => {
         this.bindingText = '绑定成功';
-        console.log(res);
+        sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+        sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        this.$router.push({path: '/finance/income'})
       });
     }
   }

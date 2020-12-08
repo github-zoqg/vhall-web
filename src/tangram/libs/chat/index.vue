@@ -335,10 +335,9 @@ export default {
       this.scroll.scrollTo(0, this.scroll.maxScrollY, 200);
     },
     clickCallLogin () {
-      this.$parent.loginTest();
+      this.$parent.NoLogin();
     },
     init () {
-      this.chatSDK = window.chatSDK;
       this.$nextTick(() => {
         this.scroll = new BScroll(this.$refs.scroll, {
           click: true,
@@ -369,13 +368,15 @@ export default {
         //   this.getHistoryMsg()
         // })
 
-        this.listenEvents();
         this.page = 1;
         this.getHistoryMsg();
-
         // this.scroll.once('scroll', disableScroll)
         // this.scroll.once('scrollEnd', enableScroll)
       });
+      setTimeout(() => {
+        this.chatSDK = window.chatSDK;
+        this.listenEvents()
+      }, 1000)
     },
     mouseenter () {
       if (!this.isClientEnd()) return; // 只有观看端才执行
@@ -436,6 +437,7 @@ export default {
               data.text_content = data.text_content.replace(`@${a.nickName}`, `***${a.nickName}`);
             });
           }
+          console.log(111123123123123, this.chatSDK)
           this.chatSDK.emit(data, context);
           window.vhallReport.report('CHAT', {
             event: JSON.stringify(data),
@@ -496,13 +498,20 @@ export default {
           this.chatGap = this.delayTime(this.onlineUsers);
           this.chatGapInterval = window.setInterval(() => {
             if (this.chatGap > 0) {
+              console.log(111111)
               if (!this.lock || this.lock == 'false') {
+              console.log(22222222)
+
                 sessionStorage.setItem('chatLock', true);
               } else {
+              console.log(3333333)
+
                 // this.$message.warning(`太频繁啦，还有${this.chatGap}秒后才能发送`)
               }
               this.chatGap = this.chatGap - 1;
             } else {
+              console.log(44444444)
+
               window.clearInterval(this.chatGapInterval);
               sessionStorage.setItem('chatLock', false);
             }

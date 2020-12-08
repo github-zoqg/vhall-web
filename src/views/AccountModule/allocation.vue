@@ -73,8 +73,8 @@
         <div class="ac__allocation--user">
           <h1 class="title">可用资源</h1>
           <img src="../../common/images/avatar.jpg" alt="" />
-          <p class="result_val">1016.34</p>
-          <p class="unit">当前可分配流量（GB）</p>
+          <p class="result_val">{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}</p>
+          <p class="unit">当前可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</p>
           <p class="date">有效期至2023-07-31</p>
         </div>
         <ul class="ac__allocation--info">
@@ -101,6 +101,7 @@
 
 <script>
   import PageTitle from '@/components/PageTitle';
+  import {sessionOrLocal} from "@/utils/utils";
   export default {
     name: 'info.vue',
     components: {
@@ -108,6 +109,7 @@
     },
     data() {
       return {
+        resourcesVo: null,
         tabList: [
           {
             label: '动态分配',
@@ -122,7 +124,7 @@
         ],
         tabType: null,
         vipStatus: null, // trends_0 动态重分配；trends_1 动态已分配；regular_0 固态重分配；regular_1 固态已分配
-        dataList: null,
+        dataList: [],
         total: 0,
         multiAllocShow: false,
         multiAllocForm: {
@@ -163,33 +165,20 @@
           // 获取子账户数据
         }
       },
-      // 获取可分配用量方式
+      // 获取账号可分配资源
       allocMoreGet() {
-        /*this.$fetch('allocMoreGet', {}).then(res=>{
-          if (res && res.code === 200 && res.data) {
-            this.total = res.data.total;
-            let list = res.data.list || [];
-            list.map(item => {
-              item.inputCount = 0;
-              item.count = 0;
-              item.isHide = false;
-            });
-            this.dataList = list;
+        this.$fetch('allocMoreGet', {
+          user_id: sessionOrLocal.get('userId')
+        }).then(res=>{
+          if (res && res.code === 200) {
+            this.resourcesVo = res.data;
+          } else {
+            this.resourcesVo = null;
           }
-        }).catch(error=>{
-          console.log(error);
-          this.dataList = [];
-          this.total = 0;
-        });*/
-        this.dataList = [
-          {
-            nick_name: '嘿嘿嘿',
-            phone: 18310410764,
-            inputCount: 0,
-            count: 0,
-            isHide: false
-          }
-        ];
+        }).catch(e=>{
+          console.log(e);
+          this.resourcesVo = null;
+        });
       },
       handleSelectionChange() {},
       // 保存单个子账户分配
@@ -230,7 +219,6 @@
     },
     created() {
       this.allocMoreGet();
-      this.getAllocMethod();
     }
   };
 </script>

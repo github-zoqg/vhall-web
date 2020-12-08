@@ -1,19 +1,19 @@
 <template>
   <div class="result">
     <div class="result-count">
-      <img :class="{'img-zero': count == 0}" :src="count!=0 ? signImg : signImgZero" alt="" />
-      <div>签到人数：{{count}}人</div>
+      <img :class="{'img-zero': signTotal == 0}" :src="signTotal!=0 ? signImg : signImgZero" alt="" />
+      <div>签到人数：{{signTotal}}人</div>
     </div>
-    <div class="result-table" v-if="count != 0">
+    <div class="result-table" v-if="signTotal != 0">
       <div class="result-table-head">
         <strong>昵称</strong>
         <strong>签到时间</strong>
       </div>
       <div class="result-table-list">
-        <div class="result-table-item">
-          <img :src="signImg" alt="" />
-          <span class="nickname ellsips">欧阳丹打发时间粉红色副书记咖啡馆田</span>
-          <span class="time">14:34</span>
+        <div class="result-table-item" v-for="(user, index) in signList" :key="index">
+          <img :src="user.signer_avatar ? user.signer_avatar : defaultAvater" alt="" />
+          <span class="nickname ellsips">{{user.signer_nickname}}</span>
+          <span class="time">{{signTime(user.created_at)}}</span>
         </div>
       </div>
     </div>
@@ -34,6 +34,12 @@ export default {
       type: Number,
       default: 0
     },
+    room_id:{
+      type: [Number, String]
+    },
+    signId:{
+      type: [Number, String]
+    },
     users: {
       type: Array,
       default() {
@@ -41,12 +47,43 @@ export default {
       }
     }
   },
+  computed: {
+    signTime(){
+      return function(val){
+        return this.$moment(val).format('hh:mm')
+      }
+    }
+  },
   data() {
     return {
       signImg: require('../images/sign@2x.png'),
-      signImgZero: require('../images/sign_zero@2x.png')
+      signImgZero: require('../images/sign_zero@2x.png'),
+      defaultAvater: '//cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png',
+      signTotal: 10,
+      signList: [
+        {
+          signer_nickname: '陈小帅',
+          created_at: '2020-12-07 17:23:49'
+        }
+      ]
     };
-  }
+  },
+  mounted() {
+    let _data = {
+      room_id: this.room_id,
+      sign_id: this.signId,
+      limit: 100
+    }
+    this.$fetch('v3GetSignList', _data).then(res=>{
+      console.warn('获取当前活动的签到列表', res)
+      if(res.code == 200){
+        this.signTotal = res.data.total
+        this.signList = res.data.list
+      }
+    }).catch(err=>{
+      console.warn('获取当前活动的签到列表', res)
+    })
+  },
 };
 </script>
 
@@ -96,6 +133,8 @@ export default {
         width: 24px;
         height: 24px;
         margin-right: 8px;
+        border: 1px solid #ccc;
+        border-radius: 50%;
       }
       .nickname {
         text-align: left;

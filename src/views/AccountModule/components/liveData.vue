@@ -17,11 +17,10 @@
       <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList()">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
-      <el-button size="medium" round>导出数据</el-button>
+      <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
     </div>
     <!-- 数据 -->
     <div class="list--data">
-      {{dataDao}}
       <table-list
         ref="sonTab"
         :isHandle=false
@@ -31,7 +30,7 @@
         :totalNum="dataDao.total"
         :needPagination=true
         @getTableList="getUserPayDetail"
-        v-if="dataDao.total > 0"
+        v-if="dataDao.total > 0 && dataDao.list.length > 0"
       >
       </table-list>
       <!-- 无消息内容 -->
@@ -42,6 +41,7 @@
 
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "liveData.vue",
   components: {
@@ -49,7 +49,9 @@ export default {
   },
   data() {
     return {
-      sonVo: null,
+      sonVo: {
+        vip_info: {}
+      },
       query: {
         title: '',
         timeStr: null,
@@ -75,12 +77,12 @@ export default {
         },
         {
           label: '开播时间',
-          key: 'timeStr',
+          key: 'pay_date',
           width: 200
         },
         {
           label: '最高并发（方）',
-          key: 'count',
+          key: 'webinar_flow',
           width: 200
         }
       ]
@@ -95,36 +97,44 @@ export default {
     },
     getUserPayDetail() {
       let params = {
-        account_id: this.$route.params.id, // b端账号id
+        account_id: sessionOrLocal.get('userId'), // b端账号id
         type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
-        title: this.query.title,
         pos: this.query.pos,
-        limit: this.query.limit
+        limit: this.query.limit,
+        subject: this.query.title,
       };
       if (this.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      /*this.$fetch(this.sonVo.vip_Info.type > 0 ? 'getBusinessList' : 'getAccountList', params).then(res=>{
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getBusinessList' : 'getAccountList', params).then(res=>{
         if (res && res.code === 200 && res.data) {
           this.dataDao = res.data;
         }
       }).catch(e=>{
         console.log(e);
-      });*/
-      this.dataDao = {
-        total: 10,
-        "list":[
-          {
-            "pay_date": "2020-09-15", //消费时间
-            "webinar_id": 202009, //活动id
-            "subject": "测试", //活动名称
-            "pay_type": "2", //消费类型（1：并发 2：流量）
-            "type": "1", //账号类型（1：父账号 2：父账号+子账号3:子账号）
-            "webinar_flow": 10 //消耗量
-          }
-        ]
+      });
+    },
+    downloadHandle() {
+      let params = {
+        account_id: sessionOrLocal.get('userId'),
+        pos: 0,
+        limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
+        type: 1
       };
+      if (this.timeStr) {
+        params.start_time = this.query.timeStr[0] || '';
+        params.end_time = this.query.timeStr[1] || '';
+      }
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', params).then(res=>{
+        if (res && res.code === 200) {
+          this.$message.success('下载申请成功，请去下载中心下载该项！');
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(e=>{
+        console.log(e);
+      });
     },
     initComp(sonVo) {
       this.sonVo = sonVo;
@@ -133,7 +143,9 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.query.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
-      this.getUserPayDetail();
+      this.$nextTick(() => {
+        this.getUserPayDetail();
+      });
     }
   }
 };

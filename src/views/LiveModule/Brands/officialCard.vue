@@ -42,26 +42,26 @@
             <el-form-item :label="title">
               <el-switch
                 v-model="status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value="0"
+                :inactive-value="1"
                 active-color="#ff4949"
                 inactive-color="#ccc"
                 :active-text="activeTitle"
               >
               </el-switch>
             </el-form-item>
-            <el-form-item label="自动弹出" v-if="title==='公众号展示'">
+            <el-form-item :label="title==='公众号展示' ? '自动弹出' : '自动关闭' ">
               <el-switch
                 v-model="alert_type"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value="0"
+                :inactive-value="1"
                 active-color="#ff4949"
                 inactive-color="#ccc"
-                :active-text="activeTitle"
+                :active-text="autoUpText"
               >
               </el-switch>
             </el-form-item>
-            <el-form-item label="海报链接" v-else>
+            <el-form-item label="海报链接" v-if="title !== '公众号展示'">
               <el-input v-model="url" placeholder="请输入跳转链接"></el-input>
             </el-form-item>
             <el-form-item>
@@ -89,8 +89,8 @@ export default {
       img: '',
       url: '',
       imgShowUrl: '',
-      status: 0,
-      alert_type: 0
+      status: 1,
+      alert_type: 1
     };
   },
   computed: {
@@ -105,10 +105,10 @@ export default {
       }
     },
     autoUpText(){
-      if(this.alert_type){
-        return '已开启，进入活动页公众中自动展示';
-      }else{
-        return "开启后，进入活动页公众中自动展示";
+      if (this.title==='公众号展示') {
+        return this.alert_type ? '已开启，进入活动页公众中自动展示' : '开启后，进入活动页公众中自动展示';
+      } else {
+        return this.alert_type ? '已开启，倒计时结束后自动关闭' : '开启后，倒计时结束后自动关闭';
       }
     }
   },
@@ -162,20 +162,21 @@ export default {
       });
     },
     preSure() {
-      let obj = {};
       let url = '';
-      obj.img = this.img;
-      obj.status = this.status ? 0 : 1;
+      let params = {
+        webinar_id: this.$route.params.str,
+        status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
+        img: this.$parseURL(this.img).path // 公众号/开屏海报  图片地址
+      };
       if (this.title === '公众号展示') {
-        obj.alert_type = this.alert_type ? 0 : 1;
+        params.alert_type = this.alert_type; // 公众号-弹窗方式：0自动弹出 1手动弹出
         url = 'setPublicInfo';
       } else {
-        obj.url = this.url;
+        params.shutdown_type = this.alert_type;
+        params.url = this.url;
         url = 'setPosterInfo';
       }
-      obj.webinar_id = this.$route.params.str;
-      console.log(obj);
-      this.$fetch(url, obj).then(res => {
+      this.$fetch(url, this.$params(params)).then(res => {
         if(res && res.code === 200) {
           this.$message.success('保存成功');
           this.getData();

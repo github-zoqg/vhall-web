@@ -5,11 +5,11 @@
       <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建子账号</el-button>
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-button size="medium" round >导出</el-button>
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword">
+      <el-button size="medium" round @click="downloadHandle">导出</el-button>
+      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @change="getSonList">
         <i class="el-icon-search el-input__icon" slot="suffix"></i>
       </el-input>
-      <el-select placeholder="全部" round  v-model="query.type">
+      <el-select placeholder="全部" round  v-model="query.role_id" @change="getSonList">
         <el-option
           v-for="item in roleList"
           :key="'v_' + item.id"
@@ -37,7 +37,7 @@
     </div>
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
-    <!-- 添加观众/ 观众修改 -->
+    <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
                  width="680px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
@@ -54,7 +54,7 @@
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span>当前可创建子账号数量23个 {{roleList}}</span>
+          <span v-if="sonCountVo.available_num">当前可创建子账号数量{{sonCountVo.available_num}}个</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
           <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
@@ -107,9 +107,19 @@ export default {
     }
   },
   data() {
+    /*let validNums = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入数量'));
+      } else {
+        if (value > this.sonCountVo.available_num) {
+          callback(new Error(`当前可创建子账号数量不能超过${this.sonCountVo.available_num}个`));
+        }
+        callback();
+      }
+    };*/
     return {
       query: {
-        type: '',
+        role_id: null,
         keyword: '',
         pos: 0,
         limit: 1000
@@ -119,6 +129,7 @@ export default {
         total: 0,
         list: []
       },
+      sonCountVo: {},
       isHandle: false, // 是否有操作项
       sonTableColumn: [
         {
@@ -218,7 +229,7 @@ export default {
     checkMoreRow(val) {
       console.log(val);
       this.ids = val.map(item => {
-        return item.account_id;
+        return item.child_id;
       });
     },
     // 批量删除
@@ -228,10 +239,27 @@ export default {
       } else {
         this.sonDel(this, {
           rows: {
-            id: this.ids.join(',')
+            child_id: this.ids.join(',')
           }
         });
       }
+    },
+    downloadHandle() {
+      let params = {
+        role_id: this.query.role_id,
+        keyword: this.query.keyword,
+        pos: 0,
+        limit: 999999, // TODO 跟大龙确定，传值大于0，后台下载依然是所有符合条件的全部数据
+      };
+      this.$fetch('sonChildExport', params).then(res=>{
+        if (res && res.code === 200) {
+          this.$message.success('下载申请成功，请去下载中心下载该项！');
+        } else {
+          this.$message.error(res.msg);
+        }
+      }).catch(e=>{
+        console.log(e);
+      });
     },
     // 获取子账号个数
     sonCountGetHandle() {
@@ -250,7 +278,7 @@ export default {
         cancelButtonText: '取消'
       }).then(() => {
         that.$fetch('sonDel', {
-          msg_id: rows.account_id
+          child_ids: rows.child_id
         }).then(res => {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
@@ -319,13 +347,24 @@ export default {
       this.$refs.sonForm.validate((valid) => {
         if (valid) {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
-          let params = Object.assign(this.sonDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.sonDialog.row.id, group_id: this.query.group_id }, this.sonForm);
+          let params = Object.assign(
+            this.sonDialog.type === 'add' ? {
+            } : {
+              id: this.sonDialog.row.id,
+              child_id: this.sonDialog.row.child_id
+            }, this.sonForm);
           this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
-            res && res.code === 200 ? this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`) : this.$message({
-              type: 'error',
-              message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
-            });
-            this.sonDialog.visible = false;
+            if (res && res.code === 200) {
+              this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
+              this.sonDialog.visible = false;
+              // 新增成功后，重查列表
+              this.getSonList();
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
+              })
+            }
           }).catch(e => {
             console.log(e);
             this.$message({
@@ -339,11 +378,11 @@ export default {
     // 获取列表数据
     getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
       let params = {
-        role_id: this.sonForm.role_id,
+        role_id: this.query.role_id,
         user_id: sessionOrLocal.get('userId'),
         pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
         limit: pageInfo.pageSize,
-        scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
+        scene_id: 2 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
       this.$fetch('getSonList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
@@ -351,7 +390,17 @@ export default {
           list: []
         };
         (dao.list||[]).map(item => {
-          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : '固定'}）`;
+          if(item.vip_info.type > 0) {
+            if (item.is_dynamic > 0 ) {
+              // 流量动态
+              item.round = `流量动态`;
+            } else {
+              // 流量（XXXGB）
+
+            }
+          }
+
+          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
         this.sonDao = dao;
       }).catch(e=>{

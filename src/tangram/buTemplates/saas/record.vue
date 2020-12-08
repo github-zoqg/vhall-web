@@ -50,6 +50,9 @@ export default {
     });
     EventBus.$on('endLive', () => {
       this.living = false;
+      if(window.sessionStorage.getItem('isAutoSign')){
+        window.sessionStorage.removeItem('isAutoSign')
+      }
     });
   },
 

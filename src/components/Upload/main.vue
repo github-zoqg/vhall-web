@@ -8,7 +8,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="picValue" class="avatar" alt="" />
+          <img :src="domainUrl || domain_url" class="avatar" alt="" />
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
@@ -45,6 +45,7 @@ export default {
   data(){
     return {
       imageUrl: '',
+      domainUrl: '',
       token: sessionOrLocal.get('token')
     };
   },
@@ -60,6 +61,10 @@ export default {
       action: {
         type: String,
         default: `${Env.BASE_URL}/v3/commons/upload/index`
+      },
+      domain_url: {
+        type: String,
+        default: ``
       },
       "list-type": {
         type: String,
@@ -103,11 +108,6 @@ export default {
       default: ()=>{}
     }
   },
-  computed: {
-    picValue: function() {
-      return this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.value);
-    }
-  },
   created(){
     console.log(this.$props);
   },
@@ -118,6 +118,9 @@ export default {
         this.$message.error(response.msg || '上传失败');
       } else {
         console.log(this.$props);
+        if(response.data.domain_url) {
+          this.domainUrl = response.data.domain_url;
+        }
         // this.$emit('input', URL.createObjectURL(file.raw));
         // this.imageUrl = URL.createObjectURL(file.raw);
         this.onSuccess(response, file, fileList);

@@ -27,15 +27,16 @@
               </div>
               <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
             </el-form-item>
-            <el-form-item prop="password">
+            <el-form-item prop="password" @click="passWordType">
               <el-input
                 placeholder="请输入密码"
                 maxlength="30"
                 clearable
-                type="password"
+                :type="passWordType ? password : text"
                 v-model="loginForm.password">
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-                <i slot="suffix" class="el-input__icon el-icon-view"></i>
+                <icon slot="prefix" class="icon" icon-class="saaseyeclose_huaban1" v-show="passWordType"></icon>
+                <icon slot="prefix" class="icon" icon-class="saasicon-eye" v-show="!passWordType"></icon>
               </el-input>
             </el-form-item>
             <div class="login-btn">
@@ -177,6 +178,7 @@ export default {
     };
     return {
       remember: 0,
+      isPassWordType: true,
       isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
         account: '',
@@ -227,6 +229,9 @@ export default {
     },
     thirdLogin(url) {
       window.location.href = url;
+    },
+    passWordType() {
+      this.isPassWordType = !this.isPassWordType;
     },
     // 忘记密码
     forgetPassword() {
@@ -309,7 +314,7 @@ export default {
         console.log(res.data, this.registerForm, '注册完成');
       });
     },
-     /**
+    /**
      * 倒计时函数
      */
     countDown() {

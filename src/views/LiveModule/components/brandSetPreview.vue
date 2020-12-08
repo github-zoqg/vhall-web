@@ -130,33 +130,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.zdy--switch {
-  width: 158px;
-  height: 32px;
-  border-radius: 100px;
-  border: 1px solid #CCCCCC;
-  display: block;
-  margin-bottom: 16px;
-  span {
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-    width: 50%;
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #666666;
-    cursor: pointer;
-    &.active {
-      background: #FB3A32;
-      color: #FFFFFF;
-      border-radius: 15px;
-    }
-  }
-}
-
 /*预览区域样式开始*/
 .skin-preview.preview-pc {
   width: 445px;

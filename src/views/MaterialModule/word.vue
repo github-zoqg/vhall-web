@@ -26,9 +26,9 @@
         :before-upload="beforeUploadHandler"
         :on-preview="uploadPreview"
       >
-        <el-button round type="primary">上传</el-button>
+        <el-button round type="primary" size="medium">上传</el-button>
       </el-upload>
-      <el-button round class="head-btn batch-del">批量删除</el-button>
+      <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -52,8 +52,8 @@
     </el-card>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
-        <doc-preview ref="videoPreview" :docParam='docParam'></doc-preview>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+        <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>
     </template>
   </div>
@@ -68,10 +68,6 @@ export default {
   data() {
     return {
       token: sessionOrLocal.get('token'),
-      saveData: {
-        path: 'webinar/document',
-        type: 1, // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
-      },
       actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
       formParams: {},
       totalNum: 0,
@@ -79,19 +75,19 @@ export default {
       tabelColumn: [
         {
           label: '文档名称',
-          key: 'wordName',
+          key: 'file_name',
         },
         {
-          label: '进度',
-          key: 'progress',
+          label: '上传时间',
+          key: 'created_at',
         },
         {
           label: '页码',
           key: 'page',
         },
         {
-          label: '上传时间',
-          key: 'time',
+          label: '进度',
+          key: 'progress',
         }
       ],
       tableRowBtnFun: [
@@ -110,15 +106,30 @@ export default {
           key: "searchTitle",
         }
       ],
-      fileList: [],
-      accept: 'png|jpg|jpeg|bmp|gif|doc|mp4',
+      multipleSelection: [],
       showDialog: false,
-      docParam: {}
+      docParam: null
     };
   },
   components: {
     PageTitle,
     DocPreview
+  },
+  computed: {
+    saveData: function() {
+      let data = {
+        path: 'webinar/document',
+        type: 1, // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
+      }
+      if(this.$route.params.str) {
+        // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
+        data.type = 0;
+        data.webinar_id = this.$route.params.str;
+      } else {
+        data.type = 1;
+      }
+      return data;
+    },
   },
   methods: {
     uploadSuccess(res, file, fileList){
@@ -126,7 +137,9 @@ export default {
       if(res.code !== 200) {
         this.$message.error(res.msg || '上传失败');
       } else {
+        this.$message.success('上传成功');
         // 判断文件上传情况
+        this.initPage();
       }
     },
     beforeUploadHandler(file){
@@ -155,18 +168,51 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+    // 批量删除
+    wordMultiDel() {
+      if (this.multipleSelection && this.multipleSelection.length > 0) {
+        this.$confirm('是否确认删除', '删除提示', {
+          confirmButtonText: '删除',
+          cancelButtonText: '取消'
+        }).then(() => {
+          let ids = this.multipleSelection.map(item => {
+            return item.id;
+          });
+          this.deleteSend({
+            id: ids.join(',')
+          })
+        }).catch(() => {
+        });
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请至少选择一条记录进行删除'
+        });
+      }
+    },
     // 获取文档列表数据
     getTableWordList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
-      console.log(obj);
       let params = {
         pos: pageInfo.pos,
         limit: pageInfo.limit,
         keyword: this.formParams.keyword,
-        type: 1
+        type: 1,
+        webinar_id: this.$route.params.str
       };
       this.$fetch(this.$route.params.str ? 'getWebinarWordList' : 'getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.totalNum = res.data.total;
+          let list = res.data.list;
+          list.map(item => {
+            // 转换状态 0待转换 100转换中 200完成 500失败
+            let statusStr = {
+              0: '等待转码',
+              100: '转码中',
+              200: '转码完成',
+              500: '转码失败'
+            }
+            item.progress = statusStr[item.status];
+          })
           this.tableList = res.data.list;
         } else {
           this.totalNum = 0;
@@ -183,33 +229,36 @@ export default {
     preShow(that, { rows }) {
       console.log('预览', rows);
       that.showDialog = true;
+      that.docParam = rows;
     },
     // 删除
     deleteHandle(that, { rows }) {
       console.log('删除', rows);
-        that.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          that.deleteSend(rows);
-        }).catch(() => {
-          that.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
+      that.$confirm(that.$route.params.str ? '该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？' : '确认删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        that.deleteSend(rows);
+      }).catch(() => {
+        that.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
     },
     deleteSend(rows) {
       let params = {
-        ids: rows.document_id,
+        ids: rows.id,
         tag: this.$route.params.str ? 1 : 2,
         webinar_id: this.$route.params.str
       };
       this.$fetch('delWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.$message.success('删除成功');
+          this.$refs.tableListWord.clearSelect();
+          this.initPage();
         } else {
           this.$message.error(res.msg || '删除失败');
         }
@@ -222,6 +271,7 @@ export default {
     // 选中
     changeTableCheckbox(val) {
       console.log(val);
+      this.multipleSelection = val;
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -230,14 +280,22 @@ export default {
     initPage() {
       this.getTableWordList();
     }
+  },
+  created() {
+    this.initPage();
   }
 };
 </script>
 <style lang="less" scoped>
 .btn-upload {
+  display: inline-block;
+  margin-right: 16px;
   /deep/.el-upload {
-    display: inline-block;
-    margin-right: 16px;
+    width: auto;
+    height: auto;
+    line-height: unset;
+    background: transparent;
+    border: none;
   }
 }
 .video-wrap {

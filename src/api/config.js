@@ -10,6 +10,23 @@ const apis = {
   dataVideoupdate: ['/v3/webinars/videos/edit', 'POST'], //音视频编辑
   dataVideoDel: ['/v3/webinars/videos/delete', 'POST'], //音视频删除
   createVideo: ['/v3/webinars/videos/create', 'POST'], //音视频添加
+  getAppid: ['/v3/webinars/videos/get-appid', 'POST'], //获取appid接口
+
+  // 问卷
+  createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST', 'data'], //共享库_创建问卷
+  editQuestion: ['/v3/vss/survey/update-shared-survey', 'POST', 'data'], //共享库_编辑问卷
+  getQuestionList: ['/v3/vss/survey/list-shared-survey', 'GET', 'data'], //问卷列表
+  deleteQuestion: ['/v3/vss/survey/delete-shared-survey', 'POST', 'data'], //共享库_删除问卷
+  copyQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET', 'data'], //共享库-问卷复制
+
+  // 直播-问卷
+  createLiveQuestion: ['/v3/vss/survey/create-webinar-survey', 'POST', 'data'], //直播设置_创建问卷
+  editLiveQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST', 'data'], //直播设置_编辑问卷
+  getLiveQuestionList: ['/v3/vss/survey/list-webinar-survey', 'GET', 'data'], //直播设置_问卷列表
+  deleteLiveQuestion: ['/v3/vss/survey/delete-webinar-surveys', 'POST', 'data'], //直播设置_删除问卷
+  // copyLiveQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET', 'data'], //共享库-问卷复制
+  sharedLiveQuestion: ['/v3/vss/survey/clone-from-shared', 'POST', 'data'], //直播设置_从资料库添加
+
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
   editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
@@ -52,7 +69,7 @@ const apis = {
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
-  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口        接口少了一个字段
+  getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
@@ -135,11 +152,11 @@ const apis = {
   viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li  √
   fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li •••
   // 自定义菜单
-  menuTplList: ['/101/v3/menu-components/list', 'POST', 'mock'], // 控制台-组件列表接口 jia.li
-  customMenuList: ['/101/v3/menu-bak/list', 'POST', 'mock'], // 控制台-菜单列表接口 jia.li
-  customMenuSave: ['/101/v3/menus/save', 'POST', 'mock'], // 控制台-菜单保存接口 jia.li
-  webinarCMenuList: ['/101/v3/webinar-menus/list', 'POST', 'mock'], // 观看端-菜单列表接口 jia.li
-  webinarCMenuGet: ['/101/v3/webinar-menus/info', 'POST', 'mock'], // 观看端-单个菜单详情接口 jia.li
+  menuTplList: ['/v3/interacts/menu/components-list', 'POST'], // 控制台-组件列表接口 jia.li
+  customMenuList: ['/v3/interacts/menu/bak-menu-list', 'POST'], // 控制台-菜单列表接口 jia.li
+  customMenuSave: ['/v3/interacts/menu/save', 'POST'], // 控制台-菜单保存接口 jia.li
+  webinarCMenuList: ['/v3/interacts/menu/menu-list', 'POST'], // 观看端-菜单列表接口 jia.li
+  webinarCMenuGet: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端-单个菜单详情接口 jia.li
   // 虚拟人数
   virtualSetSave: ['/v3/webinars/virtual/add', 'POST'], // 控制台-编辑虚拟人数配置 jia.li  √
   virtualGet: ['/v3/webinars/virtual/info', 'GET'], // 控制台-获取虚拟人数配virtual置 jia.li  √
@@ -198,21 +215,22 @@ const apis = {
   getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET', 'data'], //获取活动浏览器信息
   getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET', 'data'], //获取观看人数趋势
 
+  // 直播-用户统计
+  getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET', 'data'], //获取用户观看详情
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
   getSonInfo: ['/v3/users/child/get-head-info', 'POST'], // 子账号tab页头部信息接口 Jia.li  √
-  childExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出接口 Jia.li
   getSonList: ['/v3/users/child/get-list', 'POST'], // 获取子账号列表信息 Jia.li
-  sonExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出 Jia.li
+  sonChildExport: ['/v3/users/child/export', 'POST'], // 子账号列表导出 Jia.li
   sonAdd: ['/v3/users/child/create', 'POST'], // 子账号创建 Jia.li
   sonDel: ['/v3/users/child/delete', 'POST'], // 子账号删除 Jia.li
   sonEdit: ['/v3/users/child/edit', 'POST'], // 子账号修改 Jia.li
   sonCountGet: ['/v3/users/child/count', 'POST'], // 获取子账号个数 Jia.li
   sonDetailGet:  ['/v3/users/child/get-info', 'POST'], // 子账号详情 Jia.li
-  allocSave:  ['/v3/users/child/edit', 'POST'], // 子账号-用  量分配-保存分配方式 Jia.li
-  allocMoreGet:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-可分配数量获取 Jia.li
-  allocSetVal:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
+  allocSave:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-保存分配方式 Jia.li
+  allocMoreGet:  ['/v3/fin/user-vip/get-dist-resources', 'GET', 'data'], // 子账号-用量分配-可分配数量获取 Jia.li
+  allocSetVal:  ['/v3/fin/user-vip/dist-resources', 'POST', 'data'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
   getRoleList: ['/v3/users/user-role/list', 'POST'], // 角色-用户-获取 Jia.li
   sonRoleAdd: ['/v3/users/child-role/create', 'POST'], // 子账号-角色创建 Jia.li
   sonRoleDel: ['/v3/users/child-role/delete', 'POST'], // 子账号-角色删除 Jia.li
@@ -225,12 +243,21 @@ const apis = {
 
   //财务中心
   getVersionInfo: ['/v3/fin/account/info', 'GET', 'data'],  //获取用户版本信息 √
-  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //获取用量统计数据-并发
+  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //账户并发数据趋势图
   getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取用量统计数据-流量
   getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET', 'data'],  //获取并发-消费账单
   getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
   getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET', 'data'], //获取财务总览-并发-消费账单
   getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET', 'data'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
+  userFlowTrend: ['/v3/data-center/business-total/user-flow-trend', 'GET', 'data'], //账户流量数据趋势图
+  exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET', 'data'], //账户流量数据趋势图__导出
+  exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET', 'data'], //账户并发数据趋势图_导出
+  exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET', 'data'], //流量明细导出
+  exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET', 'data'], //并发明细导出
+
+
+
+
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
   orderArrears: ['/v3/fin/order/arrears', 'POST', 'data'], // 财务总览-补缴欠费
   orderFlow: ['/v3/fin/order/flow', 'POST', 'data'], // 流量包购买
@@ -248,10 +275,10 @@ const apis = {
   liveIncomeDetailList: ['/v3/fin/income/live/details/list', 'GET', 'data'], // 直播收益详情列表
   packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET', 'data'], // 红包收益
   accountList: ['/v3/fin/withdraw/list', 'GET', 'data'], // 提现明细
-  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定
-  callbackUserInfo: ['/100/v3/users/oauth/callback', 'POST', 'mock'], // 绑定之后获取用户信息
-  withdrawalPhoneCode: ['/104/v3/finances/withdraw/phone-code', 'POST', 'mock'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
-  withdrawal: ['/104/v3/finances/withdraw', 'POST', 'mock'], // 提现
+  weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定  微信授权
+  callbackUserInfo: ['/v3/users/oauth/callback', 'POST'], // 绑定之后获取用户信息
+  withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST', 'data'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
+  withdrawal: ['/v3/fin/withdraw', 'POST', 'data'], // 提现
 
   //开发设置
   getAppList: ['/v3/users/appkeys/get-list', 'POST'], // 获取应用信息列表接口 jian.chang •••
@@ -350,7 +377,7 @@ const apis = {
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
   getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
-  goodsList: ['/101/v3/interacts/goods/get-on-sale-goods-list', 'GET', 'mock'], // 商品推荐 xiaodong.ding
+  goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
   getConfigList: ['/v3/users/permission/get-config-list', 'POST'], // 获取观看端配置项
@@ -373,7 +400,8 @@ const apis = {
   setBanned: ['/v3/interacts/chat-user/set-banned', 'POST'], // 设置禁言
   getHistoryQaMsg: ['/v3/interacts/qa/get-webinar-history-questions', 'POST'], // 获取历史问答记录
   sendQaMsg: ['/v3/interacts/qa/submit-one-question', 'POST'], // 发送问答
-  getBannedList: ['/v3/interacts/chat-user/get-banned-list', 'POST'], // 获取禁言列表
+  v3GetBannedList: ['/v3/interacts/chat-user/get-banned-list', 'POST'], // 获取禁言列表 √
+  v3GetKickedList: ['/v3/interacts/chat-user/get-kicked-list', 'POST'], // 获取踢出列表  √
   getKickList: ['/v3/interacts/chat-user/get-kicked-list', 'POST'], // 获取踢出列表
   getOnlineList: ['/v3/interacts/chat-user/get-online-list', 'POST'], // 获取在线列表
   // 礼物
@@ -391,7 +419,8 @@ const apis = {
   saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
-
+  // 签到
+  userSingin: ['/v3/interacts/sign/user-sign', 'POST'], // 用户签到
   // 开平海报
   getPlaybillInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报信息
   // 互动
@@ -400,7 +429,14 @@ const apis = {
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
   // 发起端所有新增
-  v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST']
+  v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
+
+  // 签到
+  v3CreateSifn: ['/v3/interacts/sign/create-and-push', 'POST'], // 创建签到  √
+  v3StopSign: ['/v3/interacts/sign/set-end-sign', 'POST'], // 结束签到  √
+  v3GetCurrentSign:['/v3/interacts/sign/get-doing-sign', 'POST'], // 获取当前活动正在的签到  √
+  v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录  √
+  v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数  √
 };
 
 const getApi = api => {

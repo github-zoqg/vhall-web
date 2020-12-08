@@ -799,8 +799,8 @@ export default {
     async getLimitedUsers () {
       let data = { room_id: this.roomId };
       try {
-        let bannedList = await this.$vhallFetch('getBannedList', data);
-        let kickedList = await this.$vhallFetch('getkickedList', data);
+        let bannedList = await this.$fetch('v3GetBannedList', data);
+        let kickedList = await this.$fetch('v3GetKickedList', data);
         let list = bannedList.data.list.concat(kickedList.data.list);
         let hash = {};
         this.limitedUsers = list.reduce((preVal, curVal) => {

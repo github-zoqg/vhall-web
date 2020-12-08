@@ -426,6 +426,7 @@ import { findIndex } from 'lodash';
 import SassAlert from '../../libs/saas-popup/alert';
 import { browserSupport } from '@/utils/getBrowserType';
 import { isIE, resize } from '../../utils/utils';
+import { sessionOrLocal } from '@/utils/utils'
 
 import EventBus from '@/utils/Events';
 
