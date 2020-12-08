@@ -4,7 +4,8 @@ const router = [
   {
     path: '/special/detail',
     name: 'detail',
-    component: () => import('@/views/SpecialModule/components/preShow')
+    component: () => import('@/views/SpecialModule/components/preShow'),
+    hidden: true
   },
   {
     path: '/emptyLayout',

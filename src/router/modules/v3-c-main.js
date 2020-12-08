@@ -8,9 +8,8 @@ const router = [
     children: [
       {
         path: 'home',
-        name: 'Home',
         component: () => import('@/views/FirstPage/index.vue'),
-        meta: { title: '首页', icon: 'saasel-icon-v3-home', level: 1 }
+        meta: { auth: true, title: '首页', icon: 'saasel-icon-v3-home', level: 1 , name: 'sysHome'}
       }
     ]
   }

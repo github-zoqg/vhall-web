@@ -5,20 +5,18 @@ const router = [
     path: '/setting',
     component: Layout,
     redirect: '/setting/info',
-    name: 'Setting',
-    meta: { title: '设置中心'},
+    meta: { auth: true, title: '设置中心', name: 'settingMgr'},
     children: [
       {
         path: 'info',
-        name: 'info',
         component: () => import('@/views/SettingModule/setting.vue'),
-        meta: { title: '设置中心', icon: 'saasel-icon-v3-settings' }
+        meta: { auth: true, title: '设置中心', name: 'settingInfo' ,icon: 'saasel-icon-v3-settings' }
       },
       {
         path: 'chat/:str(\\d+)',
         component: () => import('@/views/SettingModule/chat'),
         name: 'chat',
-        meta:{ title: '聊天严禁词', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '聊天严禁词', name: 'chatMgr', activeMenu: '/setting/info'},
         hidden: true
       },
       // {
@@ -31,29 +29,25 @@ const router = [
       {
         path: '/dev/add',
         component: () => import('@/views/SettingModule/Development/appInfo'),
-        name: 'devAdd',
-        meta:{ title: '新增应用', activeMenu: '/setting/info', action: 'add'},
+        meta:{ auth: true, title: '新增应用', name: 'devAdd', activeMenu: '/setting/info', action: 'add'},
         hidden: true
       },
       {
         path: '/dev/:appId(\\d+)',
         component: () => import('@/views/SettingModule/Development/appInfo'),
-        name: 'devModify',
-        meta:{ title: '应用详情', activeMenu: '/setting/info', action: 'detail'},
+        meta:{ auth: true, title: '应用详情', name: 'devModify', activeMenu: '/setting/info', action: 'detail'},
         hidden: true
       },
       {
         path: '/dev/list',
         component: () => import('@/views/SettingModule/Development/list'),
-        name: 'devlIST',
-        meta:{ title: '开发设置', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '开发设置', name: 'devlIST', activeMenu: '/setting/info'},
         hidden: true
       },
       {
         path: 'logo/:str(\\d+)',
         component: () => import('@/views/SettingModule/logo'),
-        name: 'logo',
-        meta:{ title: '控制台标志', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '控制台标志', name: 'logoSetting',activeMenu: '/setting/info'},
         hidden: true
       }
     ]

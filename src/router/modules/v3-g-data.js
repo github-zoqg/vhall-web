@@ -5,20 +5,17 @@ const router = [
     path: '/data',
     component: Layout,
     redirect: '/data/info',
-    name: 'Data',
-    meta: { title: '数据中心', icon: 'saasel-icon-v3-charts' },
+    meta: { auth: true,  title: '数据中心', name: 'dataMgr', icon: 'saasel-icon-v3-charts' },
     children: [
       {
         path: 'info',
-        name: 'info',
         component: () => import('@/views/StatisticsModule/dataInfo'),
-        meta: { title: '数据总览'}
+        meta: { auth: true, title: '数据总览', name: 'dataInfo'}
       },
       {
         path: 'live',
-        name: 'live',
         component: () => import('@/views/StatisticsModule/dataLive'),
-        meta: { title: '活动数据'}
+        meta: { auth: true, title: '活动数据', name: 'dataLive'}
       }
     ]
   }

@@ -5,57 +5,48 @@ const router = [
     path: '/material',
     component: Layout,
     redirect: '/material/word',
-    name: 'Material',
-    meta: { title: '资料管理', icon: 'saasel-icon-v3-datas', level: 1 },
+    meta: { auth: true, title: '资料管理', name: 'Material', icon: 'saasel-icon-v3-datas', level: 1 },
     children: [
       {
         path: 'word',
-        name: 'word',
         component: () => import('@/views/MaterialModule/word'),
-        meta: { title: '文档' }
+        meta: { auth: true, title: '文档', name: 'wordMgr' }
       },
       {
         path: 'video',
-        name: 'video',
         component: () => import('@/views/MaterialModule/video'),
-        meta: { title: '音视频'}
+        meta: { auth: true, title: '音视频', name: 'videoMgr'}
       },
       {
         path: 'question',
-        name: 'question',
         component: () => import('@/views/MaterialModule/question'),
-        meta: { title: '问卷', name: 'material'}
+        meta: { auth: true, title: '问卷', name: 'questionMgr'}
       },
       {
         path: 'addQuestion',
         component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
-        name: 'addQuestion',
-        meta:{ title: '新建问卷', name: 'material' },
+        meta:{ auth: true, title: '新建问卷', name: 'addQuestionMgr' },
         hidden: true
       },
       {
         path: 'prize',
-        name: 'prize',
         component: () => import('@/views/MaterialModule/prize'),
-        meta: { title: '奖品'}
+        meta: { auth: true, title: '奖品', name: 'prizeMgr'}
       },
       {
         path: 'viewer',
-        name: 'viewer',
         component: () => import('@/views/MaterialModule/viewer'),
-        meta: { title: '观众'}
+        meta: { auth: true, title: '观众', name: 'viewerMgr'}
       },
       {
         path: 'advertCard',
-        name: 'advertCard',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
-        meta: { title: '广告推荐', name: 'material' }
+        meta: { auth: true, title: '广告推荐', name: 'advertCard'}
       },
       {
         path: 'gift',
-        name: 'gift',
         component: () => import('@/views/MaterialModule/gift'),
-        meta: { title: '礼物'}
+        meta: { auth: true, title: '礼物', name: 'giftMgr' }
       }
     ]
   }
