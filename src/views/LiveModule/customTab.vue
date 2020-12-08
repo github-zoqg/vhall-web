@@ -464,6 +464,7 @@ export default {
               item.isOpen = true;
               this.clickItem = item;
               this.menuTabIndex = ins;
+
               sessionOrLocal.set('menu_active', ins);
               console.log(ins, this.clickItem, '===> clickItem设定当前简介下标');
             } else {
@@ -636,31 +637,21 @@ export default {
         this.$message.error('非有效组件，无法使用');
         return;
       }
-      this.compIndex++;
       let unitComp = Object.assign({
         show_type: item.compType
       }, item);
       unitComp.compInfo = {};
-      unitComp.original_params = {
-        styles: '',
-        content: '',
-        params: ''
-      };
-      unitComp.update_params = {
-        styles: '',
-        content: '',
-        params: ''
-      };
+      console.log(item.msg, '当前组件类型')
       // 如果是分割线，直接保存
       if (item.compType === 'hr') {
-        unitComp.compInfo = {component_id: item.component_id, msg: item.msg};
+        unitComp.compInfo = {component_id: item.component_id, msg: '分割线'};
       } else if (item.compType === 'rq-code') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, isDefault:true};
       } else if (item.compType === 'rank') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, inSwitch: 1, inContent: '', rewardSwitch: 1, rewardContent: ''};
         unitComp.rankType = 'inv';
       } else if (item.compType === 'title') {
-        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, title: '默认标题'};
+        unitComp.compInfo = {component_id: item.component_id, msg: '标题', title: '默认标题'};
       }
       this.modShowHtmlList.push(unitComp);
       sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
@@ -775,39 +766,42 @@ export default {
     // 验证所有的组件保存： 若有失败的，不可保存，直接清除。若验证通过的，直接保存。
     checkComps(customTab_comp_arr) {
       let flag = true;
-      for(let i = 0; i<customTab_comp_arr.length; i++) {
-        let vo = customTab_comp_arr[i];
-        if(vo.component_id === 1) {// 图文
-          if(vo.content === null || vo.content === '' || vo.content === undefined) {
+      if (customTab_comp_arr && customTab_comp_arr.length > 0) {
+        debugger
+        for(let i = 0; i<customTab_comp_arr.length; i++) {
+          let vo = customTab_comp_arr[i];
+          if(vo.component_id === 1) {// 图文
+            if(vo.content === null || vo.content === '' || vo.content === undefined) {
+              flag = false;
+            }
+          } else if (vo.component_id === 2) {// 二维码
+            if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined) {
+              flag = false;
+            }
+          } else if (vo.component_id === 3) {// 直播
             flag = false;
-          }
-        } else if (vo.component_id === 2) {// 二维码
-          if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined) {
+          } else if (vo.component_id === 4) {// 专题
             flag = false;
-          }
-        } else if (vo.component_id === 3) {// 直播
-          flag = false;
-        } else if (vo.component_id === 4) {// 专题
-          flag = false;
-        } else if (vo.component_id === 5) {// 文字链
-          if(vo.text === null || vo.text === '' || vo.text === undefined ) {
-            flag = false;
-          } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
-            flag = false;
-          }
-        } else if (vo.component_id === 6) {// 图片链
-          if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined ) {
-            flag = false;
-          } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
-            flag = false;
-          }
-        } else if (vo.component_id === 7) {// 标题
-          if(vo.title === null || vo.title === '' || vo.title === undefined ) {
-            flag = false;
-          }
-        } else if (vo.component_id === 9) { // 排行榜
-          if(Number(vo.inSwitch) === 0 && Number(vo.rewardSwitch) === 0) {
-            flag = false;
+          } else if (vo.component_id === 5) {// 文字链
+            if(vo.text === null || vo.text === '' || vo.text === undefined ) {
+              flag = false;
+            } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
+              flag = false;
+            }
+          } else if (vo.component_id === 6) {// 图片链
+            if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined ) {
+              flag = false;
+            } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
+              flag = false;
+            }
+          } else if (vo.component_id === 7) {// 标题
+            if(vo.compInfo.title === null || vo.compInfo.title === '' || vo.compInfo.title === undefined ) {
+              flag = false;
+            }
+          } else if (vo.component_id === 9) { // 排行榜
+            if(Number(vo.inSwitch) === 0 && Number(vo.rewardSwitch) === 0) {
+              flag = false;
+            }
           }
         }
       }
@@ -819,7 +813,15 @@ export default {
       let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
       if(this.checkComps(customTab_comp)) {
         let menu_active = sessionOrLocal.get('menu_active');
-        saveMenus[menu_active].components = saveMenus[menu_active].type === 1 ? customTab_comp : [];
+        debugger
+        let compList = [];
+        if(customTab_comp && customTab_comp.length>0) {
+          customTab_comp.map(item => {
+            return item.compInfo;
+          });
+        }
+        debugger
+        saveMenus[menu_active].components = saveMenus[menu_active].type === 1 ? compList : [];
         console.log(saveMenus, 'saveCustomTab第一步组装==>存储完编辑选项内容后，数据处理');
         sessionOrLocal.removeItem('customTab_comp');
         console.log('saveCustomTab存储完成后数据清空');
@@ -1145,7 +1147,6 @@ export default {
   min-height: 32px;
   margin: 10px;
   &.active, &:hover {
-    height: 32px;
     background: #FFF5F5;
     border: 1px dashed #F09D99;
   }
