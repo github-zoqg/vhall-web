@@ -574,6 +574,7 @@
               :accountId="roomInfo.join_info.third_party_user_id"
               :isEnjoy="false"
               :roomId="roomInfo.interact.room_id"
+              :webinar_id='webinar_id'
               :permission="permission"
               :vssToken="vssToken"
               :docLowPriority="docLowPriority"
@@ -611,28 +612,6 @@
             ></share-screen>
 
             <!-- 文档区域 -->
-            <!--
-            :class="{'vhall-saas-miniArea vhall-saas-miniArea-doc': miniElemt == 'doc' }"
-            -->
-            <!-- <watch-doc
-              ref="refDoc"
-              :class="{
-                'vhall-miniBox vhall-saas-miniArea': miniElement == 'doc'
-              }"
-              v-if="rebroadcast && rebroadcast != 'rebroadcastEnd'"
-              :channel-id="roomInfo.interact.channel_id"
-              :roomId="roomInfo.interact.room_id"
-              :joinId="roomInfo.join_info.third_party_user_id + '7890'"
-              :appId="roomInfo.interact.paas_app_id"
-              :roleType="2"
-              :token="roomInfo.interact.paas_access_token"
-              :isVod="false"
-              :isMini="miniElement == 'doc'"
-              :rebroadcastChannelId="rebroadcastChannelId"
-              :roleName="roleName"
-            ></watch-doc> -->
-            <!--
-            v-if="(!assistantType || (assistantType && assistantType == 'doc'))&&(!rebroadcast||rebroadcast=='rebroadcastEnd')"-->
             <doc
               :class="
                 miniElement == 'doc' ? 'vhall-miniBox vhall-saas-miniArea' : ''
@@ -657,14 +636,6 @@
               :rebroadcastChannelId="rebroadcastChannelId"
             >
               <!-- 兼容轻享写法 -->
-              <!-- <template slot="whiteBoard">
-              <span style="display:none"></span>
-              </template>-->
-              <template slot="liveEnd">
-                <!--              <div class="thirdParty-warp live-end" v-show="LiveEndMobild">-->
-                <!--                <liveEnd :tooTimeFew="tooTimeFew" :layout="layout"></liveEnd>-->
-                <!--              </div>-->
-              </template>
               <template
                 slot="mainplaceholder"
                 slot-scope="{ docContainerShow }"
@@ -1690,6 +1661,7 @@ export default {
       }
 
       if (!this.permission.includes(100030) && !this.assistantType) {
+        alert('tets --1')
         this.isWhiteBoardEnabled = true;
         this.$refs.doc && this.$refs.doc.toggleBoard(true);
         this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
@@ -2625,7 +2597,7 @@ export default {
       this.doc_permission = _data.doc_permission; // 当前主讲人
       this.mainScreen = _data.main_screen;
       this.speakerList = _data.speaker_list || [];
-      if(this.rootActive && this.rootActive.rebroadcast ){
+      if(this.rootActive.rebroadcast && this.rootActive.rebroadcast.room_id ){
         this.rebroadcast =  this.rootActive.rebroadcast.room_id || '';
         this.rebroadcastChannelId = this.rootActive.rebroadcast.channel_id || '';
       }
