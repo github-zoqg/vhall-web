@@ -633,6 +633,18 @@ const v3Routes = [
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '预约' }
       },
+      {
+        path: '/keylogin/:id',
+        name: 'list',
+        component: () => import('@/views/LiveModule/Subscribe/index'),
+        meta: { title: '口令登录' }
+      },
+      {
+        path: '/keylogin-host/:id',
+        name: 'list',
+        component: () => import('@/views/LiveModule/Subscribe/index'),
+        meta: { title: '口令登录' }
+      },
     ]
   },
   { path: '*', redirect: '/warning/404', hidden: true }

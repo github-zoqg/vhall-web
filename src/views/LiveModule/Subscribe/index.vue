@@ -39,30 +39,35 @@
             <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
           </div>
           <div class="rightWatch">
-            <div class="title">距离直播开始还有</div>
-            <div class="timeBox">
-              <div>
-                <p class="mian">{{days}}</p>
-                <p class="sub">天</p>
+            <template v-if="!isKeyLogin">
+              <div class="title">距离直播开始还有</div>
+              <div class="timeBox">
+                <div>
+                  <p class="mian">{{days}}</p>
+                  <p class="sub">天</p>
+                </div>
+                <div>
+                  <p class="mian">{{hours}}</p>
+                  <p class="sub">小时</p>
+                </div>
+                <div>
+                  <p class="mian">{{minutes}}</p>
+                  <p class="sub">分钟</p>
+                </div>
+                <div>
+                  <p class="mian">{{seconds}}</p>
+                  <p class="sub">秒</p>
+                </div>
               </div>
-              <div>
-                <p class="mian">{{hours}}</p>
-                <p class="sub">小时</p>
+              <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
+              <div class="bottom">
+                <el-button :disabled="btnVal === '已预约' ? true : false" type="primary" @click="subscribe">{{ btnVal }}</el-button>
+                <p class="limit">白名单</p>
               </div>
-              <div>
-                <p class="mian">{{minutes}}</p>
-                <p class="sub">分钟</p>
-              </div>
-              <div>
-                <p class="mian">{{seconds}}</p>
-                <p class="sub">秒</p>
-              </div>
-            </div>
-            <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
-            <div class="bottom">
-              <el-button :disabled="btnVal === '已预约' ? true : false" type="primary" @click="subscribe">{{ btnVal }}</el-button>
-              <p class="limit">白名单</p>
-            </div>
+            </template>
+            <template v-else>
+              <key-login></key-login>
+            </template>
           </div>
         </div>
       </div>
@@ -142,6 +147,7 @@ import custoMenu from '../components/customMenuView';
 import goodsPop from '../Room/rankList/goodsPop';
 import products from '../components/products';
 import signUpForm from './signUpForm';
+import keyLogin from '../components/keyLogin';
 export default {
   components: {
     feedBack,
@@ -149,10 +155,12 @@ export default {
     custoMenu,
     goodsPop,
     products,
-    signUpForm
+    signUpForm,
+    keyLogin
   },
   data(){
     return {
+      isKeyLogin: this.$route.path.startsWith('/keyLogin'),
       title: '预约',
       webinarType: 1,
       viewCount: 0,
@@ -315,7 +323,7 @@ export default {
   .area {
     width: 1220px;
     margin: 0 auto;
-    @media screen and (min-width: 1366px) {
+    @media screen and (min-width: 1367px) {
       width: 1480px;
     }
   }
