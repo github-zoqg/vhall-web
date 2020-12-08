@@ -272,18 +272,16 @@ export default {
           default_type: opts.default_type,
           label: opts.subject,
           order_num: opts.order_num,
-          options: JSON.parse(opts.options),
+          options: opts.options && JSON.parse(opts.options),
           required: !!opts.is_must,
-          phoneValide: !!(JSON.parse(opts.options) && JSON.parse(opts.options).open_verify)
+          phoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).open_verify)
         };
         filedJson = {
           ...filedJson,
           ...mergeObj
         };
-        console.log(opts.subject, JSON.parse(opts.options));
         if ((info.type === 'radio' || info.type === 'checkBox') && opts.items && opts.items.length) {
           opts.items.forEach((item, index) => {
-            console.log('..............', filedJson.nodes, filedJson.nodes[0]);
             const length = filedJson.nodes[0].children.length;
             if (index < length) {
               filedJson.nodes[0].children[index].item_id = item.id;

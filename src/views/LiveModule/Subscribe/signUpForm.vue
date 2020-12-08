@@ -1,280 +1,339 @@
 <template>
   <div class="signFormBox">
     <div class="signWrap">
-      <signUp
-        :baseInfo="baseInfo"
-        :questionArr.sync="questionArr"
-        @closePreview="closePreview"
-      ></signUp>
+      <div class="entryFormBox">
+        <header>
+          <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
+        </header>
+        <article>
+          <h1 class="pageTitle">{{ baseInfo.form_title }}</h1>
+          <div :class="['tabs', colorIndex]">
+            <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
+            <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
+          </div>
+          <!-- 报名表单 -->
+          <template>
+            <el-form v-show="tabs === 1" :model="form" class="entryForm" ref="form" :rules="rules">
+              <el-form-item
+                v-for="(question, quesIndex) in list"
+                :key="question.id"
+                :required="!!question.is_must"
+                :prop="question.id + ''"
+                v-show="question.type != 6"
+                :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
+              >
+                <!-- 输入框 -->
+                <template
+                  v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
+                >
+                  <el-input
+                    v-model="form[question.id]"
+                    :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
+                </template>
+                <!-- 单选 -->
+                <template
+                  v-if="(question.default_type === 4) || question.type === 2"
+                >
+                  <el-radio-group v-model="form[question.id]">
+                    <template v-if="question.default_type === 4">
+                      <el-radio label="男" name="gender"></el-radio>
+                      <el-radio label="女" name="gender"></el-radio>
+                    </template>
+                    <template v-else>
+                      <el-radio
+                        v-for="radioItem in question.items"
+                        :key="radioItem.id"
+                        :label="radioItem.subject"
+                        :name="question.id + ''"
+                      >
+                        <template v-if="radioItem.type === 1">
+                          其他
+                          <el-input v-model="form[`${question.id}other`]" class="noFull radioInput"></el-input>
+                          <br/>
+                        </template>
+                      </el-radio>
+                    </template>
+                  </el-radio-group>
+                </template>
+                <!-- 多选 -->
+                <template
+                  v-if="question.type === 3"
+                >
+                  <el-checkbox-group v-model="form[question.id]">
+                    <el-checkbox
+                      v-for="checkItem in question.items"
+                      :key="checkItem.id"
+                      :label="checkItem.subject"
+                      :name="question.id + ''"
+                    >
+                      <template v-if="checkItem.type === 1">
+                        其他
+                        <el-input v-model="form[`${question.id}other`]" class="noFull radioInput"></el-input>
+                        <br/>
+                      </template>
+                    </el-checkbox>
+                  </el-checkbox-group>
+                </template>
+                <!-- 下拉 -->
+                <template
+                  v-if="question.type === 4"
+                >
+                  <el-select v-model="form[question.id]" placeholder="请选择">
+                    <el-option
+                      v-for="option in question.items"
+                      :key="option.id"
+                      :label="option.subject"
+                      :value="option.subject"
+                    ></el-option>
+                  </el-select>
+                </template>
+                <!-- 地域选择 -->
+                <template
+                  v-if="question.type === 5"
+                >
+                  <el-row :gutter="20">
+                    <el-col :span="8">
+                      <el-select v-model="province" placeholder="请选择省份">
+                        <el-option
+                          v-for="opt in provinces"
+                          :key="opt.value"
+                          :label="opt.label"
+                          :value="opt.value"
+                        ></el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="8">
+                      <el-select v-model="city" placeholder="请选择市">
+                        <el-option
+                          v-for="opt in cityList"
+                          :key="opt.value"
+                          :label="opt.label"
+                          :value="opt.value"
+                        ></el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="8" countyList>
+                      <el-select v-model="form[question.id]" placeholder="请选择区/县">
+                        <el-option
+                          v-for="opt in countyList"
+                          :key="opt.value"
+                          :label="opt.label"
+                          :value="opt.value"
+                        ></el-option>
+                      </el-select>
+                    </el-col>
+                  </el-row>
+                </template>
+              </el-form-item>
+              <el-form-item>
+                <div id="setCaptcha">
+                  <el-input  v-model.trim="form.imgCode"> </el-input>
+                </div>
+                <p class="errorText" v-show="errorMsgShow">图形码错误</p>
+              </el-form-item>
+              <el-form-item :required="false" prop="code">
+                <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码">
+                  <el-button :disabled="time !== 60" class="no-border" size="mini" slot="append" @click="getDyCode(true)">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+                </el-input>
+              </el-form-item>
+              <el-form-item :prop="provicy.id + ''">
+                <!-- 隐私声明 -->
+                <template
+                  v-if="provicy"
+                >
+                  <el-checkbox v-model="form[provicy.id]">
+                    <p>我们根据《隐私声明》保护您填写的所有信息</p>
+                  </el-checkbox>
+                </template>
+              </el-form-item>
+              <el-button round type="primary" @click="submitForm">报名</el-button>
+            </el-form>
+          </template>
+
+          <!-- 验证 -->
+          <template>
+            <el-form v-show="tabs === 2" :model="verifyForm" ref="verifyForm" :rules="verifyRules">
+              <el-form-item
+                required
+                label="请输入报名时您填写的手机号"
+                prop="phone"
+              >
+                <el-input v-model.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <div id="setCaptcha1">
+                  <el-input  v-model.trim="verifyForm.imgCode"> </el-input>
+                </div>
+                <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p>
+              </el-form-item>
+              <el-form-item prop="code">
+                <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码">
+                  <el-button class="no-border" size="mini" slot="append" @click="getDyCode(false)">{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
+                </el-input>
+              </el-form-item>
+              <el-button round type="primary" @click="submitVerify">提交</el-button>
+            </el-form>
+          </template>
+        </article>
+        <i
+          class="closeBtn"
+          @click="closePreview"
+        >&times;</i>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-  import signUp from '../signUp/signUpForm';
+  import Env from "@/api/env";
+  import { validPhone } from '@/utils/validate'
+  import axios from 'axios'
   export default {
-    components: {
-      signUp
+    created() {
+      this.getBaseInfo();
+      this.getQuestionList();
+    },
+    watch: {
+      list: {
+        deep: true,
+        handler(newList) {
+          let form = {};
+          let rules = {};
+          newList && newList.length && newList.forEach(item => {
+            form[item.id] = '';
+            if (item.type === 3) {
+              form[item.id] = [];
+            }
+            if (item.items && item.items.length) {
+              item.items.some(elem => elem.type === 1) && (form[`${item.id}other`] = '');
+            }
+
+            // 生成验证规则
+            if (item.type === 0 && item.default_type === 1) {
+              // 姓名
+              rules[item.id] = {
+                required: !!item.is_must,
+                message: '请填写姓名',
+                trigger: 'blur'
+              }
+            } else if (item.type === 0 && item.default_type === 2) {
+              // 手机号
+              rules[item.id] = {
+                required: !!item.is_must,
+                validator: validPhone,
+                trigger: 'blur'
+              }
+            } else if (item.type === 0 && item.default_type === 4) {
+              // 性别
+              rules[item.id] = {
+                required: !!item.is_must,
+                message: '请选择性别',
+                trigger: 'change'
+              }
+            } else if (item.type === 0 && item.default_type === 3) {
+              // 邮箱
+              rules[item.id] = {
+                type: 'email',
+                required: !!item.is_must,
+                message: '请填写邮箱',
+                trigger: 'blur'
+              }
+            } else if (item.type === 1) {
+              // 问答
+              rules[item.id] = {
+                required: !!item.is_must,
+                message: '请填写内容',
+                trigger: 'blur'
+              }
+            } else if (item.type === 2 || item.type === 4) {
+              // 单选/下拉
+              rules[item.id] = {
+                required: !!item.is_must,
+                message: '请选择内容',
+                trigger: 'change'
+              }
+            } else if (item.type === 3) {
+              // 多选
+              rules[item.id] = {
+                type: 'array',
+                required: !!item.is_must,
+                message: '请选择内容',
+                trigger: 'change'
+              }
+            } else if (item.type === 5) {
+              // 地域
+              rules[item.id] = {
+                required: !!item.is_must,
+                message: '请选择地域',
+                trigger: 'change'
+              }
+            } else if (item.type === 6) {
+              // 隐私协议勾选
+              rules[item.id] = {
+                required: !!item.is_must,
+                message: '请先勾选隐私协议',
+                trigger: 'change'
+              }
+            }
+          })
+          rules.code = {
+            required: true,
+            message: '请输入验证码',
+            trigger: 'blur'
+          }
+          this.form = {
+            imgCode: '',
+            code: '',
+            ...form
+          };
+          this.rules = {
+            ...rules
+          };
+        }
+      }
+    },
+    computed: {
+      cityList() {
+        return this.cities[this.province];
+      },
+      countyList() {
+        return this.counties[this.city]
+      }
     },
     data() {
       return {
-        questionArr: [
-          {
-            "label": "名字",
-            "required": true,
-            "bottomBtn": [],
-            "type": "input",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "placeholder": "请输入姓名"
-              },
-              "value": ""
-            }],
-            "reqType": 0,
-            "default_type": 1,
-            "subject": "名字",
-            "name": "name",
-            "question_id": 6085
-          }, {
-            "label": "性别",
-            "required": false,
-            "bottomBtn": ["delete", "move", "requireSwtich"],
-            "type": "radio",
-            "value": "",
-            "nodes": [{
-              "props": {},
-              "value": "",
-              "children": [{
-                "value": "男"
-              }, {
-                "value": "女"
-              }]
-            }],
-            "reqType": 0,
-            "default_type": 4,
-            "subject": "性别",
-            "name": "gender",
-            "question_id": 4019
-          }, {
-            "label": "单选题",
-            "required": false,
-            "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
-            "type": "radio",
-            "value": "",
-            "nodes": [{
-              "props": {},
-              "value": "",
-              "children": [{
-                "value": ""
-              }, {
-                "value": ""
-              }]
-            }],
-            "reqType": 2,
-            "default_type": "",
-            "labelEditable": true,
-            "question_id": 5070
-          }, {
-            "label": "多选题",
-            "required": false,
-            "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
-            "type": "checkBox",
-            "value": "",
-            "nodes": [{
-              "props": {},
-              "value": [],
-              "children": [{
-                "value": ""
-              }, {
-                "value": ""
-              }]
-            }],
-            "reqType": 3,
-            "default_type": "",
-            "labelEditable": true,
-            "question_id": 7999
-          }, {
-            "label": "问答题",
-            "required": false,
-            "bottomBtn": ["delete", "move", "requireSwtich"],
-            "type": "input",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "placeholder": "请输入答案"
-              },
-              "value": ""
-            }],
-            "reqType": 1,
-            "default_type": "",
-            "labelEditable": true,
-            "question_id": 6874
-          }, {
-            "label": "职务",
-            "required": true,
-            "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
-            "type": "select",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "disabled": true,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "首席执行官/总经理"
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "首席信息官/IT经理"
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "市场总监/经理"
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "销售总监/经理"
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "销售总监/经理"
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "工程技术人员"
-            }, {
-              "props": {
-                "disabled": false,
-                "placeholder": "选项",
-                "class": ["selectInput"]
-              },
-              "canRemove": true,
-              "value": "其他"
-            }],
-            "reqType": 4,
-            "default_type": "",
-            "options": {
-              "item_list": ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"],
-              "question_subject": "职务",
-              "immutable": true
-            },
-            "name": "duty",
-            "question_id": 2559
-          }, {
-            "label": "公司",
-            "required": true,
-            "bottomBtn": ["delete", "move", "requireSwtich"],
-            "type": "input",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "placeholder": "请输入公司名称"
-              },
-              "value": ""
-            }],
-            "reqType": 1,
-            "default_type": "",
-            "options": {
-              "type": 7
-            },
-            "name": "company",
-            "question_id": 7053
-          }, {
-            "label": "地域",
-            "required": true,
-            "bottomBtn": ["delete", "move", "requireSwtich"],
-            "type": "select",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "disabled": true,
-                "placeholder": "省/自治区/直辖市",
-                "class": ["selectInput"]
-              },
-              "value": ""
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "市",
-                "class": ["selectInput"]
-              },
-              "value": ""
-            }, {
-              "props": {
-                "disabled": true,
-                "placeholder": "区/县",
-                "class": ["selectInput"]
-              },
-              "value": ""
-            }],
-            "reqType": 5,
-            "default_type": "",
-            "options": {
-              "show_country": 0,
-              "show_province": 1,
-              "show_city": 1,
-              "show_district": 1
-            },
-            "name": "regional",
-            "question_id": 3362
-          }, {
-            "label": "邮箱",
-            "required": true,
-            "bottomBtn": ["delete", "move", "requireSwtich"],
-            "type": "input",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "placeholder": "请输入邮箱号"
-              },
-              "value": ""
-            }],
-            "reqType": 0,
-            "default_type": 3,
-            "subject": "邮箱",
-            "name": "email",
-            "question_id": 7815
-          }, {
-            "label": "手机号",
-            "required": true,
-            "bottomBtn": ["phoneValid"],
-            "type": "input",
-            "value": "",
-            "nodes": [{
-              "props": {
-                "placeholder": "请输入手机号"
-              },
-              "value": ""
-            }],
-            "reqType": 0,
-            "default_type": 2,
-            "subject": "手机号",
-            "name": "phone",
-            "question_id": 6204
-          }
-        ],
+        Env: Env,
+        webinar_id: this.$route.params.id,
+        colorIndex: 'red',
+        tabs: 1,
+        province: '',
+        city: '',
+        provinces: [],
+        cities: {},
+        counties: {},
+        list: [],
+        errorMsgShow: false,
+        showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
+        captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
+        mobileKey: '', // 云盾值
+        captcha1: null, // 云盾实例
+        captcha2: null, // 云盾实例
+        time: 60,
+        provicy: false,
+        placeholderL: ['', ''],
+        placeholderList: {
+          1: '请输入姓名',
+          2: '请输入手机号',
+          3: '请输入邮箱',
+          5: {
+            province: '请选择省份',
+            city: '请选择市',
+            county: '请选择区/县'
+          },
+          6: '请输入验证码',
+        },
+        rules: {},
+        form: {},
         baseInfo: {
           "open_link": 0,
           "theme_color": "red",
@@ -283,18 +342,323 @@
           "form_title": "ddassd",
           "form_introduce": "",
           "form_cover": "sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png"
-        }
+        },
+        verifyForm: {
+          phone: '',
+          imgCode: ''
+        },
+        verifyRules: {
+          phone: {
+            required: true,
+            message: '请输入手机号',
+            trigger: 'blur'
+          },
+          code: {
+            required: true,
+            message: '请输入验证码',
+            trigger: 'blur'
+          }
+        },
+        verifyErrorMsgShow: false,
+        verifyTime: 60,
       };
+    },
+    mounted() {
+      this.callCaptcha('#setCaptcha');
+      this.callCaptcha('#setCaptcha1');
     },
     methods: {
       closePreview() {
         this.$emit('closeSignUp');
+      },
+      // 获取表单基本信息
+      getBaseInfo() {
+        this.$fetch('regFromGet', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          if (res.code === 200) {
+            this.baseInfo = res.data;
+          }
+        }).catch(err => {
+          this.$message.error(`报名表单基本信息失败！`);
+          console.log(err);
+        });
+      },
+      getDyCode(isForm) {
+        console.log(1111)
+        let phone = ''
+        if (isForm) {
+          const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
+          phone = this.form[phoneItem.id];
+        } else {
+          phone = this.verifyForm.phone
+        }
+        console.log(phone)
+        // 获取短信验证码
+        if (validPhone('', phone) && this.mobileKey) {
+          this.$fetch('regSendVerifyCode', {
+            phone: phone,
+            captcha: this.mobileKey,
+          }).then(() => {
+            this.countDown(isForm);
+          });
+        }
+      },
+      // 倒计时函数
+      countDown(isForm) {
+        const key = isForm ? 'time' : 'verifyTime'
+        if (this[key]) {
+          this[key]--;
+          setTimeout(() => {
+            this.countDown();
+          }, 1000);
+        } else {
+          this[key] = 60;
+        }
+      },
+      /**
+       * 初始化网易易盾图片验证码
+       */
+      callCaptcha(id) {
+        const captcha = id === '#setCaptcha' ? 'captcha1' : 'captcha2'
+        const that = this;
+        // eslint-disable-next-line
+        initNECaptcha({
+          captchaId: that.captchakey,
+          element: id,
+          mode: 'float',
+          onReady(instance) {
+            console.log('instance', instance);
+          },
+          onVerify(err, data) {
+            if (data) {
+              that.mobileKey = data.validate;
+              that.showCaptcha = true;
+              console.log('data>>>', data);
+              that.errorMsgShow = '';
+            } else {
+              that[captcha] = '';
+              console.log('errr>>>', err);
+              that.errorMsgShow = true;
+            }
+          },
+          onload(instance) {
+            console.log('onload', instance);
+            that[captcha] = instance;
+          }
+        });
+      },
+      // 提交表单
+      submitForm() {
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            this.formHandler()
+            console.log(this.form)
+            console.log(JSON.stringify(this.answer))
+            const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
+            console.log(validPhone('', this.form[phoneItem.id]));
+            const options = {
+              webinar_id: this.webinar_id,
+              phone: this.form[phoneItem.id],
+              verify_code: this.form.code,
+              form: JSON.stringify(this.answer),
+              report: JSON.stringify({
+                phone: this.form[phoneItem.id]
+              })
+            }
+            this.$fetch('regAnswerSubmit', options).then(res => {console.log(res)})
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      submitVerify() {
+        this.$refs['verifyForm'].validate((valid) => {
+          if (valid) {
+            this.$fetch('regUserCheck', {
+              webinar_id: this.webinar_id,
+              phone: this.verifyForm.phone,
+              verify_code: this.verifyForm.code,
+              visit_id: 12313 // 访客 ID 是什么？ 建辉沟通一下
+            }).then(res => {
+              console.log(res);
+              // 如果已经报名
+              this.closePreview()
+              this.$emit('changeBtnVal', '已预约')
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      // form => answer
+      formHandler() {
+        const answer = {}
+        this.list.forEach(item => {
+          if (item.type === 0) {
+            // 系统题目
+            !answer.default && (answer.default = []);
+            answer.default.push({
+              "id": item.id,
+              "content": this.form[item.id],
+              "default_type": item.default_type
+            })
+          } else if (item.type === 1) {
+            // 问答
+            const opts = item.options && JSON.parse(item.options);
+            let options = [];
+            opts && opts.type === 7 && (options = {type: 7})
+            !answer.text && (answer.text = []);
+            answer.text.push({
+              "id": item.id,
+              "content": this.form[item.id],
+              "options": options
+            })
+          } else if (item.type === 2) {
+            // 单选
+            !answer.radio && (answer.radio = []);
+            const element = item.items.find(elem => elem.subject === this.form[item.id]);
+            let content = element.type !== 1
+              ? {
+                id: element.id,
+                content: element.subject
+              }
+              : {
+                id: element.id,
+                content: this.form[item.id + 'other'] ? this.form[item.id + 'other'] : '其他'
+              }
+            answer.radio.push({
+              "id": item.id,
+              "content": content
+            })
+          } else if (item.type === 3) {
+            // 多选
+            !answer.checkbox && (answer.checkbox = []);
+            let content = [];
+            this.form[item.id].forEach((checkOpt, index) => {
+              const element = item.items.find(elem => elem.subject === checkOpt);
+              const obj = element.type !== 1
+                ? {
+                  id: element.id,
+                  content: element.subject
+                }
+                : {
+                  id: element.id,
+                  content: this.form[item.id + 'other'] ? this.form[item.id + 'other'] : '其他'
+                }
+              content.push(obj)
+            })
+            answer.checkbox.push({
+              "id": item.id,
+              "content": content
+            })
+          } else if (item.type === 4) {
+            // 下拉
+            !answer.select && (answer.select = []);
+            const element = item.items.find(elem => elem.subject === this.form[item.id]);
+            answer.select.push({
+              "id": item.id,
+              "content": {
+                "id": element.id,
+                "jobTxt": item.subject,
+                "content": element.subject
+              }
+            })
+          } else if (item.type === 5) {
+            // 地域
+            !answer.address && (answer.address = []);
+            const provinec = this.provinces.find(ele => ele.value == this.province)
+            console.log(provinec)
+            const city = this.cityList.find(ele => ele.value == this.city)
+            console.log(this.form[item.id])
+            const county = this.countyList.find(ele => ele.value == this.form[item.id])
+            console.log(county)
+            answer.address.push({
+              "id": item.id,
+              "content": `${provinec.label}${city.label}${county.label}`,
+              "contentDe": [
+                {
+                  "id": provinec.value,
+                  "content": provinec.label
+                },
+                {
+                  "id": city.value,
+                  "content": city.label
+                },
+                {
+                  "id": county.value,
+                  "content": county.label
+                }
+              ]
+            })
+          } else if (item.type === 6) {
+            // 隐私协议勾选
+            !answer.statement && (answer.statement = []);
+            answer.statement.push({
+              "id": item.id,
+              "content": this.form[item.id] ? '是' : '否'
+            })
+          }
+        })
+        this.answer = answer;
+      },
+      // 获取地域列表
+      getAreaList() {
+        axios.get("/data/area.json").then(res => {
+          this.provinces = res.data.provinces;
+          this.cities = res.data.cities;
+          this.counties = res.data.counties;
+        })
+      },
+      // 获取表单题目列表
+      getQuestionList() {
+        function compare(property){
+          return function(a,b){
+            var value1 = a[property];
+            var value2 = b[property];
+            return value1 - value2;
+          };
+        }
+        this.$fetch('regQListGet', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          // 按照 order_num 从小到大排序
+          const list = res.data.ques_list.sort(compare('order_num'));
+          this.list = list;
+          console.log(list);
+          // 隐私声明格式处理
+          const lastQuestion = this.list[this.list.length - 1];
+          console.log(lastQuestion)
+          if (lastQuestion.subject === '隐私声明') {
+            this.provicy = lastQuestion
+            // let parseOpts = lastQuestion.options.substring(1);
+            // parseOpts = parseOpts.substring(0, parseOpts.length-1);
+            // console.log(parseOpts)
+            // parseOpts = JSON.parse(parseOpts)
+            // console.log(this.parseOpts)
+            // const parseOptsFir = parseOpts[0] && JSON.parse(parseOpts[0]);
+            // const parseOptsSec = parseOpts[1] && JSON.parse(parseOpts[1]);
+            // console.log(parseOptsFir)
+            // console.log(parseOptsSec)
+          }
+          list.some(item => item.type === 5) && this.getAreaList()
+        }).catch(err => {
+          console.log(err);
+        });
       },
     }
   };
 </script>
 
 <style lang="less" scoped>
+  @red: #FB3A32;
+  @redBg: #FFEBEB;
+  @blue: #3562FA;
+  @blueBg: #ebefff;
+  @orange: #FA9A32;
+  @orangeBg: #fff5eb;
   .signFormBox {
     position: fixed;
     top: 0;
@@ -309,6 +673,131 @@
     .signWrap {
       overflow-y: auto;
       height: 843px;
+      .entryFormBox {
+        width: 840px;
+        background: #fff;
+        padding-bottom: 90px;
+        position: relative;
+      }
+      header{
+        width: 100%;
+        height: 240px;
+        img{
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .pageTitle{
+        font-size: 24px;
+        color: #1A1A1A;
+        margin: 40px 0;
+        text-align: center;
+      }
+      article{
+        padding: 0 75px;
+      }
+      .closeBtn{
+        width: 32px;
+        height: 32px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 28px;
+        color: #fff;
+        position: absolute;
+        right: 16px;
+        top: 16px;
+        font-size: 32px;
+        text-align: center;
+        line-height: 26px;
+        font-style: normal;
+        cursor: pointer;
+      }
+      .tabs{
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 43px;
+        >div{
+          width: 50%;
+          float: left;
+          border-radius: 4px;
+          border: 1px solid #E6E6E6;
+          border-radius: 4px 0px 0px 4px;
+          line-height: 40px;
+          height: 40px;
+          text-align: center;
+          transition: all .2s linear;
+          cursor: pointer;
+          &:nth-child(1){
+            border-right: 0px none;
+          }
+          &:nth-child(2){
+            border-left: 0px none;
+          }
+          &.active{
+            border: 1px solid @red;
+            background: @redBg;
+            color: @red;
+          }
+        }
+        &.red{
+          .active{
+            border: 1px solid @red;
+            background: @redBg;
+            color: @red;
+          }
+        }
+        &.blue{
+          .active{
+            border: 1px solid @blue;
+            background: @blueBg;
+            color: @blue;
+          }
+        }
+        &.orange{
+          .active{
+            border: 1px solid@orange;
+            background: @orangeBg;
+            color:@orange;
+          }
+        }
+      }
+      /deep/ .el-form-item__label{
+        float: none;
+      }
+      .el-checkbox-group{
+        width: 100%;
+        padding-left: 20px;
+        .el-checkbox{
+          display: block;
+          margin-top: 20px;
+        }
+        /deep/ .el-checkbox__label{
+          width: 100%;
+        }
+        .el-checkbox:last-child{
+          margin-right: 30px;
+        }
+      }
+      .el-select{
+        width: 100%;
+      }
+      .el-radio-group{
+        width: 100%;
+        padding-left: 20px;
+        .el-radio{
+          display: block;
+          margin-top: 20px;
+        }
+        .el-radio:last-child{
+          margin-right: 30px;
+        }
+      }
+      .noFull {
+        width: calc(100% - 30px);
+      }
+      /deep/ .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
+        background-color: inherit;
+        border: none;
+      }
     }
   }
 </style>

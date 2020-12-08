@@ -29,16 +29,30 @@
                 </el-option>
               </el-select>
             </template>
+            <!-- 隐私声明 -->
+            <!-- <template v-else-if="formItem.name=='privacy'">
+              <el-checkbox v-model="formItem.value">
+                <p v-html="privacyFormatter(formItem.nodes)"></p>
+              </el-checkbox>
+            </template> -->
             <template v-for="(nodes, nodeIndex) in formItem.nodes" v-else>
               <el-input v-if="formItem.type=='input'"  :key="`${formIndex}-${nodeIndex}`" v-model="nodes.value" v-bind="nodes.props"></el-input>
               <!-- 单选类型 -->
               <el-radio-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='radio'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-radio v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
+                  {{radioItem.other ? "其他" : radioItem.value}}
+                  <el-input v-if="radioItem.other" maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" ></el-input>
+                  <br/>
                 </el-radio>
               </el-radio-group>
               <!-- 多选类型 -->
               <el-checkbox-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='checkBox'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-checkbox v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
+                  {{radioItem.other ? "其他" : radioItem.value}}
+                  <el-input v-if="radioItem.other" maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
+                    <i class="el-icon-remove-outline removeIcon" slot="suffix" @click="deleteOptions(node.children, raionIndex)"></i>
+                  </el-input>
+                  <br/>
                 </el-checkbox>
               </el-checkbox-group>
             </template>
@@ -132,9 +146,9 @@ export default {
   },
   computed: {
     renderQuestionArr() {
-      return this.questionArr.filter(item => {
+      return JSON.parse(JSON.stringify(this.questionArr.filter(item => {
         return item.label !== '隐私声明';
-      });
+      })))
     },
     privacyItem() {
       if (this.questionArr.length > 0 && this.questionArr[this.questionArr.length - 1].label === '隐私声明') {
