@@ -60,7 +60,7 @@
             </div>
             <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
             <div class="bottom">
-              <el-button type="primary" @click="subscribe">立即预约</el-button>
+              <el-button :disabled="btnVal === '已预约' ? true : false" type="primary" @click="subscribe">{{ btnVal }}</el-button>
               <p class="limit">白名单</p>
             </div>
           </div>
@@ -130,7 +130,7 @@
     <!-- 商品详情的弹窗 -->
     <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
     <!-- 报名表单 -->
-    <signUpForm v-if="!isSignUp" @closeSignUp="isSignUp = true"></signUpForm>
+    <signUpForm v-if="!isSignUp" @closeSignUp="isSignUp = true" @changeBtnVal="changeBtnVal"></signUpForm>
   </div>
 </template>
 
@@ -172,6 +172,7 @@ export default {
       shadeShow: false,
       goodsPopShow: false,
       isSignUp: true,
+      btnVal: '立即预约'
     };
   },
   created(){
@@ -275,6 +276,10 @@ export default {
       this.shadeShow = false;
       this.goodsPopShow = false;
     },
+    // 改变按钮显示内容
+    changeBtnVal(newValue) {
+      this.btnVal = newValue
+    }
   },
   filters: {
     webinarTypeToText(val){

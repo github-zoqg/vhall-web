@@ -104,6 +104,7 @@
               >
                 {{radioItem.other ? "其他" : ''}}
                 <el-input
+                  :disabled="radioItem.other"
                   @change="(chooseOptChange(item, radioItem))"
                   maxlength="50"
                   show-word-limit
@@ -133,6 +134,7 @@
               >
                 {{radioItem.other ? "其他" : ''}}
                 <el-input
+                  :disabled="radioItem.other"
                   maxlength="50"
                   show-word-limit
                   :placeholder="`选项${raionIndex+1}`"
