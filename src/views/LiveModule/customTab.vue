@@ -144,7 +144,8 @@
                 <!-- 菜单列表 -->
                 <div class="panel__app__menu">
                   <ul class="app__menu__list" :style="{'marginLeft': marginLeft + 'px'}">
-                    <li v-for="(item, ins) in customMenus" :key="ins" :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"
+                    <li v-for="(item, ins) in customMenus" :key="ins"
+                        :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"
                         @click.prevent.stop="isOpenHoverHandle(item, ins)"  @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)"
                     >
                       <div class="menu__item__title" >{{ item.name }}</div>
@@ -183,7 +184,7 @@
                   <img src="https://t-alistatic01.e.vhall.com/static/images/menu/doc-bg-new-h5.png">
                 </div>
                 <!-- 聊天静态展示 -->
-                <static-chat v-if="Number(clickItem.type) === 3"></static-chat>
+                <static-chat v-else-if="Number(clickItem.type) === 3"></static-chat>
                 <!-- 简介静态展示 -->
                 <static-introduce v-else-if="Number(clickItem.type) === 4"></static-introduce>
                 <!-- 商品静态展示 -->
@@ -270,6 +271,10 @@
             <!-- 组件标题 -->
             <div class="comp__edit__title">{{unitComp.name}}</div>
             <!-- 编辑区域引入 -->
+            <!-- 文档废弃
+            <unit-menu-doc v-if="Number(clickItem.type) === 2"></unit-menu-doc>
+            -->
+            <unit-menu-chat v-if="Number(clickItem.type) === 3"></unit-menu-chat>
             <unit-img-txt ref="img-txt-unit-dom" v-if="unitComp.show_type === 'img-txt'" @cxtChangeInfo="editChange"></unit-img-txt>
             <unit-rq-code ref="rq-code-unit-dom" v-if="unitComp.show_type === 'rq-code'" @cxtChangeInfo="editChange"/>
             <unit-video ref="video-unit-dom" v-if="unitComp.show_type === 'video'"/>
@@ -310,6 +315,9 @@ import PageTitle from '@/components/PageTitle';
 // 展示区
 import ShowVideo from  './CustomTab/showVideo.vue';
 import ShowSpecial from  './CustomTab/showSpecial.vue';
+// 菜单设置区
+import UnitMenuChat from  './CustomTab/unitMenuChat.vue';
+
 // 编辑区
 import UnitImgTxt from  './CustomTab/unitImgTxt.vue';
 import UnitRqCode from  './CustomTab/unitRqCode.vue';
@@ -342,6 +350,7 @@ export default {
     UnitImgLink,
     UnitTitle,
     UnitRank,
+    UnitMenuChat
   },
   data() {
     return {
@@ -360,7 +369,7 @@ export default {
           { required: true, maxlength: 8, message: '请输入菜单名称', trigger: 'blur' }
         ]
       },
-      menuTabIndex: 0,
+      menuTabIndex: null,
       marginLeft: 0,
       clickItem: {},
       modShowHtmlList: [], // 展示模块中创建的组件push进入的数据集合。但删除的时候，组件编号顺序变化情况需关注。
@@ -438,19 +447,43 @@ export default {
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
+        res = {"code":200,"msg":"success","data": {
+            list: [
+              {"name":"\u6587\u6863","type":2,"status":1,"doc_id":0,"doc_name":""},
+              {"name":"\u804a\u5929","type":3,"status":1,"welcome_content":""},
+              {"name":"\u7b80\u4ecb","type":4,"status":1},
+              {"name":"\u63a8\u8350","type":6,"status":1},
+              {"name":"\u5546\u54c1","type":5,"status":1}
+            ]
+          }
+        }
         if(res && res.code === 200) {
           let menuList = res.data.list;
-          menuList.map((item, ins) => {
+          let docItem = menuList.filter(item => item.type === 2);
+          if(docItem && docItem.length > 0) {
+            sessionOrLocal.set('menu_doc_default', JSON.stringify(docItem[0]));
+            console.log(docItem, '===> 过滤结果，文档')
+          }
+          // 其它状态处理
+          let newMenuList = menuList.filter((item) => {
+            return item.type !== 2;
+          }).map((item, ins) => {
             item.isShow = false;
-            item.isOpen = ins <= 0;
+            // 默认简介选中
+            if(item.type === 4) {
+              item.isOpen = true;
+              this.clickItem = item;
+              this.menuTabIndex = ins;
+              sessionOrLocal.set('menu_active', ins);
+              console.log(ins, this.clickItem, '===> 设定当前简介下标');
+            } else {
+              item.isOpen = false;
+            }
             return item;
           });
-          this.customMenus = menuList;
-          if(menuList && menuList.length > 0) {
-            // 默认第一个菜单被选中
-            this.clickItem = menuList[0];
-            this.menuTabIndex = 0;
-            sessionOrLocal.set('menu_active', this.menuTabIndex);
+          console.log(newMenuList, '===> 设定默认状态以及简介选中状态，菜单所有')
+          if(newMenuList && newMenuList.length > 0) {
+            this.customMenus = newMenuList;
           }
         } else {
           this.customMenus = [];
@@ -863,7 +896,7 @@ export default {
 }
 /*  APP 左侧布局 */
 .panel__app {
-  padding: 24px 24px 40px 24px;
+  padding: 0 0;
   .flex-display();
   .justify(space-between);
 }
@@ -872,17 +905,18 @@ export default {
   margin-right: 16px;
   height: 661px;
   overflow-y: auto;*/
-  width: 326px;
-  height: 631px;
+  width: 368px;
+  height: 674px;
   background-image: url('../../common/images/h5-show-phone.png');
   background-size: cover;
-  margin-top: -15px;
+  margin-top: -16px;
+  margin-left: -16px;
   position: relative;
   .panel__preview {
     position: absolute;
-    top: 286px;
-    width: 290px;
-    left: 25px;
+    top: 304px;
+    width: 310px;
+    left: 27px;
   }
   .panel__preview__ctx {
     height: 275px;
@@ -892,7 +926,7 @@ export default {
   }
 }
 .app__right {
-  width: calc(100% - 340px);
+  width: calc(100% - 368px);
 }
 .comp__edit__title {
   margin-bottom: 32px;
@@ -1221,6 +1255,9 @@ export default {
 }
 /*文档*/
 .static-doc {
+  width: 286px;
+  height: 160px;
+  margin: 0 auto;
   img {
     width: 100%;
     height: auto;

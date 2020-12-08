@@ -186,7 +186,7 @@
 
 <script>
   import Env from "@/api/env";
-  import { validPhone } from '@/utils/validate'
+  import { validPhone } from '@/utils/validate.js'
   import axios from 'axios'
   export default {
     created() {
