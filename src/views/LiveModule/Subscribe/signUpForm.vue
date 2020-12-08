@@ -142,7 +142,7 @@
                   v-if="provicy"
                 >
                   <el-checkbox v-model="form[provicy.id]">
-                    <p>我们根据《隐私声明》保护您填写的所有信息</p>
+                    <p v-html="provicyText"></p>
                   </el-checkbox>
                 </template>
               </el-form-item>
@@ -320,6 +320,7 @@
         captcha2: null, // 云盾实例
         time: 60,
         provicy: false,
+        provicyText: '',
         placeholderL: ['', ''],
         placeholderList: {
           1: '请输入姓名',
@@ -385,7 +386,6 @@
         });
       },
       getDyCode(isForm) {
-        console.log(1111)
         let phone = ''
         if (isForm) {
           const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
@@ -397,6 +397,7 @@
         // 获取短信验证码
         if (validPhone('', phone) && this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
+            webinar_id: this.webinar_id,
             phone: phone,
             captcha: this.mobileKey,
           }).then(() => {
@@ -633,20 +634,31 @@
           console.log(lastQuestion)
           if (lastQuestion.subject === '隐私声明') {
             this.provicy = lastQuestion
-            // let parseOpts = lastQuestion.options.substring(1);
-            // parseOpts = parseOpts.substring(0, parseOpts.length-1);
-            // console.log(parseOpts)
-            // parseOpts = JSON.parse(parseOpts)
-            // console.log(this.parseOpts)
-            // const parseOptsFir = parseOpts[0] && JSON.parse(parseOpts[0]);
-            // const parseOptsSec = parseOpts[1] && JSON.parse(parseOpts[1]);
-            // console.log(parseOptsFir)
-            // console.log(parseOptsSec)
+            this.provicy && this.privacyFormatter()
           }
           list.some(item => item.type === 5) && this.getAreaList()
         }).catch(err => {
           console.log(err);
         });
+      },
+      privacyFormatter(){
+        let parseOpts = JSON.parse(this.provicy.options)
+        const parseOptsFir = parseOpts[0] && JSON.parse(parseOpts[0].options);
+        const parseOptsSec = parseOpts[1] && JSON.parse(parseOpts[1].options);
+
+        let text = parseOptsFir.content;
+        let matchPrivacy1 = parseOptsFir.color_text.trim() ? text.match(parseOptsFir.color_text) : null;
+        if(matchPrivacy1){
+          let reg = new RegExp(`(${matchPrivacy1[0]})`);
+          text = text.replace(reg, `<a href="${parseOptsFir.url}" target="_blank">$1</a>`);
+        }
+        let matchPrivacy2 = (parseOptsSec && parseOptsSec.privacy_info.trim()) ? text.match(parseOptsSec.privacy_info) : null;
+        if(matchPrivacy2){
+          let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
+          text = text.replace(reg, `<a href="${parseOptsSec.url}" target="_blank">$1</a>`);
+        }
+
+        this.provicyText = text;
       },
     }
   };
