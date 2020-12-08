@@ -49,7 +49,7 @@
     >
       <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
-        <li class="viewItem" v-for="(item, index) in renderQuestion" :key="index">
+        <li class="viewItem" v-for="(item, index) in renderQuestion" :key="item.question_id">
           <p class="label">
             {{ index < 9 ? `0${ index + 1 }` : index + 1 }}.
             <!-- {{item.required ? '（必填）' : ''}} -->
@@ -98,7 +98,7 @@
               :key='`${index}-${nodeIndex}`'
             >
               <el-radio
-                :name="item.id || 'ceshi'"
+                :name="item.id"
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
               >
