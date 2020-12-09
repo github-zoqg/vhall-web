@@ -9,13 +9,13 @@
               <el-radio :label="1">自定义皮肤</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="页面设置">
+          <el-form-item label="页面设置" v-if="skinType === 1">
             <color-set :themeKeys=pageBgColors></color-set>
           </el-form-item>
-          <el-form-item label="页面风格">
+          <el-form-item label="页面风格" v-if="skinType === 1">
             <color-set :themeKeys=pageThemeColors :openSelect=true></color-set>
           </el-form-item>
-          <el-form-item label="标志替换：" prop="logo_url">
+          <el-form-item label="标志替换：" prop="logo_url" v-if="skinType === 1">
             <upload
               class="upload__sign heightMore"
               v-model="skinSetForm.logo_url"
@@ -35,6 +35,9 @@
               </div>
             </upload>
             <p class="p-notice">开启时支持更换品牌标志</p>
+          </el-form-item>
+          <el-form-item label="" v-if="skinType !== 1">
+            <p>无需设置皮肤，默认皮肤效果</p>
           </el-form-item>
           <el-form-item label="">
             <el-button type="primary" round @click.prevent.stop="skinSetSave">保 存</el-button>
@@ -684,21 +687,63 @@ export default {
         this.signSetForm.logoUrl = '';
       });
     },
-    initComp() {},
+    initComp() {
+      // 获取当前活动启用皮肤的信息详情
+      this.getInterWebinarSkin();
+    },
+    getInterWebinarSkin() {
+      this.$fetch('getInterWebinarSkin', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        if (res && res.code === 200) {
+          this.skinVo = res.data;
+        } else {
+          this.skinVo = {};
+        }
+      }).catch(err=>{
+        console.log(err);
+        this.skinVo = {};
+      });
+    },
     skinSetSave() {
       this.$refs.signSetForm.validate((valid) => {
         if(valid) {
-          this.$fetch('userEdit', this.signSetForm).then(res => {
-            console.log(res);
-            if (res && res.code === 200) {
-              this.$message.success('保存基本设置成功');
-            } else {
-              this.$message.error(res.msg || '保存基本设置失败');
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$message.error('保存基本设置失败');
-          });
+          if (this.skinType !== 1) {
+            this.$fetch('setSkinWebinarSkin', {
+              webinar_id: this.$route.params.str,
+              status: 0
+            }).then(res => {
+              if (res && res.code === 200) {
+                this.$message.success('默认皮肤使用设置成功');
+              } else {
+                this.$message.error(res.msg || '默认皮肤使用设置失败');
+              }
+            }).catch(err=>{
+              console.log(err);
+              this.$message.error('保存基本设置失败');
+            });
+          } else {
+            this.$fetch('skinCreate', {
+              skin_name: '',
+              skin_json_pc: '',
+              skin_style_code_pc: '',
+              skin_json_wap: '',
+              skin_style_code_wap: '',
+              skin_preview_code_pc: '',
+              skin_preview_code_wap: '',
+              webinar_id: this.$route.params.str
+            }).then(res => {
+              console.log(res);
+              if (res && res.code === 200) {
+                this.$message.success('保存基本设置成功');
+              } else {
+                this.$message.error(res.msg || '保存基本设置失败');
+              }
+            }).catch(err=>{
+              console.log(err);
+              this.$message.error('保存基本设置失败');
+            });
+          }
         }
       });
     }

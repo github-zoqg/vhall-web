@@ -19,6 +19,8 @@ modulesFiles.keys().map((modulePath) => {
   }
 });
 const createRouter = () => new Router({
+  mode: 'history',
+  base: '',
   routes
 });
 const router = createRouter();
