@@ -65,8 +65,8 @@
                 <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
                   <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </el-input>
-                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}</strong>个</span>
-                <el-button class="down-btn" round>下载邀请码</el-button>
+                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
+                <el-button class="down-btn" round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
@@ -104,8 +104,8 @@
                 <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
                   <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
                 </el-input>
-                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.nums ? viewerDao.nums : 0}}</strong>个</span>
-                <el-button class="down-btn" round>下载邀请码</el-button>
+                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
+                <el-button class="down-btn" round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
@@ -167,7 +167,7 @@
           <el-form label-width="100px">
             <el-form-item label="选择观众组">
               <ul class="tab__white tab__white__group">
-                <li :class="['tab__btn--solid', {'active': whiteIds.includes(item.id)}]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
+                <li :class="['tab__btn--solid', {'active': whiteId === item.id }]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
                   <span>{{item.subject}}</span>
                 </li>
                 <li class="tab__btn--dashed">
@@ -269,6 +269,7 @@ export default {
         preview_time: 5, // 试看时长-分钟计
       },
       whiteIds: [],
+      whiteId: null, // 观众组只可选择一个
       groupList: [],
       payForm: {
         fee: ''
@@ -328,13 +329,44 @@ export default {
       this.$fetch('viewerSetGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        res && res.code === 200 && res.data ? this.viewerDao = res.data : this.viewerDao = {};
-        // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
-        this.form.verify = res.data.verify || 0;
+        if(res && res.code === 200) {
+          this.viewerDao = res.data;
+          // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
+          let { webinar_id, verify, password, white_id, fee, is_preview, preview_time} = res.data;
+          this.$nextTick(() => {
+            this.form = {
+              webinar_id: webinar_id,
+              verify: verify,
+              password: password, // 观看密码
+              white_id: white_id, // 白名单-观众组字符拼接串
+              fee: fee, // 付费金额,
+              is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
+              preview_time: preview_time // 试看时长-分钟计
+            };
+            console.log(this.form, '当前');
+            // 表单选项初始化
+            this.initViewerSet();
+          })
+        }
       }).catch(err=>{
         console.log(err);
         this.viewerDao = {};
       });
+    },
+    initViewerSet() {
+      // let arr = ['', 'pwdForm', 'whiteForm', 'payForm', 'fCodeForm', '', 'fCodePayForm'];
+      if(this.form.verify === 1) {
+        this.pwdForm.password = this.viewerDao.password;
+      } else if (this.form.verify === 2) {
+        this.whiteIds = this.viewerDao.white_id;
+      } else if (this.form.verify === 3) {
+        this.payForm.fee = this.viewerDao.fee;
+      } else if (this.form.verify === 4) {
+        this.fCodeForm.nums = this.viewerDao.nums;
+      } else if (this.form.verify === 6) {
+        this.fCodePayForm.nums = this.viewerDao.nums;
+        this.fCodePayForm.fee = this.viewerDao.fee;
+      }
     },
     // 观看限制保存
     viewerSetSave() {
@@ -350,12 +382,14 @@ export default {
           }
         });
       } else if(formName === 'whiteForm') {
-        flag = this.whiteIds.length > 0;
+        /*flag = this.whiteIds.length > 0;*/
+        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
         if (!flag) {
           this.$message.error('请选择观众组');
           return;
         }
-        params = Object.assign(this.form, {white_id: this.whiteIds.join(',')});
+        // params = Object.assign(this.form, {white_id: this.whiteIds.join(',')});
+        params = Object.assign(this.form, {white_id: this.whiteId});
       } else if (formName === '') {
         flag = true; // 免费不验证
         params = Object.assign(this.form);
@@ -391,7 +425,7 @@ export default {
     },
     selectGroup(item) {
       console.log(item);
-      if(!this.whiteIds.includes(item.id)) {
+      /*if(!this.whiteIds.includes(item.id)) {
         this.whiteIds.push(item.id);
       } else {
         if(this.whiteIds.includes(item.id)) {
@@ -399,6 +433,8 @@ export default {
         }
       }
       console.log('当前已经选中分组集合'+this.whiteIds.join('.'));
+      */
+      this.whiteId = item.id;
     },
     // 验证码生成
     fCodeExecute(formName) {
@@ -409,13 +445,15 @@ export default {
         }
       });
       if(flag) {
-        this.$fetch('audienceGet', {
+        this.$fetch('fCodeExecute', {
           webinar_id: this.$route.params.str,
           nums: this[formName].nums
         }).then(res => {
           if(res && res.code === 200) {
             this.$message.success('生成成功');
-            this.viewerSetGet();
+            // this.viewerSetGet();
+            // 更新已生成邀请码数量
+            this.viewerDao.fcodes = res.data.code_count;
           } else {
             this.$message.error(res.msg || '生成失败');
           }
@@ -424,6 +462,9 @@ export default {
           this.$message.error('生成失败');
         });
       }
+    },
+    downFCodeHandle() {
+      window.open(`${env.staticLinkVo.downOldUrl}/export/fcode/${this.$route.params.str}`, '_blank');
     },
     initPage() {
       this.viewerSetGet();
