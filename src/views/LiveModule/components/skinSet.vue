@@ -2,7 +2,7 @@
   <div class="skin--set">
     <div class="sign--set--main">
       <div class="skin--set--left">
-        <el-form :model="skinSetForm" ref="signSetForm" :rules="skinSetFormRules" label-width="94px">
+        <el-form :model="skinSetForm" ref="skinSetForm" :rules="skinSetFormRules" label-width="94px">
           <el-form-item label="皮肤方案">
             <el-radio-group v-model="skinType">
               <el-radio :label="0">默认皮肤</el-radio>
@@ -10,14 +10,14 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="页面设置" v-if="skinType === 1">
-            <color-set :themeKeys=pageBgColors @color="bgColorHandle"></color-set>
+            <color-set ref="pageBgColors" :themeKeys=pageBgColors @color="bgColorHandle" :colorDefault="skinSetForm.bgColor"></color-set>
           </el-form-item>
           <el-form-item label="页面风格" v-if="skinType === 1">
-            <color-set :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle"></color-set>
+            <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="skinSetForm.pageStyle"></color-set>
           </el-form-item>
           <el-form-item label="背景图：" prop="bg_url" v-if="skinType === 1">
             <upload
-              class="upload__sign heightMore"
+              class="upload__skin heightMore"
               v-model="skinSetForm.bg_url"
               :saveData="{
                  path: 'webinars/sign_set_url',
@@ -39,7 +39,7 @@
           <el-form-item label="" v-if="skinType !== 1">
             <p>无需设置皮肤，默认皮肤效果</p>
           </el-form-item>
-          <el-form-item label="" v-if="skinVo.skin_json_pc || skinType === 1">
+          <el-form-item label="" v-if="skinType === 1 && skinVo.skin_json_pc || skinType === 1">
             <el-button type="primary" round @click.prevent.stop="skinSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
@@ -64,19 +64,19 @@ export default {
   },
   data() {
     return {
-      skinType: 0, // 0-默认皮肤；1-自定义皮肤
-      skinVo: null,
+      skinType: null, // 0-默认皮肤；1-自定义皮肤
+      skinVo: {},
       pageBgColors: ['FFFFFF', 'F2F2F2', '1A1A1A'],
       pageThemeColors: ['FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       skinSetForm: {
         bg_url: null,
-        bgColor: '',
-        pageStyle: '',
+        bgColor: '#FFFFFF',
+        pageStyle: '#FB3A32',
         popStyle: ''
       },
       skinSetFormRules: {
-        logo: [
-          {require: true, message: '请先选择图片', trigger: 'change'}
+        bg_url: [
+          {require: true, message: '请先选择背景图片', trigger: 'change'}
         ]
       },
     };
@@ -87,31 +87,29 @@ export default {
         bgColor: this.skinSetForm.bgColor,
         pageStyle: this.skinSetForm.pageStyle,
         popStyle: '',
-        background: "webinars/skin_img/4c/dc/4cdc01abf8329501fe75b145db8fc6e0.jpeg"
+        background: this.$parseURL(this.skinSetForm.bg_url).path,
       };
       // 无手机端设置的时候，如 => skin_json_wap = {"logo":"","pageStyle":""} skin_style_code_wap为空
       // 有手机端设置的时候，{"logo":"webinars/skin_img/5c/5d/5c5dce7de690e4f1d0fbf845eb13c1a9.jpg","pageStyle":"bg-red"}
-      let skin_json_wap = {
-        "logo":"webinars/skin_img/5c/5d/5c5dce7de690e4f1d0fbf845eb13c1a9.jpg",
-        "pageStyle":"bg-red"
-      };
+      let skin_json_wap = skin_json_pc;
       return {
+        skin_name: '用户自定义',
         skin_json_pc: JSON.stringify(skin_json_pc),
-        skin_style_code_pc: ``,
+        skin_style_code_pc: `/*pc端样式*/`,
         skin_json_wap: JSON.stringify(skin_json_wap),
-        skin_style_code_wap: ``,
-        skin_preview_code_pc: ``,
-        skin_preview_code_wap: ``
+        skin_style_code_wap: `/*手机端样式*/`,
+        skin_preview_code_pc: `/*pc端预览样式*/`,
+        skin_preview_code_wap: `/*手机端预览样式*/`
       }
     }
   },
   methods: {
     bgColorHandle(color) {
-      this.signSetForm.bgColor = color;
+      this.skinSetForm.bgColor = color;
     },
     // 页面样式色值
     pageStyleHandle(color) {
-      this.signSetForm.pageStyle = color;
+      this.skinSetForm.pageStyle = color;
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -145,7 +143,7 @@ export default {
     },
     resetLogoUrl() {
       this.$nextTick(()=> {
-        this.signSetForm.logoUrl = '';
+        this.skinSetForm.bg_url = '';
       });
     },
     initComp() {
@@ -157,18 +155,25 @@ export default {
         webinar_id: this.$route.params.str
       }).then(res => {
         if (res && res.code === 200) {
-          this.skinVo = res.data || null;
-          this.skinType = res.data.status > 1 ? 1 : 0;
+          this.skinVo = res.data || {};
+          this.skinType = Number(res.data.status) > 0 ? 1 : 0;
+          // 页面赋值
+          let skin_json_pc = JSON.parse(res.data.skin_json_pc);
+          this.skinSetForm.bgColor = skin_json_pc.bgColor;
+          this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
+          this.skinSetForm.bg_url = skin_json_pc.background;
+          this.skinSetForm.skin_id = res.data.skin_id || '';
+          console.log(this.skinType, '页面刷新后');
         } else {
-          this.skinVo = null;
+          this.skinVo = {};
         }
       }).catch(err=>{
         console.log(err);
-        this.skinVo = null;
+        this.skinVo = {};
       });
     },
     skinSetSave() {
-      this.$refs.signSetForm.validate((valid) => {
+      this.$refs.skinSetForm.validate((valid) => {
         if(valid) {
           if (this.skinType !== 1) {
             this.$fetch('setSkinWebinarSkin', {
@@ -177,6 +182,7 @@ export default {
             }).then(res => {
               if (res && res.code === 200) {
                 this.$message.success('默认皮肤使用设置成功');
+                this.getInterWebinarSkin();
               } else {
                 this.$message.error(res.msg || '默认皮肤使用设置失败');
               }
@@ -185,19 +191,17 @@ export default {
               this.$message.error('保存基本设置失败');
             });
           } else {
-            this.$fetch('skinCreate', {
-              skin_name: '',
-              skin_json_pc: '',
-              skin_style_code_pc: '',
-              skin_json_wap: '',
-              skin_style_code_wap: '',
-              skin_preview_code_pc: '',
-              skin_preview_code_wap: '',
-              webinar_id: this.$route.params.str
-            }).then(res => {
+            let params = Object.assign({
+              webinar_id: this.$route.params.str,
+              status: 1
+            }, this.tmpl, {
+              skin_id: this.skinSetForm.skin_id || ''
+            });
+            this.$fetch(this.skinSetForm.skin_id ? 'skinUpdate' : 'skinCreate', this.$params(params)).then(res => {
               console.log(res);
               if (res && res.code === 200) {
                 this.$message.success('保存基本设置成功');
+                this.getInterWebinarSkin();
               } else {
                 this.$message.error(res.msg || '保存基本设置失败');
               }
@@ -225,13 +229,15 @@ export default {
 .skin--set--left{
   width: 50%;
 }
+/deep/.el-form-item__label {
+  line-height: 40px;
+}
 .brand--preview {
   width: calc(50% - 48px);
   padding-left: 48px;
 }
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;
-  line-height: 20px;
 }
 /deep/.el-form-item {
   margin-bottom: 32px;
