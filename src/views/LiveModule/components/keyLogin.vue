@@ -16,7 +16,7 @@
   export default {
     data() {
       return {
-        ishost: this.$route.path.startsWith('/keyLogin-host'),
+        ishost: this.$route.path.startsWith('/keylogin-host'),
         name: '',
         keyCode: '',
         warnningVal: ''

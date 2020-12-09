@@ -160,7 +160,7 @@ export default {
   },
   data(){
     return {
-      isKeyLogin: this.$route.path.startsWith('/keyLogin'),
+      isKeyLogin: this.$route.path.startsWith('/keylogin'),
       title: '预约',
       webinarType: 1,
       viewCount: 0,
