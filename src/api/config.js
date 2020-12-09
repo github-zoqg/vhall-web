@@ -355,9 +355,10 @@ const apis = {
   onlineUserList :['/interacts/chat-user/get-online-list', 'POST'], // 获取在线用户列表
   liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播  √
   rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 √
-  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 未知
-  v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 未知
-  v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 未知
+  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 √
+  v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 √
+  v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 √
+
 
   // 授权模块
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••
@@ -442,6 +443,8 @@ const apis = {
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
+  v3InviteMic: ['/v3/interacts/inav/invite', 'POST'],// 邀请用户上麦
+  v3SetDevice: ['/v3/interacts/room/set-device', 'POST'], //设置房间用户的设备检测状态
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
 

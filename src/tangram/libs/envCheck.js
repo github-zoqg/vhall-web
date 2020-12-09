@@ -52,7 +52,9 @@ export default {
     },
     customGetDevices () {
       if (this.isInteract == 1 && navigator.mediaDevices) {
+
         navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
+
           EventBus.$emit('deviceSuccess', { audio: true, video: true, type: 'permissionCheck' });
           this.setDeviceStatus(1);
           stream.getTracks().forEach((trackInput) => {
@@ -81,7 +83,7 @@ export default {
         _flag = true;
       }
       if (_flag) {
-        this.$vhallFetch('setDevice', {
+        this.$fetch('v3SetDevice', {
           room_id: this.roomId,
           status: videoStatus,
           type: type

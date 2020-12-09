@@ -694,11 +694,11 @@ export default {
       components: null,
       userChatId: null,
       nickName: null,
-      roominfo: { 
+      roominfo: {
         modules: {
           initiator: {},
           header: {},
-          logo: {} 
+          logo: {}
         },
         auth: {},
         host: {},
@@ -772,7 +772,7 @@ export default {
        * 2.  计算出文档区高度 + with - 295 / x = 16/ 9
        * x =  width - 295 / 1.78
        * 容器高度 =  height + 46 // 底部互动工具栏高度
-      */ 
+      */
       const ratio = 16 / 9;
       const docHeight = (width - 294) / ratio + 46;
       document.querySelector('.seeding-content').style.height = `${docHeight}px`;
@@ -949,7 +949,7 @@ export default {
     registerClick() {
       window.location.href = `${this.webDominUrl}/auth/register`
     },
-    // 超过登录次数 唤起图片验证码 
+    // 超过登录次数 唤起图片验证码
     callCaptcha(element) {
       let that = this;
       initNECaptcha({
@@ -1409,7 +1409,7 @@ export default {
           default_definition: this.definitionConfig,
           scrolling_text: this.marquee,
           watermark: this.water,
-          hls: 0 // wap：hls= 1 pc:hls = 0 
+          hls: 0 // wap：hls= 1 pc:hls = 0
         },
         modules: {
           logo: {
@@ -1431,11 +1431,11 @@ export default {
           gift: {show: 1}, // TODO:
           chat_login: {show: 1}
         }
-      } 
+      }
       if (this.roominfo.modules && this.roominfo.modules.barrage) {
         this.roominfo.player.barrage = this.roominfo.modules.barrage.hide
       }
-      
+
       this.userChatId = this.roominfo.user.third_party_user_id
       // 获取所有的主域名
       this.webDominUrl = this.roominfo.domains.web
