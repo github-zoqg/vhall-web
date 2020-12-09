@@ -36,7 +36,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'chooseWay/:str(\\d+)',
+        path: 'chooseWay/:str',
         component: () => import('@/views/LiveModule/chooseWay'),
         meta: { auth: true, title: '选择发起方式', name: 'chooseWay', activeMenu: '/live/list' },
         hidden: true
@@ -234,6 +234,12 @@ const router = [
         meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/list' }
       }
     ]
+  },
+  {
+    path: '/chooseWay/:str',
+    component: () => import('@/views/LiveModule/chooseWay'),
+    meta: { auth: true, title: '选择发起方式', name: 'chooseWay'},
+    hidden: true
   }
 ];
 export default router;

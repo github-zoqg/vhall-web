@@ -63,6 +63,12 @@ const router = [
     meta: { auth: false, name: 'common'},
     hidden: true
   },
+  {
+    path: '/browser', // 浏览器
+    component: () => import('@/views/PlatformModule/browser'),
+    meta: { auth: false, name: 'common'},
+    hidden: true
+  },
   { path: '*', redirect: '/warning/404', hidden: true }
 ];
 export default router;
