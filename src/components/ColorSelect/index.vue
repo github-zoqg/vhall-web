@@ -68,11 +68,15 @@ export default {
     updateValue(tab) {
       console.log(tab);
       this.colors = tab.hex;
+      console.log(this.colors, '当前样式2');
+      this.$emit('color', this.colors);
       // 值设置成功，关闭浮层
       this.selectPanelShow = false;
     },
     setColorsValue(tab) {
       this.colors = tab;
+      console.log(this.colors, '当前样式1');
+      this.$emit('color', this.colors);
     }
   }
 };
