@@ -60,7 +60,7 @@
         </el-scrollbar>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="advSaveToWebinar" round>确 定</el-button>
+        <el-button type="primary" @click="advSaveToWebinar(null)" round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -76,6 +76,7 @@ export default {
       dialogAdverVisible: false,
       advertisementTitle: '',
       baseImgUrl: Env.staticLinkVo.uploadBaseUrl,
+      selectChecked: [],
       rules: {
         subject: [
           { required: true, message: '请输入广告标题', trigger: 'blur' },
@@ -136,6 +137,7 @@ export default {
       this.$refs.advertisementForm.validate((valid) => {
         if (valid) {
           if (this.$route.params.str) {
+            // 直播-新建广告
             this.createAdv();
           } else {
             // 资料库中广告推荐，默认不同步到资料库
@@ -194,19 +196,26 @@ export default {
       });
     },
     choiseAdvisetion(items) {
-      this.adList.map(item => {
-       item.isChecked = false;
-       items.isChecked = true;
-      });
+      items.isChecked = !items.isChecked;
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
+      if (!id) {
+        this.selectChecked = this.adList.filter(item => item.isChecked).map(item => item.adv_id);
+        if (this.selectChecked.length < 1) {
+          this.dialogAdverVisible = false;
+          return;
+        } else {
+          id = this.selectChecked.join(',');
+        }
+      }
       let params = {
         webinar_id: this.$route.params.str,
         adv_ids: id
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         this.$message.info(res.msg);
+        this.$emit('reload');
       })
     },
     uploadAdvSuccess(res, file) {
@@ -264,15 +273,16 @@ export default {
      }
      .ad-list{
        display: flex;
-       justify-content: space-between;
+      //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
        max-height: 300px;
        .ad-item{
-         width: 165px;
+         width: 150px;
          margin-bottom: 20px;
          background: #F7F7F7;
          position: relative;
+         margin-right: 15px;
          &.active{
           background: #FFFFFF;
           box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);

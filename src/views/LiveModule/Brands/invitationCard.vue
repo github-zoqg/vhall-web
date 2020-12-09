@@ -34,11 +34,17 @@
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
-              <p v-for="(item, index) in showList" :key="index" :class="item.show_type == formInvitation.show_type ? 'isActiveColor' : ''">
-                <label class="img-tangle" v-show="item.show_type == formInvitation.show_type">
-                  <i class="el-icon-check"></i>
-                </label>
-                <img :src="item.url" alt="" @click="showMethods(item)"/>
+              <p :class="showType === '1' ? 'isActiveColor' : ''" @click="changeType('1')">
+                <img src="../../../common/images/invite-card/tmpl1.png" alt="">
+                <label class="img-tangle" v-if="showType === '1'"><icon icon-class="saasicon-choose-01"></icon></label>
+              </p>
+               <p :class="showType === '2' ? 'isActiveColor' : ''" @click="changeType('2')">
+                <img src="../../../common/images/invite-card/tmpl2.png" alt="">
+                <label class="img-tangle" v-if="showType === '2'"><icon icon-class="saasicon-choose-01"></icon></label>
+              </p>
+               <p :class="showType === '3' ? 'isActiveColor' : ''" @click="changeType('3')">
+                <img src="../../../common/images/invite-card/tmpl3.png" alt="">
+                <label class="img-tangle" v-if="showType === '3'"><icon icon-class="saasicon-choose-01"></icon></label>
               </p>
             </div>
           </el-form-item>
@@ -190,6 +196,7 @@ export default {
       invitation: true,
       qrcode: '',
       showCode: '',
+      showType: '1',
       link: 'http://e.vhall.com/mywebinar/invite-card/923464350/1734888',
       isShow: 'first',
       formInvitation: {
@@ -240,6 +247,9 @@ export default {
     addBackground
   },
   methods: {
+    changeType(index) {
+      this.showType = index;
+    },
     isInviteCard() {
       let params = {
         webinar_id: '923464350',
@@ -372,32 +382,25 @@ export default {
       border: 1px solid #E6E6E6;
       position: relative;
       height: 125px;
+      border: 1px solid transparent;
       .img-tangle{
         position: absolute;
-        right: 0;
-        top:0;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-right-color: #FB3A32;
-        border-top-color: #FB3A32;
-        i{
-          color:#fff;
-          position: absolute;
-          top: -8px;
-          right:-11px;
-          font-size: 10px;
+        right: -2px;
+        top:-8px;
+        /deep/.svg-icon{
+          font-size: 24px;
         }
       }
       img {
         width: 100%;
         height: 125px;
       }
+      &.isActiveColor{
+        box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+        border: 1px solid #FB3A32;
+      }
     }
-    .isActiveColor{
-      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
-      border: 1px solid #FB3A32;
-    }
+
   }
   .invitation-show{
     padding-top: 20px;
