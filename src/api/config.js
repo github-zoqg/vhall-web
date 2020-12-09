@@ -355,9 +355,10 @@ const apis = {
   onlineUserList :['/interacts/chat-user/get-online-list', 'POST'], // 获取在线用户列表
   liveEnd: ['/v3/webinars/live/end', 'POST'], // 结束直播  √
   rebroadcastList: ['/v3/webinars/rebroadcast/list', 'GET'], // 转播列表 √
-  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 未知
-  v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 未知
-  v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 未知
+  rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 √
+  v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 √
+  v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 √
+
 
   // 授权模块
   weixinAuth: ['/v3/commons/auth/weixin', 'GET'], // 微信授权接口 •••
@@ -399,7 +400,9 @@ const apis = {
   agreeInvite: ['/v3/interacts/inav-user/agree-invite', 'POST'], // 用户同意上麦
   rejectInvite: ['/v3/interacts/inav-user/reject-invite', 'POST'], // 用户拒绝上麦
   speakOn: ['/v3/interacts/inav-user/speak', 'POST'], // 用户上麦
-  speakOff: ['/v3/interacts/inav-user/nospeak', 'POST'], // 用户下麦
+  speakOff: ['/v3/interacts/inav-user/nospeak', 'POST'], // 用户自己下麦
+  speakUserOff: ['/v3/interacts/inav/nospeak', 'POST'], // 设置其他人下麦
+  v3SetHandsup : ['/v3/interacts/inav/set-handsup', 'POST'], // 设置房间举手状态---允许举手
   redPackInfo: ['/v3/interacts/redpacket/get-redpacket-status', 'POST'], // 获取红包信息
   applySpeakOn: ['/v3/interacts/inav-user/apply', 'POST'], // 用户申请上麦
   cancelApplySpeakOn: ['/v3/interacts/inav-user/cancel-apply', 'POST'], // 用户取消上麦申请
@@ -442,6 +445,8 @@ const apis = {
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
+  v3InviteMic: ['/v3/interacts/inav/invite', 'POST'],// 邀请用户上麦
+  v3SetDevice: ['/v3/interacts/room/set-device', 'POST'], //设置房间用户的设备检测状态
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
 

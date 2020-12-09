@@ -92,13 +92,33 @@
       <!--手机预览，begin-->
       <div class="app" v-show="switchType === 'app'">
         <div :class="`skin-preview preview-${switchType} ${bgColorType}`">
+          <div class="panel__preview">
+            <header class="h5-title">
+              <img src="../../../common/images/h5-show-phone-logo2x.png" class="logo"/>
+              <span class="title">北京微吼时代科技有限公司</span>
+              <div class="title-icons">
+                <icon icon-class="saasguanzhu"></icon>
+                <icon icon-class="saasbiaoji"></icon>
+              </div>
+            </header>
+            <img src="../../../common/images/h5-show-phone-player2x.png" class="h5-player"/>
+            <!-- 菜单 -->
+            <ul class="h5-menu">
+              <li>文档</li>
+              <li>聊天</li>
+              <li class="active">简介</li>
+              <li>推荐</li>
+              <li>商品</li>
+            </ul>
+            <!-- 简介 -->
+            <img src="../../../common/images/custom-tab/detail-bg-new-h5.png" alt="" class="h5-notice" />
+          </div>
         </div>
       </div>
       <!--手机预览,end-->
     </div>
   </div>
 </template>
-
 <script>
 import Env from "@/api/env";
 
@@ -364,8 +384,88 @@ export default {
   }
 }
 .skin-preview.preview-app {
-  width: 445px;
-  height: 565px;
-  border: 1px solid #d2d2d2;
+  width: 368px;
+  height: 674px;
+  background-image: url('../../../common/images/h5-show-phone-null2x.png');
+  background-size: cover;
+  margin-top: -16px;
+  margin-left: -16px;
+  position: relative;
+  .panel__preview {
+    position: absolute;
+    top: 84px;
+    width: 310px;
+    left: 27px;
+  }
+  .h5-title {
+    .flex-display();
+    padding: 12px 12px;
+    .logo {
+      display: inline-block;
+      vertical-align: middle;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+    span.title {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 8px;
+      width: 168px;
+      height: 24px;
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 24px;
+    }
+    .title-icons {
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: auto;
+      span:last-child {
+        margin-left: 14px;
+      }
+    }
+  }
+  .h5-player {
+    width: 310px;
+    height: 174px;
+  }
+  .h5-notice {
+    width: 100%;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+  }
+  .h5-menu {
+    margin-top: -5px;
+    height: 40px;
+    display: block;
+    width: 310px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E6E6E6;
+    li {
+      list-style-type: none;
+      display: inline-block;
+      vertical-align: middle;
+      height: 40px;
+      line-height: 40px;
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #666666;
+      margin-left: 24px;
+      &.active {
+        border-bottom: 2px solid #FB3A32;
+        color: #FB3A32;
+      }
+    }
+  }
+  .panel__preview__ctx {
+    height: 275px;
+    overflow-y: auto;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
 }
 </style>

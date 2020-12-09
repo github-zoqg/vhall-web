@@ -43,6 +43,15 @@ src
 --------baseLayout.vue 空白布局 不默认包含任何内容
 ----tangram（tangram不在以依赖形式安装，而是将相关文件复制到项目里面，此文件夹为原tangram项目）
 ----router 路由
+--------modules
+------------home.js 首页
+------------liveOrSpecial.js 直播或专题
+------------material.js 资料
+------------room.js 观看/发起/预约/口令等
+------------settingOrData.js 数据或开发设置
+------------user.js 财务中心、账户管理、个人主页
+------------v3Sys.js 登录、注册、忘记密码、消息中心、下载中心、公共页面、*跳转
+--------index.js 入口
 ----utils
 --------enumeration.js 常量、枚举，用于页面展示反显
 --------Events.js

@@ -1,6 +1,6 @@
 <template>
-  <div ref="vhallBaseScroll">
-    <div ref="scrollArea">
+  <div ref="vhallBaseScroll" class="test_02">
+    <div ref="scrollArea" class="test_01">
       <slot></slot>
     </div>
   </div>

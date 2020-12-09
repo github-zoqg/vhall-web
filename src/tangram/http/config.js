@@ -54,11 +54,9 @@ const Apis = {
   getRecordsPacket: ['/cmpt/redpacket/records-get', 'POST'], // 获取红包领取记录
   getPacketLastInfo: ['/cmpt/redpacket/get-last-info', 'POST'], // 获取房间内最新的一个红包信息
   myPacketLastInfo: ['/cmpt/redpacket/get-my-info', 'POST'], // 获取房间内最新的红包我抢到红包信息
-  inviteMic: ['/cmpt/inav/invite', 'POST'], // 主持人邀请上麦
   rejectInvite: ['/cmpt/inav/reject-invite', 'POST'], // 拒绝上麦邀请
   setBanned: ['/cmpt/inav/set-banned', 'POST'], // 禁言/取消禁言某个用户
   setAllBanned: ['/cmpt/inav/set-all-banned', 'POST'], // 禁言/取消禁言全体
-  setKicked: ['/cmpt/inav/set-kicked', 'POST'], // 踢出/取消踢出某个用户
   setSpeaker: ['/cmpt/inav/set-doc-permission', 'POST'], // 设置主讲人
   setMainScreen: ['/cmpt/inav/set-main-screen', 'POST'], // 设置主画面
   muteDevic: ['/cmpt/inav/set-device-status', 'POST'], // 禁用设备 - device 1, audio 2, vido

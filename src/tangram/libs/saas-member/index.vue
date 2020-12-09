@@ -48,7 +48,7 @@
                 ></i>
                 <!-- 显示条件：上麦中 -->
                 <i
-                  v-if="currentSpeakerId !=user.account_id && user.is_speak"
+                  v-if="currentSpeakerId !=user.account_id && user.is_speak == 1"
                   class="vhall-member-user--control--user-icon iconfont iconxiamai1"
                   style="color:#fc5659;font-size:15px;"
                 ></i>
@@ -394,6 +394,7 @@ export default {
       tab: 1,
       searchShow: false,
       totalNum: 0,
+      page: 0,
       searchUserInput: '',
       defaultAvatar: 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png',
       currentSpeakerId: this.docPermissionId, // 当前主讲人ID
@@ -456,7 +457,6 @@ export default {
   },
   methods: {
     init () {
-      this.page = 1;
       setTimeout(() => {
         this.getOnlineUsers();
       }, 2000);
@@ -756,42 +756,64 @@ export default {
         this.$set(list, index, item);
       }
     },
+    NumberFilter(_list){
+      _list.forEach(ele=>{
+       if( ele.is_kicked) ele.is_kicked	= Number(ele.is_kicked)
+       if( ele.is_banned) ele.is_banned	= Number(ele.is_banned)
+       if( ele.is_signed) ele.is_signed	= Number(ele.is_signed)
+       if( ele.is_answered_questionnaire) ele.is_answered_questionnaire	= Number(ele.is_answered_questionnaire)
+       if( ele.is_lottery_winner) ele.is_lottery_winner	= Number(ele.is_lottery_winner)
+       if( ele.is_answered_exam) ele.is_answered_exam	= Number(ele.is_answered_exam)
+       if( ele.is_answered_vote) ele.is_answered_vote	= Number(ele.is_answered_vote)
+       if( ele.status) ele.status	= Number(ele.status)
+       if( ele.is_speak) ele.is_speak	= Number(ele.is_speak)
+      })
+    },
     /**
      * 得到在线人员列表
      */
     getOnlineUsers () {
       let data = {
         room_id: this.roomId,
-        page: this.page
+        pos: this.page,
+        limit: 10
       };
       if (this.searchUserInput) {
         Object.assign(data, { nickname: this.searchUserInput });
       }
       this.$fetch('getOnlineList', data).then(res => {
         console.warn('当前在线人员列表', res)
-        this.$refs.scroll.finishPullUp();
-        if (this.isRefesh) {
-          this.onlineUsers = this._sortUsers(res.data.list);
-          this.isRefesh = false;
-        } else {
-          if (res.data.list.length) {
-            let list = this.onlineUsers.concat(res.data.list);
-            const deduplicatedList = _.uniqBy(list, 'account_id'); // 嘉宾主持人同时刷新页面 14069
-            this.onlineUsers = this._sortUsers(deduplicatedList);
+        if(res.code == 200){
+          this.NumberFilter(res.data.list)
+          this.$refs.scroll.finishPullUp();
+          if (this.isRefesh) {
+            this.onlineUsers = this._sortUsers(res.data.list);
+            this.isRefesh = false;
           } else {
-            this.page--;
+            if (res.data.list.length) {
+              let list = this.onlineUsers.concat(res.data.list);
+              const deduplicatedList = _.uniqBy(list, 'account_id'); // 嘉宾主持人同时刷新页面 14069
+              this.onlineUsers = this._sortUsers(deduplicatedList);
+            } else {
+              this.page--;
+            }
           }
+          if (this.searchUserInput && res.data.list.length == 0) {
+            this.searchEmpty = true;
+          } else {
+            this.searchEmpty = false;
+          }
+          this.totalNum = res.data.total;
+          setTimeout(() => {
+            this.$refs.scroll.refresh();
+          }, 50);
+        }else{
+          this.page--
         }
-        if (this.searchUserInput && res.data.list.length == 0) {
-          this.searchEmpty = true;
-        } else {
-          this.searchEmpty = false;
-        }
-        this.totalNum = res.data.total;
-        setTimeout(() => {
-          this.$refs.scroll.refresh();
-        }, 50);
-      }).catch(() => { this.isRefesh = false; });
+      }).catch(() => {
+        this.page--
+        this.isRefesh = false;
+      });
     },
     /**
      * 得到在线人员列表
@@ -802,6 +824,7 @@ export default {
         let bannedList = await this.$fetch('v3GetBannedList', data);
         let kickedList = await this.$fetch('v3GetKickedList', data);
         let list = bannedList.data.list.concat(kickedList.data.list);
+        this.NumberFilter(list)
         let hash = {};
         this.limitedUsers = list.reduce((preVal, curVal) => {
           !hash[curVal.account_id] && (hash[curVal.account_id] = true && preVal.push(curVal));
@@ -867,8 +890,7 @@ export default {
     async chooseTab (index) {
       this.searchUserInput = '';
       this.tab = index;
-      if (index === 1) {
-      } else if (index === 2) {
+      if (index === 1) {} else if (index === 2) {
         this.raiseHandTip = false;
       } else if (index === 3) {
         await this.getLimitedUsers();
@@ -890,7 +912,7 @@ export default {
         room_id: this.roomId,
         status: e.target.checked ? 1 : 0
       };
-      this.$vhallFetch('allowApply', data)
+      this.$fetch('v3SetHandsup', data)
         .then(() => {
           this.$message.success({ message: '设置成功' });
         })
@@ -937,11 +959,10 @@ export default {
             room_id: this.roomId,
             receive_account_id: accountId
           };
-          this.$vhallFetch('inviteMic', data)
-            .then(res => {
-              this.$message.success({ message: '邀请发送成功' });
-            })
-            .catch(() => {});
+          this.$fetch('v3InviteMic', data).then(res => {
+            console.warn(res, '邀请上麦');
+            this.$message.success({ message: '邀请发送成功' });
+          }).catch(() => {});
         }
       }
     },
@@ -953,11 +974,12 @@ export default {
         room_id: this.roomId,
         receive_account_id: accountId
       };
-      this.$vhallFetch('speakOff', data)
-        .then(() => {})
-        .catch(error => {
-          console.error('邀请上麦接口错误', error);
-        });
+      console.warn('对上麦的用户进行下麦操作---------',data);
+      this.$fetch('speakUserOff', data).then((res) => {
+        console.warn(res, '8888');
+      }).catch(error => {
+        console.error('邀请上麦接口错误', error);
+      });
     },
     /**
      *  列表删除用户
@@ -999,7 +1021,7 @@ export default {
       if (this.isRefesh) {
         return;
       }
-      this.page = 1;
+      this.page = 0;
       this.searchUserInput = '';
       this.isRefesh = true;
       this.getOnlineUsers();
@@ -1008,19 +1030,24 @@ export default {
      * 禁言/取消禁言
      */
     setBanned (accountId, isBanned) {
-      let nextStatus = isBanned ? 0 : 1;
+      let nextStatus = isBanned==1 ? 0 : 1;
       let data = {
         receive_account_id: accountId,
         status: nextStatus,
         room_id: this.roomId
       };
-      this.$vhallFetch('setBanned', data);
+      this.$fetch('setBanned', data).then(res=>{
+        console.warn('禁言---res',res)
+      }).catch(err=>{
+        console.warn('禁言---res',err);
+      });
     },
     /**
      * 踢出/取消踢出
      */
     setKicked (accountId, isKicked) {
-      let nextStatus = isKicked ? 0 : 1;
+      console.log(isKicked ,'isKicked')
+      let nextStatus = isKicked==1 ? 0 : 1;
       let confirmText = nextStatus
         ? '您确定要执行踢出操作？'
         : '您确定要执行取消踢出操作？';
@@ -1036,7 +1063,7 @@ export default {
             status: nextStatus,
             room_id: this.roomId
           };
-          this.$vhallFetch('setKicked', data).then(() => {
+          this.$fetch('setKickOut', data).then(() => {
             // 踢出只能在在线和举手列表操作
             if (nextStatus) {
               this._deleteUser(accountId, this.onlineUsers);
@@ -1068,13 +1095,14 @@ export default {
       if (!this.searchUserInput) {
         return;
       }
-      this.page = 1;
+      this.page = 0;
       this.isRefesh = true;
       this.getOnlineUsers();
     },
 
     handlePullingUp () {
       this.page++;
+      console.warn(this.page, 'dsf');
       this.getOnlineUsers();
     },
     refresh () {

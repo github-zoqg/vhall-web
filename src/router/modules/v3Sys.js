@@ -3,6 +3,24 @@ import {sessionOrLocal} from "@/utils/utils";
 
 const router = [
   {
+    path: '/login',
+    meta: { auth: false, name: 'login', title: '登录' },
+    component: () => import('@/views/login'),
+    hidden: true
+  },
+  {
+    path: '/register',
+    meta: { auth: false, name: 'register', title: '注册' },
+    component: () => import('@/views/login'),
+    hidden: true
+  },
+  {
+    path: '/forgetPassword',
+    meta: { auth: false, name: 'forgetPassword', title: '忘记密码' },
+    component: () => import('@/views/forgetPassword'),
+    hidden: true
+  },
+  {
     path: '/other',
     component: Layout,
     redirect: '/other/msgList',
@@ -38,6 +56,13 @@ const router = [
         meta: { auth: false, title: 'Tinymce富文本', name: 'cssDemo', icon: 'el-icon-s-home' }
       }
     ]
-  }
+  },
+  {
+    path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
+    component: () => import('@/views/PlatformModule/Error/index'),
+    meta: { auth: false, name: 'common'},
+    hidden: true
+  },
+  { path: '*', redirect: '/warning/404', hidden: true }
 ];
 export default router;
