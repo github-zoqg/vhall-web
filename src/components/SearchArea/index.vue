@@ -97,11 +97,10 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.name);
   },
   methods: {
     changeTime(opt) {
-      if (this.$route.name === 'infoDetail') {
+      if (this.$route.path === '/infoDetail') {
         return;
       }
       this.isActive = opt.active;
@@ -109,7 +108,7 @@ export default {
       this.$emit("onSearchFun");
     },
     changeDate(){
-      if (this.$route.name === 'infoDetail') {
+      if (this.$route.path === '/infoDetail') {
         return;
       }
       this.$emit("onSearchFun");

@@ -3,10 +3,7 @@ const Apis = {
   stopLive: ['/cmpt/room/end-live', 'POST'], // 结束直播
   getInavInfo: ['/cmpt/room/get', 'POST'], // 获取房间信息
 
-  getDocList: ['/cmpt/document/lists', 'POST'], // 获取文档列表
   switchDoc: ['/cmpt/room/switch-doc', 'POST'], // 开启关闭文档
-  deleteDoc: ['/cmpt/document/delete', 'POST'], // 删除文档
-  uploadDoc: ['/cmpt/document/upload', 'POST'], // 上传文档
   allowApply: ['/cmpt/inav/set-handsup', 'POST'], // 允许-上麦操作
   noSpeak: ['/cmpt/inav/nospeak', 'POST'], // 下麦
   apply: ['/cmpt/inav/apply', 'POST'], // 申请上麦

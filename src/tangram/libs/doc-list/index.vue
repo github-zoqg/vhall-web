@@ -28,14 +28,17 @@
           <div class="upload-container">
             <el-upload
             class="avatar-uploader"
-            :action="`${$baseUrl}/cmpt/document/upload`"
+            :action="`${$baseUrl}/v3/interacts/document/upload-webinar-document`"
             :show-file-list="false"
-            name="document"
+            :headers="{
+              token: token,
+              'interact-token': interact_token
+            }"
+            name="resfile"
             accept="*/*"
-            :data = "{
-              'vss_token': vssToken,
-              'room_id': roomId,
-              'low_priority': docLowPriority
+            :data="{
+              webinar_id: this.webinar_id,
+              type: 2
             }"
             :on-success="handleAvatarSuccess"
             :on-progress="handleAvatarProgress"
@@ -100,7 +103,7 @@
                 <button class="btn small blue-line" @click="demonstrate(localitem.document_id)">演示</button>
               </div>
               <div class="icon-warp" v-show="localitem.document_id">
-                <i class="el-icon-delete" @click="showDeleteDialog(localitem.document_id, index, true)"></i>
+                <i class="el-icon-delete" @click="showDeleteDialog(localitem.id, index, true)"></i>
 
               </div>
             </li>
@@ -120,7 +123,7 @@
                 <button class="btn small blue-line" @click="demonstrate(doc.document_id)" v-show="doc.status_jpeg == 200 || doc.transcoded">演示</button>
               </div>
               <div class="icon-warp">
-                <i class="el-icon-delete" @click="showDeleteDialog(doc.document_id)"></i>
+                <i class="el-icon-delete" @click="showDeleteDialog(doc.id)"></i>
 
               </div>
             </li>
@@ -176,7 +179,7 @@
 <script>
 import EventBus from '@/utils/Events';
 import SassAlert from '../../libs/saas-popup/alert';
-
+import { sessionOrLocal } from '@/utils/utils'
 export default {
   props: {
     accountId: {
@@ -199,10 +202,15 @@ export default {
     },
     permission: {
       required: false
+    },
+    webinar_id:{
+      required: true
     }
   },
   data () {
     return {
+      token: sessionOrLocal.get('token') || '',
+      interact_token: sessionOrLocal.get('interact_token') || '',
       switchStatus: false,
       isDoListcShow: false,
       searchKey: '', // 查询关键字
@@ -309,6 +317,7 @@ export default {
       });
     },
     handleAvatarSuccess (res, flie) {
+      console.warn(res, flie, '文档的上传-----');
       if (res.code == 200) {
         const uids = flie.uid;
         this.locaList.forEach((item) => {
@@ -316,10 +325,12 @@ export default {
             item.document_id = res.data.document_id;
           }
         });
-        // this.$message({
-        //   message: '上传成功',
-        //   type: 'success'
-        // })
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        })
+      }else{
+        this.$message.warning(res.msg)
       }
     },
     showDeleteDialog (id, index, local) {
@@ -330,16 +341,17 @@ export default {
       };
       this.isShowDeleteDialog = true;
     },
-    deleteFile (id, index, local) {
-      console.log('删除文档=============', this.deletParam);
+    deleteFile () {
+      console.log('删除文档=============',this.deletParam);
       const data = {
-        vss_token: this.vssToken,
-        room_id: this.roomId,
-        document_id: this.deletParam.id
+        tag: 1,
+        webinar_id: this.webinar_id,
+        ids: this.deletParam.id
       };
-      this.$vhallFetch('deleteDoc', data).then(res => {
+      console.warn('test-----文档列表的删除', data);
+      this.$fetch('delWordList', data).then(res => {
         if (this.deletParam.local) {
-          this.locaList.splice(index, 1);
+          this.locaList.splice(this.deletParam.index, 1);
         }
         if (res.code === 200) {
           this.isShowDeleteDialog = false;
@@ -428,25 +440,25 @@ export default {
          */
     getDocList () {
 
-
       let data = {};
       data = {
-        curr_page: this.pageInfo.currentPage,
-        page_size: this.pageInfo.pageSize
+        pos: this.pageInfo.currentPage,
+        limit: this.pageInfo.pageSize,
+        webinar_id: this.webinar_id,
+        type: '2'
       };
-
       if(this.permission.includes(100031)) {
         data.room_id = this.roomId;
-      } else {
-        let accoutId = sessionStorage.getItem('host_uid');
-        data.account_id = accoutId;
       }
+
       if (this.searchKey) {
         data.file_name = this.searchKey;
       }
-      this.$fetch('getDocList', data).then(res => {
+
+      console.warn('doc----选择文档', data);
+      this.$fetch('getWebinarWordList', data).then(res => {
         if (res.code == 200) {
-          this.docList = res.data.detail.map((item) => {
+          this.docList = res.data.list.map((item) => {
             let transformStr;
             const statusJpeg = item.status_jpeg * 1;
             const status = item.status * 1;

@@ -165,7 +165,7 @@ export default {
             this.$message.success(`创建成功`);
             console.log(res);
             setTimeout(()=>{
-              this.$router.push({name: 'Special'});
+              this.$router.push({path: '/special'});
             }, 500);
           }).catch(error=>{
             this.$message.error(`创建失败，${error.message}`);

@@ -14,19 +14,9 @@
         <el-tab-pane label="领奖页设置" name="first">
           <div class="give-item">
             <div class="give-prize">
-              <el-form :model="formData" ref="ruleForm" label-width="100px">
-                <el-form-item label="姓名">
+              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
+                <!-- <el-form-item label="姓名">
                   <el-input v-model="formData.name" maxlength="10" placeholder="请输入姓名" show-word-limit></el-input>
-                  <!-- <upload
-                    class="giftUpload"
-                    v-model="imageUrl"
-                    :on-success="handleuploadSuccess"
-                    :on-progress="uploadProcess"
-                    :on-error="uploadError"
-                    :on-preview="uploadPreview"
-                    :before-upload="beforeUploadHnadler">
-                    <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
-                  </upload> -->
                 </el-form-item>
                 <el-form-item label="手机号">
                     <el-input v-model="formData.phone" placeholder="请输入手机号"></el-input>
@@ -40,26 +30,25 @@
                       active-text=""
                       inactive-text="必填">
                     </el-switch>
-                </el-form-item>
-                <el-form-item label="自定义1">
-                    <el-input v-model="formData.title" type="textarea" placeholder="请输入内容" :autosize="{ minRows: 4}"></el-input>
+                </el-form-item> -->
+                <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="Boolean(item.is_system) ? item.field : `${item.field}${index - 2}`" :ref="`${item.field_key}`" :contenteditable="Boolean(item.is_system) ? false : true" >
+                    <el-input v-model="givePrizeForm[item.field_key]" type="text" placeholder="请输入内容" v-if="Boolean(item.is_system)"></el-input>
+                    <el-input v-model="givePrizeForm[item.field_key]"  type="textarea" placeholder="请输入" :autosize="{ minRows: 4}" v-else></el-input>
                     <div class="isDelete">
-                      <i class="el-icon-delete"></i>
+                      <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <el-switch
-                        v-model="formData.isTitle"
-                        active-color="#ccc"
-                        inactive-color="#ff4949"
-                        active-text=""
+                       v-if="index > 1"
+                        v-model="givePrizeForm[item.is_required]"
                         inactive-text="必填">
                       </el-switch>
                     </div>
                 </el-form-item>
-                <div class="add-prize">
+                <div class="add-prize" @click="addField">
                   <i class="el-icon-plus"></i>
                   添加字段
                 </div>
                 <el-form-item>
-                  <el-button type="primary" round>保存</el-button>
+                  <el-button type="primary" round @click="sureGivePrize">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -84,11 +73,11 @@
                   <upload
                     class="giftUpload"
                     v-model="formData.imageUrl"
-                    :on-success="handleuploadSuccess"
+                    :on-success="prizeLoadSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
                     :on-preview="uploadPreview"
-                    :before-upload="beforeUploadHnadler">
+                    :before-upload="beforeUploadHandler">
                     <p slot="tip">推荐尺寸：240*240px，小于2MB <br/> 支持jpg、gif、png、bmp</p>
                   </upload>
                 </el-form-item>
@@ -125,7 +114,10 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="奖品设置" name="third">
-          <div class="prize-list" v-if="total">
+          <div class="prize-info">
+             <prize-list></prize-list>
+          </div>
+          <!-- <div class="prize-list" v-if="total">
             <div class="head-operat">
               <el-button type="primary" round  @click="createPrize">创建奖品</el-button>
               <el-button round @click="changePrize">资料库</el-button>
@@ -146,24 +138,28 @@
           <div class="prize-no" v-else>
             <el-button type="primary" @click="createPrize" round>新建奖品</el-button>
             <el-button round>资料库</el-button>
-          </div>
+          </div> -->
         </el-tab-pane>
       </el-tabs>
     </el-card>
-    <create-prize ref="createPrize"></create-prize>
+    <!-- <create-prize ref="createPrize"></create-prize> -->
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
-import createPrize from './components/createPrize';
+// import createPrize from './components/createPrize';
+import prizeList from '../../MaterialModule/prize'
 export default {
   name: 'prizeSet',
   data() {
     return {
-      activeName: 'third',
+      activeName: 'first',
       formData: {},
+      givePrizeForm: {
+        adressCheced: false
+      },
       total: 100,
       prizeImg: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
       typeList: [
@@ -180,6 +176,34 @@ export default {
           isChecked: false
         }
       ],
+      givePrizeList: [
+        {
+          is_system: 1,
+          field: '姓名',
+          field_key: 'name',
+          rank: 1,
+        },
+        {
+          is_system: 1,
+          field: '手机号',
+          field_key: 'phone',
+          rank: 2,
+        },
+        {
+          is_system: 1,
+          field: '地址',
+          field_key: 'adress',
+          is_required: 'adressCheced',
+          rank: 3,
+        },
+        {
+          is_system: 0,
+          field: '自定义',
+          field_key: 'user_define_4',
+          is_required: 'is_required_4',
+          rank: 4,
+        },
+      ],
       prizeForm: {
         name: '',
         imageUrl: ''
@@ -189,54 +213,49 @@ export default {
           { required: true, message: '请输入奖品名称', trigger: 'blur' }
         ]
       },
-      searchAreaLayout: [
-        {
-          prizeName: ''
-        }
-      ],
-      tabelColumn: [
-        {
-          label: '奖品图片',
-          key: 'img',
-        },
-        {
-          label: '奖品ID',
-          key: 'id',
-        },
-        {
-          label: '奖品名称',
-          key: 'name',
-        },
-        {
-          label: '创建时间',
-          key: 'time',
-        }
-      ],
-      tableRowBtnFun: [
-       {name:'编辑', methodName: 'edit'},{name:'复制', methodName: 'cope'},{name:'删除', methodName: 'del'}
-      ],
-      tableData: [
-        {
-          id: '12',
-          time: '2020-10-10',
-          name: '请输入000',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        },
-        {
-          id: '13',
-          time: '2020-10-10',
-          name: '请输入111',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ]
     };
   },
   components: {
     PageTitle,
     upload,
-    createPrize
+    // createPrize,
+    prizeList
+  },
+  mounted() {
+    this.getGivePrize();
+
   },
   methods: {
+    changeZX(item,ind){
+      console.warn(item, index, '567890')
+    },
+    changeVal(e) {
+      console.log(e.target.innerHTML, '11111111111');
+        // this.editValue = e.target.innerHTML;
+    },
+    addField() {
+      this.givePrizeList.push({
+        is_system: 0,
+        field: '自定义',
+        field_key: 'user_define_' + (this.givePrizeList.length + 1),
+        is_required: 'is_required_' + (this.givePrizeList.length + 1),
+        rank: this.givePrizeList.length + 1,
+      });
+    },
+    deleteGivePrize(index) {
+      this.givePrizeList.splice(index, 1);
+    },
+    // 获取领奖页信息
+    getGivePrize() {
+      this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
+        console.log(res.data, '111111111111');
+      })
+    },
+    // 保存领奖页信息
+    sureGivePrize() {
+      console.log(this.$refs.user_define_4.innerHTML, '111111111111');
+      console.log(this.givePrizeList, this.givePrizeForm, '00000000000000000000')
+    },
     getPrizeList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
@@ -278,6 +297,58 @@ export default {
         items.isChecked = true;
       });
     },
+     prizeLoadSuccess(res, file){
+      console.log(res, file);
+      // this.prizeForm.imageUrl = URL.createObjectURL(file.raw);
+      // this.prizeForm.img_path = res.data.file_url;
+      // this.fileList.push({
+      //   url: this.form.imageUrl,
+      //   cover: false
+      // });
+      // if (!this.fileList.some(item => item.cover)) {
+      //   this.fileList[0].cover = true;
+      // }
+      // // 生成图片 ID 添加到 imgIdArr 中
+      // this.generateImgId(this.form.imageUrl);
+      // console.log(this.fileList);
+    },
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      let imgSrc = window.URL.createObjectURL(file);
+      let img = new Image();
+      img.src = imgSrc;
+      let that = this; // onload 里面不能用this
+      img.onload = function () {
+        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
+        if (img.width > img.height) {
+          that.imgType = 'widthMore';
+        } else if (img.width < img.height) {
+          that.imgType = 'heightMore';
+        } else {
+          that.imgType = 'default';
+        }
+      };
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`封面上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
     createPrize() {
       this.$refs.createPrize.dialogVisible = true;
     },
@@ -300,6 +371,12 @@ export default {
   }
   /deep/.el-form-item__label{
     color: #1A1A1A;
+  }
+  /deep/.el-switch__label.is-active {
+    color: #1A1A1A;
+}
+  .prize-info{
+    margin: 18px 24px;
   }
   .prize-list{
     padding: 33px 24px;

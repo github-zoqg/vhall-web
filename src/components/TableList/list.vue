@@ -35,7 +35,6 @@
                 }}</span>
                 <el-progress
                   :percentage="scope.row.uploadObj.num"
-                  v-if="scope.row.uploadObj.num != 100"
                 ></el-progress>
               </p>
               <!-- {{scope.row}} -->

@@ -172,7 +172,7 @@ export default {
     // 编辑
     edit(that, {rows}) {
       that.$router.push({
-        name: 'editProduct',
+        path: '/editProduct',
         query: {
           goodId: rows.good_id
         }
@@ -219,7 +219,7 @@ export default {
     },
     // 新建礼物
     addGift() {
-      this.$router.push({name: 'addProduct'});
+      this.$router.push({path: '/addProduct'});
     }
   },
 };
