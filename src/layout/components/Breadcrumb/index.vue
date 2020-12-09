@@ -1,12 +1,18 @@
 <template>
-  <el-breadcrumb class="app-breadcrumb" separator="/">
-    <transition-group name="breadcrumb">
-      <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
-        <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.meta.title }}</span>
-        <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
-      </el-breadcrumb-item>
-    </transition-group>
-  </el-breadcrumb>
+  <div>
+    <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
+      <span>今日，</span>{{sysDateStr}}，欢迎您回到微吼控制台。
+    </div>
+    <el-breadcrumb class="app-breadcrumb" separator="/" v-else>
+      <transition-group name="breadcrumb">
+        <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
+          <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.meta.title }}</span>
+          <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
+        </el-breadcrumb-item>
+      </transition-group>
+    </el-breadcrumb>
+  </div>
+
 </template>
 
 <script>
@@ -28,6 +34,8 @@ export default {
     }
   },
   created() {
+    // 获取本地系统时间字符串
+    this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
     this.getBreadcrumb();
   },
   methods: {
@@ -66,6 +74,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.sys-date {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 32px;
+  margin-left: 8px;
+  span {
+    font-weight: bold;
+    font-size: 18px;
+  }
+}
 .app-breadcrumb.el-breadcrumb {
   display: inline-block;
   font-size: 14px;

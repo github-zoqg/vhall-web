@@ -32,6 +32,8 @@ Object.keys(filters).forEach(key=>{
 });
 // 工具类引入
 import moment from 'moment'; // 日期格式化
+import 'moment/locale/zh-cn';
+moment.locale(); // zh-cn
 import { getParams } from './utils/general';
 import fetchData from './api/fetch';
 Vue.prototype.$fetch = fetchData;

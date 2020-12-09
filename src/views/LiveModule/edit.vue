@@ -311,8 +311,8 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         this.formData.title = this.liveDetailInfo.subject;
-        this.formData.date1 = this.liveDetailInfo.start_time;
-        this.formData.date2 = this.liveDetailInfo.start_time;
+        this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
+        this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
         this.liveMode = this.liveDetailInfo.webinar_type;
         this.imageUrl = Env.staticLinkVo.uploadBaseUrl + this.liveDetailInfo.img_url;
         this.tagIndex = this.liveDetailInfo.category - 1;
@@ -371,7 +371,7 @@ export default {
     },
     submitForm(formName) {
       let data = {
-        webinar_id: this.webinarId,
+        webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
@@ -399,7 +399,7 @@ export default {
             url = this.webinarId ? 'liveEdit' : 'createLive';
           }
           this.$fetch(url, this.$params(data)).then(res=>{
-            this.$message.success(`创建成功`);
+            this.$message.success(this.title === '编辑' ? `编辑成功` : `创建成功`);
             console.log(res);
             setTimeout(()=>{
               this.$router.push({path: '/live/list'});

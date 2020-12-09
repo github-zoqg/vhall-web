@@ -388,8 +388,6 @@ export default {
     },
     // 发送消息
     sendMsg (callback) {
-      // chatFilterData    //过滤敏感词汇
-      // console.log('guolv关键词',this.chatFilterData)
       window.clearTimeout(this.sendTimeOut);
       this.sendTimeOut = setTimeout(() => {
         let inputValue = this.trimPlaceHolder('reply');
@@ -412,13 +410,13 @@ export default {
         let userInfo = JSON.parse(sessionStorage.getItem('user'));
         console.warn('获取当前的本地用户信息', userInfo)
         let context = {
-          nickname: userInfo.nickname, // 昵称
+          nickname: userInfo.nickname ? userInfo.nickname : userInfo.nick_name, // 昵称
           avatar: userInfo.avatar, // 头像
           role_name: this.roleName, // 角色 1主持人2观众3助理4嘉宾
           replyMsg: this.replyMsg, // 回复消息
           atList: this.atList // @用户列表
         };
-        console.log('context', context);
+        console.log('获取当前的本地用户信息 -context', context);
         // data.role_name = this.roleName
         let filterStatus = true;
         console.log(JSON.stringify(data));

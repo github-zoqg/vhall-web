@@ -36,7 +36,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'chooseWay/:str(\\d+)',
+        path: 'chooseWay/:str',
         component: () => import('@/views/LiveModule/chooseWay'),
         meta: { auth: true, title: '选择发起方式', name: 'chooseWay', activeMenu: '/live/list' },
         hidden: true
@@ -138,14 +138,14 @@ const router = [
         hidden: true
       },
       {
-        path: 'question/:str(\\d+)',
-        component: () => import('@/views/MaterialModule/question'),
+        path: 'question',
+        component: () => import('@/views/LiveModule/MaterialSet/question'),
         meta:{ auth: true, title: '直播—问卷', name: 'question', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'addQuestion',
-        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        component: () => import('@/views/LiveModule/MaterialSet/components/addQuestion'),
         meta:{ auth: true, title: '直播—新建问卷', name: 'addQuestion', activeMenu: '/live/list'},
         hidden: true
       },
@@ -186,36 +186,60 @@ const router = [
         hidden: true
       },
       {
-        path: '/reportsData/:str(\\d+)',
+        path: 'reportsData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         meta:{ auth: true, title: '数据报告', name: 'reportsData', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/interactionData/:str(\\d+)',
+        path: 'interactionData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/interactData'),
         meta:{ auth: true, title: '互动统计', name: 'interactionData', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/userData/:str(\\d+)',
+        path: 'userData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/userData'),
         meta:{ auth: true, title: '用户统计', name: 'userData', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/interactionDetail',
+        path: 'interactionDetail',
         component: () => import('@/views/LiveModule/Data/interactDetail'),
         meta:{ auth: true, title: '查看数据', name: 'interactionDetail', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/lookSingleQuestion',
+        path: 'lookSingleQuestion',
         component: () => import('@/views/LiveModule/Data/lookSingleQuestion'),
         meta:{ auth: true, title: '查看问卷详情', name: 'lookSingleQuestion', activeMenu: '/live/list'},
         hidden: true
       }
     ]
+  },
+  {
+    path: '/special',
+    component: Layout,
+    redirect: '/special/list',
+    meta: { auth: true, title: '专题管理', name: 'Special', icon: 'saasel-icon-v3-projects', level: 1 },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/SpecialModule/list'),
+        meta: { auth: true, title: '专题列表', name: 'specialList', level: 2, activeMenu: '/special/list' }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/SpecialModule/edit'),
+        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/list' }
+      }
+    ]
+  },
+  {
+    path: '/chooseWay/:str',
+    component: () => import('@/views/LiveModule/chooseWay'),
+    meta: { auth: true, title: '选择发起方式', name: 'chooseWay'},
+    hidden: true
   }
 ];
 export default router;
