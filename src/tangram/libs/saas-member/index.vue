@@ -912,7 +912,7 @@ export default {
         room_id: this.roomId,
         status: e.target.checked ? 1 : 0
       };
-      this.$vhallFetch('allowApply', data)
+      this.$fetch('v3SetHandsup', data)
         .then(() => {
           this.$message.success({ message: '设置成功' });
         })
@@ -974,7 +974,8 @@ export default {
         room_id: this.roomId,
         receive_account_id: accountId
       };
-      this.$fetch('speakOff', data).then((res) => {
+      console.warn('对上麦的用户进行下麦操作---------',data);
+      this.$fetch('speakUserOff', data).then((res) => {
         console.warn(res, '8888');
       }).catch(error => {
         console.error('邀请上麦接口错误', error);

@@ -400,7 +400,9 @@ const apis = {
   agreeInvite: ['/v3/interacts/inav-user/agree-invite', 'POST'], // 用户同意上麦
   rejectInvite: ['/v3/interacts/inav-user/reject-invite', 'POST'], // 用户拒绝上麦
   speakOn: ['/v3/interacts/inav-user/speak', 'POST'], // 用户上麦
-  speakOff: ['/v3/interacts/inav-user/nospeak', 'POST'], // 用户下麦
+  speakOff: ['/v3/interacts/inav-user/nospeak', 'POST'], // 用户自己下麦
+  speakUserOff: ['/v3/interacts/inav/nospeak', 'POST'], // 设置其他人下麦
+  v3SetHandsup : ['/v3/interacts/inav/set-handsup', 'POST'], // 设置房间举手状态---允许举手
   redPackInfo: ['/v3/interacts/redpacket/get-redpacket-status', 'POST'], // 获取红包信息
   applySpeakOn: ['/v3/interacts/inav-user/apply', 'POST'], // 用户申请上麦
   cancelApplySpeakOn: ['/v3/interacts/inav-user/cancel-apply', 'POST'], // 用户取消上麦申请
