@@ -112,7 +112,7 @@ export default {
         '直播': [
           { icon: 'saasicon_shangchuanwendang-copy', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
           { icon: 'saasicon_pinpaishezhi-copy', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '问卷', subText: '创建问卷收集信息', path: `/live/question/${this.$route.params.str}` },
+          { icon: 'saasicon_chuangjianzhibo-copy', title: '问卷', subText: '创建问卷收集信息', path: '/live/question' },
           { icon: 'saasicon_zhanghaoshuju-copy', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
           { icon: 'saasicon_caiwuzonglan-copy', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
         ],
@@ -121,9 +121,9 @@ export default {
           // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         '数据': [
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '数据报告', subText: '统计直播基本数据', path: `/reportsData${this.$route.params.str}` },
-          { icon: 'saasicon_shangchuanwendang-copy', title: '互动统计', subText: '统计直播互动工具数据', path: `/interactionData${this.$route.params.str}` },
-          { icon: 'saasicon_caiwuzonglan-copy', title: '用户统计', subText: '统计直播观众详细数据', path: `/userData${this.$route.params.str}` },
+          { icon: 'saasicon_zhanghaoshuju-copy', title: '数据报告', subText: '统计直播基本数据', path: `/live/reportsData/${this.$route.params.str}` },
+          { icon: 'saasicon_shangchuanwendang-copy', title: '互动统计', subText: '统计直播互动工具数据', path: `/live/interactionData/${this.$route.params.str}` },
+          { icon: 'saasicon_caiwuzonglan-copy', title: '用户统计', subText: '统计直播观众详细数据', path: `/live/userData/${this.$route.params.str}` },
         ]
       }
     };
@@ -150,7 +150,6 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         this.getCode();
-        console.log(res);
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -163,7 +162,6 @@ export default {
       QRcode.toDataURL(
       this.link,
       (err, url) => {
-        console.log(err, url);
         this.showCode = url;
       }
      );
@@ -180,10 +178,11 @@ export default {
       if(item.path){
         if (item.path === '/live/edit') {
           this.$router.push({path: item.path, query: {id:this.$route.params.str }});
+        } else if (item.path === '/live/question') {
+          this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});
         } else {
           this.$router.push({path: item.path});
         }
-
       }else{
         console.log(item);
       }

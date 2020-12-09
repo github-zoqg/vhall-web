@@ -11,6 +11,7 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
+      <el-button round  @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
       <div class="inputKey">
         <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList"></el-input>
@@ -22,12 +23,14 @@
       </table-list>
     </el-card>
     <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question>
+    <base-question ref="dataBase"></base-question>
   </div>
 </template>
+
 <script>
 import PageTitle from '@/components/PageTitle';
 import preQuestion from '@/components/Question/preQuestion';
-import { sessionOrLocal } from '@/utils/utils';
+import baseQuestion from './components/questionBase';
 export default {
   name: "question",
   data() {
@@ -39,7 +42,7 @@ export default {
       tabelColumn: [
         {
           label: '问卷ID',
-          key: 'survey_id',
+          key: 'question_id',
         },
         {
           label: '问卷名称',
@@ -75,10 +78,10 @@ export default {
   },
   components: {
     PageTitle,
-    preQuestion
+    preQuestion,
+    baseQuestion
   },
   mounted() {
-    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getTableList();
   },
   methods: {
@@ -86,10 +89,11 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    getTableList(params) {
+    getTableList() {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = {
-        user_id: this.userId,
+        webinar_id: this.$route.query.id,
+        room_id: this.$route.query.roomId,
         keyword: this.keyword
       }
       if (this.keyword) {
@@ -99,10 +103,9 @@ export default {
         this.$refs.tableList.clearSelect();
       }
       let obj = Object.assign({}, pageInfo, formParams);
-      this.$fetch('getQuestionList', this.$params(obj)).then(res => {
-        this.total = res.data.total;
+      this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list;
-        // console.log(res.data.list, '222222222222222222');
+        this.total = res.data.total;
       })
     },
     // 预览
@@ -113,8 +116,12 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
-      console.log('复制', rows);
-      that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
+      let params = {
+        survey_id: rows.question_id,
+        webinar_id: that.$route.query.id,
+        room_id: that.$route.query.roomId
+      }
+      that.$fetch('copyLiveQuestion', params).then(res => {
         that.$message({
           type: res.code == 200 ? 'success' : 'error',
           message: res.msg,
@@ -126,11 +133,14 @@ export default {
     edit(that, {rows}) {
       console.log('编辑', rows);
       that.$router.push({
-        path: '/material/addQuestion',
+        path: '/live/addQuestion',
         query: {
-          id: rows.question_id
+          id: rows.question_id,
+          webinarId: that.$route.query.id,
+          roomId: that.$route.query.roomId
         }
-      });
+        }
+      );
     },
     // 删除
     del(that, {rows}) {
@@ -148,15 +158,16 @@ export default {
         });
     },
     deleteAll(id) {
-       if (!id) {
+      if (!id) {
         if (this.selectChecked.length < 1) {
           this.$message.warning('请选择要操作的选项');
         } else {
           id = this.selectChecked.join(',');
         }
       }
-      this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
+      this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.$route.query.id}).then(res => {
         this.getTableList();
+        this.$refs.tableList.clearSelect();
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -170,8 +181,10 @@ export default {
     },
     addQuestion() {
       this.$router.push({
-        path: '/material/addQuestion'
-      });
+        path: '/live/addQuestion', query: {webinarId: this.$route.query.id, roomId: this.$route.query.roomId}});
+    },
+    dataBase() {
+      this.$refs.dataBase.dataBaseVisible = true;
     }
   },
 };
