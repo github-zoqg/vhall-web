@@ -1377,7 +1377,7 @@ export default {
         },
         user: {
           avatar: data.join_info.avata,
-          nick_name: data.join_info.nickname,
+          nickname: data.join_info.nickname,
           role_name: 2,
           saas_join_id: data.join_info.join_id,
           third_party_user_id: data.join_info.third_party_user_id,
