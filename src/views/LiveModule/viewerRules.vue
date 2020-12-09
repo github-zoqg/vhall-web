@@ -362,9 +362,9 @@ export default {
       } else if (this.form.verify === 3) {
         this.payForm.fee = this.viewerDao.fee;
       } else if (this.form.verify === 4) {
-        this.fCodeForm.nums = this.viewerDao.nums;
+        this.fCodeForm.nums = null;
       } else if (this.form.verify === 6) {
-        this.fCodePayForm.nums = this.viewerDao.nums;
+        this.fCodePayForm.nums = null;
         this.fCodePayForm.fee = this.viewerDao.fee;
       }
     },

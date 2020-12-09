@@ -767,7 +767,7 @@ export default {
     checkComps(customTab_comp_arr) {
       let flag = true;
       if (customTab_comp_arr && customTab_comp_arr.length > 0) {
-        debugger
+        // debugger
         for(let i = 0; i<customTab_comp_arr.length; i++) {
           let vo = customTab_comp_arr[i];
           if(vo.component_id === 1) {// 图文
@@ -813,14 +813,14 @@ export default {
       let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
       if(this.checkComps(customTab_comp)) {
         let menu_active = sessionOrLocal.get('menu_active');
-        debugger
+        // debugger
         let compList = [];
         if(customTab_comp && customTab_comp.length>0) {
           customTab_comp.map(item => {
             return item.compInfo;
           });
         }
-        debugger
+        // debugger
         saveMenus[menu_active].components = saveMenus[menu_active].type === 1 ? compList : [];
         console.log(saveMenus, 'saveCustomTab第一步组装==>存储完编辑选项内容后，数据处理');
         sessionOrLocal.removeItem('customTab_comp');
@@ -847,7 +847,7 @@ export default {
         menus: saveMenus
       };
       console.log(params, '最终文档存储数据结果');
-      debugger
+      // debugger
       this.$fetch('customMenuSave', {
         request_data: JSON.stringify(params)
       }).then(res =>{
