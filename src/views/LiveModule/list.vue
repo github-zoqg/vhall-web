@@ -46,7 +46,8 @@
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
           <div class="top">
-            <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
+            <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
+              <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
               {{item.pv | unitCovert}}

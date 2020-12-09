@@ -105,7 +105,7 @@ export default {
           var a = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2NDIxMzg0IiwicGhvbmUiOiIxMzc4MzQ1MTAyMyIsIm5pY2tfbmFtZSI6Ilx1NTQwM1x1NGUwZFx1ODBkNlx1NWMwZlx1OTY0OCIsImpvaW5fdWlkIjoiMTczNjI2NyJ9.SZ2CgHUBoGFRN7v-NscO90ZbOJtprgItBE-HhYoV4vc';
           this.params_verify_token = mockResult.join_info.interact_token;
           this.permission = mockResult.permission;
-          this.permission = [100001,100003,100004,100005,100008,100009,100011,100012,100013,100014,100015,100016,100017,100018,100019,100020,100021,100022,100023,100026,100027,100028,100029,100030];
+          this.permission = [100001,100003,100004,100005,100008,100009,100011,100012,100013,100014,100015,100016,100017,100018,100019,100020,100021,100022,100023,100026,100027,100028,100029,100030,100031];
           console.log(this.roomStatus, 123);
           this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
           this.domains = {

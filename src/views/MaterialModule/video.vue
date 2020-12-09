@@ -11,7 +11,7 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
-      <el-button round class="head-btn batch-del">批量删除</el-button>
+      <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -52,11 +52,11 @@ export default {
       tabelColumn: [
         {
           label: '音视频名称',
-          key: 'file_name',
+          key: 'name',
         },
         {
           label: '上传时间',
-          key: 'create_time',
+          key: 'created_at',
         },
         {
           label: '时长',
@@ -166,11 +166,12 @@ export default {
         // });
         // console.warn(res);
         this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
-          console.log(res, '上传成功');
+          this.tableData.splice(0, 1);
+          console.log(this.tableData, this.uploadList, '000000000000000000')
+          this.$message.success('上传视频成功');
           this.getTableList();
         });
       },err=>{
-        console.warn(err, '上传失败');
         this.tableData.shift();
         this.uploadList.shift();
         this.$message.error('创建点播失败');
@@ -220,10 +221,14 @@ export default {
                 break;
             }
           });
-          this.tableData = res.data.list;
-          if(this.uploadList.length!=0){
-            this.tableData =this.uploadList.concat(this.tableData);
+          if (res.data.total === 1) {
+            this.$refs.tableList.clearSelect();
           }
+          this.tableData = res.data.list;
+          // this.checkedList = [];
+          // if(this.uploadList.length!=0){
+          //   this.tableData =this.uploadList.concat(this.tableData);
+          // }
         }
       });
     },
@@ -236,46 +241,53 @@ export default {
         }).then(({ value }) => {
           let flag = Boolean(value.match(/^[ ]*$/));
           if(!flag && value!=null){
-            that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, file_name: value}).then(res=>{
-              console.warn('成功', res);
-                that.$message({
-                  type: 'success',
-                  message: '修改成功'
-                });
+            that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, filename: value}).then(res=>{
+              that.$message.success('修改成功');
+              that.getTableList();
             });
           }
         }).catch(() => {});
     },
     del(that, { rows }) {
-      that.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除?', '提示', {
+      that.checkedList = [];
+      that.$confirm('确定要删除此视频或音频吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
             center: true
           }).then(() => {
-            that.$fetch('dataVideoDel', {video_ids: rows.id, user_id:  this.userId}).then(res=>{
-              console.warn('成功', res);
-                that.$message({
-                  type: 'success',
-                  message: '删除成功'
-                });
-            });
+            that.allDelete(rows.id);
           }).catch(() => {});
+    },
+    // 批量删除
+    allDelete(id) {
+      if (!id) {
+        if(this.checkedList.length <= 0) {
+          this.$message.error('请至少选择一条视频删除');
+          return;
+        } else {
+          id = this.checkedList.join(',');
+        }
+      }
+      this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
+        this.getTableList();
+        this.$message.success('删除成功');
+      });
     },
     preview(that, { rows }) {
       //  this.videoParam 进本信息
-      this.showDialog = true;
+      if (rows.transcode_status == 1) {
+        that.showDialog = true;
+      } else {
+        that.$message.warning('只有转码成功才能查看');
+      }
     },
     operating(val){
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
     changeTableCheckbox(item) {
-      this.checkedList.filter(item => item.id);
-      console.log(this.checkedList, '1231423543253');
-    },
-    pageSizeChange(page){
-      console.log(page);
+      this.checkedList = item.map(val => val.id);
     },
     uploadSucess(msg){
       console.log('上传成功', msg);

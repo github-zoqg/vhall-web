@@ -1,7 +1,7 @@
 <template>
   <div class="prize-create">
     <VhallDialog
-      title="创建奖品"
+      :title="`${title}奖品`"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
@@ -9,21 +9,22 @@
         <el-form-item label="图片上传">
           <upload
             class="giftUpload"
-            v-model="prizeForm.imageUrl"
-            :on-success="handleuploadSuccess"
+            v-model="prizeForm.img_path"
+            :domain_url="prizeForm.img_path"
+            :on-success="prizeLoadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
-            :before-upload="beforeUploadHnadler">
+            :before-upload="beforeUploadHandler">
             <p slot="tip">推荐尺寸：120*120px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
           </upload>
         </el-form-item>
-        <el-form-item label="奖品名称" prop="name">
-            <el-input v-model="prizeForm.name" maxlength="10" show-word-limit></el-input>
+        <el-form-item label="奖品名称" prop="prize_name">
+            <el-input v-model="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.name">确 定</el-button>
+        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name">确 定</el-button>
         <el-button @click.prevent.stop="dialogVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -68,11 +69,12 @@ export default {
       dialogPrizeVisible: false,
       checkedList: [],
       prizeForm: {
-        imageUrl: '',
-        name: ''
+        source: 1,
+        img_path: '',
+        prize_name: ''
       },
        rules: {
-        name: [
+        prize_name: [
           { required: true, message: '请输入奖品名称', trigger: 'blur' }
         ]
       },
@@ -110,19 +112,99 @@ export default {
       ]
     };
   },
+  computed: {
+    title() {
+      if (this.prizeInfo.prize_id) {
+        this.$set(this.prizeForm, 'img_path', this.prizeInfo.img_path);
+        this.$set(this.prizeForm, 'prize_name', this.prizeInfo.prize_name);
+        this.$set(this.prizeForm, 'prize_id', this.prizeInfo.prize_id);
+        this.$set(this.prizeForm, 'source', 1);
+        return '编辑';
+      } else {
+        this.prizeResetForm();
+        return '新建';
+      }
+    }
+  },
+  props: ['prizeInfo'],
   components: {
     upload
   },
   methods: {
+    prizeResetForm() {
+      this.prizeForm = {
+        source: 1,
+        img_path: '',
+        prize_name: ''
+      }
+    },
     surePrize() {
-      this.$refs[prizeForm].validate((valid) => {
+      this.$refs.prizeForm.validate((valid) => {
         if (valid) {
           this.dialogVisible = false;
+          let url = this.title === '编辑' ? 'editPrize' : 'createPrize';
+          this.$fetch(url, this.prizeForm).then(res => {
+            console.log(res.data, '111111111111');
+            this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
+            this.$emit('getTableList');
+          })
           console.log('新建奖品');
         } else {
           return false;
         }
       });
+    },
+    prizeLoadSuccess(res, file){
+      console.log(res, file);
+      // this.prizeForm.imageUrl = URL.createObjectURL(file.raw);
+      this.prizeForm.img_path = res.data.file_url;
+      // this.fileList.push({
+      //   url: this.form.imageUrl,
+      //   cover: false
+      // });
+      // if (!this.fileList.some(item => item.cover)) {
+      //   this.fileList[0].cover = true;
+      // }
+      // // 生成图片 ID 添加到 imgIdArr 中
+      // this.generateImgId(this.form.imageUrl);
+      // console.log(this.fileList);
+    },
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      let imgSrc = window.URL.createObjectURL(file);
+      let img = new Image();
+      img.src = imgSrc;
+      let that = this; // onload 里面不能用this
+      img.onload = function () {
+        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
+        if (img.width > img.height) {
+          that.imgType = 'widthMore';
+        } else if (img.width < img.height) {
+          that.imgType = 'heightMore';
+        } else {
+          that.imgType = 'default';
+        }
+      };
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`封面上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
     },
     cancelPeize() {
       this.dialogVisible = false;

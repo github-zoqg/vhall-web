@@ -12,6 +12,7 @@
            <upload
               class="giftUpload"
               v-model="advertisement.img_url"
+              :domain_url="advertisement.img_url"
               :saveData="{
                 path: 'webinars/img_url',
                 type: 'image',

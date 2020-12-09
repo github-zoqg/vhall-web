@@ -36,8 +36,19 @@ export default {
     };
   },
   methods: {
+    sendData: function() {
+      debugger
+      this.$emit('cxtChangeInfo', this.form.welcome_content);
+    }
   },
   watch: {
+    'form.welcome_content': {
+      handler() {
+        //执行代码
+        this.sendData();
+      },
+      deep: true //为true，表示深度监听，这时候就能监测到a值变化
+    }
   }
 };
 </script>

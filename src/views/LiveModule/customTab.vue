@@ -94,7 +94,7 @@
                   </div>
                   <!-- 标题 -->
                   <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`">
-                    <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '标题'}}</h5>
+                    <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '默认标题'}}</h5>
                   </div>
                   <!-- 分割线 -->
                   <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`">
@@ -230,7 +230,7 @@
                     </div>
                     <!-- 标题 -->
                     <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                      <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '标题'}}</h5>
+                      <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '默认标题'}}</h5>
                     </div>
                     <!-- 分割线 -->
                     <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
@@ -261,7 +261,7 @@
                         </div>
                       </div>
                     </div>
-                    <i class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></i>
+                    <icon icon-class="saasicon-trashline-01" class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></icon>
                   </div>
                 </div>
               </div>
@@ -274,7 +274,7 @@
             <!-- 文档废弃
             <unit-menu-doc v-if="Number(clickItem.type) === 2"></unit-menu-doc>
             -->
-            <unit-menu-chat v-if="Number(clickItem.type) === 3"></unit-menu-chat>
+            <unit-menu-chat v-if="Number(clickItem.type) === 3" @cxtChangeInfo="menuCtxChange"></unit-menu-chat>
             <unit-img-txt ref="img-txt-unit-dom" v-if="unitComp.show_type === 'img-txt'" @cxtChangeInfo="editChange"></unit-img-txt>
             <unit-rq-code ref="rq-code-unit-dom" v-if="unitComp.show_type === 'rq-code'" @cxtChangeInfo="editChange"/>
             <unit-video ref="video-unit-dom" v-if="unitComp.show_type === 'video'"/>
@@ -447,16 +447,6 @@ export default {
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
-        res = {"code":200,"msg":"success","data": {
-            list: [
-              {"name":"\u6587\u6863","type":2,"status":1,"doc_id":0,"doc_name":""},
-              {"name":"\u804a\u5929","type":3,"status":1,"welcome_content":""},
-              {"name":"\u7b80\u4ecb","type":4,"status":1},
-              {"name":"\u63a8\u8350","type":6,"status":1},
-              {"name":"\u5546\u54c1","type":5,"status":1}
-            ]
-          }
-        }
         if(res && res.code === 200) {
           let menuList = res.data.list;
           let docItem = menuList.filter(item => item.type === 2);
@@ -474,14 +464,15 @@ export default {
               item.isOpen = true;
               this.clickItem = item;
               this.menuTabIndex = ins;
+
               sessionOrLocal.set('menu_active', ins);
-              console.log(ins, this.clickItem, '===> 设定当前简介下标');
+              console.log(ins, this.clickItem, '===> clickItem设定当前简介下标');
             } else {
               item.isOpen = false;
             }
             return item;
           });
-          console.log(newMenuList, '===> 设定默认状态以及简介选中状态，菜单所有')
+          console.log(newMenuList, '===> newMenuList设定默认状态以及简介选中状态，菜单所有')
           if(newMenuList && newMenuList.length > 0) {
             this.customMenus = newMenuList;
           }
@@ -495,8 +486,11 @@ export default {
     },
     // ，是否可以通过hover选择二级菜单
     isOpenHoverHandle(item, ins) {
-      // 保存原有数据
-      this.setCompToMenuSave()
+      // 如果是自建立菜单，切换时保存原有数据
+      console.log(item, '菜单切换===>isOpenHoverHandle')
+      if(item.type === 1) {
+        this.setCompToMenuSave();
+      }
       // 某个点击开启的时候，之前的数据保存到customMenus里面。
       this.clickItem = item;
       this.menuTabIndex = ins;
@@ -509,8 +503,8 @@ export default {
     setCompToMenuSave() {
       let oldMenuActive = sessionOrLocal.get('menu_active');
       let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
-      console.log(customTab_comp, 'customTab_comp');
-      this.customMenus[oldMenuActive].components = customTab_comp;
+      console.log(oldMenuActive, customTab_comp, 'customTab_comp');
+      this.customMenus[oldMenuActive].components = customTab_comp || [];
       sessionOrLocal.removeItem('customTab_comp');
     },
     showHoverMenu(item, flag) {
@@ -643,29 +637,21 @@ export default {
         this.$message.error('非有效组件，无法使用');
         return;
       }
-      this.compIndex++;
       let unitComp = Object.assign({
         show_type: item.compType
       }, item);
       unitComp.compInfo = {};
-      unitComp.original_params = {
-        styles: '',
-        content: '',
-        params: ''
-      };
-      unitComp.update_params = {
-        styles: '',
-        content: '',
-        params: ''
-      };
+      console.log(item.msg, '当前组件类型')
       // 如果是分割线，直接保存
       if (item.compType === 'hr') {
-        unitComp.compInfo = {component_id: item.component_id, msg: item.msg};
+        unitComp.compInfo = {component_id: item.component_id, msg: '分割线'};
       } else if (item.compType === 'rq-code') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, isDefault:true};
       } else if (item.compType === 'rank') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, inSwitch: 1, inContent: '', rewardSwitch: 1, rewardContent: ''};
         unitComp.rankType = 'inv';
+      } else if (item.compType === 'title') {
+        unitComp.compInfo = {component_id: item.component_id, msg: '标题', title: '默认标题'};
       }
       this.modShowHtmlList.push(unitComp);
       sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
@@ -694,6 +680,13 @@ export default {
       });
     },
     // 右侧编辑区修改，通知左侧展示区域
+    menuCtxChange(content) {
+      this.customMenus.map(item => {
+        if(item.type === 3) {
+          item.welcome_content = content || ''
+        }
+      })
+    },
     editChange(saveItem) {
       // 文字链格式： { content: "{component_id: 5, msg: '文字链', text: '文本', src: '文件链路径'}",type: 'text-link', compIndex: 0 }
       // 标题格式： { content: "{component_id: 7, msg: '标题', title: '默认标123题'}",type: 'title', compIndex: 0 }
@@ -770,13 +763,91 @@ export default {
     showInOrRewardPanel(type) {
       this.rankType = type;
     },
+    // 验证所有的组件保存： 若有失败的，不可保存，直接清除。若验证通过的，直接保存。
+    checkComps(customTab_comp_arr) {
+      let flag = true;
+      if (customTab_comp_arr && customTab_comp_arr.length > 0) {
+        // debugger
+        for(let i = 0; i<customTab_comp_arr.length; i++) {
+          let vo = customTab_comp_arr[i];
+          if(vo.component_id === 1) {// 图文
+            if(vo.content === null || vo.content === '' || vo.content === undefined) {
+              flag = false;
+            }
+          } else if (vo.component_id === 2) {// 二维码
+            if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined) {
+              flag = false;
+            }
+          } else if (vo.component_id === 3) {// 直播
+            flag = false;
+          } else if (vo.component_id === 4) {// 专题
+            flag = false;
+          } else if (vo.component_id === 5) {// 文字链
+            if(vo.text === null || vo.text === '' || vo.text === undefined ) {
+              flag = false;
+            } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
+              flag = false;
+            }
+          } else if (vo.component_id === 6) {// 图片链
+            if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined ) {
+              flag = false;
+            } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
+              flag = false;
+            }
+          } else if (vo.component_id === 7) {// 标题
+            if(vo.compInfo.title === null || vo.compInfo.title === '' || vo.compInfo.title === undefined ) {
+              flag = false;
+            }
+          } else if (vo.component_id === 9) { // 排行榜
+            if(Number(vo.inSwitch) === 0 && Number(vo.rewardSwitch) === 0) {
+              flag = false;
+            }
+          }
+        }
+      }
+      return flag;
+    },
     saveCustomTab() {
-      // 获取customTab_comp，组装某个菜单要组装的内容
+      let saveMenus = this.customMenus;
+      // 获取缓存组件,若验证通过，存储在当前停留菜单保存
+      let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
+      if(this.checkComps(customTab_comp)) {
+        let menu_active = sessionOrLocal.get('menu_active');
+        // debugger
+        let compList = [];
+        if(customTab_comp && customTab_comp.length>0) {
+          customTab_comp.map(item => {
+            return item.compInfo;
+          });
+        }
+        // debugger
+        saveMenus[menu_active].components = saveMenus[menu_active].type === 1 ? compList : [];
+        console.log(saveMenus, 'saveCustomTab第一步组装==>存储完编辑选项内容后，数据处理');
+        sessionOrLocal.removeItem('customTab_comp');
+        console.log('saveCustomTab存储完成后数据清空');
+      } else {
+        this.$alert('有组件配置错误，请更正后再尝试保存', '提示', {
+          dangerouslyUseHTMLString: true,
+          center: true,
+          customClass: 'zdy-alert-box',
+          confirmButtonText: '我知道了'
+        });
+        return;
+      }
+      // 若customMenus不包含文档，第一位填充
+      let checkType2Result = this.customMenus.filter(item => item.type === 2);
+      if(checkType2Result && checkType2Result.length === 0) {
+        let menu_doc_default = JSON.parse(sessionOrLocal.get('menu_doc_default'));
+        saveMenus.unshift(menu_doc_default);
+      }
+      console.log(params, 'saveCustomTab第二步组装==>若不包含文档，需填充文档');
       let params = {
         webinar_id: this.$route.params.str,
         save_type: 2, // 1--保存；2--保存+发布
-        menus: this.customMenus
+        menus: saveMenus
       };
+      console.log(params, '最终文档存储数据结果');
+      // debugger
       this.$fetch('customMenuSave', {
         request_data: JSON.stringify(params)
       }).then(res =>{
@@ -1048,6 +1119,13 @@ export default {
 .edit__draggable {
   min-height: 460px;
 }
+.unit-title {
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #1A1A1A;
+  line-height: 20px;
+}
 /*面板设置*/
 .pc-custom-box {
   .show-comp-template {
@@ -1069,11 +1147,8 @@ export default {
   min-height: 32px;
   margin: 10px;
   &.active, &:hover {
-    cursor: pointer;
-    -webkit-transition: border .3s;
-    transition: border .3s;
-    border: 1px dashed #58ABFF;
-    background: rgba(88,171,255,0.1);
+    background: #FFF5F5;
+    border: 1px dashed #F09D99;
   }
   /*排行榜组件-特殊*/
   &.rank {
@@ -1160,15 +1235,9 @@ export default {
   .del {
     position: absolute;
     display: block;
-    top: -20px;
+    top: -15px;
     right: -10px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-image: url(../../common/images/custom-tab/delete_icon.png) !important;
-    background-size: cover;
-    background-position: 100% 100%;
-    margin: 8px auto 0 auto;
+    font-size: 20px;
     z-index: 5;
   }
   .content {

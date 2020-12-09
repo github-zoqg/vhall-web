@@ -9,7 +9,6 @@ import { copy, dealObjectValue, domainCovert, parseURL } from './utils/utils';
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
-// import './permission';
 // 七巧板组件库，直播间内使用
 import vhallSaas from './tangram/buTemplates/index.js';
 Vue.use(ElementUI);

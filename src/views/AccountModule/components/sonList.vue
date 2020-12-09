@@ -283,7 +283,8 @@ export default {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.getSonList();
+            that.$refs.sonTab.clearSelection();
+            that.getSonList();viewerRules
           }else {
             that.$message({
               type: 'error',
