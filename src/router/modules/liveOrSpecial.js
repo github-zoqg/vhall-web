@@ -138,14 +138,14 @@ const router = [
         hidden: true
       },
       {
-        path: 'question/:str(\\d+)',
-        component: () => import('@/views/MaterialModule/question'),
+        path: 'question',
+        component: () => import('@/views/LiveModule/MaterialSet/question'),
         meta:{ auth: true, title: '直播—问卷', name: 'question', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'addQuestion',
-        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        component: () => import('@/views/LiveModule/MaterialSet/components/addQuestion'),
         meta:{ auth: true, title: '直播—新建问卷', name: 'addQuestion', activeMenu: '/live/list'},
         hidden: true
       },
@@ -186,31 +186,31 @@ const router = [
         hidden: true
       },
       {
-        path: '/reportsData/:str(\\d+)',
+        path: 'reportsData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         meta:{ auth: true, title: '数据报告', name: 'reportsData', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/interactionData/:str(\\d+)',
+        path: 'interactionData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/interactData'),
         meta:{ auth: true, title: '互动统计', name: 'interactionData', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/userData/:str(\\d+)',
+        path: 'userData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/userData'),
         meta:{ auth: true, title: '用户统计', name: 'userData', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/interactionDetail',
+        path: 'interactionDetail',
         component: () => import('@/views/LiveModule/Data/interactDetail'),
         meta:{ auth: true, title: '查看数据', name: 'interactionDetail', activeMenu: '/live/list'},
         hidden: true
       },
       {
-        path: '/lookSingleQuestion',
+        path: 'lookSingleQuestion',
         component: () => import('@/views/LiveModule/Data/lookSingleQuestion'),
         meta:{ auth: true, title: '查看问卷详情', name: 'lookSingleQuestion', activeMenu: '/live/list'},
         hidden: true

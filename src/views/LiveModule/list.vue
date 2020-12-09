@@ -64,7 +64,7 @@
                 <router-link :to="`chooseWay/${item.webinar_id},1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="回放" placement="top">
-                <i class="el-icon-s-promotion"></i>
+              <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="详情" placement="top">
                 <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
