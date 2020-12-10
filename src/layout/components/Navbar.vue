@@ -96,9 +96,12 @@ export default {
       });
     },
     logout() {
-      /*this.$fetch('loginOut', {}).then(res =>{
+      this.$fetch('loginOut', {}).then(res =>{
         if(res && res.code === 200 && res.data) {
           sessionOrLocal.clear();
+          sessionOrLocal.clear('localStorage');
+          // 监听消息变化
+          this.$EventBus.$emit('saas_vs_login_out', true);
           this.$router.push({
             path: '/login'
           });
@@ -108,10 +111,6 @@ export default {
       }).catch(e=>{
         console.log(e);
         this.$message.error('退出失败');
-      });*/
-      sessionOrLocal.clear();
-      this.$router.push({
-        path: '/login'
       });
     },
     updateAccount(account) {
@@ -124,7 +123,17 @@ export default {
     let userInfo = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      if(this.userInfo) {
+        this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      } else {
+        this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      }
+     } else {
+      sessionOrLocal.clear();
+      sessionOrLocal.clear('localStorage');
+      this.$router.push({
+        path: '/login'
+      });
     }
     // 监听消息变化
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);

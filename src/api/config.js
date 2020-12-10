@@ -135,7 +135,7 @@ const apis = {
   warnEdit: ['/99/v3/webinars/warm/edit', 'POST', 'mock'], // 修改暖场视频封面图片接口 •••
 
   // 商品
-  goodsGet: ['/101/v3/interacts/goods/get-webinar-goods-list', 'GET', 'mock'], // 获取活动下商品列表
+    goodsGet: ['/101/v3/interacts/goods/get-webinar-goods-list', 'GET', 'mock'], // 获取活动下商品列表
   goodsEnable: ['/101/v3/interacts/goods/enable-webinar-goods', 'POST', 'mock'], // 商品上架
   goodsDisable: ['/101/v3/interacts/goods/disable-webinar-goods', 'POST', 'mock'], // 商品下架
   goodsCopy: ['/101/v3/interacts/goods/clone-goods', 'POST', 'mock'], // 复制一个商品

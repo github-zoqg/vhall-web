@@ -30,9 +30,9 @@
     <div class="content">
       <div class="special-code">
         <p class="icons">
-          <i></i>
-          <i></i>
-          <i></i>
+          123123<icon icon-class="saasicon_wechat" @click="toShare"></icon>
+         aaa <icon icon-class="saasicon_sina"></icon>
+          vv<icon icon-class="saasicon_qq"></icon>
         </p>
         <p class="img-code"><img :src="qrcode" alt=""><br><span>手机扫码观看</span></p>
       </div>
@@ -78,6 +78,9 @@ export default {
     );
   },
   methods: {
+    toShare() {
+      window.location.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://t.e.vhall.com/v3/#/live/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用', '_blank');
+    },
     copy(){
       const input = document.getElementById(this.linkId);
       input.select();
@@ -149,26 +152,6 @@ export default {
     }
     .icons{
       text-align: center;
-      i{
-        display: inline-block;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        &:nth-child(1){
-          background: url("@{iconpath}/qq.png") center center no-repeat;
-          background-size: 100% 100%;
-        }
-        &:nth-child(2){
-          background: url("@{iconpath}/weibo.png") center center no-repeat;
-          background-size: 100% 100%;
-          margin: 0 48px;
-        }
-        &:nth-child(3){
-          background: url("@{iconpath}/wechat.png") center center no-repeat;
-          background-size: 100% 100%;
-        }
-
-      }
     }
     /deep/ .el-input__inner{
       border-radius: 4px 0 0 4px;

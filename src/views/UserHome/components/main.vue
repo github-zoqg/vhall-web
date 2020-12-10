@@ -58,7 +58,13 @@
         </el-col>
       </el-row>
     </div>
-    <SPagination :total="tabType === 'live' ? tabList[0].total : tabList[1].total" :page-size='query.limit' :current-page='query.pageNumber' @current-change="changeHandle" align="center"></SPagination>
+    <SPagination
+      :total="tabType === 'live' ? tabList[0].total : tabList[1].total"
+      :page-size='query.limit'
+      :current-page='query.pageNumber'
+      @current-change="changeHandle" align="center"
+      v-if="tabType === 'live' ? tabList[0].total > 0 : tabList[1].total > 0"
+    ></SPagination>
   </div>
 </template>
 
@@ -136,9 +142,10 @@ export default {
       this.$fetch('liveList', this.$params(params)).then(res=>{
         if (res && res.code === 200) {
           let list = res.data.list;
-          list.map(item => {
-            item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
-          });
+          /*list.map(item => {
+            item.img_url =
+              // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
+          });*/
           this.dataList = res.data.list;
           this.tabList[0].total = res.data.total;
         } else {
@@ -166,9 +173,9 @@ export default {
       this.$fetch('subjectList', this.$params(params)).then(res=>{
         console.log(res);
         let list = res.data.list;
-        list.map(item => {
+        /*list.map(item => {
           item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
-        });
+        });*/
         this.dataList = res.data.list;
         this.tabList[1].total = res.data.total;
       }).catch(error=>{

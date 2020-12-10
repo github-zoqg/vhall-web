@@ -8,6 +8,12 @@ const router = [
     hidden: true
   },
   {
+    path: '/clientLiveEdit',
+    meta: { auth: false, title: '', name: 'clientLiveEdit'},
+    component: () => import('@/views/LiveModule/edit'),
+    hidden: true
+  },
+  {
     path: '/live',
     component: Layout,
     redirect: '/live/list',
