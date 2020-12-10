@@ -21,7 +21,8 @@ import * as pathToRegexp from 'path-to-regexp';
 export default {
   data() {
     return {
-      levelList: null
+      levelList: null,
+      sysDateStr: ''
     };
   },
   watch: {
@@ -34,11 +35,22 @@ export default {
     }
   },
   created() {
+    if(this.dateUpdateTimer) {
+      window.clearInterval(this.dateUpdateTimer);
+    }
     // 获取本地系统时间字符串
     this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
+    this.updateData();
+    // 获取导航面包屑
     this.getBreadcrumb();
   },
   methods: {
+    updateData() {
+      let that = this;
+      this.dateUpdateTimer = setInterval(() => {
+        that.sysDateStr = that.$moment(new Date().getTime()).format('llll');
+      }, 60000); // 一分钟更新一下
+    },
     getBreadcrumb() {
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title);
@@ -68,6 +80,11 @@ export default {
         return;
       }
       this.$router.push(this.pathCompile(path));
+    }
+  },
+  beforeDestroy() {
+    if(this.dateUpdateTimer) {
+      window.clearInterval(this.dateUpdateTimer);
     }
   }
 };

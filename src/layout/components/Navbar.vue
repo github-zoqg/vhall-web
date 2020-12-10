@@ -5,13 +5,7 @@
     <!-- 登录用户等 -->
     <div class="right-menu">
       <div class="right-menu-item">
-        <a>旧版控制台</a>
-      </div>
-      <!-- 帮助中心 -->
-      <div class="right-menu-item">
-        <span>
-             <icon icon-class="saasicon_help_m"></icon>
-          </span>
+        <a :href="env.staticLinkVo.downOldUrl">旧版控制台</a>
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
@@ -20,6 +14,12 @@
              <icon icon-class="saasicon_download"></icon>
           </span>
         </el-badge>
+      </div>
+      <!-- 帮助中心 -->
+      <div class="right-menu-item">
+        <span @click.prevent.stop="toHelpPage">
+             <icon icon-class="saasicon_help_m"></icon>
+          </span>
       </div>
       <!-- 消息中心 -->
       <div class="right-menu-item">
@@ -33,11 +33,16 @@
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
             <img :src="avatarImgUrl" class="user-avatar" alt="" />
-            <span>{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
+            <span>{{
+                userInfo && userInfo.nick_name ? userInfo.nick_name : ''
+              }}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
+            <el-dropdown-item divided @click.native="toAccountPage">
+              <span><icon icon-class="saasicon_Settings"></icon>账户信息</span>
+            </el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">
-              <span style="display:block;">退出</span>
+              <span><icon icon-class="saasicon_Settings"></icon>退出</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -64,16 +69,23 @@ export default {
       unread_num: 0,
       isDownload: 0,
       avatarImgUrl: '',
-      userInfo: null
+      userInfo: null,
+      env: Env
     };
   },
   // inject: [],
   methods: {
+    toHelpPage() {
+      window.open(Env.staticLinkVo.helpLinkUrl, '_blank');
+    },
     toMsgPage() {
       this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
       this.$router.push({path: '/other/downloadList'});
+    },
+    toAccountPage() {
+      this.$router.push({path: '/account/info'});
     },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{
@@ -104,7 +116,7 @@ export default {
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = account ?  account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
@@ -112,7 +124,7 @@ export default {
     let userInfo = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
     // 监听消息变化
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
@@ -124,7 +136,16 @@ export default {
   }
 };
 </script>
-
+<style>
+.user-dropdown {
+  /deep/.el-dropdown-menu__item{
+    padding: 0 10px!important;
+  }
+  /deep/.el-dropdown-menu__item--divided:before {
+    display: none!important;
+  }
+}
+</style>
 <style lang="less" scoped>
 @import '../../common/css/index.less';
 .navbar {
@@ -148,6 +169,7 @@ export default {
   }
   .right-menu-item {
     margin-right: 16px;
+    cursor: pointer;
     &:first-child {
       font-size: 14px;
       font-family: @fontRegular;

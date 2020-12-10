@@ -10,13 +10,7 @@ const routes = [];
 // 动态加载路由
 const modulesFiles = require.context('./modules', true, /\.js$/);
 modulesFiles.keys().map((modulePath) => {
-  const value = modulesFiles(modulePath);
-  //判断是否为数组路由
-  if(value.default.length || value.default.length ===0){
-    routes.push(...value.default);
-  }else{
-    routes.push(value.default);
-  }
+  routes.push(...modulesFiles(modulePath).default);
 });
 const createRouter = () => new Router({
   // mode: 'history',
@@ -26,10 +20,10 @@ const createRouter = () => new Router({
 const router = createRouter();
 NProgress.configure({showSpinner: false}); // NProgress Configuration
 const whiteList = ['/login', '/register', '/forgetPassword']; // 白名单，不需携带Token
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
   // NProgress.start();
   // next();
-  let token = window.sessionStorage.getItem('token');
+  let token = sessionOrLocal.get('token', 'localStorage') || '';
   if (token) {
     // 已登录不准跳转登录页
     console.log('11111111', to.path, '当前页面');
@@ -44,7 +38,7 @@ router.beforeEach(async (to, from, next) => {
     fetchData('getInfo', {scene_id: 2}).then(res => {
       // debugger;
       if(res.code === 200) {
-        console.log('222222', to.path, '当前页面');
+
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
       } else {

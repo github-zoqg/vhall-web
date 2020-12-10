@@ -74,14 +74,14 @@ export default {
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = account ? account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
     let userInfo  = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
     this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '';
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);

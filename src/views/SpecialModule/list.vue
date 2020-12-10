@@ -43,7 +43,7 @@
               <i class="el-icon-view"></i>
               {{item.view_num | unitCovert}}
             </span>
-            <img :src="item.cover || 'https://t-alistatic01.e.vhall.com/static/img/v35-subject.png'" alt="">
+            <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
           </div>
           <div class="bottom">
             <div class="">
@@ -98,7 +98,8 @@ export default {
       ],
       loading: true,
       liveList: [],
-      shareUrl: null
+      shareUrl: null,
+      env: Env
     };
   },
   components: {
