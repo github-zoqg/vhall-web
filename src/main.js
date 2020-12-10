@@ -1,6 +1,20 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+import tinymce from 'tinymce';
+import VueTinymce from '@packy-tang/vue-tinymce';
+//样式
+import 'tinymce/skins/content/default/content.min.css';
+import 'tinymce/skins/ui/oxide/skin.min.css';
+import 'tinymce/skins/ui/oxide/content.min.css';
+//主题
+import 'tinymce/themes/silver';
+import 'tinymce/icons/default/icons.min.js';
+//插件
+import 'tinymce/plugins/image'; //图片插件
+import 'tinymce/plugins/quickbars';//快速栏插件
+import 'tinymce/plugins/fullscreen';//全屏插件
+
 import EventBus from './utils/Events';
 import baseObj from './api/env'
 console.log(baseObj)
@@ -11,6 +25,31 @@ import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
 import vhallSaas from './tangram/buTemplates/index.js';
+// 页面加载进度样式
+import 'nprogress/nprogress.css';
+// 系统通用重置样式
+import '@/common/css/index.less';
+
+//过滤器
+import * as filters from './utils/filter';
+
+// 工具类引入
+import moment from 'moment'; // 日期格式化
+import 'moment/locale/zh-cn';
+
+import { getParams } from './utils/general';
+import fetchData from './api/fetch';
+
+Vue.prototype.$fetch = fetchData;
+Vue.prototype.$moment = moment;
+Vue.config.productionTip = false;
+Vue.prototype.$EventBus = EventBus;
+Vue.prototype.$copyText = copy;
+Vue.prototype.$params = dealObjectValue; //去除空值参数转换
+Vue.prototype.$domainCovert = domainCovert;// 添加域名
+Vue.prototype.$parseURL = parseURL; // 去除域名//t-alistatic01.e.vhall.com/upload/
+Vue.prototype.$img = require('./common/images/small.png');
+
 Vue.use(ElementUI);
 Vue.use(vhallSaas, {
   config: {
@@ -19,32 +58,15 @@ Vue.use(vhallSaas, {
   baseUrl: baseObj.BASE_URL,
   buHost: "https://t.e.vhall.com"
 });
-// 页面加载进度样式
-import 'nprogress/nprogress.css';
 
-// 系统通用重置样式
-import '@/common/css/index.less';
-Vue.prototype.$img = require('./common/images/small.png');
-//过滤器
-import * as filters from './utils/filter';
+moment.locale(); // zh-cn
+window.mom = moment
+
 Object.keys(filters).forEach(key=>{
   Vue.filter(key, filters[key]);    //插入过滤器名和对应方法
 });
-// 工具类引入
-import moment from 'moment'; // 日期格式化
-import 'moment/locale/zh-cn';
-moment.locale(); // zh-cn
-import { getParams } from './utils/general';
-import fetchData from './api/fetch';
-Vue.prototype.$fetch = fetchData;
-window.mom = moment
-Vue.prototype.$moment = moment;
-Vue.config.productionTip = false;
-Vue.prototype.$EventBus = EventBus;
-Vue.prototype.$copyText = copy;
-Vue.prototype.$params = dealObjectValue; //去除空值参数转换
-Vue.prototype.$domainCovert = domainCovert;// 添加域名
-Vue.prototype.$parseURL = parseURL; // 去除域名//t-alistatic01.e.vhall.com/upload/
+
+
 window.SAAS_V3_COL = {
   KEY_1: 'SAAS_V3_SON_VO', // 子账号个数
   KEY_2: 'SAAS_V3_PID', // 用户ID
@@ -85,19 +107,6 @@ const i18n = new VueI18n({
 });
 window.i18n = i18n;
 
-import tinymce from 'tinymce';
-import VueTinymce from '@packy-tang/vue-tinymce';
-//样式
-import 'tinymce/skins/content/default/content.min.css';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-//主题
-import 'tinymce/themes/silver';
-import 'tinymce/icons/default/icons.min.js';
-//插件
-import 'tinymce/plugins/image'; //图片插件
-import 'tinymce/plugins/quickbars';//快速栏插件
-import 'tinymce/plugins/fullscreen';//全屏插件
 Vue.prototype.$tinymce = tinymce;
 Vue.use(VueTinymce);
 

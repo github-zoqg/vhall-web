@@ -38,7 +38,7 @@ router.beforeEach((to, from, next) => {
     fetchData('getInfo', {scene_id: 2}).then(res => {
       // debugger;
       if(res.code === 200) {
-        console.log('222222', to.path, '当前页面');
+
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
       } else {
