@@ -21,7 +21,7 @@
           >
         </search-area>
       </div>
-      <el-card class="question-list" v-if="tableData.length">
+      <el-card class="question-list" v-if="total">
         <table-list
           ref="tableProductList"
           :manageTableData="tableData"
@@ -36,9 +36,9 @@
         >
         </table-list>
       </el-card>
-    <div class="empty" v-else>
-      <noData :nullType="nullText" :text="'暂未创建商品'">
-      </noData>
+       <div class="empty" v-else>
+        <noData :nullType="nullText" :text="'暂未创建商品'">
+        </noData>
       </div>
   </div>
 </template>
@@ -54,7 +54,7 @@ export default {
       imageUrl: '',
       nullText: 'noData',
       checkedGoodsId: [],
-      total: 0,
+      total: 1,
       btnsWidth: 230,
       searchAreaLayout: [
         {
@@ -64,7 +64,7 @@ export default {
       tabelColumn: [
         {
           label: '商品ID',
-          key: 'good_id',
+          key: 'goods_id',
         },
         {
           label: '图片',
@@ -106,7 +106,7 @@ export default {
         // 上架处理
         this.$fetch('goodsEnable', {
           webinar_id: this.$route.params.str,
-          goods_id: option.good_id
+          goods_id: option.goods_id
         }).then(res => {
           this.$message.success("上架设置成功！");
           console.log(res);
@@ -118,7 +118,7 @@ export default {
         // 下架处理
         this.$fetch('goodsDisable', {
           webinar_id: this.$route.params.str,
-          goods_id: option.good_id
+          goods_id: option.goods_id
         }).then(res => {
           this.$message.success("下架设置成功！");
           console.log(res);
@@ -170,7 +170,7 @@ export default {
     cope(that, {rows}) {
       that.$fetch('goodsCopy', {
         webinar_id: that.$route.params.str,
-        goods_id: rows.good_id
+        goods_id: rows.goods_id
       }).then(res => {
         that.$message.success("复制成功！");
         that.getTableList();
@@ -185,7 +185,7 @@ export default {
       that.$router.push({
         path: `/live/addProduct/${that.$route.params.str}`,
         query: {
-          goodId: rows.good_id
+          goodId: rows.goods_id
         }
       });
     },
@@ -196,7 +196,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        that.batchDel(rows.good_id);
+        that.batchDel(rows.goods_id);
       }).catch(() => {
         that.$message({
           type: 'info',
@@ -207,7 +207,7 @@ export default {
     // 选中
     changeTableCheckbox(val) {
       console.log(val);
-      this.checkedGoodsId = val.map(item => item.good_id);
+      this.checkedGoodsId = val.map(item => item.goods_id);
     },
     // 批量删除
     batchDel(id) {
@@ -216,9 +216,10 @@ export default {
           this.$message.error("请选择要操作的文件");
         } else {
           id = this.checkedGoodsId.join(',');
+          console.log(this.checkedGoodsId, '111111111111111')
         }
       }
-      this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_id: id}).then(res => {
+      this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
         this.$message.success("删除成功！");
         this.checkedGoodsId = [];
         this.getTableList();
