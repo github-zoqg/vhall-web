@@ -116,11 +116,18 @@ export default {
           this.permission = mockResult.permission;
           console.log(this.roomStatus, 123);
           this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
+          // 单独增加 static、upload、web  为了减少修改，将这个
           this.domains = {
-            ...mockResult.urls || {},  // ??? 云俊 返回
-            custom: mockResult.live_domain_customization
+            ...mockResult.urls || {},
+            custom: mockResult.live_domain_customization,
+            ...{
+              static: mockResult.urls.static_url,
+              upload: mockResult.urls.upload_url,
+              webinar: '',
+              web: mockResult.urls.web_url
+            }
           };
-          console.log(mockResult, 88888);
+          console.log(mockResult, 88888, this.domains);
           let localDomain = {
             'static':mockResult.urls.static_url ,
             'upload': mockResult.urls.upload_url,

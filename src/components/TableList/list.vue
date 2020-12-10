@@ -1,6 +1,5 @@
 <template>
   <div class="data-list">
-    <div class="table-list">
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -95,13 +94,12 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum > pageInfo.limit"
+      v-if="needPagination && totalNum"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
     >
     </SPagination>
-    </div>
   </div>
 </template>
 <script>
