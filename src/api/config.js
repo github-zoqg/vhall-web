@@ -38,7 +38,7 @@ const apis = {
   editLiveQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST', 'data'], //直播设置_编辑问卷
   getLiveQuestionList: ['/v3/vss/survey/list-webinar-survey', 'GET', 'data'], //直播设置_问卷列表
   deleteLiveQuestion: ['/v3/vss/survey/delete-webinar-surveys', 'POST', 'data'], //直播设置_删除问卷
-  // copyLiveQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET', 'data'], //共享库-问卷复制
+  copyLiveQuestion: ['/v3/vss/survey/copy-webinar-survey', 'GET', 'data'], //直播设置-问卷复制
   sharedLiveQuestion: ['/v3/vss/survey/clone-from-shared', 'POST', 'data'], //直播设置_从资料库添加
 
 

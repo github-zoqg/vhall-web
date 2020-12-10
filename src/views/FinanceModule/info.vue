@@ -232,9 +232,8 @@ export default {
     }
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    this.getLineList();
-    this.getAccountList();
-    // console.log(getCountDownTime('2020-12-04 11:00:00'));
+    // this.getLineList();
+    // this.getAccountList();
   },
   beforeRouteLeave(to, from, next) {
     if (this.status) {
@@ -245,7 +244,7 @@ export default {
   methods: {
     // 用量统计数据
     getLineList(params) {
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
       let paramsObj = {
         account_id: this.userId
       };

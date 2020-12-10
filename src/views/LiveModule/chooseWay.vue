@@ -1,39 +1,42 @@
 <template>
-  <div class="chooseWay">
-    <pageTitle title="选择发起方式"></pageTitle>
+  <div :class="['chooseWay', {'no-login': Number(arr[1]) !== 1}]">
+    <OldHeader :is-show-login=false class="old-header" v-if="Number(arr[1]) !== 1"></OldHeader>
     <div class="choose__way__main">
-      <div class="select-way">
-        <div :class="chooseType === 'browser' ? 'choose-a-way active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
-          <p class="choose-p"></p>
-          <p class="f-20">网页发起直播</p>
-          <p>一键发起直播</p>
-          <p>无需安装任何直播插件</p>
+      <pageTitle title="选择发起方式"></pageTitle>
+      <div class="choose__way__ctx">
+        <div class="select-way">
+          <div :class="chooseType === 'browser' ? 'choose-a-way active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
+            <p class="choose-p"></p>
+            <p class="f-20">网页发起直播</p>
+            <p>一键发起直播</p>
+            <p>无需安装任何直播插件</p>
+          </div>
+          <!-- <div class="interact_select choose-a-way">
+            <p class="choose-p"></p>
+            <p class="f-20">网页发起互动直播</p>
+            <p>可进行多人连麦</p>
+            <p>需要使用chrome浏览器</p>
+          </div> -->
+          <div :class="chooseType === 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
+            <p class="choose-p"></p>
+            <p class="f-20"><label class="beta-label" style="font-weight: 400">客户端发起</label></p>
+            <p>功能更为强大，支持多种视频采集卡</p>
+            <p>拥有共享桌面、插入视频等功能</p>
+          </div>
+          <!-- <div class="choose-a-way other vip">
+            <p class="choose-p"></p>
+            <p class="f-20"><label style="font-weight: 400">第三方推流方式/工具发起</label></p>
+            <p>通过第三方软件实现多样化的推流方式</p>
+            <p>拥有更强的扩展性</p>
+          </div> -->
         </div>
-        <!-- <div class="interact_select choose-a-way">
-          <p class="choose-p"></p>
-          <p class="f-20">网页发起互动直播</p>
-          <p>可进行多人连麦</p>
-          <p>需要使用chrome浏览器</p>
-        </div> -->
-        <div :class="chooseType === 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
-          <p class="choose-p"></p>
-          <p class="f-20"><label class="beta-label" style="font-weight: 400">客户端发起</label></p>
-          <p>功能更为强大，支持多种视频采集卡</p>
-          <p>拥有共享桌面、插入视频等功能</p>
+        <div class="choose-btn">
+          <el-button type="primary" round @click="goLive">发起直播</el-button>
+          <iframe :src="scheme" class="hide" frameborder="0" scrolling="no" id="start_live">发起直播</iframe>
         </div>
-        <!-- <div class="choose-a-way other vip">
-          <p class="choose-p"></p>
-          <p class="f-20"><label style="font-weight: 400">第三方推流方式/工具发起</label></p>
-          <p>通过第三方软件实现多样化的推流方式</p>
-          <p>拥有更强的扩展性</p>
-        </div> -->
-      </div>
-      <div class="choose-btn">
-        <el-button type="primary" round @click="goLive">发起直播</el-button>
-        <iframe :src="scheme" class="hide" frameborder="0" scrolling="no" id="start_live">发起直播</iframe>
-      </div>
-      <div class="v-download" v-if="chooseType === 'client'">
-        客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服400-888-9970
+        <div class="v-download" v-if="chooseType === 'client'">
+          客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服400-888-9970
+        </div>
       </div>
     </div>
   </div>
@@ -41,19 +44,30 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import {sessionOrLocal} from "@/utils/utils";
+import OldHeader from '@/components/OldHeader';
+import { browserDetect } from '@/utils/utils';
+
 export default {
   name: 'chooseWay.vue',
   components: {
     PageTitle,
+    OldHeader
   },
   data() {
     return {
       chooseType: 'browser',
-      scheme: ''
+      scheme: '',
+      watchUrl: '',
+      arr: [],
+      browserStatus: false
     };
   },
   created(){
     console.log(this.$route);
+    // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
+    this.arr = this.$route.params.str.split(','); // id，role
+    this.getRoleUrl();
   },
   methods: {
     changeChoose(type) {
@@ -61,18 +75,34 @@ export default {
       this.scheme = '';
     },
     goLive(){
-      if(this.chooseType =='client'){
-        this.scheme = 'vhalllive://vhalllive?stream_name=936719661&stream_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdHJlYW1uYW1lIjoiOTM2NzE5NjYxIn0.DC3w81q1Cxez0gC3P19LxelRhB4pk5uHMv-1jI1GPiI&msg_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE3MzQyNzQiLCJuYW1lIjoidHR0dHR0dCIsInJvb20iOiI5MzY3MTk2NjEiLCJyb2xlIjoiaG9zdCIsInVpZCI6IjE2NDIyNjgwIiwidHJhY2tJZCI6IjIyNDU5NTUiLCJkZXZpY2Vfc3RhdHVzIjoxfQ.KQx_qyRZzYMHj7Te9ulB1F0eIhYUPsjID42U_Q0PQGw&hide_logo=0';
-        setTimeout(()=>{
-          this.scheme = '';
-        }, 300);
-      }else{
-        this.$router.push({path: `/live/room/${this.$route.params.str}`});
+      if(this.chooseType !== 'client') {
+        // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
+        if(browserDetect()) {
+          this.$router.push({path:  this.watchUrl});
+        } else {
+          this.$router.push({path: '/browser'})
+        }
       }
+    },
+    getRoleUrl() {
+      // 获取当前用户角色 1-主持人，2-嘉宾 ，3-助理
+      let params = {
+        webinar_id: this.arr[0],
+        type: this.arr[1],
+        live_token: Number( this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
+      }; // 若非主持人登录，需传递用户token
+      this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
+        if(res && res.code === 200) {
+          this.watchUrl = res.data.page_url;
+          this.scheme = res.data.client_protocol;
+        } else {
+          this.$message.error('当前未获取到启动数据');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error('当前未获取到启动数据');
+      });
     }
-  },
-  create() {
-    // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
   },
   mounted() {
   }
@@ -81,7 +111,22 @@ export default {
 
 <style lang="less" scoped>
 @import '../../common/css/common.less';
-.choose__way__main {
+.chooseWay {
+  &.no-login {
+    .choose__way__main {
+      width: 1300px;
+      margin: 0 auto;
+    }
+    .choose__way__ctx {
+      background: #ffffff;
+      padding: 40px 0;
+    }
+  }
+}
+.old-header {
+  margin-bottom: 40px;
+}
+.choose__way__ctx {
 }
 .select-way {
   text-align: center;
@@ -143,5 +188,9 @@ export default {
       color: @default--hover;
     }
   }
+}
+
+.browser-version {
+  display: ;
 }
 </style>

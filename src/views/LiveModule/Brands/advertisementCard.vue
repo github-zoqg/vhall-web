@@ -20,7 +20,6 @@
           :tabelColumnLabel="tabelColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
-          :restPic="true"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getAdvTableList"
           @changeTableCheckbox="changeTableCheckbox"

@@ -1,5 +1,6 @@
 <template>
   <div class="data-list">
+    <div class="table-list" v-if="totalNum">
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -13,9 +14,9 @@
         type="selection"
         width="55"
         align="left"
-        v-if="isCheckout && totalNum > 0"
+        v-if="isCheckout"
       />
-      <template v-if="totalNum > 0">
+      <template>
         <el-table-column
           align="left"
           v-for="(item, index) in tabelColumnLabel"
@@ -70,7 +71,7 @@
                 <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
-            <p v-else class="text">{{ scope.row[item.key] || '-' }}</p>
+            <p v-else class="text">{{ scope.row[item.key] }}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -91,26 +92,27 @@
           </template>
         </el-table-column>
       </template>
-      <div slot="empty" v-else>
-        <div>
-          <img
-            src="../../common/images/v35-webinar.png"
-            alt=""
-            width="140"
-            height="140"
-          />
-        </div>
-        <p :style="{ marginTop: '23px' }">没有数据</p>
-      </div>
     </el-table>
     <SPagination
       :total="totalNum"
-      v-show="needPagination && totalNum > 9"
+      v-if="needPagination && totalNum > pageInfo.limit"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
     >
     </SPagination>
+    </div>
+    <div class="empty" v-else>
+      <div>
+        <img
+          src="../../common/images/v35-webinar.png"
+          alt=""
+          width="140"
+          height="140"
+        />
+      </div>
+      <p :style="{ marginTop: '23px' }">没有数据</p>
+    </div>
   </div>
 </template>
 <script>
@@ -286,6 +288,9 @@ export default {
     .active-waiting {
       background: #FA9A32;
     }
+  }
+  .empty{
+    text-align: center;
   }
 }
 </style>

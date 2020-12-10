@@ -3,6 +3,7 @@
   <tip v-else-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="publish-wrap">
     <vhall-saas
+      v-if="roomStatus"
       :roomId="roomId"
       :ilId="il_id"
       :vssToken="vss_token"
@@ -94,6 +95,14 @@ export default {
             return this.tipMsg = res.msg;
           }
           const mockResult =  this.rootActive = res.data;
+          sessionStorage.setItem('host_uid', JSON.stringify(mockResult.join_info.third_party_user_id));
+          sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
+          sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
+          sessionStorage.setItem('roomId', mockResult.interact.room_id);
+          sessionStorage['vhall-vsstoken'] = mockResult.join_info.interact_token;
+          sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
+          sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???
+          sessionStorage.setItem('interact_token', mockResult.interact.interact_token);
           await this.getTools(mockResult.interact.room_id);
           this.shareId = mockResult.share_id;
           this.userInfo = mockResult.join_info;
@@ -118,6 +127,7 @@ export default {
             'web': mockResult.urls.web_url,
             'webinar': "//t-webinar.e.vhall.com"
           };
+          sessionStorage.setItem('vhall_domain',JSON.stringify(localDomain));
           this.duration = mockResult.webinar.live_time;
           this.is_interact = mockResult.webinar.mode == 3  ? 1 : 0 ; // 做一下判断 ??? mode 直播模式：1-音频、2-视频、3-互动
           this.document_id = mockResult.webinar.document_id;
@@ -125,15 +135,6 @@ export default {
           this.record_notice = mockResult.record_notice || 3; // 设置默认回放视频提示 ???
           this.docLowPriority = mockResult.doc_low_priority || 0;// ???  互动工具
           this.recordTip = mockResult.record_tip;
-          sessionStorage.setItem('vhall_domain',JSON.stringify(localDomain));
-          sessionStorage.setItem('host_uid', JSON.stringify(mockResult.join_info.third_party_user_id));
-          sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
-          sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
-          sessionStorage.setItem('roomId', mockResult.interact.room_id);
-          sessionStorage['vhall-vsstoken'] = mockResult.join_info.interact_token;
-          sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
-          sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???
-          sessionStorage.setItem('interact_token', mockResult.interact.interact_token);
           // 初始化数据上报
           this.initVHallReport(mockResult);
         }).catch(err => {
@@ -143,8 +144,12 @@ export default {
     getTools(roomId){
       return new Promise((resolve, reject) => {
         this.$fetch('getToolStatus', {room_id: roomId}).then(res=>{
-          this.roomStatus = res.data;
-          resolve();
+          if(res.code == 200){
+            this.roomStatus = res.data;
+            resolve();
+          }else{
+            this.$message.warning(res.msg)
+          }
         }).catch(err=>{
           console.warn(err, 'catch');
           resolve();

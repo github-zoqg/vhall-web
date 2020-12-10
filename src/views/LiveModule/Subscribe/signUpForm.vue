@@ -335,6 +335,7 @@
         },
         rules: {},
         form: {},
+        answer: {},
         baseInfo: {
           "open_link": 0,
           "theme_color": "red",
@@ -411,7 +412,7 @@
         if (this[key]) {
           this[key]--;
           setTimeout(() => {
-            this.countDown();
+            this.countDown(isForm);
           }, 1000);
         } else {
           this[key] = 60;
@@ -454,10 +455,7 @@
         this.$refs['form'].validate((valid) => {
           if (valid) {
             this.formHandler()
-            console.log(this.form)
-            console.log(JSON.stringify(this.answer))
             const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
-            console.log(validPhone('', this.form[phoneItem.id]));
             const options = {
               webinar_id: this.webinar_id,
               phone: this.form[phoneItem.id],
@@ -655,7 +653,7 @@
         let matchPrivacy2 = (parseOptsSec && parseOptsSec.privacy_info.trim()) ? text.match(parseOptsSec.privacy_info) : null;
         if(matchPrivacy2){
           let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-          text = text.replace(reg, `<a href="${parseOptsSec.url}" target="_blank">$1</a>`);
+          text = text.replace(reg, `<a href="${parseOptsSec.privacy_link}" target="_blank">$1</a>`);
         }
 
         this.provicyText = text;

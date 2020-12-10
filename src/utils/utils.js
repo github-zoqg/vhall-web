@@ -24,8 +24,17 @@ export const sessionOrLocal = {
 };
 // 判断是否IE
 export function isIE () {
-  return (!!window.ActiveXObject || 'ActiveXObject' in window);
+  return (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1);
 }
+
+export function browserDetect() {
+  let chromeReg = /Chrome\/(\d{2})[.\d]+\sSafari\/[.\d]+$/gi;
+  let chromeResult = chromeReg.exec(navigator.userAgent);
+  let safariReg = /(\d+\.\d)?(?:\.\d)?\s+safari\/?(\d+\.\d+)?/i;
+  let safariResult = navigator.userAgent.match(safariReg);
+  return chromeResult ? !(chromeResult.length == 0 || chromeResult[1] < 61) : !(!safariResult || safariResult.length == 0 || parseInt(safariResult[1].split('.').join('')) < 121);
+}
+
 // 尺寸重置
 export function resize () {
   if (isIE()) {
