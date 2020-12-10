@@ -1,6 +1,6 @@
 <template>
   <div class="add-question">
-     <pageTitle title="新建问卷">
+     <pageTitle :title="`${title}问卷`">
         <div class="headBtnGroup">
           <el-button round size="medium" @click="returnBack">返回</el-button>
         </div>
@@ -17,28 +17,7 @@ export default {
   name: 'question',
   data() {
     return {
-      rightComponent: 'fieldSet',
-      questionArr: [],
-      service: {},
-      setOptions: {
-        "基本信息": [
-          {icon: 'saasicon_xingming', label: "姓名", name: 'name'},
-          {icon: 'el-icon-male', label: "性别", name: 'gender'},
-          {icon: 'el-icon-birthday', label: "生日", name: 'birthday'},
-          {icon: 'el-icon-education', label: "教育水平", name: 'educational'},
-          {icon: 'el-icon-message', label: "邮箱", name: 'email'},
-          {icon: 'el-icon-location', label: "地域", name: 'regional'},
-          {icon: 'el-icon-office-building', label: "公司", name: 'company'},
-          {icon: 'el-icon-info', label: "职务", name: 'dust'},
-          {icon: 'el-icon-info', label: "行业", name: 'industry'},
-        ],
-        "题目类型": [
-          {icon: 'el-icon-user-solid', label: "单选题", type: 'radio'},
-          {icon: 'el-icon-user-solid', label: "多选题", type: 'checkBox'},
-          {icon: 'el-icon-tickets', label: "问答题", type: 'input'},
-          {icon: 'el-icon-caret-bottom', label: "小结", type: 'inputs'},
-        ]
-      },
+      rightComponent: 'fieldSet'
     };
   },
   components: {
@@ -47,7 +26,13 @@ export default {
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.questionId = this.$route.query.id || '';
-    this.getVideoAppid();
+    // this.getVideoAppid();
+    this.initQuestion();
+  },
+  computed: {
+    title() {
+      return this.$route.query.id ? '编辑' : '新建';
+    }
   },
   methods: {
     getVideoAppid() {
@@ -55,8 +40,7 @@ export default {
         this.initQuestion(res.data.app_id, res.data.access_token);
       })
     },
-    initQuestion(id, token) {
-      console.log(id, token);
+    initQuestion() {
       let params = {};
       let service = new VHall_Questionnaire_Service({
         auth: {
@@ -76,40 +60,43 @@ export default {
         data.question_id = params.question_id;
       });
       service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
-        // params.question_id = data.question_id;
+        params.survey_id = data.id;
+        params.description = data.description;
+        params.title = data.title;
+        this.createQuest(params);
         if (this.questionId) {
           this.editQuest();
+          console.log('编辑问卷成功', data);
         } else {
-          this.createQuest(data.question_id);
-        }
+          console.log('新建问卷成功', data);
 
-        console.log('新建问卷成功', data);
+        }
       })
-      // service.$on(VHall_Questionnaire_Const.EVENT.ADDQUESTION, data => {
-      //   // params.question_id = data.question_id;
-      //   console.log('新建问卷问题', data);
-      // })
-      // service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
-      //   // params.question_id = data.question_id;
-      //   console.log('更新问卷成功', data);
-      // })
-      // let button = document.querySelector('.save .el-button');
-      // button.addEventListener('click', (e) => {
-      //   this.submitFinish('提交');
-      // });
+      service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
+        params.survey_id = data.id;
+        params.description = data.description;
+        params.title = data.title;
+        this.editQuest(params);
+      })
       setTimeout(() => {
         let text = document.querySelector('.text');
         text.innerHTML = '';
       }, 1000);
     },
-    createQuest(id) {
-      this.$fetch('createQuestion', {survey_id: id}).then(res => {
-        console.log(res.data, "我是新增")
+    createQuest(params) {
+      this.$fetch('createQuestion', params).then(res => {
+        this.$message.success('新建成功');
+        this.$router.push({
+          path: '/material/question',
+        });
       })
     },
-    editQuest() {
-      this.$fetch('editQuestion', {survey_id: this.questionId}).then(res => {
-        console.log(res.data, "我是编辑")
+    editQuest(params) {
+      this.$fetch('editQuestion', params).then(res => {
+        this.$message.success('编辑成功');
+        this.$router.push({
+          path: '/material/question',
+        });
       })
     },
     submitFinish(data) {
@@ -117,7 +104,7 @@ export default {
     },
     returnBack() {
       this.$router.push({
-        path: `/${this.$route.meta.name}/question`
+        path: '/material/question'
       });
     }
   },

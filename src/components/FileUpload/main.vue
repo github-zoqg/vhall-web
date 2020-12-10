@@ -2,7 +2,7 @@
   <el-upload
     class="file-uploader"
     v-bind="$props"
-    :headers="{token: token}"
+    :headers="{token: token, platform: 17}"
     :data=saveData
     name="resfile"
     :on-success='uploadSuccess'>

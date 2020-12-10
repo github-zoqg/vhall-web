@@ -1,33 +1,35 @@
 <template>
-  <header class="commen-header home-header">
-    <nav class="navbar nav-top" role="navigation">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">
-          <img src="//t-alistatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012"
-               onerror="this.src='//t-alistatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012'"></a>
-      </div>
-      <div class="collapse navbar-collapse">
-        <div class="pull-right login-reg" >
-          <div class=""  v-if="isLogin">
-            <el-dropdown @command="handleCommand">
+  <div>
+    <header class="commen-header home-header">
+      <nav class="navbar nav-top" role="navigation">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">
+            <img src="//t-alistatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012"
+                 onerror="this.src='//t-alistatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012'"></a>
+        </div>
+        <div class="collapse navbar-collapse" v-if="isShowLogin">
+          <div class="pull-right login-reg" >
+            <div class=""  v-if="isLogin">
+              <el-dropdown @command="handleCommand">
               <span class="el-dropdown-link">
                 <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
                 <span class="textofover">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
                 <span class="caret"></span>
               </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="loginOut">退出</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </div>
-          <div class=""  v-if="!isLogin">
-            <el-button size="mini" round @click="toLoginPageHandle">登录</el-button>
-            <el-button type="primary" size="mini" round @click="toRegisterHandle">注册</el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="loginOut">退出</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+            <div class=""  v-if="!isLogin">
+              <el-button size="mini" round @click="toLoginPageHandle">登录</el-button>
+              <el-button type="primary" size="mini" round @click="toRegisterHandle">注册</el-button>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
-  </header>
+      </nav>
+    </header>
+  </div>
 </template>
 
 <script>
@@ -36,6 +38,12 @@ import Env from "@/api/env";
 
 export default {
   name: "index.vue",
+  props: {
+    isShowLogin: {
+      require: false,
+      default: true
+    }
+  },
   data() {
     return {
       isLogin: null,

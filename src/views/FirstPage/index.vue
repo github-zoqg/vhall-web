@@ -40,25 +40,49 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>活动总数</p>
-              <h2>{{ mainKeyData.webinar_count}}</h2>
+              <h2>
+                <count-to :startVal="0"
+                  :endVal="mainKeyData.webinar_count"
+                  :duration="1500"
+                  v-if="mainKeyData.webinar_count > 0">
+                </count-to>
+              </h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看次数</p>
-              <h2>{{ mainKeyData.watch_times}}</h2>
+              <h2>
+                <count-to :startVal="0"
+                  :endVal="mainKeyData.watch_times"
+                  :duration="1500"
+                  v-if="mainKeyData.watch_times > 0">
+                </count-to>
+              </h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看人数</p>
-              <h2>{{ mainKeyData.watch_number}}</h2>
+              <h2>
+                <count-to :startVal="0"
+                  :endVal="mainKeyData.watch_number"
+                  :duration="1500"
+                  v-if="mainKeyData.watch_number > 0">
+                </count-to>
+              </h2>
             </div>
           </el-col>
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看时长(分)</p>
-              <h2>{{ mainKeyData.watch_duration}}</h2>
+              <h2>
+                <count-to :startVal="0"
+                  :endVal="mainKeyData.watch_duration"
+                  :duration="1500"
+                  v-if="mainKeyData.watch_duration > 0">
+                </count-to>
+                </h2>
             </div>
           </el-col>
         </el-row>
@@ -89,6 +113,7 @@
 import LineEcharts from '@/components/Echarts/lineEcharts.vue';
 import DataUsage from '@/components/DataUsage/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
+import CountTo from 'vue-count-to';
 export default {
   data() {
     return {
@@ -99,7 +124,8 @@ export default {
   },
   components: {
     LineEcharts,
-    DataUsage
+    DataUsage,
+    CountTo
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));

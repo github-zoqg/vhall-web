@@ -24,7 +24,7 @@ const router = [
       },
       {
         path: 'addQuestion',
-        component: () => import('@/views/LiveModule/MaterialSet/addQuestion'),
+        component: () => import('@/views/MaterialModule/addQuestion'),
         meta:{ auth: true, title: '新建问卷', name: 'addQuestionMgr' },
         hidden: true
       },

@@ -6,12 +6,12 @@
       <div class="input-card">
         <div class="input-item">
           <span>我的主页</span>
-          <el-input v-model="myMain" ></el-input>
+          <el-input v-model="myMain" readonly></el-input>
           <el-button @click="cope(myMain)">复制</el-button>
         </div>
         <div class="input-item">
           <span>观看直播</span>
-          <el-input v-model="liveContent" ></el-input>
+          <el-input v-model="liveContent" readonly></el-input>
           <el-button @click="cope(liveContent)">复制</el-button>
         </div>
         <p>帮助：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://www.vhall.com/saas/doc/1692.html')"> 微信嵌入</a></p>
@@ -22,12 +22,12 @@
       <div class="input-card">
         <div class="input-item">
           <span>完全嵌入</span>
-          <el-input v-model="completion" ></el-input>
+          <el-input v-model="completion" readonly></el-input>
           <el-button @click="cope(completion)">复制</el-button>
         </div>
         <div class="input-item">
           <span>视频嵌入</span>
-          <el-input v-model="video" ></el-input>
+          <el-input v-model="video" readonly></el-input>
           <el-button @click="cope(video)">复制</el-button>
         </div>
         <p>注意：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://www.vhall.com/saas/doc/163.html')"> 网页嵌入指南</a></p>
@@ -117,6 +117,8 @@ export default {
     height: 222px;
     border: 1px solid #ccc;
     margin: 20px 50px;
+    background: url(../../common/images/third-promote.png) no-repeat;
+    background-position: 40px 30px;
   }
 }
 </style>
