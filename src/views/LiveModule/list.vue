@@ -51,7 +51,7 @@
                   <i class="el-icon-view"></i>
                   {{item.pv | unitCovert}}
                 </span>
-                <img :src="`${imgBaseUrl}${item.img_url}`" alt="">
+                <img :src="`${item.img_url}`" alt="">
               </div>
               <div class="bottom">
                 <div class="">
