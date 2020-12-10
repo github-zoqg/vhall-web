@@ -2631,7 +2631,6 @@ export default {
       }
       this.starting = true;
       this.stopping = false;
-      alert(12);
       console.warn('this.thirdPartyBtn && this.thirdPartyMobild', this.thirdPartyBtn, this.thirdPartyMobild);
       // 第三方发起推流
       if (this.thirdPartyBtn && this.thirdPartyMobild) {
@@ -2712,7 +2711,7 @@ export default {
           });
         }
       } else {
-        this.$vhallFetch('setDesktop', { // 直播结束后条用视频最小化接口
+        this.$fetch('v3SetDesktop', { // 直播结束后条用视频最小化接口
           room_id: this.roomInfo.interact.room_id,
           status: '0'
         });

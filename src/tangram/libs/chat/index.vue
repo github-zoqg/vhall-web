@@ -53,7 +53,7 @@
         <el-upload
           v-if="roleName != '2'"
           class="avatar-uploader"
-          :headers="{token: headToken}"
+          :headers="{token: headToken, platform: 7}"
           :action="`${$baseUrl}/v3/commons/upload/index`"
           :show-file-list="false"
           name="resfile"

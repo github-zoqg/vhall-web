@@ -32,6 +32,7 @@
             :show-file-list="false"
             :headers="{
               token: token,
+              platform: 7,
               'interact-token': interact_token
             }"
             name="resfile"
@@ -217,7 +218,7 @@ export default {
       docList: [],
       locaList: [],
       pageInfo: {
-        currentPage: 1,
+        currentPage: 0,
         total: 0,
         pageSize: 200
       },
@@ -374,7 +375,7 @@ export default {
     showDocList () {
       this.locaList = [];
       this.isDoListcShow = true;
-      this.pageInfo.currentPage = 1;
+      this.pageInfo.currentPage = 0;
       this.searchKey = '';
       this.getDocList();
     },
