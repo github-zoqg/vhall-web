@@ -15,6 +15,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
   const token = sessionOrLocal.get('token') || '';
   let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
+  // let data = Object.assign(data1);
   const interact_token = sessionOrLocal.get('interact_token') || null;
   let formData = null;
 
@@ -64,10 +65,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
     option.body = formData || qs.stringify(data); // body data type must match "Content-Type" header
   }
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
-  if (mock == 'mock') {
+  if (mock) {
     api = `/mock${api}`;
-  } else if(mock == 'data') {
-    api = `${Env.BASE_URL_DATA}${api}`;
   } else {
     api = `${Env.BASE_URL}${api}`;
   }

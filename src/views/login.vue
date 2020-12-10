@@ -27,16 +27,17 @@
               </div>
               <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
             </el-form-item>
-            <el-form-item prop="password" @click="passWordType">
+            <el-form-item prop="password">
               <el-input
                 placeholder="请输入密码"
                 maxlength="30"
-                clearable
-                :type="passWordType ? password : text"
+                :type="isPassWordType ? 'password' : 'text'"
                 v-model="loginForm.password">
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-                <icon slot="prefix" class="icon" icon-class="saaseyeclose_huaban1" v-show="passWordType"></icon>
-                <icon slot="prefix" class="icon" icon-class="saasicon-eye" v-show="!passWordType"></icon>
+                <span slot="suffix" @click="passWordType" class="closePwd">
+                  <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
+                  <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
+                </span>
               </el-input>
             </el-form-item>
             <div class="login-btn">
@@ -52,8 +53,8 @@
             <div class="login-other">
               其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
               <div class="other-img" v-show="!isOpenOther">
-                <img src="../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t.e.vhall.com/auth/login')">
-                <img src="../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t.e.vhall.com/auth/login')">
+                <img src="../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t-saas-dispatch.vhall.com/#/home')">
+                <img src="../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t-saas-dispatch.vhall.com/#/home')">
                 <img src="../common/images/icon/weibo.png" alt="">
               </div>
             </div>
@@ -542,6 +543,9 @@ export default {
           background: #fc5659;
         }
       }
+    }
+    .closePwd{
+      cursor: pointer;
     }
     .login-footer{
       position: absolute;
