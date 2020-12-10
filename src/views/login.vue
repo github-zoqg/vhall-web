@@ -164,6 +164,7 @@
 </template>
 <script>
 import footerSection from '../components/Footer/index';
+import {sessionOrLocal} from "@/utils/utils";
 // import { sessionOrLocal } from '../utils/utils';
 export default {
   data() {
@@ -301,7 +302,7 @@ export default {
       params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
         if(res && res.code === 200) {
-          window.sessionStorage.setItem('token', res.data.token);
+          sessionOrLocal.set('token', res.data.token, 'localStorage');
           console.log("我是未登录页面");
           this.$router.push({path: '/'});
         } else {

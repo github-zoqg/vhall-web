@@ -67,7 +67,7 @@ export default {
   name: 'word.vue',
   data() {
     return {
-      token: sessionOrLocal.get('token'),
+      token: sessionOrLocal.get('token', 'localStorage') || '',
       actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
       formParams: {},
       totalNum: 0,

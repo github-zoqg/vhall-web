@@ -4,7 +4,7 @@ import router from './router';
 import EventBus from './utils/Events';
 import baseObj from './api/env'
 console.log(baseObj)
-import { copy, dealObjectValue, domainCovert, parseURL } from './utils/utils';
+import {copy, dealObjectValue, domainCovert, parseURL, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
@@ -101,6 +101,21 @@ import 'tinymce/plugins/fullscreen';//全屏插件
 Vue.prototype.$tinymce = tinymce;
 Vue.use(VueTinymce);
 
+
+
+function clientToken(param) {
+  let reg = new RegExp('[?&]' + param + '=([^&]*)[&$]*');
+  let ret = window.location.hash.match(reg);
+  if (ret) {
+    ret = decodeURIComponent(ret[1]);
+  }
+  return ret || '';
+}
+let clientTokenVal = clientToken('token');
+if(clientTokenVal) {
+  sessionOrLocal.set('token', clientTokenVal , 'localStorage');
+  sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
+}
 new Vue({
   router,
   i18n,
