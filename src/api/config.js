@@ -135,17 +135,17 @@ const apis = {
   warnEdit: ['/99/v3/webinars/warm/edit', 'POST', 'mock'], // 修改暖场视频封面图片接口 •••
 
   // 商品
-  goodsGet: ['/101/v3/interacts/goods/get-webinar-goods-list', 'GET', 'mock'], // 获取活动下商品列表
-  goodsEnable: ['/101/v3/interacts/goods/enable-webinar-goods', 'POST', 'mock'], // 商品上架
-  goodsDisable: ['/101/v3/interacts/goods/disable-webinar-goods', 'POST', 'mock'], // 商品下架
-  goodsCopy: ['/101/v3/interacts/goods/clone-goods', 'POST', 'mock'], // 复制一个商品
-  goodsInfoGet: ['/101/v3/interacts/goods/get-webinar-goods-info', 'GET', 'mock'], // 查看活动下某个商品详情
-  goodsCreate: ['/101/v3/interacts/goods/create-goods', 'POST', 'mock'], // 新建活动展示商品
-  goodsUpdate: ['/101/v3/interacts/goods/update-goods', 'POST', 'mock'], // 更新商品信息
-  goodsImgIdCreate: ['/101/v3/interacts/goods/generate-goods-image-id', 'POST', 'mock'], // 生成商品图片ID
-  goodsBatchDel: ['/101/v3/interacts/goods/batch-delete-goods', 'POST', 'mock'], // 批量删除活动商品
-  goodsImgDel: ['/101/v3/interacts/goods/delete-goods-img', 'POST', 'mock'], // 删除活动商品图片
-  goodsSetCover: ['/101/v3/interacts/goods/set-goods-cover', 'POST', 'mock'], // 设置商品默认封面
+  goodsGet: ['/v3/interacts/goods/get-webinar-goods-list', 'GET'], // 获取活动下商品列表
+  goodsEnable: ['/v3/interacts/goods/enable-webinar-goods', 'POST'], // 商品上架
+  goodsDisable: ['/v3/interacts/goods/disable-webinar-goods', 'POST'], // 商品下架
+  goodsCopy: ['/v3/interacts/goods/clone-goods', 'POST'], // 复制一个商品
+  goodsInfoGet: ['/v3/interacts/goods/get-webinar-goods-info', 'GET'], // 查看活动下某个商品详情
+  goodsCreate: ['/v3/interacts/goods/create-goods', 'POST'], // 新建活动展示商品
+  goodsUpdate: ['/v3/interacts/goods/update-goods', 'POST'], // 更新商品信息
+  goodsImgIdCreate: ['/v3/interacts/goods/generate-goods-image-id', 'POST'], // 生成商品图片ID
+  goodsBatchDel: ['/v3/interacts/goods/batch-delete-goods', 'POST'], // 批量删除活动商品
+  goodsImgDel: ['/v3/interacts/goods/delete-goods-img', 'POST'], // 删除活动商品图片
+  goodsSetCover: ['/v3/interacts/goods/set-goods-cover', 'POST'], // 设置商品默认封面
 
   // 功能配置
   planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li

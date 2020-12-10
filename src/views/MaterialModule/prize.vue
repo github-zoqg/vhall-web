@@ -39,6 +39,17 @@ import PageTitle from '@/components/PageTitle';
 import createPrize from '../LiveModule/MaterialSet/components/createPrize';
 export default {
   name: "prize",
+  props: {
+    source: {
+      type: String,
+      required: false,
+      default:'1'
+    },
+    roomId: {
+      type: String,
+      required: false
+    },
+  },
   data() {
     return {
       total: 100,
@@ -99,26 +110,41 @@ export default {
       methodsCombin[val.type](this, val);
     },
     getTableList(params) {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let pageInfo = {}
+      if (this.tableData.length) {
+        pageInfo = this.$refs.tableList.pageInfo;
+      } else {
+        pageInfo = {limit:1,pageNum:1,pos:0}
+      }
+       //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        this.$refs.tableList.clearSelect();
+        if (this.tableData.length) {
+          this.$refs.tableList.clearSelect();
+        }
       }
-      formParams.source = 1;
+        if (this.source == '0') {
+          formParams = {...formParams,...{room_id:this.roomId}}
+        }
+      formParams.source =  this.source;
       let obj = Object.assign({}, pageInfo, formParams);
       console.log(obj, '111111111111');
-      this.tableData.map(item => {
-        item.img = item.img_path;
-      })
+
       this.$fetch('getPrizeList', obj).then(res => {
-        console.log(res.data, '1111111111111');
+        this.tableData = res.data.list
+        this.total = res.data.count
+        this.tableData.map(item => {
+        // 临时写死的，后期调
+        item.img = `http://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/${item.img_path}`;
+      })
+        // console.log(res.data, '22222');
       })
     },
     // 复制
     cope(that, {rows}) {
-      that.$fetch('copyPrize', {prize_id: rows.prize_id, source: 1}).then(res => {
+      that.$fetch('copyPrize', {prize_id: rows.prize_id, source: this.source}).then(res => {
         that.$message.success('复制成功');
         that.getTableList();
       })
@@ -148,7 +174,7 @@ export default {
           id = this.prizeChecked.join(',')
         }
       }
-      this.$fetch('delPrize', {prize_id: id, source: 1}).then(res=>{
+      this.$fetch('delPrize', {prize_id: id, source: this.source}).then(res=>{
         this.getTableList();
         this.$message.success('删除成功');
       });
@@ -159,7 +185,9 @@ export default {
     },
     // 创建奖品
     createPrize() {
-      this.$refs.tableList.clearSelect();
+      if (this.tableData.length) {
+         this.$refs.tableList.clearSelect();
+      }
       this.$refs.createPrize.dialogVisible = true;
     },
     // 从资料库中选择
