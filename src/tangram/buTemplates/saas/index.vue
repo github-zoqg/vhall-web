@@ -2022,11 +2022,11 @@ export default {
 
     // 手动维护在线上麦人员列表 - 上线
     this.$EventBus.$on('vrtc_connect_success', e => {
-      console.log('用户上麦了', e);
+      console.log('用户上麦了12', e);
       let check = findIndex(this.speakerList, item => {
         return item.account_id == e.data.room_join_id;
       });
-
+      console.warn('test----check-----', check);
       if (check < 0) {
         this.speakerList.push({
           account_id: e.data.room_join_id,
@@ -2035,6 +2035,7 @@ export default {
           role_name: Number(e.data.room_role),
           video: e.data.vrtc_video_status == 'on' ? 1 : 0
         });
+        console.warn('test----this.speakerList-----', this.speakerList);
       }
     });
 

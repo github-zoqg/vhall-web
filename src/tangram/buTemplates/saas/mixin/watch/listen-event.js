@@ -23,6 +23,7 @@ export const listenEvent = {
       }
     },
     addSocketsListener () {
+      console.log(66666666, this.speakerList)
       EventBus.$on('room_kickout', e => {
         console.log('用户被踢出', e);
         if (e.target_id == this.roomInfo.third_party_user_id) {
@@ -108,7 +109,6 @@ export const listenEvent = {
 
       // 监听举手上麦
       EventBus.$on('vrtc_connect_open', msg => {
-        console.log('1');
         this.$message.success('您可以举手申请上麦了');
         this.handShow = true;
         this.statusHand = true; // 全部允许举手的状态
@@ -282,18 +282,11 @@ export const listenEvent = {
       EventBus.$on('vrtc_connect_agree', async (msg) => {
         if (msg.room_join_id == this.roomInfo.third_party_user_id) {
           // 更新上麦人员列表
-          let speakList = await this.$fetch('speakList', {
-            room_id: this.bizInfo.room_id
-          }).then(res => {
-            if (res.code == 200 && res.data.list) {
-              return res.data.list
-            }
-          })
           await this.$fetch('queryRoomInterInfo', {
             room_id: this.bizInfo.room_id
           }).then(res => {
             this.mainScreen = res.data.main_screen
-            this.speakerList = speakList
+            this.speakerList = res.data.speaker_list
           })
           this.handDownShow = true; // 下麦按钮的显示
           this.handShow = false; // 上麦按钮关闭
@@ -354,12 +347,12 @@ export const listenEvent = {
 
       // 手动维护在线上麦人员列表 - 上线
       EventBus.$on('vrtc_connect_success', e => {
-        console.log('用户上麦了', e);
         let check = findIndex(this.speakerList, item => {
           return item.account_id == e.data.room_join_id;
         });
 
         if (check < 0) {
+          console.warn('test----观看端响应到上麦情形---', this.speakerList, e);
           this.speakerList.push({
             account_id: e.data.room_join_id,
             audio: e.data.vrtc_audio_status == 'on' ? 1 : 0,
@@ -367,6 +360,7 @@ export const listenEvent = {
             role_name: Number(e.data.room_role),
             video: e.data.vrtc_video_status == 'on' ? 1 : 0
           });
+          console.warn('test----观看端响应到上麦情形---', this.speakerList);
         }
       });
 
