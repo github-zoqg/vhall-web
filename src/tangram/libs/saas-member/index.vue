@@ -756,19 +756,6 @@ export default {
         this.$set(list, index, item);
       }
     },
-    NumberFilter(_list){
-      _list.forEach(ele=>{
-       if( ele.is_kicked) ele.is_kicked	= Number(ele.is_kicked)
-       if( ele.is_banned) ele.is_banned	= Number(ele.is_banned)
-       if( ele.is_signed) ele.is_signed	= Number(ele.is_signed)
-       if( ele.is_answered_questionnaire) ele.is_answered_questionnaire	= Number(ele.is_answered_questionnaire)
-       if( ele.is_lottery_winner) ele.is_lottery_winner	= Number(ele.is_lottery_winner)
-       if( ele.is_answered_exam) ele.is_answered_exam	= Number(ele.is_answered_exam)
-       if( ele.is_answered_vote) ele.is_answered_vote	= Number(ele.is_answered_vote)
-       if( ele.status) ele.status	= Number(ele.status)
-       if( ele.is_speak) ele.is_speak	= Number(ele.is_speak)
-      })
-    },
     /**
      * 得到在线人员列表
      */
@@ -784,7 +771,6 @@ export default {
       this.$fetch('getOnlineList', data).then(res => {
         console.warn('当前在线人员列表', res)
         if(res.code == 200){
-          this.NumberFilter(res.data.list)
           this.$refs.scroll.finishPullUp();
           if (this.isRefesh) {
             this.onlineUsers = this._sortUsers(res.data.list);
@@ -824,7 +810,6 @@ export default {
         let bannedList = await this.$fetch('v3GetBannedList', data);
         let kickedList = await this.$fetch('v3GetKickedList', data);
         let list = bannedList.data.list.concat(kickedList.data.list);
-        this.NumberFilter(list)
         let hash = {};
         this.limitedUsers = list.reduce((preVal, curVal) => {
           !hash[curVal.account_id] && (hash[curVal.account_id] = true && preVal.push(curVal));

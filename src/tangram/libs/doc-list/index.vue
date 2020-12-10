@@ -447,9 +447,9 @@ export default {
         webinar_id: this.webinar_id,
         type: '2'
       };
-      if(this.permission.includes(100031)) {
+      // if(this.permission.includes(100031)) {
         data.room_id = this.roomId;
-      }
+      // }
 
       if (this.searchKey) {
         data.file_name = this.searchKey;
