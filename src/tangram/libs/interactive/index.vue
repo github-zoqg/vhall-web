@@ -254,14 +254,12 @@ export default {
     splited: {
       required: false, // 分屏状态
       default: false
-    },
-    webinadId: {
-      required: true // 活动id
     }
   },
 
   data () {
     return {
+      webinadId: this.$route.params.id,
       beforeUnloadTime: null,
       $SDKINSTANCE: null,
       $localStreamId: null,

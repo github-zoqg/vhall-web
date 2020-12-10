@@ -915,11 +915,11 @@ export default {
         room_id: this.bizInfo.room_id
       }).then(async () => {
         let speakList = await this.getSpeakList()
-        await this.$fetch('queryRoomInterInfo', { // 上麦之前获取房间内音视频禁用状态 bug15469
+        await this.$fetch('getToolStatus', { // 上麦之前获取房间内音视频禁用状态 bug15469
           room_id: this.bizInfo.room_id
         }).then(res => {
           this.mainScreen = res.data.main_screen
-          this.speakerList = speakList
+          this.speakerList = res.data.speaker_list
         });
         this.interactiveShow = true;
         this.loading = true;
