@@ -677,8 +677,7 @@ export default {
         }
       })
     },
-    async getRoomStatus () {
-      let speakList = await this.getSpeakList()
+    getRoomStatus () {
       this.$fetch('queryRoomInterInfo', {
         room_id: this.bizInfo.room_id
       }).then(res => {
@@ -695,7 +694,8 @@ export default {
             this.statusHand = false;
           }
           // 初始化文档状态 end
-          this.speakerList = speakList;
+          this.speakerList = res.data.speaker_list;
+          console.log(99999999, this.speakerList)
           this.rebroadcastChannelId = res.data.rebroadcast && res.data.rebroadcast.channel_id; // TODO: rebroadcast
           let isApply = findIndex(this.speakerList, {
             account_id: this.roomInfo.third_party_user_id
@@ -826,8 +826,10 @@ export default {
       VhallChat.createInstance(
         opt,
         chat => {
-          this.getRoomStatus();
-          this.addSocketsListener();
+          console.log(1111111111111111, this.speakerList, this)
+          this.$nextTick(() => {
+            this.addSocketsListener();
+          })
           window.chatSDK = chat.message;
           console.log('chatSDK is Ready');
 
@@ -919,6 +921,7 @@ export default {
         await this.$fetch('queryRoomInterInfo', { // 上麦之前获取房间内音视频禁用状态 bug15469
           room_id: this.bizInfo.room_id
         }).then(res => {
+          console.log(990, res)
           this.mainScreen = res.data.main_screen
           this.speakerList = res.data.speaker_list
         });
@@ -1108,6 +1111,7 @@ export default {
             this.timerFun = setInterval(() => {
               this.timer--;
               this.handSend = `等待(${this.timer}s)`;
+              console.log(12121212, this.speakerList)
               if (this.timer <= 0) {
                 this.handSend = '举手上麦';
                 window.clearInterval(this.timerFun);
@@ -1127,6 +1131,7 @@ export default {
           if (res.code == 200) {
             this.lowerWheat = true; // 上麦的状态
             window.clearInterval(this.timerFun);
+            console.log(23232323, this.speakerList)
             this.handSend = '举手上麦';
             this.$message.success('您已取消申请上麦！');
           }
