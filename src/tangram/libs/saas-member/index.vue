@@ -48,7 +48,7 @@
                 ></i>
                 <!-- 显示条件：上麦中 -->
                 <i
-                  v-if="currentSpeakerId !=user.account_id && user.is_speak == 1"
+                  v-if="currentSpeakerId !=user.account_id && user.is_speak"
                   class="vhall-member-user--control--user-icon iconfont iconxiamai1"
                   style="color:#fc5659;font-size:15px;"
                 ></i>

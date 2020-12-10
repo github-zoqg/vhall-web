@@ -58,7 +58,6 @@ const Apis = {
   setBanned: ['/cmpt/inav/set-banned', 'POST'], // 禁言/取消禁言某个用户
   setAllBanned: ['/cmpt/inav/set-all-banned', 'POST'], // 禁言/取消禁言全体
   setSpeaker: ['/cmpt/inav/set-doc-permission', 'POST'], // 设置主讲人
-  setMainScreen: ['/cmpt/inav/set-main-screen', 'POST'], // 设置主画面
   muteDevic: ['/cmpt/inav/set-device-status', 'POST'], // 禁用设备 - device 1, audio 2, vido
   roleQuit: ['/api/webinar/v1/interact/logout', 'POST', 't.e'], // 角色退出
   saveMediaSettings: ['/cmpt/inav/set-stream', 'POST'], // 保存媒体设置属性
