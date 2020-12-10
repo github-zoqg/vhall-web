@@ -20,6 +20,7 @@
           :isDocShow="watchDocShow"
         >
           <Interactive
+            :webinadId='ilId'
             :ownerId="roomInfo.account_id"
             :inavId="roomInfo.inav_id"
             :roomId="roomInfo.room_id"
@@ -914,12 +915,12 @@ export default {
       this.$fetch('speakOn', { // 上麦接口成功后出发vrtc_connect_success消息，监听到该消息后手动维护speakerList，渲染互动组件 互动组件初始化互动sdk后 执行autorepushstream方法判断该用户是否已上麦，若已上麦就开始推流
         room_id: this.bizInfo.room_id
       }).then(async () => {
-        let speakList = await this.getSpeakList()
+        // let speakList = await this.getSpeakList()
         await this.$fetch('queryRoomInterInfo', { // 上麦之前获取房间内音视频禁用状态 bug15469
           room_id: this.bizInfo.room_id
         }).then(res => {
           this.mainScreen = res.data.main_screen
-          this.speakerList = speakList
+          this.speakerList = res.data.speaker_list
         });
         this.interactiveShow = true;
         this.loading = true;

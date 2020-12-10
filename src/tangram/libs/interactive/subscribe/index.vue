@@ -327,11 +327,11 @@ export default {
           () => {},
           e => { console.log('动态设置主屏失败', e); });
       }
-      this.$vhallFetch('setMainScreen', {
+      this.$fetch('setMainScreen', {
         receive_account_id: this.accountId,
         room_id: this.roomId
       });
-      this.$vhallFetch('setSpeaker', {
+      this.$fetch('setSpeaker', {
         receive_account_id: this.masterAccountId,
         room_id: this.roomId
       });
@@ -401,19 +401,17 @@ export default {
         muteDevice = 2;
         status = this.videoStatus ? 0 : 1;
       }
-
-      this.$vhallFetch('muteDevic', {
+      this.$fetch('setRoomDevice', {
         room_id: this.roomId,
+        receive_account_id: this.accountId,
         device: muteDevice,
         status: status,
-        account_Id: this.accountId,
-        receive_account_id: this.accountId
-      });
+      })
     },
 
     speakOff () {
       // 发送下麦消息
-      this.$vhallFetch('speakOff', {
+      this.$fetch('speakUserOff', {
         room_id: this.roomId,
         receive_account_id: this.accountId
       });
