@@ -13,8 +13,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // 此token不要删除  --  直播间需要使用   我将你们的token进行注释了
   // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
   // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
-  const token = sessionOrLocal.get('token') || '';
-  let data = Object.assign({token, platform: 17, need_sign: 1}, data1);
+  const token = sessionOrLocal.get('token', 'localStorage') || '';
+  let data = Object.assign(data1);
   const interact_token = sessionOrLocal.get('interact_token') || null;
   let formData = null;
 
@@ -36,7 +36,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   }
 
   let headers = {
-    platform: 17,
+    platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token
     // 'Content-Type': 'application/json'
   };
@@ -64,10 +64,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
     option.body = formData || qs.stringify(data); // body data type must match "Content-Type" header
   }
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
-  if (mock == 'mock') {
+  if (mock) {
     api = `/mock${api}`;
-  } else if(mock == 'data') {
-    api = `${Env.BASE_URL_DATA}${api}`;
   } else {
     api = `${Env.BASE_URL}${api}`;
   }

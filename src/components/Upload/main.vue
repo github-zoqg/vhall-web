@@ -46,7 +46,7 @@ export default {
     return {
       imageUrl: '',
       domainUrl: '',
-      token: sessionOrLocal.get('token')
+      token: sessionOrLocal.get('token', 'localStorage') || ''
     };
   },
   props: {

@@ -209,7 +209,7 @@ export default {
   },
   data () {
     return {
-      token: sessionOrLocal.get('token') || '',
+      token: sessionOrLocal.get('token', 'localStorage') || '',
       interact_token: sessionOrLocal.get('interact_token') || '',
       switchStatus: false,
       isDoListcShow: false,

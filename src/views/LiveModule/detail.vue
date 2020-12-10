@@ -5,7 +5,7 @@
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
         <div class="inner">
           <div class="thumb">
-            <img :src="`${imgBaseUrl}${liveDetailInfo.img_url}`" alt="">
+            <img :src="liveDetailInfo.img_url" alt="">
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
@@ -23,7 +23,7 @@
               <!-- <span class="tag">报名表单</span> -->
             </p>
             <div class="action-look">
-              <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;">恢复预告</el-button>
+              <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                   placement="bottom"
                   trigger="hover"
@@ -149,6 +149,7 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
+        // this.liveDetailInfo.webinar_state = 5;
         this.getCode();
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
@@ -172,6 +173,33 @@ export default {
         this.$message.success('复制成功！');
       }).catch(error=>{
         this.$message.error('复制失败！');
+      });
+    },
+    //恢复预告
+    resetResume(status) {
+      if (status === 5) {
+        this.$confirm('恢复为预告后，回放将不能观看', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.reSumeNotice();
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });
+        });
+      } else {
+        this.reSumeNotice();
+      }
+    },
+    reSumeNotice() {
+      this.$fetch('liveEdit', {webinar_id:this.$route.params.str, type: 2}).then(res=>{
+        this.$message.success('恢复预告成功');
+        this.getLiveDetail(this.$route.params.str);
+      }).catch(error=>{
+        this.$message.error(`恢复预告失败，${error.message}`);
       });
     },
     blockHandler(item){
