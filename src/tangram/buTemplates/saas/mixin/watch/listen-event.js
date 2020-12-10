@@ -288,7 +288,6 @@ export const listenEvent = {
             this.mainScreen = res.data.main_screen
             this.speakerList = res.data.speaker_list
           })
-          console.log(888888, this.speakerList)
           this.handDownShow = true; // 下麦按钮的显示
           this.handShow = false; // 上麦按钮关闭
           this.lowerWheat = true; // 上麦的状态
