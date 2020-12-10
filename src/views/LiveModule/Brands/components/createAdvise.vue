@@ -14,7 +14,7 @@
               v-model="advertisement.img_url"
               :domain_url="domain_url"
               :saveData="{
-                path: 'saas/webinars/spread-imgs/',
+                path: 'saas/webinars/spread-imgs',
                 type: 'image',
               }"
               :on-success="uploadAdvSuccess"

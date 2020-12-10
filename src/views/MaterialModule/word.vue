@@ -118,7 +118,7 @@ export default {
   computed: {
     saveData: function() {
       let data = {
-        path: 'webinar/document',
+        path: 'saas/interacts/docs/',
         type: 1, // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
       }
       if(this.$route.params.str) {

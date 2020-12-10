@@ -142,7 +142,10 @@ export function domainCovert(baseDomain, url) {
 }
 
 /**
- * parseURL 路径转换 去除//t-alistatic01.e.vhall.com/upload/
+ * parseURL 路径转换 去除
+ * //t-alistatic01.e.vhall.com/upload/
+ * 或者
+ * //t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/
  **/
 export function parseURL(url) {
   let a = document.createElement('a');
