@@ -1,53 +1,57 @@
 <template>
   <div class="show-special">
-    <pageTitle title="专题详情"></pageTitle>
-    <el-card>
-      <div class="special-main">
-        <div class="special-img">
-          <img src="//cnstatic01.e.vhall.com/static/img/v35-subject.png">
+    <OldHeader></OldHeader>
+    <div class="special-show-ctx">
+      <pageTitle title="专题详情"></pageTitle>
+      <el-card>
+        <div class="special-main">
+          <div class="special-img">
+            <img src="//cnstatic01.e.vhall.com/static/img/v35-subject.png">
+          </div>
+          <div class="special-detail">
+            <h1>看的见</h1>
+            <p>2020-03-20 10:08</p>
+            <h2>共<b>3</b>个直播<span><b>32</b>次观看</span><b>0</b>次预约</h2>
+            <h3 @click="specialShare"><i class="el-icon-share"></i>分享</h3>
+          </div>
         </div>
-        <div class="special-detail">
-          <h1>看的见</h1>
-          <p>2020-03-20 10:08</p>
-          <h2>共<b>3</b>个直播<span><b>32</b>次观看</span><b>0</b>次预约</h2>
-          <h3 @click="specialShare"><i class="el-icon-share"></i>分享</h3>
-        </div>
-      </div>
-    </el-card>
-    <el-card class="special-list">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="专题简介" name="first">
-          <p class="text">专题简介............</p>
-        </el-tab-pane>
-        <el-tab-pane label="目录列表" name="second">
-          <el-row :gutter="40" class="lives">
-            <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-              <div class="inner">
-                <div class="top">
-                  <span class="liveTag">{{item.status}}</span>
-                  <!-- <span class="hot">
-                    <i class="el-icon-view"></i>
-                    {{item.pv}}
-                  </span> -->
-                  <img :src="item.img_url" alt="">
-                </div>
-                <div class="bottom">
-                  <div class="">
-                    <p class="liveTitle">{{item.subject}}</p>
-                    <p class="liveTime">{{item.start_time}} <span><i class="el-icon-view"></i> {{item.pv}}</span></p>
+      </el-card>
+      <el-card class="special-list">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="专题简介" name="first">
+            <p class="text">专题简介............</p>
+          </el-tab-pane>
+          <el-tab-pane label="目录列表" name="second">
+            <el-row :gutter="40" class="lives">
+              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+                <div class="inner">
+                  <div class="top">
+                    <span class="liveTag">{{item.status}}</span>
+                    <!-- <span class="hot">
+                      <i class="el-icon-view"></i>
+                      {{item.pv}}
+                    </span> -->
+                    <img :src="item.img_url" alt="">
+                  </div>
+                  <div class="bottom">
+                    <div class="">
+                      <p class="liveTitle">{{item.subject}}</p>
+                      <p class="liveTime">{{item.start_time}} <span><i class="el-icon-view"></i> {{item.pv}}</span></p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
-    </el-card>
-    <share ref="share"></share>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
+        </el-tabs>
+      </el-card>
+      <share ref="share"></share>
+    </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
+import OldHeader from '@/components/OldHeader';
 import share from './share';
 export default {
   data() {
@@ -105,6 +109,7 @@ export default {
   },
   components: {
     PageTitle,
+    OldHeader,
     share
   },
   methods: {
@@ -119,6 +124,13 @@ export default {
 };
 </script>
 <style lang="less">
+.titleBox {
+  margin-top: 40px;
+}
+.special-show-ctx {
+  width: 1300px;
+  margin: 0 auto 50px auto;
+}
   .show-special{
     height: 100%;
     /deep/.el-card__body {

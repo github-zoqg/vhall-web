@@ -42,6 +42,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
   };
   if(window.location.hash.indexOf('/live/room/') !== -1 || window.location.hash.indexOf('/live/watch/') !== -1) {
     headers['interact-token']= interact_token;
+    // pc观看等
+    headers.platform = 7;
   }
   if (header['Content-Type'] === 'multipart/form-data') {
     formData = new FormData();

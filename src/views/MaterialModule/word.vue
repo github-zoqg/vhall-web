@@ -17,7 +17,7 @@
       <el-upload
         class="btn-upload"
         :action=actionUrl
-        :headers="{token: token}"
+        :headers="{token: token, platform: 17}"
         :data=saveData
         name="resfile"
         :show-file-list=false

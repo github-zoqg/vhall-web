@@ -47,10 +47,10 @@
       </el-form>
     </div>
     <span slot="footer">
-      <el-button class="dialog-btn" type="primary" round size="medium" v-if="showVo.executeType !== 'pwd' && showVo.step === 1" @click="changePhoneOrEmailStep">下一步</el-button>
-      <el-button class="dialog-btn" type="primary" round size="medium" v-if="showVo.executeType === 'pwd'" @click="changePwdStep">确定</el-button>
-      <el-button class="dialog-btn" round size="medium" v-if="showVo.executeType === 'pwd'" @click="cancelPwdStep">取消</el-button>
-      <el-button class="dialog-btn" type="primary" round size="medium" v-if="showVo.executeType !== 'pwd' && showVo.step === 2" @click="sendBindHandle">立即绑定</el-button>
+      <el-button class="dialog-btn" type="primary" round size="medium" v-if="showVo.executeType !== 'pwd' && showVo.step === 1" @click="changePhoneOrEmailStep">下一步1</el-button>
+      <el-button class="dialog-btn" type="primary" round size="medium" v-if="showVo.executeType === 'pwd'" @click="changePwdStep">确定2</el-button>
+      <el-button class="dialog-btn" round size="medium" v-if="showVo.executeType === 'pwd'" @click="cancelPwdStep">取消3</el-button>
+      <el-button class="dialog-btn" type="primary" round size="medium" v-if="showVo.executeType !== 'pwd' && showVo.step === 2" @click="sendBindHandle">立即绑定4</el-button>
     </span>
   </VhallDialog>
 </template>
@@ -130,6 +130,7 @@ export default {
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
+      codeKey: null, // 短信、邮箱验证码校验接口返回key值
       errorMsgShow: ''
     };
   },
@@ -145,19 +146,28 @@ export default {
     getDyCode(type) {
       // 获取短信验证码
       if (this.checkMobile(type) && this.mobileKey) {
-       /* this.$fetch('sendCode', {
-          type: 1,
-          phone: this.form[type],
+        this.$fetch('sendCode', {
+          type: type === 'phone' ? 1 : 2, // 1手机  2邮箱
+          data: this.form[type],
           validate: this.mobileKey,
-          scene_id: 7
-        }).then(() => {
-          this.countDown();
-        });*/
-         this.isDisabledClick = true;
+          scene_id: 1
+        }).then((res) => {
+          if(res && res.code === 200) {
+            this.countDown();
+          } else {
+            this.$message.error(e.msg || '验证码发送失败');
+          }
+        }).catch(e => {
+          console.log(e);
+          this.$message.error(e.msg || '验证码发送失败');
+        });
+         /*this.isDisabledClick = true;
          if(this.downTimer) {
            window.clearTimeout(this.downTimer);
          }
-        this.countDown();
+        this.countDown();*/
+      } else {
+        this.$message.error('请先确认手机号且验证图形码正确');
       }
     },
     countDown() {
@@ -193,11 +203,47 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           if(this.showVo.step === 1) {
-            // 验证码第一步，继续下一步
-            this.showVo.step = 2;
+            // 第一步，验证码，获取验证码是否正确得到key，验证通过，继续下一步
+            let params = {
+              type: 1, // 密码修改-默认手机号校验
+              data: this.form.phone,
+              code: this.form.code,
+              scene_id: 1
+            };
+            this.$fetch('codeCheck', params).then(res => {
+              if (res && res.code === 200) {
+                if (res.data.check_result > 0) {
+                  this.codeKey = res.data.key || '';
+                  // 验证码第一步，继续下一步
+                  this.showVo.step = 2;
+                } else {
+                  this.$message.error(res.msg || '验证失败，无法操作');
+                }
+              } else {
+                this.$message.error(res.msg || '验证失败，无法操作');
+              }
+            }).catch(e => {
+              console.log(e);
+              this.$message.error('验证失败，无法操作');
+            });
           } else {
-            // 保存密码
-            this.visible = false;
+            // 第二步密码保存 => 存储密码
+            console.log('changePwdStep ---- 保存密码');
+            let params = {
+              old_password: this.form.old_pwd,
+              password: this.form.password,
+              confirm_password: this.form.new_password,
+              scene_id: !(this.vo && this.vo.has_password > 0) ? 9 : 1,
+              key: this.codeKey
+            };
+            this.$fetch('resetPassword', params).then(res => {
+              if (res && res.code === 200) {
+                this.$message.success('操作成功');
+                this.visible = false;
+              }
+            }).catch(e => {
+              console.log(e);
+            });
           }
         }
       });
@@ -231,11 +277,12 @@ export default {
     initComp(vo, btnType) {
       // btnType => pwd 密码；email 邮箱； phone手机号
       // 场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码 9设置密码（密码不存在情况）
-      vo = {
+      /*vo = {
         has_password: 0,
         phone: 18310410764,
         email: '123123123@qq.com'
-      };
+      };*/
+      console.log(vo, '当前登录用户');
       this.vo = vo;
       this.showVo.executeType = btnType;
       if(!vo) {
@@ -275,6 +322,10 @@ export default {
         this.$refs.form.resetFields();
       }
       this.visible = true;
+      // 为表单赋值
+      this.form.phone = vo.phone || '';
+      this.form.email = vo.email || '';
+
       this.$nextTick(() => {
         this.callCaptcha();
       });
@@ -297,7 +348,7 @@ export default {
             that.mobileKey = data.validate;
             that.showCaptcha = true;
             console.log('data>>>', data);
-            this.errorMsgShow = '';
+            that.errorMsgShow = '';
           } else {
             that.form.captcha = '';
             console.log('errr>>>', err);

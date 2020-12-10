@@ -8,8 +8,9 @@
       <el-form-item label="专题封面:">
         <upload
           v-model="imageUrl"
+          :domain_url="domain_url"
           :saveData="{
-             path: 'webinar/live_url',
+             path: 'saas/webinars/subject-imgs/',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -98,9 +99,9 @@ export default {
       home: false,
       loading: false,
       imageUrl: '',
-      imageUrlTrue:'',
+      domain_url:'',
       content: '',
-      webinarIds: ['726319166'],
+      webinarIds: [],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
@@ -117,10 +118,11 @@ export default {
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
-      if (res.data.file_url) {
-        // 文件上传成功，保存信息
-        this.imageUrl =  Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
-        this.imageUrlTrue = res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.imageUrl = file_url;
+        this.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){

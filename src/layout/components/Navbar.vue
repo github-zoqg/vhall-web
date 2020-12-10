@@ -33,10 +33,12 @@
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
             <img :src="avatarImgUrl" class="user-avatar" alt="" />
-            <span>{{showName}}</span>
+            <span>{{
+                userInfo && userInfo.nick_name ? userInfo.nick_name : ''
+              }}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item divided @click.native="logout">
+            <el-dropdown-item divided @click.native="toAccountPage">
               <span><icon icon-class="saasicon_Settings"></icon>账户信息</span>
             </el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">
@@ -82,6 +84,9 @@ export default {
     toDownloadPage() {
       this.$router.push({path: '/other/downloadList'});
     },
+    toAccountPage() {
+      this.$router.push({path: '/account/info'});
+    },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{
         this.unread_num = res && res.code === 200 && res.data ? res.data.unread_num : 0;
@@ -111,14 +116,7 @@ export default {
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
-    }
-  },
-  computed: {
-    showName: function() {
-      let nickName = this.userInfo && this.userInfo.nick_name ? this.userInfo.nick_name : '';
-      console.log( nickName && nickName.length > 5 ? nickName + '...' : nickName, '昵称');
-      return nickName && nickName.length > 5 ? nickName + '...' : nickName;
+      this.avatarImgUrl = account ?  account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
@@ -126,7 +124,7 @@ export default {
     let userInfo = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
     // 监听消息变化
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
@@ -138,7 +136,16 @@ export default {
   }
 };
 </script>
-
+<style>
+.user-dropdown {
+  /deep/.el-dropdown-menu__item{
+    padding: 0 10px!important;
+  }
+  /deep/.el-dropdown-menu__item--divided:before {
+    display: none!important;
+  }
+}
+</style>
 <style lang="less" scoped>
 @import '../../common/css/index.less';
 .navbar {

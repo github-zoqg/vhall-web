@@ -305,9 +305,10 @@ const apis = {
   homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li √字段未同步
   homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li √
   homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li √字段未同步
-  checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
-  resetPassword: ['/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回/设置密码接口
-  bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
+  checkAccount: ['/v3/users/user/check-account', 'POST'], // 账号检测接口 Jia.li
+  resetPassword: ['/v3/users/user/reset-password', 'POST'], // 修改密码/密码找回/设置密码接口 Jia.li
+  codeCheck: ['/v3/users/code/check', 'POST'], // check Jia.li
+  bindInfo: ['/v3/users/user/bind-info', 'POST'], // 绑定邮箱、手机号接口 Jia.li
 
   // 下载中心
   downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √

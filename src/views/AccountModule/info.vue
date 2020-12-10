@@ -73,14 +73,14 @@ export default {
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
     let userInfo = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
     this.tabType = 'baseSet';
     this.$refs[`baseSetComp`].initComp();
