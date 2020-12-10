@@ -916,12 +916,12 @@ export default {
         room_id: this.roomId,
         receive_account_id: accountId
       };
+      console.warn('同意上麦------', data);
+      // , {}, 4000 此处本要做 节流   暂去除
       this._deleteUser(accountId, this.applyUsers);
-      this.$vhallFetch('consentApplay', data, {}, 4000)
-        .then(res => {
-          this._deleteUser(accountId, this.applyUsers);
-        })
-        .catch(() => {});
+      this.$fetch('allowSpeak', data).then(res => {
+        this._deleteUser(accountId, this.applyUsers);
+      }).catch(() => {});
     },
     /**
      * 邀请上麦 / 同意上麦
@@ -1069,8 +1069,6 @@ export default {
         receive_account_id: accountId,
         room_id: this.roomId
       };
-      // this.$vhallFetch('setMainScreen', data)
-      // this.$vhallFetch('setSpeaker', data)
       EventBus.$emit('SETSPEAKER', data);
     },
     /**
