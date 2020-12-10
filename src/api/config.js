@@ -448,6 +448,7 @@ const apis = {
   allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦   主持人同意上麦
   v3InviteMic: ['/v3/interacts/inav/invite', 'POST'],// 邀请用户上麦
   v3SetDevice: ['/v3/interacts/room/set-device', 'POST'], //设置房间用户的设备检测状态
+  v3SetDesktop: ['/v3/interacts/room/set-desktop', 'POST'], // 开启桌面共享自动最大化
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
 
