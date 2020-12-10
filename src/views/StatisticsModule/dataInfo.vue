@@ -87,11 +87,7 @@ export default {
             {
               label: '主账号',
               value: 1,
-            },
-            {
-              label: '主账号+子账号',
-              value: 2,
-            },
+            }
           ],
         },
       ],
@@ -103,6 +99,15 @@ export default {
       browerDataList: [],
       deviceDataList: []
     };
+  },
+  created() {
+    this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+    if (this.parentId) {
+      this.searchAreaLayout.map(item => {
+        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      })
+    }
+
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));

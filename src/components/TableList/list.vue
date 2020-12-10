@@ -1,6 +1,6 @@
 <template>
   <div class="data-list">
-    <div class="table-list" v-if="totalNum">
+    <div class="table-list">
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -101,17 +101,6 @@
       align="center"
     >
     </SPagination>
-    </div>
-    <div class="empty" v-else>
-      <div>
-        <img
-          src="../../common/images/v35-webinar.png"
-          alt=""
-          width="140"
-          height="140"
-        />
-      </div>
-      <p :style="{ marginTop: '23px' }">没有数据</p>
     </div>
   </div>
 </template>

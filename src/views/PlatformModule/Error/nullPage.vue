@@ -6,10 +6,9 @@
     </div>
     <div v-else>
       <img src="../../../common/images/sys/no-create.svg" class="no-create" />
-      <p class="null-info">暂未创建活动</p>
+      <p class="null-info">{{ text }}</p>
       <div class="btn-list">
-        <el-button type="primary" round>创建直播</el-button>
-        <el-button round>创建点播</el-button>
+        <slot></slot>
       </div>
     </div>
   </div>
@@ -21,7 +20,11 @@ export default {
   props: {
     nullType: {
       type: String,
-      default: '1'
+      default: 'search'
+    },
+    text: {
+      type: String,
+      default: '暂未设置该内容'
     }
   }
 };

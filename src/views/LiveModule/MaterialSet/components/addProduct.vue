@@ -165,7 +165,7 @@ export default {
     },
     productLoadSuccess(res, file){
       console.log(res, file);
-      this.form.imageUrl = URL.createObjectURL(file.raw);
+      this.form.imageUrl = res.data.file_url;
       this.fileList.push({
         url: this.form.imageUrl,
         cover: false
