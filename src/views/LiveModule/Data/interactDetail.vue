@@ -1,40 +1,44 @@
 <template>
   <div class="data-detail">
-    <div class="title-data">
-      <span>{{ title }}</span>
-    </div>
-    <el-card>
-      <div class="search-box" v-if="title==='聊天' || title==='问答'">
-        <search-area
-          ref="searchArea"
-          :searchAreaLayout="searchAreaLayout"
-          :placeholder="placeholder"
-          @onSearchFun="getTableList('search')"
-          @onExportData="exportData"
-          @deletedChecked="deletedChecked"
+    <pageTitle :title='title'></pageTitle>
+    <div class="interact-detail">
+      <el-card>
+        <div class="search-box" v-if="title==='聊天' || title==='问答'">
+          <search-area
+            ref="searchArea"
+            :searchAreaLayout="searchAreaLayout"
+            :placeholder="placeholder"
+            @onSearchFun="getTableList('search')"
+            @onExportData="exportData"
+            @deletedChecked="deletedChecked"
           >
-        </search-area>
-      </div>
-      <div class="search-box" v-else>
-        <el-button round> 导出数据</el-button>
-      </div>
-      <table-list
-        ref="tableList"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :tableRowBtnFun="tableRowBtnFun"
-        :isCheckout="isCheckout"
-        :totalNum="totalNum"
-        @changeTableCheckbox="changeTableCheckbox"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getTableList"
+          </search-area>
+        </div>
+        <div class="search-box" v-else>
+          <el-button round> 导出数据</el-button>
+        </div>
+        <table-list
+          ref="tableList"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :isCheckout="isCheckout"
+          :totalNum="totalNum"
+          @changeTableCheckbox="changeTableCheckbox"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getTableList"
         >
-      </table-list>
-    </el-card>
+        </table-list>
+      </el-card>
+    </div>
   </div>
 </template>
 <script>
+import PageTitle from '@/components/PageTitle';
 export default {
+  components: {
+    PageTitle,
+  },
   data() {
     return {
       isCheckout: false,
@@ -401,17 +405,23 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .title-data {
-  margin: 20px 0;
-  text-align: left;
-  line-height: 30px;
   span{
     font-size: 22px;
     font-family: PingFangSC-Semibold, PingFang SC;
     font-weight: 600;
     color: #1a1a1a;
   }
+}
+.interact-detail {
+  margin-top: 32px;
+  /*/deep/.el-card {
+    .padding48-40();
+  }
+  /deep/.el-card__body {
+    padding: 0;
+  }*/
 }
 .search-box{
   margin-bottom: 20px;
