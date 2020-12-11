@@ -97,7 +97,7 @@ export default {
   },
   computed: {
     pathUrl: function() {
-      return this.title==='公众号展示' ? `saas/interacts/wechat-official-imgs` : `saas/interacts/screen-imgs`;
+      return this.title==='公众号展示' ? `interacts/wechat-official-imgs` : `interacts/screen-imgs`;
     },
     title() {
       return this.$route.meta.title === '品牌—开屏海报' ? '开屏海报' : '公众号展示';
@@ -157,8 +157,9 @@ export default {
         webinar_id: this.$route.params.str
       }).then(res => {
         if(res && res.code === 200) {
-          this.img = res.data.img;
+          this.img = res.data.img || '';
           this.url = res.data.url || '';
+          this.domain_url = res.data.img || '';
           this.status = res.data.status;
           this.alert_type = res.data.alert_type;
         }

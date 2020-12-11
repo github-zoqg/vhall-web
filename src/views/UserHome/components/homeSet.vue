@@ -10,7 +10,7 @@
           v-model="homeSetInfoForm.homepage_avatar"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/users/homepage-imgs',
+             path: 'users/homepage-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -38,7 +38,7 @@
           v-model="homeSetInfoForm.img_url"
           :domain_url="domain_bg_url"
           :saveData="{
-           path: 'saas/users/homepage-imgs',
+           path: 'users/homepage-imgs',
            type: 'image',
           }"
           :on-success="handleUploadSuccessBg"

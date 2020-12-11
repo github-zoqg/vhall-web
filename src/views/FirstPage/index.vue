@@ -104,7 +104,7 @@
           <h1>微吼直播客户端</h1>
           <p>强大稳定的直播工具，支持插播 视频、桌面</p>
         </div>
-        <a href="https://www.vhall.com/saas/client" class="download-btn">立即下载</a>
+        <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank">立即下载</a>
       </div>
       <div class="app-download">
         <div class="app-web">
@@ -114,14 +114,14 @@
           <h1>微吼直播APP下载</h1>
           <p>强大稳定的直播工具，支持插播 视频、桌面共享等功能</p>
         </div>
-        <a href="http://e.vhall.com/app" class="download-btn">立即下载</a>
+        <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
       </div>
       <div class="data-document">
-        <h2>文档中心<a href="https://www.vhall.com/saas/doc">更多</a></h2>
-        <p><a href="https://www.vhall.com/saas/doc/6.html">API文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/260.html">JSSDK文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/262.html">IOS SDK文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/261.html">Andriod SDK文档</a></p>
+        <h2>文档中心<a href="https://www.vhall.com/saas/doc" target="_blank">更多</a></h2>
+        <p><a href="https://www.vhall.com/saas/doc/6.html" target="_blank">API文档</a></p>
+        <p><a href="https://www.vhall.com/saas/doc/260.html" target="_blank">JSSDK文档</a></p>
+        <p><a href="https://www.vhall.com/saas/doc/262.html" target="_blank">IOS SDK文档</a></p>
+        <p><a href="https://www.vhall.com/saas/doc/261.html" target="_blank">Andriod SDK文档</a></p>
       </div>
       <div class="helpMsg" @click="contactUs">
         <i class="el-icon-chat-dot-round"></i>

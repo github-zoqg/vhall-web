@@ -6,7 +6,7 @@
     </div>
     <div v-else>
       <img src="../../../common/images/sys/no-create.svg" class="no-create" />
-      <p class="null-info">{{ text }}</p>
+      <p class="null-info" v-html="text"></p>
       <div class="btn-list">
         <slot></slot>
       </div>

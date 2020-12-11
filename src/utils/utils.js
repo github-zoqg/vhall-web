@@ -148,9 +148,21 @@ export function domainCovert(baseDomain, url) {
  * //t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/
  **/
 export function parseURL(url) {
-  let a = document.createElement('a');
+ /* let a = document.createElement('a');
   a.href = url;
   return {
     path: a.pathname.replace(/^([^\/])/,'/$1').replace('/upload/', '')
-  };
+  };*/
+  // 查找/upload/位置，保留之后的路径
+
+  let targetIndex = url.indexOf('/upload/');
+  if (targetIndex > 0) {
+    return {
+      path: url.substr(targetIndex + 8, url.length)
+    }
+  } else {
+    return {
+      path: url
+    };
+  }
 }

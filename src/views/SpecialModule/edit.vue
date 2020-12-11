@@ -10,7 +10,7 @@
           v-model="imageUrl"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/webinars/subject-imgs',
+             path: 'webinars/subject-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -101,7 +101,7 @@ export default {
       imageUrl: '',
       domain_url:'',
       content: '',
-      webinarIds: [],
+      webinarIds: ['856483543'],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
