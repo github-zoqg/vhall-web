@@ -132,6 +132,7 @@ export function uploadFileNames(type) {
     {code:35,text:'提交问题上传附件',url:'/saas/interacts/feedback-imgs/',type: 1 ,key: 'feebackDocs1'},
     {code:36,text:'我的主页设置背景',url:'/saas/users/homepage-imgs/',type: 1,key: 'homeImg1'},
     {code:37,text:'账户设置上传头像',url:'/saas/users/face-imgs/',type: 1,key: 'faceImg1'},
+    {code:41,text:'控制台标志上传',url:' /saas/users/logo-imgs/',type: 1,key: 'logoImg1'},
     {code:38,text:'聊天发送图片',url:'/saas/interacts/chat-imgs/',type: 1,key: 'chatImg1'},
     {code:40,text:'活动数据导出上传',url:'/saas/webinars/',type: 1,key: 'wearUpload'},
     {code:4,text:'上传点播',url:'',type: 1,key: 'vodUpload'},

@@ -85,6 +85,11 @@
                   <upload
                     class="giftUpload"
                     v-model="formWatermark.img_url"
+                    :domain_url="domain_url"
+                    :saveData="{
+                       path: 'saas/interacts/watermark-imgs',
+                       type: 'image',
+                    }"
                     :on-success="uploadAdvSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
@@ -185,6 +190,7 @@ export default {
         img_url: '',
         img_alpha: 80
       },
+      domain_url: '',
       formOther: {
         progress: true,
         bulletChat: true,
@@ -269,9 +275,11 @@ export default {
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
-      if (res.data.file_url) {
-        // 文件上传成功，保存信息
-        this.formWatermark.img_url  = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.formWatermark.img_url = file_url;
+        this.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){

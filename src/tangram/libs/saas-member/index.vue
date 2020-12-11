@@ -519,11 +519,6 @@ export default {
         }, 30000);
         this.$emit('memberUpdata');
 
-        //  删除申请上麦消息提示 - 改用 主持端自动提示
-        // if (this.roleName == 1)
-        // this.$message.success({
-        //   message: `收到${role}${msg.nick_name}的上麦申请`
-        // })
       });
 
       // 用户取消申请上麦
@@ -541,21 +536,6 @@ export default {
         this.raiseHandTip = false;
       });
 
-      // 用户同意上麦邀请
-      EventBus.$on('vrtc_connect_invite_agree', msg => {
-        // if (msg.room_join_id == this.userId || this.roleName != 1) {
-        //   return
-        // }
-        // let role = ''
-        // if (msg.room_role == 2) {
-        //   role = '观众'
-        // } else if (msg.room_role == 4) {
-        //   role = '嘉宾'
-        // }
-        // this.$message.warning({
-        //   message: `${role}${msg.nick_name}同意了你的上麦邀请`
-        // })
-      });
       // 用户拒绝上麦邀请
       EventBus.$on('vrtc_connect_invite_refused', msg => {
         // 如果申请人是自己
@@ -916,12 +896,12 @@ export default {
         room_id: this.roomId,
         receive_account_id: accountId
       };
+      console.warn('同意上麦------', data);
+      // , {}, 4000 此处本要做 节流   暂去除
       this._deleteUser(accountId, this.applyUsers);
-      this.$vhallFetch('consentApplay', data, {}, 4000)
-        .then(res => {
-          this._deleteUser(accountId, this.applyUsers);
-        })
-        .catch(() => {});
+      this.$fetch('allowSpeak', data).then(res => {
+        this._deleteUser(accountId, this.applyUsers);
+      }).catch(() => {});
     },
     /**
      * 邀请上麦 / 同意上麦
@@ -1069,8 +1049,6 @@ export default {
         receive_account_id: accountId,
         room_id: this.roomId
       };
-      // this.$vhallFetch('setMainScreen', data)
-      // this.$vhallFetch('setSpeaker', data)
       EventBus.$emit('SETSPEAKER', data);
     },
     /**

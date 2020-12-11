@@ -67,8 +67,10 @@ export default {
         if (res && res.code === 200) {
           // 粉丝数、是否关注、主页信息
           let {attentioned_count, follow, homepage_info } = res.data;
-          homepage_info.homepage_avatar = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
-          homepage_info.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
+          homepage_info.homepage_avatar = homepage_info.homepage_avatar || '';
+          // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
+          homepage_info.img_url = homepage_info.img_url || '';
+            // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
           this.userHomeVo = homepage_info;
           this.attentioned_count = attentioned_count;
           this.follow = follow;
@@ -89,7 +91,12 @@ export default {
     let userInfo  = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      if(this.userInfo) {
+        this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      } else {
+        this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      }
     }
   }
 };

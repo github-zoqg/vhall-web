@@ -78,15 +78,17 @@
       <el-form-item :label="`${webniarTypeToZH}封面：`">
         <upload
           v-model="imageUrl"
+          :domain_url="domain_url"
           :saveData="{
-             path: 'webinar/live_url',
+             path: pathUrl,
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUploadHnadler">
+          :before-upload="beforeUploadHnadler"
+          @delete="imageUrl = ''">
           <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
@@ -208,6 +210,9 @@ export default {
     VEditor
   },
   computed: {
+    pathUrl: function() {
+      return `saas/interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
+    },
     docSwtichDesc(){
       if(this.docSwtich){
         return '已开启，支持观众直播中提前预览文档，进行文档翻页';
@@ -290,7 +295,7 @@ export default {
       tagIndex: 0,
       loading: false,
       imageUrl: '',
-      imageUrlTrue:'',
+      domain_url: '',
       selectMedia: null
     };
   },
@@ -314,7 +319,9 @@ export default {
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
         this.liveMode = this.liveDetailInfo.webinar_type;
-        this.imageUrl = Env.staticLinkVo.uploadBaseUrl + this.liveDetailInfo.img_url;
+        this.imageUrl = this.liveDetailInfo.img_url;
+        this.domain_url = this.liveDetailInfo.img_url;
+        console.log(this.domain_url, this.imageUrl, '封面地址');
         this.tagIndex = this.liveDetailInfo.category - 1;
         this.home = Boolean(this.liveDetailInfo.is_private);
         this.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
@@ -341,10 +348,12 @@ export default {
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
-      if (res.data.file_url) {
-        // 文件上传成功，保存信息
-        this.imageUrl =  Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
-        this.imageUrlTrue = res.data.file_url;
+      // 文件上传成功，保存信息
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.imageUrl = file_url;
+        this.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -378,7 +387,7 @@ export default {
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
-        // img_url: this.imageUrlTrue, // 封面图 `//t-alistatic01.e.vhall.com/upload/${this.imageUrlTrue}`
+        img_url: this.imageUrl, // 封面图
         is_private: Number(this.home), // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
         hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否

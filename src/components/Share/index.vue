@@ -4,14 +4,14 @@
       <div class="left">
         <p class="title">分享直播</p>
         <div class="icons">
-          <i class="icon">
-            <icon icon-class="saasweixin"></icon>
+          <i class="icon" @click="toShare('wechat')">
+            <icon icon-class="saasicon_wechat"></icon>
           </i>
-          <i class="icon">
-            <icon icon-class="saasweibo"></icon>
+          <i class="icon" @click="toShare('sina')">
+            <icon icon-class="saasicon_sina"></icon>
           </i>
-          <i class="icon">
-            <icon icon-class="saasqq"></icon>
+          <i class="icon" @click="toShare('qq')">
+            <icon icon-class="saasicon_qq"></icon>
           </i>
         </div>
 
@@ -53,6 +53,21 @@ export default {
     );
   },
   methods: {
+    toShare(type) {
+      let url = '';
+      if(type === 'wechat') {
+        // ag: url = http://t.e.vhall.com/v3/#/live/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用
+        url = '//aliqr.e.vhall.com/qr.png?t=https://t.e.vhall.com/user/home/16422680'
+      }
+      else if (type === 'sina') {
+        // http://service.weibo.com/share/share.php?url=你的分享网址&sharesource=weibo&title=你的分享标题&pic=你的分享图片&appkey=你的key，需要在新浪微博开放平台中申请
+        url = `http://service.weibo.com/share/share.php?url=${url}`
+      }
+      else if (type === 'qq') {
+        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${url}`
+      }
+      window.open(url, '_blank');
+    },
     doCopy () {
       this.$copyText(this.url).then(e => {
         this.$message.success('复制成功！');
@@ -125,9 +140,9 @@ export default {
     margin-right: 30px;
     cursor: pointer;
     .iconContainer{
-      font-size: 24px;
+      font-size: 44px;
     }
-    &:nth-child(1){
+   /* &:nth-child(1){
       background: rgb(97, 233, 44);
     }
     &:nth-child(2){
@@ -136,6 +151,6 @@ export default {
     &:nth-child(3){
       background: rgb(80, 149, 255);
       margin-right: 0px;
-    }
+    }*/
   }
 </style>

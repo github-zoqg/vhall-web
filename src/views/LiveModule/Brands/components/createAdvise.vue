@@ -12,9 +12,9 @@
            <upload
               class="giftUpload"
               v-model="advertisement.img_url"
-              :domain_url="advertisement.img_url"
+              :domain_url="domain_url"
               :saveData="{
-                path: 'webinars/img_url',
+                path: 'saas/webinars/spread-imgs',
                 type: 'image',
               }"
               :on-success="uploadAdvSuccess"
@@ -23,6 +23,7 @@
               :on-preview="uploadPreview"
               @handleFileChange="handleFileChange"
               :before-upload="beforeUploadHnadler"
+              @delete="advertisement.img_url = ''"
               >
               <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
             </upload>
@@ -88,6 +89,7 @@ export default {
           { required: true,  message: '请输入广告链接', trigger: 'blur' }
         ],
       },
+      domain_url: '',
       advertisement: {
         is_sync: 0,
         img_url: '',
@@ -113,6 +115,8 @@ export default {
     title() {
       if (this.title === '编辑') {
         this.$set(this.advertisement, 'img_url', this.advInfo.img_url);
+        this.domain_url = this.advInfo.img_url;
+        console.log(this.domain_url, this.advertisement.img_url, '广告推荐图片地址');
         this.$set(this.advertisement, 'subject', this.advInfo.subject);
         this.$set(this.advertisement, 'url', this.advInfo.url);
         this.$set(this.advertisement, 'adv_id', this.advInfo.adv_id);
@@ -220,13 +224,14 @@ export default {
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
-      // this.advertisement.img_url = URL.createObjectURL(file.raw);
-      if (res.data.file_url) {
-        // 文件上传成功，保存信息
-        this.advertisement.img_url = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
-        // 触发验证
-        this.$refs.advertisementForm.validateField('img_url');
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.advertisement.img_url = file_url;
+        this.domain_url = domain_url;
       }
+      // 触发验证
+      this.$refs.advertisementForm.validateField('img_url');
     },
     beforeUploadHnadler(file){
       console.log(file);

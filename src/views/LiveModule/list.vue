@@ -7,107 +7,108 @@
         2.控制台数据为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
-
     <!-- 操作栏 -->
-    <div class="operaBox">
-      <el-button type="primary" round @click="$router.push({path:'/live/edit'})">创建直播</el-button>
-      <el-button round @click="$router.push({path:'/live/vodEdit'})">创建点播</el-button>
-      <div class="searchBox">
-        <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
-          <el-option
-            v-for="item in statusOptions"
-            :key="item.value+item.label"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
-          <el-option
-            v-for="item in orderOptions"
-            :key="item.value+item.label"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-input
-          placeholder="请输入直播标题"
-          v-model="keyWords">
-          <i
-            class="el-icon-search el-input__icon"
-            slot="suffix"
-            @click="searchHandler">
-          </i>
-        </el-input>
-      </div>
-    </div>
-    <!-- 操作栏 -->
-
-    <el-row :gutter="40" class="lives">
-      <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <div class="inner">
-          <div class="top">
-            <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
-              <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
-            <span class="hot">
-              <i class="el-icon-view"></i>
-              {{item.pv | unitCovert}}
-            </span>
-            <img :src="`${imgBaseUrl}${item.img_url}`" alt="">
-          </div>
-          <div class="bottom">
-            <div class="">
-              <p class="liveTitle">{{item.subject}}</p>
-              <p class="liveTime">{{item.start_time}}</p>
-            </div>
-            <p class="liveOpera">
-              <el-tooltip class="item" effect="dark" content="开播" placement="top">
-                <router-link :to="`chooseWay/${item.webinar_id},1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="回放" placement="top">
-              <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
-              </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="详情" placement="top">
-                <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
-              </el-tooltip>
-              <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
-                <i class="el-icon-more"></i>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command='/reportsData'>数据报告</el-dropdown-item>
-                  <el-dropdown-item command='/interactionData'>互动统计</el-dropdown-item>
-                  <el-dropdown-item command='/userData'>用户统计</el-dropdown-item>
-                  <el-dropdown-item command='/edit'>复制</el-dropdown-item>
-                  <el-dropdown-item command='删除'>删除</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </p>
-          </div>
-          <transition name="el-zoom-in-bottom">
-            <div class="mask" v-show="!!item.liveDropDownVisible"></div>
-          </transition>
+      <div class="operaBox">
+        <el-button type="primary" round @click="createLiveAction('1')">创建直播</el-button>
+        <el-button round @click="createLiveAction('2')">创建点播</el-button>
+        <div class="searchBox">
+          <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value+item.label"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
+            <el-option
+              v-for="item in orderOptions"
+              :key="item.value+item.label"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-input
+            placeholder="请输入直播标题"
+            v-model="keyWords">
+            <i
+              class="el-icon-search el-input__icon"
+              slot="suffix"
+              @click="searchHandler">
+            </i>
+          </el-input>
         </div>
-      </el-col>
-    </el-row>
-
-    <!-- <ul class="lives">
-      <li v-for="(item, index) in liveList" :key="index">
-
-      </li>
-    </ul> -->
-    <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
+      </div>
+    <!-- 操作栏 -->
+    <div v-if="liveList.length">
+      <el-row :gutter="40" class="lives">
+          <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+            <div class="inner">
+              <div class="top">
+                <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
+                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
+                <span class="hot">
+                  <i class="el-icon-view"></i>
+                  {{item.pv | unitCovert}}
+                </span>
+                <img :src="`${item.img_url}`" alt="">
+              </div>
+              <div class="bottom">
+                <div class="">
+                  <p class="liveTitle">{{item.subject}}</p>
+                  <p class="liveTime">{{item.start_time}}</p>
+                </div>
+                <p class="liveOpera">
+                  <el-tooltip class="item" effect="dark" content="开播" placement="top">
+                    <router-link :to="`chooseWay/${item.webinar_id},1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="回放" placement="top">
+                  <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="详情" placement="top">
+                    <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
+                  </el-tooltip>
+                  <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
+                    <i class="el-icon-more"></i>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item command='/reportsData'>数据报告</el-dropdown-item>
+                      <el-dropdown-item command='/interactionData'>互动统计</el-dropdown-item>
+                      <el-dropdown-item command='/userData'>用户统计</el-dropdown-item>
+                      <el-dropdown-item command='/edit'>复制</el-dropdown-item>
+                      <el-dropdown-item command='删除'>删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </p>
+              </div>
+              <transition name="el-zoom-in-bottom">
+                <div class="mask" v-show="!!item.liveDropDownVisible"></div>
+              </transition>
+            </div>
+          </el-col>
+      </el-row>
+      <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
+    </div>
+    <div class="no-live" v-else>
+      <noData :nullType="nullText" :text="'暂未创建活动'">
+      </noData>
+    </div>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import Env from '@/api/env.js';
+import noData from '@/views/PlatformModule/Error/nullPage';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
       liveStatus: 0,
+      nullText: 'nullData',
       orderBy: 1,
       keyWords: '',
       imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
-      pageSize: 10,
+      pageSize: 12,
       pageNum: 1,
       pagePos: 0,
       webinarInfo: {},
@@ -131,10 +132,10 @@ export default {
   },
   components: {
     PageTitle,
+    noData
   },
   created() {
     this.getLiveList();
-    // Cast to number failed for value "v3" at path "_id" for model "project"
   },
   methods: {
     searchHandler() {
@@ -181,6 +182,9 @@ export default {
       this.$fetch('liveList', this.$params(data)).then(res=>{
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
+        if ((this.orderBy || this.keyWords || this.liveStatus) && !res.data.total) {
+          this.nullText = 'search';
+        }
         // item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
       }).catch(error=>{
         this.$message.error(`获取直播列表失败,${error.msg || error.message}`);
@@ -194,6 +198,22 @@ export default {
         this.$message.success('删除成功');
         this.getLiveList();
       });
+    },
+    // 创建活动
+    createLiveAction(index){
+      let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
+      if (!userPhone) {
+        this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
+          confirmButtonText: '立即绑定',
+          callback: action => {
+            if (action === 'confirm') {
+              this.$router.push({path:'/account/info'});
+            }
+          }
+        });
+      } else {
+        index === '1' ? this.$router.push({path:'/live/edit'}) : this.$router.push({path:'/live/vodEdit'});
+      }
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
@@ -349,6 +369,9 @@ export default {
         .liveOpera{
           color: #666666;
           font-size: 18px;
+          a{
+            color: rgb(44, 43, 43);
+          }
           i{
             cursor: pointer;
             &:nth-child(2){

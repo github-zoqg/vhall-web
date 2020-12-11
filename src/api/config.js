@@ -13,33 +13,33 @@ const apis = {
   getAppid: ['/v3/webinars/videos/get-appid', 'POST'], //获取appid接口 √
 
   // 资料管理 -奖品
-  createPrize: ['/v3/vss/lottery/create-prize', 'POST', 'data'], //资料管理-创建奖品
-  editPrize: ['/v3/vss/lottery/get-edit-prize-info', 'POST', 'data'], //资料管理-编辑奖品
-  getPrizeList: ['/v3/vss/lottery/get-prize-list', 'POST', 'data'], //资料管理-奖品列表
-  delPrize: ['/v3/vss/lottery/prize-del', 'POST', 'data'], //资料管理-删除
-  copyPrize: ['/v3/vss/lottery/prize-copy', 'POST', 'data'], //资料管理-复制
+  createPrize: ['/v3/vss/lottery/create-prize', 'POST' ], //资料管理-创建奖品
+  editPrize: ['/v3/vss/lottery/get-edit-prize-info', 'POST' ], //资料管理-编辑奖品
+  getPrizeList: ['/v3/vss/lottery/get-prize-list', 'POST' ], //资料管理-奖品列表
+  delPrize: ['/v3/vss/lottery/prize-del', 'POST' ], //资料管理-删除
+  copyPrize: ['/v3/vss/lottery/prize-copy', 'POST' ], //资料管理-复制
 
   // 直播详情 -奖品设置
-  getLivePrizeInfo: ['/v3/vss/lottery/get-prize-info', 'GET', 'data'], //抽奖页-获取信息
-  savePrizepicture: ['/v3/vss/lottery/save-prize-image', 'POST', 'data'], //抽奖页-保存图片
-  savePrizeInfo: ['/v3/vss/lottery/save-prize-info', 'POST', 'data'], //抽奖页-保存信息
-  getDrawPrizeInfo: ['/v3/vss/lottery/get-draw-prize-info', 'GET', 'data'], //领奖页-获取信息
-  saveDrawPrizeInfo: ['/v3/vss/lottery/save-draw-prize', 'POST', 'data'], //领奖页-保存信息
+  getLivePrizeInfo: ['/v3/vss/lottery/get-prize-info', 'GET' ], //抽奖页-获取信息
+  savePrizepicture: ['/v3/vss/lottery/save-prize-image', 'POST' ], //抽奖页-保存图片
+  savePrizeInfo: ['/v3/vss/lottery/save-prize-info', 'POST' ], //抽奖页-保存信息
+  getDrawPrizeInfo: ['/v3/vss/lottery/get-draw-prize-info', 'GET' ], //领奖页-获取信息
+  saveDrawPrizeInfo: ['/v3/vss/lottery/save-draw-prize', 'POST' ], //领奖页-保存信息
 
   // 问卷
-  createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST', 'data'], //共享库_创建问卷
-  editQuestion: ['/v3/vss/survey/update-shared-survey', 'POST', 'data'], //共享库_编辑问卷
-  getQuestionList: ['/v3/vss/survey/list-shared-survey', 'GET', 'data'], //问卷列表
-  deleteQuestion: ['/v3/vss/survey/delete-shared-survey', 'POST', 'data'], //共享库_删除问卷
-  copyQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET', 'data'], //共享库-问卷复制
+  createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST' ], //共享库_创建问卷
+  editQuestion: ['/v3/vss/survey/update-shared-survey', 'POST' ], //共享库_编辑问卷
+  getQuestionList: ['/v3/vss/survey/list-shared-survey', 'GET' ], //问卷列表
+  deleteQuestion: ['/v3/vss/survey/delete-shared-survey', 'POST' ], //共享库_删除问卷
+  copyQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET' ], //共享库-问卷复制
 
   // 直播-问卷
-  createLiveQuestion: ['/v3/vss/survey/create-webinar-survey', 'POST', 'data'], //直播设置_创建问卷
-  editLiveQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST', 'data'], //直播设置_编辑问卷
-  getLiveQuestionList: ['/v3/vss/survey/list-webinar-survey', 'GET', 'data'], //直播设置_问卷列表
-  deleteLiveQuestion: ['/v3/vss/survey/delete-webinar-surveys', 'POST', 'data'], //直播设置_删除问卷
-  copyLiveQuestion: ['/v3/vss/survey/copy-webinar-survey', 'GET', 'data'], //直播设置-问卷复制
-  sharedLiveQuestion: ['/v3/vss/survey/clone-from-shared', 'POST', 'data'], //直播设置_从资料库添加
+  createLiveQuestion: ['/v3/vss/survey/create-webinar-survey', 'POST' ], //直播设置_创建问卷
+  editLiveQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST' ], //直播设置_编辑问卷
+  getLiveQuestionList: ['/v3/vss/survey/list-webinar-survey', 'GET' ], //直播设置_问卷列表
+  deleteLiveQuestion: ['/v3/vss/survey/delete-webinar-surveys', 'POST' ], //直播设置_删除问卷
+  copyLiveQuestion: ['/v3/vss/survey/copy-webinar-survey', 'GET' ], //直播设置-问卷复制
+  sharedLiveQuestion: ['/v3/vss/survey/clone-from-shared', 'POST' ], //直播设置_从资料库添加
 
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
@@ -135,21 +135,21 @@ const apis = {
   warnEdit: ['/99/v3/webinars/warm/edit', 'POST', 'mock'], // 修改暖场视频封面图片接口 •••
 
   // 商品
-  goodsGet: ['/101/v3/interacts/goods/get-webinar-goods-list', 'GET', 'mock'], // 获取活动下商品列表
-  goodsEnable: ['/101/v3/interacts/goods/enable-webinar-goods', 'POST', 'mock'], // 商品上架
-  goodsDisable: ['/101/v3/interacts/goods/disable-webinar-goods', 'POST', 'mock'], // 商品下架
-  goodsCopy: ['/101/v3/interacts/goods/clone-goods', 'POST', 'mock'], // 复制一个商品
-  goodsInfoGet: ['/101/v3/interacts/goods/get-webinar-goods-info', 'GET', 'mock'], // 查看活动下某个商品详情
-  goodsCreate: ['/101/v3/interacts/goods/create-goods', 'POST', 'mock'], // 新建活动展示商品
-  goodsUpdate: ['/101/v3/interacts/goods/update-goods', 'POST', 'mock'], // 更新商品信息
-  goodsImgIdCreate: ['/101/v3/interacts/goods/generate-goods-image-id', 'POST', 'mock'], // 生成商品图片ID
-  goodsBatchDel: ['/101/v3/interacts/goods/batch-delete-goods', 'POST', 'mock'], // 批量删除活动商品
-  goodsImgDel: ['/101/v3/interacts/goods/delete-goods-img', 'POST', 'mock'], // 删除活动商品图片
-  goodsSetCover: ['/101/v3/interacts/goods/set-goods-cover', 'POST', 'mock'], // 设置商品默认封面
+  goodsGet: ['/v3/interacts/goods/get-webinar-goods-list', 'GET'], // 获取活动下商品列表
+  goodsEnable: ['/v3/interacts/goods/enable-webinar-goods', 'POST'], // 商品上架
+  goodsDisable: ['/v3/interacts/goods/disable-webinar-goods', 'POST'], // 商品下架
+  goodsCopy: ['/v3/interacts/goods/clone-goods', 'POST'], // 复制一个商品
+  goodsInfoGet: ['/v3/interacts/goods/get-webinar-goods-info', 'GET'], // 查看活动下某个商品详情
+  goodsCreate: ['/v3/interacts/goods/create-goods', 'POST'], // 新建活动展示商品
+  goodsUpdate: ['/v3/interacts/goods/update-goods', 'POST'], // 更新商品信息
+  goodsImgIdCreate: ['/v3/interacts/goods/generate-goods-image-id', 'POST'], // 生成商品图片ID
+  goodsBatchDel: ['/v3/interacts/goods/batch-delete-goods', 'POST'], // 批量删除活动商品
+  goodsImgDel: ['/v3/interacts/goods/delete-goods-img', 'POST'], // 删除活动商品图片
+  goodsSetCover: ['/v3/interacts/goods/set-goods-cover', 'POST'], // 设置商品默认封面
 
   // 功能配置
-  planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li
-  planFunctionEdit: ['/102/config-type/up_config', 'POST', 'mock'], // 修改配置项 jia.li
+  planFunctionGet: ['/v3/users/permission/get-config-list', 'POST'], // 获取可配置项列表 jia.li
+  planFunctionEdit: ['/v3/users/permission/edit-webinar-config', 'POST'], // 修改配置项 jia.li
 
   // 观看限制
   audienceGet: ['/v3/webinars/audience/get-group-list', 'POST'], // 获取白名单分组列表 Jia.li  √
@@ -217,20 +217,20 @@ const apis = {
   register: ['/v3/users/user/register', 'POST'],  //注册接口
 
   //数据中心
-  getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET', 'data'], //获取账户下的总数据  数据总览
+  getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET'], //获取账户下的总数据  数据总览
   getActiveDataList: ['/v3/webinars/webinar/get-data-list', 'POST'], //活动数据列表接口   活动数据
 
   // 直播-数据报告
-  getStatisticsinfo: ['/v3/data-center/webinar-statistics-info', 'GET', 'data'], //获取活动数据下报告
-  getMaxuv: ['/v3/data-center/webinar-max-uv', 'GET', 'data'], //获取活动最高并发
-  getHeat: ['/v3/data-center/webinar-heat', 'GET', 'data'], //获取活动热度
-  getProvinceinfo: ['/v3/data-center/webinar-province-info', 'GET', 'data'], //获取活动省份统计
-  getDeviceinfo: ['/v3/data-center/webinar-device-info', 'GET', 'data'], //获取活动设备信息
-  getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET', 'data'], //获取活动浏览器信息
-  getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET', 'data'], //获取观看人数趋势
+  getStatisticsinfo: ['/v3/data-center/webinar-statistics-info', 'GET'], //获取活动数据下报告
+  getMaxuv: ['/v3/data-center/webinar-max-uv', 'GET'], //获取活动最高并发
+  getHeat: ['/v3/data-center/webinar-heat', 'GET'], //获取活动热度
+  getProvinceinfo: ['/v3/data-center/webinar-province-info', 'GET'], //获取活动省份统计
+  getDeviceinfo: ['/v3/data-center/webinar-device-info', 'GET'], //获取活动设备信息
+  getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET'], //获取活动浏览器信息
+  getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET'], //获取观看人数趋势
 
   // 直播-用户统计
-  getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET', 'data'], //获取用户观看详情
+  getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET'], //获取用户观看详情
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
@@ -243,8 +243,8 @@ const apis = {
   sonCountGet: ['/v3/users/child/count', 'POST'], // 获取子账号个数 Jia.li
   sonDetailGet:  ['/v3/users/child/get-info', 'POST'], // 子账号详情 Jia.li
   allocSave:  ['/v3/users/child/edit', 'POST'], // 子账号-用量分配-保存分配方式 Jia.li
-  allocMoreGet:  ['/v3/fin/user-vip/get-dist-resources', 'GET', 'data'], // 子账号-用量分配-可分配数量获取 Jia.li
-  allocSetVal:  ['/v3/fin/user-vip/dist-resources', 'POST', 'data'], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
+  allocMoreGet:  ['/v3/fin/user-vip/get-dist-resources', 'GET' ], // 子账号-用量分配-可分配数量获取 Jia.li
+  allocSetVal:  ['/v3/fin/user-vip/dist-resources', 'POST' ], // 子账号-用量分配-固定-并发数值保存（单个 or 批量） Jia.li
   getRoleList: ['/v3/users/user-role/list', 'POST'], // 角色-用户-获取 Jia.li
   sonRoleAdd: ['/v3/users/child-role/create', 'POST'], // 子账号-角色创建 Jia.li
   sonRoleDel: ['/v3/users/child-role/delete', 'POST'], // 子账号-角色删除 Jia.li
@@ -256,43 +256,43 @@ const apis = {
   sonResourcesSave: ['/104/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
 
   //财务中心
-  getVersionInfo: ['/v3/fin/account/info', 'GET', 'data'],  //获取用户版本信息 √
-  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //账户并发数据趋势图
-  getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取用量统计数据-流量
-  getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET', 'data'],  //获取并发-消费账单
-  getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
-  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET', 'data'], //获取财务总览-并发-消费账单
-  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET', 'data'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
-  userFlowTrend: ['/v3/data-center/business-total/user-flow-trend', 'GET', 'data'], //账户流量数据趋势图
-  exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET', 'data'], //账户流量数据趋势图__导出
-  exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET', 'data'], //账户并发数据趋势图_导出
-  exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET', 'data'], //流量明细导出
-  exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET', 'data'], //并发明细导出
+  getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息 √
+  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET'],  //账户并发数据趋势图
+  getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  //获取用量统计数据-流量
+  getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET'],  //获取并发-消费账单
+  getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  //获取流量-消费账单
+  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
+  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
+  userFlowTrend: ['/v3/data-center/business-total/user-flow-trend', 'GET'], //账户流量数据趋势图
+  exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
+  exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
+  exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
+  exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //并发明细导出
 
 
 
 
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
-  orderArrears: ['/v3/fin/order/arrears', 'POST', 'data'], // 财务总览-补缴欠费
-  orderFlow: ['/v3/fin/order/flow', 'POST', 'data'], // 流量包购买
-  orderUpgrade: ['/v3/fin/order/upgrade', 'POST', 'data'], // 升级并发
-  orderExtend: ['/v3/fin/order/extend', 'POST', 'data'], // 购买扩展包
-  orderInfo: ['/v3/fin/order/info', 'GET', 'data'], // 获取订单详情
-  payOrder: ['/v3/fin/pay', 'POST', 'data'], // 支付订单
-  buyDetail: ['/v3/fin/order/list', 'GET', 'data'], // 账单明细 - 购买明细
-  deleteDetail: ['/v3/fin/order/delete', 'GET', 'data'], // 删除购买明细
-  orderDetail: ['/v3/fin/admin-order/list', 'GET', 'data'], // 账单明细 - 开通明细
+  orderArrears: ['/v3/fin/order/arrears', 'POST'], // 财务总览-补缴欠费
+  orderFlow: ['/v3/fin/order/flow', 'POST'], // 流量包购买
+  orderUpgrade: ['/v3/fin/order/upgrade', 'POST'], // 升级并发
+  orderExtend: ['/v3/fin/order/extend', 'POST'], // 购买扩展包
+  orderInfo: ['/v3/fin/order/info', 'GET'], // 获取订单详情
+  payOrder: ['/v3/fin/pay', 'POST'], // 支付订单
+  buyDetail: ['/v3/fin/order/list', 'GET'], // 账单明细 - 购买明细
+  deleteDetail: ['/v3/fin/order/delete', 'GET'], // 删除购买明细
+  orderDetail: ['/v3/fin/admin-order/list', 'GET'], // 账单明细 - 开通明细
 
   //财务收益
-  incomeInfo: ['/v3/fin/income', 'GET', 'data'], // 账户收益总览
-  liveIncomeList: ['/v3/fin/income/live/list', 'GET', 'data'], // 直播收益
-  liveIncomeDetailList: ['/v3/fin/income/live/details/list', 'GET', 'data'], // 直播收益详情列表
-  packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET', 'data'], // 红包收益
-  accountList: ['/v3/fin/withdraw/list', 'GET', 'data'], // 提现明细
+  incomeInfo: ['/v3/fin/income', 'GET'], // 账户收益总览
+  liveIncomeList: ['/v3/fin/income/live/list', 'GET'], // 直播收益
+  liveIncomeDetailList: ['/v3/fin/income/live/details/list', 'GET'], // 直播收益详情列表
+  packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET'], // 红包收益
+  accountList: ['/v3/fin/withdraw/list', 'GET'], // 提现明细
   weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定  微信授权
   callbackUserInfo: ['/v3/users/oauth/callback', 'POST'], // 绑定之后获取用户信息
-  withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST', 'data'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
-  withdrawal: ['/v3/fin/withdraw', 'POST', 'data'], // 提现
+  withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
+  withdrawal: ['/v3/fin/withdraw', 'POST'], // 提现
 
   //开发设置
   getAppList: ['/v3/users/appkeys/get-list', 'POST'], // 获取应用信息列表接口 jian.chang •••
@@ -305,9 +305,10 @@ const apis = {
   homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li √字段未同步
   homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li √
   homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li √字段未同步
-  checkAccount: ['/100/v3/users/user/check-account', 'POST', 'mock'], // 账号检测接口 Jia.li
-  resetPassword: ['/v3/users/user/reset-password', 'POST', 'mock'], // 修改密码/密码找回/设置密码接口
-  bindInfo: ['/100/v3/users/user/bind-info', 'POST', 'mock'], // 绑定邮箱、手机号接口 Jia.li
+  checkAccount: ['/v3/users/user/check-account', 'POST'], // 账号检测接口 Jia.li
+  resetPassword: ['/v3/users/user/reset-password', 'POST'], // 修改密码/密码找回/设置密码接口 Jia.li
+  codeCheck: ['/v3/users/code/check', 'POST'], // check Jia.li
+  bindInfo: ['/v3/users/user/bind-info', 'POST'], // 绑定邮箱、手机号接口 Jia.li
 
   // 下载中心
   downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √
@@ -444,9 +445,10 @@ const apis = {
   setMainScreen: ['/v3/interacts/room/set-main-screen', 'POST'], // 设置主屏
   setRoomDevice: ['/v3/interacts/room/set-device-status', 'POST'], // 设置音视频设备开关
   setSpeaker: ['/v3/interacts/room/set-doc-permission', 'POST'], // 设置主讲人
-  allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦
+  allowSpeak: ['/v3/interacts/inav/agree-apply', 'POST'], // 允许用户上麦   主持人同意上麦
   v3InviteMic: ['/v3/interacts/inav/invite', 'POST'],// 邀请用户上麦
   v3SetDevice: ['/v3/interacts/room/set-device', 'POST'], //设置房间用户的设备检测状态
+  v3SetDesktop: ['/v3/interacts/room/set-desktop', 'POST'], // 开启桌面共享自动最大化
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
 

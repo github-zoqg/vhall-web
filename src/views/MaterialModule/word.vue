@@ -17,7 +17,7 @@
       <el-upload
         class="btn-upload"
         :action=actionUrl
-        :headers="{token: token}"
+        :headers="{token: token, platform: 17}"
         :data=saveData
         name="resfile"
         :show-file-list=false
@@ -67,7 +67,7 @@ export default {
   name: 'word.vue',
   data() {
     return {
-      token: sessionOrLocal.get('token'),
+      token: sessionOrLocal.get('token', 'localStorage') || '',
       actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
       formParams: {},
       totalNum: 0,
@@ -118,7 +118,7 @@ export default {
   computed: {
     saveData: function() {
       let data = {
-        path: 'webinar/document',
+        path: 'saas/interacts/docs/',
         type: 1, // 上传类型 0：直播设置上传 1:资料库文档上传，2：发起端直播间
       }
       if(this.$route.params.str) {

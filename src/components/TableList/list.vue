@@ -1,6 +1,5 @@
 <template>
   <div class="data-list">
-    <div class="table-list" v-if="totalNum">
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -95,24 +94,12 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum > pageInfo.limit"
+      v-if="needPagination && totalNum"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
     >
     </SPagination>
-    </div>
-    <div class="empty" v-else>
-      <div>
-        <img
-          src="../../common/images/v35-webinar.png"
-          alt=""
-          width="140"
-          height="140"
-        />
-      </div>
-      <p :style="{ marginTop: '23px' }">没有数据</p>
-    </div>
   </div>
 </template>
 <script>

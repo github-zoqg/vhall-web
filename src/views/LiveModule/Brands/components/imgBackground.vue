@@ -10,6 +10,11 @@
         <div class="list-item">
           <upload
             v-model="imageUrl"
+            :domain_url="domain_url"
+            :saveData="{
+               path: 'saas/interacts/invite-card-imgs',
+               type: 'image',
+            }"
             :on-success="handleuploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
@@ -42,6 +47,7 @@ export default {
       dialogVisible: false,
       advertisement: {},
       imageUrl: '',
+      domain_url: '',
       fileList: [
         {
           isChecked: true,
@@ -69,7 +75,13 @@ export default {
     },
     handleuploadSuccess(res, file) {
       console.log(res, file);
-      this.imageUrl = URL.createObjectURL(file.raw);
+      // this.imageUrl = URL.createObjectURL(file.raw);
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.imageUrl = file_url;
+        this.domain_url = domain_url;
+      }
     },
     beforeUploadHnadler(file){
       console.log(file);

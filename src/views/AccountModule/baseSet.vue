@@ -8,8 +8,9 @@
         <upload
           :class="'upload__avatar ' + imgType"
           v-model="baseSetForm.avatar"
+          :domain_url="domain_url"
           :saveData="{
-             path: 'webinars/img_url',
+             path: 'saas/users/face-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -50,6 +51,7 @@ export default {
   data() {
     return {
       imgType: 'default', // 默认宽高相等
+      domain_url: '',
       baseSetForm: {
         nick_name: '',
         avatar: '',
@@ -75,7 +77,12 @@ export default {
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.baseSetForm.avatar = res.data.file_url || '';
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.baseSetForm.avatar = file_url;
+        this.domain_url = domain_url;
+      }
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -119,6 +126,8 @@ export default {
       if(account_info !== null) {
         let accountInfo = JSON.parse(account_info);
         this.baseSetForm = accountInfo;
+        this.domain_url = accountInfo.avatar;
+        console.log(this.domain_url, this.baseSetForm.avatar, '其它头像地址');
       }
     },
     // 保存

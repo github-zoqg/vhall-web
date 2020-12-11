@@ -131,9 +131,6 @@ export default {
       this.getGoodInfo();
     }
   },
-  // watch: {
-
-  // },
   components: {
     upload
   },
@@ -146,7 +143,7 @@ export default {
         this.form = {
           ...res.data,
           ...this.form,
-          url: res.data.good_url,
+          url: res.data.goods_url
         };
         this.fileList = res.data.img_list.map(item => {
           return {
@@ -165,7 +162,7 @@ export default {
     },
     productLoadSuccess(res, file){
       console.log(res, file);
-      this.form.imageUrl = URL.createObjectURL(file.raw);
+      this.form.imageUrl = res.data.file_url;
       this.fileList.push({
         url: this.form.imageUrl,
         cover: false
@@ -283,6 +280,10 @@ export default {
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
+          if (this.form.discount_price > this.form.discount_price) {
+            this.$message.warning('折扣价不等于原价');
+            return;
+          }
           const obj = {
             ...this.form,
             img_id: this.form.imgIdArr,
@@ -295,12 +296,10 @@ export default {
           } else {
             url = 'goodsCreate';
           }
-          this.$fetch(url, obj).then(res => {
+          this.$fetch(url, this.$params(obj)).then(res => {
+            this.$message.success(this.$route.query.goodId ? '修改成功' : '创建成功');
             this.$router.push({
-              name: 'productSet',
-              params: {
-                str: this.$route.params.str
-              }
+              path: `/live/productSet/${this.$route.params.str}`
             });
           }).catch(err => {
             this.$message.error('保存失败！');

@@ -32,7 +32,7 @@ import {sessionOrLocal} from "@/utils/utils";
 export default {
   data(){
     return {
-      token: sessionOrLocal.get('token'),
+      token: sessionOrLocal.get('token', 'localStorage') || '',
       fileName: null
     };
   },

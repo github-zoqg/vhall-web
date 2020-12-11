@@ -8,7 +8,7 @@
           class="upload__avatar"
           v-model="logoForm.logoUrl"
           :saveData="{
-             path: 'webinars/img_url',
+             path: 'saas/users/logo-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"

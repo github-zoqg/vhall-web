@@ -69,22 +69,24 @@ export default {
     },
     loginOut() {
       sessionOrLocal.clear();
+      sessionOrLocal.clear('localStorage');
       // 更新当前页面
       this.isLogin = false;
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = account ? account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
   },
   mounted() {
     let userInfo  = sessionOrLocal.get('userInfo');
-    if(userInfo !== null) {
+    if(userInfo !== null && userInfo !== 'null') {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-    this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '';
+    this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
+    this.$EventBus.$on('saas_vs_login_out', this.loginOut);
   }
 };
 </script>

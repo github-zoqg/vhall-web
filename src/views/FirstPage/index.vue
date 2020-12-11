@@ -18,7 +18,7 @@
         <el-col :span="5">
           <div class="center-item" @click="toBrandSet">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
-            <h3>品牌设置</h3>
+            <h3>设置中心</h3>
           </div>
         </el-col>
         <el-col :span="5">
@@ -96,15 +96,36 @@
     </div>
     <div class="advert-banner">
       <div class="web-download">
-        <button class="download-btn">立即下载</button>
+        <div class="ad-web">
+          <h1>微吼直播客户端</h1>
+          <p>强大文件的直播工具</p>
+        </div>
+        <div class="ad-text">
+          <h1>微吼直播客户端</h1>
+          <p>强大稳定的直播工具，支持插播 视频、桌面</p>
+        </div>
+        <a href="https://www.vhall.com/saas/client" class="download-btn">立即下载</a>
       </div>
       <div class="app-download">
-        <button class="download-btn">立即下载</button>
+        <div class="app-web">
+          <img src="../../common/images/v35-webinar.png" alt="">
+        </div>
+        <div class="ad-text">
+          <h1>微吼直播APP下载</h1>
+          <p>强大稳定的直播工具，支持插播 视频、桌面共享等功能</p>
+        </div>
+        <a href="http://e.vhall.com/app" class="download-btn">立即下载</a>
       </div>
       <div class="data-document">
-        <h2>文档中心</h2>
-        <p>API文档</p>
-        <p>SDK文档</p>
+        <h2>文档中心<a href="https://www.vhall.com/saas/doc">更多</a></h2>
+        <p><a href="https://www.vhall.com/saas/doc/6.html">API文档</a></p>
+        <p><a href="https://www.vhall.com/saas/doc/260.html">JSSDK文档</a></p>
+        <p><a href="https://www.vhall.com/saas/doc/262.html">IOS SDK文档</a></p>
+        <p><a href="https://www.vhall.com/saas/doc/261.html">Andriod SDK文档</a></p>
+      </div>
+      <div class="helpMsg" @click="contactUs">
+        <i class="el-icon-chat-dot-round"></i>
+        <p>联系我们</p>
       </div>
     </div>
   </div>
@@ -129,7 +150,7 @@ export default {
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    // this.versionInfo = JSON.parse(sessionOrLocal.get('versionInfo'));
+    // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
   },
   methods: {
@@ -141,9 +162,9 @@ export default {
     toUploadWord(){
       this.$router.push({path: `/material/word`});
     },
-    // 品牌设置
+    // 设置中心
     toBrandSet(){
-      this.$router.push({path: `/live/brandSet/795704919`});
+      this.$router.push({path: `/setting/info`});
     },
     // 数据中心-数据总览
     toDataInfo(){
@@ -153,18 +174,12 @@ export default {
     toFinanceInfo(){
       this.$router.push({path: `/finance/info`});
     },
-    // getUserVersion() {
-    //   let params = {
-    //     user_id: '16417099'
-    //   };
-    //   this.$fetch('getVersionInfo', params).then(res =>{
-    //     this.userInfo = res.data;
-    //     sessionOrLocal.set('userInfo', this.userInfo);
-    //   }).catch(e=>{
-    //     console.log(e);
-    //   });
-    // },
+    // 联系我们
+    contactUs() {
+      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=${this.userId}`, "_blank");
+    },
     getLiveList() {
+      // parent_id > 0 子账号
       let params = {
         account_id: this.userId,
         type: 1
@@ -172,7 +187,6 @@ export default {
       this.$fetch('getDataCenterInfo', params).then(res =>{
         this.mainKeyData = res.data.key_data;
         this.lineDataList = res.data.trend.live;
-        // sessionOrLocal.set('dataCenterInfo', this.lineDataList);
       }).catch(e=>{
         console.log(e);
       });
@@ -269,25 +283,63 @@ export default {
       height: 100%;
       margin-left: 32px;
       .download-btn{
-        outline: none;
+        // outline: none;
         width: 110px;
         height: 36px;
         border-radius: 18px;
-        border: 1px solid #FB3A32;
+        border: 1px solid #ccc;
         text-align: center;
         line-height: 36px;
         background: #fff;
-        color: #FB3A32;
+        font-size: 14px;
+        color: #1a1a1a;
         position: absolute;
         left: 53px;
         bottom: 24px;
         cursor: pointer;
+        &:hover{
+          color: #FB3A32;
+          border: 1px solid #FB3A32;
+        }
       }
       .web-download{
         height: 279px;
         background: #fff;
         border-radius: 4px;
         position: relative;
+        .ad-web{
+          height: 126px;
+          background: linear-gradient(224deg, #FD2349 0%, #FF6321 100%);
+          border-radius: 4px;
+          color: #fff;
+          padding: 32px 17px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          h1{
+            font-size: 18px;
+            line-height: 25px;
+            font-weight: 600px;
+          }
+          p{
+            font-size: 12px;
+            line-height: 15px;
+            font-weight: 400px;
+          }
+        }
+      }
+      .ad-text{
+          padding: 8px 17px;
+           h1{
+            font-size: 16px;
+            line-height: 25px;
+            font-weight: 600px;
+            color: #1A1A1A;
+          }
+          p{
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 400px;
+            color: #666;
+          }
       }
       .app-download{
         height: 278px;
@@ -295,22 +347,61 @@ export default {
         margin:16px 0;
         border-radius: 4px;
         position: relative;
+        .app-web{
+          font-size: 0;
+          img{
+            width: 100%;
+            height: 126px;
+          }
+        }
       }
       .data-document{
         background: #fff;
-        height: calc(100% - 589px);
+        height: 236px;
         h2{
           font-size: 16px;
           color: #1A1A1A;
           padding: 12px 0 14px 14px;
+          a{
+            float: right;
+            font-size: 14px;
+            color: #666;
+            margin-right: 14px;
+            &:hover{
+              color: #FB3A32;
+            }
+          }
         }
         p{
           font-size: 14px;
           color: #666;
           padding: 0 0 11px 14px;
+          a{
+             color: #666;
+            &:hover{
+              color: #FB3A32;
+            }
+          }
         }
       }
     }
-
+    .helpMsg {
+      position: fixed;
+      right: 0;
+      bottom: 60px;
+      width: 30px;
+      background: #FB3A32;
+      color: #fff;
+      padding: 12px 7px;
+      cursor: pointer;
+      i{
+        color: #fff;
+        font-size: 20px;
+      }
+      p{
+        font-size: 14px;
+        text-align: center;
+      }
+    }
   }
 </style>
