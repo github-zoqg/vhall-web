@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import {sessionOrLocal} from "@/utils/utils";
+
 export default {
   name: "index.vue",
   props: {
@@ -32,32 +34,49 @@ export default {
       type: [Boolean, String],
       required: false,
       default: false
+    },
+    saveType: {
+      type: String,
+      required: false
     }
   },
   data() {
     // 上传图片
-    // const _this = this;
+    const _this = this;
     function images_upload_handler(blobInfo, success, fail) {
       const File = blobInfo.blob();
       console.log(File);
-      if(File) {
-        success(URL.createObjectURL(File));
-      }else {
-        fail('失败上传');
-      }
-      /*
-      const Params = {
-        token: localStorage.getItem('token'),
-        image: File
-      };_this.$fetch('getUploadImg', Params, {
-        'Content-Type': 'multipart/form-data'
-      }).then(
-        res => {
-          success(res.data.url);
+      if (_this.saveType) {
+        debugger
+        let pathVo = {
+          live: `webinars/intro-imgs/${_this.$moment().format('YYYYMM')}`,
+          customTabImg: `interacts/menu-imgs`,
+          special: `webinars/subject-imgs`
         }
-      ).catch(err => {
-        fail(err);
-      });*/
+        const params = {
+          path: pathVo[_this.saveType],
+          resfile: File,
+          type: 'image'
+        };
+        _this.$fetch('uploadImage', params, {
+          'Content-Type': 'multipart/form-data',
+          token: sessionOrLocal.get('token', 'localStorage') || '',
+          platform: 17
+        }).then(
+          res => {
+            success(res.data.domain_url);
+          }
+        ).catch(err => {
+          fail(err);
+        });
+      } else {
+        // 万一没传
+        if(File) {
+          success(URL.createObjectURL(File));
+        }else {
+          fail('失败上传');
+        }
+      }
     }
     return {
       content: this.value||'',

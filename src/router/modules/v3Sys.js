@@ -44,7 +44,7 @@ const router = [
       }
     ]
   },
-  {
+  /*{
     path: '/css-demo',
     component: Layout,
     meta: { auth: false, title: '样式Demo', name: 'cssDemoAll', icon: 'el-icon-s-help' },
@@ -56,7 +56,7 @@ const router = [
         meta: { auth: false, title: 'Tinymce富文本', name: 'cssDemo', icon: 'el-icon-s-home' }
       }
     ]
-  },
+  },*/
   {
     path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Error/index'),

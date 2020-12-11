@@ -7,6 +7,7 @@
         </router-link>
         <router-link v-else key="expand" class="sidebar-logo-link" to="/">
           <img v-if="logo" :src="logo" class="sidebar-logo">
+          <img v-else src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
         </router-link>
       </transition>
       <!-- 是否收缩按钮 -->
@@ -80,6 +81,7 @@ export default {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
     this.logo = userInfo.user_extends ? userInfo.user_extends.logo : '';
+    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : '';
       // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
@@ -112,6 +114,12 @@ export default {
     & .sidebar-logo {
       height: 100%;
       width: 100%;
+      &.static {
+        height: auto;
+        width: 96px;
+        margin-top: 20px;
+        margin-left: -62px;
+      }
     }
   }
   &.collapse {

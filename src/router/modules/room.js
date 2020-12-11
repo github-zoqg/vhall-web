@@ -43,6 +43,12 @@ const router = [
         name: 'list',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '口令登录' }
+      },
+      {
+        path: '/live/qa/:id',
+        name: 'qa',
+        component: () => import('@/views/LiveModule/Qa/index'),
+        meta: { title: '问答' }
       }
     ]
   }

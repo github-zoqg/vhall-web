@@ -272,7 +272,7 @@ export default {
   computed: {
     pathUrl: function() {
        // return `sys/${window.sessionStorage.getItem('userId')}_v3_${new Date().getTime()}`;
-      return `saas/interacts/audience-docs`;
+      return `interacts/audience-docs`;
     }
   },
   methods: {

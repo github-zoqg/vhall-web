@@ -60,6 +60,12 @@ export default {
   background-clip: content-box;
   cursor: pointer;
   border: 2px solid transparent;
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
+  &:nth-child(4n) {
+    margin-right: 18px;
+  }
   &:hover{
     border: 2px solid #FB3A32;
   }
@@ -86,6 +92,16 @@ export default {
     .subText{
       font-size: 14px;
       color: #666666;
+    }
+  }
+}
+@media screen and (min-width: 1920px) {
+  .sunjectInner {
+    &:nth-child(3n) {
+      margin-right: 18px;
+    }
+    &:nth-child(4n) {
+      margin-right: 0;
     }
   }
 }

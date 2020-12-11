@@ -20,7 +20,7 @@
               class="upload__skin heightMore"
               v-model="skinSetForm.bg_url"
               :saveData="{
-                 path: 'saas/interacts/skin-imgs',
+                 path: 'interacts/skin-imgs',
                  type: 'image',
               }"
               :on-success="handleUploadSuccess"

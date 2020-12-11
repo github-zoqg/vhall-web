@@ -14,7 +14,7 @@
               v-model="advertisement.img_url"
               :domain_url="domain_url"
               :saveData="{
-                path: 'saas/webinars/spread-imgs',
+                path: 'webinars/spread-imgs',
                 type: 'image',
               }"
               :on-success="uploadAdvSuccess"
@@ -170,7 +170,9 @@ export default {
       if(this.$route.params.str) {
         this.advertisement.webinar_id = this.$route.params.str;
       }
-      this.$fetch(url, this.advertisement).then(res => {
+      let params = Object.assign({}, this.advertisement) ;
+      params.img_url = this.$parseURL(params.img_url).path;
+      this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
           if (type) {

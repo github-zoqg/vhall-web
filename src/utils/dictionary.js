@@ -72,7 +72,7 @@ export function platform(type) {
     {code:10,text:'h5播放器wap端',key:'h5_wap'},
     {code:15,text:'OpenApi',key:'open_api'},
     {code:16,text:'admin后台',key:'admin'},
-    {code:16,text:'控制台',key:'console'}
+    {code:17,text:'控制台',key:'console'}
   ];
   return filter(type,types);
 }

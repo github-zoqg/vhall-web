@@ -1135,6 +1135,7 @@
               <qa
                 :webinarId="ilId"
                 :masterEnd="true"
+                :roomId='roomId'
                 ref="qa"
                 :isEmbed="isEmbed"
                 :joinId="joinId"
@@ -2825,21 +2826,18 @@ export default {
     },
     // 打开问答
     openQAPopup () {
-      // this.isQAEnabled
-      //  &&
-      //   this.$vhallFetch('getQACount', {
-      //     params_verify_token: this.params_verify_token,
-      //     webinar_id: this.ilId,
-      //     join_id: this.saas_join_id
-      //   })
-      //     .then(res => {
-      //       this.qaCount = res.data;
-      //     })
-      //     .catch(() => {
-      //       this.$message('获取问题数量失败!');
-      //       this.qaCount = 0;
-      //     });
-
+      this.isQAEnabled && this.$fetch('v3GetQaNum', {
+        room_id: this.roomId
+      }).then(res => {
+        if(res.code == 200){
+          this.qaCount = res.data.num;
+        }else{
+          this.$message(res.msg)
+        }
+      }).catch(() => {
+        this.$message('获取问题数量失败!');
+        this.qaCount = 0;
+      });
       this.qaVisible = true;
     },
     // 关闭问答

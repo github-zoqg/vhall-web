@@ -10,60 +10,58 @@
         <el-button circle icon="el-icon-question" class="button-tip"></el-button>
       </el-tooltip>
     </div>
-    <el-row :gutter="40">
-      <el-col class="liveItem">
-        <div class="base-item" v-if="isStatus===1">
-          <p>导出</p>
-          <div class="base-main">
-            <i class="el-icon-document"></i>
-            <div class="base-text">
-              <span>预约（人）</span>
-              <h1>351</h1>
-            </div>
+    <div class="liveItem">
+      <div class="base-item" v-if="isStatus===1">
+        <p>导出</p>
+        <div class="base-main">
+          <i class="el-icon-document"></i>
+          <div class="base-text">
+            <span>预约（人）</span>
+            <h1>351</h1>
           </div>
         </div>
-        <div class="base-item">
-          <p>导出</p>
-          <div class="base-main">
-            <i class="el-icon-document"></i>
-            <div class="base-text">
-              <span>报名表单（人）</span>
-              <h1>351</h1>
-            </div>
+      </div>
+      <div class="base-item">
+        <p>导出</p>
+        <div class="base-main">
+          <i class="el-icon-document"></i>
+          <div class="base-text">
+            <span>报名表单（人）</span>
+            <h1>351</h1>
           </div>
         </div>
-        <div class="base-item">
-          <p>导出</p>
-          <div class="base-main">
-           <i class="el-icon-document"></i>
-            <div class="base-text">
-              <span>试看（人）</span>
-              <h1>351</h1>
-            </div>
+      </div>
+      <div class="base-item">
+        <p>导出</p>
+        <div class="base-main">
+         <i class="el-icon-document"></i>
+          <div class="base-text">
+            <span>试看（人）</span>
+            <h1>351</h1>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="lookOption('邀请排名')">查看</p>
-          <div class="base-main">
-            <i class="el-icon-document"></i>
-            <div class="base-text">
-              <span>邀请排名（人）</span>
-              <h1>351</h1>
-            </div>
+      </div>
+      <div class="base-item">
+        <p @click="lookOption('邀请排名')">查看</p>
+        <div class="base-main">
+          <i class="el-icon-document"></i>
+          <div class="base-text">
+            <span>邀请排名（人）</span>
+            <h1>351</h1>
           </div>
         </div>
-        <div class="base-item">
-          <p>导出</p>
-          <div class="base-main">
-            <i class="el-icon-document"></i>
-            <div class="base-text">
-              <span>分享排名（条）</span>
-              <h1>351</h1>
-            </div>
+      </div>
+      <div class="base-item">
+        <p>导出</p>
+        <div class="base-main">
+          <i class="el-icon-document"></i>
+          <div class="base-text">
+            <span>分享排名（条）</span>
+            <h1>351</h1>
           </div>
         </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
     <div class="base-title">
       <span><b></b>互动统计</span>
       <el-tooltip effect="dark" placement="right-start">
@@ -199,7 +197,7 @@ export default {
   methods: {
     lookOption(title) {
       this.$router.push({
-        path: '/interactionDetail',
+        path: '/live/interactionDetail',
         query: {
           id: 1,
           title: title
@@ -211,7 +209,6 @@ export default {
 </script>
 <style lang="less" scoped>
   .base-data{
-    padding: 0 15px;
     /deep/.el-button {
       border: none;
       background: transparent;
@@ -245,12 +242,18 @@ export default {
       // justify-content: space-between;
       .base-item{
         height: 120px;
-        width: 324px;
+        width: 323px;
         margin-bottom: 24px;
-         margin-right: 24px;
+        margin-right: 24px;
         position: relative;
         border-radius: 8px;
         background: #fff;
+        &:nth-child(3n) {
+          margin-right: 0;
+        }
+        &:nth-child(4n) {
+          margin-right: 24px;
+        }
         p{
           position: absolute;
           font-size: 12px;
@@ -279,6 +282,16 @@ export default {
             }
           }
         }
+      }
+    }
+  }
+  @media screen and (min-width: 1920px) {
+    .base-data .liveItem .base-item{
+      &:nth-child(3n) {
+        margin-right: 24px;
+      }
+      &:nth-child(4n) {
+        margin-right: 0;
       }
     }
   }
