@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
           <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
-            <el-button class="no-border" size="mini" slot="append" @click="getDyCode('phone')" :class="showCaptcha ? 'isLoginActive' : ''" :disabled="isDisabledClick">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+            <el-button class="no-border" size="mini" slot="append" @click="getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''" :disabled="isDisabledClick">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="1邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
@@ -151,12 +151,26 @@ export default {
     },
     getDyCode(type) {
       // 获取短信验证码
+      let scene_id = 1;
+      if (this.showVo.executeType === 'pwd' && this.vo && this.vo.phone) {
+        scene_id = 1;
+      } else if (this.showVo.executeType === 'phone' && this.vo && this.vo.phone) {
+        scene_id = 2;
+      } else if (this.showVo.executeType === 'phone' && this.vo && !this.vo.phone) {
+        scene_id = 2;
+      } else if (this.showVo.executeType === 'email' && this.vo && this.vo.email) {
+        scene_id = 3;
+      } else if (this.showVo.executeType === 'email' && this.vo && !this.vo.email) {
+        scene_id = 3;
+      } else {
+        scene_id = 1;
+      }
       if (this.checkMobile(type) && this.mobileKey) {
         this.$fetch('sendCode', {
-          type: type === 'phone' ? 1 : 2, // 1手机  2邮箱
+          type: this.executeType === 'pwd' || this.executeType === 'phone' ? 1 : 2, // 1手机  2邮箱
           data: this.form[type],
           validate: this.mobileKey,
-          scene_id: 1
+          scene_id: scene_id
         }).then((res) => {
           if(res && res.code === 200) {
             this.countDown();

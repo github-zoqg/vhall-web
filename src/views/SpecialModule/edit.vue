@@ -101,7 +101,7 @@ export default {
       imageUrl: '',
       domain_url:'',
       content: '',
-      webinarIds: [],
+      webinarIds: ['856483543'],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
