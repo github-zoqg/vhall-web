@@ -637,14 +637,7 @@ export default {
         autoplay: false,
         forceMSE: false,
         otherOption: {
-          report_extra: this.reportExtra,
-          // TODO:
-          os: 10,
-          device_id:"",
-          type:7,
-          user_id: this.accountId,
-          webinar_id: this.$route.params.il_id,
-          t_start: this.startTime
+          report_extra: this.reportExtra
         }
       };
       if (this.isLive && this.liveOption && this.type == 'live') {

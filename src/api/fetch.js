@@ -34,7 +34,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
     });
     api = api + Uri;
   }
-
+  
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token
@@ -68,6 +68,13 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
+  } else if (api.indexOf('/login') > -1) {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', api)
+    if (api.indexOf('/login/login') > -1) {
+      api = `${Env.BASE_REPORT_URL}${api.slice(6)}`;
+    } else {
+      api = `${Env.BASE_REPORT_URL}${api}`;
+    }
   } else {
     api = `${Env.BASE_URL}${api}`;
   }

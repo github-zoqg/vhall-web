@@ -281,7 +281,9 @@ export default {
       streamLength: 0 // 房间内音视频流数量
     };
   },
-  created () {},
+  created () {
+    console.log(888888, this.$route.params.id, this.$route.params)
+  },
 
   async mounted () {
     this.broadCastLayout = sessionStorage.getItem('layout') || 'CANVAS_LAYOUT_PATTERN_TILED_6_1T5D';
@@ -651,7 +653,7 @@ export default {
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
-            webinar_id: this.webinadId,
+            webinar_id: this.$route.params.il_id, // TODO: 临时修改
             start_type: 1
           }).then(() => {
             if (this.role == VhallRTC.MASTER) {
