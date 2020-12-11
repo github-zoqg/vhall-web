@@ -254,12 +254,14 @@ export default {
     splited: {
       required: false, // 分屏状态
       default: false
+    },
+    webinadId: {
+      required: true // 活动id
     }
   },
 
   data () {
     return {
-      webinadId: this.$route.params.id,
       beforeUnloadTime: null,
       $SDKINSTANCE: null,
       $localStreamId: null,
@@ -648,6 +650,7 @@ export default {
      */
 
     async startLive (status) {
+      console.warn('-----------------------------------', this.webinadId, this.$route)
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
@@ -858,7 +861,7 @@ export default {
      * @param { String } accountId
      * @return { Promise }
      * TODO:
-     * 
+     *
      */
     speakOff (accountId) {
       return this.$fetch('speakOff', {
