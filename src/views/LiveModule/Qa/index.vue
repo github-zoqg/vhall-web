@@ -13,9 +13,35 @@
             </li>
           </ul>
           <div class="tab-content">
-            <div>
-
-            </div>
+            <ul class="await-deal" v-show="active == 0">
+              <li v-for="(item, index) in awaitList" :key="index" class="clearFix">
+               <div class="fl">
+                 <p class="await-name">
+                  <span>{{item.name}}</span>
+                  <span>{{filterTime(item.time)}}</span>
+                 </p>
+                 <p class="await-content">{{item.content}}</p>
+               </div>
+               <div class="fr">
+                 <p>不处理</p>
+                 <el-dropdown split-button>
+                  <span class="el-dropdown-link">
+                    更多
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item> <p>私聊</p></el-dropdown-item>
+                    <el-dropdown-item> <p>文字回复</p></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+               </div>
+              </li>
+            </ul>
+            <ul class="text-deal" v-show="active == 1">
+              <li v-for="(item, index) in textDealList" :key="index">{{item}}</li>
+            </ul>
+            <ul class="no-deal" v-show="active == 2">
+              <li v-for="(item, index) in noDealList" :key="index">{{item}}</li>
+            </ul>
           </div>
         </div>
     </div>
@@ -28,16 +54,33 @@ export default {
   components: {
     OldHeader
   },
+  computed:{
+    filterTime(){
+      return function(time){
+        console.warn(time, 77);
+        return this.$moment(time).format('hh:mm')
+      }
+    }
+  },
   data() {
     return {
       List:[
         {text:'待处理', count: 0},
+        {text:'语音回复', count: 0},
         {text:'文字回复', count: 0},
         {text:'不处理', count: 0}
       ],
       active: 0,
       baseObj: {},
-      $Chat: null
+      awaitList: [{
+        name: '东方闪电',
+        content: '测试提交的内容',
+        time: new Date()
+
+      }], // 待处理
+      textDealList: [], // 文字回复
+      noDealList: [], // 不处理
+      $Chat: null,
     }
   },
   async created() {
@@ -166,6 +209,53 @@ export default {
             color: #f64a43;
             .border{
               display: inline-block;
+            }
+          }
+        }
+      }
+      .tab-content{
+        border: 1px solid red;
+        height: calc(100% - 44px);
+        ul{
+          height: 100%;
+          overflow-y: auto;
+        }
+        .await-deal{
+          font-size: 14px;
+          li{
+            border-bottom: 1px solid #c2c2c2;
+            padding: 10px 20px;
+          }
+          .fl{
+            width: calc(100% - 300px);
+            line-height: 25px;
+            .await-name{
+              color: #888;
+              font-size: 12px;
+              span{
+                margin-right: 30px;
+              }
+            }
+            .await-content{
+              font-size: 12px;
+            }
+          }
+          .fr{
+            float: right;
+            width: 300px;
+            margin-top: 10px;
+            p{
+              float: right;
+              display: inline-block;
+              padding: 0px 12px;
+              height: 30px;
+              line-height: 30px;
+              border: 1px solid #d0cdcd;
+              background-color: #f9f9f9;
+              color: #666;
+              &:nth-child(2){
+                margin: 0 5px;
+              }
             }
           }
         }
