@@ -23,7 +23,6 @@ let staticLinkVo = {
 let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
 let BASE_URL;
 let BASE_URL_DATA;
-let BASE_REPORT_URL;
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -33,7 +32,6 @@ switch (process.env.VUE_APP_NODE_ENV) {
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
     BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
-    BASE_REPORT_URL = 'https://dc.e.vhall.com/login';
     break;
   case 'test':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -43,7 +41,6 @@ switch (process.env.VUE_APP_NODE_ENV) {
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
     BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
-    BASE_REPORT_URL = 'https://t-dc.e.vhall.com/login';
     break;
   case 'pre':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -53,7 +50,6 @@ switch (process.env.VUE_APP_NODE_ENV) {
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com/';
     BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
-    BASE_REPORT_URL = 'https://t-dc.e.vhall.com/login';
     break;
   case 'development':
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -63,7 +59,6 @@ switch (process.env.VUE_APP_NODE_ENV) {
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
     BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
-    BASE_REPORT_URL = 'https://t-dc.e.vhall.com/login';
     break;
   default:
     fileBaseUrl = '//t-alistatic01.e.vhall.com/static';
@@ -73,7 +68,6 @@ switch (process.env.VUE_APP_NODE_ENV) {
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
     BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
-    BASE_REPORT_URL = 'https://t-dc.e.vhall.com/login';
 }
 export default {
   fileBaseUrl,
@@ -83,6 +77,5 @@ export default {
   staticBaseUrl,
   roomWatchUrl,
   BASE_URL,
-  BASE_URL_DATA,
-  BASE_REPORT_URL
+  BASE_URL_DATA
 };

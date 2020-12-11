@@ -3,7 +3,7 @@ import getUrlData from './getUrlData'
 import 'whatwg-fetch'
 class VhallReport {
   constructor(params) {
-    var { business_uid, bu, pf, activity_id = '', consumer_uid = '', visitor_id = '', service_names, env, standby_2, standby_3 } = params
+    var { business_uid, bu, pf, activity_id = '', consumer_uid = '', visitor_id = '', service_names, env, standby_2, standby_3, user_id, webinar_id, t_start, entry_time } = params
     this.commonParams = {
       // 业务单元 eg.saas code为0
       bu,
@@ -12,7 +12,15 @@ class VhallReport {
       business_uid,
       service_names,
       ua: window.navigator.userAgent,
-      refer: window.document.referrer
+      refer: window.document.referrer,
+      user_agent: navigator.userAgent,
+      os: 10, // TODO:
+      device_id:"",
+      type: 'PC', // TODO:
+      user_id: user_id, // TODO:
+      webinar_id: webinar_id,
+      t_start: t_start,
+      entry_time: entry_time
     }
     var refer = window.localStorage.getItem('zhike_refer')
     if (refer) {

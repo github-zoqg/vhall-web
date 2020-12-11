@@ -1722,7 +1722,27 @@ export default {
         webinar_id: this.$route.params.il_id,
         visitor: this.roomData.visitor_id
       }).then(res => {
-        this.report('ENTER_WATCH', res.data.bu)
+        window.vhallReport = new VhallReport({
+          ...res.data,
+          pf: 7,
+          user_id: this.roominfo.auth.id ?  this.roominfo.auth.id : 0,
+          webinar_id: this.$route.params.il_id,
+          t_start: this.roominfo.webinar.start_time,
+          entry_time: this.roominfo.webinar.start_time,
+          service_names: this.roominfo.is_replay == 1 ? 2 : 1,
+          env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+        });
+        window.vhallReport.report('ENTER_WATCH', {
+          event: this.$route.query.refer // 推广渠道，会在url里传参
+        });
+        // this.report('ENTER_WATCH', res.data.bu)
+      })
+      // 浏览器或者页面关闭时上报
+      window.addEventListener('beforeunload', function(e) {
+        // 离开H5观看端页面
+        if (/room\/watch/.test(window.location.pathname)) {
+          window.vhallReport.report('LEAVE_WATCH', {}, false);
+        }
       })
     },
 

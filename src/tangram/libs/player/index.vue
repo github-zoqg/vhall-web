@@ -177,9 +177,6 @@ export default {
         return true;
       }
     },
-    startTime: {
-      type: String
-    },
     controller: {
       type: String
     },

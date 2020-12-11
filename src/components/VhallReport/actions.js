@@ -1,6 +1,6 @@
 const ACTION = {
   ENTER_WATCH: {
-    k: 602007,
+    k: 102006,
     behavior: 6
   },
   CHAT: {
