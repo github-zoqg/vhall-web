@@ -148,8 +148,8 @@ const apis = {
   goodsSetCover: ['/v3/interacts/goods/set-goods-cover', 'POST'], // 设置商品默认封面
 
   // 功能配置
-  planFunctionGet: ['/102/config-type/getconfig', 'POST', 'mock'], // 获取可配置项列表 jia.li
-  planFunctionEdit: ['/102/config-type/up_config', 'POST', 'mock'], // 修改配置项 jia.li
+  planFunctionGet: ['/v3/users/permission/get-config-list', 'POST'], // 获取可配置项列表 jia.li
+  planFunctionEdit: ['/v3/users/permission/edit-webinar-config', 'POST'], // 修改配置项 jia.li
 
   // 观看限制
   audienceGet: ['/v3/webinars/audience/get-group-list', 'POST'], // 获取白名单分组列表 Jia.li  √

@@ -88,7 +88,7 @@ export default {
       imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       liveDetailInfo: {},
       showCode: '',
-      link: `${Env.BASE_URL}/live/watch/${this.$route.params.str}`,
+      link: `${Env.BASE_URL}/#/live/room/${this.$route.params.str}`,
       operas: {
         '准备': [
           { icon: 'saasicon_shangchuanwendang-copy', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },

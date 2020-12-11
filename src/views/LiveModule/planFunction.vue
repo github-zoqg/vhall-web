@@ -36,6 +36,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "planFunction",
   components: {
@@ -44,54 +45,7 @@ export default {
   data() {
     return {
       query: {},
-      keyList: [
-        [
-          {
-            type: 'DS',
-            key_name: '隐藏打赏',
-            openShow: '已开启，观看端打赏按钮已被隐藏',
-            closeShow: '开启后，观看端打赏按钮将被隐藏',
-            value: 0
-          },
-          {
-            type: 'DZ',
-            key_name: '隐藏点赞',
-            openShow: '已开启，观看端点赞按钮已被隐藏',
-            closeShow: '开启后，观看端点赞按钮将被隐藏',
-            value: 0
-          },
-          {
-            type: 'LW',
-            key_name: '隐藏礼物',
-            openShow: '已开启，观看端礼物按钮已被隐藏',
-            closeShow: '开启后，观看端礼物按钮将被隐藏',
-            value: 0
-          },
-          {
-            type: 'FX',
-            key_name: '隐藏分享',
-            openShow: '已开启，观看端分享按钮已被隐藏',
-            closeShow: '开启后，观看端分享按钮将被隐藏',
-            value: 0
-          }
-        ],
-        [
-          {
-            type: 'JY',
-            key_name: '回放禁言',
-            openShow: '已开启，回放默认已开启聊天禁言',
-            closeShow: '开启后，回放默认开启聊天禁言',
-            value: 0
-          },
-          {
-            type: 'ZJ',
-            key_name: '回放章节',
-            openShow: '已开启，回放/点播观看端显示文档章节',
-            closeShow: '开启后，回放/点播观看端显示文档章节',
-            value: 0
-          }
-        ]
-      ]
+      keyList: []
     };
   },
   methods: {
@@ -117,7 +71,56 @@ export default {
       });
     },
     planSuccessRender (data) {
-      console.log(data);
+      let dataVo = JSON.parse(data);
+      console.log(dataVo, '功能配置');
+      this.keyList = [
+        [
+          {
+            type: 'ui.hide_reward',
+            key_name: '隐藏打赏',
+            openShow: '已开启，观看端打赏按钮已被隐藏',
+            closeShow: '开启后，观看端打赏按钮将被隐藏',
+            value: 0
+          },
+          {
+            type: 'DZ',
+            key_name: '隐藏点赞',
+            openShow: '已开启，观看端点赞按钮已被隐藏',
+            closeShow: '开启后，观看端点赞按钮将被隐藏',
+            value: 0
+          },
+          {
+            type: 'ui.hide_gifts',
+            key_name: '隐藏礼物',
+            openShow: '已开启，观看端礼物按钮已被隐藏',
+            closeShow: '开启后，观看端礼物按钮将被隐藏',
+            value: 0
+          },
+          {
+            type: 'ui.hide_share',
+            key_name: '隐藏分享',
+            openShow: '已开启，观看端分享按钮已被隐藏',
+            closeShow: '开启后，观看端分享按钮将被隐藏',
+            value: 0
+          }
+        ],
+        [
+          {
+            type: 'JY',
+            key_name: '回放禁言',
+            openShow: '已开启，回放默认已开启聊天禁言',
+            closeShow: '开启后，回放默认开启聊天禁言',
+            value: 0
+          },
+          {
+            type: 'ZJ',
+            key_name: '回放章节',
+            openShow: '已开启，回放/点播观看端显示文档章节',
+            closeShow: '开启后，回放/点播观看端显示文档章节',
+            value: 0
+          }
+        ]
+      ]
     },
     planErrorRender(err) {
       this.$message({
@@ -128,10 +131,13 @@ export default {
     },
     // 获取可配置选项
     planFunctionGet() {
-      this.$fetch('planFunctionGet', {}).then(res=>{
+      this.$fetch('planFunctionGet', {
+        webinar_id: this.$route.params.str,
+        webinar_user_id: sessionOrLocal.get('userId')
+      }).then(res=>{
         console.log(res);
         // 数据渲染
-        res && res.code == 200 && res.data ?  this.planSuccessRender(res.data) : this.planErrorRender(null);
+        res && res.code == 200 && res.data ?  this.planSuccessRender(res.data.permissions) : this.planErrorRender(null);
       }).catch(err =>{
         console.log(err);
         this.planErrorRender(err);

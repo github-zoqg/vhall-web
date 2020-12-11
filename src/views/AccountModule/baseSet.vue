@@ -10,7 +10,7 @@
           v-model="baseSetForm.avatar"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/users/face-imgs/',
+             path: 'saas/users/face-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"

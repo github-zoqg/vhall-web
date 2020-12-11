@@ -184,7 +184,8 @@ export default {
       return this.addForm.executeType === 'add' ? this.addFormRules : this.editFormRules;
     },
     pathUrl: function() {
-      return `sys/${window.sessionStorage.getItem('userId')}_v3_${new Date().getTime()}`;
+      // return `sys/${window.sessionStorage.getItem('userId')}_v3_${new Date().getTime()}`;
+      return `saas/interacts/keyword-docs`;
     }
   },
   methods: {
