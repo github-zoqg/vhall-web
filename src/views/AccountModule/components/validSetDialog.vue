@@ -288,16 +288,18 @@ export default {
       if(!vo) {
         this.$alert('信息获取失败，请您检查网络或重新登录', '提示', {
           dangerouslyUseHTMLString: true,
-          center: true,
-          customClass: 'zdy-alert-box'
+          customClass: 'zdy-alert-box',
+          type: 'warning',
+          center: true
         });
         return;
       } else if (btnType === 'pwd' && vo && !vo.phone) {
         // 无密码
         this.$alert('为了保证您的账号安全，请您先绑定手机号', '提示', {
           dangerouslyUseHTMLString: true,
-          center: true,
-          customClass: 'zdy-alert-box'
+          customClass: 'zdy-alert-box',
+          type: 'warning',
+          center: true
         });
         return;
       } else if (btnType === 'pwd' && vo && vo.phone) {// 密码，并且手机号不为空

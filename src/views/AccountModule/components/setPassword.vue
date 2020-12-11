@@ -120,8 +120,9 @@ export default {
       if(!(vo.has_password > 0)) {
         this.$alert('为了保证您的账号安全，请您先绑定手机号', '提示', {
           dangerouslyUseHTMLString: true,
-          center: true,
-          customClass: 'zdy-alert-box'
+          customClass: 'zdy-alert-box',
+          type: 'warning',
+          center: true
         });
       } else {
         this.step = 1;
