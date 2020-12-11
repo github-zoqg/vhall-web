@@ -13,7 +13,7 @@
         ></el-button>
       </el-tooltip>
     </div>
-    <title-data></title-data>
+    <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <el-card>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="直播" name="1"></el-tab-pane>
@@ -31,7 +31,8 @@
           ref="tableList"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
-          :isHandle="isHandle"
+          :isHandle="false"
+          :isCheckout="false"
           :totalNum="totalNum"
           @changeTableCheckbox="changeTableCheckbox"
           @getTableList="getTableList"
@@ -51,13 +52,15 @@ export default {
       totalNum: 100,
       isHandle: false,
       activeName: '1',
+      liveDetailInfo: {},
+      switchList: [],
       placeholder: '搜索用户昵称',
       searchAreaLayout: [],
       tableList: [],
       tabelColumn:[
         {
           label: '用户信息',
-          key: 'user',
+          key: 'userName',
         },
         {
           label: '手机号',
@@ -65,7 +68,7 @@ export default {
         },
         {
           label: '邮箱',
-          key: 'emails',
+          key: 'email',
         },
         {
           label: '进入时间',
@@ -105,29 +108,8 @@ export default {
         },
         {
           type: "3",
-          key: "searchOnce",
-          options: [
-            {
-              label: '全部',
-              value: '1',
-            },
-            {
-              label: '第1场',
-              value: '2',
-            },
-            {
-              label: '第2场',
-              value: '3',
-            },
-            {
-              label: '第3场',
-              value: '4',
-            },
-            {
-              label: '第4场',
-              value: '5',
-            },
-          ]
+          key: "switchId",
+          options: []
         }
       ],
       searchLayout: [
@@ -166,22 +148,51 @@ export default {
   components: {
     titleData
   },
+  created() {
+    this.getLiveSwitchInfo();
+    this.getLiveDetail();
+  },
   mounted() {
     this.getTableList();
   },
   methods: {
+    //获取直播详情
+    getLiveDetail() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        this.liveDetailInfo = res.data;
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      });
+    },
+    // 获取直播场次
+    getLiveSwitchInfo() {
+      this.$fetch('getWebinarSwitchList', {webinar_id: this.$route.params.str}).then(res => {
+        this.switchList = res.data.switch_list.map((item, index) => {
+          return {
+            label: `第${index + 1}场`,
+            value: item.id
+          }
+        });
+      })
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       if (parseInt(formParams.searchIsTime) === 2) {
+        formParams.searchTime = '';
+        this.searchArea.map(item => {
+          item.key === 'switchId' ? item.options = this.switchList : []
+        })
         this.searchAreaLayout = this.searchArea;
       } else {
         this.searchAreaLayout = this.searchLayout;
       }
       let paramsObj = {
-        switch_id: 0,
+        webinar_id: this.$route.params.str,
+        switch_id: formParams.switchId || 0,
         service_names: this.activeName,
-        webinar_id: this.$route.params.str
+        merge_type: formParams.merge_type ? 1 : 2
       };
       if (params === 'search') {
         pageInfo.pageNum= 1;
@@ -197,14 +208,16 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.merge_type = paramsObj.merge_type ? 1 : 2;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.getBaseUserInfo(obj);
     },
     getBaseUserInfo(params) {
       this.$fetch('getUserBaseinfo', params).then(res => {
         this.tableList = res.data.list;
-        // this.totalNum = res.data.total;
+        this.tableList.map(item => {
+          item.userName = `${item.nick_name}${item.w_name}`;
+        })
+        this.totalNum = res.data.total;
       });
     },
     changeTableCheckbox(val) {
