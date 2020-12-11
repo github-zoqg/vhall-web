@@ -4,7 +4,7 @@
       <p class="subject">{{index}}</p>
       <div class="subjectOuter">
         <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
-          <icon class="icon" icon-class="saasicon_shangchuanwendang-copy"></icon>
+          <icon class="icon" :icon-class="opera.icon"></icon>
           <div class="desc">
             <p class="mainText">{{opera.title}}</p>
             <p class="subText">{{opera.subText}}</p>

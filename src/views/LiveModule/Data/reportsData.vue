@@ -5,14 +5,14 @@
         1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
-    <title-data></title-data>
+    <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
       @onSearchFun="getDataList('search')"
       >
     </search-area>
-    <main-data :mainKeyData="mainKeyData" :titleType="titleType" :highData="highMax"></main-data>
+    <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
@@ -62,6 +62,7 @@ export default {
     return {
       titleType: '直播',
       mainKeyData: {},
+      liveDetailInfo: {},
       allDataList: {},
       lineDataList: [],
       areaDataList: {},
@@ -70,6 +71,7 @@ export default {
       deviceDataList: [],
       browerDataList: [],
       isActive: 1,
+      switchList: [],
       timeData: [
         {
           label: '按时间筛选',
@@ -121,29 +123,8 @@ export default {
         },
         {
           type: "3",
-          key: "searchOnce",
-          options: [
-            {
-              label: '全部',
-              value: '1',
-            },
-            {
-              label: '第1场',
-              value: '2',
-            },
-            {
-              label: '第2场',
-              value: '3',
-            },
-            {
-              label: '第3场',
-              value: '4',
-            },
-            {
-              label: '第4场',
-              value: '5',
-            },
-          ]
+          key: "switchId",
+          options: []
         }
       ]
     };
@@ -157,19 +138,47 @@ export default {
     PageTitle
   },
   created() {
+    this.getLiveSwitchInfo();
+    this.getLiveDetail();
+  },
+  mounted() {
     this.searchAreaLayout = this.searchLayout;
-    this.getBaseData(this.$route.params.str);
-    this.getHighUv(this.$route.params.str);
-    this.getTrendData(this.$route.params.str);
-    this.getProvinceData(this.$route.params.str);
-    this.getDeviceData(this.$route.params.str);
-    this.getBrowerData(this.$route.params.str);
+    this.$nextTick(() => {
+      this.getDataList();
+    })
   },
   methods: {
+    //获取直播详情
+    getLiveDetail() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        this.liveDetailInfo = res.data;
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      });
+    },
+    // 获取直播场次
+    getLiveSwitchInfo() {
+      this.$fetch('getWebinarSwitchList', {webinar_id: this.$route.params.str}).then(res => {
+        this.switchList = res.data.switch_list.map((item, index) => {
+          return {
+            label: `第${index + 1}场`,
+            value: item.id
+          }
+        });
+      })
+    },
     getDataList(params) {
-      let searchData = this.$refs.searchArea.searchParams;
-      let paramsObj = {};
-      if (parseInt(searchData.searchIsTime) === 2) {
+      let formParams = this.$refs.searchArea.searchParams;
+      let paramsObj = {
+        webinar_id: this.$route.params.str,
+        switch_id: formParams.switchId || 0
+      };
+      if (parseInt(formParams.searchIsTime) === 2) {
+        formParams.searchTime = '';
+        this.searchArea.map(item => {
+          item.key === 'switchId' ? item.options = this.switchList : []
+        })
         this.searchAreaLayout = this.searchArea;
       } else {
         this.searchAreaLayout = this.searchLayout;
@@ -182,62 +191,40 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      console.log(params);
-      console.log(searchData);
+      console.log(this.$params(paramsObj), '111111111111111');
+      this.getAllData(paramsObj);
     },
-    getBaseData(id) {
-      let params = {
-        switch_id: 0,
-        webinar_id: id
-      };
-      this.$fetch('getStatisticsinfo', params).then(res => {
-        this.mainKeyData = res.data;
-        console.log(res.data, '1111');
+    getAllData(params) {
+      // 获取直播场次
+      let dataInfo = {};
+      this.$fetch('getWebinarSwitchList', params).then(res => {
+        dataInfo.total_live_time = res.data.total_live_time;
+        dataInfo.total = res.data.total;
       });
-    },
-    getHighUv(id) {
-      let params = {
-        switch_id: 0,
-        webinar_id: id
-      };
+       // 获取最高并发
       this.$fetch('getMaxuv', params).then(res => {
-        this.highMax = res.data.max_onlines || '';
-        this.webianr_id = res.data.webianr_id;
+        dataInfo.max_onlines = res.data.max_onlines;
       });
-    },
-    getTrendData(id) {
-      let params = {
-        switch_id: 0,
-        webinar_id: id
-      };
+      this.$fetch('getStatisticsinfo', params).then(res => {
+          this.mainKeyData = {
+          ...res.data,
+          ...dataInfo
+        };
+      });
+      // 获取用户统计
       this.$fetch('getDateUvinfo', params).then(res => {
         this.allDataList = res.data;
         this.lineDataList = this.allDataList.live;
       });
-    },
-    getProvinceData(id) {
-      let params = {
-        switch_id: 0,
-        webinar_id: id
-      };
+      // 获取观看地域
       this.$fetch('getProvinceinfo', params).then(res => {
         this.areaDataList = res.data;
       });
-    },
-    getDeviceData(id) {
-      let params = {
-        switch_id: 0,
-        webinar_id: id
-      };
+      // 获取终端设备
       this.$fetch('getDeviceinfo', params).then(res => {
         this.deviceDataList = res.data.list;
       });
-    },
-    getBrowerData(id) {
-      let params = {
-        switch_id: 0,
-        webinar_id: id
-      };
+      // 获取浏览器
       this.$fetch('getBrowserinfo', params).then(res => {
         this.browerDataList = res.data.list;
       });

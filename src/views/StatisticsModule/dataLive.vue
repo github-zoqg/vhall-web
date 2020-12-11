@@ -22,22 +22,31 @@
         :width="320"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
+        v-show="totalNum"
       >
       </table-list>
+      <div class="no-live" v-show="!totalNum">
+        <noData :nullType="nullText" :text="'暂未创建活动'">
+         <el-button type="primary" round @click="createLive" v-if="nullText==='noData'">创建直播</el-button>
+        </noData>
+      </div>
     </el-card>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "dataLive",
   components: {
-    PageTitle
+    PageTitle,
+    noData
   },
   data() {
     return {
       isCheckout: false,
+      nullText: 'noData',
       totalNum: 0,
       loading: true,
       tableList: [],
@@ -121,14 +130,16 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
-      this.getLiveList(obj);
+      this.getLiveList(obj, params);
     },
-     getLiveList(data){
+     getLiveList(data, params){
       this.loading = true;
-      console.log(data);
-      this.$fetch('getActiveDataList', data).then(res=>{
+      this.$fetch('getActiveDataList', this.$params(data)).then(res=>{
         this.tableList = res.data.list;
         this.totalNum = res.data.total;
+        if (params === 'search' && !res.data.total) {
+          this.nullText = 'search';
+        }
       }).catch(error=>{
         this.$message.error(`获取活动列表失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -136,10 +147,13 @@ export default {
         this.loading = false;
       });
     },
+    createLive() {
+      this.$router.push({path: '/live/edit'})
+    },
     dataReport(that, val) {
       let id = val.rows.webinar_id;
       that.$router.push({
-        path: `${val.path}/${id}`,
+        path: `/live${val.path}/${id}`,
         query: {
           type: val.rows.webinar_state
         }
