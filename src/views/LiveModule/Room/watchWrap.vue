@@ -1694,9 +1694,10 @@ export default {
     },
     // 获取房间活动状态
     queryRoomInterInfo () {
-      this.$fetch('queryRoomInterInfo', {
+      this.$fetch('getToolStatus', {
         room_id: this.roomData.interact.room_id
       }).then(res => {
+        console.log(111111111, res)
         if (res.code == 200 && res.data) {
           this.interactiveInfo = res.data
         }

@@ -93,7 +93,8 @@ export default {
     'joinId',
     'thirdPartyId',
     'privateChat',
-    'isEmbed'
+    'isEmbed',
+    'roomId'
   ],
   components: {
     PrivateMessage,
@@ -301,9 +302,8 @@ export default {
         } else {
           // TODO:
           this.$fetch('sendQaMsg', {
-            webinar_id: this.webinarId,
-            content: this.inputValue,
-            join_id: this.joinId
+            room_id: this.roomId,
+            content: this.inputValue
           })
             .then(res => {
               this.lock = sessionStorage.getItem('QALock');

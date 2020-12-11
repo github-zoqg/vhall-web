@@ -268,6 +268,7 @@
             v-show="qaVisible && tabIndex == 2"
             :webinarId="ilId"
             :masterEnd="false"
+            :roomId="roomInfo.room_id"
             :joinId="saasJoinId"
             :thirdPartyId="roomInfo.third_party_user_id"
             :privateChat="privateChat"
@@ -678,7 +679,7 @@ export default {
       })
     },
     getRoomStatus () {
-      this.$fetch('queryRoomInterInfo', {
+      this.$fetch('getToolStatus', {
         room_id: this.bizInfo.room_id
       }).then(res => {
         if (res.code == 200 && res.data) {
