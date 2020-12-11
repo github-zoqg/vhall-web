@@ -449,6 +449,10 @@ const apis = {
   v3InviteMic: ['/v3/interacts/inav/invite', 'POST'],// 邀请用户上麦
   v3SetDevice: ['/v3/interacts/room/set-device', 'POST'], //设置房间用户的设备检测状态
   v3SetDesktop: ['/v3/interacts/room/set-desktop', 'POST'], // 开启桌面共享自动最大化
+
+  // 问答
+  v3GetQa: ['/v3/interacts/qa/enable', 'POST'], // 主持人开启问答
+  v3CloseQa: ['/v3/interacts/qa/disable', 'POST'], // 主持人关闭问答
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
 
