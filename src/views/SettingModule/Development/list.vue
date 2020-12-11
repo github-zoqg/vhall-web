@@ -39,6 +39,7 @@ import PageTitle from '@/components/PageTitle';
 import DevTable from '@/components/TableList/devTable';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
+import env from "@/api/env";
 export default {
   data(){
     return{
@@ -121,7 +122,7 @@ export default {
       }
     },
     openChat() {
-      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, '_blank');
+      window.open(`${env.staticLinkVo.kf}`, '_blank');
     },
     // 查看文档-开发设置
     openDoc() {

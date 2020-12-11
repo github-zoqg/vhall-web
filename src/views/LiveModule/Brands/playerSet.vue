@@ -87,7 +87,7 @@
                     v-model="formWatermark.img_url"
                     :domain_url="domain_url"
                     :saveData="{
-                       path: 'saas/interacts/watermark-imgs',
+                       path: 'interacts/watermark-imgs',
                        type: 'image',
                     }"
                     :on-success="uploadAdvSuccess"

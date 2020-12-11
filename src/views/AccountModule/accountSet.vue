@@ -31,7 +31,7 @@ export default {
     },
     bindWx() {},
     bindQQ() {
-      window.open()`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?platform=pc&jump_url=http://t.e.vhall.com/v3/#/account/info`
+      window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?platform=17&jump_url=${encodeURI('http://t.e.vhall.com/#/login')}`)
     }
   }
 };

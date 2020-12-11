@@ -211,7 +211,7 @@ export default {
   },
   computed: {
     pathUrl: function() {
-      return `saas/interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
+      return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
     docSwtichDesc(){
       if(this.docSwtich){

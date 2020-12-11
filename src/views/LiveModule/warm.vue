@@ -26,7 +26,7 @@
             v-model="warmForm.imageUrl"
             :domain_url="domain_url"
             :saveData="{
-              path: 'saas/users/logo-imgs',
+              path: 'users/logo-imgs',
               type: 'image',
             }"
             :disabled='!warmFlag'

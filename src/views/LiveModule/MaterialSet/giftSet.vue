@@ -87,7 +87,7 @@
             v-model="editParams.img"
             :domain_url="domain_url"
             :saveData="{
-               path: 'saas/interacts/gift-imgs',
+               path: 'interacts/gift-imgs',
                type: 'image',
             }"
             :on-success="handleuploadSuccess"

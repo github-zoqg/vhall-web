@@ -10,7 +10,7 @@
           v-model="baseSetForm.avatar"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/users/face-imgs',
+             path: 'users/face-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -136,7 +136,7 @@ export default {
         if(valid) {
           let params = {
             nick_name: this.baseSetForm.nick_name,
-            avatar: this.baseSetForm.avatar,
+            avatar: this.$parseURL(this.baseSetForm.avatar).path,
             company: this.baseSetForm.company,
             position: this.baseSetForm.position
           };

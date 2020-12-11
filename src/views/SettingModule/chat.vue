@@ -173,8 +173,8 @@ export default {
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
       importResult: {
-        fail_count: 0,
-        success_count: 0
+        fail: 0,
+        success: 0
       }
     };
   },
@@ -185,7 +185,7 @@ export default {
     },
     pathUrl: function() {
       // return `sys/${window.sessionStorage.getItem('userId')}_v3_${new Date().getTime()}`;
-      return `saas/interacts/keyword-docs`;
+      return `interacts/keyword-docs`;
     }
   },
   methods: {
@@ -269,6 +269,8 @@ export default {
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
+        customClass: 'zdy-message-box',
+        type: 'warning'
       }).then(() => {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id
@@ -330,7 +332,7 @@ export default {
     getKeywordTemplate() {
       this.$fetch('getKeywordTemplate', {}).then(res =>{
         if(res && res.code === 200) {
-          this.downloadHref = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, res.data.url || '');
+          this.downloadHref = res.data.url || '';
         }
       }).catch(e => {
         console.log(e);
