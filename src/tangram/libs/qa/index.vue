@@ -24,7 +24,7 @@
       </div>
     </div>
     <div v-if="masterEnd&&!isEmbed" class="button-container">
-      <a :href="url" target="_blank">问答管理</a>
+      <p  @click="openQa" >问答管理</p>
     </div>
     <div v-if="!masterEnd" class="qa-inputbar">
       <div class="operation-box">
@@ -94,7 +94,8 @@ export default {
     'thirdPartyId',
     'privateChat',
     'isEmbed',
-    'roomId'
+    'roomId',
+    'vssToken'
   ],
   components: {
     PrivateMessage,
@@ -199,9 +200,9 @@ export default {
     );
     // TODO:
     this.$fetch('getHistoryQaMsg', {
-      room_id: this.roomId
-    })
-      .then((res = {data: {}}) => {
+      room_id: this.roomId,
+      skip_cache: 1
+    }).then((res = {data: {}}) => {
         console.warn(res, '历时问答记录')
         const list = res.data.list.map((h) => {
           return {...h, content: this.emojiToText(h.content)};
@@ -233,6 +234,9 @@ export default {
           scrollbar: true
         });
       });
+    },
+    openQa(){
+      window.open(`/#/live/qa/${this.webinarId}`)
     },
     refresh () {
       this.scroll.refresh();
@@ -398,7 +402,7 @@ export default {
     right: 0;
     bottom: 0;
     position: absolute;
-    & > a {
+    & > p {
       color: #fff;
       display: block;
       margin: 0 auto;
