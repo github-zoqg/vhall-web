@@ -3,17 +3,17 @@
     :title="title"
     :visible.sync="visible"
     :close-on-click-modal="false"
-    width="30%">
+    width="480px">
     <div class="content">
       <el-form :model="form" ref="form" :rules="formRules" label-width="120px">
-        <p v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
+        <p class="info" v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
         <el-form-item label="邮箱地址" key="email" prop="email" v-if="showVo.executeType === 'email' && showVo.step === 1">
           <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled/>
         </el-form-item>
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
           <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled/>
         </el-form-item>
-        <el-form-item label="图形码" v-if="showVo.step === 1 && showVo.executeType !== 'email'">
+        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
           <div id="setCaptcha">
             <el-input  v-model.trim="form.imgCode"> </el-input>
           </div>
@@ -123,6 +123,12 @@ export default {
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
         ],
         code: [
+          {required: true, message: '请输入验证码', trigger: 'blur'}
+        ],
+        new_phone: [
+          {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
+        ],
+        new_code: [
           {required: true, message: '请输入验证码', trigger: 'blur'}
         ]
       },
@@ -248,6 +254,7 @@ export default {
         }
       });
     },
+    // 取消修改密码
     cancelPwdStep() {
       if(this.showVo.step === 2) {
         // 返回上一步
@@ -262,17 +269,88 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           if(this.showVo.step === 1) {
-            // 验证码第一步，继续下一步
-            this.showVo.step = 2;
+            // 第一步，验证码，获取验证码是否正确得到key，验证通过，继续下一步
+            let params = {
+              type: this.showVo.executeType === 'phone' ? 1 : 2,
+              data: this.showVo.executeType === 'phone' ? this.form.phone : this.form.email,
+              code: this.form.code,
+              scene_id: this.showVo.executeType === 'phone' ? 2 : 3
+            };
+            this.$fetch('codeCheck', params).then(res => {
+              if (res && res.code === 200) {
+                if (res.data.check_result > 0) {
+                  this.codeKey = res.data.key || '';
+                  // 验证码第一步，继续下一步
+                  this.showVo.step = 2;
+                } else {
+                  this.$message.error(res.msg || '验证失败，无法操作');
+                }
+              } else {
+                this.$message.error(res.msg || '验证失败，无法操作');
+              }
+            }).catch(e => {
+              console.log(e);
+              this.$message.error('验证失败，无法操作');
+            });
           } else {
-            // 保存密码
+            // 重置邮箱或者手机号
             this.visible = false;
           }
         }
       });
     },
-    sendBindHandle() {
+    checkNewCodeResult() {
+      let params = {
+        type: this.showVo.executeType === 'phone' ? 1 : 2,
+        data: this.showVo.executeType === 'phone' ? this.form.new_phone : this.form.new_email,
+        code: this.form.new_code,
+        scene_id: this.showVo.executeType === 'phone' ? 2 : 3
+      };
+      this.$fetch('codeCheck', params).then(res => {
+        if (res && res.code === 200) {
+          if (res.data.check_result > 0) {
+            this.newCodeKey = res.data.key || '';
+            this.bindSave();
+          } else {
+            this.$message.error(res.msg || '验证失败，无法操作');
+          }
+        } else {
+          this.$message.error(res.msg || '验证失败，无法操作');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error('验证失败，无法操作');
+      });
+    },
+    bindSave() {
+      let params = {
+        type: this.showVo.executeType === 'phone' ? 1 : 2,
+        account: this.showVo.executeType === 'phone' ? this.form.new_phone : this.form.new_email,
+        code: this.form.new_code,
+        scene_id: this.showVo.executeType === 'phone' ? 2 : 3,
+        key: this.newCodeKey
+      };
       // 确认绑定新功能
+      this.$fetch('bindInfo', params).then(res => {
+        if (res && res.code === 200) {
+          this.$message.success('绑定成功！');
+          this.visible = false;
+        } else {
+          this.$message.error(res.msg || '绑定失败！');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error('绑定失败');
+      });
+    },
+    // 绑定手机号 或者 邮箱
+    sendBindHandle() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          // 先验证验证码结果，再实际绑定为新手机号 或 新邮箱
+          this.checkNewCodeResult();
+        }
+      });
     },
     initComp(vo, btnType) {
       // btnType => pwd 密码；email 邮箱； phone手机号
@@ -280,9 +358,8 @@ export default {
       /*vo = {
         has_password: 0,
         phone: 18310410764,
-        email: '123123123@qq.com'
+        email: '15389863287@qq.com'
       };*/
-      console.log(vo, '当前登录用户');
       this.vo = vo;
       this.showVo.executeType = btnType;
       if(!vo) {
@@ -327,9 +404,10 @@ export default {
       // 为表单赋值
       this.form.phone = vo.phone || '';
       this.form.email = vo.email || '';
-
       this.$nextTick(() => {
-        this.callCaptcha();
+        if(this.showVo.executeType !== 'email') {
+          this.callCaptcha();
+        }
       });
     },
     /**
@@ -382,5 +460,8 @@ export default {
     background: transparent;
     color: #666666;
   }
+}
+.info {
+  margin-bottom: 16px;
 }
 </style>
