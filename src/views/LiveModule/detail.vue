@@ -347,7 +347,7 @@ export default {
     margin: 0 auto;
   }
 }
-.detailBox {
+/*.detailBox {
   margin: auto;
   width: 1020px;
 }
@@ -357,5 +357,5 @@ export default {
     margin: auto;
     width: 1374px;
   }
-}
+}*/
 </style>

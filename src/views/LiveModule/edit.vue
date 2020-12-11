@@ -439,8 +439,8 @@ export default {
 <style lang="less" scoped>
   .el-form{
     background: #ffffff;
-    padding: 60px 80px;
-    margin-top: 30px;
+    padding: 48px 20px 50px 48px;
+    margin-top: 32px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -597,14 +597,14 @@ export default {
       padding: 10px 23px;
     }
   }
-  .editBox {
+  /*.editBox {
     padding: 0px 40px;
   }
   @media screen and (min-width: 1920px) {
     .editBox {
       padding: 0px 140px;
     }
-  }
+  }*/
   .mediaBox{
     background-color: #fbfdff;
     border: 1px dashed #c0ccda;
