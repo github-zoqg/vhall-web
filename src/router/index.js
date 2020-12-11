@@ -20,6 +20,10 @@ const createRouter = () => new Router({
 const router = createRouter();
 NProgress.configure({showSpinner: false}); // NProgress Configuration
 const whiteList = ['/login', '/register', '/forgetPassword']; // 白名单，不需携带Token
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 router.beforeEach((to, from, next) => {
   // NProgress.start();
   // next();

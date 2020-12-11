@@ -24,8 +24,9 @@
                 <upload
                   class="giftUpload"
                   v-model="img"
+                  :domain_url="domain_url"
                   :saveData="{
-                     path: 'webinars/img_url',
+                     path: pathUrl,
                      type: 'image',
                   }"
                   :on-success="uploadAdvSuccess"
@@ -87,6 +88,7 @@ export default {
   data() {
     return {
       img: '',
+      domain_url: '',
       url: '',
       imgShowUrl: '',
       status: 1,
@@ -94,6 +96,9 @@ export default {
     };
   },
   computed: {
+    pathUrl: function() {
+      return this.title==='公众号展示' ? `saas/interacts/wechat-official-imgs` : `saas/interacts/screen-imgs`;
+    },
     title() {
       return this.$route.meta.title === '品牌—开屏海报' ? '开屏海报' : '公众号展示';
     },
@@ -187,7 +192,13 @@ export default {
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
-      this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.img = file_url;
+        this.domain_url = domain_url;
+      }
       // 触发验证
       // this.$refs.signSetForm.validateField('img');
     },

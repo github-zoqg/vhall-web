@@ -9,46 +9,52 @@
         3.上传的视频，不支持剪辑和下载
       </div>
     </pageTitle>
-    <div class="head-operat">
-      <el-button type="primary" @click="addGift" round>创建</el-button>
-      <el-button round @click="batchDel">批量删除</el-button>
-      <search-area class="head-btn fr search"
-        ref="searchArea"
-        :placeholder="'请输入商品名称'"
-        :isExports='false'
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
+      <div class="head-operat">
+        <el-button type="primary" round  @click="addProduct">创建</el-button>
+        <el-button round @click="batchDel(null)">批量删除</el-button>
+        <search-area class="head-btn fr search"
+          ref="searchArea"
+          :placeholder="'请输入商品名称'"
+          :isExports='false'
+          :searchAreaLayout="searchAreaLayout"
+          @onSearchFun="getTableList('search')"
+          >
+        </search-area>
+      </div>
+      <el-card class="question-list" v-if="total">
+        <table-list
+          ref="tableProductList"
+          :manageTableData="tableData"
+          :tabelColumnLabel="tabelColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :width="btnsWidth"
+          :totalNum="total"
+          @onHandleBtnClick='onHandleBtnClick'
+          @getTableList="getTableList"
+          @changeTableCheckbox="changeTableCheckbox"
+          @switchChange="onSwitchChange"
         >
-      </search-area>
-    </div>
-    <el-card class="question-list">
-      <table-list
-        ref="tableList"
-        :manageTableData="tableData"
-        :tabelColumnLabel="tabelColumn"
-        :tableRowBtnFun="tableRowBtnFun"
-        :width="btnsWidth"
-        :totalNum="total"
-        @onHandleBtnClick='onHandleBtnClick'
-        @getTableList="getTableList"
-        @changeTableCheckbox="changeTableCheckbox"
-        @switchChange="onSwitchChange"
-      >
-      </table-list>
-    </el-card>
+        </table-list>
+      </el-card>
+       <div class="empty" v-else>
+        <noData :nullType="nullText" :text="'暂未创建商品'">
+        </noData>
+      </div>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "prize",
   data() {
     return {
       formData: {},
       imageUrl: '',
-      checkedGoodsId: '',
-      total: 16,
+      nullText: 'noData',
+      checkedGoodsId: [],
+      total: 1,
       btnsWidth: 230,
       searchAreaLayout: [
         {
@@ -58,7 +64,7 @@ export default {
       tabelColumn: [
         {
           label: '商品ID',
-          key: 'good_id',
+          key: 'goods_id',
         },
         {
           label: '图片',
@@ -88,7 +94,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    noData
   },
   mounted() {
     this.getTableList();
@@ -99,7 +106,7 @@ export default {
         // 上架处理
         this.$fetch('goodsEnable', {
           webinar_id: this.$route.params.str,
-          goods_id: option.good_id
+          goods_id: option.goods_id
         }).then(res => {
           this.$message.success("上架设置成功！");
           console.log(res);
@@ -111,7 +118,7 @@ export default {
         // 下架处理
         this.$fetch('goodsDisable', {
           webinar_id: this.$route.params.str,
-          goods_id: option.good_id
+          goods_id: option.goods_id
         }).then(res => {
           this.$message.success("下架设置成功！");
           console.log(res);
@@ -126,13 +133,13 @@ export default {
       methodsCombin[val.type](this, val);
     },
     getTableList(params) {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let pageInfo = this.$refs.tableProductList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
-        this.$refs.tableList.clearSelect();
+        this.$refs.tableProductList.clearSelect();
       }
       let obj = {
         ...pageInfo,
@@ -141,6 +148,10 @@ export default {
       };
       this.$fetch('goodsGet', obj).then(res => {
         this.tableData = res.data.goods_list;
+        this.total = res.data.total;
+        if (params === 'search' && !res.data.total) {
+          this.nullText = 'search';
+        }
         this.addCover();
       }).catch(e => {
         console.log(e);
@@ -159,7 +170,7 @@ export default {
     cope(that, {rows}) {
       that.$fetch('goodsCopy', {
         webinar_id: that.$route.params.str,
-        goods_id: rows.good_id
+        goods_id: rows.goods_id
       }).then(res => {
         that.$message.success("复制成功！");
         that.getTableList();
@@ -172,54 +183,53 @@ export default {
     // 编辑
     edit(that, {rows}) {
       that.$router.push({
-        path: '/editProduct',
+        path: `/live/addProduct/${that.$route.params.str}`,
         query: {
-          goodId: rows.good_id
+          goodId: rows.goods_id
         }
       });
     },
     // 删除
     del(that, {rows}) {
-      that.$fetch('goodsBatchDel', {
-        webinar_id: that.$route.params.str,
-        goods_id: rows.good_id
-      }).then(res => {
-        that.$message.success("删除成功！");
-        that.getTableList();
-        console.log(res);
-      }).catch(err => {
-        that.$message.error("删除失败！");
-        console.log(err);
+      that.$confirm('确定要删除该文件吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        that.batchDel(rows.goods_id);
+      }).catch(() => {
+        that.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
       });
     },
     // 选中
     changeTableCheckbox(val) {
       console.log(val);
-      val &&
-      val.length &&
-      (this.checkedGoodsId = val.reduce((accumulator, currentItem) => {
-        return accumulator + currentItem.good_id + ',';
-      }, ''));
-      this.checkedGoodsId = this.checkedGoodsId.substring(0, this.checkedGoodsId.length - 1);
+      this.checkedGoodsId = val.map(item => item.goods_id);
     },
     // 批量删除
-    batchDel() {
-      this.$fetch('goodsBatchDel', {
-        webinar_id: this.$route.params.str,
-        goods_id: this.checkedGoodsId
-      }).then(res => {
-        this.$message.success("批量删除成功！");
-        this.checkedGoodsId = '',
+    batchDel(id) {
+      if (!id) {
+        if (this.checkedGoodsId.length < 1) {
+          this.$message.error("请选择要操作的文件");
+        } else {
+          id = this.checkedGoodsId.join(',');
+          console.log(this.checkedGoodsId, '111111111111111')
+        }
+      }
+      this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
+        this.$message.success("删除成功！");
+        this.checkedGoodsId = [];
         this.getTableList();
-        console.log(res);
       }).catch(err => {
-        this.$message.error("批量删除失败！");
-        console.log(err);
-      });
+        this.$message.error("删除失败！");
+      })
     },
     // 新建礼物
-    addGift() {
-      this.$router.push({path: '/addProduct'});
+    addProduct() {
+      this.$router.push({path: `/live/addProduct/${this.$route.params.str}`});
     }
   },
 };
@@ -244,22 +254,6 @@ export default {
     .head-btn{
       display: inline-block;
       border-radius: 20px;
-    }
-    /deep/.el-button{
-      padding: 10px 20px;
-    }
-    ::v-deep.set-upload{
-      position: relative;
-      span{
-        input{
-          position: absolute;
-          left: 0;
-          top: 0;
-          opacity: 0;
-          width: 100%;
-          height: 100%;
-        }
-      }
     }
   }
 }

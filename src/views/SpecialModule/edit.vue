@@ -10,7 +10,7 @@
           v-model="imageUrl"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/webinars/subject-imgs/',
+             path: 'saas/webinars/subject-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"

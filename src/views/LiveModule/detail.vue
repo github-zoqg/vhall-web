@@ -88,7 +88,7 @@ export default {
       imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       liveDetailInfo: {},
       showCode: '',
-      link: `${Env.BASE_URL}/live/watch/${this.$route.params.str}`,
+      link: `${Env.BASE_URL}/#/live/room/${this.$route.params.str}`,
       operas: {
         '准备': [
           { icon: 'saasicon_shangchuanwendang-copy', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
@@ -207,7 +207,11 @@ export default {
         if (item.path === '/live/edit') {
           this.$router.push({path: item.path, query: {id:this.$route.params.str }});
         } else if (item.path === '/live/question') {
+          // 问卷
           this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});
+        } else if(item.path === `/live/prizeSet/${this.$route.params.str}`) {
+          // 奖品
+          this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
         } else {
           this.$router.push({path: item.path});
         }

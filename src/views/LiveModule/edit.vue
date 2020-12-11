@@ -80,7 +80,7 @@
           v-model="imageUrl"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/interacts/screen-imgs/',
+             path: pathUrl,
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -210,6 +210,9 @@ export default {
     VEditor
   },
   computed: {
+    pathUrl: function() {
+      return `saas/interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
+    },
     docSwtichDesc(){
       if(this.docSwtich){
         return '已开启，支持观众直播中提前预览文档，进行文档翻页';

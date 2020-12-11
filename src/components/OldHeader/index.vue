@@ -69,6 +69,7 @@ export default {
     },
     loginOut() {
       sessionOrLocal.clear();
+      sessionOrLocal.clear('localStorage');
       // 更新当前页面
       this.isLogin = false;
     },
@@ -79,12 +80,13 @@ export default {
   },
   mounted() {
     let userInfo  = sessionOrLocal.get('userInfo');
-    if(userInfo !== null) {
+    if(userInfo !== null && userInfo !== 'null') {
       this.userInfo = JSON.parse(userInfo);
       this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-    this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '';
+    this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
+    this.$EventBus.$on('saas_vs_login_out', this.loginOut);
   }
 };
 </script>

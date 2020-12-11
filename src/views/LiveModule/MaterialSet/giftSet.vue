@@ -68,7 +68,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <SPagination 
+      <SPagination
         :total="total"
         v-show="total > 10"
         :currentPage="searchParams.page"
@@ -85,11 +85,18 @@
           <upload
             class="giftUpload"
             v-model="editParams.img"
+            :domain_url="domain_url"
+            :saveData="{
+               path: 'saas/interacts/gift-imgs',
+               type: 'image',
+            }"
             :on-success="handleuploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
-            :before-upload="beforeUploadHandler">
+            :before-upload="beforeUploadHandler"
+            @delete="editParams.img === ''"
+           >
             <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
           </upload>
         </el-form-item>
@@ -148,7 +155,7 @@
         placeholder="请输入礼物名称"
         prefix-icon="el-icon-search"
         @change="searchMaterialGift"/>
-        <div 
+        <div
           v-for="(item, index) in materiaTableData"
           :key='index'
           class="matrial-item"
@@ -163,7 +170,7 @@
           </div>
         </div>
       </div>
-      <SPagination 
+      <SPagination
         :total="materialTotal"
         v-show="materialTotal > 10"
         :currentPage="materiaSearchParams.page"
@@ -326,7 +333,8 @@ export default {
       deleteId: '',
       openGiftIds: [], // 显示礼物列表
       selectIds:[], // 批量操作
-      addGiftsIds: [] // 添加礼物
+      addGiftsIds: [], // 添加礼物
+      domain_url: ''
     };
   },
   components: {
@@ -375,7 +383,7 @@ export default {
             this.getTableList()
           }
         }
-      }; 
+      };
     },
     // 处理批量操作
     handleSelectionChange (val) {
@@ -400,7 +408,12 @@ export default {
     // 上传礼物封面成功
     handleuploadSuccess(res, file){
       console.log(res, file);
-      this.editParams.img = URL.createObjectURL(file.raw);
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.editParams.img = file_url;
+        this.domain_url = domain_url;
+      }
     },
     // 上传失败处理
     uploadError(err, file, fileList){

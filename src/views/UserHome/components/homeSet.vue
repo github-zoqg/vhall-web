@@ -8,15 +8,17 @@
         <upload
           :class="'upload__avatar ' + avatarImgType"
           v-model="homeSetInfoForm.homepage_avatar"
+          :domain_url="domain_url"
           :saveData="{
-             path: 'webinars/img_url',
+             path: 'saas/users/homepage-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
+          :before-upload="beforeUploadHandler"
+          @delete="homeSetInfoForm.homepage_avatar = ''">
           <div slot="tip">
             <p>推荐尺寸：100*100px</p>
             <p>图片不超过100K</p>
@@ -34,15 +36,17 @@
         <upload
           :class="'upload__bg__avatar ' + imgType"
           v-model="homeSetInfoForm.img_url"
+          :domain_url="domain_bg_url"
           :saveData="{
-             path: 'webinars/img_url',
-             type: 'image',
+           path: 'saas/users/homepage-imgs',
+           type: 'image',
           }"
           :on-success="handleUploadSuccessBg"
           :on-progress="uploadProcessBg"
           :on-error="uploadErrorBg"
           :on-preview="uploadPreviewBg"
-          :before-upload="beforeUploadHandlerBg">
+          :before-upload="beforeUploadHandlerBg"
+          @delete="homeSetInfoForm.img_url = ''">
           <div slot="tip">
             <p>推荐尺寸：100*100px,图片比例 16:9</p>
             <p>图片不超过2MB</p>
@@ -127,16 +131,20 @@ export default {
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入主页标题', trigger: 'blur' }
         ]
-      }
+      },
+      domain_url: '',
+      domain_bg_url: ''
     };
   },
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
       // this.homeSetInfoForm.homepage_avatar = URL.createObjectURL(file.raw);
-      if (res.data.file_url) {
-        // 文件上传成功，保存主页头像信息
-        this.homeSetInfoForm.homepage_avatar = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.homeSetInfoForm.homepage_avatar = file_url;
+        this.domain_url = domain_url;
       }
     },
     beforeUploadHandler(file){
@@ -180,9 +188,11 @@ export default {
       console.log(res, file);
       // this.homeSetInfoForm.img_url = URL.createObjectURL(file.raw);
       console.log(res, file);
-      if (res.data.file_url) {
-        // 文件上传成功，保存主页背景信息
-        this.homeSetInfoForm.img_url = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.homeSetInfoForm.img_url = file_url;
+        this.domain_bg_url = domain_url;
       }
     },
     beforeUploadHandlerBg(file){
@@ -271,11 +281,13 @@ export default {
         console.log(res);
         if (res && res.code === 200) {
           let { homepage_info } = res.data;
-          homepage_info.homepage_avatar = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
-          homepage_info.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
-          console.log(homepage_info.imgShowUrl );
+          // homepage_info.homepage_avatar = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
+          // homepage_info.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
+          // console.log(homepage_info.imgShowUrl );
           this.homeSetInfoForm = homepage_info;
-        } else {
+          this.domain_url = homepage_info.homepage_avatar;
+          this.domain_bg_url = homepage_info.img_url;
+          console.log(this.domain_url, this.domain_bg_url, '主页头像、主页背景');
         }
       }).catch(err=>{
         console.log(err);

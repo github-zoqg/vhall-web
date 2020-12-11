@@ -47,7 +47,7 @@
               class="upload__sign heightMore"
               v-model="signSetForm.logo_url"
               :saveData="{
-                 path: 'webinars/sign_set_url',
+                 path: 'saas/interacts/skin-imgs',
                  type: 'image',
               }"
               :on-success="handleUploadSuccess"
