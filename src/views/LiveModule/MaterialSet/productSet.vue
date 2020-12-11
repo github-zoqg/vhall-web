@@ -109,6 +109,7 @@ export default {
           goods_id: option.goods_id
         }).then(res => {
           this.$message.success("上架设置成功！");
+          this.getTableList();
           console.log(res);
         }).catch(err => {
           this.$message.error("上架设置失败！");
@@ -121,6 +122,7 @@ export default {
           goods_id: option.goods_id
         }).then(res => {
           this.$message.success("下架设置成功！");
+          this.getTableList();
           console.log(res);
         }).catch(err => {
           this.$message.error("下架设置失败！");
@@ -148,6 +150,10 @@ export default {
       };
       this.$fetch('goodsGet', obj).then(res => {
         this.tableData = res.data.goods_list;
+        this.tableData.map(item => {
+          item.watch = Boolean(!item.status);
+          item.img = item.img_url;
+        });
         this.total = res.data.total;
         if (params === 'search' && !res.data.total) {
           this.nullText = 'search';

@@ -3,8 +3,8 @@
     <div class="title-data">
       <span>数据报告</span>
     </div>
-    <title-data :isStatus="status"></title-data>
-    <base-data :isStatus="status"></base-data>
+    <title-data :liveDetailInfo="liveDetailInfo"></title-data>
+    <base-data :isStatus="liveDetailInfo.webinar_state"></base-data>
   </div>
 </template>
 <script>
@@ -17,8 +17,22 @@ export default {
   },
   data() {
     return {
-      status: 1
+      liveDetailInfo: {}
     };
+  },
+  created() {
+    this.getLiveDetail();
+  },
+  methods: {
+    //获取直播详情
+    getLiveDetail() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        this.liveDetailInfo = res.data;
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      });
+    }
   },
 };
 </script>

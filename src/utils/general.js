@@ -89,14 +89,21 @@ export function formateDate(timer) {
     '-' +
     mat(m) +
     '-' +
-    mat(d) +
-    ' ' +
-    mat(h) +
-    ':' +
-    mat(mm) +
-    ':' +
-    mat(s)
+    mat(d) + ' ' + '00:00:00'
   );
+  // return (
+  //   y +
+  //   '-' +
+  //   mat(m) +
+  //   '-' +
+  //   mat(d) +
+  //   ' ' +
+  //   mat(h) +
+  //   ':' +
+  //   mat(mm) +
+  //   ':' +
+  //   mat(s)
+  // );
 }
 
 export function getRangeDays(value) {

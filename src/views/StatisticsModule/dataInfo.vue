@@ -107,7 +107,6 @@ export default {
         item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
       })
     }
-
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -127,14 +126,16 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
+      if (paramsObj.start_time) {
+        paramsObj.start_time = paramsObj.start_time.substring(0, 10);
+      }
       let obj = Object.assign({}, paramsObj);
-      console.log(formParams);
       this.loading = true;
       this.getAllCenterData(obj);
     },
     // 获取总数据
     getAllCenterData(params) {
-      this.$fetch('getDataCenterInfo', params).then(res =>{
+      this.$fetch('getDataCenterInfo', this.$params(params)).then(res =>{
         this.allDataList = res.data;
         console.log(this.allDataList);
         this.mainKeyData = this.allDataList.key_data;

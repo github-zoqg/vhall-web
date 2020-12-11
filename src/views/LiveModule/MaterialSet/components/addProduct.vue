@@ -5,7 +5,7 @@
         <el-form-item label="商品名称" prop="name">
           <el-input v-model="form.name" maxlength="30" show-word-limit placeholder="请输入商品名称"></el-input>
         </el-form-item>
-        <el-form-item label="商品图片" prop="imgIdArr">
+        <el-form-item label="商品图片" prop="img_id">
           <div class="imgList">
             <div class="img-item" v-for="(item, index) in fileList" :key="index">
               <span class="cover-item" v-if="item.cover">封面</span>
@@ -13,11 +13,13 @@
               <upload
                 class="giftUpload"
                 v-model="item.url"
+                :domain_url="item.domain_url"
                 :on-success="productLoadSuccess"
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
                 :restPic="true"
+                @resetImage="resetPic(item)"
                 :coverPic="!item.cover"
                 @delete="formDelete(item)"
                 @coverPage="coverPage(item)"
@@ -37,26 +39,6 @@
                 <p slot="tip">上传图片</p>
               </upload>
             </div>
-              <!-- <div class="img-item" v-for="(item, index) in fileList" :key="index">
-                <div class="hover-item">
-                  <p><i class="el-icon-collection"></i><br/>封面</p>
-                  <p><i class="el-icon-delete"></i><br/>删除</p>
-                </div>
-                <span class="cover-item" v-if="item.cover">封面</span>
-                <img :src="item.url" alt="">
-              </div>
-              <div class="img-item" v-if="fileList.length<4">
-                <upload
-                  class="giftUpload"
-                  :on-success="productLoadSuccess"
-                  :on-progress="uploadProcess"
-                  :on-error="uploadError"
-                  :on-preview="uploadPreview"
-                  :restPic="true"
-                  >
-                  <p slot="tip">上传图片</p>
-                </upload>
-              </div> -->
           </div>
           <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，尺寸：600*600</p>
         </el-form-item>
@@ -64,10 +46,10 @@
           <el-input type="textarea" v-model="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></el-input>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <el-input v-model="form.price" placeholder="请输入商品原价0.00元"><i slot="suffix">元</i></el-input>
+          <el-input v-model="form.price" placeholder="请输入商品原价0.00元" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="优惠价">
-         <el-input v-model="form.discount_price" placeholder="请输入商品优惠价0.00元"><i slot="suffix">元</i></el-input>
+         <el-input v-model="form.discount_price" placeholder="请输入商品优惠价0.00元" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <el-input v-model="form.url" placeholder="请输入商品链接"></el-input>
@@ -99,10 +81,13 @@ export default {
     };
     return {
       editGoodInfo: {},
+      isReset: false,
+      resetImgItem: {},
+      defaultCover: 0, //设置默认封面的id
       isEdit: !!this.$route.query.goodId,
       imgIdMap: new Map(),
       form: {
-        imgIdArr: [],
+        img_id: [],
         imageUrl: '',
         url: ''
       },
@@ -111,7 +96,7 @@ export default {
         name: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
         ],
-        imgIdArr: [
+        img_id: [
           { required: true, validator: imgValidate, trigger: 'change' }
         ],
         description: [
@@ -146,32 +131,35 @@ export default {
           url: res.data.goods_url
         };
         this.fileList = res.data.img_list.map(item => {
+          this.form.img_id.push(item.img_id);
           return {
+            domain_url: item.img_url,
+            cover: item.is_cover ? true : false,
             url: item.img_url,
-            cover: item.is_cover === '1'
+            img_id: item.img_id
           };
         });
+        console.log(this.fileList, this.form.img_id, '0000000000000000');
         // 图片 ID 处理
-        res.data.img_list.forEach(item => {
-          this.form.imgIdArr.push(item.img_id);
-          this.imgIdMap.set(item.img_url, item.img_id);
-        });
+        // res.data.img_list.forEach(item => {
+        //   this.form.img_id.push(item.img_id);
+        //   // this.imgIdMap.set(item.img_url, item.img_id);
+        // });
       }).catch(err => {
         console.log(err);
       });
     },
+    resetPic(item) {
+      console.log(item, '11111111111');
+      this.resetImgItem = item;
+      this.isReset = true;
+    },
     productLoadSuccess(res, file){
       console.log(res, file);
-      this.form.imageUrl = res.data.file_url;
-      this.fileList.push({
-        url: this.form.imageUrl,
-        cover: false
-      });
-      if (!this.fileList.some(item => item.cover)) {
-        this.fileList[0].cover = true;
-      }
+      let imageUrl = res.data.file_url;
+      let domain_url = res.data.domain_url;
       // 生成图片 ID 添加到 imgIdArr 中
-      this.generateImgId(this.form.imageUrl);
+      this.generateImgId(imageUrl, domain_url);
       console.log(this.fileList);
     },
     beforeUploadHandler(file){
@@ -214,32 +202,33 @@ export default {
     // 删除
     formDelete(opt) {
       // 从 id 数组中删除
-      console.log(this.imgIdMap);
-      const id = this.imgIdMap.get(opt.url);
-      this.delImg(id);
-      this.form.imgIdArr.map((item, index) => {
-        if (item === id) {
-          this.form.imgIdArr.splice(index, 1);
-        }
-      });
-      this.imgIdMap.delete(opt.url);
+      console.log(opt, '111111111111111');
+      // const id = this.imgIdMap.get(opt.url);
+      // // this.delImg(id);
+      // this.form.imgIdArr.map((item, index) => {
+      //   if (item === id) {
+      //     this.form.imgIdArr.splice(index, 1);
+      //   }
+      // });
+      // this.imgIdMap.delete(opt.url);
 
       this.fileList.map((item, index) => {
-        if (item.url === opt.url) {
+        if (item.img_id === opt.img_id) {
           this.fileList.splice(index, 1);
+          this.form.img_id.splice(index, 1);
         }
       });
       let length = this.fileList.length;
       if (length > 0 && opt.cover) {
         this.fileList[length-1].cover = true;
-        this.coverPage(this.fileList[length-1]);
       }
+      console.log(this.fileList, '333333333333333');
     },
     // 删除商品图片
     delImg(id) {
       this.$fetch('goodsImgDel', {
         webinar_id: this.$route.params.str,
-        goods_id: this.$route.query.goodId,
+        goods_id: this.$route.query.goodId || '',
         img_id: id
       }).then(res => {
         console.log(this.fileList);
@@ -249,29 +238,60 @@ export default {
       });
     },
     coverPage(item) {
-      const id = this.imgIdMap.get(item.url);
-      this.$fetch('goodsSetCover', {
-        webinar_id: this.$route.params.str,
-        goods_id: this.$route.query.goodId,
-        img_id: id
-      }).then(res => {
-        this.fileList.map(item => item.cover = false);
-        item.cover = true;
-        console.log(this.fileList);
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      this.fileList.map(item => item.cover = false);
+      item.cover = true;
+      // const id = this.imgIdMap.get(item.url);
+      // this.$fetch('goodsSetCover', {
+      //   webinar_id: this.$route.params.str,
+      //   goods_id: this.$route.query.goodId,
+      //   img_id: id
+      // }).then(res => {
+      //   this.fileList.map(item => item.cover = false);
+      //   item.cover = true;
+      //   console.log(this.fileList);
+      //   console.log(res);
+      // }).catch(err => {
+      //   console.log(err);
+      // });
     },
     // 生成图片id
-    generateImgId(image_url) {
+    generateImgId(image_url, domain_url) {
       this.$fetch('goodsImgIdCreate', {
         webinar_id: this.$route.params.str,
-        goods_id: this.$route.query.goodId,
+        // goods_id: this.$route.query.goodId,
         image_url
       }).then(res => {
-        this.form.imgIdArr.push(res.data.img_id);
-        this.imgIdMap.set(image_url, res.data.img_id);
+       if(res.code == 200 && res.data) {
+        if (this.isReset) {
+          // 如果是重置图片
+          this.fileList.map((item, index) => {
+            if (item.img_id === this.resetImgItem.img_id) {
+              this.form.img_id.splice(index, 1, res.data.img_id);
+              return {
+                url: image_url,
+                domain_url: domain_url,
+                cover: this.resetImgItem.cover,
+                img_id: res.data.img_id
+              }
+            }
+          });
+        } else {
+          this.fileList.push({
+            url: image_url,
+            domain_url: domain_url,
+            cover: false,
+            img_id: res.data.img_id
+          });
+          this.form.img_id.push(res.data.img_id);
+        }
+        if (!this.fileList.some(item => item.cover)) {
+          this.fileList[0].cover = true;
+        }
+        this.isReset = false;
+        this.resetImgItem = {};
+        console.log(this.fileList , '4444444444444444444');
+       }
+        // this.imgIdMap.set(image_url, res.data.img_id);
       }).catch(err => {
         this.$message.error(`图片ID生成失败！`);
         console.log(err);
@@ -280,15 +300,19 @@ export default {
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.form.discount_price > this.form.discount_price) {
-            this.$message.warning('折扣价不等于原价');
+          if (parseFloat(this.form.discount_price) > parseFloat(this.form.price)) {
+            this.$message.error('优惠价不能大于等于商品原价');
             return;
           }
+          this.defaultCover = this.fileList.filter(item => item.cover).map(item => item.img_id).join(',');
+          // this.form.imgIdArr = this.fileList.map(item => item.img_id);
           const obj = {
             ...this.form,
-            img_id: this.form.imgIdArr,
-            webinar_id: this.$route.params.str
+            // img_id: this.form.imgIdArr,
+            webinar_id: this.$route.params.str,
+            cover_id: this.defaultCover
           };
+          console.log(obj, this.fileList,  '222222222222222222');
           let url;
           if (this.$route.query.goodId) {
             obj.goods_id = this.$route.query.goodId;
@@ -297,10 +321,14 @@ export default {
             url = 'goodsCreate';
           }
           this.$fetch(url, this.$params(obj)).then(res => {
-            this.$message.success(this.$route.query.goodId ? '修改成功' : '创建成功');
-            this.$router.push({
-              path: `/live/productSet/${this.$route.params.str}`
-            });
+            if (res.code == 200 && res.data) {
+              this.$message.success(this.$route.query.goodId ? '修改成功' : '创建成功');
+              this.$router.push({
+                path: `/live/productSet/${this.$route.params.str}`
+              });
+            } else {
+               this.$message.error('保存失败！');
+            }
           }).catch(err => {
             this.$message.error('保存失败！');
           });

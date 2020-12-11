@@ -104,7 +104,7 @@ export default {
         return;
       }
       this.isActive = opt.active;
-      this.searchParams.startTime = getRangeDays(opt.active);
+      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(opt.active);
       this.$emit("onSearchFun");
     },
     changeDate(){

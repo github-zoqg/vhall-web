@@ -155,9 +155,11 @@ export default {
       this.$emit('coverPage', '');
     },
     refresh(event){
+      this.$emit('resetImage');
       if(typeof this.restPic == "function"){
         this.restPic();
         event.stopPropagation();
+        // this.$emit('resetImage');
       }
     }
   },
