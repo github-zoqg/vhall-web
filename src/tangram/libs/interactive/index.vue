@@ -656,15 +656,19 @@ export default {
           return this.$fetch('liveStart', {
             webinar_id: this.webinadId,
             start_type: 1
-          }).then(() => {
-            if (this.role == VhallRTC.MASTER) {
-              setTimeout(() => {
-                this.startBroadCast({
-                  roomId: this.roomId // 直播房间ID，必填
-                });
-              }, 600);
+          }).then((res) => {
+            if(res.code == 200){
+              if (this.role == VhallRTC.MASTER) {
+                setTimeout(() => {
+                  this.startBroadCast({
+                    roomId: this.roomId // 直播房间ID，必填
+                  });
+                }, 600);
+              }
+              EventBus.$emit('startLive');
+            }else{
+              this.$message.warning(res.msg)
             }
-            EventBus.$emit('startLive');
           });
         } else {
           if (this.role == VhallRTC.MASTER) {
