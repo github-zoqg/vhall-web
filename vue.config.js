@@ -2,7 +2,7 @@ const path = require('path');
 // function resolve (dir) {
 // return path.join(__dirname, dir)
 // // }
-let publicPath = './';
+let publicPath = '/';
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/';
@@ -14,14 +14,14 @@ switch (process.env.VUE_APP_NODE_ENV) {
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/';
     break;
   case 'development':
-    publicPath = './';
+    publicPath = '/';
   // eslint-disable-next-line no-fallthrough
   default:
-    publicPath = './';
+    publicPath = '/';
 }
 console.log( publicPath, process.env.VUE_APP_NODE_ENV);
 module.exports = {
-  publicPath: publicPath,
+  publicPath: publicPath, //history模式下publicPath: "/",hash模式下publicPath: "./"
   assetsDir: './static', // 设置放置打包生成的静态资源 (js、css、img、fonts) 的目录。
   lintOnSave: false,
   devServer: {

@@ -13,9 +13,7 @@ modulesFiles.keys().map((modulePath) => {
   routes.push(...modulesFiles(modulePath).default);
 });
 const createRouter = () => new Router({
-  // mode: 'history',
-
-  // base: '/v3/',
+  mode: 'history',
   routes
 });
 const router = createRouter();
