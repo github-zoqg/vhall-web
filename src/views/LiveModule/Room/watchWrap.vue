@@ -1362,7 +1362,9 @@ export default {
           id: userInfo.user_id ? userInfo.user_id : '',
           nick_name: data.join_info.nickname,
         } : [],
-        open_question: this.interactiveInfo.question_status,
+        // open_question: this.interactiveInfo.question_status,
+        open_question: 0, // TODO:
+
         report_extra: data.report_data.report_extra,
         vss_token: data.interact.interact_token,
         room_id: data.interact.room_id,
@@ -1391,8 +1393,8 @@ export default {
           web: data.urls.web_url,
           webinar: '//' + document.domain
         },
-        hd_definition: this.interactiveInfo.hd_definition,
-        push_definition: this.interactiveInfo.push_definition,
+        hd_definition: this.interactiveInfo ? this.interactiveInfo.hd_definition : '',
+        push_definition: this.interactiveInfo ? this.interactiveInfo.push_definition : '',
         host: {
           id: data.webinar.userinfo.user_id,
           nick_name: data.webinar.userinfo.nickname,

@@ -63,6 +63,7 @@
             :isAudio="roomInfo.layout == 2"
             :voiceBack="voiceBack"
             :vodControllerShow="true"
+            :startTime="bizInfo.webinar"
             ref="vhallPlayer"
             @BackEnd="WarchBackEnd"
             :reportExtra='bizInfo.report_extra'

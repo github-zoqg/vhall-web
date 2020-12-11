@@ -177,6 +177,9 @@ export default {
         return true;
       }
     },
+    startTime: {
+      type: String
+    },
     controller: {
       type: String
     },
@@ -634,7 +637,14 @@ export default {
         autoplay: false,
         forceMSE: false,
         otherOption: {
-          report_extra: this.reportExtra
+          report_extra: this.reportExtra,
+          // TODO:
+          os: 10,
+          device_id:"",
+          type:7,
+          user_id: this.accountId,
+          webinar_id: this.$route.params.il_id,
+          t_start: this.startTime
         }
       };
       if (this.isLive && this.liveOption && this.type == 'live') {
