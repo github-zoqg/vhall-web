@@ -28,6 +28,7 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
+        :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
         :restPic="resetBanner"
@@ -247,7 +248,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = newVal.cover;
+        this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover}`;
       },
       deep: true,
       immediate: true
@@ -261,7 +262,7 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png',
+      imageUrl: `http:${Env.staticLinkVo.uploadBaseUrl}sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`,
       renderQuestion: []
     };
   },
@@ -475,7 +476,7 @@ export default {
         webinar_id: this.webinar_id,
         content: nodes[0].value,
         color_text: '《隐私声明2》',
-        url: 'http://localhost:8080/#/live/signup/337792152?id=337792152'
+        url: ''
       }).then(res => {
         nodes[3].privacy_id = res.data.privacy_id;
         nodes[4].privacy_id = res.data.privacy_id;

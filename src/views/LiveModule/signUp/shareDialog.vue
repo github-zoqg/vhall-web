@@ -53,9 +53,7 @@
 
 <script>
 export default {
-  created() {
-    console.log(this);
-  },
+  created() {},
   props: {
     baseInfo: {
       type: Object,
@@ -71,7 +69,6 @@ export default {
   watch:{
     baseInfo: {
       handler(newVal){
-        console.log(this.baseInfo);
         this.shareSwtich = !!this.baseInfo.open_link;
       },
       deep: true,

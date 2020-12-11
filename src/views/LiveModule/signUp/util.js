@@ -106,7 +106,6 @@ let filedJson = {
 };
 export function getfiledJson({name, type}){
   let json = '';
-  console.log(11, name, type);
   if(name){
     switch (name) {
       case 'name':
@@ -319,7 +318,6 @@ export function getfiledJson({name, type}){
         break;
     }
     json.name = name;
-    console.log(1123123, json);
   }else{
     json = JSON.parse(JSON.stringify(filedJson[type]));
     json.labelEditable = true;
