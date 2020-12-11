@@ -260,7 +260,7 @@
               <p v-if="isQAEnabled">
                 该功能已开启，是否关闭？ 当前已收集问题：{{ qaCount }}个
               </p>
-              <div v-if="isQAEnabled" @click="enableQA">关闭问答</div>
+              <div v-if="isQAEnabled" @click="closeQA">关闭问答</div>
             </div>
             <div v-else class="vhall-qa-switch">
               <p v-if="!isQAEnabled">
@@ -270,7 +270,7 @@
               <p v-if="isQAEnabled">
                 问答关闭后，观众端将不能提问。 当前已收集问题：{{ qaCount }}个
               </p>
-              <div v-if="isQAEnabled" @click="enableQA">关闭问答</div>
+              <div v-if="isQAEnabled" @click="closeQA">关闭问答</div>
             </div>
           </popup>
           <!-- 发红包 -->
@@ -2850,7 +2850,7 @@ export default {
      */
     enableQA (flag) {
       const type = this.isQAEnabled ? '0' : '1';
-      this.$vhallFetch('enableQA', {
+      this.$fetch('v3GetQa', {
         params_verify_token: this.params_verify_token,
         webinar_id: this.ilId,
         join_id: this.saas_join_id,
@@ -2858,18 +2858,39 @@ export default {
       })
         .then(res => {
           console.log(res);
-          const tip = type == '0' ? '关闭问答成功！' : '开启问答成功！';
           if (this.isQAEnabled) {
             this.changeTab(0);
           }
           if (flag != 1) {
-            this.$message.success(tip);
+            this.$message.success('开启问答成功！');
           }
           this.closeQAPopup();
           if (this.assistantType) {
             this.isQAEnabled = !this.isQAEnabled;
           }
         });
+    },
+    closeQA(flag){
+      this.$fetch('v3CloseQa', {
+        room_id: ''
+      }).then(res=>{
+        console.warn(res);
+        if(res.code == 200){
+
+          if (this.isQAEnabled) {
+            this.changeTab(0);
+          }
+          if (flag != 1) {
+            this.$message.success('关闭问答成功！');
+          }
+          this.closeQAPopup();
+          if (this.assistantType) {
+            this.isQAEnabled = !this.isQAEnabled;
+          }
+        }
+      }).catch(err=>{
+        console.warn(err);
+      })
     },
     showDoc () {
       if (this.doc_permission != this.roomInfo.join_info.third_party_user_id) {
