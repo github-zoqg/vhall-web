@@ -200,11 +200,14 @@ const apis = {
   uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 
   // 回放模块
-  playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang
-  playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
-  playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
+  playBackList: ['/99/v3/webinars/record/get-list', 'POST', 'mock'], // 回放列表 xiaodong.ding
+  playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding
+  playBackDelete: ['/v3/webianrs/record/delete', 'POST'], // 删除回放 jian.chang
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
   playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
+  playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
+  playBackSetDefault: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
+  getChapters: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √

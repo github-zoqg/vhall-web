@@ -5,14 +5,15 @@
       <el-button size="medium" type="primary" round @click="toTailoring">创建回放</el-button>
       <el-button size="medium" plain round>录制</el-button>
       <el-button size="medium" round @click="settingHandler">回放设置</el-button>
-      <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(';'))">批量删除</el-button>
+      <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
       <el-input
+        @keyup.enter.native="getList"
         placeholder="请输入内容标题"
         v-model="keyWords">
         <i
           class="el-icon-search el-input__icon"
           slot="suffix"
-          @click="searchHandler">
+          @click="getList">
         </i>
       </el-input>
     </div>
@@ -38,7 +39,7 @@
                     <img :src="defaultImg" alt="">
                   </div>
                 </el-image>
-                <span class="defaultSign"><i :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                <span class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
               </div>
               <div class="info">
                 <p class="name ellipsis"><span class="text">{{ scope.row.name }}</span></p>
@@ -49,22 +50,31 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="来源"
-          width="80">
-           <template slot-scope="scope">{{scope.row.source | soruceTotext}}</template>
+          width="180">
+          <template slot-scope="{ column, $index }" slot="header">
+            <el-select v-model="recordType" @change="typeChange(column, $index)">
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+          <template slot-scope="scope">{{scope.row.source | soruceTotext}}</template>
         </el-table-column>
 
         <el-table-column
           label="时长"
-          width="80"
+          width="180"
           show-overflow-tooltip>
-          <template slot-scope="scope">{{scope.row.duration | secondsFormmat}}</template>
+          <template slot-scope="scope">{{scope.row.duration}}</template>
         </el-table-column>
 
         <el-table-column
           prop="stagingDate"
           label="暂存至"
-          width="120"
+          width="180"
           show-overflow-tooltip>
         </el-table-column>
 
@@ -76,7 +86,7 @@
             {{ scope.row.date }}
             <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
             <el-button type="text">下载</el-button>
-            <el-button type="text" @click="toChapter">章节</el-button>
+            <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
             <el-dropdown @command="handleCommand">
               <el-button type="text">更多</el-button>
               <el-dropdown-menu slot="dropdown">
@@ -92,13 +102,12 @@
     </div>
     <!-- 编辑弹窗 -->
     <el-dialog
-      title="编辑"
+      title="编辑内容标题"
       v-loading="editLoading"
       :visible.sync="editDialogVisible"
       :close-on-click-modal="false"
       width="480px">
-      <span>链接地址：</span>
-      <el-input placeholder="请输入标记文字" maxlength="30" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
+      <el-input placeholder="请输入标题" maxlength="30" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
         <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
@@ -123,7 +132,15 @@ export default {
       titleEdit: '',
       editRecord: {},
       editLoading: false,
-      selectDatas: []
+      selectDatas: [],
+      recordType: '-1',
+      typeOptions: [
+        { label: '来源', value: '-1' },
+        { label: '回放', value: '0' },
+        { label: '录制', value: '1' },
+        { label: '上传', value: '2' },
+        { label: '打点录制', value: '3' }
+      ]
     };
   },
   computed: {
@@ -149,11 +166,29 @@ export default {
     this.tipMsg.close();
   },
   methods: {
+    typeChange(column, index) {
+      this.getList()
+    },
+    setDefault(row) {
+      const confirmTitle = row.type === 6 ? '取消默认回放后，回放将不能观看' : '设置为默认回放后，将无法进行预约'
+      this.$confirm(confirmTitle, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$fetch('playBackSetDefault', {
+          webinar_id: this.webinar_id,
+          record_id: row.id,
+          type: row.type === 6 ? 0 :1
+        }).then(res => {
+          console.log(res)
+          // TODO: 刷新列表
+          this.getList()
+        })
+      })
+    },
     handleSelectionChange(val){
       this.selectDatas = val;
-    },
-    searchHandler(){
-
     },
     handleCommand(param){
       console.log(param);
@@ -169,11 +204,11 @@ export default {
     getList(){
       let param = {
         webinar_id: this.webinar_id,
-        user_id: '1333',
+        user_id: window.sessionStorage.getItem('userId'),
         pos: this.pos,
         limit: this.pageSize,
-        source: "-1",
-        order_type: '1'
+        source: this.recordType,
+        title: this.keyWords
       };
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
@@ -237,8 +272,8 @@ export default {
     toTailoring(){
       this.$router.push({path: `/videoTailoring`});
     },
-    toChapter(){
-      this.$router.push({path: `/live/chapter/11`});
+    toChapter(recordId){
+      this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId}});
     }
   },
   filters: {
@@ -330,6 +365,7 @@ export default {
           border: 1px solid #FFFFFF;
           margin-right: 4px;
           margin-bottom: -2px;
+          cursor: pointer;
           &.active{
             border: 3px solid #FB3A32;
             background: #fff;
