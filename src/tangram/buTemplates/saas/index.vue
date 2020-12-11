@@ -2825,19 +2825,20 @@ export default {
     },
     // 打开问答
     openQAPopup () {
-      this.isQAEnabled &&
-        this.$vhallFetch('getQACount', {
-          params_verify_token: this.params_verify_token,
-          webinar_id: this.ilId,
-          join_id: this.saas_join_id
-        })
-          .then(res => {
-            this.qaCount = res.data;
-          })
-          .catch(() => {
-            this.$message('获取问题数量失败!');
-            this.qaCount = 0;
-          });
+      // this.isQAEnabled
+      //  &&
+      //   this.$vhallFetch('getQACount', {
+      //     params_verify_token: this.params_verify_token,
+      //     webinar_id: this.ilId,
+      //     join_id: this.saas_join_id
+      //   })
+      //     .then(res => {
+      //       this.qaCount = res.data;
+      //     })
+      //     .catch(() => {
+      //       this.$message('获取问题数量失败!');
+      //       this.qaCount = 0;
+      //     });
 
       this.qaVisible = true;
     },
@@ -2849,14 +2850,9 @@ export default {
      * @param {Number} flag 值为1的时候不弹出提示
      */
     enableQA (flag) {
-      const type = this.isQAEnabled ? '0' : '1';
       this.$fetch('v3GetQa', {
-        params_verify_token: this.params_verify_token,
-        webinar_id: this.ilId,
-        join_id: this.saas_join_id,
-        type
-      })
-        .then(res => {
+        room_id: this.roomId
+      }).then(res => {
           console.log(res);
           if (this.isQAEnabled) {
             this.changeTab(0);
@@ -2872,11 +2868,10 @@ export default {
     },
     closeQA(flag){
       this.$fetch('v3CloseQa', {
-        room_id: ''
+        room_id: this.roomId
       }).then(res=>{
-        console.warn(res);
+        console.warn('v3CloseQa',res);
         if(res.code == 200){
-
           if (this.isQAEnabled) {
             this.changeTab(0);
           }
