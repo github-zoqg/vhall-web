@@ -199,11 +199,11 @@ export default {
     );
     // TODO:
     this.$fetch('getHistoryQaMsg', {
-      webinar_id: this.webinarId,
-      join_id: this.joinId
+      room_id: this.roomId
     })
-      .then((res = {data: []}) => {
-        const list = res.data.map((h) => {
+      .then((res = {data: {}}) => {
+        console.warn(res, '历时问答记录')
+        const list = res.data.list.map((h) => {
           return {...h, content: this.emojiToText(h.content)};
         });
         this.msgList = list;

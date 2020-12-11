@@ -44,6 +44,7 @@
         :status="status"
         :isInteract="isInteract"
         :splited="true"
+        :webinarId="ilId"
         ref="interactive"
       ></Interactive>
     </streams>
