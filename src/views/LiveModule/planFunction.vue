@@ -99,8 +99,8 @@ export default {
           {
             type: 'ui.hide_share',
             key_name: '隐藏分享',
-            openShow: '已开启，观看端分享按钮已被隐藏',
-            closeShow: '开启后，观看端分享按钮将被隐藏',
+            openShow: '已开启，观看端的分享已被隐藏（PC端分享按钮和手机端的微信分享）',
+            closeShow: '开启后，观看端的分享将被隐藏（PC端分享按钮和手机端的微信分享）',
             value: 0
           }
         ],

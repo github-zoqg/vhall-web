@@ -828,8 +828,9 @@ export default {
       } else {
         this.$alert('有组件配置错误，请更正后再尝试保存', '提示', {
           dangerouslyUseHTMLString: true,
-          center: true,
           customClass: 'zdy-alert-box',
+          type: 'warning',
+          center: true,
           confirmButtonText: '我知道了'
         });
         return;

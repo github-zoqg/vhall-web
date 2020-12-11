@@ -21,14 +21,23 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="视频封面">
-          <el-upload :disabled='!warmFlag' class="avatar-uploader" action="/mock/user/picupload"
-            :show-file-list="false" :limit='1' :on-success="handleuploadSuccess" :before-upload="beforeUpload">
-            <img v-if="warmForm.imageUrl" :src="warmForm.imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <div class="el-upload__text">
-              建议尺寸1600*900，大小不超过2MB<br>支持jpg、png、gif格式
-            </div>
-          </el-upload>
+          <upload
+            class="upload__avatar"
+            v-model="warmForm.imageUrl"
+            :domain_url="domain_url"
+            :saveData="{
+              path: 'users/logo-imgs',
+              type: 'image',
+            }"
+            :disabled='!warmFlag'
+            :on-success="handleUploadSuccess"
+            :on-progress="uploadProcess"
+            :on-error="uploadError"
+            :on-preview="uploadPreview"
+            :before-upload="beforeUploadHandler"
+            @delete="warmForm.imageUrl = ''">
+            <p slot="tip">最佳头图尺寸：1600*900px <br/>小于2MB(支持jpg、png、gif)</p>
+          </upload>
         </el-form-item>
         <el-form-item>
           <el-button :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')">提交</el-button>
@@ -39,9 +48,12 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
+import Upload from '@/components/Upload/main';
+import Env from "@/api/env";
 export default {
   components: {
-    PageTitle
+    PageTitle,
+    Upload
   },
   data() {
     return {
@@ -51,10 +63,43 @@ export default {
         videoUrl: '',
         resource:'单次播放',
         imageUrl: ''
-      }
+      },
+      domain_url: ''
     };
   },
   methods: {
+    handleUploadSuccess(res, file) {
+      console.log(res, file);
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.warmForm.imageUrl = file_url;
+        this.domain_url = domain_url;
+      }
+    },
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message.error(`标志上传失败`);
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    },
     submitForm(){
       if(this.warmForm.videoUrl == ''){
         this.$message.warning('请上传暖场视频');
@@ -68,36 +113,15 @@ export default {
           console.log('点击的是确定');
         }).catch(() => {});
       }
-    },
-    beforeUpload(file){
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isType) {
-        this.$message.error(`文件格式错误，请重新上传/您上传的文件过大，请重新上传`);
-      }
-      if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
-      }
-      return isType && isLt2M;
-    },
-    uploadProcess(event, file, fileList){
-      console.log('uploadProcess', event, file, fileList);
-    },
-    uploadError(err, file, fileList){
-      console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
-    },
-    uploadPreview(file){
-      console.log('uploadPreview', file);
-    },
-    handleuploadSuccess(res, file){
-      this.warmForm.imageUrl = URL.createObjectURL(file.raw);
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
+.content {
+  .layout--right--main();
+  .padding48-40();
+}
 .wramUp-wrap::v-deep{
   .avatar-uploader .el-upload {
      border: 1px dashed #d9d9d9;

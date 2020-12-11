@@ -4,7 +4,7 @@
       <p class="subject">{{index}}</p>
       <div class="subjectOuter">
         <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
-          <icon class="icon" icon-class="saasicon_shangchuanwendang-copy"></icon>
+          <icon class="icon" :icon-class="opera.icon"></icon>
           <div class="desc">
             <p class="mainText">{{opera.title}}</p>
             <p class="subText">{{opera.subText}}</p>
@@ -60,6 +60,12 @@ export default {
   background-clip: content-box;
   cursor: pointer;
   border: 2px solid transparent;
+  &:nth-child(3n) {
+    margin-right: 0;
+  }
+  &:nth-child(4n) {
+    margin-right: 18px;
+  }
   &:hover{
     border: 2px solid #FB3A32;
   }
@@ -86,6 +92,16 @@ export default {
     .subText{
       font-size: 14px;
       color: #666666;
+    }
+  }
+}
+@media screen and (min-width: 1920px) {
+  .sunjectInner {
+    &:nth-child(3n) {
+      margin-right: 18px;
+    }
+    &:nth-child(4n) {
+      margin-right: 0;
     }
   }
 }

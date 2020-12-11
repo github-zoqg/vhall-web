@@ -1,7 +1,7 @@
 <template>
   <div class="editBox">
     <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="120px">
+    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="100px">
       <el-form-item label="专题标题:" prop="title">
         <el-input v-model="formData.title" limit='100'></el-input>
       </el-form-item>
@@ -10,7 +10,7 @@
           v-model="imageUrl"
           :domain_url="domain_url"
           :saveData="{
-             path: 'saas/webinars/subject-imgs',
+             path: 'webinars/subject-imgs',
              type: 'image',
           }"
           :on-success="handleUploadSuccess"
@@ -57,10 +57,10 @@
       <el-form-item label="专题目录:">
          <el-button size="small">添加</el-button>
       </el-form-item>
-      <p class="btnGroup">
+      <el-form-item label="">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" round>取消</el-button>
-      </p>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -101,7 +101,7 @@ export default {
       imageUrl: '',
       domain_url:'',
       content: '',
-      webinarIds: [],
+      webinarIds: ['856483543'],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
@@ -192,7 +192,7 @@ export default {
 <style lang="less" scoped>
   .el-form{
     background: #ffffff;
-    padding: 60px 80px;
+    padding: 48px 20px 50px 48px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -231,14 +231,14 @@ export default {
       padding: 10px 23px;
     }
   }
-  .editBox {
+ /* .editBox {
     padding: 0px 40px;
   }
   @media screen and (min-width: 1920px) {
     .editBox {
       padding: 0px 140px;
     }
-  }
+  }*/
 </style>
 <style lang="css">
   html{

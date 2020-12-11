@@ -283,7 +283,9 @@ export default {
       streamLength: 0 // 房间内音视频流数量
     };
   },
-  created () {},
+  created () {
+    console.log(888888, this.$route.params.id, this.$route.params)
+  },
 
   async mounted () {
     this.broadCastLayout = sessionStorage.getItem('layout') || 'CANVAS_LAYOUT_PATTERN_TILED_6_1T5D';
@@ -650,20 +652,25 @@ export default {
      */
 
     async startLive (status) {
+      console.warn('-----------------------------------', this.webinadId, this.$route)
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
-            webinar_id: this.webinadId,
+            webinar_id: this.$route.params.il_id, // TODO: 临时修改
             start_type: 1
-          }).then(() => {
-            if (this.role == VhallRTC.MASTER) {
-              setTimeout(() => {
-                this.startBroadCast({
-                  roomId: this.roomId // 直播房间ID，必填
-                });
-              }, 600);
+          }).then((res) => {
+            if(res.code == 200){
+              if (this.role == VhallRTC.MASTER) {
+                setTimeout(() => {
+                  this.startBroadCast({
+                    roomId: this.roomId // 直播房间ID，必填
+                  });
+                }, 600);
+              }
+              EventBus.$emit('startLive');
+            }else{
+              this.$message.warning(res.msg)
             }
-            EventBus.$emit('startLive');
           });
         } else {
           if (this.role == VhallRTC.MASTER) {
@@ -860,7 +867,7 @@ export default {
      * @param { String } accountId
      * @return { Promise }
      * TODO:
-     * 
+     *
      */
     speakOff (accountId) {
       return this.$fetch('speakOff', {

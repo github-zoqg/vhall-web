@@ -71,10 +71,10 @@
                   <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
                     <i class="el-icon-more"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='/reportsData'>数据报告</el-dropdown-item>
-                      <el-dropdown-item command='/interactionData'>互动统计</el-dropdown-item>
-                      <el-dropdown-item command='/userData'>用户统计</el-dropdown-item>
-                      <el-dropdown-item command='/edit'>复制</el-dropdown-item>
+                      <el-dropdown-item command='/live/reportsData'>数据报告</el-dropdown-item>
+                      <el-dropdown-item command='/live/interactionData'>互动统计</el-dropdown-item>
+                      <el-dropdown-item command='/live/userData'>用户统计</el-dropdown-item>
+                      <el-dropdown-item command='/live/edit'>复制</el-dropdown-item>
                       <el-dropdown-item command='删除'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
@@ -161,6 +161,8 @@ export default {
             message: '已取消删除'
           });
         });
+      } else if (command === '/live/edit') {
+        this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: this.webinarInfo.webinar_state }});
       } else {
         this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {type: this.webinarInfo.webinar_state }});
       }
@@ -205,6 +207,9 @@ export default {
       if (!userPhone) {
         this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
           confirmButtonText: '立即绑定',
+          customClass: 'zdy-alert-box',
+          type: 'warning',
+          center: true,
           callback: action => {
             if (action === 'confirm') {
               this.$router.push({path:'/account/info'});

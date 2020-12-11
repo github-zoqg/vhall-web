@@ -323,7 +323,7 @@ const apis = {
   getFormEnableStatus: ['/v3/webinars/registration-form/get-form-enable-status', 'POST', 'mock'], // 获取活动报名表单开启状态
 
   // 活动基础信息
-  getWebinarSwitchList: ['/v3/webinars/webinar/get-webinar-switch-list', 'POST', 'mock'], // 数据统计直播详情包含场次列表 •••
+  getWebinarSwitchList: ['/v3/webinars/webinar/get-webinar-switch-list', 'POST'], // 数据统计直播详情包含场次列表
   getUserAllWebinar: ['/v3/webinars/webinar/get-user-all-webinar', 'POST', 'mock'], // 大数据依赖通过用户id获取账户下活动总数 •••
   batchGetWebinarInfo: ['/v3/webinars/webinar/batch-get-webinar-info', 'POST', 'mock'], // 批量查询活动基础信息接口 •••
   getWebinarListBigdata: ['/v3/webinars/webinar/get-webinar-list-bigdata', 'POST', 'mock'], // 大数据服务依赖活动列表 •••
@@ -389,7 +389,6 @@ const apis = {
   // 观看端
   likeTotal: ['/v3/interacts/like/get-room-like', 'POST'], // 房间内点赞总数
   queryAdsInfo: ['/v3/interacts/recommend-adv/watch-get-adv-list', 'GET'], // 获取广告信息 •••
-  queryRoomInterInfo: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间互动工具状态
   getSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 获取皮肤
   getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
   attention: ['/v3/users/attentions/create', 'POST'], // 关注
@@ -452,6 +451,13 @@ const apis = {
   v3InviteMic: ['/v3/interacts/inav/invite', 'POST'],// 邀请用户上麦
   v3SetDevice: ['/v3/interacts/room/set-device', 'POST'], //设置房间用户的设备检测状态
   v3SetDesktop: ['/v3/interacts/room/set-desktop', 'POST'], // 开启桌面共享自动最大化
+
+  // 问答
+  v3GetQa: ['/v3/interacts/qa/enable', 'POST'], // 主持人开启问答
+  v3CloseQa: ['/v3/interacts/qa/disable', 'POST'], // 主持人关闭问答
+  v3GetQaNum: ['/v3/interacts/qa/get-current-play-question-num', 'POST'], // 获取当前场次收集到的问题个数
+  v3GetHistoryQaNum: ['/v3/interacts/qa/reply-user-question', 'POST'], // 获取当前场次收集到的历史问答 主持人
+  channelInfo: [`${process.env.VUE_APP_VSS_HOST}/cmpt/room/get`, 'POST'], // 获取频道信息
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
 
@@ -461,6 +467,7 @@ const apis = {
   v3GetCurrentSign:['/v3/interacts/sign/get-doing-sign', 'POST'], // 获取当前活动正在的签到  √
   v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录  √
   v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数  √
+
 };
 
 const getApi = api => {

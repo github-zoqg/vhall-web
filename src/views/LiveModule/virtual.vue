@@ -7,7 +7,7 @@
     </pageTitle>
     <!-- 模式选择 -->
     <div class="virtual-ctx">
-      <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="180px" width="360px">
+      <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="100px" width="360px">
         <el-form-item label="人数增加：" prop="pv">
           <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
             <el-button class="no-border" size="mini" slot="append">人</el-button>

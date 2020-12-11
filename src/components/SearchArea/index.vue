@@ -2,7 +2,7 @@
   <div class="search-area">
     <el-form :inline="true" :model="searchParams" ref="searchForm">
       <el-form-item v-for="(item, index) in searchAreaLayout" :key="index">
-        <el-button v-if="item.type==5" @click="deletedChecked">批量删除</el-button>
+        <el-button v-if="item.type==5" @click="deletedChecked" round>批量删除</el-button>
         <!-- 快速选择时间 -->
         <div class="time-kuai" v-else-if="item.type==1">
           <span
@@ -104,7 +104,7 @@ export default {
         return;
       }
       this.isActive = opt.active;
-      this.searchParams.startTime = getRangeDays(opt.active);
+      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(opt.active);
       this.$emit("onSearchFun");
     },
     changeDate(){

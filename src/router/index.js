@@ -13,8 +13,7 @@ modulesFiles.keys().map((modulePath) => {
   routes.push(...modulesFiles(modulePath).default);
 });
 const createRouter = () => new Router({
-  // mode: 'history',
-  // base: '/v3/',
+  mode: 'history',
   routes
 });
 const router = createRouter();
@@ -29,6 +28,19 @@ router.beforeEach((to, from, next) => {
   // next();
   let token = sessionOrLocal.get('token', 'localStorage') || '';
   if (token) {
+    fetchData('planFunctionGet', {}).then(res => {
+      if(res && res.code === 200) {
+        let permissions = res.data.permissions;
+        if(permissions) {
+          sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
+        } else {
+          sessionOrLocal.removeItem('SAAS_VS_PES');
+        }
+      }
+    }).catch(e => {
+      console.log(e);
+      sessionOrLocal.removeItem('SAAS_VS_PES');
+    });
     // 已登录不准跳转登录页
     console.log('11111111', to.path, '当前页面');
     if (to.path === '/login') {
@@ -36,13 +48,10 @@ router.beforeEach((to, from, next) => {
       NProgress.done();
       return;
     }
-    // 登录状态跳转非登录页面
-    //存在token
     // 获取用户信息
     fetchData('getInfo', {scene_id: 2}).then(res => {
       // debugger;
       if(res.code === 200) {
-
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
       } else {

@@ -282,7 +282,7 @@ export const listenEvent = {
       EventBus.$on('vrtc_connect_agree', async (msg) => {
         if (msg.room_join_id == this.roomInfo.third_party_user_id) {
           // 更新上麦人员列表
-          await this.$fetch('queryRoomInterInfo', {
+          await this.$fetch('getToolStatus', {
             room_id: this.bizInfo.room_id
           }).then(res => {
             this.mainScreen = res.data.main_screen

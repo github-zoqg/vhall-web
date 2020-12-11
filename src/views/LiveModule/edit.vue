@@ -41,7 +41,7 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode=3' :class="{active: liveMode== 3}">
+          <div style="cursor: default;">
             <el-container class='model'>
               <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
@@ -117,7 +117,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}简介：`">
-        <v-editor :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
+        <v-editor save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}类别：`" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
@@ -211,7 +211,7 @@ export default {
   },
   computed: {
     pathUrl: function() {
-      return `saas/interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
+      return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
     docSwtichDesc(){
       if(this.docSwtich){
@@ -282,6 +282,7 @@ export default {
         date2: ''
       },
       content: ``,
+      defaultImg: 'saas/interacts/screen-imgs/202012/e5/73/e573abf3cfe016c05d6a764d5ff33e15.png',
       docSwtich: false,
       reservation: false,
       online: false,
@@ -387,7 +388,7 @@ export default {
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
-        img_url: this.imageUrl, // 封面图
+        img_url: this.imageUrl || this.defaultImg, // 封面图
         is_private: Number(this.home), // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
         hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否
@@ -439,8 +440,8 @@ export default {
 <style lang="less" scoped>
   .el-form{
     background: #ffffff;
-    padding: 60px 80px;
-    margin-top: 30px;
+    padding: 48px 20px 50px 48px;
+    margin-top: 32px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -597,14 +598,14 @@ export default {
       padding: 10px 23px;
     }
   }
-  .editBox {
+  /*.editBox {
     padding: 0px 40px;
   }
   @media screen and (min-width: 1920px) {
     .editBox {
       padding: 0px 140px;
     }
-  }
+  }*/
   .mediaBox{
     background-color: #fbfdff;
     border: 1px dashed #c0ccda;

@@ -302,6 +302,7 @@
             :layout="layout"
             :status="status"
             :isInteract="isInteract"
+            :webinarId="ilId"
             ref="interactive"
           ></Interactive>
         </streams>

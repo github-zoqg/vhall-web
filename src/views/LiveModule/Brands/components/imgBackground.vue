@@ -12,7 +12,7 @@
             v-model="imageUrl"
             :domain_url="domain_url"
             :saveData="{
-               path: 'saas/interacts/invite-card-imgs',
+               path: 'interacts/invite-card-imgs',
                type: 'image',
             }"
             :on-success="handleuploadSuccess"

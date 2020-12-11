@@ -13,7 +13,13 @@
             </div>
            <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>123</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.total"
+              :duration="1500"
+              v-if="mainKeyData.total >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6" v-if="titleType!=='全部'">
@@ -23,7 +29,13 @@
             <div slot="content">每场直播活动的时长，筛选条件内数据进行相加</div>
             <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>56:03:22</h3>
+           <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.total_live_time"
+              :duration="1500"
+              v-if="mainKeyData.total_live_time >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
        <el-col :span="6" v-if="titleType==='全部'">
@@ -33,7 +45,13 @@
             <div slot="content">筛选条件内的活动总数，包含直播、点播</div>
             <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.webinar_count}}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.webinar_count"
+              :duration="1500"
+              v-if="mainKeyData.webinar_count >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6" v-if="titleType!=='点播'">
@@ -45,7 +63,13 @@
             </div>
            <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ highData || mainKeyData.max_onlines }}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.max_onlines"
+              :duration="1500"
+              v-if="mainKeyData.max_onlines >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -57,7 +81,13 @@
             </div>
             <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.watch_number}}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.watch_number"
+              :duration="1500"
+              v-if="mainKeyData.watch_number >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6" v-if="titleType!=='直播'">
@@ -69,7 +99,13 @@
             </div>
             <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.watch_times }}</h3>
+          <h3>
+             <count-to :startVal="0"
+              :endVal="mainKeyData.watch_times"
+              :duration="1500"
+              v-if="mainKeyData.watch_times >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
     </el-row>
@@ -83,7 +119,13 @@
             </div>
            <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.watch_times }}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.watch_times"
+              :duration="1500"
+              v-if="mainKeyData.watch_times >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -93,7 +135,13 @@
             <div slot="content">人均观看次数=观看次数/观看人数</div>
            <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.watch_times_avg }}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.watch_times_avg"
+              :duration="1500"
+              v-if="mainKeyData.watch_times_avg >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -103,7 +151,13 @@
             <div slot="content">筛选条件内的观看总时长</div>
             <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.watch_duration }}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.watch_duration"
+              :duration="1500"
+              v-if="mainKeyData.watch_duration >= 0">
+            </count-to>
+          </h3>
         </div>
       </el-col>
       <el-col :span="6">
@@ -115,13 +169,20 @@
             </div>
           <i class="el-icon-question"></i>
           </el-tooltip>
-          <h3>{{ mainKeyData.watch_duration_avg }}</h3>
+          <h3>
+            <count-to :startVal="0"
+              :endVal="mainKeyData.watch_duration_avg"
+              :duration="1500"
+              v-if="mainKeyData.watch_duration_avg >= 0">
+            </count-to>
+         </h3>
         </div>
       </el-col>
     </el-row>
   </el-card>
 </template>
 <script>
+import CountTo from 'vue-count-to';
 export default {
   props: {
     titleType: {
@@ -135,6 +196,9 @@ export default {
     mainKeyData: {
       type: Object
     }
+  },
+  components: {
+    CountTo
   }
 };
 </script>
@@ -175,13 +239,15 @@ export default {
       color: #999;
       margin: 0;
     }
-    h3 {
-      font-size: 28px;
-      font-family: DINAlternate-Bold, DINAlternate;
-      font-weight: bold;
-      color: #1a1a1a;
-      margin: 0;
+    h3{
       padding-top: 6px;
+      span{
+        font-size: 28px;
+        font-family: DINAlternate-Bold, DINAlternate;
+        font-weight: bold;
+        color: #1a1a1a;
+        margin: 0;
+      }
     }
   }
 }

@@ -27,6 +27,11 @@ export default {
   background: #f7f7f7;
   padding: 40px 61px 60px 61px;
 }
+@media screen and (min-width: 1920px) {
+  .app-main {
+    padding: 40px 161px 60px 161px;
+  }
+}
 .fixed-header+.app-main {
   padding-top: 50px;
 }

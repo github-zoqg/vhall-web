@@ -24,7 +24,7 @@
       </div>
     </div>
     <div v-if="masterEnd&&!isEmbed" class="button-container">
-      <a :href="url" target="_blank">问答管理</a>
+      <p  @click="openQa" >问答管理</p>
     </div>
     <div v-if="!masterEnd" class="qa-inputbar">
       <div class="operation-box">
@@ -93,7 +93,9 @@ export default {
     'joinId',
     'thirdPartyId',
     'privateChat',
-    'isEmbed'
+    'isEmbed',
+    'roomId',
+    'vssToken'
   ],
   components: {
     PrivateMessage,
@@ -198,11 +200,11 @@ export default {
     );
     // TODO:
     this.$fetch('getHistoryQaMsg', {
-      webinar_id: this.webinarId,
-      join_id: this.joinId
-    })
-      .then((res = {data: []}) => {
-        const list = res.data.map((h) => {
+      room_id: this.roomId,
+      skip_cache: 1
+    }).then((res = {data: {}}) => {
+        console.warn(res, '历时问答记录')
+        const list = res.data.list.map((h) => {
           return {...h, content: this.emojiToText(h.content)};
         });
         this.msgList = list;
@@ -232,6 +234,9 @@ export default {
           scrollbar: true
         });
       });
+    },
+    openQa(){
+      window.open(`/#/live/qa/${this.webinarId}`)
     },
     refresh () {
       this.scroll.refresh();
@@ -301,9 +306,8 @@ export default {
         } else {
           // TODO:
           this.$fetch('sendQaMsg', {
-            webinar_id: this.webinarId,
-            content: this.inputValue,
-            join_id: this.joinId
+            room_id: this.roomId,
+            content: this.inputValue
           })
             .then(res => {
               this.lock = sessionStorage.getItem('QALock');
@@ -398,7 +402,7 @@ export default {
     right: 0;
     bottom: 0;
     position: absolute;
-    & > a {
+    & > p {
       color: #fff;
       display: block;
       margin: 0 auto;

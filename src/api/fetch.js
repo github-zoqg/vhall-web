@@ -34,7 +34,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
     });
     api = api + Uri;
   }
-
+  
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token
