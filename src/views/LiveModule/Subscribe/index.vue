@@ -107,30 +107,8 @@
         @sellGoodsInfo="sellGoodsInfo"
         :goodsList="goodsList"
       ></products>
-      <!-- <div v-if="productFlag" class="fixWidth">
-        <div class="productImg" @click="$refs.productDialog.dialogVisible = true">
-          <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-        </div>
-        <p class="title">手持无绳擦地机机器人扫地人扫地器人扫地人</p>
-
-        <p class="price">
-          <span>
-            ￥699.00
-          </span>
-          <span>
-            ￥<i>900.00</i>
-          </span>
-        </p>
-
-        <p class="desc">
-          这种模拟人手擦地的高频率震动，搭配两片拖布，效果相当于1分钟里擦了地板1000次，清洁力是一般手动拖地的60-80倍。
-        </p>
-        <el-button type="primary" class="fullBut">即将发售</el-button>
-        <el-button type="text" class="textBtn">去店铺<i class="el-icon-arrow-right"></i></el-button>
-      </div> -->
     </div>
     <feedBack ref="feedBack"></feedBack>
-    <!-- <productDialog ref="productDialog"></productDialog> -->
     <div class="shade" v-if="shadeShow"></div>
     <!-- 商品详情的弹窗 -->
     <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
@@ -143,11 +121,11 @@
 import feedBack from './feedBack';
 import share from '@/components/Share';
 import custoMenu from '../components/customMenuView';
-// import productDialog from '../components/productDialog';
 import goodsPop from '../Room/rankList/goodsPop';
 import products from '../components/products';
 import signUpForm from './signUpForm';
 import keyLogin from '../components/keyLogin';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   components: {
     feedBack,
@@ -160,6 +138,7 @@ export default {
   },
   data(){
     return {
+      webinar_id: this.$route.params.id, // 活动ID
       isKeyLogin: this.$route.path.startsWith('/keylogin'),
       title: '预约',
       webinarType: 1,
@@ -170,7 +149,7 @@ export default {
       hours: "00",
       minutes: "00",
       seconds: "00",
-      focusCount: 10,
+      focusCount: 10, // 关注人数
       subscribe_count: 0,
       activeName: 'desc',
       activeName2: 'activity',
@@ -180,16 +159,40 @@ export default {
       shadeShow: false,
       goodsPopShow: false,
       isSignUp: true,
-      btnVal: '立即预约'
+      btnVal: '立即预约',
+      status: 'subscribe', // 活动状态
+      webinar: {} // 活动信息
     };
   },
   created(){
-    setInterval(this.remainTimes, 1*1000);
+    this.getWatchInfo()
     this.getGoodsInfo();
   },
   methods:{
-    remainTimes(){
-      const limitTime = new Date('2020-11-27 14:26').getTime();
+    getWatchInfo() {
+      this.$fetch('watchInit', {
+        webinar_id: this.webinar_id,
+        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : ''
+      }).then(res => {
+        sessionOrLocal.set('visitor_id', res.data.visitor_id);
+        // ***************不确定的逻辑，注掉，不需要直接删除***start
+        // // 判断去预约页还是去直播观看页
+        // if (res.data.status === 'live') {
+        //   // TODO：跳转到直播观看页
+        // } else {
+        //   // TODO：判断是否已经预约
+        // }
+        // this.status = res.data.status;
+        // this.btnVal = this.status === 'subscribe' ? '立即预约' : '进入直播';
+        // this.benVal = this.is_subscribe === 0 ? '立即预约' : '已预约';
+        // this.webinar = res.data.webinar;
+        // ***************不确定的逻辑，注掉，不需要直接删除***end
+        setInterval(this.remainTimes(res.data.webinar.start_time), 1*1000);
+      })
+    },
+    // startTime  YYYY-MM-DD HH:MM
+    remainTimes(startTime){
+      const limitTime = new Date(startTime).getTime();
       const now = new Date().getTime();
       const remin = parseInt((limitTime - now)/1000);
       const day_coefficient = 1*24*60*60; // 定义一天包含多少秒---系数
@@ -198,10 +201,10 @@ export default {
       const hour_reminder = remin % day_coefficient; // 剩余时间取余
       const minutes_reminder = hour_reminder % hours_coefficient;  // 剩余时间取余
       const seconds_reminder = minutes_reminder % mintes_coefficient;  // 剩余时间取余
-      this.days = this.zeroPadding(parseInt(remin/day_coefficient));
-      this.hours = this.zeroPadding(parseInt(hour_reminder/hours_coefficient));
-      this.minutes = this.zeroPadding(parseInt(minutes_reminder/mintes_coefficient));
-      this.seconds = this.zeroPadding(seconds_reminder);
+      this.days = this.zeroPadding(parseInt(remin/day_coefficient)) < 1 ? '00' : this.zeroPadding(parseInt(remin/day_coefficient));
+      this.hours = this.zeroPadding(parseInt(hour_reminder/hours_coefficient)) < 1 ? '00' : this.zeroPadding(parseInt(hour_reminder/hours_coefficient));
+      this.minutes = this.zeroPadding(parseInt(minutes_reminder/mintes_coefficient)) < 1 ? '00' : this.zeroPadding(parseInt(minutes_reminder/mintes_coefficient));
+      this.seconds = this.zeroPadding(seconds_reminder) < 1 ? '00' : this.zeroPadding(seconds_reminder);
       console.log;
     },
     zeroPadding(num){

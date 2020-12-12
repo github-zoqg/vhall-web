@@ -2,7 +2,7 @@
   <el-card class="container-box">
     <div class="flex-item">
       <div class="box-item">
-       <img :src="`${imgBaseUrl}${liveDetailInfo.img_url}`" alt="">
+       <img :src="liveDetailInfo.img_url" alt="">
       </div>
       <div class="box-title">
         <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
@@ -23,27 +23,8 @@
   </el-card>
 </template>
 <script>
-import Env from '@/api/env.js';
 export default {
-  data() {
-    return {
-      liveDetailInfo: {},
-      imgBaseUrl: Env.staticLinkVo.uploadBaseUrl
-    };
-  },
-  mounted() {
-    this.getLiveDetail(this.$route.params.str);
-  },
-  methods: {
-    getLiveDetail(id) {
-      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
-        this.liveDetailInfo = res.data;
-      }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
-        console.log(error);
-      });
-    },
-  }
+  props: ['liveDetailInfo']
 };
 </script>
 <style lang="less" scoped>
@@ -74,6 +55,7 @@ export default {
   .title-status {
     width: 52px;
     height: 18px;
+    line-height: 18px;
     text-align: center;
     background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
     border-radius: 10px;

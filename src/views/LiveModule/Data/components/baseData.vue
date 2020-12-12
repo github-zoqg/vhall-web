@@ -10,58 +10,66 @@
         <el-button circle icon="el-icon-question" class="button-tip"></el-button>
       </el-tooltip>
     </div>
-    <div class="liveItem">
-      <div class="base-item" v-if="isStatus===1">
-        <p>导出</p>
-        <div class="base-main">
-          <i class="el-icon-document"></i>
-          <div class="base-text">
-            <span>预约（人）</span>
-            <h1>351</h1>
+    <el-row :gutter="40">
+      <el-col class="liveItem">
+        <div class="base-item" v-if="isStatus!= 4">
+          <p>导出</p>
+          <div class="base-main">
+            <icon icon-class="saasicon_yuyue"></icon>
+            <div class="base-text">
+              <span>预约（人）</span>
+              <h1>123
+                 <!-- <count-to :startVal="0"
+                  :endVal="mainKeyData.total"
+                  :duration="1500"
+                  v-if="mainKeyData.total >= 0">
+                </count-to> -->
+              </h1>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="base-item">
-        <p>导出</p>
-        <div class="base-main">
-          <i class="el-icon-document"></i>
-          <div class="base-text">
-            <span>报名表单（人）</span>
-            <h1>351</h1>
+        <div class="base-item">
+          <p>导出</p>
+          <div class="base-main">
+            <icon icon-class="saasicon_baomingbiaodan"></icon>
+            <div class="base-text">
+              <span>报名表单（人）</span>
+              <h1>351</h1>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="base-item">
-        <p>导出</p>
-        <div class="base-main">
-         <i class="el-icon-document"></i>
-          <div class="base-text">
-            <span>试看（人）</span>
-            <h1>351</h1>
+        <div class="base-item">
+          <p>导出</p>
+          <div class="base-main">
+           <icon icon-class="saasicon_shikan"></icon>
+            <div class="base-text">
+              <span>试看（人）</span>
+              <h1>351</h1>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="base-item">
-        <p @click="lookOption('邀请排名')">查看</p>
-        <div class="base-main">
-          <i class="el-icon-document"></i>
-          <div class="base-text">
-            <span>邀请排名（人）</span>
-            <h1>351</h1>
+        <div class="base-item">
+          <p @click="lookOption('邀请排名')">查看</p>
+          <div class="base-main">
+            <icon icon-class="saasicon_yaoqingpaiming"></icon>
+            <div class="base-text">
+              <span>邀请排名（人）</span>
+              <h1>351</h1>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="base-item">
-        <p>导出</p>
-        <div class="base-main">
-          <i class="el-icon-document"></i>
-          <div class="base-text">
-            <span>分享排名（条）</span>
-            <h1>351</h1>
+        <div class="base-item">
+          <p>导出</p>
+          <div class="base-main">
+            <icon icon-class="saasicon_fenxiangpaiming"></icon>
+            <div class="base-text">
+              <span>分享排名（条）</span>
+              <h1>351</h1>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </el-col>
+    </el-row>
     <div class="base-title">
       <span><b></b>互动统计</span>
       <el-tooltip effect="dark" placement="right-start">
@@ -77,22 +85,22 @@
         ></el-button>
       </el-tooltip>
     </div>
-     <el-row :gutter="40">
+    <el-row :gutter="40">
       <el-col class="liveItem">
         <div class="base-item">
           <p @click="lookOption('聊天')">查看</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_liaotian"></icon>
             <div class="base-text">
               <span>聊天</span>
               <h1>351</h1>
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus===1">
+        <div class="base-item" v-if="isStatus!=4">
           <p @click="lookOption('问答')">查看</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_wenda"></icon>
             <div class="base-text">
               <span>问答</span>
               <h1>351</h1>
@@ -101,47 +109,47 @@
         </div>
          <div class="base-item">
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_dianzan"></icon>
             <div class="base-text">
               <span>点赞(次)</span>
               <h1>351</h1>
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus===1">
+         <div class="base-item" v-if="isStatus!=4">
           <p @click="lookOption('签到')">查看</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_qiandao"></icon>
             <div class="base-text">
               <span>签到(人)</span>
               <h1>351</h1>
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus===1">
+         <div class="base-item" v-if="isStatus!=4">
           <p @click="lookOption('问卷')">查看</p>
          <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_wenjuan"></icon>
             <div class="base-text">
               <span>问卷(人)</span>
               <h1>351</h1>
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus===1">
+         <div class="base-item" v-if="isStatus!=4">
           <p @click="lookOption('抽奖')">查看</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_choujiang"></icon>
             <div class="base-text">
               <span>抽奖(人)</span>
               <h1>351</h1>
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus===1">
+        <div class="base-item" v-if="isStatus!=4">
           <p @click="lookOption('发群红包')">查看</p>
          <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_hongbao"></icon>
             <div class="base-text">
               <span>发群红包(元)</span>
               <h1>351</h1>
@@ -151,7 +159,7 @@
         <div class="base-item">
           <p>导出</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_dashang"></icon>
             <div class="base-text">
               <span>打赏(元)</span>
               <h1>351</h1>
@@ -161,17 +169,17 @@
         <div class="base-item">
           <p>导出</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_liwu"></icon>
             <div class="base-text">
               <span>礼物(元)</span>
               <h1>351</h1>
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus===1">
+         <div class="base-item" v-if="isStatus!=4">
           <p>导出</p>
           <div class="base-main">
-            <i class="el-icon-document"></i>
+            <icon icon-class="saasicon_lianmai"></icon>
             <div class="base-text">
               <span>连麦(条)</span>
               <h1>351</h1>
@@ -183,10 +191,14 @@
   </div>
 </template>
 <script>
+// import CountTo from 'vue-count-to';
 export default {
   data() {
     return {
     };
+  },
+  components: {
+    // CountTo
   },
   props: {
     isStatus: {
@@ -266,11 +278,11 @@ export default {
           height: 100%;
           margin: 30px 0 0 36px;
           display: flex;
-          i{
-            font-size: 60px;
+          /deep/.svg-icon{
+            font-size: 45px;
           }
           .base-text{
-            margin-left: 10px;
+            margin-left: 15px;
             span{
               color:#666;
             }

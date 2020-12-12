@@ -136,7 +136,6 @@ export default {
   created(){
     this.getBaseInfo();
     this.getQuestionList();
-    console.log(this.questionArr);
   },
   methods: {
     // 切换组件
@@ -150,7 +149,7 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
-          this.signUpSwtich = res.data.enable_status === '0' ? false : true;
+          this.signUpSwtich = res.data.enable_status == '0' ? false : true;
         }
       }).catch(err => {
         this.$message.error(`报名表单${ behaviour }失败！`);
@@ -171,7 +170,6 @@ export default {
       }).then(res => {
         // 按照 order_num 从小到大排序
         const list = res.data.ques_list.sort(compare('order_num'));
-        console.log(list);
         list.forEach(element => {
           // 如果是姓名、手机、邮箱、性别
           if (element.type === 0) {
@@ -221,7 +219,6 @@ export default {
             this.addFiled(this.setOptions["题目类型"][4], element);
           }
         });
-        console.log(res);
       }).catch(err => {
         console.log(err);
       });
@@ -238,7 +235,6 @@ export default {
         } else {
           this.$message.error(`报名表单${ behaviour }失败！`);
         }
-        console.log(res);
       }).catch(err => {
         this.$message.error(`报名表单${ behaviour }失败！`);
         console.log(err);
@@ -250,9 +246,22 @@ export default {
         ...this.baseInfo,
         ...options,
       };
+      const keyMap = {
+        title: 'form_title',
+        intro: 'form_introduce',
+        cover: 'form_cover',
+        theme_color: 'form_theme_color',
+        tab_verify_title: 'form_tab_verify_title',
+        tab_form_title: 'form_tab_register_title',
+        open_link: 'is_independent_link',
+      }
+      const opts = {}
+      for(let item in options) {
+        opts[keyMap[item]] = options[item]
+      }
       this.$fetch('regFromUpdate', {
         webinar_id: this.webinar_id,
-        ...options
+        ...opts
       }).then(res => {
         console.log(res);
         callback && callback();
@@ -335,7 +344,9 @@ export default {
             filedJson.nodes[3].canRemove = true;
           }
         }
-        console.log(filedJson);
+        if(info.type === 'checkBox') {
+          filedJson.value = []
+        }
         this.questionArr.push(filedJson);
         return false;
       }

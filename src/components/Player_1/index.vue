@@ -1,7 +1,7 @@
 <template>
   <div>
     <div :id="nodeId" class="vh-player"></div>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4.js" @load="sdkLoad"></remote-script>
+    <!-- <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4.js" @load="sdkLoad"></remote-script> -->
   </div>
 
 </template>
@@ -120,6 +120,7 @@ export default {
     return {};
   },
   async mounted () {
+    this.sdkLoad()
   },
   methods: {
     getScrollTextInfo () {

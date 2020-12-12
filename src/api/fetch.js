@@ -1,21 +1,18 @@
 import 'whatwg-fetch';
+import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
 import Env from './env';
 import { sessionOrLocal } from '../utils/utils';
-
 
 export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url);
   let [api, method, mock, paas] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
-  // 此token不要删除  --  直播间需要使用   我将你们的token进行注释了
-  // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4MTM1MzgsImV4cCI6MTYwOTQwNTUzOCwidXNlcl9pZCI6MTY0MjEzODR9.MgfoflxNLIy6VKRAMXJghdE5Hkjlu-SYstmsME-Xmk8");
-  // sessionStorage.setItem('token', "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY4NzY5NjMsImV4cCI6MTYwOTQ2ODk2MywidXNlcl9pZCI6MTY0MjEzODR9.Sc-yqQJ0XStTKm2v0k7Z6FEMA2Tn58RarjndBwVVt8U");
   const token = sessionOrLocal.get('token', 'localStorage') || '';
   let data = Object.assign(data1);
-  const interact_token = sessionOrLocal.get('interact_token') || null;
+  const interact_token = sessionStorage.getItem('interact_token') || null;
   let formData = null;
 
   if (method === 'GET' && data) {
@@ -37,11 +34,15 @@ export default function fetchData(url, data1 = {}, header = {}) {
 
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
-    token: token
+    token: token,
+    uuid: uuidV1()
     // 'Content-Type': 'application/json'
   };
-  if(window.location.hash.indexOf('/live/room/') !== -1 || window.location.hash.indexOf('/live/watch/') !== -1) {
-    headers['interact-token']= interact_token;
+
+  interact_token && (headers['interact-token'] = interact_token)
+
+  if(window.location.hash.indexOf('/live/watch/') !== -1) {
+
     // pc观看等
     headers.platform = 7;
   }
@@ -70,6 +71,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
     api = `/mock${api}`;
   } else if (paas){
     api = `${api}`
+    option.headers = {}
   } else {
     api = `${Env.BASE_URL}${api}`;
   }

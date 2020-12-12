@@ -22,7 +22,7 @@
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
-        <v-editor :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
+        <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
          <el-switch

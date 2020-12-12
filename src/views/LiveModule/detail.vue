@@ -42,7 +42,9 @@
                 >
                 <div class="invitation-code">
                   <p>直播观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
-                  <p style="margin-top:20px;text-align: center;"><el-button round size="mini" type="primary" @click="doCopy">复制</el-button><el-button round size="mini" type="primary">打开页面</el-button></p>
+                  <p style="margin-top:20px;text-align: center;">
+                    <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
+                    <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
                 </div>
                   <el-button round size="mini" slot="reference">查看</el-button>
               </el-popover>
@@ -88,42 +90,42 @@ export default {
       imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       liveDetailInfo: {},
       showCode: '',
-      link: `${Env.BASE_URL}/#/live/room/${this.$route.params.str}`,
+      link: `${Env.staticLinkVo.WEB_SHARE_URL}/live/watch/${this.$route.params.str}`,
       operas: {
         '准备': [
-          { icon: 'saasicon_shangchuanwendang-copy', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
-          { icon: 'saasicon_pinpaishezhi-copy', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
-          { icon: 'saasicon_shangchuanwendang-copy', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
-          { icon: 'saasicon_pinpaishezhi-copy', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
+          { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
+          { icon: 'saasicon_gongnengpeizhi', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
+          { icon: 'saasicon_guankanxianzhi', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
+          { icon: 'saasicon_jiaoseyaoqing', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
+          { icon: 'saasicon_nuanchangshipin', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
+          { icon: 'saasicon_xunirenshu', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
+          { icon: 'saasicon_baomingbiaodan', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
+          { icon: 'saasicon_tuiguangqianru', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
         ],
         '品牌': [
-          { icon: 'saasicon_pinpaishezhi-copy', title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`},
-          { icon: 'saasicon_caiwuzonglan-copy', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
-          { icon: 'saasicon_shangchuanwendang-copy', title: '广告推荐', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
+          { icon: 'saasicon_pinpaishezhi1', title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`},
+          { icon: 'saasicon_zidingyicaidan', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
+          { icon: 'saasicon_bofangqishezhi', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
+          { icon: 'saasicon_yaoqingkashezhi', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
+          { icon: 'saasicon_guanggaotuijian', title: '广告推荐', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
+          { icon: 'saasicon_gongzhonghaozhanshi', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
+          { icon: 'saasicon_kaipinghaibao', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
         ],
         '直播': [
-          { icon: 'saasicon_shangchuanwendang-copy', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
-          { icon: 'saasicon_pinpaishezhi-copy', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '问卷', subText: '创建问卷收集信息', path: '/live/question' },
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
-          { icon: 'saasicon_caiwuzonglan-copy', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
+          { icon: 'saasicon_wendang', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
+          { icon: 'saasicon_choujiang', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
+          { icon: 'saasicon_wenjuan', title: '问卷', subText: '创建问卷收集信息', path: '/live/question' },
+          { icon: 'saasicon_shangpin', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
+          { icon: 'saasicon_liwu', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
         ],
         '回放': [
-          { icon: 'saasicon_chuangjianzhibo-copy', title: '回放管理', subText: '管理直播回放内容', path: `/live/playback/${this.$route.params.str}` },
+          { icon: 'saasicon_huifangguanli', title: '回放管理', subText: '管理直播回放内容', path: `/live/playback/${this.$route.params.str}` },
           // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
         ],
         '数据': [
-          { icon: 'saasicon_zhanghaoshuju-copy', title: '数据报告', subText: '统计直播基本数据', path: `/live/reportsData/${this.$route.params.str}` },
-          { icon: 'saasicon_shangchuanwendang-copy', title: '互动统计', subText: '统计直播互动工具数据', path: `/live/interactionData/${this.$route.params.str}` },
-          { icon: 'saasicon_caiwuzonglan-copy', title: '用户统计', subText: '统计直播观众详细数据', path: `/live/userData/${this.$route.params.str}` },
+          { icon: 'saasicon_shujubaogao', title: '数据报告', subText: '统计直播基本数据', path: `/live/reportsData/${this.$route.params.str}` },
+          { icon: 'saasicon_hudongtongji', title: '互动统计', subText: '统计直播互动工具数据', path: `/live/interactionData/${this.$route.params.str}` },
+          { icon: 'saasicon_yonghutongji', title: '用户统计', subText: '统计直播观众详细数据', path: `/live/userData/${this.$route.params.str}` },
         ]
       }
     };
@@ -175,6 +177,10 @@ export default {
         this.$message.error('复制失败！');
       });
     },
+    // 打开页面
+    openLink() {
+      window.open(this.link, '_blank');
+    },
     //恢复预告
     resetResume(status) {
       if (status === 5) {
@@ -221,7 +227,8 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
-      const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+      // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
       window.open(href);
     }
   }

@@ -21,7 +21,7 @@
         </el-form-item>
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
           <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
-            <el-button class="no-border" size="mini" slot="append" @click="getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''" :disabled="isDisabledClick">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+            <el-button class="no-border" size="mini" slot="append" @click="getDyCode('phone')" :class="showCaptcha ? 'isLoginActive' : ''" :disabled="isDisabledClick">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="1邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
@@ -151,44 +151,53 @@ export default {
     },
     getDyCode(type) {
       // 获取短信验证码
-      let scene_id = 1;
+      let scene_id = 1, data = this.form.phone;
       if (this.showVo.executeType === 'pwd' && this.vo && this.vo.phone) {
         scene_id = 1;
       } else if (this.showVo.executeType === 'phone' && this.vo && this.vo.phone) {
         scene_id = 2;
       } else if (this.showVo.executeType === 'phone' && this.vo && !this.vo.phone) {
         scene_id = 2;
-      } else if (this.showVo.executeType === 'email' && this.vo && this.vo.email) {
+      } else if (this.showVo.executeType === 'email' && this.vo && this.vo.email) { // 邮箱，并且邮箱不为空
         scene_id = 3;
-      } else if (this.showVo.executeType === 'email' && this.vo && !this.vo.email) {
+      } else if (this.showVo.executeType === 'email' && this.vo && !this.vo.email) { // 邮箱，并且邮箱为空
         scene_id = 3;
-      } else {
-        scene_id = 1;
       }
-      if (this.checkMobile(type) && this.mobileKey) {
-        this.$fetch('sendCode', {
-          type: this.executeType === 'pwd' || this.executeType === 'phone' ? 1 : 2, // 1手机  2邮箱
-          data: this.form[type],
+      let flag = false;
+      if (this.showVo.executeType !== 'email') {
+        if (this.checkMobile(type) && this.mobileKey) {
+          flag = true;
+        } else {
+          this.$message.error('请先确认手机号且验证图形码正确');
+        }
+        data = this.form.phone;
+      } else {
+        // 验证邮箱
+        flag = true;
+        data = this.form.email;
+      }
+      if (flag) {
+        this.$fetch('sendCode', this.$params({
+          type: this.showVo.executeType !== 'email' ? 1 : 2, // 1手机  2邮箱
+          data: data ,
           validate: this.mobileKey,
           scene_id: scene_id
-        }).then((res) => {
+        })).then((res) => {
           if(res && res.code === 200) {
             this.countDown();
           } else {
-            this.$message.error(e.msg || '验证码发送失败');
+            this.$message.error(res.msg || '验证码发送失败');
           }
         }).catch(e => {
           console.log(e);
-          this.$message.error(e.msg || '验证码发送失败');
+          this.$message.error('验证码发送失败');
         });
-         /*this.isDisabledClick = true;
-         if(this.downTimer) {
-           window.clearTimeout(this.downTimer);
-         }
-        this.countDown();*/
-      } else {
-        this.$message.error('请先确认手机号且验证图形码正确');
       }
+      /*this.isDisabledClick = true;
+      if(this.downTimer) {
+        window.clearTimeout(this.downTimer);
+      }
+     this.countDown();*/
     },
     countDown() {
       this.isDisabledClick = this.time > 1;
@@ -413,6 +422,11 @@ export default {
       }
       if(this.$refs.form) {
         this.$refs.form.resetFields();
+        // 验证码归位
+      }
+      if(this.downTimer) {
+        window.clearTimeout(this.downTimer);
+        this.time = 60;
       }
       this.visible = true;
       // 为表单赋值

@@ -236,7 +236,7 @@ export default {
       });
     },
     openQa(){
-      window.open(`/#/live/qa/${this.webinarId}`)
+      window.open(`/live/qa/${this.webinarId}`)
     },
     refresh () {
       this.scroll.refresh();

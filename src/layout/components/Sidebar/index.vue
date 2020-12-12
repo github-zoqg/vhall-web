@@ -116,9 +116,9 @@ export default {
       width: 100%;
       &.static {
         height: auto;
-        width: 96px;
-        margin-top: 20px;
-        margin-left: -62px;
+        width: 156px;
+        float: left;
+        margin: 4px 0;
       }
     }
   }

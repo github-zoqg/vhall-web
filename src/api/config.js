@@ -164,7 +164,9 @@ const apis = {
   viewerSetGet: ['/v3/webinars/webinar/get-webinar-verify', 'POST'],// 获取活动观看限制接口 jia.li  √
   viewerInfo: ['/v3/webinars/audience/info', 'POST'],// 白名单观众详情获取 jia.li •••【控制台未用到】
   viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li  √
-  fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li •••
+  fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li  √
+  getFCodeExcel: ['/v3/webinars/webinar/get-fcode-excel', 'POST'],// 生成验证码 jia.li  √
+
   // 自定义菜单
   menuTplList: ['/v3/interacts/menu/components-list', 'POST'], // 控制台-组件列表接口 jia.li
   customMenuList: ['/v3/interacts/menu/bak-menu-list', 'POST'], // 控制台-菜单列表接口 jia.li
@@ -197,14 +199,17 @@ const apis = {
   executeUseRead: ['/v3/commons/msgcenter/batch-read', 'POST'], // 标记已读 jia.li  √
 
   // 文件上传(图片)
-  uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
+  uploadImage: ['/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 
   // 回放模块
-  playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang
-  playBackEdit: ['/99/v3/webinars/record/put-record', 'POST', 'mock'], // 修改回放标题 jian.chang
-  playBackDelete: ['/99/v3/webianrs/record/del-record', 'POST', 'mock'], // 删除回放 jian.chang
+  playBackList: ['/99/v3/webinars/record/get-list', 'POST', 'mock'], // 回放列表 xiaodong.ding
+  playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding
+  playBackDelete: ['/v3/webianrs/record/delete', 'POST'], // 删除回放 jian.chang
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
   playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
+  playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
+  playBackSetDefault: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
+  getChapters: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -320,7 +325,7 @@ const apis = {
   getFormEnableStatus: ['/v3/webinars/registration-form/get-form-enable-status', 'POST', 'mock'], // 获取活动报名表单开启状态
 
   // 活动基础信息
-  getWebinarSwitchList: ['/v3/webinars/webinar/get-webinar-switch-list', 'POST', 'mock'], // 数据统计直播详情包含场次列表 •••
+  getWebinarSwitchList: ['/v3/webinars/webinar/get-webinar-switch-list', 'POST'], // 数据统计直播详情包含场次列表
   getUserAllWebinar: ['/v3/webinars/webinar/get-user-all-webinar', 'POST', 'mock'], // 大数据依赖通过用户id获取账户下活动总数 •••
   batchGetWebinarInfo: ['/v3/webinars/webinar/batch-get-webinar-info', 'POST', 'mock'], // 批量查询活动基础信息接口 •••
   getWebinarListBigdata: ['/v3/webinars/webinar/get-webinar-list-bigdata', 'POST', 'mock'], // 大数据服务依赖活动列表 •••
@@ -474,7 +479,6 @@ const apis = {
   v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录  √
   v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数  √
 
-  reportData: ['/login', 'GET']
 };
 
 const getApi = api => {

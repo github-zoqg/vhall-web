@@ -28,6 +28,8 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
+        :noDel="true"
+        :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
         :restPic="resetBanner"
@@ -46,12 +48,13 @@
       @change="sortChange"
       @start="drag = true"
       @end="drag = false"
+      :move="onMove"
     >
       <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
         <li class="viewItem" v-for="(item, index) in renderQuestion" :key="item.question_id">
           <p class="label">
-            {{ index < 9 ? `0${ index + 1 }` : index + 1 }}.
+            {{ index | numFormmat }}.
             <!-- {{item.required ? '（必填）' : ''}} -->
             <template v-if="!item.labelEditable">
               {{item.label}}
@@ -101,6 +104,7 @@
                 :name="item.id"
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
+                :label="radioItem.item_id"
               >
                 {{radioItem.other ? "其他" : ''}}
                 <el-input
@@ -131,6 +135,8 @@
               <el-checkbox
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
+                :label="radioItem.item_id"
+                :name="item.id"
               >
                 {{radioItem.other ? "其他" : ''}}
                 <el-input
@@ -247,7 +253,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = newVal.cover;
+        this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover}`;
       },
       deep: true,
       immediate: true
@@ -261,7 +267,7 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png',
+      imageUrl: `http:${Env.staticLinkVo.uploadBaseUrl}sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`,
       renderQuestion: []
     };
   },
@@ -275,7 +281,25 @@ export default {
       };
     },
   },
+  filters: {
+    numFormmat(val){
+      return val < 9 ? `0${ val + 1 }` : val + 1
+    }
+  },
   methods: {
+    onMove({ relatedContext, draggedContext }) {
+      const relatedElement = relatedContext.element;
+      const draggedElement = draggedContext.element;
+      if (relatedElement.reqType === 0) {
+        if (relatedElement.default_type === 1 || relatedElement.default_type === 2) {
+          return false
+        }
+      } else if (relatedElement.reqType === 6) {
+        return false
+      } else {
+        return true
+      }
+    },
     // 保存表单
     sureQuestionnaire() {
       if (!this.title) {
@@ -475,7 +499,7 @@ export default {
         webinar_id: this.webinar_id,
         content: nodes[0].value,
         color_text: '《隐私声明2》',
-        url: 'http://localhost:8080/#/live/signup/337792152?id=337792152'
+        url: ''
       }).then(res => {
         nodes[3].privacy_id = res.data.privacy_id;
         nodes[4].privacy_id = res.data.privacy_id;
