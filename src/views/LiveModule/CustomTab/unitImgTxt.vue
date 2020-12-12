@@ -1,6 +1,6 @@
 <template>
 	<div>
-    <v-editor :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="unitImgTxtForm.content"></v-editor>
+    <v-editor save-type='customTabImg' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="unitImgTxtForm.content"></v-editor>
   </div>
 </template>
 

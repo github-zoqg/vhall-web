@@ -17,7 +17,6 @@ import 'tinymce/plugins/fullscreen';//全屏插件
 
 import EventBus from './utils/Events';
 import baseObj from './api/env'
-console.log(baseObj)
 import {copy, dealObjectValue, domainCovert, parseURL, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
@@ -119,6 +118,7 @@ function clientToken(param) {
   if (ret) {
     ret = decodeURIComponent(ret[1]);
   }
+  console.log(ret, '当前hash判断')
   return ret || '';
 }
 let clientTokenVal = clientToken('token');

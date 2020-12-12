@@ -42,7 +42,9 @@
                 >
                 <div class="invitation-code">
                   <p>直播观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
-                  <p style="margin-top:20px;text-align: center;"><el-button round size="mini" type="primary" @click="doCopy">复制</el-button><el-button round size="mini" type="primary">打开页面</el-button></p>
+                  <p style="margin-top:20px;text-align: center;">
+                    <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
+                    <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
                 </div>
                   <el-button round size="mini" slot="reference">查看</el-button>
               </el-popover>
@@ -88,7 +90,7 @@ export default {
       imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       liveDetailInfo: {},
       showCode: '',
-      link: `${Env.BASE_URL}/#/live/room/${this.$route.params.str}`,
+      link: `${Env.staticLinkVo.WEB_SHARE_URL}/live/watch/${this.$route.params.str}`,
       operas: {
         '准备': [
           { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
@@ -175,6 +177,10 @@ export default {
         this.$message.error('复制失败！');
       });
     },
+    // 打开页面
+    openLink() {
+      window.open(this.link, '_blank');
+    },
     //恢复预告
     resetResume(status) {
       if (status === 5) {
@@ -221,7 +227,8 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
-      const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+      // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
+      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
       window.open(href);
     }
   }
