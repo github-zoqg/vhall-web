@@ -198,31 +198,25 @@ export default {
     },
     // 获取按钮的状态
     querySwitchInfo () {
-      console.warn(param, '******************', this.baseChanelInfo);
       let param = {
         ...this.baseChanelInfo
       }
-      this.$fetch('getChannelSwitch', param)
-        .then(res => {
-          console.warn(res, 'getChannelSwitch');
-          this.isOpen = res.data.switch
-          this.autoSend = res.data.switch_options + ''
+      this.$fetch('getChannelSwitch', param).then(res => {
+        this.isOpen = res.data.switch || 1
+        this.autoSend = res.data.switch_options + ''
+      }).catch(res => {
+        console.warn(res, 'cxs');
+        this.$message({
+          message: res.msg,
+          type: 'error'
         })
-        .catch(res => {
-          console.warn(res, 'cxs');
-          this.$message({
-            message: res.msg,
-            type: 'error'
-          })
-        })
+      })
     },
     // 页面刷新时，获取未通过的消息列表
     queryMessage () {
       let param = {
         ...this.baseChanelInfo
       }
-
-      console.log(param)
       this.messageInfo = []
       let tempItem = {}
       let object = {}
@@ -263,12 +257,6 @@ export default {
         }
         console.log(this.messageInfo)
       })
-      //   .catch(res => {
-      //   this.$message({
-      //     message: res.msg,
-      //     type: 'error'
-      //   })
-      // })
     },
     // 获取已通过消息的列表
     queryAllowMsg () {
@@ -294,9 +282,9 @@ export default {
       }
       let _url = ''
       if (ind === 2) {
-        _url = 'bannedList'
+        _url = 'v3GetBannedList'
       } else {
-        _url = 'kickedList'
+        _url = 'v3GetKickedList'
       }
       this.$fetch(_url, params).then(res => {
         this.specialUser = res.data.list
@@ -535,8 +523,7 @@ export default {
         status: 0
       }
       this.$fetch(_url, params).then(res => {
-        if (res.code === 200) {
-        } else {
+        if (res.code === 200) {} else {
           this.$message({
             message: res.msg,
             type: 'error'

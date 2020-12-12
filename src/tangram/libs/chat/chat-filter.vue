@@ -77,8 +77,13 @@ export default {
       this.$fetch('setAllBanned', {
         room_id: this.roomId,
         status: flag ? 1 : 0
+      }).then(res=>{
+        if(res.code == 200){
+          this.bannedAll = !this.bannedAll
+        }
       }).catch(error => {
-        console.error('全体禁言接口失败', error);
+        console.error('全体禁言接口失败', error, this.bannedAll);
+        this.$message.error(error.msg)
       });
     },
     sendMsgToAssistant () {
