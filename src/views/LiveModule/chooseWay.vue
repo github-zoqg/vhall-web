@@ -105,7 +105,7 @@ export default {
     }
   },
   mounted() {
-    this.watchUrl = `${Env.staticLinkVo.WEB_SHARE_URL}/live/room/${this.arr[0]}`
+    this.watchUrl = `/live/room/${this.arr[0]}`
   }
 };
 </script>
