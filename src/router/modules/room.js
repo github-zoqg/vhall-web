@@ -49,6 +49,12 @@ const router = [
         name: 'qa',
         component: () => import('@/views/LiveModule/Qa/index'),
         meta: { title: '问答' }
+      },
+      {
+        path: '/live/authchat/:id',
+        name: 'authchat',
+        component: () => import('@/views/LiveModule/AuthChat/index'),
+        meta: { title: '聊天过滤' }
       }
     ]
   }
