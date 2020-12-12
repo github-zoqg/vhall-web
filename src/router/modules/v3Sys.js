@@ -5,19 +5,19 @@ const router = [
   {
     path: '/login',
     meta: { auth: false, name: 'login', title: '登录' },
-    component: () => import('@/views/login'),
+    component: () => import('@/views/Login/login'),
     hidden: true
   },
   {
     path: '/register',
     meta: { auth: false, name: 'register', title: '注册' },
-    component: () => import('@/views/login'),
+    component: () => import('@/views/Login/login'),
     hidden: true
   },
   {
     path: '/forgetPassword',
     meta: { auth: false, name: 'forgetPassword', title: '忘记密码' },
-    component: () => import('@/views/forgetPassword'),
+    component: () => import('@/views/Login/forgetPassword'),
     hidden: true
   },
   {
