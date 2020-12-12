@@ -61,7 +61,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
-    // credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
+    // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
   if (method === 'POST') {
@@ -72,13 +72,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
     api = `/mock${api}`;
   } else if (paas){
     api = `${api}`
-  }else if (api.indexOf('/login') > -1) {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', api)
-    if (api.indexOf('/login/login') > -1) {
-      api = `${Env.BASE_REPORT_URL}${api.slice(6)}`;
-    } else {
-      api = `${Env.BASE_REPORT_URL}${api}`;
-    }
   } else {
     api = `${Env.BASE_URL}${api}`;
   }
