@@ -43,9 +43,9 @@ const apis = {
 
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
-  editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
+  updateGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
   createGiftInfo: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 创建共享库礼品信息
-  deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
+  deleteGift: ['/v3/interacts/gift/delete-shared-gift', 'POST'], // 删除共享库礼品
   liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
 
   //广告推荐
@@ -437,6 +437,8 @@ const apis = {
   // 礼物
   sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
+  setRelevance: ['/v3/interacts/gift/set-webinar-map-gifts', 'POST'], // 设置活动关联礼物
+
 
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
