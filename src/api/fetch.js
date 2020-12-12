@@ -70,12 +70,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
     api = `/mock${api}`;
   } else if (paas){
     api = `${api}`
-  }else if (api.indexOf('/login') > -1) {
-    if (api.indexOf('/login/login') > -1) {
-      api = `${Env.BASE_REPORT_URL}${api.slice(6)}`;
-    } else {
-      api = `${Env.BASE_REPORT_URL}${api}`;
-    }
   } else {
     api = `${Env.BASE_URL}${api}`;
   }
