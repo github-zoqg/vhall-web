@@ -1136,6 +1136,7 @@
                 :webinarId="ilId"
                 :masterEnd="true"
                 :roomId='roomId'
+                :roleName='roleName'
                 ref="qa"
                 :isEmbed="isEmbed"
                 :joinId="joinId"
