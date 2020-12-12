@@ -203,10 +203,6 @@ export default {
       let param = {
         ...this.baseChanelInfo
       }
-      this.$fetch('Test', param).then(res => {
-          console.warn(res, 'getChannelSwitch');
-        })
-      console.warn(param, '******************',);
       this.$fetch('getChannelSwitch', param)
         .then(res => {
           console.warn(res, 'getChannelSwitch');
@@ -214,6 +210,7 @@ export default {
           this.autoSend = res.data.switch_options + ''
         })
         .catch(res => {
+          console.warn(res, 'cxs');
           this.$message({
             message: res.msg,
             type: 'error'
@@ -225,6 +222,8 @@ export default {
       let param = {
         ...this.baseChanelInfo
       }
+
+      console.log(param)
       this.messageInfo = []
       let tempItem = {}
       let object = {}

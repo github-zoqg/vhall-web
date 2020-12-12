@@ -20,7 +20,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let formData = null;
 
   if (method === 'GET' && data) {
-    if(!paas){
       let Uri;
       api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
       Object.keys(data).forEach((key, indx) => {
@@ -35,7 +34,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
         }
       });
       api = api + Uri;
-    }
   }
 
   let headers = {
