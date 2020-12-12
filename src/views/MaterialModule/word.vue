@@ -13,63 +13,98 @@
         5.文档转换较慢，请于直播前提前上传
       </div>
     </pageTitle>
-    <div class="head-operat">
-      <el-upload
-        class="btn-upload"
-        :action=actionUrl
-        :headers="{token: token, platform: 17}"
-        :data=saveData
-        name="resfile"
-        :show-file-list=false
-        :on-success='uploadSuccess'
-        :on-error="uploadError"
-        :before-upload="beforeUploadHandler"
-        :on-preview="uploadPreview"
-      >
-        <el-button round type="primary" size="medium">上传</el-button>
-      </el-upload>
-      <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
-      <search-area class="head-btn fr search"
-        ref="searchArea"
-        :isExports='false'
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="initPage"
+    <div v-if="no_show">
+      <null-page text="您还未添加内容，快去上传吧" nullType="noAuth">
+        <el-upload
+          class="btn-upload"
+          :action=actionUrl
+          :headers="{token: token, platform: 17}"
+          :data=saveData
+          name="resfile"
+          :show-file-list=false
+          :on-success='uploadSuccess'
+          :on-error="uploadError"
+          :before-upload="beforeUploadHandler"
+          :on-preview="uploadPreview"
         >
-      </search-area>
+          <el-button round type="primary" class="length152">上传</el-button>
+        </el-upload>
+      </null-page>
     </div>
-    <el-card class="word-list">
-      <table-list
-        ref="tableListWord"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :tableRowBtnFun="tableRowBtnFun"
-        :totalNum="totalNum"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getTableWordList"
-        @changeTableCheckbox="changeTableCheckbox"
+    <div v-else>
+      <div class="head-operat">
+        <el-upload
+          class="btn-upload"
+          :action=actionUrl
+          :headers="{token: token, platform: 17}"
+          :data=saveData
+          name="resfile"
+          :show-file-list=false
+          :on-success='uploadSuccess'
+          :on-error="uploadError"
+          :before-upload="beforeUploadHandler"
+          :on-preview="uploadPreview"
         >
-      </table-list>
-    </el-card>
-    <!-- 预览功能 -->
-    <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
-        <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
-      </el-dialog>
-    </template>
+          <el-button round type="primary" size="medium">上传</el-button>
+        </el-upload>
+        <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
+        <el-input
+          class="head-btn search-tag"
+          placeholder="请输入文档名称"
+          v-model="formParams.keyword"
+          @keyup.enter.native="initPage">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="initPage">
+          </i>
+        </el-input>
+      </div>
+      <el-card class="word-list">
+        <table-list
+          ref="tableListWord"
+          v-if="totalNum > 0"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :totalNum="totalNum"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getTableWordList"
+          @changeTableCheckbox="changeTableCheckbox"
+        >
+        </table-list>
+        <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
+      </el-card>
+      <!-- 预览功能 -->
+      <template v-if="showDialog">
+        <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+          <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
+        </el-dialog>
+      </template>
+    </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import DocPreview from './DocPreview/index.vue';
+import NullPage from '../PlatformModule/Error/nullPage.vue';
 import Env from '@/api/env.js';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'word.vue',
+  components: {
+    PageTitle,
+    DocPreview,
+    NullPage
+  },
   data() {
     return {
+      no_show: false,
       token: sessionOrLocal.get('token', 'localStorage') || '',
       actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
-      formParams: {},
+      formParams: {
+        keyword: ''
+      },
       totalNum: 0,
       tableList: [],
       tabelColumn: [
@@ -110,10 +145,6 @@ export default {
       showDialog: false,
       docParam: null
     };
-  },
-  components: {
-    PageTitle,
-    DocPreview
   },
   computed: {
     saveData: function() {
@@ -171,9 +202,10 @@ export default {
     // 批量删除
     wordMultiDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
-        this.$confirm('是否确认删除', '删除提示', {
-          confirmButtonText: '删除',
-          cancelButtonText: '取消'
+        this.$confirm('删除后将会影响文档演示和观看，确定删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -202,6 +234,7 @@ export default {
       this.$fetch(this.$route.params.str ? 'getWebinarWordList' : 'getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.totalNum = res.data.total;
+          this.no_show = this.totalNum === 0 && this.formParams.keyword === '';
           let list = res.data.list;
           list.map(item => {
             // 转换状态 0待转换 100转换中 200完成 500失败
@@ -234,11 +267,10 @@ export default {
     // 删除
     deleteHandle(that, { rows }) {
       console.log('删除', rows);
-      that.$confirm(that.$route.params.str ? '该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？' : '确认删除？', '提示', {
+      that.$confirm(that.$route.params.str ? '删除后将会影响文档演示和观看，确定删除？' : '删除后将会影响文档演示和观看，确定删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(() => {
         that.deleteSend(rows);
       }).catch(() => {
@@ -328,6 +360,24 @@ export default {
     margin-bottom: 20px;
     .head-btn{
       display: inline-block;
+      float: right;
+    }
+    .el-input{
+      width: 220px;
+      .el-input__icon{
+        cursor: pointer;
+      }
+      /deep/ .el-input__icon{
+        line-height: 36px;
+      }
+    }
+    /deep/ .el-input__inner{
+      user-select: none;
+      border-radius: 50px;
+      font-size: 14px;
+      color: #666666;
+      height: 36px;
+      line-height: 36px;
     }
     ::v-deep.set-upload{
       position: relative;

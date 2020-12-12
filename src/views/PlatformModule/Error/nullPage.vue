@@ -1,6 +1,6 @@
 <template>
   <div class="null-page">
-    <div v-if="nullType === 'search'">
+    <div v-if="nullType === 'search'" class="search">
       <img src="../../../common/images/sys/no-search.svg" class="no-search" />
       <p class="null-info">暂未搜索到您想要的内容</p>
     </div>
@@ -36,6 +36,9 @@ export default {
 }
 .no-search {
   margin: 137px 0 27px 0;
+}
+.search {
+  padding-bottom: 137px;
 }
 .no-create {
   margin: 185px 0 27px 0;
