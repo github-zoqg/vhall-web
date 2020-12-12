@@ -202,9 +202,9 @@ const apis = {
   uploadImage: ['/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 
   // 回放模块
-  playBackList: ['/99/v3/webinars/record/get-list', 'POST', 'mock'], // 回放列表 xiaodong.ding
-  playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding
-  playBackDelete: ['/v3/webianrs/record/delete', 'POST'], // 删除回放 jian.chang
+  playBackList: ['/v3/webinars/record/get-list', 'POST'], // 回放列表 xiaodong.ding  √
+  playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding  √
+  playBackDelete: ['/v3/webinars/record/delete', 'POST'], // 删除回放 xiaodong.ding  √
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
   playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
   playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
