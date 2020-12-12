@@ -70,7 +70,10 @@
                 <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
-            <p v-else class="text">{{ scope.row[item.key] }}</p>
+            <p v-else class="text">
+              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
+              {{ scope.row[item.key] }}
+            </p>
           </template>
         </el-table-column>
         <el-table-column
@@ -138,6 +141,10 @@ export default {
     maxHeight: {
       type: [Number, String],
       default: 450,
+    },
+    scene: {
+      type: String,
+      default: 'normal' // 场景，按场景展示
     }
   },
   watch: {
@@ -200,6 +207,9 @@ export default {
 </script>
 <style lang="less" scoped>
 .data-list {
+  .word-status {
+    margin-right: 12px;
+  }
   /deep/.cell .imgs {
     width: 100px;
     height: 100px;

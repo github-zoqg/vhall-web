@@ -75,4 +75,23 @@ export const filterPhone = (value) => {
   return  String(value).replace( /([0-9]{3})([0-9]{4})([0-9]{4})/,"$1****$3");
 };
 
+export const wordStatusCss = (ext) => {
+  if (ext === 'pdf') {
+    return 'saasPDFwenjian';
+  } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'bmp') {
+    return 'saastupianwenjian';
+  } else if (ext === 'video') {
+    return 'saasshipinwenjian';
+  } else if (ext === 'doc' || ext === 'docx') {
+    return 'saaswordwendang';
+  } else if (ext === 'ppt' || ext === 'pptx') {
+    return 'saaspptwendang';
+  } else if (ext === 'csv') {
+    return 'saasCSVwenjian';
+  } else if (ext === 'xls' || ext === 'xlsx') {
+    return 'saasexcelwendang';
+  } else if (ext === 'media') {
+    return 'saasyinpinwenjian';
+  }
+}
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="video-wrap">
+  <div class="word-wrap">
     <pageTitle title="文档">
       <div slot="content">
         1.支持的文档格式: doc/docx，xls/xlsx，ppt/pptx，pdf，jpeg/jpg，png，bmp
@@ -13,6 +13,7 @@
         5.文档转换较慢，请于直播前提前上传
       </div>
     </pageTitle>
+    <!-- 无权限，未创建 -->
     <div v-if="no_show">
       <null-page text="您还未添加内容，快去上传吧" nullType="noAuth">
         <el-upload
@@ -47,6 +48,7 @@
         >
           <el-button round type="primary" size="medium">上传</el-button>
         </el-upload>
+        <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
         <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
         <el-input
           class="head-btn search-tag"
@@ -64,8 +66,9 @@
         <table-list
           ref="tableListWord"
           v-if="totalNum > 0"
+          scene="word"
           :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
+          :tabelColumnLabel="tableColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
           @onHandleBtnClick="onHandleBtnClick"
@@ -75,13 +78,15 @@
         </table-list>
         <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
       </el-card>
-      <!-- 预览功能 -->
-      <template v-if="showDialog">
-        <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
-          <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
-        </el-dialog>
-      </template>
     </div>
+    <!-- 预览功能 -->
+    <template v-if="showDialog">
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+        <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
+      </el-dialog>
+    </template>
+    <!-- 文档列表 -->
+    <select-word ref="dialogWordComp" @reload="getTableWordList"></select-word>
   </div>
 </template>
 <script>
@@ -89,13 +94,16 @@ import PageTitle from '@/components/PageTitle';
 import DocPreview from './DocPreview/index.vue';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import Env from '@/api/env.js';
+import SelectWord from './components/selectWord.vue';
+
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'word.vue',
   components: {
     PageTitle,
     DocPreview,
-    NullPage
+    NullPage,
+    SelectWord
   },
   data() {
     return {
@@ -107,7 +115,7 @@ export default {
       },
       totalNum: 0,
       tableList: [],
-      tabelColumn: [
+      tableColumn: [
         {
           label: '文档名称',
           key: 'file_name',
@@ -143,7 +151,11 @@ export default {
       ],
       multipleSelection: [],
       showDialog: false,
-      docParam: null
+      docParam: null,
+      dialogVisible: false,
+      dialogTotal: 0,
+      dialogTableList: [],
+      dialogMulti: []
     };
   },
   computed: {
@@ -169,9 +181,42 @@ export default {
         this.$message.error(res.msg || '上传失败');
       } else {
         this.$message.success('上传成功');
-        // 判断文件上传情况
-        this.initPage();
+        if (this.$route.params.str) {
+          // 弹出框提示是否同步
+          this.$confirm('是否同步到资料库?', '提示', {
+            confirmButtonText: '同步',
+            cancelButtonText: '不同步',
+            customClass: 'zdy-message-box'
+          }).then(() => {
+            // 同步到资料库
+            this.asyncWord(res);
+          }).catch(() => {
+          });
+        } else {
+          // 判断文件上传情况
+          this.initPage();
+        }
       }
+    },
+    asyncWord(resV) {
+      let params = {
+        document_id: resV.data.document_id,
+        tag: 1, // 1：同步到资料库 ，2：同步到活动
+        webinar_id: this.$route.params.str
+      }
+      this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
+        if(res && res.code === 200) {
+          this.$message.success('同步成功');
+          this.$refs.tableListWord.clearSelect();
+          this.initPage();
+        } else {
+          this.$message.error(res.msg || '同步失败');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error(e.msg || '同步失败');
+      }).finally(()=>{
+      });
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -198,6 +243,11 @@ export default {
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
+    },
+    // 从资料库选择文档
+    openCheckWord() {
+      this.dialogVisible = true;
+      this.$refs.dialogWordComp.initComp();
     },
     // 批量删除
     wordMultiDel() {
@@ -330,7 +380,7 @@ export default {
     border: none;
   }
 }
-.video-wrap {
+.word-wrap {
   height: 100%;
    .word-list{
     width: 100%;
