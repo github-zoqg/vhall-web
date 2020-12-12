@@ -203,9 +203,27 @@ export default {
       let param = {
         ...this.baseChanelInfo
       }
+        // let data = {
+        //     app_id: "fd8d3653",
+        //     channel_id: "ch_6c486935",
+        //     created_at: "2020-12-11 16:06:04",
+        //     description: "",
+        //     id: 1431823,
+        //     updated_at: "2020-12-11 16:06:04"
+        //   }
+        //   this.isOpen = data.switch
+        //   this.autoSend = data.switch_options + ''
       this.$fetch('getChannelSwitch', param)
         .then(res => {
           console.warn(res, 'getChannelSwitch');
+          let data = {
+            app_id: "fd8d3653",
+            channel_id: "ch_6c486935",
+            created_at: "2020-12-11 16:06:04",
+            description: "",
+            id: 1431823,
+            updated_at: "2020-12-11 16:06:04"
+          }
           this.isOpen = res.data.switch
           this.autoSend = res.data.switch_options + ''
         })
@@ -221,6 +239,8 @@ export default {
       let param = {
         ...this.baseChanelInfo
       }
+
+      console.log(param)
       this.messageInfo = []
       let tempItem = {}
       let object = {}
