@@ -344,6 +344,9 @@ export default {
             filedJson.nodes[3].canRemove = true;
           }
         }
+        if(info.type === 'checkBox') {
+          filedJson.value = []
+        }
         this.questionArr.push(filedJson);
         return false;
       }
