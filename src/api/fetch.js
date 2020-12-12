@@ -59,7 +59,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
-    credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
+    // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
   if (method === 'POST') {
