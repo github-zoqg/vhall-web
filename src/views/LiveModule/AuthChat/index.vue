@@ -203,10 +203,6 @@ export default {
       let param = {
         ...this.baseChanelInfo
       }
-      this.$fetch('Test', param).then(res => {
-          console.warn(res, 'getChannelSwitch');
-        })
-      console.warn(param, '******************',);
       this.$fetch('getChannelSwitch', param)
         .then(res => {
           console.warn(res, 'getChannelSwitch');

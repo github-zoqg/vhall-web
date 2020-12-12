@@ -30,10 +30,6 @@ module.exports = {
         target: 'http://yapi.vhall.domain',
         changeOrigin: true
       },
-      '/sdk': {
-        target: 'http://api.vhallyun.com/sdk/',
-        changeOrigin: true
-      },
       '/v3': {
         target: 'http://t-saas-dispatch.vhall.com',
         changeOrigin: true
