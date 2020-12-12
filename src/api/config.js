@@ -43,9 +43,9 @@ const apis = {
 
 
   shareGiftList: ['/v3/interacts/gift/shared-gift-list', 'GET'], // 共享礼物库
-  editGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
+  updateGiftInfo: ['/v3/interacts/gift/update-shared-gift', 'POST'], // 更新共享库礼品信息
   createGiftInfo: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 创建共享库礼品信息
-  deleteGift: ['/v3/interacts/gift/create-shared-gift', 'POST'], // 删除共享库礼品
+  deleteGift: ['/v3/interacts/gift/delete-shared-gift', 'POST'], // 删除共享库礼品
   liveGiftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 活动下礼物库
 
   //广告推荐
@@ -202,9 +202,9 @@ const apis = {
   uploadImage: ['/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 
   // 回放模块
-  playBackList: ['/99/v3/webinars/record/get-list', 'POST', 'mock'], // 回放列表 xiaodong.ding
-  playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding
-  playBackDelete: ['/v3/webianrs/record/delete', 'POST'], // 删除回放 jian.chang
+  playBackList: ['/v3/webinars/record/get-list', 'POST'], // 回放列表 xiaodong.ding  √
+  playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding  √
+  playBackDelete: ['/v3/webinars/record/delete', 'POST'], // 删除回放 xiaodong.ding  √
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
   playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
   playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
@@ -434,7 +434,7 @@ const apis = {
   getOnlineList: ['/v3/interacts/chat-user/get-online-list', 'POST'], // 获取在线列表
 
   // PAAS 生产环境
-  allowMsg: ['//api.vhallyun.com/sdk/v2/message/lists', 'GET', 'paas'], // 获取消息通过列表
+  allowMsg: ['//api.vhallyun.com/sdk/v2/message/lists', 'GET',false, 'paas'], // 获取消息通过列表
   setChannelSwitch: ['//api.vhallyun.com/sdk/v2/message/set-channel-switch','GET', false, 'paas'], // 设置审核开关接口
   getChannelSwitch: ['//api.vhallyun.com/sdk/v2/message/get-channel-switch','GET', false, 'paas'], // 更新总开的状态
   setAutoSend: ['//api.vhallyun.com/sdk/v2/message/set-channel-switch-options','GET', false, 'paas'], // 设置是否自动处理聊天数据接口
@@ -443,6 +443,8 @@ const apis = {
   // 礼物
   sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
+  setRelevance: ['/v3/interacts/gift/set-webinar-map-gifts', 'POST'], // 设置活动关联礼物
+
 
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞

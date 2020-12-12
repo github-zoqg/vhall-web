@@ -215,7 +215,7 @@ export default {
         } else if (item.path === '/live/question') {
           // 问卷
           this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});
-        } else if(item.path === `/live/prizeSet/${this.$route.params.str}`) {
+        } else if(item.path === `/live/prizeSet/${this.$route.params.str}` || item.path === `/live/gift/${this.$route.params.str}`) {
           // 奖品
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
         } else if (item.path === `/live/interactionData/${this.$route.params.str}`) {

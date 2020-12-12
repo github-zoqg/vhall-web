@@ -273,6 +273,7 @@
             :thirdPartyId="roomInfo.third_party_user_id"
             :privateChat="privateChat"
             :isEmbed="isEmbed"
+            :roleName='false'
             ref="qa"
           ></qa>
         </div>

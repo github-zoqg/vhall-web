@@ -55,11 +55,10 @@
               <li v-for="(item, index) in noDealList" :key="index">{{item}}</li>
             </ul>
             <div class="messChat">
-              <el-button @click="messClick" size='small' type="success">私聊</el-button>
-              <ul>
-                <li></li>
-                <div></div>
-              </ul>
+              <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
+              <template v-show="privateFlag">
+                <Private ></Private>
+              </template>
             </div>
           </div>
         </div>
@@ -68,10 +67,12 @@
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
+import Private from './PrivateMess/index';
 
 export default {
   components: {
-    OldHeader
+    OldHeader,
+    Private
   },
   computed:{
     filterTime(){
@@ -106,6 +107,7 @@ export default {
         }
       ], // 不处理
       $Chat: null,
+      privateFlag: true
     }
   },
   async created() {
@@ -155,6 +157,7 @@ export default {
     },
     messClick(){
       console.warn('右下角私聊');
+      this.privateFlag = true
     },
     // 初始化
     initChat(){

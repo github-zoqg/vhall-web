@@ -200,6 +200,7 @@ export default {
     },
     currentChangeHandler(num){
       this.pageNum = num;
+      this.getList();
     },
     getList(){
       let param = {
@@ -212,7 +213,7 @@ export default {
       };
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
-        this.tableData = res.data.data;
+        this.tableData = res.data.list;
         this.totalElement = res.data.total;
         console.log(res);
       }).catch(error=>{
@@ -234,7 +235,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true;
-        this.$fetch('playBackDelete', { record_id: ids}).then(res=>{
+        this.$fetch('playBackDelete', { record_ids: ids}).then(res=>{
           if(res.code === 200){
             this.$message.success('已删除');
             this.getList();
@@ -251,7 +252,7 @@ export default {
     confirmEdit(){
       if(!this.titleEdit.trim()) return this.$message.error('请输入标题');
       this.editLoading =true;
-      this.$fetch('playBackEdit', { record_id: this.editRecord.id, subject: this.titleEdit}).then(res=>{
+      this.$fetch('playBackEdit', { record_id: this.editRecord.id, name: this.titleEdit}).then(res=>{
         if(res.code === 200){
           this.$message.success('修改成功');
           this.getList();

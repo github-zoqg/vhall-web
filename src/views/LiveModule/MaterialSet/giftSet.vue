@@ -40,7 +40,6 @@
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
         @selection-change="handleSelectionChange">
         <el-table-column
-          :reserve-selection="true"
           type="selection"
           width="55"
           align="left"
@@ -56,11 +55,11 @@
         </el-table-column>
         <el-table-column label="价格" prop="price" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="显示">
+        <!-- <el-table-column label="显示">
            <template slot-scope="scope">
              <el-switch v-model="scope.row.status" active-color="#FC5659" inactive-color="#CECECE" @change="changeGiftStatu(scope.row.status, scope.row.gift_id)"></el-switch>
            </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="操作">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
             <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
@@ -143,18 +142,19 @@
     </el-dialog>
     <el-dialog
       title="选择礼物"
-      width="616px"
+      width="620px"
       :visible.sync="dialogGiftsVisible"
       :close-on-click-modal="false"
       :before-close="handleCloseChooseGift"
     >
+
+      <el-input
+      class="head-btn fr search"
+      v-model="materiaSearchName"
+      placeholder="请输入礼物名称"
+      prefix-icon="el-icon-search"
+      @change="searchMaterialGift"/>
       <div class="select-matrial-wrap">
-        <el-input
-        class="head-btn fr search"
-        v-model="materiaSearchName"
-        placeholder="请输入礼物名称"
-        prefix-icon="el-icon-search"
-        @change="searchMaterialGift"/>
         <div
           v-for="(item, index) in materiaTableData"
           :key='index'
@@ -170,17 +170,17 @@
           </div>
         </div>
       </div>
-      <SPagination
+      <!-- <SPagination
         :total="materialTotal"
         v-show="materialTotal > 10"
         :currentPage="materiaSearchParams.page"
         @current-change="currentMaterialChangeHandler"
-        align="center"></SPagination>
+        align="center"></SPagination> -->
       <div class="control">
         <span>当前选中{{addGiftsIds.length}}件商品</span>
         <div class="control-btn">
-          <el-button class="add-btn" :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
-          <el-button class="cancel-btn">取消</el-button>
+          <el-button @click="chooseGift" class="add-btn" :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
+          <el-button @click="handleCloseChooseGift" class="cancel-btn">取消</el-button>
         </div>
       </div>
     </el-dialog>
@@ -196,117 +196,15 @@ export default {
   name: "giftSize",
   data() {
     return {
+      webinar_id: this.$route.params.webinar_id,
+      room_id: this.$route.query.roomId,
       total: 100,
       materialTotal: 100,
       batchDelete: true,
-      materiaTableData: [
-        {
-          gift_id: 1,
-          name: 'aaaaaaaaaaaaaaaaaaa1a',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '1',
-          status: true,
-          isChecked: false
-        },
-        {
-          gift_id: 2,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true,
-          isChecked: false
-        },
-        {
-          gift_id: 3,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true,
-          isChecked: false
-        },
-        {
-          gift_id: 4,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true,
-          isChecked: false
-        },
-        {
-          gift_id: 5,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true,
-          isChecked: false
-        },
-        {
-          gift_id: 61,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true,
-          isChecked: false
-        }
-      ], // 资料库数据
-      tableData: [ // TODO: 直播数据
-        {
-          gift_id: 1,
-          name: '请输入000',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '1',
-          status: true
-        },
-        {
-          gift_id: 2,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true
-        },
-        {
-          gift_id: 3,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true
-        },
-        {
-          gift_id: 4,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true
-        },
-        {
-          gift_id: 5,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true
-        },
-        {
-          gift_id: 61,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0',
-          status: true
-        }
-      ],
+      materiaTableData: [], // 资料库数据
+      tableData: [], // 当前活动关联数据
       searchParams: {
-        room_id: this.$route.params.str,
+        room_id: this.room_id,
         gift_name: '',
         page_size: 20,
         page: 1
@@ -343,7 +241,8 @@ export default {
     SPagination
   },
   created() {
-    // this.getTableList()
+    this.getTableList()
+    this.queryMateriaGifts()
   },
   mounted() {
     this.bindEventListener()
@@ -352,13 +251,10 @@ export default {
     // 获取礼物列表
     getTableList () {
       this.$fetch('liveGiftList', {
-        ...this.searchParams
+        room_id: this.room_id
       }).then((res) => {
         if (res.code == 200 && res.data) {
-          res.data.list && res.data.list.map((item, index) => {
-            item.status = !!item.status
-            return item
-          })
+          this.tableData = res.data.list
         }
       })
     },
@@ -441,7 +337,7 @@ export default {
     // 打开编辑面板
     handleEditGift (data) {
       this.editParams = {
-        gift_id: data.gift_id,
+        gift_id: data.id,
         name: data.name,
         price: data.price,
         img: process.env.img + '/' + data.img // TODO:
@@ -464,6 +360,7 @@ export default {
     // 处理编辑新建
     handleUpdateGift () {
       if(this.editParams.gift_id) {
+        // 编辑
         this.handleEdit()
       } else {
         this.dialogShareVisible = true
@@ -486,13 +383,14 @@ export default {
         }
       }).catch((e) => {
           this.$message.error('编辑失败')
+          this.handleCancelEdit()
       })
     },
     // 创建
     handleCreate () {
       let price = Number(this.editParams.price)
       if (price) {
-        this.editParams.price = this.editParams.price.toFixed(2)
+        this.editParams.price = price.toFixed(2)
       } else {
         this.$message.error('请输入正确礼物价格')
         return
@@ -503,9 +401,11 @@ export default {
         if (res.code == 200) {
           this.$message.success('创建成功')
           this.handleCancelEdit()
+          this.closeShare()
         }
       }).catch((e) => {
           this.$message.error('创建失败')
+          this.closeShare()
       })
     },
     // 取消礼品编辑
@@ -523,16 +423,13 @@ export default {
     },
     // 获取资料库礼物数据
     queryMateriaGifts () {
-      this.$fetch('shareGiftList', {
-        ...this.materiaSearchParams
-      }).then((res) => {
+      this.$fetch('shareGiftList').then((res) => {
         if (res.code == 200 && res.data) {
           res.data.list.length > 0 && res.data.list.forEach((item, index) => {
             item.isChecked = false
           })
           this.materiaTableData = res.data.list
           this.materialTotal = res.data.total
-          console.log(this.materiaTableData)
         }
       })
     },
@@ -548,7 +445,7 @@ export default {
     // 删除礼品
     handleDelete (data) {
       this.dialogTipVisible = true
-      this.deleteId = data.gift_id
+      this.deleteId = data.id
     },
     handleDeleteGift () {
       this.$fetch('deleteGift', {
@@ -608,6 +505,15 @@ export default {
         this.addGiftsIds.splice(num, 1)
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
+    },
+    chooseGift() {
+      this.$fetch('setRelevance', {
+        gift_ids: this.addGiftsIds.join(','),
+        room_id: this.room_id
+      }).then(res => {
+        console.log(res)
+        this.handleCloseChooseGift()
+      })
     },
     handleCloseChooseGift () {
       this.addGiftsIds = []
@@ -708,7 +614,9 @@ export default {
   .select-matrial-wrap {
     box-sizing: border-box;
     width: 100%;
+    height: 500px;
     padding: 24px 28px;
+    overflow-y: auto;
     .head-btn{
       width: 100%;
       /deep/.el-input__inner{
