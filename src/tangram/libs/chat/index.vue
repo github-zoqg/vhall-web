@@ -126,6 +126,8 @@ import { textToEmojiText } from './js/emoji';
 import { formatTime, handleTime } from './js/handle-time';
 import getAvatar from './js/get-avatar';
 import { disableScroll, enableScroll } from '../../utils/scroll';
+import { sessionOrLocal } from '@/utils/utils';
+
 BScroll.use(ScrollBar);
 BScroll.use(PullDown);
 BScroll.use(MouseWheel);
@@ -208,7 +210,7 @@ export default {
   },
   data () {
     return {
-      headToken:  window.sessionStorage.getItem('token') || '', // 请求token
+      headToken: sessionOrLocal.get('token', 'localStorage'), // 请求token
       assistantType: this.$route.query.assistantType,
       placeholderDescribe: '', // placeholder的显示
       chatLoginStatus: false, // 聊天是否需要登录
@@ -407,6 +409,7 @@ export default {
           data.image_urls = this.imgUrls;
           data.type = 'image';
         }
+        console.log(11111122222, this.imgUrls)
         let userInfo = JSON.parse(sessionStorage.getItem('user'));
         console.warn('获取当前的本地用户信息', userInfo)
         let context = {
@@ -435,7 +438,6 @@ export default {
               data.text_content = data.text_content.replace(`@${a.nickName}`, `***${a.nickName}`);
             });
           }
-          console.log(111123123123123, this.chatSDK)
           this.chatSDK.emit(data, context);
           window.vhallReport.report('CHAT', {
             event: JSON.stringify(data),
@@ -496,20 +498,13 @@ export default {
           this.chatGap = this.delayTime(this.onlineUsers);
           this.chatGapInterval = window.setInterval(() => {
             if (this.chatGap > 0) {
-              console.log(111111)
               if (!this.lock || this.lock == 'false') {
-              console.log(22222222)
-
                 sessionStorage.setItem('chatLock', true);
               } else {
-              console.log(3333333)
-
                 // this.$message.warning(`太频繁啦，还有${this.chatGap}秒后才能发送`)
               }
               this.chatGap = this.chatGap - 1;
             } else {
-              console.log(44444444)
-
               window.clearInterval(this.chatGapInterval);
               sessionStorage.setItem('chatLock', false);
             }
