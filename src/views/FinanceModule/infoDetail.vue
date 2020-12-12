@@ -21,7 +21,7 @@
           ref="tableDetail"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
-          :isCheckout="isCheckout"
+          :isCheckout="false"
           :isHandle="isHandle"
           :width="120"
           :tableRowBtnFun="tableRowBtnFun"
@@ -44,6 +44,47 @@ export default {
     return {
       activeIndex: '1',
       totalNum: 1000,
+      isHandle: true,
+      options: [
+        {
+          label: '结清并发欠费',
+          value: 7
+        },
+        {
+          label: '结清流量欠费',
+          value: 8
+        },
+        {
+          label: '并发包',
+          value: 10
+        },
+        {
+          label: '流量包',
+          value: 11
+        },
+        {
+          label: '并发扩展包(人/次)',
+          value: 12
+        }
+      ],
+      orderOptions: [
+        {
+          label: '流量包',
+          value: 'flow'
+        },
+        {
+          label: '并发包,',
+          value: 'concurrency'
+        },
+        {
+          label: '并发扩展包(人次)',
+          value: 'extend_people'
+        },
+        {
+          label: '并发扩展包(天)',
+          value: 'extend_day'
+        },
+      ],
       searchDetail: [
         {
           type: '2',
@@ -59,7 +100,7 @@ export default {
               value: 7
             },
             {
-              label: '结清流量欠费,',
+              label: '结清流量欠费',
               value: 8
             },
             {
@@ -71,24 +112,8 @@ export default {
               value: 11
             },
             {
-              label: '扩展包',
+              label: '并发扩展包(人/次)',
               value: 12
-            },
-            {
-              label: '专业版',
-              value: 13
-            },
-            {
-              label: '回放流量包',
-              value: 14
-            },
-            {
-              label: '免费回放流量包',
-              value: 15
-            },
-            {
-              label: '并发预充值',
-              value: 16
             }
           ]
         },
@@ -142,36 +167,7 @@ export default {
           type: '6'
         },
       ],
-      isCheckout: false,
-      isHandle: true,
-      tableList: [
-        {
-          order_id: '1',
-          id: '123244',
-          create_time: '2020-09-17',
-          type: '支付宝',
-          amount: '123,000',
-          content: '哈哈哈哈',
-          status: '1',
-          statusText: '成功',
-          source: '直播',
-          start_time: '2020-10-01',
-          end_time: '2021-10-01'
-        },
-        {
-          order_id: '2',
-          id: '100000',
-          create_time: '2020-01-17',
-          type: '微信',
-          amount: '111,000',
-          content: '开始讲课',
-          status: '2',
-          statusText: '失败',
-          source: '录播',
-          start_time: '2020-01-01',
-          end_time: '2021-01-01'
-        }
-      ],
+      tableList: [],
       tabelColumn: [],
       tabelColumns: [
         {
@@ -189,6 +185,40 @@ export default {
         {
           label: '交易金额',
           key: 'amount',
+        },
+        {
+          label: '购买内容',
+          key: 'content',
+        },
+        {
+          label: '订单状态',
+          key: 'status',
+        },
+        {
+          label: '来源',
+          key: 'source',
+        },
+        {
+          label: '启用日期',
+          key: 'start_time',
+        },
+        {
+          label: '失效日期',
+          key: 'end_time',
+        }
+      ],
+      tabelColumnes: [
+        {
+          label: '订单编号',
+          key: 'order_id',
+        },
+        {
+          label: '交易时间',
+          key: 'create_time',
+        },
+        {
+          label: '订单类型',
+          key: 'type',
         },
         {
           label: '购买内容',
@@ -230,15 +260,39 @@ export default {
   watch: {
     activeIndex(value) {
       if (parseInt(value) === 2) {
+        // 开通明细
         this.isHandle = false;
-        this.tabelColumn = this.tabelColumn.filter(item => item.key !== 'money');
+        this.tabelColumn = this.tabelColumnes;
+        this.getRoleList();
       } else {
+        // 购买明细
         this.isHandle = true;
         this.tabelColumn = this.tabelColumns;
+        this.searchDetail.map(item => {
+          if (item.key === 'orderType') {
+            item.options = this.options;
+          }
+        })
       }
     }
   },
   methods: {
+    getRoleList() {
+      this.$fetch('getRoleRbacList', {category_id: 1,limit: 50, pos: 0}).then(res => {
+       let roleList = res.data.list;
+        roleList.map(item => {
+          this.orderOptions.push({
+            label: item.role_name,
+            value: item.id
+          })
+        })
+      })
+      this.searchDetail.map(item => {
+        if (item.key === 'orderType') {
+          item.options = this.orderOptions;
+        }
+      })
+    },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
@@ -253,9 +307,17 @@ export default {
     getDetailList(params) {
       let pageInfo = this.$refs.tableDetail.pageInfo; //获取分页信息
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
+      let type;
+      if (this.activeIndex == '1') {
+        // 购买明细 type必须大于等于7
+        type = formParams.orderType || 7;
+      } else {
+        type = formParams.orderType || '';
+      }
       let paramsObj = {
-        user_id: this.userId
+        user_id: this.userId,
       };
+      console.log(type, '000000000000000')
       if (params === 'search') {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
@@ -268,19 +330,28 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.type = paramsObj.orderType < 7  ? paramsObj.orderType : 7;
+      paramsObj.type = type;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      console.log(obj);
+      console.log(obj, '111111111111111111111111111');
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
         tableList.map(item=> {
-          item.statusText = item.status== 1 ? '成功' : '失败';
+          item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
+          item.type = this.culesType(item.type);
         });
+        this.tableList = tableList;
       }).catch(e=>{
         console.log(e);
       });
+    },
+    culesType(type) {
+      if (this.activeIndex == '1') {
+        return this.options.filter(item => item.value == type).map(item => item.label);
+      } else {
+        return this.orderOptions.filter(item => item.value == type).map(item => item.label);
+      }
     },
     delete(that, val) {
       that.$confirm('确定要删除吗?', '提示', {

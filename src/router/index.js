@@ -12,8 +12,12 @@ const modulesFiles = require.context('./modules', true, /\.js$/);
 modulesFiles.keys().map((modulePath) => {
   routes.push(...modulesFiles(modulePath).default);
 });
+
+const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
+
 const createRouter = () => new Router({
   mode: 'history',
+  base,
   routes
 });
 const router = createRouter();

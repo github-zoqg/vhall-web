@@ -75,7 +75,8 @@
           ref="tableIncome"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
-          :isCheckout="isCheckout"
+          :isCheckout="false"
+          :isHandle="isHandle"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
           @onHandleBtnClick="onHandleBtnClick"
@@ -101,6 +102,7 @@ export default {
       money: 0,
       phone: 0,
       type: 0,
+      isHandle: true,
       incomeInfo: {},
       searchAccount: [
         {
@@ -261,14 +263,13 @@ export default {
       }
       paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      console.log(obj);
+      console.log(obj, '11111111111111111111');
       let url = this.activeIndex == '1' ? "liveIncomeList" : "packetIncomeList";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
+        this.tableList = res.data.list;
         if (this.activeIndex == '2') {
-            this.rowsList(res.data.list);
-        } else {
-          this.tableList = res.data.list;
+          this.rowsList(this.tableList);
         }
         console.log(res);
       }).catch(e=>{
@@ -276,10 +277,10 @@ export default {
       });
     },
     rowsList(data) {
-      this.tableList = data.map(item => {
+      data.map(item => {
         item.red_packet = item.red_packet_type == '1' ? '固定金额': '拼手气';
       });
-      console.log(this.tableList);
+      console.log(this.tableList, '1111111111111111111');
     },
     cash(title) {
       if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
@@ -306,16 +307,13 @@ export default {
     },
     detail(that, { rows }) {
       that.$router.push({
-        name: 'incomeDetail',
-        query: {
-          webinar_id: rows.webinar_id
-        }
+        path: `/finance/incomeDetail/${rows.webinar_id}`
       });
     },
-    // 账单明细
+    // 提现明细
     accountDetail() {
       this.$router.push({
-        path: '/accountDetail'
+        path: '/finance/accountDetail'
       });
     }
   },
