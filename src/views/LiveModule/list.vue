@@ -11,7 +11,7 @@
       <div class="operaBox">
         <el-button type="primary" round @click="createLiveAction('1')">创建直播</el-button>
         <el-button round @click="createLiveAction('2')">创建点播</el-button>
-        <div class="searchBox">
+        <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
               v-for="item in statusOptions"
@@ -29,8 +29,10 @@
             </el-option>
           </el-select>
           <el-input
+            class="search-tag"
             placeholder="请输入直播标题"
-            v-model="keyWords">
+            v-model="keyWords"
+            @keyup.enter.native="searchHandler">
             <i
               class="el-icon-search el-input__icon"
               slot="suffix"
@@ -149,7 +151,7 @@ export default {
     },
     commandMethod(command) {
       if (command === '删除') {
-         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？?', '提示', {
+         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

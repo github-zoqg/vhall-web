@@ -47,7 +47,7 @@ import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
 import { browserDetect } from '@/utils/utils';
-
+import Env from '@/api/env';
 export default {
   name: 'chooseWay.vue',
   components: {
@@ -78,7 +78,7 @@ export default {
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          this.$router.push({path:  this.watchUrl});
+          window.location.href = this.watchUrl;
         } else {
           this.$router.push({path: '/browser'})
         }
@@ -93,7 +93,7 @@ export default {
       }; // 若非主持人登录，需传递用户token
       this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
         if(res && res.code === 200) {
-          this.watchUrl = res.data.page_url;
+          // this.watchUrl = res.data.page_url;
           this.scheme = res.data.client_protocol;
         } else {
           this.$message.error('当前未获取到启动数据');
@@ -105,6 +105,7 @@ export default {
     }
   },
   mounted() {
+    this.watchUrl = `${Env.staticLinkVo.WEB_SHARE_URL}/live/room/${this.arr[0]}`
   }
 };
 </script>

@@ -15,46 +15,39 @@ let staticLinkVo = {
   wordShowUrl: '//cnstatic01.e.vhall.com/document', // 文档上传后预览地址-通过hash
   downOldUrl: '//t.e.vhall.com', // 旧版控制台地址，AG: 下载邀请码等；跳转旧版控制台
   helpLinkUrl: 'https://www.vhall.com/help', // 帮助中心跳转地址
-  WEB_SHARE_URL: '//t.e.vhall.com/v3/#' // 部署后链接地址
+  WEB_SHARE_URL: 'https://t.e.vhall.com/v3/#' // 部署后链接地址（注意发起端，现在必须要https才能发起）
 };
 let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
 let BASE_URL;
-let BASE_URL_DATA;
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/'; // 原来
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   case 'test':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   case 'pre':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com/';
-    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   case 'development':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
     break;
   default:
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    BASE_URL_DATA = 'http://t-saas-findc.vhall.com';
 }
 export default {
   staticLinkVo,
   staticBaseUrl,
   roomWatchUrl,
-  BASE_URL,
-  BASE_URL_DATA
+  BASE_URL
 };

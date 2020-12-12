@@ -59,6 +59,7 @@ export default {
   box-sizing: border-box;
   background-clip: content-box;
   cursor: pointer;
+  border-radius: 4px;
   border: 2px solid transparent;
   &:nth-child(3n) {
     margin-right: 0;
@@ -67,7 +68,8 @@ export default {
     margin-right: 18px;
   }
   &:hover{
-    border: 2px solid #FB3A32;
+    box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+    border: 1px solid #FB3A32;
   }
   .icon{
     width: 56px;

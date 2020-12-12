@@ -61,8 +61,10 @@ export default {
     background-clip: content-box;
     cursor: pointer;
     border: 2px solid transparent;
+    border-radius: 4px;
     &:hover{
-      border: 2px solid #FB3A32;
+      box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+      border: 1px solid #FB3A32;
     }
   }
   .icon{
