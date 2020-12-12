@@ -53,9 +53,9 @@
             <div class="login-other">
               其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
               <div class="other-img" v-show="!isOpenOther">
-                <img src="../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t-saas-dispatch.vhall.com/#/home')">
-                <img src="../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t-saas-dispatch.vhall.com/#/home')">
-                <img src="../common/images/icon/weibo.png" alt="">
+                <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t-saas-dispatch.vhall.com/#/home')">
+                <img src="../../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t-saas-dispatch.vhall.com/#/home')">
+                <img src="../../common/images/icon/weibo.png" alt="">
               </div>
             </div>
           </el-form>
@@ -104,7 +104,7 @@
         </div>
         <div class="login-line"></div>
         <div class="form-items">
-          <el-form ref="registerForm" :model="registerForm" :rules="loginRules">
+          <el-form ref="registerForm" :model="registerForm" :rules="registerRules">
               <el-form-item prop="phone">
                 <el-input
                   placeholder="请输入手机号"
@@ -127,11 +127,9 @@
                   <el-input
                   style="width:200px"
                     placeholder="动态密码"
-                    clearable
                     v-model="registerForm.code">
-                    <i slot="prefix" class="el-input__icon el-icon-lock"></i>
                   </el-input>
-                  <span @click="getDyCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  <span @click="getRegisterCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                 </div>
                 <!-- <p class="errorText" v-show="errorMsgShow.dycode"><i class="el-icon-error"></i>验证码错误</p> -->
               </el-form-item>
@@ -139,18 +137,20 @@
                 <el-input
                   placeholder="设置密码(6-30个字符)"
                   maxlength="30"
-                  clearable
-                  type="password"
+                  :type="isPassWordType ? 'password' : 'text'"
                   v-model="registerForm.password">
                   <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-                  <i slot="suffix" class="el-input__icon el-icon-view"></i>
+                  <span slot="suffix" @click="passWordType" class="closePwd">
+                    <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
+                    <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
+                  </span>
                 </el-input>
               </el-form-item>
               <div class="login-btn">
-                <el-button type="primary" @click="registerAccount" :disabled="!registerForm.checked">立 即 注 册</el-button>
+                <el-button type="primary" @click="registerAccount" :disabled="!checked">立 即 注 册</el-button>
               </div>
               <el-form-item class="login-checked register-checked">
-                <el-checkbox v-model="registerForm.checked">同意遵守<b style="color: #4da1ff">《服务条款》</b></el-checkbox>
+                <el-checkbox v-model="checked">同意遵守<b style="color: #4da1ff">《服务条款》</b></el-checkbox>
                 <span @click="$router.push({path: '/login'})">去登录</span>
               </el-form-item>
           </el-form>
@@ -163,7 +163,7 @@
   </div>
 </template>
 <script>
-import footerSection from '../components/Footer/index';
+import footerSection from '../../components/Footer/index';
 import {sessionOrLocal} from "@/utils/utils";
 // import { sessionOrLocal } from '../utils/utils';
 export default {
@@ -188,7 +188,15 @@ export default {
       },
       dynamicForm: {phoneNumber: ''},
       registerForm: {
-        agree: 1
+        argee: 1,
+        phone: '',
+        code: '',
+        password: ''
+      },
+      registerRules: {
+        phone: [
+          { validator: validatePhone, trigger: 'blur' }
+        ]
       },
       loginRules: {
         account: [
@@ -202,11 +210,9 @@ export default {
         ],
         dynamic_code: [
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
-        ],
-        phone: [
-          { validator: validatePhone, trigger: 'blur' }
         ]
       },
+      checked: false,
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
@@ -248,7 +254,7 @@ export default {
     },
     getDyCode() {
       // 获取短信验证码
-      if (this.checkMobile() && this.mobileKey) {
+      if (this.checkMobile(this.dynamicForm.phoneNumber) && this.mobileKey) {
         this.$fetch('sendCode', {
           type: 1,
           data: this.dynamicForm.phoneNumber,
@@ -310,10 +316,26 @@ export default {
         }
       });
     },
+    getRegisterCode() {
+      if (this.checkMobile(this.registerForm.phone) && this.mobileKey) {
+        this.$fetch('sendCode', {
+          type: 1,
+          data: this.registerForm.phone,
+          validate: this.mobileKey,
+          scene_id: 8
+        }).then(() => {
+          this.countDown();
+        });
+      }
+    },
     registerAccount() {
       this.registerForm.captcha = this.mobileKey;
+      console.log(this.registerForm, '>>>>>>>>>>>>>>>>>>>>>>>>');
       this.$fetch('register', this.registerForm).then(res => {
-        console.log(res.data, this.registerForm, '注册完成');
+        this.$message.success('注册成功');
+        setTimeout(() => {
+          this.$router.push({path:'/login'})
+        }, 2000)
       });
     },
     /**
@@ -332,8 +354,8 @@ export default {
     /**
      * 校验手机号
      */
-    checkMobile() {
-      return /^1[0-9]{10}$/.test(this.dynamicForm.phoneNumber);
+    checkMobile(phone) {
+      return /^1[0-9]{10}$/.test(phone);
     },
     checkPassWord() {
       return /^(\w){6,20}$/.test(this.loginForm.password);
@@ -393,7 +415,7 @@ export default {
         margin: 0 auto;
         width: 162px;
         height: 92px;
-        background: url(../common/images/login_logo.png) no-repeat;
+        background: url(../../common/images/login_logo.png) no-repeat;
         margin-bottom: 40px;
         background-size: contain;
         background-position: center;

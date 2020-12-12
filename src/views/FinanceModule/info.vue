@@ -39,7 +39,7 @@
             @onSearchFun="getAccountList('search')"
         >
         </search-area>
-      <div class="content-grid" v-if="versionType == 2">
+      <div class="content-grid" v-if="versionType == '旗舰版'">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
@@ -116,7 +116,7 @@ export default {
         vod_flow: 1231234434
       },
       time: '',
-      versionType:2,
+      versionType: '',
       dataValue: '',
       totalNum: 1000,
       vm: {},
@@ -133,10 +133,6 @@ export default {
             {
               label: '主账号',
               value: 1
-            },
-            {
-              label: '主账号+子账号',
-              value: 2
             }
           ]
         }
@@ -153,14 +149,6 @@ export default {
             {
               label: '主账号',
               value: 1
-            },
-            {
-              label: '主账号+子账号',
-              value: 2
-            },
-            {
-              label: '子账号',
-              value: 3
             }
           ]
         },
@@ -188,7 +176,8 @@ export default {
           typeText: '主账号'
         }
       ],
-      tabelColumn: [
+      tabelColumn: [],
+      tabelColumns: [
         {
           label: '消费时间',
           key: 'pay_date',
@@ -209,10 +198,6 @@ export default {
           label: '账号类型',
           key: 'typeText',
         },
-        {
-          label: '最高并发（方）',
-          key: 'webinar_max_uv',
-        }
       ]
     };
   },
@@ -226,14 +211,36 @@ export default {
   filters:{
     formatMoney
   },
+  created() {
+    this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    if (this.versionType === '旗舰版') {
+      this.tabelColumn = this.tabelColumns.concat({
+        label: '最高并发（方）',
+        key: 'webinar_max_uv'
+      })
+    } else {
+      this.tabelColumn = this.tabelColumns.concat({
+        label: '消耗流量（GB）',
+        key: 'webinar_flow'
+      })
+    }
+    if (this.parentId) {
+      this.searchAreaLayout.map(item => {
+        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      })
+      this.searchAccount.map(item => {
+        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      })
+    }
+  },
   mounted() {
     if (this.status) {
       this.initPayMessage();
     }
-    this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    // this.getLineList();
-    // this.getAccountList();
+    this.getLineList();
+    this.getAccountList();
   },
   beforeRouteLeave(to, from, next) {
     if (this.status) {
@@ -246,7 +253,8 @@ export default {
     getLineList(params) {
       let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
       let paramsObj = {
-        account_id: this.userId
+        account_id: this.userId,
+        type: formParams.type || 1
       };
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -260,18 +268,18 @@ export default {
       this.getFlowTrend(obj);
     },
     getFlowTrend(obj) {
-      let url = this.versionType == 2 ? 'getTrendInfo' : 'getFlowInfo';
+      let url = this.versionType == '旗舰版' ? 'getTrendLineInfo' : 'getFlowLineInfo';
       this.$fetch(url, obj).then(res =>{
         this.lintData = res.data.list;
       }).catch(e=>{
         console.log(e);
       });
     },
-    // 获取并发-最高
+    // 获取并发-最高  流量-活动个数
     getOnlinePay(obj) {
-      let url = this.versionType == 2 ? 'getOnlinePay' : 'getFlowPay';
+      let url = this.versionType == '旗舰版' ? 'getTrendHighInfo' : 'getFlowPayInfo';
       this.$fetch(url, obj).then(res =>{
-        this.trendData = res.data;
+        this.trendData = res.data || {};
       }).catch(e=>{
         console.log(e);
       });
@@ -279,10 +287,10 @@ export default {
     // 获取消费账单列表
     getAccountList(params) {
       let pageInfo = this.$refs.accountTableList.pageInfo;
-      let formParams = this.$refs.searchArea.searchAccount; //获取搜索参数
+      let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
       let paramsObj = {
         account_id: this.userId,
-        type: 1
+        type: formParams.type || 1
       };
       if (params === 'search') {
         pageInfo.pos= 0;
@@ -297,15 +305,15 @@ export default {
         }
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
-      console.log(obj);
-      this.getDataList(obj);
+      console.log(obj, '22222222222222222');
       this.getOnlinePay(obj);
+      this.getDataList(obj);
     },
     getDataList(obj) {
-      let url = this.versionType == 2 ? 'getAccountList' : 'getBusinessList';
+      let url = this.versionType == '旗舰版' ? 'getAccountList' : 'getBusinessList';
       this.$fetch(url, obj).then(res =>{
         let costList = res.data.list;
-        // this.totalNum =
+        this.totalNum = res.data.total;
         costList.map(item => {
           item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
           item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
@@ -318,7 +326,7 @@ export default {
     getOrderArrear() {
       let params = {
         user_id: this.userId,
-        type: this.versionType == 2 ? 2 : 1
+        type: this.versionType == '旗舰版' ? 2 : 1
       };
       this.$fetch('orderArrears', params).then(res =>{
         this.$router.push({

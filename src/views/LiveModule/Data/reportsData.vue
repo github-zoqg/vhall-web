@@ -191,6 +191,9 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
+      if (paramsObj.start_time) {
+        paramsObj.start_time = paramsObj.start_time.substring(0, 10);
+      }
       console.log(this.$params(paramsObj), '111111111111111');
       this.getAllData(paramsObj);
     },
