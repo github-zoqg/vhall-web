@@ -180,7 +180,6 @@ export default {
           this.roleName = res.data.join_info.role_name
           //  res.data.created_at
           this.createTime = '2020-12-09 19:52:00'.split(' ')[0].split('-').join('/')
-          console.warn(this.createTime, '--------');
           this.querySwitchInfo()
           this.queryMessage()
           this.initMsgServe()
