@@ -214,6 +214,9 @@ const apis = {
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
 
+  //用户RBAC
+  getRoleRbacList: ['/v3/users/roles/list', 'GET'], //角色- 列表
+
   // 登录
   loginInfo: ['/v3/users/user/login', 'POST'],  //登录接口  √
   loginOut: ['/v3/users/user/logout', 'POST'],  //退出接口  √
@@ -236,6 +239,10 @@ const apis = {
 
   // 直播-用户统计
   getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET'], //获取用户观看详情
+
+  // 直播-互动统计
+  getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
+  getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
@@ -262,21 +269,20 @@ const apis = {
 
   //财务中心
   getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息 √
-  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET'],  //账户并发数据趋势图
-  getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  //获取用量统计数据-流量
-  getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET'],  //获取并发-消费账单
-  getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  //获取流量-消费账单
-  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
-  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
-  userFlowTrend: ['/v3/data-center/business-total/user-flow-trend', 'GET'], //账户流量数据趋势图
+  getTrendLineInfo: ['/v3/data-center/business-total/user-online-trend', 'GET'],  //账户--并发--数据趋势图
+  getFlowLineInfo: ['/v3/data-center/business-total/user-flow-trend', 'GET'],  // 账户---流量----数据趋势图
+  getTrendHighInfo: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET'],  // 并发-消费账单-最高并发
+  getFlowPayInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  // 流量--消费账单-活动总数
+
+  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //并发-消费账单
+  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //流量-消费账单-分页明细[子账号也涉及]
+
   exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
   exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
   exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
   exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //并发明细导出
 
-
-
-
+ //账务-账单  财务-购买
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
   orderArrears: ['/v3/fin/order/arrears', 'POST'], // 财务总览-补缴欠费
   orderFlow: ['/v3/fin/order/flow', 'POST'], // 流量包购买
