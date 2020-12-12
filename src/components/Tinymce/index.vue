@@ -41,43 +41,6 @@ export default {
     }
   },
   data() {
-    // 上传图片
-    const _this = this;
-    function images_upload_handler(blobInfo, success, fail) {
-      const File = blobInfo.blob();
-      console.log(File);
-      if (_this.saveType) {
-        debugger
-        let pathVo = {
-          live: `webinars/intro-imgs/${_this.$moment().format('YYYYMM')}`,
-          customTabImg: `interacts/menu-imgs`,
-          special: `webinars/subject-imgs`
-        }
-        const params = {
-          path: pathVo[_this.saveType],
-          resfile: File,
-          type: 'image'
-        };
-        _this.$fetch('uploadImage', params, {
-          'Content-Type': 'multipart/form-data',
-          token: sessionOrLocal.get('token', 'localStorage') || '',
-          platform: 17
-        }).then(
-          res => {
-            success(res.data.domain_url);
-          }
-        ).catch(err => {
-          fail(err);
-        });
-      } else {
-        // 万一没传
-        if(File) {
-          success(URL.createObjectURL(File));
-        }else {
-          fail('失败上传');
-        }
-      }
-    }
     return {
       content: this.value||'',
       tinymceId: this.id,
@@ -94,7 +57,35 @@ export default {
         convert_urls: false, // 关闭url自动识别转换
         content_style: 'p {color:#555; margin: 0px; border:0px ; padding: 0px; word-break: break-all;}', // 关闭默认p标签间距
         fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
-        images_upload_handler: images_upload_handler
+        images_upload_handler: (blobInfo, success, failure) => {
+          let files = new window.File([blobInfo.blob()], blobInfo.filename(), {
+            type: blobInfo.type
+          })
+          console.log(files, '当前文件对象');
+          let pathVo = {
+            live: `webinars/intro-imgs/${this.$moment().format('YYYYMM')}`,
+            customTabImg: `interacts/menu-imgs`,
+            special: `webinars/subject-imgs`
+          }
+          const param = {
+            token: sessionOrLocal.get('token', 'localStorage') || '',
+            platform: 17,
+            type: 'image',
+            resfile: files,
+            path: pathVo[this.saveType]
+          }
+          this.$fetch('uploadImage', param, {
+            'Content-Type': 'multipart/form-data'
+          }).then(res => {
+            if (res && res.code === 200) {
+              success(res.data.domain_url);
+            } else {
+              failure('上传失败');
+            }
+          }).catch(() => {
+            failure('上传失败');
+          })
+        }
       }
     };
   },

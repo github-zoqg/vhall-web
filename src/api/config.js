@@ -197,7 +197,7 @@ const apis = {
   executeUseRead: ['/v3/commons/msgcenter/batch-read', 'POST'], // 标记已读 jia.li  √
 
   // 文件上传(图片)
-  uploadImage: ['/102/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
+  uploadImage: ['/v3/commons/upload/index', 'POST'], // 文件上传（图片） jia.li •••有调整
 
   // 回放模块
   playBackList: ['/99/v3/webinars/record/get-record-list', 'POST', 'mock'], // 回放列表 jian.chang

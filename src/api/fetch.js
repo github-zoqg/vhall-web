@@ -1,4 +1,5 @@
 import 'whatwg-fetch';
+import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
 import Env from './env';
@@ -34,10 +35,11 @@ export default function fetchData(url, data1 = {}, header = {}) {
     });
     api = api + Uri;
   }
-  
+
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
-    token: token
+    token: token,
+    uuid: uuidV1()
     // 'Content-Type': 'application/json'
   };
   if(window.location.hash.indexOf('/live/room/') !== -1 || window.location.hash.indexOf('/live/watch/') !== -1) {
@@ -59,7 +61,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
-    credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
+    // credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
   if (method === 'POST') {
