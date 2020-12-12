@@ -3,8 +3,24 @@
     <pageTitle :title='title'></pageTitle>
     <div class="interact-detail">
       <el-card>
-        <div class="search-box" v-if="title==='聊天' || title==='问答'">
-          <search-area
+        <div class="search-box">
+          <span v-if="title==='聊天' || title==='问答'">
+            <el-button round> 批量删除</el-button>
+            <el-date-picker
+              v-model="searchTime"
+              value-format="yyyy-MM-dd"
+              type="daterange"
+              @change="changeDate"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width: 240px"
+            />
+          </span>
+        <span class="search-export">
+          <el-button round> 导出数据</el-button>
+        </span>
+          <!-- <search-area
             ref="searchArea"
             :searchAreaLayout="searchAreaLayout"
             :placeholder="placeholder"
@@ -12,11 +28,11 @@
             @onExportData="exportData"
             @deletedChecked="deletedChecked"
           >
-          </search-area>
+          </search-area> -->
         </div>
-        <div class="search-box" v-else>
+        <!-- <div class="search-export">
           <el-button round> 导出数据</el-button>
-        </div>
+        </div> -->
         <table-list
           ref="tableList"
           :manageTableData="tableList"
@@ -43,6 +59,7 @@ export default {
     return {
       isCheckout: false,
       placeholder: '',
+      searchTime: null,
       seleteAllOptionList: [],
       totalNum: 100,
       tableList: [
@@ -126,27 +143,22 @@ export default {
          {
           label: '问答',
           key: 'type',
-          width: 120
         },
         {
           label: '问答内容',
           key: 'content',
-          width: 120
         },
         {
           label: '发送时间',
           key: 'time',
-          width: 120
         },
         {
           label: '私密',
           key: 'seract',
-          width: 120
         },
         {
           label: '状态',
           key: 'status',
-          width: 120
         }
       ],
       // 问卷
@@ -312,7 +324,7 @@ export default {
       ]
     };
   },
-  created() {
+  mounted() {
     this.title = this.$route.query.title;
     this.changeColumn(this.title);
   },
@@ -344,6 +356,7 @@ export default {
           this.tabelColumn= this.questColumn;
           this.tableRowBtnFun = this.chatBtnFun;
           this.searchAreaLayout = this.questAreaLayout;
+          this.getRecordList();
           break;
         case '抽奖':
           this.isCheckout = false;
@@ -369,19 +382,39 @@ export default {
           break;
       }
     },
+    changeDate() {
+
+    },
     onHandleBtnClick(val) {
       console.log(val);
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    getRecordList() {
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        room_id: this.$route.query.roomId
+      };
+      if (this.searchTime) {
+        pageInfo.pos = 0;
+        pageInfo.pageNum= 1;
+        this.$refs.tableList.clearSelect();
+        params.start_time = this.searchTime[0];
+        params.end_time = this.searchTime[1];
+      }
+      let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getRecodrderList', obj).then(res => {
+        console.log(res.data.list, '11111111111111111');
+      })
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
-        pageInfo.pageNum= 1;
-        // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
-      }
+      // let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      // if (params === 'search') {
+      //   pageInfo.pageNum= 1;
+      //   // 如果搜索是有选中状态，取消选择
+      //   // this.$refs.tableList.clearSelect();
+      // }
       let obj = Object.assign({}, pageInfo, formParams);
       console.log(obj);
     },
@@ -425,5 +458,14 @@ export default {
 }
 .search-box{
   margin-bottom: 20px;
+  /deep/.el-input__inner{
+    border-radius: 18px;
+    height: 40px;
+    margin-left: 15px;
+  }
+}
+.search-export{
+  float: right;
+  // margin-bottom: 20px;
 }
 </style>

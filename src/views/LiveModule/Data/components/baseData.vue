@@ -195,6 +195,7 @@
 export default {
   data() {
     return {
+      dataInfo: {}
     };
   },
   components: {
@@ -206,12 +207,23 @@ export default {
       default: 1
     }
   },
+  created() {
+    this.roomId = this.$route.query.roomId;
+    this.getAllDataInfo();
+  },
   methods: {
+    getAllDataInfo() {
+      //问答
+      this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.recordNum = res.data.total;
+      })
+    },
     lookOption(title) {
       this.$router.push({
         path: '/live/interactionDetail',
         query: {
-          id: 1,
+          roomId: this.roomId,
+          id: this.$route.params.str,
           title: title
         }
       });
@@ -279,7 +291,7 @@ export default {
           margin: 30px 0 0 36px;
           display: flex;
           /deep/.svg-icon{
-            font-size: 45px;
+            font-size: 38px;
           }
           .base-text{
             margin-left: 15px;
@@ -291,6 +303,7 @@ export default {
               color:#1A1A1A;
               font-weight: bold;
               line-height: 42px;
+              padding-top: 5px;
             }
           }
         }

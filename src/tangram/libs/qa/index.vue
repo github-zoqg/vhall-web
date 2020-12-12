@@ -95,7 +95,8 @@ export default {
     'privateChat',
     'isEmbed',
     'roomId',
-    'vssToken'
+    'vssToken',
+    'roleName'
   ],
   components: {
     PrivateMessage,
@@ -199,10 +200,11 @@ export default {
       true
     );
     // TODO:
-    this.$fetch('getHistoryQaMsg', {
-      room_id: this.roomId,
-      skip_cache: 1
-    }).then((res = {data: {}}) => {
+    if(!this.roleName){
+      // 只有观众才加载问答记录
+      this.$fetch('getHistoryQaMsg', {
+        room_id: this.roomId
+      }).then((res = {data: {}}) => {
         console.warn(res, '历时问答记录')
         const list = res.data.list.map((h) => {
           return {...h, content: this.emojiToText(h.content)};
@@ -211,9 +213,8 @@ export default {
         if (this.msgList.length && !this.masterEnd) {
           this.$parent.qaVisible = true;
         }
-      })
-      .catch(res => {});
-    // }
+      }).catch(res => {});
+    }
   },
   methods: {
     init () {
@@ -236,7 +237,7 @@ export default {
       });
     },
     openQa(){
-      window.open(`/#/live/qa/${this.webinarId}`)
+      window.open(`/live/qa/${this.webinarId}`)
     },
     refresh () {
       this.scroll.refresh();

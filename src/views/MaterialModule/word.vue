@@ -1,5 +1,5 @@
 <template>
-  <div class="video-wrap">
+  <div class="word-wrap">
     <pageTitle title="文档">
       <div slot="content">
         1.支持的文档格式: doc/docx，xls/xlsx，ppt/pptx，pdf，jpeg/jpg，png，bmp
@@ -13,66 +13,109 @@
         5.文档转换较慢，请于直播前提前上传
       </div>
     </pageTitle>
-    <div class="head-operat">
-      <el-upload
-        class="btn-upload"
-        :action=actionUrl
-        :headers="{token: token, platform: 17}"
-        :data=saveData
-        name="resfile"
-        :show-file-list=false
-        :on-success='uploadSuccess'
-        :on-error="uploadError"
-        :before-upload="beforeUploadHandler"
-        :on-preview="uploadPreview"
-      >
-        <el-button round type="primary" size="medium">上传</el-button>
-      </el-upload>
-      <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
-      <search-area class="head-btn fr search"
-        ref="searchArea"
-        :isExports='false'
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="initPage"
+    <!-- 无权限，未创建 -->
+    <div v-if="no_show">
+      <null-page text="您还未添加内容，快去上传吧" nullType="noAuth">
+        <el-upload
+          class="btn-upload"
+          :action=actionUrl
+          :headers="{token: token, platform: 17}"
+          :data=saveData
+          name="resfile"
+          :show-file-list=false
+          :on-success='uploadSuccess'
+          :on-error="uploadError"
+          :before-upload="beforeUploadHandler"
+          :on-preview="uploadPreview"
         >
-      </search-area>
+          <el-button round type="primary" class="length152">上传</el-button>
+        </el-upload>
+      </null-page>
     </div>
-    <el-card class="word-list">
-      <table-list
-        ref="tableListWord"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :tableRowBtnFun="tableRowBtnFun"
-        :totalNum="totalNum"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getTableWordList"
-        @changeTableCheckbox="changeTableCheckbox"
+    <div v-else>
+      <div class="head-operat">
+        <el-upload
+          class="btn-upload"
+          :action=actionUrl
+          :headers="{token: token, platform: 17}"
+          :data=saveData
+          name="resfile"
+          :show-file-list=false
+          :on-success='uploadSuccess'
+          :on-error="uploadError"
+          :before-upload="beforeUploadHandler"
+          :on-preview="uploadPreview"
         >
-      </table-list>
-    </el-card>
+          <el-button round type="primary" size="medium">上传</el-button>
+        </el-upload>
+        <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
+        <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
+        <el-input
+          class="head-btn search-tag"
+          placeholder="请输入文档名称"
+          v-model="formParams.keyword"
+          @keyup.enter.native="initPage">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="initPage">
+          </i>
+        </el-input>
+      </div>
+      <el-card class="word-list">
+        <table-list
+          ref="tableListWord"
+          v-if="totalNum > 0"
+          scene="word"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tableColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :totalNum="totalNum"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getTableWordList"
+          @changeTableCheckbox="changeTableCheckbox"
+        >
+        </table-list>
+        <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
+      </el-card>
+    </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>
     </template>
+    <!-- 文档列表 -->
+    <select-word ref="dialogWordComp" @reload="getTableWordList"></select-word>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import DocPreview from './DocPreview/index.vue';
+import NullPage from '../PlatformModule/Error/nullPage.vue';
 import Env from '@/api/env.js';
+import SelectWord from './components/selectWord.vue';
+
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'word.vue',
+  components: {
+    PageTitle,
+    DocPreview,
+    NullPage,
+    SelectWord
+  },
   data() {
     return {
+      no_show: false,
       token: sessionOrLocal.get('token', 'localStorage') || '',
       actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
-      formParams: {},
+      formParams: {
+        keyword: ''
+      },
       totalNum: 0,
       tableList: [],
-      tabelColumn: [
+      tableColumn: [
         {
           label: '文档名称',
           key: 'file_name',
@@ -108,12 +151,12 @@ export default {
       ],
       multipleSelection: [],
       showDialog: false,
-      docParam: null
+      docParam: null,
+      dialogVisible: false,
+      dialogTotal: 0,
+      dialogTableList: [],
+      dialogMulti: []
     };
-  },
-  components: {
-    PageTitle,
-    DocPreview
   },
   computed: {
     saveData: function() {
@@ -138,9 +181,42 @@ export default {
         this.$message.error(res.msg || '上传失败');
       } else {
         this.$message.success('上传成功');
-        // 判断文件上传情况
-        this.initPage();
+        if (this.$route.params.str) {
+          // 弹出框提示是否同步
+          this.$confirm('是否同步到资料库?', '提示', {
+            confirmButtonText: '同步',
+            cancelButtonText: '不同步',
+            customClass: 'zdy-message-box'
+          }).then(() => {
+            // 同步到资料库
+            this.asyncWord(res);
+          }).catch(() => {
+          });
+        } else {
+          // 判断文件上传情况
+          this.initPage();
+        }
       }
+    },
+    asyncWord(resV) {
+      let params = {
+        document_id: resV.data.document_id,
+        tag: 1, // 1：同步到资料库 ，2：同步到活动
+        webinar_id: this.$route.params.str
+      }
+      this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
+        if(res && res.code === 200) {
+          this.$message.success('同步成功');
+          this.$refs.tableListWord.clearSelect();
+          this.initPage();
+        } else {
+          this.$message.error(res.msg || '同步失败');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error(e.msg || '同步失败');
+      }).finally(()=>{
+      });
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -168,12 +244,18 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+    // 从资料库选择文档
+    openCheckWord() {
+      this.dialogVisible = true;
+      this.$refs.dialogWordComp.initComp();
+    },
     // 批量删除
     wordMultiDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
-        this.$confirm('是否确认删除', '删除提示', {
-          confirmButtonText: '删除',
-          cancelButtonText: '取消'
+        this.$confirm('删除后将会影响文档演示和观看，确定删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -202,6 +284,7 @@ export default {
       this.$fetch(this.$route.params.str ? 'getWebinarWordList' : 'getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.totalNum = res.data.total;
+          this.no_show = this.totalNum === 0 && this.formParams.keyword === '';
           let list = res.data.list;
           list.map(item => {
             // 转换状态 0待转换 100转换中 200完成 500失败
@@ -234,11 +317,10 @@ export default {
     // 删除
     deleteHandle(that, { rows }) {
       console.log('删除', rows);
-      that.$confirm(that.$route.params.str ? '该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？' : '确认删除？', '提示', {
+      that.$confirm(that.$route.params.str ? '删除后将会影响文档演示和观看，确定删除？' : '删除后将会影响文档演示和观看，确定删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(() => {
         that.deleteSend(rows);
       }).catch(() => {
@@ -298,7 +380,7 @@ export default {
     border: none;
   }
 }
-.video-wrap {
+.word-wrap {
   height: 100%;
    .word-list{
     width: 100%;
@@ -328,6 +410,24 @@ export default {
     margin-bottom: 20px;
     .head-btn{
       display: inline-block;
+      float: right;
+    }
+    .el-input{
+      width: 220px;
+      .el-input__icon{
+        cursor: pointer;
+      }
+      /deep/ .el-input__icon{
+        line-height: 36px;
+      }
+    }
+    /deep/ .el-input__inner{
+      user-select: none;
+      border-radius: 50px;
+      font-size: 14px;
+      color: #666666;
+      height: 36px;
+      line-height: 36px;
     }
     ::v-deep.set-upload{
       position: relative;
