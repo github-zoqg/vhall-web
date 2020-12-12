@@ -37,7 +37,8 @@ export default {
     },
     saveType: {
       type: String,
-      required: false
+      required: false,
+      default: 'other'
     }
   },
   data() {
@@ -65,7 +66,8 @@ export default {
           let pathVo = {
             live: `webinars/intro-imgs/${this.$moment().format('YYYYMM')}`,
             customTabImg: `interacts/menu-imgs`,
-            special: `webinars/subject-imgs`
+            special: `webinars/subject-imgs`,
+            other: `webinars/saas-tinymce`
           }
           const param = {
             token: sessionOrLocal.get('token', 'localStorage') || '',
