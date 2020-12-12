@@ -430,7 +430,6 @@ const apis = {
   // PAAS 生产环境
   allowMsg: ['//api.vhallyun.com/sdk/v2/message/lists', 'GET', 'paas'], // 获取消息通过列表
   setChannelSwitch: ['//api.vhallyun.com/sdk/v2/message/set-channel-switch','GET', false, 'paas'], // 设置审核开关接口
-  Test: ['/sdk/v2/message/set-channel-switch','GET', false, 'paas'], // 设置审核开关接口
   getChannelSwitch: ['//api.vhallyun.com/sdk/v2/message/get-channel-switch','GET', false, 'paas'], // 更新总开的状态
   setAutoSend: ['//api.vhallyun.com/sdk/v2/message/set-channel-switch-options','GET', false, 'paas'], // 设置是否自动处理聊天数据接口
   getChatAuditLists: ['//api.vhallyun.com/sdk/v2/message/get-chat-audit-lists','GET', false,'paas'], // 获取待审核消息列表
