@@ -2,7 +2,9 @@
   <div class="doc-preview-wrap">
     <ul class="Thumbnail">
       <li :class="activeIns === index ? 'imgActive' : ''" v-for="index of docParam.page" :key="index">
-        <img :index="index" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${index}.jpg`"><span>{{index}}</span></li>
+        <img :index="index" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${index}.jpg`" @click="activeIns = index">
+        <span>{{index}}</span>
+      </li>
     </ul>
     <div class="del_imgBox">
       <div class="imgBox">
@@ -97,7 +99,9 @@ export default {
   display: inline-block;
   height: 540px;
   img {
-    height: 100%;
+    height: auto;
+    width: 100%;
+    display: block;
   }
   &.imgHidden {
     display: none;
@@ -115,6 +119,7 @@ export default {
   height: 100%;
   background: white;
   position: relative;
+  overflow: auto;
 }
 .imgLoading {
   width: 40px!important;
