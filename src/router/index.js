@@ -70,7 +70,7 @@ router.beforeEach((to, from, next) => {
   } else {
     // token不存在时跳转
     console.log('4444444', to.path, '当前页面');
-    whiteList.includes(to.path) || to.path.indexOf('/user/home') !== -1|| to.path.indexOf('/live/watch/') !== -1? next() : next({path: '/login'});
+    whiteList.includes(to.path) || to.path.indexOf('/subscribe') !== -1 || to.path.indexOf('/user/home') !== -1|| to.path.indexOf('/live/watch/') !== -1? next() : next({path: '/login'});
     NProgress.done();
   }
 });
