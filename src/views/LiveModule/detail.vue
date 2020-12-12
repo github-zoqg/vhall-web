@@ -212,6 +212,9 @@ export default {
         } else if(item.path === `/live/prizeSet/${this.$route.params.str}`) {
           // 奖品
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
+        } else if (item.path === `/live/interactionData/${this.$route.params.str}`) {
+          // 互动统计
+          this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
         } else {
           this.$router.push({path: item.path});
         }

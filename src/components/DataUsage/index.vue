@@ -1,6 +1,6 @@
 <template>
   <el-card class="data-usage">
-    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.edition == '2'">
+    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.edition == '旗舰版'">
       <el-col :span="6">
         <div class="top-item">
           <p>当前版本</p>
@@ -17,7 +17,7 @@
       </el-col>
       <el-col :span="6">
         <div class="top-item" v-if="userInfo.concurrency">
-          <p>并发扩展包<span class="level" @click="levelVersion('购买')" v-if="buttonList.includes('extend')">购买</span>
+          <p>并发扩展包（人次）<span class="level" @click="levelVersion('购买')" v-if="buttonList.includes('extend')">购买</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
               1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
@@ -28,7 +28,23 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance'">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div class="top-item" v-if="userInfo.concurrency.extend_day > 0">
+          <p>并发扩展包（天）
+          <el-tooltip effect="dark" placement="right-start">
+            <div slot="content">
+              1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
+              若无扩展包，则不可发直播且直播回放不可播放<br>
+              2.扩展包欠费则不可发直播，回放不受影响
+            </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+          </p>
+          <h2>{{ userInfo.concurrency.extend_day }}</h2>
+          <p>{{ userInfo.concurrency.extend_day_start }}至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
     </el-row>
@@ -36,11 +52,11 @@
       <el-col :span="9">
         <div class="top-item">
           <p>当前版本</p>
-          <h2>{{ userInfo.edition == '1' ? '专业版' : userInfo.edition == '3' ? '无极版' : '标准版' }} <span class="level" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
+          <h2>{{ userInfo.edition }} <span class="level" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
           <p>有效期: {{ userInfo.edition_valid_time || ''  }}</p>
         </div>
       </el-col>
-      <el-col :span="9" v-if = "userInfo.edition == '3'">
+      <el-col :span="9" v-if = "userInfo.edition == '无极版'">
         <div class="top-item"  v-if="userInfo.flow">
           <p>总流量/回放流量（GB）
             <el-tooltip effect="dark" placement="right-start">
@@ -53,13 +69,13 @@
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance' && buttonList.includes('details ')">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details ')">账单明细</p>
         </div>
       </el-col>
       <el-col :span="9" v-else>
         <div class="top-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
-          <el-tooltip effect="dark" placement="right-start" v-if="userInfo.edition == '1'">
+          <el-tooltip effect="dark" placement="right-start" v-if="userInfo.edition == '标准版'">
             <div slot="content">
               1.专业版过期后将自动降级为标准版，流量包可继续使用<br>
               2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
@@ -78,7 +94,8 @@
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
-          <p @click="goAccountDetail" v-if="this.$route.path==='/finance' && buttonList.includes('details ')" class="account">账单明细</p>
+          <p @click="goAccountDetail" v-if="this.$route.path==='/finance/info'" class="account">账单明细</p>
+           <!-- && buttonList.includes('details ') -->
         </div>
       </el-col>
     </el-row>
@@ -99,7 +116,7 @@ export default {
   data() {
     return {
       title: '流量包',
-      versionType: 1,
+      versionType: '',
       userInfo: {
         concurrency: {},
         flow: {},
@@ -129,9 +146,9 @@ export default {
       });
     },
     levelVersion(title) {
-      if (this.$route.path !== '/finance') {
+      if (this.$route.path !== '/finance/info') {
         this.$router.push({
-          path: '/finance'
+          path: '/finance/info'
         });
       } else {
         this.$refs.levelVersion.dialogVisible = true;
@@ -141,21 +158,21 @@ export default {
     },
     goAccountDetail() {
       this.$router.push({
-        path: '/infoDetail'
+        path: '/finance/infoDetail'
       });
     },
     upgradeVersion() {
       this.$router.push({
-        path: '/orderDetail'
+        path: '/finance/orderDetail'
       });
     },
     buyVersion() {
-      if (this.$route.path === '/finance') {
+      if (this.$route.path === '/finance/info') {
         this.$router.push({
-          path: '/finance'
+          path: '/finance/info'
         });
       } else {
-        this.title = this.versionType == 1 ? '专业版' : '标准版';
+        this.title = this.versionType;
         this.concurrentPrice = this.userInfo.flow;
         this.$refs.levelVersion.dialogBuyVisible = true;
       }

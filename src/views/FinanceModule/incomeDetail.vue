@@ -3,7 +3,7 @@
     <div class="title-data">
       <p>收益详情</p>
     </div>
-    <title-data></title-data>
+    <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <el-card class="box-income">
       <p>收益明细</p>
       <search-area
@@ -16,8 +16,8 @@
         ref="tableIncome"
         :manageTableData="tableList"
         :tabelColumnLabel="tabelColumn"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
+        :isCheckout="false"
+        :isHandle="false"
         :totalNum="totalNum"
         @getTableList="getIncomeDetailList"
         >
@@ -28,11 +28,13 @@
 
 <script>
 import titleData from '../LiveModule/Data/components/title';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "income",
   data() {
     return {
-      totalNum: 1000,
+      totalNum: 1,
+      liveDetailInfo: {},
       searchDetail: [
         {
           type: '2',
@@ -45,41 +47,20 @@ export default {
           options: [
             {
               label: '礼物',
-              value: '13'
+              value: 13
             },
             {
               label: '门票',
-              value: '2'
+              value: 2
             },
             {
               label: '打赏',
-              value: '5'
+              value: 5
             },
           ]
         }
       ],
-      isCheckout: false,
-      isHandle: false,
-      tableList: [
-        {
-          pay_time: '2020-09-17',
-          pay_type: '5',
-          pay_fee: '123,000',
-          nickname: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
-          id: '1',
-          is_enter: '否',
-          phone:'11122233345',
-        },
-        {
-          pay_time: '2020-01-17',
-          pay_type: '2',
-          pay_fee: '111,000',
-          nickname: '哈哈减肥吧开始讲课',
-          id: '2',
-          phone:'12345678900',
-          is_enter: '是',
-        }
-      ],
+      tableList: [],
       tabelColumn: [
         {
           label: '用户昵称',
@@ -88,27 +69,22 @@ export default {
         {
           label: '手机号',
           key: 'phone',
-          width: 120
         },
         {
           label: '付费金额',
           key: 'pay_fee',
-          width: 150
         },
         {
           label: '付费类型',
           key: 'type',
-          width: 120,
         },
         {
           label: '支付时间',
           key: 'pay_time',
-          width: 150,
         },
         {
           label: '是否参会',
           key: 'is_enter',
-          width: 100
         }
       ]
     };
@@ -116,18 +92,31 @@ export default {
   components: {
    titleData
   },
+  created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getLiveDetail();
+  },
   mounted() {
     this.getIncomeDetailList();
-    console.log(this.$route.query.webinar_id);
+    console.log(this.$route.params.str);
   },
   methods: {
+    //获取直播详情
+    getLiveDetail() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        this.liveDetailInfo = res.data;
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      });
+    },
     getIncomeDetailList(params) {
       let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
       let formParams = this.$refs.incomeDetils.searchParams; //获取搜索参数
       let paramsObj = {};
       if (params === 'search') {
         pageInfo.pageNum= 1;
-        pageInfo.pos = 1;
+        pageInfo.pos = 0;
       }
        for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -137,22 +126,22 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.user_id = '16417099';
-      paramsObj.webinar_id = this.$route.query.webinar_id;
+      paramsObj.user_id = this.userId;
+      paramsObj.webinar_id = this.$route.params.str;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
       this.$fetch('liveIncomeDetailList', obj).then(res =>{
-        this.rowsList();
-        console.log(res);
-        // this.totalNum = res.data.total;
-        // this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+        this.tableList = res.data.list;
+        this.rowsList(this.tableList);
       }).catch(e=>{
         console.log(e);
       });
     },
-    rowsList() {
-      this.tableList.map(item => {
+    rowsList(data) {
+      data.map(item => {
         item.type = item.pay_type == '2' ? '门票': item.pay_type == '5' ? '打赏' : '礼物';
+        item.is_enter = item.is_enter ? '是' : '否';
       });
       console.log(this.tableList);
       // .map(item => {"red_packet": item.red_packet_type == '1' ? '固定金额': '拼手气' })
