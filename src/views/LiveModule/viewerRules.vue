@@ -463,8 +463,20 @@ export default {
         });
       }
     },
+    // 下载邀请码
     downFCodeHandle() {
-      window.open(`${env.staticLinkVo.downOldUrl}/export/fcode/${this.$route.params.str}`, '_blank');
+      this.$fetch('getFCodeExcel', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        if(res && res.code === 200) {
+          this.$message.success('邀请码下载申请成功，请去下载中心查看');
+        } else {
+          this.$message.error(res.msg || '邀请码下载申请失败');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error('邀请码下载申请失败');
+      });
     },
     initPage() {
       this.viewerSetGet();
@@ -473,7 +485,6 @@ export default {
   },
   created() {
     this.initPage();
-    this.downloadUrl = `${env.downBaseUrl}/export/fcode/${this.$route.params.str}`;
   }
 };
 </script>

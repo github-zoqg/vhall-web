@@ -44,7 +44,7 @@
       <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
             <div class="inner">
-              <div class="top">
+              <div class="top"  @click.prevent.stop="toDetail(item.webinar_id)">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
@@ -311,9 +311,10 @@ export default {
         position: relative;
       }
       .inner:hover{
-        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
       }
       .top{
+        cursor: pointer;
         height: 175px;
         background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
         background-size: 400% 400%;

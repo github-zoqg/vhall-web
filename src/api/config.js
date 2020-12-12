@@ -164,7 +164,9 @@ const apis = {
   viewerSetGet: ['/v3/webinars/webinar/get-webinar-verify', 'POST'],// 获取活动观看限制接口 jia.li  √
   viewerInfo: ['/v3/webinars/audience/info', 'POST'],// 白名单观众详情获取 jia.li •••【控制台未用到】
   viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li  √
-  fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li •••
+  fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li  √
+  getFCodeExcel: ['/v3/webinars/webinar/get-fcode-excel', 'POST'],// 生成验证码 jia.li  √
+
   // 自定义菜单
   menuTplList: ['/v3/interacts/menu/components-list', 'POST'], // 控制台-组件列表接口 jia.li
   customMenuList: ['/v3/interacts/menu/bak-menu-list', 'POST'], // 控制台-菜单列表接口 jia.li
