@@ -149,7 +149,7 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
-          this.signUpSwtich = res.data.enable_status === '0' ? false : true;
+          this.signUpSwtich = res.data.enable_status == '0' ? false : true;
         }
       }).catch(err => {
         this.$message.error(`报名表单${ behaviour }失败！`);
@@ -343,6 +343,9 @@ export default {
             filedJson.nodes[3].privacyAdd = false;
             filedJson.nodes[3].canRemove = true;
           }
+        }
+        if(info.type === 'checkBox') {
+          filedJson.value = []
         }
         this.questionArr.push(filedJson);
         return false;

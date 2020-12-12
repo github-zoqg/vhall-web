@@ -28,6 +28,7 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
+        :noDel="true"
         :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
@@ -47,12 +48,13 @@
       @change="sortChange"
       @start="drag = true"
       @end="drag = false"
+      :move="onMove"
     >
       <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
         <li class="viewItem" v-for="(item, index) in renderQuestion" :key="item.question_id">
           <p class="label">
-            {{ index < 9 ? `0${ index + 1 }` : index + 1 }}.
+            {{ index | numFormmat }}.
             <!-- {{item.required ? '（必填）' : ''}} -->
             <template v-if="!item.labelEditable">
               {{item.label}}
@@ -102,6 +104,7 @@
                 :name="item.id"
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
+                :label="radioItem.item_id"
               >
                 {{radioItem.other ? "其他" : ''}}
                 <el-input
@@ -132,6 +135,8 @@
               <el-checkbox
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
+                :label="radioItem.item_id"
+                :name="item.id"
               >
                 {{radioItem.other ? "其他" : ''}}
                 <el-input
@@ -276,7 +281,25 @@ export default {
       };
     },
   },
+  filters: {
+    numFormmat(val){
+      return val < 9 ? `0${ val + 1 }` : val + 1
+    }
+  },
   methods: {
+    onMove({ relatedContext, draggedContext }) {
+      const relatedElement = relatedContext.element;
+      const draggedElement = draggedContext.element;
+      if (relatedElement.reqType === 0) {
+        if (relatedElement.default_type === 1 || relatedElement.default_type === 2) {
+          return false
+        }
+      } else if (relatedElement.reqType === 6) {
+        return false
+      } else {
+        return true
+      }
+    },
     // 保存表单
     sureQuestionnaire() {
       if (!this.title) {
