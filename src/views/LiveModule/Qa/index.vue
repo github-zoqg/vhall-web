@@ -54,6 +54,12 @@
             <ul class="no-deal" v-show="active == 2">
               <li v-for="(item, index) in noDealList" :key="index">{{item}}</li>
             </ul>
+            <div class="messChat">
+              <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
+              <template v-show="privateFlag">
+                <Private ></Private>
+              </template>
+            </div>
           </div>
         </div>
     </div>
@@ -61,10 +67,12 @@
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
+import Private from './PrivateMess/index';
 
 export default {
   components: {
-    OldHeader
+    OldHeader,
+    Private
   },
   computed:{
     filterTime(){
@@ -91,8 +99,15 @@ export default {
 
       }], // 待处理
       textDealList: [], // 文字回复
-      noDealList: [], // 不处理
+      noDealList: [
+        {
+          name: 'content',
+          content: 'dfs',
+          time: '2020-12-06'
+        }
+      ], // 不处理
       $Chat: null,
+      privateFlag: true
     }
   },
   async created() {
@@ -119,9 +134,9 @@ export default {
     },
     getChat(){
       console.warn(45);
-      this.$fetch('channelInfo', {
+      this.$fetch('getAutherQa', {
         room_id: this.baseObj.interact.room_id,
-        vss_token: ''
+        type: 0
       }).then(res=>{
         console.warn('获取res', res)
       }).catch(err=>{
@@ -139,6 +154,10 @@ export default {
       }else{
         console.warn('不处理');
       }
+    },
+    messClick(){
+      console.warn('右下角私聊');
+      this.privateFlag = true
     },
     // 初始化
     initChat(){
@@ -240,6 +259,7 @@ export default {
       .tab-content{
         border: 1px solid red;
         height: calc(100% - 44px);
+        position: relative;
         ul{
           height: 100%;
           overflow-y: auto;
@@ -273,6 +293,11 @@ export default {
               margin-left: 10px;
             }
           }
+        }
+        .messChat{
+          position: absolute;
+          bottom: 0;
+          right: 0;
         }
       }
     }

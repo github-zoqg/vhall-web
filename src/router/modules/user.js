@@ -19,31 +19,31 @@ const router = [
         meta: { auth: true, title: '账户收益', name: 'financeIncome'}
       },
       {
-        path: '/incomeDetail/:str(\\d+)',
+        path: 'incomeDetail/:str(\\d+)',
         component: () => import('@/views/FinanceModule/incomeDetail'),
         meta:{ auth: true,  title: '收益详情', name: 'incomeDetail', activeMenu: '/finance/info'},
         hidden: true
       },
       {
-        path: '/payOrder',
+        path: 'payOrder',
         component: () => import('@/views/FinanceModule/payList'),
         meta:{ auth: true,  title: '购买列表', name: 'payOrder', activeMenu: '/finance/info'},
         hidden: true
       },
       {
-        path: '/infoDetail',
+        path: 'infoDetail',
         component: () => import('@/views/FinanceModule/infoDetail'),
         meta:{ auth: true,  title: '账单明细', name: 'infoDetail', activeMenu: '/finance/info'},
         hidden: true
       },
       {
-        path: '/accountDetail',
+        path: 'accountDetail',
         component: () => import('@/views/FinanceModule/accountDetail'),
         meta:{ auth: true,  title: '提现明细', name: 'accountDetail', activeMenu: '/finance/income'},
         hidden: true
       },
       {
-        path: '/orderDetail',
+        path: 'orderDetail',
         component: () => import('@/views/FinanceModule/orderDetail'),
         meta:{ auth: true,  title: '订单支付', name: 'orderDetail', activeMenu: '/finance/income'},
         hidden: true

@@ -125,6 +125,7 @@ import ChatUserControl from './chat-user-control';
 import { textToEmojiText } from './js/emoji';
 import { formatTime, handleTime } from './js/handle-time';
 import getAvatar from './js/get-avatar';
+import {sessionOrLocal} from "@/utils/utils";
 import { disableScroll, enableScroll } from '../../utils/scroll';
 BScroll.use(ScrollBar);
 BScroll.use(PullDown);
@@ -208,7 +209,7 @@ export default {
   },
   data () {
     return {
-      headToken:  window.sessionStorage.getItem('token') || '', // 请求token
+      headToken: sessionOrLocal.get('token', 'localStorage') || '', // 请求token
       assistantType: this.$route.query.assistantType,
       placeholderDescribe: '', // placeholder的显示
       chatLoginStatus: false, // 聊天是否需要登录

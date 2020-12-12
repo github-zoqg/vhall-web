@@ -27,10 +27,10 @@ export default {
     return {
       showSignin: false,
       signInfo: null,
-      remaining: 0,
+      remaining: 0, // 总时长
       timer: null,
-      signId: '',
-      nowSignObj: ''
+      signId: '', // 签到ID
+      nowSignObj: '' // 当前自动签到信息
     };
   },
   methods: {

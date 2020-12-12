@@ -155,7 +155,7 @@ export default {
       that.$router.push({
         path: `/live${val.path}/${id}`,
         query: {
-          type: val.rows.webinar_state
+          roomId: val.rows.room_id
         }
       });
     }
