@@ -2,8 +2,8 @@
   <div class="new-qa">
     <OldHeader class="head-wrap"></OldHeader>
     <div class="qa-wrap">
-        <h3 class="title">{{baseObj.webinar.subject}}</h3>
-        <p class="host">主播：{{baseObj.webinar.userinfo.nickname}}</p>
+        <h3 class="title">{{baseObj.webinar && baseObj.webinar.subject}}</h3>
+        <p class="host">主播：{{ baseObj.webinar && baseObj.webinar.userinfo && baseObj.webinar.userinfo.nickname}}</p>
         <div class="tab-box">
           <ul>
             <li @click="select(index)" :class="['tab-li', {'tab-li-active' : index == active}]"  v-for="(item, index) in List" :key="index">
@@ -23,21 +23,33 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                 <p>不处理</p>
-                 <el-dropdown split-button>
-                  <span class="el-dropdown-link">
-                    更多
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item> <p>私聊</p></el-dropdown-item>
-                    <el-dropdown-item> <p>文字回复</p></el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
+                  <el-button @click="reply('audio')" size="small" class="setBut">标记为语音回复</el-button>
+                  <el-dropdown @command="reply" size="small" class="setBut">
+                    <el-button size="small"  class="el-dropdown-link">更多</el-button>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command='private'>私聊</el-dropdown-item>
+                        <el-dropdown-item command='no'>不处理</el-dropdown-item>
+                      </el-dropdown-menu>
+                  </el-dropdown>
                </div>
               </li>
             </ul>
-            <ul class="text-deal" v-show="active == 1">
-              <li v-for="(item, index) in textDealList" :key="index">{{item}}</li>
+            <ul class="await-deal text-deal" v-show="active == 1">
+              <!-- textDealList -->
+              <li v-for="(item, index) in awaitList" :key="index"  class="clearFix">
+               <div class="fl">
+                 <p class="await-name">
+                  <span>{{item.name}}</span>
+                  <span>{{filterTime(item.time)}}</span>
+                 </p>
+                 <p class="await-content">{{item.content}}</p>
+               </div>
+               <div class="fr">
+                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
+                  <el-button @click="reply('audio')" size="small" class="setBut">私聊</el-button>
+               </div>
+              </li>
             </ul>
             <ul class="no-deal" v-show="active == 2">
               <li v-for="(item, index) in noDealList" :key="index">{{item}}</li>
@@ -115,6 +127,18 @@ export default {
       }).catch(err=>{
         console.warn('获取err', err);
       })
+    },
+    reply(val){
+      console.warn(val,789, this.active);
+      if(val == 'text'){
+        console.warn('文字回复')
+      }else if(val == 'audio'){
+        console.warn('语音回复');
+      }else if(val == 'private'){
+        console.warn('私聊回复');
+      }else{
+        console.warn('不处理');
+      }
     },
     // 初始化
     initChat(){
@@ -227,7 +251,7 @@ export default {
             padding: 10px 20px;
           }
           .fl{
-            width: calc(100% - 300px);
+            width: calc(100% - 330px);
             line-height: 25px;
             .await-name{
               color: #888;
@@ -242,20 +266,11 @@ export default {
           }
           .fr{
             float: right;
-            width: 300px;
+            width: 330px;
             margin-top: 10px;
-            p{
-              float: right;
-              display: inline-block;
-              padding: 0px 12px;
-              height: 30px;
-              line-height: 30px;
-              border: 1px solid #d0cdcd;
-              background-color: #f9f9f9;
-              color: #666;
-              &:nth-child(2){
-                margin: 0 5px;
-              }
+            text-align: right;
+            .setBut{
+              margin-left: 10px;
             }
           }
         }

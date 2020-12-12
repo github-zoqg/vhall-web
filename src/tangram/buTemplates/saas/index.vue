@@ -2206,9 +2206,10 @@ export default {
     let vhallDomain = window.sessionStorage.getItem('vhall_domain');
     if (vhallDomain) {
       vhallDomain = JSON.parse(vhallDomain);
-      this.filterUrl =
-        (this.$route.query.assistantType ? 'http:' : 'https:') +
-        `${vhallDomain.web}/room/authchat/${this.ilId}`;
+      this.filterUrl = `/live/authchat/${this.ilId}`
+      // this.filterUrl =
+      //   (this.$route.query.assistantType ? 'http:' : 'https:') +
+      //   `${vhallDomain.web}/room/authchat/${this.ilId}`;
     } else {
       console.error('聊天过滤地址没有localStorage的vhall_domain');
     }

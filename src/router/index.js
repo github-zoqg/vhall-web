@@ -42,7 +42,6 @@ router.beforeEach((to, from, next) => {
       sessionOrLocal.removeItem('SAAS_VS_PES');
     });
     // 已登录不准跳转登录页
-    console.log('11111111', to.path, '当前页面');
     if (to.path === '/login') {
       next({ path: '/' });
       NProgress.done();

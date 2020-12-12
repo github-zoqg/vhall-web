@@ -8,7 +8,7 @@ import { sessionOrLocal } from '../utils/utils';
 
 export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url);
-  let [api, method, mock] = config;
+  let [api, method, mock, paas] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
   // 此token不要删除  --  直播间需要使用   我将你们的token进行注释了
@@ -20,20 +20,22 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let formData = null;
 
   if (method === 'GET' && data) {
-    let Uri;
-    api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
-    Object.keys(data).forEach((key, indx) => {
-      if (indx === data.length) {
-        Uri = Uri + `${key}=${data[key]}`;
-      } else {
-        if (indx < Object.keys(data).length - 1) {
-          Uri = Uri + `${key}=${data[key]}&`;
-        } else {
+    if(!paas){
+      let Uri;
+      api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
+      Object.keys(data).forEach((key, indx) => {
+        if (indx === data.length) {
           Uri = Uri + `${key}=${data[key]}`;
+        } else {
+          if (indx < Object.keys(data).length - 1) {
+            Uri = Uri + `${key}=${data[key]}&`;
+          } else {
+            Uri = Uri + `${key}=${data[key]}`;
+          }
         }
-      }
-    });
-    api = api + Uri;
+      });
+      api = api + Uri;
+    }
   }
 
   let headers = {
@@ -70,14 +72,21 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
+  } else if (paas){
+    api = `${api}`
+  }else if (api.indexOf('/login') > -1) {
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', api)
+    if (api.indexOf('/login/login') > -1) {
+      api = `${Env.BASE_REPORT_URL}${api.slice(6)}`;
+    } else {
+      api = `${Env.BASE_REPORT_URL}${api}`;
+    }
   } else {
     api = `${Env.BASE_URL}${api}`;
   }
-  console.log(api);
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
-    // || res.code === 500
     if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
       this.$router.push({
@@ -88,11 +97,5 @@ export default function fetchData(url, data1 = {}, header = {}) {
     } else {
       return Promise.reject(res);
     }
-    // else {
-    //     EventBus.$message({
-    //         message: res.msg,
-    //         type: 'error'
-    //     })
-    // }
   });
 }
