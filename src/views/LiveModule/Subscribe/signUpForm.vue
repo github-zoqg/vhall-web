@@ -6,7 +6,7 @@
           <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
         </header>
         <article>
-          <h1 class="pageTitle">{{ baseInfo.form_title }}</h1>
+          <h1 class="pageTitle">{{ baseInfo.title }}</h1>
           <div :class="['tabs', colorIndex]">
             <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
             <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
@@ -43,12 +43,13 @@
                       <el-radio
                         v-for="radioItem in question.items"
                         :key="radioItem.id"
-                        :label="radioItem.subject"
+                        :label="radioItem.id"
                         :name="question.id + ''"
                       >
+                      {{ radioItem.type != 1 ? radioItem.subject : ''}}
                         <template v-if="radioItem.type === 1">
                           其他
-                          <el-input v-model="form[`${question.id}other`]" class="noFull radioInput"></el-input>
+                          <el-input v-model="form[`${question.id}${radioItem.id}`]" class="noFull radioInput"></el-input>
                           <br/>
                         </template>
                       </el-radio>
@@ -63,12 +64,13 @@
                     <el-checkbox
                       v-for="checkItem in question.items"
                       :key="checkItem.id"
-                      :label="checkItem.subject"
+                      :label="checkItem.id"
                       :name="question.id + ''"
                     >
+                    {{ checkItem.type != 1 ? checkItem.subject : ''}}
                       <template v-if="checkItem.type === 1">
                         其他
-                        <el-input v-model="form[`${question.id}other`]" class="noFull radioInput"></el-input>
+                        <el-input v-model="form[`${question.id}${checkItem.id}`]" class="noFull radioInput"></el-input>
                         <br/>
                       </template>
                     </el-checkbox>
@@ -203,10 +205,25 @@
             form[item.id] = '';
             if (item.type === 3) {
               form[item.id] = [];
+              item.items.forEach(opt => {
+                if (opt.type === 1) {
+                  form[`${item.id}${opt.id}`] = ''
+                }
+              })
+            } else if (item.type === 0 && item.default_type === 2 && this.baseInfo.phone) {
+              // 手机号
+              form[item.id] = this.baseInfo.phone;
+            } else if (item.type === 2) {
+              // 单选/多选
+              item.items.forEach(opt => {
+                if (opt.type === 1) {
+                  form[`${item.id}${opt.id}`] = ''
+                }
+              })
             }
-            if (item.items && item.items.length) {
-              item.items.some(elem => elem.type === 1) && (form[`${item.id}other`] = '');
-            }
+            // if (item.items && item.items.length) {
+            //   item.items.some(elem => elem.type === 1) && (form[`${item.id}other`] = '');
+            // }
 
             // 生成验证规则
             if (item.type === 0 && item.default_type === 1) {
@@ -341,9 +358,9 @@
           "theme_color": "red",
           "tab_verify_title": "验证",
           "tab_form_title": "用户报名",
-          "form_title": "ddassd",
-          "form_introduce": "",
-          "form_cover": "sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png"
+          "title": "ddassd",
+          "intro": "",
+          "cover": "sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png"
         },
         verifyForm: {
           phone: '',
@@ -380,6 +397,7 @@
         }).then(res => {
           if (res.code === 200) {
             this.baseInfo = res.data;
+            this.baseInfo.phone && (this.verifyForm.phone = this.baseInfo.phone)
           }
         }).catch(err => {
           this.$message.error(`报名表单基本信息失败！`);
@@ -518,7 +536,7 @@
           } else if (item.type === 2) {
             // 单选
             !answer.radio && (answer.radio = []);
-            const element = item.items.find(elem => elem.subject === this.form[item.id]);
+            const element = item.items.find(elem => elem.id === this.form[item.id]);
             let content = element.type !== 1
               ? {
                 id: element.id,
@@ -526,7 +544,7 @@
               }
               : {
                 id: element.id,
-                content: this.form[item.id + 'other'] ? this.form[item.id + 'other'] : '其他'
+                content: this.form[`${item.id}${element.id}`] ? this.form[`${item.id}${element.id}`] : '其他'
               }
             answer.radio.push({
               "id": item.id,
@@ -537,7 +555,7 @@
             !answer.checkbox && (answer.checkbox = []);
             let content = [];
             this.form[item.id].forEach((checkOpt, index) => {
-              const element = item.items.find(elem => elem.subject === checkOpt);
+              const element = item.items.find(elem => elem.id === checkOpt);
               const obj = element.type !== 1
                 ? {
                   id: element.id,
@@ -545,7 +563,7 @@
                 }
                 : {
                   id: element.id,
-                  content: this.form[item.id + 'other'] ? this.form[item.id + 'other'] : '其他'
+                  content: this.form[`${item.id}${element.id}`] ? this.form[`${item.id}${element.id}`] : '其他'
                 }
               content.push(obj)
             })

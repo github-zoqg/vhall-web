@@ -9,8 +9,9 @@
       <div class="docBox">
         <div class="docInner">
           <doc
+            v-if="showDoc"
             ref="doc"
-            webinarId="561752317"
+            :webinarId='webinar_id'
             docPermissionId="no"
             :isInteract="true"
             :roleType="2"
@@ -19,7 +20,7 @@
             :appId="playerProps.appId"
             :token="playerProps.token"
             :liveStatus="2"
-            :joinId="287484"
+            :joinId="playerProps.accountId"
             :accountId="playerProps.accountId"
             :isVod="true"
           ></doc>
@@ -93,7 +94,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <associateDoc ref="associateDialog"></associateDoc>
+    <associateDoc @getChapters="getChapters" ref="associateDialog"></associateDoc>
     <previewChapter :docSdk="docsdk" :playerProps="playerProps" v-if="previewVisible" :chapters='tableData' @close="closePreview"></previewChapter>
   </div>
 </template>
@@ -107,6 +108,10 @@ import previewChapter from './previewChapter';
 export default {
   data(){
     return {
+      recordId: this.$route.query.recordId,
+      webinar_id: this.$route.params.str,
+      showDoc: false,
+      userId: window.sessionStorage.getItem('userId'),
       playerProps: {
         accountId: 16422680,
         nickName: '123',
@@ -167,6 +172,37 @@ export default {
     }
   },
   created(){
+    this.$fetch('playBackPreview', {
+      webinar_id: this.webinar_id,
+      record_id: this.recordId,
+      type: 0
+    }).then(res => {
+      console.log(res)
+      const data = res.data
+      this.playerProps = {
+        appId: 'd317f559',
+        channelId: 'ch_1a348b67',
+        roomId: 'lss_706f5237',
+        accountId: '10000127',
+        watchAccountId: '10000128',
+        token: 'access:d317f559:75107dced08acdb1',
+        recordId: '922013fa',
+        // accountId: data.accountId,
+        nickName: '123',
+        // appId: data.paasAppId,
+        // token: data.paasAccessToken || 'access:d317f559:75107dced08acdb1',
+        type: 'vod',
+        // roomId: data.doc.roomId,
+        channel_id: data.doc.channelId,
+        vodOption: {
+          // recordId: this.recordId
+          recordId: '922013fa'
+        },
+        openPlayerUI: false,
+        playerInfo: {}
+      }
+      this.showDoc = true
+    })
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -218,6 +254,13 @@ export default {
     this.$EventBus.$off('component_page_info');
   },
   methods: {
+    getChapters(tableSelect) {
+      this.$fetch('getChapters', {
+        document_id: tableSelect.join(',')
+      }).then(res => {
+        console.log(res)
+      })
+    },
     prevPage(){
       this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
     },

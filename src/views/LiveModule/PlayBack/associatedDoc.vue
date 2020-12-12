@@ -5,10 +5,10 @@
     :close-on-click-modal="false"
     width="810px">
     <div class="tabs">
-      <div :class="{active: tabs==1}" @click="tabs=1">1.选择文档</div>
-      <div :class="{active: tabs==2}" @click="tabs=2">2.生成章节</div>
+      <div :class="{active: tabs==1}">1.选择文档</div>
+      <div :class="{active: tabs==2}">2.生成章节</div>
     </div>
-    <template>
+    <template v-if="tabs === 1">
       <el-table
         ref="docList"
         :data="docList"
@@ -45,10 +45,24 @@
           </template>
         </el-table-column>
       </el-table>
+      <div class="pagination-wrapper" v-if="pageInfo.total > pageInfo.pageSize">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="pageInfo['pageSize']"
+          :total="pageInfo['total']"
+          :current-page="pageInfo['currentPage']"
+          @current-change="handlePageChange"
+        ></el-pagination>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="nextStep" round size="medium">下一步</el-button>
+      </span>
     </template>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round size="medium">下一步</el-button>
-    </span>
+    <template v-else>
+      转换完成
+      <el-button type="primary" @click="transOver" round size="medium">确认</el-button>
+    </template>
   </el-dialog>
 </template>
 
@@ -56,44 +70,89 @@
 export default {
   data(){
     return {
+      webinar_id: this.$route.params.str,
+      pageInfo: {
+        currentPage: 1,
+        total: 0,
+        pageSize: 200
+      },
+      docList: [],
       dialogVisible: false,
       tabs: 1,
-      docList: [
-        {
-          name: '测试文档1',
-          uploadTime: '2020-08-19 12:03:09',
-          pages: 92,
-          status: 'transcoding',
-          process: 50
-        },
-        {
-          name: '测试文档2',
-          uploadTime: '2020-08-19 12:03:09',
-          pages: 92,
-          status: 'wating',
-          process: 50
-        },
-        {
-          name: '测试文档3',
-          uploadTime: '2020-08-19 12:03:09',
-          pages: 92,
-          status: 'success',
-          process: 50
-        },
-        {
-          name: '测试文档4',
-          uploadTime: '2020-08-19 12:03:09',
-          pages: 92,
-          status: 'failer',
-          process: 50
-        }
-      ],
       tableSelect: []
     };
   },
+  created() {
+    this.getDocList()
+  },
   methods: {
+    nextStep() {
+      if (!this.tableSelect.length) {
+        this.$message.error('请选择要关联的文档')
+      } else if (false) {
+        this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'info',
+          center: true
+        }).then(() => {
+          this.tabs = 2
+          this.$emit('getChapters', this.tableSelect)
+        })
+      } else {
+        this.tabs = 2
+        this.$emit('getChapters', this.tableSelect)
+      }
+    },
+    transOver() {
+      this.dialogVisible = false
+      this.tabs = 1
+    },
     handleSelectionChange(val){
-      this.tableSelect = val;
+      let ids = []
+      val.length > 0 && val.forEach((item, index) => {
+        ids.push(item.id)
+      })
+      this.tableSelect = ids
+    },
+    handlePageChange (page) {
+      this.pageInfo.currentPage = page;
+      this.getDocList();
+    },
+    getDocList () {
+      let data = {};
+      data = {
+        pos: (this.pageInfo.currentPage - 1) * this.pageInfo.pageSize + 1,
+        limit: this.pageInfo.pageSize,
+        webinar_id: this.webinar_id,
+        type: '1'
+      };
+      this.$fetch('getWebinarWordList', data).then(res => {
+        if (res.code == 200) {
+          this.docList = res.data.list.map((item) => {
+            let transformStr;
+            const statusJpeg = item.status_jpeg * 1;
+            const status = item.status * 1;
+            if (statusJpeg === 0 && status === 0) {
+              transformStr = '待转码';
+            } else if (statusJpeg === 100 || status === 100) {
+              transformStr = '转码中';
+            } else if (statusJpeg === 200 || status === 200) {
+              transformStr = '转码完成';
+            } else {
+              transformStr = '转码失败';
+            }
+            return {
+              ...item,
+              transform_schedule_str: transformStr,
+              codeProcess: 0,
+              transcoded: false
+            };
+          });
+
+          this.pageInfo.total = res.data.total;
+        }
+      });
     }
   },
   filters: {
@@ -171,5 +230,10 @@ export default {
     &.failer::before{
       background:#FB3A32;
     }
+  }
+  .pagination-wrapper {
+    display: flex;
+    margin-top: 60px;
+    justify-content: center;
   }
 </style>

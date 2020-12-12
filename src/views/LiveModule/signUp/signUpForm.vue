@@ -4,7 +4,7 @@
       <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
     </header>
     <article>
-      <h1 class="pageTitle">{{ baseInfo.form_title }}</h1>
+      <h1 class="pageTitle">{{ baseInfo.title }}</h1>
       <div :class="['tabs', colorIndex]">
         <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
         <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
@@ -157,9 +157,7 @@ export default {
       return false;
     }
   },
-  created(){
-    console.log(this.questionArr);
-  },
+  created(){},
   mounted() {
     this.callCaptcha('#setCaptcha');
     this.callCaptcha('#setCaptcha1');
@@ -195,7 +193,6 @@ export default {
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-        console.log(reg);
         text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`);
       }
 

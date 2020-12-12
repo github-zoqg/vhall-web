@@ -317,7 +317,7 @@ export default {
       // ====================================================================================
       // 监听回放消息
       if (this.isVod) {
-        this.docSDK.on(window.VHDocSDK.Event.VOD_CUEPOINT_LOAD_COMPLETE, async () => {
+        this.docSDK.on(window.VHDocSDK.Event.VOD_CUEPOINT_LOAD_COMPLETE, async ({ chapters }) => {
           console.log('VOD_CUEPOINT_LOAD_COMPLETE', this.docSDK.getVodAllCids());
           const data = this.docSDK.getVodAllCids();
           this.cids = data.map(item => item.cid);
