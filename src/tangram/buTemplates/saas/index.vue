@@ -2515,13 +2515,11 @@ export default {
             token: this.roomInfo.interact.paas_access_token,
             hide: this.$route.query.hide == 1
           };
-          console.warn('cxs----', opt);
           VhallChat.createInstance(
             opt,
             chat => {
               window.chatSDK = chat.message;
               this.roomReady = true;
-              console.warn('cxs---1-', opt);
               this.$loadingStus.close();
               this.$EventBus.$on('sdkReady', () => {
                 if (!this.assistantType && this.roomInfo.join_info.role_name != 3) {

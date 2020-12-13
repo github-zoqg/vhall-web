@@ -1,4 +1,14 @@
 const path = require('path');
+let cdn = {
+  js: [
+    "//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4-1.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-vodupload/latest/vhall-jssdk-upload-2.0.2.js",
+    "//t-static01-open.e.vhall.com/jssdk/vhall-jssdk-form/vhall-jssdk-form-1.0.3.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.1.3.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js",
+    "//static01-open.e.vhall.com/jssdk/question-component/1.0.3/questionnaire_service.js"
+  ]
+}
 module.exports = {
   lintOnSave: false,
   devServer: {
@@ -27,6 +37,12 @@ module.exports = {
         }
       }
     }
+  },
+  chainWebpack: config=>{
+    config.plugin('html').tap(options=>{
+      options[0].cdn = cdn
+      return options
+    })
   },
   pluginOptions: {
     'style-resources-loader': {
