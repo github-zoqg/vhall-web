@@ -47,7 +47,7 @@ export default {
       },
       action: {
         type: String,
-        default: `${Env.BASE_URL}/v3/commons/upload/index`
+        default: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`
       },
       "list-type": {
         type: String,

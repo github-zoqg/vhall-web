@@ -66,8 +66,8 @@
                   <!-- 二维码 -->
                   <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`">
                     <img class="rq-code"
-                         :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str"
-                         :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str" alt="" />
+                         :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + process.env.VUE_APP_ROOM_WATCH +'/'+ $route.params.str"
+                         :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + process.env.VUE_APP_ROOM_WATCH +'/'+ $route.params.str" alt="" />
                   </div>
                   <!-- 直播 -->
                   <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`">
@@ -83,10 +83,10 @@
                   </div>
                   <!-- 图片链 -->
                   <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`">
-                    <!-- TODO 路径暂时用本地的不配置 env.staticBaseUrl + item.compInfo.imageSrc-->
+                    <!-- TODO 路径暂时用本地的不配置 process.env.VUE_APP_STATIC_URL + / + item.compInfo.imageSrc-->
                     <a>
                       <img class="img--ink--img"
-                           :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticBaseUrl + 'static/images/menu/image-unit.png'"
+                           :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : process.env.VUE_APP_STATIC_URL + '/static/images/menu/image-unit.png'"
                            :hrc="item.compInfo && item.compInfo.imageSrc ?  item.compInfo.imageSrc : ''"
                            :tosrc="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''"
                            alt=""/>
@@ -202,8 +202,8 @@
                     <!-- 二维码 -->
                     <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
                       <img class="rq-code"
-                           :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str"
-                           :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + env.roomWatchUrl + $route.params.str" alt="" />
+                           :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + process.env.VUE_APP_ROOM_WATCH +'/'+ $route.params.str"
+                           :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + process.env.VUE_APP_ROOM_WATCH +'/'+ $route.params.str" alt="" />
                     </div>
                     <!-- 直播 -->
                     <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
@@ -219,10 +219,10 @@
                     </div>
                     <!-- 图片链 -->
                     <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
-                      <!-- TODO 路径暂时用本地的不配置 env.staticBaseUrl + item.compInfo.imageSrc-->
+                      <!-- TODO 路径暂时用本地的不配置 process.env.VUE_APP_STATIC_URL + item.compInfo.imageSrc-->
                       <a>
                         <img class="img--ink--img"
-                             :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticBaseUrl + 'static/images/menu/image-unit.png'"
+                             :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : process.env.VUE_APP_STATIC_URL + '/static/images/menu/image-unit.png'"
                              :hrc="item.compInfo && item.compInfo.imageSrc ?  item.compInfo.imageSrc : ''"
                              :tosrc="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''"
                              alt=""/>
@@ -646,7 +646,7 @@ export default {
       if (item.compType === 'hr') {
         unitComp.compInfo = {component_id: item.component_id, msg: '分割线'};
       } else if (item.compType === 'rq-code') {
-        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${env.roomWatchUrl}${this.$route.params.str}`, isDefault:true};
+        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${process.env.VUE_APP_ROOM_WATCH}/${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${process.env.VUE_APP_ROOM_WATCH}/${this.$route.params.str}`, isDefault:true};
       } else if (item.compType === 'rank') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, inSwitch: 1, inContent: '', rewardSwitch: 1, rewardContent: ''};
         unitComp.rankType = 'inv';

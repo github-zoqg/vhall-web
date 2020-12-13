@@ -6,7 +6,9 @@
       </li>
     </ul>
     <div class="list-content fr">
-
+      <p>
+        <span></span>
+      </p>
     </div>
   </div>
 </template>
