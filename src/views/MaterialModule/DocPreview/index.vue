@@ -2,14 +2,16 @@
   <div class="doc-preview-wrap">
     <ul class="Thumbnail">
       <li :class="activeIns === index ? 'imgActive' : ''" v-for="index of docParam.page" :key="index">
-        <img :index="index" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${index}.jpg`"><span>{{index}}</span></li>
+        <img :index="index" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${index}.jpg?x-oss-process=image/resize,w_100,h_100`" @click="activeIns = index">
+        <span>{{index}}</span>
+      </li>
     </ul>
     <div class="del_imgBox">
+      <img class="imgLoading" :src="`${env.staticLinkVo.tmplDownloadUrl}/images/delFlash/load.gif`" v-show="isLoading">
       <div class="imgBox">
-        <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`">
+        <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg?x-oss-process=image/resize,w_3000,h_200`">
       </div>
-      <img class="imgLoading" :src="`${env.staticLinkVo.tmplDownloadUrl}/images/delFlash/load.gif`" style="display: none;">
-      <p class="arrow" style="display: block;">
+      <p class="arrow">
         <span class="left" @click="showLastImg">&lt;</span>
         <strong class="page">{{activeIns}}/ {{ docParam.page }}</strong>
         <span class="right" @click="showNextImg">&gt;</span>
@@ -31,7 +33,8 @@ export default {
   data() {
     return {
       env: Env,
-      activeIns: 1
+      activeIns: null,
+      isLoading: true
     };
   },
   created() {
@@ -39,7 +42,17 @@ export default {
   },
   methods: {
     initSize(){
-
+      try {
+        this.activeIns = 1;
+        let img = new Image();
+        img.src = `http:${this.env.staticLinkVo.wordShowUrl}/${this.docParam.hash}/${this.activeIns}.jpg`;
+        let that = this; // onload 里面不能用this
+        img.onload = function() {
+          that.isLoading = false;
+        }
+      } catch (e) {
+        console.log(e);
+      }
     },
     showNextImg() {
       if(this.activeIns === this.docParam.page) {
@@ -93,11 +106,15 @@ export default {
   border: 2px solid #fc5659!important;
 }
 .del_imgBox {
-  width: calc(100% - 140px);
+  width: calc(100% - 156px);
   display: inline-block;
   height: 540px;
+  background: #f7f7f7;
+  margin-left: 16px;
   img {
-    height: 100%;
+    height: auto;
+    width: 100%;
+    display: block;
   }
   &.imgHidden {
     display: none;
@@ -115,6 +132,7 @@ export default {
   height: 100%;
   background: white;
   position: relative;
+  overflow: auto;
 }
 .imgLoading {
   width: 40px!important;

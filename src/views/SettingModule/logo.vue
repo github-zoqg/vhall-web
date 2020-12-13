@@ -152,7 +152,6 @@ export default {
       } else {
         this.$refs.logoForm.validate((valid) => {
           if (valid) {
-            alert(this.logoForm.logo)
             this.saveSend({
               logo: this.$parseURL(this.logoForm.logo).path,
               logo_jump_url: this.logoForm.logo_jump_url
