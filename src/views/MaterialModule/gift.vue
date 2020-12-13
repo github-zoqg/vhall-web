@@ -16,10 +16,11 @@
         class="head-btn set-upload"
         :class="{'no-data': tableData.length <= 0}"
         :disabled="tableData.length <= 0"
-        @click="handleBatchDeletion">
+        @click="dialogTipVisible = true">
         批量删除
       </el-button>
       <el-input
+        @keyup.enter.native="searchGifts"
         class="head-btn fr search"
         v-model="searchName"
         placeholder="请输入礼物名称"
@@ -27,23 +28,20 @@
     </div>
     <el-card class="gift-list">
       <el-table
-        :data="tableData"
+        :data="currentTableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
         ref="multipleTable"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
         @selection-change="handleSelectionChange">
         <el-table-column
-          :reserve-selection="true"
           type="selection"
           width="55"
           align="left"
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="scope.row.img">
-            <!--TODO:-->
-            <!-- <img class="gift-cover" :src="defaultImgHost + scope.row.img"> -->
+            <img class="gift-cover" :src="defaultImgHost + scope.row.img">
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
@@ -57,8 +55,9 @@
           </template>
         </el-table-column>
       </el-table>
-      <SPagination 
+      <SPagination
         :total="total"
+        :page-size="10"
         v-show="total > 10"
         :currentPage="searchParams.page"
         @current-change="currentChangeHandler"
@@ -113,63 +112,22 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
+import Env from "@/api/env";
 
 export default {
   name: "gift",
   data() {
     return {
-      total: 100,
-      tableData: [ // TODO:
-        {
-          gift_id: 1,
-          name: '请输入000',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '1'
-        },
-        {
-          gift_id: 2,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0'
-        },
-        {
-          gift_id: 3,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0'
-        },
-        {
-          gift_id: 4,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0'
-        },
-        {
-          gift_id: 5,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0'
-        },
-        {
-          gift_id: 61,
-          name: '请输入111',
-          price: '99.99',
-          img: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          source_status: '0'
-        }
-      ],
+      total: 0,
+      tableData: [],
+      currentTableData: [],
       searchParams: {
         gift_name: '',
-        page_size: 20,
+        page_size: 10,
         page: 1
       },
       selectIds:[],
-      defaultImgHost: process.env.upload + '/',
+      defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
       editParams: {
         gift_id: '',
@@ -188,41 +146,33 @@ export default {
     SPagination
   },
   created() {
-    // this.getTableList()
-  },
-  mounted() {
-    this.bindEventListener()
+    this.getTableList()
   },
   methods: {
-    // 监听回车等情况搜索礼物名称
-    bindEventListener () {
-      let searchBtn = document.querySelector('.el-input__suffix'),
-          inputDom = document.querySelector('.el-input__inner')
-      inputDom.setAttribute('id', 'customGiftSearchBtn')
-      searchBtn && searchBtn.addEventListener('click', () => {
-        this.searchParams.gift_name = this.searchName
-        this.searchParams.page = 1
-        this.getTableList()
-      })
-       document.onkeydown = (event) => {
-        // 搜索框获取焦点时点击回车自动搜搜
-        let e = event || window.event;
-        if (e && e.keyCode == 13) { //回车键的键值为13
-          if (document.activeElement.id == 'customGiftSearchBtn') {
-            this.searchParams.gift_name = this.searchName
-            this.searchParams.page = 1
-            this.getTableList()
-          }
-        }
-      }; 
+    searchGifts() {
+      this.getTableList(true)
     },
     // 获取礼物列表
-    getTableList () {
+    getTableList (isSearch) {
       this.$fetch('shareGiftList', {
         ...this.searchParams
       }).then((res) => {
         if (res.code == 200 && res.data) {
-          this.tableData = res.data.list
+          if (isSearch) {
+            const resultData = []
+            this.tableData.forEach(item => {
+              if(item.name.indexOf(this.searchName) != -1) {
+                resultData.push(item)
+              }
+            })
+            this.tableData = resultData
+          } else {
+            this.tableData = res.data.list
+          }
+          this.currentTableData = this.tableData.filter((item, index) => {
+            return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+          })
+          this.total = this.tableData.length
         }
       })
     },
@@ -241,8 +191,12 @@ export default {
     },
     // 上传礼物封面成功
     handleuploadSuccess(res, file){
-      console.log(res, file);
-      this.editParams.img = URL.createObjectURL(file.raw);
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.editParams.img = file_url;
+        this.domain_url = domain_url;
+      }
     },
     // 上传失败处理
     uploadError(err, file, fileList){
@@ -273,7 +227,7 @@ export default {
         gift_id: data.gift_id,
         name: data.name,
         price: data.price,
-        img: process.env.img + '/' + data.img // TODO:
+        img: data.img
       }
       this.dialogVisible = true
     },
@@ -302,6 +256,7 @@ export default {
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('编辑成功')
+          this.getTableList()
           this.handleCancelEdit()
         }
       }).catch((e) => {
@@ -312,7 +267,7 @@ export default {
     handleCreate () {
       let price = Number(this.editParams.price)
       if (price) {
-        this.editParams.price = this.editParams.price.toFixed(2)
+        this.editParams.price = price.toFixed(2)
       } else {
         this.$message.error('请输入正确礼物价格')
         return
@@ -322,6 +277,7 @@ export default {
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('创建成功')
+          this.getTableList()
           this.handleCancelEdit()
         }
       }).catch((e) => {
@@ -339,15 +295,17 @@ export default {
     // 删除礼品
     handleDelete (data) {
       this.dialogTipVisible = true
-      this.deleteId = data.gift_id
+      this.selectIds = []
+      this.selectIds.push(data.gift_id)
     },
     handleDeleteGift () {
       this.$fetch('deleteGift', {
-        gift_id: this.deleteId
+        gift_id: this.selectIds.join(',')
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('删除成功')
-          this.deleteId = ''
+          this.getTableList()
+          this.selectIds = []
           this.dialogTipVisible = false
         }
       }).catch((e) => {
@@ -355,11 +313,8 @@ export default {
       })
     },
     handleCancelDelete () {
-      this.deleteId = ''
       this.dialogTipVisible = false
     },
-    // 批量删除
-    handleBatchDeletion () {},
     // 翻页
     currentChangeHandler (val) {
       this.searchParams.page = val
@@ -379,6 +334,9 @@ export default {
   }
   /deep/.el-upload--picture-card{
     width:83%;
+  }
+  /deep/.el-upload--picture-card .box img {
+    width: auto
   }
   .head-operat{
     margin-bottom: 20px;
