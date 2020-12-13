@@ -483,6 +483,7 @@
                 phone: this.form[phoneItem.id]
               })
             }
+            this.$route.query.refer && (options.refer = this.$route.query.refer)
             this.$fetch('regAnswerSubmit', options).then(res => {console.log(res)})
           } else {
             console.log('error submit!!');
