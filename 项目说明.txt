@@ -10,7 +10,7 @@ src
 ----api
 --------config.js 接口请求地址配置文件
 --------fetch.js 接口请求封装文件
---------env.js 不同环境，静态地址配置
+--------env.js 不同环境，静态地址配置  因太多使用，不删除     所有环境变量防止 .env.*****
 ----common
 --------css 样式文件（less）
 --------images 图片
@@ -124,10 +124,10 @@ tests
 --------example.spec.js 单元测试
 .browserslistrc
 .editorconfig
-.env.development
-.env.pre
-.env.production
-.env.test
+.env.development  开发环境
+.env.pre  预发布环境
+.env.production 生产环境
+.env.test 测试环境
 .eslintrc.js
 .gitignore
 babel.config.js

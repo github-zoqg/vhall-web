@@ -2558,6 +2558,7 @@ body.tox-dialog__disable-scroll {
   margin-right: 4px;
 }
 .tox .tox-statusbar {
+  display: none;
   align-items: center;
   background-color: #222f3e;
   border-top: 1px solid #000000;
