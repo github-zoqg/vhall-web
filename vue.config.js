@@ -11,6 +11,7 @@ let cdn = {
 }
 module.exports = {
   lintOnSave: false,
+  assetsDir: './static',
   devServer: {
     proxy: {
       '/mock': {
