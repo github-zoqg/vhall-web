@@ -302,8 +302,7 @@ export default {
   created(){
     if (this.$route.query.id) {
       this.webinarId = this.$route.query.id;
-      this.title = '编辑';
-      // this.$route.meta.title = '编辑直播';
+      this.title = this.$route.query.type == 2 ? '编辑' : '复制';
       this.getLiveBaseInfo(this.$route.query.id);
     } else {
       this.title = '创建';
@@ -405,10 +404,10 @@ export default {
           if (this.webniarTypeToZH === '点播') {
             url = 'demandCreate';
           } else {
-            url = this.webinarId ? 'liveEdit' : 'createLive';
+            url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
           this.$fetch(url, this.$params(data)).then(res=>{
-            this.$message.success(this.title === '编辑' ? `编辑成功` : `创建成功`);
+            this.$message.success(`${this.title}成功`);
             console.log(res);
             setTimeout(()=>{
               this.$router.push({path: '/live/list'});

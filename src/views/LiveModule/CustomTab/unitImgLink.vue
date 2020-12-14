@@ -6,6 +6,11 @@
           :class="'upload__imgLink ' + imgType"
           v-model="unitImgLinkForm.imageSrc"
           :value="unitImgLinkForm.imageSrc"
+          :saveData="{
+             path: 'interacts/menu-imgs',
+             type: 'image',
+          }"
+          :domain_url="domain_url"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -42,6 +47,7 @@ export default {
         imageSrc: '',
         src: ''
       },
+      domain_url: '',
       unitImgLinkFormRules: {
         imageSrc: [
           { required: true, message: '请上传图片', trigger: 'blur' },
@@ -56,7 +62,15 @@ export default {
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.unitImgLinkForm.imageSrc = URL.createObjectURL(file.raw);
+      // this.unitImgLinkForm.imageSrc = URL.createObjectURL(file.raw);
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        this.unitImgLinkForm.imageSrc = domain_url;
+        this.domain_url = domain_url;
+      }
+      // 触发验证
+      this.$refs.unitImgLinkForm.validateField('imageSrc');
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -99,6 +113,7 @@ export default {
     * 参数1： compVoStr 参数结果对象，包含保存前数据
     * 参数2： index 当前展示部分组件下标 */
     initDataComp(compVoStr, index) {
+      // debugger
       console.log('图片链编辑区，每次show区域选中，右侧编辑区域变化', index);
       // if(this.unitTextLinkForm) {
       //   this.$refs.unitTextLinkForm.resetFields();
@@ -107,9 +122,11 @@ export default {
       if (compVo.compInfo && compVo.compInfo.imageSrc !== '' && compVo.compInfo.imageSrc !== null && compVo.compInfo.imageSrc !== undefined) {
         this.unitImgLinkForm.imageSrc = compVo.compInfo.imageSrc;
         this.unitImgLinkForm.src = compVo.compInfo.src;
+        this.domain_url = compVo.compInfo.imageSrc;
       } else {
         this.unitImgLinkForm.imageSrc = '';
         this.unitImgLinkForm.src = '';
+        this.domain_url = '';
       }
       // 默认组件类别 和 组件名称
       this.unitImgLinkForm.component_id = compVo.component_id;

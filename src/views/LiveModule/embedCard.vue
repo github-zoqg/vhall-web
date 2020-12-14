@@ -43,12 +43,13 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'embedCard',
   data() {
     return {
-      myMain: 'https://t.e.vhall.com/user/home/16422704',
-      liveContent: 'https://t-webinar.e.vhall.com/906078803',
+      myMain: `${window.location.origin}/user/info/${sessionOrLocal.get('userId')}`,
+      liveContent: `${window.location.origin}/live/watch/${this.$route.params.str}`,
       completion: '<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="https://t-webinar.e.vhall.com/webinar/inituser/906078803" width="800" height="600"></iframe>',
       video: '<iframe border="0" allowfullscreen="true" src="https://t-webinar.e.vhall.com/webinar/inituser/906078803?embed=video" width="800" height="600"></iframe>'
     };
