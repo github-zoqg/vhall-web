@@ -2,7 +2,7 @@ import Layout from "@/layout/index";
 
 const router = [
   {
-    path: '/videoTailoring',
+    path: '/videoTailoring/:str(\\d+)',
     meta: { auth: true, title: '', name: 'videoTailoring'},
     component: () => import('@/views/LiveModule/PlayBack/videoTailoring'),
     hidden: true

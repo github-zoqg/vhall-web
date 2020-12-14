@@ -172,37 +172,7 @@ export default {
     }
   },
   created(){
-    this.$fetch('playBackPreview', {
-      webinar_id: this.webinar_id,
-      record_id: this.recordId,
-      type: 0
-    }).then(res => {
-      console.log(res)
-      const data = res.data
-      this.playerProps = {
-        appId: 'd317f559',
-        channelId: 'ch_1a348b67',
-        roomId: 'lss_706f5237',
-        accountId: '10000127',
-        watchAccountId: '10000128',
-        token: 'access:d317f559:75107dced08acdb1',
-        recordId: '922013fa',
-        // accountId: data.accountId,
-        nickName: '123',
-        // appId: data.paasAppId,
-        // token: data.paasAccessToken || 'access:d317f559:75107dced08acdb1',
-        type: 'vod',
-        // roomId: data.doc.roomId,
-        channel_id: data.doc.channelId,
-        vodOption: {
-          // recordId: this.recordId
-          recordId: '922013fa'
-        },
-        openPlayerUI: false,
-        playerInfo: {}
-      }
-      this.showDoc = true
-    })
+    this.getPlayBackInfo()
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -254,8 +224,41 @@ export default {
     this.$EventBus.$off('component_page_info');
   },
   methods: {
+    getPlayBackInfo() {
+      this.$fetch('playBackPreview', {
+        webinar_id: this.webinar_id,
+        record_id: this.recordId,
+        type: 0
+      }).then(res => {
+        console.log(res)
+        const data = res.data
+        this.playerProps = {
+          appId: 'd317f559',
+          channelId: 'ch_1a348b67',
+          roomId: 'lss_706f5237',
+          accountId: '10000127',
+          watchAccountId: '10000128',
+          token: 'access:d317f559:75107dced08acdb1',
+          recordId: '922013fa',
+          // accountId: data.accountId,
+          nickName: '123',
+          // appId: data.paasAppId,
+          // token: data.paasAccessToken || 'access:d317f559:75107dced08acdb1',
+          type: 'vod',
+          // roomId: data.doc.roomId,
+          channel_id: data.doc.channelId,
+          vodOption: {
+            // recordId: this.recordId
+            recordId: '922013fa'
+          },
+          openPlayerUI: false,
+          playerInfo: {}
+        }
+        this.showDoc = true
+      })
+    },
     getChapters(tableSelect) {
-      this.$fetch('getChapters', {
+      this.$fetch('playBackChaptersGet', {
         document_id: tableSelect.join(',')
       }).then(res => {
         console.log(res)

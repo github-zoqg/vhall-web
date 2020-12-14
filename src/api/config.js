@@ -207,10 +207,13 @@ const apis = {
   playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding  √
   playBackDelete: ['/v3/webinars/record/delete', 'POST'], // 删除回放 xiaodong.ding  √
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
-  playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
+  playBackDemand: ['/v3/webinars/webinar/create-demand', 'POST'], // 回放发布为点播 jian.chang
   playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
   playBackSetDefault: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
-  getChapters: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
+  playBackChaptersGet: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
+  playBackDownUrlGet: ['/v3/webinars/record/check-download', 'POST'], // 获取回放下载地址 xiaodong.ding
+  tailorSave: ['/v3/webinars/record/cut', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  createRecord: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -451,6 +454,7 @@ const apis = {
   sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
   setRelevance: ['/v3/interacts/gift/set-webinar-map-gifts', 'POST'], // 设置活动关联礼物
+  createWebinarGift: ['/v3/interacts/gift/create-webinar-gift', 'POST'], // 设置活动关联礼物
 
 
   // 点赞
