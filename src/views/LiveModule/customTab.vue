@@ -393,6 +393,7 @@ export default {
       compIndex: 0, // 统计当前组件属于数据集合中第几个
       unitComp: {}, // 当前操作面板, 同compList中单个内容
       env: env,
+      process: process,
       rankType: 'inv' // 邀请榜单切换
     };
   },
@@ -717,7 +718,7 @@ export default {
       if (item.compType === 'hr') {
         unitComp.compInfo = {component_id: item.component_id, msg: '分割线'};
       } else if (item.compType === 'rq-code') {
-        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${env.staticLinkVo.aliQr}${process.env.VUE_APP_ROOM_WATCH}/${this.$route.params.str}`, hrc: `${env.staticLinkVo.aliQr}${process.env.VUE_APP_ROOM_WATCH}/${this.$route.params.str}`, isDefault:true};
+        unitComp.compInfo = {component_id: item.component_id, msg: item.msg, imageSrc: `${this.env.staticLinkVo.aliQr}${process.env.VUE_APP_ROOM_WATCH}/${this.$route.params.str}`, hrc: `${this.env.staticLinkVo.aliQr}${process.env.VUE_APP_ROOM_WATCH}/${this.$route.params.str}`, isDefault:true};
       } else if (item.compType === 'rank') {
         unitComp.compInfo = {component_id: item.component_id, msg: item.msg, inSwitch: 1, inContent: '', rewardSwitch: 1, rewardContent: ''};
         unitComp.rankType = 'inv';
@@ -767,6 +768,7 @@ export default {
       // 图文： {content: "{component_id: 1, msg: '图文', content: '<p>是否哈佛哈哈</p>'}", type: 'img-txt', compIndex: 0}
       // 排行榜：  {content: "{"component_id":9,"msg":"排行榜","inSwitch":"1","rewardSwitch":"0","inContent":"邀请榜文案","rewardContent":"排行榜文案"}", rankType: 'inv', type: 'rank', compIndex: 0}
       if (saveItem.type === 'text-link' || saveItem.type === 'title' || saveItem.type === 'img-link' || saveItem.type === 'rq-code' || saveItem.type === 'img-txt' || saveItem.type === 'rank') {
+        // debugger
         this.modShowHtmlList[saveItem.compIndex].compInfo = JSON.parse(saveItem.content);
         sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
         if (saveItem.type === 'rank') {
@@ -843,11 +845,11 @@ export default {
         for(let i = 0; i<customTab_comp_arr.length; i++) {
           let vo = customTab_comp_arr[i];
           if(vo.component_id === 1) {// 图文
-            if(vo.content === null || vo.content === '' || vo.content === undefined) {
+            if(vo.compInfo.content === null || vo.compInfo.content === '' || vo.compInfo.content === undefined) {
               flag = false;
             }
           } else if (vo.component_id === 2) {// 二维码
-            if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined) {
+            if(vo.compInfo.imageSrc === null || vo.compInfo.imageSrc === '' || vo.compInfo.imageSrc === undefined) {
               flag = false;
             }
           } else if (vo.component_id === 3) {// 直播
@@ -855,15 +857,15 @@ export default {
           } else if (vo.component_id === 4) {// 专题
             flag = false;
           } else if (vo.component_id === 5) {// 文字链
-            if(vo.text === null || vo.text === '' || vo.text === undefined ) {
+            if(vo.compInfo.text === null || vo.compInfo.text === '' || vo.compInfo.text === undefined ) {
               flag = false;
-            } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
+            } else if (vo.compInfo.src === null || vo.compInfo.src === '' || vo.compInfo.src === undefined ) {
               flag = false;
             }
           } else if (vo.component_id === 6) {// 图片链
-            if(vo.imageSrc === null || vo.imageSrc === '' || vo.imageSrc === undefined ) {
+            if(vo.compInfo.imageSrc === null || vo.compInfo.imageSrc === '' || vo.compInfo.imageSrc === undefined ) {
               flag = false;
-            } else if (vo.src === null || vo.src === '' || vo.src === undefined ) {
+            } else if (vo.compInfo.src === null || vo.compInfo.src === '' || vo.compInfo.src === undefined ) {
               flag = false;
             }
           } else if (vo.component_id === 7) {// 标题
@@ -871,7 +873,7 @@ export default {
               flag = false;
             }
           } else if (vo.component_id === 9) { // 排行榜
-            if(Number(vo.inSwitch) === 0 && Number(vo.rewardSwitch) === 0) {
+            if(Number(vo.compInfo.inSwitch) === 0 && Number(vo.compInfo.rewardSwitch) === 0) {
               flag = false;
             }
           }
