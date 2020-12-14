@@ -74,7 +74,14 @@ router.beforeEach((to, from, next) => {
   } else {
     // token不存在时跳转
     console.log('4444444', to.path, '当前页面');
-    whiteList.includes(to.path) || to.path.indexOf('/subscribe') !== -1 || to.path.indexOf('/user/home') !== -1|| to.path.indexOf('/live/watch/') !== -1? next() : next({path: '/login'});
+    if(whiteList.includes(to.path) || to.path.indexOf('/subscribe') !== -1 || to.path.indexOf('/user/home') !== -1|| to.path.indexOf('/live/watch/') !== -1) {
+      next()
+    } else {
+      // 跳转之前，清空所有内容
+      sessionOrLocal.clear('localStorage');
+      sessionOrLocal.clear();
+      next({path: '/login'});
+    }
     NProgress.done();
   }
 });

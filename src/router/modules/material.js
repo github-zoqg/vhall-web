@@ -5,7 +5,7 @@ const router = [
     path: '/material',
     component: Layout,
     redirect: '/material/word',
-    meta: { auth: true, title: '资料管理', name: 'Material', icon: 'saasel-icon-v3-datas', level: 1 },
+    meta: { auth: true, title: '资料管理', name: 'Material', icon: 'saasicon_datas', level: 1 },
     children: [
       {
         path: 'word',

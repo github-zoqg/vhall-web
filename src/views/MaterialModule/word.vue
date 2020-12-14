@@ -71,6 +71,7 @@
           :tabelColumnLabel="tableColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
+          max-height="auto"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getTableWordList"
           @changeTableCheckbox="changeTableCheckbox"
