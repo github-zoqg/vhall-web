@@ -643,10 +643,11 @@
       },
       // 获取地域列表
       getAreaList() {
-        this.$fetch('getAreaList').catch(err => {
-          this.provinces = err.data.provinces;
-          this.cities = err.data.cities;
-          this.counties = err.data.counties;
+        axios.get(`${process.env.VUE_APP_STATIC_URL}/saas/common_libs/area.json`).then(res => {
+          console.warn(res, '加载地址');
+          this.provinces = res.data.provinces;
+          this.cities = res.data.cities;
+          this.counties = res.data.counties;
         })
       },
       // 获取表单题目列表

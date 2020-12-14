@@ -17,7 +17,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.actual_start_time }}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.start_time }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -56,13 +56,13 @@
         <div class="inner liveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
-            <span>10</span>
+            <span>{{ time.day }}</span>
             <i>天</i>
-            <span>08</span>
+            <span>{{ time.hours }}</span>
             <i>时</i>
-            <span>46</span>
+            <span>{{ time.minute }}</span>
             <i>分</i>
-            <span>25</span>
+            <span>{{ time.second }}</span>
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
@@ -79,6 +79,7 @@ import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 import QRcode from 'qrcode';
 import Env from "@/api/env";
+import { formateDate } from "@/utils/general.js"
 export default {
   components: {
     PageTitle,
@@ -87,10 +88,17 @@ export default {
   data(){
     return {
       msg: '',
-      imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
-      liveDetailInfo: {},
+      liveDetailInfo: {
+        webinar_state: ''
+      },
       showCode: '',
       link: `${Env.staticLinkVo.WEB_SHARE_URL}/live/watch/${this.$route.params.str}`,
+      time: {
+        day: 0,
+        hours: 0,
+        minute: 0,
+        second: 0
+      },
       operas: {
         '准备': [
           { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
@@ -148,10 +156,13 @@ export default {
   //   },
   // },
   methods: {
+    // 获取基本信息
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
-        // this.liveDetailInfo.webinar_state = 5;
+        let date = new Date();
+        let nowTime = date.setTime(date.getTime());
+        this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         this.getCode();
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
@@ -233,6 +244,39 @@ export default {
       // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
       const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
       window.open(href);
+    },
+    downTime(targetStartDate, targetEndDate) {
+      let targetStart = new Date(targetStartDate);
+      let targetEnd = new Date(targetEndDate);
+      if (targetEnd.getTime() - targetStart.getTime() < 0) {
+        return false;
+      } else {
+        let diff = targetEnd.getTime() - targetStart.getTime();
+        targetStart.setTime(targetStart.getTime() + 1000);
+        let day = Math.floor(diff / (24 * 3600 * 1000));
+        this.time.day = day > 9 ? day : `0${day}`;
+        let limit1 = diff % (24 * 3600 * 1000);
+        let hours = Math.floor(limit1 / (3600 * 1000));
+        this.time.hours = hours > 9 ? hours : `0${hours}`;
+        let limit2 = limit1 % (3600 * 1000);
+        let minute = Math.floor(limit2 / (60 * 1000));
+        this.time.minute = minute > 9 ? minute : `0${minute}`;
+
+        let limit3 = limit2 % (60 * 1000);
+        let second = Math.floor(limit3 / 1000);
+        this.time.second = second > 9 ? second : `0${second}`;
+        if (diff) {
+          let diffSetTime = window.setTimeout(() => {
+            if (this.time.day === '00' && this.time.hours === '00'  && this.time.minute === '00' && this.time.second === '00') {
+              this.liveDetailInfo.webinar_state = '1';
+            }
+            this.downTime(targetStart, targetEnd);
+            window.clearTimeout(diffSetTime);
+          }, 1000);
+        } else {
+          return `天0时0分0秒`;
+        }
+      }
     }
   }
 };

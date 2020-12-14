@@ -27,8 +27,9 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </div>
-    <div class="prize-no" v-else>
-      <el-button type="primary" @click="createPrize" round>新建奖品</el-button>
+    <div class="no-live" v-else>
+      <noData :nullType="nullText" :text="'暂未创建奖品'">
+      </noData>
     </div>
     <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo"></create-prize>
   </div>
@@ -37,6 +38,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import createPrize from '../LiveModule/MaterialSet/components/createPrize';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "prize",
   props: {
@@ -52,7 +54,8 @@ export default {
   },
   data() {
     return {
-      total: 100,
+      total: 1,
+      nullText: 'noData',
       prizeInfo: {},
       searchAreaLayout: [
         {
@@ -81,25 +84,13 @@ export default {
         {name:'复制', methodName: 'cope'} ,{name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
       prizeChecked: [],
-      tableData: [
-        {
-          prize_id: '12312413',
-          prize_name: '请输入000',
-          create_time: '2020-10-03',
-          img_path: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        },
-        {
-          prize_id: '1212345',
-          prize_name: '请输入111',
-          create_time: '2020-10-12',
-          img_path: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ]
+      tableData: []
     };
   },
   components: {
     PageTitle,
-    createPrize
+    createPrize,
+    noData
   },
   mounted() {
     this.getTableList();
@@ -130,11 +121,13 @@ export default {
         }
       formParams.source =  this.source;
       let obj = Object.assign({}, pageInfo, formParams);
-      console.log(obj, '111111111111');
 
       this.$fetch('getPrizeList', obj).then(res => {
-        this.tableData = res.data.list
-        this.total = res.data.count
+        this.tableData = res.data.list;
+        this.total = res.data.count;
+        if (!res.data.count && params === 'search') {
+          this.nullText = 'search';
+        }
         this.tableData.map(item => {
         // 临时写死的，后期调
         item.img = `http://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/${item.img_path}`;

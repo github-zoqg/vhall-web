@@ -42,7 +42,7 @@
         </div>
       </div>
     <!-- 操作栏 -->
-    <div v-if="liveList.length">
+    <div v-if="totalElement">
       <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
             <div class="inner">
@@ -122,7 +122,7 @@ export default {
         { label: '直播', value: 1 },
         { label: '结束', value: 3 },
         { label: '点播', value: 4 },
-        { label: '回访', value: 5 }
+        { label: '回放', value: 5 }
       ],
       orderOptions: [
         { label: '按创建时间排序', value: 1 },

@@ -35,15 +35,15 @@
       width="588px">
      <div class="prizeList">
        <div class="search">
-         <el-input v-model="prizeForm.name" placeholder="请输入奖品名称" suffix-icon="el-icon-search" style="width:220px"></el-input>
+         <el-input v-model="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" style="width:220px"></el-input>
        </div>
        <el-scrollbar>
          <div class="prize">
            <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click="choisePrize(item)">
              <img src="@/common/images/avatar.jpg" alt="">
              <div class="prize-title">
-               <h1>{{item.name}}</h1>
-               <p>{{item.type}}</p>
+               <h1>{{item.prize_name}}</h1>
+               <p>{{item.prize_id}}</p>
              </div>
              <label class="img-tangle" v-show="item.isChecked">
               <i class="el-icon-check"></i>
@@ -67,6 +67,8 @@ export default {
     return {
       dialogVisible: false,
       dialogPrizeVisible: false,
+      keyword: '',
+      pos: 0,
       checkedList: [],
       prizeForm: {
         source: 1,
@@ -118,7 +120,7 @@ export default {
         this.$set(this.prizeForm, 'img_path', this.prizeInfo.img_path);
         this.$set(this.prizeForm, 'prize_name', this.prizeInfo.prize_name);
         this.$set(this.prizeForm, 'prize_id', this.prizeInfo.prize_id);
-        this.$set(this.prizeForm, 'source', 1);
+        this.$set(this.prizeForm, 'source', this.$parent.source);
         return '编辑';
       } else {
         this.prizeResetForm();
@@ -130,10 +132,17 @@ export default {
   components: {
     upload
   },
+  watch: {
+    dialogPrizeVisible() {
+      if (this.dialogPrizeVisible) {
+        this.getPrizeList();
+      }
+    }
+  },
   methods: {
     prizeResetForm() {
       this.prizeForm = {
-        source: 1,
+        source: this.$parent.source,
         img_path: '',
         prize_name: ''
       }
@@ -142,17 +151,32 @@ export default {
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
           this.dialogVisible = false;
-          let url = this.title === '编辑' ? 'editPrize' : 'createPrize';
-          this.$fetch(url, this.prizeForm).then(res => {
-            console.log(res.data, '111111111111');
+          this.prizeForm.room_id = this.$route.query.roomId || '';
+          this.$fetch('createPrize', this.prizeForm).then(res => {
             this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
             this.$emit('getTableList');
           })
-          console.log('新建奖品');
         } else {
           return false;
         }
       });
+    },
+    getPrizeList() {
+      let params = {
+        keyword: this.keyword,
+        pos: this.pos,
+        limit: 20,
+        source: 1
+      }
+      this.$fetch('getPrizeList', params).then(res => {
+        this.list = res.data.list;
+        console.log(this.list, '??????????????????????');
+        // this.total = res.data.count;
+        this.list.map(item => {
+          // 临时写死的，后期调
+          item.img = `http://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/${item.img_path}`;
+        })
+      })
     },
     prizeLoadSuccess(res, file){
       console.log(res, file);

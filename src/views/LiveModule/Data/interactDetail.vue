@@ -1,51 +1,44 @@
 <template>
   <div class="data-detail">
     <pageTitle :title='title'></pageTitle>
+    <div class="operaBox flex-between">
+      <div class="searchBox">
+        <el-input
+          :placeholder="placeholder"
+          v-model="search">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix">
+          </i>
+        </el-input>
+      </div>
+      <el-button size="medium" round>导出数据</el-button>
+      <el-button size="medium" round  v-if="title==='聊天' || title==='问答'">批量删除</el-button>
+      <el-date-picker
+        v-model="searchTime"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        @change="changeDate"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="width: 240px"
+        v-if="title==='聊天' || title==='问答'"
+      />
+    </div>
     <div class="interact-detail">
-      <el-card>
-        <div class="search-box">
-          <span v-if="title==='聊天' || title==='问答'">
-            <el-button round> 批量删除</el-button>
-            <el-date-picker
-              v-model="searchTime"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              @change="changeDate"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              style="width: 240px"
-            />
-          </span>
-        <span class="search-export">
-          <el-button round> 导出数据</el-button>
-        </span>
-          <!-- <search-area
-            ref="searchArea"
-            :searchAreaLayout="searchAreaLayout"
-            :placeholder="placeholder"
-            @onSearchFun="getTableList('search')"
-            @onExportData="exportData"
-            @deletedChecked="deletedChecked"
-          >
-          </search-area> -->
-        </div>
-        <!-- <div class="search-export">
-          <el-button round> 导出数据</el-button>
-        </div> -->
-        <table-list
-          ref="tableList"
-          :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
-          :tableRowBtnFun="tableRowBtnFun"
-          :isCheckout="isCheckout"
-          :totalNum="totalNum"
-          @changeTableCheckbox="changeTableCheckbox"
-          @onHandleBtnClick="onHandleBtnClick"
-          @getTableList="getTableList"
-        >
-        </table-list>
-      </el-card>
+      <table-list
+        ref="tableList"
+        :manageTableData="tableList"
+        :tabelColumnLabel="tabelColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :isCheckout="isCheckout"
+        :totalNum="totalNum"
+        @changeTableCheckbox="changeTableCheckbox"
+        @onHandleBtnClick="onHandleBtnClick"
+        @getTableList="getTableList"
+      >
+      </table-list>
     </div>
   </div>
 </template>
@@ -59,7 +52,9 @@ export default {
     return {
       isCheckout: false,
       placeholder: '',
+      title: '',
       searchTime: null,
+      search: '',
       seleteAllOptionList: [],
       totalNum: 100,
       tableList: [
@@ -333,7 +328,7 @@ export default {
       switch (title) {
         case '邀请排名':
           this.isCheckout = false;
-          this.placeholder = '请输入用户昵称';
+          this.placeholder = '搜索用户昵称';
           this.tabelColumn= this.inviteColumn;
           this.tableRowBtnFun = this.inviteBtnFun;
           this.searchAreaLayout = this.inviteAreaLayout;
@@ -448,20 +443,41 @@ export default {
   }
 }
 .interact-detail {
-  margin-top: 32px;
-  /*/deep/.el-card {
-    .padding48-40();
-  }
-  /deep/.el-card__body {
-    padding: 0;
-  }*/
+  .layout--right--main();
+  .min-height();
+  padding: 32px 24px 40px 24px;
 }
-.search-box{
+
+.operaBox{
+  overflow: hidden;
   margin-bottom: 20px;
-  /deep/.el-input__inner{
-    border-radius: 18px;
-    height: 40px;
-    margin-left: 15px;
+  &.flex-between {
+    float: unset;
+    .flex-display();
+    .justify(space-between);
+  }
+  .el-link {
+    margin-left: 20px;
+  }
+  .searchBox{
+   /* float: right;*/
+    .el-input{
+      width: 220px;
+      .el-input__icon{
+        cursor: pointer;
+      }
+      /deep/ .el-input__icon{
+        line-height: 36px;
+      }
+    }
+    /deep/ .el-input__inner{
+      user-select: none;
+      border-radius: 50px;
+      font-size: 14px;
+      color: #666666;
+      height: 36px;
+      line-height: 36px;
+    }
   }
 }
 .search-export{
