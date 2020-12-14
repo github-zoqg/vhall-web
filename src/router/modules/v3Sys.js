@@ -25,6 +25,7 @@ const router = [
     component: Layout,
     redirect: '/other/msgList',
     meta: { auth: true, title: '辅助业务', name: 'other', icon: 'el-icon-s-help' },
+    hidden: true,
     children: [
       {
         path: 'msgList',

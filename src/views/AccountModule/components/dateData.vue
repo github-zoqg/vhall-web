@@ -45,7 +45,7 @@ export default {
     },
     getUserPayDetail() {
       console.log(this.vip_info, 'this.vip_info')
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'userFlowTrend' : 'getTrendInfo', {
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', {
         account_id: sessionOrLocal.get('userId'),
         start_time: this.timeStr[0],
         end_time: this.timeStr[1],

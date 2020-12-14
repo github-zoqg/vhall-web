@@ -82,7 +82,7 @@ export default {
         },
         {
           label: '最高并发（方）',
-          key: 'webinar_flow',
+          key: 'webinar_max_uv',
           width: 200
         }
       ]

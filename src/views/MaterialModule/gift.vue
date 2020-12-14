@@ -272,9 +272,9 @@ export default {
         this.$message.error('请输入正确礼物价格')
         return
       }
-      this.$fetch('createGiftInfo', {
+      this.$fetch('createGiftInfo', this.$params({
         ...this.editParams
-      }).then((res) => {
+      })).then((res) => {
         if (res.code == 200) {
           this.$message.success('创建成功')
           this.getTableList()

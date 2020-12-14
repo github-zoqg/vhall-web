@@ -277,10 +277,12 @@ const apis = {
   getFlowLineInfo: ['/v3/data-center/business-total/user-flow-trend', 'GET'],  // 账户---流量----数据趋势图
   getTrendHighInfo: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET'],  // 并发-消费账单-最高并发
   getFlowPayInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  // 流量--消费账单-活动总数
-
-  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //并发-消费账单
-  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //流量-消费账单-分页明细[子账号也涉及]
-
+  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //账户并发数据趋势图
+  getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取用量统计数据-流量
+  getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET', 'data'],  //获取并发-消费账单
+  getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
+  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
+  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
   exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
   exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
   exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
