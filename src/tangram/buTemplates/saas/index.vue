@@ -1663,7 +1663,6 @@ export default {
       }
 
       if (!this.permission.includes(100030) && !this.assistantType) {
-        alert('tets --1')
         this.isWhiteBoardEnabled = true;
         this.$refs.doc && this.$refs.doc.toggleBoard(true);
         this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
