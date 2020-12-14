@@ -210,9 +210,9 @@
                   form[`${item.id}${opt.id}`] = ''
                 }
               })
-            } else if (item.type === 0 && item.default_type === 2 && this.baseInfo.phone) {
+            } else if (item.type === 0 && item.default_type === 2 && this.currentPhone) {
               // 手机号
-              form[item.id] = this.baseInfo.phone;
+              form[item.id] = this.currentPhone;
             } else if (item.type === 2) {
               // 单选/多选
               item.items.forEach(opt => {
@@ -329,6 +329,7 @@
         cities: {},
         counties: {},
         list: [],
+        currentPhone: '',
         errorMsgShow: false,
         showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
         captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
@@ -397,7 +398,6 @@
         }).then(res => {
           if (res.code === 200) {
             this.baseInfo = res.data;
-            this.baseInfo.phone && (this.verifyForm.phone = this.baseInfo.phone)
           }
         }).catch(err => {
           this.$message.error(`报名表单基本信息失败！`);
@@ -644,6 +644,8 @@
         }).then(res => {
           // 按照 order_num 从小到大排序
           const list = res.data.ques_list.sort(compare('order_num'));
+          this.currentPhone = res.data.phone;
+          res.data.phone && (this.verifyForm.phone = res.data.phone)
           this.list = list;
           console.log(list);
           // 隐私声明格式处理
