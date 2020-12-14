@@ -71,6 +71,7 @@
           :tabelColumnLabel="tableColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
+          max-height="auto"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getTableWordList"
           @changeTableCheckbox="changeTableCheckbox"
@@ -109,7 +110,7 @@ export default {
     return {
       no_show: false,
       token: sessionOrLocal.get('token', 'localStorage') || '',
-      actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
+      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/interacts/document/upload-webinar-document`,
       formParams: {
         keyword: ''
       },

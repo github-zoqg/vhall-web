@@ -392,11 +392,11 @@ export default {
     initComp(vo, btnType) {
       // btnType => pwd 密码；email 邮箱； phone手机号
       // 场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码 9设置密码（密码不存在情况）
-      vo = {
-        has_password: 0,
-        phone: '',
-        email: ''
-      };
+      // vo = {
+      //   has_password: 0,
+      //   phone: '',
+      //   email: ''
+      // };
       this.vo = vo;
       this.showVo.executeType = btnType;
       if(!vo) {

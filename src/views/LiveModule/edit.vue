@@ -117,7 +117,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}简介：`">
-        <v-editor save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
+        <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}类别：`" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
@@ -650,8 +650,13 @@ export default {
     }
   }
 </style>
-<style lang="css">
+<style lang="less">
   html{
     background: #F7F7F7;
+  }
+  .editor-wrap{
+    .tox-statusbar{
+      display: none;
+    }
   }
 </style>

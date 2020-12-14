@@ -6,7 +6,7 @@ const router = [
     path: '/finance',
     component: Layout,
     redirect: '/finance/info',
-    meta: { auth: true, title: '财务中心', name: 'Finance', icon: 'saasel-icon-v3-financial' },
+    meta: { auth: true, title: '财务中心', name: 'Finance', icon: 'saasicon_financial' },
     children: [
       {
         path: 'info',
@@ -60,7 +60,7 @@ const router = [
     path: '/account',
     component: Layout,
     redirect: '/account/info',
-    meta: { auth: true, title: '账户管理', name:'accountMgr', icon: 'saasel-icon-v3-account' },
+    meta: { auth: true, title: '账户管理', name:'accountMgr', icon: 'saasicon_account' },
     children: [
       {
         path: 'info',

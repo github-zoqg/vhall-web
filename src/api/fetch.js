@@ -2,7 +2,6 @@ import 'whatwg-fetch';
 import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
-import Env from './env';
 import { sessionOrLocal } from '../utils/utils';
 
 export default function fetchData(url, data1 = {}, header = {}) {
@@ -73,7 +72,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
     api = `${api}`
     option.headers = {}
   } else {
-    api = `${Env.BASE_URL}${api}`;
+    api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
   return fetch(api, option).then((res) => {
     return res.json();
