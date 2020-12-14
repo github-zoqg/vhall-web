@@ -1,30 +1,32 @@
 <template>
   <div class="data-detail">
     <pageTitle :title='title'></pageTitle>
-    <div class="operaBox flex-between">
+    <div class="operaBox">
       <div class="searchBox">
         <el-input
           :placeholder="placeholder"
-          v-model="search">
+          v-if="title=='聊天' || title=='邀请排名'"
+          style="margin-right: 20px;"
+          v-model="searchText">
           <i
             class="el-icon-search el-input__icon"
             slot="suffix">
           </i>
         </el-input>
+        <el-date-picker
+          v-model="searchTime"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          @change="changeDate"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 240px;margin-right: 20px;"
+          v-if="title==='聊天' || title==='问答'"
+        />
+        <el-button size="medium" round>批量删除</el-button>
       </div>
-      <el-button size="medium" round>导出数据</el-button>
-      <el-button size="medium" round  v-if="title==='聊天' || title==='问答'">批量删除</el-button>
-      <el-date-picker
-        v-model="searchTime"
-        value-format="yyyy-MM-dd"
-        type="daterange"
-        @change="changeDate"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        style="width: 240px"
-        v-if="title==='聊天' || title==='问答'"
-      />
+      <span><el-button size="medium" round>导出数据</el-button></span>
     </div>
     <div class="interact-detail">
       <table-list
@@ -53,35 +55,13 @@ export default {
       isCheckout: false,
       placeholder: '',
       title: '',
+      webinarId: '',
+      roomId: '',
       searchTime: null,
-      search: '',
+      searchText: '',
       seleteAllOptionList: [],
       totalNum: 100,
       tableList: [
-        {
-          sort: '1',  //排名
-          id: '1233454555',
-          liveName: "哈哈哈哈哈", //昵称
-          wacthPeople: '123',
-          wacthNum: '124',
-          num: '1',
-          people: '20',
-          title: '今天周一',
-          content: '我是问卷1',
-          timeLang: '30:00:00'
-        },
-        {
-          sort: '2',
-          id: '123789000',
-          liveName: '嘻嘻嘻',
-          wacthPeople: '111',
-          wacthNum: '222',
-          title: '明天周二',
-          num: '2',
-          people: '30',
-          content: '我是问卷2',
-          timeLang: '50:00:00'
-        }
       ],
       tabelColumn:[],
       // 邀请排名
@@ -105,39 +85,34 @@ export default {
       chatColumn: [
         {
           label: '昵称',
-          key: 'name',
-          width: 120
+          key: 'nickname',
         },
         {
           label: '身份',
-          key: 'card',
-          width: 120
+          key: 'name',
         },
         {
           label: '发送时间',
-          key: 'time',
-          width: 120
+          key: 'date_time',
         },
         {
           label: '消息内容',
-          key: 'liveName',
+          key: 'content',
         },
         {
           label: '审核状态',
           key: 'status',
-          width: 120
         },
         {
           label: '接收方',
           key: 'revice',
-           width: 120
         },
       ],
       // 问答
       questColumn: [
          {
           label: '问答',
-          key: 'type',
+          key: 'name',
         },
         {
           label: '问答内容',
@@ -145,11 +120,11 @@ export default {
         },
         {
           label: '发送时间',
-          key: 'time',
+          key: 'created_at',
         },
         {
           label: '私密',
-          key: 'seract',
+          key: 'is_open',
         },
         {
           label: '状态',
@@ -160,22 +135,19 @@ export default {
       questnaireColumn: [
         {
           label: '序号',
-          key: 'num',
-          width: 120
+          key: 'survey_id',
         },
         {
-          label: '推送问卷内容',
-          key: 'content',
-          width: 120
+          label: '推送问卷时间',
+          key: 'send_time',
         },
         {
           label: '问卷标题',
-          key: 'title',
+          key: 'subject',
         },
         {
           label: '填写人数',
-          key: 'people',
-          width: 120
+          key: 'filled_number',
         },
       ],
       // 签到
@@ -200,26 +172,22 @@ export default {
         {
           label: '序号',
           key: 'num',
-          width: 120
         },
         {
           label: '推送抽奖时间',
-          key: 'time',
-          width: 120
+          key: 'create_time',
         },
         {
           label: '抽奖方式',
-          key: 'method',
+          key: 'lottery_type',
         },
         {
           label: '实际中奖人数',
-          key: 'people',
-          width: 120
+          key: 'num',
         },
         {
           label: '实际奖品',
-          key: 'stausa',
-          width: 120
+          key: 'prize_name',
         }
       ],
       // 发群红包
@@ -316,11 +284,13 @@ export default {
         {
           key: 'nameTitle'
         }
-      ]
+      ],
     };
   },
   mounted() {
     this.title = this.$route.query.title;
+    this.webinarId = this.$route.query.id;
+    this.roomId = this.$route.query.roomId;
     this.changeColumn(this.title);
   },
   methods: {
@@ -328,67 +298,139 @@ export default {
       switch (title) {
         case '邀请排名':
           this.isCheckout = false;
-          this.placeholder = '搜索用户昵称';
           this.tabelColumn= this.inviteColumn;
           this.tableRowBtnFun = this.inviteBtnFun;
-          this.searchAreaLayout = this.inviteAreaLayout;
+          this.placeholder = '搜索用户昵称';
+          this.inviteInfo();
           break;
         case '签到':
           this.isCheckout = false;
           this.tabelColumn= this.signColumn;
           this.tableRowBtnFun = this.inviteBtnFun;
-          this.searchAreaLayout = this.signAreaLayout;
+          this.signInfoList();
           break;
         case '聊天':
           this.isCheckout = true;
           this.placeholder = '请输入聊天内容';
           this.tabelColumn= this.chatColumn;
           this.tableRowBtnFun = this.chatBtnFun;
-          this.searchAreaLayout = this.chatAreaLayout;
+          this.chatInfo();
           break;
         case '问答':
           this.isCheckout = true;
           this.tabelColumn= this.questColumn;
           this.tableRowBtnFun = this.chatBtnFun;
-          this.searchAreaLayout = this.questAreaLayout;
           this.getRecordList();
           break;
         case '抽奖':
           this.isCheckout = false;
           this.tabelColumn= this.drawColumn;
-          this.placeholder = '请输入搜索内容';
           this.tableRowBtnFun = this.inviteBtnFun;
-          this.searchAreaLayout = this.questnaireAreaLayout;
+          this.prizeList();
           break;
         case '问卷':
           this.isCheckout = false;
-          this.placeholder = '请输入问卷标题';
           this.tabelColumn= this.questnaireColumn;
           this.tableRowBtnFun = this.questnaireBtnFun;
-          this.searchAreaLayout = this.questnaireAreaLayout;
+          this.getQuestionInfo();
           break;
         case '发群红包':
           this.tabelColumn= this.packetColumn;
           this.isCheckout = false;
           this.tableRowBtnFun = this.inviteBtnFun;
-          this.searchAreaLayout = this.signAreaLayout;
           break;
         default:
           break;
       }
     },
     changeDate() {
-
+      if(this.title === '问答') {
+        this.getRecordList();
+      }
     },
     onHandleBtnClick(val) {
       console.log(val);
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    // 邀请排名
+    inviteInfo() {
+      // 少了一个搜索参数
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        webinar_id: this.webinarId,
+        ...pageInfo,
+      }
+      this.$fetch('getInviteListInfo', params).then(res => {
+        this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+      });
+    },
+    // 聊天
+    chatInfo() {
+      // 少了一个搜索参数
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        room_id: this.roomId
+      };
+      if (this.searchTime) {
+        pageInfo.pos = 0;
+        pageInfo.pageNum= 1;
+        this.$refs.tableList.clearSelect();
+        params.start_time = this.searchTime[0];
+        params.end_time = this.searchTime[1];
+      }
+      let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getChatListInfo', obj).then(res => {
+        this.tableList = res.data.list;
+        this.tableList.map(item => {
+          item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
+          item.content = item.data.text_content || item.data.barrage_txt;
+        })
+        this.totalNum = res.data.total;
+      });
+    },
+    //签到
+    signInfoList(){
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        room_id: this.roomId
+      }
+      let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getSignInfo', obj).then(res => {
+        this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+      });
+    },
+    // 问卷
+    getQuestionInfo() {
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        room_id: this.roomId
+      }
+      let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getSurveyUsageInfo', obj).then(res => {
+        this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+      });
+    },
+    // 抽奖
+    prizeList() {
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        webinar_id: this.webinarId
+      }
+      let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getPrizeListInfo', obj).then(res => {
+        this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+      });
+    },
+    // 回答
     getRecordList() {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
-        room_id: this.$route.query.roomId
+        room_id: this.roomId
       };
       if (this.searchTime) {
         pageInfo.pos = 0;
@@ -399,7 +441,20 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getRecodrderList', obj).then(res => {
-        console.log(res.data.list, '11111111111111111');
+        let tableList = res.data.list;
+        console.log()
+        tableList.map((item, index) => {
+          item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '转给主持人 即语音回复' : item.status == 3 ? '文字回复' : '未处理';
+          item.name = '问';
+          this.tableList.push(item);
+          if (item.answer.length) {
+            item.answer[0].is_open = item.answer[0].is_open == 1 ? '公开' : '私密';
+            item.answer[0].name = '答';
+            this.tableList.push(item.answer[0]);
+          }
+        })
+        this.totalNum = res.data.total;
+        console.log(this.tableList, '??????????????????');
       })
     },
     getTableList(params) {
@@ -442,6 +497,18 @@ export default {
     color: #1a1a1a;
   }
 }
+/deep/.el-range-editor .el-range-input {
+    background: transparent;
+  }
+  /deep/.el-button{
+    background: transparent;
+    &:hover{
+      background: #fb3a32;
+      span{
+        color: #fff;
+      }
+    }
+  }
 .interact-detail {
   .layout--right--main();
   .min-height();
@@ -451,11 +518,19 @@ export default {
 .operaBox{
   overflow: hidden;
   margin-bottom: 20px;
-  &.flex-between {
-    float: unset;
-    .flex-display();
-    .justify(space-between);
+  display: flex;
+  justify-content: space-between;
+  .searchBox{
+    display: flex;
+    &:first-child{
+      margin-right: 20px;
+    }
   }
+  // &.flex-between {
+  //   float: unset;
+  //   .flex-display();
+  //   .justify(space-between);
+  // }
   .el-link {
     margin-left: 20px;
   }
@@ -482,6 +557,5 @@ export default {
 }
 .search-export{
   float: right;
-  // margin-bottom: 20px;
 }
 </style>

@@ -1,22 +1,22 @@
 <template>
   <el-card class="data-usage">
-    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.edition == '旗舰版'">
+    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
       <el-col :span="6">
         <div class="top-item">
           <p>当前版本</p>
-          <h2>旗舰版</h2>
+          <h2>{{ userInfo.edition }}</h2>
           <p>有效期: {{ userInfo.edition_valid_time || '' }}</p>
         </div>
       </el-col>
       <el-col :span="6">
-        <div class="top-item" v-if="userInfo.concurrency">
+        <div class="top-item">
           <p>总并发(方)<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
           <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}</p>
         </div>
       </el-col>
       <el-col :span="6">
-        <div class="top-item" v-if="userInfo.concurrency">
+        <div class="top-item">
           <p>并发扩展包（人次）<span class="level" @click="levelVersion('购买')" v-if="buttonList.includes('extend')">购买</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
@@ -44,11 +44,11 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend_day }}</h2>
-          <p>{{ userInfo.concurrency.extend_day_start }}至 {{ userInfo.concurrency.extend_day_end }}</p>
+          <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
     </el-row>
-    <el-row type="flex" class="row-top" justify="space-around" v-else>
+    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.flow">
       <el-col :span="9">
         <div class="top-item">
           <p>当前版本</p>
@@ -56,8 +56,8 @@
           <p>有效期: {{ userInfo.edition_valid_time || ''  }}</p>
         </div>
       </el-col>
-      <el-col :span="9" v-if = "userInfo.edition == '无极版'">
-        <div class="top-item"  v-if="userInfo.flow">
+      <el-col :span="9" v-if="userInfo.edition === '无极版'">
+        <div class="top-item">
           <p>总流量/回放流量（GB）
             <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
@@ -69,10 +69,10 @@
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details ')">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">账单明细</p>
         </div>
       </el-col>
-      <el-col :span="9" v-else>
+      <el-col :span="9">
         <div class="top-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
           <el-tooltip effect="dark" placement="right-start" v-if="userInfo.edition == '标准版'">
@@ -95,7 +95,6 @@
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
           <p @click="goAccountDetail" v-if="this.$route.path==='/finance/info'" class="account">账单明细</p>
-           <!-- && buttonList.includes('details ') -->
         </div>
       </el-col>
     </el-row>
@@ -138,7 +137,7 @@ export default {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
         this.versionType = res.data.edition;
-        this.buttonList = res.data.concurrency.buttons || res.data.flow.buttons;
+        this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         sessionOrLocal.set('versionType', JSON.stringify(res.data.edition));
         sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
       }).catch(e=>{
