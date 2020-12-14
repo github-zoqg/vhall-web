@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      total: 100,
+      total: 1,
       prizeInfo: {},
       searchAreaLayout: [
         {
@@ -81,20 +81,7 @@ export default {
         {name:'复制', methodName: 'cope'} ,{name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
       prizeChecked: [],
-      tableData: [
-        {
-          prize_id: '12312413',
-          prize_name: '请输入000',
-          create_time: '2020-10-03',
-          img_path: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        },
-        {
-          prize_id: '1212345',
-          prize_name: '请输入111',
-          create_time: '2020-10-12',
-          img_path: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }
-      ]
+      tableData: []
     };
   },
   components: {

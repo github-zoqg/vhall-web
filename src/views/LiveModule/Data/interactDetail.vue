@@ -59,6 +59,7 @@ export default {
     return {
       isCheckout: false,
       placeholder: '',
+      title: '',
       searchTime: null,
       seleteAllOptionList: [],
       totalNum: 100,

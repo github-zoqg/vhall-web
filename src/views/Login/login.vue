@@ -165,7 +165,6 @@
 <script>
 import footerSection from '../../components/Footer/index';
 import {sessionOrLocal} from "@/utils/utils";
-// import { sessionOrLocal } from '../utils/utils';
 export default {
   data() {
     var validatePhone = (rule, value, callback) => {
@@ -188,7 +187,7 @@ export default {
       },
       dynamicForm: {phoneNumber: ''},
       registerForm: {
-        argee: 1,
+        agree: 1,
         phone: '',
         code: '',
         password: ''
@@ -227,7 +226,7 @@ export default {
     footerSection
   },
   watch: {
-    '$route.path'() {
+    '$route.path': function() {
       this.callCaptcha();
     }
   },
@@ -253,7 +252,7 @@ export default {
     changeLogin(index) {
       this.isActive = parseInt(index);
       this.isActive === 1 ? this.$refs['dynamicForm'].resetFields() : this.$refs['loginForm'].resetFields();
-      // this.callCaptcha();
+      this.mobileKey = '';
       this.showCaptcha = false;
       this.errorMsgShow = '';
     },
@@ -298,6 +297,7 @@ export default {
     checkedAccount() {
       this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
         if (res && res.code === 200) {
+          //check_result  : 1 锁定    0未锁定
           if (res.data.check_result && !this.mobileKey) {
             this.isLogin = true;
           } else {
@@ -313,8 +313,8 @@ export default {
       params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
         if(res && res.code === 200) {
+          this.mobileKey = '';
           sessionOrLocal.set('token', res.data.token, 'localStorage');
-          console.log("我是未登录页面");
           this.$router.push({path: '/'});
         } else {
           this.$message.error(res.msg || '登录失败！');
@@ -335,12 +335,12 @@ export default {
     },
     registerAccount() {
       this.registerForm.captcha = this.mobileKey;
-      console.log(this.registerForm, '>>>>>>>>>>>>>>>>>>>>>>>>');
       this.$fetch('register', this.registerForm).then(res => {
         this.$message.success('注册成功');
+        this.mobileKey = '';
         setTimeout(() => {
           this.$router.push({path:'/login'})
-        }, 2000)
+        }, 1000)
       });
     },
     /**
