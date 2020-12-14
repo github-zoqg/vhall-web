@@ -189,7 +189,6 @@
 <script>
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
-  import axios from 'axios'
   export default {
     created() {
       this.getBaseInfo();
@@ -624,10 +623,10 @@
       },
       // 获取地域列表
       getAreaList() {
-        axios.get("/data/area.json").then(res => {
-          this.provinces = res.data.provinces;
-          this.cities = res.data.cities;
-          this.counties = res.data.counties;
+        this.$fetch('getAreaList').catch(err => {
+          this.provinces = err.data.provinces;
+          this.cities = err.data.cities;
+          this.counties = err.data.counties;
         })
       },
       // 获取表单题目列表

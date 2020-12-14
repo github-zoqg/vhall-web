@@ -6,7 +6,7 @@ import { sessionOrLocal } from '../utils/utils';
 
 export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url);
-  let [api, method, mock, paas] = config;
+  let [api, method, mock, paas, staticdata] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
@@ -68,7 +68,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
-  } else if (paas){
+  } else if (paas || staticdata){
     api = `${api}`
     option.headers = {}
   } else {
