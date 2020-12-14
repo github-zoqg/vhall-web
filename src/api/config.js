@@ -474,7 +474,7 @@ const apis = {
   v3GetQa: ['/v3/interacts/qa/enable', 'POST'], // 主持人开启问答
   v3CloseQa: ['/v3/interacts/qa/disable', 'POST'], // 主持人关闭问答
   v3GetQaNum: ['/v3/interacts/qa/get-current-play-question-num', 'POST'], // 获取当前场次收集到的问题个数
-  v3GetHistoryQaNum: ['/v3/interacts/qa/reply-user-question', 'POST'], // 获取当前场次收集到的历史问答 主持人
+  v3ReplayUserQu: ['/v3/interacts/qa/reply-user-question', 'POST'], // 获取当前场次收集到的历史问答 主持人
   channelInfo: [`${process.env.VUE_APP_VSS_HOST}/cmpt/room/get`, 'POST', false, 'paas'], // 获取频道信息
   getAutherQa: ['/v3/interacts/qa/get-question-by-status', 'POST'], // 提问列表
   // 发起端所有新增
