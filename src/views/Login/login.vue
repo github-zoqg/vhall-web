@@ -336,11 +336,18 @@ export default {
     registerAccount() {
       this.registerForm.captcha = this.mobileKey;
       this.$fetch('register', this.registerForm).then(res => {
-        this.$message.success('注册成功');
-        this.mobileKey = '';
-        setTimeout(() => {
-          this.$router.push({path:'/login'})
-        }, 1000)
+        if(res && res.code === 200) {
+          this.$message.success('注册成功');
+          this.mobileKey = '';
+          setTimeout(() => {
+            this.$router.push({path:'/login'})
+          }, 1000)
+        } else {
+          this.$message.error(res.msg || '注册失败');
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message.error('注册失败');
       });
     },
     /**
