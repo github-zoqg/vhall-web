@@ -34,7 +34,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
-    uuid: uuidV1()
+    'request-id': uuidV1()
     // 'Content-Type': 'application/json'
   };
 
