@@ -17,7 +17,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.actual_start_time }}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.start_time }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -88,7 +88,6 @@ export default {
   data(){
     return {
       msg: '',
-      imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       liveDetailInfo: {
         webinar_state: ''
       },
@@ -254,24 +253,28 @@ export default {
       } else {
         let diff = targetEnd.getTime() - targetStart.getTime();
         targetStart.setTime(targetStart.getTime() + 1000);
-        this.time.day = Math.floor(diff / (24 * 3600 * 1000));
+        let day = Math.floor(diff / (24 * 3600 * 1000));
+        this.time.day = day > 9 ? day : `0${day}`;
         let limit1 = diff % (24 * 3600 * 1000);
-        this.time.hours = Math.floor(limit1 / (3600 * 1000));
+        let hours = Math.floor(limit1 / (3600 * 1000));
+        this.time.hours = hours > 9 ? hours : `0${hours}`;
         let limit2 = limit1 % (3600 * 1000);
-        this.time.minute = Math.floor(limit2 / (60 * 1000));
+        let minute = Math.floor(limit2 / (60 * 1000));
+        this.time.minute = minute > 9 ? minute : `0${minute}`;
 
         let limit3 = limit2 % (60 * 1000);
-        this.time.second = Math.floor(limit3 / 1000);
+        let second = Math.floor(limit3 / 1000);
+        this.time.second = second > 9 ? second : `0${second}`;
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
-            if (this.time.day === '0' && this.time.hours === '0'  && this.time.minute === '0' && this.time.second === '0') {
+            if (this.time.day === '00' && this.time.hours === '00'  && this.time.minute === '00' && this.time.second === '00') {
               this.liveDetailInfo.webinar_state = '1';
             }
             this.downTime(targetStart, targetEnd);
             window.clearTimeout(diffSetTime);
           }, 1000);
         } else {
-          return `0天0时0分0秒`;
+          return `天0时0分0秒`;
         }
       }
     }
