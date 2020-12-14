@@ -31,7 +31,7 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input :value="privilegeVo && privilegeVo.host_join_link ? privilegeVo.host_join_link : ''" readonly></el-input>
+              <el-input :value="privilegeVo && host_join_link ? host_join_link : ''" readonly></el-input>
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.host_password" readonly>
@@ -71,7 +71,7 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input :value="privilegeVo && privilegeVo.join_link ? privilegeVo.join_link : ''" readonly></el-input>
+              <el-input :value="privilegeVo && join_link ? join_link : ''" readonly></el-input>
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.guest_password" readonly>
@@ -114,7 +114,7 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input  :value="privilegeVo && privilegeVo.join_link ? privilegeVo.join_link : ''"  readonly></el-input>
+              <el-input  :value="privilegeVo && join_link ? join_link : ''"  readonly></el-input>
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.assistant_password" readonly>
@@ -239,6 +239,12 @@ export default {
 开始时间：${this.privilegeVo.start_time}
 助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
 加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+    },
+    host_join_link: function() {
+      return `${window.location.origin}/keylogin-host/${this.privilegeVo.webinar_id}`;
+    },
+    join_link: function() {
+      return `${window.location.origin}/keylogin/${this.privilegeVo.webinar_id}`;
     }
   },
   methods: {
