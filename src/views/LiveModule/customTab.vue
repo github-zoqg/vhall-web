@@ -135,46 +135,55 @@
           <div class="app__left">
             <section class="panel__preview">
               <div class="app__menu">
-                <!-- 左翻 -->
+                <!-- 左翻翻 -->
                 <span class="app__menu__arrow el-icon-arrow-left" @click.prevent.stop="movePxHandle('left')"></span>
-                <!-- 右翻 -->
+                <!-- 右翻翻 -->
                 <span class="app__menu__arrow el-icon-arrow-right" @click.prevent.stop="movePxHandle('right')"></span>
                 <!-- 添加菜单 -->
                 <span class="add-menu" @click.prevent.stop="menuSetHandle(null, null, 'add')">+</span>
                 <!-- 菜单列表 -->
                 <div class="panel__app__menu">
                   <ul class="app__menu__list" :style="{'marginLeft': marginLeft + 'px'}">
-                    <li v-for="(item, ins) in customMenus" :key="ins"
-                        :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"
-                        @click.prevent.stop="isOpenHoverHandle(item, ins)"  @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)"
-                    >
-                      <div class="menu__item__title" >{{ item.name }}</div>
-                      <div class="app__menu__panel" v-if="item.isOpen" v-show="item.isShow" :style="{left: (90*ins + marginLeft) + 'px'}" @mouseover="showHoverMenu(item, true)" @mouseout="showHoverMenu(item, false)">
-                        <ul class="app__menu__btn">
-                          <li @click.prevent.stop="menuSetHandle(item, ins, 'reName')">重命名</li>
-                          <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')" v-if="ins !== customMenus.length-1">右移</li>
-                          <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')" v-if="ins !== 0">左移</li>
-                          <li @click.prevent.stop="menuSetHandle(item, ins, 'right')">右边新增菜单</li>
-                          <li @click.prevent.stop="menuSetHandle(item, ins, 'left')">左边新增菜单</li>
-                          <li v-if="Number(item.status) === 3 || Number(item.status) === 4">
-                            <div class="checkbox-item">
-                              <el-checkbox :checked="Number(item.status) === 4" @change="changeMenuStatusHandle(item, ins)"/>
-                              <div class="menu__item__status">
-                                预告/结束显示
-                                <el-tooltip>
-                                  <div slot="content">
-                                    勾选后，该直播为预告和结束状态时也会显示此菜单；不勾选则只在直播和回放状态显示。
-                                  </div>
-                                  <i class="el-icon-question"></i>
-                                </el-tooltip>
+                    <template :data-type="item.type" v-for="(item, ins) in customMenus" >
+                      <!-- 文档 和 章节不展示 -->
+                      <li
+                          :key="ins"
+                          v-if="item.type !== 2 && item.type !== 7"
+                          :class="menuTabIndex === ins ? 'menu__item active' : 'menu__item'"
+                          @click.prevent.stop="isOpenHoverHandle(item, ins)"
+                          @mouseover="showHoverMenu(item, true)"
+                          @mouseout="showHoverMenu(item, false)">
+                        <div class="menu__item__title" >{{ item.name }}</div>
+                        <div :class="['app__menu__panel', {'show': item.isShow}]" v-if="item.isOpen"
+                             :style="{left: (computeHoverPx(item, ins)) + 'px'}"
+                             @mouseover="showHoverMenu(item, true)"
+                             @mouseout="showHoverMenu(item, false)">
+                          <ul class="app__menu__btn">
+                            <li @click.prevent.stop="menuSetHandle(item, ins, 'reName')">重命名{{ins}}</li>
+                            <li @click.prevent.stop="moveMenuHandle(item, ins, 'right')" v-if="ins !== tabMaxLen -1">右移</li>
+                            <li @click.prevent.stop="moveMenuHandle(item, ins, 'left')" v-if="ins !== tabMinLen">左移</li>
+                            <li @click.prevent.stop="menuSetHandle(item, ins, 'right')">右边新增菜单</li>
+                            <li @click.prevent.stop="menuSetHandle(item, ins, 'left')">左边新增菜单</li>
+                            <li v-if="Number(item.status) === 3 || Number(item.status) === 4">
+                              <div class="checkbox-item">
+                                <el-checkbox :checked="Number(item.status) === 4" @change="changeMenuStatusHandle(item, ins)"/>
+                                <div class="menu__item__status">
+                                  预告/结束显示
+                                  <el-tooltip>
+                                    <div slot="content">
+                                      勾选后，该直播为预告和结束状态时也会显示此菜单；不勾选则只在直播和回放状态显示。
+                                    </div>
+                                    <i class="el-icon-question"></i>
+                                  </el-tooltip>
+                                </div>
                               </div>
-                            </div>
-                          </li>
-                          <li v-if="Number(item.status) === 3 || Number(item.status) === 4" @click.prevent.stop="delMenuHandle(ins)">删除</li>
-                          <li v-if="Number(item.status) === 1 || Number(item.status) === 2" @click.prevent.stop="changeMenuStatusHandle(item, ins)">{{item.status === 1 ? '隐藏' : '显示'}}</li>
-                        </ul>
-                      </div>
-                    </li>
+                            </li>
+                            <li v-if="Number(item.status) === 3 || Number(item.status) === 4" @click.prevent.stop="delMenuHandle(ins)">删除</li>
+                            <li v-if="Number(item.status) === 1 || Number(item.status) === 2" @click.prevent.stop="changeMenuStatusHandle(item, ins)">{{item.status === 1 ? '隐藏' : '显示'}}</li>
+                          </ul>
+                        </div>
+                      </li>
+                    </template>
                   </ul>
                 </div>
               </div>
@@ -193,32 +202,37 @@
                 <static-advert v-else-if="Number(clickItem.type) === 6"></static-advert>
                 <!-- 自定义菜单编辑面板 -->
                 <div class="edit__draggable" @drop="dropCompLabel($event)" @dragover="allowDropCompLabel($event)" v-else>
-                  <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList" :key="'showHtml' + ins"
-                       @drop.prevent.stop="drop($event, ins)" @dragover.prevent.stop="allowDrop($event, ins)" @click.prevent.stop="selectShowComp(item, ins)">
+                  <template>
+
+                  </template>
+                  <div :class="`show-comp-template ${item.show_type} active`" :title="item.name" v-for="(item, ins) in modShowHtmlList"
+                       :key="'showHtml' + ins"
+                       @drop.prevent.stop="drop($event, ins)" @dragover.prevent.stop="allowDrop($event, ins)"
+                       @click.prevent.stop="selectShowComp(item, ins)">
                     <!-- 图文 -->
-                    <div class="img-txt" v-if="item.show_type === 'img-txt'" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="img-txt" v-if="item.show_type === 'img-txt'" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <div class="content" v-html="item.compInfo && item.compInfo.content ? item.compInfo.content : item.compInfo.content"></div>
                     </div>
                     <!-- 二维码 -->
-                    <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="rq-code" v-if="item.show_type === 'rq-code'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <img class="rq-code"
                            :src="item.compInfo && item.compInfo.imageSrc ? item.compInfo.imageSrc : env.staticLinkVo.aliQr + process.env.VUE_APP_ROOM_WATCH +'/'+ $route.params.str"
                            :hrc="item.compInfo && item.compInfo.hrc ?  item.compInfo.hrc : env.staticLinkVo.aliQr + process.env.VUE_APP_ROOM_WATCH +'/'+ $route.params.str" alt="" />
                     </div>
                     <!-- 直播 -->
-                    <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="video" v-if="item.show_type === 'video'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <show-video :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-video>
                     </div>
                     <!-- 专题 -->
-                    <div class="special" v-if="item.show_type === 'special'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="special" v-if="item.show_type === 'special'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <show-special :ref="`${item.show_type}-show-dom_${ins}`" @out="getShowCompInfo" :p_show_comps_index="ins" :p_show_comps_id="item.component_id"></show-special>
                     </div>
                     <!-- 文字链 -->
-                    <div class="text-link" v-if="item.show_type === 'text-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="text-link" v-if="item.show_type === 'text-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <a :src="item.compInfo && item.compInfo.src ?  item.compInfo.src : ''">{{item.compInfo && item.compInfo.text ? item.compInfo.text : '文字链'}}</a>
                     </div>
                     <!-- 图片链 -->
-                    <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="img-link" v-if="item.show_type === 'img-link'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <!-- TODO 路径暂时用本地的不配置 process.env.VUE_APP_STATIC_URL + item.compInfo.imageSrc-->
                       <a>
                         <img class="img--ink--img"
@@ -229,15 +243,15 @@
                       </a>
                     </div>
                     <!-- 标题 -->
-                    <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="title" v-if="item.show_type === 'title'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <h5 class="unit-title">{{item.compInfo && item.compInfo.title ? item.compInfo.title : '默认标题'}}</h5>
                     </div>
                     <!-- 分割线 -->
-                    <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="hr" v-if="item.show_type === 'hr'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <span class="line"></span>
                     </div>
                     <!-- 排行榜 -->
-                    <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart="drag($event, ins)" >
+                    <div class="rank" v-if="item.show_type === 'rank'" :id="`comps-show-${ins}`" draggable="true" @dragstart.stop="drag($event, ins)" >
                       <div content="rank-show">
                         <div class="ranking-title"  v-if="item.compInfo && !(!!item.compInfo.inSwitch === false && !!item.compInfo.rewardSwitch === false)">
                           <div class="rank-menu fl">
@@ -261,7 +275,9 @@
                         </div>
                       </div>
                     </div>
-                    <icon icon-class="saasicon-trashline-01" class="menu-icon del" @click.prevent.stop="showCompsItemDel($event, ins)"></icon>
+                    <div class="menu-icon del" @click.stop="showCompsItemDel($event, ins)">
+                      <icon icon-class="saasicon-trashline-01"></icon>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -274,7 +290,7 @@
             <!-- 文档废弃
             <unit-menu-doc v-if="Number(clickItem.type) === 2"></unit-menu-doc>
             -->
-            <unit-menu-chat v-if="Number(clickItem.type) === 3" @cxtChangeInfo="menuCtxChange"></unit-menu-chat>
+            <unit-menu-chat ref="menu-chat" v-if="Number(clickItem.type) === 3" @cxtChangeInfo="menuCtxChange"></unit-menu-chat>
             <unit-img-txt ref="img-txt-unit-dom" v-if="unitComp.show_type === 'img-txt'" @cxtChangeInfo="editChange"></unit-img-txt>
             <unit-rq-code ref="rq-code-unit-dom" v-if="unitComp.show_type === 'rq-code'" @cxtChangeInfo="editChange"/>
             <unit-video ref="video-unit-dom" v-if="unitComp.show_type === 'video'"/>
@@ -354,6 +370,7 @@ export default {
   },
   data() {
     return {
+      tabPxLen: 90, // 菜单固定长度
       compVo: null,
       compList: [],
       tabType: 'app', // pc 电脑端；app 移动端
@@ -380,13 +397,20 @@ export default {
     };
   },
   computed: {
-    dragOptions() {
-      return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost"
-      };
+    tabMaxLen() {
+      let filterMenus = this.customMenus.filter((item) => item.type !== 2 && item.type !== 7);
+      return filterMenus && filterMenus.length;
+    },
+    tabMinLen() {
+      let targetIns = 0;
+      for(let i = 0;i<this.customMenus.length; i++){
+        let item = this.customMenus[i];
+        if (item.type !== 2 && item.type !== 7) {
+          targetIns = i;
+          break;
+        }
+      }
+      return targetIns;
     },
     pcCustomMenus() {
       if (this.customMenus && this.customMenus.length > 0) {
@@ -399,6 +423,17 @@ export default {
     }
   },
   methods: {
+    computeHoverPx(item, ins) {
+      let targetPx = this.tabPxLen * ins;
+      for(let i = 0;i<ins; i++){
+        let item = this.customMenus[i];
+        if (item.type === 2 || item.type === 7) {
+          targetPx = targetPx - this.tabPxLen;
+          console.log(targetPx, `减去一次${this.tabPxLen}`);
+        }
+      }
+      return targetPx + this.marginLeft;
+    },
     // 匹配自定义菜单类型
     compCovert(component_id) {
       return ['', 'img-txt', 'rq-code', 'video', 'special', 'text-link', 'img-link', 'title', 'hr', 'rank'][component_id]
@@ -449,22 +484,13 @@ export default {
       }).then(res=>{
         if(res && res.code === 200) {
           let menuList = res.data.list;
-          let docItem = menuList.filter(item => item.type === 2);
-          if(docItem && docItem.length > 0) {
-            sessionOrLocal.set('menu_doc_default', JSON.stringify(docItem[0]));
-            console.log(docItem, '===> 过滤结果，文档')
-          }
-          // 其它状态处理
-          let newMenuList = menuList.filter((item) => {
-            return item.type !== 2;
-          }).map((item, ins) => {
+          menuList.map((item, ins) => {
             item.isShow = false;
             // 默认简介选中
             if(item.type === 4) {
               item.isOpen = true;
               this.clickItem = item;
               this.menuTabIndex = ins;
-
               sessionOrLocal.set('menu_active', ins);
               console.log(ins, this.clickItem, '===> clickItem设定当前简介下标');
             } else {
@@ -472,10 +498,7 @@ export default {
             }
             return item;
           });
-          console.log(newMenuList, '===> newMenuList设定默认状态以及简介选中状态，菜单所有')
-          if(newMenuList && newMenuList.length > 0) {
-            this.customMenus = newMenuList;
-          }
+          this.customMenus = menuList;
         } else {
           this.customMenus = [];
         }
@@ -484,10 +507,11 @@ export default {
         this.customMenus = [];
       });
     },
-    // ，是否可以通过hover选择二级菜单
+    // 是否可以通过hover选择二级菜单
     isOpenHoverHandle(item, ins) {
       // 如果是自建立菜单，切换时保存原有数据
       console.log(item, '菜单切换===>isOpenHoverHandle')
+      // 如果是自定义菜单
       if(item.type === 1) {
         this.setCompToMenuSave();
       }
@@ -499,6 +523,30 @@ export default {
       this.customMenus.map((item, cIns) => {
         cIns === ins ? item.isOpen = true : item.isOpen = false;
       });
+      // 如果是聊天，数据初始化
+      if(item.type === 3) {
+        this.$nextTick(() => {
+          this.$refs[`menu-chat`].initDataComp(JSON.stringify(item), ins);
+        })
+      } else if (item.type === 1) {
+        // 数据初始化
+        let compList = item.components || [];
+        compList.map(vItem => {
+          let show_type = this.compCovert(vItem.component_id);
+          // 组合左侧组件 配合 转换后右侧展示类型，合并成一个新对象
+          let compVo = this.compList.filter(sItem => sItem.component_id === vItem.component_id)[0];
+          let unitComp = Object.assign({
+            show_type: show_type
+          }, compVo);
+          unitComp.compInfo = vItem;
+          if (show_type === 'rank') {
+            unitComp.rankType = 'inv';
+          }
+          console.log(unitComp, '反显当前菜单下，配置的所有组件-单个内容')
+          this.modShowHtmlList.push(unitComp);
+          sessionOrLocal.set('customTab_comp', JSON.stringify(this.modShowHtmlList));
+        })
+      }
     },
     setCompToMenuSave() {
       let oldMenuActive = sessionOrLocal.get('menu_active');
@@ -506,6 +554,7 @@ export default {
       console.log(oldMenuActive, customTab_comp, 'customTab_comp');
       this.customMenus[oldMenuActive].components = customTab_comp || [];
       sessionOrLocal.removeItem('customTab_comp');
+      this.modShowHtmlList = [];
     },
     showHoverMenu(item, flag) {
       item.isShow = flag;
@@ -519,10 +568,10 @@ export default {
     // 左右滑动一个移动菜单
     movePxHandle(type) {
       // 计算总长度
-      let maxLength = this.customMenus.length * 90;
-      let movePx = maxLength - 270;
-      let leftMargin = this.marginLeft - 90;
-      let rightMargin = this.marginLeft + 90;
+      let maxLength = this.tabMaxLen * this.tabPxLen;
+      let movePx = maxLength - this.tabPxLen*3;
+      let leftMargin = this.marginLeft - this.tabPxLen;
+      let rightMargin = this.marginLeft + this.tabPxLen;
       // console.log(`当前总长度maxLength=${maxLength},左移目标=${leftMargin},右移目标=${rightMargin},可移动像素movePx=${movePx}`);
       if (type === 'right' && Math.abs(leftMargin) <= movePx) {
         // 点击右侧按钮，右侧内容左移，像素相减
@@ -531,21 +580,43 @@ export default {
         // 点击左侧按钮，左侧内容右移，像素相加
         this.marginLeft = rightMargin;
       }
+      console.log(this.marginLeft, '像素移动');
+    },
+    findTargetIndex(ins, type) {
+      // 查找不是章节 或 文档的菜单下标
+      let compareIndex = type === 'left' ? ins - 1 : ins + 1;
+      if (type === 'left' && compareIndex <= 0) {
+        return 0;
+      }else if (type === 'right' && compareIndex >= this.customMenus.length - 1) {
+        return this.customMenus.length - 1;
+      } else {
+        let vo = this.customMenus[compareIndex];
+        if(vo.type === 2 || vo.type === 7) {
+          this.findTargetIndex(type === 'left' ? compareIndex - 1 : compareIndex + 1);
+        } else {
+          return ins;
+        }
+      }
     },
     // 左、右移动菜单
     moveMenuHandle(item, ins, type) {
+      let allMenu = this.customMenus;
+      // 通过当前下标，确认左移下标（若为章节 或 文档，应移除）
       // type === 'left' 左侧移动一个；type === 'right' 右侧移动一个
-      let arrs = this.customMenus;
       // 先添加一个，在移除一个
       if(type === 'left') {
-        arrs.splice(ins,1,...arrs.splice(ins-1,1,arrs[ins]));
+        let targetIns = this.findTargetIndex(ins, 'left');
+        console.log(ins, targetIns, '当前菜单下标，左侧移动目标下标');
+        allMenu.splice(targetIns,1,...allMenu.splice(targetIns-1,1,allMenu[targetIns]));
       } else if(type === 'right') {
-        arrs.splice(ins+1,1,...arrs.splice(ins,1,arrs[ins+1]));
+        let targetIns = this.findTargetIndex(ins, 'right');
+        console.log(ins, targetIns, '当前菜单下标，右侧移动目标下标');
+        allMenu.splice(targetIns+1,1,...allMenu.splice(targetIns,1,allMenu[targetIns+1]));
       }
     },
     // 左、右添加菜单
     menuSetHandle(item, ins, type) {
-      // type === 'left' 左侧添加一个；type === 'right' 右侧添加一个
+      // type === 'left' 左侧新增一个；type === 'right' 右侧新增一个；add - 最右侧添加；reName - 重命名。
       if (type === 'add'){
         this.addCustomForm.showTitle = '新增菜单';
         this.addCustomForm.menuIndex = this.customMenus.length;
@@ -734,6 +805,7 @@ export default {
       eve.dataTransfer.setData('showCompIndex', index);
     },
     showCompsItemDel(eve, index) {
+      // debugger
       this.$confirm(`确认删除该项？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -807,24 +879,27 @@ export default {
       }
       return flag;
     },
+    // 保存自定义菜单
     saveCustomTab() {
       let saveMenus = this.customMenus;
       // 获取缓存组件,若验证通过，存储在当前停留菜单保存
       let customTab_comp = JSON.parse(sessionOrLocal.get('customTab_comp'));
       if(this.checkComps(customTab_comp)) {
         let menu_active = sessionOrLocal.get('menu_active');
-        // debugger
         let compList = [];
-        if(customTab_comp && customTab_comp.length>0) {
-          customTab_comp.map(item => {
+        if(customTab_comp && customTab_comp.length > 0) {
+          compList = customTab_comp.map(item => {
             return item.compInfo;
           });
+          // debugger
         }
-        // debugger
-        saveMenus[menu_active].components = saveMenus[menu_active].type === 1 ? compList : [];
-        console.log(saveMenus, 'saveCustomTab第一步组装==>存储完编辑选项内容后，数据处理');
-        sessionOrLocal.removeItem('customTab_comp');
-        console.log('saveCustomTab存储完成后数据清空');
+        // 如果是自定义改动，存储
+        if (saveMenus[menu_active].type === 1) {
+          saveMenus[menu_active].components = saveMenus[menu_active].type === 1 ? compList : [];
+          console.log(saveMenus, 'saveCustomTab第一步组装==>存储完编辑选项内容后，数据处理');
+          sessionOrLocal.removeItem('customTab_comp');
+          console.log('saveCustomTab存储完成后数据清空');
+        }
       } else {
         this.$alert('有组件配置错误，请更正后再尝试保存', '提示', {
           dangerouslyUseHTMLString: true,
@@ -836,12 +911,12 @@ export default {
         return;
       }
       // 若customMenus不包含文档，第一位填充
-      let checkType2Result = this.customMenus.filter(item => item.type === 2);
-      if(checkType2Result && checkType2Result.length === 0) {
-        let menu_doc_default = JSON.parse(sessionOrLocal.get('menu_doc_default'));
-        saveMenus.unshift(menu_doc_default);
-      }
-      console.log(params, 'saveCustomTab第二步组装==>若不包含文档，需填充文档');
+      // let checkType2Result = this.customMenus.filter(item => item.type === 2);
+      // if(checkType2Result && checkType2Result.length === 0) {
+      //   let menu_doc_default = JSON.parse(sessionOrLocal.get('menu_doc_default'));
+      //   saveMenus.unshift(menu_doc_default);
+      // }
+      // console.log(params, 'saveCustomTab第二步组装==>若不包含文档，需填充文档');
       let params = {
         webinar_id: this.$route.params.str,
         save_type: 2, // 1--保存；2--保存+发布
@@ -1099,6 +1174,10 @@ export default {
   background: transparent;
   padding-top: 36px;
   z-index: 99;
+  display: none;
+  &.show {
+    display: block;
+  }
 }
 .app__menu__btn {
   min-width: 136px;
@@ -1236,7 +1315,7 @@ export default {
   .del {
     position: absolute;
     display: block;
-    top: -15px;
+    top: -10px;
     right: -10px;
     font-size: 20px;
     z-index: 5;

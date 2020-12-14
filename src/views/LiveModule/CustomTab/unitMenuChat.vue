@@ -36,8 +36,12 @@ export default {
     };
   },
   methods: {
+    initDataComp(compVoStr, index) {
+      console.log(compVoStr, '聊天编辑区，每次菜单点击变换', index);
+      let compVo = JSON.parse(compVoStr);
+      this.form.welcome_content = compVo.welcome_content;
+    },
     sendData: function() {
-      debugger
       this.$emit('cxtChangeInfo', this.form.welcome_content);
     }
   },
