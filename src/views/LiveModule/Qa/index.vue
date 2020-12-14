@@ -91,14 +91,14 @@
             maxlength="200"
             :rows="5"
             placeholder="请输入内容"
-            v-model="sendText"
+            v-model="sendMessage.text"
             show-word-limit>
           </el-input>
         </div>
         <div slot="footer">
           <p class="send-left">
-            <el-radio v-model="sendRadio" label="1">公开</el-radio>
-            <el-radio v-model="sendRadio" label="2">私密</el-radio>
+            <el-radio v-model="sendMessage.Radio" label="1">公开</el-radio>
+            <el-radio v-model="sendMessage.Radio" label="0">私密</el-radio>
           </p>
           <el-button class="send-right" type="primary" @click="textReply">确定</el-button>
         </div>
@@ -147,9 +147,12 @@ export default {
       ], // 不处理
       $Chat: null, // 聊天句柄
       privateFlag: true,
-      textDalog: true, // 是否显示输入框
-      sendRadio: '1', // 发送类型
-      sendText: ''
+      textDalog: false, // 是否显示输入框
+      // 当前展示 提交信息集合
+      sendMessage: {
+        text: '',
+        Radio: '1' // 信息类型
+      }
     }
   },
   async created() {
@@ -251,6 +254,8 @@ export default {
       }else{
         if(val == 'text'){
           console.warn('文字回复')
+         this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active})
+          this.textDalog = true
         }else if(val == 'audio'){
           console.warn();
           let data = {
@@ -323,22 +328,28 @@ export default {
       this.active = index
     },
     textReply(){
-      console.warn('点击的文字回复');
-        let data = {
-          question_id: item.id,
-          room_id: this.baseObj.interact.room_id,
-          type: 2,
-          is_open: 1
+      let data = {
+        question_id: this.sendMessage.id,
+        content: this.sendMessage.text,
+        is_open: Number(this.sendMessage.Radio),
+        type: 3,
+        room_id: this.baseObj.interact.room_id
+      }
+      console.warn('点击的文字回复', data, this.sendMessage);
+      this.$fetch('v3ReplayUserQu', data).then(res=>{
+        console.warn('不处理结果---', res);
+        if(res.code == 200){
+          this.$nextTick(()=>{
+            if(this.sendMessage.activeDom == 0) {
+
+            }else if(this.sendMessage.activeDom == 1){
+
+            }
+            // this.List[0].count--
+            // this.awaitList.splice(val.index, 1)
+          })
         }
-        this.$fetch('v3ReplayUserQu', data).then(res=>{
-          console.warn('不处理结果---', res);
-          if(res.code == 200){
-            this.$nextTick(()=>{
-              this.List[0].count--
-              this.awaitList.splice(val.index, 1)
-            })
-          }
-        })
+      })
     }
   },
   beforeCreate() {
