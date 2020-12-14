@@ -403,15 +403,17 @@ export default {
         top: 15px;
       }
       .el-dialog--center .el-dialog__body{
-        padding: 0px 10px 10px;
+        padding: 0 10px 10px;
       }
     }
   }
   .head-operat{
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
     .head-btn{
       display: inline-block;
-      float: right;
+      margin-left: auto;
     }
     .el-input{
       width: 220px;
