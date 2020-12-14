@@ -15,24 +15,8 @@
           <div class="give-item">
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
-                <!-- <el-form-item label="姓名">
-                  <el-input v-model="formData.name" maxlength="10" placeholder="请输入姓名" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="手机号">
-                    <el-input v-model="formData.phone" placeholder="请输入手机号"></el-input>
-                </el-form-item>
-                <el-form-item label="联系地址">
-                    <el-input v-model="formData.adress" type="textarea" placeholder="请输入地址"  :autosize="{ minRows: 4}"></el-input>
-                    <el-switch
-                      v-model="formData.isPhone"
-                      active-color="#ccc"
-                      inactive-color="#ff4949"
-                      active-text=""
-                      inactive-text="必填">
-                    </el-switch>
-                </el-form-item> -->
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="Boolean(item.is_system) ? item.field : `${item.field}${index - 2}`" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : true" >
-                    <el-input v-model="givePrizeForm[item.field_Key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)"></el-input>
+                    <el-input v-model="givePrizeForm[item.field_Key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
                         <el-input v-model="givePrizeForm[item.field_Key]"  type="textarea" placeholder="请输入" :autosize="{ minRows: 4}" v-else></el-input>
                         <div class="isDelete">
                           <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
@@ -85,12 +69,30 @@
                 </el-form-item>
                 <el-form-item label="模板库">
                     <div class="prize-type">
-                      <p v-for="(item, index) in typeList" :key="index" :class="item.isChecked ? 'active' : ''" @click="changeType(item)">
+                      <p :class="isChecked == 0 ? 'active' : ''" @click="changeType(0)">
+                        <img src="../../../common/images/gif/prize03.gif" alt="">
+                        <label class="img-tangle" v-show="isChecked == 0" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                      <p :class="isChecked == 1 ? 'active' : ''" @click="changeType(1)">
+                        <img src="../../../common/images/gif/prize01.gif" alt="" >
+                        <label class="img-tangle" v-show="isChecked == 1" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                      <p :class="isChecked == 2 ? 'active' : ''" @click="changeType(2)">
+                        <img src="../../../common/images/gif/prize02.gif" alt="">
+                        <label class="img-tangle" v-show="isChecked == 2" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                      <!-- <p v-for="(item, index) in typeList" :key="index" :class="item.isChecked ? 'active' : ''" @click="changeType(item)">
                         <label class="img-tangle" v-show="item.isChecked">
                           <i class="el-icon-check"></i>
                         </label>
                         <img :src="item.url" alt="">
-                      </p>
+                      </p> -->
                     </div>
                 </el-form-item>
                 <el-form-item label="抽奖标题">
@@ -107,8 +109,7 @@
             <div class="give-show">
               <div class="give-people">
                 <h3>抽奖<i class="el-icon-close"></i></h3>
-                <div class="prize-show">
-                  <img :src="prizeImg" alt="">
+                <div class="prize-show" :style="`backgroundImage: url(${prizeImgList[isChecked]})`">
                 </div>
                 <div class="sureBtn">正在进行抽奖</div>
               </div>
@@ -119,46 +120,22 @@
           <div class="prize-info">
             <prize-list :source = "'0'" :roomId = '$route.query.roomId'></prize-list>
           </div>
-          <!-- <div class="prize-list" v-if="total">
-            <div class="head-operat">
-              <el-button type="primary" round  @click="createPrize">创建奖品</el-button>
-              <el-button round @click="changePrize">资料库</el-button>
-              <el-button round>批量删除</el-button>
-              <search-area class="head-btn fr search"
-                ref="searchArea"
-                :placeholder="'请输入奖品名称'"
-                :isExports='false'
-                :searchAreaLayout="searchAreaLayout"
-                @onSearchFun="getPrizeList('search')"
-                >
-              </search-area>
-            </div>
-            <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-            :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getPrizeList" @changeTableCheckbox="changeTableCheckbox">
-            </table-list>
-          </div>
-          <div class="prize-no" v-else>
-            <el-button type="primary" @click="createPrize" round>新建奖品</el-button>
-            <el-button round>资料库</el-button>
-          </div> -->
         </el-tab-pane>
       </el-tabs>
     </el-card>
-    <!-- <create-prize ref="createPrize"></create-prize> -->
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
-// import createPrize from './components/createPrize';
 import prizeList from '../../MaterialModule/prize'
 export default {
   name: 'prizeSet',
   data() {
     return {
       prizeInfoStatus: false,
-      activeName: 'first',
+      activeName: 'second',
       formData: {
         title:'',
         description:''
@@ -168,7 +145,8 @@ export default {
         adressCheced: false
       },
       total: 100,
-      prizeImg: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
+      isChecked: 0,
+      prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
       typeList: [
         {
           url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
@@ -300,37 +278,6 @@ export default {
       })
       console.log(this.givePrizeList, this.givePrizeForm, '00000000000000000000')
     },
-    getPrizeList(params) {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
-        pageInfo.pageNum= 1;
-        pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        // this.$refs.tableList.clearSelect();
-      }
-      let obj = Object.assign({}, pageInfo, formParams);
-    },
-    onHandleBtnClick(val) {
-      let methodsCombin = this.$options.methods;
-      methodsCombin[val.type](this, val);
-    },
-    // 复制
-    cope(that, {rows}) {
-      console.log('复制', rows);
-    },
-    // 编辑
-    edit(that, {rows}) {
-      console.log('编辑', rows);
-    },
-    // 删除
-    del(that, {rows}) {
-      console.log('删除', rows);
-    },
-    // 选中
-    changeTableCheckbox(val) {
-      console.log(val);
-    },
     handleClick(tab) {
       this.activeName = tab.name;
       console.log('taba',tab);
@@ -343,12 +290,12 @@ export default {
           break
       }
     },
-    changeType(items) {
-      this.prizeImg = items.url;
-      this.typeList.map(item => {
-        item.isChecked = false;
-        items.isChecked = true;
-      });
+    changeType(index) {
+      this.isChecked = index;
+      // this.typeList.map(item => {
+      //   item.isChecked = false;
+      //   items.isChecked = true;
+      // });
     },
      prizeLoadSuccess(res, file){
       // console.log('图片上传',res,'ssssss', file);
@@ -521,12 +468,16 @@ export default {
       .prize-show{
         margin: 10px auto;
         text-align: center;
-        border-radius: 50%;
-        img{
-          width: 200px;
-          height: 200px;
-          border-radius: 50%;
-        }
+        // border-radius: 50%;
+        width: 200px;
+        height: 200px;
+        background-size: 100%;
+        background-repeat:no-repeat;
+        // img{
+        //   width: 200px;
+        //   height: 200px;
+        //   border-radius: 50%;
+        // }
       }
     }
     .prize-type{

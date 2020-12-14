@@ -243,6 +243,10 @@ const apis = {
   // 直播-互动统计
   getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
   getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
+  getRoomLikeInfo: ['/v3/interacts/like/get-room-like', 'POST'], // 获取房间的点赞数量
+  getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天列表
+  getSignInfo: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取发起签到的签到总数
+  getSpeakListInfo: ['/v3/interacts/inav/get-speak-list', 'POST'], // 获取发起签到的签到总数
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √

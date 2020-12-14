@@ -103,7 +103,7 @@
             <icon icon-class="saasicon_wenda"></icon>
             <div class="base-text">
               <span>问答</span>
-              <h1>351</h1>
+              <h1>{{ dataInfo.recordNum }}</h1>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@
             <icon icon-class="saasicon_dianzan"></icon>
             <div class="base-text">
               <span>点赞(次)</span>
-              <h1>351</h1>
+              <h1>{{ dataInfo.likeNum }}</h1>
             </div>
           </div>
         </div>
@@ -216,7 +216,35 @@ export default {
       //问答
       this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.recordNum = res.data.total;
-      })
+      });
+      // 点赞
+      this.$fetch('getRoomLikeInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.likeNum = res.data.total;
+      });
+      // 聊天
+      this.$fetch('getChatListInfo', {room_id: this.roomId,pos:0,limit:10}).then(res => {
+        this.dataInfo.chatNum = res.data.total;
+      });
+      // 签到
+      this.$fetch('getSignInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.signNum = res.data.total;
+      });
+      // 预约
+      // this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
+      //   this.dataInfo.recordNum = res.data.total;
+      // });
+      // // 点赞
+      // this.$fetch('getRoomLikeInfo', {room_id: this.roomId}).then(res => {
+      //   this.dataInfo.likeNum = res.data.total;
+      // });
+      // // 聊天
+      // this.$fetch('getChatListInfo', {room_id: this.roomId,pos:0,limit:10}).then(res => {
+      //   this.dataInfo.chatNum = res.data.total;
+      // });
+      // 上麦
+      this.$fetch('getSpeakListInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.speakNum = res.data.total;
+      });
     },
     lookOption(title) {
       this.$router.push({
