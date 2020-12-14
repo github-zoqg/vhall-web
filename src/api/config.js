@@ -122,6 +122,7 @@ const apis = {
   regAnswerSubmit: ['/v3/webinars/registration-form/submit', 'POST'], // 提交报名表单答案
   regVisiterCheck: ['/v3/webinars/registration-form/get-visiter-register-status', 'POST'], // 查询某个访客是否已经报过名
   verifyOpenLink: ['/v3/webinars/registration-form/verify-open-link', 'GET'], // 检查报名表单是否开启独立链接以及独立链接是否有效
+  getAreaList: ['/data/area.json','GET', false, false, 'staticdata'], // 本地静态资源区域列表
 
   // 第三方K值模块
   kidAuthInfo:  ['/v3/webinars/auth/info', 'POST'], // 获取单个活动K值详情接口 •••
@@ -242,11 +243,22 @@ const apis = {
 
   // 直播-互动统计
   getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
-  getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
   getRoomLikeInfo: ['/v3/interacts/like/get-room-like', 'POST'], // 获取房间的点赞数量
   getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天列表
   getSignInfo: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取发起签到的签到总数
   getSpeakListInfo: ['/v3/interacts/inav/get-speak-list', 'POST'], // 获取发起签到的签到总数
+  getRewardListInfo: ['/v3/interacts/reward/get-room-reward-stat', 'POST'], // 获取房间打赏统计
+  getShareListInfo: ['/v3/interacts/share/get-top-list', 'POST'], // 获取分享榜
+  getInviteListInfo: ['/v3/interacts/invite-card/get-list', 'POST'], // 获取邀请数
+  getPrizeUserInfo: ['/v3/vss/lottery/winner/count', 'GET'], // 获取抽奖中奖人总数
+  getPrizeListInfo: ['/v3/vss/lottery/get-prize-data-info-list', 'GET'], // 获取信息收集-抽奖数据/日期筛选
+  getSurveyInfo: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下问卷提交人数
+  getSurveyUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下问卷使用数据概览
+  getGiftIncome: ['/v3/interacts/gift/get-gift-income-stat', 'GET'], // 获取礼物收益
+  getAnswerListInfo: ['/v3/webinars/registration-form/get-answer-people-count', 'GET'], // 获取报名表单总人数
+
+  //直播-互动统计-详情页
+  getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √

@@ -7,7 +7,8 @@
         </header>
         <article>
           <h1 class="pageTitle">{{ baseInfo.title }}</h1>
-          <div :class="['tabs', colorIndex]">
+          <p class="pageIntro">{{ baseInfo.intro }}</p>
+          <div :class="['tabs', baseInfo.theme_color]">
             <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
             <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
           </div>
@@ -17,7 +18,6 @@
               <el-form-item
                 v-for="(question, quesIndex) in list"
                 :key="question.id"
-                :required="!!question.is_must"
                 :prop="question.id + ''"
                 v-show="question.type != 6"
                 :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
@@ -148,13 +148,13 @@
                   </el-checkbox>
                 </template>
               </el-form-item>
-              <el-button round type="primary" @click="submitForm">报名</el-button>
+              <el-button :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
             </el-form>
           </template>
 
           <!-- 验证 -->
           <template>
-            <el-form v-show="tabs === 2" :model="verifyForm" ref="verifyForm" :rules="verifyRules">
+            <el-form class="entryForm" v-show="tabs === 2" :model="verifyForm" ref="verifyForm" :rules="verifyRules">
               <el-form-item
                 required
                 label="请输入报名时您填写的手机号"
@@ -173,7 +173,7 @@
                   <el-button class="no-border" size="mini" slot="append" @click="getDyCode(false)">{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
                 </el-input>
               </el-form-item>
-              <el-button round type="primary" @click="submitVerify">提交</el-button>
+              <el-button :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
             </el-form>
           </template>
         </article>
@@ -189,7 +189,6 @@
 <script>
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
-  import axios from 'axios'
   export default {
     created() {
       this.getBaseInfo();
@@ -474,17 +473,25 @@
           if (valid) {
             this.formHandler()
             const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
+            const nameItem = this.list.find(item => item.type === 0 && item.default_type === 1);
             const options = {
               webinar_id: this.webinar_id,
               phone: this.form[phoneItem.id],
               verify_code: this.form.code,
               form: JSON.stringify(this.answer),
               report: JSON.stringify({
-                phone: this.form[phoneItem.id]
+                phone: this.form[phoneItem.id],
+                real_name: this.form[nameItem.id]
               })
             }
             this.$route.query.refer && (options.refer = this.$route.query.refer)
-            this.$fetch('regAnswerSubmit', options).then(res => {console.log(res)})
+            this.$fetch('regAnswerSubmit', options).then(res => {
+              if(res.code == 200) {
+                // 报名成功的操作，跳转到直播间
+                this.closePreview()
+                this.$emit('changeBtnVal', '已预约')
+              }
+            })
           } else {
             console.log('error submit!!');
             return false;
@@ -500,10 +507,22 @@
               verify_code: this.verifyForm.code,
               visit_id: sessionStorage.getItem("visitor_id")
             }).then(res => {
-              console.log(res);
-              // 如果已经报名
-              this.closePreview()
-              this.$emit('changeBtnVal', '已预约')
+              if (res.code == 12809) {
+                this.$message.error('短信验证码错误')
+              } else if (res.code == 12002) {
+                this.$message.error('活动不存在或已删除')
+              } else if (res.code == 12502) {
+                this.$message.error('不支持的活动类型(flash)')
+              } else {
+                // 如果已经报名
+                if (res.data.has_registed == 1) {
+                  // 已报名，跳转到直播间
+                  this.closePreview()
+                  this.$emit('changeBtnVal', '已预约')
+                } else {
+                  this.$message.warning('请先报名！');
+                }
+              }
             })
           } else {
             console.log('error submit!!');
@@ -624,7 +643,8 @@
       },
       // 获取地域列表
       getAreaList() {
-        axios.get("/data/area.json").then(res => {
+        axios.get(`${process.env.VUE_APP_STATIC_URL}/saas/common_libs/area.json`).then(res => {
+          console.warn(res, '加载地址');
           this.provinces = res.data.provinces;
           this.cities = res.data.cities;
           this.counties = res.data.counties;
@@ -688,8 +708,8 @@
   @redBg: #FFEBEB;
   @blue: #3562FA;
   @blueBg: #ebefff;
-  @orange: #FA9A32;
-  @orangeBg: #fff5eb;
+  @purple: #8d57a4;
+  @purpleBg: #F5BDEA;
   .signFormBox {
     position: fixed;
     top: 0;
@@ -724,6 +744,14 @@
         margin: 40px 0;
         text-align: center;
       }
+      .pageIntro{
+        width: 658px;
+        margin: 20px auto 0;
+        color: #333333;
+        font-size: 16px;
+        word-break: break-all;
+        font-weight: 300;
+      }
       article{
         padding: 0 75px;
       }
@@ -746,6 +774,7 @@
         width: 100%;
         overflow: hidden;
         margin-bottom: 43px;
+        margin-top: 20px;
         >div{
           width: 50%;
           float: left;
@@ -783,11 +812,11 @@
             color: @blue;
           }
         }
-        &.orange{
+        &.purple{
           .active{
-            border: 1px solid@orange;
-            background: @orangeBg;
-            color:@orange;
+            border: 1px solid@purple;
+            background: @purpleBg;
+            color:@purple;
           }
         }
       }
@@ -828,6 +857,30 @@
       /deep/ .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
         background-color: inherit;
         border: none;
+      }
+    }
+    .entryForm .blue {
+      background: @blue;
+      border-color: @blue;
+      &:hover {
+        background: @blue;
+        border-color: @blue;
+      }
+    }
+    .entryForm .red {
+      background: @red;
+      border-color: @red;
+      &:hover {
+        background: @red;
+        border-color: @red;
+      }
+    }
+    .entryForm .purple {
+      background: @purple;
+      border-color: @purple;
+      &:hover {
+        background: @purple;
+        border-color: @purple;
       }
     }
   }

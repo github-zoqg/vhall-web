@@ -164,9 +164,9 @@ export default {
           });
         });
       } else if (command === '/live/edit') {
-        this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: this.webinarInfo.webinar_state }});
+        this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
       } else {
-        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {type: this.webinarInfo.webinar_state, roomId: this.webinarInfo.vss_room_id }});
+        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id }});
       }
     },
     currentChangeHandler(current) {

@@ -17,7 +17,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.start_time }}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -222,7 +222,7 @@ export default {
     blockHandler(item){
       if(item.path){
         if (item.path === '/live/edit') {
-          this.$router.push({path: item.path, query: {id:this.$route.params.str }});
+          this.$router.push({path: item.path, query: {id:this.$route.params.str, type: 2 }});
         } else if (item.path === '/live/question') {
           // 问卷
           this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});
