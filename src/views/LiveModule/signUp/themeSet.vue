@@ -8,7 +8,7 @@
       <span>选择主题</span>
       <i :class="{active: colorIndex=='red'}" @click="colorIndex='red'"></i>
       <i :class="{active: colorIndex=='blue'}" @click="colorIndex='blue'"></i>
-      <i :class="{active: colorIndex=='orange'}" @click="colorIndex='orange'"></i>
+      <i :class="{active: colorIndex=='purple'}" @click="colorIndex='purple'"></i>
     </div>
     <p class="margin">标签页标题</p>
     <div :class="['tabs', colorIndex]">
@@ -75,8 +75,8 @@ export default {
   @redBg: #FFEBEB;
   @blue: #3562FA;
   @blueBg: #ebefff;
-  @orange: #FA9A32;
-  @orangeBg: #fff5eb;
+  @purple: #8d57a4;
+  @purpleBg: #F5BDEA;
   .themeBox{
     line-height: 40px;
     i{
@@ -100,7 +100,7 @@ export default {
         background-clip: content-box;
       }
       &:nth-child(4){
-        background:@orange;
+        background:@purple;
         background-clip: content-box;
       }
       &.active{
@@ -149,11 +149,11 @@ export default {
         color: @blue;
       }
     }
-    &.orange{
+    &.purple{
       .active{
-        border: 1px solid@orange;
-        background: @orangeBg;
-        color:@orange;
+        border: 1px solid@purple;
+        background: @purpleBg;
+        color:@purple;
       }
     }
   }
