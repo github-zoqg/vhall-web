@@ -4,7 +4,7 @@
       <span>数据报告</span>
     </div>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
-    <base-data :isStatus="liveDetailInfo.webinar_state"></base-data>
+    <base-data :isStatus="liveDetailInfo.webinar_state" :webinarType="liveDetailInfo.webinar_type"></base-data>
   </div>
 </template>
 <script>
