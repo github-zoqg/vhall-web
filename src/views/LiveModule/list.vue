@@ -122,7 +122,7 @@ export default {
         { label: '直播', value: 1 },
         { label: '结束', value: 3 },
         { label: '点播', value: 4 },
-        { label: '回访', value: 5 }
+        { label: '回放', value: 5 }
       ],
       orderOptions: [
         { label: '按创建时间排序', value: 1 },

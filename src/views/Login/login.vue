@@ -226,6 +226,11 @@ export default {
   components: {
     footerSection
   },
+  watch: {
+    '$route.path'() {
+      this.callCaptcha();
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       this.callCaptcha();
