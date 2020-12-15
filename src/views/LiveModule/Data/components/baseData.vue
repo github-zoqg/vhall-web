@@ -13,17 +13,17 @@
     <el-row :gutter="40">
       <el-col class="liveItem">
         <div class="base-item" v-if="isStatus!= 4">
-          <p>导出</p>
+          <p @click="exportSubscribeInfo">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_yuyue"></icon>
             <div class="base-text">
               <span>预约（人）</span>
-              <h1>123
-                 <!-- <count-to :startVal="0"
-                  :endVal="mainKeyData.total"
+              <h1>
+                 <count-to :startVal="0"
+                  :endVal="dataInfo.subscribeNum"
                   :duration="1500"
-                  v-if="mainKeyData.total >= 0">
-                </count-to> -->
+                  v-if="dataInfo.subscribeNum >= 0">
+                </count-to>
               </h1>
             </div>
           </div>
@@ -45,12 +45,18 @@
           </div>
         </div>
         <div class="base-item">
-          <p>导出</p>
+          <p @click="exportPreviewInfo">导出</p>
           <div class="base-main">
            <icon icon-class="saasicon_shikan"></icon>
             <div class="base-text">
               <span>试看（人）</span>
-              <h1>351</h1>
+              <h1>
+                 <count-to :startVal="0"
+                  :endVal="dataInfo.previewNum"
+                  :duration="1500"
+                  v-if="dataInfo.previewNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -71,7 +77,7 @@
           </div>
         </div>
         <div class="base-item">
-          <p>导出</p>
+          <p @click="exportShare">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_fenxiangpaiming"></icon>
             <div class="base-text">
@@ -211,7 +217,7 @@
           </div>
         </div>
         <div class="base-item">
-          <p>导出</p>
+          <p @click="exportReward">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_dashang"></icon>
             <div class="base-text">
@@ -221,7 +227,7 @@
           </div>
         </div>
         <div class="base-item">
-          <p>导出</p>
+          <p @click="exportGift">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_liwu"></icon>
             <div class="base-text">
@@ -232,8 +238,9 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType==3">
-          <p>导出</p>
+         <div class="base-item">
+           <!-- v-if="isStatus!=4&&webinarType==3" -->
+          <p @click="exportSpeak">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_lianmai"></icon>
             <div class="base-text">
@@ -258,7 +265,9 @@ export default {
   data() {
     return {
       dataInfo: {
+        previewNum: 0,
         answerNum: 0,
+        subscribeNum: 0, //预约
         recordNum: 0,
         rewardMoney: 0,
         redpacketMoney: 0,
@@ -293,18 +302,12 @@ export default {
   },
   methods: {
     getAllDataInfo() {
-      // 预约
-      // this.$fetch('getRecodrderInfo', {room_id: this.roomId, start_time: '2020-12-10'}).then(res => {
-      //   this.dataInfo.recordNum = res.data.total;
-      // });
-      //  报名表单（人）
+      // 预约  报名表单（人）  试看（人）
       this.$fetch('getAnswerListInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.answerNum = res.data.answer_num;
+        this.dataInfo.previewNum = res.data.preview;
+        this.dataInfo.subscribeNum = res.data.subscribe;
+        this.dataInfo.answerNum = res.data.regform;
       });
-       // 试看（人）
-      // this.$fetch('getRecodrderInfo', {room_id: this.roomId, start_time: '2020-12-10'}).then(res => {
-      //   this.dataInfo.recordNum = res.data.total;
-      // });
       // 邀请排名
       this.$fetch('getInviteListInfo', {webinar_id: this.$route.params.str}).then(res => {
         this.dataInfo.inviteNum = res.data.total;
@@ -357,9 +360,47 @@ export default {
       }
 
     },
+    // 预约-导出
+    exportSubscribeInfo() {
+      this.$fetch('exportSubscribe',{webinar_id: this.$route.params.str}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 试看-导出
+    exportPreviewInfo() {
+      this.$fetch('exportPreview',{webinar_id: this.$route.params.str}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 分享导出
+    exportShare() {
+      this.$fetch('exportShareInfo',{room_id: this.roomId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
     //报名表单导出
     exportAnswer() {
-
+      this.$fetch('exportForm',{webinar_id: this.$route.params.str}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+     //打赏---导出
+    exportReward() {
+      this.$fetch('exportReward',{webinar_id: this.$route.params.str}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 礼物---导出
+    exportGift() {
+      this.$fetch('exportGift',{room_id: this.roomId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 连麦---导出
+    exportSpeak() {
+       this.$fetch('exportSpeak',{room_id: this.roomId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
     },
     lookOption(title) {
       this.$router.push({
@@ -447,6 +488,10 @@ export default {
               font-weight: bold;
               line-height: 42px;
               padding-top: 5px;
+              span{
+                color:#1A1A1A;
+                font-weight: bold;
+              }
             }
           }
         }
