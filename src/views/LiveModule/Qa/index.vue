@@ -12,20 +12,20 @@
               <span class="border"></span>
             </li>
             <li v-if="active == 2" class="reply-text">
-              <el-checkbox @change='setOpenReply' v-model="openReply">公开</el-checkbox>
-              <el-checkbox @change='setPrivacyReply' v-model="privacyReply">私密</el-checkbox>
+              <el-checkbox @change='setReply' v-model="openReply">公开</el-checkbox>
+              <el-checkbox @change='setReply' v-model="privacyReply">私密</el-checkbox>
             </li>
           </ul>
           <div class="tab-content">
             <!-- 待处理 -->
-            <ul class="await-deal" v-show="active == 0">
+            <ul :class="['await-deal', {'showPagination': activeObj.count > 20}]" v-show="active == 0">
               <li v-for="(item, index) in awaitList" :key="index" class="clearFix">
                <div class="fl">
                  <p class="await-name">
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
@@ -52,8 +52,8 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio')" size="small" class="setBut">私聊</el-button>
-                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
+                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
               </li>
             </ul>
@@ -68,9 +68,17 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio')" size="small" class="setBut">私聊</el-button>
-                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
+                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
+                <ul class="answer">
+                  <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
+                    <p>
+                      <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
+                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite)" class="answer-time answer-revoke">撤销此条回复</span>
+                    </p>
+                  </li>
+                </ul>
               </li>
             </ul>
             <!-- 不处理 -->
@@ -89,10 +97,14 @@
                 </div>
               </li>
             </ul>
+            <div class="pagination">
+              <SPagination :total="activeObj.count" v-show="activeObj.count > 20" :currentPage="searchParams.page" :page-size="searchParams.page_size"
+                @current-change="currentChangeHandler" align="center"></SPagination>
+            </div>
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private ></Private>
+                <Private :userInfo='baseObj'></Private>
               </template>
             </div>
           </div>
@@ -127,11 +139,13 @@
 <script>
 import OldHeader from '@/components/OldHeader';
 import Private from './PrivateMess/index';
-import { faceArr, textToEmoji, emojiToPath } from '@/tangram/libs/chat/js/emoji';
+import { faceArr, textToEmoji, emojiToPath, textToEmojiText } from '@/tangram/libs/chat/js/emoji';
+import SPagination from '@/components/Spagination/main'
 export default {
   components: {
     OldHeader,
-    Private
+    Private,
+    SPagination
   },
   computed:{
     filterTime(){
@@ -148,14 +162,15 @@ export default {
         {text:'文字回复', count: 0},
         {text:'不处理', count: 0}
       ],
-      active: 0,
+      active: 2, // 当前正在展示的Dom
+      activeObj: {}, // 当前正在展示的信息
       baseObj: {},
       awaitList: [], // 待处理
       textDealList: [], // 文字回复
       audioList: [], // 语音回复
       noDealList: [], // 不处理
       $Chat: null, // 聊天句柄
-      privateFlag: true,
+      privateFlag: false,
       textDalog: false, // 是否显示输入框
       // 当前展示 提交信息集合
       sendMessage: {
@@ -164,6 +179,10 @@ export default {
       },
       openReply: true, // 文字回复之公开
       privacyReply: true, // 文字回复之隐私
+      searchParams: {
+        page_size: 20,
+        page: 0
+      },
     }
   },
   async created() {
@@ -171,7 +190,7 @@ export default {
    this.getChat(0)  // 待处理
    this.getChat(1)  // 不处理
    this.getChat(2)  // 语音回复
-   this.getChat(3)  // 文字回复
+   this.setReply()  // 文字回复
    this.initChat()
   },
   watch:{
@@ -179,7 +198,6 @@ export default {
       this.$nextTick(()=>{
 
       })
-      console.warn(newval, '坚挺到的变化------');
     }
   },
   mounted() {
@@ -196,7 +214,6 @@ export default {
         console.warn('this.$router.params', this.$router.currentRoute.params.id);
         this.$fetch('initiatorInfo', { webinar_id:  this.$router.currentRoute.params.id }).then(res => {
           if(res.code == 200){
-            console.warn(res, '4578');
             this.baseObj = res.data
             resolve()
           }else{
@@ -207,18 +224,57 @@ export default {
         })
       })
     },
-    getChat(val){
+    select(index){
+      this.active = index
+      this.activeObj = Object.assign(this.activeObj,{active: index, count: this.List[index].count})
+      // 0 未处理 1 不处理 2 语音回复 3 文字回复
+      switch (index) {
+        case 0:
+          this.getChat(0)
+          break;
+        case 1:
+          this.getChat(2)
+          break;
+        case 2:
+          // 获取文字回复
+          this.setReply()
+          break;
+        case 3:
+          this.getChat(1)
+          break;
+      }
+    },
+    currentChangeHandler(val){
+      console.warn('页码的点击效果----', val);
+      if(this.active == 2) {
+        this.setReply(val-1)
+      } else {
+        this.getChat( this.active, val-1)
+      }
+    },
+    getChat(val, pagePos){
       this.$fetch('getAutherQa', {
         room_id: this.baseObj.interact.room_id,
         type: val,
-        limit: 100
+        limit: 20 ,
+        pos: pagePos ? pagePos : 0
       }).then(res=>{
         if(res.code == 200){
-          console.warn(val, '数字', res);
+          try {
+            console.warn(res.data.list);
+            res.data.list.forEach(item=>{
+              if (item.content) {
+                item.content = textToEmojiText(item.content);
+              }
+            })
+          } catch (error) {
+            console.warn(error, '聊天消息过滤错误');
+          }
           switch (val) {
             case 0:
             this.awaitList = res.data.list
             this.List[0].count = res.data.total
+            this.activeObj = Object.assign(this.activeObj,{active: 0, count: res.data.total})
               break;
           case 1:
             this.noDealList = res.data.list
@@ -228,15 +284,36 @@ export default {
             this.audioList = res.data.list
             this.List[1].count = res.data.total
             break;
-          case 3:
-            this.textDealList = res.data.list
-            this.List[2].count = res.data.total
-            break;
           }
         }else{
           this.$message.warning(res.msg)
         }
       }).catch(err=>{
+      })
+    },
+    setReply(pagePos){
+      // 文本回复  --- 设置回复 / 获取回复
+      let openType = 0
+      if(this.openReply && this.privacyReply){
+        openType = 2
+      }else if(this.openReply){
+        openType = 1
+      }else{
+        openType = 0
+      }
+      let data = {
+        room_id: this.baseObj.interact.room_id,
+        is_open: openType, // 0 私密 1 公开 2 全部
+        pos: pagePos? pagePos : 0 ,
+        limit: 20
+      }
+      this.$fetch('v3GetTextReply', data).then(res=>{
+        if(res.code == 200){
+          this.textDealList = res.data.list
+          this.List[2].count = res.data.total
+        }else{
+          this.$message.warning(res.msg)
+        }
       })
     },
     reply(val, item, index){
@@ -245,27 +322,31 @@ export default {
         if(val.type == 'private'){
           console.warn('私聊回复');
         }else{
-          console.warn('不处理');
+          console.warn('不处理----开始执行');
           let data = {
             question_id: val.item.id,
             room_id: this.baseObj.interact.room_id,
-            type: 2,
+            type: 1,
             is_open: 1
           }
           this.$fetch('v3ReplayUserQu', data).then(res=>{
-            console.warn('不处理结果---', res);
             if(res.code == 200){
               this.$nextTick(()=>{
                 this.List[0].count--
+                if(this.List[0].count <=0) this.List[0].count = 0
+                this.List[3].count++
                 this.awaitList.splice(val.index, 1)
               })
+            }else{
+              this.$message.warning(res.msg)
             }
           })
         }
       }else{
         if(val == 'text'){
-          console.warn('文字回复')
-         this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active})
+          this.sendMessage.text = ''
+          this.sendMessage.Radio = '1'
+          this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active, index: index})
           this.textDalog = true
         }else if(val == 'audio'){
           console.warn();
@@ -289,6 +370,17 @@ export default {
     },
     messClick(){
       this.privateFlag = true
+    },
+    revoke(val){
+      // 撤销回复
+      console.warn('撤销回复', val);
+      this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
+        if(res.code == 200){
+          console.warn(res, '撤销成功');
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
     },
     // 初始化
     initChat(){
@@ -335,17 +427,6 @@ export default {
          this.$EventBus.$emit(msg.type, msg);
       })
     },
-    select(index){
-      this.active = index
-    },
-    setOpenReply(){
-      // 设置公开回复
-      console.warn('设置公开回复');
-    },
-    setPrivacyReply(){
-      // 设置隐私回复
-      console.warn('设置隐私回复');
-    },
     textReply(){
       let data = {
         question_id: this.sendMessage.id,
@@ -354,19 +435,25 @@ export default {
         type: 3,
         room_id: this.baseObj.interact.room_id
       }
-      console.warn('点击的文字回复', data, this.sendMessage);
+      console.warn('点击的文字回复----准备到最终', data, this.sendMessage,);
       this.$fetch('v3ReplayUserQu', data).then(res=>{
-        console.warn('不处理结果---', res);
         if(res.code == 200){
-          this.$nextTick(()=>{
-            if(this.sendMessage.activeDom == 0) {
-
+            this.textDalog = false
+            if(this.sendMessage.activeDom == 0){
+              // 点击的是待处理的 Dom
+              this.awaitList.splice(this.sendMessage.index, 1)
             }else if(this.sendMessage.activeDom == 1){
-
+              // 点击的是语音回复 Dom
+              this.audioList.splice(this.sendMessage.index, 1)
+            }else{
+              // 点击的是文字回复 Dom
+              this.textDealList.splice(this.sendMessage.index, 1)
             }
-            // this.List[0].count--
-            // this.awaitList.splice(val.index, 1)
-          })
+            this.List[2].count++
+            this.List[this.sendMessage.activeDom].count--
+            if(this.List[this.sendMessage.activeDom].count<=0){
+              this.List[this.sendMessage.activeDom].count = 0
+            }
         }
       })
     }
@@ -485,7 +572,7 @@ export default {
           .fr{
             float: right;
             width: 330px;
-            margin-top: 10px;
+            margin-top: 6px;
             text-align: right;
             .setBut{
               margin-left: 10px;
@@ -506,6 +593,58 @@ export default {
               float: right;
               display: inline-block;
             }
+          }
+        }
+      }
+      .showPagination{
+        height: calc(100% - 58px) !important;
+      }
+      .pagination{
+        height: 60px;
+        .pageBox{
+          width: 100%;
+          background: #fff;
+          padding: 0;
+          position: absolute;
+          left: 50%;
+          bottom: 0px;
+          height: 60px;
+          padding-top: 18px;
+          transform: translateX(-50%);
+          .el-pagination{
+            height: 100%;
+          }
+        }
+      }
+      // 文字回复  回答
+      .answer{
+        height: 74px!important;
+        border: 1px solid red;
+        background: #e8e8e8;
+        font-size: 14px;
+        color: #888;
+        p{
+          &:hover{
+            .answer-revoke{
+              display: inline-block;
+            }
+          }
+          .answer-time{
+            font-size: 12px;
+            margin-right: 8px;
+          }
+          .answer-open{
+            padding: 3px 8px;
+            background: #169BD5;
+            color: #fff;
+            font-size: 14px;
+            margin-right: 14px;
+          }
+          .answer-revoke{
+            text-decoration: none;
+            cursor: pointer;
+            color: #337ab7;
+            display: none;
           }
         }
       }

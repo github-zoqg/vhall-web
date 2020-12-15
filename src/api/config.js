@@ -499,7 +499,9 @@ const apis = {
   channelInfo: [`${process.env.VUE_APP_VSS_HOST}/cmpt/room/get`, 'POST', false, 'paas'], // 获取频道信息
   getAutherQa: ['/v3/interacts/qa/get-question-by-status', 'POST'], // 提问列表
   sendPrivateMsg: ['/v3/interacts/chat-private/send-message', 'POST'], // 发送私聊信息
-  
+  v3GetTextReply: ['/v3/interacts/qa/get-answer-list', 'POST'], // 文字回复---私密
+  v3Revoke: ['/v3/interacts/qa/revoke-reply', 'POST'], // 主持人撤销回复
+
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
   // 邀请卡
@@ -517,7 +519,7 @@ const apis = {
   watchInterGetFirstPost: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报
   tipOff: ['/v3/interacts/report/user-create-report', 'POST'], // 观众举报
   videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
-  
+
 };
 
 const getApi = api => {

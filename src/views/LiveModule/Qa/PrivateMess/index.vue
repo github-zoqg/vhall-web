@@ -25,11 +25,15 @@
   </div>
 </template>
 <script>
-import smallEmoji from '../../../../tangram/libs/chat/emoji.vue';
+import smallEmoji from '@/tangram/libs/chat/emoji.vue';
+import { faceArr, textToEmoji, emojiToPath } from '@/tangram/libs/chat/js/emoji';
+import Msg from '@/tangram/libs/chat/js/msg-class';
+import { formatTime, handleTime } from '@/tangram/libs/chat/js/handle-time';
 export default {
   components: {
     smallEmoji
   },
+  props:['userInfo'],
   data() {
     return {
       acrivePrivate: 0, // 当前私聊对象
@@ -58,6 +62,34 @@ export default {
     },
     privateSend(){
       console.warn('私聊发送图片和表情', this.privateValue);
+      if (!this.privateValue.trim()) {
+        return this.$message.error('内容不能为空');
+      }
+      let data = {
+        type:'text',
+        barrageTxt: this.privateValue.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'),
+        text_content: textToEmojiText(this.privateValue),
+      };
+      let context = {
+        nickname: this.userInfo.join_info.nickname, // 昵称
+        avatar: this.userInfo.avatar, // 头像
+        role_name: this.userInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
+        join_id: this.userInfo.join_id
+      };
+      console.log('获取私聊  准备发送的消息----', context);
+      let tempData = new Msg({
+        avatar: getAvatar(context.avatar),
+        nickName: context.nickname,
+        type: 'text',
+        content: data,
+        sendId: context.join_id,
+        sendTime: formatTime(new Date()),
+        roleName: context.role_name,
+        client: 'pc',
+        showTime: handleTime(item.sendTime),
+        replyMsg: this.replyMsg
+      });
+
     }
   },
 }
