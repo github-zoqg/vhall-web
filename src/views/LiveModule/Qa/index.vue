@@ -378,6 +378,9 @@ export default {
       this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
         if(res.code == 200){
           console.warn(res, '撤销成功');
+          this.$nextTick(() => {
+            // this.textDealList = this.textDealList
+          })
         }else{
           this.$message.warning(res.msg)
         }
