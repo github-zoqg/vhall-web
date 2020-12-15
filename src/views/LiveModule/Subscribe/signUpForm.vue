@@ -187,6 +187,7 @@
 </template>
 
 <script>
+  import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
   export default {

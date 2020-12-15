@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="base-item">
-          <p>导出</p>
+          <p @click="exportAnswer">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_baomingbiaodan"></icon>
             <div class="base-text">
@@ -110,7 +110,7 @@
           <div class="base-main">
             <icon icon-class="saasicon_liaotian"></icon>
             <div class="base-text">
-              <span>聊天</span>
+              <span>聊天(条)</span>
               <h1>
                 <count-to :startVal="0"
                   :endVal="dataInfo.chatNum"
@@ -126,7 +126,7 @@
           <div class="base-main">
             <icon icon-class="saasicon_wenda"></icon>
             <div class="base-text">
-              <span>问答</span>
+              <span>问答(条)</span>
               <h1>
                 <count-to :startVal="0"
                   :endVal="dataInfo.recordNum"
@@ -206,13 +206,7 @@
             <icon icon-class="saasicon_hongbao"></icon>
             <div class="base-text">
               <span>发群红包(元)</span>
-              <h1>
-                <count-to :startVal="0"
-                  :endVal="dataInfo.shareNum"
-                  :duration="1500"
-                  v-if="dataInfo.shareNum >= 0">
-                </count-to>
-              </h1>
+              <h1>{{ dataInfo.redpacketMoney }}</h1>
             </div>
           </div>
         </div>
@@ -222,13 +216,7 @@
             <icon icon-class="saasicon_dashang"></icon>
             <div class="base-text">
               <span>打赏(元)</span>
-              <h1>
-                <count-to :startVal="0"
-                  :endVal="dataInfo.rewardMoney"
-                  :duration="1500"
-                  v-if="dataInfo.rewardMoney >= 0">
-                </count-to>
-              </h1>
+              <h1>{{ dataInfo.rewardMoney }}</h1>
             </div>
           </div>
         </div>
@@ -239,11 +227,7 @@
             <div class="base-text">
               <span>礼物(元)</span>
               <h1>
-               <count-to :startVal="0"
-                  :endVal="dataInfo.gitMoney"
-                  :duration="1500"
-                  v-if="dataInfo.gitMoney >= 0">
-                </count-to>
+              {{ dataInfo.gitMoney }}
               </h1>
             </div>
           </div>
@@ -277,6 +261,7 @@ export default {
         answerNum: 0,
         recordNum: 0,
         rewardMoney: 0,
+        redpacketMoney: 0,
         gitMoney: 0,
         prizeNum: 0,
         inviteNum: 0,
@@ -349,16 +334,16 @@ export default {
         this.dataInfo.submitNum = res.data.submit_nums;
       });
       // 获取抽奖人数
-      this.$fetch('getPrizeUserInfo', {room_id: this.roomId,lottery_type:1,is_repetition:1}).then(res => {
+      this.$fetch('getPrizeUserInfo', {webinar_id: this.$route.params.str}).then(res => {
         this.dataInfo.prizeNum = res.data.count;
       });
        // 发红包
-      // this.$fetch('getRecodrderInfo', {room_id: this.roomId, start_time: '2020-12-10'}).then(res => {
-      //   this.dataInfo.recordNum = res.data.total;
-      // });
+      this.$fetch('getRedpacketInfo', {webinar_id: this.$route.params.str}).then(res => {
+        this.dataInfo.redpacketMoney = res.data.send_amount;
+      });
       // 打赏统计
       this.$fetch('getRewardListInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.rewardMoney = parseFloat(res.data.total_money);
+        this.dataInfo.rewardMoney = res.data.total_money;
       });
       // 礼物(元)
       this.$fetch('getGiftIncome', {room_id: this.roomId}).then(res => {
@@ -370,6 +355,10 @@ export default {
           this.dataInfo.speakNum = res.data.total;
         });
       }
+
+    },
+    //报名表单导出
+    exportAnswer() {
 
     },
     lookOption(title) {
