@@ -11,7 +11,6 @@ const routes = [];
 const modulesFiles = require.context('./modules', true, /\.js$/);
 
 modulesFiles.keys().map((modulePath) => {
-  console.warn(modulePath,modulesFiles(modulePath), 'test ');
   routes.push(...modulesFiles(modulePath).default);
 });
 
