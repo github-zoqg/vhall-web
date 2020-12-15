@@ -15,9 +15,9 @@
             v-model="logoForm.logo"
             :domain_url="domain_url"
             :saveData="{
-             path: 'users/logo-imgs',
-             type: 'image',
-          }"
+               path: 'users/logo-imgs',
+               type: 'image',
+            }"
             :on-success="handleUploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"

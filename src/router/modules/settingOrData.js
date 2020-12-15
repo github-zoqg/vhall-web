@@ -5,7 +5,7 @@ const router = [
     path: '/data',
     component: Layout,
     redirect: '/data/info',
-    meta: { auth: true,  title: '数据中心', name: 'dataMgr', icon: 'saasel-icon-v3-charts' },
+    meta: { auth: true,  title: '数据中心', name: 'dataMgr', icon: 'saasicon_charts' },
     children: [
       {
         path: 'info',
@@ -28,7 +28,7 @@ const router = [
       {
         path: 'info',
         component: () => import('@/views/SettingModule/setting.vue'),
-        meta: { auth: true, title: '设置中心', name: 'settingInfo' ,icon: 'saasel-icon-v3-settings' }
+        meta: { auth: true, title: '设置中心', name: 'settingInfo' ,icon: 'saasicon_Settings' }
       },
       {
         path: 'chat/:str(\\d+)',

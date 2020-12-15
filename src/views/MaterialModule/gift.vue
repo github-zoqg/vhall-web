@@ -272,9 +272,9 @@ export default {
         this.$message.error('请输入正确礼物价格')
         return
       }
-      this.$fetch('createGiftInfo', {
+      this.$fetch('createGiftInfo', this.$params({
         ...this.editParams
-      }).then((res) => {
+      })).then((res) => {
         if (res.code == 200) {
           this.$message.success('创建成功')
           this.getTableList()
@@ -300,7 +300,7 @@ export default {
     },
     handleDeleteGift () {
       this.$fetch('deleteGift', {
-        gift_id: this.selectIds.join(',')
+        gift_ids: this.selectIds.join(',')
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('删除成功')

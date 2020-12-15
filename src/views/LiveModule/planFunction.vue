@@ -8,6 +8,8 @@
           <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
             v-model="item.value"
+            :active-value="1"
+            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             @change="changeStatus($event, item)">
@@ -23,6 +25,8 @@
           <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
             v-model="item.value"
+            :active-value="1"
+            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             @change="changeStatus($event, item)">
@@ -52,8 +56,8 @@ export default {
     changeStatus(callback, item) {
       let params = {
         webinar_id: this.$route.params.str,
-        needKey: item.type,
-        value: callback
+        permission_key: item.type,
+        status: Number(callback)
       };
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
@@ -80,44 +84,44 @@ export default {
             key_name: '隐藏打赏',
             openShow: '已开启，观看端打赏按钮已被隐藏',
             closeShow: '开启后，观看端打赏按钮将被隐藏',
-            value: 0
+            value: Number(dataVo['ui.hide_reward'])
           },
           {
-            type: 'DZ',
+            type: 'ui.hide_like',
             key_name: '隐藏点赞',
             openShow: '已开启，观看端点赞按钮已被隐藏',
             closeShow: '开启后，观看端点赞按钮将被隐藏',
-            value: 0
+            value: Number(dataVo['ui.hide_like'])
           },
           {
             type: 'ui.hide_gifts',
             key_name: '隐藏礼物',
             openShow: '已开启，观看端礼物按钮已被隐藏',
             closeShow: '开启后，观看端礼物按钮将被隐藏',
-            value: 0
+            value: Number(dataVo['ui.hide_gifts'])
           },
           {
             type: 'ui.hide_share',
             key_name: '隐藏分享',
             openShow: '已开启，观看端的分享已被隐藏（PC端分享按钮和手机端的微信分享）',
             closeShow: '开启后，观看端的分享将被隐藏（PC端分享按钮和手机端的微信分享）',
-            value: 0
+            value: Number(dataVo['ui.hide_share'])
           }
         ],
         [
           {
-            type: 'JY',
+            type: 'record_no_chatting',
             key_name: '回放禁言',
             openShow: '已开启，回放默认已开启聊天禁言',
             closeShow: '开启后，回放默认开启聊天禁言',
-            value: 0
+            value: Number(dataVo['record_no_chatting'])
           },
           {
-            type: 'ZJ',
+            type: 'ui.watch_record_chapter',
             key_name: '回放章节',
             openShow: '已开启，回放/点播观看端显示文档章节',
             closeShow: '开启后，回放/点播观看端显示文档章节',
-            value: 0
+            value: Number(dataVo['ui.watch_record_chapter'])
           }
         ]
       ]

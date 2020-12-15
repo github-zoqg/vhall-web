@@ -70,7 +70,7 @@
       </el-table>
       <SPagination
         :total="total"
-        v-show="total > 4"
+        v-show="total > 10"
         :currentPage="searchParams.page"
         :page-size="searchParams.page_size"
         @current-change="currentChangeHandler"
@@ -224,7 +224,7 @@ export default {
       searchParams: {
         room_id: this.room_id,
         gift_name: '',
-        page_size: 4,
+        page_size: 10,
         page: 1
       },
       materiaSearchParams: {
@@ -431,11 +431,13 @@ export default {
         this.$message.error('请输入正确礼物价格')
         return
       }
-      this.$fetch('createGiftInfo', {
-        ...this.editParams
+      this.$fetch('createWebinarGift', {
+        ...this.editParams,
+        room_id: this.room_id
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('创建成功')
+          this.getTableList()
           this.handleCancelEdit()
           this.closeShare()
         }

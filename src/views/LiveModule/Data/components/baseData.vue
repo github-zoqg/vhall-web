@@ -34,7 +34,13 @@
             <icon icon-class="saasicon_baomingbiaodan"></icon>
             <div class="base-text">
               <span>报名表单（人）</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.answerNum"
+                  :duration="1500"
+                  v-if="dataInfo.answerNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -54,7 +60,13 @@
             <icon icon-class="saasicon_yaoqingpaiming"></icon>
             <div class="base-text">
               <span>邀请排名（人）</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.inviteNum"
+                  :duration="1500"
+                  v-if="dataInfo.inviteNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -64,7 +76,13 @@
             <icon icon-class="saasicon_fenxiangpaiming"></icon>
             <div class="base-text">
               <span>分享排名（条）</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.shareNum"
+                  :duration="1500"
+                  v-if="dataInfo.shareNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -93,7 +111,13 @@
             <icon icon-class="saasicon_liaotian"></icon>
             <div class="base-text">
               <span>聊天</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.chatNum"
+                  :duration="1500"
+                  v-if="dataInfo.chatNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -103,7 +127,13 @@
             <icon icon-class="saasicon_wenda"></icon>
             <div class="base-text">
               <span>问答</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.recordNum"
+                  :duration="1500"
+                  v-if="dataInfo.recordNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -112,7 +142,13 @@
             <icon icon-class="saasicon_dianzan"></icon>
             <div class="base-text">
               <span>点赞(次)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.likeNum"
+                  :duration="1500"
+                  v-if="dataInfo.likeNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -122,7 +158,13 @@
             <icon icon-class="saasicon_qiandao"></icon>
             <div class="base-text">
               <span>签到(人)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.signNum"
+                  :duration="1500"
+                  v-if="dataInfo.signNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -132,7 +174,13 @@
             <icon icon-class="saasicon_wenjuan"></icon>
             <div class="base-text">
               <span>问卷(人)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.submitNum"
+                  :duration="1500"
+                  v-if="dataInfo.submitNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -142,7 +190,13 @@
             <icon icon-class="saasicon_choujiang"></icon>
             <div class="base-text">
               <span>抽奖(人)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.prizeNum"
+                  :duration="1500"
+                  v-if="dataInfo.prizeNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -152,7 +206,13 @@
             <icon icon-class="saasicon_hongbao"></icon>
             <div class="base-text">
               <span>发群红包(元)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.shareNum"
+                  :duration="1500"
+                  v-if="dataInfo.shareNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -162,7 +222,13 @@
             <icon icon-class="saasicon_dashang"></icon>
             <div class="base-text">
               <span>打赏(元)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.rewardMoney"
+                  :duration="1500"
+                  v-if="dataInfo.rewardMoney >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -172,17 +238,29 @@
             <icon icon-class="saasicon_liwu"></icon>
             <div class="base-text">
               <span>礼物(元)</span>
-              <h1>351</h1>
+              <h1>
+               <count-to :startVal="0"
+                  :endVal="dataInfo.gitMoney"
+                  :duration="1500"
+                  v-if="dataInfo.gitMoney >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4">
+         <div class="base-item" v-if="isStatus!=4&&webinarType==3">
           <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_lianmai"></icon>
             <div class="base-text">
               <span>连麦(条)</span>
-              <h1>351</h1>
+              <h1>
+                <count-to :startVal="0"
+                  :endVal="dataInfo.speakNum"
+                  :duration="1500"
+                  v-if="dataInfo.speakNum >= 0">
+                </count-to>
+              </h1>
             </div>
           </div>
         </div>
@@ -191,32 +269,108 @@
   </div>
 </template>
 <script>
-// import CountTo from 'vue-count-to';
+import CountTo from 'vue-count-to';
 export default {
   data() {
     return {
-      dataInfo: {}
+      dataInfo: {
+        answerNum: 0,
+        recordNum: 0,
+        rewardMoney: 0,
+        gitMoney: 0,
+        prizeNum: 0,
+        inviteNum: 0,
+        shareNum: 0,
+        chatNum: 0,
+        likeNum: 0,
+        signNum: 0,
+        submitNum: 0,
+        speakNum: 0,
+      }
     };
   },
   components: {
-    // CountTo
+    CountTo
   },
   props: {
     isStatus: {
       type: Number,
       default: 1
+    },
+    webinarType: {
+      type: Number,
+      default: 1
     }
   },
-  created() {
+  mounted() {
     this.roomId = this.$route.query.roomId;
     this.getAllDataInfo();
   },
   methods: {
     getAllDataInfo() {
+      // 预约
+      // this.$fetch('getRecodrderInfo', {room_id: this.roomId, start_time: '2020-12-10'}).then(res => {
+      //   this.dataInfo.recordNum = res.data.total;
+      // });
+      //  报名表单（人）
+      this.$fetch('getAnswerListInfo', {webinar_id: this.$route.params.str}).then(res => {
+        this.dataInfo.answerNum = res.data.answer_num;
+      });
+       // 试看（人）
+      // this.$fetch('getRecodrderInfo', {room_id: this.roomId, start_time: '2020-12-10'}).then(res => {
+      //   this.dataInfo.recordNum = res.data.total;
+      // });
+      // 邀请排名
+      this.$fetch('getInviteListInfo', {webinar_id: this.$route.params.str}).then(res => {
+        this.dataInfo.inviteNum = res.data.total;
+      });
+      // 分享排名
+      this.$fetch('getShareListInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.shareNum = res.data.total;
+      });
+      // 聊天
+      this.$fetch('getChatListInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.chatNum = res.data.total;
+      });
       //问答
       this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.recordNum = res.data.total;
-      })
+      });
+      // 点赞
+      this.$fetch('getRoomLikeInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.likeNum = res.data.total;
+      });
+      // 签到
+      this.$fetch('getSignInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.signNum = res.data.total;  //报错
+      });
+      // 问卷提交人数
+      this.$fetch('getSurveyInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.submitNum = res.data.submit_nums;
+      });
+      // 获取抽奖人数
+      this.$fetch('getPrizeUserInfo', {room_id: this.roomId,lottery_type:1,is_repetition:1}).then(res => {
+        this.dataInfo.prizeNum = res.data.count;
+      });
+       // 发红包
+      // this.$fetch('getRecodrderInfo', {room_id: this.roomId, start_time: '2020-12-10'}).then(res => {
+      //   this.dataInfo.recordNum = res.data.total;
+      // });
+      // 打赏统计
+      this.$fetch('getRewardListInfo', {webinar_id: this.$route.params.str}).then(res => {
+        this.dataInfo.rewardMoney = parseFloat(res.data.total_money);
+      });
+      // 礼物(元)
+      this.$fetch('getGiftIncome', {room_id: this.roomId}).then(res => {
+        this.dataInfo.gitMoney = res.data.total_money;
+      });
+      // 连麦(条)
+      if (this.webinarType == 3) {
+        this.$fetch('getSpeakListInfo', {room_id: this.roomId}).then(res => {
+          this.dataInfo.speakNum = res.data.total;
+        });
+      }
+
     },
     lookOption(title) {
       this.$router.push({

@@ -120,7 +120,7 @@ export default {
       dataValue: '',
       totalNum: 1000,
       vm: {},
-      status: JSON.parse(sessionOrLocal.get("arrears")).total_fee,
+      status: 0,
       searchAreaLayout: [
         {
           type: "2",
@@ -201,13 +201,6 @@ export default {
       ]
     };
   },
-  watch: {
-    status() {
-      if (this.status) {
-        this.initPayMessage();
-      }
-    }
-  },
   filters:{
     formatMoney
   },
@@ -236,7 +229,8 @@ export default {
     }
   },
   mounted() {
-    if (this.status) {
+    let arrear = JSON.parse(sessionOrLocal.get("arrears")).total_fee || 0;
+    if (arrear) {
       this.initPayMessage();
     }
     this.getLineList();

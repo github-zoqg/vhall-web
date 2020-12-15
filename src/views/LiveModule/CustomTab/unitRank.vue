@@ -94,6 +94,7 @@ export default {
       }
     },
     sendData() {
+      // debugger
       console.log('当前开关状态变化............');
       this.$emit('cxtChangeInfo', {
         content: JSON.stringify(this.unitRankForm),
