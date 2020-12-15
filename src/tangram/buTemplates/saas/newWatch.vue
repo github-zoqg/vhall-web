@@ -271,7 +271,6 @@
             :roomId="roomInfo.room_id"
             :joinId="saasJoinId"
             :thirdPartyId="roomInfo.third_party_user_id"
-            :privateChat="privateChat"
             :isEmbed="isEmbed"
             :roleName='false'
             ref="qa"
@@ -301,7 +300,7 @@
       :width="'600px'"
       title="问卷"
     >
-      <question
+      <!-- <question
         :roomId="roomId"
         :ilId="ilId"
         :userId="roomInfo.third_party_user_id"
@@ -312,7 +311,7 @@
         @onCloses="closeQuestion"
         :roleName="roomInfo.role_name"
         ref="questions"
-      ></question>
+      ></question> -->
     </popup>
     </template>
     <popup
@@ -412,7 +411,7 @@ import streams from '../../libs/interactive/remoteStreams'; // 订阅流
 import Interactive from '../../libs/interactive'; // 互动
 import praise from '../../libs/praise'; // 点赞
 import gift from '../../libs/gift'; // 礼物
-import question from '../../libs/question/saas'; // 问卷
+// import question from '../../libs/question/saas'; // 问卷
 import reward from '../../libs/reward'; // 打赏
 import lottery from '../../libs/lottery'; // 抽奖
 import playbill from '../../libs/playbill'; // 开屏海报
@@ -476,10 +475,6 @@ export default {
       required: true
     },
 
-    privateChat: {
-      required: true
-    },
-
     domains: {
       required: true
     },
@@ -518,7 +513,7 @@ export default {
     Interactive,
     praise,
     gift,
-    question,
+    // question,
     Signin,
     reward,
     lottery,

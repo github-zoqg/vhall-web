@@ -41,9 +41,9 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="移动速度">
-                  <el-radio v-model="formHorse.speed" label="1" :disabled="!scrolling_open">慢</el-radio>
-                  <el-radio v-model="formHorse.speed" label="2" :disabled="!scrolling_open">中</el-radio>
-                  <el-radio v-model="formHorse.speed" label="3" :disabled="!scrolling_open">快</el-radio>
+                  <el-radio v-model="formHorse.speed" label="10000" :disabled="!scrolling_open">慢</el-radio>
+                  <el-radio v-model="formHorse.speed" label="6000" :disabled="!scrolling_open">中</el-radio>
+                  <el-radio v-model="formHorse.speed" label="3000" :disabled="!scrolling_open">快</el-radio>
                 </el-form-item>
                 <el-form-item label="显示位置">
                   <el-radio v-model="formHorse.position" label="1" :disabled="!scrolling_open">上</el-radio>
@@ -177,10 +177,10 @@ export default {
       scrolling_open: true,
       watermark_open: true,
       formHorse: {
-        color: '#fff',
+        color: '#FFFFFF', // 六位
         text_type: '2',
         size: 20,
-        speed: '2',
+        speed: '6000',
         position: '2',
         alpha: 50
       },
@@ -258,6 +258,7 @@ export default {
     },
     // 保存跑马灯
     preFormHorse() {
+      this.formHorse.webinar_id = this.$route.params.str
       this.formHorse.interval = this.formHorse.interval || 20;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = this.scrolling_open ? 1 : 0;
@@ -267,6 +268,7 @@ export default {
     },
     // 保存水印
     preWatermark() {
+      this.formWatermark.webinar_id = this.$route.params.str
       this.formWatermark.img_url = this.formWatermark.img_url || 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100';
       this.formWatermark.watermark_open = this.watermark_open ? 1 : 0;
       this.$fetch('setWatermark',this.formWatermark).then(res => {

@@ -49,12 +49,19 @@ export default {
       let imgIndex = parseInt(Math.random() * 5);
       console.log(imgIndex, '2132132131');
       var random = this.getRandom(10) * 3;
-      var img = $(
-        `<img style="z-index:666;position:absolute;bottom:0;left:${random}px" src=${this.imgList[imgIndex]}>`
-      );
-      $('.hello')
-        .css('left', $('.support-heart').position().left + 'px')
-        .append(img);
+      var img = new Image();
+      img.src = `${this.imgList[imgIndex]}`
+      img.style.cssText = `z-index:666;position:absolute;bottom:0;left:${random}px`;
+      // var img = $(
+      //   `<img style="z-index:666;position:absolute;bottom:0;left:${random}px" src=${this.imgList[imgIndex]}>`
+      // );
+      let helloDom = document.querySelector('.hello')
+      let supportDom = document.querySelector('.support-heart')
+      helloDom.style.left = supportDom.style.left + 'px'
+      helloDom.append(img)
+      // $('.hello')
+      //   .css('left', $('.support-heart').position().left + 'px')
+      //   .append(img);
       img.animate(
         {
           bottom: '90px',

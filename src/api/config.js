@@ -57,10 +57,10 @@ const apis = {
   viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
   //播放器设置
-  setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯 •••
-  setWatermark: ['/101/v3/interacts/players/set-watermark-config', 'POST', 'mock'], //从资料库保存到活动 •••
-  getScrolling: ['/101/v3/interacts/players/get-scrolling-screen-config', 'GET', 'mock'], //观看端_获取跑马灯设置配置信息 •••
-  getWatermark: ['/101/v3/interacts/players/get-watermark-config', 'GET', 'mock'], //观看端_获取水印设置 •••
+  setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
+  setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
+  getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息 •••
+  getWatermark: ['/v3/interacts/players/get-watermark-config', 'GET'], //观看端_获取水印设置 •••
 
   //公众号 开屏海报
   setPublicInfo: ['/v3/interacts/adv/set-public-account-config-info', 'POST'], //保存公众号展示配置  •••接口有问题
@@ -73,7 +73,7 @@ const apis = {
   //  邀请卡
   getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
   setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
-  editCardStatus: ['/101/v3/interacts/invite-card/edit', 'POST', 'mock'], //修改邀请卡信息
+  editCardStatus: ['/v3/interacts/invite-card/edit', 'POST'], //修改邀请卡信息
   createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
   createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
   getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
@@ -470,7 +470,6 @@ const apis = {
 
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
-
   // 打赏
   seadAwardMsg: ['/v3/interacts/reward/create-user-reward', 'POST'], // 打赏
   getQeustionList: ['/v3/vss/survey/list-webinar-survey', 'POST'], // 获取问卷列表
@@ -499,8 +498,15 @@ const apis = {
   v3ReplayUserQu: ['/v3/interacts/qa/reply-user-question', 'POST'], // 获取当前场次收集到的历史问答 主持人
   channelInfo: [`${process.env.VUE_APP_VSS_HOST}/cmpt/room/get`, 'POST', false, 'paas'], // 获取频道信息
   getAutherQa: ['/v3/interacts/qa/get-question-by-status', 'POST'], // 提问列表
+  sendPrivateMsg: ['/v3/interacts/chat-private/send-message', 'POST'], // 发送私聊信息
+  
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
+  // 邀请卡
+  shwoInvite: ['/v3/interacts/invite-card/watch-get-info', 'POST'], // 邀请卡信息
+  // 关注
+  attentionStatus: ['/v3/users/attentions/info', 'POST'], // 关注状态
+  getAttentionNum: ['/v3/users/attentions/count', 'POST'], // 获取关注数量
 
   // 签到
   v3CreateSifn: ['/v3/interacts/sign/create-and-push', 'POST'], // 创建签到  √
@@ -508,7 +514,10 @@ const apis = {
   v3GetCurrentSign:['/v3/interacts/sign/get-doing-sign', 'POST'], // 获取当前活动正在的签到  √
   v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录  √
   v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数  √
-
+  watchInterGetFirstPost: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报
+  tipOff: ['/v3/interacts/report/user-create-report', 'POST'], // 观众举报
+  videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
+  
 };
 
 const getApi = api => {

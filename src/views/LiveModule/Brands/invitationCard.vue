@@ -296,7 +296,10 @@ export default {
         room_id: 'ls_123423',
         welcome_txt: '欢迎'
       };
-      let obj = Object.assign({}, ids, this.formInvitation);
+      let params = this.formInvitation
+      params.is_show_watermark = this.formInvitation.is_show_watermark ? 1 : 0
+      console.log(99, params)
+      let obj = Object.assign({}, ids, params);
       this.$fetch('editCardStatus', obj).then(res => {
        console.log(res.data, "保存数据");
       });

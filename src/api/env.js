@@ -14,8 +14,8 @@ let staticLinkVo = {
   wordShowUrl: '//cnstatic01.e.vhall.com/document', // 文档上传后预览地址-通过hash
   downOldUrl: '//t.e.vhall.com', // 旧版控制台地址，AG: 下载邀请码等；跳转旧版控制台
   helpLinkUrl: 'https://www.vhall.com/help', // 帮助中心跳转地址
-  WEB_SHARE_URL: 'https://t.e.vhall.com/v3/#' // 部署后链接地址（注意发起端，现在必须要https才能发起）
+  WEB_SHARE_URL: 'http://localhost:8080/#' // 部署后链接地址（注意发起端，现在必须要https才能发起）
 };
 export default {
-  staticLinkVo,
+  staticLinkVo
 };
