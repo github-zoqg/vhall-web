@@ -195,6 +195,8 @@ export default {
         this.deletePlayBack(param.data.id);
       }else if(param.command == 'tailoring'){
         this.toTailoring(param.data.id, param.data.name);
+      } else if (param.command == 'publish') {
+        this.toCreateVod(param.data);
       }
     },
     currentChangeHandler(num){
@@ -234,7 +236,11 @@ export default {
         record_id: data.id
       }).then(res => {
         console.log(res)
-        // window.open(this.downloadHref);
+        if (res.data.has_download_url == 0) {
+          this.$message.warning('回放暂未生成');
+          return false;
+        }
+        window.open(rees.data.download_url);
       })
     },
     deletePlayBack(ids){
@@ -287,6 +293,9 @@ export default {
     },
     toChapter(recordId){
       this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId}});
+    },
+    toCreateVod(recordData) {
+      this.$router.push({path: `/live/vodEdit`});
     }
   },
   filters: {
