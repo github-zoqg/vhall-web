@@ -302,7 +302,6 @@ export default {
             console.log('初始化播放器成功111');
             window.vhallPlayer = this.$PLAYER = event.vhallplayer;
             this.$PLAYER.openControls(false);
-            this.$PLAYER.play();
             if (this.type == 'live') {
               resolve();
               this.$EventBus.$emit('component_playerSDK_ready');

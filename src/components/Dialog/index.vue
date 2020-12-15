@@ -1,5 +1,4 @@
 <template>
-
   <el-dialog v-bind="$props"
     @open="openHandler"
     @opened="openedHandler"

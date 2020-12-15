@@ -8,7 +8,7 @@
         </h1>
         <p>填写人数:<span>100</span></p>
         <div class="export">
-          <el-button type="primary" round>导出数据</el-button>
+          <el-button type="primary" round @click="exportSingleQuerstion">导出数据</el-button>
         </div>
       </div>
     </el-card>
@@ -190,6 +190,12 @@ export default {
       };
       barEcharts.setOption(option);
     },
+    // 导出数据
+    exportSingleQuerstion() {
+      this.$fetch('exportSurveyDetial',{webinar_id: this.$route.query.id, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    }
   },
 };
 </script>
