@@ -24,9 +24,60 @@
           style="width: 240px;margin-right: 20px;"
           v-if="title==='聊天' || title==='问答'"
         />
-        <el-button size="medium" round>批量删除</el-button>
+        <el-button size="medium" round v-if="title==='聊天' || title==='问答'" @click="deleteAll(null)">批量删除</el-button>
       </div>
-      <span><el-button size="medium" round>导出数据</el-button></span>
+      <span><el-button size="medium" round @click="exportData">导出数据</el-button></span>
+    </div>
+    <div class="interact-detail" v-if="false">
+      <el-table
+        :data="tableList"
+        :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+        row-key="id"
+        @selection-change="qeTableCheckbox"
+        :default-expand-all="false"
+        :tree-props="{children: 'answer'}">
+        <el-table-column
+        :reserve-selection="true"
+        type="selection"
+        width="55"
+        align="left"
+      />
+        <el-table-column
+          prop="name"
+          width="120"
+          label="问答"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="content"
+          label="问答内容"
+          >
+        </el-table-column>
+        <el-table-column
+          prop="created_at"
+          label="发送时间">
+        </el-table-column>
+        <el-table-column
+          prop="is_open"
+          width="120"
+          label="私密">
+        </el-table-column>
+        <el-table-column
+          prop="statusText"
+          label="状态">
+        </el-table-column>
+        <el-table-column
+          width="120"
+          label="操作">
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              @click="handleDelete(scope.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <div class="interact-detail">
       <table-list
@@ -36,6 +87,7 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :totalNum="totalNum"
+        :width="120"
         @changeTableCheckbox="changeTableCheckbox"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
@@ -59,7 +111,10 @@ export default {
       roomId: '',
       searchTime: null,
       searchText: '',
+      params: {},
       seleteAllOptionList: [],
+      seleteAnwerList: [], //答案
+      seleteQuestionList: [],//问题
       totalNum: 100,
       tableList: [
       ],
@@ -69,7 +124,6 @@ export default {
         {
           label: '排名',
           key: 'sort',
-          width: 120
         },
         {
           label: '昵称',
@@ -78,7 +132,6 @@ export default {
         {
           label: '邀请人数',
           key: 'wacthPeople',
-          width: 120
         }
       ],
       // 聊天
@@ -90,6 +143,7 @@ export default {
         {
           label: '身份',
           key: 'name',
+          width:100
         },
         {
           label: '发送时间',
@@ -101,11 +155,13 @@ export default {
         },
         {
           label: '审核状态',
-          key: 'status',
+          key: 'statusText',
+          width:100
         },
         {
           label: '接收方',
           key: 'revice',
+          width:100
         },
       ],
       // 问答
@@ -128,7 +184,7 @@ export default {
         },
         {
           label: '状态',
-          key: 'status',
+          key: 'statusText',
         }
       ],
       // 问卷
@@ -154,17 +210,15 @@ export default {
       signColumn: [
         {
           label: '序号',
-          key: 'sort',
-          width: 120
+          key: 'index',
         },
         {
           label: '推送签到时间',
-          key: 'liveName',
+          key: 'created_at',
         },
         {
           label: '签到人数',
           key: 'wacthPeople',
-          width: 120
         }
       ],
       // 抽奖
@@ -194,13 +248,12 @@ export default {
       packetColumn: [
          {
           label: '序号',
-          key: 'num',
-          width: 120
+          key: 'index',
+          width: 80
         },
         {
           label: '发红包时间',
-          key: 'time',
-          width: 120
+          key: 'created_at',
         },
         {
           label: '支付方式',
@@ -209,17 +262,15 @@ export default {
         {
           label: '红包金额',
           key: 'money',
-          width: 120
         },
         {
           label: '红包个数',
-          key: 'ge',
+          key: 'num',
           width: 120
         },
         {
           label: '红包类型',
           key: 'type',
-          width: 120
         }
       ],
       tableRowBtnFun: [],
@@ -232,7 +283,13 @@ export default {
       chatBtnFun: [
         {
           name: '删除',
-          methodName: 'detele',
+          methodName: 'chatDetele',
+        }
+      ],
+      anwerBtnFun: [
+        {
+          name: '删除',
+          methodName: 'anwerDetele',
         }
       ],
       questnaireBtnFun: [
@@ -241,50 +298,7 @@ export default {
           methodName: 'lookDetail',
           path: '/lookSingleQuestion',
         }
-      ],
-      searchAreaLayout:[],
-      inviteAreaLayout:[
-        {
-          key: 'nameTitle'
-        }
-      ],
-      chatAreaLayout: [
-        {
-          type: 5,
-          key: 'allChecked'
-        },
-        {
-          type: 2,
-          key: 'searchDate'
-        },
-        {
-          key: 'nameTitle'
-        }
-      ],
-      questAreaLayout: [
-        {
-          type: 5
-        },
-        {
-          type: 2,
-          key: 'searchDate'
-        }
-      ],
-      signAreaLayout: [
-        {
-          type: 2,
-          key: 'searchDate'
-        }
-      ],
-      questnaireAreaLayout: [
-        {
-          type: 2,
-          key: 'searchDate'
-        },
-        {
-          key: 'nameTitle'
-        }
-      ],
+      ]
     };
   },
   mounted() {
@@ -295,6 +309,7 @@ export default {
   },
   methods: {
     changeColumn(title) {
+      this.params = {};
       switch (title) {
         case '邀请排名':
           this.isCheckout = false;
@@ -319,7 +334,7 @@ export default {
         case '问答':
           this.isCheckout = true;
           this.tabelColumn= this.questColumn;
-          this.tableRowBtnFun = this.chatBtnFun;
+          this.tableRowBtnFun = this.anwerBtnFun;
           this.getRecordList();
           break;
         case '抽奖':
@@ -338,6 +353,7 @@ export default {
           this.tabelColumn= this.packetColumn;
           this.isCheckout = false;
           this.tableRowBtnFun = this.inviteBtnFun;
+          this.getRedpacketList();
           break;
         default:
           break;
@@ -349,7 +365,6 @@ export default {
       }
     },
     onHandleBtnClick(val) {
-      console.log(val);
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
@@ -386,9 +401,91 @@ export default {
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
           item.content = item.data.text_content || item.data.barrage_txt;
+          item.revice = item.context.reply_msg;
+          item.statusText = '通过';
         })
         this.totalNum = res.data.total;
       });
+    },
+    // 聊天删除
+    chatDetele(that, { rows }) {
+       that.$confirm('确定要删除该文件吗111?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          that.deleteAll(rows.id);
+        }).catch(() => {
+          that.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    },
+    // 聊天批量删除（删除）
+    chatAllDelete(id) {
+      let obj = {
+        msg_id: id,
+        room_id: this.roomId
+      }
+      this.$fetch('deleteChatList', obj).then(res => {
+        this.$message.success('删除成功');
+        this.chatInfo();
+      });
+    },
+    // 批量删除(问答和聊天)
+    deleteAll(id) {
+      if (this.title === '聊天') {
+        if (!id) {
+          if (this.seleteAllOptionList.length < 1) {
+            this.$message.error('请选择要操作的对象')
+          } else {
+            id = this.seleteAllOptionList.join(',');
+          }
+        }
+        this.chatAllDelete(id);
+      } else {
+          if (this.seleteAnwerList.length < 1 && this.seleteQuestionList.length < 1) {
+            this.$message.error('请选择要操作的对象')
+          } else {
+            this.recordAllDelete();
+          }
+      }
+    },
+    // 问答批量删除
+    recordAllDelete() {
+      let obj = {
+        ques_ids: this.seleteQuestionList.join(','),
+        answer_ids: this.seleteAnwerList.join(','),
+        room_id: this.roomId
+      }
+      this.$fetch('deleteAllRecodrder', this.$params(obj)).then(res => {
+        this.$message.success('删除成功');
+        this.getRecordList();
+      });
+    },
+     // 问答单个删除
+    anwerDetele(that, {rows}) {
+      that.$confirm('确定要删除该文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let obj = {
+            id: rows.id,
+            type: rows.name === '问' ? 2 : 1,
+            room_id: that.roomId
+          }
+          that.$fetch('deleteRecodrder', obj).then(res => {
+            that.$message.success('删除成功');
+            that.getRecordList();
+          });
+        }).catch(() => {
+          that.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
     //签到
     signInfoList(){
@@ -397,8 +494,11 @@ export default {
         room_id: this.roomId
       }
       let obj = Object.assign({}, pageInfo, params);
-      this.$fetch('getSignInfo', obj).then(res => {
+      this.$fetch('getSignList', obj).then(res => {
         this.tableList = res.data.list;
+        this.tableList.map((item, index) => {
+          item.index = index + 1;
+        })
         this.totalNum = res.data.total;
       });
     },
@@ -439,46 +539,136 @@ export default {
         params.start_time = this.searchTime[0];
         params.end_time = this.searchTime[1];
       }
+      this.tableList = [];
       let obj = Object.assign({}, pageInfo, params);
+      this.params = obj;
       this.$fetch('getRecodrderList', obj).then(res => {
+        this.params.start_time = res.data.start_time;
+        this.params.end_time = res.data.end_time;
+        // this.tableList = res.data.list;
+        // this.tableList.map(item => {
+        //   item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '转给主持人 即语音回复' : item.status == 3 ? '文字回复' : '未处理';
+        //   item.name = '问';
+        //   if (item.answer.length) {
+        //     item.answer[0].name = '答';
+        //     item.answer[0].is_open = item.answer[0].is_open == 1 ? '公开' : '私密';
+        //   }
+        // })
         let tableList = res.data.list;
-        console.log()
         tableList.map((item, index) => {
           item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '转给主持人 即语音回复' : item.status == 3 ? '文字回复' : '未处理';
           item.name = '问';
           this.tableList.push(item);
           if (item.answer.length) {
-            item.answer[0].is_open = item.answer[0].is_open == 1 ? '公开' : '私密';
-            item.answer[0].name = '答';
-            this.tableList.push(item.answer[0]);
+            item.answer.map(opt => {
+              opt.is_open = opt.is_open == 1 ? '公开' : '私密';
+              opt.name = '答';
+              this.tableList.push(opt);
+            })
           }
         })
         this.totalNum = res.data.total;
-        console.log(this.tableList, '??????????????????');
       })
     },
-    getTableList(params) {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      // let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      // if (params === 'search') {
-      //   pageInfo.pageNum= 1;
-      //   // 如果搜索是有选中状态，取消选择
-      //   // this.$refs.tableList.clearSelect();
-      // }
-      let obj = Object.assign({}, pageInfo, formParams);
-      console.log(obj);
+    // 问答删除
+    handleDelete(item) {
+      this.$confirm('确定要删除该文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let obj = {
+            id: item.id,
+            type: item.name === '问' ? 2 : 1,
+            room_id: this.roomId
+          }
+          this.$fetch('deleteRecodrder', obj).then(res => {
+            this.$message.success('删除成功');
+            this.getRecordList();
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
-    // 批量删除
-    deletedChecked() {
-      console.log('请删除');
+    // 红包列表
+    getRedpacketList() {
+      let pageInfo = this.$refs.tableList.pageInfo;
+      pageInfo.pos ++;
+      // if (!pageInfo.pos) {
+      //   pageInfo.pos = 1;
+      // } else
+      let formParams = {
+        webinar_id: this.webinarId
+      }
+      let obj = Object.assign({}, pageInfo, formParams);
+      this.$fetch('getRedpacketList', obj).then(res => {
+        this.tableList = res.data.data;
+        this.totalNum = res.data.total;
+        this.tableList.map((item, index) => {
+          item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '其它';
+          item.type = item.type === 1 ? '均分红包' : '拼手气';
+          item.index = index + 1;
+        })
+      });
+    },
+    getTableList(params) {
+      this.changeColumn(this.title);
+    },
+    // 导出明细
+    reportDetail(that, {rows}) {
+      if (this.title === '发群红包') {
+        console.log(rows.id);
+      } else if (this.title === '签到') {
+        console.log(rows);
+      } else if (this.title === '邀请排名') {
+        console.log(rows);
+      } else {
+        console.log(rows, '抽奖');
+      }
     },
     changeTableCheckbox(val) {
-      let idList = [];
-      this.seleteAllOptionList = val.map(item => idList.push(item.id));
-      console.log(this.seleteAllOptionList);
+      if (this.title === '聊天') {
+        this.seleteAllOptionList = val.map(item => item.id);
+      } else {
+        this.seleteAnwerList = val.filter(item => item.name == '答').map(item => item.id);
+        this.seleteQuestionList = val.filter(item => item.name == '问').map(item => item.id);
+      }
+
     },
     exportData() {
-      console.log("111111111111", '请导出数据');
+      switch (this.title) {
+        case '邀请排名':
+          this.exportInviteInfo();
+          break;
+        case '签到':
+          this.signInfoList();
+          break;
+        case '聊天':
+          this.chatInfo();
+          break;
+        case '问答':
+          this.exportRecordList();
+          break;
+        case '抽奖':
+          this.prizeList();
+          break;
+        case '问卷':
+          this.getQuestionInfo();
+          break;
+        case '发群红包':
+          this.getRedpacketList();
+          break;
+        default:
+          break;
+      }
+    },
+    exportRecordList() {
+      this.$fetch('exportRecodrder', this.params).then(res => {
+        console.log(res.data,  '0000000000000000000000')
+      })
     },
     // 问卷查看
     lookDetail(that, val) {
@@ -500,19 +690,20 @@ export default {
 /deep/.el-range-editor .el-range-input {
     background: transparent;
   }
-  /deep/.el-button{
-    background: transparent;
-    &:hover{
-      background: #fb3a32;
-      span{
-        color: #fff;
-      }
-    }
-  }
 .interact-detail {
   .layout--right--main();
   .min-height();
   padding: 32px 24px 40px 24px;
+   /deep/.el-table td, .el-table th{
+    padding: 15px 0;
+  }
+  /deep/.el-button.el-button--text{
+    color: #1A1A1A;
+    border: 0;
+    &:hover{
+      color: #FB3A32;
+    }
+  }
 }
 
 .operaBox{
@@ -524,6 +715,15 @@ export default {
     display: flex;
     &:first-child{
       margin-right: 20px;
+    }
+  }
+  /deep/.el-button{
+    background: transparent;
+    &:hover{
+      background: #fb3a32;
+      span{
+        color: #fff;
+      }
     }
   }
   // &.flex-between {

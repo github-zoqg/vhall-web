@@ -31,8 +31,8 @@
           <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
         </div>
       </el-col>
-      <el-col :span="6">
-        <div class="top-item" v-if="userInfo.concurrency.extend_day > 0">
+      <el-col :span="6" v-if="userInfo.concurrency.extend_day">
+        <div class="top-item">
           <p>并发扩展包（天）
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
