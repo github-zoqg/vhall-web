@@ -78,7 +78,7 @@ export default {
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          this.$route.push({
+          this.$router.push({
             path: this.watchUrl
           })
         } else {
