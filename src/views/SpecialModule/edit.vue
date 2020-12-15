@@ -176,12 +176,16 @@ export default {
           this.loading = true;
           let url = this.$route.query.title === '编辑' ? 'subjectEdit' : 'subjectCreate';
           this.$fetch(url, this.$params(data)).then(res=>{
-            this.subject_id = res.data.subject_id;
-            this.$message.success(`创建成功`);
-            console.log(res);
-            setTimeout(()=>{
-              this.$router.push({path: '/special'});
-            }, 500);
+            if(res.code == 200) {
+              this.subject_id = res.data.subject_id;
+              this.$message.success(`创建成功`);
+              console.log(res);
+              setTimeout(()=>{
+                this.$router.push({path: '/special'});
+              }, 500);
+            } else {
+              this.$message.error(`创建失败，${res.msg}`);
+            }
           }).catch(error=>{
             this.$message.error(`创建失败，${error.message}`);
           }).finally(()=>{
