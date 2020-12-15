@@ -104,7 +104,7 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, formParams);
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
-        this.tableData = res.data.list;
+        this.tableData = res.data.list || [];
         this.total = res.data.total;
       })
     },
