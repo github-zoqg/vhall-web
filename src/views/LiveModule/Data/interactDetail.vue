@@ -370,10 +370,10 @@ export default {
     },
     // 邀请排名
     inviteInfo() {
-      // 少了一个搜索参数
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         webinar_id: this.webinarId,
+        keyword: this.searchText,
         ...pageInfo,
       }
       this.$fetch('getInviteListInfo', params).then(res => {
@@ -520,6 +520,7 @@ export default {
       let params = {
         webinar_id: this.webinarId
       }
+      this.params = params;
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getPrizeListInfo', obj).then(res => {
         this.tableList = res.data.list;
@@ -619,14 +620,14 @@ export default {
     },
     // 导出明细
     reportDetail(that, {rows}) {
-      if (this.title === '发群红包') {
-        console.log(rows.id);
-      } else if (this.title === '签到') {
-        console.log(rows);
-      } else if (this.title === '邀请排名') {
-        console.log(rows);
+      if (that.title === '发群红包') {
+        that.exportRedpacketDetailInfo(rows.id, rows.type);
+      } else if (that.title === '签到') {
+        that.exportDetailSignInfo(rows.sign_id);
+      } else if (that.title === '邀请排名') {
+        that.exportInviteDetailInfo(rows.invite_id);
       } else {
-        console.log(rows, '抽奖');
+        that.exportPrizeDetailInfo(rows);
       }
     },
     changeTableCheckbox(val) {
@@ -644,36 +645,96 @@ export default {
           this.exportInviteInfo();
           break;
         case '签到':
-          this.signInfoList();
+          this.exportSignInfo();
           break;
         case '聊天':
-          this.chatInfo();
+          this.exportChatInfo();
           break;
         case '问答':
-          this.exportRecordList();
+          this.exportRecordInfo();
           break;
         case '抽奖':
-          this.prizeList();
+          this.exportPrizeInfo();
           break;
         case '问卷':
-          this.getQuestionInfo();
+          this.exportQuestionInfo();
           break;
         case '发群红包':
-          this.getRedpacketList();
+          this.exportRedpacketInfo();
           break;
         default:
           break;
       }
     },
-    exportRecordList() {
+    // 邀请详情导出
+    exportInviteDetailInfo(id) {
+       this.$fetch('exportDetailInvite', {webinar_id: this.webinarId, join_id: id }).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 邀请导出
+    exportInviteInfo() {
+      this.$fetch('exportInvite', {webinar_id: this.webinarId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 聊天
+    exportChatInfo() {
+      this.$fetch('exportChat', {room_id: this.roomId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 问答
+    exportRecordInfo() {
       this.$fetch('exportRecodrder', this.params).then(res => {
-        console.log(res.data,  '0000000000000000000000')
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 签到
+    exportSignInfo() {
+      this.$fetch('exportSign', {room_id: roomId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    exportDetailSignInfo(id) {
+      this.$fetch('exportDetailSign',{room_id: roomId, sign_id: id}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 问卷
+    exportQuestionInfo() {
+      this.$fetch('exportSurvey',{room_id: roomId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 抽奖
+    exportPrizeInfo() {
+      this.$fetch('exportLottery', this.params).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 抽奖单个
+    exportPrizeDetailInfo(item) {
+      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+    // 发群红包
+    exportRedpacketInfo() {
+      this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
+      })
+    },
+     // 发群红包---导出明细
+    exportRedpacketDetailInfo(uuid, type) {
+      this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
+        this.$message.success('导出申请成功，请去下载中心下载');
       })
     },
     // 问卷查看
     lookDetail(that, val) {
-      console.log(val.rows);
-      that.$router.push({path: val.path});
+      let rows = val.rows;
+      that.$router.push({path: val.path, query: {id:this.webinarId,surveyId: rows.survey_id, subject: rows.subject}});
     }
   }
 };

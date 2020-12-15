@@ -53,7 +53,7 @@
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }} <span class="level" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
-          <p>有效期: {{ userInfo.edition_valid_time || ''  }}</p>
+          <p>有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="9" v-if="userInfo.edition === '无极版'">
@@ -75,16 +75,7 @@
       <el-col :span="9">
         <div class="top-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
-          <el-tooltip effect="dark" placement="right-start" v-if="userInfo.edition == '标准版'">
-            <div slot="content">
-              1.专业版过期后将自动降级为标准版，流量包可继续使用<br>
-              2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
-              3.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
-              4.流量包到期后自动失效
-            </div>
-            <i class="el-icon-question"></i>
-          </el-tooltip>
-          <el-tooltip effect="dark" placement="right-start" v-else>
+          <el-tooltip effect="dark" placement="right-start" >
               <div slot="content">
                 1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
                 2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
@@ -94,7 +85,7 @@
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
-          <p @click="goAccountDetail" v-if="this.$route.path==='/finance/info'" class="account">账单明细</p>
+          <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">账单明细</p>
         </div>
       </el-col>
     </el-row>

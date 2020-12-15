@@ -31,26 +31,24 @@ export default {
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.questionId = this.$route.query.id || '';
-    console.log(this.questionId, '11111111111');
     this.getVideoAppid();
   },
   methods: {
     getVideoAppid() {
-      this.$fetch('getAppid').then(res => {
+      this.$fetch('getPassId').then(res => {
         this.initQuestion(res.data.app_id, res.data.access_token);
       })
     },
     initQuestion(id, token) {
-      console.log(id, token);
       let params = {
         webinar_id: this.$route.query.webinarId,
         room_id: this.$route.query.roomId
       };
       let service = new VHall_Questionnaire_Service({
         auth: {
-          appId: 'd317f559', //paas的应用id,必填
+          appId: id, //paas的应用id,必填
           accountId: this.userId, //paas的第三方用户id,必填
-          token: 'vhall' //paas的授权token,必填
+          token: token //paas的授权token,必填
         },
         isLoadElementCss: true,
         notify: true //是否开启消息提示，非必填,默认是true
@@ -68,7 +66,7 @@ export default {
         params.survey_id = data.id;
         let obj = Object.assign({}, params, data);
         console.log(obj, '1111111111111');
-        // this.createQuest(obj);
+        this.createQuest(obj);
       })
       // service.$on(VHall_Questionnaire_Const.EVENT.ADDQUESTION, data => {
       //   // params.question_id = data.question_id;
@@ -79,7 +77,7 @@ export default {
         params.survey_id = data.id;
         let obj = Object.assign({}, params, data);
         console.log(obj, '22222222222222');
-        // this.editQuest(obj);
+        this.editQuest(obj);
       })
       setTimeout(() => {
         let text = document.querySelector('.text');
@@ -140,6 +138,9 @@ export default {
         border-bottom: 0;
       }
     }
+  }
+  #settingBox /deep/.question-wrap.click{
+    border: 1px solid #FB3A32;
   }
   #settingBox /deep/.create-wrap .save{
     .el-button{
