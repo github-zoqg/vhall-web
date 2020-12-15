@@ -9,14 +9,14 @@ Vue.use(Router);
 const routes = [];
 // 动态加载路由
 const modulesFiles = require.context('./modules', true, /\.js$/);
-console.warn('modulesFiles--',modulesFiles.keys());
+
 modulesFiles.keys().map((modulePath) => {
   console.warn(modulePath,modulesFiles(modulePath), 'test ');
   routes.push(...modulesFiles(modulePath).default);
 });
 
 const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
-console.warn(base, 'sdf');
+
 const createRouter = () => new Router({
   mode: 'history',
   base,
