@@ -2,18 +2,11 @@
   <tip v-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="watch-wrap">
     <header
-      v-if="roominfo.modules"
+      v-if="roominfo.modules && roominfo.modules.logo.image"
       class="wh-title"
     >
-      <img v-if="roominfo.modules.logo && roominfo.modules.logo.show == 1" class="logo-image" :src="roominfo.modules.logo.image" alt @click.stop="handleSkipLogo"/>
+      <img v-if="roominfo.modules && roominfo.modules.logo.show == 1" class="logo-image" :src="roominfo.modules.logo.image" alt @click.stop="handleSkipLogo"/>
       <div class="title-right">
-        <el-input
-          @keyup.enter.native="searchDocdument"
-          v-model="documentData"
-          class="search-input"
-          prefix-icon="el-icon-search"
-          placeholder="搜索"
-        ></el-input>
         <span v-if="!isLogin">
           <el-button class="button-style button-login" @click="callLogin"
             >登录</el-button
@@ -38,30 +31,27 @@
 
             <ul v-if="menuListShow" class="login-info-list">
               <li>
-                <a :href="webDominUrl + '/mywebinar/main'">
+                <a :href="myliveRoute">
                   <i></i>
                   <span>我的直播</span>
                 </a>
               </li>
               <li>
                 <a
-                  :href="
-                    webDominUrl +
-                      `${ isLogin ? '/account/usage' : '/account/center'}`
-                  "
+                  :href="accountRoute"
                 >
                   <i></i>
                   <span>账户中心</span>
                 </a>
               </li>
               <li>
-                <a :href="webDominUrl + '/user/home/' + roominfo.auth.id">
+                <a :href="myPageRoute">
                   <i></i>
                   <span>我的主页</span>
                 </a>
               </li>
               <li>
-                <a :href="webDominUrl + '/account/index'">
+                <a :href="myAccountRoute">
                   <i></i>
                   <span>账户设置</span>
                 </a>
@@ -89,24 +79,26 @@
               </h3>
               <span v-if="iconPlayShow" class="seeding-icon">{{iconPlay}}</span>
               <div>
-                <span
-                  style="color: #666"
-                  class="iconfont"
-                  :class="{
-                    'iconzhubanfang1-copy': roominfo.modules.initiator.show == 1
-                  }"
-                ></span>
-                <span
-                  v-if="roominfo.modules.initiator.show == 1"
-                  style="color: #666"
-                  >主办方：</span
-                >
-                <a
-                  v-if="roominfo.modules.initiator.show == 1"
-                  :href="webDominUrl + '/user/home/' + roominfo.host.id"
-                  style="color:#007AFF;cursor:pointer;"
-                  >{{ hostInfo.nick_name }}</a
-                >
+                <template v-if="roominfo.modules && roominfo.modules.logo.organizers_status == 1">
+                  <span
+                    style="color: #666"
+                    class="iconfont"
+                    :class="{
+                      'iconzhubanfang1-copy': roominfo.modules.initiator.show == 1
+                    }"
+                  ></span>
+                  <span
+                    v-if="roominfo.modules.initiator.show == 1"
+                    style="color: #666"
+                    >主办方：</span
+                  >
+                  <a
+                    v-if="roominfo.modules.initiator.show == 1"
+                    :href="webDominUrl + '/user/home/' + roominfo.host.id"
+                    style="color:#007AFF;cursor:pointer;"
+                    >{{ hostInfo.nick_name }}</a
+                  >
+                </template>
                 <span
                   style="margin-left: 20px;color: #666"
                   class="iconfont iconshijian"
@@ -154,7 +146,7 @@
                 </div>
                 <div
                   v-if="attentionShow"
-                  :class="followStyle ? 'follow' : 'followShow'"
+                  :class="followStyle ? 'followShow' : 'follow'"
                   @click="handleAttention"
                 >
                   <span class="iconfont iconguanzhu"></span>
@@ -167,7 +159,7 @@
                   <span><i class="iconfont iconweixin"></i>微信公众号</span>
                   <div class="qr-wrap">
                     <span class="arrow"></span>
-                    <template v-if="roominfo.domains && roominfo.modules.adv">
+                    <template v-if="roominfo.modules.adv && roominfo.modules.adv.public.img">
                       <img
                         :src="
                           `https:${roominfo.domains.upload}/${roominfo.modules.adv.public.img}?x-oss-process=image/resize,m_fill,w_233,h_233`
@@ -190,7 +182,6 @@
                 :saasJoinId="roominfo.user.saas_join_id"
                 :qaStatus="roominfo.open_question"
                 :userChatId="userChatId"
-                :privateChat="roominfo.saas_chat"
                 :domains="domains"
                 :chatShow="chatShow"
                 :chatFilterData="chatFilterData"
@@ -541,7 +532,7 @@
               :goodsList="goodsList"
             ></products>
           </div>
-          <div class="footer inner-center tac">
+          <div class="footer inner-center tac" v-if="roominfo.modules && roominfo.modules.logo.reserved_status == 1">
             <div class="about-us">
               <a href="http://www.vhall.com/about" target="_blank">关于我们</a>
               <a href="http://www.vhall.com/blog" target="_blank">客户案例</a>
@@ -586,12 +577,12 @@
           <span>邀请你关注微信了解更多资讯</span>
         </div>
         <div class="preview-content">
-          <a target="_blank">
+          <a target="_blank" v-if="roominfo.modules.adv && roominfo.modules.adv.public.img">
             <img
               :src="
-                `https:${roominfo.domains && roominfo.domains.upload}/${roominfo.modules.adv && roominfo.modules.adv.public.img}?x-oss-process=image/resize,m_fill,w_233,h_233`
+                `${roominfo.modules.adv.public.img}?x-oss-process=image/resize,m_fill,w_233,h_233`
               "
-              :alt="`https:${roominfo.domains && roominfo.domains.upload}/${roominfo.modules.adv && roominfo.modules.adv.public.img}`"
+              :alt="`${roominfo.modules.adv.public.img}`"
             />
           </a>
           <div class="preview-des">扫码关注公众号</div>
@@ -600,8 +591,8 @@
     </popup>
     <!--弹窗蒙层-->
     <div class="shade" @click="shadeClick" v-if="shadeShow"></div>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="chatSdkLoadHandler"></remote-script>
-    <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="interactionSdkLoadHandler"></remote-script>
+    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="sdkLoadHandler('chat')"></remote-script>
+    <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="sdkLoadHandler('interact')"></remote-script>
   </div>
 </template>
 <script>
@@ -622,6 +613,10 @@ import { sessionOrLocal } from '@/utils/utils'
 export default {
   data() {
     return {
+      myliveRoute: '',
+      accountRoute: '',
+      myPageRoute: '',
+      myAccountRoute: '',
       isIE: isIE(),
       webDominUrl: '', // 主站的域名
       webinarDominUrl: '', // 观看的域名
@@ -648,9 +643,8 @@ export default {
       errorMessage: '请输入正确的邮箱', // 错误的提示
       swiperPrevShow: false, // 向前翻页的按钮显示
       swiperNextShow: true, // 向后翻页的按钮显示
-      followStyle: true, // 关注不关注的显示
+      followStyle: false, // 关注不关注的显示
       shadeShow: false, // 遮罩层的显示
-      documentData: '', // 搜索框的搜索数据
       menuListShow: false, // 菜单列表的显示
       otherWayShow: false, // 其他登录方式的图标
       qrCodeShow: false, // 二维码的显示切换
@@ -680,7 +674,6 @@ export default {
       regShow: false, // 注册的显示
       pvShow: false, // 观看次数的显示
       onlineShow: false, // 在线人数的显示
-      companyLogoShow: false, // logo的显示
       attentionShow: false,
       activeInfo: {}, // 活动信息
       goodInfo: {}, // 商品信息
@@ -726,6 +719,7 @@ export default {
       menuData: [],
       visitor_id: '', // 访客标识
       isLogin: false, // 是否登录
+      initStatus: true,
       configList: {},
       userInfo: {}
     };
@@ -746,6 +740,10 @@ export default {
   },
   mounted() {
     window.EventBridge = this.$EventBus;
+    this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
+    if (this.userInfo && this.userInfo.user_id) {
+      this.isLogin = true
+    }
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
       // 是否显示公众号
@@ -753,13 +751,15 @@ export default {
       if (
         modules &&
         modules.adv &&
-        !(modules.adv.public instanceof Array)
+        modules.adv.public
       ) {
-        // alert_type:1 取消自动弹出
-        if (modules.adv.public.alert_type == 0) {
+        // alert_type:1 自动弹出
+        if (modules.adv.public.alert_type == 1) {
           this.showOfficialAccountQRCode = true
         }
-        this.showOfficialAccountMiniQRCode = true
+        if (modules.adv.public.status == 1) {
+          this.showOfficialAccountMiniQRCode = true
+        }
       }
     });
     // 自适应处理
@@ -826,6 +826,7 @@ export default {
     window.vhallReport.report('LEAVE_WATCH')
   },
   methods: {
+    // 心跳检测
     heartbeatLink() {
       setTimeout(() => {
         this.$fetch('liveHeartBeat', {})
@@ -837,6 +838,93 @@ export default {
             console.log('心跳检测失败:', e)
           })
       }, 1000 * 60 * 30)
+    },
+    // 聊天或互动sdk加载完成
+    sdkLoadHandler (type) {
+      if (type == 'chat') {
+        this.chatSdkLoaded = true;
+      } else {
+        this.interactionSdkLoaded = true;
+      }
+      if(this.chatSdkLoaded && this.interactionSdkLoaded) {
+        this.startRoomInitProcess()
+      }
+    },
+    async startRoomInitProcess () {
+      try {
+        await this.getRoomInfo() // 初始化房间信息
+        if (this.roomData && this.roomData.status == 'subscribe') {
+          this.$router.push({name: 'list', params: {id: this.$route.params.il_id}})
+          return
+        }
+        if (this.roomData && this.roomData.status == 'live') {
+          await this.getTotalLike() // 获取总点赞数
+          await this.getMarqueenInfo() // 获取跑马灯信息
+          await this.getWaterInfo() // 获取水印信息
+          await this.getDefinitionConfig() // 获取当前流默认清晰度
+          await this.queryRoomInterInfo() // 获取房间活动状态
+          await this.getFirstPost() // 开屏
+        }
+        await this.getAdsInfo() // 获取活动广告信息
+        await this.getSkin() // 获取皮肤
+        await this.getPublisAdv() // 获取公众号广告
+        await this.getSignInfo() // 获取标记 logo 主办方信息
+        // 预约后的活动才显示邀请卡
+        if (this.roomData.is_subscribe) {
+          await this.getInviteStatus()
+        }
+        if (this.isLogin) {
+          await this.getAttentionStatus()
+        }
+        await this.getConfigList() // 获取观看端配置项
+        this.handleRoomInfo()
+      } catch (e) {
+        console.log('初始化调用失败:', e)
+      }
+    },
+    // 初始化房间信息
+    getRoomInfo () {
+      return this.$fetch('watchInit', {
+        webinar_id: this.$route.params.il_id,
+        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '',
+        refer: '',
+        record_id: '', // TODO:
+        wx_url: ''
+      }).then(res => {
+        this.handleErrorCode(res)
+      }).catch(e => {
+        this.initStatus = false
+        console.log('获取房间信息失败:', e)
+      })
+    },
+    // 初始化错误信息处理
+    handleErrorCode (res) {
+      switch (res.code) {
+        case 200:
+          this.roomData = res.data && res.data
+          this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
+          this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
+          break
+        case 12514: // 您已被踢出，请联系活动组织者
+          this.$EventBus.$emit('loaded')
+          this.kickOutSass = true
+          break
+        case 12002: // 活动不存在
+        case 12522: // 主持人、嘉宾或助理不允许进入观看端
+        case 12536: // 回放不存在
+        case 12542: // 此视频暂时下线了
+        case 12543: // 该视频已下线，有疑问请联系客服
+        case 12544: // 该视频转码失败
+        case 12545: // 该视频正在审核中
+        case 12546: // 该视频正在转码中
+        case 12541: // 活动现场太火爆，已超过人数上限
+          this.$EventBus.$emit('loaded');
+          this.tipMsg = res.msg;
+          break;
+        // case 12534: // 跳转链接
+        //   window.location.href = data.url // TODO:
+        //   break;
+      }
     },
     // 点击商品获得详细的信息
     sellGoodsInfo(goodInfo) {
@@ -875,6 +963,7 @@ export default {
     onlinePeople(msg) {
       this.$nextTick(() => {
         this.roomUser.uvOnline = msg.uv;
+        console.log(991, JSON.parse(msg.context), this.roomUser)
         if (msg.context.pv > this.roomUser.pvCount) {
           this.roomUser.pvCount = msg.context.pv;
         }
@@ -901,10 +990,6 @@ export default {
     shadeClick() {
       this.loginDialogShow = false;
       this.shadeShow = false;
-    },
-    // 搜索框enter进行搜索
-    searchDocdument() {
-      window.location.href = `${this.webDominUrl}/search?wd=${this.documentData}`;
     },
     // other登录方式的修改
     otherLoginClick() {
@@ -1039,7 +1124,7 @@ export default {
           this.phoneKey = ''
           this.smsErrorMessage = ''
           sessionOrLocal.set('sso', res.data.sso_token)
-          sessionOrLocal.set('token', res.data.token)
+          sessionOrLocal.set('token', res.data.token, 'localStorage')
           sessionOrLocal.set('userInfo', res.data)
         } else if (res.code == 10000) {
           this.smsErrorMessage = '当前账号或密码错误'
@@ -1082,7 +1167,7 @@ export default {
             this.photoCpathaShow = true
             this.$router.go(0) // 重新进入
             sessionOrLocal.set('sso', res.data.sso_token)
-            sessionOrLocal.set('token', res.data.token)
+            sessionOrLocal.set('token', res.data.token, 'localStorage')
             sessionOrLocal.set('userInfo', res.data)
           } else {
             if (res.code == 12042) {
@@ -1125,8 +1210,6 @@ export default {
           console.log('登录检查失败:', e);
         });
     },
-    // 获取验证码
-    getCodes() {},
     // 云链账号登录
     usersLogin() {
       this.typeControl = true;
@@ -1209,21 +1292,25 @@ export default {
     // 关注
     handleAttention() {
       if (this.isLogin) {
-        if (this.followStyle) {
+        if (!this.followStyle) {
           this.$fetch('attention', {
             at_id: this.hostInfo.id,
+            type: 1
           }).then(res => {
             if (res.code == 200) {
-              this.followStyle = false;
-              this.attentionContent = '已关注';
+              this.followStyle = true;
+              this.roominfo.modules.attention.follow = 1
+              this.attentionContent = '取消关注';
             }
           })
         } else {
           this.$fetch('notAttention', {
             at_id: this.hostInfo.id,
+            type: 1
           }).then(res => {
             if (res.code == 200) {
-              this.followStyle = true;
+              this.followStyle = false;
+              this.roominfo.modules.attention.follow = 0
               this.attentionContent = '关注';
             }
           })
@@ -1262,13 +1349,8 @@ export default {
      */
     chatFilter() {
       this.$fetch('getWatchFilterWords', {
-        room_id: this.$route.params.il_id
+        room_id: this.roomData.interact.room_id
       }).then(res => {
-        console.log(
-          'saas action info::',
-          'get auth chat info done.',
-          `get datas: ${res}`
-        );
         if (res.code == 200) {
           this.chatFilterData = res.data.list;
         }
@@ -1277,94 +1359,175 @@ export default {
     handleSkipLogo () {
       window.location.href = this.roominfo.modules.logo.href
     },
-    getUerInfo () {
-      this.$fetch('watchInit', {
+    // 获取总点赞数
+    getTotalLike () {
+      return this.$fetch('likeTotal', {
+        room_id: this.roomData.interact.room_id
+      }).then((res) => {
+        if (res.code == 200) {
+          this.stars = res.data.total
+        }
+      })
+    },
+    // 获取活动广告信息
+    getAdsInfo () {
+      return this.$fetch('queryAdsInfo', {
         webinar_id: this.$route.params.il_id,
-        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '',
-        refer: '',
-        record_id: '',
-        wx_url: ''
+        pos: 0,
+        limit: 50
       }).then(res => {
         if (res.code == 200 && res.data) {
-          this.roomData = res.data
-          sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
-          sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
-          this.getConfigList()
-        } else if (res.code == 10008) {
-          // 未登录
-          // TODO:
-          // window.location.href = '/login'
-        } else if (res.code == 123456) { // TODO: 对应老接口301
-          // --------------------
-          // 知客 SAAS 融合 相关业务
-          // -------——-----------
-          this.$EventBus.$emit('loaded');
-          sessionOrLocal.set('zhike_refer', window.document.referrer);
-          window.location.replace(res.data.url);
-        } else if (res.code == 210) { // TODO: 踢出新code码
-          this.$EventBus.$emit('loaded');
-          this.kickOutSass = true;
+          this.ads = res.data.adv_list
         }
-        else {
-          this.$EventBus.$emit('loaded');
-          this.tipMsg = res.msg;
+      })
+    },
+    // 获取跑马灯信息
+    getMarqueenInfo () {
+      return this.$fetch('getScrolling', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.marquee = res.data
+        }
+      })
+    },
+    // 获取观看端配置项
+    getConfigList () {
+      return this.$fetch('getConfigList', {
+        webinar_id: this.$route.params.il_id,
+        webinar_user_id: this.roomData.webinar.userinfo.user_id
+      }).then(res => {
+        if (res.code == 200 && res.data && res.data.permissions) {
+          this.configList = JSON.parse(res.data.permissions)
+        }
+      })
+    },
+    // 获取水印信息
+    getWaterInfo () {
+      return this.$fetch('getWatermark', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.water = res.data
+        }
+      })
+    },
+    // 获取皮肤
+    getSkin () {
+      return this.$fetch('getSkin', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.skinInfo = res.data
+        }
+      })
+    },
+    // 获取公众号广告
+    getPublisAdv () {
+      return this.$fetch('getScreenPublicInfo', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.publicAdv = res.data
+        }
+      })
+    },
+    // 获取开屏海报
+    getFirstPost () {
+      return this.$fetch('watchInterGetFirstPost', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.firstPost = res.data
+        }
+      })
+    },
+    // 获取标记 logo 主办方信息
+    getSignInfo () {
+      return this.$fetch('watchInterGetWebinarTag', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.signInfo = res.data
+        }
+      })
+    },
+    // 获取当前流默认清晰度
+    getDefinitionConfig () {
+      return this.$fetch('getDefinitionConfig', {
+        webinar_id: this.$route.params.il_id,
+        is_h5: 1,
+        type: 0
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.definitionConfig = res.data.default_definition
+        }
+      })
+    },
+    // 获取房间活动状态
+    queryRoomInterInfo () {
+      return this.$fetch('getToolStatus', {
+        room_id: this.roomData.interact.room_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.interactiveInfo = res.data
+        }
+      })
+    },
+    // 获取邀请卡信息
+    getInviteStatus () {
+      return this.$fetch('shwoInvite', {
+        webinar_id: this.$route.params.il_id,
+        join_id: this.roomData.join_info.join_id
+      }).then((res) => {
+        if (res.code == 200 && res.data) {
+          this.inviteInfo = res.data
+        }
+      })
+    },
+    // 获取关注状态
+    getAttentionStatus () {
+      return this.$fetch('attentionStatus', {
+        at_id: this.roomData.webinar.userinfo.user_id,
+        type: 1 // 关注人
+      }).then(res => {
+        if (res.code == 200) {
+          this.attentionStatus = res.data.result
         }
       })
     },
     handleRoomInfo () {
-      console.log('获取房间配置信息', this.configList)
-      console.log('获取房间点赞总数', this.stars)
-      console.log('获取房间广告信息', this.ads)
-      console.log('获取房间跑马灯信息', this.marquee)
-      console.log('获取房间水印信息', this.water)
-      console.log('获取房间皮肤信息', this.skinInfo)
-      // console.log('获取房间公众号广告信息', this.publicAdv)
-      console.log('获取房间标记信息', this.signInfo)
-      console.log('获取房间清晰度信息', this.definitionConfig)
-      console.log('获取房间用户信息', this.userInfo)
-      console.log('获取房间活动状态信息', this.interactiveInfo)
       let data = this.roomData,
-          text = '',
-          userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
-      if (this.water.img_url) {
-        this.water.img_url += data.urls.upload_url + '/' + this.water.img_url
-      }
-      if (userInfo.user_id) {
-        this.isLogin = true
-      }
-      switch (data.webinar.type) {
-        case 1:
-          text = '直播'
-          break;
-        case 2:
-          text = '预约'
-          break;
-        case 3:
-          text = '结束'
-          break;
-        case 4:
-          text = '点播'
-          break;
-        case 5:
-          text = '回放'
-          break;
+          userInfo = this.userInfo,
+          text = data.webinar.type == 1
+          ? '直播'
+          : data.webinar.type == 2
+          ? '预约'
+          : data.webinar.type == 3
+          ? '结束'
+          : data.webinar.type == 4
+          ? '点播'
+          : '回放'
+      if (this.water && this.water.img_url) {
+        this.water.img_url = data.urls.upload_url + '/' + this.water.img_url
       }
       this.roominfo = {
         webinar: Object.assign({}, data.webinar, {
           image_url: data.webinar.img_url,
           is_interact: data.webinar.mode == 3 ? 1 : 0,
-          like: this.stars,
+          like: this.stars ? this.stars : 0,
           pv: data.pv.num
         }),
         advs: this.ads,
         auth: this.isLogin ? {
           avatar: data.join_info.avatar,
-          id: userInfo.user_id ? userInfo.user_id : '',
-          nick_name: data.join_info.nickname,
+          id: this.userInfo ? this.userInfo.user_id : data.join_info.third_party_user_id,
+          nick_name: this.userInfo ? this.userInfo.nick_name : data.join_info.nickname,
+          phone: this.userInfo ? this.userInfo.phone : ''
         } : [],
-        // open_question: this.interactiveInfo.question_status,
-        open_question: 0, // TODO:
-
+        interactiveInfo: this.interactiveInfo ? this.interactiveInfo : {},
+        rebroadcast: data.rebroadcast,
+        open_question: this.interactiveInfo ? this.interactiveInfo.question_status : 0,
         report_extra: data.report_data.report_extra,
         vss_token: data.interact.interact_token,
         room_id: data.interact.room_id,
@@ -1373,14 +1536,15 @@ export default {
         inav_id: data.interact.inav_id,
         introduction: data.webinar.introduction,
         paas_access_token: data.interact.paas_access_token,
+        inviteInfo: this.inviteInfo ? this.inviteInfo : {status: 0},
         skin: {
-          skin_json_pc : this.skinInfo.skin_style_code_pc,
-          skin_json_wap: this.skinInfo.skin_style_code_wap
+          skin_json_pc : this.skinInfo ? (this.skinInfo.skin_style_code_pc ? JSON.parse(this.skinInfo.skin_style_code_pc) : '') : {},
+          skin_json_wap: this.skinInfo ? (this.skinInfo.skin_style_code_wap ? JSON.parse(this.skinInfo.skin_style_code_wap) : '') : {}
         },
         user: {
-          avatar: data.join_info.avata,
+          avatar: data.join_info.avatar,
           nickname: data.join_info.nickname,
-          role_name: 2,
+          role_name: 2, // TODO:
           saas_join_id: data.join_info.join_id,
           third_party_user_id: data.join_info.third_party_user_id,
           account_id: data.join_info.third_party_user_id,
@@ -1403,37 +1567,46 @@ export default {
         base_online_num: data.online.num,
         base_pv: data.pv.num,
         is_replay: data.webinar.type == 5 ? 2 : 1,
+        // is_replay: data.webinar.type == 5 || data.webinar.type == 4,
         paas_record_id: data.paas_record_id,
         record_history_time: '', // TODO:
-        saas_chat: {}, // TODO:
         share_id: data.share_id,
         player: {
-          default_definition: this.definitionConfig,
-          scrolling_text: this.marquee,
-          watermark: this.water,
+          default_definition: this.definitionConfig ? this.definitionConfig : '',
+          scrolling_text: this.marquee ? this.marquee : '',
+          watermark: this.water ? this.water : '',
           hls: 0 // wap：hls= 1 pc:hls = 0
         },
         modules: {
           logo: {
             show: this.signInfo ? this.signInfo.view_status : 0,
             href: this.signInfo ? this.signInfo.skip_url : '',
-            image: this.signInfo ? this.signInfo.logo : ''
+            image: this.signInfo ? this.signInfo.logo : '',
+            reserved_status: this.signInfo ? this.signInfo.reserved_status : 0, // 版权信息
+            organizers_status: this.signInfo ? this.signInfo.organizers_status : 0// 主办方信息
           },
-          attention: {show: data.follow, count:data.attentioned_count}, // TODO: 关注 人数和显示  云俊&大龙
-          initiator: {show: this.signInfo ? this.signInfo.organizers_status : 0},
+          attention: {show: 1, follow: this.isLogin ? this.attentionStatus : 0},
+          // initiator: {show: this.signInfo ? this.signInfo.organizers_status : 0},
+          initiator: {show: 1},
           adv: {
-            public: this.publicAdv ? this.publicAdv['public-account'] : '' // 公众号广告
+            public: (this.publicAdv && this.publicAdv['public-account']) ? this.publicAdv['public-account'] : [], // 公众号广告
+            posters: (this.firstPost && this.firstPost['screen-posters']) ? this.firstPost['screen-posters'] : [] // 开屏广告
           },
           barrage: {hide: this.configList['ui.hide_barrage']},
           online: {show: data.online.show}, // 在线人数
           reg: {show: data.webinar.reg_form}, // 报名表单
           pv: {show: data.pv.show}, // 热度
           webinar_status: {show: data.webinar.type, text: text}, // 直播状态
-          reward: {show: 1}, // TODO:
-          gift: {show: 1}, // TODO:
+          reward: {show: this.configList ? this.configList['ui.hide_reward'] : 0},
+          gift: {show: this.configList ? this.configList['ui.hide_gifts'] : 0},
           chat_login: {show: 1}
         }
       }
+      this.myliveRoute = window.location.origin + '/live/list'
+      this.accountRoute = window.location.origin + '/finance/info'
+      this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
+      this.myAccountRoute = window.location.origin + '/account/info'
+      this.followStyle = this.roominfo.modules.attention.follow == 1
       if (this.roominfo.modules && this.roominfo.modules.barrage) {
         this.roominfo.player.barrage = this.roominfo.modules.barrage.hide
       }
@@ -1474,13 +1647,12 @@ export default {
       sessionOrLocal.set('vhall-vsstoken', this.roominfo.vss_token)
       sessionOrLocal.set('moduleShow', JSON.stringify(this.roominfo))
       // 关注的显示
-      this.roominfo.modules.attention.show == 1
-        ? (this.attentionShow = true)
-        : (this.attentionShow = false);
-      // logo的显示
-      this.roominfo.modules.logo.show == 1
-        ? (this.companyLogoShow = true)
-        : (this.companyLogoShow = false);
+      if (this.roominfo.modules.logo.organizers_status == 1) {
+        this.attentionShow = true
+      } else {
+        this.attentionShow = false
+      }
+      console.log(123, this.roominfo.modules.logo)
       // 在线人数的显示
       this.roominfo.modules.online.show == 1
         ? (this.onlineShow = true)
@@ -1513,7 +1685,6 @@ export default {
           }
         });
       }
-
       //  @author  Sean
       // 自定义 页面皮肤 初始化 相关逻辑
       //
@@ -1572,7 +1743,6 @@ export default {
       // 获取 推荐商品数据
       this.getGoodsInfo();
       // end
-
       this.chatFilter(); // 聊天过滤接口
 
       this.recordHistoryTime = data.record_history_time; // TODO:
@@ -1581,138 +1751,6 @@ export default {
       // 初始化邀请卡
       this.invitePartner();
     },
-    // 获取观看端配置项
-    getConfigList () {
-      this.$fetch('getConfigList', {
-        webinar_id: this.$route.params.il_id,
-        webinar_user_id: this.roomData.webinar.userinfo.user_id
-      }).then(res => {
-        if (res.code == 200 && res.data && res.data.permissions) {
-          this.configList = JSON.parse(res.data.permissions)
-        }
-      }).finally(() =>{
-        this.getTotalLike()
-      })
-    },
-    // 获取总点赞数
-    getTotalLike () {
-      this.$fetch('likeTotal', {
-        room_id: this.roomData.interact.room_id
-      }).then((res) => {
-        if (res.code == 200) {
-          this.stars = res.data.total
-        }
-      }).finally(() =>{
-        this.getAdsInfo()
-      })
-    },
-    // 获取活动广告信息
-    getAdsInfo () {
-      this.$fetch('queryAdsInfo', {
-        webinar_id: this.$route.params.il_id,
-        pos: 0,
-        limit: 50
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.ads = res.data.adv_list
-        }
-      }).finally(() =>{
-        this.getMarqueenInfo()
-      })
-    },
-    // 获取跑马灯信息
-    getMarqueenInfo () {
-      this.$fetch('getScrolling', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.marquee = res.data
-        }
-      }).finally(() => {
-        this.getWaterInfo()
-      })
-    },
-    // 获取水印信息
-    getWaterInfo () {
-      this.$fetch('getWatermark', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.water = res.data
-        }
-      }).finally(() => {
-        this.getSkin()
-      })
-    },
-    // 获取皮肤
-    getSkin () {
-      this.$fetch('getSkin', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.skinInfo = res.data
-        }
-      }).finally(() => {
-        this.getPublisAdv()
-      })
-    },
-    // 获取公众号广告
-    getPublisAdv () {
-      this.$fetch('getScreenPublicInfo', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.publicAdv = res.data
-        }
-      }).finally(() => {
-        this.getSignInfo()
-      })
-    },
-    // 获取标记 logo 主办方信息
-    getSignInfo () {
-      this.$fetch('watchInterGetWebinarTag', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.signInfo = res.data
-        }
-      }).finally(() => {
-        this.getDefinitionConfig()
-      })
-    },
-    // 获取当前流默认清晰度
-    getDefinitionConfig () {
-      this.$fetch('getDefinitionConfig', {
-        webinar_id: this.$route.params.il_id,
-        is_h5: 1,
-        type: 0
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.definitionConfig = res.data.default_definition
-        }
-      }).finally(() => {
-        this.queryRoomInterInfo()
-      })
-    },
-    // 获取房间活动状态
-    queryRoomInterInfo () {
-      this.$fetch('getToolStatus', {
-        room_id: this.roomData.interact.room_id
-      }).then(res => {
-        console.log(111111111, res)
-        if (res.code == 200 && res.data) {
-          this.interactiveInfo = res.data
-        }
-      }).finally(() => {
-        this.handleRoomInfo()
-      })
-    },
-    // 获取用户信息
-    // getUserInfo () {
-    //   this.$fetch('getInfo', {
-    //     scene_id: 2
-    //   })
-    // },
     /**
      * @description 数据上报  init 方法
      *
@@ -1735,7 +1773,6 @@ export default {
         window.vhallReport.report('ENTER_WATCH', {
           event: this.$route.query.refer // 推广渠道，会在url里传参
         });
-        // this.report('ENTER_WATCH', res.data.bu)
       })
       // 浏览器或者页面关闭时上报
       window.addEventListener('beforeunload', function(e) {
@@ -1744,50 +1781,6 @@ export default {
           window.vhallReport.report('LEAVE_WATCH', {}, false);
         }
       })
-    },
-
-    report (txt, bu) {
-      let reportData = {
-        user_agent: navigator.userAgent,
-        os: 10, // TODO:
-        device_id:"",
-        type: 'PC', // TODO:
-        user_id: this.roominfo.auth.id ?  this.roominfo.auth.id : 110, // TODO:
-        webinar_id: this.$route.params.il_id,
-        t_start: this.roominfo.webinar.start_time,
-        entry_time: this.roominfo.webinar.start_time
-      }
-      let url = process.env.VUE_APP_NODE_ENV != 'production' ? 'https://t-dc.e.vhall.com/login' : 'https://dc.e.vhall.com/login'
-      let params = Object.assign({}, reportData, {k: 102006 })
-      let token = window.btoa(JSON.stringify(params))
-      console.log(220, token, reportData)
-      let id = `${Date.now()}${Math.floor(Math.random() * 10000)}`
-      console.log(999999999)
-      this.$fetch('reportData', {
-        k: 102006,
-        id: 123,
-        s: 123,
-        token: token
-      }).then(res => {
-        console.log(2222222)
-
-      }).catch(e => {
-        console.log(1111111111)
-      })
-    },
-    chatSdkLoadHandler(){
-      this.chatSdkLoaded = true;
-      if(this.chatSdkLoaded&&this.interactionSdkLoaded){
-        this.getUerInfo();
-        this.getMenuList();
-      }
-    },
-    interactionSdkLoadHandler(){
-      this.interactionSdkLoaded = true;
-      if(this.chatSdkLoaded&&this.interactionSdkLoaded){
-        this.getUerInfo();
-        this.getMenuList();
-      }
     }
   }
 };
@@ -2047,13 +2040,6 @@ export default {
         }
       }
     }
-  }
-  .search-input {
-    width: 220px;
-    height: 38px;
-    // margin-left: 1000px;
-    // vertical-align: middle;
-    margin-top: 2px;
   }
 
   .button-style {

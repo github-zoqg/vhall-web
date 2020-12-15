@@ -16,7 +16,6 @@
         :saasJoinId="saasJoinId"
         :qaStatus="open_question"
         :userChatId="userChatId"
-        :privateChat="privateChat"
         :domains="domains"
         @NoLogin="NoLogin"
         :chatShow="chatShow"
@@ -144,7 +143,6 @@ export default {
       },
       saasJoinId: '',
       open_question: 0,
-      privateChat: {},
       domains: {},
       downloadChrome: false,
       recordHistoryTime: '', // 播放器进度
@@ -645,7 +643,6 @@ export default {
           this.hostInfo = this.roominfo.host
           this.roominfo.webinar_id = res.data.webinar.id
           this.activeInfo = res.data.webinar
-          this.privateChat = res.data.saas_chat
           this.domains = res.data.domains
           sessionStorage.setItem('vhall-vsstoken', this.roominfo.vss_token)
 

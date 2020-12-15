@@ -127,7 +127,6 @@ import { formatTime, handleTime } from './js/handle-time';
 import getAvatar from './js/get-avatar';
 import {sessionOrLocal} from "@/utils/utils";
 import { disableScroll, enableScroll } from '../../utils/scroll';
-import { sessionOrLocal } from '@/utils/utils';
 
 BScroll.use(ScrollBar);
 BScroll.use(PullDown);

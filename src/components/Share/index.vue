@@ -43,14 +43,21 @@ export default {
       required: true
     }
   },
-  created(){
-    let a = QRcode.toDataURL(
-      this.url,
-      (err, url) => {
-        console.log(err, url);
-        this.qrcode = url;
+  watch: {
+    url: {
+      handler (val) {
+        if (val) {
+          let a = QRcode.toDataURL(
+            val,
+            (err, url) => {
+              console.log(err, url);
+              this.qrcode = url;
+            }
+          );
+        }
       }
-    );
+    },
+    immediate: true
   },
   methods: {
     toShare(type) {

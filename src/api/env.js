@@ -19,35 +19,42 @@ let staticLinkVo = {
 };
 let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
 let BASE_URL;
+let web = ''
 switch (process.env.VUE_APP_NODE_ENV) {
   case 'production':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/'; // 原来
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
+    web = 'https://e.vhall.com/v3'
     break;
   case 'test':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
+    web = 'https://t.e.vhall.com/v3'
     break;
   case 'pre':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com/';
+    web = 'https://t.e.vhall.com/v3'
     break;
   case 'development':
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
+    web = 'https://t.e.vhall.com/v3'
     break;
   default:
     staticBaseUrl = '//cnstatic01.e.vhall.com/';
     roomWatchUrl = 'http://live.vhall.com/';
     BASE_URL = 'https://t-saas-dispatch.vhall.com';
+    web = 'https://t.e.vhall.com/v3'
 }
 export default {
   staticLinkVo,
   staticBaseUrl,
   roomWatchUrl,
-  BASE_URL
+  BASE_URL,
+  web
 };
