@@ -55,13 +55,19 @@
         </el-switch>
       </el-form-item>
       <el-form-item label="专题目录:">
-         <el-button size="small">添加</el-button>
+         <el-button size="small" @click="showActiveSelect = true">添加</el-button>
       </el-form-item>
       <el-form-item label="">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
     </el-form>
+    <chose-actives
+      v-if="showActiveSelect"
+      :checkedList="selectedActives"
+      @cacelSelect="showActiveSelect = false"
+      @selectedEvent="doSelectedActives"
+    ></chose-actives>
   </div>
 </template>
 
@@ -70,12 +76,14 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
+import ChoseActives from './components/choseActives'
 
 export default {
   components: {
     PageTitle,
     VEditor,
     upload,
+    ChoseActives
   },
   computed: {
     reservationDesc(){
@@ -90,6 +98,9 @@ export default {
   },
   data(){
     return {
+      showActiveSelect: false,
+      selectedActives: [],
+
       formData: {
         title: '',
       },
@@ -110,7 +121,7 @@ export default {
     };
   },
   created(){
-    console.log(this.$route.query.title, '111111111111111111');
+    // console.log(this.$route.query.title, '111111111111111111');
   },
   methods: {
     sendData(content) {
@@ -138,6 +149,7 @@ export default {
       }
       return isType && isLt2M;
     },
+
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
     },
@@ -148,6 +160,7 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -184,6 +197,11 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+
+    doSelectedActives (selectedActives) {
+      this.selectedActives = selectedActives
+      this.showActiveSelect = false
     }
   },
 };
