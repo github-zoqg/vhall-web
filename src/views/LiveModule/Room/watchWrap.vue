@@ -161,10 +161,8 @@
                     <span class="arrow"></span>
                     <template v-if="roominfo.modules.adv && roominfo.modules.adv.public.img">
                       <img
-                        :src="
-                          `https:${roominfo.domains.upload}/${roominfo.modules.adv.public.img}?x-oss-process=image/resize,m_fill,w_233,h_233`
-                        "
-                        :alt="`https:${roominfo.domains.upload}/${roominfo.modules.adv.public.img}`"
+                        :src="`${roominfo.modules.adv.public.img}?x-oss-process=image/resize,m_fill,w_233,h_233`"
+                        :alt="`${roominfo.modules.adv.public.img}`"
                       />
                     </template>
                   </div>
@@ -563,7 +561,7 @@
       :visible="showOfficialAccountQRCode"
       :width="'340px'"
       title="公众号二维码"
-      :onClose="showOfficialAccountQRCode = false"
+      :onClose="closeWXCode"
     >
       <div class="preview-wrap ad-qrcode">
         <div class="preview-title">
@@ -820,6 +818,9 @@ export default {
     window.vhallReport.report('LEAVE_WATCH')
   },
   methods: {
+    closeWXCode () {
+      this.showOfficialAccountQRCode = false
+    },
     // 心跳检测
     heartbeatLink() {
       setTimeout(() => {
@@ -1593,6 +1594,7 @@ export default {
           chat_login: {show: 1}
         }
       }
+      console.log(11111112222222, this.roominfo.modules.adv)
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
