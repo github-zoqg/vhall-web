@@ -2,12 +2,11 @@ import 'whatwg-fetch';
 import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
-import Env from './env';
 import { sessionOrLocal } from '../utils/utils';
 
 export default function fetchData(url, data1 = {}, header = {}) {
   const config = getApi(url);
-  let [api, method, mock, paas] = config;
+  let [api, method, mock, paas, staticdata] = config;
   if (!api) throw TypeError('api 未定义');
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
@@ -35,7 +34,7 @@ export default function fetchData(url, data1 = {}, header = {}) {
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
-    uuid: uuidV1()
+    'request-id': uuidV1()
     // 'Content-Type': 'application/json'
   };
 
@@ -69,11 +68,11 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
-  } else if (paas){
+  } else if (paas || staticdata){
     api = `${api}`
     option.headers = {}
   } else {
-    api = `${Env.BASE_URL}${api}`;
+    api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
   return fetch(api, option).then((res) => {
     return res.json();

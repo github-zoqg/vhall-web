@@ -2,7 +2,7 @@ import Layout from "@/layout/index";
 
 const router = [
   {
-    path: '/videoTailoring',
+    path: '/videoTailoring/:str(\\d+)',
     meta: { auth: true, title: '', name: 'videoTailoring'},
     component: () => import('@/views/LiveModule/PlayBack/videoTailoring'),
     hidden: true
@@ -17,7 +17,7 @@ const router = [
     path: '/live',
     component: Layout,
     redirect: '/live/list',
-    meta: { auth: true, title: '直播管理', icon: 'saasel-icon-v3-lives', level: 1 , name: 'liveMgr'},
+    meta: { auth: true, title: '直播管理', icon: 'saasicon_lives', level: 1 , name: 'liveMgr'},
     children: [
       {
         path: 'list',
@@ -227,7 +227,7 @@ const router = [
     path: '/special',
     component: Layout,
     redirect: '/special/list',
-    meta: { auth: true, title: '专题管理', name: 'Special', icon: 'saasel-icon-v3-projects', level: 1 },
+    meta: { auth: true, title: '专题管理', name: 'Special', icon: 'saasicon_projects', level: 1 },
     children: [
       {
         path: 'list',

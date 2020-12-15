@@ -22,10 +22,11 @@
         class="head-btn set-upload"
         :class="{'no-data': batchDelete}"
         :disabled="batchDelete"
-        @click="handleBatchDeletion">
+        @click="batchDialogTipVisible = true">
         批量删除
       </el-button>
       <el-input
+        @keyup.enter.native="searchGifts"
         class="head-btn fr search"
         v-model="searchName"
         placeholder="请输入礼物名称"
@@ -33,7 +34,7 @@
     </div>
     <el-card class="gift-list">
       <el-table
-        :data="tableData"
+        :data="currentTableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
         ref="multipleTable"
@@ -46,7 +47,7 @@
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="scope.row.img">
+            <img class="gift-cover" :src="defaultImgHost + scope.row.image_url">
             <!--TODO:-->
             <!-- <img class="gift-cover" :src="defaultImgHost + scope.row.img"> -->
           </template>
@@ -71,6 +72,7 @@
         :total="total"
         v-show="total > 10"
         :currentPage="searchParams.page"
+        :page-size="searchParams.page_size"
         @current-change="currentChangeHandler"
         align="center"></SPagination>
     </el-card>
@@ -141,6 +143,19 @@
       </span>
     </el-dialog>
     <el-dialog
+      title="提示"
+      width="400px"
+      :visible.sync="batchDialogTipVisible"
+      :close-on-click-modal="false"
+      :before-close="handleCancelBatchDelete"
+    >
+      <span>观众端礼物显示将受到影响, 确认删除?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCancelBatchDelete">取 消</el-button>
+        <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
       title="选择礼物"
       width="620px"
       :visible.sync="dialogGiftsVisible"
@@ -149,11 +164,12 @@
     >
 
       <el-input
-      class="head-btn fr search"
-      v-model="materiaSearchName"
-      placeholder="请输入礼物名称"
-      prefix-icon="el-icon-search"
-      @change="searchMaterialGift"/>
+        class="head-btn fr search"
+        v-model="materiaSearchName"
+        placeholder="请输入礼物名称"
+        prefix-icon="el-icon-search"
+        @keyup.enter.native="searchMaterialGift"
+      />
       <div class="select-matrial-wrap">
         <div
           v-for="(item, index) in materiaTableData"
@@ -162,7 +178,7 @@
           :class="{active: item.isChecked}"
           @click.stop="handleChooseGift(index)">
           <div class="gift-cover">
-            <img :src="item.img" alt>
+            <img :src="defaultImgHost + item.img" alt>
           </div>
           <div class="gift-info">
             <span class="gift-name">{{item.name}}</span>
@@ -191,6 +207,7 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
+import Env from "@/api/env";
 
 export default {
   name: "giftSize",
@@ -198,15 +215,16 @@ export default {
     return {
       webinar_id: this.$route.params.webinar_id,
       room_id: this.$route.query.roomId,
-      total: 100,
+      total: 0,
       materialTotal: 100,
       batchDelete: true,
       materiaTableData: [], // 资料库数据
       tableData: [], // 当前活动关联数据
+      currentTableData: [], // 当前显示的分页数据
       searchParams: {
         room_id: this.room_id,
         gift_name: '',
-        page_size: 20,
+        page_size: 10,
         page: 1
       },
       materiaSearchParams: {
@@ -214,7 +232,7 @@ export default {
         page_size: 20,
         page: 1
       },
-      defaultImgHost: process.env.upload + '/',
+      defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
       materiaSearchName: '',
       editParams: {
@@ -223,13 +241,14 @@ export default {
         name: '',
         price: ''
       },
+      batchDialogTipVisible: false, // 批量删除提示
       dialogTipVisible: false, // 删除提示
       dialogVisible: false, // 新建礼品
       dialogGiftsVisible: false, // 显示资料库添加礼品
       dialogShareVisible: false, // 分享面板
       shareMaterial: false, // 是否分享到资料库
       deleteId: '',
-      openGiftIds: [], // 显示礼物列表
+      // openGiftIds: [], // 显示礼物列表
       selectIds:[], // 批量操作
       addGiftsIds: [], // 添加礼物
       domain_url: ''
@@ -242,55 +261,71 @@ export default {
   },
   created() {
     this.getTableList()
-    this.queryMateriaGifts()
   },
-  mounted() {
-    this.bindEventListener()
-  },
+  mounted() {},
   methods: {
     // 获取礼物列表
-    getTableList () {
+    getTableList (isSearch) {
       this.$fetch('liveGiftList', {
         room_id: this.room_id
       }).then((res) => {
         if (res.code == 200 && res.data) {
+          this.searchParams.page = 1
           this.tableData = res.data.list
+          if (isSearch) {
+            const resultData = []
+            this.tableData.forEach(item => {
+              if(item.name.indexOf(this.searchName) != -1) {
+                resultData.push(item)
+              }
+            })
+            this.tableData = resultData
+          }
+          this.total = this.tableData.length
+          // 切换table显示的内容
+          this.currentTableData = this.tableData.filter((item, index) => {
+            return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+          })
+          this.addGiftsIds = this.tableData.map((item) => item.id)
         }
       })
+    },
+    searchGifts() {
+      this.getTableList(true)
     },
     // 监听回车等情况搜索礼物名称
-    bindEventListener () {
-      let searchBtn = document.querySelector('.el-input__suffix'),
-          inputDom = document.querySelector('.head-operat .el-input__inner')
+    // bindEventListener () {
+    //   let searchBtn = document.querySelector('.el-input__suffix'),
+    //       inputDom = document.querySelector('.head-operat .el-input__inner')
 
-      inputDom.setAttribute('id', 'outGiftSearchBtn')
-      searchBtn && searchBtn.addEventListener('click', () => {
-        this.searchParams.gift_name = this.searchName
-        this.searchParams.page = 1
-        this.getTableList()
-      })
-       document.onkeydown = (event) => {
-        // 搜索框获取焦点时点击回车自动搜搜
-        let e = event || window.event;
-        if (e && e.keyCode == 13) { //回车键的键值为13
-          if (document.activeElement.id == 'outGiftSearchBtn') {
-            this.searchParams.gift_name = this.searchName
-            this.searchParams.page = 1
-            this.getTableList()
-          }
-        }
-      };
-    },
+    //   inputDom.setAttribute('id', 'outGiftSearchBtn')
+    //   searchBtn && searchBtn.addEventListener('click', () => {
+    //     this.searchParams.gift_name = this.searchName
+    //     this.searchParams.page = 1
+    //     this.getTableList()
+    //   })
+    //    document.onkeydown = (event) => {
+    //     // 搜索框获取焦点时点击回车自动搜搜
+    //     let e = event || window.event;
+    //     if (e && e.keyCode == 13) { //回车键的键值为13
+    //       if (document.activeElement.id == 'outGiftSearchBtn') {
+    //         this.searchParams.gift_name = this.searchName
+    //         this.searchParams.page = 1
+    //         this.getTableList()
+    //       }
+    //     }
+    //   };
+    // },
     // 处理批量操作
     handleSelectionChange (val) {
       let ids = []
       // 只能删除用户自定义
       val.length > 0 && val.forEach((item, index) => {
         if (item.source_status == 1) {
-          ids.push(item.gift_id)
+          ids.push(item.id)
         }
       })
-      if (ids > 0) {
+      if (ids.length > 0) {
         this.batchDelete = false
       } else {
         this.batchDelete = true
@@ -303,7 +338,6 @@ export default {
     },
     // 上传礼物封面成功
     handleuploadSuccess(res, file){
-      console.log(res, file);
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
@@ -322,7 +356,6 @@ export default {
     },
     // 上传格式校验
     beforeUploadHandler(file){
-      console.log(file);
       const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
       const isType = typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -340,8 +373,9 @@ export default {
         gift_id: data.id,
         name: data.name,
         price: data.price,
-        img: process.env.img + '/' + data.img // TODO:
+        img: this.defaultImgHost + data.image_url
       }
+      this.domain_url = this.editParams.img
       this.dialogVisible = true
     },
     // 新建
@@ -379,6 +413,8 @@ export default {
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('编辑成功')
+          this.getTableList()
+          this.queryMateriaGifts()
           this.handleCancelEdit()
         }
       }).catch((e) => {
@@ -395,11 +431,13 @@ export default {
         this.$message.error('请输入正确礼物价格')
         return
       }
-      this.$fetch('createGiftInfo', {
-        ...this.editParams
+      this.$fetch('createWebinarGift', {
+        ...this.editParams,
+        room_id: this.room_id
       }).then((res) => {
         if (res.code == 200) {
           this.$message.success('创建成功')
+          this.getTableList()
           this.handleCancelEdit()
           this.closeShare()
         }
@@ -422,14 +460,30 @@ export default {
       this.queryMateriaGifts()
     },
     // 获取资料库礼物数据
-    queryMateriaGifts () {
+    queryMateriaGifts (isSearch) {
       this.$fetch('shareGiftList').then((res) => {
         if (res.code == 200 && res.data) {
           res.data.list.length > 0 && res.data.list.forEach((item, index) => {
             item.isChecked = false
+            if (this.addGiftsIds.length > 0) {
+              this.addGiftsIds.map(addItem => {
+                if(addItem == item.gift_id) {
+                  item.isChecked = true
+                }
+              })
+            }
           })
           this.materiaTableData = res.data.list
-          this.materialTotal = res.data.total
+          if (isSearch) {
+            const resultData = []
+            res.data.list.forEach(item => {
+              if(item.name.indexOf(this.materiaSearchName) != -1) {
+                resultData.push(item)
+              }
+            })
+            this.materiaTableData = resultData
+          }
+          this.materialTotal = this.materiaTableData.length
         }
       })
     },
@@ -440,7 +494,10 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
       this.searchParams.page = val
-      this.getTableList()
+      // 切换table显示的内容
+      this.currentTableData = this.tableData.filter((item, index) => {
+        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      })
     },
     // 删除礼品
     handleDelete (data) {
@@ -448,54 +505,58 @@ export default {
       this.deleteId = data.id
     },
     handleDeleteGift () {
-      this.$fetch('deleteGift', {
-        gift_id: this.deleteId
-      }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success('删除成功')
-          this.clearOpenGiftStatu(this.deleteId)
-          this.deleteId = ''
-          this.dialogTipVisible = false
+      const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
+      this.tableData = resData
+      this.addGiftsIds = this.tableData.map(item => item.id)
+      this.materiaTableData.forEach(meterialItem => {
+        if (meterialItem.gift_id == this.deleteId) {
+          meterialItem.isChecked = false
         }
-      }).catch((e) => {
-          this.$message.error('删除失败')
       })
+      this.chooseGift()
+
+      this.deleteId = ''
+      this.dialogTipVisible = false
     },
     handleCancelDelete () {
       this.deleteId = ''
       this.dialogTipVisible = false
     },
+    handleCancelBatchDelete () {
+      this.selectIds = []
+      this.batchDialogTipVisible = false
+    },
     // 批量删除
     handleBatchDeletion () {
-      // 成功接口删除已经显示的数据
       this.selectIds.forEach((item, index) => {
-        this.clearOpenGiftStatu(item)
+        const resData = this.tableData.filter(curItem => curItem.id != item)
+        this.tableData = resData
+        this.materiaTableData.forEach(meterialItem => {
+          if (meterialItem.gift_id == item) {
+            meterialItem.isChecked = false
+          }
+        })
       })
+      this.addGiftsIds = this.tableData.map(item => item.id)
+      this.chooseGift()
       this.selectIds = []
-    },
-    // 删除时清理选中礼品状态
-    clearOpenGiftStatu (id) {
-      this.openGiftIds.length > 0 && this.openGiftIds.forEach((i, num) => {
-        if (i == id) {
-          this.openGiftIds.splice(num, 1)
-        }
-      })
+      this.batchDialogTipVisible = false
     },
     // 修改礼品显示状态
-    changeGiftStatu () {
-      if (this.changeStatuTimer) clearTimeout(this.changeStatuTimer)
-      this.changeStatuTimer = setTimeout(() => {
-        if (arguments[0]) {
-          if (this.openGiftIds.length <= 40) {
-            this.openGiftIds.push(arguments[1])
-          } else {
-            this.$message.warn('观看端最多显示40个礼物')
-          }
-        } else {
-          this.openGiftIds.splice(this.openGiftIds.indexOf(arguments[1]), 1)
-        }
-      }, 300)
-    },
+    // changeGiftStatu () {
+    //   if (this.changeStatuTimer) clearTimeout(this.changeStatuTimer)
+    //   this.changeStatuTimer = setTimeout(() => {
+    //     if (arguments[0]) {
+    //       if (this.openGiftIds.length <= 40) {
+    //         this.openGiftIds.push(arguments[1])
+    //       } else {
+    //         this.$message.warn('观看端最多显示40个礼物')
+    //       }
+    //     } else {
+    //       this.openGiftIds.splice(this.openGiftIds.indexOf(arguments[1]), 1)
+    //     }
+    //   }, 300)
+    // },
     // 选择奖品添加
     handleChooseGift (index) {
       if (!this.materiaTableData[index].isChecked) {
@@ -511,24 +572,24 @@ export default {
         gift_ids: this.addGiftsIds.join(','),
         room_id: this.room_id
       }).then(res => {
-        console.log(res)
         this.handleCloseChooseGift()
+        this.getTableList()
       })
     },
     handleCloseChooseGift () {
-      this.addGiftsIds = []
       this.dialogGiftsVisible = false
     },
     // 翻页
-    currentMaterialChangeHandler (val) {
-      this.materiaSearchParams.page = val
-      this.queryMateriaGifts()
-    },
+    // currentMaterialChangeHandler (val) {
+    //   this.materiaSearchParams.page = val
+    //   this.queryMateriaGifts()
+    // },
     // 检索奖品库礼物
     searchMaterialGift () {
-      this.materiaSearchParams.gift_name = this.materiaSearchName
-      this.materiaSearchParams.page = 1
-      this.queryMateriaGifts()
+      // this.materiaSearchParams.gift_name = this.materiaSearchName
+      // this.materiaSearchParams.page = 1
+      // this.queryMateriaGifts()
+      this.queryMateriaGifts(true)
     },
     // 新建添加到资料库
     handelShareMarterial () {
@@ -548,6 +609,9 @@ export default {
   }
   /deep/.el-upload--picture-card{
     width:83%;
+  }
+  /deep/.el-upload--picture-card .box img {
+    width: auto
   }
   .head-operat{
     margin-bottom: 20px;
@@ -695,15 +759,17 @@ export default {
     }
     margin-bottom: 20px;
   }
-  .control-btn{
-    position: absolute;
-    top: -8px;
-    left: 0;
-  }
   .control{
+    padding-top: 30px;
     padding-bottom: 32px;
     width: 100%;
     position:relative;
+    &>span {
+      display: inline-block;
+      position: absolute;
+      top: 43px;
+      left: 20px;
+    }
     /deep/.add-btn, .cancel-btn{
       width: 80px;
       height: 34px;

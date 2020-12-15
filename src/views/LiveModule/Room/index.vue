@@ -26,8 +26,6 @@
       :rootActive='rootActive'
       :roomStatus='roomStatus'
     ></vhall-saas>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="chatSdkLoadHandler"></remote-script>
-    <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="interactionSdkLoadHandler"></remote-script>
   </div>
 </template>
 <script>
@@ -67,6 +65,7 @@ export default {
   beforeCreate() {},
   created() {
     if (!browserSupport()) return;
+    this.getUserinfo()
   },
 
   mounted() {
@@ -196,19 +195,6 @@ export default {
 
       });
     },
-    chatSdkLoadHandler(){
-      this.chatSdkLoaded = true;
-      if(this.chatSdkLoaded&&this.interactionSdkLoaded){
-        this.getUserinfo();
-      }
-
-    },
-    interactionSdkLoadHandler(){
-      this.interactionSdkLoaded = true;
-      if(this.chatSdkLoaded&&this.interactionSdkLoaded){
-        this.getUserinfo();
-      }
-    }
   }
 };
 </script>

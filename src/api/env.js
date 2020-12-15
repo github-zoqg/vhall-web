@@ -6,7 +6,6 @@
  * 配置编译环境和线上环境之间的切换
  * fileBaseUrl = 文件所在域名地址
  */
-let staticBaseUrl; // 静态图片展示地址
 let staticLinkVo = {
   kf: 'http://webim.qiao.baidu.com//im/index?siteid=113762&ucid=2052738',
   aliQr: '//aliqr.e.vhall.com/qr.png?t=',
@@ -17,44 +16,6 @@ let staticLinkVo = {
   helpLinkUrl: 'https://www.vhall.com/help', // 帮助中心跳转地址
   WEB_SHARE_URL: 'http://localhost:8080/#' // 部署后链接地址（注意发起端，现在必须要https才能发起）
 };
-let roomWatchUrl; // 观看页部署域名地址，AG: http://live.vhall.com/
-let BASE_URL;
-let web = ''
-switch (process.env.VUE_APP_NODE_ENV) {
-  case 'production':
-    staticBaseUrl = '//cnstatic01.e.vhall.com/';
-    roomWatchUrl = 'http://live.vhall.com/'; // 原来
-    BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    web = 'https://e.vhall.com/v3'
-    break;
-  case 'test':
-    staticBaseUrl = '//cnstatic01.e.vhall.com/';
-    roomWatchUrl = 'http://live.vhall.com/';
-    BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    web = 'https://t.e.vhall.com/v3'
-    break;
-  case 'pre':
-    staticBaseUrl = '//cnstatic01.e.vhall.com/';
-    roomWatchUrl = 'http://live.vhall.com/';
-    BASE_URL = 'https://t-saas-dispatch.vhall.com/';
-    web = 'https://t.e.vhall.com/v3'
-    break;
-  case 'development':
-    staticBaseUrl = '//cnstatic01.e.vhall.com/';
-    roomWatchUrl = 'http://live.vhall.com/';
-    BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    web = 'https://t.e.vhall.com/v3'
-    break;
-  default:
-    staticBaseUrl = '//cnstatic01.e.vhall.com/';
-    roomWatchUrl = 'http://live.vhall.com/';
-    BASE_URL = 'https://t-saas-dispatch.vhall.com';
-    web = 'https://t.e.vhall.com/v3'
-}
 export default {
-  staticLinkVo,
-  staticBaseUrl,
-  roomWatchUrl,
-  BASE_URL,
-  web
+  staticLinkVo
 };

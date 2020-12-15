@@ -39,10 +39,10 @@
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
             <el-dropdown-item divided @click.native="toAccountPage">
-              <span><icon icon-class="saasicon_Settings"></icon>账户信息</span>
+              <span><icon icon-class="saasicon_Settings" class="hover-icon"></icon>账户信息</span>
             </el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">
-              <span><icon icon-class="saasicon_Settings"></icon>退出</span>
+              <span><icon icon-class="saasicon_Settings" class="hover-icon"></icon>退出</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -145,7 +145,8 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="less" scoped>
+@import '../../common/css/index.less';
 .user-dropdown {
   /deep/.el-dropdown-menu__item{
     padding: 0 10px!important;
@@ -153,10 +154,10 @@ export default {
   /deep/.el-dropdown-menu__item--divided:before {
     display: none!important;
   }
+  .hover-icon {
+    margin-right: 12px;
+  }
 }
-</style>
-<style lang="less" scoped>
-@import '../../common/css/index.less';
 .navbar {
   height: 64px;
   padding: 15px 17px;

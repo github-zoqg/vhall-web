@@ -1,6 +1,34 @@
 const path = require('path');
+let cdn = {
+  js: [
+    "//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4-1.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-vodupload/latest/vhall-jssdk-upload-2.0.2.js",
+    "//t-static01-open.e.vhall.com/jssdk/vhall-jssdk-form/vhall-jssdk-form-1.0.3.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.1.3.js",
+    "//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202",
+    "//static01-open.e.vhall.com/jssdk/question-component/1.0.3/questionnaire_service.js"
+  ]
+}
+
+let publicPath = null
+
+switch (process.env.VUE_APP_NODE_ENV)  {
+  case 'development':
+    publicPath = '/'
+    break;
+  case 'test':
+    publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
+    break;
+  default :
+    publicPath = './'
+    break;
+}
+
+
 module.exports = {
   lintOnSave: false,
+  assetsDir: './static',
+  publicPath: publicPath,
   devServer: {
     proxy: {
       '/mock': {
@@ -27,6 +55,12 @@ module.exports = {
         }
       }
     }
+  },
+  chainWebpack: config=>{
+    config.plugin('html').tap(options=>{
+      options[0].cdn = cdn
+      return options
+    })
   },
   pluginOptions: {
     'style-resources-loader': {

@@ -1663,7 +1663,6 @@ export default {
       }
 
       if (!this.permission.includes(100030) && !this.assistantType) {
-        alert('tets --1')
         this.isWhiteBoardEnabled = true;
         this.$refs.doc && this.$refs.doc.toggleBoard(true);
         this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
@@ -2515,13 +2514,11 @@ export default {
             token: this.roomInfo.interact.paas_access_token,
             hide: this.$route.query.hide == 1
           };
-          console.warn('cxs----', opt);
           VhallChat.createInstance(
             opt,
             chat => {
               window.chatSDK = chat.message;
               this.roomReady = true;
-              console.warn('cxs---1-', opt);
               this.$loadingStus.close();
               this.$EventBus.$on('sdkReady', () => {
                 if (!this.assistantType && this.roomInfo.join_info.role_name != 3) {

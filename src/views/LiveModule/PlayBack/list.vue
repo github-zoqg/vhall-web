@@ -2,7 +2,7 @@
   <div class="listBox">
     <pageTitle title="回放管理"></pageTitle>
     <div class="operaBlock">
-      <el-button size="medium" type="primary" round @click="toTailoring">创建回放</el-button>
+      <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
       <el-button size="medium" plain round>录制</el-button>
       <el-button size="medium" round @click="settingHandler">回放设置</el-button>
       <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
@@ -44,7 +44,7 @@
               <div class="info">
                 <p class="name ellipsis"><span class="text">{{ scope.row.name }}</span></p>
                 <p>{{ scope.row.created_at }}</p>
-                <span class="tag">章节</span>
+                <!-- <span class="tag">章节</span> -->
               </div>
             </div>
           </template>
@@ -85,7 +85,7 @@
           <template slot-scope="scope">
             {{ scope.row.date }}
             <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-            <el-button type="text">下载</el-button>
+            <el-button type="text" @click="downPlayBack(scope.row)">下载</el-button>
             <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
             <el-dropdown @command="handleCommand">
               <el-button type="text">更多</el-button>
@@ -191,11 +191,10 @@ export default {
       this.selectDatas = val;
     },
     handleCommand(param){
-      console.log(param);
       if(param.command == 'delete'){
         this.deletePlayBack(param.data.id);
       }else if(param.command == 'tailoring'){
-        this.toTailoring();
+        this.toTailoring(param.data.id, param.data.name);
       }
     },
     currentChangeHandler(num){
@@ -209,15 +208,15 @@ export default {
         pos: this.pos,
         limit: this.pageSize,
         source: this.recordType,
-        title: this.keyWords
       };
+      this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
         this.tableData = res.data.list;
         this.totalElement = res.data.total;
         console.log(res);
       }).catch(error=>{
-        this.$message.error(`获取回访列表失败，${error.msg || error.message}`);
+        this.$message.error(`获取回放列表失败，${error.msg || error.message}`);
       }).finally(()=>{
         this.loading = false;
       });
@@ -227,6 +226,16 @@ export default {
       this.titleEdit = data.name;
       this.editDialogVisible = true;
       this.editRecord = data;
+    },
+    // 下载回放
+    downPlayBack(data) {
+      console.log(data);
+      this.$fetch('playBackDownUrlGet', {
+        record_id: data.id
+      }).then(res => {
+        console.log(res)
+        // window.open(this.downloadHref);
+      })
     },
     deletePlayBack(ids){
       this.$confirm('删除回放会导致目前已生成回放的数据丢失，请谨慎操作，确定要删除这段回放么？', '提示', {
@@ -270,8 +279,11 @@ export default {
     settingHandler(){
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
-    toTailoring(){
-      this.$router.push({path: `/videoTailoring`});
+    toCreate() {
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
+    },
+    toTailoring(recordId, recordName){
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
     },
     toChapter(recordId){
       this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId}});

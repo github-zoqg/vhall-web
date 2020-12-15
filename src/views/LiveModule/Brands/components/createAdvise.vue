@@ -51,7 +51,7 @@
         <el-scrollbar>
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <img :src="`${baseImgUrl}${item.img_url}`" alt="">
+              <img :src="`${item.img_url}`" alt="">
               <p>{{ item.subject }}</p>
               <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
@@ -175,9 +175,9 @@ export default {
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
-          if (type) {
+          /*if (type) {
             this.advSaveToWebinar(res.data.adv_info.adv_id);
-          }
+          }*/
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
           // 获取列表数据
           this.$emit('reload');

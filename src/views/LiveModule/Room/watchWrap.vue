@@ -493,13 +493,7 @@
                         <span class="left-mark">推广</span>
                         <a :href="item.url">
                           <img
-                            :src="
-                              `${roominfo.domains && roominfo.domains.upload}/${
-                                item.webinar
-                                  ? item.webinar.img_url
-                                  : item.img_url
-                              }`
-                            "
+                            :src="item.img_url"
                             onerror="this.src='//cnstatic01.e.vhall.com/static/img/v35-webinar.png';this.onerror=null"
                             alt
                           />
@@ -1508,9 +1502,6 @@ export default {
           : data.webinar.type == 4
           ? '点播'
           : '回放'
-      if (this.water && this.water.img_url) {
-        this.water.img_url = data.urls.upload_url + '/' + this.water.img_url
-      }
       this.roominfo = {
         webinar: Object.assign({}, data.webinar, {
           image_url: data.webinar.img_url,
@@ -1579,9 +1570,9 @@ export default {
         },
         modules: {
           logo: {
-            show: this.signInfo ? this.signInfo.view_status : 0,
+            show: this.signInfo ? this.signInfo.view_status : 0, // 观看标志w
             href: this.signInfo ? this.signInfo.skip_url : '',
-            image: this.signInfo ? this.signInfo.logo : '',
+            image: this.signInfo ? this.signInfo.logo_url : '',
             reserved_status: this.signInfo ? this.signInfo.reserved_status : 0, // 版权信息
             organizers_status: this.signInfo ? this.signInfo.organizers_status : 0// 主办方信息
           },
@@ -1610,7 +1601,7 @@ export default {
       if (this.roominfo.modules && this.roominfo.modules.barrage) {
         this.roominfo.player.barrage = this.roominfo.modules.barrage.hide
       }
-
+      
       this.userChatId = this.roominfo.user.third_party_user_id
       // 获取所有的主域名
       this.webDominUrl = this.roominfo.domains.web
@@ -1863,8 +1854,6 @@ export default {
     margin: 0 auto;
     overflow: hidden;
     // position: relative;
-    padding-left: 80px;
-    padding-right: 80px;
     .title-right {
       float: right;
     }

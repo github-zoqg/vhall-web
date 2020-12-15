@@ -57,8 +57,8 @@ const apis = {
   viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
   //播放器设置
-  setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯 •••
-  setWatermark: ['/101/v3/interacts/players/set-watermark-config', 'POST', 'mock'], //从资料库保存到活动 •••
+  setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
+  setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
   getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息 •••
   getWatermark: ['/v3/interacts/players/get-watermark-config', 'GET'], //观看端_获取水印设置 •••
 
@@ -73,7 +73,7 @@ const apis = {
   //  邀请卡
   getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
   setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
-  editCardStatus: ['/101/v3/interacts/invite-card/edit', 'POST', 'mock'], //修改邀请卡信息
+  editCardStatus: ['/v3/interacts/invite-card/edit', 'POST'], //修改邀请卡信息
   createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
   createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
   getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
@@ -122,6 +122,7 @@ const apis = {
   regAnswerSubmit: ['/v3/webinars/registration-form/submit', 'POST'], // 提交报名表单答案
   regVisiterCheck: ['/v3/webinars/registration-form/get-visiter-register-status', 'POST'], // 查询某个访客是否已经报过名
   verifyOpenLink: ['/v3/webinars/registration-form/verify-open-link', 'GET'], // 检查报名表单是否开启独立链接以及独立链接是否有效
+  getAreaList: ['/data/area.json','GET', false, false, 'staticdata'], // 本地静态资源区域列表
 
   // 第三方K值模块
   kidAuthInfo:  ['/v3/webinars/auth/info', 'POST'], // 获取单个活动K值详情接口 •••
@@ -206,10 +207,13 @@ const apis = {
   playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding  √
   playBackDelete: ['/v3/webinars/record/delete', 'POST'], // 删除回放 xiaodong.ding  √
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
-  playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
+  playBackDemand: ['/v3/webinars/webinar/create-demand', 'POST'], // 回放发布为点播 jian.chang
   playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
   playBackSetDefault: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
-  getChapters: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
+  playBackChaptersGet: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
+  playBackDownUrlGet: ['/v3/webinars/record/check-download', 'POST'], // 获取回放下载地址 xiaodong.ding
+  tailorSave: ['/v3/webinars/record/cut', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  createRecord: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -242,6 +246,21 @@ const apis = {
 
   // 直播-互动统计
   getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
+  getRoomLikeInfo: ['/v3/interacts/like/get-room-like', 'POST'], // 获取房间的点赞数量
+  getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天列表
+  getSignInfo: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取发起签到的签到总数
+  getSpeakListInfo: ['/v3/interacts/inav/get-speak-list', 'POST'], // 获取发起签到的签到总数
+  getRewardListInfo: ['/v3/interacts/reward/get-room-reward-stat', 'POST'], // 获取房间打赏统计
+  getShareListInfo: ['/v3/interacts/share/get-top-list', 'POST'], // 获取分享榜
+  getInviteListInfo: ['/v3/interacts/invite-card/get-list', 'POST'], // 获取邀请数
+  getPrizeUserInfo: ['/v3/vss/lottery/winner/count', 'GET'], // 获取抽奖中奖人总数
+  getPrizeListInfo: ['/v3/vss/lottery/get-prize-data-info-list', 'GET'], // 获取信息收集-抽奖数据/日期筛选
+  getSurveyInfo: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下问卷提交人数
+  getSurveyUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下问卷使用数据概览
+  getGiftIncome: ['/v3/interacts/gift/get-gift-income-stat', 'GET'], // 获取礼物收益
+  getAnswerListInfo: ['/v3/webinars/registration-form/get-answer-people-count', 'GET'], // 获取报名表单总人数
+
+  //直播-互动统计-详情页
   getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
 
   // 账户管理
@@ -273,10 +292,12 @@ const apis = {
   getFlowLineInfo: ['/v3/data-center/business-total/user-flow-trend', 'GET'],  // 账户---流量----数据趋势图
   getTrendHighInfo: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET'],  // 并发-消费账单-最高并发
   getFlowPayInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  // 流量--消费账单-活动总数
-
-  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //并发-消费账单
-  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //流量-消费账单-分页明细[子账号也涉及]
-
+  getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //账户并发数据趋势图
+  getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取用量统计数据-流量
+  getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET', 'data'],  //获取并发-消费账单
+  getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
+  getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
+  getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
   exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
   exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
   exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
@@ -444,6 +465,7 @@ const apis = {
   sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
   setRelevance: ['/v3/interacts/gift/set-webinar-map-gifts', 'POST'], // 设置活动关联礼物
+  createWebinarGift: ['/v3/interacts/gift/create-webinar-gift', 'POST'], // 设置活动关联礼物
 
 
   // 点赞

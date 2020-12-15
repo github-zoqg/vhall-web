@@ -12,7 +12,7 @@ export default {
   },
   data() {
     return {
-      actionUrl: `${Env.BASE_URL}/v3/interacts/document/upload-webinar-document`,
+      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/interacts/document/upload-webinar-document`,
       docTxt: '暂无默认文档'
     };
   },

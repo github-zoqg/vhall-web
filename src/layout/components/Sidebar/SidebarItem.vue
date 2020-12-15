@@ -4,7 +4,7 @@
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
           <template slot="title">
-            <icon :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" v-if="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"></icon>
+            <icon class="sidebar-font" :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" v-if="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"></icon>
             <span slot='title' v-if="onlyOneChild.meta.title">{{onlyOneChild.meta.title}}</span>
           </template>
         </el-menu-item>
@@ -14,7 +14,7 @@
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <!-- 包含子菜单 -->
       <template slot="title">
-        <icon :icon-class="item.meta && item.meta.icon" v-if="item.meta && item.meta.icon"></icon>
+        <icon class="sidebar-font" :icon-class="item.meta && item.meta.icon" v-if="item.meta && item.meta.icon"></icon>
         <span slot='title' v-if="item.meta.title">{{item.meta.title}}</span>
       </template>
       <sidebar-item

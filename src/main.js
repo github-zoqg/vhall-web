@@ -16,7 +16,6 @@ import 'tinymce/plugins/quickbars';//快速栏插件
 import 'tinymce/plugins/fullscreen';//全屏插件
 
 import EventBus from './utils/Events';
-import baseObj from './api/env'
 import {copy, dealObjectValue, domainCovert, parseURL, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
@@ -48,13 +47,12 @@ Vue.prototype.$params = dealObjectValue; //去除空值参数转换
 Vue.prototype.$domainCovert = domainCovert;// 添加域名
 Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
 Vue.prototype.$img = require('./common/images/small.png');
-
 Vue.use(ElementUI);
 Vue.use(vhallSaas, {
   config: {
     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
   },
-  baseUrl: baseObj.BASE_URL,
+  baseUrl: process.env.VUE_APP_BASE_URL,
   buHost: "https://t.e.vhall.com"
 });
 
@@ -71,7 +69,6 @@ window.SAAS_V3_COL = {
   KEY_2: 'SAAS_V3_PID', // 用户ID
   KEY_3: 'SAAS_V3_BASE64', // 控制台token
   KEY_4: 'SAAS_V3_UO', // 用户对象
-  SYS_URL: baseObj
 };
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
