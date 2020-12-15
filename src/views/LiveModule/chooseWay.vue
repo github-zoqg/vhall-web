@@ -105,7 +105,8 @@ export default {
     }
   },
   mounted() {
-    this.watchUrl = `/live/room/${this.arr[0]}`
+    const path = (process.env.VUE_APP_NODE_ENV == 'test' || process.env.VUE_APP_NODE_ENV == 'production') ? '/v3/' : '/'
+    this.watchUrl = `${path}/live/room/${this.arr[0]}`
   }
 };
 </script>
