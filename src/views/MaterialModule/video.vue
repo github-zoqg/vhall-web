@@ -112,7 +112,7 @@ export default {
       }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
       let name = beforeName.split('.m')[0];
-      console.log(name, '22222222222222222222222222');
+      console.log(name, beforeName,  '22222222222222222222222222');
       let onlyId = this.uploadId--;
       file.id = onlyId;
       if(!reg.test(name)){
@@ -124,7 +124,7 @@ export default {
       }
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
-        file_name: name,
+        file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
         duration: '',
         uploadObj: {}, // type：1   上传视频     2创建点播
         id: onlyId

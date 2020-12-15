@@ -247,7 +247,7 @@ const apis = {
   // 直播-互动统计
   getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
   getRoomLikeInfo: ['/v3/interacts/like/get-room-like', 'POST'], // 获取房间的点赞数量
-  getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天列表
+  getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天总数和列表
   getSignInfo: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取发起签到的签到总数
   getSpeakListInfo: ['/v3/interacts/inav/get-speak-list', 'POST'], // 获取发起签到的签到总数
   getRewardListInfo: ['/v3/interacts/reward/get-room-reward-stat', 'POST'], // 获取房间打赏统计
@@ -258,10 +258,17 @@ const apis = {
   getSurveyInfo: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下问卷提交人数
   getSurveyUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下问卷使用数据概览
   getGiftIncome: ['/v3/interacts/gift/get-gift-income-stat', 'GET'], // 获取礼物收益
+  getRedpacketInfo: ['/v3/interacts/redpacket/get-redpacket-overview', 'GET'], // 获取活动下红包统计数据
   getAnswerListInfo: ['/v3/webinars/registration-form/get-answer-people-count', 'GET'], // 获取报名表单总人数
 
   //直播-互动统计-详情页
   getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
+  deleteRecodrder: ['/v3/interacts/qa/delete-question', 'POST'], // 获取删除一条问问答记录
+  exportRecodrder: ['/v3/interacts/qa/export-qa-recorder', 'GET'], // 导出问答记录
+  deleteAllRecodrder: ['/v3/interacts/qa/batch-delete-qa', 'POST'], // 批量删除提问或者答案
+  deleteChatList: ['/v3/interacts/chat/batch-delete-message', 'POST'], //批量删除聊天的消息
+  getRedpacketList: ['/v3/interacts/redpacket/get-redpacket-send-recorder', 'GET'], //活动群红包发送记录
+  getSignList: ['/v3/interacts/sign/get-sign-list', 'POST'], //获取发起的签到列表
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
