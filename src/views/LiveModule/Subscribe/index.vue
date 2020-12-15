@@ -395,6 +395,7 @@
       </div>
     </section>
     <div :class="{area: true, product: productFlag}">
+      <custoMenu></custoMenu>
       <div class="active-second" v-if="advs && advs.length > 0">
         <h3>活动推荐</h3>
         <hr />
@@ -416,33 +417,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="flex1"> -->
-        <!-- <custoMenu></custoMenu> -->
-        <!-- <el-tabs class="foot" v-model="activeName2" @tab-click="handleClick">
-          <el-tab-pane label="活动推荐" name="activity">
-            <ul class="activity" ref="activityUL">
-              <li>
-                <div class="imgBox">
-                  <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-                </div>
-                <p class="activityName"><span>最多可输入30个文字</span></p>
-              </li>
-              <li v-for=" i in  10" :key="i">
-                <div class="imgBox">
-                  <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-                </div>
-                <p class="activityName"><span>最多可输入30个文字，单行居中对齐折行文字左对齐</span></p>
-              </li>
-            </ul>
-            <span class="operaBtn left" @click="activityMove('left')">
-              <i class="el-icon-arrow-left"></i>
-            </span>
-            <span class="operaBtn right" @click="activityMove('right')">
-              <i class="el-icon-arrow-right"></i>
-            </span>
-          </el-tab-pane>
-        </el-tabs>
-      </div> -->
       <!-- <products
         v-if="productFlag"
         @sellGoodsInfo="sellGoodsInfo"
