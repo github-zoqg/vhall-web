@@ -518,6 +518,7 @@ export default {
           .border{
             display: none;
             border: 2px solid red;
+            background: red;
             width: 100%;
             position: absolute;
             top: 0;
