@@ -35,6 +35,7 @@
                </div>
               </li>
             </ul>
+            <!-- 语音回复 -->
             <ul class="await-deal text-deal" v-show="active == 1">
               <li v-for="(item, index) in textDealList" :key="index" class="clearFix">
                <div class="fl">
