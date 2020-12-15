@@ -9,6 +9,7 @@ Vue.use(Router);
 const routes = [];
 // 动态加载路由
 const modulesFiles = require.context('./modules', true, /\.js$/);
+
 modulesFiles.keys().map((modulePath) => {
   routes.push(...modulesFiles(modulePath).default);
 });
@@ -88,6 +89,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   NProgress.done();
 });
+console.log('routerer');
 export function resetRouter() {
   const newRouter = createRouter();
   router.matcher = newRouter.matcher;// reset router

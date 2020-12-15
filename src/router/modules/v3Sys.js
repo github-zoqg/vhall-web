@@ -1,6 +1,4 @@
 import Layout from "@/layout/index";
-import {sessionOrLocal} from "@/utils/utils";
-
 const router = [
   {
     path: '/login',

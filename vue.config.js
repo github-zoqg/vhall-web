@@ -10,9 +10,12 @@ let cdn = {
   ]
 }
 
-let publicPath = './'
+let publicPath = null
 
 switch (process.env.VUE_APP_NODE_ENV)  {
+  case 'development':
+    publicPath = '/'
+    break;
   case 'test':
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
     break;
