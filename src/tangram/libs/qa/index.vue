@@ -236,7 +236,8 @@ export default {
       });
     },
     openQa(){
-      window.open(`/live/qa/${this.webinarId}`)
+      const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
+      window.open(`${base}live/qa/${this.webinarId}`)
     },
     refresh () {
       this.scroll.refresh();
