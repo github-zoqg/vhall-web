@@ -78,7 +78,9 @@ export default {
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          window.location.href = this.watchUrl;
+          this.$route.push({
+            path: this.watchUrl
+          })
         } else {
           this.$router.push({path: '/browser'})
         }
@@ -105,8 +107,7 @@ export default {
     }
   },
   mounted() {
-    const path = (process.env.VUE_APP_NODE_ENV == 'test' || process.env.VUE_APP_NODE_ENV == 'production') ? '/v3/' : '/'
-    this.watchUrl = `${path}/live/room/${this.arr[0]}`
+    this.watchUrl = `/live/room/${this.arr[0]}`
   }
 };
 </script>
