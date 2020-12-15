@@ -17,31 +17,32 @@
               <li v-for="(item, index) in awaitList" :key="index" class="clearFix">
                <div class="fl">
                  <p class="await-name">
-                  <span>{{item.name}}</span>
-                  <span>{{filterTime(item.time)}}</span>
+                  <span>{{item.nick_name}}</span>
+                  <span>{{item.created_at}}</span>
                  </p>
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
-                  <el-button @click="reply('audio')" size="small" class="setBut">标记为语音回复</el-button>
+                  <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
+                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">标记为语音回复</el-button>
                   <el-dropdown @command="reply" size="small" class="setBut">
                     <el-button size="small"  class="el-dropdown-link">更多</el-button>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command='private'>私聊</el-dropdown-item>
-                        <el-dropdown-item command='no'>不处理</el-dropdown-item>
+                        <el-dropdown-item :command='{type: "private",item:item, index}'>私聊</el-dropdown-item>
+                        <el-dropdown-item :command='{type: "no", item:item, index}'>不处理</el-dropdown-item>
                       </el-dropdown-menu>
                   </el-dropdown>
                </div>
               </li>
             </ul>
+            <!-- 语音回复 -->
             <ul class="await-deal text-deal" v-show="active == 1">
-              <!-- textDealList -->
-              <li v-for="(item, index) in awaitList" :key="index"  class="clearFix">
+              <li v-for="(item, index) in textDealList" :key="index" class="clearFix">
                <div class="fl">
                  <p class="await-name">
-                  <span>{{item.name}}</span>
-                  <span>{{filterTime(item.time)}}</span>
+                  <span>{{item.nick_name}}</span>
+                  <span>{{item.created_at}}</span>
+                  <span>{{baseObj}}</span>
                  </p>
                  <p class="await-content">{{item.content}}</p>
                </div>
@@ -51,8 +52,25 @@
                </div>
               </li>
             </ul>
+            <!-- 文字回复 -->
             <ul class="no-deal" v-show="active == 2">
               <li v-for="(item, index) in noDealList" :key="index">{{item}}</li>
+            </ul>
+            <!-- 不处理 -->
+            <ul class="no-deal await-deal" v-show="active == 3">
+              <li v-for="(item, index) in noDealList" :key="index" class="clearFix">
+                <div class="fl">
+                 <p class="await-name">
+                  <span>{{item.nick_name}}</span>
+                  <span>{{item.created_at}}</span>
+                 </p>
+                 <p class="await-content">{{item.content}}</p>
+               </div>
+               <div class="fr">
+                    <span>操作时间：{{filterTime(item.updated_at)}}</span>
+                    <span class="ellsips">操作人：{{baseObj.join_info && baseObj.join_info.nickname}}</span>
+                </div>
+              </li>
             </ul>
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
@@ -63,12 +81,36 @@
           </div>
         </div>
     </div>
+    <VhallDialog
+        title="文字回复"
+        custom-class='text-reply'
+        :visible.sync="textDalog"
+        :close-on-click-modal="false"
+        width="50%">
+        <div id="send-content">
+          <el-input
+            type="textarea"
+            maxlength="200"
+            :rows="5"
+            placeholder="请输入内容"
+            v-model="sendMessage.text"
+            show-word-limit>
+          </el-input>
+        </div>
+        <div slot="footer">
+          <p class="send-left">
+            <el-radio v-model="sendMessage.Radio" label="1">公开</el-radio>
+            <el-radio v-model="sendMessage.Radio" label="0">私密</el-radio>
+          </p>
+          <el-button class="send-right" type="primary" @click="textReply">确定</el-button>
+        </div>
+      </VhallDialog>
   </div>
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
 import Private from './PrivateMess/index';
-
+import { faceArr, textToEmoji, emojiToPath } from '@/tangram/libs/chat/js/emoji';
 export default {
   components: {
     OldHeader,
@@ -77,7 +119,6 @@ export default {
   computed:{
     filterTime(){
       return function(time){
-        console.warn(time, 77);
         return this.$moment(time).format('hh:mm')
       }
     }
@@ -96,9 +137,9 @@ export default {
         name: '东方闪电',
         content: '测试提交的内容',
         time: new Date()
-
       }], // 待处理
       textDealList: [], // 文字回复
+      audioList: [], // 语音回复
       noDealList: [
         {
           name: 'content',
@@ -106,14 +147,39 @@ export default {
           time: '2020-12-06'
         }
       ], // 不处理
-      $Chat: null,
-      privateFlag: true
+      $Chat: null, // 聊天句柄
+      privateFlag: true,
+      textDalog: false, // 是否显示输入框
+      // 当前展示 提交信息集合
+      sendMessage: {
+        text: '',
+        Radio: '1' // 信息类型
+      }
     }
   },
   async created() {
    await this.getUserInfo()
-   this.getChat()
+   this.getChat(0)
+   this.getChat(1)
+   this.getChat(2)
+   this.getChat(3)
    this.initChat()
+  },
+  watch:{
+    'awaitList.length' (newval){
+      this.$nextTick(()=>{
+
+      })
+      console.warn(newval, '坚挺到的变化------');
+    }
+  },
+  mounted() {
+    this.$EventBus.$on('question_answer_create', e => {
+      console.warn('我是问答管理页面-----', e);
+      // 发起端收到消息
+      e.content = this.emojiToText(e.content);
+      this.awaitList.push(e)
+    });
   },
   methods: {
     getUserInfo(){
@@ -125,38 +191,94 @@ export default {
             this.baseObj = res.data
             resolve()
           }else{
-            reject()
+            this.$message.warning(res.msg)
           }
         }).catch(err=>{
           reject()
         })
       })
     },
-    getChat(){
-      console.warn(45);
+    getChat(val){
       this.$fetch('getAutherQa', {
         room_id: this.baseObj.interact.room_id,
-        type: 0
+        type: val,
+        limit: 100
       }).then(res=>{
-        console.warn('获取res', res)
+        if(res.code == 200){
+          console.warn(val, '数字', res);
+          switch (val) {
+            case 0:
+            this.awaitList = res.data.list
+            this.List[0].count = res.data.list.length
+              break;
+          case 1:
+            this.noDealList = res.data.list
+            this.List[3].count = res.data.list.length
+            break;
+          case 2:
+            this.audioList = res.data.list
+            this.List[1].count = res.data.list.length
+            break;
+          case 3:
+            this.textDealList = res.data.list
+            this.List[2].count = res.data.list.length
+            break;
+          }
+        }else{
+          this.$message.warning(res.msg)
+        }
       }).catch(err=>{
-        console.warn('获取err', err);
       })
     },
-    reply(val){
-      console.warn(val,789, this.active);
-      if(val == 'text'){
-        console.warn('文字回复')
-      }else if(val == 'audio'){
-        console.warn('语音回复');
-      }else if(val == 'private'){
-        console.warn('私聊回复');
+    reply(val, item, index){
+      if(typeof val == 'object'){
+        console.warn(val, val.index, val.item.content);
+        if(val.type == 'private'){
+          console.warn('私聊回复');
+        }else{
+          console.warn('不处理');
+          let data = {
+            question_id: val.item.id,
+            room_id: this.baseObj.interact.room_id,
+            type: 2,
+            is_open: 1
+          }
+          this.$fetch('v3ReplayUserQu', data).then(res=>{
+            console.warn('不处理结果---', res);
+            if(res.code == 200){
+              this.$nextTick(()=>{
+                this.List[0].count--
+                this.awaitList.splice(val.index, 1)
+              })
+            }
+          })
+        }
       }else{
-        console.warn('不处理');
+        if(val == 'text'){
+          console.warn('文字回复')
+         this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active})
+          this.textDalog = true
+        }else if(val == 'audio'){
+          console.warn();
+          let data = {
+            question_id: item.id,
+            room_id: this.baseObj.interact.room_id,
+            type: 2,
+            is_open: 1
+          }
+          this.$fetch('v3ReplayUserQu', data).then(res=>{
+            console.warn('不处理结果---', res);
+            if(res.code == 200){
+              this.$nextTick(()=>{
+                this.List[0].count--
+                this.awaitList.splice(val.index, 1)
+              })
+            }
+          })
+        }
       }
     },
     messClick(){
-      console.warn('右下角私聊');
       this.privateFlag = true
     },
     // 初始化
@@ -168,7 +290,6 @@ export default {
         token: this.baseObj.interact.paas_access_token, // 必须， token，初始化接口获取
       }
       window.VhallChat.createInstance(option, (event) => {
-        console.warn(event, '---------------第三方都是');
         this.$Chat = event.message; // 聊天实例句柄
         let disable = event.disable; // 个人是否被禁言，bool值
         let disable_all = event.disable_all; // 是否频道被禁言，bool值
@@ -177,14 +298,60 @@ export default {
         console.error(err);
       })
     },
+    emojiToText (content) {
+      return textToEmoji(content)
+        .map(c => {
+          return c.msgType == 'text'
+            ? c.msgCont
+            : `<img width="24" src="${c.msgImage}" border="0" />`;
+        })
+        .join(' ');
+    },
     // 监听
     monitor(){
-      this.$Chat.onChat(msg=>{
-        console.warn('坚挺到消息的派发-----', msg);
+      this.$Chat.onRoomMsg(msg => {
+        console.warn('坚挺到消息的派发----0-', msg);
+        if (typeof msg !== 'object') {
+          msg = JSON.parse(msg);
+        }
+        try {
+          if (msg.data && typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+        Object.assign(msg, msg.data);
+        console.warn('坚挺到消息的派发----1-', msg);
+         this.$EventBus.$emit(msg.type, msg);
       })
     },
     select(index){
       this.active = index
+    },
+    textReply(){
+      let data = {
+        question_id: this.sendMessage.id,
+        content: this.sendMessage.text,
+        is_open: Number(this.sendMessage.Radio),
+        type: 3,
+        room_id: this.baseObj.interact.room_id
+      }
+      console.warn('点击的文字回复', data, this.sendMessage);
+      this.$fetch('v3ReplayUserQu', data).then(res=>{
+        console.warn('不处理结果---', res);
+        if(res.code == 200){
+          this.$nextTick(()=>{
+            if(this.sendMessage.activeDom == 0) {
+
+            }else if(this.sendMessage.activeDom == 1){
+
+            }
+            // this.List[0].count--
+            // this.awaitList.splice(val.index, 1)
+          })
+        }
+      })
     }
   },
   beforeCreate() {
@@ -277,7 +444,7 @@ export default {
               color: #888;
               font-size: 12px;
               span{
-                margin-right: 30px;
+                margin-right: 15px;
               }
             }
             .await-content{
@@ -299,8 +466,48 @@ export default {
           bottom: 0;
           right: 0;
         }
+        .no-deal{
+          .fr{
+            font-size: 14px;
+            color: #333;
+            span{
+              width: 140px;
+              float: right;
+              display: inline-block;
+            }
+          }
+        }
       }
     }
+  }
+}
+
+// 问答管理 回复
+::v-deep .text-reply {
+  width: 600px!important;
+  .el-message-box__header {
+    padding: 0;
+  }
+  .el-dialog__header{
+    padding: 7px 10px!important;
+    border-bottom: 1px solid #ccc;
+    background: #f3f3f3;
+    .el-dialog__title{
+      font-size: 14px;
+      color: #818181;
+    }
+  }
+  .el-dialog__headerbtn{
+    top: 20px;
+  }
+  #send-content{
+    margin-top: 20px;
+  }
+  .send-left{
+    display: inline-block;
+    width: 140px;
+    margin-right: 20px;
+
   }
 }
 </style>

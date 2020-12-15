@@ -11,7 +11,6 @@ const uploadMixin = {
   },
   methods: {
     onExceed(res) {
-      console.log(res, 77777)
       if (this.inputStatus.disable) {
         this.$message.error('您已被禁言')
         return false

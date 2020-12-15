@@ -8,10 +8,9 @@
     width="30%">
     <div class="content">
       <el-radio-group v-model="type" @change="radioChange">
-        <el-radio :label="1">内容举报</el-radio>
-        <el-radio :label="2">观看问题</el-radio>
+        <el-radio :label="1">观看问题</el-radio>
+        <el-radio :label="2">内容举报</el-radio>
       </el-radio-group>
-
       <div class="item">
         <span class="label">问题信息</span>
         <el-select v-model="selectValue" placeholder="请选择">
@@ -29,7 +28,7 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
+      <el-button type="primary" @click="handleInfo" round size="medium">确 定</el-button>
     </span>
   </VhallDialog>
 </template>
@@ -45,6 +44,17 @@ export default {
         {label: '黑屏', value: 2},
         {label: '声音不同步', value: 3}
       ],
+      renderVideoOption: [
+        {label: '卡顿', value: 1},
+        {label: '黑屏', value: 2},
+        {label: '声音不同步', value: 3},
+        {label: '其他', value: 4},
+        {label: '助手崩溃', value: 10},
+        {label: '插入视频问题', value: 11},
+        {label: '摄像设置问题', value: 12},
+        {label: '音频问题', value: 13},
+        {label: '软件共享源失败', value: 14},
+      ],
       feedBackOptions: [
         {label: '传播色情、暴力、反动等违法不良信息', value: 1},
         {label: '欺诈', value: 2},
@@ -59,16 +69,9 @@ export default {
   computed: {
     renderOption(){
       if(this.type == 1){
-        return this.questionOptions;
+        return this.renderVideoOption;
       }else{
         return this.feedBackOptions;
-      }
-    },
-    fixLabel(){
-      if(this.type == 1){
-        return "举报";
-      }else{
-        return "问题";
       }
     }
   },
@@ -80,6 +83,28 @@ export default {
       this.type = 1;
       this.selectValue = 1;
       this.desc = '';
+    },
+    handleInfo () {
+      let params = {
+        webinar_id: this.$route.params.id,
+        type: this.selectValue,
+        content: this.desc,
+      },
+      url = ''
+      if (this.type == 1) {
+        params.source = 1 // TODO  2app 3小助手
+        url = 'videoTipOff'
+      } else {
+        url = 'tipOff'
+      }
+      this.$fetch(url, {
+        ...params
+      }).then(res => {
+        if (res.code == 200) {
+          this.$message.success('问题反馈成功!')
+          this.closeHandler()
+        }
+      })
     }
   }
 };
