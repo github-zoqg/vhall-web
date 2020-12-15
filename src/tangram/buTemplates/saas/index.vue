@@ -2206,7 +2206,8 @@ export default {
     let vhallDomain = window.sessionStorage.getItem('vhall_domain');
     if (vhallDomain) {
       vhallDomain = JSON.parse(vhallDomain);
-      this.filterUrl = `/live/authchat/${this.ilId}`
+      const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
+      this.filterUrl = `${base}live/authchat/${this.ilId}`
       // this.filterUrl =
       //   (this.$route.query.assistantType ? 'http:' : 'https:') +
       //   `${vhallDomain.web}/room/authchat/${this.ilId}`;
