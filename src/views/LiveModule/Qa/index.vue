@@ -11,8 +11,13 @@
               <span class="count">({{item.count}})</span>
               <span class="border"></span>
             </li>
+            <li v-if="active == 2" class="reply-text">
+              <el-checkbox @change='setOpenReply' v-model="openReply">公开</el-checkbox>
+              <el-checkbox @change='setPrivacyReply' v-model="privacyReply">私密</el-checkbox>
+            </li>
           </ul>
           <div class="tab-content">
+            <!-- 待处理 -->
             <ul class="await-deal" v-show="active == 0">
               <li v-for="(item, index) in awaitList" :key="index" class="clearFix">
                <div class="fl">
@@ -37,24 +42,36 @@
             </ul>
             <!-- 语音回复 -->
             <ul class="await-deal text-deal" v-show="active == 1">
+              <li v-for="(item, index) in audioList" :key="index" class="clearFix">
+               <div class="fl">
+                 <p class="await-name">
+                  <span>{{item.nick_name}}</span>
+                  <span>{{item.created_at}}</span>
+                  <span style="color:#169bd5">{{baseObj.join_info.nickname}} <span class="mark">标记为语音回复</span>  {{filterTime(item.updated_at)}}</span>
+                 </p>
+                 <p class="await-content">{{item.content}}</p>
+               </div>
+               <div class="fr">
+                  <el-button @click="reply('audio')" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
+               </div>
+              </li>
+            </ul>
+            <!-- 文字回复 -->
+            <ul class="await-deal text-deal" v-show="active == 2">
               <li v-for="(item, index) in textDealList" :key="index" class="clearFix">
                <div class="fl">
                  <p class="await-name">
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
-                  <span>{{baseObj}}</span>
                  </p>
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
                   <el-button @click="reply('audio')" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply('text')" size="small" class="setBut">文字回复</el-button>
                </div>
               </li>
-            </ul>
-            <!-- 文字回复 -->
-            <ul class="no-deal" v-show="active == 2">
-              <li v-for="(item, index) in noDealList" :key="index">{{item}}</li>
             </ul>
             <!-- 不处理 -->
             <ul class="no-deal await-deal" v-show="active == 3">
@@ -74,7 +91,7 @@
             </ul>
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
-              <template v-show="privateFlag">
+              <template v-if="privateFlag">
                 <Private ></Private>
               </template>
             </div>
@@ -133,20 +150,10 @@ export default {
       ],
       active: 0,
       baseObj: {},
-      awaitList: [{
-        name: '东方闪电',
-        content: '测试提交的内容',
-        time: new Date()
-      }], // 待处理
+      awaitList: [], // 待处理
       textDealList: [], // 文字回复
       audioList: [], // 语音回复
-      noDealList: [
-        {
-          name: 'content',
-          content: 'dfs',
-          time: '2020-12-06'
-        }
-      ], // 不处理
+      noDealList: [], // 不处理
       $Chat: null, // 聊天句柄
       privateFlag: true,
       textDalog: false, // 是否显示输入框
@@ -154,15 +161,17 @@ export default {
       sendMessage: {
         text: '',
         Radio: '1' // 信息类型
-      }
+      },
+      openReply: true, // 文字回复之公开
+      privacyReply: true, // 文字回复之隐私
     }
   },
   async created() {
    await this.getUserInfo()
-   this.getChat(0)
-   this.getChat(1)
-   this.getChat(2)
-   this.getChat(3)
+   this.getChat(0)  // 待处理
+   this.getChat(1)  // 不处理
+   this.getChat(2)  // 语音回复
+   this.getChat(3)  // 文字回复
    this.initChat()
   },
   watch:{
@@ -209,19 +218,19 @@ export default {
           switch (val) {
             case 0:
             this.awaitList = res.data.list
-            this.List[0].count = res.data.list.length
+            this.List[0].count = res.data.total
               break;
           case 1:
             this.noDealList = res.data.list
-            this.List[3].count = res.data.list.length
+            this.List[3].count = res.data.total
             break;
           case 2:
             this.audioList = res.data.list
-            this.List[1].count = res.data.list.length
+            this.List[1].count = res.data.total
             break;
           case 3:
             this.textDealList = res.data.list
-            this.List[2].count = res.data.list.length
+            this.List[2].count = res.data.total
             break;
           }
         }else{
@@ -329,6 +338,14 @@ export default {
     select(index){
       this.active = index
     },
+    setOpenReply(){
+      // 设置公开回复
+      console.warn('设置公开回复');
+    },
+    setPrivacyReply(){
+      // 设置隐私回复
+      console.warn('设置隐私回复');
+    },
     textReply(){
       let data = {
         question_id: this.sendMessage.id,
@@ -391,7 +408,7 @@ export default {
       font-size: 18px;
     }
     .tab-box{
-      border: 1px solid red;
+      border: 1px solid #bbb;
       height: 700px;
       ul{
           height: 44px;
@@ -422,9 +439,20 @@ export default {
             }
           }
         }
+        .reply-text{
+          width: 140px;
+          height: calc(100% - 2px);
+          float: right;
+          display: inline-block;
+          .el-checkbox{
+            margin-right: 0;
+            &:nth-child(1){
+              margin-right: 15px;
+            }
+          }
+        }
       }
       .tab-content{
-        border: 1px solid red;
         height: calc(100% - 44px);
         position: relative;
         ul{
@@ -445,6 +473,9 @@ export default {
               font-size: 12px;
               span{
                 margin-right: 15px;
+              }
+              .mark{
+                margin: 0 10px;
               }
             }
             .await-content{
