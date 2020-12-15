@@ -42,6 +42,7 @@
                  <p class="await-name">
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
+                  <span>{{baseObj}}</span>
                  </p>
                  <p class="await-content">{{item.content}}</p>
                </div>
