@@ -75,7 +75,7 @@
                   <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
                     <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
-                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite)" class="answer-time answer-revoke">撤销此条回复</span>
+                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
                     <p>{{ite.content}}</p>
                   </li>
@@ -372,14 +372,14 @@ export default {
     messClick(){
       this.privateFlag = true
     },
-    revoke(val){
+    revoke(val, index, fatherIndex){
       // 撤销回复
-      console.warn('撤销回复', val);
+      console.warn('撤销回复', this.textDealList[fatherIndex].answer[index]);
       this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
         if(res.code == 200){
           console.warn(res, '撤销成功');
           this.$nextTick(() => {
-            // this.textDealList = this.textDealList
+            this.textDealList[fatherIndex].answer[index].is_backout = 1
           })
         }else{
           this.$message.warning(res.msg)
