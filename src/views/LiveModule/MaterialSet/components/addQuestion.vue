@@ -36,10 +36,10 @@ export default {
   methods: {
     getVideoAppid() {
       this.$fetch('getPassId').then(res => {
-        this.initQuestion(res.data.app_id, res.data.access_token);
+        this.initQuestion(res.data.app_id, res.data.third_party_user_id, res.data.access_token);
       })
     },
-    initQuestion(id, token) {
+    initQuestion(id, userId, token) {
       let params = {
         webinar_id: this.$route.query.webinarId,
         room_id: this.$route.query.roomId
@@ -47,7 +47,8 @@ export default {
       let service = new VHall_Questionnaire_Service({
         auth: {
           appId: id, //paas的应用id,必填
-          accountId: this.userId, //paas的第三方用户id,必填
+          accountId: this.userId, //paas的第三方用户id,必填,
+          third_party_user_id: userId,
           token: token //paas的授权token,必填
         },
         isLoadElementCss: true,
@@ -141,6 +142,9 @@ export default {
   }
   #settingBox /deep/.question-wrap.click{
     border: 1px solid #FB3A32;
+  }
+  #settingBox /deep/.show-text:hover{
+    border-color:#FB3A32;
   }
   #settingBox /deep/.create-wrap .save{
     .el-button{

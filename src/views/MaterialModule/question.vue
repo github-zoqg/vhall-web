@@ -75,6 +75,7 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      pageInfo.limit = 20;
       let formParams = {
         user_id: this.userId,
         keyword: this.keyword
@@ -95,6 +96,7 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.questionId = rows.question_id;
+      console.log(that.questionId, '111111111111111');
       that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制

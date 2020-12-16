@@ -238,8 +238,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item">
-           <!-- v-if="isStatus!=4&&webinarType==3" -->
+         <div class="base-item" v-if="isStatus!=4&&webinarType==3">
           <p @click="exportSpeak">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_lianmai"></icon>
