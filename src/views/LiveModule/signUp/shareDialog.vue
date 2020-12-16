@@ -1,57 +1,71 @@
 <template>
-  <VhallDialog
-    title="分享"
-    :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
-    width="30%">
-    <div class="content">
-      <p>
-        <span class="title">
-          独立表单
-          <el-switch
-            class="smallSwtich"
-            :width='28'
-            :height="16"
-            v-model="shareSwtich"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="switchExtraForm"
-          >
-          </el-switch>
-          <el-tooltip
-            content="">
-              <pre slot="content">开启独立报名功能后，可为报名表单
+  <div>
+    <VhallDialog
+      title="分享"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      width="30%">
+      <div class="content">
+        <div v-show="!shareSwtich" class="content-wrap"></div>
+        <p>
+          <span class="title">
+            独立表单
+            <el-switch
+              class="smallSwtich"
+              :width='28'
+              :height="16"
+              v-model="shareSwtich"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+              @change="switchExtraForm"
+            >
+            </el-switch>
+            <el-tooltip
+              content="">
+                <pre slot="content">开启独立报名功能后，可为报名表单
 生成独立的链接地址。通过分享链接
 ，用户填写报名表单后就能观看直播
 和回放。注意：只有活动观看限制设
 置为“免费”时，该功能才能生效！
-              </pre>
-            <i class="el-icon-question"></i>
-          </el-tooltip>
-        </span>
-      </p>
-      <p class="">
-        <span>链接地址</span>
-        <el-input style="width: 433px" placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
-          <el-button slot="append" @click="copy">复制</el-button>
-        </el-input>
+                </pre>
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+          </span>
+        </p>
+        <p class="">
+          <span>链接地址</span>
+          <el-input style="width: 433px" placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
+            <el-button slot="append" @click="copy">复制</el-button>
+          </el-input>
 
-      </p>
-      <p class="sub">地址支持增加refer参数</p>
-      <p class="icons">
-        <i></i>
-        <i></i>
-        <i></i>
-      </p>
-    </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
-      <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
-    </span>
-  </VhallDialog>
+        </p>
+        <p class="sub">地址支持增加refer参数</p>
+        <p class="icons">
+          <i @click="shareQQ"></i>
+          <i @click="shareSina"></i>
+          <i @click="shareWX"></i>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
+        <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
+      </span>
+    </VhallDialog>
+    <VhallDialog
+      title="分享"
+      :visible.sync="wxDialogVisible"
+      :close-on-click-modal="false"
+      width="20%">
+      <div class="wximg-box">
+        <img :src="wxUrl" alt="">
+      </div>
+      <p class="wximg-intro">打开微信，点击底部的“发现”，使用 “扫一扫” 即可将网页分享到我的朋友圈。</p>
+    </VhallDialog>
+  </div>
 </template>
 
 <script>
+import Env from "@/api/env";
 export default {
   created() {},
   props: {
@@ -62,8 +76,10 @@ export default {
   data(){
     return {
       dialogVisible: false,
+      wxDialogVisible: false,
       shareSwtich: true,
-      link: 'https://t.e.vhall.com/'
+      link: `${process.env.VUE_APP_WAP_WATCH}/entryform/${this.$route.params.str}`,
+      wxUrl: ''
     };
   },
   watch:{
@@ -86,6 +102,19 @@ export default {
     switchExtraForm(value) {
       const val = value ? 1 : 0;
       this.$emit('setBaseInfo', { open_link: val } );
+    },
+    shareQQ() {
+      const url = `//connect.qq.com/widget/shareqq/index.html?title=${this.baseInfo.title}&url=${this.link}&summary=${this.baseInfo.intro}&pics=undefined`;
+      window.open(url, '_blank');
+    },
+    shareSina() {
+      const url = `//service.weibo.com/share/share.php?url=${this.link}&summary=${this.baseInfo.intro}&title=${this.baseInfo.title}&pic=undefined&appkey=&searchPic=false`;
+      window.open(url, '_blank');
+    },
+    shareWX() {
+      this.wxDialogVisible = true;
+      const url = `${Env.staticLinkVo.aliQr}${this.link}`;
+      this.wxUrl = url;
     }
   }
 };
@@ -112,6 +141,15 @@ export default {
     }
   }
   .content{
+    position: relative;
+    .content-wrap{
+      position: absolute;
+      z-index: 2;
+      width: 100%;
+      bottom: 0;
+      height: calc(100% - 50px);
+      background: rgba(255, 255, 255, 0.5)
+    }
     .el-input-group{
       width: 330px;
       float: right;
@@ -159,5 +197,21 @@ export default {
       }
 
     }
+  }
+  .wximg-box {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      width: 80%;
+      height: 80%;
+    }
+  }
+  .wximg-intro {
+    padding-bottom: 24px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
   }
 </style>

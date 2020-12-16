@@ -28,19 +28,25 @@ const router = [
       },
       {
         path: '/subscribe/:id',
-        name: 'list',
+        name: 'Subscribe',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '预约' }
       },
       {
-        path: '/keylogin/:id/:role_name', // 助理
-        name: 'list',
+        path: '/entryform/:id',
+        name: 'Entryform',
+        component: () => import('@/views/LiveModule/Subscribe/entryForm'),
+        meta: { title: '报名表单' }
+      },
+      {
+        path: '/keylogin/:id/:role_name',
+        name: 'KeyLogin',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '口令登录' }
       },
       {
-        path: '/keylogin-host/:id/:role_name', // 主持人
-        name: 'list',
+        path: '/keylogin-host/:id/:role_name',
+        name: 'KeyLoginHost',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '口令登录' }
       },

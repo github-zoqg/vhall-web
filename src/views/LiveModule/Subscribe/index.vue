@@ -480,7 +480,7 @@
       </div>
     </popup>
     <!--报名表单-->
-    <sign-form 
+    <sign-form
       v-if="showSignForm"
       @closeSignUp="closeSignForm"
     ></sign-form>
@@ -521,7 +521,6 @@ import share from '@/components/Share';
 import custoMenu from '../components/customMenuView';
 import goodsPop from '../Room/rankList/goodsPop';
 import products from '../components/products';
-import signUpForm from './signUpForm';
 import keyLogin from '../components/keyLogin';
 import { sessionOrLocal } from '@/utils/utils';
 import Popup from '../../../tangram/libs/saas-popup'; // 弹窗
@@ -537,7 +536,6 @@ export default {
     custoMenu,
     goodsPop,
     products,
-    signUpForm,
     keyLogin,
     SignForm
   },
@@ -575,7 +573,7 @@ export default {
       btnVal: '立即预约',
       limitText: '',
       shareUrl: '',
-      
+
       // 登录
       isLogin: false,
       loginDialogShow: false, // 登录页面
@@ -662,7 +660,7 @@ export default {
     getWatchInfo() {
       return this.$fetch('watchInit', {
         webinar_id: this.$route.params.id,
-        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '', 
+        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '',
         refer: '',
         record_id: '',
         wx_url: ''
@@ -1017,7 +1015,7 @@ export default {
     changeBtnVal(newValue) {
       this.btnVal = newValue
     },
-    
+
     // 获取关注人被关注数量
     getAttentionNum () {
       this.$fetch('getAttentionNum', {
@@ -1240,7 +1238,7 @@ export default {
     getBtnText () {
       let ret = ''
       const {
-        verify, // 观看限制类型 
+        verify, // 观看限制类型
         type, // 直播类型
         fee, // 观看费用
         reg_form // 是否开启报名表单
@@ -1398,7 +1396,7 @@ export default {
       this.$fetch('watchAuth', {
         ...this.joinCommonParam,
         ...params
-      }).then(res => { 
+      }).then(res => {
         if (res.code == 200) {
           window.location.reload()
         } else {
@@ -1489,7 +1487,7 @@ export default {
             // } else {
 
             // }
-            
+
 
             // let service_code = ''
             // this.$fetch('pay', {
@@ -2519,5 +2517,5 @@ export default {
       }
     }
   }
-  
+
 </style>

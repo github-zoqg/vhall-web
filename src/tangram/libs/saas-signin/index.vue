@@ -38,8 +38,9 @@ export default {
       console.log('closed');
     },
     openSignIn() {
-      const localAuto = window.sessionStorage.isAutoSign
-      if(localAuto == 'false'){
+      let localAuto = window.sessionStorage.isAutoSign
+      console.warn('localAuto-----', localAuto, localAuto == 'false' || localAuto == undefined);
+      if(localAuto == 'false' || localAuto == undefined){
         // 当获取的存储值为false 或者  根本取不到值的时候  都进行获取一次当前活动是含有签到信息
         this.showSignin = true;
       }else{

@@ -150,27 +150,33 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.$confirm('确定要删除此奖品吗?', '提示', {
+      that.deleteConfirm(rows.prize_id);
+    },
+    deleteConfirm(id) {
+      this.$confirm('确定要删除此奖品吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+         customClass: 'zdy-message-box',
         type: 'warning',
         center: true
       }).then(() => {
-        that.allDelete(rows.prize_id);
+        this.$fetch('delPrize', {prize_id: id, source: this.source}).then(res=>{
+          if (res.code == 200) {
+            this.getTableList();
+            this.$message.success('删除成功');
+          } else {
+            this.$message.success('删除失败');
+          }
+        });
       }).catch(() => {});
     },
     allDelete(id) {
-      if (!id) {
-        if (this.prizeChecked.length < 1) {
+       if (this.prizeChecked.length < 1) {
           this.$message.warning('请选择要删除的选项');
         } else {
           id = this.prizeChecked.join(',')
+          this.deleteConfirm(id);
         }
-      }
-      this.$fetch('delPrize', {prize_id: id, source: this.source}).then(res=>{
-        this.getTableList();
-        this.$message.success('删除成功');
-      });
     },
     // 选中
     changeTableCheckbox(val) {
