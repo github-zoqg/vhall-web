@@ -325,6 +325,7 @@ export default {
           data.forEach(({cid, type}) => {
             this.initContainer({ type: type.toLowerCase(), id: cid });
           });
+          this.$EventBus.$emit('vod_cuepoint_load_complete', chapters);
         });
         // 监听回放事件
         this.FIRST = true;

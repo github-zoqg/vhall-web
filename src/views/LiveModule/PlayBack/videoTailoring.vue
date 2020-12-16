@@ -3,17 +3,18 @@
     <header>
       <i class="el-icon-back" @click="$router.back()"></i>
       <span>回放剪辑台</span>
-      <div v-if="!recordId" class="time-box">
-        <el-date-picker
-          v-model="timeVal"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间">
-        </el-date-picker>
-        <el-button @click="createRecord" size="small">确定</el-button>
-      </div>
     </header>
+    <div v-if="!recordId" class="time-box">
+      <span class="time-label">选择回放时间</span>
+      <el-date-picker
+        v-model="timeVal"
+        type="datetimerange"
+        range-separator="至"
+        start-placeholder="开始时间"
+        end-placeholder="结束时间">
+      </el-date-picker>
+      <el-button @click="createRecord" size="small">确定</el-button>
+    </div>
     <videoTailoring
       v-if="dataReady"
       ref="videoTailoringComponent"
@@ -24,6 +25,7 @@
       @getVod="getVod"
       @createVideo="createVideo"
       @selectVideo="selectVideo"
+      :class="[recordId ? 'vh-video-tailoring__editwarp' : '']"
     ></videoTailoring>
     <el-dialog
       title="请输入生成视频名称"
@@ -244,11 +246,16 @@ export default {
     }
     .vh-video-tailoring__warp{
       width: 100%;
-      height: calc( 100vh - 60px);
+      height: calc( 100vh - 140px);
       margin-top: 0px;
       margin-bottom: 0;
+      border-radius: 0px;
+      &.vh-video-tailoring__editwarp{
+        height: calc( 100vh - 60px);
+      }
       /deep/ .vh-video-tailoring__section{
         height: calc( 100% - 260px );
+        background: #17171e;
       }
       /deep/ .vh-video-tailoring__effective-zone .vh-video-tailoring__content{
         background-color: #FB3A32;
@@ -265,31 +272,126 @@ export default {
       // width: 1366px;
       margin: 0 auto;
       padding: 20px 25px;
-      position: relative;
       i{
         float: left;
         cursor: pointer;
       }
-      .time-box {
-        position: absolute;
-        top: 12px;
-        right: 80px;
-        display: flex;
-        align-items: center;
-        .el-date-editor {
-          background: #fff;
+    }
+    .time-box {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #17171e;
+      border-bottom: 1px #000 solid;
+      .time-label {
+        color: #666666;
+        font-size: 16px;
+        display: inline-block;
+        padding-right: 15px;
+      }
+      .el-date-editor {
+        background: #fff;
+      }
+      .el-button {
+        margin-left: 10px;
+        padding: 7px 16px;
+        height: 50px;
+        border-radius: 25px;
+        border-color: #666666;
+        border-width: 2px;
+        background: #17171e;
+        width: 90px;
+        font-size: 16px;
+      }
+      /deep/ .el-range-editor {
+        border-radius: 25px;
+        height: 50px;
+        background: #17171e;
+        border-color: #666666;
+        border-width: 2px;
+        width: 450px;
+        .el-range-separator {
+          color: #666666;
+          line-height: 40px;
+          font-size: 16px;
         }
-        .el-button {
-          margin-left: 10px;
-          padding: 7px 16px;
+        .el-range-input {
+          background: #17171e;
+          color: #666666;
+          font-size: 16px;
+          &::-webkit-input-placeholder {
+            /* WebKit browsers */
+            color: #666666;
+          }
+          &:-moz-placeholder {
+            /* Mozilla Firefox 4 to 18 */
+            color: #666666;
+          }
+          &::-moz-placeholder {
+            /* Mozilla Firefox 19+ */
+            color: #666666;
+          }
+          &:-ms-input-placeholder {
+            /* Internet Explorer 10+ */
+            color: #666666;
+          }
+        }
+        .el-range__icon {
+          font-size: 20px;
+          line-height: 40px;
+          color: #666666;
+        }
+        .el-range__close-icon {
+          font-size: 20px;
+          line-height: 40px;
+          color: #666666;
         }
       }
+    }
+    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp {
+      background-color: #000;
     }
     /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp.vh-video-tailoring__button-operation-warp-active .vh-video-select__button .el-button:hover{
       color: #FB3A32;
     }
     /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp .fr.el-button--default:hover{
       background: #FB3A32;
+    }
+    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__control-warp {
+      background-color: #17171e;
+    }
+    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__control-warp {
+      width: auto;
+    }
+    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__operation-warp {
+      background: #000;
+    }
+    /deep/ .vh-video-tailoring__ruler ul li .vh-video-tailoring__scale-tip {
+      background-color: #000;
+    }
+    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__content {
+      height: 60px;
+    }
+    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__content .vh-video-tailoring__content-center {
+      height: 52px;
+    }
+    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__right-border .vh-video-tailoring__pull-right-warp {
+      height: 60px;
+      background-size: 100% 100%;
+    }
+    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__left-border .vh-video-tailoring__pull-left-warp {
+      height: 60px;
+      background-size: 100% 100%;
+    }
+    /deep/ .vh-video-tailoring__video-duration-warp .vh-video-tailoring__bg-warp {
+      height: 52px;
+    }
+    /deep/ #vh-player {
+      height: 100%;
+      #vh-video {
+        background: #17171e;
+      }
     }
   }
 </style>

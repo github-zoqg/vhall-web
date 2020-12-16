@@ -549,7 +549,7 @@ const apis = {
   watchInterGetFirstPost: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报
   tipOff: ['/v3/interacts/report/user-create-report', 'POST'], // 观众举报
   videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
-
+  pay: ['/v3/fin/webinar-pay', 'GET'], //支付二维码
 };
 
 const getApi = api => {

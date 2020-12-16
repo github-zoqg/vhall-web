@@ -382,8 +382,9 @@
               </div>
               <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
               <div class="bottom">
-                <el-button  type="primary" @click="btnClick">{{ btnVal }}</el-button>
-                <p class="limit">{{limitText}}</p>
+                <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
+                <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
+                <p class="limit" v-else>{{limitText}}</p>
               </div>
             </template>
             <template v-else>
@@ -394,32 +395,27 @@
       </div>
     </section>
     <div :class="{area: true, product: productFlag}">
-      <div class="flex1">
-        <!-- <custoMenu></custoMenu> -->
-        <el-tabs class="foot" v-model="activeName2" @tab-click="handleClick">
-          <el-tab-pane label="活动推荐" name="activity">
-            <ul class="activity" ref="activityUL">
-              <li>
-                <div class="imgBox">
-                  <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-                </div>
-                <p class="activityName"><span>最多可输入30个文字</span></p>
-              </li>
-              <li v-for=" i in  10" :key="i">
-                <div class="imgBox">
-                  <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
-                </div>
-                <p class="activityName"><span>最多可输入30个文字，单行居中对齐折行文字左对齐</span></p>
-              </li>
-            </ul>
-            <span class="operaBtn left" @click="activityMove('left')">
-              <i class="el-icon-arrow-left"></i>
-            </span>
-            <span class="operaBtn right" @click="activityMove('right')">
-              <i class="el-icon-arrow-right"></i>
-            </span>
-          </el-tab-pane>
-        </el-tabs>
+      <custoMenu></custoMenu>
+      <div class="active-second" v-if="advs && advs.length > 0">
+        <h3>活动推荐</h3>
+        <hr />
+        <div class="active-recommond">
+          <div class="recom-item"
+            v-for="(item, index) in advs"
+            :key="index">
+            <span class="left-mark">推广</span>
+            <a :href="item.url">
+              <img
+                :src="item.img_url"
+                onerror="this.src='//cnstatic01.e.vhall.com/static/img/v35-webinar.png';this.onerror=null"
+                alt
+              />
+            </a>
+            <div class="recommond-contents">
+              <p class="content-header">{{ item.subject }}</p>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- <products
         v-if="productFlag"
@@ -427,6 +423,71 @@
         :goodsList="goodsList"
       ></products> -->
     </div>
+    
+
+    <!--观看限制验证-->
+    <el-dialog
+      :title="tipTitle"
+      width="400px"
+      :visible.sync="showModile"
+      :close-on-click-modal="true"
+      :before-close="handleCancelDelete"
+    >
+      <span>{{tipContent}}</span>
+      <el-input v-model="authCheckValue" :placeholder="dialogPlaceholder"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCancelDelete">取 消</el-button>
+        <el-button type="primary" @click="fillLimitSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!--二维码分享-->
+    <popup
+      :visible="showOfficialAccountQRCode"
+      :width="'340px'"
+      title="公众号二维码"
+      :onClose="closeWXCode"
+    >
+      <div class="preview-wrap ad-qrcode">
+        <div class="preview-title">
+          <span class="owner">【{{ roomData.webinar && roomData.webinar.userinfo.nickname }}】</span>
+          <span>邀请你关注微信了解更多资讯</span>
+        </div>
+        <div class="preview-content">
+          <a target="_blank" v-if="publicAdv && publicAdv.img">
+            <img
+              :src="
+                `${publicAdv && publicAdv.img}?x-oss-process=image/resize,m_fill,w_233,h_233`
+              "
+              :alt="`${publicAdv && publicAdv.img}`"
+            />
+          </a>
+          <div class="preview-des">扫码关注公众号</div>
+        </div>
+      </div>
+    </popup>
+    <!--支付-->
+    <popup
+      :visible="showPayModel"
+      :width="'340px'"
+      title="支付"
+      :onClose="closePayModel"
+    >
+      <div class="preview-wrap ad-qrcode">
+        <div class="preview-content">
+          <img :src="wxPayImg">
+          <a :href="zfbLink"></a>
+        </div>
+      </div>
+    </popup>
+    <!--报名表单-->
+    <sign-form 
+      v-if="showSignForm"
+      @closeSignUp="closeSignForm"
+      @changeBtnVal="changeSignFormBtnVal"
+    ></sign-form>
+    <!--反馈信息-->
+    <feedBack ref="feedBack"></feedBack>
+    <!--版权信息-->
     <div class="footer inner-center tac" v-if="logo && logo.reserved_status == 1">
       <div class="about-us">
         <a href="http://www.vhall.com/about" target="_blank">关于我们</a>
@@ -449,50 +510,9 @@
       <p>京ICP备10024636号-4京公网安备11010502008915</p>
       <p>© Vhall 2020.All Rights Reserved.</p>
     </div>
-    <el-dialog
-      :title="tipTitle"
-      width="400px"
-      :visible.sync="showModile"
-      :close-on-click-modal="true"
-      :before-close="handleCancelDelete"
-    >
-      <span>{{tipContent}}</span>
-      <el-input v-model="authCheckValue" :placeholder="dialogPlaceholder"></el-input>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete">取 消</el-button>
-        <el-button type="primary" @click="btnClick">确 定</el-button>
-      </span>
-    </el-dialog>
-    <popup
-      :visible="showOfficialAccountQRCode"
-      :width="'340px'"
-      title="公众号二维码"
-      :onClose="showOfficialAccountQRCode = false"
-    >
-      <div class="preview-wrap ad-qrcode">
-        <div class="preview-title">
-          <span class="owner">【{{ roomData.webinar && roomData.webinar.userinfo.nickname }}】</span>
-          <span>邀请你关注微信了解更多资讯</span>
-        </div>
-        <div class="preview-content">
-          <a target="_blank" v-if="publicAdv && publicAdv.img">
-            <img
-              :src="
-                `${publicAdv && publicAdv.img}?x-oss-process=image/resize,m_fill,w_233,h_233`
-              "
-              :alt="`${publicAdv && publicAdv.img}`"
-            />
-          </a>
-          <div class="preview-des">扫码关注公众号</div>
-        </div>
-      </div>
-    </popup>
-    <feedBack ref="feedBack"></feedBack>
     <div class="shade" v-if="shadeShow" @click="(shadeShow = false), (loginDialogShow = false)"></div>
     <!-- 商品详情的弹窗 -->
     <!-- <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop> -->
-    <!-- 报名表单 -->
-    <!-- <signUpForm v-if="!isSignUp" @closeSignUp="isSignUp = true" @changeBtnVal="changeBtnVal"></signUpForm> -->
   </div>
 </template>
 
@@ -505,7 +525,11 @@ import products from '../components/products';
 import signUpForm from './signUpForm';
 import keyLogin from '../components/keyLogin';
 import { sessionOrLocal } from '@/utils/utils';
+import Popup from '../../../tangram/libs/saas-popup'; // 弹窗
+import SignForm from './signUpForm'
 import Env from '@/api/env.js';
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
+
 export default {
   components: {
     feedBack,
@@ -514,10 +538,13 @@ export default {
     goodsPop,
     products,
     signUpForm,
-    keyLogin
+    keyLogin,
+    SignForm
   },
   data(){
     return {
+      btnDisabled: false,
+      showSignForm: false,
       tipContent: '',
       showModile: false,
       authCheckValue: '',
@@ -584,7 +611,27 @@ export default {
       myPageRoute: '',
       myAccountRoute: '',
       publicAdv: {},
-      tipTitle: ''
+      tipTitle: '',
+      advs: [],
+      swiperOption: {
+        slidesPerView: 4,
+        slidesPerGroup: 1,
+        loop: false,
+        loopFillGroupWithBlank: true,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        }
+      },
+      showPayModel: false,
+      getWxImg: false,
+      getZFBlink: false,
+      wxPayImg: '',
+      zfbLink: ''
     };
   },
   async created(){
@@ -606,6 +653,9 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods:{
+    closeWXCode () {
+      this.showOfficialAccountQRCode = false
+    },
     getWatchInfo() {
       return this.$fetch('watchInit', {
         webinar_id: this.$route.params.id,
@@ -624,6 +674,7 @@ export default {
       switch (res.code) {
         case 200:
           this.roomData = res.data
+          console.log(77, res.data)
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
           this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
           this.getAttentionNum()
@@ -651,7 +702,7 @@ export default {
         limit: 50
       }).then(res => {
         if (res.code == 200 && res.data) {
-          this.ads = res.data.adv_list
+          this.advs = res.data.adv_list
         }
       })
     },
@@ -1082,199 +1133,74 @@ export default {
         }
       })
     },
-    /**
-     * 判断主按钮状态
-     */
-    getBtnText() {
-      // type  直播状态 1直播中 2预告 3直播结束 4点播 5回放
-      // verify  验证类型，0 无验证，1 密码，2 白名单，3 付费活动, 4 F码, 6 付费+F码
-      // verified 除报名表单外其余的条件验证通过
+    getBtnText () {
       let ret = ''
       const {
-        verify,
-        type,
-        verified,
-        fee,
-        is_subscribe,
-        reg_form
+        verify, // 观看限制类型 
+        type, // 直播类型
+        fee, // 观看费用
+        reg_form // 是否开启报名表单
       } = this.roomData.webinar
-      // 预告
-      if (reg_form == 1) {
-        if (type == 2) {
-          if (verified && is_subscribe == 1) {
-            ret = '预约成功'
-            this.buttonDisabled = true
-          } else {
-            if (verify == 3) {
-              ret = `付费预约`
-              this.limitText = `付费${fee}￥`
-            } else if (verify == 6) {
-              if (verified) {
-                ret = '立即预约'
-              } else {
-                ret = `付费(￥${fee})立即预约`
-                this.limitText = `邀请码`
-              }
-            } else if (verify == 4) {
-              ret = '观看验证'
-              this.limitText = '邀请码'
-            } else if (verify == 1) {
-              // 密码
-              ret = '立即预约'
-              this.limitText = '密码'
-            } else if (verify == 2) {
-              ret = '立即预约'
-              this.limitText = '白名单'
-            } else {
-              ret = '立即预约'
-              this.limitText = '免费'
-            }
-          }
-          // 直播中
-        } else if (type == 1) {
-          ret = this._getBtnText('进入直播', verified, verify, fee)
-        } else {
-          // 回放
-          if (type == 5) {
-            ret = this._getBtnText('观看回放', verified, verify, fee)
-            // 点播
-          } else if (type == 4) {
-            ret = this._getBtnText('观看点播', verified, verify, fee)
-          } else {
-            // 结束
-            ret = '直播已结束'
-            this.buttonDisabled = true
-          }
-        }
-        this.btnVal = ret
-      } else {
-        if (type == 2) {
-          if (verified) {
-            ret = '预约成功'
-            this.buttonDisabled = true
-          } else {
-            if (verify == 0) {
-              ret = '立即预约'
-              this.limitText = '免费'
-            } else if (verify == 3) {
-              ret = `付费预约`
-              this.limitText = `付费${fee}￥`
-            } else if (verify == 6) {
-              ret = `付费(￥${fee})立即预约`
-              this.limitText = `邀请码`
-              // this.setData({
-              //   btnShowInviteCode: true
-              // })
-            } else if (verify == 4) {
-              ret = '观看验证'
-              this.limitText = '邀请码'
-            } else if (verify == 1) {
-              ret = '立即预约'
-              this.limitText = '密码'
-            } else if (verify == 2) {
-              ret = '立即预约'
-              this.limitText = '白名单'
-            } else {
-              ret = '观看验证'
-              this.limitText = '免费'
-            }
-          }
-          // 直播中
-        } else if (type == 1) {
-          ret = this._getBtnText('进入直播', verified, verify, fee)
-        } else {
-          // 回放
-          if (type == 5) {
-            ret = this._getBtnText('观看回放', verified, verify, fee)
-            // 点播
-          } else if (type == 4) {
-            ret = this._getBtnText('观看点播', verified, verify, fee)
-          } else {
-            // 结束
-            ret = '直播已结束'
-            this.buttonDisabled = true
-          }
-        }
-        this.btnVal = ret
-        // if (ret) {
-        //   this.showLimitBtn = true
-        // } else {
-        //   this.showLimitBtn = false
-        // }
+      const verified = this.roomData.verified // 是否通过观看限制 不包含表单
+      const is_subscribe = this.roomData.is_subscribe // 是否已预约
+      if (type == 3) {
+        this.btnVal = `已结束`
+        this.limitText = ``
+        this.btnDisabled = true
+        return
       }
-    },
-    _getBtnText(txt, verified, verify, fee) {
-      let ret = ''
-      if (this.roomData.webinar.reg_form == 1) {
-        // 已经验证过或者免费
-        if (
-          (verified && this.roomData.webinar.is_subscribe == 1) ||
-          verify == 0
-        ) {
-          ret = txt
-          return ret
+      if (is_subscribe == 1) {
+        if (type == 1) {
+          ret = `进入直播`
+          this.limitText = ``
+        } else if (type == 2) {
+          ret = `已预约`
+          this.limitText = ``
+          this.btnDisabled = true
+        } else if (type == 4) {
+          ret = `观看点播`
+          this.limitText = ``
+        } else if (type == 5) {
+          ret = `观看回放`
+          this.limitText = ``
         }
-        // 其他需要验证的类型
-        if (verify == 3) {
-          ret = `付费观看`
-          this.limitText = `付费${fee}￥`
-        } else if (verify == 6) {
-          if (verified) {
+      } else {
+        if (verified == 0) {
+          if (verify == 0) {
+            ret = `立即预约`
+            this.limitText = `免费`
+          } else if (verify == 1) {
+            ret = `立即预约`
+            this.limitText = `密码`
+          } else if (verify == 2) {
+            ret = `立即预约`
+            this.limitText = `白名单`
+          } else if (verify == 3) {
+            ret = `付费预约`
+            this.limitText = `付费￥${fee}`
+          } else if (verify == 4) {
             ret = '观看验证'
-          } else {
-            ret = `付费观看`
-            this.limitText = `付费${fee}￥`
+            this.limitText = '邀请码'
+          } else if (verify == 6) {
+            ret = `付费(￥${fee})立即预约`
+            this.limitText = `邀请码`
           }
-        } else if (verify == 1) {
-          ret = `观看验证`
-          this.limitText = `密码`
-        } else if (verify == 2) {
-          ret = `观看验证`
-          this.limitText = `白名单`
-        } else if (verify == 4) {
-          ret = `观看验证`
-          this.limitText = `邀请码`
         } else {
-          ret = '观看验证'
-          this.limitText = `免费`
+          ret = `立即预约`
         }
-        return ret
-      } else {
-        // 已经验证过或者免费
-        if (verified || verify == 0) {
-          ret = txt
-          return ret
-        }
-        // 其他需要验证的类型
-        if (verify == 3) {
-          ret = `付费观看`
-            this.limitText = `付费${fee}￥`
-        } else if (verify == 6) {
-          ret = `付费观看`
-            this.limitText = `付费${fee}￥`
-          // this.setData({
-          //   btnShowInviteCode: true
-          // })
-        } else if (verify == 1) {
-          ret = `观看验证`
-          this.limitText = `密码`
-        } else if (verify == 2) {
-          ret = `观看验证`
-          this.limitText = `白名单`
-        } else if (verify == 4) {
-          ret = `观看验证`
-          this.limitText = `邀请码`
-        } else {
-          ret = '观看验证'
-          this.limitText = `免费`
-        }
-        return ret
       }
+      this.btnVal = ret
     },
     // 底部按钮点击验证
     btnClick(e) {
-      console.log('点击-------------------')
       if (this.hasClick) {
+        return
+      }
+      
+      // 判断登录
+      if (!this.isLogin) {
+        this.callLogin()
+        this.hasClick = false
         return
       }
       this.hasClick = true
@@ -1283,73 +1209,62 @@ export default {
         type,
         verify
       } = this.roomData.webinar
-      try {
-        if (type == 3) {
-          // 直播结束
-          this.$message.warn('直播已结束')
-          this.hasClick = false
-          return
-        }
-        // 判断登录
-        if (!this.isLogin) {
-          this.callLogin()
-          this.hasClick = false
-          return
-        }
-        /**
-         * 下面的就是条件验证没通过的情况
-         */
-        if (verify == 6) { // 验证码加付费
-          const type = e.target.nodeName
-          if (e == 'I') {
-            if (!this.showModile) {
-              this.tipTitle = '邀请码验证'
-              this.dialogPlaceholder = '请输入邀请码'
-              this.tipContent = ''
-              this.showModile = true
+      if (type == 2) {
+        try {
+          if (verify == 0) { // 免费
+            this.fetchAuth({type: 0})
+          } else if (verify == 1) { // 密码
+            this.passwordAuth()
+          } else if (verify == 2) { // 白名单
+            this.whiteAuth()
+          } else if (verify == 3) { // 付费
+            this.feeAuth()
+          } else if (verify == 4) { // 邀请码
+            this.checkInviteCodeAuth()
+          } else if (verify == 6) { // 邀请码加付费
+            if (e == 'invite') {
+              this.checkInviteCodeAuth()
+            } else {
+              this.feeAuth()
             }
+          }
+        } catch (e) {
+          console.log('预约鉴权失败', e)
+        }
+      } else if (type == 1 || type == 4 || type == 5) {
+        this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+      }
+    },
+    fillLimitSubmit () {
+      if (this.authCheckValue == '') {
+        this.$message.warning('请填写信息')
+        return
+      }
+      const {
+        type,
+        verify
+      } = this.roomData.webinar
+      if (verify == 0) { // 免费
+          this.fetchAuth({type: 0})
+        } else if (verify == 1) { // 密码
+          this.passwordAuth()
+        } else if (verify == 2) { // 白名单
+          this.whiteAuth()
+        } else if (verify == 3) { // 付费
+          this.feeAuth()
+        } else if (verify == 4) { // 邀请码
+          this.checkInviteCodeAuth()
+        } else if (verify == 6) { // 邀请码加付费
+          if (this.dialogPlaceholder == '请输入邀请码') {
             this.checkInviteCodeAuth()
           } else {
             this.feeAuth()
           }
-        } else if (verify == 4) {
-          if (!this.showModile) {
-            this.tipTitle = '邀请码验证'
-            this.dialogPlaceholder = '请输入邀请码'
-            this.showModile = true
-          }
-          this.checkInviteCodeAuth()
-        } else if (verify == 3) {
-          this.feeAuth()
-        } else if (verify == 2) {
-          if (!this.showModile) {
-            this.tipTitle = '身份验证'
-            this.tipContent = '当前活动设置了身份验证'
-            this.dialogPlaceholder = '请输入身份信息'
-            this.showModile = true
-          }
-          this.whiteAuth()
-        } else if (verify == 1) {
-          if (!this.showModile) {
-            this.tipTitle = '密码验证'
-            this.tipContent = '当前活动需要密码'
-            this.dialogPlaceholder = '请输入密码'
-            this.showModile = true
-          }
-          this.passwordAuth()
-        } else if (verify == 0) {
-          this.handleAppointment()
         }
-      } catch (e) {
-        console.log('预约鉴权失败', e)
-      }
     },
     // 邀请码鉴权
     checkInviteCodeAuth () {
-      console.log(1111123123123123, this.confirmError(this.authCheckValue))
-      if (this.confirmError(this.authCheckValue)) {
-        this.fetchAuth({type: 4, verify_value: this.authCheckValue})
-      }
+      this.fetchAuth({type: 4, verify_value: this.authCheckValue})
     },
     // 付费鉴权
     feeAuth () {
@@ -1357,28 +1272,11 @@ export default {
     },
     // 白名单鉴权
     whiteAuth () {
-      if (this.confirmError(this.authCheckValue)) {
-        this.fetchAuth({type: 2, verify_value: this.authCheckValue})
-      }
+      this.fetchAuth({type: 2, verify_value: this.authCheckValue})
     },
     // 密码鉴权
     passwordAuth () {
-      if (this.confirmError(this.authCheckValue)) {
-        this.fetchAuth({type: 1, verify_value: this.authCheckValue})
-      }
-    },
-    // 弹窗确认失败处理
-    confirmError (content) {
-      if (content == '') {
-        this.hasClick = false
-        return false
-      } else {
-        return true
-      }
-    },
-    // 立即预约
-    handleAppointment () {
-      this.fetchAuth({type: 0})
+      this.fetchAuth({type: 1, verify_value: this.authCheckValue})
     },
     // 请求鉴权
     fetchAuth (params) {
@@ -1387,8 +1285,7 @@ export default {
         ...params
       }).then(res => { 
         if (res.code == 200) {
-          console.log('>>>>>>校验通过')
-          // this.toWatch()
+          window.location.reload()
         } else {
           this.handleAuthErrorCode(res.code, res.msg)
           this.hasClick = false
@@ -1398,16 +1295,24 @@ export default {
         this.hasClick = false
       })
     },
+    showDialog (title, holder, content) {
+      this.tipTitle = title
+      this.dialogPlaceholder = holder
+      this.tipContent = content
+      this.showModile = true
+    },
+    closePayModel () {
+      this.showPayModel = false
+    },
     // 鉴权code处理
     handleAuthErrorCode (code, msg) {
       switch (code) {
-        case 10008:
-          this.showLoginCard = true
+        case 10008: // 未登录
+          this.callLogin()
           this.hasClick = false
           break
-        case 12525:
-          // this.$toast('未填写报名表单')
-          this.$router.push({name: 'signup', params: {id: this.$route.params.id}})
+        case 12525: // 填写表单
+          this.showSignForm = true
           break
         case 12002:
           this.$message.warning('活动不存在')
@@ -1415,36 +1320,82 @@ export default {
         case 12522:
           this.$message.warning('主持人、嘉宾或助理不允许进入观看端')
           break
-        case 12514: 
-          this.$message.warning('您已被踢出，请联系活动组织者')
-          this.$emit('haveKick')
-          break
         case 12529:
           this.$message.warning('邀请码错误')
+          !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 12530:
           this.$message.warning('邀请码已被使用')
+          !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 12531:
-          this.$message.warning('请输入邀请码')
+          // this.$message.warning('请输入邀请码')
+          !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 12527:
             this.$message.warning('密码错误')
+            !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
         case 12528:
-            this.$message.warning('请输入密码')
+            // this.$message.warning('请输入密码')
+            !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
         case 12532:
-            this.$message.warning('请输入白名单手机号')
+            // this.$message.warning('请输入白名单手机号')
+            !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
         case 12017:
             this.$message.warning('白名单观众不存在')
+            !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
         case 12523: // TODO:
             this.$message.warning('需要支付')
-            console.log(1111111111111111111)
+            if (this.getWxImg && this.getZFBlink) {
+              this.showPayModel = true
+            } else {
+              this.handleShowPay('wx')
+              this.handleShowPay('zfb')
+            }
+            // let params = {
+            //   user_id: this.userInfo.user_id,
+            //   webinar_id: this.$route.params.id
+            // }
+            // var ua = navigator.userAgent.toLowerCase();
+
+            // 微信内
+            // if(ua.match(/MicroMessenger/i) == "micromessenger") {
+            //   params.service_code = 'JSAPI'
+            //   params.service.code = '' // TODO:
+            //   params.type = 2
+            // } else if (navigator.userAgent.indexOf('MQQBrowser') > -1) {
+            //   // qq浏览器
+            //   params.service_code = 'H5_PAY'
+            //   params.type = 2
+            // } else {
+
+            // }
+            
+
+            // let service_code = ''
+            // this.$fetch('pay', {
+            //   user_id: this.userInfo.user_id,
+            //   webinar_id: this.$route.params.id,
+            //   type: 1, // 1支付宝 2微信
+            //   service_code: '',
+            //   code: ''
+            // }).then(res => {
+            //   console.log(11112221, res)
+            // })
+            // var ua = navigator.userAgent.toLowerCase();
+            // // wx
+            // if(ua.match(/MicroMessenger/i)=="micromessenger") {
+            //   service_code = ''
+            //   return true;
+            // } else {
+            //   return false;
+            // }
             // window.location.href = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=https://t.e.vhall.com/v3/watch/${this.$route.params.id}`
-            window.location.href = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=http://172.16.23.7:8081/watch/803634057`
+            // window.location.href = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=http://172.16.23.7:8081/watch/803634057`
             // if (Array.isArray(param)) {
                   //   // 如果是个数组说明需要跳转支付宝(兼容老接口，无数据的时候返回空数组，有数据了返回对象,对象内部是拉起微信支付的参数)
                   //   window.location.href = `${this.webinarInfo.domains.web}/webinar/paywebinar/${this.$route.params.id}`
@@ -1472,14 +1423,54 @@ export default {
                   // }
             break;
         default:
-          this.$message.warn(res.msg)
+          this.$message.warning(res.msg)
           break
       }
+    },
+    // 获取支付连接
+    handleShowPay (type) {
+      let params = {
+        user_id: this.userInfo.user_id,
+        webinar_id: this.$route.params.id
+      }
+      if (type == 'wx') {
+        params.type = 2
+        params.service_code = 'H5_PAY'
+      } else {
+        params.type = 1
+      }
+      this.$fetch('pay', {
+        ...params
+      }).then(res => {
+        if (res.code == 200) {
+          if (type == 'wx') {
+            this.wxPayImg = res.data.link
+            this.getWxImg = true
+          } else {
+            this.zfbLink = res.data.link
+            this.getZFBlink = true
+          }
+        }
+        if (this.getWxImg && this.getZFBlink) {
+          this.showPayModel = true
+        }
+      }).catch(e => {
+        console.log('获取支付信息失败', e)
+        this.$message.warning('获取支付信息失败')
+      })
+    },
+    closeSignForm () {
+      this.showSignForm = false
+    },
+    // 提交表单验证
+    changeSignFormBtnVal () {
+      window.location.reload()
     },
     handleCancelDelete () {
       this.showModile = false
       this.authCheckValue = ''
       this.dialogPlaceholder = ''
+      this.tipContent = ''
     }
   },
   filters: {
@@ -1669,6 +1660,9 @@ export default {
       font-size: 14px;
       height: 20px;
       color: #7c8287;
+    }
+    .extra-verify:hover{
+      cursor: pointer;
     }
   }
   .foot{
@@ -2466,5 +2460,95 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .active-second {
+    width: 100%;
+    background: #fff;
+    color: #fff;
+    float: left;
+    margin-top: 30px;
+    border: 1px solid #c7c7c7;
+    margin-bottom: 40px;
+    .active-recommond {
+      position: relative;
+      padding: 20px 30px;
+      width: 100%;
+      min-height: 200px;
+      .recom-item {
+        width: 324px;
+        height: 202px;
+        box-sizing: border-box;
+        position:relative;
+        float:left;
+        margin: 0px 15px 20px 15px;
+        .left-mark {
+          display: block;
+          width: 35px;
+          height: 18px;
+          background: #a560cf;
+          text-align: center;
+          line-height: 18px;
+          color: #fff;
+          position: absolute;
+          left: 0;
+          top: 0;
+          font-size: 12px;
+        }
+        img , a{
+          display: inline-block;
+          width: 100%;
+          height: 180px;
+          border: 1px solid #d2d2d2;
+        }
+        .recommond-contents {
+          padding: 2px;
+          margin: 0 auto;
+          width: 100%;
+          text-align: center;
+          p {
+            height: 20px;
+            text-align: center;
+            color: #333;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.5px;
+            width: auto;
+            display: inline-block;
+            text-align: left;
+          }
+        }
+      }
+
+      div:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
+  @media screen and (max-width: 1480px) {
+    .recommond-content {
+      // width: 234px !important;
+      margin-right: 17px !important;
+
+      img {
+        // width: 234.1px !important;
+      }
+    }
+    .swiper-button-next {
+      // right: -96px !important;
+      // margin-top: -45px;
+      // background-image: url(./img/right.png) !important;
+    }
+    /* .selling {
+      width: 195px !important;
+    }
+
+    .sell-image {
+      width: 195px !important;
+      height: 195px !important;
+      img {
+        width: 195px !important;
+        height: 195px !important;
+      }
+    } */
   }
 </style>

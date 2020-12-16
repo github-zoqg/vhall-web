@@ -73,10 +73,11 @@
                </div>
                 <ul class="answer">
                   <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
-                    <p>
+                    <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
-                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite)" class="answer-time answer-revoke">撤销此条回复</span>
+                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
+                    <p>{{ite.content}}</p>
                   </li>
                 </ul>
               </li>
@@ -371,12 +372,15 @@ export default {
     messClick(){
       this.privateFlag = true
     },
-    revoke(val){
+    revoke(val, index, fatherIndex){
       // 撤销回复
-      console.warn('撤销回复', val);
+      console.warn('撤销回复', this.textDealList[fatherIndex].answer[index]);
       this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
         if(res.code == 200){
           console.warn(res, '撤销成功');
+          this.$nextTick(() => {
+            this.textDealList[fatherIndex].answer[index].is_backout = 1
+          })
         }else{
           this.$message.warning(res.msg)
         }
@@ -514,6 +518,7 @@ export default {
           .border{
             display: none;
             border: 2px solid red;
+            background: red;
             width: 100%;
             position: absolute;
             top: 0;
@@ -618,12 +623,15 @@ export default {
       }
       // 文字回复  回答
       .answer{
-        height: 74px!important;
-        border: 1px solid red;
         background: #e8e8e8;
         font-size: 14px;
         color: #888;
+        width: 100%;
+        li{
+          border: none!important;
+        }
         p{
+          line-height: 26px;
           &:hover{
             .answer-revoke{
               display: inline-block;
