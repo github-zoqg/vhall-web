@@ -60,11 +60,7 @@
 <script>
 export default {
 
-  props: {
-    checkedList: {
-      default: () => []
-    }
-  },
+  props: ['checkedList'],
 
   data() {
     return {
@@ -122,9 +118,12 @@ export default {
     syncCheckStatus() {
       if (this.checkedList.length > 0) {
       const checked = this.checkedList.map((item) => {
-        return item.webinar_id
+        return item.webinar_id || item.id
       })
       this.activeList = this.activeList.map((item) => {
+
+        console.log('12312', checked)
+
           if(checked.includes(item.webinar_id)) {
             return {
               ...item,
