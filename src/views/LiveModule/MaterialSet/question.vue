@@ -144,36 +144,38 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-       that.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+      that.deleteConfirm(rows.question_id);
+    },
+    deleteConfirm(id) {
+      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteAll(rows.question_id);
+          this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.$route.query.id}).then(res => {
+            if (res.code == 200) {
+              this.getTableList();
+              this.$refs.tableList.clearSelect();
+              this.$message.success('删除成功');
+            } else {
+              this.$message.error('删除失败');
+            }
+          })
         }).catch(() => {
-          that.$message({
+          this.$message({
             type: 'info',
             message: '已取消删除'
           });
         });
     },
     deleteAll(id) {
-      if (!id) {
-        if (this.selectChecked.length < 1) {
+      if (this.selectChecked.length < 1) {
           this.$message.warning('请选择要操作的选项');
         } else {
           id = this.selectChecked.join(',');
+          this.deleteConfirm(id);
         }
-      }
-      this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.$route.query.id}).then(res => {
-        this.getTableList();
-        this.$refs.tableList.clearSelect();
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
-      })
     },
     // 选中
     changeTableCheckbox(val) {

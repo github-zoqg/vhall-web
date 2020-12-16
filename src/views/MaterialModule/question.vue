@@ -90,6 +90,9 @@ export default {
       this.$fetch('getQuestionList', this.$params(obj)).then(res => {
         this.total = res.data.total;
         this.tableData = res.data.list || [];
+        if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+          window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+        }
       })
     },
     // 预览
