@@ -93,7 +93,7 @@ export default {
             value: Number(dataVo['ui.hide_reward'])
           },
           {
-            type: 'watch_hide_like',
+            type: 'ui.watch_hide_like',
             key_name: '隐藏点赞',
             openShow: '已开启，观看端点赞按钮已被隐藏',
             closeShow: '开启后，观看端点赞按钮将被隐藏',
