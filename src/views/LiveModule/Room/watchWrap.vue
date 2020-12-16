@@ -865,14 +865,16 @@ export default {
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
         // 预约后的活动才显示邀请卡
-        if (this.roomData.is_subscribe) {
-          await this.getInviteStatus()
-        }
         if (this.isLogin) {
           await this.getAttentionStatus()
         }
-        await this.getConfigList() // 获取观看端配置项
-        this.handleRoomInfo()
+        if (this.roomData && this.roomData.is_subscribe) {
+          await this.getInviteStatus()
+        }
+        if (this.roomData) {
+          await this.getConfigList() // 获取观看端配置项
+          this.handleRoomInfo()
+        }
       } catch (e) {
         console.log('初始化调用失败:', e)
       }
