@@ -1,13 +1,14 @@
 <template>
   <div class="private-wrap clearFix">
     <ul class="list-name fl">
-      <li v-for="(item, index) in userList" :key="index" class="ellsips" :class="{'active-name': acrivePrivate == index}" @click="selectUser(item)">
-        {{item.name}}
+      <li v-for="(ite, index) in userList" :key="index" class="ellsips" :class="{'active-name': acrivePrivate == index}" @click="selectUser(item)">
+        {{ite.item.nick_name || ''}}
       </li>
     </ul>
     <div class="list-content fr">
       <p class="private-head">
-        <span>{{activeName || userList[0].name || ''}}</span>
+        <span>{{activeName || userList[0]&&userList[0].item&&userList[0].item.nick_name || ''}}</span>
+        <span class="close" @click="$emit('close')">﹀</span>
       </p>
       <p class="private-content"></p>
       <div class="private-footer">
@@ -26,7 +27,7 @@
 </template>
 <script>
 import smallEmoji from '@/tangram/libs/chat/emoji.vue';
-import { faceArr, textToEmoji, emojiToPath } from '@/tangram/libs/chat/js/emoji';
+import { faceArr, textToEmoji, emojiToPath, textToEmojiText } from '@/tangram/libs/chat/js/emoji';
 import Msg from '@/tangram/libs/chat/js/msg-class';
 import { formatTime, handleTime } from '@/tangram/libs/chat/js/handle-time';
 export default {
@@ -39,17 +40,37 @@ export default {
       acrivePrivate: 0, // 当前私聊对象
       activeName: '',
       privateValue: '', // 私聊内容
-      userList:[
-        {
-          name: 'test'
-        }
-      ]
+      userList:[], // 私聊列表
+      userListId: [], // 私聊列表的ID
     }
   },
   watch:{
-
+    onlyChatMess: {
+      handler(newValue, oldValue){
+        this.$nextTick(()=>{
+          let isFlag = this.userList.some(ele =>{
+            return ele.item && ele.item.join_id == newValue.item.join_id
+          })
+          if(!isFlag){
+            this.userList.push(newValue)
+          }
+        })
+      },
+      deep: true,
+      immediate: true
+    }
   },
   methods: {
+    getContent(){
+      this.$fetch('v3GetPrivCon', {room_id: '', webinar_id: ''}).then(res=>{
+        console.warn(res);
+        if(res.code == 200){
+          console.warn(res.data);
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
+    },
     // 切换表情显示
     toggleEmoji () {
       console.warn('点击的表情展示----', this.$refs, this.$refs.emoji);
@@ -63,35 +84,32 @@ export default {
       // 设置当前私聊title名字
       this.activeName = user.name
     },
+    roleClassFilter (value) {
+      return value == '1' ? 'host' : value == '3' ? 'assistant' : 'guest';
+    },
     privateSend(){
-      console.warn('私聊发送图片和表情', this.privateValue);
       if (!this.privateValue.trim()) {
         return this.$message.error('内容不能为空');
       }
       let data = {
+        avatar: this.userInfo.join_info.avatar,
+        target_id: this.userList[this.acrivePrivate].item.join_id,
         type:'text',
         barrageTxt: this.privateValue.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'),
-        text_content: textToEmojiText(this.privateValue),
+        text_content: this.privateValue
       };
+      // 为保持一致   故传了多个不同key  同value
       let context = {
+        to: this.userList[this.acrivePrivate].item.join_id,
         nickname: this.userInfo.join_info.nickname, // 昵称
-        avatar: this.userInfo.avatar, // 头像
-        role_name: this.userInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
-        join_id: this.userInfo.join_id
+        nick_name: this.userInfo.join_info.nickname,
+        user_name:  this.userInfo.join_info.nickname,
+        role_name: this.roleClassFilter(this.userInfo.join_info.role_name), // 角色 1主持人2观众3助理4嘉宾
+        user_role: this.roleClassFilter(this.userInfo.join_info.role_name),
+        user_id: this.userInfo.join_info.join_id,
+        app: 'vhall'
       };
-      console.log('获取私聊  准备发送的消息----', context);
-      let tempData = new Msg({
-        avatar: getAvatar(context.avatar),
-        nickName: context.nickname,
-        type: 'text',
-        content: data,
-        sendId: context.join_id,
-        sendTime: formatTime(new Date()),
-        roleName: context.role_name,
-        client: 'pc',
-        showTime: handleTime(item.sendTime),
-        replyMsg: this.replyMsg
-      });
+      this.$emit('sendMsg', data,context)
 
     }
   },
@@ -139,6 +157,15 @@ export default {
       font-size: 14px;
       line-height: 39px;
       text-align: center;
+      .close{
+          position: absolute;
+          right: 10px;
+          line-height: 39px;
+          color: #fff;
+          font-weight: normal;
+          font-size: 24px;
+          top: 3px;
+      }
     }
     .private-content{
       height: calc(100% - 140px);

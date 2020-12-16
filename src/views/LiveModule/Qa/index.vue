@@ -105,7 +105,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj' :onlyChat='onlyChatMess'></Private>
+                <Private :userInfo='baseObj' :onlyChatMess='onlyChatMess' @close='privateClose' @sendMsg='privateSendMsg'></Private>
               </template>
             </div>
           </div>
@@ -163,7 +163,7 @@ export default {
         {text:'文字回复', count: 0},
         {text:'不处理', count: 0}
       ],
-      active: 2, // 当前正在展示的Dom
+      active: 0, // 当前正在展示的Dom
       activeObj: {}, // 当前正在展示的信息
       baseObj: {},
       awaitList: [], // 待处理
@@ -194,6 +194,7 @@ export default {
    this.getChat(2)  // 语音回复
    this.setReply()  // 文字回复
    this.initChat()
+   this.getPrivateList() // 获取私聊列表
   },
   watch:{
     'awaitList.length' (newval){
@@ -208,6 +209,9 @@ export default {
       // 发起端收到消息
       e.content = this.emojiToText(e.content);
       this.awaitList.push(e)
+      this.$nextTick(()=>{
+        this.List[0].count = this.awaitList.length
+      })
     });
   },
   methods: {
@@ -332,8 +336,8 @@ export default {
           console.warn('--------点击的是私聊---------------',privateMess );
           if(!this.privateFlag){
             this.privateFlag = true
-            this.onlyChatMess = privateMess
           }
+          this.onlyChatMess = privateMess
         }else{
           console.warn('不处理----开始执行');
           let data = {
@@ -383,6 +387,13 @@ export default {
     },
     messClick(){
       this.privateFlag = true
+    },
+    privateClose(){
+      this.privateFlag = false
+    },
+    privateSendMsg(data,msg){
+      console.warn('发送私聊消息, 走到消息通道', msg);
+      this.$Chat.emit(data,msg)
     },
     revoke(val, index, fatherIndex){
       // 撤销回复
@@ -438,7 +449,7 @@ export default {
         }
         Object.assign(msg, msg.data);
         // console.warn('坚挺到消息的派发----1-', msg);
-        //  this.$EventBus.$emit(msg.type, msg);
+         this.$EventBus.$emit(msg.type, msg);
       })
     },
     textReply(){
@@ -470,10 +481,17 @@ export default {
             }
         }
       })
+    },
+    getPrivateList(){
+      this.$fetch('v3GetPrivateList', {room_id: this.baseObj.interact.room_id, webinar_id: this.$router.currentRoute.params.id }).then(res=>{
+        console.warn(res);
+        if(res.code == 200){
+          console.warn('开始准备', res);
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
     }
-  },
-  beforeCreate() {
-    console.log(this)
   },
 }
 </script>

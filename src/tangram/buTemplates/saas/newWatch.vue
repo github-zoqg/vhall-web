@@ -746,7 +746,7 @@ export default {
       this.roomInfo = inavInfo
 
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
-      this.shareUrl = `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+      this.shareUrl = `https:${this.domains.web}room/watch/${this.ilId}`;
       this.$emit('descripe', this.roomInfo.introduction);
       if (this.roomInfo.status == 1 && this.FIRST && this.roomInfo.role_name == 2) {
         this.PopAlert.visible = true;
