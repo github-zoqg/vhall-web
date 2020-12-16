@@ -87,6 +87,8 @@
 import 'whatwg-fetch';
 import PageTitle from '@/components/PageTitle';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
+import {v1 as uuidV1} from "uuid";
+import fetchData from "@/api/fetch";
 export default {
   name: "download.vue",
   components: {
@@ -132,7 +134,7 @@ export default {
       } else {
         let index = 0;
         let interDown = setInterval(function() {
-          window.open('http://t-alistatic01.e.vhall.com/upload/sys/exel_url/75/20/7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx');
+          window.open(that.selectRows[index].dow_url);
           if(index === arr.length - 1) {
             window.clearInterval(interDown);
             // 最后一次结束后，批量状态修改
@@ -213,16 +215,8 @@ export default {
       // 第一步，拿取其余服务接口请求地址
       let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
       if(result.code === 200 && result.data) {
-        fetch(result.send_url, {
-          method: result.request_method, // *GET, POST, PUT, DELETE, etc.
-          mode: 'cors',
-          credentials: 'same-origin', // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
-          headers: {
-            platform: 17,
-            token
-          },
-          body: result.select_json
-        }).then(res => {
+        debugger
+        fetchData(result.send_url, result.select_json).then(res => {
           console.log('发送成功~~~~~~~');
           console.log(res);
         }).catch(e => {});
