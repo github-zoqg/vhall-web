@@ -119,7 +119,7 @@
         </div>
       </div>
       <div class="vh-video-tailoring__form">
-        <span class="vh-video-tailoring__label">{{ t('回放标题缩写') }}</span>
+        <span class="vh-video-tailoring__label">{{ t('回放标题') }}</span>
         <div class="vh-video-tailoring__input-form">
           <el-input v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="30"></el-input>
           <span class="vh-invitation-card__title-length">
@@ -275,6 +275,7 @@ export default {
   beforeDestroy () {
     window.vhallPlayer && window.vhallPlayer.destroy();
     window.vhallPlayer = null;
+    this.$EventBus.$off('docSDK_ready');
     this.$EventBus.$off('component_playerSDK_ready');
     this.$EventBus.$off('cutTimeListChange'); // 测试是否注释
     this.$EventBus.$off('component_doc_info');

@@ -122,7 +122,7 @@ export default {
             page: '1'
           };
 
-      this.$vhallFetch('questionList', params).then(res => {
+      this.$fetch('questionList', params).then(res => {
         console.log('问卷 列表', res);
         this.docList = res.data.list || [];
 
@@ -167,7 +167,7 @@ export default {
       this.publish(this.previewId, this.previewDoc);
     },
     publish (questionId, doc) {
-      this.$vhallFetch('publicQuestion', {
+      this.$fetch('publicQuestion', {
         question_id: questionId,
         room_id: this.roomId
       }).then(res => {
@@ -228,7 +228,7 @@ export default {
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
-        this.$vhallFetch('updatesurvey', {
+        this.$fetch('updatesurvey', {
           survey_id: data.id,
           user_id: this.accountId
         })
@@ -269,7 +269,7 @@ export default {
     },
 
     createQuestionAction (id, title, description) {
-      this.$vhallFetch('createQuestion', {
+      this.$fetch('createQuestion', {
         room_id: this.roomId,
         title: title,
         question_id: id,
@@ -287,7 +287,7 @@ export default {
     },
 
     updateQuestionAction (id, title, description) {
-      this.$vhallFetch('updateQuestion', {
+      this.$fetch('updateQuestion', {
         room_id: this.roomId,
         title: title,
         question_id: id,
@@ -358,7 +358,7 @@ export default {
     },
     // 校验checkSurvey
     checkSurveyQuestion (questionId, chat) {
-      this.$vhallFetch('checkSurvey', {
+      this.$fetch('checkSurvey', {
         survey_id: questionId,
         user_id: this.userId,
         webinar_id: this.ilId

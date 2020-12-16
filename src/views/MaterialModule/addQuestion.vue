@@ -26,8 +26,8 @@ export default {
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.questionId = this.$route.query.id || '';
-    // this.getVideoAppid();
-    this.initQuestion();
+    this.getVideoAppid();
+    // this.initQuestion();
   },
   computed: {
     title() {
@@ -36,17 +36,18 @@ export default {
   },
   methods: {
     getVideoAppid() {
-      this.$fetch('getAppid').then(res => {
-        this.initQuestion(res.data.app_id, res.data.access_token);
+      this.$fetch('getPassId').then(res => {
+        this.initQuestion(res.data.app_id, res.data.third_party_user_id, res.data.access_token);
       })
     },
-    initQuestion() {
+    initQuestion(appId, userId, token) {
       let params = {};
       let service = new VHall_Questionnaire_Service({
         auth: {
-          appId: 'd317f559', //paas的应用id,必填
+          appId: appId, //paas的应用id,必填
           accountId: this.userId, //paas的第三方用户id,必填
-          token: 'vhall' //paas的授权token,必填
+          owner_id: userId,
+          token: token, //paas的授权token,必填
         },
         isLoadElementCss: true,
         notify: true //是否开启消息提示，非必填,默认是true
@@ -64,13 +65,6 @@ export default {
         params.description = data.description;
         params.title = data.title;
         this.createQuest(params);
-        if (this.questionId) {
-          this.editQuest();
-          console.log('编辑问卷成功', data);
-        } else {
-          console.log('新建问卷成功', data);
-
-        }
       })
       service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
         params.survey_id = data.id;
@@ -135,6 +129,19 @@ export default {
       background: #FB3A32 !important;
       border: none;
     }
+  }
+  #settingBox /deep/.question-wrap.click{
+    border: 1px solid #FB3A32;
+  }
+  #settingBox /deep/.show-text:hover{
+    border-color:#FB3A32;
+  }
+  #settingBox /deep/.default-img{
+    // img{
+    //   background: url('../../common/images/avatar.jpg') no-repeat;
+    //   z-index: 100;
+    // }
+
   }
   .headBtnGroup{
     float: right;

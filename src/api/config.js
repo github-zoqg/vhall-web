@@ -34,6 +34,7 @@ const apis = {
   copyQuestion: ['/v3/vss/survey/copy-shared-survey', 'GET' ], //共享库-问卷复制
 
   // 直播-问卷
+  getPassId: ['/v3/vss/survey/init', 'GET'], //生成前端调用Paas使用的授权token
   createLiveQuestion: ['/v3/vss/survey/create-webinar-survey', 'POST' ], //直播设置_创建问卷
   editLiveQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST' ], //直播设置_编辑问卷
   getLiveQuestionList: ['/v3/vss/survey/list-webinar-survey', 'GET' ], //直播设置_问卷列表
@@ -57,10 +58,10 @@ const apis = {
   viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
   //播放器设置
-  setScrolling: ['/101/v3/interacts/players/set-scrolling-screen-config', 'POST', 'mock'], //直播设置_设置播放器跑马灯 •••
-  setWatermark: ['/101/v3/interacts/players/set-watermark-config', 'POST', 'mock'], //从资料库保存到活动 •••
-  getScrolling: ['/101/v3/interacts/players/get-scrolling-screen-config', 'GET', 'mock'], //观看端_获取跑马灯设置配置信息 •••
-  getWatermark: ['/101/v3/interacts/players/get-watermark-config', 'GET', 'mock'], //观看端_获取水印设置 •••
+  setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
+  setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
+  getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息 •••
+  getWatermark: ['/v3/interacts/players/get-watermark-config', 'GET'], //观看端_获取水印设置 •••
 
   //公众号 开屏海报
   setPublicInfo: ['/v3/interacts/adv/set-public-account-config-info', 'POST'], //保存公众号展示配置  •••接口有问题
@@ -73,7 +74,7 @@ const apis = {
   //  邀请卡
   getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
   setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
-  editCardStatus: ['/101/v3/interacts/invite-card/edit', 'POST', 'mock'], //修改邀请卡信息
+  editCardStatus: ['/v3/interacts/invite-card/edit', 'POST'], //修改邀请卡信息
   createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
   createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
   getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
@@ -207,10 +208,13 @@ const apis = {
   playBackEdit: ['/v3/webinars/record/edit', 'POST'], // 修改回放标题 xiaodong.ding  √
   playBackDelete: ['/v3/webinars/record/delete', 'POST'], // 删除回放 xiaodong.ding  √
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
-  playBackDemand: ['/99/v3/webinars/record/post-record-demand', 'POST', 'mock'], // 回放发布为点播 jian.chang
+  playBackDemand: ['/v3/webinars/webinar/create-demand', 'POST'], // 回放发布为点播 jian.chang
   playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
   playBackSetDefault: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
-  getChapters: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
+  playBackChaptersGet: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
+  playBackDownUrlGet: ['/v3/webinars/record/check-download', 'POST'], // 获取回放下载地址 xiaodong.ding
+  tailorSave: ['/v3/webinars/record/cut', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  createRecord: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -244,7 +248,7 @@ const apis = {
   // 直播-互动统计
   getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
   getRoomLikeInfo: ['/v3/interacts/like/get-room-like', 'POST'], // 获取房间的点赞数量
-  getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天列表
+  getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天总数和列表
   getSignInfo: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取发起签到的签到总数
   getSpeakListInfo: ['/v3/interacts/inav/get-speak-list', 'POST'], // 获取发起签到的签到总数
   getRewardListInfo: ['/v3/interacts/reward/get-room-reward-stat', 'POST'], // 获取房间打赏统计
@@ -255,10 +259,39 @@ const apis = {
   getSurveyInfo: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下问卷提交人数
   getSurveyUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下问卷使用数据概览
   getGiftIncome: ['/v3/interacts/gift/get-gift-income-stat', 'GET'], // 获取礼物收益
-  getAnswerListInfo: ['/v3/webinars/registration-form/get-answer-people-count', 'GET'], // 获取报名表单总人数
+  getRedpacketInfo: ['/v3/interacts/redpacket/get-redpacket-overview', 'GET'], // 获取活动下红包统计数据
+  getAnswerListInfo: ['/v3/webinars/export/get-total', 'POST'], // 获取 报名表单 -- 试看人数 --- 预约人数  总人数
+
+
+  exportSubscribe: ['/v3/webinars/export/subscribe', 'POST'], //导出 -- 预约
+  exportPreview: ['/v3/webinars/export/preview', 'POST'], //数据导出 -- 试看
+  exportShareInfo: ['/v3/interacts/share/export', 'GET'], //导出 -- 分享
+  exportReward: ['/v3/interacts/reward/export-reward-record', 'GET'], //数据导出 -- 打赏
+  exportGift: ['/v3/interacts/gift/export-gift-recorder', 'GET'], //导出礼物记录
+  exportForm: ['/v3/webinars/registration-form/export-reg-record', 'GET'], //导出 -- 报名表单
+  exportSpeak: ['/v3/interacts/inav/export-speak-record', 'POST'], //导出 --上麦用户记录
 
   //直播-互动统计-详情页
   getRecodrderList: ['/v3/interacts/qa/get-questions-list', 'POST'], // 获取问答记录列表
+  deleteRecodrder: ['/v3/interacts/qa/delete-question', 'POST'], // 获取删除一条问问答记录
+  exportRecodrder: ['/v3/interacts/qa/export-qa-recorder', 'GET'], // 导出问答记录
+  deleteAllRecodrder: ['/v3/interacts/qa/batch-delete-qa', 'POST'], // 批量删除提问或者答案
+  deleteChatList: ['/v3/interacts/chat/batch-delete-message', 'POST'], //批量删除聊天的消息
+  getRedpacketList: ['/v3/interacts/redpacket/get-redpacket-send-recorder', 'GET'], //活动群红包发送记录
+  getSignList: ['/v3/interacts/sign/get-sign-list', 'POST'], //获取发起的签到列表
+  exportDetailInvite: ['/v3/interacts/invite-card/export-invite-details', 'GET'], //邀请详情导出
+  exportInvite: ['/v3/interacts/invite-card/export', 'GET'], //邀请导出
+  exportChat: ['/v3/interacts/chat/export', 'POST'], //导出当前房间聊天列表
+  exportSign: ['/v3/interacts/sign/export-sign-list', 'POST'], //导出-签到列表
+  exportDetailSign: ['/v3/interacts/sign/export-user-sign-list', 'POST'], //导出-签到明细列表
+  exportSurvey: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], //导出问卷数据
+  exportSurveyDetial: ['/v3/vss/survey/export-get-webinar-survey-usage-detail', 'GET'], //导出问卷单个数据
+  exportLottery: ['/v3/vss/lottery/export-prize-data-info-list', 'GET'], //导出-抽奖
+  exportDetailLottery: ['/v3/vss/lottery/export-lottery-user-detail', 'GET'], //导出-抽奖-详情
+  exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
+  exportDetailRedpacket: ['/v3/interacts/redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个红包的领取明细
+
+
 
   // 账户管理
   userEdit: ['/v3/users/user/edit', 'POST'], // 修改用户信息接口 （昵称、头像、公司、职位、控制台标志） Jia.li  √
@@ -462,11 +495,11 @@ const apis = {
   sendGift: ['/v3/interacts/gift/send-gift', 'POST'], // 直播间发送礼物
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
   setRelevance: ['/v3/interacts/gift/set-webinar-map-gifts', 'POST'], // 设置活动关联礼物
+  createWebinarGift: ['/v3/interacts/gift/create-webinar-gift', 'POST'], // 设置活动关联礼物
 
 
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
-
   // 打赏
   seadAwardMsg: ['/v3/interacts/reward/create-user-reward', 'POST'], // 打赏
   getQeustionList: ['/v3/vss/survey/list-webinar-survey', 'POST'], // 获取问卷列表
@@ -492,11 +525,20 @@ const apis = {
   v3GetQa: ['/v3/interacts/qa/enable', 'POST'], // 主持人开启问答
   v3CloseQa: ['/v3/interacts/qa/disable', 'POST'], // 主持人关闭问答
   v3GetQaNum: ['/v3/interacts/qa/get-current-play-question-num', 'POST'], // 获取当前场次收集到的问题个数
-  v3GetHistoryQaNum: ['/v3/interacts/qa/reply-user-question', 'POST'], // 获取当前场次收集到的历史问答 主持人
+  v3ReplayUserQu: ['/v3/interacts/qa/reply-user-question', 'POST'], // 获取当前场次收集到的历史问答 主持人
   channelInfo: [`${process.env.VUE_APP_VSS_HOST}/cmpt/room/get`, 'POST', false, 'paas'], // 获取频道信息
   getAutherQa: ['/v3/interacts/qa/get-question-by-status', 'POST'], // 提问列表
+  sendPrivateMsg: ['/v3/interacts/chat-private/send-message', 'POST'], // 发送私聊信息
+  v3GetTextReply: ['/v3/interacts/qa/get-answer-list', 'POST'], // 文字回复---私密
+  v3Revoke: ['/v3/interacts/qa/revoke-reply', 'POST'], // 主持人撤销回复
+
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
+  // 邀请卡
+  shwoInvite: ['/v3/interacts/invite-card/watch-get-info', 'POST'], // 邀请卡信息
+  // 关注
+  attentionStatus: ['/v3/users/attentions/info', 'POST'], // 关注状态
+  getAttentionNum: ['/v3/users/attentions/count', 'POST'], // 获取关注数量
 
   // 签到
   v3CreateSifn: ['/v3/interacts/sign/create-and-push', 'POST'], // 创建签到  √
@@ -504,7 +546,10 @@ const apis = {
   v3GetCurrentSign:['/v3/interacts/sign/get-doing-sign', 'POST'], // 获取当前活动正在的签到  √
   v3GetSignList:['/v3/interacts/sign/get-user-sign-list', 'POST'], // 获取当前活动的签到记录  √
   v3GetSignTotal: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取当前活动的签到总数  √
-
+  watchInterGetFirstPost: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], // 获取开屏海报
+  tipOff: ['/v3/interacts/report/user-create-report', 'POST'], // 观众举报
+  videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
+  pay: ['/v3/fin/webinar-pay', 'GET'], //支付二维码
 };
 
 const getApi = api => {

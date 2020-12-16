@@ -9,7 +9,6 @@
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
     >
       <el-table-column
-        :reserve-selection="true"
         type="selection"
         width="55"
         align="left"

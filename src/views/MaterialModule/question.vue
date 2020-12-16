@@ -39,7 +39,7 @@ export default {
       tabelColumn: [
         {
           label: '问卷ID',
-          key: 'survey_id',
+          key: 'question_id',
         },
         {
           label: '问卷名称',
@@ -57,20 +57,7 @@ export default {
       tableRowBtnFun: [
         {name:'预览', methodName: 'preview'}, {name:'复制', methodName: 'cope'} ,{name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
-      tableData: [
-        {
-          survey_id: '12312413',
-          title: '请输入000',
-          updated_at: '2020-10-03',
-          topic_num: 100
-        },
-        {
-          survey_id: '1212345',
-          title: '请输入111',
-          updated_at: '2020-10-12',
-          topic_num: 200
-        }
-      ]
+      tableData: []
     };
   },
   components: {
@@ -88,6 +75,7 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      pageInfo.limit = 20;
       let formParams = {
         user_id: this.userId,
         keyword: this.keyword
@@ -101,19 +89,18 @@ export default {
       let obj = Object.assign({}, pageInfo, formParams);
       this.$fetch('getQuestionList', this.$params(obj)).then(res => {
         this.total = res.data.total;
-        this.tableData = res.data.list;
-        // console.log(res.data.list, '222222222222222222');
+        this.tableData = res.data.list || [];
       })
     },
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
       that.questionId = rows.question_id;
+      console.log(that.questionId, '111111111111111');
       that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制
     cope(that, {rows}) {
-      console.log('复制', rows);
       that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
         that.$message({
           type: res.code == 200 ? 'success' : 'error',

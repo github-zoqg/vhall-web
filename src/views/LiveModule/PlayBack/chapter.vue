@@ -42,7 +42,7 @@
         <el-button size="medium" round @click="addChapter">新增章节</el-button>
         <el-button size="medium" round @click="deleteChapter">批量删除</el-button>
         <div class="right">
-          <el-button size="medium" round>保存</el-button>
+          <el-button size="medium" round @click="saveChapters">保存</el-button>
           <el-button size="medium" round @click="previewVisible=true">预览</el-button>
         </div>
       </div>
@@ -51,36 +51,39 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="handleSelectionChange">
+        @selection-change="handleSelectionChange"
+        :tree-props="{children: 'sub'}"
+        row-key="index"
+      >
         <el-table-column
           type="selection"
           width="55">
         </el-table-column>
         <el-table-column
           label="序号"
-          type="index"
-          width="55">
+          prop="index"
+          width="120">
         </el-table-column>
         <el-table-column
           label="章节标题">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.subject" placeholder="请输入章节标题"></el-input>
+            <el-input v-model="scope.row.title" placeholder="请输入章节标题"></el-input>
           </template>
         </el-table-column>
         <el-table-column
           label="文档页码"
           width="110">
            <template slot-scope="scope">
-             <el-input v-model="scope.row.pageNum" placeholder="请输入文档页码"></el-input>
+             <el-input v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
         <el-table-column
           label="章节时间"
-          width="110"
+          width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.times" placeholder="请输入章节时间"></el-input>
+            <el-input v-model="scope.row.createTime" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
@@ -106,6 +109,7 @@ import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
 import previewChapter from './previewChapter';
 export default {
+  name: 'Chapters',
   data(){
     return {
       recordId: this.$route.query.recordId,
@@ -172,37 +176,7 @@ export default {
     }
   },
   created(){
-    this.$fetch('playBackPreview', {
-      webinar_id: this.webinar_id,
-      record_id: this.recordId,
-      type: 0
-    }).then(res => {
-      console.log(res)
-      const data = res.data
-      this.playerProps = {
-        appId: 'd317f559',
-        channelId: 'ch_1a348b67',
-        roomId: 'lss_706f5237',
-        accountId: '10000127',
-        watchAccountId: '10000128',
-        token: 'access:d317f559:75107dced08acdb1',
-        recordId: '922013fa',
-        // accountId: data.accountId,
-        nickName: '123',
-        // appId: data.paasAppId,
-        // token: data.paasAccessToken || 'access:d317f559:75107dced08acdb1',
-        type: 'vod',
-        // roomId: data.doc.roomId,
-        channel_id: data.doc.channelId,
-        vodOption: {
-          // recordId: this.recordId
-          recordId: '922013fa'
-        },
-        openPlayerUI: false,
-        playerInfo: {}
-      }
-      this.showDoc = true
-    })
+    this.getPlayBackInfo()
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -244,6 +218,19 @@ export default {
       this.pageInfo = this.$refs.doc.pageInfo;
     });
 
+    // 监听文档加载完毕
+    this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
+      this.tableData = chapters.map((item, index) => ({
+        ...item,
+        index: index + 1,
+        createTime: this.secondsFormmat(item.createTime),
+        sub: item.sub.map((subItem, subIndex) => ({
+          ...subItem,
+          createTime: this.secondsFormmat(subItem.createTime),
+          index: `${index + 1}-${subIndex + 1}`
+        }))
+      }));
+    });
   },
   mounted(){
 
@@ -252,13 +239,71 @@ export default {
     this.$EventBus.$off('docSDK_ready');
     this.$EventBus.$off('component_playerSDK_ready');
     this.$EventBus.$off('component_page_info');
+    this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
-    getChapters(tableSelect) {
-      this.$fetch('getChapters', {
-        document_id: tableSelect.join(',')
+    saveChapters() {
+      this.tableData.map(item => ({
+
+      }))
+    },
+    getPlayBackInfo() {
+      this.$fetch('playBackPreview', {
+        webinar_id: this.webinar_id,
+        record_id: this.recordId,
+        type: 0
       }).then(res => {
         console.log(res)
+        const data = res.data
+        this.playerProps = {
+          appId: 'd317f559',
+          channelId: 'ch_1a348b67',
+          roomId: 'lss_706f5237',
+          accountId: '10000127',
+          watchAccountId: '10000128',
+          token: 'access:d317f559:75107dced08acdb1',
+          recordId: '922013fa',
+          // accountId: data.accountId,
+          nickName: '123',
+          // appId: data.paasAppId,
+          // token: data.paasAccessToken || 'access:d317f559:75107dced08acdb1',
+          type: 'vod',
+          // roomId: data.doc.roomId,
+          channel_id: data.doc.channelId,
+          vodOption: {
+            // recordId: this.recordId
+            recordId: '922013fa'
+          },
+          openPlayerUI: false,
+          playerInfo: {}
+        }
+        this.showDoc = true
+      })
+    },
+    getChapters(tableSelect) {
+      this.$fetch('playBackChaptersGet', {
+        // document_id: tableSelect.join(',')
+        document_id:'ea7afd73,bfe9ae3a'
+      }).then(res => {
+        this.tableData = res.data.doc_titles.map((item, index) => {
+          return {
+            createTime: this.secondsFormmat(item.created_at),
+            docId: item.document_id,
+            slideIndex: item.page,
+            stepIndex: item.step,
+            title: item.title,
+            index: index + 1,
+            sub: item.subsection.length ?
+              item.subsection.map((subItem, subIndex) => ({
+                createTime: this.secondsFormmat(subItem.created_at),
+                docId: subItem.document_id,
+                slideIndex: subItem.page,
+                stepIndex: subItem.step,
+                title: subItem.title,
+                index: `${index + 1}-${subIndex + 1}`
+              })) : []
+          }
+        })
       })
     },
     prevPage(){
@@ -293,16 +338,18 @@ export default {
 
     },
     getTime(row){
-      row.times = this.$refs.player.$PLAYER.getCurrentTime();
+      // 时间为秒数，四舍五入取整数
+      row.createTime = this.secondsFormmat(Math.round(this.$refs.player.$PLAYER.getCurrentTime()));
+      console.log(row.createTime)
+      console.log(this.secondsFormmat(row.createTime))
     },
     associateHandler(){
       this.$refs.associateDialog.dialogVisible = true;
     },
     closePreview(){
       this.previewVisible = false;
-    }
-  },
-  filters:{
+    },
+    // 格式化秒数为时分秒 s => hh:mm:ss
     secondsFormmat(val){
       val = Number(val);
       if(isNaN(val)) return val;
@@ -310,6 +357,14 @@ export default {
       const minutes = parseInt(val/60) - (hours*60);
       const seconds = val % 60;
       return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    },
+    // 格式化时分秒为秒数 hh:mm:ss => s
+    secondsReverse(val){
+      const hours = val.split(':')[0];
+      const minutes = val.split(':')[1];
+      const seconds = val.split(':')[2];
+      s = Number(hours*3600) + Number(minutes*60) + Number(seconds);
+      return s;
     },
   },
   components: {
@@ -402,6 +457,9 @@ export default {
       th{
         background: #F7F7F7;
       }
+    }
+    .el-input {
+      width: 95%;
     }
   }
   .right{
