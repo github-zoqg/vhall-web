@@ -127,13 +127,7 @@ export default {
             }
           };
           console.log(mockResult, 88888, this.domains);
-          let localDomain = {
-            'static':mockResult.urls.static_url ,
-            'upload': mockResult.urls.upload_url,
-            'web': mockResult.urls.web_url,
-            'webinar': "//t-webinar.e.vhall.com"
-          };
-          sessionStorage.setItem('vhall_domain',JSON.stringify(localDomain));
+          sessionStorage.setItem('vhall_domain',JSON.stringify(this.domains));
           this.duration = mockResult.webinar.live_time;
           this.is_interact = mockResult.webinar.mode == 3  ? 1 : 0 ; // 做一下判断 ??? mode 直播模式：1-音频、2-视频、3-互动
           this.document_id = mockResult.webinar.document_id;
