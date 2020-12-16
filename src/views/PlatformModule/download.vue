@@ -215,7 +215,6 @@ export default {
       // 第一步，拿取其余服务接口请求地址
       let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
       if(result.code === 200 && result.data) {
-        debugger
         fetchData(result.send_url, result.select_json).then(res => {
           console.log('发送成功~~~~~~~');
           console.log(res);
