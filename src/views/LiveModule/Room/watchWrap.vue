@@ -630,7 +630,7 @@ export default {
         basePv: 0
       },
       simpleContent: '', // 简介内容
-      sellGoodsShow: true, // 商品推荐的显示
+      sellGoodsShow: false, // 商品推荐的显示
       smsErrorMessage: '', // 短信的错误提示
       errorMessage: '请输入正确的邮箱', // 错误的提示
       swiperPrevShow: false, // 向前翻页的按钮显示
@@ -1409,7 +1409,7 @@ export default {
     },
     // 获取皮肤
     getSkin () {
-      return this.$fetch('getSkin', {
+      return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
         if (res.code == 200 && res.data) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap">
+  <div class="wrap customTheme">
     <header
       class="wh-title"
       v-if="logo && logo.image"
@@ -631,6 +631,7 @@ export default {
     this.getGoodsInfo();
   },
   mounted() {
+    window.themeRed = '#ffffff'
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
@@ -711,13 +712,47 @@ export default {
     },
     // 获取皮肤
     getSkin () {
-      return this.$fetch('getSkin', {
+      return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.id
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.skinInfo = res.data
+          this.theme = this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : ''
+          if (this.theme) {
+            this.setCustomTheme(this.theme)
+          }
         }
       })
+    },
+    // 设置主题
+    setCustomTheme (data) {
+      let {bgColor, pageStyle, popStyle, background} = data
+      let wrap = document.querySelector('.wrap')
+      let register = document.querySelector('.title-right .button-register')
+      let follow = document.querySelector('.focusBtn')
+      let title = document.querySelector('.active-second>h3')
+      let webinarStr = document.querySelector('.topInfo .tag')
+      let bc = document.querySelector('.area')
+      if (wrap) {
+        wrap.style.background = bgColor
+      }
+      if (register) {
+        register.style.background = pageStyle
+      }
+      if (follow) {
+        follow.style.background = pageStyle
+      }
+      if (title) {
+        title.style.borderBottom = `2px solid ${pageStyle}`
+      }
+      if (webinarStr) {
+        webinarStr.style.background = pageStyle
+      }
+      if (bc) {
+        bc.style.background = `url(${background})`
+        bc.style.backgroundSize = 'cover'
+        bc.style.backgroundRepeat = 'no-repeat'
+      }
     },
     // 获取公众号广告
     getPublisAdv () {
@@ -786,6 +821,12 @@ export default {
           }
         }
         this.getBtnText()
+        this.$nextTick(() => {
+          console.log(99, this.theme)
+          if (this.theme) {
+            this.setCustomTheme(this.theme)
+          }
+        })
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
           this.remainTimes(this.roomData.webinar.start_time)
@@ -1644,6 +1685,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
   .wrap{
     min-width: 1280px;
     margin: 0 auto;
@@ -2505,6 +2547,21 @@ export default {
           border: none;
         }
       }
+    }
+  }
+  .customThemePage-FFF {
+    .wrap {
+      background: #fff;
+    }
+  }
+  .customThemePage-F2 {
+    .wrap {
+      background: #f2f2f2;
+    }
+  }
+  .customThemePage-1A {
+    .wrap {
+      background: #1a1a1a;
     }
   }
   @media screen and (max-width: 1280px) {
