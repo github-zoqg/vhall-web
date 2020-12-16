@@ -71,6 +71,9 @@ export default function fetchData(url, data1 = {}, header = {}) {
   } else if (paas || staticdata){
     api = `${api}`
     option.headers = {}
+    // if(api.indexOf('apply-message-send')!=-1){
+    //   option.headers = headers
+    // }
   } else {
     api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
