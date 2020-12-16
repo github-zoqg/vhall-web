@@ -321,7 +321,10 @@ export default {
       if(typeof val == 'object'){
         console.warn(val, val.index, val.item.content);
         if(val.type == 'private'){
-          console.warn('私聊回复');
+          console.warn('--------点击的是私聊---------------');
+          if(!this.privateFlag){
+            this.privateFlag = true
+          }
         }else{
           console.warn('不处理----开始执行');
           let data = {
@@ -350,7 +353,7 @@ export default {
           this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active, index: index})
           this.textDalog = true
         }else if(val == 'audio'){
-          console.warn();
+          // 设置为语音回复
           let data = {
             question_id: item.id,
             room_id: this.baseObj.interact.room_id,
@@ -358,7 +361,6 @@ export default {
             is_open: 1
           }
           this.$fetch('v3ReplayUserQu', data).then(res=>{
-            console.warn('不处理结果---', res);
             if(res.code == 200){
               this.$nextTick(()=>{
                 this.List[0].count--
@@ -427,8 +429,8 @@ export default {
           console.log(e);
         }
         Object.assign(msg, msg.data);
-        console.warn('坚挺到消息的派发----1-', msg);
-         this.$EventBus.$emit(msg.type, msg);
+        // console.warn('坚挺到消息的派发----1-', msg);
+        //  this.$EventBus.$emit(msg.type, msg);
       })
     },
     textReply(){
@@ -470,6 +472,9 @@ export default {
 <style lang="less" scoped>
 .new-qa{
   background: #f8f8f8;
+  &::-webkit-scrollbar{
+    width: 5px;
+  }
   ::v-deep.head-wrap{
     .collapse{
       height: 100%;
@@ -552,6 +557,9 @@ export default {
           overflow-y: auto;
         }
         .await-deal{
+          &::-webkit-scrollbar{
+            width: 5px;
+          }
           font-size: 14px;
           li{
             border-bottom: 1px solid #c2c2c2;
@@ -588,6 +596,12 @@ export default {
           position: absolute;
           bottom: 0;
           right: 0;
+          .el-button{
+            background: #169BD5;
+            color: #fff;
+            border: none;
+            padding: 5px 20px;
+          }
         }
         .no-deal{
           .fr{
