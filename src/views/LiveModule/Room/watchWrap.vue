@@ -1418,8 +1418,42 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.skinInfo = res.data
+          this.theme = this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : ''
+          if (this.theme) {
+            this.setCustomTheme(this.theme)
+          }
         }
       })
+    },
+    // 设置主题
+    setCustomTheme (data) {
+      let {bgColor, pageStyle, popStyle, background} = data
+      let wrap = document.querySelector('.wrap')
+      let register = document.querySelector('.title-right .button-register')
+      let follow = document.querySelector('.focusBtn')
+      let title = document.querySelector('.active-second>h3')
+      let webinarStr = document.querySelector('.topInfo .tag')
+      let bc = document.querySelector('.area')
+      if (wrap) {
+        wrap.style.background = bgColor
+      }
+      if (register) {
+        register.style.background = pageStyle
+      }
+      if (follow) {
+        follow.style.background = pageStyle
+      }
+      if (title) {
+        title.style.borderBottom = `2px solid ${pageStyle}`
+      }
+      if (webinarStr) {
+        webinarStr.style.background = pageStyle
+      }
+      if (bc) {
+        bc.style.background = `url(${background})`
+        bc.style.backgroundSize = 'cover'
+        bc.style.backgroundRepeat = 'no-repeat'
+      }
     },
     // 获取公众号广告
     getPublisAdv () {
@@ -1747,6 +1781,12 @@ export default {
       this.initVHallReport();
       // 初始化邀请卡
       this.invitePartner();
+      this.$nextTick(() => {
+        // console.log(99, this.theme)
+        if (this.theme) {
+          this.setCustomTheme(this.theme)
+        }
+      })
     },
     /**
      * @description 数据上报  init 方法
