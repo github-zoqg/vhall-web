@@ -15,7 +15,7 @@
     </pageTitle>
     <!-- 无权限，未创建 -->
     <div v-if="no_show">
-      <null-page text="您还未添加内容，快去上传吧" nullType="noAuth">
+      <null-page text="您还没有文档，快来上传吧" nullType="noAuth">
         <el-upload
           class="btn-upload"
           :action=actionUrl
