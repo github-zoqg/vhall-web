@@ -106,6 +106,9 @@ export default {
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list || [];
         this.total = res.data.total;
+        if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+          window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+        }
       })
     },
     // 预览
