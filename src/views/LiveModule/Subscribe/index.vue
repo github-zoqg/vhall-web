@@ -716,9 +716,6 @@ export default {
         if (res.code == 200 && res.data) {
           this.skinInfo = res.data
           this.theme = this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : ''
-          if (this.theme) {
-            this.setCustomTheme(this.theme)
-          }
         }
       })
     },
