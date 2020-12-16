@@ -172,7 +172,7 @@ export default {
           webinar_id: this.$route.params.str
         }
         console.log(params, '同步到活动中');
-        this.$confirm('确定保存?', '提示', {
+        this.$confirm('确定同步到活动？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'

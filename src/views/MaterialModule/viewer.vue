@@ -364,9 +364,10 @@ export default {
     },
     // 白名单删除分组
     postGroupDel(item) {
-      this.$confirm('是否确认删除当前分组', '删除组', {
+      this.$confirm('确定要删除当前分组？', '删除组', {
         confirmButtonText: '确认',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box'
       }).then(() => {
         let params = {
           group_ids: item.id
@@ -486,9 +487,10 @@ export default {
     // 白名单观众-批量删除
     viewerDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
-        this.$confirm('是否确认从当前组里删除该观众', '删除观众', {
+        this.$confirm('确定从当前组里删除该观众？', '删除观众', {
           confirmButtonText: '删除',
-          cancelButtonText: '取消'
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;

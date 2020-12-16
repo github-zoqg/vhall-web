@@ -71,8 +71,8 @@
           </el-form>
         </div>
         <div class="official-phone">
-          <div class="img-code" v-if="img">
-            <img :src="img" alt="">
+          <div class="img-code" v-if="domain_url">
+            <img :src="domain_url" alt="">
           </div>
         </div>
       </div>
@@ -160,8 +160,8 @@ export default {
           this.img = res.data.img || '';
           this.url = res.data.url || '';
           this.domain_url = res.data.img || '';
-          this.status = res.data.status;
-          this.alertType = this.title === '公众号展示' ? res.data.alert_type : res.data.shutdown_type;
+          this.status = res.data.status || 1;
+          this.alertType = this.title === '公众号展示' ? res.data.alert_type || 1 : res.data.shutdown_type || 1;
         }
       }).catch(e => {
         console.log(e);
@@ -169,6 +169,10 @@ export default {
     },
     preSure() {
       let url = '';
+      if(!this.img) {
+        this.$message.error('上传图片不能为空');
+        return;
+      }
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
@@ -201,8 +205,6 @@ export default {
         this.img = file_url;
         this.domain_url = domain_url;
       }
-      // 触发验证
-      // this.$refs.signSetForm.validateField('img');
     },
     beforeUploadHnadler(file){
       console.log(file);

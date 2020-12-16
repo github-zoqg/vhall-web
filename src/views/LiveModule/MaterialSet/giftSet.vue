@@ -370,7 +370,7 @@ export default {
       this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        iconClass: ''
+        customClass: 'zdy-message-box'
       }).then(() => {
         this.$fetch('updateGiftInfo', {
           ...this.editParams
@@ -392,7 +392,7 @@ export default {
       this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        iconClass: ''
+        customClass: 'zdy-message-box'
       }).then(() => {
         this.$fetch('createWebinarGift', {
           ...this.editParams,
@@ -525,7 +525,7 @@ export default {
       if(gift.source_status == 0) {
         this.$message.warning('默认礼物不支持取消关联')
         return false;
-      };
+      }
       if (!this.materiaTableData[index].isChecked) {
         this.addGiftsIds.push(Number(this.materiaTableData[index].gift_id))
       } else {

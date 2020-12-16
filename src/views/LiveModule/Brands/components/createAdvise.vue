@@ -160,8 +160,7 @@ export default {
       this.$confirm('是否同步到资料库?', '提示', {
           confirmButtonText: '同步',
           cancelButtonText: '不同步',
-          customClass: 'zdy-message-box',
-          type: 'warning'
+          customClass: 'zdy-message-box'
         }).then(() => {
           this.advertisement.is_sync = 1;
           this.createAdvAndsync(1);

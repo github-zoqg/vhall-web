@@ -416,7 +416,7 @@ export default {
       this.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          customClass: 'zdy-message-box'
         }).then(() => {
           let obj = {
             msg_id: id,
@@ -459,8 +459,7 @@ export default {
       this.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          type: 'warning'
+          customClass: 'zdy-message-box'
         }).then(() => {
           let obj = {
             ques_ids: this.seleteQuestionList.join(','),
@@ -612,8 +611,7 @@ export default {
       this.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          type: 'warning'
+          customClass: 'zdy-message-box'
         }).then(() => {
           let obj = {
             id: item.id,

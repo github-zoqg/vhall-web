@@ -121,9 +121,7 @@ export default {
       this.$confirm('是否删除当前广告？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(() => {
         this.$fetch('deleteAdv',this.$params({
           adv_ids: id,

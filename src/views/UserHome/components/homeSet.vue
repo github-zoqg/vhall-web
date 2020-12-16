@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item label="主页简介：" prop="content">
         <v-editor  :isReturn=true @returnChange="sendRewardData" ref="contentEditor"
-                   :value="homeSetInfoForm.content"
+                   v-model="homeSetInfoForm.content"
                    toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen">
         </v-editor>
       </el-form-item>

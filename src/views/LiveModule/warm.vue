@@ -107,8 +107,7 @@ export default {
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
-          center: true
+          customClass: 'zdy-message-box'
         }).then(() => {
           console.log('点击的是确定');
         }).catch(() => {});

@@ -1,11 +1,12 @@
 <template>
     <span :class="['iconContainer', className]">
+        <!--
         <svg class="svg-icon" aria-hidden="true">
             <use :xlink:href="iconName"></use>
         </svg>
-        <slot></slot>
+        <slot></slot>-->
+       <i class="svg-icon" :class="`iconfont-v3 ${iconClass}`"></i>
     </span>
-
 </template>
 
 <script>
@@ -20,11 +21,11 @@ export default {
       type: String
     }
   },
-  computed: {
-    iconName() {
-      return `#${this.iconClass}`;
-    }
-  }
+  // computed: {
+  //   iconName() {
+  //     return `#${this.iconClass}`;
+  //   }
+  // }
 };
 </script>
 

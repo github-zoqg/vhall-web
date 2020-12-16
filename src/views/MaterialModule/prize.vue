@@ -153,12 +153,10 @@ export default {
       that.deleteConfirm(rows.prize_id);
     },
     deleteConfirm(id) {
-      this.$confirm('确定要删除此奖品吗?', '提示', {
+      this.$confirm('确定要删除此奖品吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-         customClass: 'zdy-message-box',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(() => {
         this.$fetch('delPrize', {prize_id: id, source: this.source}).then(res=>{
           if (res.code == 200) {

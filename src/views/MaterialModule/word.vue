@@ -184,7 +184,7 @@ export default {
         this.$message.success('上传成功');
         if (this.$route.params.str) {
           // 弹出框提示是否同步
-          this.$confirm('是否同步到资料库?', '提示', {
+          this.$confirm('确定同步到资料库？', '提示', {
             confirmButtonText: '同步',
             cancelButtonText: '不同步',
             customClass: 'zdy-message-box'
@@ -261,7 +261,7 @@ export default {
     // 批量删除
     wordMultiDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
-        this.$confirm('删除后将会影响文档演示和观看，确定删除？', '提示', {
+        this.$confirm('删除后将会影响文档演示和观看，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
@@ -348,7 +348,13 @@ export default {
       this.$fetch('delWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.$message.success('删除成功');
-          this.$refs.tableListWord.clearSelect();
+          try {
+            this.$nextTick(() => {
+              this.$refs.tableListWord.clearSelect();
+            })
+          } catch(e) {
+            console.log(e);
+          }
           this.initPage();
         } else {
           this.$message.error(res.msg || '删除失败');

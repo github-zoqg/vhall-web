@@ -31,7 +31,7 @@
                 >
                 <div class="invitation-code">
                   <p>活动观看页</p>
-                  <img :src="h5WapLink" alt="">
+                  <img :src="h5WapLink" alt="" v-if="h5WapLink">
                   <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
                 </div>
                   <el-button round size="mini" slot="reference">扫码</el-button>
@@ -208,7 +208,7 @@ export default {
         this.$confirm('恢复为预告后，回放将不能观看', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          customClass: 'zdy-message-box'
         }).then(() => {
           this.reSumeNotice();
         }).catch(() => {

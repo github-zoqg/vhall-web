@@ -11,7 +11,7 @@
       </el-switch>
       <span class="leve3_title title--999">请输入邀请榜的活动规则</span>
       <v-editor v-if="unitRankForm.inSwitch"
-        :isReturn=true @returnChange="sendInData" ref="invEditor" :value="unitRankForm.inContent" toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen"></v-editor>
+        :isReturn=true @returnChange="sendInData" ref="invEditor" v-model="unitRankForm.inContent" toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen"></v-editor>
     </div>
     <div class="switch__box">
       <label class="leve3_title label__r12">打赏榜</label>
@@ -24,7 +24,7 @@
       </el-switch>
       <span class="leve3_title title--999">请输入打赏榜的活动规则</span>
       <v-editor  v-if="unitRankForm.rewardSwitch"
-        :isReturn=true @returnChange="sendRewardData" ref="rewardEditor" :value="unitRankForm.rewardContent" toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen"></v-editor>
+        :isReturn=true @returnChange="sendRewardData" ref="rewardEditor" v-model="unitRankForm.rewardContent" toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen"></v-editor>
     </div>
   </div>
 </template>

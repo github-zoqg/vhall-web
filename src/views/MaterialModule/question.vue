@@ -126,11 +126,10 @@ export default {
       that.deleteConfirm(rows.question_id);
     },
     deleteConfirm(id) {
-      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作将删除该文件, 确认继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          type: 'warning'
+          customClass: 'zdy-message-box'
         }).then(() => {
           this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
             this.getTableList();

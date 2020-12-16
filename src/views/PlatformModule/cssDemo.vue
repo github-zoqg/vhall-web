@@ -34,9 +34,9 @@
     <br />
     <br />
     {{content}}
-    <v-editor save-type='live' :isReturn=true @returnChange="sendData1" ref="unitImgTxtEditor" :value="content"></v-editor>
+    <v-editor save-type='live' :isReturn=true @returnChange="sendData1" ref="unitImgTxtEditor" v-model="content"></v-editor>
     {{content2}}
-    <v-editor save-type='live' :isReturn=true @returnChange="sendData2" ref="unitImgTxtEditor" :value="content2"></v-editor>
+    <v-editor save-type='live' :isReturn=true @returnChange="sendData2" ref="unitImgTxtEditor" v-model="content2"></v-editor>
     <v-editor save-type='live'></v-editor>
   </div>
 </template>

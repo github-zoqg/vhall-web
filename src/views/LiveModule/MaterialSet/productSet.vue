@@ -195,11 +195,10 @@ export default {
       });
     },
     delConfirm(id) {
-      this.$confirm('确定要删除该文件吗?', '提示', {
+      this.$confirm('确定要删除该文件吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        type: 'warning'
+        customClass: 'zdy-message-box'
       }).then(() => {
         this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
           if (res.code == 200) {

@@ -158,7 +158,7 @@ export default {
       if (!(this.ids && this.ids.length > 0)) {
         this.$message.error('请至少选择一条信息标记为已读');
       } else {
-        this.$confirm('是否要标记选中内容为已读？', '提示', {
+        this.$confirm('确定要标记选中内容为已读？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
