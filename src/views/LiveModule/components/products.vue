@@ -10,7 +10,13 @@
       <el-carousel-item v-for="good in goodsList" :key="good.goods_id">
         <div class="sell-goods-item">
           <div class="sell-image" @click="sellGoodsInfo(good)">
-            <img src="https://cn.vuejs.org/images/logo.png" alt />
+            <el-carousel 
+              height="235px"
+              :autoplay="false">
+              <el-carousel-item v-for="(item, i) in good.img_list" :key="i">
+                <img :src="item.img_url" alt />
+              </el-carousel-item>
+            </el-carousel>
           </div>
           <h3 :title="good.name" class="sell-title">
             {{ good.name }}
@@ -74,10 +80,13 @@
     .sell-image {
       display: block;
       margin: 0 auto;
-
       img {
         width: 100%;
         height: 100%;
+      }
+      /deep/ .el-carousel__arrow.el-carousel__arrow--left,
+      /deep/ .el-carousel__arrow.el-carousel__arrow--right{
+        display: none!important;
       }
     }
 

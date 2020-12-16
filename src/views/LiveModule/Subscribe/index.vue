@@ -483,7 +483,6 @@
     <sign-form 
       v-if="showSignForm"
       @closeSignUp="closeSignForm"
-      @changeBtnVal="changeSignFormBtnVal"
     ></sign-form>
     <!--反馈信息-->
     <feedBack ref="feedBack"></feedBack>
@@ -2386,7 +2385,7 @@ export default {
     }
   }
   .active-second {
-    width: auto;
+    width: 100%;
     background: #fff;
     color: #fff;
     float: left;
