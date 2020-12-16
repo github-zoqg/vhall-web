@@ -52,7 +52,7 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
               </li>
@@ -68,14 +68,15 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
                 <ul class="answer">
                   <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
+                    <span class="triangle"></span>
                     <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
-                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite)" class="answer-time answer-revoke">撤销此条回复</span>
+                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
                     <p>{{ite.content}}</p>
                   </li>
@@ -105,7 +106,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj'></Private>
+                <Private :userInfo='baseObj' :onlyChatMess='onlyChatMess' @close='privateClose' @sendMsg='privateSendMsg'></Private>
               </template>
             </div>
           </div>
@@ -163,7 +164,7 @@ export default {
         {text:'文字回复', count: 0},
         {text:'不处理', count: 0}
       ],
-      active: 2, // 当前正在展示的Dom
+      active: 0, // 当前正在展示的Dom
       activeObj: {}, // 当前正在展示的信息
       baseObj: {},
       awaitList: [], // 待处理
@@ -184,6 +185,7 @@ export default {
         page_size: 20,
         page: 0
       },
+      onlyChatMess:{} // 当前私聊对象
     }
   },
   async created() {
@@ -193,6 +195,7 @@ export default {
    this.getChat(2)  // 语音回复
    this.setReply()  // 文字回复
    this.initChat()
+   this.getPrivateList() // 获取私聊列表
   },
   watch:{
     'awaitList.length' (newval){
@@ -207,6 +210,9 @@ export default {
       // 发起端收到消息
       e.content = this.emojiToText(e.content);
       this.awaitList.push(e)
+      this.$nextTick(()=>{
+        this.List[0].count = this.awaitList.length
+      })
     });
   },
   methods: {
@@ -319,9 +325,20 @@ export default {
     },
     reply(val, item, index){
       if(typeof val == 'object'){
-        console.warn(val, val.index, val.item.content);
         if(val.type == 'private'){
-          console.warn('私聊回复');
+          // 合并 当前数据
+          this.onlyChatMess = {}
+          let privateMess = Object.assign(val, {activeDom: this.active, Subscript: index})
+          if(this.active != 0){
+            privateMess.item = item
+          }else{
+            privateMess.Subscript = val.index
+          }
+          console.warn('--------点击的是私聊---------------',privateMess );
+          if(!this.privateFlag){
+            this.privateFlag = true
+          }
+          this.onlyChatMess = privateMess
         }else{
           console.warn('不处理----开始执行');
           let data = {
@@ -350,7 +367,7 @@ export default {
           this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active, index: index})
           this.textDalog = true
         }else if(val == 'audio'){
-          console.warn();
+          // 设置为语音回复
           let data = {
             question_id: item.id,
             room_id: this.baseObj.interact.room_id,
@@ -358,11 +375,11 @@ export default {
             is_open: 1
           }
           this.$fetch('v3ReplayUserQu', data).then(res=>{
-            console.warn('不处理结果---', res);
             if(res.code == 200){
               this.$nextTick(()=>{
                 this.List[0].count--
                 this.awaitList.splice(val.index, 1)
+                this.List[1].count++
               })
             }
           })
@@ -372,12 +389,22 @@ export default {
     messClick(){
       this.privateFlag = true
     },
-    revoke(val){
+    privateClose(){
+      this.privateFlag = false
+    },
+    privateSendMsg(data,msg){
+      console.warn('发送私聊消息, 走到消息通道', msg);
+      this.$Chat.emit(data,msg)
+    },
+    revoke(val, index, fatherIndex){
       // 撤销回复
-      console.warn('撤销回复', val);
+      console.warn('撤销回复', this.textDealList[fatherIndex].answer[index]);
       this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
         if(res.code == 200){
           console.warn(res, '撤销成功');
+          this.$nextTick(() => {
+            this.textDealList[fatherIndex].answer[index].is_backout = 1
+          })
         }else{
           this.$message.warning(res.msg)
         }
@@ -401,13 +428,11 @@ export default {
       })
     },
     emojiToText (content) {
-      return textToEmoji(content)
-        .map(c => {
-          return c.msgType == 'text'
-            ? c.msgCont
-            : `<img width="24" src="${c.msgImage}" border="0" />`;
-        })
-        .join(' ');
+      return textToEmoji(content).map(c => {
+        return c.msgType == 'text'
+          ? c.msgCont
+          : `<img width="24" src="${c.msgImage}" border="0" />`;
+      }).join(' ');
     },
     // 监听
     monitor(){
@@ -424,7 +449,7 @@ export default {
           console.log(e);
         }
         Object.assign(msg, msg.data);
-        console.warn('坚挺到消息的派发----1-', msg);
+        // console.warn('坚挺到消息的派发----1-', msg);
          this.$EventBus.$emit(msg.type, msg);
       })
     },
@@ -457,16 +482,26 @@ export default {
             }
         }
       })
+    },
+    getPrivateList(){
+      this.$fetch('v3GetPrivateList', {room_id: this.baseObj.interact.room_id, webinar_id: this.$router.currentRoute.params.id }).then(res=>{
+        console.warn(res);
+        if(res.code == 200){
+          console.warn('开始准备', res);
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
     }
-  },
-  beforeCreate() {
-    console.log(this)
   },
 }
 </script>
 <style lang="less" scoped>
 .new-qa{
   background: #f8f8f8;
+  &::-webkit-scrollbar{
+    width: 5px;
+  }
   ::v-deep.head-wrap{
     .collapse{
       height: 100%;
@@ -515,6 +550,7 @@ export default {
           .border{
             display: none;
             border: 2px solid red;
+            background: red;
             width: 100%;
             position: absolute;
             top: 0;
@@ -548,6 +584,9 @@ export default {
           overflow-y: auto;
         }
         .await-deal{
+          &::-webkit-scrollbar{
+            width: 5px;
+          }
           font-size: 14px;
           li{
             border-bottom: 1px solid #c2c2c2;
@@ -584,6 +623,12 @@ export default {
           position: absolute;
           bottom: 0;
           right: 0;
+          .el-button{
+            background: #169BD5;
+            color: #fff;
+            border: none;
+            padding: 5px 20px;
+          }
         }
         .no-deal{
           .fr{
@@ -619,12 +664,23 @@ export default {
       }
       // 文字回复  回答
       .answer{
-        background: #e8e8e8;
         font-size: 14px;
         color: #888;
         width: 100%;
         li{
           border: none!important;
+          background: #e8e8e8;
+          position: relative;
+          margin-top: 20px;
+          .triangle{
+            position: absolute;
+            top: -28px;
+            width: 0px;
+            height: 0px;
+            border-width: 14px;
+            border-style: solid;
+            border-color: transparent transparent #e8e8e8 transparent;
+          }
         }
         p{
           line-height: 26px;

@@ -10,10 +10,9 @@
         :infinite-scroll-disabled="disabled"
         :infinite-scroll-immediate="true"
       >
-
         <!-- 单个视频 -->
         <div class="vh-chose-active-item"
-          v-for="(item, index) in activeList"
+          v-for="(item) in activeList"
           :key="item.webinar_id"
           @click="doSelect(item)"
           :class="{'checkedActive': item.checked}"

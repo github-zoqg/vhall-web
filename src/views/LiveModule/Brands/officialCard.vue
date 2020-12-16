@@ -53,7 +53,7 @@
             </el-form-item>
             <el-form-item :label="title==='公众号展示' ? '自动弹出' : '自动关闭' ">
               <el-switch
-                v-model="alert_type"
+                v-model="alertType"
                 :active-value="0"
                 :inactive-value="1"
                 active-color="#ff4949"
@@ -91,8 +91,8 @@ export default {
       domain_url: '',
       url: '',
       imgShowUrl: '',
-      status: 1,
-      alert_type: 1
+      status: null,
+      alertType: null
     };
   },
   computed: {
@@ -111,9 +111,9 @@ export default {
     },
     autoUpText(){
       if (this.title==='公众号展示') {
-        return this.alert_type ? '已开启，进入活动页公众中自动展示' : '开启后，进入活动页公众中自动展示';
+        return this.alertType > 0 ? '已开启，进入活动页公众中自动展示' : '开启后，进入活动页公众中自动展示';
       } else {
-        return this.alert_type ? '已开启，倒计时结束后自动关闭' : '开启后，倒计时结束后自动关闭';
+        return this.alertType > 0 ? '已开启，倒计时结束后自动关闭' : '开启后，倒计时结束后自动关闭';
       }
     }
   },
@@ -161,7 +161,7 @@ export default {
           this.url = res.data.url || '';
           this.domain_url = res.data.img || '';
           this.status = res.data.status;
-          this.alert_type = res.data.alert_type;
+          this.alertType = this.title === '公众号展示' ? res.data.alert_type : res.data.shutdown_type;
         }
       }).catch(e => {
         console.log(e);
@@ -174,11 +174,12 @@ export default {
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
         img: this.$parseURL(this.img).path // 公众号/开屏海报  图片地址
       };
+      let type = this.alertType;
       if (this.title === '公众号展示') {
-        params.alert_type = this.alert_type; // 公众号-弹窗方式：0自动弹出 1手动弹出
+        params.alert_type = type; // 公众号-弹窗方式：0自动弹出 1手动弹出
         url = 'setPublicInfo';
       } else {
-        params.shutdown_type = this.alert_type;
+        params.shutdown_type = type;
         params.url = this.url;
         url = 'setPosterInfo';
       }

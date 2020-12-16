@@ -238,8 +238,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item">
-           <!-- v-if="isStatus!=4&&webinarType==3" -->
+         <div class="base-item" v-if="isStatus!=4&&webinarType==3">
           <p @click="exportSpeak">导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_lianmai"></icon>
@@ -296,6 +295,19 @@ export default {
       default: 1
     }
   },
+  watch: {
+    webinarType() {
+      if (this.webinarType == 3) {
+        this.speakContactInfo();
+      }
+    },
+    isStatus() {
+      if (this.isStatus != 4) {
+        // 点播不需要调用
+        this.getOtherInfo();
+      }
+    }
+  },
   mounted() {
     this.roomId = this.$route.query.roomId;
     this.getAllDataInfo();
@@ -320,17 +332,27 @@ export default {
       this.$fetch('getChatListInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.chatNum = res.data.total;
       });
-      //问答
-      this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.recordNum = res.data.total;
-      });
       // 点赞
       this.$fetch('getRoomLikeInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.likeNum = res.data.total;
       });
-      // 签到
+      // 打赏统计
+      this.$fetch('getRewardListInfo', {webinar_id: this.$route.params.str}).then(res => {
+        this.dataInfo.rewardMoney = res.data.total_money;
+      });
+      // 礼物(元)
+      this.$fetch('getGiftIncome', {room_id: this.roomId}).then(res => {
+        this.dataInfo.gitMoney = res.data.total_money;
+      });
+    },
+    getOtherInfo() {
+       //问答
+      this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.recordNum = res.data.total;
+      });
+       // 签到
       this.$fetch('getSignInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.signNum = res.data.total;  //报错
+        this.dataInfo.signNum = res.data.total;
       });
       // 问卷提交人数
       this.$fetch('getSurveyInfo', {room_id: this.roomId}).then(res => {
@@ -344,21 +366,12 @@ export default {
       this.$fetch('getRedpacketInfo', {webinar_id: this.$route.params.str}).then(res => {
         this.dataInfo.redpacketMoney = res.data.send_amount;
       });
-      // 打赏统计
-      this.$fetch('getRewardListInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.rewardMoney = res.data.total_money;
+    },
+    // 连麦(条)
+    speakContactInfo() {
+      this.$fetch('getSpeakListInfo', {room_id: this.roomId}).then(res => {
+        this.dataInfo.speakNum = res.data.total;
       });
-      // 礼物(元)
-      this.$fetch('getGiftIncome', {room_id: this.roomId}).then(res => {
-        this.dataInfo.gitMoney = res.data.total_money;
-      });
-      // 连麦(条)
-      if (this.webinarType == 3) {
-        this.$fetch('getSpeakListInfo', {room_id: this.roomId}).then(res => {
-          this.dataInfo.speakNum = res.data.total;
-        });
-      }
-
     },
     // 预约-导出
     exportSubscribeInfo() {
@@ -446,8 +459,8 @@ export default {
       margin-bottom: 20px;
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
-      // justify-content: space-between;
+      // margin-right: -24px;
+      // align-items: center;
       .base-item{
         height: 120px;
         width: 323px;

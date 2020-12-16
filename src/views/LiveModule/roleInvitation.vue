@@ -114,7 +114,7 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input  :value="privilegeVo && join_link ? join_link : ''"  readonly></el-input>
+              <el-input  :value="privilegeVo && assistant_join_link ? assistant_join_link : ''"  readonly></el-input>
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.assistant_password" readonly>
@@ -241,10 +241,13 @@ export default {
 加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
     },
     host_join_link: function() {
-      return `${window.location.origin}/keylogin-host/${this.privilegeVo.webinar_id}`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
     },
     join_link: function() {
-      return `${window.location.origin}/keylogin/${this.privilegeVo.webinar_id}`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/2`;
+    },
+    assistant_join_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/3`;
     }
   },
   methods: {

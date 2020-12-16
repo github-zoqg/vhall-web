@@ -150,7 +150,6 @@ export default {
       });
     },
     resetPic(item) {
-      console.log(item, '11111111111');
       this.resetImgItem = item;
       this.isReset = true;
     },
@@ -267,12 +266,10 @@ export default {
           this.fileList.map((item, index) => {
             if (item.img_id === this.resetImgItem.img_id) {
               this.form.img_id.splice(index, 1, res.data.img_id);
-              return {
-                url: image_url,
-                domain_url: domain_url,
-                cover: this.resetImgItem.cover,
-                img_id: res.data.img_id
-              }
+              item.url = image_url;
+              item.domain_url = domain_url;
+              item.cover = this.resetImgItem.cover;
+              item.img_id = res.data.img_id;
             }
           });
         } else {
@@ -289,7 +286,6 @@ export default {
         }
         this.isReset = false;
         this.resetImgItem = {};
-        console.log(this.fileList , '4444444444444444444');
        }
         // this.imgIdMap.set(image_url, res.data.img_id);
       }).catch(err => {
@@ -308,7 +304,6 @@ export default {
           // this.form.imgIdArr = this.fileList.map(item => item.img_id);
           const obj = {
             ...this.form,
-            // img_id: this.form.imgIdArr,
             webinar_id: this.$route.params.str,
             cover_id: this.defaultCover
           };

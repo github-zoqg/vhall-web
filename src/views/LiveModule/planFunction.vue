@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     changeStatus(callback, item) {
+      item.value = Number(!callback)
       let params = {
         webinar_id: this.$route.params.str,
         permission_key: item.type,
@@ -62,10 +63,15 @@ export default {
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
         console.log(res);
-        this.$message({
-          message:  `${callback ? '开启' : '关闭'} ${item.key_name} 成功`,
-          type: 'success'
-        });
+        if(res && res.code === 200) {
+          this.$message({
+            message:  `${callback ? '开启' : '关闭'} ${item.key_name} 成功`,
+            type: 'success'
+          });
+          item.value = Number(callback);
+        } else {
+          this.$message.error(res.msg || `${callback ? '开启' : '关闭'} ${item.key_name} 失败`);
+        }
       }).catch(e => {
         console.log(e);
         this.$message({
@@ -87,7 +93,7 @@ export default {
             value: Number(dataVo['ui.hide_reward'])
           },
           {
-            type: 'ui.hide_like',
+            type: 'watch_hide_like',
             key_name: '隐藏点赞',
             openShow: '已开启，观看端点赞按钮已被隐藏',
             closeShow: '开启后，观看端点赞按钮将被隐藏',
@@ -110,7 +116,7 @@ export default {
         ],
         [
           {
-            type: 'record_no_chatting',
+            type: 'ui.watch_record_no_chatting',
             key_name: '回放禁言',
             openShow: '已开启，回放默认已开启聊天禁言',
             closeShow: '开启后，回放默认开启聊天禁言',

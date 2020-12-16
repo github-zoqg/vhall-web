@@ -1644,7 +1644,8 @@ export default {
   mounted () {
     window.saasindex = this;
     this.getInavInfo();
-    this.shareUrl = this.domains.custom ? `${this.domains.custom}/room/watch/${this.ilId}` : `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+    console.warn(this.domains, '图片地址   ***********************');
+    this.shareUrl = this.domains.custom ? `${this.domains.custom}/v3/live/watch/${this.ilId}` : `https:${this.domains.web_url}live/watch/${this.ilId}`;
     this.localDuration = this.duration;
     setTimeout(() => {
       this.interacttools = this.$refs['interacttools'] && this.$refs['interacttools'].childElementCount == 0;
@@ -2206,7 +2207,8 @@ export default {
     let vhallDomain = window.sessionStorage.getItem('vhall_domain');
     if (vhallDomain) {
       vhallDomain = JSON.parse(vhallDomain);
-      this.filterUrl = `/live/authchat/${this.ilId}`
+      const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
+      this.filterUrl = `${base}live/authchat/${this.ilId}`
       // this.filterUrl =
       //   (this.$route.query.assistantType ? 'http:' : 'https:') +
       //   `${vhallDomain.web}/room/authchat/${this.ilId}`;
@@ -2219,8 +2221,8 @@ export default {
     roomId (newVal) {
       this.getInavInfo();
       this.shareUrl = this.domains.custom
-        ? `${this.domains.custom}/room/watch/${this.ilId}`
-        : `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+        ? `${this.domains.custom}/v3/live/watch/${this.ilId}`
+        : `https:${this.domains.web_url}live/watch/${this.ilId}`;
       this.localDuration = this.duration;
       setTimeout(() => {
         this.interacttools =

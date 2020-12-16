@@ -597,7 +597,7 @@ export default {
       smsErrorMessage: '', // 短信的错误提示
       timeinterval: null,
       countTime: 60,
-      webDominUrl: process.env.VUE_APP_ROOM,
+      webDominUrl: process.env.VUE_APP_WAP_WATCH,
       bottomLoginInfo: true, // 登录底部信息展示
       otherWayShow: false, // 其他登录方式的图标
 
@@ -746,7 +746,7 @@ export default {
     },
     // 点击注册
     registerClick() {
-      window.location.href = `${process.env.VUE_APP_ROOM}/register`
+      window.location.href = `${process.env.VUE_APP_WAP_WATCH}/register`
     },
     handleInitRoom () {
       if (this.roomData) {
@@ -755,8 +755,8 @@ export default {
         this.title = this.roomData.webinar.subject
         this.viewCount = this.roomData.pv.num
         this.hostName = this.roomData.webinar.userinfo.nickname
-        this.hostUrl = process.env.VUE_APP_ROOM + `/user/home/${this.roomData.webinar.userinfo.user_id}`
-        this.shareUrl = process.env.VUE_APP_ROOM + `/live/watch/${this.$route.params.id}`
+        this.hostUrl = process.env.VUE_APP_WAP_WATCH + `/user/home/${this.roomData.webinar.userinfo.user_id}`
+        this.shareUrl = process.env.VUE_APP_WAP_WATCH + `/live/watch/${this.$route.params.id}`
         this.time = this.roomData.webinar.start_time
         this.webinarDominUrl = this.roomData.urls.web_url
         this.myliveRoute = window.location.origin + '/live/list'

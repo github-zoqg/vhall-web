@@ -154,6 +154,7 @@ export default {
          this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
          this.deleteLive();

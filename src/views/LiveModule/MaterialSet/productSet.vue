@@ -21,7 +21,7 @@
           >
         </search-area>
       </div>
-      <el-card class="question-list" v-if="total">
+      <el-card class="question-list" v-show="total">
         <table-list
           ref="tableProductList"
           :manageTableData="tableData"
@@ -36,7 +36,7 @@
         >
         </table-list>
       </el-card>
-       <div class="empty" v-else>
+       <div class="empty" v-show="!total">
         <noData :nullType="nullText" :text="'暂未创建商品'">
         </noData>
       </div>
@@ -148,7 +148,7 @@ export default {
         keyword: formParams.questionName,
         webinar_id: this.$route.params.str
       };
-      this.$fetch('goodsGet', obj).then(res => {
+      this.$fetch('goodsGet', this.$params(obj)).then(res => {
         this.tableData = res.data.goods_list;
         this.tableData.map(item => {
           item.watch = Boolean(!item.status);
@@ -180,7 +180,6 @@ export default {
       }).then(res => {
         that.$message.success("复制成功！");
         that.getTableList();
-        console.log(res);
       }).catch(err => {
         that.$message.error("复制失败！");
         console.log(err);
@@ -195,20 +194,35 @@ export default {
         }
       });
     },
-    // 删除
-    del(that, {rows}) {
-      that.$confirm('确定要删除该文件吗?', '提示', {
+    delConfirm(id) {
+      this.$confirm('确定要删除该文件吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
         type: 'warning'
       }).then(() => {
-        that.batchDel(rows.goods_id);
+        this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
+          if (res.code == 200) {
+            this.$message.success("删除成功！");
+            this.checkedGoodsId = [];
+            this.getTableList();
+          } else {
+            this.$message.error('删除失败, 请下架后删除');
+          }
+
+        }).catch(err => {
+          this.$message.error("删除失败！");
+        })
       }).catch(() => {
-        that.$message({
+        this.$message({
           type: 'info',
           message: '已取消删除'
         });
       });
+    },
+    // 删除
+    del(that, {rows}) {
+      that.delConfirm(rows.goods_id);
     },
     // 选中
     changeTableCheckbox(val) {
@@ -217,21 +231,12 @@ export default {
     },
     // 批量删除
     batchDel(id) {
-      if (!id) {
-        if (this.checkedGoodsId.length < 1) {
-          this.$message.error("请选择要操作的文件");
-        } else {
-          id = this.checkedGoodsId.join(',');
-          console.log(this.checkedGoodsId, '111111111111111')
-        }
+     if (this.checkedGoodsId.length < 1) {
+        this.$message.error("请选择要操作的文件");
+      } else {
+        id = this.checkedGoodsId.join(',');
+        this.delConfirm(id);
       }
-      this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
-        this.$message.success("删除成功！");
-        this.checkedGoodsId = [];
-        this.getTableList();
-      }).catch(err => {
-        this.$message.error("删除失败！");
-      })
     },
     // 新建礼物
     addProduct() {

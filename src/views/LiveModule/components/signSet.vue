@@ -24,7 +24,7 @@
                 :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.reserved_status ? '关闭后，观看端的底部版权信息降被隐藏' : '已关闭，观看端的底部版权信息已被隐藏'"
+                :active-text="signSetForm.reserved_status ? '关闭后，观看端的底部版权信息将被隐藏' : '已关闭，观看端的底部版权信息已被隐藏'"
               >
               </el-switch>
             </div>
@@ -46,6 +46,7 @@
             <upload
               class="upload__sign heightMore"
               v-model="signSetForm.logo_url"
+              :domain_url="domain_url"
               :saveData="{
                  path: 'interacts/skin-imgs',
                  type: 'image',
@@ -96,12 +97,13 @@ export default {
         logo_url: null,
         skip_url: null
       },
+      domain_url: '',
       signSetFormRules: {
         logo_url: [
-          { required: true, message: '请选择标志', trigger: ['blur', 'change'] }
+          { required: true, message: '请选择标志', trigger: 'change'}
         ],
         skip_url: [
-          { required: true, message: '请填写标志链接', trigger: ['blur', 'change'] }
+          { required: true, message: '请填写标志链接', trigger: 'blur'}
         ]
       }
     };
@@ -109,7 +111,12 @@ export default {
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
-      this.signSetForm.logo_url = res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.signSetForm.logo_url = file_url;
+        this.domain_url = domain_url;
+      }
       // 触发验证
       this.$refs.signSetForm.validateField('logo_url');
     },
@@ -155,6 +162,7 @@ export default {
             logo_url: null,
             skip_url: null
           };
+          this.domain_url = res.data.logo_url || '';
           this.$EventBus.$emit('SAAS_V3_SIGN_PREVIEW', this.signSetForm);
         } else {
           this.signSetForm = {
