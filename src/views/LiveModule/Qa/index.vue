@@ -52,7 +52,7 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
               </li>
@@ -68,7 +68,7 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
                 <ul class="answer">
@@ -105,7 +105,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj'></Private>
+                <Private :userInfo='baseObj' :onlyChat='onlyChatMess'></Private>
               </template>
             </div>
           </div>
@@ -184,6 +184,7 @@ export default {
         page_size: 20,
         page: 0
       },
+      onlyChatMess:{} // 当前私聊对象
     }
   },
   async created() {
@@ -319,11 +320,19 @@ export default {
     },
     reply(val, item, index){
       if(typeof val == 'object'){
-        console.warn(val, val.index, val.item.content);
         if(val.type == 'private'){
-          console.warn('--------点击的是私聊---------------');
+          // 合并 当前数据
+          this.onlyChatMess = {}
+          let privateMess = Object.assign(val, {activeDom: this.active, Subscript: index})
+          if(this.active != 0){
+            privateMess.item = item
+          }else{
+            privateMess.Subscript = val.index
+          }
+          console.warn('--------点击的是私聊---------------',privateMess );
           if(!this.privateFlag){
             this.privateFlag = true
+            this.onlyChatMess = privateMess
           }
         }else{
           console.warn('不处理----开始执行');
@@ -365,6 +374,7 @@ export default {
               this.$nextTick(()=>{
                 this.List[0].count--
                 this.awaitList.splice(val.index, 1)
+                this.List[1].count++
               })
             }
           })
@@ -406,13 +416,11 @@ export default {
       })
     },
     emojiToText (content) {
-      return textToEmoji(content)
-        .map(c => {
-          return c.msgType == 'text'
-            ? c.msgCont
-            : `<img width="24" src="${c.msgImage}" border="0" />`;
-        })
-        .join(' ');
+      return textToEmoji(content).map(c => {
+        return c.msgType == 'text'
+          ? c.msgCont
+          : `<img width="24" src="${c.msgImage}" border="0" />`;
+      }).join(' ');
     },
     // 监听
     monitor(){
