@@ -54,8 +54,8 @@
               其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
               <div class="other-img" v-show="!isOpenOther">
                 <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=https://t-saas-dispatch.vhall.com/#/home')">
-                <img src="../../common/images/icon/wechat.png" alt=""  @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t-saas-dispatch.vhall.com/#/home')">
-                <img src="../../common/images/icon/weibo.png" alt="">
+                <img src="../../common/images/icon/wechat.png" alt="" @click="weiXinLogin">
+                <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
               </div>
             </div>
           </el-form>
@@ -150,7 +150,7 @@
                 <el-button type="primary" @click="registerAccount" :disabled="!checked">立 即 注 册</el-button>
               </div>
               <el-form-item class="login-checked register-checked">
-                <el-checkbox v-model="checked">同意遵守<b style="color: #4da1ff">《服务条款》</b></el-checkbox>
+                <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
                 <span @click="$router.push({path: '/login'})">去登录</span>
               </el-form-item>
           </el-form>
@@ -160,11 +160,17 @@
     <div class="login-footer">
       <footer-section></footer-section>
     </div>
+    <VhallDialog title="微信登录" :visible.sync="dialogVisible" :close-on-click-modal="false" width="300px">
+      <div>
+        <img :src="showCode" alt="">
+      </div>
+    </VhallDialog>
   </div>
 </template>
 <script>
 import footerSection from '../../components/Footer/index';
 import {sessionOrLocal} from "@/utils/utils";
+import QRcode from 'qrcode';
 export default {
   data() {
     var validatePhone = (rule, value, callback) => {
@@ -179,7 +185,9 @@ export default {
     };
     return {
       remember: 0,
+      showCode: '',
       isPassWordType: true,
+      dialogVisible: false,
       isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
         account: '',
@@ -350,6 +358,13 @@ export default {
         this.$message.error('注册失败');
       });
     },
+    // 第三方登录
+    // 微信登录
+    weiXinLogin() {
+      this.dialogVisible = true;
+      let link = 'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://www.baidu.com/';
+      this.getCode(link);
+    },
     /**
      * 倒计时函数
      */
@@ -402,6 +417,15 @@ export default {
           that.captcha = instance;
         }
       });
+    },
+    // 获取二维码
+    getCode(link) {
+      QRcode.toDataURL(
+      link,
+      (err, url) => {
+        this.showCode = url;
+      }
+     );
     },
   }
 };
@@ -514,6 +538,9 @@ export default {
           }
           .register-checked{
             padding-bottom: 20px;
+            a{
+              color: #4da1ff;
+            }
           }
           .login-just{
             text-align: center;

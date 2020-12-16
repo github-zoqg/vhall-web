@@ -8,6 +8,7 @@
     <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
+      @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
     >
     </search-area>
@@ -72,6 +73,7 @@ export default {
     return {
       isActive: true,
       loading: true,
+      params: {}, //导出的时候用来记录参数
       searchAreaLayout: [
         {
           type: '1',
@@ -131,6 +133,7 @@ export default {
       }
       let obj = Object.assign({}, paramsObj);
       this.loading = true;
+      this.params = obj;
       this.getAllCenterData(obj);
     },
     // 获取总数据
@@ -148,6 +151,16 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 导出
+    exportCenterData() {
+      this.$fetch('exportCenterInfo', this.params).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`账号维度下数据报告导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`账号维度下数据报告${res.msg}`);
+        }
+      })
     },
     changeTime(title) {
       if (title === '直播') {
