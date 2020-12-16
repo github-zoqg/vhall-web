@@ -440,7 +440,7 @@
           <div class="bottom-content">
             <!-- 活动简介 -->
             <div class="active-left">
-              <div class="active-introduce">
+              <div class="active-introduce" v-show="menuList.length > 0">
                 <h3
                   v-for="(item, index) in menuList"
                   @click="activeClick(index, item)"
@@ -478,7 +478,7 @@
                 </div>
               </div>
 
-              <div class="active-second" v-if="roominfo.advs && roominfo.advs.length > 0">
+              <div class="active-second" v-show="roominfo.advs && roominfo.advs.length > 0">
                 <h3>活动推荐</h3>
                 <hr />
                 <div class="active-recommond">
@@ -519,12 +519,12 @@
             </div>
             <!-- 布局修改 -->
             <products
-              v-if="sellGoodsShow"
+              v-show="sellGoodsShow"
               @sellGoodsInfo="sellGoodsInfo"
               :goodsList="goodsList"
             ></products>
           </div>
-          <div class="footer inner-center tac" v-if="roominfo.modules && roominfo.modules.logo.reserved_status == 1">
+          <div class="footer inner-center tac" v-show="roominfo.modules && roominfo.modules.logo.reserved_status == 1">
             <div class="about-us">
               <a href="http://www.vhall.com/about" target="_blank">关于我们</a>
               <a href="http://www.vhall.com/blog" target="_blank">客户案例</a>
@@ -746,10 +746,10 @@ export default {
         modules.adv.public
       ) {
         // alert_type:1 自动弹出
-        if (modules.adv.public.alert_type == 1) {
+        if (modules.adv.public.alert_type == 0) {
           this.showOfficialAccountQRCode = true
         }
-        if (modules.adv.public.status == 1) {
+        if (modules.adv.public.status == 0) {
           this.showOfficialAccountMiniQRCode = true
         }
       }
@@ -1322,14 +1322,16 @@ export default {
         webinar_id: this.$route.params.il_id
       }).then(res => {
         if (res.code == 200) {
-          this.sellGoodsShow = true;
           this.goodsList = res.data.goods_list
-          this.goodsList.length > 0 && this.goodsList.forEach((good, index) => {
-            if (index == 0) {
-              this.goodInfo = res.data.goods_list[0]
-            }
-            good.goodImage = `${this.roominfo.domains.upload}/${good.img_list.find(img => img.is_cover).img_url}`
-          });
+          if (this.goodsList.length > 0) {
+            this.sellGoodsShow = true;
+          }
+          // this.goodsList.length > 0 && this.goodsList.forEach((good, index) => {
+          //   if (index == 0) {
+          //     this.goodInfo = res.data.goods_list[0]
+          //   }
+          //   good.goodImage = `${this.roominfo.domains.upload}/${good.img_list.find(img => img.is_cover).img_url}`
+          // });
         }
       });
     },
@@ -1416,8 +1418,42 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.skinInfo = res.data
+          this.theme = this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : ''
+          if (this.theme) {
+            this.setCustomTheme(this.theme)
+          }
         }
       })
+    },
+    // 设置主题
+    setCustomTheme (data) {
+      let {bgColor, pageStyle, popStyle, background} = data
+      let wrap = document.querySelector('.wrap')
+      let register = document.querySelector('.title-right .button-register')
+      let follow = document.querySelector('.focusBtn')
+      let title = document.querySelector('.active-second>h3')
+      let webinarStr = document.querySelector('.topInfo .tag')
+      let bc = document.querySelector('.area')
+      if (wrap) {
+        wrap.style.background = bgColor
+      }
+      if (register) {
+        register.style.background = pageStyle
+      }
+      if (follow) {
+        follow.style.background = pageStyle
+      }
+      if (title) {
+        title.style.borderBottom = `2px solid ${pageStyle}`
+      }
+      if (webinarStr) {
+        webinarStr.style.background = pageStyle
+      }
+      if (bc) {
+        bc.style.background = `url(${background})`
+        bc.style.backgroundSize = 'cover'
+        bc.style.backgroundRepeat = 'no-repeat'
+      }
     },
     // 获取公众号广告
     getPublisAdv () {
@@ -1745,6 +1781,12 @@ export default {
       this.initVHallReport();
       // 初始化邀请卡
       this.invitePartner();
+      this.$nextTick(() => {
+        // console.log(99, this.theme)
+        if (this.theme) {
+          this.setCustomTheme(this.theme)
+        }
+      })
     },
     /**
      * @description 数据上报  init 方法
@@ -1807,7 +1849,6 @@ export default {
     min-width: 700px;
     flex: 1;
   }
-
   .loginUserInfo {
     // width: 200px;
     // height: 70px;
