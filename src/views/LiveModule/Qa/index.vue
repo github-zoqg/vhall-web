@@ -106,7 +106,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj' :onlyChatMess='onlyChatMess' @close='privateClose' @sendMsg='privateSendMsg'></Private>
+                <Private :userInfo='baseObj' :webinar_id='webinar_id' :onlyChatMess='onlyChatMess' :priteChatList='priteChatList' @close='privateClose' @sendMsg='privateSendMsg'></Private>
               </template>
             </div>
           </div>
@@ -185,7 +185,9 @@ export default {
         page_size: 20,
         page: 0
       },
-      onlyChatMess:{} // 当前私聊对象
+      onlyChatMess:{}, // 当前私聊对象
+      priteChatList: [], // 私聊列表
+      webinar_id: null
     }
   },
   async created() {
@@ -205,6 +207,7 @@ export default {
     }
   },
   mounted() {
+    this.webinar_id = this.$router.currentRoute.params.id
     this.$EventBus.$on('question_answer_create', e => {
       console.warn('我是问答管理页面-----', e);
       // 发起端收到消息
@@ -328,16 +331,19 @@ export default {
         if(val.type == 'private'){
           // 合并 当前数据
           this.onlyChatMess = {}
+          console.warn(val , '点击的是私聊');
           let privateMess = Object.assign(val, {activeDom: this.active, Subscript: index})
           if(this.active != 0){
             privateMess.item = item
           }else{
             privateMess.Subscript = val.index
           }
+          privateMess.nickname = privateMess.item.nick_name
           console.warn('--------点击的是私聊---------------',privateMess );
           if(!this.privateFlag){
             this.privateFlag = true
           }
+
           this.onlyChatMess = privateMess
         }else{
           console.warn('不处理----开始执行');
@@ -387,6 +393,7 @@ export default {
       }
     },
     messClick(){
+      console.warn('点击的升级');
       this.privateFlag = true
     },
     privateClose(){
@@ -488,6 +495,7 @@ export default {
         console.warn(res);
         if(res.code == 200){
           console.warn('开始准备', res);
+          this.priteChatList = res.data.list
         }else{
           this.$message.warning(res.msg)
         }

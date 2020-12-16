@@ -370,7 +370,7 @@ export default {
       }
     },
     // 观看限制保存
-    viewerSetSave() {
+    async viewerSetSave() {
       let formList = ['', 'pwdForm', 'whiteForm', 'payForm', 'fCodeForm', '', 'fCodePayForm'];
       let formName = formList[this.form.verify];
       let flag = false;
@@ -405,30 +405,33 @@ export default {
           return;
         }
       }
+      // 若是当前白名单，开启了报名表单，直接提示不可和白名单直接使用。
+      if (formName === 'whiteForm' && Number(this.liveDetailInfo.reg_form) === 1) {
+        this.$message.error('您已选择报名表单不可和白名单叠加使用');
+        return;
+      }
       if (flag) {
         console.log('当前保存参数存储：' + JSON.stringify(params));
-        // 若设置了报名表单，调取报名表单是否配置独立链接接口。
-        if(formName !== '' && Number(this.liveDetailInfo.reg_form) === 1) {
-          this.$confirm('已开启报名表单的独立链接功能，修改观看限制将会导致链接失效?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            customClass: 'zdy-message-box'
-          }).then(async () => {
-            // 需要验证报名表单
-            let result = await this.$fetch('regFromGet', {
-              webinar_id: this.$route.params.str
-            })
-            if (result.code === 200) {
-              if (result.data.open_link > 0) { // 报名表单是否为独立链接，1开启 0关闭,默认为0
-                this.$message.error('您已选择报名表单不可和白名单叠加使用');
-              } else {
-                this.sendViewerSetSave(params);
-              }
-            } else {
-              this.$message.error('设置失败');
-            }
-          });
+        if(formName !== '' && formName !== 'whiteForm' && Number(this.liveDetailInfo.reg_form) === 1) {
+          // 若设置了报名表单，调取报名表单是否配置独立链接，配置了提示，没配置直接保存。
+          let result = await this.$fetch('regFromGet', {
+            webinar_id: this.$route.params.str
+          })
+          if (result.code === 200 && result.data.open_link > 0) { // 报名表单是否为独立链接，1开启 0关闭,默认为0
+            this.$confirm('已开启报名表单的独立链接功能，修改观看限制将会导致链接失效?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              customClass: 'zdy-message-box'
+            }).then(() => {
+              // 设置了报名表单，开启了报名表单独立链接。
+              this.sendViewerSetSave(params);
+            });
+          } else if(result.code === 200) {
+            // 设置了报名表单，没开启独立链接
+            this.sendViewerSetSave(params);
+          }
         } else {
+          // 未设置报名表单，直接保存
           this.sendViewerSetSave(params);
         }
       }

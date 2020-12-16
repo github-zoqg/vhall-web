@@ -89,7 +89,7 @@ export default {
         bgColor: this.skinSetForm.bgColor,
         pageStyle: this.skinSetForm.pageStyle,
         popStyle: '',
-        background: this.$parseURL(this.skinSetForm.bg_url).path
+        background: this.skinSetForm.bg_url ? this.$parseURL(this.skinSetForm.bg_url).path : ''
       };
       // 无手机端设置的时候，如 => skin_json_wap = {"logo":"","pageStyle":""} skin_style_code_wap为空
       // 有手机端设置的时候，{"logo":"webinars/skin_img/5c/5d/5c5dce7de690e4f1d0fbf845eb13c1a9.jpg","pageStyle":"bg-red"}

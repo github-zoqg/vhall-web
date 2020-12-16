@@ -256,12 +256,15 @@ export default {
               padding: 17px 0 4px 40px;
             }
             h2{
-              font-size: 22px;
               color: #1A1A1A;
               line-height: 30px;
               margin: auto;
               padding-left: 40px;
-              font-weight: bold;
+              span{
+                color: #1A1A1A;
+                font-weight: bold;
+                font-size: 28px;
+              }
             }
           }
         }

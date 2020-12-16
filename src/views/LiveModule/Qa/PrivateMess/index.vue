@@ -1,16 +1,24 @@
 <template>
   <div class="private-wrap clearFix">
     <ul class="list-name fl">
-      <li v-for="(ite, index) in userList" :key="index" class="ellsips" :class="{'active-name': acrivePrivate == index}" @click="selectUser(item)">
-        {{ite.item.nick_name || ''}}
+      <li v-for="(ite, index) in userList" :key="index" :class="{'active-name': acrivePrivate == index}" @click="selectUser(ite, index)">
+        <span class="ellsips">
+          {{ite.nickname ||  '' }}
+        </span>
+        <span @click.stop="closeUser(ite,index)">X</span>
       </li>
     </ul>
     <div class="list-content fr">
       <p class="private-head">
-        <span>{{activeName || userList[0]&&userList[0].item&&userList[0].item.nick_name || ''}}</span>
+        <span>{{activeName || userList[0]&&userList[0].nickname || ''}}</span>
         <span class="close" @click="$emit('close')">﹀</span>
       </p>
-      <p class="private-content"></p>
+      <ul class="private-content">
+        <li class="private-content-li" v-for="(item, index) in chatList" :key="index">
+          <p>我： <span>{{filterTime(item.created_at)}}</span></p>
+          <p v-html="item.content.text"></p>
+        </li>
+      </ul>
       <div class="private-footer">
         <el-input type="textarea" :rows="2" placeholder="说点什么吧..." v-model="privateValue"> </el-input>
         <p>
@@ -34,42 +42,76 @@ export default {
   components: {
     smallEmoji
   },
-  props:['userInfo', 'onlyChatMess'],
+  props:['userInfo', 'onlyChatMess','priteChatList', 'webinar_id'],
   data() {
     return {
       acrivePrivate: 0, // 当前私聊对象
       activeName: '',
       privateValue: '', // 私聊内容
-      userList:[], // 私聊列表
-      userListId: [], // 私聊列表的ID
+      userList: this.priteChatList, // 私聊列表
+      chatList: [], //获取到
     }
   },
   watch:{
     onlyChatMess: {
       handler(newValue, oldValue){
-        this.$nextTick(()=>{
-          let isFlag = this.userList.some(ele =>{
-            return ele.item && ele.item.join_id == newValue.item.join_id
+        if(newValue.type){
+          console.warn(newValue, 789);
+          this.$nextTick(()=>{
+            let isFlag = this.userList.some(ele =>{
+              return ele.id == newValue.item.join_id
+            })
+            if(!isFlag){
+              this.userList.push(newValue)
+              this.acrivePrivate = this.userList.length - 1
+              this.activeName = newValue.nickname
+              this.getDefaultContent(newValue.item.join_id)
+            }
           })
-          if(!isFlag){
-            this.userList.push(newValue)
-          }
-        })
+        }
       },
       deep: true,
       immediate: true
     }
   },
+  computed:{
+    filterTime(){
+      return function(time){
+        return this.$moment(time).format('hh:mm:ss')
+      }
+    }
+  },
+  mounted() {
+    window.mo = this.$moment
+    if(this.userList.length!=0){
+      this.getDefaultContent(this.userList[0].id)
+    }
+  },
   methods: {
-    getContent(){
-      this.$fetch('v3GetPrivCon', {room_id: '', webinar_id: ''}).then(res=>{
+    getDefaultContent(to_userID){
+      let _data = {
+        room_id: this.userInfo.interact.room_id,
+        start_time: '',
+        pos: 0,
+        limit: 100,
+        to_user: to_userID,
+        webinar_id: this.webinar_id
+      }
+      this.chatList = []
+      this.$fetch('v3GetPrivCon', _data).then(res=>{
         console.warn(res);
         if(res.code == 200){
           console.warn(res.data);
+          this.chatList = res.data.list
         }else{
           this.$message.warning(res.msg)
         }
       })
+    },
+    closeUser(user, index){
+      this.userList.splice(index, 1)
+      this.chatList = []
+      this.activeName=''
     },
     // 切换表情显示
     toggleEmoji () {
@@ -80,12 +122,22 @@ export default {
     emojiInput (value) {
       this.privateValue += value;
     },
-    selectUser(user){
+    selectUser(user, index){
       // 设置当前私聊title名字
-      this.activeName = user.name
+      this.activeName = user.nickname
+      this.acrivePrivate = index
+      console.warn(this.userList[index]);
+      this.getDefaultContent(this.userList[index].id)
     },
     roleClassFilter (value) {
       return value == '1' ? 'host' : value == '3' ? 'assistant' : 'guest';
+    },
+    emojiToText (content) {
+      return textToEmoji(content).map(c => {
+        return c.msgType == 'text'
+          ? c.msgCont
+          : `<img width="24" src="${c.msgImage}" border="0" />`;
+      }).join(' ');
     },
     privateSend(){
       if (!this.privateValue.trim()) {
@@ -93,14 +145,14 @@ export default {
       }
       let data = {
         avatar: this.userInfo.join_info.avatar,
-        target_id: this.userList[this.acrivePrivate].item.join_id,
+        target_id: this.userList[this.acrivePrivate].join_id,
         type:'text',
         barrageTxt: this.privateValue.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'),
         text_content: this.privateValue
       };
       // 为保持一致   故传了多个不同key  同value
       let context = {
-        to: this.userList[this.acrivePrivate].item.join_id,
+        to: this.userList[this.acrivePrivate].join_id,
         nickname: this.userInfo.join_info.nickname, // 昵称
         nick_name: this.userInfo.join_info.nickname,
         user_name:  this.userInfo.join_info.nickname,
@@ -109,8 +161,17 @@ export default {
         user_id: this.userInfo.join_info.join_id,
         app: 'vhall'
       };
-      this.$emit('sendMsg', data,context)
-
+      this.$nextTick(()=>{
+        this.$emit('sendMsg', data,context)
+        let _data = {
+          created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+          content:{
+            text:this.emojiToText(this.privateValue)
+          }
+        }
+        this.chatList.push(_data)
+        this.privateValue = ''
+      })
     }
   },
 }
@@ -118,7 +179,7 @@ export default {
 <style lang="less" scoped>
 .private-wrap{
   position: absolute;
-  width: 700px;
+  width: 720px;
   height: 400px;
   border: 1px solid;
   right: 0;
@@ -126,18 +187,34 @@ export default {
   background-color: #f1f1f1;
   border: 1px solid #c1c1c1;
   .list-name{
-    width: 120px;
+    width: 140px;
     height: 100%;
     display: inline-block;
     border-right: 1px solid #c1c1c1;
     li{
       height: 40px;
       line-height: 40px;
+      position: relative;
       color: #666;
       font-size: 15px;
       text-align: left;
       padding-left: 10px;
       border-bottom: 1px solid #ccc;
+      &:hover{
+        span:nth-child(2){
+          display: inline-block
+        }
+      }
+      span{
+        width: 100px;
+        display: inline-block;
+        &:nth-child(2){
+          width: 20px;
+          float: right;
+          display: none;
+
+        }
+      }
     }
     .active-name{
       color: #fff;
@@ -146,7 +223,7 @@ export default {
   }
   .list-content{
     display: inline-block;
-    width: calc(100% - 120px);
+    width: calc(100% - 140px);
     position: relative;
     height: 100%;
     .private-head{
@@ -170,6 +247,23 @@ export default {
     .private-content{
       height: calc(100% - 140px);
       overflow-y: auto;
+      &-li{
+        font-size: 14px;
+        color: #949393;
+        border-bottom: 1px solid #fff;
+        p{
+          padding-left: 10px;
+          line-height: 24px;
+          &:nth-child(2){
+            color: #333;
+          }
+          span{
+            color: #bcbcbc;
+            font-size: 12px;
+            margin-left: 5px;
+          }
+        }
+      }
     }
     .private-footer{
       height: 100px;
