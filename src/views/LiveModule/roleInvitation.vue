@@ -241,10 +241,11 @@ export default {
 加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
     },
     host_join_link: function() {
-      return `${window.location.origin}/keylogin-host/${this.privilegeVo.webinar_id}`;
+      debugger
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}`;
     },
     join_link: function() {
-      return `${window.location.origin}/keylogin/${this.privilegeVo.webinar_id}`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}`;
     }
   },
   methods: {

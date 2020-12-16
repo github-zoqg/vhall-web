@@ -33,7 +33,7 @@ export default {
   components: {
     smallEmoji
   },
-  props:['userInfo'],
+  props:['userInfo', 'onlyChatMess'],
   data() {
     return {
       acrivePrivate: 0, // 当前私聊对象
@@ -45,6 +45,9 @@ export default {
         }
       ]
     }
+  },
+  watch:{
+
   },
   methods: {
     // 切换表情显示

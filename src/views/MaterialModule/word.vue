@@ -192,6 +192,8 @@ export default {
             // 同步到资料库
             this.asyncWord(res);
           }).catch(() => {
+            // 取消同步，刷新列表
+            this.initPage();
           });
         } else {
           // 判断文件上传情况
@@ -208,8 +210,13 @@ export default {
       this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.$message.success('同步成功');
-          this.$refs.tableListWord.clearSelect();
-          this.initPage();
+          try {
+            this.$nextTick(() => {
+              this.$refs.tableListWord.clearSelect();
+            })
+          } catch(e) {
+            console.log(e);
+          }
         } else {
           this.$message.error(res.msg || '同步失败');
         }
@@ -217,6 +224,7 @@ export default {
         console.log(e);
         this.$message.error(e.msg || '同步失败');
       }).finally(()=>{
+        this.initPage();
       });
     },
     beforeUploadHandler(file){

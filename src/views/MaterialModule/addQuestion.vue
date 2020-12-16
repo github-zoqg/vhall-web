@@ -45,7 +45,8 @@ export default {
       let service = new VHall_Questionnaire_Service({
         auth: {
           appId: appId, //paas的应用id,必填
-          accountId: userId, //paas的第三方用户id,必填
+          accountId: this.userId, //paas的第三方用户id,必填
+          owner_id: userId,
           token: token, //paas的授权token,必填
         },
         isLoadElementCss: true,
@@ -128,6 +129,12 @@ export default {
       background: #FB3A32 !important;
       border: none;
     }
+  }
+  #settingBox /deep/.question-wrap.click{
+    border: 1px solid #FB3A32;
+  }
+  #settingBox /deep/.show-text:hover{
+    border-color:#FB3A32;
   }
   #settingBox /deep/.default-img{
     // img{

@@ -8,14 +8,14 @@
     <!-- 模式选择 -->
     <div class="virtual-ctx">
       <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="100px" width="360px">
-        <el-form-item label="人数增加：" prop="pv">
-          <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
+        <el-form-item label="人数增加：" prop="online">
+          <el-input  autocomplete="off" v-model.trim="virtualForm.online" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
             <el-button class="no-border" size="mini" slot="append">人</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="热度增加：" prop="online">
-          <el-input  autocomplete="off" v-model.trim="virtualForm.online" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two">
-            <el-button class="no-border" size="mini" slot="append">人</el-button>
+        <el-form-item label="热度增加：" prop="pv">
+          <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two">
+            <el-button class="no-border" size="mini" slot="append">次</el-button>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -42,32 +42,36 @@ export default {
     PageTitle
   },
   data() {
-    let checkPv = (rule, value, callback) => {
-      let pvCount = value > 0 ? Math.floor(Number(value) * 0.8) : 0;
-      if (!/^([1-9][0-9]{0,5})$/.test(value)) {
-        return callback(new Error('请输入1~999,999之间的正整数'));
-      } else if (!/^([1-9][0-9]{0,5})$/.test(value)) {
-        return callback(new Error('请输入1~999,999之间的正整数'));
-      } else if (this.virtualForm.online > 0 && pvCount < Number(this.virtualForm.online)) {
-        return callback(new Error('热度不能大于观看人数的80%'));
-      } else {
-        if (this.virtualForm.online !== '') {
-          this.$refs.virtualForm.clearValidate('online_num');
-        }
-        callback();
-      }
-    };
+    // 校验人数
     let checkOnlineNum = (rule, value, callback) => {
+      // 在线人数不能超过热度的80%
       let pvCount = value > 0 ? Math.floor(Number(this.virtualForm.pv) * 0.8) : 0;
       if (!/^([1-9][0-9]{0,5})$/.test(value)) {
         return callback(new Error('请输入1~999,999之间的正整数'));
       } else if (!/^([1-9][0-9]{0,5})$/.test(value)) {
         return callback(new Error('请输入1~999,999之间的正整数'));
       } else if (this.virtualForm.pv > 0 && pvCount < Number(value)) {
-        return callback(new Error('热度不能大于观看人数的80%'));
+        return callback(new Error('在线人数不能超过热度的80%'));
       } else {
         if (this.virtualForm.pv !== '') {
           this.$refs.virtualForm.clearValidate('pv');
+        }
+        callback();
+      }
+    };
+    // 校验热度
+    let checkPv = (rule, value, callback) => {
+      // 在线人数不能超过热度的80%
+      let pvCount = value > 0 ? Math.floor(Number(value) * 0.8) : 0;
+      if (!/^([1-9][0-9]{0,5})$/.test(value)) {
+        return callback(new Error('请输入1~999,999之间的正整数'));
+      } else if (!/^([1-9][0-9]{0,5})$/.test(value)) {
+        return callback(new Error('请输入1~999,999之间的正整数'));
+      } else if (this.virtualForm.online > 0 && pvCount < Number(this.virtualForm.online)) {
+        return callback(new Error('在线人数不能超过热度的80%'));
+      } else {
+        if (this.virtualForm.online !== '') {
+          this.$refs.virtualForm.clearValidate('online_num');
         }
         callback();
       }
@@ -78,11 +82,11 @@ export default {
         online: null // 在线人数
       },
       virtualFormRules: {
-        pv: [
-          { validator: checkPv, trigger: 'blur' }
-        ],
         online: [
           { validator: checkOnlineNum, trigger: 'blur' }
+        ],
+        pv: [
+          { validator: checkPv, trigger: 'blur' }
         ]
       }
     };

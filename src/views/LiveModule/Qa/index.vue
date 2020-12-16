@@ -52,7 +52,7 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
               </li>
@@ -68,14 +68,14 @@
                  <p class="await-content">{{item.content}}</p>
                </div>
                <div class="fr">
-                  <el-button @click="reply('audio', item, index)" size="small" class="setBut">私聊</el-button>
+                  <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
                   <el-button @click="reply('text', item, index)" size="small" class="setBut">文字回复</el-button>
                </div>
                 <ul class="answer">
                   <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
                     <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
-                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite)" class="answer-time answer-revoke">撤销此条回复</span>
+                      <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
                     <p>{{ite.content}}</p>
                   </li>
@@ -105,7 +105,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj'></Private>
+                <Private :userInfo='baseObj' :onlyChat='onlyChatMess'></Private>
               </template>
             </div>
           </div>
@@ -184,6 +184,7 @@ export default {
         page_size: 20,
         page: 0
       },
+      onlyChatMess:{} // 当前私聊对象
     }
   },
   async created() {
@@ -319,9 +320,20 @@ export default {
     },
     reply(val, item, index){
       if(typeof val == 'object'){
-        console.warn(val, val.index, val.item.content);
         if(val.type == 'private'){
-          console.warn('私聊回复');
+          // 合并 当前数据
+          this.onlyChatMess = {}
+          let privateMess = Object.assign(val, {activeDom: this.active, Subscript: index})
+          if(this.active != 0){
+            privateMess.item = item
+          }else{
+            privateMess.Subscript = val.index
+          }
+          console.warn('--------点击的是私聊---------------',privateMess );
+          if(!this.privateFlag){
+            this.privateFlag = true
+            this.onlyChatMess = privateMess
+          }
         }else{
           console.warn('不处理----开始执行');
           let data = {
@@ -350,7 +362,7 @@ export default {
           this.sendMessage = Object.assign(this.sendMessage, item, {activeDom: this.active, index: index})
           this.textDalog = true
         }else if(val == 'audio'){
-          console.warn();
+          // 设置为语音回复
           let data = {
             question_id: item.id,
             room_id: this.baseObj.interact.room_id,
@@ -358,11 +370,11 @@ export default {
             is_open: 1
           }
           this.$fetch('v3ReplayUserQu', data).then(res=>{
-            console.warn('不处理结果---', res);
             if(res.code == 200){
               this.$nextTick(()=>{
                 this.List[0].count--
                 this.awaitList.splice(val.index, 1)
+                this.List[1].count++
               })
             }
           })
@@ -372,14 +384,14 @@ export default {
     messClick(){
       this.privateFlag = true
     },
-    revoke(val){
+    revoke(val, index, fatherIndex){
       // 撤销回复
-      console.warn('撤销回复', val);
+      console.warn('撤销回复', this.textDealList[fatherIndex].answer[index]);
       this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
         if(res.code == 200){
           console.warn(res, '撤销成功');
           this.$nextTick(() => {
-            // this.textDealList = this.textDealList
+            this.textDealList[fatherIndex].answer[index].is_backout = 1
           })
         }else{
           this.$message.warning(res.msg)
@@ -404,13 +416,11 @@ export default {
       })
     },
     emojiToText (content) {
-      return textToEmoji(content)
-        .map(c => {
-          return c.msgType == 'text'
-            ? c.msgCont
-            : `<img width="24" src="${c.msgImage}" border="0" />`;
-        })
-        .join(' ');
+      return textToEmoji(content).map(c => {
+        return c.msgType == 'text'
+          ? c.msgCont
+          : `<img width="24" src="${c.msgImage}" border="0" />`;
+      }).join(' ');
     },
     // 监听
     monitor(){
@@ -427,8 +437,8 @@ export default {
           console.log(e);
         }
         Object.assign(msg, msg.data);
-        console.warn('坚挺到消息的派发----1-', msg);
-         this.$EventBus.$emit(msg.type, msg);
+        // console.warn('坚挺到消息的派发----1-', msg);
+        //  this.$EventBus.$emit(msg.type, msg);
       })
     },
     textReply(){
@@ -470,6 +480,9 @@ export default {
 <style lang="less" scoped>
 .new-qa{
   background: #f8f8f8;
+  &::-webkit-scrollbar{
+    width: 5px;
+  }
   ::v-deep.head-wrap{
     .collapse{
       height: 100%;
@@ -518,6 +531,7 @@ export default {
           .border{
             display: none;
             border: 2px solid red;
+            background: red;
             width: 100%;
             position: absolute;
             top: 0;
@@ -551,6 +565,9 @@ export default {
           overflow-y: auto;
         }
         .await-deal{
+          &::-webkit-scrollbar{
+            width: 5px;
+          }
           font-size: 14px;
           li{
             border-bottom: 1px solid #c2c2c2;
@@ -587,6 +604,12 @@ export default {
           position: absolute;
           bottom: 0;
           right: 0;
+          .el-button{
+            background: #169BD5;
+            color: #fff;
+            border: none;
+            padding: 5px 20px;
+          }
         }
         .no-deal{
           .fr{
