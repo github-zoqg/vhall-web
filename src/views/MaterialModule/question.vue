@@ -96,7 +96,6 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.questionId = rows.question_id;
-      console.log(that.questionId, '111111111111111');
       that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制
@@ -121,34 +120,36 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-       that.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+      that.deleteConfirm(rows.question_id);
+    },
+    deleteConfirm(id) {
+      this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteAll(rows.question_id);
+          this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
+            this.getTableList();
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          })
         }).catch(() => {
-          that.$message({
+          this.$message({
             type: 'info',
             message: '已取消删除'
           });
         });
     },
     deleteAll(id) {
-       if (!id) {
-        if (this.selectChecked.length < 1) {
+       if (this.selectChecked.length < 1) {
           this.$message.warning('请选择要操作的选项');
         } else {
           id = this.selectChecked.join(',');
+          this.deleteConfirm(id);
         }
-      }
-      this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
-        this.getTableList();
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
-      })
     },
     // 选中
     changeTableCheckbox(val) {

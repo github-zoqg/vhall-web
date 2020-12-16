@@ -9,6 +9,7 @@
       <search-area
         ref="searchArea"
         :searchAreaLayout="searchAreaLayout"
+        @onExportData="exportCenterData()"
         @onSearchFun="getTableList('search')"
       >
       </search-area>
@@ -48,6 +49,7 @@ export default {
       isCheckout: false,
       nullText: 'noData',
       totalNum: 0,
+      params: {}, //导出的时候用来记录参数
       loading: true,
       tableList: [],
       tabelColumn: [
@@ -130,6 +132,7 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
+      this.params = obj;
       this.getLiveList(obj, params);
     },
      getLiveList(data, params){
@@ -149,6 +152,16 @@ export default {
     },
     createLive() {
       this.$router.push({path: '/live/edit'})
+    },
+    // 导出
+    exportCenterData() {
+      this.$fetch('exportWebinar', this.params).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`活动数据导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`活动数据${res.msg}`);
+        }
+      })
     },
     dataReport(that, val) {
       let id = val.rows.webinar_id;

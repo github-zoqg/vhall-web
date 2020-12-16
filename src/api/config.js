@@ -233,6 +233,10 @@ const apis = {
   getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET'], //获取账户下的总数据  数据总览
   getActiveDataList: ['/v3/webinars/webinar/get-data-list', 'POST'], //活动数据列表接口   活动数据
 
+  //数据中心(账号维度下)导出
+  exportCenterInfo: ['/v3/data-center/account-export-data', 'GET'], //导出 -- 账号下的数据导出
+  exportWebinar: ['/v3/webinars/webinar/get-data-list-excel', 'POST'], //导出 -- 活动数据
+
   // 直播-数据报告
   getStatisticsinfo: ['/v3/data-center/webinar-statistics-info', 'GET'], //获取活动数据下报告
   getMaxuv: ['/v3/data-center/webinar-max-uv', 'GET'], //获取活动最高并发
@@ -242,15 +246,18 @@ const apis = {
   getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET'], //获取活动浏览器信息
   getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET'], //获取观看人数趋势
 
+  exportWebinarInfo: ['/v3/data-center/export', 'GET'], //导出 -- 直播下数据报告
+
   // 直播-用户统计
   getUserBaseinfo: ['/v3/data-center/user-watch-detail', 'GET'], //获取用户观看详情
+  exportUserinfo: ['/v3/data-center/export-user-watch-detail', 'GET'], //导出 -- 用户观看详情
 
   // 直播-互动统计
   getRecodrderInfo: ['/v3/interacts/qa/get-qa-recorder-count', 'GET'], // 获取问答总数
   getRoomLikeInfo: ['/v3/interacts/like/get-room-like', 'POST'], // 获取房间的点赞数量
   getChatListInfo: ['/v3/interacts/chat/get-list', 'POST'], // 获取当前房间聊天总数和列表
   getSignInfo: ['/v3/interacts/sign/get-sign-total', 'POST'], // 获取发起签到的签到总数
-  getSpeakListInfo: ['/v3/interacts/inav/get-speak-list', 'POST'], // 获取发起签到的签到总数
+  getSpeakListInfo: ['/v3/interacts/inav/get-speak-record', 'POST'], // 获取连麦总数
   getRewardListInfo: ['/v3/interacts/reward/get-room-reward-stat', 'POST'], // 获取房间打赏统计
   getShareListInfo: ['/v3/interacts/share/get-top-list', 'POST'], // 获取分享榜
   getInviteListInfo: ['/v3/interacts/invite-card/get-list', 'POST'], // 获取邀请数
@@ -261,7 +268,6 @@ const apis = {
   getGiftIncome: ['/v3/interacts/gift/get-gift-income-stat', 'GET'], // 获取礼物收益
   getRedpacketInfo: ['/v3/interacts/redpacket/get-redpacket-overview', 'GET'], // 获取活动下红包统计数据
   getAnswerListInfo: ['/v3/webinars/export/get-total', 'POST'], // 获取 报名表单 -- 试看人数 --- 预约人数  总人数
-
 
   exportSubscribe: ['/v3/webinars/export/subscribe', 'POST'], //导出 -- 预约
   exportPreview: ['/v3/webinars/export/preview', 'POST'], //数据导出 -- 试看
@@ -278,7 +284,7 @@ const apis = {
   deleteAllRecodrder: ['/v3/interacts/qa/batch-delete-qa', 'POST'], // 批量删除提问或者答案
   deleteChatList: ['/v3/interacts/chat/batch-delete-message', 'POST'], //批量删除聊天的消息
   getRedpacketList: ['/v3/interacts/redpacket/get-redpacket-send-recorder', 'GET'], //活动群红包发送记录
-  getSignList: ['/v3/interacts/sign/get-sign-list', 'POST'], //获取发起的签到列表
+  getSignList: ['/v3/interacts/sign/get-sign-stat-list', 'GET'], //获取发起的签到列表
   exportDetailInvite: ['/v3/interacts/invite-card/export-invite-details', 'GET'], //邀请详情导出
   exportInvite: ['/v3/interacts/invite-card/export', 'GET'], //邀请导出
   exportChat: ['/v3/interacts/chat/export', 'POST'], //导出当前房间聊天列表

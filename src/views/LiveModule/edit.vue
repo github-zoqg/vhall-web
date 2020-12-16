@@ -74,6 +74,7 @@
             <p class="desc">音频直播</p>
           </div>
         </div>
+        <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面：`">
         <upload
@@ -318,6 +319,9 @@ export default {
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
         this.liveMode = this.liveDetailInfo.webinar_type;
+        // if (this.$route.query.type == 2) {
+        //   this.liveMode = 1;
+        // }
         this.imageUrl = this.liveDetailInfo.img_url;
         this.domain_url = this.liveDetailInfo.img_url;
         console.log(this.domain_url, this.imageUrl, '封面地址');
@@ -396,7 +400,6 @@ export default {
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
       };
-      console.log(data, 'data-------------');
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -466,6 +469,7 @@ export default {
   .modeBox{
     display: flex;
     justify-content: space-between;
+    position: relative;
     >div{
       height: 112px;
       width: 180px;
@@ -546,6 +550,13 @@ export default {
       text-align: center;
       line-height: 30px;
     }
+  }
+  .modeHide{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 180px;
+    width: 100%;
   }
   .tag{
     padding: 3px 18px;

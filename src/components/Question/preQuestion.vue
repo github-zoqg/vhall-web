@@ -19,7 +19,7 @@ export default {
   watch: {
     questionId() {
       if (this.questionId) {
-        this.initQuestion();
+        this.getVideoAppid();
       }
     }
   },
@@ -27,12 +27,18 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
   },
   methods: {
-    initQuestion() {
+    getVideoAppid() {
+    this.$fetch('getPassId').then(res => {
+      this.initQuestion(res.data.app_id, res.data.third_party_user_id, res.data.access_token);
+    })
+  },
+    initQuestion(appId, userId, token) {
       let service = new VHall_Questionnaire_Service({
         auth: {
-          appId: 'd317f559', //paas的应用id,必填
+          appId: appId, //paas的应用id,必填
           accountId: this.userId, //paas的第三方用户id,必填
-          token: 'vhall' //paas的授权token,必填
+          owner_id: userId,
+          token: token //paas的授权token,必填
         },
         isLoadElementCss: true,
         notify: true //是否开启消息提示，非必填,默认是true
