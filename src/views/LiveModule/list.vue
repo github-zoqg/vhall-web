@@ -91,7 +91,7 @@
       <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
     </div>
     <div class="no-live" v-else>
-      <noData :nullType="nullText" :text="'暂未创建活动'">
+      <noData :nullType="nullText" :text="'您还没有直播，快来创建吧！'">
       </noData>
     </div>
   </div>

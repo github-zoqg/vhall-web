@@ -195,7 +195,7 @@ export default {
       margin-left: 2px;
     }
     h2 {
-      font-size: 22px;
+      font-size: 28px;
       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
