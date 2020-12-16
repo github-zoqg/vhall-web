@@ -70,6 +70,7 @@
       <el-form>
         <el-form-item label="图片上传">
           <upload
+            :domain_url="domain_url"
             class="giftUpload"
             v-model="editParams.img"
             :on-success="handleuploadSuccess"
@@ -134,6 +135,7 @@ export default {
         name: '',
         price: ''
       },
+      domain_url: '',
       dialogTipVisible: false,
       dialogVisible: false,
       deleteId: ''
@@ -231,6 +233,7 @@ export default {
         price: data.price,
         img: data.img
       }
+      this.domain_url = this.defaultImgHost + this.editParams.img
       this.dialogVisible = true
     },
     // 新建
