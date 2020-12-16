@@ -488,7 +488,7 @@
                 path: `/subscribe/${this.webinar_id}`
               })
             } else {
-              this.go(0)
+              this.$router.go(0)
             }
           }
         })
