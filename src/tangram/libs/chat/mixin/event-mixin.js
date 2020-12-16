@@ -13,7 +13,6 @@ const eventMixin = {
         if (this.chatList.length > 200) {
           this.chatList = this.chatList.slice(-200);
         }
-        console.log('dddd');
       }, 2000);
       this.chatSDK.on(msg => {
         if (typeof msg !== 'object') {
@@ -29,7 +28,7 @@ const eventMixin = {
         } catch (e) {
           console.log(e);
         }
-        console.log('============收到聊天消息===============');
+        console.log('============收到聊天消息==============111=');
         console.log(msg);
         if (!msg.data.barrageTxt && msg.data.text_content) {
           msg.data.barrageTxt = msg.data.text_content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');

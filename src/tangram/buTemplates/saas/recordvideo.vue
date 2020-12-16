@@ -1258,7 +1258,7 @@ export default {
   watch: {
     roomId (newVal) {
       this.getInavInfo();
-      this.shareUrl = `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+      this.shareUrl = `https:${this.domains.web}room/watch/${this.ilId}`;
       this.localDuration = this.duration;
     },
     permission (newval) {

@@ -536,6 +536,8 @@ const apis = {
   sendPrivateMsg: ['/v3/interacts/chat-private/send-message', 'POST'], // 发送私聊信息
   v3GetTextReply: ['/v3/interacts/qa/get-answer-list', 'POST'], // 文字回复---私密
   v3Revoke: ['/v3/interacts/qa/revoke-reply', 'POST'], // 主持人撤销回复
+  v3GetPrivateList: ['/v3/interacts/chat-private/get-rank-list', 'POST'], // 获取私聊列表
+  v3GetPrivCon: ['/v3/interacts/chat-private/get-list', 'POST'], // 获取私聊内容
 
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
