@@ -28,11 +28,10 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
-        :noDel="true"
         :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
-        :restPic="resetBanner"
+        :restPic="true"
         @delete="deleteBanner"
       >
         <p slot="tip">最佳头图尺寸：840*240px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
@@ -253,7 +252,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover}`;
+        this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover ? newVal.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`;
       },
       deep: true,
       immediate: true
@@ -559,14 +558,14 @@ export default {
     },
     // 删除头图
     deleteBanner() {
-      this.imageUrl = '';
+      this.imageUrl = 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
       this.$emit('setBaseInfo', { cover: this.imageUrl });
     },
     // 重置头图
-    resetBanner(event){
-      this.imageUrl= 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
-      this.$emit('setBaseInfo', { cover: this.imageUrl });
-    },
+    // resetBanner(event){
+    //   this.imageUrl= 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
+    //   this.$emit('setBaseInfo', { cover: this.imageUrl });
+    // },
     // 题目顺序修改
     sortChange(val, arr){
       console.log('sortChange-->', this.renderQuestion);

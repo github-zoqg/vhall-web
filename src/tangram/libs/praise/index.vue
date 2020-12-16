@@ -139,7 +139,7 @@ export default {
       }
     },
     praise () {
-      window.vhallReport.report('PRAISE');
+      window.vhallReport && window.vhallReport.report('PRAISE');
       // TODO:
       this.$fetch('like', {
         room_id: this.roomId,

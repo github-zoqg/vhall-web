@@ -115,43 +115,44 @@ export default {
       that.$refs.adviseSonChild.dialogVisible = true;
     },
     delete(that, { rows }) {
-      that.$confirm('是否删除当前广告？', '提示', {
+      that.deleteConfirm(rows.adv_id);
+    },
+    deleteConfirm(id) {
+      this.$confirm('是否删除当前广告？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
         type: 'warning',
         center: true
       }).then(() => {
-        that.allDelete(rows.adv_id);
+        this.$fetch('deleteAdv',this.$params({
+          adv_ids: id,
+          webinar_id: this.$route.params.str
+        })).then(res => {
+          if (res && res.code === 200) {
+              this.$message.success('删除成功');
+              // 刷新页面
+            this.adv_ids = [];
+            this.$refs.tableList.clearSelect();
+            this.initPage();
+          } else {
+            this.$message.error(res.msg || '删除失败');
+          }
+        });
       }).catch(() => {});
     },
     allDelete(id) {
-      if(!id) {
-        if(this.adv_ids.length <= 0) {
+      if(this.adv_ids.length <= 0) {
           this.$message.error('请至少选择一条记录删除');
           return;
         } else {
           id = this.adv_ids.join(',');
+          this.deleteConfirm(id);
         }
-      }
-      this.$fetch('deleteAdv',this.$params({
-        adv_ids: id,
-        webinar_id: this.$route.params.str
-      })).then(res => {
-         if (res && res.code === 200) {
-            this.$message.success('删除成功');
-            // 刷新页面
-           this.adv_ids = [];
-           this.$refs.tableList.clearSelect();
-           this.initPage();
-         } else {
-           this.$message.error(res.msg || '删除失败');
-         }
-      });
     },
     changeTableCheckbox(val) {
       console.log(val);
       this.adv_ids = val.map(item => item.adv_id);
-      console.log('avd_ids', this.adv_ids);
     },
     createAdvise(title) {
       this.title = '创建';

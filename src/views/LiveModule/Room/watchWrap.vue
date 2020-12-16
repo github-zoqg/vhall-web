@@ -630,7 +630,7 @@ export default {
         basePv: 0
       },
       simpleContent: '', // 简介内容
-      sellGoodsShow: true, // 商品推荐的显示
+      sellGoodsShow: false, // 商品推荐的显示
       smsErrorMessage: '', // 短信的错误提示
       errorMessage: '请输入正确的邮箱', // 错误的提示
       swiperPrevShow: false, // 向前翻页的按钮显示
@@ -815,7 +815,7 @@ export default {
   beforeDestroy() {
     if (this.timeinterval) clearInterval(this.timeinterval)
     this.timeinterval = null
-    window.vhallReport.report('LEAVE_WATCH')
+    window.vhallReport && window.vhallReport.report('LEAVE_WATCH')
   },
   methods: {
     closeWXCode () {
@@ -865,14 +865,16 @@ export default {
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
         // 预约后的活动才显示邀请卡
-        if (this.roomData.is_subscribe) {
-          await this.getInviteStatus()
-        }
         if (this.isLogin) {
           await this.getAttentionStatus()
         }
-        await this.getConfigList() // 获取观看端配置项
-        this.handleRoomInfo()
+        if (this.roomData && this.roomData.is_subscribe) {
+          await this.getInviteStatus()
+        }
+        if (this.roomData) {
+          await this.getConfigList() // 获取观看端配置项
+          this.handleRoomInfo()
+        }
       } catch (e) {
         console.log('初始化调用失败:', e)
       }
@@ -924,7 +926,7 @@ export default {
     // 点击商品获得详细的信息
     sellGoodsInfo(goodInfo) {
       this.goodInfo = goodInfo;
-      window.vhallReport.report('GOOD_RECOMMEND', {
+      window.vhallReport && window.vhallReport.report('GOOD_RECOMMEND', {
         event: moment().format('YYYY-MM-DD HH:mm'),
         market_tools_id: this.goodInfo.good_id,
         // 浏览
@@ -1409,7 +1411,7 @@ export default {
     },
     // 获取皮肤
     getSkin () {
-      return this.$fetch('getSkin', {
+      return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
         if (res.code == 200 && res.data) {
@@ -1763,7 +1765,7 @@ export default {
           service_names: this.roominfo.is_replay == 1 ? 2 : 1,
           env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
         });
-        window.vhallReport.report('ENTER_WATCH', {
+        window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
           event: this.$route.query.refer // 推广渠道，会在url里传参
         });
       })
@@ -1771,7 +1773,7 @@ export default {
       window.addEventListener('beforeunload', function(e) {
         // 离开H5观看端页面
         if (/room\/watch/.test(window.location.pathname)) {
-          window.vhallReport.report('LEAVE_WATCH', {}, false);
+          window.vhallReport && window.vhallReport.report('LEAVE_WATCH', {}, false);
         }
       })
     }

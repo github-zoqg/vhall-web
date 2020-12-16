@@ -1,6 +1,6 @@
 <template>
-  <div class="signFormBox">
-    <div class="signWrap">
+  <div :class="['signFormBox', isEntryForm ? 'signFormBoxHid' : '']">
+    <div :class="['signWrap', isEntryForm ? 'signWrapHid' : '']">
       <div class="entryFormBox">
         <header>
           <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
@@ -178,6 +178,7 @@
           </template>
         </article>
         <i
+          v-if="!isEntryForm"
           class="closeBtn"
           @click="closePreview"
         >&times;</i>
@@ -321,6 +322,7 @@
       return {
         Env: Env,
         webinar_id: this.$route.params.id,
+        isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
         colorIndex: 'red',
         tabs: 1,
         province: '',
@@ -468,6 +470,29 @@
           }
         });
       },
+      // 获取当前活动状态，如果直播中，跳转到直播间
+      getWebinarStatus() {
+        this.$fetch('watchInit', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          const type = res.data.webinar.type
+          if(type == 1 || type == 4 || type == 5) {
+            // 如果直播，回放，点播，跳转到直播观看页
+            this.$router.push({
+              path: `/live/watch/${this.webinar_id}`
+            })
+          } else if(type == 2 || type == 3) {
+            // 如果预约或结束，跳转到预约页
+            if(this.isEntryForm) {
+              this.$router.push({
+                path: `/subscribe/${this.webinar_id}`
+              })
+            } else {
+              this.$router.go(0)
+            }
+          }
+        })
+      },
       // 提交表单
       submitForm() {
         this.$refs['form'].validate((valid) => {
@@ -490,7 +515,9 @@
               if(res.code == 200) {
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
-                this.$emit('changeBtnVal', '已预约')
+                // this.$emit('changeBtnVal', '已预约')
+                // 判断当前直播状态，进行相应的跳转
+                this.getWebinarStatus()
               }
             })
           } else {
@@ -519,7 +546,9 @@
                 if (res.data.has_registed == 1) {
                   // 已报名，跳转到直播间
                   this.closePreview()
-                  this.$emit('changeBtnVal', '已预约')
+                  // this.$emit('changeBtnVal', '已预约')
+                  // 判断当前直播状态，进行相应的跳转
+                  this.getWebinarStatus()
                 } else {
                   this.$message.warning('请先报名！');
                 }
@@ -722,9 +751,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    &.signFormBoxHid{
+      position: static;
+      background-color: #fff;
+      width: auto;
+      height: auto;
+    }
     .signWrap {
       overflow-y: auto;
       height: 843px;
+      &.signWrapHid{
+        height: auto;
+        border: 1px solid #ccc;
+      }
       .entryFormBox {
         width: 840px;
         background: #fff;

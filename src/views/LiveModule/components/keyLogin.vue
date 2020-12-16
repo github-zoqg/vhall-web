@@ -19,17 +19,23 @@
         ishost: this.$route.path.startsWith('/keylogin-host'),
         name: '',
         keyCode: '',
-        warnningVal: ''
+        warnningVal: '',
+        roleName: this.$route.params.role_name
       }
     },
     methods: {
       entryLive() {
+        console.log(this.$route.params)
         if (!this.name && !this.ishost) {
           this.warnningVal = '参会昵称不能为空'
         } else if (!this.keyCode) {
           this.warnningVal = '直播口令不能为空'
         } else {
-          console.log('submit')
+          this.$emit('codeAuthLogin', {
+            role: this.roleName,
+            name: this.name,
+            keyCode: this.keyCode
+          })
         }
       }
     }

@@ -9,6 +9,7 @@
     <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
+      @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
       >
     </search-area>
@@ -61,7 +62,12 @@ export default {
   data() {
     return {
       titleType: '直播',
-      mainKeyData: {},
+      params: {}, //导出的时候用来记录参数
+      mainKeyData: {
+        max_onlines: 0,
+        total_live_time: 0,
+        total: 0
+      },
       liveDetailInfo: {},
       allDataList: {},
       lineDataList: [],
@@ -194,26 +200,33 @@ export default {
       if (paramsObj.start_time) {
         paramsObj.start_time = paramsObj.start_time.substring(0, 10);
       }
-      console.log(this.$params(paramsObj), '111111111111111');
+      this.params = this.$params(paramsObj);
       this.getAllData(paramsObj);
     },
     getAllData(params) {
-      // 获取直播场次
-      let dataInfo = {};
-      this.$fetch('getWebinarSwitchList', params).then(res => {
-        dataInfo.total_live_time = res.data.total_live_time;
-        dataInfo.total = res.data.total;
-      });
-       // 获取最高并发
-      this.$fetch('getMaxuv', params).then(res => {
-        dataInfo.max_onlines = res.data.max_onlines;
-      });
-      this.$fetch('getStatisticsinfo', params).then(res => {
-          this.mainKeyData = {
-          ...res.data,
-          ...dataInfo
-        };
-      });
+      let promiseArr = [] //promise异步数组
+      let obj = {};
+      promiseArr.push(
+        this.$fetch('getStatisticsinfo', params).then(res => {
+          obj = {
+            ...res.data
+          };
+        })
+      )
+      promiseArr.push(
+        this.$fetch('getWebinarSwitchList', params).then(res => {
+          obj.total_live_time = res.data.total_live_time;
+          obj.total = res.data.total;
+        })
+      )
+      promiseArr.push(
+        this.$fetch('getMaxuv', params).then(res => {
+          obj.max_onlines = res.data.max_onlines;
+        })
+      )
+      Promise.all(promiseArr).then(() => {
+        this.mainKeyData = { ...obj }
+      })
       // 获取用户统计
       this.$fetch('getDateUvinfo', params).then(res => {
         this.allDataList = res.data;
@@ -231,6 +244,16 @@ export default {
       this.$fetch('getBrowserinfo', params).then(res => {
         this.browerDataList = res.data.list;
       });
+    },
+    // 导出
+    exportCenterData() {
+      this.$fetch('exportWebinarInfo', this.params).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`活动数据报告导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`活动数据报告${res.msg}`);
+        }
+      })
     },
     changeTime(title) {
       if (title === '直播') {

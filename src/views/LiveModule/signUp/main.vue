@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="head">
-      <pageTitle title="报名表单" content="toolTip">
+      <pageTitle title="报名表单">
         <el-switch
           class="swtich"
           v-model="signUpSwtich"

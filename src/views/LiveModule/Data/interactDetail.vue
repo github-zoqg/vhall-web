@@ -5,7 +5,7 @@
       <div class="searchBox">
         <el-input
           :placeholder="placeholder"
-          v-if="title=='聊天' || title=='邀请排名'"
+          v-if="title=='邀请排名'"
           style="margin-right: 20px;"
           v-model="searchText">
           <i
@@ -123,15 +123,15 @@ export default {
       inviteColumn: [
         {
           label: '排名',
-          key: 'sort',
+          key: 'index',
         },
         {
           label: '昵称',
-          key: 'liveName',
+          key: 'nick_name',
         },
         {
           label: '邀请人数',
-          key: 'wacthPeople',
+          key: 'num',
         }
       ],
       // 聊天
@@ -218,14 +218,14 @@ export default {
         },
         {
           label: '签到人数',
-          key: 'wacthPeople',
+          key: 'count',
         }
       ],
       // 抽奖
       drawColumn: [
         {
           label: '序号',
-          key: 'num',
+          key: 'index',
         },
         {
           label: '推送抽奖时间',
@@ -233,7 +233,7 @@ export default {
         },
         {
           label: '抽奖方式',
-          key: 'lottery_type',
+          key: 'lottery',
         },
         {
           label: '实际中奖人数',
@@ -376,8 +376,11 @@ export default {
         keyword: this.searchText,
         ...pageInfo,
       }
-      this.$fetch('getInviteListInfo', params).then(res => {
+      this.$fetch('getInviteListInfo', this.$params(params)).then(res => {
         this.tableList = res.data.list;
+        this.tableList.map((item, index) => {
+          item.index = index + 1;
+        })
         this.totalNum = res.data.total;
       });
     },
@@ -403,47 +406,46 @@ export default {
           item.content = item.data.text_content || item.data.barrage_txt;
           item.revice = item.context.reply_msg;
           item.statusText = '通过';
+          item.revice = '主持人';
         })
         this.totalNum = res.data.total;
       });
     },
-    // 聊天删除
-    chatDetele(that, { rows }) {
-       that.$confirm('确定要删除该文件吗111?', '提示', {
+    //删除聊天（二次确认）
+    chatConfirmSure(id) {
+      this.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          that.deleteAll(rows.id);
+          let obj = {
+            msg_id: id,
+            room_id: this.roomId
+          }
+          this.$fetch('deleteChatList', obj).then(res => {
+            this.$message.success('删除成功');
+            this.chatInfo();
+          });
         }).catch(() => {
-          that.$message({
+          this.$message({
             type: 'info',
             message: '已取消删除'
           });
         });
     },
-    // 聊天批量删除（删除）
-    chatAllDelete(id) {
-      let obj = {
-        msg_id: id,
-        room_id: this.roomId
-      }
-      this.$fetch('deleteChatList', obj).then(res => {
-        this.$message.success('删除成功');
-        this.chatInfo();
-      });
+    // 聊天删除
+    chatDetele(that, { rows }) {
+      that.chatConfirmSure(rows.msg_id);
     },
     // 批量删除(问答和聊天)
     deleteAll(id) {
       if (this.title === '聊天') {
-        if (!id) {
-          if (this.seleteAllOptionList.length < 1) {
-            this.$message.error('请选择要操作的对象')
-          } else {
-            id = this.seleteAllOptionList.join(',');
-          }
+        if (this.seleteAllOptionList.length < 1) {
+          this.$message.error('请选择要操作的对象');
+        } else {
+          id = this.seleteAllOptionList.join(',');
+          this.chatConfirmSure(id);
         }
-        this.chatAllDelete(id);
       } else {
           if (this.seleteAnwerList.length < 1 && this.seleteQuestionList.length < 1) {
             this.$message.error('请选择要操作的对象')
@@ -454,15 +456,27 @@ export default {
     },
     // 问答批量删除
     recordAllDelete() {
-      let obj = {
-        ques_ids: this.seleteQuestionList.join(','),
-        answer_ids: this.seleteAnwerList.join(','),
-        room_id: this.roomId
-      }
-      this.$fetch('deleteAllRecodrder', this.$params(obj)).then(res => {
-        this.$message.success('删除成功');
-        this.getRecordList();
-      });
+      this.$confirm('确定要删除该文件吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          type: 'warning'
+        }).then(() => {
+          let obj = {
+            ques_ids: this.seleteQuestionList.join(','),
+            answer_ids: this.seleteAnwerList.join(','),
+            room_id: this.roomId
+          }
+          this.$fetch('deleteAllRecodrder', this.$params(obj)).then(res => {
+            this.$message.success('删除成功');
+            this.getRecordList();
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
      // 问答单个删除
     anwerDetele(that, {rows}) {
@@ -524,8 +538,30 @@ export default {
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getPrizeListInfo', obj).then(res => {
         this.tableList = res.data.list;
+        this.tableList.map((item, index) => {
+          item.index = index + 1;
+          item.lottery = this.lotteryType(item.lottery_type);
+        })
         this.totalNum = res.data.total;
       });
+    },
+    lotteryType(type) {
+      if (type == 1) {
+        return '全体参会用户';
+      } else if (type == 2) {
+        return '参与问卷的参会者';
+      } else if (type == 3) {
+        return '参与签到的参会者';
+      } else if (type == 4) {
+        return '全体观众';
+      } else if (type == 5) {
+        return '已登录观众';
+      } else if (type == 6) {
+        return '参与问卷的观众';
+      } else {
+        return '参与签到的观众';
+      }
+
     },
     // 回答
     getRecordList() {
@@ -576,6 +612,7 @@ export default {
       this.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
           let obj = {
@@ -623,7 +660,7 @@ export default {
       if (that.title === '发群红包') {
         that.exportRedpacketDetailInfo(rows.id, rows.type);
       } else if (that.title === '签到') {
-        that.exportDetailSignInfo(rows.sign_id);
+        that.exportDetailSignInfo(rows.id);
       } else if (that.title === '邀请排名') {
         that.exportInviteDetailInfo(rows.invite_id);
       } else {
@@ -632,7 +669,7 @@ export default {
     },
     changeTableCheckbox(val) {
       if (this.title === '聊天') {
-        this.seleteAllOptionList = val.map(item => item.id);
+        this.seleteAllOptionList = val.map(item => item.msg_id);
       } else {
         this.seleteAnwerList = val.filter(item => item.name == '答').map(item => item.id);
         this.seleteQuestionList = val.filter(item => item.name == '问').map(item => item.id);
@@ -692,18 +729,18 @@ export default {
     },
     // 签到
     exportSignInfo() {
-      this.$fetch('exportSign', {room_id: roomId}).then(res => {
+      this.$fetch('exportSign', {room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
       })
     },
     exportDetailSignInfo(id) {
-      this.$fetch('exportDetailSign',{room_id: roomId, sign_id: id}).then(res => {
+      this.$fetch('exportDetailSign',{room_id: this.roomId, sign_id: id}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
       })
     },
     // 问卷
     exportQuestionInfo() {
-      this.$fetch('exportSurvey',{room_id: roomId}).then(res => {
+      this.$fetch('exportSurvey',{room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
       })
     },

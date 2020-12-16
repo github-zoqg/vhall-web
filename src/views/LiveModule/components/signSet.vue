@@ -155,13 +155,17 @@ export default {
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
-          this.signSetForm = res.data || {
-            organizers_status: 0,
-            reserved_status: 0,
-            view_status: 0,
-            logo_url: null,
-            skip_url: null
-          };
+          if (res.data.logo_url) {
+            this.signSetForm = res.data;
+          } else {
+            this.signSetForm = {
+              organizers_status: 0,
+              reserved_status: 0,
+              view_status: 0,
+              logo_url: null,
+              skip_url: null
+            };
+          }
           this.domain_url = res.data.logo_url || '';
           this.$EventBus.$emit('SAAS_V3_SIGN_PREVIEW', this.signSetForm);
         } else {
@@ -184,6 +188,7 @@ export default {
     signSetSave() {
       this.$refs.signSetForm.validate((valid) => {
         if(valid) {
+          console.log(this.signSetForm, 'signSetForm');
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
           this.$fetch('setInterWebinarTag', params).then(res => {
             console.log(res);

@@ -1,15 +1,24 @@
 <template>
   <div class="private-wrap clearFix">
     <ul class="list-name fl">
-      <li v-for="(item, index) in userList" :key="index" class="ellsips" :class="{'active-name': acrivePrivate == index}" @click="selectUser(item)">
-        {{item.name}}
+      <li v-for="(ite, index) in userList" :key="index" :class="{'active-name': acrivePrivate == index}" @click="selectUser(ite, index)">
+        <span class="ellsips">
+          {{ite.nickname ||  '' }}
+        </span>
+        <span @click.stop="closeUser(ite,index)">X</span>
       </li>
     </ul>
     <div class="list-content fr">
       <p class="private-head">
-        <span>{{activeName || userList[0].name || ''}}</span>
+        <span>{{activeName || userList[0]&&userList[0].nickname || ''}}</span>
+        <span class="close" @click="$emit('close')">﹀</span>
       </p>
-      <p class="private-content"></p>
+      <ul class="private-content">
+        <li class="private-content-li" v-for="(item, index) in chatList" :key="index">
+          <p>我： <span>{{filterTime(item.created_at)}}</span></p>
+          <p v-html="item.content.text"></p>
+        </li>
+      </ul>
       <div class="private-footer">
         <el-input type="textarea" :rows="2" placeholder="说点什么吧..." v-model="privateValue"> </el-input>
         <p>
@@ -26,30 +35,79 @@
 </template>
 <script>
 import smallEmoji from '@/tangram/libs/chat/emoji.vue';
-import { faceArr, textToEmoji, emojiToPath } from '@/tangram/libs/chat/js/emoji';
+import { faceArr, textToEmoji, emojiToPath, textToEmojiText } from '@/tangram/libs/chat/js/emoji';
 import Msg from '@/tangram/libs/chat/js/msg-class';
 import { formatTime, handleTime } from '@/tangram/libs/chat/js/handle-time';
 export default {
   components: {
     smallEmoji
   },
-  props:['userInfo', 'onlyChatMess'],
+  props:['userInfo', 'onlyChatMess','priteChatList', 'webinar_id'],
   data() {
     return {
       acrivePrivate: 0, // 当前私聊对象
       activeName: '',
       privateValue: '', // 私聊内容
-      userList:[
-        {
-          name: 'test'
-        }
-      ]
+      userList: this.priteChatList, // 私聊列表
+      chatList: [], //获取到
     }
   },
   watch:{
-
+    onlyChatMess: {
+      handler(newValue, oldValue){
+        if(newValue.type){
+          console.warn('test --2');
+          console.warn(newValue, 789);
+          this.$nextTick(()=>{
+            let isFlag = this.userList.some(ele =>{
+              return ele.id == newValue.item.join_id
+            })
+            if(!isFlag){
+              this.userList.push(newValue)
+              this.acrivePrivate = this.userList.length - 1
+              this.activeName = newValue.nickname
+              this.getDefaultContent(newValue.item.join_id)
+            }
+          })
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+  computed:{
+    filterTime(){
+      return function(time){
+        return this.$moment(time).format('hh:mm:ss')
+      }
+    }
   },
   methods: {
+    getDefaultContent(to_userID){
+      let _data = {
+        room_id: this.userInfo.interact.room_id,
+        start_time: '',
+        pos: 0,
+        limit: 100,
+        to_user: to_userID,
+        webinar_id: this.webinar_id
+      }
+      this.chatList = []
+      this.$fetch('v3GetPrivCon', _data).then(res=>{
+        console.warn(res);
+        if(res.code == 200){
+          console.warn(res.data);
+          this.chatList = res.data.list
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
+    },
+    closeUser(user, index){
+      this.userList.splice(index, 1)
+      this.chatList = []
+      this.activeName=''
+    },
     // 切换表情显示
     toggleEmoji () {
       console.warn('点击的表情展示----', this.$refs, this.$refs.emoji);
@@ -59,40 +117,56 @@ export default {
     emojiInput (value) {
       this.privateValue += value;
     },
-    selectUser(user){
+    selectUser(user, index){
       // 设置当前私聊title名字
-      this.activeName = user.name
+      this.activeName = user.nickname
+      this.acrivePrivate = index
+      console.warn(this.userList[index]);
+      this.getDefaultContent(this.userList[index].id)
+    },
+    roleClassFilter (value) {
+      return value == '1' ? 'host' : value == '3' ? 'assistant' : 'guest';
+    },
+    emojiToText (content) {
+      return textToEmoji(content).map(c => {
+        return c.msgType == 'text'
+          ? c.msgCont
+          : `<img width="24" src="${c.msgImage}" border="0" />`;
+      }).join(' ');
     },
     privateSend(){
-      console.warn('私聊发送图片和表情', this.privateValue);
       if (!this.privateValue.trim()) {
         return this.$message.error('内容不能为空');
       }
       let data = {
+        avatar: this.userInfo.join_info.avatar,
+        target_id: this.userList[this.acrivePrivate].join_id,
         type:'text',
         barrageTxt: this.privateValue.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'),
-        text_content: textToEmojiText(this.privateValue),
+        text_content: this.privateValue
       };
+      // 为保持一致   故传了多个不同key  同value
       let context = {
+        to: this.userList[this.acrivePrivate].join_id,
         nickname: this.userInfo.join_info.nickname, // 昵称
-        avatar: this.userInfo.avatar, // 头像
-        role_name: this.userInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
-        join_id: this.userInfo.join_id
+        nick_name: this.userInfo.join_info.nickname,
+        user_name:  this.userInfo.join_info.nickname,
+        role_name: this.roleClassFilter(this.userInfo.join_info.role_name), // 角色 1主持人2观众3助理4嘉宾
+        user_role: this.roleClassFilter(this.userInfo.join_info.role_name),
+        user_id: this.userInfo.join_info.join_id,
+        app: 'vhall'
       };
-      console.log('获取私聊  准备发送的消息----', context);
-      let tempData = new Msg({
-        avatar: getAvatar(context.avatar),
-        nickName: context.nickname,
-        type: 'text',
-        content: data,
-        sendId: context.join_id,
-        sendTime: formatTime(new Date()),
-        roleName: context.role_name,
-        client: 'pc',
-        showTime: handleTime(item.sendTime),
-        replyMsg: this.replyMsg
-      });
-
+      this.$nextTick(()=>{
+        this.$emit('sendMsg', data,context)
+        let _data = {
+          created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+          content:{
+            text:this.emojiToText(this.privateValue)
+          }
+        }
+        this.chatList.push(_data)
+        this.privateValue = ''
+      })
     }
   },
 }
@@ -100,7 +174,7 @@ export default {
 <style lang="less" scoped>
 .private-wrap{
   position: absolute;
-  width: 700px;
+  width: 720px;
   height: 400px;
   border: 1px solid;
   right: 0;
@@ -108,18 +182,34 @@ export default {
   background-color: #f1f1f1;
   border: 1px solid #c1c1c1;
   .list-name{
-    width: 120px;
+    width: 140px;
     height: 100%;
     display: inline-block;
     border-right: 1px solid #c1c1c1;
     li{
       height: 40px;
       line-height: 40px;
+      position: relative;
       color: #666;
       font-size: 15px;
       text-align: left;
       padding-left: 10px;
       border-bottom: 1px solid #ccc;
+      &:hover{
+        span:nth-child(2){
+          display: inline-block
+        }
+      }
+      span{
+        width: 100px;
+        display: inline-block;
+        &:nth-child(2){
+          width: 20px;
+          float: right;
+          display: none;
+
+        }
+      }
     }
     .active-name{
       color: #fff;
@@ -128,7 +218,7 @@ export default {
   }
   .list-content{
     display: inline-block;
-    width: calc(100% - 120px);
+    width: calc(100% - 140px);
     position: relative;
     height: 100%;
     .private-head{
@@ -139,10 +229,36 @@ export default {
       font-size: 14px;
       line-height: 39px;
       text-align: center;
+      .close{
+          position: absolute;
+          right: 10px;
+          line-height: 39px;
+          color: #fff;
+          font-weight: normal;
+          font-size: 24px;
+          top: 3px;
+      }
     }
     .private-content{
       height: calc(100% - 140px);
       overflow-y: auto;
+      &-li{
+        font-size: 14px;
+        color: #949393;
+        border-bottom: 1px solid #fff;
+        p{
+          padding-left: 10px;
+          line-height: 24px;
+          &:nth-child(2){
+            color: #333;
+          }
+          span{
+            color: #bcbcbc;
+            font-size: 12px;
+            margin-left: 5px;
+          }
+        }
+      }
     }
     .private-footer{
       height: 100px;

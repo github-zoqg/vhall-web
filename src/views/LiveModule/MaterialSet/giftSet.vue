@@ -2,11 +2,9 @@
   <div class="live-gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
-        1.支持自定义创建35个礼物, 支持创建免费礼物
+        1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
         <br>
-        2.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
-        <br>
-        3.礼物名称不支持特殊字符、表情
+        2.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
@@ -42,20 +40,20 @@
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
+          :selectable="selectHandle"
           width="55"
           align="left"
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
             <img class="gift-cover" :src="defaultImgHost + scope.row.image_url">
-            <!--TODO:-->
-            <!-- <img class="gift-cover" :src="defaultImgHost + scope.row.img"> -->
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
         </el-table-column>
         <el-table-column label="价格" prop="price" show-overflow-tooltip>
         </el-table-column>
+        <!-- 暂时不支持,隐藏 -->
         <!-- <el-table-column label="显示">
            <template slot-scope="scope">
              <el-switch v-model="scope.row.status" active-color="#FC5659" inactive-color="#CECECE" @change="changeGiftStatu(scope.row.status, scope.row.gift_id)"></el-switch>
@@ -116,22 +114,6 @@
     <el-dialog
       title="提示"
       width="400px"
-      :visible.sync="dialogShareVisible"
-      :close-on-click-modal="false"
-      :before-close="closeShare"
-    >
-      <span>确定保存当前礼物?</span>
-      <div class="share-material" @click="handelShareMarterial">
-        <span class="square" :class="{active: shareMaterial}"></span><span>共享到资料管理</span>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelShare">取 消</el-button>
-        <el-button type="primary" @click="handleShare">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="提示"
-      width="400px"
       :visible.sync="dialogTipVisible"
       :close-on-click-modal="false"
       :before-close="handleCancelDelete"
@@ -176,7 +158,7 @@
           :key='index'
           class="matrial-item"
           :class="{active: item.isChecked}"
-          @click.stop="handleChooseGift(index)">
+          @click.stop="handleChooseGift(index, item)">
           <div class="gift-cover">
             <img :src="defaultImgHost + item.img" alt>
           </div>
@@ -184,14 +166,9 @@
             <span class="gift-name">{{item.name}}</span>
             <span class="gift-price">￥{{item.price}}</span>
           </div>
+          <i v-if="item.isChecked" class="el-icon-check"></i>
         </div>
       </div>
-      <!-- <SPagination
-        :total="materialTotal"
-        v-show="materialTotal > 10"
-        :currentPage="materiaSearchParams.page"
-        @current-change="currentMaterialChangeHandler"
-        align="center"></SPagination> -->
       <div class="control">
         <span>当前选中{{addGiftsIds.length}}件商品</span>
         <div class="control-btn">
@@ -245,7 +222,6 @@ export default {
       dialogTipVisible: false, // 删除提示
       dialogVisible: false, // 新建礼品
       dialogGiftsVisible: false, // 显示资料库添加礼品
-      dialogShareVisible: false, // 分享面板
       shareMaterial: false, // 是否分享到资料库
       deleteId: '',
       // openGiftIds: [], // 显示礼物列表
@@ -293,29 +269,9 @@ export default {
     searchGifts() {
       this.getTableList(true)
     },
-    // 监听回车等情况搜索礼物名称
-    // bindEventListener () {
-    //   let searchBtn = document.querySelector('.el-input__suffix'),
-    //       inputDom = document.querySelector('.head-operat .el-input__inner')
-
-    //   inputDom.setAttribute('id', 'outGiftSearchBtn')
-    //   searchBtn && searchBtn.addEventListener('click', () => {
-    //     this.searchParams.gift_name = this.searchName
-    //     this.searchParams.page = 1
-    //     this.getTableList()
-    //   })
-    //    document.onkeydown = (event) => {
-    //     // 搜索框获取焦点时点击回车自动搜搜
-    //     let e = event || window.event;
-    //     if (e && e.keyCode == 13) { //回车键的键值为13
-    //       if (document.activeElement.id == 'outGiftSearchBtn') {
-    //         this.searchParams.gift_name = this.searchName
-    //         this.searchParams.page = 1
-    //         this.getTableList()
-    //       }
-    //     }
-    //   };
-    // },
+    selectHandle(row) {
+      return !(row.source_status == 0);
+    },
     // 处理批量操作
     handleSelectionChange (val) {
       let ids = []
@@ -373,9 +329,9 @@ export default {
         gift_id: data.id,
         name: data.name,
         price: data.price,
-        img: this.defaultImgHost + data.image_url
+        img: data.image_url
       }
-      this.domain_url = this.editParams.img
+      this.domain_url = this.defaultImgHost + this.editParams.img
       this.dialogVisible = true
     },
     // 新建
@@ -388,62 +344,68 @@ export default {
       }
       this.dialogVisible = true
     },
-    closeShare () {
-      this.dialogShareVisible = false
-    },
     // 处理编辑新建
     handleUpdateGift () {
-      if(this.editParams.gift_id) {
-        // 编辑
-        this.handleEdit()
-      } else {
-        this.dialogShareVisible = true
-      }
-    },
-    handleCancelShare () {
-      this.dialogShareVisible = false
-    },
-    handleShare () {
-      this.handleCreate()
-    },
-    // 编辑
-    handleEdit () {
-      this.$fetch('updateGiftInfo', {
-        ...this.editParams
-      }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success('编辑成功')
-          this.getTableList()
-          this.queryMateriaGifts()
-          this.handleCancelEdit()
-        }
-      }).catch((e) => {
-          this.$message.error('编辑失败')
-          this.handleCancelEdit()
-      })
-    },
-    // 创建
-    handleCreate () {
       let price = Number(this.editParams.price)
-      if (price) {
+      if (price || price == 0) {
+        if (price < 0 || price > 10000) {
+          this.$message.error('价格必须介于0-10000之间')
+          return
+        }
         this.editParams.price = price.toFixed(2)
       } else {
         this.$message.error('请输入正确礼物价格')
         return
       }
-      this.$fetch('createWebinarGift', {
-        ...this.editParams,
-        room_id: this.room_id
-      }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success('创建成功')
-          this.getTableList()
-          this.handleCancelEdit()
-          this.closeShare()
-        }
-      }).catch((e) => {
-          this.$message.error('创建失败')
-          this.closeShare()
+      if(this.editParams.gift_id) {
+        // 编辑
+        this.handleEdit()
+      } else {
+        // 创建
+        this.handleCreate()
+      }
+    },
+    // 编辑
+    handleEdit () {
+      this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        iconClass: ''
+      }).then(() => {
+        this.$fetch('updateGiftInfo', {
+          ...this.editParams
+        }).then((res) => {
+          if (res.code == 200) {
+            this.$message.success('编辑成功')
+            this.getTableList()
+            this.queryMateriaGifts()
+            this.handleCancelEdit()
+          }
+        }).catch((e) => {
+            this.$message.error('编辑失败')
+            this.handleCancelEdit()
+        })
+      })
+    },
+    // 创建
+    handleCreate () {
+      this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        iconClass: ''
+      }).then(() => {
+        this.$fetch('createWebinarGift', {
+          ...this.editParams,
+          room_id: this.room_id
+        }).then((res) => {
+          if (res.code == 200) {
+            this.$message.success('创建成功')
+            this.getTableList()
+            this.handleCancelEdit()
+          }
+        }).catch((e) => {
+            this.$message.error('创建失败')
+        })
       })
     },
     // 取消礼品编辑
@@ -558,11 +520,16 @@ export default {
     //   }, 300)
     // },
     // 选择奖品添加
-    handleChooseGift (index) {
+    handleChooseGift (index, gift) {
+      // 默认礼物不支持取消关联
+      if(gift.source_status == 0) {
+        this.$message.warning('默认礼物不支持取消关联')
+        return false;
+      };
       if (!this.materiaTableData[index].isChecked) {
-        this.addGiftsIds.push(this.materiaTableData[index].gift_id)
+        this.addGiftsIds.push(Number(this.materiaTableData[index].gift_id))
       } else {
-        let num = this.addGiftsIds.indexOf(this.materiaTableData[index].gift_id)
+        let num = this.addGiftsIds.indexOf(Number(this.materiaTableData[index].gift_id))
         this.addGiftsIds.splice(num, 1)
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
@@ -579,16 +546,8 @@ export default {
     handleCloseChooseGift () {
       this.dialogGiftsVisible = false
     },
-    // 翻页
-    // currentMaterialChangeHandler (val) {
-    //   this.materiaSearchParams.page = val
-    //   this.queryMateriaGifts()
-    // },
     // 检索奖品库礼物
     searchMaterialGift () {
-      // this.materiaSearchParams.gift_name = this.materiaSearchName
-      // this.materiaSearchParams.page = 1
-      // this.queryMateriaGifts()
       this.queryMateriaGifts(true)
     },
     // 新建添加到资料库
@@ -737,6 +696,15 @@ export default {
       &:hover{
         cursor: pointer;
       }
+      .el-icon-check {
+        position: absolute;
+        bottom: 2px;
+        right: 3px;
+        color: #fff;
+        z-index: 2;
+        font-size: 16px;
+        font-weight: 800;
+      }
     }
     .matrial-item.active{
       border: 1px solid #FC5659;
@@ -783,6 +751,7 @@ export default {
     }
     .add-btn{
       margin-left: 191px ;
+      color: #fff;
     }
     /deep/ .disabled{
       opacity: 0.5;

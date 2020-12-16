@@ -29,7 +29,7 @@
       </el-form-item>
       <el-form-item label="直播模式：" required v-if="webniarType=='live'">
         <div class="modeBox">
-          <div @click='liveMode=2' :class="{active: liveMode== 2}">
+          <div @click='liveModeChange(2)' :class="{active: liveMode== 2}">
             <el-container class='model'>
               <el-aside width="80px" class="block">
                 <i class="el-icon-video-camera icon"></i>
@@ -41,7 +41,7 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode=3' :class="{active: liveMode== 3}">
+          <div @click='!webniarIntact && liveModeChange(3)' :class="{active: liveMode== 3 }">
             <el-container class='model'>
               <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
@@ -59,9 +59,9 @@
               </el-container>
             </el-container>
             <p class="desc">互动直播</p>
-            <span class="notAllow">未开通</span>
+            <span class="notAllow" v-if="webniarIntact">未开通</span>
           </div>
-          <div @click='liveMode=1' :class="{active: liveMode== 1}">
+          <div @click='liveModeChange(1)' :class="{active: liveMode== 1}">
             <el-container class='model'>
               <el-aside width="80px" class="block">
                 <i class="el-icon-microphone icon"></i>
@@ -74,6 +74,7 @@
             <p class="desc">音频直播</p>
           </div>
         </div>
+        <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面：`">
         <upload
@@ -200,6 +201,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
+import { sessionOrLocal } from '@/utils/utils';
 import Env from "@/api/env";
 
 export default {
@@ -272,6 +274,13 @@ export default {
         live: '直播'
       };
       return zh[this.$route.meta.webniarType];
+    },
+    webniarIntact() {
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact == '1') {
+        return false;
+      } else {
+        return true;
+      }
     }
   },
   data(){
@@ -308,7 +317,7 @@ export default {
       this.title = '创建';
       this.webinarId = '';
     }
-    console.log(this.$route);
+    console.log(JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact, '????????????')
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -318,6 +327,9 @@ export default {
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
         this.liveMode = this.liveDetailInfo.webinar_type;
+        // if (this.$route.query.type == 2) {
+        //   this.liveMode = 1;
+        // }
         this.imageUrl = this.liveDetailInfo.img_url;
         this.domain_url = this.liveDetailInfo.img_url;
         console.log(this.domain_url, this.imageUrl, '封面地址');
@@ -344,6 +356,9 @@ export default {
     },
     sendData(content) {
       this.content = content;
+    },
+    liveModeChange(index) {
+      this.liveMode = index;
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
@@ -396,7 +411,6 @@ export default {
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
       };
-      console.log(data, 'data-------------');
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -466,6 +480,7 @@ export default {
   .modeBox{
     display: flex;
     justify-content: space-between;
+    position: relative;
     >div{
       height: 112px;
       width: 180px;
@@ -546,6 +561,13 @@ export default {
       text-align: center;
       line-height: 30px;
     }
+  }
+  .modeHide{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 180px;
+    width: 100%;
   }
   .tag{
     padding: 3px 18px;

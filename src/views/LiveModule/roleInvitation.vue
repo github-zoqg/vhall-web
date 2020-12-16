@@ -346,8 +346,16 @@ export default {
         webinar_id: this.$route.params.str,
       }).then(res => {
           if(res && res.code === 200 && res.data) {
-            this.privilegeVo = res.data;
+            // 若是未开启，口令展示为空
+            if (Number(res.data.is_privilege) === 0) {
+              res.data.host_password = '';
+              res.data.guest_password = '';
+              res.data.assistant_password = '';
+            }
             this.roleSwitch = res.data.is_privilege;
+            this.$nextTick(() => {
+              this.privilegeVo = res.data;
+            })
           } else {
             this.privilegeVo = {};
           }

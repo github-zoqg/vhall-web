@@ -15,15 +15,10 @@
               <br/>
               封面
             </span>
-            <span v-if="!noDel">
+            <span>
               <i class="el-icon-delete" @click.stop="deletes"></i>
               <br/>
               删除
-            </span>
-            <span v-else>
-              <i class="el-icon-upload2"></i>
-              <br/>
-              替换
             </span>
             <span v-if="!!$props.restPic">
               <i class="el-icon-refresh-left" @click="refresh($event)"></i>
@@ -95,10 +90,6 @@ export default {
         type: Boolean,
         default: false
       },
-      "noDel": {
-        type: Boolean,
-        default: false
-      }
     }),
     value: {
       type: String,
@@ -158,6 +149,7 @@ export default {
     //   // this.$emit('on-change', args)
     // },
     deletes(){
+      this.domainUrl = ''
       this.$emit('delete', '');
     },
     coverPage() {
@@ -207,6 +199,7 @@ export default {
     img{
       width: 100%;
       height: 100%;
+      object-fit: cover;
     }
   }
   .mask{

@@ -73,6 +73,7 @@
                </div>
                 <ul class="answer">
                   <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
+                    <span class="triangle"></span>
                     <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
                       <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
@@ -105,7 +106,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj' :onlyChat='onlyChatMess'></Private>
+                <Private ref="private" :userInfo='baseObj' :webinar_id='webinar_id' :onlyChatMess='onlyChatMess' :priteChatList='priteChatList' @close='privateClose' @sendMsg='privateSendMsg'></Private>
               </template>
             </div>
           </div>
@@ -163,7 +164,7 @@ export default {
         {text:'文字回复', count: 0},
         {text:'不处理', count: 0}
       ],
-      active: 2, // 当前正在展示的Dom
+      active: 0, // 当前正在展示的Dom
       activeObj: {}, // 当前正在展示的信息
       baseObj: {},
       awaitList: [], // 待处理
@@ -184,30 +185,30 @@ export default {
         page_size: 20,
         page: 0
       },
-      onlyChatMess:{} // 当前私聊对象
+      onlyChatMess:{}, // 当前私聊对象
+      priteChatList: [], // 私聊列表
+      webinar_id: null
     }
   },
   async created() {
    await this.getUserInfo()
+   await this.getPrivateList() // 获取私聊列表
    this.getChat(0)  // 待处理
    this.getChat(1)  // 不处理
    this.getChat(2)  // 语音回复
    this.setReply()  // 文字回复
    this.initChat()
   },
-  watch:{
-    'awaitList.length' (newval){
-      this.$nextTick(()=>{
-
-      })
-    }
-  },
   mounted() {
+    this.webinar_id = this.$router.currentRoute.params.id
     this.$EventBus.$on('question_answer_create', e => {
       console.warn('我是问答管理页面-----', e);
       // 发起端收到消息
       e.content = this.emojiToText(e.content);
       this.awaitList.push(e)
+      this.$nextTick(()=>{
+        this.List[0].count = this.awaitList.length
+      })
     });
   },
   methods: {
@@ -323,17 +324,19 @@ export default {
         if(val.type == 'private'){
           // 合并 当前数据
           this.onlyChatMess = {}
+          console.warn(val , '点击的是私聊');
           let privateMess = Object.assign(val, {activeDom: this.active, Subscript: index})
           if(this.active != 0){
             privateMess.item = item
           }else{
             privateMess.Subscript = val.index
           }
+          privateMess.nickname = privateMess.item.nick_name
           console.warn('--------点击的是私聊---------------',privateMess );
           if(!this.privateFlag){
             this.privateFlag = true
-            this.onlyChatMess = privateMess
           }
+          this.onlyChatMess = privateMess
         }else{
           console.warn('不处理----开始执行');
           let data = {
@@ -382,7 +385,15 @@ export default {
       }
     },
     messClick(){
+      console.warn('点击的升级');
       this.privateFlag = true
+    },
+    privateClose(){
+      this.privateFlag = false
+    },
+    privateSendMsg(data,msg){
+      console.warn('发送私聊消息, 走到消息通道', msg);
+      this.$Chat.emit(data,msg)
     },
     revoke(val, index, fatherIndex){
       // 撤销回复
@@ -438,7 +449,7 @@ export default {
         }
         Object.assign(msg, msg.data);
         // console.warn('坚挺到消息的派发----1-', msg);
-        //  this.$EventBus.$emit(msg.type, msg);
+         this.$EventBus.$emit(msg.type, msg);
       })
     },
     textReply(){
@@ -470,10 +481,24 @@ export default {
             }
         }
       })
+    },
+    getPrivateList(){
+      return new Promise((resolve, reject)=>{
+        this.$fetch('v3GetPrivateList', {room_id: this.baseObj.interact.room_id, webinar_id: this.$router.currentRoute.params.id }).then(res=>{
+          console.warn(res);
+          if(res.code == 200){
+            console.warn('开始准备', res);
+            this.priteChatList = res.data.list
+            this.$refs.private.getDefaultContent(res.data.list[0].id)
+          }else{
+            this.$message.warning(res.msg)
+          }
+          resolve()
+        }).catch(err=>{
+          reject(err)
+        })
+      })
     }
-  },
-  beforeCreate() {
-    console.log(this)
   },
 }
 </script>
@@ -645,12 +670,23 @@ export default {
       }
       // 文字回复  回答
       .answer{
-        background: #e8e8e8;
         font-size: 14px;
         color: #888;
         width: 100%;
         li{
           border: none!important;
+          background: #e8e8e8;
+          position: relative;
+          margin-top: 20px;
+          .triangle{
+            position: absolute;
+            top: -28px;
+            width: 0px;
+            height: 0px;
+            border-width: 14px;
+            border-style: solid;
+            border-color: transparent transparent #e8e8e8 transparent;
+          }
         }
         p{
           line-height: 26px;

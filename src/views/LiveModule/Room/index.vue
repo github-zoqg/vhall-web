@@ -118,7 +118,6 @@ export default {
           // 单独增加 static、upload、web  为了减少修改，将这个
           this.domains = {
             ...mockResult.urls || {},
-            custom: mockResult.live_domain_customization,
             ...{
               static: mockResult.urls.static_url,
               upload: mockResult.urls.upload_url,
