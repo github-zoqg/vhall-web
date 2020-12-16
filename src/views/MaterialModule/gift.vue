@@ -2,11 +2,9 @@
   <div class="gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
-        1.支持自定义创建35个礼物, 支持创建免费礼物
+        1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
         <br>
-        2.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
-        <br>
-        3.礼物名称不支持特殊字符、表情
+        2.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
@@ -14,8 +12,8 @@
       <el-button
         round
         class="head-btn set-upload"
-        :class="{'no-data': tableData.length <= 0}"
-        :disabled="tableData.length <= 0"
+        :class="{'no-data': selectIds.length <= 0}"
+        :disabled="selectIds.length <= 0"
         @click="dialogTipVisible = true">
         批量删除
       </el-button>
@@ -35,6 +33,7 @@
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
         @selection-change="handleSelectionChange">
         <el-table-column
+          :selectable="selectHandle"
           type="selection"
           width="55"
           align="left"
@@ -152,12 +151,17 @@ export default {
     searchGifts() {
       this.getTableList(true)
     },
+    selectHandle(row) {
+      return !(row.source_status == 0);
+    },
     // 获取礼物列表
     getTableList (isSearch) {
       this.$fetch('shareGiftList', {
         ...this.searchParams
       }).then((res) => {
         if (res.code == 200 && res.data) {
+          this.searchParams.page = 1
+          this.tableData = res.data.list
           if (isSearch) {
             const resultData = []
             this.tableData.forEach(item => {
@@ -166,8 +170,6 @@ export default {
               }
             })
             this.tableData = resultData
-          } else {
-            this.tableData = res.data.list
           }
           this.currentTableData = this.tableData.filter((item, index) => {
             return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
@@ -243,6 +245,17 @@ export default {
     },
     // 处理编辑新建
     handleUpdateGift () {
+      let price = Number(this.editParams.price)
+      if (price || price == 0) {
+        if (price < 0 || price > 10000) {
+          this.$message.error('价格必须介于0-10000之间')
+          return
+        }
+        this.editParams.price = price.toFixed(2)
+      } else {
+        this.$message.error('请输入正确礼物价格')
+        return
+      }
       if(this.editParams.gift_id) {
         this.handleEdit()
       } else {
@@ -318,7 +331,10 @@ export default {
     // 翻页
     currentChangeHandler (val) {
       this.searchParams.page = val
-      this.getTableList()
+      // 切换table显示的内容
+      this.currentTableData = this.tableData.filter((item, index) => {
+        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      })
     }
   },
 };
