@@ -29,7 +29,7 @@
       </el-form-item>
       <el-form-item label="直播模式：" required v-if="webniarType=='live'">
         <div class="modeBox">
-          <div @click='liveMode=2' :class="{active: liveMode== 2}">
+          <div @click='liveModeChange(2)' :class="{active: liveMode== 2}">
             <el-container class='model'>
               <el-aside width="80px" class="block">
                 <i class="el-icon-video-camera icon"></i>
@@ -41,7 +41,7 @@
             </el-container>
             <p class="desc">视频直播</p>
           </div>
-          <div @click='liveMode=3' :class="{active: liveMode== 3}">
+          <div @click='!webniarIntact && liveModeChange(3)' :class="{active: liveMode== 3 }">
             <el-container class='model'>
               <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
@@ -59,9 +59,9 @@
               </el-container>
             </el-container>
             <p class="desc">互动直播</p>
-            <span class="notAllow">未开通</span>
+            <span class="notAllow" v-if="webniarIntact">未开通</span>
           </div>
-          <div @click='liveMode=1' :class="{active: liveMode== 1}">
+          <div @click='liveModeChange(1)' :class="{active: liveMode== 1}">
             <el-container class='model'>
               <el-aside width="80px" class="block">
                 <i class="el-icon-microphone icon"></i>
@@ -201,6 +201,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
+import { sessionOrLocal } from '@/utils/utils';
 import Env from "@/api/env";
 
 export default {
@@ -273,6 +274,13 @@ export default {
         live: '直播'
       };
       return zh[this.$route.meta.webniarType];
+    },
+    webniarIntact() {
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact == '1') {
+        return false;
+      } else {
+        return true;
+      }
     }
   },
   data(){
@@ -309,7 +317,7 @@ export default {
       this.title = '创建';
       this.webinarId = '';
     }
-    console.log(this.$route);
+    console.log(JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact, '????????????')
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -348,6 +356,9 @@ export default {
     },
     sendData(content) {
       this.content = content;
+    },
+    liveModeChange(index) {
+      this.liveMode = index;
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
