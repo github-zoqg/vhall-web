@@ -78,7 +78,7 @@ export default {
       dialogVisible: false,
       wxDialogVisible: false,
       shareSwtich: true,
-      link: `${process.env.VUE_APP_WAP_WATCH}/entryform/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WEB_URL}/entryform/${this.$route.params.str}`,
       wxUrl: ''
     };
   },

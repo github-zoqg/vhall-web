@@ -35,7 +35,7 @@
     </el-card>
     <el-card>
       <h3>第三方渠道推广嵌入</h3>
-      <p class="third-text">目前微吼已支持在各大平台进行同步直播<a @click="goForm('https://t.e.vhall.com//webinar/marketing/index')"> 填写推广需求表</a></p>
+      <p class="third-text">目前微吼已支持在各大平台进行同步直播<a @click="goForm('https://t.e.vhall.com/webinar/marketing/index')"> 填写推广需求表</a></p>
       <div class="third-list"></div>
     </el-card>
   </div>
@@ -48,8 +48,8 @@ export default {
   name: 'embedCard',
   data() {
     return {
-      myMain: `${window.location.origin}/user/info/${sessionOrLocal.get('userId')}`,
-      liveContent: `${window.location.origin}/live/watch/${this.$route.params.str}`,
+      myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
+      liveContent: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
       completion: '<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="https://t-webinar.e.vhall.com/webinar/inituser/906078803" width="800" height="600"></iframe>',
       video: '<iframe border="0" allowfullscreen="true" src="https://t-webinar.e.vhall.com/webinar/inituser/906078803?embed=video" width="800" height="600"></iframe>'
     };

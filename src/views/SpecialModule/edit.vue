@@ -22,7 +22,7 @@
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
-        <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" :value="content"></v-editor>
+        <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
          <el-switch
@@ -166,7 +166,6 @@ export default {
     return {
       showActiveSelect: false,
       selectedActives: [],
-
       formData: {
         title: '',
       },
@@ -178,7 +177,7 @@ export default {
       imageUrl: '',
       domain_url:'',
       content: '',
-      webinarIds: ['856483543'],
+      webinarIds: [],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
@@ -189,7 +188,35 @@ export default {
   created(){
     // console.log(this.$route.query.title, '111111111111111111');
   },
+
+  mounted() {
+    if (this.$route.query.id) {
+      this.initInfo()
+    }
+  },
+
   methods: {
+    // 获取专题 - 详情
+    initInfo() {
+      this.$fetch('subjectInfo', {
+        subject_id: this.$route.query.id
+      }).then(res => {
+        if (res.code == 200) {
+          this.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
+          this.subject_id = res.data.webinar_subject.id
+          this.formData.title = res.data.webinar_subject.title
+          res.data.webinar_subject.cover && (this.imageUrl = res.data.webinar_subject.cover)
+          this.content = res.data.webinar_subject.intro
+
+          // 配置项
+          this.home = +res.data.webinar_subject.is_open // 是否显示个人主页
+          this.hot = +res.data.webinar_subject.hide_pv // 是否显示 人气
+          this.reservation = +res.data.webinar_subject.hide_appointment // 是否显示预约人数
+
+        }
+      })
+    },
+
     sendData(content) {
       this.content = content;
     },
@@ -230,12 +257,9 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-
           const webinar_ids = this.selectedActives.map((item) => {
-            return item.webinar_id
+            return item.webinar_id || item.id
           });
-
-          console.log(webinar_ids)
           let data = {
             subject: this.formData.title,
             introduction: this.content,
@@ -243,10 +267,19 @@ export default {
             is_private: this.home,
             hide_appointment: this.reservation,
             hide_pv: this.hot,
-            webinar_ids: webinar_ids.join(',')
           };
+
+          if (webinar_ids.length) {
+            data.webinar_ids = webinar_ids.join(',')
+          }
+
           this.loading = true;
-          let url = this.$route.query.title === '编辑' ? 'subjectEdit' : 'subjectCreate';
+          let url = this.$route.query.id ? 'subjectEdit' : 'subjectCreate';
+
+          if(url == 'subjectEdit') {
+            data.id = this.subject_id
+          }
+
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
               this.subject_id = res.data.subject_id;
@@ -264,6 +297,8 @@ export default {
             this.loading = false;
           });
           console.log(data);
+
+
         } else {
           this.$message.error('请完善必填字段');
           document.documentElement.scrollTop = 0;

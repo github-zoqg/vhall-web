@@ -56,6 +56,7 @@ export default {
     onlyChatMess: {
       handler(newValue, oldValue){
         if(newValue.type){
+          console.warn('test --2');
           console.warn(newValue, 789);
           this.$nextTick(()=>{
             let isFlag = this.userList.some(ele =>{
@@ -79,12 +80,6 @@ export default {
       return function(time){
         return this.$moment(time).format('hh:mm:ss')
       }
-    }
-  },
-  mounted() {
-    window.mo = this.$moment
-    if(this.userList.length!=0){
-      this.getDefaultContent(this.userList[0].id)
     }
   },
   methods: {

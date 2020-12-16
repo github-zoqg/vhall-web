@@ -1,6 +1,6 @@
 <template>
   <div>
-    <vue-tinymce v-model="content" :setting="setting" @change="sendContent"></vue-tinymce>
+    <vue-tinymce :content="value" :setting="setting" @change="sendContent"></vue-tinymce>
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import {sessionOrLocal} from "@/utils/utils";
 
 export default {
-  name: "index.vue",
+  name: "vhall-editor",
   props: {
     id: {
       type: String,
@@ -17,37 +17,45 @@ export default {
       }
     },
     value: {
-      type: String,
+      required: true,
       default: ''
     },
+
     toolbar: {
       type: String,
       required: false,
       default: 'fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | image | fullscreen'
     },
+
     height: {
       type: [Number, String],
       required: false,
       default: 360
     },
-    isReturn: {
-      type: [Boolean, String],
-      required: false,
-      default: false
-    },
+
     saveType: {
       type: String,
       required: false,
       default: 'other'
     }
   },
+  created() {
+
+  },
+  mounted() {
+  },
+
+  updated() {
+    console.log(this.value)
+  },
+
   data() {
     return {
-      content: this.value||'',
+      // content: this.value || '',
       tinymceId: this.id,
       setting: {
         selector: `#${this.tinymceId}`,
-        plugins: 'preview fullscreen image link hr indent2em lineheight wordcount',
+        plugins: 'fullscreen image',
         toolbar: this.toolbar,
         quickbars_selection_toolbar: "removeformat | bold italic underline strikethrough | fontsizeselect forecolor backcolor",
         // 引入汉化组件
@@ -92,21 +100,18 @@ export default {
     };
   },
   methods: {
-    // 重置默认展示调用
-    resetContent(content) {
-      this.content = content;
-    },
     // 内容修改后，将信息返回
-    sendContent() {
-      // console.log('sendContent~~~~~~~~~');
+    sendContent(text) {
       //执行代码
-      if (this.isReturn && this.value !== this.content) {
-        this.$emit('returnChange', this.content);
-      }
+      console.log('save content',text)
+      this.$emit('input', text);
     }
   },
 };
 </script>
+<style lang="less">
+.tox-statusbar{
+  display: none !important;
+}
 
-<style lang="less" scoped>
 </style>

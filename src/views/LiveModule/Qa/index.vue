@@ -106,7 +106,7 @@
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
               <template v-if="privateFlag">
-                <Private :userInfo='baseObj' :webinar_id='webinar_id' :onlyChatMess='onlyChatMess' :priteChatList='priteChatList' @close='privateClose' @sendMsg='privateSendMsg'></Private>
+                <Private ref="private" :userInfo='baseObj' :webinar_id='webinar_id' :onlyChatMess='onlyChatMess' :priteChatList='priteChatList' @close='privateClose' @sendMsg='privateSendMsg'></Private>
               </template>
             </div>
           </div>
@@ -192,19 +192,12 @@ export default {
   },
   async created() {
    await this.getUserInfo()
+   await this.getPrivateList() // 获取私聊列表
    this.getChat(0)  // 待处理
    this.getChat(1)  // 不处理
    this.getChat(2)  // 语音回复
    this.setReply()  // 文字回复
    this.initChat()
-   this.getPrivateList() // 获取私聊列表
-  },
-  watch:{
-    'awaitList.length' (newval){
-      this.$nextTick(()=>{
-
-      })
-    }
   },
   mounted() {
     this.webinar_id = this.$router.currentRoute.params.id
@@ -343,7 +336,6 @@ export default {
           if(!this.privateFlag){
             this.privateFlag = true
           }
-
           this.onlyChatMess = privateMess
         }else{
           console.warn('不处理----开始执行');
@@ -491,14 +483,20 @@ export default {
       })
     },
     getPrivateList(){
-      this.$fetch('v3GetPrivateList', {room_id: this.baseObj.interact.room_id, webinar_id: this.$router.currentRoute.params.id }).then(res=>{
-        console.warn(res);
-        if(res.code == 200){
-          console.warn('开始准备', res);
-          this.priteChatList = res.data.list
-        }else{
-          this.$message.warning(res.msg)
-        }
+      return new Promise((resolve, reject)=>{
+        this.$fetch('v3GetPrivateList', {room_id: this.baseObj.interact.room_id, webinar_id: this.$router.currentRoute.params.id }).then(res=>{
+          console.warn(res);
+          if(res.code == 200){
+            console.warn('开始准备', res);
+            this.priteChatList = res.data.list
+            this.$refs.private.getDefaultContent(res.data.list[0].id)
+          }else{
+            this.$message.warning(res.msg)
+          }
+          resolve()
+        }).catch(err=>{
+          reject(err)
+        })
       })
     }
   },
