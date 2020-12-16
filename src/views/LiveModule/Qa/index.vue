@@ -73,6 +73,7 @@
                </div>
                 <ul class="answer">
                   <li class="await-name" v-for="(ite, ind) in item.answer" :key="ind">
+                    <span class="triangle"></span>
                     <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
                       <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
@@ -663,12 +664,23 @@ export default {
       }
       // 文字回复  回答
       .answer{
-        background: #e8e8e8;
         font-size: 14px;
         color: #888;
         width: 100%;
         li{
           border: none!important;
+          background: #e8e8e8;
+          position: relative;
+          margin-top: 20px;
+          .triangle{
+            position: absolute;
+            top: -28px;
+            width: 0px;
+            height: 0px;
+            border-width: 14px;
+            border-style: solid;
+            border-color: transparent transparent #e8e8e8 transparent;
+          }
         }
         p{
           line-height: 26px;
