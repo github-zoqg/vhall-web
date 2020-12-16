@@ -166,15 +166,19 @@ export default {
       });
     });
     EventBus.$on('receiveMsg', msg => {
+      console.warn('监听到的私聊消息事件----1--', msg);
       let e = { ...msg };
+      console.warn(e, e.data.text_content, '监听到的私聊消息事件----4-');
       if (!e.data.text_content) {
         return;
       }
       e.data = e.data.text_content;
+      console.warn('监听到的私聊消息事件---2---', e);
       if (e.context.to == this.joinId || e.sender_id == this.joinId) {
         // 如果是本用户收发的消息放到私聊消息队列
         if (e.sender_id != this.joinId) {
           // 发消息的人不是本用户
+          console.warn('私聊消息的派发---3---', e);
           this.privateMessages.push(e);
         } else {
         }

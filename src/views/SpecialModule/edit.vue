@@ -55,7 +55,71 @@
         </el-switch>
       </el-form-item>
       <el-form-item label="专题目录:">
-         <el-button size="small" @click="showActiveSelect = true">添加</el-button>
+        <el-button size="small" @click="showActiveSelect = true">添加</el-button>
+        <div class="vh-sort-tables">
+          <div class="vh-sort-tables__theader">
+            <div class="vh-sort-tables__theader-id">
+              序号
+            </div>
+            <div class="vh-sort-tables__theader-title">
+              直播标题
+            </div>
+            <div class="vh-sort-tables__theader-status">
+              直播状态
+            </div>
+            <div class="vh-sort-tables__theader-hots">
+              热度
+            </div>
+            <div class="vh-sort-tables__theader-editor">
+              操作
+            </div>
+          </div>
+          <div class="vh-sort-tables__tbody">
+            <draggable
+              :list="selectedActives"
+              chosenClass="vh-sort-tables__tbody-selected"
+              @dragstart="dragStart"
+              @dragend="dragEnd"
+            >
+              <div
+                class="vh-sort-tables__tbody-tr"
+                v-for="(item, index) in selectedActives"
+                :key="item.webinar_id"
+                >
+                <div class="vh-sort-tables__tbody-id">
+                  {{ index + 1 }}
+                </div>
+                <div class="vh-sort-tables__tbody-title">
+                  {{ item.subject }}
+                </div>
+                <div class="vh-sort-tables__tbody-status">
+                  <template v-if="item.webinar_state == 1">
+                    直播
+                  </template>
+                  <template v-if="item.webinar_state == 2">
+                    预告
+                  </template>
+                  <template v-if="item.webinar_state == 3">
+                    结束
+                  </template>
+                  <template v-if="item.webinar_state == 4">
+                    点播
+                  </template>
+                  <template v-if="item.webinar_state == 5">
+                    回放
+                  </template>
+                </div>
+                <div class="vh-sort-tables__tbody-hots">
+                  {{ item.pv }}
+                </div>
+                <div class="vh-sort-tables__tbody-editor">
+                  <i class="iconfont-v3 saasicon-trash"></i>
+                  <i class="iconfont-v3 saasicon_move"></i>
+                </div>
+              </div>
+            </draggable>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
@@ -72,6 +136,7 @@
 </template>
 
 <script>
+import draggable from "vuedraggable";
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
@@ -83,7 +148,8 @@ export default {
     PageTitle,
     VEditor,
     upload,
-    ChoseActives
+    ChoseActives,
+    draggable
   },
   computed: {
     reservationDesc(){
@@ -164,6 +230,12 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+
+          const webinar_ids = this.selectedActives.map((item) => {
+            return item.webinar_id
+          });
+
+          console.log(webinar_ids)
           let data = {
             subject: this.formData.title,
             introduction: this.content,
@@ -171,7 +243,7 @@ export default {
             is_private: this.home,
             hide_appointment: this.reservation,
             hide_pv: this.hot,
-            webinar_ids: this.webinarIds.join(',')
+            webinar_ids: webinar_ids.join(',')
           };
           this.loading = true;
           let url = this.$route.query.title === '编辑' ? 'subjectEdit' : 'subjectCreate';
@@ -206,6 +278,15 @@ export default {
     doSelectedActives (selectedActives) {
       this.selectedActives = selectedActives
       this.showActiveSelect = false
+    },
+    dragStart(e) {
+      console.log('vhall saas Event 拖动开始::', e)
+    },
+    dragEnd(e) {
+      console.log('vhall saas Event 拖动结束::', e)
+    },
+    sortChange(e) {
+      console.log('拖拽事件', e)
     }
   },
 };
@@ -262,8 +343,87 @@ export default {
     }
   }*/
 </style>
-<style lang="css">
+<style lang="less">
   html{
     background: #F7F7F7;
+  }
+  .vh-sort-tables{
+    position: relative;
+    width: 640px;
+    font-size: 14px;
+    font-weight: 400;
+
+
+    &__theader{
+      height: 40px;
+      line-height: 40px;
+      background: #F7F7F7;
+      color: #666666;
+      &>div{
+        display: inline-block;
+      }
+      &-id{
+        width: 77px;
+        padding-left: 24px;
+        box-sizing: border-box;
+      }
+      &-title{
+        width: 290px;
+      }
+      &-status{
+        width: 88px;
+      }
+      &-hots{
+        width: 93px;
+      }
+      &-editor{
+        width: 86px;
+      }
+    }
+
+    &__tbody{
+      height: 120px;
+      overflow-y: scroll;
+      &-selected {
+        border: 1px solid #FB3A32;
+      }
+      &-tr{
+        border-bottom: 1px solid #E6E6E6;
+        height: 40px;
+        line-height: 40px;
+        font-size: 14px;
+        color: #1A1A1A;
+        word-break: keep-all;
+        &>div{
+          display: inline-block;
+          vertical-align: top;
+        }
+      }
+
+      &-id{
+        width: 77px;
+        padding-left: 24px;
+        box-sizing: border-box;
+      }
+      &-title{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 288px;
+      }
+      &-status{
+        width: 88px;
+      }
+      &-hots{
+        width: 93px;
+      }
+      &-editor{
+        width: 82px;
+        i{
+          font-size: 20px;
+          margin: 0 5px;
+          cursor: pointer;
+        }
+      }
+    }
   }
 </style>

@@ -1644,7 +1644,8 @@ export default {
   mounted () {
     window.saasindex = this;
     this.getInavInfo();
-    this.shareUrl = this.domains.custom ? `${this.domains.custom}/room/watch/${this.ilId}` : `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+    console.warn(this.domains, '图片地址   ***********************');
+    this.shareUrl = this.domains.custom ? `${this.domains.custom}/v3/live/watch/${this.ilId}` : `https:${this.domains.web_url}live/watch/${this.ilId}`;
     this.localDuration = this.duration;
     setTimeout(() => {
       this.interacttools = this.$refs['interacttools'] && this.$refs['interacttools'].childElementCount == 0;
@@ -2220,8 +2221,8 @@ export default {
     roomId (newVal) {
       this.getInavInfo();
       this.shareUrl = this.domains.custom
-        ? `${this.domains.custom}/room/watch/${this.ilId}`
-        : `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+        ? `${this.domains.custom}/v3/live/watch/${this.ilId}`
+        : `https:${this.domains.web_url}live/watch/${this.ilId}`;
       this.localDuration = this.duration;
       setTimeout(() => {
         this.interacttools =

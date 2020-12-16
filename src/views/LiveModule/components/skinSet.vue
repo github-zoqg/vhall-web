@@ -19,6 +19,7 @@
             <upload
               class="upload__skin heightMore"
               v-model="skinSetForm.bg_url"
+              :domain_url="domain_url"
               :saveData="{
                  path: 'interacts/skin-imgs',
                  type: 'image',
@@ -39,7 +40,7 @@
           <el-form-item label="" v-if="skinType !== 1">
             <p>无需设置皮肤，默认皮肤效果</p>
           </el-form-item>
-          <el-form-item label="" v-if="skinType === 1 && skinVo.skin_json_pc || skinType === 1">
+          <el-form-item label="" v-if="skinVo.status > 0 || skinType === 1">
             <el-button type="primary" round @click.prevent.stop="skinSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
@@ -74,6 +75,7 @@ export default {
         pageStyle: '#FB3A32',
         popStyle: ''
       },
+      domain_url: '',
       skinSetFormRules: {
         bg_url: [
           {require: true, message: '请先选择背景图片', trigger: 'change'}
@@ -87,7 +89,7 @@ export default {
         bgColor: this.skinSetForm.bgColor,
         pageStyle: this.skinSetForm.pageStyle,
         popStyle: '',
-        background: this.$parseURL(this.skinSetForm.bg_url).path,
+        background: this.$parseURL(this.skinSetForm.bg_url).path
       };
       // 无手机端设置的时候，如 => skin_json_wap = {"logo":"","pageStyle":""} skin_style_code_wap为空
       // 有手机端设置的时候，{"logo":"webinars/skin_img/5c/5d/5c5dce7de690e4f1d0fbf845eb13c1a9.jpg","pageStyle":"bg-red"}
@@ -114,7 +116,12 @@ export default {
     handleUploadSuccess(res, file){
       console.log(res, file);
       console.log(res, file);
-      this.skinSetForm.bg_url = res.data.file_url;
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.skinSetForm.bg_url = file_url;
+        this.domain_url = domain_url;
+      }
       // 触发验证
       this.$refs.skinSetForm.validateField('bg_url');
     },
@@ -156,12 +163,14 @@ export default {
       }).then(res => {
         if (res && res.code === 200) {
           this.skinVo = res.data || {};
+          this.showBtn = this.skinVo.status !== undefined && this.skinVo.status !== null && this.skinVo.status !== '';
           this.skinType = Number(res.data.status) > 0 ? 1 : 0;
           // 页面赋值
           let skin_json_pc = JSON.parse(res.data.skin_json_pc);
           this.skinSetForm.bgColor = skin_json_pc.bgColor;
           this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
           this.skinSetForm.bg_url = skin_json_pc.background;
+          this.domain_url = skin_json_pc.background;
           this.skinSetForm.skin_id = res.data.skin_id || '';
           console.log(this.skinType, '页面刷新后');
         } else {

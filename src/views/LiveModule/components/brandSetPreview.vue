@@ -11,9 +11,9 @@
       <div class="pc" v-show="switchType === 'pc'">
         <div :class="`skin-preview preview-${switchType} ${bgColorType}`">
           <div></div>
-          <div class="header">
+          <div class="header" v-show="!(signSetVo && signSetVo.view_status > 0)">
             <div class="img-logo">
-              <img :src="logoUrl" alt="" v-if="logoUrl && signSetVo.view_status > 0"/>
+              <img :src="signSetVo.logo_url" alt="" v-if="signSetVo"/>
             </div>
           </div>
           <div class="player">
@@ -66,7 +66,7 @@
               </div>
             </div>
           </div>
-          <div class="copyright">
+          <div class="copyright" v-show="!(signSetVo && signSetVo.reserved_status > 0)">
             <div class="content">
               <img width="176" height="25" src="../../../common/images/skin/black/copyright.png"  v-if="bgColorType === 'black'" />
               <img width="176" height="25" src="../../../common/images/skin/white/copyright.png" v-else/>
@@ -139,7 +139,6 @@ export default {
     signSetVoInfo(vo) {
       this.$nextTick(() => {
         this.signSetVo = vo;
-        this.logoUrl = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.signSetVo.logo_url);
       });
     }
   },
@@ -174,6 +173,7 @@ export default {
         padding: 0;
         width: auto;
         height: 27px;
+        cursor: pointer;
       }
     }
   }

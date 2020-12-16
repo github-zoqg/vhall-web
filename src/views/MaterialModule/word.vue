@@ -15,7 +15,7 @@
     </pageTitle>
     <!-- 无权限，未创建 -->
     <div v-if="no_show">
-      <null-page text="您还未添加内容，快去上传吧" nullType="noAuth">
+      <null-page text="您还没有文档，快来上传吧" nullType="noAuth">
         <el-upload
           class="btn-upload"
           :action=actionUrl
@@ -192,6 +192,8 @@ export default {
             // 同步到资料库
             this.asyncWord(res);
           }).catch(() => {
+            // 取消同步，刷新列表
+            this.initPage();
           });
         } else {
           // 判断文件上传情况
@@ -208,8 +210,13 @@ export default {
       this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           this.$message.success('同步成功');
-          this.$refs.tableListWord.clearSelect();
-          this.initPage();
+          try {
+            this.$nextTick(() => {
+              this.$refs.tableListWord.clearSelect();
+            })
+          } catch(e) {
+            console.log(e);
+          }
         } else {
           this.$message.error(res.msg || '同步失败');
         }
@@ -217,6 +224,7 @@ export default {
         console.log(e);
         this.$message.error(e.msg || '同步失败');
       }).finally(()=>{
+        this.initPage();
       });
     },
     beforeUploadHandler(file){

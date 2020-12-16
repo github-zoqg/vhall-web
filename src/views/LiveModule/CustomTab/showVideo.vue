@@ -19,32 +19,6 @@
         </p>
       </div>
     </li>
-    <li class="v35-activity-card mb">
-      <i class="menu-icon del"></i>
-      <div class="card-top">
-        <a>
-          <img class="live-play-icon" src="//cnstatic01.e.vhall.com/static/img/mobile/play_.png" alt="" />
-          <img src="//cnstatic01.e.vhall.com/static/img/v35-webinar.png" alt="" />
-          <div class="num">
-            <div class="view_num"><i class="num-icon view-icon-h5-2"></i>66</div>
-            <span class="card-type">付费</span>
-            <span class='card-type hide'>免费</span>
-            <span class='card-type'>密码</span>
-            <span class='card-type'>白名单</span>
-            <span class='card-type'>付费</span>
-            <span class='card-type'>邀请码</span>
-            <span class='card-type'>注册表单</span>
-            <span class='card-type'>付费/邀请码</span>
-          </div>
-        </a>
-      </div>
-      <div class="card-bottom">
-        <p class="title">直播示例</p>
-        <p class="info">
-          <time>2018-06-28 16:00</time>
-        </p>
-      </div>
-    </li>
   </ul>
 </template>
 

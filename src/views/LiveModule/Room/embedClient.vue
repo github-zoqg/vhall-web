@@ -807,7 +807,7 @@ export default {
           service_names: this.roominfo.is_replay == 1 ? 2 : 1,
           env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
         })
-        window.vhallReport.report('ENTER_WATCH', {
+        window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
           event: this.$route.query.refer // 推广渠道，会在url里传参
         })
       })
@@ -815,13 +815,13 @@ export default {
       window.addEventListener('beforeunload', function(e) {
         // 离开H5观看端页面
         if (/room\/watch/.test(window.location.pathname)) {
-          window.vhallReport.report('LEAVE_WATCH', {}, false)
+          window.vhallReport && window.vhallReport.report('LEAVE_WATCH', {}, false)
         }
       })
     }
   },
   beforeDestroy() {
-    window.vhallReport.report('LEAVE_WATCH')
+    // window.vhallReport.report('LEAVE_WATCH')
   }
 }
 </script>

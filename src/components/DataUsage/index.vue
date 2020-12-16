@@ -33,16 +33,7 @@
       </el-col>
       <el-col :span="6" v-if="userInfo.concurrency.extend_day">
         <div class="top-item">
-          <p>并发扩展包（天）
-          <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">
-              1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
-              若无扩展包，则不可发直播且直播回放不可播放<br>
-              2.扩展包欠费则不可发直播，回放不受影响
-            </div>
-            <i class="el-icon-question"></i>
-          </el-tooltip>
-          </p>
+          <p>并发扩展包（天</p>
           <h2>{{ userInfo.concurrency.extend_day }}</h2>
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>

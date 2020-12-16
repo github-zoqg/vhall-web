@@ -746,7 +746,7 @@ export default {
       this.roomInfo = inavInfo
 
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
-      this.shareUrl = `https:${this.domains.webinar}/room/watch/${this.ilId}`;
+      this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;
       this.$emit('descripe', this.roomInfo.introduction);
       if (this.roomInfo.status == 1 && this.FIRST && this.roomInfo.role_name == 2) {
         this.PopAlert.visible = true;
@@ -810,11 +810,13 @@ export default {
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
+        // accountId: '',
         channelId: this.roomInfo.channel_id,
         context: JSON.stringify(context),
         token: this.roomInfo.paas_access_token,
         client: 'pc_browser'
       };
+      console.log(5555555566666666)
       if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
         this.init = true;
         window.EventBridge.$emit('loaded');
@@ -958,8 +960,8 @@ export default {
       try {
         if (this.miniElemt == 'video') {
           this.miniElemt = 'doc';
-          const w = this.$refs.bigArea.offsetWidth;
-          const h = this.$refs.bigArea.offsetHeight - 40;
+          const w = this.$refs.bigArea && this.$refs.bigArea.offsetWidth;
+          const h = this.$refs.bigArea && (this.$refs.bigArea.offsetHeight - 40);
           const opt = {
             width: w,
             height: h

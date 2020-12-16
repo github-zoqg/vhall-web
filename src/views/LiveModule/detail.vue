@@ -31,8 +31,8 @@
                 >
                 <div class="invitation-code">
                   <p>活动观看页</p>
-                  <img :src="showCode" alt="">
-                  <p><el-button round type="primary">下载二维码</el-button></p>
+                  <img :src="h5WapLink" alt="">
+                  <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
                 </div>
                   <el-button round size="mini" slot="reference">扫码</el-button>
               </el-popover>
@@ -91,8 +91,8 @@ export default {
       liveDetailInfo: {
         webinar_state: ''
       },
-      showCode: '',
-      link: `${Env.staticLinkVo.WEB_SHARE_URL}/live/watch/${this.$route.params.str}`,
+      link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
+      h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       time: {
         day: 0,
         hours: 0,
@@ -163,7 +163,6 @@ export default {
         let date = new Date();
         let nowTime = date.setTime(date.getTime());
         this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
-        this.getCode();
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -171,14 +170,25 @@ export default {
         this.loading = false;
       });
     },
-    // 获取扫码查看
-    getCode() {
-      QRcode.toDataURL(
-      this.link,
-      (err, url) => {
-        this.showCode = url;
-      }
-     );
+    // 下载二维码
+    downErCode() {
+      let image = new Image();
+      // 解决跨域 Canvas 污染问题
+      image.setAttribute("crossOrigin", "anonymous");
+      image.onload = function() {
+        let canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, image.width, image.height);
+        let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
+        let a = document.createElement("a"); // 生成一个a元素
+        let event = new MouseEvent("click"); // 创建一个单击事件
+        a.download = `code${new Date().getTime()}`; // 设置图片名称
+        a.href = url; // 将生成的URL设置为a.href属性
+        a.dispatchEvent(event); // 触发a的单击事件
+      };
+      image.src = this.h5WapLink;
     },
     // 复制
     doCopy () {

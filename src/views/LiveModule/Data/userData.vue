@@ -22,6 +22,7 @@
           <search-area
             ref="searchArea"
             :placeholder="placeholder"
+            @onExportData="exportCenterData()"
             :searchAreaLayout="searchAreaLayout"
             @onSearchFun="getTableList('search')"
             >
@@ -51,6 +52,7 @@ export default {
       status: 2,
       totalNum: 100,
       isHandle: false,
+      params: {}, //导出的时候用来记录参数
       activeName: '1',
       liveDetailInfo: {},
       switchList: [],
@@ -177,6 +179,7 @@ export default {
       })
     },
     getTableList(params) {
+      this.params = {};
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       if (parseInt(formParams.searchIsTime) === 2) {
@@ -209,6 +212,7 @@ export default {
         }
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
+      this.params = obj;
       this.getBaseUserInfo(obj);
     },
     getBaseUserInfo(params) {
@@ -219,6 +223,16 @@ export default {
         })
         this.totalNum = res.data.total;
       });
+    },
+    // 导出
+    exportCenterData() {
+      this.$fetch('exportUserinfo', this.params).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`用户统计数据导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`用户统计数据${res.msg}`);
+        }
+      })
     },
     changeTableCheckbox(val) {
       console.log(val);

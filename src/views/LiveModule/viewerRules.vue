@@ -213,6 +213,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
+import {formateDate} from "@/utils/general";
 export default {
   name: 'viewerRules.vue',
   components: {
@@ -300,7 +301,7 @@ export default {
         ],
         fee: [
           { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'}
+          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
         ]
       },
       pwdForm: {
@@ -341,7 +342,7 @@ export default {
               white_id: white_id, // 白名单-观众组字符拼接串
               fee: fee, // 付费金额,
               is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
-              preview_time: preview_time // 试看时长-分钟计
+              preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
             };
             console.log(this.form, '当前');
             // 表单选项初始化
@@ -392,23 +393,59 @@ export default {
         params = Object.assign(this.form, {white_id: this.whiteId});
       } else if (formName === '') {
         flag = true; // 免费不验证
-        params = Object.assign(this.form);
+        params = {
+          webinar_id: this.$route.params.str,
+          verify: 0
+        }
+      }
+      // 若是邀请码 和 付费/邀请码里面
+      if(formName === 'fCodeForm' || formName === 'fCodePayForm') {
+        if (!(this.viewerDao.fcodes > 0)) {
+          this.$message.error('您暂无邀请码，请生成后保存');
+          return;
+        }
       }
       if (flag) {
         console.log('当前保存参数存储：' + JSON.stringify(params));
-        this.$fetch('viewerSetSave', this.$params(params)).then(res => {
-          console.log(res);
-          if (res && res.code === 200) {
-            this.$message.success('设置成功');
-            this.initPage();
-          } else {
-            this.$message.error(res.msg || '设置失败');
-          }
-        }).catch(err=>{
-          console.log(err);
-          this.$message.error('设置失败');
-        });
+        // 若设置了报名表单，调取报名表单是否配置独立链接接口。
+        if(formName !== '' && Number(this.liveDetailInfo.reg_form) === 1) {
+          this.$confirm('已开启报名表单的独立链接功能，修改观看限制将会导致链接失效?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box'
+          }).then(async () => {
+            // 需要验证报名表单
+            let result = await this.$fetch('regFromGet', {
+              webinar_id: this.$route.params.str
+            })
+            if (result.code === 200) {
+              if (result.data.open_link > 0) { // 报名表单是否为独立链接，1开启 0关闭,默认为0
+                this.$message.error('您已选择报名表单不可和白名单叠加使用');
+              } else {
+                this.sendViewerSetSave(params);
+              }
+            } else {
+              this.$message.error('设置失败');
+            }
+          });
+        } else {
+          this.sendViewerSetSave(params);
+        }
       }
+    },
+    sendViewerSetSave(params) {
+      this.$fetch('viewerSetSave', this.$params(params)).then(res => {
+        console.log(res);
+        if (res && res.code === 200) {
+          this.$message.success('设置成功');
+          this.initPage();
+        } else {
+          this.$message.error(res.msg || '设置失败');
+        }
+      }).catch(err=>{
+        console.log(err);
+        this.$message.error('设置失败');
+      });
     },
     // 获取观众分组列表
     audienceGet() {
@@ -481,9 +518,26 @@ export default {
     initPage() {
       this.viewerSetGet();
       this.audienceGet();
-    }
+    },
+    // 获取基本信息
+    getLiveDetail(id) {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if (res && res.code === 200) {
+          this.liveDetailInfo = res.data;
+        } else {
+          this.liveDetailInfo = {};
+          this.$message.error(res.msg);
+        }
+      }).catch(e=>{
+        console.log(e);
+        this.$message.error('获取活动信息失败');
+        this.liveDetailInfo = {};
+      }).finally(()=>{
+      });
+    },
   },
   created() {
+    this.getLiveDetail(); // 获取活动信息，知晓是否设置过报名表单
     this.initPage();
   }
 };
