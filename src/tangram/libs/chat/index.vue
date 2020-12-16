@@ -439,7 +439,7 @@ export default {
             });
           }
           this.chatSDK.emit(data, context);
-          window.vhallReport.report('CHAT', {
+          window.vhallReport && window.vhallReport.report('CHAT', {
             event: JSON.stringify(data),
             market_tools_id: this.roleName
           });

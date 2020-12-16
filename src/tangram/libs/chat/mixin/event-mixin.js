@@ -181,7 +181,7 @@ const eventMixin = {
               });
               this.chatList.push(data);
             }
-            window.vhallReport.report('LOTTERY', {
+            window.vhallReport && window.vhallReport.report('LOTTERY', {
               question_id: index >= 0 ? 1 : 0,
               answer_id: msg.lottery_id
             });

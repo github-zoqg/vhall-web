@@ -810,11 +810,13 @@ export default {
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
+        // accountId: '',
         channelId: this.roomInfo.channel_id,
         context: JSON.stringify(context),
         token: this.roomInfo.paas_access_token,
         client: 'pc_browser'
       };
+      console.log(5555555566666666)
       if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
         this.init = true;
         window.EventBridge.$emit('loaded');
@@ -958,8 +960,8 @@ export default {
       try {
         if (this.miniElemt == 'video') {
           this.miniElemt = 'doc';
-          const w = this.$refs.bigArea.offsetWidth;
-          const h = this.$refs.bigArea.offsetHeight - 40;
+          const w = this.$refs.bigArea && this.$refs.bigArea.offsetWidth;
+          const h = this.$refs.bigArea && (this.$refs.bigArea.offsetHeight - 40);
           const opt = {
             width: w,
             height: h

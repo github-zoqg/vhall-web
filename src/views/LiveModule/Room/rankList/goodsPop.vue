@@ -5,14 +5,16 @@
     <div class="dialog-left">
       <img class="big-image" :src="bigImageUrl" alt="" />
       <div>
-        <div
-          @click="changeBigImage(item, index)"
-          class="mini-image"
-          v-for="(item,index) in goodsAllInfo.img_list"
-          :key="index"
-        >
-          <img :src="dominImage+'/'+item.img" alt="" />
-        </div>
+        <template v-if="goodsAllInfo.img_list.length > 0">
+          <div
+            @click="changeBigImage(item, index)"
+            class="mini-image"
+            v-for="(item,index) in goodsAllInfo.img_list"
+            :key="index"
+          >
+            <img :src="item.img_url" alt="" />
+          </div>
+        </template>
       </div>
     </div>
     <div class="dialog-right">
@@ -41,10 +43,7 @@ export default {
     };
   },
   created () {
-    this.dominImage = sessionStorage.getItem('imageDomin');
-    this.bigImageUrl = `${this.dominImage}/${
-      this.goodsAllInfo.img_list[0].img
-    }`;
+    this.bigImageUrl = this.goodsAllInfo.img_list[0].img_url
   },
 
   mounted () {},
@@ -56,17 +55,17 @@ export default {
     },
     // 立即购买
     nowPurchase () {
-      window.vhallReport.report('GOOD_RECOMMEND', {
-        event: moment().format('YYYY-MM-DD HH:mm'),
-        market_tools_id: this.goodsAllInfo.good_id,
-        // 点击购买
-        market_tools_status: 1
-      });
-      window.location.href = this.goodsAllInfo.good_url;
+      // window.vhallReport.report('GOOD_RECOMMEND', {
+      //   event: moment().format('YYYY-MM-DD HH:mm'),
+      //   market_tools_id: this.goodsAllInfo.good_id,
+      //   // 点击购买
+      //   market_tools_status: 1
+      // });
+      window.location.href = this.goodsAllInfo.goods_url;
     },
     // 切换图片按钮
     changeBigImage (item, index) {
-      this.bigImageUrl = `${this.dominImage}/${item.img_url}`;
+      this.bigImageUrl = item.img_url
       const [...selectPhoto] = document.querySelectorAll('.mini-image');
       selectPhoto.map((item, index) => {
         item.style.border = 'none';

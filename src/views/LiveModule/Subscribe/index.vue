@@ -16,7 +16,7 @@
             >注册</el-button
           >
         </template>
-        <span class="login-info-wrap" v-else>
+        <div class="login-info-wrap" v-else>
           <div @click="menuListShow = !menuListShow" class="loginUserInfo">
             <img
               :src="roomData && roomData.join_info ? roomData.join_info.avatar : '//cnstatic01.e.vhall.com/static/img/head50.jpg'"
@@ -61,7 +61,7 @@
               </li>
             </ul>
           </div>
-        </span>
+        </div>
       </div>
     </header>
     <!-- 登录弹窗 -->
@@ -168,7 +168,7 @@
               ></el-checkbox>
               <span class="auto-login">自动登录</span>
               <span class="auto-login forget-password">
-                <a :href="webDominUrl + '/auth/forgot'">忘记密码？</a>
+                <a :href="webDominUrl + '/forgetPassword'">忘记密码？</a>
               </span>
             </div>
           </el-form-item>
@@ -243,7 +243,7 @@
             <span style="color:#FC5659">
               <a
                 style="color:#FC5659"
-                :href="webDominUrl + '/auth/register'"
+                :href="webDominUrl + '/register'"
                 >立即注册</a
               >
             </span>
@@ -356,8 +356,7 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <!-- <img :src="roomData.urls.upload_url + '/' + roomData.webinar.img_url" v-if="this.roomData && this.roomData.webinar.img_url" alt=""> -->
-            <!-- <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" v-else alt=""> -->
+            <img :src="roomData.urls.upload_url + '/' + roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt="">
           </div>
           <div class="rightWatch">
             <template v-if="!isKeyLogin">
@@ -380,7 +379,7 @@
                   <p class="sub">秒</p>
                 </div>
               </div>
-              <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
+              <!-- <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p> -->
               <div class="bottom">
                 <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
@@ -388,42 +387,45 @@
               </div>
             </template>
             <template v-else>
-              <key-login></key-login>
+              <key-login
+                @codeAuthLogin="handleCodeAuthLogin"
+              ></key-login>
             </template>
           </div>
         </div>
       </div>
     </section>
     <div :class="{area: true, product: productFlag}">
-      <custoMenu></custoMenu>
-      <div class="active-second" v-if="advs && advs.length > 0">
-        <h3>活动推荐</h3>
-        <hr />
-        <div class="active-recommond">
-          <div class="recom-item"
-            v-for="(item, index) in advs"
-            :key="index">
-            <span class="left-mark">推广</span>
-            <a :href="item.url">
-              <img
-                :src="item.img_url"
-                onerror="this.src='//cnstatic01.e.vhall.com/static/img/v35-webinar.png';this.onerror=null"
-                alt
-              />
-            </a>
-            <div class="recommond-contents">
-              <p class="content-header">{{ item.subject }}</p>
+      <div class="left-content">
+        <!-- <custoMenu></custoMenu> -->
+        <div class="active-second" v-if="advs && advs.length > 0">
+          <h3>活动推荐</h3>
+          <hr />
+          <div class="active-recommond">
+            <div class="recom-item"
+              v-for="(item, index) in advs"
+              :key="index">
+              <span class="left-mark">推广</span>
+              <a :href="item.url">
+                <img
+                  :src="item.img_url"
+                  onerror="this.src='//cnstatic01.e.vhall.com/static/img/v35-webinar.png';this.onerror=null"
+                  alt
+                />
+              </a>
+              <div class="recommond-contents">
+                <p class="content-header">{{ item.subject }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- <products
+      <products
         v-if="productFlag"
         @sellGoodsInfo="sellGoodsInfo"
         :goodsList="goodsList"
-      ></products> -->
+      ></products>
     </div>
-    
 
     <!--观看限制验证-->
     <el-dialog
@@ -468,15 +470,13 @@
     <!--支付-->
     <popup
       :visible="showPayModel"
-      :width="'340px'"
       title="支付"
       :onClose="closePayModel"
     >
-      <div class="preview-wrap ad-qrcode">
-        <div class="preview-content">
-          <img :src="wxPayImg">
-          <a :href="zfbLink"></a>
-        </div>
+      <div class="preview-wrap pay">
+        <img :src="wxPayImg">
+        <span>微信支付</span>
+        <a :href="zfbLink">支付宝支付</a>
       </div>
     </popup>
     <!--报名表单-->
@@ -488,7 +488,7 @@
     <!--反馈信息-->
     <feedBack ref="feedBack"></feedBack>
     <!--版权信息-->
-    <div class="footer inner-center tac" v-if="logo && logo.reserved_status == 1">
+    <div class="footer" v-if="logo && logo.reserved_status == 1">
       <div class="about-us">
         <a href="http://www.vhall.com/about" target="_blank">关于我们</a>
         <a href="http://www.vhall.com/blog" target="_blank">客户案例</a>
@@ -512,7 +512,7 @@
     </div>
     <div class="shade" v-if="shadeShow" @click="(shadeShow = false), (loginDialogShow = false)"></div>
     <!-- 商品详情的弹窗 -->
-    <!-- <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop> -->
+    <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
   </div>
 </template>
 
@@ -527,8 +527,9 @@ import keyLogin from '../components/keyLogin';
 import { sessionOrLocal } from '@/utils/utils';
 import Popup from '../../../tangram/libs/saas-popup'; // 弹窗
 import SignForm from './signUpForm'
-import Env from '@/api/env.js';
+// import Env from '@/api/env.js';
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import QRcode from 'qrcode'
 
 export default {
   components: {
@@ -552,31 +553,31 @@ export default {
       showOfficialAccountQRCode: false, // 刷新后是否显示公众号弹窗
       showOfficialAccountMiniQRCode: false, // head栏是否显示微信公众号图标
       isKeyLogin: this.$route.path.startsWith('/keylogin'),
-      title: '预约',
+      title: '',
       webinarType: 1,
       viewCount: 0,
       hostName: '',
       hostUrl: '',
+      focusCount: 0, // 关注人数
+      // subscribe_count: 0,
+      shadeShow: false,
+      // 预约计时
       time: '',
       days: "00",
       hours: "00",
       minutes: "00",
       seconds: "00",
-      focusCount: 0, // 关注人数
-      subscribe_count: 0,
-      activeName: 'desc',
-      activeName2: 'activity',
-      productFlag: true,
-      goodsList: [],
-      goodInfo: {},
-      shadeShow: false,
+
+      // 商品
+      productFlag: false,
       goodsPopShow: false,
-      isSignUp: true,
+      goodInfo: {},
+      goodsList: [],
       btnVal: '立即预约',
       limitText: '',
-      status: 'subscribe', // 活动状态
       shareUrl: '',
-      webinar: {}, // 活动信息
+      
+      // 登录
       isLogin: false,
       loginDialogShow: false, // 登录页面
       isActive: true, // 切换tap
@@ -592,13 +593,14 @@ export default {
       key: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       accountChecked: false, // 账户的自动登录
       buttonControl: true, // 按钮的置灰
-      webDominUrl: '',
-      smsErrorMessage: '', // 短信的错误提示
       sendMsgDisabled: false,
+      smsErrorMessage: '', // 短信的错误提示
       timeinterval: null,
       countTime: 60,
+      webDominUrl: process.env.VUE_APP_ROOM,
       bottomLoginInfo: true, // 登录底部信息展示
       otherWayShow: false, // 其他登录方式的图标
+
       pickUpShow: true, // 收起的显示
       menuListShow: false, // 菜单列表的显示
       logo: {},
@@ -613,20 +615,6 @@ export default {
       publicAdv: {},
       tipTitle: '',
       advs: [],
-      swiperOption: {
-        slidesPerView: 4,
-        slidesPerGroup: 1,
-        loop: false,
-        loopFillGroupWithBlank: true,
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev'
-        }
-      },
       showPayModel: false,
       getWxImg: false,
       getZFBlink: false,
@@ -641,13 +629,29 @@ export default {
     await this.getSkin() // 获取皮肤
     await this.getPublisAdv() // 获取公众号广告
     this.handleInitRoom()
-    // this.getGoodsInfo();
+    this.getGoodsInfo();
   },
   mounted() {
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
     }
+     // 自适应处理
+    window.addEventListener('resize', () => {
+      let width = document.querySelector('.watchBox').offsetWidth;
+      /**
+       * 根据文档区域 16: 9  去计算容器 高度
+       * 具体算法。
+       * 1.  计算出文档区域 宽度   width - 侧边栏 宽度 （ 295 ）
+       * 2.  计算出文档区高度 + with - 295 / x = 16/ 9
+       * x =  width - 295 / 1.78
+       * 容器高度 =  height + 46 // 底部互动工具栏高度
+      */
+      const ratio = 16 / 9;
+      const docHeight = (width - 294) / ratio + 46;
+      document.querySelector('.watchBox').style.height = `${docHeight}px`;
+      console.log(909, docHeight)
+    });
   },
   beforeDestroy() {
     this.timer && clearInterval(this.timer)
@@ -659,7 +663,7 @@ export default {
     getWatchInfo() {
       return this.$fetch('watchInit', {
         webinar_id: this.$route.params.id,
-        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '',
+        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '', 
         refer: '',
         record_id: '',
         wx_url: ''
@@ -674,7 +678,7 @@ export default {
       switch (res.code) {
         case 200:
           this.roomData = res.data
-          console.log(77, res.data)
+          this.webinarType = this.roomData.webinar.type
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
           this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
           this.getAttentionNum()
@@ -742,18 +746,17 @@ export default {
     },
     // 点击注册
     registerClick() {
-      window.location.href = `${Env.web}/auth/register`
+      window.location.href = `${process.env.VUE_APP_ROOM}/register`
     },
     handleInitRoom () {
       if (this.roomData) {
-        this.status = this.roomData.status
         // this.btnVal = this.roomData.status === 'subscribe' ? '立即预约' : '进入直播'
         console.log(111111, this.roomData)
         this.title = this.roomData.webinar.subject
         this.viewCount = this.roomData.pv.num
         this.hostName = this.roomData.webinar.userinfo.nickname
-        this.hostUrl = Env.web + `/user/home/${this.roomData.webinar.userinfo.user_id}`
-        this.shareUrl = Env.web + `/live/watch/${this.$route.params.id}`
+        this.hostUrl = process.env.VUE_APP_ROOM + `/user/home/${this.roomData.webinar.userinfo.user_id}`
+        this.shareUrl = process.env.VUE_APP_ROOM + `/live/watch/${this.$route.params.id}`
         this.time = this.roomData.webinar.start_time
         this.webinarDominUrl = this.roomData.urls.web_url
         this.myliveRoute = window.location.origin + '/live/list'
@@ -789,6 +792,135 @@ export default {
           this.remainTimes(this.roomData.webinar.start_time)
         }, 1*1000);
       }
+    },
+    initChat () {
+      this.$fetch('initiatorInfo', {
+        webinar_id: this.roomData
+      }).then(async res => {
+          this.roomInfo = this.rootActive;
+          this.userInfo = JSON.parse(sessionStorage.getItem('user'));
+          // 因早期设置值不同  进行根源影射   更换接口时产生的问题  备注勿删
+          if(this.rootActive.webinar.type == 1){
+            this.status = 1;
+          }else if(this.rootActive.webinar.type == 2){
+            this.status = 0;
+          }else{
+           this.status = 2;
+          }
+          this.isPublishing = this.status == 1;
+          this.isQAEnabled = this.qaStatus == 1; // ??
+          this.isQAEnabled = this.roomStatus.question_status == 1; // ??
+          this.roleName = this.rootActive.join_info.role_name;
+
+          this.layout =  this.roomStatus.layout;
+          this.localDuration = this.duration;
+
+          if (this.status == 1) {
+            this.virtualAudienceCanUse = true;
+          }
+          // 媒体检测
+          const mediacheckStatus = sessionStorage.getItem(`MEDIACHECK_FINISH_${this.roomInfo.interact.room_id}`);
+          console.warn('cxs----设备检测', mediacheckStatus,this.roomInfo.interact.room_id, this.roomInfo.join_info.role_name);
+          if (this.roomInfo.join_info.role_name == 1) {
+            console.warn('cxs--设备检测---',!this.assistantType, mediacheckStatus != 'yes', this.status != 1 );
+            if (!this.assistantType && mediacheckStatus != 'yes' && this.status != 1) {
+              // this.popAlertCheckVisible = true;
+            }
+          } else if (this.roomInfo.join_info.role_name == 4 && mediacheckStatus != 'no') {
+            if (!this.assistantType && mediacheckStatus != 'yes') {
+              this.popAlertCheckVisible = true;
+            }
+          }
+          this.isBanned = this.roomStatus.is_banned == 1;
+          this.isKicked = this.roomStatus.is_kicked == 1;
+          this.getRoomStatus();
+          let context = {
+            nickname: this.userInfo.nickname, // 昵称
+            avatar: this.userInfo.avatar
+              ? `${this.userInfo.avatar}`
+              : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
+            // pv: 100, // pv
+            role_name: this.roomInfo.join_info.role_name, // 角色 1主持人2观众3助理4嘉宾
+            device_type: '2', // 设备类型 1手机端 2PC 0未检测
+            device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
+            is_banned: this.isBanned // 是否禁言 1是0否
+          };
+
+          let opt = {
+            appId: this.roomData.interact.paas_app_id,
+            third_party_user_id: this.third_party_user_id, // TODO:
+            channelId: this.roomData.interact.channel_id,
+            context: JSON.stringify(context),
+            token: this.roomData.interact.paas_access_token,
+            hide: this.$route.query.hide == 1
+          };
+          VhallChat.createInstance(
+            opt,
+            chat => {
+              window.chatSDK = chat.message;
+              this.roomReady = true;
+              this.$loadingStus.close();
+              this.$EventBus.$on('sdkReady', () => {
+                if (!this.assistantType && this.roomInfo.join_info.role_name != 3) {
+                  this.vhallChecking();
+                }
+              });
+              if (this.assistantType && this.assistantPlugin) {
+                // 接受加入房间消息
+                window.chatSDK.join(msg => {
+                  if (typeof msg !== 'object') {
+                    msg = JSON.parse(msg);
+                  }
+                  try {
+                    if (msg.context && typeof msg.context !== 'object') {
+                      msg.context = JSON.parse(msg.context);
+                    }
+                    if (msg.data && typeof msg.data !== 'object') {
+                      msg.data = JSON.parse(msg.data);
+                    }
+                  } catch (e) {
+                    console.log(e);
+                  }
+
+                  console.log('********加入房间消息*********');
+                  console.log(msg);
+                  this.$EventBus.$emit(msg.data.type, msg);
+                });
+                // 接受离开房间消息
+                window.chatSDK.leave(msg => {
+                  if (typeof msg !== 'object') {
+                    msg && (msg = JSON.parse(msg));
+                  }
+                  try {
+                    if (msg.context && typeof msg.context !== 'object') {
+                      msg.context = JSON.parse(msg.context);
+                    }
+                    if (msg.data && typeof msg.data !== 'object') {
+                      msg.data = JSON.parse(msg.data);
+                    }
+                  } catch (e) {
+                    console.log(e);
+                  }
+                  console.log('********离开房间消息*********');
+                  console.log(msg);
+                  this.$EventBus.$emit(msg.data.type, msg);
+                });
+              }
+            },
+            err => {
+              console.error('聊天SDK实例化失败', err);
+            }
+          );
+          if (this.splitStatus == 1) {
+            this.calculateLiveDuration(1);
+          }
+          if (this.roleName == 3 && !this.assistantType) {
+            this.autoPlay();
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
     },
     // startTime  YYYY-MM-DD HH:MM
     remainTimes(startTime){
@@ -842,13 +974,6 @@ export default {
         this.callLogin()
       }
     },
-    // 预约
-    subscribe(){
-      this.isSignUp = false;
-    },
-    handleClick(){
-
-    },
     activityMove(direction){
       const el = this.$refs.activityUL;
       const offset = el.style.transform.match(/-?\d+/g);
@@ -868,13 +993,8 @@ export default {
     },
     // 点击商品获得详细的信息
     sellGoodsInfo(goodInfo) {
+      console.log(999999, goodInfo)
       this.goodInfo = goodInfo;
-      // window.vhallReport.report('GOOD_RECOMMEND', {
-      //   event: moment().format('YYYY-MM-DD HH:mm'),
-      //   market_tools_id: this.goodInfo.goods_id,
-      //   // 浏览
-      //   market_tools_status: 0
-      // });
       this.shadeShow = true;
       this.goodsPopShow = true;
     },
@@ -884,23 +1004,8 @@ export default {
         webinar_id: this.$route.params.id
       }).then(res => {
         if (res.code == 200) {
-          this.productFlag = true;
-          this.goodsList = res.data.goods_list;
-          this.goodsList
-            && this.goodsList.length
-            && (this.goodInfo = res.data.goods_list[0]);
-
-          this.goodsList.forEach(good => {
-            const imgUrl = good.img_list.find(img => img.is_cover === '1');
-            if (imgUrl) {
-              good.goodImage = `
-                ${this.imageDomin}/
-                ${
-                  good.img_list.find(img => img.is_cover === '1').img_url
-                }
-              `;
-            }
-          });
+          res.data.goods_list.length > 0 && (this.productFlag = true)
+          this.goodsList = res.data.goods_list
         }
       });
     },
@@ -1186,53 +1291,64 @@ export default {
             this.limitText = `邀请码`
           }
         } else {
-          ret = `立即预约`
+          if (type == 1) {
+            ret = `进入直播`
+          } else if (type == 2) {
+            ret = `立即预约`
+          } else if (type == 3) {
+            ret = `已结束`
+            this.btnDisabled = false
+          } else if (type == 4) {
+            ret = `观看点播`
+          } else if (type == 5) {
+            ret = `观看回放`
+          }
+          this.limitText = ``
         }
       }
       this.btnVal = ret
     },
     // 底部按钮点击验证
     btnClick(e) {
-      if (this.hasClick) {
-        return
-      }
-      
-      // 判断登录
-      if (!this.isLogin) {
-        this.callLogin()
-        this.hasClick = false
-        return
-      }
-      this.hasClick = true
       // 只有免费的才可以不登录进直播
       const {
         type,
-        verify
+        verify,
+        reg_form
       } = this.roomData.webinar
+      if (this.hasClick) {
+        return
+      }
+      if ((verify == 0 && reg_form == 1 && this.roomData.is_subscribe == 0) || (verify != 0 && reg_form == 1 && this.roomData.is_subscribe == 0 && this.roomData.verified)) {
+      } else {
+        // 判断登录
+        if (!this.isLogin) {
+          this.callLogin()
+          this.hasClick = false
+          return
+        }
+      }
+      this.hasClick = true
       if (type == 2) {
-        try {
-          if (verify == 0) { // 免费
-            this.fetchAuth({type: 0})
-          } else if (verify == 1) { // 密码
-            this.passwordAuth()
-          } else if (verify == 2) { // 白名单
-            this.whiteAuth()
-          } else if (verify == 3) { // 付费
-            this.feeAuth()
-          } else if (verify == 4) { // 邀请码
+        if (verify == 0) { // 免费
+          this.fetchAuth({type: 0})
+        } else if (verify == 1) { // 密码
+          this.passwordAuth()
+        } else if (verify == 2) { // 白名单
+          this.whiteAuth()
+        } else if (verify == 3) { // 付费
+          this.feeAuth()
+        } else if (verify == 4) { // 邀请码
+          this.checkInviteCodeAuth()
+        } else if (verify == 6) { // 邀请码加付费
+          if (e == 'invite') {
             this.checkInviteCodeAuth()
-          } else if (verify == 6) { // 邀请码加付费
-            if (e == 'invite') {
-              this.checkInviteCodeAuth()
-            } else {
-              this.feeAuth()
-            }
+          } else {
+            this.feeAuth()
           }
-        } catch (e) {
-          console.log('预约鉴权失败', e)
         }
       } else if (type == 1 || type == 4 || type == 5) {
-        this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+        this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
       }
     },
     fillLimitSubmit () {
@@ -1348,8 +1464,8 @@ export default {
             this.$message.warning('白名单观众不存在')
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
-        case 12523: // TODO:
-            this.$message.warning('需要支付')
+        case 12523:
+            // this.$message.warning('需要支付')
             if (this.getWxImg && this.getZFBlink) {
               this.showPayModel = true
             } else {
@@ -1365,7 +1481,7 @@ export default {
             // 微信内
             // if(ua.match(/MicroMessenger/i) == "micromessenger") {
             //   params.service_code = 'JSAPI'
-            //   params.service.code = '' // TODO:
+            //   params.service.code = ''
             //   params.type = 2
             // } else if (navigator.userAgent.indexOf('MQQBrowser') > -1) {
             //   // qq浏览器
@@ -1444,7 +1560,13 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           if (type == 'wx') {
-            this.wxPayImg = res.data.link
+            let wxImg = QRcode.toDataURL(
+              res.data.link,
+              (err, url) => {
+                console.log(err, url);
+                this.wxPayImg = url;
+              }
+            )
             this.getWxImg = true
           } else {
             this.zfbLink = res.data.link
@@ -1471,6 +1593,27 @@ export default {
       this.authCheckValue = ''
       this.dialogPlaceholder = ''
       this.tipContent = ''
+    },
+    // 邀请登录
+    handleCodeAuthLogin (data) {
+      let {role, name, keyCode} = data
+      this.$fetch('roleLogin', {
+        webinar_id: this.$route.params.id,
+        type: role, // 1主持 2嘉宾 3观众
+        password: keyCode,
+        refer: '',
+        nickname: name,
+        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : ''
+      }).then(res => {
+        if (res.code == 200) {
+          sessionOrLocal.set('interact_token', res.data.live_token)
+          sessionOrLocal.set('visitor_id', res.data.visitor_id)
+          this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+          return
+        } else {
+          this.$message.error(res.msg)
+        }
+      })
     }
   },
   filters: {
@@ -1478,10 +1621,20 @@ export default {
       let str = val;
       switch (val) {
         case 1:
-          str = "预告";
-
+          str = "直播";
           break;
-
+        case 2:
+          str = "预约";
+          break;
+        case 1:
+          str = "结束";
+          break;
+        case 1:
+          str = "点播";
+          break;
+        case 1:
+          str = "回放";
+          break;
         default:
           break;
       }
@@ -1493,8 +1646,6 @@ export default {
 
 <style lang="less" scoped>
   .wrap{
-    width: 100%;
-    // margin: -1rem;
     min-width: 1280px;
     margin: 0 auto;
     background: #fff;
@@ -1509,19 +1660,6 @@ export default {
       opacity: 0.5;
       z-index: 3;
     }
-  }
-  .area {
-    width: 1220px;
-    margin: 0 auto;
-    @media screen and (min-width: 1380px) {
-      width: 1480px;
-    }
-  }
-  .watchContainer{
-    padding: 10px 0 20px;
-    padding-top: 36px;
-    background-color: #e8e9eb;
-    border-bottom: 1px solid #c9c9c9;
   }
   .iconBtn{
     .iconContainer{
@@ -1575,439 +1713,6 @@ export default {
   }
   .red{
     color: #e63c37;
-  }
-  .topInfo{
-    p{
-      line-height: 32px;
-    }
-    b{
-      font-size: 24px;
-      font-weight: normal;
-    }
-    .tag{
-      color: #fff;
-      display: inline-block;
-      background-color: #1087dc;
-      font-size: 14px;
-      padding: 0 8px;
-      border-radius: 3px;
-      margin: 8px 0 0 15px;
-      line-height: normal;
-    }
-    .right{
-      float: right;
-    }
-  }
-  .watchBox{
-    margin-top: 40px;
-    display: flex;
-    height: 521px;
-    overflow: hidden;
-    .leftWatch{
-      flex: 1;
-      line-height: 0;
-      img{
-        display: inline-block;
-        width: 100%;
-        height: 100%;
-      }
-    }
-    .rightWatch{
-      width: 300px;
-      background: #242424;
-      color: #fff;
-      position: relative;
-      .title{
-        font-size: 20px;
-        text-align: center;
-        margin: 40px 0;
-      }
-      .timeBox{
-        display: flex;
-        justify-content: space-around;
-        >div{
-          width: 64px;
-          height: 90px;
-          background: #1b1b1b;
-          border: 2px solid #2d2d2d;
-          border-radius: 4px;
-          text-align: center;
-        }
-        .mian{
-          font-size: 33px;
-          margin: 10px 0;
-          margin-bottom: 4px;
-        }
-        .sub{
-          font-size: 14px;
-          color: #7c8287;
-        }
-      }
-    }
-  }
-  .bottom{
-    position: absolute;
-    bottom: 40px;
-    width: 100%;
-    padding: 0 20px;
-    .el-button{
-      width: 100%;
-    }
-    .limit{
-      margin-top: 10px;
-      color: #7c8287;
-      text-align: center;
-      font-size: 14px;
-      height: 20px;
-      color: #7c8287;
-    }
-    .extra-verify:hover{
-      cursor: pointer;
-    }
-  }
-  .foot{
-    margin-top: 20px;
-    border: 1px solid #d2d2d2;
-    /deep/ .el-tabs__content{
-      padding: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-  }
-  .activity{
-    width: max-content;
-    overflow: hidden;
-    transition: all .15s linear;
-    // &::after{
-    //   content: '';
-    //   display: block;
-
-    // }
-    li{
-      float: left;
-      width: 260px;
-      margin-right: 20px;
-      .imgBox{
-        width: 100%;
-        height: 146px;
-        img{
-          width: 100%;
-          height: 100%;
-        }
-      }
-      .activityName{
-        font-size: 14px;
-        color: #333333;
-        text-align: center;
-        margin-top: 6px;
-        height: 40px;
-        line-height: 20px;
-        span{
-          display: inline-block;
-          text-align: left;
-        }
-      }
-    }
-  }
-  .operaBtn{
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
-    background: #FFFFFF;
-    background: #FFFFFF;
-    border-radius: 50%;
-    position: absolute;
-    top: 60px;
-    box-sizing: border-box;
-    cursor: pointer;
-    font-size: 18px;
-    transition: all .15s linear;
-    &:hover{
-      background: #7DB7F0;
-      color: #fff;
-    }
-    &.left{
-      left: -24px;
-      text-align: right;
-      padding-right: 10px;
-    }
-    &.right{
-      right: -24px;
-      text-indent: 4px;
-    }
-  }
-  .fixWidth{
-    padding: 20px;
-    border: 1px solid #D2D2D2;
-    display: inline-block;
-    width: 300px;
-    box-sizing: border-box;
-    margin-top: 20px;
-    margin-left: 20px;
-    vertical-align: top;
-    .productImg{
-      width: 100%;
-      height: 254px;
-      cursor: pointer;
-      img{
-        height: 100%;
-        width: 100%;
-      }
-    }
-    .title{
-      font-size: 19px;
-      color: #333;
-      font-weight: bold;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      line-height: 40px;
-    }
-    .price{
-      span:nth-child(1){
-        font-size: 24px;
-        color: #FC5659;
-      }
-      span:nth-child(2){
-        font-size: 18px;
-        color:#D2D2D2;
-        i{
-          text-decoration: line-through;
-          font-style: normal;
-        }
-      }
-    }
-    .desc{
-      font-size: 14px;
-      color: #666;
-      margin-top: 20px;
-    }
-    .fullBut{
-      width: 100%;
-      margin-top: 20px;
-    }
-    .textBtn{
-      width: 100%;
-      color: #FC5659;
-      text-align: center;
-      border: 0 none;
-    }
-  }
-  .product{
-    .flex1{
-      display: inline-block;
-      width: calc(84% - 78px);
-    }
-  }
-  .wh-title {
-    max-width: 1480px;
-    line-height: 70px;
-    // min-width: 1220px;
-    margin: 0 auto;
-    overflow: hidden;
-    .title-right {
-      float: right;
-      .el-input {
-        width: auto;
-      }
-      .button-register {
-        padding: 0px;
-        border: none;
-        background: #fc5659;
-        color: #fff;
-        border: none;
-        span{
-          display: inline-block;
-          width: 70px;
-          text-align:center;
-        }
-      }
-
-      .button-login {
-        padding: 0px;
-        border: none;
-        margin-left: 20px;
-        background: #e7e7e7;
-        color: #333;
-        span{
-          display: inline-block;
-          width: 70px;
-          text-align:center;
-        }
-      }
-    }
-    .logo-image {
-      width: 80px;
-      height: 38px;
-      float: left;
-      margin-top: 16px;
-    }
-    .login-info-list {
-      font-size: 12px;
-      position: absolute;
-      top: 70px;
-      z-index: 66;
-      width: 200px;
-      height: 200px;
-      cursor: pointer;
-      background: #fff;
-      margin-right: 8px;
-      .recive-news {
-        font-size: 12px;
-        border-radius: 50%;
-        position: absolute;
-        width: 18px;
-        height: 18px;
-        background-color: #ff3333;
-        color: #fff;
-        line-height: 18px;
-        text-align: center;
-        margin-left: 7px;
-        top: 10px;
-      }
-      li {
-        width: 198px;
-        height: 40px;
-        text-align: center;
-        line-height: 40px;
-        cursor: pointer;
-
-        i {
-          display: inline-block;
-          vertical-align: middle;
-          margin-top: 3px;
-        }
-        span {
-          display: inline-block;
-          vertical-align: middle;
-          font-size: 14px;
-          color: #333;
-        }
-        &:hover {
-          span {
-            color: #e8403f;
-          }
-          .recive-news {
-            font-size: 12px;
-            border-radius: 50%;
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background-color: #ff3333;
-            color: #fff;
-            line-height: 18px;
-            text-align: center;
-            margin-left: 7px;
-            top: 10px;
-          }
-        }
-      }
-
-      li:first-of-type {
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -70px -17px;
-        }
-        &:hover {
-          i {
-            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-              no-repeat -130px -17px;
-          }
-        }
-      }
-      li:nth-of-type(2) {
-        width: 200px;
-        border-bottom: 1px solid #ccc;
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -71px -68px;
-        }
-        &:hover {
-          i {
-            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-              no-repeat -130px -68px;
-          }
-        }
-      }
-      li:nth-of-type(3) {
-        position: relative;
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -71px -238px;
-        }
-        &:hover {
-          i {
-            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-              no-repeat -131px -238px;
-          }
-        }
-      }
-      li:nth-of-type(4) {
-        position: relative;
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -70px -95px;
-        }
-        &:hover {
-          i {
-            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-              no-repeat -130px -95px;
-          }
-        }
-      }
-      li:nth-of-type(5) {
-        width: 200px;
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -70px -118px;
-        }
-        &:hover {
-          i {
-            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-              no-repeat -130px -118px;
-          }
-        }
-      }
-      li:nth-of-type(6) {
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -70px -142px;
-        }
-        &:hover {
-          i {
-            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-              no-repeat -130px -142px;
-          }
-        }
-      }
-      li:nth-of-type(7) {
-        i {
-          width: 21px;
-          height: 19px;
-          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
-            no-repeat -70px -167px;
-        }
-        &:hover {
-          span {
-            color: #333;
-          }
-        }
-      }
-    }
   }
   .loginUserInfo {
     // width: 200px;
@@ -2077,7 +1782,7 @@ export default {
         height: 30px;
         cursor: pointer;
         font-size: 12px;
-        line-height: 30px;
+        line-height: 5px;
         border-radius: 4px;
         text-align: center;
         border: none;
@@ -2221,7 +1926,6 @@ export default {
       }
     }
   }
-
   .bottom-login {
     width: 270px;
     margin: 0 auto;
@@ -2316,52 +2020,6 @@ export default {
     .third-auth .weixin {
       background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/login_spirt.png?v=TTFVyijQs0w%2BDrAG7%2B%2FB3g%3D%3D)
         no-repeat -10px -196px;
-    }
-  }
-  .botton-image {
-    width: 113px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-around;
-    img {
-      margin-top: 12px;
-      width: 15px;
-      height: 15px;
-    }
-  }
-  .button-style {
-    width: 70px;
-    height: 38px;
-  }
-  .footer {
-    margin: 0 auto;
-    padding-left: 80px;
-    padding-right: 80px;
-    padding-bottom: 100px;
-    text-align: center;
-    font-size: 14px;
-    margin-top: 40px;
-    max-width: 1480px;
-    p {
-      color: #808080;
-      line-height: 25px;
-    }
-    .about-us {
-      border-top: 1px solid #e1e1e1;
-      padding-bottom: 10px;
-      padding-top: 40px;
-      font-size: 14px;
-      a {
-        text-decoration: none;
-        color: #333;
-        display: inline-block;
-        padding: 0 15px;
-        line-height: 1;
-        border-right: 1px solid #000;
-        &:last-child {
-          border: none;
-        }
-      }
     }
   }
   .officialaccount-qrcode {
@@ -2461,26 +2119,306 @@ export default {
       }
     }
   }
+  .watchContainer{
+    background: rgba(232, 233, 235, 1);
+  }
+  .area {
+    max-width: 1640px;
+    padding: 20px 80px 15px 80px;
+    margin: 0 auto;
+    overflow: hidden;
+    width: auto;
+  }
+  .topInfo{
+    p{
+      line-height: 32px;
+    }
+    b{
+      font-size: 24px;
+      font-weight: normal;
+    }
+    .tag{
+      color: #fff;
+      display: inline-block;
+      background-color: #1087dc;
+      font-size: 14px;
+      padding: 0 8px;
+      border-radius: 3px;
+      margin: 8px 0 0 15px;
+      line-height: normal;
+    }
+    .right{
+      float: right;
+    }
+  }
+  .watchBox{
+    margin-top: 30px;
+    display: flex;
+    height: 721px;
+    overflow: hidden;
+    .leftWatch{
+      flex: 1;
+      line-height: 0;
+      img{
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .rightWatch{
+      width: 300px;
+      background: #242424;
+      color: #fff;
+      position: relative;
+      .title{
+        font-size: 20px;
+        text-align: center;
+        margin: 40px 0;
+      }
+      .timeBox{
+        display: flex;
+        justify-content: space-around;
+        >div{
+          width: 64px;
+          height: 90px;
+          background: #1b1b1b;
+          border: 2px solid #2d2d2d;
+          border-radius: 4px;
+          text-align: center;
+        }
+        .mian{
+          font-size: 33px;
+          margin: 10px 0;
+          margin-bottom: 4px;
+        }
+        .sub{
+          font-size: 14px;
+          color: #7c8287;
+        }
+      }
+      .bottom{
+        position: absolute;
+        bottom: 40px;
+        width: 100%;
+        padding: 0 20px;
+        .el-button{
+          width: 100%;
+        }
+        .limit{
+          margin-top: 10px;
+          color: #7c8287;
+          text-align: center;
+          font-size: 14px;
+          height: 20px;
+          color: #7c8287;
+        }
+        .extra-verify:hover{
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  .product{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    .left-content{
+      width: calc(100% - 300px);
+      margin-right: 20px;
+    }
+  }
+  .wh-title {
+    width: auto;
+    max-width: 1640px;
+    line-height: 70px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0px 80px;
+    &:after{
+      clear:both;
+    }
+    .title-right {
+      float: right;
+    }
+    .logo-image {
+      width: 80px;
+      height: 38px;
+      float: left;
+      margin-top: 16px;
+    }
+    .login-info-list {
+      font-size: 12px;
+      position: absolute;
+      top: 70px;
+      right: 0px;
+      z-index: 66;
+      width: 200px;
+      height: 201px;
+      cursor: pointer;
+      background: #fff;
+      margin-right: 8px;
+      .recive-news {
+        font-size: 12px;
+        border-radius: 50%;
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        background-color: #ff3333;
+        color: #fff;
+        line-height: 18px;
+        text-align: center;
+        margin-left: 7px;
+        top: 10px;
+      }
+      li {
+        width: 198px;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+        position: relative;
+        i {
+          display: inline-block;
+          vertical-align: middle;
+          margin-top: 3px;
+          width: 21px;
+          height: 19px;
+        }
+        span {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 14px;
+          color: #333;
+        }
+        &:hover {
+          span {
+            color: #e8403f;
+          }
+          .recive-news {
+            font-size: 12px;
+            border-radius: 50%;
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: #ff3333;
+            color: #fff;
+            line-height: 18px;
+            text-align: center;
+            margin-left: 7px;
+            top: 10px;
+          }
+        }
+      }
+      li:first-of-type {
+        i {
+          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+            no-repeat -70px -17px;
+        }
+        &:hover {
+          i {
+            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+              no-repeat -130px -17px;
+          }
+        }
+      }
+      li:nth-of-type(2) {
+        width: 200px;
+        border-bottom: 1px solid #ccc;
+        i {
+          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+            no-repeat -71px -68px;
+        }
+        &:hover {
+          i {
+            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+              no-repeat -130px -68px;
+          }
+        }
+      }
+      li:nth-of-type(3) {
+        i {
+          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+            no-repeat -71px -238px;
+        }
+        &:hover {
+          i {
+            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+              no-repeat -131px -238px;
+          }
+        }
+      }
+      li:nth-of-type(4) {
+        i {
+          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+            no-repeat -70px -95px;
+        }
+        &:hover {
+          i {
+            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+              no-repeat -130px -95px;
+          }
+        }
+      }
+      li:nth-of-type(5) {
+        width: 200px;
+        i {
+          background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+            no-repeat -70px -118px;
+        }
+        &:hover {
+          i {
+            background: url(https://cnstatic01.e.vhall.com/static/images/vhall3.0/v35-icon-spirit.png?v=plCGclOoh092k9Uv6wWPcA%3D%3D)
+              no-repeat -130px -118px;
+          }
+        }
+      }
+    }
+    .button-login, .button-register {
+      width: 70px!important;
+      margin-left: 10px;
+      padding: 10px 15px;
+      text-align: center;
+    }
+    .button-register {
+      background: #ff3333;
+      color: #fff;
+      border: none;
+    }
+  }
   .active-second {
-    width: 100%;
+    width: auto;
     background: #fff;
     color: #fff;
     float: left;
-    margin-top: 30px;
+    margin-top: 20px;
     border: 1px solid #c7c7c7;
-    margin-bottom: 40px;
+    hr {
+      background-color: #c7c7c7;
+      height: 1px;
+      border: none;
+      margin: 0px;
+    }
+    h3 {
+      margin-top: 15px;
+      padding-bottom: 15px;
+      color: #666;
+      margin-left: 30px;
+      width: 80px;
+      line-height: 25px;
+      text-align: center;
+      border-bottom: 2px solid #fc5659;
+    }
     .active-recommond {
       position: relative;
       padding: 20px 30px;
-      width: 100%;
-      min-height: 200px;
+      height: 220px;
       .recom-item {
         width: 324px;
         height: 202px;
         box-sizing: border-box;
         position:relative;
         float:left;
-        margin: 0px 15px 20px 15px;
+        margin: 0px 10px 20px 10px;
         .left-mark {
           display: block;
           width: 35px;
@@ -2518,37 +2456,69 @@ export default {
           }
         }
       }
-
-      div:last-of-type {
-        margin-right: 0;
+    }
+  }
+  .pay {
+    width: 350px;
+    height: 280px;
+    box-sizing: border-box;
+    padding: 15px;
+    font-size: 14px;
+    img, a, span{
+      display: block;
+      text-align: center;
+      margin: 0px auto;
+    }
+    img {
+      width: 200px;
+      height: 200px;
+    }
+    a {
+      margin-top:15px;
+    }
+  }
+  .footer {
+    margin: 0 auto;
+    padding-left: 80px;
+    padding-right: 80px;
+    padding-bottom: 100px;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 40px;
+    max-width: 1480px;
+    p {
+      color: #808080;
+      line-height: 25px;
+    }
+    .about-us {
+      border-top: 1px solid #e1e1e1;
+      padding-bottom: 10px;
+      padding-top: 40px;
+      font-size: 14px;
+      a {
+        text-decoration: none;
+        color: #333;
+        display: inline-block;
+        padding: 0 15px;
+        line-height: 1;
+        border-right: 1px solid #000;
+        &:last-child {
+          border: none;
+        }
       }
     }
   }
-  @media screen and (max-width: 1480px) {
-    .recommond-content {
-      // width: 234px !important;
-      margin-right: 17px !important;
-
+  @media screen and (max-width: 1280px) {
+    .wh-title, .area{
+      width: 1280;
+    }
+    .recom-item{
+      width: 260px;
+      height: 166px;
       img {
-        // width: 234.1px !important;
+        height: 148px;
       }
     }
-    .swiper-button-next {
-      // right: -96px !important;
-      // margin-top: -45px;
-      // background-image: url(./img/right.png) !important;
-    }
-    /* .selling {
-      width: 195px !important;
-    }
-
-    .sell-image {
-      width: 195px !important;
-      height: 195px !important;
-      img {
-        width: 195px !important;
-        height: 195px !important;
-      }
-    } */
   }
+  
 </style>

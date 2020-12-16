@@ -23,7 +23,7 @@ const router = [
       {
         path: '/live/watch/:il_id',
         component: () => import('@/views/LiveModule/Room/watchWrap'),
-        name: 'LiveRoom',
+        name: 'LiveWatch',
         meta: { title: '观看直播' },
       },
       {
@@ -33,13 +33,13 @@ const router = [
         meta: { title: '预约' }
       },
       {
-        path: '/keylogin/:id',
+        path: '/keylogin/:id/:role_name', // 助理
         name: 'list',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '口令登录' }
       },
       {
-        path: '/keylogin-host/:id',
+        path: '/keylogin-host/:id/:role_name', // 主持人
         name: 'list',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '口令登录' }

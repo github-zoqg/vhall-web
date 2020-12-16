@@ -7,7 +7,7 @@
       indicator-position="none"
       :loop="false"
     >
-      <el-carousel-item v-for="good in goodsListOn" :key="good.goods_id">
+      <el-carousel-item v-for="good in goodsList" :key="good.goods_id">
         <div class="sell-goods-item">
           <div class="sell-image" @click="sellGoodsInfo(good)">
             <img src="https://cn.vuejs.org/images/logo.png" alt />
@@ -26,7 +26,7 @@
             {{ good.description }}
           </p>
           <el-button @click="comeSelling(good)" class="selling"
-            >{{ '即将发售' }}</el-button
+            >{{ '立即购买' }}</el-button
           >
           <a
             :href="good.shop_url"
@@ -39,18 +39,13 @@
     </el-carousel>
   </div>
 </template>
-
 <script>
   export default {
     props: {
-      goodsList: Array,
-    },
-    computed: {
-      goodsListOn () {
-        return this.goodsList.filter((good) => {
-          return good.status;
-        });
-      }
+      goodsList: {
+        type: Array,
+        default: () => {}
+      },
     },
     methods: {
       sellGoodsInfo(good) {
@@ -58,7 +53,7 @@
       },
       // 即将发售
       comeSelling(good) {
-        window.location.href = good.good_url;
+        window.location.href = good.goods_url;
       },
     }
   };
@@ -66,14 +61,10 @@
 
 <style lang="less" scoped>
   .sell-goods {
-    /* width: 234px; */
-    height: 453px;
-    margin-left: 15px;
-    width: calc(16% + 60px);
-    float: right;
-    background: #fff;
+    width: 300px;
     margin-top: 20px;
-    margin-bottom: 40px;
+    height: 453px;
+    background: #fff;
     border: 1px solid #d2d2d2;
     box-sizing: content-box;
     cursor: pointer;

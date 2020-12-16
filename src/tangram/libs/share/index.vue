@@ -72,7 +72,7 @@ export default {
     doCopy () {
       this.$copyText(this.url).then(e => {
         this.$message.success('复制成功！');
-        window.vhallReport.report('SHARE', {
+        window.vhallReport && window.vhallReport.report('SHARE', {
           event: 0
         });
       }).catch(error=>{
@@ -85,12 +85,12 @@ export default {
     },
     openQRCode () {
       this.QRCodeVisible = true;
-      window.vhallReport.report('SHARE', {
+      window.vhallReport && window.vhallReport.report('SHARE', {
         event: 2
       });
     },
     shareToQQ () {
-      window.vhallReport.report('SHARE', {
+      window.vhallReport && window.vhallReport.report('SHARE', {
         event: 1
       });
       const p = {
@@ -117,7 +117,7 @@ export default {
       window.open(url);
     },
     shareToWeiBo () {
-      window.vhallReport.report('SHARE', {
+      window.vhallReport && window.vhallReport.report('SHARE', {
         event: 4
       });
       const p = {
