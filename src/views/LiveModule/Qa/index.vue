@@ -49,7 +49,7 @@
                   <span>{{item.created_at}}</span>
                   <span style="color:#169bd5">{{baseObj.join_info.nickname}} <span class="mark">标记为语音回复</span>  {{filterTime(item.updated_at)}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                   <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
@@ -65,7 +65,7 @@
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                   <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
@@ -78,7 +78,7 @@
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
                       <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
-                    <p>{{ite.content}}</p>
+                    <p v-html="ite.content"></p>
                   </li>
                 </ul>
               </li>
@@ -91,7 +91,7 @@
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                     <span>操作时间：{{filterTime(item.updated_at)}}</span>
