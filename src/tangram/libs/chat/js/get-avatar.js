@@ -8,6 +8,6 @@ function getAvatar (avatar) {
   if (/^(http|https)/.test(avatar)) {
     return avatar
   }
-  return `https:${avatar}`
+  // return `https:${avatar}`
 }
 export default getAvatar

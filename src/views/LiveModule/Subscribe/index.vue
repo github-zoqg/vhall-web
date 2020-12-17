@@ -625,6 +625,7 @@ export default {
     await this.getAdsInfo() // 获取活动广告信息
     await this.getSkin() // 获取皮肤
     await this.getPublisAdv() // 获取公众号广告
+    await this.getTryWatch()
     this.handleInitRoom()
     this.getGoodsInfo();
   },
@@ -635,18 +636,22 @@ export default {
     }
      // 自适应处理
     window.addEventListener('resize', () => {
-      let width = document.querySelector('.watchBox').offsetWidth;
-      /**
-       * 根据文档区域 16: 9  去计算容器 高度
-       * 具体算法。
-       * 1.  计算出文档区域 宽度   width - 侧边栏 宽度 （ 295 ）
-       * 2.  计算出文档区高度 + with - 295 / x = 16/ 9
-       * x =  width - 295 / 1.78
-       * 容器高度 =  height + 46 // 底部互动工具栏高度
-      */
-      const ratio = 16 / 9;
-      const docHeight = (width - 294) / ratio + 46;
-      document.querySelector('.watchBox').style.height = `${docHeight}px`;
+      let dom = document.querySelector('.watchBox')
+      if (dom) {
+        let width = document.querySelector('.watchBox').offsetWidth;
+          /**
+         * 根据文档区域 16: 9  去计算容器 高度
+         * 具体算法。
+         * 1.  计算出文档区域 宽度   width - 侧边栏 宽度 （ 295 ）
+         * 2.  计算出文档区高度 + with - 295 / x = 16/ 9
+         * x =  width - 295 / 1.78
+         * 容器高度 =  height + 46 // 底部互动工具栏高度
+        */
+        const ratio = 16 / 9;
+        const docHeight = (width - 294) / ratio + 46;
+        let watch = document.querySelector('.watchBox')
+        watch && (watch.style.height = `${docHeight}px`)
+      }
     });
   },
   beforeDestroy() {
@@ -654,6 +659,13 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods:{
+    getTryWatch () {
+      this.$fetch('viewerSetGet', {
+        webinar_id: this.$route.params.id
+      }).then(res => {
+        console.log(120, res)
+      })
+    },
     closeWXCode () {
       this.showOfficialAccountQRCode = false
     },
@@ -1228,7 +1240,7 @@ export default {
       }
       if (is_subscribe == 1) {
         if (type == 1 || type == 4 || type == 5) {
-          this.$route.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+          this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
         } else if (type == 2) {
           ret = `已预约`
           this.limitText = ``
@@ -1260,7 +1272,8 @@ export default {
             ret = `立即预约`
           } else {
             if (type == 1 || type == 4 || type == 5) {
-              this.$route.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+              console.log(1010101)
+              this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
             } else if (type == 2) {
               ret = `已预约`
               this.limitText = ``

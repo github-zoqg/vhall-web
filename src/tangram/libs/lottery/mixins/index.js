@@ -14,7 +14,7 @@ const mixins = {
           this.prizeList = res.data.list
           this.prize = res.data.list[1]
         }else{
-          this.$message.waring(res.msg)
+          this.$message.warning(res.msg)
         }
       })
     },
@@ -93,7 +93,7 @@ const mixins = {
         if(res.code == 200){
           console.warn('创建抽奖成功',res.data);
         }else{
-          this.$message.waring(res.msg)
+          this.$message.warning(res.msg)
         }
       })
       // this.$vhallFetch('add',).then(res => {
@@ -150,7 +150,7 @@ const mixins = {
         if(res.code == 200){
           console.warn(res);
         }else{
-          this.$message.waring(res.msg)
+          this.$message.warning(res.msg)
         }
       })
     }

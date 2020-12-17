@@ -23,7 +23,7 @@ const createRouter = () => new Router({
 });
 const router = createRouter();
 NProgress.configure({showSpinner: false}); // NProgress Configuration
-const whiteList = ['/login', '/register', '/forgetPassword', '/keylogin-host', '/keylogin']; // 白名单，不需携带Token
+const whiteList = ['/login', '/register', '/forgetPassword']; // 白名单，不需携带Token
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
@@ -85,7 +85,9 @@ router.beforeEach((to, from, next) => {
       to.path.indexOf('/subscribe') !== -1 ||
       to.path.indexOf('/entryform') !== -1 ||
       to.path.indexOf('/user/home') !== -1 ||
-      to.path.indexOf('/live/watch/') !== -1
+      to.path.indexOf('/live/watch') !== -1 ||
+      to.path.indexOf('/keylogin-host') !== -1 ||
+      to.path.indexOf('/keylogin') !== -1
     ) {
         next()
     } else {
