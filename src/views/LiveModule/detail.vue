@@ -9,7 +9,7 @@
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
             <span class="hot">
               <i class="el-icon-view"></i>
-              {{ liveDetailInfo.hide_pv | unitCovert }}
+              {{ liveDetailInfo.pv | unitCovert }}
             </span>
           </div>
 

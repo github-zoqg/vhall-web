@@ -189,7 +189,6 @@ export default {
         if ((this.orderBy || this.keyWords || this.liveStatus) && !res.data.total) {
           this.nullText = 'search';
         }
-        // item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
       }).catch(error=>{
         this.$message.error(`获取直播列表失败,${error.msg || error.message}`);
         console.log(error);
