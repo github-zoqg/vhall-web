@@ -1256,17 +1256,16 @@ export default {
             this.limitText = `邀请码`
           }
         } else {
-          if (type == 1) {
-            ret = `进入直播`
-          } else if (type == 2) {
+          if (reg_form == 1) {
             ret = `立即预约`
-          } else if (type == 3) {
-            ret = `已结束`
-            this.btnDisabled = false
-          } else if (type == 4) {
-            ret = `观看点播`
-          } else if (type == 5) {
-            ret = `观看回放`
+          } else {
+            if (type == 1 || type == 4 || type == 5) {
+              this.$route.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+            } else if (type == 2) {
+              ret = `已预约`
+              this.limitText = ``
+              this.btnDisabled = true
+            }
           }
           this.limitText = ``
         }
