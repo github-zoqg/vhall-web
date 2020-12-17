@@ -152,8 +152,8 @@
             <div class="table-reward" v-if="userModules.reward.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <reward :roomId="roomId"></reward>
             </div>
-            <div class="table-gift" v-if="userModules.gift.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
-              <gift :roomId="roomId" :vssToken="vssToken"></gift>
+            <div class="table-gift" v-if="userModules.gift.show == 1 && roomInfo.role_name == 2">
+              <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <getCoupon
@@ -372,6 +372,107 @@
         @vhallCheckStatus="vhallCheckStatus"
       ></watchSetting>
     </popup>
+    <!--打赏-->
+    <popup
+      :visible="showGiveMoney"
+      :onClose="closeGiveMoney"
+      :title="'支付方式'"
+      :width="'500px'"
+    >
+      <div class="pay-content">
+        <div>
+          <span :class="{active: giveMoneyIndex == 1}" @click="(giveMoneyIndex = 1), (giveMoney = 1.88)">1.88元</span>
+          <span :class="{active: giveMoneyIndex == 2}" @click="(giveMoneyIndex = 2), (giveMoney = 8.88)">8.88元</span>
+        </div>
+        <div>
+          <span :class="{active: giveMoneyIndex == 3}" @click="(giveMoneyIndex = 3), (giveMoney = 88.88)" >88.88元</span>
+          <el-input class="give-money-input" v-model="giveMoney" placeholder="打赏其他金额"></el-input>
+        </div>
+        <div class="describe">
+          <el-input placeholder="很精彩 来赞一个" v-model="giveMoneyDes"></el-input>
+        </div>
+        <div class="pay-method">
+          <el-radio v-model="giveMoneyPayWay" label="1">微信支付</el-radio>
+          <el-radio v-model="giveMoneyPayWay" label="2">支付宝支付</el-radio>
+        </div>
+      </div>
+      <el-button @click.stop="handleGiveMoney" type="primary">确定</el-button>
+    </popup>
+    <popup
+      :visible="showGiveMoneyQr"
+      :onClose="closeGiveMoneyQr"
+      :title="'支付'"
+      :width="'300px'"
+    >
+      <div class="pay-img">
+        <img :src="giveMoneyUrl">
+      </div>
+    </popup>
+    <!--选择礼物-->
+    <popup
+      :visible="showGiftSend"
+      :onClose="closeGiftsPannel"
+      :title="'选择礼物'"
+      :width="'616px'">
+      <div class="gifts-wrap">
+        <div class="gift-search"></div>
+        <div class="gifts-list">
+          <div class="gift-item"
+            :class="{'active': item.id == selectGiftId}"
+            v-for='(item, index) in giftList'
+            :key="index"
+            @click.stop="chooseGift(index)">
+            <div class="gift-cover">
+              <template v-show="uploadDomain">
+                <img :src="uploadDomain + '/' + item.image_url">
+              </template>
+            </div>
+            <div class="gift-info">
+              <span class="name">{{item.name}}</span>
+              <span class="price">￥{{item.price}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="gifts-select">
+          <el-button
+            class="sure-gift"
+            :disabled="!selectGiftId"
+            @click="selectGift"
+            >确定</el-button
+          >
+          <el-button
+              class="cancel-gift"
+              @click="closeGiftsPannel"
+              >取消</el-button
+            >
+          <div class="gift-ids">当前选中<span class="color:#3562FA">{{selectGiftId ? 1 : 0}}</span>件商品</div>
+        </div>
+      </div>
+    </popup>
+    <!--选择支付方式-->
+    <popup
+      :visible="showPayWay"
+      :onClose="closePayWay"
+      :title="'支付方式'"
+      :width="'380px'"
+    >
+      <div class="pay-way">
+        <el-radio v-model="payWay" label="1">微信支付</el-radio>
+        <el-radio v-model="payWay" label="2">支付宝支付</el-radio>
+      </div>
+      <el-button @click="checkPayWay" type="primary">确定</el-button>
+    </popup>
+    <!--礼物支付二维码-->
+    <popup
+      :visible="showPayQrCode"
+      :onClose="closePayQrCode"
+      :title="'支付'"
+      :width="'300px'"
+    >
+      <div class="pay-img">
+        <img :src="payQrCode">
+      </div>
+    </popup>
     <SassAlert
       :visible="PopAlert.visible"
       :knowText="PopAlert.knowText"
@@ -401,6 +502,7 @@
   </div>
 </template>
 <script>
+import QRcode from 'qrcode';
 import { listenEvent } from './mixin/watch/listen-event';
 import noticeShow from '../../libs/notice/noticeShow';
 import Chat from '../../libs/chat';
@@ -410,7 +512,6 @@ import WatchDoc from '@/components/Doc/watch-doc';
 import streams from '../../libs/interactive/remoteStreams'; // 订阅流
 import Interactive from '../../libs/interactive'; // 互动
 import praise from '../../libs/praise'; // 点赞
-import gift from '../../libs/gift'; // 礼物
 // import question from '../../libs/question/saas'; // 问卷
 import reward from '../../libs/reward'; // 打赏
 import lottery from '../../libs/lottery'; // 抽奖
@@ -512,7 +613,6 @@ export default {
     streams,
     Interactive,
     praise,
-    gift,
     // question,
     Signin,
     reward,
@@ -528,6 +628,8 @@ export default {
 
   data () {
     return {
+      selectGiftId: '',
+      showGiftSend: false,
       isHavePacket: false,
       checkBrowserSupport: true, // shezhi
       checkBrowserShow: true, // 不支持的浏览器隐藏举手上麦
@@ -621,15 +723,28 @@ export default {
       selfOnline: 0,
       poster: '',
       streamendErrorPopupVisible: false, // stream-end事件提示
-      layout: 0
+      layout: 0,
+      giftList: [],
+      uploadDomain: '',
+      payWay: '1',
+      showPayWay: false,
+      showPayQrCode: false,
+      payQrCode: '',
+      showGiveMoney: true,
+      giveMoney: '',
+      giveMoneyIndex: 1,
+      giveMoneyPayWay: '1',
+      giveMoneyDes: '',
+      giveMoneyUrl: '',
+      showGiveMoneyQr: false
     };
   },
   created () {
-    this.userInfo = sessionOrLocal.getItem('user') ? JSON.parse(sessionOrLocal.getItem('user')) : {}
+    this.userInfo = sessionOrLocal.get('user') ? JSON.parse(sessionOrLocal.get('user')) : {}
     // 存取观看端标识
-    sessionOrLocal.setItem('watch', true);
+    sessionOrLocal.set('watch', true);
     // 存取是否登录的标识
-    sessionOrLocal.setItem('authInfo', JSON.stringify(this.authInfo));
+    sessionOrLocal.set('authInfo', JSON.stringify(this.authInfo));
   },
   watch: {
     roomId (newVal) {
@@ -649,6 +764,7 @@ export default {
           this.poster = val.webinar.image_url ? val.domains.upload + '/' + val.webinar.image_url : '';
           this.userModules = val.modules;
           this.isInteract = val.webinar.is_interact;
+          this.uploadDomain = val.domains.upload
         }
       },
       deep: true,
@@ -658,6 +774,7 @@ export default {
   mounted () {
     this.getInavInfo();
     this.redPacketInit();
+    
     this.FIRST = true;
     this.repeatStatus = false; // 防止重复点击上麦
     if (!browserSupport()) {
@@ -669,8 +786,112 @@ export default {
     if (chat) {
       this.chatTitle = chat.name;
     }
+    this.$nextTick(() => {
+      this.getList()
+    })
+    this.eventListener()
   },
   methods: {
+    eventListener () {
+      EventBus.$on('roomAllInfo', (msg) => {
+        if (msg.type == "gift_send_success") {
+          this.showGiftSend = false
+          this.showPayQrCode = false
+          this.showPayWay = false
+          this.selectGiftId = ''
+          this.payQrCode = ''
+          this.payWay = 1
+        }
+        if (msg.data.type == "gift_send_success") {
+          this.closeGiveMoneyQr = false
+          this.showGiveMoney = false
+          this.giveMoneyIndex = 1
+          this.giveMoneyPayWay = 1
+          this.giveMoney = ''
+          this.giveMoneyDes = ''
+        }
+      });
+    },
+    closeGiveMoneyQr () {
+      this.showGiveMoneyQr = false
+    },
+    handleGiveMoney () {
+      this.$fetch('seadAwardMsg', {
+        room_id: this.roomInfo.room_id,
+        reward_amount: Number(this.giveMoney).toFixed(2),
+        channel: this.giveMoneyPayWay == 1 ? 'WEIXIN' : 'ALIPAY',
+        service_code: 'QR_PAY',
+        describe: this.giveMoneyDes
+      }).then(res => {
+        if (res.code == 200 && res.data.pay_data) {
+          let a = QRcode.toDataURL(
+            res.data.pay_data,
+            (err, url) => {
+              this.showGiveMoneyQr = true
+              this.giveMoneyUrl = url
+            }
+          )
+        }
+      })
+    },
+    closeGiveMoney () {
+      this.showGiveMoney = false
+    },
+    openGiftPannel () {
+      this.showGiftSend = true
+    },
+    closePayWay () {
+      this.showPayWay = false
+    },
+    // 礼物支付获取二维码
+    checkPayWay (type) {
+      let str =''
+      if (this.payWay == 1) {
+        str = 'WEIXIN'
+      } else {
+        str = 'ALIPAY'
+      }
+      this.$fetch('sendGift', {
+        gift_id: this.selectGiftId,
+        channel: str,
+        service_code: 'QR_PAY',
+        room_id: this.roomInfo.room_id
+      }).then(res => {
+        let a = QRcode.toDataURL(
+          res.data.data.pay_data,
+          (err, url) => {
+            this.showPayQrCode = true
+            this.payQrCode = url
+          }
+        )
+      }).catch(e => {
+        this.$message.error(e.msg)
+      })
+    },
+    closePayQrCode () {
+      this.showPayQrCode = false
+    },
+    closeGiftsPannel () {
+      this.showGiftSend = false
+      this.selectGiftId = ''
+    },
+    chooseGift (index) {
+      this.selectGiftId = this.giftList[index].id
+    },
+    // 获取礼物列表
+    getList () {
+      // list
+      this.$fetch('giftList', {
+        room_id: this.roomInfo.room_id
+      }).then((res) => {
+        if (res.code === 200) {
+          // this.giftContentControl = !this.giftContentControl
+          // this.imageInfo = res.data ? res.data.list : []
+          // console.log('礼物列表',this.giftContentControl);
+          this.giftList = res.data.list
+        }
+      })
+    },
     getSpeakList () {
       this.$fetch('speakList', {
         room_id: this.bizInfo.room_id
@@ -723,7 +944,7 @@ export default {
               }
             }
           }, 4000);
-          sessionOrLocal.setItem('speakerDefinition', res.data.definition || '');
+          sessionOrLocal.set('speakerDefinition', res.data.definition || '');
         }
       }).catch (e => {
         console.log(e);
@@ -809,7 +1030,7 @@ export default {
         is_banned: this.isBanned, // 是否禁言 1是0否
         audience: true
       };
-      sessionOrLocal.setItem('vhall_chat_context', JSON.stringify(context));
+      sessionOrLocal.set('vhall_chat_context', JSON.stringify(context));
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
@@ -1180,7 +1401,11 @@ export default {
     },
     pushBarrage (txt) {
       this.$refs.vhallPlayer.addBarrage(txt);
-    }
+    },
+    selectGift () {
+      
+      this.showPayWay = true
+    } 
   }
 };
 </script>
@@ -1518,6 +1743,15 @@ export default {
       margin-top: 7px;
       cursor: pointer;
     }
+    .table-gift{
+      width: 32px;
+      height: 32px;
+      img {
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+      }
+    }
     .table-reward {
       width: 66px;
       height: 46px;
@@ -1543,6 +1777,183 @@ export default {
     span:nth-of-type(4) {
       color: #ff3333;
     }
+  }
+}
+.gifts-wrap{
+  width: 100%;
+  min-height: 330px;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 24px 50px 32px 50px;
+}
+.gifts-list{
+  width: 100%;
+  height: 320px;
+  overflow-y: scroll;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+
+  // background: red;
+  &:after{
+    clear: both;
+  }
+}
+.gift-item{
+  float: left;
+  width: 242px;
+  height: 90px;
+  background: #F5F5F5;
+  border-radius: 4px;
+  margin-right: 12px;
+  box-sizing: border-box;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #F5F5F5;
+  &.active {
+    border: 2px solid #FC5659;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+  .gift-cover{
+    width: 66px;
+    height: 66px;
+    display:inline-block;
+    margin-right: 12px;
+    img{
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .gift-info{
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+    color: #222222;
+    box-sizing: border-box;
+    padding: 10px 0px 0px 0px;
+    .name, .price {
+      display: block;
+    }
+    .name {
+      display: inline-block;
+      width: 120px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .price{
+      margin-top: 6px;
+      color: #FC5659;
+    }
+  }
+}
+.gifts-select{
+  width: 100%;
+  height: 34px;
+  text-align: center;
+  position: relative;
+  margin-top: 10px;
+  .sure-gift, .cancel-gift{
+    color: #fff;
+    display: inline-block;
+    width: 80px;
+    height: 34px;
+    background: #FC5659;
+    border-radius: 4px;
+    border: 1px solid #F3545B;
+    padding: 0px;
+    margin: 0px;
+    margin: 0px 6px;
+    span{
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      line-height: 34px;
+    }
+  }
+  .cancel-gift{
+    color: #555555;
+    background: #fff;
+    border: 1px solid #888888;
+  }
+  .gift-ids{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    font-size: 14px;
+    font-weight: 400;
+    color: #222222;
+    line-height: 34px;
+  }
+}
+.pay-way{
+  width: 100%;
+  height: 200px;
+  font-size: 20px;
+  color: #555;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  span{
+    margin: 0px 15px;
+  }
+}
+.pay-img{
+  width: 100%;
+  height: 220px;
+  background: #fff;
+  margin: auto;
+  img{
+    margin: 20px 60px;
+    width: 180px;
+    height: 180px;
+    display: inline-block;
+  }
+}
+.pay-content{
+  width: 100%;
+  height: 300px;
+  background: #fff;
+  box-sizing: border-box;
+  >div{
+    width: 100%;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  span, .give-money-input{
+    display: inline-block;
+    width: 200px;
+    height: 40px;
+    background: #F5F5F5;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    line-height: 40px;
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+    margin: 0px 10px;
+  }
+  .give-money-input{
+    outline: none;
+    border:none;
+  }
+  .describe{
+    width: 300px;
+    margin: 0px auto;
+  }
+  .pay-method{
+    padding-top: 20px;
   }
 }
 </style>
