@@ -145,6 +145,13 @@
               >下麦</el-button
             >
           </div>
+          <div class="table-lottery">
+            <lottery
+              :roomId="roomId"
+              :vssToken="vssToken"
+              ref="lotterySon"
+            ></lottery>
+          </div>
           <div class="player-active" v-show="!isEmbed">
             <div class="table-praise" v-if="userModules.like.show == 1">
               <praise :roomId="roomId" :times="roomInfo.like"></praise>
@@ -169,13 +176,6 @@
             </div>
             <!-- <span>打赏</span> -->
           </div>
-        </div>
-        <div class="table-lottery">
-          <lottery
-            :roomId="roomId"
-            :vssToken="vssToken"
-            ref="lotterySon"
-          ></lottery>
         </div>
         <!-- 活动工具栏Done -->
       </div>
@@ -775,7 +775,7 @@ export default {
   mounted () {
     this.getInavInfo();
     this.redPacketInit();
-    
+    this.getPrize()
     this.FIRST = true;
     this.repeatStatus = false; // 防止重复点击上麦
     if (!browserSupport()) {
@@ -893,6 +893,15 @@ export default {
           // this.imageInfo = res.data ? res.data.list : []
           // console.log('礼物列表',this.giftContentControl);
           this.giftList = res.data.list
+        }
+      })
+    },
+    getPrize(){
+      this.$fetch('getLivePrizeInfo', {webinar_id: this.ilId}).then(res=>{
+        if(res.code == 200){
+          console.warn(res.data, '获取');
+        }else{
+          this.$message.warning(res.msg)
         }
       })
     },
@@ -1407,9 +1416,9 @@ export default {
       this.$refs.vhallPlayer.addBarrage(txt);
     },
     selectGift () {
-      
+
       this.showPayWay = true
-    } 
+    }
   }
 };
 </script>
@@ -1731,15 +1740,16 @@ export default {
     margin-left: -52px;
   }
 
+  .table-lottery {
+    width: 40px;
+    height: 40px;
+    background: red;
+    display: inline-block;
+    margin-top: 4px;
+  }
   .player-active {
     float: right;
     margin-right: 20px;
-
-    .table-lottery {
-      float: right;
-      margin-top: 7px;
-      margin-right: 16px;
-    }
 
     .table-gift,
     .table-redCoupon {
@@ -1800,7 +1810,7 @@ export default {
   width: 100%;
   height: 320px;
   overflow-y: scroll;
-  scrollbar-width: none; 
+  scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
     display: none; /* Chrome Safari */

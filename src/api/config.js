@@ -180,9 +180,9 @@ const apis = {
   // 虚拟人数
   virtualSetSave: ['/v3/webinars/virtual/add', 'POST'], // 控制台-编辑虚拟人数配置 jia.li  √
   virtualGet: ['/v3/webinars/virtual/info', 'GET'], // 控制台-获取虚拟人数配virtual置 jia.li  √
-  virtualClientGet: ['/v3/webinars/virtual/get-base', 'GET'], // 发起端-获取虚拟观众基数 •••
-  virtualClientStart: ['/v3/webinars/virtual/start', 'GET'], // 发起端-开始增加虚拟观众 •••
-  virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众 •••
+  virtualClientGet: ['/v3/webinars/virtual/get-base', 'GET'], // 发起端-获取虚拟观众基数 √
+  virtualClientStart: ['/v3/webinars/virtual/start', 'GET'], // 发起端-开始增加虚拟观众 √
+  virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众 √
   // virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li •••废弃
 
   // 关键词
@@ -512,7 +512,11 @@ const apis = {
   getQeustionList: ['/v3/vss/survey/list-webinar-survey', 'POST'], // 获取问卷列表
 
   // 抽奖
-  saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息
+  saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息,
+  v3CreateLottery: ['/v3/vss/lottery/add', 'POST'], // 创建抽奖
+  v3SearchUser: ['/v3/vss/lottery/search', 'GET'], // 符合抽奖条件的用户
+  v3CheckLottery: ['/v3/vss/lottery/check', 'POST'], // 检测抽奖
+  v3CreateLottery3: ['/v3/vss/lottery/add', 'POST'], // 创建抽奖
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
   // 签到
@@ -539,6 +543,7 @@ const apis = {
   v3Revoke: ['/v3/interacts/qa/revoke-reply', 'POST'], // 主持人撤销回复
   v3GetPrivateList: ['/v3/interacts/chat-private/get-rank-list', 'POST'], // 获取私聊列表
   v3GetPrivCon: ['/v3/interacts/chat-private/get-list', 'POST'], // 获取私聊内容
+  v3SetUser: ['/v3/interacts/chat-private/set-rank-list', 'POST'], // 设置联系人列表
 
   // 发起端所有新增
   v3SendNotice: ['/v3/interacts/chat/send-notice-message', 'POST'], // 发送公告  √
