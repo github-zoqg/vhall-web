@@ -283,39 +283,23 @@ export default {
       if (this.isPrivate) {
         if (!this.hostJoinId) return this.$message('需要@ 私聊对象');
         const msg = this.trimPlaceHolder(this.inputValue.trim());
-        this.$fetch('sendPrivateMsg', {
-          room_id: this.roomId,
-          client: 'h5_browser', // TODO:
-          body: JSON.stringify({ text: msg }),
-          to: this.hostJoinId
-        }).then((res) => {
-          if (res.code == 200) {
-            // let chatContext = sessionStorage.getItem('vhall_chat_context')
-            // chatContext = chatContext ? JSON.parse(chatContext) : {}
-            // data.text_content = textToEmojiText(data.text_content)
-            // const tempData = new Msg({
-            //   avatar: getAvatar(chatContext.avatar),
-            //   nickName: chatContext.nickname,
-            //   type: 'text',
-            //   content: data,
-            //   sendId: this.userInfo.third_party_user_id,
-            //   sendTime: formatTime(new Date()),
-            //   roleName: this.userInfo.role_name,
-            //   client: 'mobile',
-            //   self: true
-            //   // showTime: handleTime(item.sendTime)
-            // })
-            // this.privateChatList.push(tempData)
-            // this.scrollTop()
-            this.privateMessages.push({
-              data: this.emojiToText(msg), // TODO:
-              context: { user_name: this.hostName, sender_id: this.hostJoinId }
-            });
-            this.scroll.refresh();
+        let _data = this.emojiToText(msg)
+        let _content = { user_name: this.hostName, sender_id: this.hostJoinId }
+        window.chatSDK.emit(_data, _content)
+        if(!window.sessionStorage.getItem('localJoinList')){
+          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].id))
+          this.$fetch('v3SetUser', {room_id: this.userInfo.interact.room_id, webinar_id: this.webinar_id, to: this.userList[this.acrivePrivate].id})
+        }else{
+          let _arr = window.sessionStorage.getItem('localJoinList')
+           if(_arr.indexOf(this.userList[this.acrivePrivate].id) == -1){
+            window.sessionStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].id}`)
           }
-        }).catch(() => {
-          this.$message.error('发送失败');
+        }
+        this.privateMessages.push({
+          data: _data, // TODO:
+          context: _content
         });
+        this.scroll.refresh();
       } else {
         if (this.questionGap > 0) {
           this.lock = sessionStorage.getItem('QALock');
