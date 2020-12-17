@@ -84,12 +84,12 @@
               <label>嘉宾权限</label>
               <el-button size="mini" round @click="savePremHandle('guest')">保存</el-button>
             </div>
-            <div class="role-qx-list">
+            <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
               <el-checkbox v-model="item.check"
-                           true-label=1 false-label=0
-                           :checked="Number(item.check) == 1? true : false"
+                           :true-label="1"
+                           :false-label="0"
                            v-for="(item, key, ins) in privilegeVo.permission_data.guest"
-                           :key="key + ins">{{ item.label }}</el-checkbox>
+                           :key="`guest_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
             </div>
           </div>
           <div>
@@ -127,13 +127,13 @@
               <label>助理权限</label>
               <el-button size="mini" round @click="savePremHandle('assistant')">保存</el-button>
             </div>
-            <div class="role-qx-list">
+            <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
               <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
               <el-checkbox v-model="item.check"
-                           true-label=1 false-label=0
-                           :checked="Number(item.check) == 1? true : false"
-                           v-for="(item, key, ins) in privilegeVo.permission_data.assistant"
-                           :key="key + ins">{{ item.label }}</el-checkbox>
+                           :true-label="1"
+                           :false-label="0"
+                           v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []"
+                           :key="`assistant_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
             </div>
           </div>
           <div>
@@ -264,11 +264,12 @@ export default {
         }).then(res => {
           if (res && res.code === 200 && Number(res.data.is_privilege) === 1) {
             this.$message.success('开启成功');
-            this.roleSwitch = Number(!this.roleSwitch);
+            this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
           }else if (res && res.code === 200 && Number(res.data.is_privilege) === 0) {
             this.$message.success('关闭成功');
+            this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
           } else {
@@ -352,10 +353,7 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
-            this.roleSwitch = res.data.is_privilege;
-            this.$nextTick(() => {
-              this.privilegeVo = res.data;
-            })
+            this.privilegeVo = res.data;
           } else {
             this.privilegeVo = {};
           }
@@ -379,8 +377,8 @@ export default {
         clipboard.destroy();
       });
     },
-    async getWebinarInfo() {
-      await this.$fetch('getWebinarInfo', {
+    getWebinarInfo() {
+      this.$fetch('getWebinarInfo', {
         webinar_id: this.$route.params.str,
       }).then(res => {
         if(res && res.code === 200 && res.data) {
