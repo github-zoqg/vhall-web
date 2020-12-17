@@ -11,28 +11,17 @@
     </div>
     <div class="v-cumulativenumber">
       <p class="v-numbers">
-        {{ addOnlineNum }}人在线<span class="v-line"></span>{{ addPv }}次观看
+        在线{{ addOnlineNum }}人<span class="v-line"></span>热度 {{ addPv }}
       </p>
       <p class="current-count" v-if="addCount == 0">
-        暂未添加虚拟观众
+        暂未添加虚拟人数
       </p>
-      <p class="current-count" v-else>已累计添加{{ addCount }}次虚拟观众</p>
+      <p class="current-count" v-else>已累计添加{{ addCount }}次虚拟人数</p>
     </div>
     <div class="v-form">
       <div class="v-item">
-        执行时间：<el-select
-          v-model="input.time"
-          placeholder="请选择"
-          :disabled="!addStatus"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option> </el-select
-        >分钟
+        执行时间：<el-input v-model="runTime" placeholder="1 - 120" :disabled="!addStatus" ></el-input>分钟
+        <p class="v-error" v-if="runTimeObj.err">{{ runTimeObj.err }}</p>
       </div>
       <div class="v-item">
         在线人数：<el-input
@@ -79,24 +68,7 @@ export default {
   },
   data () {
     return {
-      options: [
-        {
-          value: 5,
-          label: '5'
-        },
-        {
-          value: 10,
-          label: '10'
-        },
-        {
-          value: 15,
-          label: '15'
-        },
-        {
-          value: 30,
-          label: '30'
-        }
-      ],
+      runTime: '',
       addCount: 0,
       QRCodeVisible: false,
       input: {
@@ -123,11 +95,23 @@ export default {
         onlineNum: true,
         pv: true
       },
+      runTimeObj: {
+        err: ''
+      },
       onlineNumCountTo: new CountTo(),
       pvCountTo: new CountTo()
     };
   },
   watch: {
+    runTime (newVal, oldVal) {
+      let re = /^\d+$/;
+      newVal = Number(newVal);
+      if (!re.test(newVal) || newVal > 120 || newVal <= 0) {
+        this.runTimeObj.err = '请输入1~120之间的正整数';
+      }else{
+        this.runTimeObj.err = ''
+      }
+    },
     'input.onlineNum' (newVal, oldVal) {
       let re = /^\d+$/;
       newVal = Number(newVal);
@@ -162,7 +146,7 @@ export default {
     },
     addStatus (newVal) {
       if (newVal) {
-        this.input.time = 5;
+        this.runTime = '';
         this.input.onlineNum = 80;
         this.input.pv = 100;
       }
@@ -170,6 +154,7 @@ export default {
   },
   computed: {
     addOnlineNum () {
+      console.warn(this.preson.onlineNum ,  this.preson.baseOnlineNum, '在线人数');
       return Number(this.preson.onlineNum + this.preson.baseOnlineNum);
     },
     addPv () {
@@ -182,39 +167,35 @@ export default {
   },
   methods: {
     addNumFun () {
-      if (!this.error.onlineNum && !this.error.pv) {
+      if (!this.error.onlineNum && !this.error.pv && !this.runTimeObj.err) {
         this.status.onlineNum = false;
         this.status.pv = false;
-        this.$vhallFetch('startBaseNum', {
-          params_verify_token: this.params_verify_token,
+        this.$fetch('virtualClientStart', {
           webinar_id: this.ilId
         }).then(res => {
           this.addCount++;
         });
         this.onlineNumCountTo.start(
-          0,
-          this.input.pv,
-          Number(this.input.time) * 60,
-          0.2,
+          0, this.input.pv, Number(this.runTime) * 60, 0.2,
           (count, lastStep, step) => {
             // pv修改
-            this.$vhallFetch(
-              'updateBaseNum',
+            this.$fetch(
+              'virtualAccumulation',
               {
                 params_verify_token: this.params_verify_token,
                 webinar_id: this.ilId,
-                update_pv: count,
-                update_online_num: 0
-              },
-              {},
-              false
-            )
+                pv: count,
+                online: 0
+              }, {}, false )
               .then(res => {
-                if (lastStep) {
-                  this.status.pv = true;
+                if(res.code == 200){
+                  if (lastStep) {
+                    this.status.pv = true;
+                  }
+                  this.preson.basePv = Number(this.preson.basePv) + Number(count);
+                }else{
+                  this.$message.warning(res.msg)
                 }
-                this.preson.basePv = Number(this.preson.basePv) + Number(count);
-                // console.log('pv success' + count)
               })
               .catch(() => {
                 this.status.pv = true;
@@ -222,31 +203,27 @@ export default {
               });
           }
         );
-        this.pvCountTo.start(
-          0,
-          this.input.onlineNum,
-          Number(this.input.time) * 60,
-          0.2,
+        this.pvCountTo.start( 0, this.input.onlineNum, Number(this.runTime) * 60, 0.2,
           (count, lastStep, step) => {
             // onlineNum修改
-            this.$vhallFetch(
-              'updateBaseNum',
+            console.warn('onlineNum修改');
+            this.$fetch('virtualAccumulation',
               {
                 params_verify_token: this.params_verify_token,
                 webinar_id: this.ilId,
-                update_online_num: count,
-                update_pv: 0
-              },
-              {},
-              false
-            )
+                online: count,
+                pv: 0
+              },{}, false)
               .then(res => {
-                if (lastStep) {
-                  this.status.onlineNum = true;
+                console.warn('在线人数成功---', res.data);
+                if(res.code == 200){
+                  if (lastStep) {
+                    this.status.onlineNum = true;
+                  }
+                  this.preson.baseOnlineNum = Number(this.preson.baseOnlineNum) + Number(count);
+                }else{
+                  this.$message.warning(res.msg)
                 }
-                this.preson.baseOnlineNum =
-                  Number(this.preson.baseOnlineNum) + Number(count);
-                // console.log('onlineNum success' + count)
               })
               .catch(() => {
                 this.status.pv = true;
@@ -263,16 +240,20 @@ export default {
       this.status.onlineNum = true;
     },
     getBaseNum () {
-      this.$vhallFetch('getBaseNum', {
-        params_verify_token: this.params_verify_token,
+      this.$fetch('virtualClientGet', {
         webinar_id: this.ilId
       }).then(res => {
-        this.preson.pv = res.data.pv;
-        this.preson.basePv = res.data.base_pv;
-        this.preson.onlineNum = res.data.online_num;
-        this.preson.baseOnlineNum = res.data.base_online_num;
-        this.preson.baseTime = res.data.base_time;
-        this.addCount = res.data.base_time;
+        console.warn(res.data, '关于虚拟人数');
+        if(res.code  == 200){
+          this.preson.pv = res.data.pv;
+          this.preson.basePv = res.data.base_pv;
+          this.preson.baseTime = res.data.base_time;
+          this.addCount = res.data.base_time;
+          this.preson.onlineNum = res.data.online;
+          this.preson.baseOnlineNum = res.data.base_online;
+        }else{
+          this.$message.warning(res.msg)
+        }
       });
     }
   },

@@ -1,9 +1,9 @@
 <template>
-  <div :class="['signFormBox', isEntryForm ? 'signFormBoxHid' : '']">
-    <div :class="['signWrap', isEntryForm ? 'signWrapHid' : '']">
+  <div :class="['signFormBox', isEntryForm || isPreview ? 'signFormBoxHid' : '']">
+    <div :class="['signWrap', isEntryForm || isPreview ? 'signWrapHid' : '']">
       <div class="entryFormBox">
         <header>
-          <img :src="`${ Env.staticLinkVo.uploadBaseUrl }sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`" alt="">
+          <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
         </header>
         <article>
           <h1 class="pageTitle">{{ baseInfo.title }}</h1>
@@ -27,6 +27,8 @@
                   v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
                 >
                   <el-input
+                    :maxlength="question.type == 0 ? '' : 60"
+                    :show-word-limit="question.type != 0"
                     v-model="form[question.id]"
                     :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
                 </template>
@@ -40,19 +42,25 @@
                       <el-radio label="女" name="gender"></el-radio>
                     </template>
                     <template v-else>
-                      <el-radio
-                        v-for="radioItem in question.items"
-                        :key="radioItem.id"
-                        :label="radioItem.id"
-                        :name="question.id + ''"
-                      >
-                      {{ radioItem.type != 1 ? radioItem.subject : ''}}
+                      <div v-for="radioItem in question.items" :key="radioItem.id">
+                        <el-radio
+                          :label="radioItem.id"
+                          :name="question.id + ''"
+                        >
+                          {{ radioItem.subject }}
+                        </el-radio>
                         <template v-if="radioItem.type === 1">
-                          其他
-                          <el-input v-model="form[`${question.id}${radioItem.id}`]" class="noFull radioInput"></el-input>
-                          <br/>
+                          <el-input
+                            maxlength="60"
+                            show-word-limit
+                            placeholder="请输入描述内容"
+                            v-show="form[question.id] == radioItem.id"
+                            style="margin-top: 10px;"
+                            v-model="form[`${question.id}${radioItem.id}`]"
+                            class="radioInput"
+                          ></el-input>
                         </template>
-                      </el-radio>
+                      </div>
                     </template>
                   </el-radio-group>
                 </template>
@@ -61,19 +69,25 @@
                   v-if="question.type === 3"
                 >
                   <el-checkbox-group v-model="form[question.id]">
-                    <el-checkbox
-                      v-for="checkItem in question.items"
-                      :key="checkItem.id"
-                      :label="checkItem.id"
-                      :name="question.id + ''"
-                    >
-                    {{ checkItem.type != 1 ? checkItem.subject : ''}}
+                    <div v-for="checkItem in question.items" :key="checkItem.id">
+                      <el-checkbox
+                        :label="checkItem.id"
+                        :name="question.id + ''"
+                      >
+                      {{ checkItem.subject }}
+                      </el-checkbox>
                       <template v-if="checkItem.type === 1">
-                        其他
-                        <el-input v-model="form[`${question.id}${checkItem.id}`]" class="noFull radioInput"></el-input>
-                        <br/>
+                        <el-input
+                          maxlength="60"
+                          show-word-limit
+                          placeholder="请输入描述内容"
+                          v-show="form[question.id].some(id => id == checkItem.id)"
+                          style="margin-top: 10px;"
+                          v-model="form[`${question.id}${checkItem.id}`]"
+                          class="radioInput"
+                        ></el-input>
                       </template>
-                    </el-checkbox>
+                    </div>
                   </el-checkbox-group>
                 </template>
                 <!-- 下拉 -->
@@ -135,7 +149,11 @@
               </el-form-item>
               <el-form-item :required="false" prop="code">
                 <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码">
-                  <el-button :disabled="time !== 60" class="no-border" size="mini" slot="append" @click="getDyCode(true)">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+                  <el-button
+                    :disabled="time !== 60 || isPreview"
+                    class="no-border" size="mini" slot="append"
+                    @click="getDyCode(true)"
+                  >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
                 </el-input>
               </el-form-item>
               <el-form-item :prop="provicy.id + ''">
@@ -148,7 +166,7 @@
                   </el-checkbox>
                 </template>
               </el-form-item>
-              <el-button :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+              <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
             </el-form>
           </template>
 
@@ -156,7 +174,6 @@
           <template>
             <el-form class="entryForm" v-show="tabs === 2" :model="verifyForm" ref="verifyForm" :rules="verifyRules">
               <el-form-item
-                required
                 label="请输入报名时您填写的手机号"
                 prop="phone"
               >
@@ -170,10 +187,16 @@
               </el-form-item>
               <el-form-item prop="code">
                 <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码">
-                  <el-button class="no-border" size="mini" slot="append" @click="getDyCode(false)">{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
+                  <el-button
+                    :disabled="isPreview"
+                    class="no-border"
+                    size="mini"
+                    slot="append"
+                    @click="getDyCode(false)"
+                  >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
                 </el-input>
               </el-form-item>
-              <el-button :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
+              <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
             </el-form>
           </template>
         </article>
@@ -222,9 +245,6 @@
                 }
               })
             }
-            // if (item.items && item.items.length) {
-            //   item.items.some(elem => elem.type === 1) && (form[`${item.id}other`] = '');
-            // }
 
             // 生成验证规则
             if (item.type === 0 && item.default_type === 1) {
@@ -321,8 +341,9 @@
     data() {
       return {
         Env: Env,
-        webinar_id: this.$route.params.id,
+        webinar_id: this.$route.params.id || this.$route.params.str,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
+        isPreview: this.$route.path.startsWith('/live/signup'),
         colorIndex: 'red',
         tabs: 1,
         province: '',
@@ -361,19 +382,18 @@
           "theme_color": "red",
           "tab_verify_title": "验证",
           "tab_form_title": "用户报名",
-          "title": "ddassd",
           "intro": "",
-          "cover": "sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png"
         },
         verifyForm: {
           phone: '',
           imgCode: ''
         },
         verifyRules: {
+
           phone: {
             required: true,
-            message: '请输入手机号',
-            trigger: 'blur'
+            trigger: 'blur',
+            validator: validPhone
           },
           code: {
             required: true,
@@ -390,6 +410,9 @@
       this.callCaptcha('#setCaptcha1');
     },
     methods: {
+      isLimit(question) {
+        return
+      },
       closePreview() {
         this.$emit('closeSignUp');
       },
@@ -496,19 +519,20 @@
       // 提交表单
       submitForm() {
         this.$refs['form'].validate((valid) => {
+          console.log(valid)
           if (valid) {
             this.formHandler()
             const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
             const nameItem = this.list.find(item => item.type === 0 && item.default_type === 1);
             const options = {
               webinar_id: this.webinar_id,
-              phone: this.form[phoneItem.id],
+              // phone: this.form[phoneItem.id],
               verify_code: this.form.code,
               form: JSON.stringify(this.answer),
-              report: JSON.stringify({
-                phone: this.form[phoneItem.id],
-                real_name: this.form[nameItem.id]
-              })
+              // report: JSON.stringify({
+              //   phone: this.form[phoneItem.id],
+              //   real_name: this.form[nameItem.id]
+              // })
             }
             this.$route.query.refer && (options.refer = this.$route.query.refer)
             this.$fetch('regAnswerSubmit', options).then(res => {
@@ -564,7 +588,9 @@
       formHandler() {
         const answer = {}
         this.list.forEach(item => {
-          if (item.type === 0) {
+          if (!this.form[item.id] || this.form[item.id] == []) {
+            console.log('空答案')
+          } else if (item.type === 0) {
             // 系统题目
             !answer.default && (answer.default = []);
             answer.default.push({
@@ -694,8 +720,8 @@
         }).then(res => {
           // 按照 order_num 从小到大排序
           const list = res.data.ques_list.sort(compare('order_num'));
-          this.currentPhone = res.data.phone;
-          res.data.phone && (this.verifyForm.phone = res.data.phone)
+          !this.isPreview && (this.currentPhone = res.data.phone);
+          !this.isPreview && res.data.phone && (this.verifyForm.phone = res.data.phone)
           this.list = list;
           console.log(list);
           // 隐私声明格式处理
@@ -762,7 +788,7 @@
       height: 843px;
       &.signWrapHid{
         height: auto;
-        border: 1px solid #ccc;
+        box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
       }
       .entryFormBox {
         width: 840px;
@@ -772,10 +798,8 @@
       }
       header{
         width: 100%;
-        height: 240px;
         img{
           width: 100%;
-          height: 100%;
         }
       }
       .pageTitle{
@@ -900,28 +924,34 @@
       }
     }
     .entryForm .blue {
-      background: @blue;
-      border-color: @blue;
+      background: @blue!important;
+      border-color: @blue!important;
       &:hover {
-        background: @blue;
-        border-color: @blue;
+        background: @blue!important;
+        border-color: @blue!important;
       }
     }
     .entryForm .red {
-      background: @red;
-      border-color: @red;
+      background: @red!important;
+      border-color: @red!important;
       &:hover {
-        background: @red;
-        border-color: @red;
+        background: @red!important;
+        border-color: @red!important;
       }
     }
     .entryForm .purple {
-      background: @purple;
-      border-color: @purple;
+      background: @purple!important;
+      border-color: @purple!important;
       &:hover {
-        background: @purple;
-        border-color: @purple;
+        background: @purple!important;
+        border-color: @purple!important;
       }
     }
+  }
+</style>
+<style lang="less">
+  .el-select-dropdown__list .el-select-dropdown__item {
+    max-width: 100%!important;
+    width: 100%;
   }
 </style>

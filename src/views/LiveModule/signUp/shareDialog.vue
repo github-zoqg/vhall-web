@@ -4,7 +4,7 @@
       title="分享"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      width="30%">
+      width="570px">
       <div class="content">
         <div v-show="!shareSwtich" class="content-wrap"></div>
         <p>
@@ -78,7 +78,7 @@ export default {
       dialogVisible: false,
       wxDialogVisible: false,
       shareSwtich: true,
-      link: `${process.env.VUE_APP_WEB_URL}/entryform/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WEB_URL}entryform/${this.$route.params.str}`,
       wxUrl: ''
     };
   },
