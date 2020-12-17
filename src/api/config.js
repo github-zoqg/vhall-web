@@ -454,7 +454,6 @@ const apis = {
   // 观看端
   likeTotal: ['/v3/interacts/like/get-room-like', 'POST'], // 房间内点赞总数
   queryAdsInfo: ['/v3/interacts/recommend-adv/watch-get-adv-list', 'GET'], // 获取广告信息 •••
-  getSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 获取皮肤
   getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
   attention: ['/v3/users/attentions/create', 'POST'], // 关注
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注

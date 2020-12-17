@@ -629,7 +629,6 @@ export default {
     this.getGoodsInfo();
   },
   mounted() {
-    window.themeRed = '#ffffff'
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
@@ -648,10 +647,10 @@ export default {
       const ratio = 16 / 9;
       const docHeight = (width - 294) / ratio + 46;
       document.querySelector('.watchBox').style.height = `${docHeight}px`;
-      console.log(909, docHeight)
     });
   },
   beforeDestroy() {
+    window.removeEventListener('resize', () => {})
     this.timer && clearInterval(this.timer)
   },
   methods:{
@@ -817,7 +816,6 @@ export default {
         }
         this.getBtnText()
         this.$nextTick(() => {
-          console.log(99, this.theme)
           if (this.theme) {
             this.setCustomTheme(this.theme)
           }

@@ -813,6 +813,13 @@ export default {
     }
   },
   beforeDestroy() {
+    window.removeEventListener('resize', () => {})
+    window.removeEventListener('fullscreenchange', () => {})
+    window.removeEventListener('webkitfullscreenchange', () => {})
+    window.removeEventListener('mozfullscreenchange', () => {})
+    window.removeEventListener('msfullscreenchange', () => {})
+    window.removeEventListener('MSFullscreenChange', () => {})
+    this.$loadingStatus.close()
     if (this.timeinterval) clearInterval(this.timeinterval)
     this.timeinterval = null
     window.vhallReport && window.vhallReport.report('LEAVE_WATCH')
@@ -849,7 +856,7 @@ export default {
       try {
         await this.getRoomInfo() // 初始化房间信息
         if (this.roomData && this.roomData.status == 'subscribe') {
-          this.$router.push({name: 'list', params: {id: this.$route.params.il_id}})
+          this.$router.push({name: 'Subscribe', params: {id: this.$route.params.il_id}})
           return
         }
         if (this.roomData && this.roomData.status == 'live') {
@@ -1573,7 +1580,7 @@ export default {
         },
         user: {
           avatar: data.join_info.avatar,
-          nickname: data.join_info.nickname,
+          nick_name: data.join_info.nickname,
           role_name: 2, // TODO:
           saas_join_id: data.join_info.join_id,
           third_party_user_id: data.join_info.third_party_user_id,
