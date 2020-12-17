@@ -72,13 +72,13 @@ const apis = {
   getScreenPosterInfo: ['/v3/interacts/adv/watch-get-screen-poster', 'GET'], //直播设置_观看端_获取开屏海报 •••接口有问题
 
   //  邀请卡
-  getCardDetailInfo: ['/101/v3/interacts/invite-card/get-info', 'POST', 'mock'], //获取邀请卡详情
-  setCardStatus: ['/101/v3/interacts/invite-card/set-card-status', 'POST', 'mock'], //开启/关闭邀请卡
+  getCardDetailInfo: ['/v3/interacts/invite-card/get-info', 'POST'], //获取邀请卡详情
+  setCardStatus: ['/v3/interacts/invite-card/set-card-status', 'POST'], //开启/关闭邀请卡
   editCardStatus: ['/v3/interacts/invite-card/edit', 'POST'], //修改邀请卡信息
-  createRelation: ['/101/v3/interacts/invite-card/create-invite-self-relation', 'POST', 'mock'], //创建邀请人邀请自己的邀请关系
-  createOtherRelation: ['/101/v3/interacts/invite-card/create-invite-othor-relation', 'POST', 'mock'], //创建邀请人邀请被邀请人的邀请关系
-  getCardList: ['/101/v3/interacts/invite-card/get-list', 'POST', 'mock'], //获取邀请列表
-  getTopList: ['/101/v3/interacts/invite-card/get-top-list', 'POST', 'mock'], //获取邀请榜
+  createRelation: ['/v3/interacts/invite-card/create-invite-self-relation', 'POST'], //创建邀请人邀请自己的邀请关系
+  createOtherRelation: ['/v3/interacts/invite-card/create-invite-othor-relation', 'POST'], //创建邀请人邀请被邀请人的邀请关系
+  getCardList: ['/v3/interacts/invite-card/get-list', 'POST'], //获取邀请列表
+  getTopList: ['/v3/interacts/invite-card/get-top-list', 'POST'], //获取邀请榜
 
 
   // 直播模块
