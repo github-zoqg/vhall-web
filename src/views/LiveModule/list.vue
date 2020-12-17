@@ -180,7 +180,7 @@ export default {
         limit: this.pageSize,
         order_type: this.orderBy,
         title: this.keyWords,
-        webinar_type: this.liveStatus
+        webinar_state: this.liveStatus
       };
       this.loading = true;
       this.$fetch('liveList', this.$params(data)).then(res=>{

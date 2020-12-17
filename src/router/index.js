@@ -93,8 +93,6 @@ router.beforeEach((to, from, next) => {
           scene_id: 1
         };
         fetch('callbackUserInfo', params).then(res => {
-          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
-          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
           sessionOrLocal.set('token', res.data.token, 'localStorage');
           next({path: '/'})
         });
