@@ -174,20 +174,6 @@ export default {
           console.log('礼物列表',this.giftContentControl);
         }
       })
-      // if (this.radio == 1) {
-      //     let link = document.createElement('a')
-      //     link.href = res.data.pay_data
-      //     link.target = '_blank'
-      //     link.click()
-      // } else {
-      //     let a = QRcode.toDataURL(
-      //     res.data.pay_data,
-      //     (err, url) => {
-      //     this.wechatPay = true
-      //     this.wechatPayImg = url
-      //     }
-      //     )
-      // }
     },
     // 送礼物
     sendGift (item) {

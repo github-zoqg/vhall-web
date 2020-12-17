@@ -105,9 +105,7 @@
             </div>
             <div class="messChat">
               <el-button v-show="!privateFlag" @click="messClick" size='small' type="success">私聊</el-button>
-              <template v-if="privateFlag">
-                <Private ref="private" :userInfo='baseObj' :webinar_id='webinar_id' :onlyChatMess='onlyChatMess' :priteChatList='priteChatList' @close='privateClose' @sendMsg='privateSendMsg'></Private>
-              </template>
+              <Private v-if="privateFlag" ref="private" :userInfo='baseObj' :webinar_id='webinar_id' :onlyChatMess='onlyChatMess' :priteChatList='priteChatList' @close='privateClose' @sendMsg='privateSendMsg'></Private>
             </div>
           </div>
         </div>
@@ -387,6 +385,11 @@ export default {
     messClick(){
       console.warn('点击的升级');
       this.privateFlag = true
+      this.$nextTick(()=>{
+        if(this.priteChatList.length!=0){
+          this.$refs.private.getDefaultContent(this.priteChatList[0].id, 'father')
+        }
+      })
     },
     privateClose(){
       this.privateFlag = false
@@ -489,7 +492,9 @@ export default {
           if(res.code == 200){
             console.warn('开始准备', res);
             this.priteChatList = res.data.list
-            this.$refs.private.getDefaultContent(res.data.list[0].id)
+            // if(res.data.list.length!=0){
+            //   this.$refs.private.getDefaultContent(res.data.list[0].id, 'father')
+            // }
           }else{
             this.$message.warning(res.msg)
           }

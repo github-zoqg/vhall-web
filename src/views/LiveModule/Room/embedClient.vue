@@ -608,9 +608,6 @@ export default {
               res.data.domains.upload + '/' + res.data.player.watermark.img_url
           }
           this.roominfo = res.data
-          if (this.roominfo.modules && this.roominfo.modules.barrage) {
-            this.roominfo.player.barrage = this.roominfo.modules.barrage.hide
-          }
           // 初始化数据上报
           this.initVHallReport(res.data.report_token)
           this.joinId = this.roominfo.user.join_id

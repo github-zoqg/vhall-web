@@ -19,7 +19,7 @@
         <div class="login-info-wrap" v-else>
           <div @click="menuListShow = !menuListShow" class="loginUserInfo">
             <img
-              :src="roomData && roomData.join_info ? roomData.join_info.avatar : '//cnstatic01.e.vhall.com/static/img/head50.jpg'"
+              :src="roomData && roomData.join_info && roomData.join_info.avatar ? roomData.join_info.avatar : '//cnstatic01.e.vhall.com/static/img/head50.jpg'"
               alt
             />
             <div class="login-nickName">
@@ -379,7 +379,7 @@
                   <p class="sub">秒</p>
                 </div>
               </div>
-              <!-- <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p> -->
+              <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
               <div class="bottom">
                 <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
@@ -556,7 +556,7 @@ export default {
       hostName: '',
       hostUrl: '',
       focusCount: 0, // 关注人数
-      // subscribe_count: 0,
+      subscribe_count: 0,
       shadeShow: false,
       // 预约计时
       time: '',
@@ -724,8 +724,20 @@ export default {
       let wrap = document.querySelector('.wrap')
       let register = document.querySelector('.title-right .button-register')
       let follow = document.querySelector('.focusBtn')
+      let activeRecommnd = document.querySelector('.active-second')
       let title = document.querySelector('.active-second>h3')
       let webinarStr = document.querySelector('.topInfo .tag')
+      let joinBtn = document.querySelector('.watchContainer .watchBox .el-button')
+      setTimeout(() => {
+        let sell = document.querySelector('.sell-goods')
+        let sellBtn = document.querySelector('.sell-goods .el-carousel__item .selling')
+        if (sellBtn) {
+          sellBtn.style.background = pageStyle
+        }
+        if (sell) {
+          sell.style.background = bgColor
+        }
+      }, 1000)
       let bc = document.querySelector('.area')
       if (wrap) {
         wrap.style.background = bgColor
@@ -735,6 +747,12 @@ export default {
       }
       if (follow) {
         follow.style.background = pageStyle
+      }
+      if (joinBtn) {
+        joinBtn.style.background = pageStyle
+      }
+      if (activeRecommnd) {
+        activeRecommnd.style.background = bgColor
       }
       if (title) {
         title.style.borderBottom = `2px solid ${pageStyle}`
@@ -791,6 +809,7 @@ export default {
         this.accountRoute = window.location.origin + '/finance/info'
         this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
         this.myAccountRoute = window.location.origin + '/account/info'
+        this.subscribe_count = this.roomData.subscribe_num
         if (this.signInfo) {
           this.logo = {
             href: this.signInfo.skip_url, // 跳转连接
@@ -807,10 +826,10 @@ export default {
           visitor_id: sessionStorage.getItem('visitor_id') ? sessionStorage.getItem('visitor_id') : ''
         }
         if (this.publicAdv) {
-          if (this.publicAdv.alert_type == 1) {
+          if (this.publicAdv.alert_type == 0) {
             this.showOfficialAccountQRCode = true
           }
-          if (this.publicAdv.status == 1) {
+          if (this.publicAdv.status == 0) {
             this.showOfficialAccountMiniQRCode = true
           }
         }
@@ -2183,6 +2202,10 @@ export default {
     }
     .right{
       float: right;
+      width: auto;
+      display: flex;
+      flex-direction:row;
+      align-items: center;
     }
   }
   .watchBox{

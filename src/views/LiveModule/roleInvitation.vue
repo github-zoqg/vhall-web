@@ -84,16 +84,16 @@
               <label>嘉宾权限</label>
               <el-button size="mini" round @click="savePremHandle('guest')">保存</el-button>
             </div>
-            <div class="role-qx-list">
+            <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
               <el-checkbox v-model="item.check"
-                           true-label=1 false-label=0
-                           :checked="Number(item.check) == 1? true : false"
+                           :true-label="1"
+                           :false-label="0"
                            v-for="(item, key, ins) in privilegeVo.permission_data.guest"
-                           :key="key + ins">{{ item.label }}</el-checkbox>
+                           :key="`guest_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
             </div>
           </div>
           <div>
-            <el-button type="primary" v-preventReClick @click="copy(urlText2)" class="copy-text">邀请</el-button>
+            <el-button  type="primary" round v-preventReClick @click="copy(urlText2)" class="copy-text">邀请</el-button>
           </div>
         </div>
         <!-- 助理 -->
@@ -127,17 +127,17 @@
               <label>助理权限</label>
               <el-button size="mini" round @click="savePremHandle('assistant')">保存</el-button>
             </div>
-            <div class="role-qx-list">
+            <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
               <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
               <el-checkbox v-model="item.check"
-                           true-label=1 false-label=0
-                           :checked="Number(item.check) == 1? true : false"
-                           v-for="(item, key, ins) in privilegeVo.permission_data.assistant"
-                           :key="key + ins">{{ item.label }}</el-checkbox>
+                           :true-label="1"
+                           :false-label="0"
+                           v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []"
+                           :key="`assistant_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
             </div>
           </div>
           <div>
-            <el-button type="primary" v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
           </div>
         </div>
       </div>
@@ -222,7 +222,7 @@ export default {
 直播ID：${this.privilegeVo.webinar_id}
 开始时间：${this.privilegeVo.start_time}
 主持人口令：${this.privilegeVo && this.privilegeVo.host_password ? this.privilegeVo.host_password : '未设置'}
-加入链接：${'/mywebinar/host-login/'+ this.privilegeVo.webinar_id }`;
+加入链接：${this.privilegeVo && this.host_join_link ? this.host_join_link : ''}`;
     },
     urlText2: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
@@ -230,7 +230,7 @@ export default {
 直播ID：${this.privilegeVo.webinar_id}
 开始时间：${this.privilegeVo.start_time}
 嘉宾口令：${this.privilegeVo && this.privilegeVo.guest_password ? this.privilegeVo.guest_password : '未设置'}
-加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+加入链接：${this.privilegeVo && this.join_link ? this.join_link : ''}`;
     },
     urlText3: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
@@ -238,7 +238,7 @@ export default {
 直播ID：${this.privilegeVo.webinar_id}
 开始时间：${this.privilegeVo.start_time}
 助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
-加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+加入链接：${this.privilegeVo && this.assistant_join_link ? this.assistant_join_link : ''}`;
     },
     host_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
@@ -264,11 +264,12 @@ export default {
         }).then(res => {
           if (res && res.code === 200 && Number(res.data.is_privilege) === 1) {
             this.$message.success('开启成功');
-            this.roleSwitch = Number(!this.roleSwitch);
+            this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
           }else if (res && res.code === 200 && Number(res.data.is_privilege) === 0) {
             this.$message.success('关闭成功');
+            this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
           } else {
@@ -352,10 +353,7 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
-            this.roleSwitch = res.data.is_privilege;
-            this.$nextTick(() => {
-              this.privilegeVo = res.data;
-            })
+            this.privilegeVo = res.data;
           } else {
             this.privilegeVo = {};
           }
@@ -379,8 +377,8 @@ export default {
         clipboard.destroy();
       });
     },
-    async getWebinarInfo() {
-      await this.$fetch('getWebinarInfo', {
+    getWebinarInfo() {
+      this.$fetch('getWebinarInfo', {
         webinar_id: this.$route.params.str,
       }).then(res => {
         if(res && res.code === 200 && res.data) {

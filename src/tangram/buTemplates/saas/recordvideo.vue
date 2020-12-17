@@ -740,6 +740,8 @@ import jiabinMixin from './mixin/jiabin';
 import player from '../../libs/player/index'; // 录制结束
 import shareScreen from '../../libs/desktopScreen';
 import { assitantMixin } from './mixin/assitantMixin';
+import { sessionOrLocal } from '@/utils/utils'
+
 BScroll.use(ScrollBar);
 BScroll.use(MouseWheel);
 export default {
@@ -1033,7 +1035,7 @@ export default {
         return item.account_id == this.roomInfo.account_id;
       });
       this.$refs.mediasettingsRef.selectedRate = '';
-      sessionStorage.setItem('speakerDefinition', '');
+      sessionOrLocal.setItem('speakerDefinition', '');
       sessionStorage.setItem('selectedRate', '');
     });
     EventBus.$on('startLive', () => {

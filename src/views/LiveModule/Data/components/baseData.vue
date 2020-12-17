@@ -300,77 +300,76 @@ export default {
       if (this.webinarType == 3) {
         this.speakContactInfo();
       }
-    },
-    isStatus() {
-      if (this.isStatus != 4) {
-        // 点播不需要调用
-        this.getOtherInfo();
-      }
     }
   },
   mounted() {
     this.roomId = this.$route.query.roomId;
     this.getAllDataInfo();
+     if (this.isStatus != 4) {
+      // 点播不需要调用
+      this.getOtherInfo();
+    }
   },
   methods: {
     getAllDataInfo() {
       // 预约  报名表单（人）  试看（人）
       this.$fetch('getAnswerListInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.previewNum = res.data.preview;
-        this.dataInfo.subscribeNum = res.data.subscribe;
-        this.dataInfo.answerNum = res.data.regform;
+        this.dataInfo.previewNum = res.data.preview || 0;
+        this.dataInfo.subscribeNum = res.data.subscribe || 0;
+        this.dataInfo.answerNum = res.data.regform || 0;
       });
       // 邀请排名
       this.$fetch('getInviteListInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.inviteNum = res.data.total;
+        this.dataInfo.inviteNum = res.data.total || 0;
       });
       // 分享排名
       this.$fetch('getShareListInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.shareNum = res.data.total;
+        this.dataInfo.shareNum = res.data.total || 0;
       });
       // 聊天
       this.$fetch('getChatListInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.chatNum = res.data.total;
+        this.dataInfo.chatNum = res.data.total || 0;
       });
       // 点赞
       this.$fetch('getRoomLikeInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.likeNum = res.data.total;
+        this.dataInfo.likeNum = res.data.total || 0;
       });
       // 打赏统计
       this.$fetch('getRewardListInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.rewardMoney = res.data.total_money;
+        this.dataInfo.rewardMoney = res.data.total_money || 0;
       });
       // 礼物(元)
       this.$fetch('getGiftIncome', {room_id: this.roomId}).then(res => {
-        this.dataInfo.gitMoney = res.data.total_money;
+        this.dataInfo.gitMoney = res.data.total_money || 0;
       });
     },
     getOtherInfo() {
-       //问答
+      console.log('111111111111');
+      //问答
       this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.recordNum = res.data.total;
+        this.dataInfo.recordNum = res.data.total || 0;
       });
        // 签到
       this.$fetch('getSignInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.signNum = res.data.total;
+        this.dataInfo.signNum = res.data.total || 0;
       });
       // 问卷提交人数
       this.$fetch('getSurveyInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.submitNum = res.data.submit_nums;
+        this.dataInfo.submitNum = res.data.submit_nums || 0;
       });
       // 获取抽奖人数
       this.$fetch('getPrizeUserInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.prizeNum = res.data.count;
+        this.dataInfo.prizeNum = res.data.count || 0;
       });
        // 发红包
       this.$fetch('getRedpacketInfo', {webinar_id: this.$route.params.str}).then(res => {
-        this.dataInfo.redpacketMoney = res.data.send_amount;
+        this.dataInfo.redpacketMoney = res.data.send_amount || 0;
       });
     },
     // 连麦(条)
     speakContactInfo() {
       this.$fetch('getSpeakListInfo', {room_id: this.roomId}).then(res => {
-        this.dataInfo.speakNum = res.data.total;
+        this.dataInfo.speakNum = res.data.total || 0;
       });
     },
     // 预约-导出

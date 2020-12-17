@@ -96,7 +96,7 @@
             :isVod="(roomInfo.status == 2 || roomInfo.status == 0 )&& roomInfo.record_id"
             :isMini="miniElemt == 'doc'"
             :rebroadcastChannelId="rebroadcastChannelId"
-            :playMode="playerInfo.hls"
+            :playMode="0"
           ></watch-doc>
         </div>
         <!-- 直播结束 -->
@@ -108,7 +108,7 @@
         </div>
         <!-- 固定工具栏区域 -->
         <div class="player-funct" v-show="!isEmbedVideo" :class="{'video-only': watchDocShow}">
-          <div class="player-share" @click="toggleShare" v-if="!isEmbed">
+          <div class="player-share" @click="toggleShare" v-if="!isEmbed && userModules.share.show == 1 ">
             <span
               class="iconfont"
               style="color: #ccc; display: inline-block;vertical-align: middle"
@@ -146,14 +146,15 @@
             >
           </div>
           <div class="player-active" v-show="!isEmbed">
-            <div class="table-praise">
+            <div class="table-praise" v-if="userModules.like.show == 1">
               <praise :roomId="roomId" :times="roomInfo.like"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
-              <reward :roomId="roomId"></reward>
+            <div class="table-reward" v-if="userModules.reward.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3" @click="showGiveMoneyPannel">
+              <!-- <reward :roomId="roomId"></reward> -->
+              <img src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
             </div>
-            <div class="table-gift" v-if="userModules.gift.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
-              <gift :roomId="roomId" :vssToken="vssToken"></gift>
+            <div class="table-gift" v-if="userModules.gift.show == 1 && roomInfo.role_name == 2">
+              <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <getCoupon
@@ -372,6 +373,107 @@
         @vhallCheckStatus="vhallCheckStatus"
       ></watchSetting>
     </popup>
+    <!--打赏-->
+    <popup
+      :visible="showGiveMoney"
+      :onClose="closeGiveMoney"
+      :title="'支付方式'"
+      :width="'500px'"
+    >
+      <div class="pay-content">
+        <div>
+          <span :class="{active: giveMoneyIndex == 1}" @click="(giveMoneyIndex = 1), (giveMoney = 1.88)">1.88元</span>
+          <span :class="{active: giveMoneyIndex == 2}" @click="(giveMoneyIndex = 2), (giveMoney = 8.88)">8.88元</span>
+        </div>
+        <div>
+          <span :class="{active: giveMoneyIndex == 3}" @click="(giveMoneyIndex = 3), (giveMoney = 88.88)" >88.88元</span>
+          <el-input class="give-money-input" v-model="giveMoney" placeholder="打赏其他金额"></el-input>
+        </div>
+        <div class="describe">
+          <el-input placeholder="很精彩 来赞一个" v-model="giveMoneyDes"></el-input>
+        </div>
+        <div class="pay-method">
+          <el-radio v-model="giveMoneyPayWay" label="1">微信支付</el-radio>
+          <el-radio v-model="giveMoneyPayWay" label="2">支付宝支付</el-radio>
+        </div>
+      </div>
+      <el-button @click.stop="handleGiveMoney" type="primary">确定</el-button>
+    </popup>
+    <popup
+      :visible="showGiveMoneyQr"
+      :onClose="closeGiveMoneyQr"
+      :title="'支付'"
+      :width="'300px'"
+    >
+      <div class="pay-img">
+        <img :src="giveMoneyUrl">
+      </div>
+    </popup>
+    <!--选择礼物-->
+    <popup
+      :visible="showGiftSend"
+      :onClose="closeGiftsPannel"
+      :title="'选择礼物'"
+      :width="'616px'">
+      <div class="gifts-wrap">
+        <div class="gift-search"></div>
+        <div class="gifts-list">
+          <div class="gift-item"
+            :class="{'active': item.id == selectGiftId}"
+            v-for='(item, index) in giftList'
+            :key="index"
+            @click.stop="chooseGift(index)">
+            <div class="gift-cover">
+              <template v-show="uploadDomain">
+                <img :src="uploadDomain + '/' + item.image_url">
+              </template>
+            </div>
+            <div class="gift-info">
+              <span class="name">{{item.name}}</span>
+              <span class="price">￥{{item.price}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="gifts-select">
+          <el-button
+            class="sure-gift"
+            :disabled="!selectGiftId"
+            @click="selectGift"
+            >确定</el-button
+          >
+          <el-button
+              class="cancel-gift"
+              @click="closeGiftsPannel"
+              >取消</el-button
+            >
+          <div class="gift-ids">当前选中<span class="color:#3562FA">{{selectGiftId ? 1 : 0}}</span>件商品</div>
+        </div>
+      </div>
+    </popup>
+    <!--选择支付方式-->
+    <popup
+      :visible="showPayWay"
+      :onClose="closePayWay"
+      :title="'支付方式'"
+      :width="'380px'"
+    >
+      <div class="pay-way">
+        <el-radio v-model="payWay" label="1">微信支付</el-radio>
+        <el-radio v-model="payWay" label="2">支付宝支付</el-radio>
+      </div>
+      <el-button @click="checkPayWay" type="primary">确定</el-button>
+    </popup>
+    <!--礼物支付二维码-->
+    <popup
+      :visible="showPayQrCode"
+      :onClose="closePayQrCode"
+      :title="'支付'"
+      :width="'300px'"
+    >
+      <div class="pay-img">
+        <img :src="payQrCode">
+      </div>
+    </popup>
     <SassAlert
       :visible="PopAlert.visible"
       :knowText="PopAlert.knowText"
@@ -401,6 +503,7 @@
   </div>
 </template>
 <script>
+import QRcode from 'qrcode';
 import { listenEvent } from './mixin/watch/listen-event';
 import noticeShow from '../../libs/notice/noticeShow';
 import Chat from '../../libs/chat';
@@ -410,7 +513,6 @@ import WatchDoc from '@/components/Doc/watch-doc';
 import streams from '../../libs/interactive/remoteStreams'; // 订阅流
 import Interactive from '../../libs/interactive'; // 互动
 import praise from '../../libs/praise'; // 点赞
-import gift from '../../libs/gift'; // 礼物
 // import question from '../../libs/question/saas'; // 问卷
 import reward from '../../libs/reward'; // 打赏
 import lottery from '../../libs/lottery'; // 抽奖
@@ -497,7 +599,7 @@ export default {
     },
     bizInfo: { // 业务层信息（主要是配置相关信息）
       required: true,
-      default: {report_extra: '', paas_record_id: ''}
+      default: () => {}
     }
   },
 
@@ -512,7 +614,6 @@ export default {
     streams,
     Interactive,
     praise,
-    gift,
     // question,
     Signin,
     reward,
@@ -528,6 +629,8 @@ export default {
 
   data () {
     return {
+      selectGiftId: '',
+      showGiftSend: false,
       isHavePacket: false,
       checkBrowserSupport: true, // shezhi
       checkBrowserShow: true, // 不支持的浏览器隐藏举手上麦
@@ -621,21 +724,28 @@ export default {
       selfOnline: 0,
       poster: '',
       streamendErrorPopupVisible: false, // stream-end事件提示
-      layout: 0
+      layout: 0,
+      giftList: [],
+      uploadDomain: '',
+      payWay: '1',
+      showPayWay: false,
+      showPayQrCode: false,
+      payQrCode: '',
+      showGiveMoney: false,
+      giveMoney: '',
+      giveMoneyIndex: 1,
+      giveMoneyPayWay: '1',
+      giveMoneyDes: '',
+      giveMoneyUrl: '',
+      showGiveMoneyQr: false
     };
   },
   created () {
-    this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-    const vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
-
-    this.poster = vssInfo.webinar.image_url ? vssInfo.domains.upload + '/' + vssInfo.webinar.image_url : '';
-
-    this.userModules = vssInfo.modules;
-    this.isInteract = vssInfo.webinar.is_interact;
+    this.userInfo = sessionOrLocal.get('user') ? JSON.parse(sessionOrLocal.get('user')) : {}
     // 存取观看端标识
-    sessionStorage.setItem('watch', true);
+    sessionOrLocal.set('watch', true);
     // 存取是否登录的标识
-    sessionStorage.setItem('authInfo', JSON.stringify(this.authInfo));
+    sessionOrLocal.set('authInfo', JSON.stringify(this.authInfo));
   },
   watch: {
     roomId (newVal) {
@@ -647,11 +757,25 @@ export default {
       } else {
         this.qaVisible = false;
       }
+    },
+    bizInfo: {
+      handler (val) {
+        if (val) {
+          this.vssInfo = val
+          this.poster = val.webinar.image_url ? val.domains.upload + '/' + val.webinar.image_url : '';
+          this.userModules = val.modules;
+          this.isInteract = val.webinar.is_interact;
+          this.uploadDomain = val.domains.upload
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted () {
     this.getInavInfo();
     this.redPacketInit();
+    
     this.FIRST = true;
     this.repeatStatus = false; // 防止重复点击上麦
     if (!browserSupport()) {
@@ -663,8 +787,115 @@ export default {
     if (chat) {
       this.chatTitle = chat.name;
     }
+    this.$nextTick(() => {
+      this.getList()
+    })
+    this.eventListener()
   },
   methods: {
+    eventListener () {
+      EventBus.$on('roomAllInfo', (msg) => {
+        if (msg.type == "gift_send_success") {
+          this.showGiftSend = false
+          this.showPayQrCode = false
+          this.showPayWay = false
+          this.selectGiftId = ''
+          this.payQrCode = ''
+          this.payWay = 1
+        }
+        if (msg.data.type == "gift_send_success") {
+          this.closeGiveMoneyQr = false
+          this.showGiveMoney = false
+          this.giveMoneyIndex = 1
+          this.giveMoneyPayWay = 1
+          this.giveMoney = ''
+          this.giveMoneyDes = ''
+        }
+      });
+    },
+    showGiveMoneyPannel () {
+      this.showGiveMoney = true
+    },
+    closeGiveMoneyQr () {
+      this.showGiveMoneyQr = false
+    },
+    handleGiveMoney () {
+      this.$fetch('seadAwardMsg', {
+        room_id: this.roomInfo.room_id,
+        reward_amount: Number(this.giveMoney).toFixed(2),
+        channel: this.giveMoneyPayWay == 1 ? 'WEIXIN' : 'ALIPAY',
+        service_code: 'QR_PAY',
+        describe: this.giveMoneyDes
+      }).then(res => {
+        if (res.code == 200 && res.data.pay_data) {
+          let a = QRcode.toDataURL(
+            res.data.pay_data,
+            (err, url) => {
+              this.showGiveMoneyQr = true
+              this.giveMoneyUrl = url
+            }
+          )
+        }
+      })
+    },
+    closeGiveMoney () {
+      this.showGiveMoney = false
+    },
+    openGiftPannel () {
+      this.showGiftSend = true
+    },
+    closePayWay () {
+      this.showPayWay = false
+    },
+    // 礼物支付获取二维码
+    checkPayWay (type) {
+      let str =''
+      if (this.payWay == 1) {
+        str = 'WEIXIN'
+      } else {
+        str = 'ALIPAY'
+      }
+      this.$fetch('sendGift', {
+        gift_id: this.selectGiftId,
+        channel: str,
+        service_code: 'QR_PAY',
+        room_id: this.roomInfo.room_id
+      }).then(res => {
+        let a = QRcode.toDataURL(
+          res.data.data.pay_data,
+          (err, url) => {
+            this.showPayQrCode = true
+            this.payQrCode = url
+          }
+        )
+      }).catch(e => {
+        this.$message.error(e.msg)
+      })
+    },
+    closePayQrCode () {
+      this.showPayQrCode = false
+    },
+    closeGiftsPannel () {
+      this.showGiftSend = false
+      this.selectGiftId = ''
+    },
+    chooseGift (index) {
+      this.selectGiftId = this.giftList[index].id
+    },
+    // 获取礼物列表
+    getList () {
+      // list
+      this.$fetch('giftList', {
+        room_id: this.roomInfo.room_id
+      }).then((res) => {
+        if (res.code === 200) {
+          // this.giftContentControl = !this.giftContentControl
+          // this.imageInfo = res.data ? res.data.list : []
+          // console.log('礼物列表',this.giftContentControl);
+          this.giftList = res.data.list
+        }
+      })
+    },
     getSpeakList () {
       this.$fetch('speakList', {
         room_id: this.bizInfo.room_id
@@ -692,7 +923,6 @@ export default {
           }
           // 初始化文档状态 end
           this.speakerList = res.data.speaker_list;
-          console.log(99999999, this.speakerList)
           this.rebroadcastChannelId = res.data.rebroadcast && res.data.rebroadcast.channel_id; // TODO: rebroadcast
           let isApply = findIndex(this.speakerList, {
             account_id: this.roomInfo.third_party_user_id
@@ -718,7 +948,7 @@ export default {
               }
             }
           }, 4000);
-          sessionStorage.setItem('speakerDefinition', res.data.definition || '');
+          sessionOrLocal.set('speakerDefinition', res.data.definition || '');
         }
       }).catch (e => {
         console.log(e);
@@ -726,7 +956,6 @@ export default {
     },
     async getInavInfo () {
       await this.getRoomStatus()
-      this.userInfo = JSON.parse(sessionStorage.getItem('user'))
       let inavInfo = {
         account_id: this.bizInfo.host.id,
         app_id: this.bizInfo.app_id,
@@ -787,11 +1016,10 @@ export default {
         this.playerType = 'live';
         this.vodOption = {};
         this.playerLiveOption = {
-          type: this.playerInfo.hls || isIE() ? 'hls' : 'flv',
+          type: 0 || isIE() ? 'hls' : 'flv',
           roomId: this.roomInfo.room_id
         };
       }
-      let vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
@@ -799,14 +1027,14 @@ export default {
         avatar: this.userInfo.avatar
           ? `https:${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        pv: vssInfo.webinar.pv, // pv
+        pv: this.vssInfo.webinar.pv, // pv
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
         is_banned: this.isBanned, // 是否禁言 1是0否
         audience: true
       };
-      sessionStorage.setItem('vhall_chat_context', JSON.stringify(context));
+      sessionOrLocal.set('vhall_chat_context', JSON.stringify(context));
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
@@ -816,7 +1044,6 @@ export default {
         token: this.roomInfo.paas_access_token,
         client: 'pc_browser'
       };
-      console.log(5555555566666666)
       if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
         this.init = true;
         window.EventBridge.$emit('loaded');
@@ -825,7 +1052,6 @@ export default {
       VhallChat.createInstance(
         opt,
         chat => {
-          console.log(1111111111111111, this.speakerList, this)
           this.$nextTick(() => {
             this.addSocketsListener();
           })
@@ -843,14 +1069,13 @@ export default {
           }, 1500);
           chat.message.join(msg => {
             // 将join放在实例化处是因为--放在聊天组件内，会因sockit消息快慢问题 偶发丢失join消息
-            console.warn('kict_obj---------------------', vssInfo);
-            if (vssInfo.sso_mark) {
-              if (msg.sender_id == vssInfo.user.third_party_user_id) {
+            if (this.vssInfo.sso_mark) {
+              if (msg.sender_id == this.vssInfo.user.third_party_user_id) {
                 this.selfOnline++;
               }
-              console.log(msg.sender_id == vssInfo.user.third_party_user_id, '关于有时候手机进入不会顶掉当前账户-----', this.selfOnline);
+              console.log(msg.sender_id == this.vssInfo.user.third_party_user_id, '关于有时候手机进入不会顶掉当前账户-----', this.selfOnline);
               if (this.selfOnline > 1) {
-                window.location.href = vssInfo.kick_out_url;
+                window.location.href = this.vssInfo.kick_out_url;
               }
             }
             if (this.isPlayback) {
@@ -919,7 +1144,6 @@ export default {
         await this.$fetch('getToolStatus', { // 上麦之前获取房间内音视频禁用状态 bug15469
           room_id: this.bizInfo.room_id
         }).then(res => {
-          console.log(990, res)
           this.mainScreen = res.data.main_screen
           this.speakerList = res.data.speaker_list
         });
@@ -1109,7 +1333,6 @@ export default {
             this.timerFun = setInterval(() => {
               this.timer--;
               this.handSend = `等待(${this.timer}s)`;
-              console.log(12121212, this.speakerList)
               if (this.timer <= 0) {
                 this.handSend = '举手上麦';
                 window.clearInterval(this.timerFun);
@@ -1129,7 +1352,6 @@ export default {
           if (res.code == 200) {
             this.lowerWheat = true; // 上麦的状态
             window.clearInterval(this.timerFun);
-            console.log(23232323, this.speakerList)
             this.handSend = '举手上麦';
             this.$message.success('您已取消申请上麦！');
           }
@@ -1183,7 +1405,11 @@ export default {
     },
     pushBarrage (txt) {
       this.$refs.vhallPlayer.addBarrage(txt);
-    }
+    },
+    selectGift () {
+      
+      this.showPayWay = true
+    } 
   }
 };
 </script>
@@ -1521,9 +1747,24 @@ export default {
       margin-top: 7px;
       cursor: pointer;
     }
+    .table-gift{
+      width: 32px;
+      height: 32px;
+      img {
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+      }
+    }
     .table-reward {
-      width: 66px;
-      height: 46px;
+      width: 32px;
+      height: 32px;
+      margin: 7px 10px;
+      img {
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+      }
       float: right;
     }
 
@@ -1546,6 +1787,183 @@ export default {
     span:nth-of-type(4) {
       color: #ff3333;
     }
+  }
+}
+.gifts-wrap{
+  width: 100%;
+  min-height: 330px;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 24px 50px 32px 50px;
+}
+.gifts-list{
+  width: 100%;
+  height: 320px;
+  overflow-y: scroll;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+
+  // background: red;
+  &:after{
+    clear: both;
+  }
+}
+.gift-item{
+  float: left;
+  width: 242px;
+  height: 90px;
+  background: #F5F5F5;
+  border-radius: 4px;
+  margin-right: 12px;
+  box-sizing: border-box;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 2px solid #F5F5F5;
+  &.active {
+    border: 2px solid #FC5659;
+  }
+  &:hover{
+    cursor: pointer;
+  }
+  .gift-cover{
+    width: 66px;
+    height: 66px;
+    display:inline-block;
+    margin-right: 12px;
+    img{
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .gift-info{
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+    color: #222222;
+    box-sizing: border-box;
+    padding: 10px 0px 0px 0px;
+    .name, .price {
+      display: block;
+    }
+    .name {
+      display: inline-block;
+      width: 120px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .price{
+      margin-top: 6px;
+      color: #FC5659;
+    }
+  }
+}
+.gifts-select{
+  width: 100%;
+  height: 34px;
+  text-align: center;
+  position: relative;
+  margin-top: 10px;
+  .sure-gift, .cancel-gift{
+    color: #fff;
+    display: inline-block;
+    width: 80px;
+    height: 34px;
+    background: #FC5659;
+    border-radius: 4px;
+    border: 1px solid #F3545B;
+    padding: 0px;
+    margin: 0px;
+    margin: 0px 6px;
+    span{
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      line-height: 34px;
+    }
+  }
+  .cancel-gift{
+    color: #555555;
+    background: #fff;
+    border: 1px solid #888888;
+  }
+  .gift-ids{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    font-size: 14px;
+    font-weight: 400;
+    color: #222222;
+    line-height: 34px;
+  }
+}
+.pay-way{
+  width: 100%;
+  height: 200px;
+  font-size: 20px;
+  color: #555;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  span{
+    margin: 0px 15px;
+  }
+}
+.pay-img{
+  width: 100%;
+  height: 220px;
+  background: #fff;
+  margin: auto;
+  img{
+    margin: 20px 60px;
+    width: 180px;
+    height: 180px;
+    display: inline-block;
+  }
+}
+.pay-content{
+  width: 100%;
+  height: 300px;
+  background: #fff;
+  box-sizing: border-box;
+  >div{
+    width: 100%;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  span, .give-money-input{
+    display: inline-block;
+    width: 200px;
+    height: 40px;
+    background: #F5F5F5;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    line-height: 40px;
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+    margin: 0px 10px;
+  }
+  .give-money-input{
+    outline: none;
+    border:none;
+  }
+  .describe{
+    width: 300px;
+    margin: 0px auto;
+  }
+  .pay-method{
+    padding-top: 20px;
   }
 }
 </style>

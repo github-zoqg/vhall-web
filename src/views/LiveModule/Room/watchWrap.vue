@@ -861,9 +861,6 @@ export default {
         }
         if (this.roomData && this.roomData.status == 'live') {
           await this.getTotalLike() // 获取总点赞数
-          await this.getMarqueenInfo() // 获取跑马灯信息
-          await this.getWaterInfo() // 获取水印信息
-          await this.getDefinitionConfig() // 获取当前流默认清晰度
           await this.queryRoomInterInfo() // 获取房间活动状态
           await this.getFirstPost() // 开屏
         }
@@ -871,6 +868,7 @@ export default {
         await this.getSkin() // 获取皮肤
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
+        await this.getMenuList()
         // 预约后的活动才显示邀请卡
         if (this.isLogin) {
           await this.getAttentionStatus()
@@ -967,7 +965,6 @@ export default {
     onlinePeople(msg) {
       this.$nextTick(() => {
         this.roomUser.uvOnline = msg.uv;
-        console.log(991, JSON.parse(msg.context), this.roomUser)
         if (msg.context.pv > this.roomUser.pvCount) {
           this.roomUser.pvCount = msg.context.pv;
         }
@@ -1182,7 +1179,6 @@ export default {
           }
         })
         .catch(e => {
-          console.log(112, e)
           if (e.captcha[0] == '图形码未验证通过') {
             this.errorMessage = '图形码未验证通过'
           }
@@ -1333,12 +1329,6 @@ export default {
           if (this.goodsList.length > 0) {
             this.sellGoodsShow = true;
           }
-          // this.goodsList.length > 0 && this.goodsList.forEach((good, index) => {
-          //   if (index == 0) {
-          //     this.goodInfo = res.data.goods_list[0]
-          //   }
-          //   good.goodImage = `${this.roominfo.domains.upload}/${good.img_list.find(img => img.is_cover).img_url}`
-          // });
         }
       });
     },
@@ -1387,16 +1377,6 @@ export default {
         }
       })
     },
-    // 获取跑马灯信息
-    getMarqueenInfo () {
-      return this.$fetch('getScrolling', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.marquee = res.data
-        }
-      })
-    },
     // 获取观看端配置项
     getConfigList () {
       return this.$fetch('getConfigList', {
@@ -1408,16 +1388,6 @@ export default {
         }
       })
     },
-    // 获取水印信息
-    getWaterInfo () {
-      return this.$fetch('getWatermark', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.water = res.data
-        }
-      })
-    },
     // 获取皮肤
     getSkin () {
       return this.$fetch('watchGetWebinarSkin', {
@@ -1425,41 +1395,71 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.skinInfo = res.data
-          this.theme = this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : ''
-          if (this.theme) {
-            this.setCustomTheme(this.theme)
-          }
+          this.theme = (this.skinInfo && this.skinInfo.skin_json_pc) ? JSON.parse(this.skinInfo.skin_json_pc) : ''
         }
       })
     },
     // 设置主题
     setCustomTheme (data) {
       let {bgColor, pageStyle, popStyle, background} = data
-      let wrap = document.querySelector('.wrap')
-      let register = document.querySelector('.title-right .button-register')
-      let follow = document.querySelector('.focusBtn')
+      let header = document.querySelector('.wh-title')
+      let content = document.querySelector('.back-content')
+      let bottom = document.querySelector('.bottom-bgColor')
+      let seedIcon = document.querySelector('.seeding-icon')
+      let follow = document.querySelector('.seeding-inforight .follow')
+      let fullScreen = document.querySelector('.seeding-inforight .full-screen')
+      let watchContent = document.querySelector('.watch-middle-cotent')
+      let activeRecommnd = document.querySelector('.active-second')
       let title = document.querySelector('.active-second>h3')
-      let webinarStr = document.querySelector('.topInfo .tag')
-      let bc = document.querySelector('.area')
-      if (wrap) {
-        wrap.style.background = bgColor
+      let shop = document.querySelector('.sell-goods')
+      let menu = document.querySelector('.active-introduce')
+      let menuTitle = document.querySelector('.active-introduce>h3')
+      setTimeout(() => {
+        let sellBtn = document.querySelector('.sell-goods .el-carousel__item .selling')
+        if (sellBtn) {
+          sellBtn.style.background = pageStyle
+        }
+      }, 1000)
+
+      if (header) {
+        header.style.background = bgColor
       }
-      if (register) {
-        register.style.background = pageStyle
+      if (content) {
+        content.style.background = bgColor
       }
-      if (follow) {
-        follow.style.background = pageStyle
+      if (bottom) {
+        bottom.style.background = bgColor
       }
+      if (activeRecommnd) {
+        activeRecommnd.style.background = bgColor
+      }
+      if (shop) {
+        shop.style.background = bgColor
+      }
+      if (menu) {
+        menu.style.background = bgColor
+      }
+
       if (title) {
         title.style.borderBottom = `2px solid ${pageStyle}`
       }
-      if (webinarStr) {
-        webinarStr.style.background = pageStyle
+      if (menuTitle) {
+        menuTitle.style.borderBottom = `2px solid ${pageStyle}`
       }
-      if (bc) {
-        bc.style.background = `url(${background})`
-        bc.style.backgroundSize = 'cover'
-        bc.style.backgroundRepeat = 'no-repeat'
+      if (seedIcon) {
+        seedIcon.style.background = pageStyle
+      }
+      
+      if (follow) {
+        follow.style.background = pageStyle
+      }
+      if (fullScreen) {
+        fullScreen.style.background = pageStyle
+      }
+      if (watchContent) {
+        watchContent.style.background = `url(${background})`
+        watchContent.style.backgroundSize = 'cover'
+        watchContent.style.backgroundRepeat = 'no-repeat'
       }
     },
     // 获取公众号广告
@@ -1489,18 +1489,6 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.signInfo = res.data
-        }
-      })
-    },
-    // 获取当前流默认清晰度
-    getDefinitionConfig () {
-      return this.$fetch('getDefinitionConfig', {
-        webinar_id: this.$route.params.il_id,
-        is_h5: 1,
-        type: 0
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.definitionConfig = res.data.default_definition
         }
       })
     },
@@ -1575,8 +1563,8 @@ export default {
         paas_access_token: data.interact.paas_access_token,
         inviteInfo: this.inviteInfo ? this.inviteInfo : {status: 0},
         skin: {
-          skin_json_pc : this.skinInfo ? (this.skinInfo.skin_style_code_pc ? JSON.parse(this.skinInfo.skin_style_code_pc) : '') : {},
-          skin_json_wap: this.skinInfo ? (this.skinInfo.skin_style_code_wap ? JSON.parse(this.skinInfo.skin_style_code_wap) : '') : {}
+          skin_json_pc : (this.skinInfo && this.skinInfo.skin_json_pc) ? (this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : '') : {},
+          skin_json_wap: (this.skinInfo && this.skinInfo.skin_json_wap) ? (this.skinInfo.skin_json_wap ? JSON.parse(this.skinInfo.skin_json_wap) : '') : {}
         },
         user: {
           avatar: data.join_info.avatar,
@@ -1608,12 +1596,7 @@ export default {
         paas_record_id: data.paas_record_id,
         record_history_time: '', // TODO:
         share_id: data.share_id,
-        player: {
-          default_definition: this.definitionConfig ? this.definitionConfig : '',
-          scrolling_text: this.marquee ? this.marquee : '',
-          watermark: this.water ? this.water : '',
-          hls: 0 // wap：hls= 1 pc:hls = 0
-        },
+        player: {},
         modules: {
           logo: {
             show: this.signInfo ? this.signInfo.view_status : 0, // 观看标志w
@@ -1629,25 +1612,23 @@ export default {
             public: (this.publicAdv && this.publicAdv['public-account']) ? this.publicAdv['public-account'] : [], // 公众号广告
             posters: (this.firstPost && this.firstPost['screen-posters']) ? this.firstPost['screen-posters'] : [] // 开屏广告
           },
-          barrage: {hide: this.configList['ui.hide_barrage']},
+          // barrage: {hide: this.configList['ui.hide_barrage']},
           online: {show: data.online.show}, // 在线人数
           reg: {show: data.webinar.reg_form}, // 报名表单
           pv: {show: data.pv.show}, // 热度
           webinar_status: {show: data.webinar.type, text: text}, // 直播状态
           reward: {show: this.configList ? this.configList['ui.hide_reward'] : 0},
           gift: {show: this.configList ? this.configList['ui.hide_gifts'] : 0},
+          like: {show: this.configList ? this.configList['ui.watch_hide_like'] : 0},
+          share: {show: this.configList ? this.configList['ui.hide_share'] : 0},
           chat_login: {show: 1}
         }
       }
-      console.log(11111112222222, this.roominfo.modules.adv)
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
       this.myAccountRoute = window.location.origin + '/account/info'
       this.followStyle = this.roominfo.modules.attention.follow == 1
-      if (this.roominfo.modules && this.roominfo.modules.barrage) {
-        this.roominfo.player.barrage = this.roominfo.modules.barrage.hide
-      }
       
       this.userChatId = this.roominfo.user.third_party_user_id
       // 获取所有的主域名
@@ -1690,7 +1671,6 @@ export default {
       } else {
         this.attentionShow = false
       }
-      console.log(123, this.roominfo.modules.logo)
       // 在线人数的显示
       this.roominfo.modules.online.show == 1
         ? (this.onlineShow = true)
@@ -1723,61 +1703,6 @@ export default {
           }
         });
       }
-      //  @author  Sean
-      // 自定义 页面皮肤 初始化 相关逻辑
-      //
-      if (this.roominfo.skin.skin_json_pc) {
-        this.$nextTick(() => {
-          try {
-            // 背景颜色
-            const bgColor = document.querySelector('.back-content');
-            const footerColor = document.querySelector('.bottom-bgColor');
-            // 页面颜色
-            const follow = document.querySelector('.follow');
-            const fullScreen = document.querySelector('.full-screen');
-            const activeHead = document.querySelector('.active-second h3');
-            const activeIntroduce = document.querySelector(
-              '.active-introduce h3'
-            );
-            // 背景图片
-            const bgContent = document.querySelector('.watch-middle-cotent');
-            if (skin.skin_json_pc.background) {
-              bgContent.style.background = `url(${this.roominfo.domains.upload}/${skin.skin_json_pc.background}) no-repeat 100% 100%`;
-              bgContent.style.backgroundSize = `cover`;
-            }
-            if (this.roominfo.skin.skin_json_pc.logo) {
-              this.logoShow = true;
-              this.skinLogo = `${this.roominfo.domains.upload}/${this.roominfo.skin.skin_json_pc.logo}`;
-            } else {
-              this.logoShow = false;
-            }
-            bgColor.style.background = skin.skin_json_pc.bgColor.substring(
-              3
-            );
-            footerColor.style.background = skin.skin_json_pc.bgColor.substring(
-              3
-            );
-            if (follow) {
-              follow.style.background = skin.skin_json_pc.pageStyle.substring(
-                3
-              );
-            }
-            fullScreen.style.background = skin.skin_json_pc.pageStyle.substring(
-              3
-            );
-            if (activeHead) {
-              activeHead.style.borderBottomColor = skin.skin_json_pc.pageStyle.substring(
-                3
-              );
-            }
-            activeIntroduce.style.borderBottomColor = skin.skin_json_pc.pageStyle.substring(
-              3
-            );
-          } catch (error) {
-            console.error(error);
-          }
-        });
-      }
       // 获取 推荐商品数据
       this.getGoodsInfo();
       // end
@@ -1789,7 +1714,6 @@ export default {
       // 初始化邀请卡
       this.invitePartner();
       this.$nextTick(() => {
-        // console.log(99, this.theme)
         if (this.theme) {
           this.setCustomTheme(this.theme)
         }

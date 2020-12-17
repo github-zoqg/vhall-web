@@ -155,10 +155,10 @@ export default {
         if (res && res.code === 200) {
           this.getTableList(null);
         } else {
-          // this.$message.error(res.msg || '状态修改失败');
+          console.log('下载状态更新失败');
         }
       }).then(e => {
-        // this.$message.error('修改状态失败');
+        console.log(e, '下载状态更新失败');
       });
     },
     // 页码改变按钮事件
@@ -193,8 +193,6 @@ export default {
           item.dowStatusStr = ['未下载' ,'已下载'][item['dow_status']]; // 0:未下载1已下载
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
-          // TODO 下载地址，模拟用后续删除
-          item.dow_url = 'http://t-alistatic01.e.vhall.com/upload/sys/exel_url/75/20/7520db1f83c8a32e4d9ccbb65cdd6a36.xlsx';
         });
         this.docDao =  dao;
       }).catch(e=>{
@@ -208,7 +206,10 @@ export default {
     // 下载
     download(rows) {
       window.open(rows.dow_url, "_blank");
-      this.downloadedEdit(rows.dow_task_id);
+      // 如果当前已经是下载状态，不触发状态修改
+      if (Number(rows.dow_status) !== 1) {
+        this.downloadedEdit(rows.dow_task_id);
+      }
     },
     // 重新生成
     async resetDownload(rows) {
@@ -218,7 +219,9 @@ export default {
         fetchData(result.send_url, result.select_json).then(res => {
           console.log('发送成功~~~~~~~');
           console.log(res);
-        }).catch(e => {});
+        }).catch(e => {
+          console.log(e);
+        });
       }
     },
     // 删除某条下载任务

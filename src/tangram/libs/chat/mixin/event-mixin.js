@@ -185,18 +185,18 @@ const eventMixin = {
             });
           }
           // 打赏成功
-          if (msg.type == 'reward_pay_success') {
+          if (msg.data.type == 'reward_pay_ok') {
             let data = new Msg({
-              nickName: msg.rewarder_nickname,
+              nickName: msg.data.rewarder_nickname,
               content: {
-                text_content: msg.reward_describe ? msg.reward_describe : '很精彩，赞一个！'
+                text_content: msg.data.reward_describe ? msg.data.reward_describe : '很精彩，赞一个！'
               },
-              type: msg.type
+              type: msg.data.type
             });
             this.chatList.push(data);
           }
           // 礼物
-          if (msg.type == 'gift_send_success') {
+          if (msg.data.type == "gift_send_success") {
             let uploadUrl = sessionStorage.getItem('imageDomin');
             let data = new Msg({
               nickName: msg.gift_user_nickname,
