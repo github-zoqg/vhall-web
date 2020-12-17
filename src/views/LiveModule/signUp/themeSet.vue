@@ -10,7 +10,10 @@
       <i :class="{active: colorIndex=='blue'}" @click="colorIndex='blue'"></i>
       <i :class="{active: colorIndex=='purple'}" @click="colorIndex='purple'"></i>
     </div>
-    <p class="margin">标签页标题</p>
+    <p class="margin">
+      <span>标签页标题</span>
+      <span class="resetTheme" @click="resetTheme">重置</span>
+    </p>
     <div :class="['tabs', colorIndex]">
       <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '用户报名'}}</div>
       <div :class="{active: tabs=='valite'}" @click="tabs='valite'">{{title2 || '验证'}}</div>
@@ -34,8 +37,8 @@ export default {
     baseInfo: {
       handler(newVal){
         this.colorIndex = newVal.theme_color;
-        this.title2 = newVal.tab_form_title;
-        this.title1 = newVal.tab_verify_title;
+        this.title1 = newVal.tab_form_title;
+        this.title2 = newVal.tab_verify_title;
       },
       deep: true,
       immediate: true
@@ -54,8 +57,8 @@ export default {
     save() {
       const options = {
         theme_color: this.colorIndex,
-        tab_verify_title: this.title2,
         tab_form_title: this.title1,
+        tab_verify_title: this.title2,
       };
       const that = this;
       this.$emit('setBaseInfo', options, () => { that.dialogVisible = false; });
@@ -65,6 +68,10 @@ export default {
       input.select();
       document.execCommand('copy');
       this.$message.success('复制成功');
+    },
+    resetTheme() {
+      this.title1 = '用户报名'
+      this.title2 = '验证'
     }
   }
 };
@@ -158,6 +165,13 @@ export default {
     }
   }
   .margin{
+    position: relative;
     margin-top: 24px;
+    .resetTheme {
+      position: absolute;
+      right: 0;
+      color: #3562FA;
+      cursor: pointer;
+    }
   }
 </style>

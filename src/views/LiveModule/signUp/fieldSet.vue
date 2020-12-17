@@ -3,7 +3,7 @@
     <!-- v-model="list" -->
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
-      <p class="label">表单名称（必填）</p>
+      <p class="label">表单名称</p>
       <el-input
         maxlength="50"
         show-word-limit
@@ -60,7 +60,7 @@
             </template>
             <el-input
               v-else
-              axlength="50"
+              maxlength="60"
               show-word-limit
               placeholder="请输入题目"
               v-model="item.label"
@@ -76,6 +76,8 @@
               v-if="item.type=='input' || item.type=='select'"
               v-model="node.value"
               v-bind="node.props"
+              :maxlength="node.key == 'url'? '200' : '60'"
+              show-word-limit
               :key='`${index}-${nodeIndex}`'
               @change="selectOptChange(item, node, item.type=='select', item.privacy)"
             >
@@ -100,20 +102,19 @@
               :key='`${index}-${nodeIndex}`'
             >
               <el-radio
+                disabled
                 :name="item.id"
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
                 :label="radioItem.item_id"
               >
-                {{radioItem.other ? "其他" : ''}}
                 <el-input
-                  :disabled="radioItem.other"
                   @change="(chooseOptChange(item, radioItem))"
-                  maxlength="50"
+                  maxlength="60"
                   show-word-limit
-                  :placeholder="`选项${raionIndex+1}`"
+                  placeholder="选项"
                   v-model="radioItem.value"
-                  :class="{noFull: !!radioItem.other, radioInput: true}"
+                  class="radioInput"
                 >
                   <i
                     class="el-icon-remove-outline removeIcon"
@@ -122,6 +123,15 @@
                   ></i>
                 </el-input>
                 <br/>
+                <el-input
+                  class="other-input"
+                  placeholder="观众输入区"
+                  disabled
+                  v-if="radioItem.other"
+                  :maxlength="60"
+                  show-word-limit
+                  :key='`${index}-${nodeIndex}disabled`'
+                ></el-input>
               </el-radio>
             </el-radio-group>
             <!-- 复选框类型 -->
@@ -132,19 +142,19 @@
               :key='`${index}-${nodeIndex}`'
             >
               <el-checkbox
+                disabled
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
                 :label="radioItem.item_id"
                 :name="item.id"
+                :class="{'other-checkbox': radioItem.other}"
               >
-                {{radioItem.other ? "其他" : ''}}
                 <el-input
-                  :disabled="radioItem.other"
-                  maxlength="50"
+                  maxlength="60"
                   show-word-limit
-                  :placeholder="`选项${raionIndex+1}`"
+                  placeholder="选项"
                   v-model="radioItem.value"
-                  :class="{noFull: !!radioItem.other, radioInput: true}"
+                  class="radioInput"
                   @change="chooseOptChange(item, radioItem)"
                 >
                   <i
@@ -154,6 +164,15 @@
                   ></i>
                 </el-input>
                 <br/>
+                <el-input
+                  class="other-input"
+                  placeholder="观众输入区"
+                  disabled
+                  v-if="radioItem.other"
+                  :maxlength="60"
+                  show-word-limit
+                  :key='`${index}-${nodeIndex}disabled`'
+                ></el-input>
               </el-checkbox>
             </el-checkbox-group>
           </template>
@@ -255,7 +274,6 @@ export default {
         this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover ? newVal.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`;
       },
       deep: true,
-      immediate: true
     }
   },
   data(){
@@ -266,7 +284,7 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: `http:${Env.staticLinkVo.uploadBaseUrl}sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`,
+      imageUrl: '',
       renderQuestion: []
     };
   },
@@ -301,11 +319,7 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
-      if (!this.title) {
-        this.$message.error('请填写表单名称！');
-      } else {
-        this.$message.success('保存成功！');
-      }
+      this.$message.success('保存成功');
     },
     // 添加一个题目选项
     addOption(data, other){
@@ -414,14 +428,19 @@ export default {
     },
     // 删除一个题目
     deleteQuestion(arr, index) {
-      this.$fetch('regQDelete', {
-        question_id: arr[index].question_id
-      }).then(res => {
-        arr.splice(index, 1);
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      this.$confirm('删除后已收集信息会被清空，确认删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.$fetch('regQDelete', {
+          question_id: arr[index].question_id
+        }).then(res => {
+          arr.splice(index, 1);
+          console.log(res);
+        }).catch(err => {
+          console.log(err);
+        });
+      })
     },
     // 删除一个题目选项
     deleteOptions(item, index, type){
@@ -646,10 +665,7 @@ export default {
       margin-top: 20px;
     }
     /deep/ .el-checkbox__label{
-      width: 100%;
-    }
-    .el-checkbox:last-child{
-      margin-right: 30px;
+      width: calc(100% - 14px);
     }
   }
   .el-radio-group{
@@ -658,9 +674,34 @@ export default {
     .el-radio{
       display: block;
       margin-top: 20px;
+      margin-right: 0px;
+      /deep/ .el-radio__label {
+        .radioInput {
+          width: calc(100% - 24px);
+        }
+        .other-input {
+          margin-top: 10px;
+        }
+      }
     }
-    .el-radio:last-child{
-      margin-right: 30px;
+  }
+  /deep/ .el-input .el-input__count .el-input__count-inner {
+    background: inherit;
+  }
+  .el-checkbox {
+    margin-right: 0px;
+  }
+  .other-checkbox {
+    /deep/ .el-checkbox__input {
+      position: absolute;
+      top: 11px;
+    }
+    /deep/ .el-checkbox__label {
+      padding-left: 24px;
+      width: 100%;
+    }
+    .other-input {
+      margin-top: 10px;
     }
   }
   .bottomBtn{
@@ -709,12 +750,20 @@ export default {
   .selectInput{
     margin-bottom: 16px;
   }
-}
-/deep/ .box .avatar {
-  width: auto;
-}
-/deep/ .el-textarea__inner {
-  font-family: Arial, Arial, 'Microsoft Yahei';
+  /deep/ .box .avatar {
+    width: auto;
+  }
+  .el-textarea {
+    /deep/ .el-textarea__inner {
+      font-family: Arial, Arial, 'Microsoft Yahei';
+    }
+    /deep/ .el-input__count {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #666666;
+    }
+  }
 }
 .sureBtn{
   background: none;

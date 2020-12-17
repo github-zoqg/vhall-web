@@ -22,15 +22,16 @@
             <section class="block" :key="key">{{key}}</section>
             <li
               :class="{
-                item: true, active: item.name &&
-                questionArr.some(qes => qes.name == item.name)
+                item: true,
+                active: item.isActive || item.name && questionArr.some(qes => qes.name == item.name)
               }"
               v-for="item in item"
               :key="item.label"
               @click="addFiled(item)"
             >
               <!-- <icon :class="item.icon"></icon> -->
-              <icon :icon-class="item.icon">{{item.label}}</icon>
+              <icon class="icon" :icon-class="item.icon"></icon>
+              <span>{{item.label}}</span>
             </li>
           </template>
         </ul>
@@ -46,9 +47,9 @@
           <!-- 表单预览组件 -->
           <signUpForm
             :baseInfo="baseInfo"
-            v-show="rightComponent == 'signUpForm'"
+            v-if="rightComponent == 'signUpForm'"
             :questionArr.sync="questionArr"
-            @closePreview="closePreview"
+            @closeSignUp="closePreview"
           ></signUpForm>
         </div>
       </div>
@@ -70,7 +71,7 @@
 import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
-import signUpForm from './signUpForm';
+import signUpForm from '../Subscribe/signUpForm';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
 export default {
@@ -92,26 +93,26 @@ export default {
         tab_form_title: '用户报名',
         title: '',
         intro: '',
-        cover: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'
+        cover: ''
       },
       radio: 3,
       rightComponent: 'fieldSet',
       setOptions: {
         "基本信息": [
-          {icon: 'saasicon_xingming', label: "姓名", name: 'name'},
-          {icon: 'el-icon-male', label: "性别", name: 'gender'},
-          {icon: 'el-icon-phone', label: "手机", name: 'phone'},
-          {icon: 'el-icon-message', label: "邮箱", name: 'email'},
-          {icon: 'el-icon-location', label: "地域", name: 'regional'},
-          {icon: 'el-icon-office-building', label: "公司", name: 'company'},
-          {icon: 'el-icon-info', label: "职务", name: 'duty'},
+          {icon: 'saasicon_name', label: "姓名", name: 'name'},
+          {icon: 'saasicon_gender', label: "性别", name: 'gender'},
+          {icon: 'saasicon_phone', label: "手机", name: 'phone'},
+          {icon: 'saasicon_mail', label: "邮箱", name: 'email'},
+          {icon: 'saasicon_regional', label: "地域", name: 'regional'},
+          {icon: 'saasicon_company', label: "公司", name: 'company'},
+          {icon: 'saasicon_position', label: "职务", name: 'duty'},
         ],
         "题目类型": [
-          {icon: 'el-icon-user-solid', label: "单选题", type: 'radio'},
-          {icon: 'el-icon-user-solid', label: "多选题", type: 'checkBox'},
-          {icon: 'el-icon-tickets', label: "问答题", type: 'input'},
-          {icon: 'el-icon-caret-bottom', label: "下拉题", type: 'select'},
-          {icon: 'el-icon-user-solid', label: "隐私声明", name: 'privacy'},
+          {icon: 'saasicon_radio', label: "单选题", type: 'radio'},
+          {icon: 'saasicon_multi-select', label: "多选题", type: 'checkBox'},
+          {icon: 'saasicon_question', label: "问答题", type: 'input'},
+          {icon: 'saasicon_drop-down', label: "下拉题", type: 'select'},
+          {icon: 'saasicon_Privacystatement', label: "隐私声明", name: 'privacy'},
         ]
       },
       questionArr: [],
@@ -131,6 +132,22 @@ export default {
           return item;
         }
       });
+    }
+  },
+  watch: {
+    questionArr: {
+      deep: true,
+      immediate: true,
+      handler(newValue) {
+        const sumObj = {}
+        newValue.forEach(item => {
+          sumObj[item.reqType] ? sumObj[item.reqType]++ : sumObj[item.reqType] = 1
+        })
+        this.setOptions["题目类型"][2].isActive = sumObj[1] >= 20;
+        this.setOptions["题目类型"][0].isActive = sumObj[2] >= 20;
+        this.setOptions["题目类型"][1].isActive = sumObj[3] >= 20;
+        this.setOptions["题目类型"][3].isActive = sumObj[4] >= 20;
+      }
     }
   },
   created(){
@@ -528,6 +545,13 @@ export default {
         i{
           margin-right: 4px;
           color: #1A1A1A;
+        }
+        .icon {
+          width: 14px;
+          height: 14px;
+          font-size: 14px;
+          display: inline-block;
+          margin-right: 8px;
         }
       }
     }
