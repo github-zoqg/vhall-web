@@ -1269,8 +1269,9 @@
           </div>
         </SassAlert>
       </div>
-        <!-- v-if="!assistantType || (assistantType && assistantType == 'doc')" -->
       <lottery
+        class="cxs"
+        v-if="!assistantType || (assistantType && assistantType == 'doc')"
         :roomId="roomInfo.interact.room_id"
         :vssToken="vssToken"
         ref="lotterySon"

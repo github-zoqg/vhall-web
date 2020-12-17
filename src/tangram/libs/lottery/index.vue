@@ -260,6 +260,7 @@ export default {
   },
   mixins: [prize],
   created () {
+    this.checkLottery()
     this.getPrizeList()
     this.disTimeSet = setInterval(() => {
       this.disabledTime--;

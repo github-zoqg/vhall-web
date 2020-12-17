@@ -1,5 +1,14 @@
 const mixins = {
   methods: {
+    checkLottery(){
+      this.$fetch('v3CheckLottery', {}).then(res=>{
+        if(res.code == 200){
+          console.warn(res, '检测当前是否在抽奖');
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
+    },
     // 获取奖品列表
     getPrizeList(){
       console.warn('wa');
