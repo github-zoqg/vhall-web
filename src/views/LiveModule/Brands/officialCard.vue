@@ -41,6 +41,7 @@
               </div>
             </el-form-item>
             <el-form-item :label="title">
+              <!--{{status}}-->
               <el-switch
                 v-model="status"
                 :active-value="0"
@@ -52,6 +53,7 @@
               </el-switch>
             </el-form-item>
             <el-form-item :label="title==='公众号展示' ? '自动弹出' : '自动关闭' ">
+              <!--{{alertType}}-->
               <el-switch
                 v-model="alertType"
                 :active-value="0"
@@ -125,33 +127,6 @@ export default {
     this.getData();
   },
   methods: {
-   /* // 修改公众号状态
-    updateSwitch() {
-      let status = this.status; // 目标
-      this.status = Number(status) === 1 ? 1 : 0;
-      this.$fetch('setPosterInfo', {
-        webinar_id: this.$route.params.str,
-        status: status,
-        img: 'afs',
-        alert_type: this.alert_type || 0
-      }).then(res => {
-        if (res && res.code === 200 && status) {
-          this.$message.success('开启成功');
-          this.status = 1;
-          this.getData();
-        }else if (res && res.code === 200 && !status) {
-          alert(1);
-          this.$message.success('关闭成功');
-          this.status = 0;
-          this.getData();
-        } else {
-          this.$message.error(res.msg || status ? `开启失败` : `关闭失败`);
-        }
-      }).catch(er => {
-        console.log(er);
-        this.$message.error(status ? `开启失败，` : `关闭失败`);
-      });
-    },*/
     getData() {
       this.$fetch(this.title === '公众号展示' ? 'getPublicInfo': 'getPosterInfo', {
         webinar_id: this.$route.params.str
@@ -160,8 +135,12 @@ export default {
           this.img = res.data.img || '';
           this.url = res.data.url || '';
           this.domain_url = res.data.img || '';
-          this.status = res.data.status || 1;
-          this.alertType = this.title === '公众号展示' ? res.data.alert_type || 1 : res.data.shutdown_type || 1;
+          this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
+          if (this.title === '公众号展示') {
+            this.alertType = res.data.alert_type === null || res.data.alert_type === undefined || res.data.alert_type === '' ? 1 : res.data.alert_type;
+          } else {
+            this.alertType = res.data.shutdown_type === null || res.data.shutdown_type === undefined || res.data.shutdown_type === '' ? 1 : res.data.shutdown_type;
+          }
         }
       }).catch(e => {
         console.log(e);
