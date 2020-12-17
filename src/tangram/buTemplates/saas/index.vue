@@ -2675,10 +2675,14 @@ export default {
         return this.$fetch('liveEnd', {
           webinar_id: this.webinar_id,
           end_type: 4
-        }).then(() => {
-          // this.localDuration = 0
-          this.thirdPartyMobild = false;
-          this.$EventBus.$emit('endLive');
+        }).then((res) => {
+          if(res.code == 200){
+            // this.localDuration = 0
+            this.thirdPartyMobild = false;
+            this.$EventBus.$emit('endLive');
+          }else{
+            this.$message.warning(res.msg)
+          }
         });
       } else if (this.rebroadcast) {
         if (this.rebroadcast == 'rebroadcastEnd') {
@@ -2686,11 +2690,15 @@ export default {
           this.$fetch('liveEnd', {
             webinar_id: this.webinar_id,
             end_type: 4
-          }).then(() => {
-            this.rebroadcast = '';
-            // this.localDuration = 0
-            this.thirdPartyMobild = false;
-            this.$EventBus.$emit('endLive');
+          }).then((res) => {
+            if(res.code == 200){
+              this.rebroadcast = '';
+              // this.localDuration = 0
+              this.thirdPartyMobild = false;
+              this.$EventBus.$emit('endLive');
+            }else{
+              this.$message.warning(res.msg)
+            }
           });
         } else {
           // 转播中停止直播
@@ -2705,10 +2713,14 @@ export default {
             this.$fetch('liveEnd', {
               webinar_id: this.webinar_id,
               end_type: 4
-            }).then(() => {
+            }).then((res) => {
+            if(res.code == 200){
               // this.localDuration = 0
               this.thirdPartyMobild = false;
               this.$EventBus.$emit('endLive');
+            }else{
+              this.$message.warning(res.msg)
+            }
             });
           });
         }

@@ -706,9 +706,13 @@ export default {
           return this.$fetch('liveEnd', {
             webinar_id: this.webinadId,
             end_type: 1
-          }).then(() => {
-            EventBus.$emit('endLive');
-            // 广播 直播结束
+          }).then((res) => {
+            if(res.code == 200){
+              EventBus.$emit('endLive');
+              // 广播 直播结束
+            }else{
+              this.$message.warning(res.msg)
+            }
           });
         }).catch((e) => {
           console.error(e, 333);
@@ -724,9 +728,13 @@ export default {
           return this.$fetch('liveEnd', {
             webinar_id: this.webinadId,
             end_type: 1
-          }).then(() => {
-            EventBus.$emit('endLive');
-            // 广播 直播结束
+          }).then((res) => {
+            if(res.code == 200){
+              EventBus.$emit('endLive');
+              // 广播 直播结束
+            }else{
+              this.$message.warning(res.msg)
+            }
           });
         });
     },
