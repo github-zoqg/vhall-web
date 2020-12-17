@@ -154,7 +154,7 @@ export default {
         },
         {
           label: '用量分配',
-          key: 'rond',
+          key: 'round',
           width: 200
         }
       ],
@@ -397,11 +397,18 @@ export default {
               item.round = `流量动态`;
             } else {
               // 流量（XXXGB）
-
+              item.round = `流量（${item.vip_info.total_flow}GB）`;
+            }
+          } else {
+            if (item.is_dynamic > 0 ) {
+              // 流量动态
+              item.round = `并发动态`;
+            } else {
+              // 并发（XXX方）
+              item.round = `并发（${item.vip_info.total}方）`
             }
           }
-
-          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
+          // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
         this.sonDao = dao;
       }).catch(e=>{

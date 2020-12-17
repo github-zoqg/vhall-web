@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="用量分配"></pageTitle>
+    <pageTitle title="用量分配is_dynamic > 0 ? '动态' : '固定'"></pageTitle>
     <div class="ac__allocation__panel">
       <!-- 左侧 -->
       <div class="ac__allocation__panel--left">
@@ -8,22 +8,18 @@
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
         <el-button round @click.prevent.stop="multiAllocShow = true" class="panel-btn length104" size="medium">批量分配</el-button>
-        <!-- 固定分配 -->
-        <div v-if="tabType === 'regular'" class="regular-ctx">
-          <p>每个子账号可单独分配用量，所有用量之和不能大于可分配用量</p>
-          <el-button type="primary" class="length152" round v-if="vipStatus === 'regular_0'" v-preventReClick @click="allocationSave('regular')">保存</el-button>
-        </div>
-        <!-- 动态分配 -->
-        <div v-if="tabType === 'trends'" :class="['trends-ctx', {'trend-list': vipStatus === 'trends_1'}]">
-          <p v-if="vipStatus === 'trends_0'">所有子账号共用所有可用的并发或流量<br />无需为单个账户分配</p>
-          <el-button type="primary" class="length152" round v-if="vipStatus === 'trends_0'" v-preventReClick @click="allocationSave('trends')">保存</el-button>
+        <!-- 固定分配，有查询列表。 -->
+        <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': vipStatus === 'regular_1'}]">
+          <p v-if="vipSelectStatus === 'regular_0'">每个子账号可单独分配用量，所有用量之和不能大于可分配用量</p>
+          <el-button type="primary" class="length152" round  v-if="vipSelectStatus === 'regular_0' && vipSelectStatus !== vipStatus" v-preventReClick @click="allocationSave('regular')">保存</el-button>
+          <!-- 当前数据库中已经是固定分配 -->
           <el-table
             ref="multipleTable"
             :data="dataList"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
-            v-if="vipStatus === 'trends_1' && dataList.length > 0">
+            v-if="vipStatus === 'regular_1' && dataList.length > 0">
             <el-table-column
               type="selection"
               width="55">
@@ -65,17 +61,28 @@
               </template>
             </el-table-column>
           </el-table>
-
+        </div>
+        <!-- 动态分配，无查询列表 -->
+        <div v-if="tabType === 'trends'" :class="['trends-ctx', {'regular-list': vipStatus === 'trends_1'}]">
+          <p>所有子账号共用所有可用的并发或流量<br />无需为单个账户分配</p>
+          <el-button type="primary" class="length152" round v-if="vipSelectStatus === 'trends_0'" v-preventReClick @click="allocationSave('trends')">保存</el-button>
         </div>
       </div>
       <!-- 右侧名片 -->
       <div class="ac__allocation__panel--right">
         <div class="ac__allocation--user">
           <h1 class="title">可用资源</h1>
-          <img src="../../common/images/avatar.jpg" alt="" />
-          <p class="result_val">{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}</p>
-          <p class="unit">当前可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</p>
-          <p class="date">有效期至2023-07-31</p>
+          <div class="allocation_icon">
+            <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i>
+          </div>
+          <ul class="allocation_one">
+            <li>可分配并发：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
+            <li>有效期至{{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul>
+          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.extend_end_time">
+            <li>可分配并发扩展包（天）：{{ resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0 }}</li>
+            <li>有效期至{{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
+          </ul>
         </div>
         <ul class="ac__allocation--info">
           <li>提示：</li>
@@ -124,6 +131,7 @@
         ],
         tabType: null,
         vipStatus: null, // trends_0 动态重分配；trends_1 动态已分配；regular_0 固态重分配；regular_1 固态已分配
+        vipSelectStatus: null,
         dataList: [],
         total: 0,
         multiAllocShow: false,
@@ -134,21 +142,29 @@
           count: [
             { required: true, message: '请输入分配数量', trigger: 'blur' }
           ]
-        }
+        },
+        sonDao: {}
       };
     },
     methods: {
-      // 切换选项卡
+      // 切换选项卡[每次点击切换时，设定其需要点击保存按钮]
       handleClick(tab, event) {
         console.log(tab, event);
-        this.vipStatus = this.tabType === 'trends' ? `trends_0` : `regular_0`;
+        // trends_0 动态重分配；trends_1 动态已分配；regular_0 固定重分配；regular_1 固定已分配。
+        this.vipSelectStatus = this.tabType === 'trends' ? `trends_0` : `regular_0`;
       },
-      // 保存分配方式
+      // 分配方式切换-保存分配方式
       allocationSave(type) {
-        console.log(type);
-        this.$fetch('allocSave', {}).then(res=>{
+        // 若为regular表示固定，其它动态
+        this.$fetch('userEdit', {
+          is_dynamic: type === 'regular' ? 0 : 1
+        }).then(res=>{
           if (res && res.code === 200) {
             this.$message.success('保存分配方式成功！');
+            // 若当前为固定分配，获取子账户列表数据
+            if (type === 'regular') {
+              this.getSonList();
+            }
           } else {
             this.$message.success(res.msg ||'保存分配方式失败！');
           }
@@ -159,17 +175,65 @@
       },
       // 获取用量分配方式
       getAllocMethod() {
+        // 获取用户信息中的 is_dynamic字段
         this.tabType = 'trends';
         this.vipStatus = 'trends_1';
         if (this.vipStatus === 'trends_1') {
           // 获取子账户数据
+          this.getSonList();
         }
+      },
+      // 获取列表数据
+      getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
+        let params = {
+          user_id: sessionOrLocal.get('userId'),
+          pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
+          limit: pageInfo.pageSize,
+          scene_id: 2 // 场景id：1子账号列表 2用量分配获取子账号列表
+        };
+        this.$fetch('getSonList', this.$params(params)).then(res =>{
+          let dao =  res && res.code === 200 && res.data ? res.data : {
+            total: 0,
+            list: []
+          };
+          (dao.list||[]).map(item => {
+            // 组装数据
+            if(item.vip_info.type > 0) {
+              if (item.is_dynamic > 0 ) {
+                // 流量动态
+                item.count = 0;
+                item.inputCount = '';
+              } else {
+                // 流量（XXXGB）
+                item.inputCount = item.vip_info.total_flow;
+                item.count = item.vip_info.total_flow;
+              }
+            } else {
+              if (item.is_dynamic > 0 ) {
+                // 流量动态
+                item.count = 0;
+                item.inputCount = '';
+              } else {
+                // 并发（XXX方）
+                item.inputCount = item.vip_info.total;
+                item.count = item.vip_info.total;
+              }
+            }
+            item.isHide = false;
+          });
+          this.dataList = dao.list;
+          this.total = dao.total;
+        }).catch(e=>{
+          console.log(e);
+          this.sonDao = {
+            total: 0,
+            list: []
+          };
+        });
       },
       // 获取账号可分配资源
       allocMoreGet() {
-        this.$fetch('allocMoreGet', {
-          user_id: sessionOrLocal.get('userId')
-        }).then(res=>{
+        this.$fetch('allocMoreGet', {}).then(res=>{
           if (res && res.code === 200) {
             this.resourcesVo = res.data;
           } else {
@@ -219,6 +283,15 @@
     },
     created() {
       this.allocMoreGet();
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      if(userInfo) {
+        this.tabType = userInfo.is_dynamic > 0 ? 'trends' : 'regular';
+        this.vipStatus = this.tabType === 'trends' ? `trends_1` : `regular_1`;
+        this.vipSelectStatus = this.tabType === 'trends' ? `trends_1` : `regular_1`;
+        if(this.vipStatus === 'regular_1') {
+          this.getSonList();
+        }
+      }
     }
   };
 </script>
@@ -235,15 +308,15 @@
     p {
       margin-bottom: 32px;
     }
+    &.regular-list {
+      padding: 24px 32px;
+    }
   }
   .trends-ctx {
     padding-top: 225px;
     text-align: center;
     p {
       margin-bottom: 32px;
-    }
-    &.trend-list {
-      padding: 24px 32px;
     }
   }
   .ac__allocation__panel--right {
@@ -269,12 +342,24 @@
       color: #999999;
       line-height: 20px;
     }
-    img {
-      display: block;
-      margin: 0 auto;
-      width: 62px;
-      height: 62px;
-      margin-top: 29px;
+    .allocation_icon {
+      text-align: center;
+      margin-top: 24px;
+      i.iconfont-v3 {
+        font-size: 62px;
+      }
+    }
+    .allocation_one {
+      margin-top: 24px;
+      li {
+        list-style-type: none;
+        text-align: left;
+        font-size: 12px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        line-height: 20px;
+      }
     }
     .result_val {
       font-size: 36px;

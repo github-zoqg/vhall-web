@@ -8,7 +8,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="domainUrl || domain_url" class="avatar" alt="" />
+          <img :src="domainUrl || domain_url" class="avatar" alt="" @click.stop="false"/>
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
@@ -21,7 +21,7 @@
               删除
             </span>
             <span v-if="!!$props.restPic">
-              <i class="el-icon-refresh-left" @click="refresh($event)"></i>
+              <i class="el-icon-refresh-left" @click.self="refresh($event)"></i>
               <br/>
               重置
             </span>

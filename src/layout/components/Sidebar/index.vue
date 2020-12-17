@@ -19,7 +19,7 @@
         :collapse="!sidebar.opened"
         background-color="#1A1A1A"
         text-color="#E2E2E2"
-        :unique-opened="false"
+        :unique-opened="true"
         active-text-color="#FB3A32"
         :collapse-transition="false"
         mode="vertical"

@@ -3,11 +3,11 @@
     title="添加封面背景"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    width="673px"
+    width="700px"
   >
     <el-scrollbar class="scrollbar">
       <div class="background-list">
-        <div class="list-item">
+        <div class="list-item" @click.stop="domain_url && choseBackground(-1)">
           <upload
             v-model="imageUrl"
             :domain_url="domain_url"
@@ -24,18 +24,21 @@
             :before-upload="beforeUploadHnadler">
             <p slot="tip">最佳尺寸750*1624<br />支持jpg、png、bmp</p>
           </upload>
-        </div>
-        <div class="list-item list-imgs is-success" v-for="(item, index) in fileList" :key="index">
-          <label class="img-tangle" v-if="item.isChecked">
+          <label class="img-tangle" v-show="isType==0">
             <i class="el-icon-check"></i>
           </label>
-          <img :src="item.url" alt="" @click="choseBackground(item)"/>
+        </div>
+        <div class="list-item list-imgs is-success" v-for="(item, index) in fileList" :key="index">
+          <label class="img-tangle" v-if="isType === index + 1">
+            <i class="el-icon-check"></i>
+          </label>
+          <img :src="item" alt="" @click="choseBackground(index)"/>
         </div>
       </div>
     </el-scrollbar>
     <div slot="footer" class="dialog-footer">
       <el-button round @click.prevent.stop="dialogVisible = false">取 消</el-button>
-      <el-button round type="primary" @click.prevent.stop="dialogVisible">选 择</el-button>
+      <el-button round type="primary" @click.prevent.stop="changePic">选 择</el-button>
     </div>
   </VhallDialog>
 </template>
@@ -48,30 +51,20 @@ export default {
       advertisement: {},
       imageUrl: '',
       domain_url: '',
-      fileList: [
-        {
-          isChecked: true,
-          name: '1',
-          url:
-            'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        },
-        {
-          name:'2',
-          url:
-            'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-        },
-      ],
+      isType: 1,
+      fileList: [require('@/common/images/avatar.jpg'), require('@/common/images/custom-tab/doc-bg-new-h5.png'), require('@/common/images/custom-tab/pc_bg-new-h5.png'), require('@/common/images/custom-tab/chat-temp-new-h5.png'), require('@/common/images/custom-tab/detail-bg-new-h5.png'), require('@/common/images/custom-tab/que02.png'), require('@/common/images/custom-tab/private-chat-new.png')],
     };
   },
   components: {
     upload
   },
   methods: {
-    choseBackground(items) {
-      this.fileList.map(item => {
-        item.isChecked = false;
-        items.isChecked = true;
-      });
+    choseBackground(index) {
+      this.isType = index + 1;
+    },
+    changePic() {
+      this.$emit('onChangePic', this.isType, this.imageUrl, this.domain_url);
+      this.dialogVisible = false;
     },
     handleuploadSuccess(res, file) {
       console.log(res, file);
@@ -81,6 +74,7 @@ export default {
         let file_url = res.data.file_url || '';
         this.imageUrl = file_url;
         this.domain_url = domain_url;
+        this.isType = 0;
       }
     },
     beforeUploadHnadler(file){
@@ -126,6 +120,24 @@ export default {
     height: 140px;
     margin: 8px;
     border: 1px solid #ccc;
+    position: relative;
+    .img-tangle{
+      position: absolute;
+      right: 0;
+      top:0;
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+      border-right-color: #FB3A32;
+      border-top-color: #FB3A32;
+      i{
+        color:#fff;
+        position: absolute;
+        top: -8px;
+        right:-11px;
+        font-size: 10px;
+      }
+    }
     img {
       width: 100%;
     }

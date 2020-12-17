@@ -77,21 +77,21 @@ export const filterPhone = (value) => {
 
 export const wordStatusCss = (ext) => {
   if (ext === 'pdf') {
-    return 'saasPDFwenjian';
+    return 'saasPDFwenjian color-E34522';
   } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'bmp') {
-    return 'saastupianwenjian';
+    return 'saastupianwenjian color-794CC5';
   } else if (ext === 'video') {
-    return 'saasshipinwenjian';
+    return 'saasshipinwenjian color-3562FA';
   } else if (ext === 'doc' || ext === 'docx') {
-    return 'saaswordwendang';
+    return 'saaswordwendang color-3562FA';
   } else if (ext === 'ppt' || ext === 'pptx') {
-    return 'saaspptwendang';
+    return 'saaspptwendang color-FA9A32';
   } else if (ext === 'csv') {
-    return 'saasCSVwenjian';
+    return 'saasCSVwenjian color-14BA6A';
   } else if (ext === 'xls' || ext === 'xlsx') {
-    return 'saasexcelwendang';
+    return 'saasexcelwendang color-14BA6A';
   } else if (ext === 'media') {
-    return 'saasyinpinwenjian';
+    return 'saasyinpinwenjian color-3562FA';
   }
 }
 
