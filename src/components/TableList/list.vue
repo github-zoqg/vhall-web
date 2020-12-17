@@ -72,6 +72,11 @@
             <div v-else-if="item.key === 'imgOrText'">
               <p v-html="scope.row.imgOrText"></p>
             </div>
+            <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
+              <el-progress :percentage="scope.row.codeProcess" v-if="scope.row.codeProcess && !scope.row.transcoded"></el-progress>
+              <span v-else-if="scope.row.transcoded">转码完成</span>
+              <span v-else>{{scope.row.transform_schedule_str}}</span>
+            </div>
             <p v-else class="text">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
               {{ scope.row[item.key] }}

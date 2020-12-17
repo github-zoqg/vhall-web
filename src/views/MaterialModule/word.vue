@@ -94,10 +94,11 @@
 import PageTitle from '@/components/PageTitle';
 import DocPreview from './DocPreview/index.vue';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
-import Env from '@/api/env.js';
 import SelectWord from './components/selectWord.vue';
 
 import {sessionOrLocal} from "@/utils/utils";
+import EventBus from "@/utils/Events";
+import {formateDate} from "@/utils/general";
 export default {
   name: 'word.vue',
   components: {
@@ -131,7 +132,7 @@ export default {
         },
         {
           label: '进度',
-          key: 'progress',
+          key: 'transform_schedule_str',
         }
       ],
       tableRowBtnFun: [
@@ -156,7 +157,8 @@ export default {
       dialogVisible: false,
       dialogTotal: 0,
       dialogTableList: [],
-      dialogMulti: []
+      dialogMulti: [],
+      channel_id: null
     };
   },
   computed: {
@@ -229,7 +231,7 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['doc','docx','xls','xlsx','ppt','pptx','jpeg','jpg','png','bmp'];
+      const typeList = ['doc','docx','xls','xlsx','ppt','pptx','pdf','jpeg','jpg','png','bmp'];
       let fileNameArr = file.name.split('.');
       let lastFileKey = fileNameArr[fileNameArr.length - 1];
       console.log(lastFileKey);
@@ -248,7 +250,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`标志上传失败`);
+      this.$message.error(`文件上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -296,14 +298,21 @@ export default {
           this.no_show = this.totalNum === 0 && this.formParams.keyword === '';
           let list = res.data.list;
           list.map(item => {
-            // 转换状态 0待转换 100转换中 200完成 500失败
-            let statusStr = {
-              0: '等待转码',
-              100: '转码中',
-              200: '转码完成',
-              500: '转码失败'
+            let transformStr;
+            const statusJpeg = item.status_jpeg * 1;
+            const status = item.status * 1;
+            if (statusJpeg === 0 && status === 0) {
+              transformStr = '待转码';
+            } else if (statusJpeg === 100 || status === 100) {
+              transformStr = '转码中';
+            } else if (statusJpeg === 200 || status === 200) {
+              transformStr = '转码完成';
+            } else {
+              transformStr = '转码失败';
             }
-            item.progress = statusStr[item.status];
+            item.transform_schedule_str = transformStr;
+            item.codeProcess = 0;
+            item.transcoded = false;
           })
           this.tableList = res.data.list;
         } else {
@@ -376,10 +385,103 @@ export default {
     },
     initPage() {
       this.getTableWordList();
+    },
+    // 初始化
+    initChat(){
+      let option = {
+        appId: 'fd8d3653', // appId 必须
+        accountId: sessionOrLocal.get('userId') || '', // 第三方用户ID
+        channelId: this.channel_id, // 频道id 必须
+        token: sessionOrLocal.get('token', 'localStorage'), // 必须， token，初始化接口获取
+      }
+      window.VhallChat.createInstance(option, (event) => {
+        // alert('初始化成功')
+        this.$Chat = event.message; // 聊天实例句柄
+        this.monitor()
+      },err=>{
+        // alert('初始化错误')
+        console.error(err);
+      })
+    },
+    // 监听
+    monitor(){
+      /**
+       * 接收聊天自定义消息*/
+      this.$Chat.onCustomMsg(async msg => {
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============收到聊天消息2===============' + JSON.stringify(msg.data))
+        if (msg.data.type === 'converted_process_msg') {
+          EventBus.$emit('converted_process_msg', msg.data.data)
+        } else if (msg.data.type === 'host_msg_webinar') {
+          EventBus.$emit('host_msg_webinar', msg.data.data)
+        }
+      })
+    },
+    getWebinarInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if (res && res.code === 200) {
+          this.channel_id = res.data.vss_channel_id;
+        }
+      }).catch(error=>{
+        console.log(error);
+      }).finally(()=>{
+      });
     }
   },
   created() {
+    // 如果存在活动Id，查询活动接口
+    let id = this.$route.params.str;
+    if(id) {
+      this.getWebinarInfo();
+    } else {
+      this.channel_id = 'ch_729e035c'; // TODO 后续这块要从用户那边取值
+    }
     this.initPage();
+    this.initChat();
+  },
+  mounted() {
+    EventBus.$on('converted_process_msg', res => { // 转码进度
+      // console.log(res, '监听到converted_process_msg转码进度事件');
+      this.tableList.forEach((item) => {
+        if (res.document_id === item.document_id && !item.transcoded) {
+          item.codeProcess = Number(res.converted_process.replaceAll('%', ''));
+        }
+      });
+    });
+    EventBus.$on('host_msg_webinar', res => { // 转码状态
+      console.log(res, '监听到host_msg_webinar转码状态事件');
+      this.tableList.forEach((item) => {
+        if (res.document_id === item.document_id) {
+          const statusJpeg = Number(res.status_jpeg);
+          const status = Number(res.status);
+          if (statusJpeg === 0 && status === 0) {
+            item.transform_schedule_str = '待转码';
+            item.transcoded = false;
+          } else if (statusJpeg === 100 || status === 100) {
+            item.transform_schedule_str = '转码中';
+            item.transcoded = false;
+          } else if (statusJpeg === 200 || status === 200) {
+            item.transform_schedule_str = '转码完成';
+            item.transcoded = true;
+          } else {
+            item.transform_schedule_str = '转码失败';
+            item.transcoded = false;
+          }
+        }
+      });
+    });
   }
 };
 </script>
