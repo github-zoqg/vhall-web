@@ -145,6 +145,13 @@
               >下麦</el-button
             >
           </div>
+          <div class="table-lottery">
+            <lottery
+              :roomId="roomId"
+              :vssToken="vssToken"
+              ref="lotterySon"
+            ></lottery>
+          </div>
           <div class="player-active" v-show="!isEmbed">
             <div class="table-praise">
               <praise :roomId="roomId" :times="roomInfo.like"></praise>
@@ -168,13 +175,6 @@
             </div>
             <!-- <span>打赏</span> -->
           </div>
-        </div>
-        <div class="table-lottery">
-          <lottery
-            :roomId="roomId"
-            :vssToken="vssToken"
-            ref="lotterySon"
-          ></lottery>
         </div>
         <!-- 活动工具栏Done -->
       </div>
@@ -636,6 +636,7 @@ export default {
     sessionStorage.setItem('watch', true);
     // 存取是否登录的标识
     sessionStorage.setItem('authInfo', JSON.stringify(this.authInfo));
+
   },
   watch: {
     roomId (newVal) {
@@ -652,6 +653,7 @@ export default {
   mounted () {
     this.getInavInfo();
     this.redPacketInit();
+    this.getPrize()
     this.FIRST = true;
     this.repeatStatus = false; // 防止重复点击上麦
     if (!browserSupport()) {
@@ -665,6 +667,15 @@ export default {
     }
   },
   methods: {
+    getPrize(){
+      this.$fetch('getLivePrizeInfo', {webinar_id: this.ilId}).then(res=>{
+        if(res.code == 200){
+          console.warn(res.data, '获取');
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
+    },
     getSpeakList () {
       this.$fetch('speakList', {
         room_id: this.bizInfo.room_id
@@ -1503,15 +1514,16 @@ export default {
     margin-left: -52px;
   }
 
+  .table-lottery {
+    width: 40px;
+    height: 40px;
+    background: red;
+    display: inline-block;
+    margin-top: 4px;
+  }
   .player-active {
     float: right;
     margin-right: 20px;
-
-    .table-lottery {
-      float: right;
-      margin-top: 7px;
-      margin-right: 16px;
-    }
 
     .table-gift,
     .table-redCoupon {

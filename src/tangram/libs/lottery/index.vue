@@ -1,4 +1,5 @@
 <template>
+ <!-- v-if="payoff" -->
   <div class="vhall-lottery" v-if="payoff">
     <div class="payment-dialog" @click="closeUserList">
       <div class="payment-title" :class="lottHeadStyle?'lottery-headleft':'lottery-right'">
@@ -33,22 +34,24 @@
               <icon icon-class="saaswenhao"></icon>
             </el-tooltip>
           </el-form-item>
-          <el-form-item label="参与口令" v-show="joinLottery == 4">
+          <el-form-item label="参与口令" v-show="joinLottery == 8">
             <el-input  maxlength="15" show-word-limit style="width: 280px;" v-model="participationPass" placeholder="有趣的口令会带来更多互动"></el-input>
           </el-form-item>
           <el-form-item label="选择奖品">
+              <!-- value-key='prize_name' -->
             <el-select
               style="width: 280px;"
-              @change="lotteryChange"
-              v-model="joinLottery"
+              @change="prizeChange"
+              value-key='prize_name'
+              v-model="prize"
               placeholder="默认奖品"
             >
               <el-option
                 style="width: 280px;"
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in prizeList"
+                :key="item.prize_id"
+                :label="item.prize_name"
+                :value="item"
               ></el-option>
             </el-select>
             <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
@@ -62,9 +65,10 @@
           <el-form-item label="中奖人数" style="margin-bottom:0px">
             <el-input style="width: 280px;" v-model="prizeNum" placeholder="请输入中奖人数"></el-input>
             <div class="lottery-payment">
-              <span>{{ getPrizeCount }}</span>人参与抽奖
+              <span>{{ getPrizeCount }}</span>人可参与抽奖
             </div>
           </el-form-item>
+          <!-- 预设中奖 -->
           <el-form-item label="预设中奖" style="margin-bottom:10px">
             <el-input v-model="userKeywords" style="width: 280px;" placeholder="请输入用户名">
               <el-button slot="append"  @click="lotterySearch">搜索</el-button>
@@ -102,9 +106,6 @@
              开启后，抽奖结束后显示中奖名单
             </span>
           </el-form-item>
-          <div>
-            11---{{userButtonShow}}---22
-          </div>
           <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
         </el-form>
       </div>
@@ -184,6 +185,7 @@
 </template>
 <script>
 import EventBus from '@/utils/Events';
+import prize from './mixins'
 export default {
   props: {
     roomId: {
@@ -218,11 +220,11 @@ export default {
       prizeShow: false, // 趣味抽奖
       userListShow: false,
       userButtonShow: false,
-      chooseList: [],
-      userList: [],
-      joinLottery: '1',
-      prizeNum: '',
+      chooseList: [], // 预中奖人员
+      userList: [], //
+      prizeNum: '', // 设置的中奖人数
       userKeywords: '',
+      joinLottery: '1',
       options: [
         {
           value: '1',
@@ -237,10 +239,12 @@ export default {
           label: '参与签到的用户'
         },
         {
-          value: '4',
+          value: '8',
           label: '口令抽奖'
         }
       ],
+      prize: {},
+      prizeList: [], // 奖品列表
       payoff: false,
       hasAward: false,
       startButtonDisabled: false, // 开始按钮禁用状态
@@ -254,7 +258,9 @@ export default {
       lotteryStep: 3 // 领奖到哪一步
     };
   },
+  mixins: [prize],
   created () {
+    this.getPrizeList()
     this.disTimeSet = setInterval(() => {
       this.disabledTime--;
       if(this.disabledTime<=0){
@@ -319,74 +325,7 @@ export default {
     // 搜索预设中奖的人员
     lotterySearch () {
       if (!this.userKeywords) return this.$message.customerror('请输入中奖人用户名');
-      this.$vhallFetch('search', {
-        vss_token: this.vssToken,
-        room_id: this.roomId,
-        lottery_type: this.joinLottery,
-        keyword: this.userKeywords
-        // lottery_user_ids:null
-      }).then(res => {
-        if (res.code === 200) {
-          const userList = res.data ? res.data.list : [];
-          this.userList = userList.filter((u) => {
-            return !this.chooseList.find((c) => {
-              return c.account_id == u.account_id;
-            });
-          });
-          this.userListShow = true;
-        } else {
-          this.$message.customerror(res.msg);
-        }
-      });
-    },
-    // 开始抽奖
-    startReward () {
-      this.prizeShow = true;
-      this.lotteryContentShow = false;
-      // if (this.prizeNum > this.getPrizeCount) {
-      //   this.$message.customerror('中奖人数不可以大于参与抽奖人员数');
-      //   return;
-      // }
-      // if (!/^[1-9]\d*$/.test(this.prizeNum)) {
-      //   this.$message.customerror('中奖人数只能为正整数');
-      //   return;
-      // }
-      // let deliverId = [];
-      // if (this.chooseList) {
-      //   this.chooseList.map(item => {
-      //     deliverId.push(item.account_id);
-      //   });
-      //   deliverId = deliverId.join(',');
-      // } else {
-      //   deliverId = null;
-      // }
-      // this.startButtonDisabled = true;
-      // this.$vhallFetch('add', {
-      //   vss_token: this.vssToken,
-      //   room_id: this.roomId,
-      //   lottery_type: this.joinLottery,
-      //   lottery_number: this.prizeNum,
-      //   lottery_user_ids: deliverId
-      // }).then(res => {
-      //   this.startButtonDisabled = false;
-      //   if (res.code === 200) {
-      //     console.log(res, 'res------');
-      //     this.lotteryInfo = res.data;
-      //     this.lotteryContentShow = false;
-      //     this.prizeShow = true;
-      //     this.disTimeSet = setInterval(() => {
-      //         this.disabledTime--;
-      //       if(this.disabledTime<=0){
-      //         clearInterval(this.disTimeSet);
-      //       }
-      //     }, 1000);
-      //     console.log('dialogtitle>>>>>>>>>>>>>', this.dialogTitle);
-      //     this.dialogTitle = '趣味抽奖！';
-      //     this.closeShow = false;
-      //   }
-      // }).catch(() => {
-      //   this.startButtonDisabled = false;
-      // });
+      this.getLotteryCount()
     },
     // 关闭
     close () {
@@ -397,28 +336,10 @@ export default {
       this.prizeShow = false; // 趣味抽奖
       this.payoff = false;
     },
-    // 有多少人可参与到抽奖中  lotteryCount
-    getLotteryCount () {
-      this.$vhallFetch('lotteryCount', {
-        vss_token: this.vssToken,
-        room_id: this.roomId,
-        lottery_type: this.joinLottery
-      }).then(res => {
-        if (res.code === 200) {
-          console.log(res);
-          this.getPrizeCount = res.data.count || 0;
-          // this.lotteryInfo = res.data;
-          // this.lotteryContentShow = false;
-          // this.prizeShow = true;
-        }
-      });
-    },
     // 点击下拉框改变可参与的人数
     lotteryChange (value) {
       console.log('选择方式变化value', value);
-      if(value != 4){
-        this.getLotteryCount();
-      }
+      this.getLotteryCount();
     },
     // 点击抽奖
     lotteryShow () {
@@ -873,5 +794,8 @@ export default {
       color: rgba(252, 86, 89, 1);
     }
   }
+}
+::v-deep .el-select-dropdown__list .el-select-dropdown__item.selected{
+  color: rgba(252, 86, 89, 1)!important;
 }
 </style>

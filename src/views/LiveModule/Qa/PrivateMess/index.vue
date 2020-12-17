@@ -16,7 +16,7 @@
       <ul class="private-content">
         <li class="private-content-li" v-for="(item, index) in chatList" :key="index">
           <p>我： <span>{{filterTime(item.created_at)}}</span></p>
-          <p v-html="item.content.text"></p>
+          <p v-html="item.data && item.data.text_content"></p>
         </li>
       </ul>
       <div class="private-footer">
@@ -56,20 +56,21 @@ export default {
     onlyChatMess: {
       handler(newValue, oldValue){
         if(newValue.type){
-          console.warn('test --2');
-          console.warn(newValue, 789);
           this.$nextTick(()=>{
             let isFlag = this.userList.some((ele, index) =>{
               this.acrivePrivate = index
               return ele.id == newValue.item.join_id
             })
             if(!isFlag){
+              if(newValue.item){
+                newValue.id = newValue.item.join_id
+              }
               this.userList.push(newValue)
               this.acrivePrivate = this.userList.length - 1
             }else{
               // this
             }
-              this.activeName = newValue.nickname
+            this.activeName = newValue.nickname
             this.getDefaultContent(newValue.item.join_id)
           })
         }
@@ -86,7 +87,7 @@ export default {
     }
   },
   methods: {
-    getDefaultContent(to_userID,from){
+    getDefaultContent(to_userID){
       let _data = {
         room_id: this.userInfo.interact.room_id,
         start_time: '',
@@ -99,10 +100,6 @@ export default {
       this.$fetch('v3GetPrivCon', _data).then(res=>{
         console.warn(res);
         if(res.code == 200){
-          console.warn(res.data);
-          if(from){
-            // this.activeName =
-          }
           this.chatList = res.data.list
         }else{
           this.$message.warning(res.msg)
@@ -116,7 +113,6 @@ export default {
     },
     // 切换表情显示
     toggleEmoji () {
-      console.warn('点击的表情展示----', this.$refs, this.$refs.emoji);
       this.$refs.emoji.toggleShow();
     },
     // 子组件输入表情
@@ -146,15 +142,17 @@ export default {
       }
       let data = {
         avatar: this.userInfo.join_info.avatar,
-        target_id: this.userList[this.acrivePrivate].join_id,
+        target_id: this.userList[this.acrivePrivate].id,
         type:'text',
         barrageTxt: this.privateValue.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'),
         text_content: this.privateValue
       };
       // 为保持一致   故传了多个不同key  同value
+      console.warn(this.userList[this.acrivePrivate], 'this.userList[this.acrivePrivate]');
       let context = {
-        to: this.userList[this.acrivePrivate].join_id,
+        to: this.userList[this.acrivePrivate].id,
         nickname: this.userInfo.join_info.nickname, // 昵称
+        account_id: '16421384',
         nick_name: this.userInfo.join_info.nickname,
         user_name:  this.userInfo.join_info.nickname,
         role_name: this.roleClassFilter(this.userInfo.join_info.role_name), // 角色 1主持人2观众3助理4嘉宾
@@ -164,10 +162,19 @@ export default {
       };
       this.$nextTick(()=>{
         this.$emit('sendMsg', data,context)
+        if(!window.localStorage.getItem('localJoinList')){
+          window.localStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].id))
+          this.$fetch('v3SetUser', {room_id: this.userInfo.interact.room_id, webinar_id: this.webinar_id, to: this.userList[this.acrivePrivate].id})
+        }else{
+          let _arr = window.localStorage.getItem('localJoinList')
+           if(_arr.indexOf(this.userList[this.acrivePrivate].id) == -1){
+            window.localStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].id}`)
+          }
+        }
         let _data = {
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-          content:{
-            text:this.emojiToText(this.privateValue)
+          data:{
+            text_content: this.emojiToText(this.privateValue)
           }
         }
         this.chatList.push(_data)
