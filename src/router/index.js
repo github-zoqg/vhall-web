@@ -98,7 +98,7 @@ router.beforeEach((to, from, next) => {
           key: getQueryString('user_auth_key'),
           scene_id: 1
         };
-        fetch('callbackUserInfo', params).then(res => {
+        fetchData('callbackUserInfo', params).then(res => {
           sessionOrLocal.set('token', res.data.token, 'localStorage');
           next({path: '/'})
         });
