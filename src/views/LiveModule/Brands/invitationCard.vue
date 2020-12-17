@@ -5,6 +5,7 @@
       <el-switch
         style="display: block; padding-top: 4px"
         v-model="invitation"
+        @change="changeOpen"
         active-color="#FB3A32"
         inactive-color="#CECECE"
         active-text="开启后，观众可以在观看页面生成邀请卡，邀请好友观看"
@@ -18,33 +19,33 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-            <el-button round slot="reference">扫码查看</el-button>
+            <el-button round slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button round>本地下载</el-button>
+        <el-button round :disabled="!invitation">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
       <div class="form-data">
-        <el-form ref="formData" :model="formInvitation" label-width="82px">
+        <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation">
           <el-form-item label="背景">
             <div class="data-img">
-              <img src="@/common/images/v35-webinar.png" alt="" />
-              <span class="choseImg" @click="changeImg">重新选择</span>
+              <img :src="img" alt=""/>
+              <span class="choseImg" @click="invitation && changeImg()">重新选择</span>
             </div>
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
-              <p :class="showType === '1' ? 'isActiveColor' : ''" @click="changeType('1')">
+              <p :class="showType === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
                 <img src="../../../common/images/invite-card/tmpl1.png" alt="">
-                <label class="img-tangle" v-if="showType === '1'"><icon icon-class="saasicon-choose-01"></icon></label>
+                <label class="img-tangle" v-if="showType === 1"><i class="el-icon-check"></i></label>
               </p>
-               <p :class="showType === '2' ? 'isActiveColor' : ''" @click="changeType('2')">
+               <p :class="showType === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
                 <img src="../../../common/images/invite-card/tmpl2.png" alt="">
-                <label class="img-tangle" v-if="showType === '2'"><icon icon-class="saasicon-choose-01"></icon></label>
+                <label class="img-tangle" v-if="showType === 2"><i class="el-icon-check"></i></label>
               </p>
-               <p :class="showType === '3' ? 'isActiveColor' : ''" @click="changeType('3')">
+               <p :class="showType === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
                 <img src="../../../common/images/invite-card/tmpl3.png" alt="">
-                <label class="img-tangle" v-if="showType === '3'"><icon icon-class="saasicon-choose-01"></icon></label>
+                <label class="img-tangle" v-if="showType === 3"><i class="el-icon-check"></i></label>
               </p>
             </div>
           </el-form-item>
@@ -69,6 +70,7 @@
               style="width: 320px"
               v-model="formInvitation.webinar_date"
               type="datetime"
+              value-format="yyyy-MM-dd HH:mm:ss"
               placeholder="选择时间"
             >
             </el-date-picker>
@@ -104,19 +106,21 @@
       </div>
       <div class="invitation-show">
         <p>移动端预览</p>
-        <div class="show-img" v-if="isShow==='first'">
+        <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1">
           <div class="show-container">
             <div class="show-header">
-              <div class="show-avator"></div>
+              <div class="show-avator">
+                <img :src="avatar" alt="">
+              </div>
               <p>微吼直播</p>
               <p>邀请你一起看直播</p>
             </div>
             <div class="show-text">
-              <h1>遇见生活—生活方<br>式生活方式面面观</h1>
-              <p>2020北京国际家具展暨智能生活节于6月14-17日在北京中国国际会展中心（新馆）盛大召开。</p>
+              <h1>{{ formInvitation.title }}</h1>
+              <p>{{ formInvitation.location }}</p>
               <div class="show-time">
-                <p>2020-11-26 14:30</p>
-                <p>北京 中国国际会展中心</p>
+                <p>{{ formInvitation.webinar_date }}</p>
+                <p>{{ formInvitation.company }}</p>
               </div>
             </div>
             <div class="show-footer">
@@ -131,44 +135,48 @@
             </div>
           </div>
         </div>
-        <div class="watch-img" v-else-if="isShow==='second'">
-          <div class="watch-bg">
+        <div class="watch-img" v-else-if="showType===2">
+          <div class="watch-bg" :style="`backgroundImage: url(${img})`">
             <div class="watch-header">
-              <div class="watch-avator"></div>
+              <div class="watch-avator">
+                <img :src="avatar" alt="">
+              </div>
               <p>微吼直播</p>
               <p>邀请你一起看直播</p>
             </div>
           </div>
           <div class="watch-text">
-            <h1>遇见生活—生活方式面 面观</h1>
-            <p>2020北京国际家具展暨智能生活节于6月14-17日在北接京中国国际会展中心盛大召开。</p>
+            <h1>{{ formInvitation.title }}</h1>
+            <p>{{ formInvitation.location }}</p>
             <div class="watch-footer">
               <div class="watch-code"><img :src="qrcode" alt=""></div>
               <div class="watch-action">
                 <p>扫码观看视频</p>
-                <h1>2020-11-26 14:30</h1>
-                <h1>中国国际会展中心</h1>
+                <h1>{{ formInvitation.webinar_date }}</h1>
+                <h1>{{ formInvitation.company }}</h1>
               </div>
             </div>
           </div>
         </div>
-        <div class="look-img" v-else>
+        <div class="look-img" :style="`backgroundImage: url(${img})`" v-else>
             <div class="look-header">
-              <div class="look-avator"></div>
+              <div class="look-avator">
+                <img :src="avatar" alt="">
+              </div>
               <p>微吼直播</p>
               <p>邀请你一起看直播</p>
             </div>
             <div class="look-text">
-              <h1>遇见生活—生活方<br>式生活方式面面观</h1>
-              <p>2020北京国际家具展暨智能生活节于6月14-17日在北京中国国际会展中心（新馆）盛大召开。</p>
+              <h1>{{ formInvitation.title }}</h1>
+              <p>{{ formInvitation.location }}</p>
             </div>
             <div class="look-time">
               <span></span>
               <p>时间</p>
-              <p>2020-11-26 14:30</p>
+              <p>{{ formInvitation.webinar_date }}</p>
               <span></span>
               <p>地点</p>
-              <p>北京 中国国际会展中心</p>
+              <p>{{ formInvitation.company }}</p>
             </div>
             <div class="look-footer">
               <div class="look-code"><img :src="qrcode" alt=""></div>
@@ -181,29 +189,43 @@
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button type="primary" :disabled="!invitation" @click="onSubmit">保存</el-button>
       </div>
     </div>
-    <add-background ref="background"></add-background>
+    <add-background ref="background" @onChangePic="onSubmitImg"></add-background>
   </div>
 </template>
 <script>
 import addBackground from './components/imgBackground';
 import QRcode from 'qrcode';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data() {
     return {
       invitation: true,
       qrcode: '',
       showCode: '',
-      showType: '1',
+      showType: 1,
+      avatar: '',
+      img: '',
+      imgType: 0,
       link: 'http://e.vhall.com/mywebinar/invite-card/923464350/1734888',
-      isShow: 'first',
+      isShowMethod: '1',
+      information: {},
       formInvitation: {
         show_type: 1,
         img_type: 0,
-        is_show_watermark: false
+        is_show_watermark: false,
       },
+      fileList: [
+        require('@/common/images/avatar.jpg'),
+        require('@/common/images/custom-tab/doc-bg-new-h5.png'),
+        require('@/common/images/custom-tab/pc_bg-new-h5.png'),
+        require('@/common/images/custom-tab/chat-temp-new-h5.png'),
+        require('@/common/images/custom-tab/detail-bg-new-h5.png'),
+        require('@/common/images/custom-tab/que02.png'),
+        require('@/common/images/custom-tab/private-chat-new.png')
+      ],
       showList: [
         {
           url: '../../../common/images/invite-card/tmpl1.png',
@@ -226,22 +248,18 @@ export default {
       ]
     };
   },
-  watch: {
-    invitation() {
-      if (this.invitation) {
-        this.getInviteCardInfo();
-      }
-    }
-  },
   created(){
-     QRcode.toDataURL(
+    this.webinarId = this.$route.params.str;
+    QRcode.toDataURL(
       this.link,
       (err, url) => {
         console.log(err, url);
         this.showCode = url;
       }
      );
-    this.isInviteCard();
+     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar;
+    this.getInviteCardInfo();
+    // this.isInviteCard();
   },
   components: {
     addBackground
@@ -250,24 +268,28 @@ export default {
     changeType(index) {
       this.showType = index;
     },
+    changeOpen() {
+      this.isInviteCard();
+    },
     isInviteCard() {
       let params = {
-        webinar_id: '923464350',
-        room_id: 'ls_123423',
-        status: this.invitation ? 1 : 0
+        webinar_id: this.webinarId,
+        status: Number(this.invitation)
       };
       this.$fetch('setCardStatus', params).then(res => {
-        console.log(res.data, '1111111111');
+        this.$message.success(this.invitation ? '开启邀请卡' : '关闭邀请卡');
       });
     },
     getInviteCardInfo() {
       let params = {
-        webinar_id: '923464350',
-        room_id: 'ls_123423'
+        webinar_id: this.webinarId
       };
       this.$fetch('getCardDetailInfo', params).then(res => {
         this.formInvitation = res.data.invite_card;
-        this.formInvitation.is_show_watermark = res.data.invite_card.is_show_watermark === 1 ? false : true;
+        this.img = res.data.invite_card.img || this.fileList[0];
+        this.showType = res.data.invite_card.show_type;
+        this.invitation = Boolean(res.data.status);
+        this.formInvitation.is_show_watermark = Boolean(res.data.invite_card.is_show_watermark);
         this.getShowCode(res.data.invite_qr_url);
       });
     },
@@ -286,24 +308,30 @@ export default {
     code() {
       this.$router.push({path: '/code'});
     },
-    showMethods(items) {
-      this.formInvitation.show_type = items.show_type;
+    onSubmitImg(type, url, trueImg) {
+      if (url) {
+        this.formInvitation.img = url;
+        this.img = trueImg;
+      } else {
+        this.img = this.fileList[type - 1];
+      }
+      this.formInvitation.img_type = type;
+      this.onSubmit();
     },
     // 修改邀请卡信息
     onSubmit() {
       let ids = {
-        webinar_id: '923464350',
-        room_id: 'ls_123423',
-        welcome_txt: '欢迎'
+        webinar_id: this.webinarId,
       };
-      let params = this.formInvitation
-      params.is_show_watermark = this.formInvitation.is_show_watermark ? 1 : 0
-      console.log(99, params)
-      let obj = Object.assign({}, ids, params);
-      this.$fetch('editCardStatus', obj).then(res => {
-       console.log(res.data, "保存数据");
+      this.formInvitation.is_show_watermark = Number(this.formInvitation.is_show_watermark);
+      this.formInvitation.show_type = this.showType;
+      this.formInvitation.img = this.formInvitation.img_type ?  '' : this.img;
+      let obj = Object.assign({}, ids, this.formInvitation);
+      this.$fetch('editCardStatus', this.$params(obj)).then(res => {
+       if (res.code == 200) {
+         this.$message.success('保存数据成功');
+       }
       });
-      // console.log("保存数据");
     }
   }
 };
@@ -388,10 +416,19 @@ export default {
       border: 1px solid transparent;
       .img-tangle{
         position: absolute;
-        right: -2px;
-        top:-8px;
-        /deep/.svg-icon{
-          font-size: 24px;
+        right: 0;
+        top:0;
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-right-color: #FB3A32;
+        border-top-color: #FB3A32;
+        i{
+          color:#fff;
+          position: absolute;
+          top: -8px;
+          right:-11px;
+          font-size: 10px;
         }
       }
       img {
@@ -421,9 +458,11 @@ export default {
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: cover;
+      height: 622px;
       .show-container{
         margin: 50px 24px;
         width: 282px;
+        height: 520px;
         background: #fff;
         box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
         .show-header{
@@ -435,7 +474,12 @@ export default {
             border-radius: 50%;
             border: 1px solid #ccc;
             margin: auto;
-            margin-bottom: 4px;
+            margin-bottom: 10px;
+            img{
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+            }
           }
           p{
             padding: 0;
@@ -446,7 +490,7 @@ export default {
           }
         }
         .show-text{
-          padding: 15px 24px 30px 24px;
+          padding: 30px 24px 30px 24px;
           text-align: center;
           h1{
             padding: 0;
@@ -454,6 +498,7 @@ export default {
             color:#1A1A1A;
             font-weight: 600;
             line-height: 37px;
+            min-height: 80px;
           }
           p{
             font-size: 14px;
@@ -461,6 +506,7 @@ export default {
             font-weight: 400;
             line-height: 20px;
             padding: 2px 0 5px 0;
+            min-height: 45px;
           }
           .show-time{
             margin-top: 10px;
@@ -491,7 +537,7 @@ export default {
               font-size: 14px;
               color:#1A1A1A;
               font-weight: 600;
-              line-height: 20px;
+              line-height: 28px;
             }
             p{
               padding:0;
@@ -507,11 +553,13 @@ export default {
       width: 330px;
       border-radius: 8px;
       background: #FFFFFF;
+      height: 620px;
       box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       .watch-bg{
         height: 360px;
         background-image: url('../../../common/images/v35-webinar.png');
-        background-size: cover;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
         .watch-header{
             padding: 20px 24px;
             text-align: center;
@@ -522,6 +570,11 @@ export default {
               border: 1px solid #ccc;
               margin: auto;
               margin-bottom: 4px;
+              img{
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+              }
             }
             p{
               padding: 0;
@@ -545,8 +598,9 @@ export default {
         padding:0;
         font-size: 14px;
         color: #666;
-        line-height: 22px;
+        line-height: 25px;
         font-weight: 400;
+        min-height: 50px;
       }
       .watch-footer{
           display: flex;
@@ -567,8 +621,8 @@ export default {
               padding:0;
               font-size: 14px;
               color:#1A1A1A;
-              font-weight: 400;
-              line-height: 20px;
+              font-weight: 500;
+              line-height: 25px;
             }
             p{
               padding:0;
@@ -576,6 +630,7 @@ export default {
               color:#666;
               font-weight: 400;
               line-height: 20px;
+              min-height: 20px;
             }
           }
         }
@@ -584,6 +639,7 @@ export default {
     .look-img{
       width: 330px;
       color:#fff;
+      height: 622px;
       border-radius: 4px;
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
@@ -597,25 +653,30 @@ export default {
           border-radius: 50%;
           border: 1px solid #ccc;
           margin: auto;
-          margin-bottom: 4px;
+          margin-bottom: 10px;
+          img{
+              width: 100%;
+              height: 100%;
+              border-radius: 50%;
+            }
         }
         p{
           padding: 0;
           font-size: 14px;
           font-weight: 400;
-          line-height: 18px;
+          line-height: 20px;
           color:#fff;
         }
       }
       .look-text{
         width: 282px;
-        // padding: 15px 24px 30px 24px;
         text-align: center;
         border: 4px solid #fff;
         border-radius: 4px;
         margin: auto;
         margin-top: 10px;
         padding: 20px 0;
+        min-height: 150px;
         h1{
           padding: 0;
           font-size: 26px;
@@ -631,11 +692,11 @@ export default {
         }
       }
       .look-time{
-        margin-top: 20px;
+        margin-top: 30px;
         padding-left: 24px;
         p{
           padding:0;
-          line-height: 22px;
+          line-height: 25px;
           color:#fff;
         }
         span{
