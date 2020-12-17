@@ -302,16 +302,13 @@ export default {
       }
     }
   },
-  created() {
-    // if (this.isStatus != 4) {
-    //   // 点播不需要调用
-    //   this.getOtherInfo();
-    // }
-  },
   mounted() {
     this.roomId = this.$route.query.roomId;
     this.getAllDataInfo();
-    this.getOtherInfo();
+     if (this.isStatus != 4) {
+      // 点播不需要调用
+      this.getOtherInfo();
+    }
   },
   methods: {
     getAllDataInfo() {

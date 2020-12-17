@@ -87,6 +87,12 @@ router.beforeEach((to, from, next) => {
       to.path.indexOf('/user/home') !== -1 ||
       to.path.indexOf('/live/watch/') !== -1
     ) {
+        next()
+    } else {
+      // 跳转之前，清空所有内容
+      console.log('33333333333', to.path, '当前页面');
+      sessionOrLocal.clear('localStorage');
+      sessionOrLocal.clear();
       if (getQueryString('user_auth_key')) {
         let params = {
           key: getQueryString('user_auth_key'),
@@ -97,14 +103,8 @@ router.beforeEach((to, from, next) => {
           next({path: '/'})
         });
       } else {
-        next()
+        next({path: '/login'});
       }
-    } else {
-      // 跳转之前，清空所有内容
-      console.log('33333333333', to.path, '当前页面');
-      sessionOrLocal.clear('localStorage');
-      sessionOrLocal.clear();
-      next({path: '/login'});
     }
     NProgress.done();
   }
