@@ -93,7 +93,7 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" v-preventReClick @click="copy(urlText2)" class="copy-text">邀请</el-button>
+            <el-button  type="primary" round v-preventReClick @click="copy(urlText2)" class="copy-text">邀请</el-button>
           </div>
         </div>
         <!-- 助理 -->
@@ -137,7 +137,7 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
           </div>
         </div>
       </div>
@@ -222,7 +222,7 @@ export default {
 直播ID：${this.privilegeVo.webinar_id}
 开始时间：${this.privilegeVo.start_time}
 主持人口令：${this.privilegeVo && this.privilegeVo.host_password ? this.privilegeVo.host_password : '未设置'}
-加入链接：${'/mywebinar/host-login/'+ this.privilegeVo.webinar_id }`;
+加入链接：${this.privilegeVo && this.host_join_link ? this.host_join_link : ''}`;
     },
     urlText2: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
@@ -230,7 +230,7 @@ export default {
 直播ID：${this.privilegeVo.webinar_id}
 开始时间：${this.privilegeVo.start_time}
 嘉宾口令：${this.privilegeVo && this.privilegeVo.guest_password ? this.privilegeVo.guest_password : '未设置'}
-加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+加入链接：${this.privilegeVo && this.join_link ? this.join_link : ''}`;
     },
     urlText3: function() {
       return `您好，【${this.privilegeVo.nick_name}】邀您参加《${this.privilegeVo.subject}》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
@@ -238,7 +238,7 @@ export default {
 直播ID：${this.privilegeVo.webinar_id}
 开始时间：${this.privilegeVo.start_time}
 助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
-加入链接：${'/mywebinar/login/'+ this.privilegeVo.webinar_id }`;
+加入链接：${this.privilegeVo && this.assistant_join_link ? this.assistant_join_link : ''}`;
     },
     host_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
