@@ -730,7 +730,7 @@ export default {
       showPayWay: false,
       showPayQrCode: false,
       payQrCode: '',
-      showGiveMoney: true,
+      showGiveMoney: false,
       giveMoney: '',
       giveMoneyIndex: 1,
       giveMoneyPayWay: '1',
