@@ -98,6 +98,7 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
+import {  textToEmoji } from '@/tangram/libs/chat/js/emoji';
 export default {
   components: {
     PageTitle,
@@ -151,7 +152,7 @@ export default {
         },
         {
           label: '消息内容',
-          key: 'content',
+          key: 'imgOrText',
         },
         {
           label: '审核状态',
@@ -308,6 +309,13 @@ export default {
     this.changeColumn(this.title);
   },
   methods: {
+    emojiToText (content) {
+      return textToEmoji(content).map(c => {
+        return c.msgType == 'text'
+          ? c.msgCont
+          : `<img width="24" src="${c.msgImage}" border="0" />`;
+      }).join(' ');
+    },
     changeColumn(title) {
       this.params = {};
       switch (title) {
@@ -362,6 +370,8 @@ export default {
     changeDate() {
       if(this.title === '问答') {
         this.getRecordList();
+      } else {
+        this.chatInfo();
       }
     },
     onHandleBtnClick(val) {
@@ -386,7 +396,6 @@ export default {
     },
     // 聊天
     chatInfo() {
-      // 少了一个搜索参数
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         room_id: this.roomId
@@ -403,8 +412,7 @@ export default {
         this.tableList = res.data.list;
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
-          item.content = item.data.text_content || item.data.barrage_txt;
-          item.revice = item.context.reply_msg;
+          item.imgOrText = this.emojiToText(item.data.text_content) || this.emojiToText(item.data.barrage_txt);
           item.statusText = '通过';
           item.revice = '主持人';
         })
@@ -482,6 +490,7 @@ export default {
       that.$confirm('确定要删除该文件吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
           let obj = {
