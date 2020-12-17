@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
 import fetchData from "@/api/fetch";
-import {sessionOrLocal} from "@/utils/utils"; // progress bar style
+import {sessionOrLocal, getQueryString} from "@/utils/utils"; // progress bar style
 Vue.use(Router);
 // 所有路由数组
 const routes = [];
@@ -75,6 +75,11 @@ router.beforeEach((to, from, next) => {
   } else {
     // token不存在时跳转
     console.log('4444444', to.path, '当前页面');
+    /**
+     * 获取用户信息需要判断是普通登录还是第三方登录
+     * 普通登录直接获取用户信息
+     * 第三方登录地址栏有user_auth_key
+     */
     if(
       whiteList.includes(to.path) ||
       to.path.indexOf('/subscribe') !== -1 ||
@@ -82,12 +87,24 @@ router.beforeEach((to, from, next) => {
       to.path.indexOf('/user/home') !== -1 ||
       to.path.indexOf('/live/watch/') !== -1
     ) {
-      next()
+        next()
     } else {
       // 跳转之前，清空所有内容
+      console.log('33333333333', to.path, '当前页面');
       sessionOrLocal.clear('localStorage');
       sessionOrLocal.clear();
-      next({path: '/login'});
+      if (getQueryString('user_auth_key')) {
+        let params = {
+          key: getQueryString('user_auth_key'),
+          scene_id: 1
+        };
+        fetchData('callbackUserInfo', params).then(res => {
+          sessionOrLocal.set('token', res.data.token, 'localStorage');
+          next({path: '/'})
+        });
+      } else {
+        next({path: '/login'});
+      }
     }
     NProgress.done();
   }

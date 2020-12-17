@@ -69,6 +69,9 @@
                 <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
+            <div v-else-if="item.key === 'imgOrText'">
+              <p v-html="scope.row.imgOrText"></p>
+            </div>
             <p v-else class="text">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
               {{ scope.row[item.key] }}
