@@ -536,7 +536,10 @@
             }
             this.$route.query.refer && (options.refer = this.$route.query.refer)
             this.$fetch('regAnswerSubmit', options).then(res => {
-              if(res.code == 200) {
+              if (res.code == 12814) {
+                this.$message.error('该手机已报名，请直接验证')
+                this.tabs = 2
+              } else {
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
                 // this.$emit('changeBtnVal', '已预约')
