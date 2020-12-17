@@ -153,7 +153,7 @@
                   </el-switch>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">保存</el-button>
+              <el-button type="primary" @click="preOthersOptions">保存</el-button>
             </el-form-item>
           </el-form>
            </div>
@@ -274,6 +274,18 @@ export default {
       this.$fetch('setWatermark',this.formWatermark).then(res => {
          console.log(res.data, '22222222222222222');
       });
+    },
+    // 保存播放器其他设置
+    preOthersOptions () {
+      let params = {
+        barrage_button: this.formOther.bulletChat ? 1 : 0,
+        progress_bar: this.formOther.progress ? 1 : 0,
+        speed: this.formOther.doubleSpeed ? 1 : 0,
+        webinar_id: this.$route.params.str
+      }
+      this.$fetch('setOtherOption', {...params}).then(res => {
+        this.$message.success('设置成功')
+      })
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);

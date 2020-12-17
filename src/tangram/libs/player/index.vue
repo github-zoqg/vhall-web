@@ -47,7 +47,7 @@
       @mouseenter="controllerMouseEnter"
       @mouseleave="controllerMouseLeave"
     >
-      <div class="slider line-slider" v-if="!isLive">
+      <div class="slider line-slider" v-if="!isLive" v-show="playerOtherOptions.progress_bar == 1">
         <el-slider v-model="sliderVal" :show-tooltip="false" ref="controllerRef" @change="setVideo"></el-slider>
         <div class="Times" :style="{left: hoverLeft + 'px'}" v-show="TimesShow">
           <span class="current-time">{{hoverTime | secondToDate}}</span>
@@ -83,7 +83,7 @@
               </li>
             </ul>
           </div>
-          <div class="Painting spee" v-if="UsableSpeed.length>0" :class="{active: SpeeActive}">
+          <div class="Painting spee" v-if="UsableSpeed.length>0 && playerOtherOptions.speed == 1" :class="{active: SpeeActive}">
             <span
               @click="SpeeEnter"
             >{{currentSpeed == 1 ? $t('message.speed'): currentSpeed.toString().length &lt; 3 ? `${currentSpeed.toFixed(1)}X` : `${currentSpeed}X`}}</span>
@@ -109,7 +109,7 @@
               <el-slider vertical height="100px" v-model="voice" :show-tooltip="false"></el-slider>
             </div>
           </div>
-          <i v-if="!(isEmbedVideo && !isLive) && lang != 'en' && this.playerInfo.barrage"
+          <i v-if="!(isEmbedVideo && !isLive) && lang != 'en' && playerOtherOptions.barrage_button == 1"
             @mouseenter="wrapEnter"
             class="iconfont icons poiner iconicon-pcdanmuguanbi"
             v-show="!danmuIsOpen "
@@ -255,7 +255,12 @@ export default {
       loading: false, // 卡顿显示加载
       lang: this.$route.query.lang,
       isIE: isIE(),
-      sonPoster: this.poster
+      sonPoster: this.poster,
+      playerOtherOptions: {
+        barrage_button: 1,
+        progress_bar: 1,
+        speed: 1
+      }
     };
   },
   watch: {
@@ -285,7 +290,7 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     console.log(this.$route, 999, this.$route.query.embed == 'video');
     if (this.$route.query.embed == 'video') {
       this.isEmbedVideo = true;
@@ -305,6 +310,9 @@ export default {
         });
       }
     });
+    await this.getMarqueenInfo()
+    await this.getWaterInfo()
+    await this.getDefinitionConfig()
     setTimeout(() => {
       this.initPaly();
     }, 500);
@@ -399,8 +407,8 @@ export default {
             } else {
               defaultDefinition = this.getQualitysMap.find(q => {
                 return (
-                  q.def == this.playerInfo.default_definition &&
-                  this.playerInfo.default_definition
+                  q.def == this.definitionConfig &&
+                  this.definitionConfig
                 );
               });
             }
@@ -511,7 +519,51 @@ export default {
           this.initSpee(); // 获取倍速
           this.initSlider(); // 初始化播放进度条
         }
+
+        this.getPlayerOtherOptions()
       });
+    },
+    // 获取跑马灯信息
+    getMarqueenInfo () {
+      return this.$fetch('getScrolling', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.marquee = res.data
+        }
+      })
+    },
+    // 获取水印信息
+    getWaterInfo () {
+      return this.$fetch('getWatermark', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.water = res.data
+        }
+      })
+    },
+    // 获取当前流默认清晰度
+    getDefinitionConfig () {
+      return this.$fetch('getDefinitionConfig', {
+        webinar_id: this.$route.params.il_id,
+        is_h5: 1,
+        type: 0
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.definitionConfig = res.data.default_definition
+        }
+      })
+    },
+    // 获取播放器其他配置
+    getPlayerOtherOptions () {
+      return this.$fetch('getOtherOptions', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.playerOtherOptions = res.data
+        }
+      })
     },
     setVideo () {
       // 快进功能
@@ -622,7 +674,7 @@ export default {
         this.initSpee();
       }
     },
-    initSDK () {
+    async initSDK () {
       console.log('sdk initing', this.type);
       let params = {
         appId: this.appId, // 应用ID，必填
@@ -649,29 +701,29 @@ export default {
       } else {
         throw new Error('参数异常');
       }
-      if (this.playerInfo.scrolling_text) {
+      if (this.marquee) {
         // 跑马灯
         params.marqueeOption = {
           enable: true,
-          text: this.playerInfo.scrolling_text.text, // 跑马灯的文字
-          alpha: this.playerInfo.scrolling_text.alpha, // 透明度,100完全显示,0 隐藏
-          size: this.playerInfo.scrolling_text.size, // 文字大小
-          color: this.playerInfo.scrolling_text.color, // 文字颜色
-          interval: this.playerInfo.scrolling_text.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
-          speed: this.playerInfo.scrolling_text.speed, // 跑马灯移动速度:3000快,6000中,10000慢
-          position: this.playerInfo.scrolling_text.position // 跑马灯位置 , 1 随机 2上,3中 4下
+          text: this.marquee.text, // 跑马灯的文字
+          alpha: this.marquee.alpha, // 透明度,100完全显示,0 隐藏
+          size: this.marquee.size, // 文字大小
+          color: this.marquee.color, // 文字颜色
+          interval: this.marquee.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+          speed: this.marquee.speed, // 跑马灯移动速度:3000快,6000中,10000慢
+          position: this.marquee.position // 跑马灯位置 , 1 随机 2上,3中 4下
         };
       } else {
         params.marqueeOption = {
           text: ''
         };
       }
-      if (this.playerInfo.watermark) {
+      if (this.water) {
         // 水印
         params.watermarkOption = {
           enable: true,
-          url: this.playerInfo.watermark.img_url, // 水印图片的路径
-          align: this.fromalAlign(this.playerInfo.watermark.img_position), // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
+          url: this.water.img_url, // 水印图片的路径
+          align: this.fromalAlign(this.water.img_position), // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%
           size: ['80px'] // 水印大小，支持px,vh,vw,%
         };
@@ -998,10 +1050,10 @@ export default {
           text = 'tr';
           break;
         case 3:
-          text = 'br';
+          text = 'bl';
           break;
         case 4:
-          text = 'bl';
+          text = 'br';
           break;
       }
       return text;

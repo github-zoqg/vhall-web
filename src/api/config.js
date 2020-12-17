@@ -60,8 +60,10 @@ const apis = {
   //播放器设置
   setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
   setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
+  setOtherOption: ['/v3/interacts/players/set-other-set-info', 'POST'], // 设置播放器其他配置
   getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息 •••
   getWatermark: ['/v3/interacts/players/get-watermark-config', 'GET'], //观看端_获取水印设置 •••
+  getOtherOptions: ['/v3/interacts/players/watch-get-other-set-info', 'GET'], // 获取观看端播放器其他配置
 
   //公众号 开屏海报
   setPublicInfo: ['/v3/interacts/adv/set-public-account-config-info', 'POST'], //保存公众号展示配置  •••接口有问题

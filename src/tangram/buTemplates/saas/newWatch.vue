@@ -96,7 +96,7 @@
             :isVod="(roomInfo.status == 2 || roomInfo.status == 0 )&& roomInfo.record_id"
             :isMini="miniElemt == 'doc'"
             :rebroadcastChannelId="rebroadcastChannelId"
-            :playMode="playerInfo.hls"
+            :playMode="0"
           ></watch-doc>
         </div>
         <!-- 直播结束 -->
@@ -108,7 +108,7 @@
         </div>
         <!-- 固定工具栏区域 -->
         <div class="player-funct" v-show="!isEmbedVideo" :class="{'video-only': watchDocShow}">
-          <div class="player-share" @click="toggleShare" v-if="!isEmbed">
+          <div class="player-share" @click="toggleShare" v-if="!isEmbed && userModules.share.show == 1 ">
             <span
               class="iconfont"
               style="color: #ccc; display: inline-block;vertical-align: middle"
@@ -146,13 +146,13 @@
             >
           </div>
           <div class="player-active" v-show="!isEmbed">
-            <div class="table-praise">
+            <div class="table-praise" v-if="userModules.like.show == 1">
               <praise :roomId="roomId" :times="roomInfo.like"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
+            <div class="table-reward" v-if="userModules.reward.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <reward :roomId="roomId"></reward>
             </div>
-            <div class="table-gift" v-if="userModules.gift.show && roomInfo.role_name != 4 && roomInfo.role_name != 3">
+            <div class="table-gift" v-if="userModules.gift.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <gift :roomId="roomId" :vssToken="vssToken"></gift>
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
@@ -497,7 +497,7 @@ export default {
     },
     bizInfo: { // 业务层信息（主要是配置相关信息）
       required: true,
-      default: {report_extra: '', paas_record_id: ''}
+      default: () => {}
     }
   },
 
@@ -625,17 +625,11 @@ export default {
     };
   },
   created () {
-    this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-    const vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
-
-    this.poster = vssInfo.webinar.image_url ? vssInfo.domains.upload + '/' + vssInfo.webinar.image_url : '';
-
-    this.userModules = vssInfo.modules;
-    this.isInteract = vssInfo.webinar.is_interact;
+    this.userInfo = sessionOrLocal.getItem('user') ? JSON.parse(sessionOrLocal.getItem('user')) : {}
     // 存取观看端标识
-    sessionStorage.setItem('watch', true);
+    sessionOrLocal.setItem('watch', true);
     // 存取是否登录的标识
-    sessionStorage.setItem('authInfo', JSON.stringify(this.authInfo));
+    sessionOrLocal.setItem('authInfo', JSON.stringify(this.authInfo));
   },
   watch: {
     roomId (newVal) {
@@ -647,6 +641,18 @@ export default {
       } else {
         this.qaVisible = false;
       }
+    },
+    bizInfo: {
+      handler (val) {
+        if (val) {
+          this.vssInfo = val
+          this.poster = val.webinar.image_url ? val.domains.upload + '/' + val.webinar.image_url : '';
+          this.userModules = val.modules;
+          this.isInteract = val.webinar.is_interact;
+        }
+      },
+      deep: true,
+      immediate: true
     }
   },
   mounted () {
@@ -692,7 +698,6 @@ export default {
           }
           // 初始化文档状态 end
           this.speakerList = res.data.speaker_list;
-          console.log(99999999, this.speakerList)
           this.rebroadcastChannelId = res.data.rebroadcast && res.data.rebroadcast.channel_id; // TODO: rebroadcast
           let isApply = findIndex(this.speakerList, {
             account_id: this.roomInfo.third_party_user_id
@@ -718,7 +723,7 @@ export default {
               }
             }
           }, 4000);
-          sessionStorage.setItem('speakerDefinition', res.data.definition || '');
+          sessionOrLocal.setItem('speakerDefinition', res.data.definition || '');
         }
       }).catch (e => {
         console.log(e);
@@ -726,7 +731,6 @@ export default {
     },
     async getInavInfo () {
       await this.getRoomStatus()
-      this.userInfo = JSON.parse(sessionStorage.getItem('user'))
       let inavInfo = {
         account_id: this.bizInfo.host.id,
         app_id: this.bizInfo.app_id,
@@ -787,11 +791,10 @@ export default {
         this.playerType = 'live';
         this.vodOption = {};
         this.playerLiveOption = {
-          type: this.playerInfo.hls || isIE() ? 'hls' : 'flv',
+          type: 0 || isIE() ? 'hls' : 'flv',
           roomId: this.roomInfo.room_id
         };
       }
-      let vssInfo = JSON.parse(sessionStorage.getItem('moduleShow'));
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
@@ -799,14 +802,14 @@ export default {
         avatar: this.userInfo.avatar
           ? `https:${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        pv: vssInfo.webinar.pv, // pv
+        pv: this.vssInfo.webinar.pv, // pv
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
         is_banned: this.isBanned, // 是否禁言 1是0否
         audience: true
       };
-      sessionStorage.setItem('vhall_chat_context', JSON.stringify(context));
+      sessionOrLocal.setItem('vhall_chat_context', JSON.stringify(context));
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
@@ -816,7 +819,6 @@ export default {
         token: this.roomInfo.paas_access_token,
         client: 'pc_browser'
       };
-      console.log(5555555566666666)
       if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
         this.init = true;
         window.EventBridge.$emit('loaded');
@@ -825,7 +827,6 @@ export default {
       VhallChat.createInstance(
         opt,
         chat => {
-          console.log(1111111111111111, this.speakerList, this)
           this.$nextTick(() => {
             this.addSocketsListener();
           })
@@ -843,14 +844,13 @@ export default {
           }, 1500);
           chat.message.join(msg => {
             // 将join放在实例化处是因为--放在聊天组件内，会因sockit消息快慢问题 偶发丢失join消息
-            console.warn('kict_obj---------------------', vssInfo);
-            if (vssInfo.sso_mark) {
-              if (msg.sender_id == vssInfo.user.third_party_user_id) {
+            if (this.vssInfo.sso_mark) {
+              if (msg.sender_id == this.vssInfo.user.third_party_user_id) {
                 this.selfOnline++;
               }
-              console.log(msg.sender_id == vssInfo.user.third_party_user_id, '关于有时候手机进入不会顶掉当前账户-----', this.selfOnline);
+              console.log(msg.sender_id == this.vssInfo.user.third_party_user_id, '关于有时候手机进入不会顶掉当前账户-----', this.selfOnline);
               if (this.selfOnline > 1) {
-                window.location.href = vssInfo.kick_out_url;
+                window.location.href = this.vssInfo.kick_out_url;
               }
             }
             if (this.isPlayback) {
@@ -919,7 +919,6 @@ export default {
         await this.$fetch('getToolStatus', { // 上麦之前获取房间内音视频禁用状态 bug15469
           room_id: this.bizInfo.room_id
         }).then(res => {
-          console.log(990, res)
           this.mainScreen = res.data.main_screen
           this.speakerList = res.data.speaker_list
         });
@@ -1109,7 +1108,6 @@ export default {
             this.timerFun = setInterval(() => {
               this.timer--;
               this.handSend = `等待(${this.timer}s)`;
-              console.log(12121212, this.speakerList)
               if (this.timer <= 0) {
                 this.handSend = '举手上麦';
                 window.clearInterval(this.timerFun);
@@ -1129,7 +1127,6 @@ export default {
           if (res.code == 200) {
             this.lowerWheat = true; // 上麦的状态
             window.clearInterval(this.timerFun);
-            console.log(23232323, this.speakerList)
             this.handSend = '举手上麦';
             this.$message.success('您已取消申请上麦！');
           }
