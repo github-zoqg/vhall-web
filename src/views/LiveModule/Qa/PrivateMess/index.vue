@@ -35,7 +35,7 @@
 </template>
 <script>
 import smallEmoji from '@/tangram/libs/chat/emoji.vue';
-import { faceArr, textToEmoji, emojiToPath, textToEmojiText } from '@/tangram/libs/chat/js/emoji';
+import {  textToEmoji } from '@/tangram/libs/chat/js/emoji';
 import Msg from '@/tangram/libs/chat/js/msg-class';
 import { formatTime, handleTime } from '@/tangram/libs/chat/js/handle-time';
 export default {
@@ -59,15 +59,18 @@ export default {
           console.warn('test --2');
           console.warn(newValue, 789);
           this.$nextTick(()=>{
-            let isFlag = this.userList.some(ele =>{
+            let isFlag = this.userList.some((ele, index) =>{
+              this.acrivePrivate = index
               return ele.id == newValue.item.join_id
             })
             if(!isFlag){
               this.userList.push(newValue)
               this.acrivePrivate = this.userList.length - 1
-              this.activeName = newValue.nickname
-              this.getDefaultContent(newValue.item.join_id)
+            }else{
+              // this
             }
+              this.activeName = newValue.nickname
+            this.getDefaultContent(newValue.item.join_id)
           })
         }
       },
@@ -83,7 +86,7 @@ export default {
     }
   },
   methods: {
-    getDefaultContent(to_userID){
+    getDefaultContent(to_userID,from){
       let _data = {
         room_id: this.userInfo.interact.room_id,
         start_time: '',
@@ -97,6 +100,9 @@ export default {
         console.warn(res);
         if(res.code == 200){
           console.warn(res.data);
+          if(from){
+            // this.activeName =
+          }
           this.chatList = res.data.list
         }else{
           this.$message.warning(res.msg)
