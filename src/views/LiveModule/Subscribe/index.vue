@@ -838,6 +838,7 @@ export default {
           if (this.theme) {
             this.setCustomTheme(this.theme)
           }
+          this.initChat()
         })
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
@@ -846,133 +847,53 @@ export default {
       }
     },
     initChat () {
-      this.$fetch('initiatorInfo', {
-        webinar_id: this.roomData
-      }).then(async res => {
-          this.roomInfo = this.rootActive;
-          this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-          // 因早期设置值不同  进行根源影射   更换接口时产生的问题  备注勿删
-          if(this.rootActive.webinar.type == 1){
-            this.status = 1;
-          }else if(this.rootActive.webinar.type == 2){
-            this.status = 0;
-          }else{
-           this.status = 2;
-          }
-          this.isPublishing = this.status == 1;
-          this.isQAEnabled = this.qaStatus == 1; // ??
-          this.isQAEnabled = this.roomStatus.question_status == 1; // ??
-          this.roleName = this.rootActive.join_info.role_name;
+      let context = {
+        nickname: '', // 昵称
+        avatar: 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
+        // pv: 100, // pv
+        role_name: (this.$route.params.role_name && this.$route.params.role_name != 4) ? this.$route.params.role_name : 2, // 角色 1主持人2观众3助理4嘉宾
+        device_type: '2', // 设备类型 1手机端 2PC 0未检测
+        device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
+        is_banned: 0 // 是否禁言 1是0否
+      };
+      let opt = {
+        appId: this.roomData.interact.paas_app_id,
+        third_party_user_id: this.roomData.join_info.third_party_user_id,
+        channelId: this.roomData.interact.channel_id,
+        context: JSON.stringify(context),
+        token: this.roomData.interact.subscribe_paas_access_token,
+        hide: 0
+      };
 
-          this.layout =  this.roomStatus.layout;
-          this.localDuration = this.duration;
+      VhallChat.createInstance(
+        opt,
+        chat => {
+          window.chatSDK = chat.message;
+          console.log('成功了居然')
+          window.chatSDK.onRoomMsg(msg => {
+            console.log('==========房间消息1===========', msg);
 
-          if (this.status == 1) {
-            this.virtualAudienceCanUse = true;
-          }
-          // 媒体检测
-          const mediacheckStatus = sessionStorage.getItem(`MEDIACHECK_FINISH_${this.roomInfo.interact.room_id}`);
-          console.warn('cxs----设备检测', mediacheckStatus,this.roomInfo.interact.room_id, this.roomInfo.join_info.role_name);
-          if (this.roomInfo.join_info.role_name == 1) {
-            console.warn('cxs--设备检测---',!this.assistantType, mediacheckStatus != 'yes', this.status != 1 );
-            if (!this.assistantType && mediacheckStatus != 'yes' && this.status != 1) {
-              // this.popAlertCheckVisible = true;
+            if (typeof msg !== 'object') {
+              msg = JSON.parse(msg);
             }
-          } else if (this.roomInfo.join_info.role_name == 4 && mediacheckStatus != 'no') {
-            if (!this.assistantType && mediacheckStatus != 'yes') {
-              this.popAlertCheckVisible = true;
-            }
-          }
-          this.isBanned = this.roomStatus.is_banned == 1;
-          this.isKicked = this.roomStatus.is_kicked == 1;
-          this.getRoomStatus();
-          let context = {
-            nickname: this.userInfo.nickname, // 昵称
-            avatar: this.userInfo.avatar
-              ? `${this.userInfo.avatar}`
-              : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-            // pv: 100, // pv
-            role_name: this.roomInfo.join_info.role_name, // 角色 1主持人2观众3助理4嘉宾
-            device_type: '2', // 设备类型 1手机端 2PC 0未检测
-            device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
-            is_banned: this.isBanned // 是否禁言 1是0否
-          };
-
-          let opt = {
-            appId: this.roomData.interact.paas_app_id,
-            third_party_user_id: this.third_party_user_id, // TODO:
-            channelId: this.roomData.interact.channel_id,
-            context: JSON.stringify(context),
-            token: this.roomData.interact.paas_access_token,
-            hide: this.$route.query.hide == 1
-          };
-          VhallChat.createInstance(
-            opt,
-            chat => {
-              window.chatSDK = chat.message;
-              this.roomReady = true;
-              this.$loadingStus.close();
-              this.$EventBus.$on('sdkReady', () => {
-                if (!this.assistantType && this.roomInfo.join_info.role_name != 3) {
-                  this.vhallChecking();
-                }
-              });
-              if (this.assistantType && this.assistantPlugin) {
-                // 接受加入房间消息
-                window.chatSDK.join(msg => {
-                  if (typeof msg !== 'object') {
-                    msg = JSON.parse(msg);
-                  }
-                  try {
-                    if (msg.context && typeof msg.context !== 'object') {
-                      msg.context = JSON.parse(msg.context);
-                    }
-                    if (msg.data && typeof msg.data !== 'object') {
-                      msg.data = JSON.parse(msg.data);
-                    }
-                  } catch (e) {
-                    console.log(e);
-                  }
-
-                  console.log('********加入房间消息*********');
-                  console.log(msg);
-                  this.$EventBus.$emit(msg.data.type, msg);
-                });
-                // 接受离开房间消息
-                window.chatSDK.leave(msg => {
-                  if (typeof msg !== 'object') {
-                    msg && (msg = JSON.parse(msg));
-                  }
-                  try {
-                    if (msg.context && typeof msg.context !== 'object') {
-                      msg.context = JSON.parse(msg.context);
-                    }
-                    if (msg.data && typeof msg.data !== 'object') {
-                      msg.data = JSON.parse(msg.data);
-                    }
-                  } catch (e) {
-                    console.log(e);
-                  }
-                  console.log('********离开房间消息*********');
-                  console.log(msg);
-                  this.$EventBus.$emit(msg.data.type, msg);
-                });
+            try {
+              if (msg.data && typeof msg.data !== 'object') {
+                msg.data = JSON.parse(msg.data);
               }
-            },
-            err => {
-              console.error('聊天SDK实例化失败', err);
+            } catch (e) {
+              console.log(e);
             }
-          );
-          if (this.splitStatus == 1) {
-            this.calculateLiveDuration(1);
-          }
-          if (this.roleName == 3 && !this.assistantType) {
-            this.autoPlay();
-          }
-        })
-        .catch(e => {
-          console.log(e);
-        });
+            console.log('==========房间消息===========', msg);
+
+            Object.assign(msg, msg.data);
+          })
+          this.$EventBus.$on('sdkReady', () => {
+          });
+        },
+        err => {
+          console.error('聊天SDK实例化失败', err);
+        }
+      )
     },
     // startTime  YYYY-MM-DD HH:MM
     remainTimes(startTime){
@@ -1070,7 +991,6 @@ export default {
     changeBtnVal(newValue) {
       this.btnVal = newValue
     },
-
     // 获取关注人被关注数量
     getAttentionNum () {
       this.$fetch('getAttentionNum', {
@@ -1307,19 +1227,12 @@ export default {
         return
       }
       if (is_subscribe == 1) {
-        if (type == 1) {
-          ret = `进入直播`
-          this.limitText = ``
+        if (type == 1 || type == 4 || type == 5) {
+          this.$route.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
         } else if (type == 2) {
           ret = `已预约`
           this.limitText = ``
           this.btnDisabled = true
-        } else if (type == 4) {
-          ret = `观看点播`
-          this.limitText = ``
-        } else if (type == 5) {
-          ret = `观看回放`
-          this.limitText = ``
         }
       } else {
         if (verified == 0) {
@@ -1343,17 +1256,16 @@ export default {
             this.limitText = `邀请码`
           }
         } else {
-          if (type == 1) {
-            ret = `进入直播`
-          } else if (type == 2) {
+          if (reg_form == 1) {
             ret = `立即预约`
-          } else if (type == 3) {
-            ret = `已结束`
-            this.btnDisabled = false
-          } else if (type == 4) {
-            ret = `观看点播`
-          } else if (type == 5) {
-            ret = `观看回放`
+          } else {
+            if (type == 1 || type == 4 || type == 5) {
+              this.$route.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+            } else if (type == 2) {
+              ret = `已预约`
+              this.limitText = ``
+              this.btnDisabled = true
+            }
           }
           this.limitText = ``
         }
@@ -1371,36 +1283,23 @@ export default {
       if (this.hasClick) {
         return
       }
-      if ((verify == 0 && reg_form == 1 && this.roomData.is_subscribe == 0) || (verify != 0 && reg_form == 1 && this.roomData.is_subscribe == 0 && this.roomData.verified)) {
-      } else {
-        // 判断登录
-        if (!this.isLogin) {
-          this.callLogin()
-          this.hasClick = false
-          return
-        }
-      }
       this.hasClick = true
-      if (type == 2) {
-        if (verify == 0) { // 免费
-          this.fetchAuth({type: 0})
-        } else if (verify == 1) { // 密码
-          this.passwordAuth()
-        } else if (verify == 2) { // 白名单
-          this.whiteAuth()
-        } else if (verify == 3) { // 付费
-          this.feeAuth()
-        } else if (verify == 4) { // 邀请码
+      if (verify == 0) { // 免费
+        this.fetchAuth({type: 0})
+      } else if (verify == 1) { // 密码
+        this.passwordAuth()
+      } else if (verify == 2) { // 白名单
+        this.whiteAuth()
+      } else if (verify == 3) { // 付费
+        this.feeAuth()
+      } else if (verify == 4) { // 邀请码
+        this.checkInviteCodeAuth()
+      } else if (verify == 6) { // 邀请码加付费
+        if (e == 'invite') {
           this.checkInviteCodeAuth()
-        } else if (verify == 6) { // 邀请码加付费
-          if (e == 'invite') {
-            this.checkInviteCodeAuth()
-          } else {
-            this.feeAuth()
-          }
+        } else {
+          this.feeAuth()
         }
-      } else if (type == 1 || type == 4 || type == 5) {
-        this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
       }
     },
     fillLimitSubmit () {
@@ -1463,15 +1362,6 @@ export default {
         this.hasClick = false
       })
     },
-    showDialog (title, holder, content) {
-      this.tipTitle = title
-      this.dialogPlaceholder = holder
-      this.tipContent = content
-      this.showModile = true
-    },
-    closePayModel () {
-      this.showPayModel = false
-    },
     // 鉴权code处理
     handleAuthErrorCode (code, msg) {
       switch (code) {
@@ -1524,76 +1414,17 @@ export default {
               this.handleShowPay('wx')
               this.handleShowPay('zfb')
             }
-            // let params = {
-            //   user_id: this.userInfo.user_id,
-            //   webinar_id: this.$route.params.id
-            // }
-            // var ua = navigator.userAgent.toLowerCase();
-
-            // 微信内
-            // if(ua.match(/MicroMessenger/i) == "micromessenger") {
-            //   params.service_code = 'JSAPI'
-            //   params.service.code = ''
-            //   params.type = 2
-            // } else if (navigator.userAgent.indexOf('MQQBrowser') > -1) {
-            //   // qq浏览器
-            //   params.service_code = 'H5_PAY'
-            //   params.type = 2
-            // } else {
-
-            // }
-
-
-            // let service_code = ''
-            // this.$fetch('pay', {
-            //   user_id: this.userInfo.user_id,
-            //   webinar_id: this.$route.params.id,
-            //   type: 1, // 1支付宝 2微信
-            //   service_code: '',
-            //   code: ''
-            // }).then(res => {
-            //   console.log(11112221, res)
-            // })
-            // var ua = navigator.userAgent.toLowerCase();
-            // // wx
-            // if(ua.match(/MicroMessenger/i)=="micromessenger") {
-            //   service_code = ''
-            //   return true;
-            // } else {
-            //   return false;
-            // }
-            // window.location.href = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=https://t.e.vhall.com/v3/watch/${this.$route.params.id}`
-            // window.location.href = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=http://172.16.23.7:8081/watch/803634057`
-            // if (Array.isArray(param)) {
-                  //   // 如果是个数组说明需要跳转支付宝(兼容老接口，无数据的时候返回空数组，有数据了返回对象,对象内部是拉起微信支付的参数)
-                  //   window.location.href = `${this.webinarInfo.domains.web}/webinar/paywebinar/${this.$route.params.id}`
-                  // } else {
-                  //   WeixinJSBridge.invoke(
-                  //     'getBrandWCPayRequest',
-                  //     {
-                  //       appId: param.appId,
-                  //       timeStamp: String(param.timeStamp), // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                  //       nonceStr: param.nonceStr, // 支付签名随机串，不长于 32 位
-                  //       package: param.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=\*\*\*）
-                  //       signType: param.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                  //       paySign: param.paySign // 支付签名
-                  //     },
-                  //     function(res) {
-                  //       if (res.err_msg == 'get_brand_wcpay_request:ok') {
-                  //         that.$toast('支付成功')
-                  //         window.location.reload()
-                  //         // window.location.replace(window.location.href)
-                  //         // 使用以上方式判断前端返回,微信团队郑重提示：
-                  //         // res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-                  //       }
-                  //     }
-                  //   )
-                  // }
             break;
         default:
           this.$message.warning(res.msg)
           break
       }
+    },
+    showDialog (title, holder, content) {
+      this.tipTitle = title
+      this.dialogPlaceholder = holder
+      this.tipContent = content
+      this.showModile = true
     },
     // 获取支付连接
     handleShowPay (type) {
@@ -1632,6 +1463,9 @@ export default {
         console.log('获取支付信息失败', e)
         this.$message.warning('获取支付信息失败')
       })
+    },
+    closePayModel () {
+      this.showPayModel = false
     },
     closeSignForm () {
       this.showSignForm = false

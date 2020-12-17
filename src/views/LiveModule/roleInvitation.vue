@@ -240,12 +240,15 @@ export default {
 助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
 加入链接：${this.privilegeVo && this.assistant_join_link ? this.assistant_join_link : ''}`;
     },
+    // 主持人
     host_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
     },
+    // 嘉宾
     join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/2`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/4`;
     },
+    // 助理
     assistant_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/3`;
     }

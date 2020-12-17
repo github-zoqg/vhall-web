@@ -17,8 +17,8 @@
             style="margin-left: 24px;width: 240px"
             @change="getTableList(null)"
           />
-          <el-input placeholder="搜索文件名称" v-model.trim="file_name" @change="getTableList(null)">
-            <i class="el-icon-search el-input__icon" slot="suffix"></i>
+          <el-input placeholder="搜索文件名称" v-model.trim="file_name"  @keyup.enter.native="getTableList(null)">
+            <i class="el-icon-search el-input__icon" slot="suffix" @click="getTableList(null)"></i>
           </el-input>
         </div>
         <el-table
@@ -38,20 +38,21 @@
             ></el-table-column>
           <el-table-column
             prop="file_name"
-            label="文件名"></el-table-column>
+            label="文件名"
+            show-overflow-tooltip
+          ></el-table-column>
           <el-table-column
             prop="webinar_name"
             label="所属活动"
-            width="210">
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             prop="created_at"
             label="生成时间"
-            width="210">
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             label="生成状态"
-            width="260"
             show-overflow-tooltip>
             <template slot-scope="scope">
               <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}</span>
@@ -59,8 +60,7 @@
           </el-table-column>
           <el-table-column
             label="操作"
-            width="260"
-            show-overflow-tooltip>
+            width="200">
             <template slot-scope="scope">
               <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">下载</el-button>
               <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
@@ -88,7 +88,8 @@ import 'whatwg-fetch';
 import PageTitle from '@/components/PageTitle';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {v1 as uuidV1} from "uuid";
-import fetchData from "@/api/fetch";
+import {sessionOrLocal} from "@/utils/utils";
+import qs from "qs";
 export default {
   name: "download.vue",
   components: {
@@ -213,15 +214,36 @@ export default {
     },
     // 重新生成
     async resetDownload(rows) {
-      // 第一步，拿取其余服务接口请求地址
-      let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
-      if(result.code === 200 && result.data) {
-        fetchData(result.send_url, result.select_json).then(res => {
-          console.log('发送成功~~~~~~~');
-          console.log(res);
-        }).catch(e => {
-          console.log(e);
-        });
+      try {
+        // 第一步，拿取其余服务接口请求地址
+        let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
+        if(result.code === 200 && result.data) {
+          debugger
+          let header = {
+            platform: sessionOrLocal.get('platform', 'localStorage') || 17,
+            token: sessionOrLocal.get('token', 'localStorage') || '',
+            'request-id': uuidV1(),
+            'interact-token': sessionStorage.getItem('interact_token') || null
+          };
+          let option = {
+            method: result.data.request_method, // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: header,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+          if (result.data.request_method.toUpperCase() === 'POST') {
+            option.body = result.data.select_json; // body data type must match "Content-Type" header
+          }
+          fetch(`${result.data.send_url}`, option).then(res => {
+            console.log(res.json(), '模拟导出申请请求，重新下载');
+          }).catch(e => {
+            console.log(e);
+          });
+        }
+      } catch (e) {
+        console.log(e);
+        this.$message.error('重新生成失败');
       }
     },
     // 删除某条下载任务
