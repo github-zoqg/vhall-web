@@ -1,17 +1,19 @@
 <template>
   <div>
-    <pageTitle title="用量分配is_dynamic > 0 ? '动态' : '固定'"></pageTitle>
+    <pageTitle :title="`用量分配is_dynamic > 0 ? '动态' : '固定'${vipStatus},${vipSelectStatus}`"></pageTitle>
     <div class="ac__allocation__panel">
       <!-- 左侧 -->
       <div class="ac__allocation__panel--left">
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <el-button round @click.prevent.stop="multiAllocShow = true" class="panel-btn length104" size="medium">批量分配</el-button>
+        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': Number($route.params.str) !== 1}]" size="medium">{{Number($route.params.str) === 1 ? '批量分配' : '分配并发包'}}</el-button>
+        <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium" v-if="Number($route.params.str) !== 1">分配扩展包</el-button>
+
         <!-- 固定分配，有查询列表。 -->
-        <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': vipStatus === 'regular_1'}]">
-          <p v-if="vipSelectStatus === 'regular_0'">每个子账号可单独分配用量，所有用量之和不能大于可分配用量</p>
-          <el-button type="primary" class="length152" round  v-if="vipSelectStatus === 'regular_0' && vipSelectStatus !== vipStatus" v-preventReClick @click="allocationSave('regular')">保存</el-button>
+        <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
+          <p v-if="is_dynamic > 0">每个子账号可单独分配用量，所有用量之和不能大于可分配用量</p>
+          <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('regular')" v-if="is_dynamic > 0">保存</el-button>
           <!-- 当前数据库中已经是固定分配 -->
           <el-table
             ref="multipleTable"
@@ -19,7 +21,7 @@
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
-            v-if="vipStatus === 'regular_1' && dataList.length > 0">
+            v-if="!(is_dynamic > 0) && dataList.length > 0">
             <el-table-column
               type="selection"
               width="55">
@@ -43,12 +45,21 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="并发人数" v-if="Number($route.params.str) !== 1">
+              label="分配并发" v-if="Number($route.params.str) !== 1">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
-                  <template slot="append"> 人</template>
+                  <template slot="append"> 方</template>
                 </el-input>
-                <span v-else>{{scope.row.count}} 人</span>
+                <span v-else>{{scope.row.count}} 方</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="分配扩展包" v-if="Number($route.params.str) !== 1">
+              <template slot-scope="scope">
+                <el-input type="text" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative">
+                  <template slot="append"> 方</template>
+                </el-input>
+                <span v-else>{{scope.row.extend_day}} 方</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -63,9 +74,9 @@
           </el-table>
         </div>
         <!-- 动态分配，无查询列表 -->
-        <div v-if="tabType === 'trends'" :class="['trends-ctx', {'regular-list': vipStatus === 'trends_1'}]">
+        <div v-if="tabType === 'trends'" :class="['trends-ctx', {'trends-list': vipStatus === 'trends_1'}]">
           <p>所有子账号共用所有可用的并发或流量<br />无需为单个账户分配</p>
-          <el-button type="primary" class="length152" round v-if="vipSelectStatus === 'trends_0'" v-preventReClick @click="allocationSave('trends')">保存</el-button>
+          <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('trends')" v-if="!(is_dynamic > 0)">保存</el-button>
         </div>
       </div>
       <!-- 右侧名片 -->
@@ -76,7 +87,7 @@
             <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i>
           </div>
           <ul class="allocation_one">
-            <li>可分配并发：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
+            <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}}：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
             <li>有效期至{{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.extend_end_time">
@@ -95,11 +106,13 @@
     <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="468px">
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="120px">
         <el-form-item label="分配数量：" prop="count">
-          <el-input v-model.trim="multiAllocForm.count" auto-complete="off" placeholder="请输入分配数量"/>
+          <el-input v-model.trim="multiAllocForm.count" auto-complete="off" placeholder="请输入分配数量" class="btn-relative">
+            <template slot="append"> {{ Number($route.params.str) === 1 ? 'GB' : '方' }}</template>
+          </el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary"  size="medium" round>确 定</el-button>
+        <el-button type="primary"  size="medium" round @click="saveMultiSetHandle">确 定</el-button>
         <el-button @click.prevent.stop="multiAllocShow = false"  size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
@@ -116,6 +129,7 @@
     },
     data() {
       return {
+        is_dynamic: null,
         resourcesVo: null,
         tabList: [
           {
@@ -143,7 +157,8 @@
             { required: true, message: '请输入分配数量', trigger: 'blur' }
           ]
         },
-        sonDao: {}
+        sonDao: {},
+        multipleSelection: []
       };
     },
     methods: {
@@ -152,6 +167,23 @@
         console.log(tab, event);
         // trends_0 动态重分配；trends_1 动态已分配；regular_0 固定重分配；regular_1 固定已分配。
         this.vipSelectStatus = this.tabType === 'trends' ? `trends_0` : `regular_0`;
+      },
+      multiSetHandle(type) {
+        // 按钮限制，若没有选中信息，不可展示
+        if (this.multipleSelection && this.multipleSelection.length > 0) {
+          if(type === 'more') {
+            // 当前为批量分配扩展包
+          } else {
+            if (Number(this.$route.params.str) === 1) {
+              // 当前为流量-批量分配
+            } else {
+              // 当前为并发-分配并发包
+            }
+          }
+          this.multiAllocShow = true;
+        } else {
+          this.$message.error('请至少选择一条子账号');
+        }
       },
       // 分配方式切换-保存分配方式
       allocationSave(type) {
@@ -162,9 +194,8 @@
           if (res && res.code === 200) {
             this.$message.success('保存分配方式成功！');
             // 若当前为固定分配，获取子账户列表数据
-            if (type === 'regular') {
-              this.getSonList();
-            }
+            this.is_dynamic = type === 'regular' ? 0 : 1;
+            this.getSonList();
           } else {
             this.$message.success(res.msg ||'保存分配方式失败！');
           }
@@ -219,6 +250,8 @@
                 item.count = item.vip_info.total;
               }
             }
+            item.extend_day = item.vip_info.extend_day;
+            item.inputExtendDay = item.vip_info.inputExtendDay;
             item.isHide = false;
           });
           this.dataList = dao.list;
@@ -244,7 +277,9 @@
           this.resourcesVo = null;
         });
       },
-      handleSelectionChange() {},
+      handleSelectionChange(val) {
+        this.multipleSelection = val;
+      },
       // 保存单个子账户分配
       save(row) {
         let regA = Number(this.$route.params.str) === 1 ? /^\d+(\.\d{1,2})?$/ :  /^\d+$/; // 允许二位小数点输入
@@ -252,7 +287,7 @@
         let flag = true;
         if (row === null || row === undefined || row === '') {
           flag = true;
-        } else if (row.inputCount === null || row.inputCount === undefined || row.inputCount === '') {
+        } else if (row.inputCount === null || row.inputCount === undefined) {
           flag = true;
         } else if (regA.test(row.inputCount)) {
           row.inputCount = Number(this.$route.params.str) === 1 ? parseFloat(row.inputCount) : parseInt(row.inputCount);
@@ -260,17 +295,59 @@
         } else {
           flag = false;
         }
-        flag ? this.$fetch('allocSetVal', {}).then(res=>{
+        // 右侧最大可分配数据
+        let maxVla = this.resourcesVo.type > 0 ? this.resourcesVo.flow : this.resourcesVo.total;
+
+        // 判断流量是否超出可分配流量
+        let params = {
+          type: Number(this.$route.params.str), // 分配类型 0-并发 1-流量,
+          pid: sessionOrLocal.get('userId'),
+          kv: [{
+            user_id: row.child_id,
+            resources: row.inputCount || 0,
+            extend_day: row.inputExtendDay || 0
+          }]
+        };
+        flag ? this.sendAllocSet(params, row) : null;
+      },
+      saveMultiSetHandle(){
+        this.$refs.multiAllocForm.validate((valid) => {
+          if (valid) {
+            let childIdList = this.multipleSelection.map(item => {
+              return {
+                user_id: item.child_id,
+                resources: Number(this.multiAllocForm.count),
+                extend_day: 0
+              }
+            })
+            let params = {
+              type: Number(this.$route.params.str), // 分配类型 0-并发 1-流量,
+              pid: sessionOrLocal.get('userId'),
+              kv: childIdList
+            };
+            this.sendAllocSet(params);
+          }
+        });
+      },
+      sendAllocSet(params, row) {
+        this.$fetch('allocSetVal', params, {
+          'Content-Type': 'application/json'
+        }).then(res=>{
           if (res && res.code === 200) {
             this.$message.success('保存成功！');
-            row.isHide = true;
+            if (row) {
+              row.isHide = true;
+            }
+            this.allocMoreGet();
+            // 保存完成后，更新数据
+            this.getSonList();
           } else {
             this.$message.success(res.msg ||'保存失败！');
           }
         }).catch(e=>{
           console.log(e);
           this.$message.error('保存失败！');
-        }) : null;
+        });
       },
       // 取消按钮 => 编辑展示
       hideInput(row) {
@@ -286,9 +363,8 @@
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       if(userInfo) {
         this.tabType = userInfo.is_dynamic > 0 ? 'trends' : 'regular';
-        this.vipStatus = this.tabType === 'trends' ? `trends_1` : `regular_1`;
-        this.vipSelectStatus = this.tabType === 'trends' ? `trends_1` : `regular_1`;
-        if(this.vipStatus === 'regular_1') {
+        this.is_dynamic = userInfo.is_dynamic;
+        if(!(this.is_dynamic > 0)) {
           this.getSonList();
         }
       }
@@ -317,6 +393,9 @@
     text-align: center;
     p {
       margin-bottom: 32px;
+    }
+    &.trends-list {
+      padding: 24px 32px;
     }
   }
   .ac__allocation__panel--right {
@@ -407,6 +486,9 @@
     position: absolute;
     right: 32px;
     top: 6px;
+    &.btn-right {
+      margin-right: 132px;
+    }
   }
   /* 选项卡 */
   /deep/.el-tabs__header {

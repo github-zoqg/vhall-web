@@ -111,6 +111,14 @@ export default {
       }).catch(e=>{
         console.log(e);
         this.$message.error('退出失败');
+      }).finally(() => {
+        sessionOrLocal.clear();
+        sessionOrLocal.clear('localStorage');
+        // 监听消息变化
+        this.$EventBus.$emit('saas_vs_login_out', true);
+        this.$router.push({
+          path: '/login'
+        });
       });
     },
     updateAccount(account) {

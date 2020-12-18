@@ -48,6 +48,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+
             @change="sonCountGetHandle"
           >
           </el-switch>

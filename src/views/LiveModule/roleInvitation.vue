@@ -89,7 +89,7 @@
                            :true-label="1"
                            :false-label="0"
                            v-for="(item, key, ins) in privilegeVo.permission_data.guest"
-                           :key="`guest_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
+                           :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
             </div>
           </div>
           <div>
@@ -133,7 +133,7 @@
                            :true-label="1"
                            :false-label="0"
                            v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []"
-                           :key="`assistant_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
+                           :key="`assistant_${key + ins}`">{{ item.label }}</el-checkbox>
             </div>
           </div>
           <div>
@@ -356,6 +356,7 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
+            this.roleSwitch = Number(res.data.is_privilege);
             this.privilegeVo = res.data;
           } else {
             this.privilegeVo = {};
