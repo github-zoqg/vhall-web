@@ -531,6 +531,7 @@ const apis = {
   v3EndLottery: ['/v3/vss/lottery/end', 'POST'], // 结束抽奖
   v3PartLottery: ['/v3/vss/lottery/participation', 'POST'], // 参数抽奖
   v3GetStep: ['/v3/vss/lottery/watch/get-draw-prize-info', 'GET'], // 获取中奖页信息
+  v3GetWineList: ['/v3/vss/lottery/users-get', 'GET'], // 查看中奖列表
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
   // 签到

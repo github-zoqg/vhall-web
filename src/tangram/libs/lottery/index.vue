@@ -119,31 +119,38 @@
         </el-button>
       </div>
       <!-- 抽奖结果 -->
-      <div class="lottery-result" v-if="lotteryResultShow">
-        <div class="result-img">
-          <img :src="`${domains.upload_url}/${lotteryResultObj.url}`" alt="">
-          <p>{{lotteryResultObj.text}}</p>
-        </div>
-        <div class="result-table">
-            <div class="result-table-head">
-              <strong>中奖名单</strong>
-            </div>
-            <ul>
-              <li class="awardBgColor" v-for="(item,index) in lotteryEndResult" :key="index">
-                <img :src="$img" alt="" />
-                <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
-              </li>
-            </ul>
-            <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
-        </div>
-      </div>
+      <template  v-if="lotteryResultShow">
+        <Result :domains='domains' :lotteryResultObj='lotteryResultObj'></Result>
+        <!-- <div class="lottery-result">
+          <div class="result-img">
+            <img :src="`${domains.upload_url}/${lotteryResultObj.url}`" alt="">
+            <p>{{lotteryResultObj.text}}</p>
+          </div>
+          <div class="result-table">
+              <div class="result-table-head">
+                <strong>中奖名单</strong>
+              </div>
+              <ul>
+                <li class="awardBgColor" v-for="(item,index) in lotteryEndResult" :key="index">
+                  <img :src="$img" alt="" />
+                  <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
+                </li>
+              </ul>
+              <el-button @startReward="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
+          </div>
+        </div> -->
+      </template>
     </div>
   </div>
 </template>
 <script>
 import EventBus from '@/utils/Events';
 import prize from './mixins'
+import Result from './common/result'
 export default {
+  component:{
+      Result
+  },
   props: {
     roomId: {
       type: String
