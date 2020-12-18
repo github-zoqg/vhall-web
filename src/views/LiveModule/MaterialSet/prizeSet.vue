@@ -14,8 +14,8 @@
         <el-tab-pane label="领奖页设置" name="first">
           <div class="give-item">
             <div class="give-prize">
-              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
-                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="Boolean(item.is_system) ? item.field : `${item.field}${index - 2}`" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : true" >
+              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
+                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : 'plaintext-only'" >
                     <el-input v-model="givePrizeForm[item.field_Key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
                         <el-input v-model="givePrizeForm[item.field_Key]"  type="textarea" placeholder="请输入" :autosize="{ minRows: 4}" v-else></el-input>
                         <div class="isDelete">
@@ -38,12 +38,17 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>抽奖<i class="el-icon-close"></i></h3>
-                <div class="give-msg">
-                  <p><el-input v-model="formData.phone" placeholder="请输入姓名" style="width:242px"></el-input></p>
-                  <p><el-input v-model="formData.phone" placeholder="请输入手机号" style="width:242px"></el-input></p>
-                  <p><el-input v-model="formData.phone" placeholder="请输入地址" style="width:242px"></el-input></p>
-                </div>
+                <h3>领奖<i class="el-icon-close"></i></h3>
+                <el-scrollbar>
+                  <div class="give-msg">
+                    <el-form :model="givePrizeForm">
+                      <el-form-item v-for="(item, index) in givePrizeList" :key="index">
+                        <el-input v-model="givePrizeForm.file" readonly type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)"></el-input>
+                        <el-input v-model="givePrizeForm.other" readonly type="textarea" placeholder="请输入" v-else></el-input>
+                      </el-form-item>
+                    </el-form>
+                  </div>
+                </el-scrollbar>
                 <div class="sureBtn"><el-button type="primary" round>确定</el-button></div>
               </div>
             </div>
@@ -87,12 +92,6 @@
                           <i class="el-icon-check"></i>
                         </label>
                       </p>
-                      <!-- <p v-for="(item, index) in typeList" :key="index" :class="item.isChecked ? 'active' : ''" @click="changeType(item)">
-                        <label class="img-tangle" v-show="item.isChecked">
-                          <i class="el-icon-check"></i>
-                        </label>
-                        <img :src="item.url" alt="">
-                      </p> -->
                     </div>
                 </el-form-item>
                 <el-form-item label="抽奖标题">
@@ -108,10 +107,10 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>抽奖<i class="el-icon-close"></i></h3>
-                <div class="prize-show" :style="`backgroundImage: url(${prizeImgList[isChecked]})`">
+                <h3>{{ formData.title }}<i class="el-icon-close"></i></h3>
+                <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
                 </div>
-                <div class="sureBtn">正在进行抽奖</div>
+                <div class="sureBtn">{{ formData.description }}</div>
               </div>
             </div>
           </div>
@@ -135,7 +134,8 @@ export default {
   data() {
     return {
       prizeInfoStatus: false,
-      activeName: 'second',
+      backgroundImg: '',
+      activeName: 'first',
       formData: {
         title:'',
         description:''
@@ -144,23 +144,12 @@ export default {
       givePrizeForm: {
         adressCheced: false
       },
+      action: `${process.env.VUE_APP_BASE_URL}/v3/vss/lottery/save-prize-image`,
       total: 100,
+      length: 0,
       isChecked: 0,
       prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
-      typeList: [
-        {
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-          isChecked: true
-        },
-        {
-          url: '../../../common/images/avatar.png',
-          isChecked: false
-        },
-        {
-          url: '../../../common/images/small.png',
-          isChecked: false
-        }
-      ],
+      prizeUrl: ['http://t-alistatic01.e.vhall.com/upload/sys/img_url/e0/2b/e02b57d63947b5ec20c57c144686cd7d.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/47/2a/472ab6904c58829ebcf91d801e146945.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/12/80/12806c4743aec43498cef45ea732c977.gif'],
       givePrizeList: [
         {
           is_system: 1,
@@ -183,7 +172,7 @@ export default {
         },
         {
           is_system: 0,
-          field: '自定义',
+          field: '自定义1',
           field_Key: 'user_define_100',
           is_required: 'is_required_100',
           rank: 100,
@@ -207,9 +196,7 @@ export default {
     prizeList
   },
   mounted() {
-    console.log('route22222222222222222',this.$route);
     this.getGivePrize();
-     console.log('refssss',this.$refs);
     // this.getReward()
   },
   methods: {
@@ -219,22 +206,38 @@ export default {
         webinar_id: this.$route.params.str,
       }
       this.$fetch('getLivePrizeInfo', params).then(res => {
-        this.previewSrc = res.data.img_path
-        this.formData.description = res.data.description
-        this.formData.title = res.data.title
+        this.previewSrc = res.data.img_path || '';
+        this.backgroundImg = res.data.img_path || prizeImgList[0];
+        if (res.data.img_path) {
+          this.isChecked = 10;
+        } else {
+          this.isChecked = 0;
+        }
+        this.formData.description = res.data.description;
+        this.formData.title = res.data.title;
       }).catch((err)=>{
-        this.$message.error(err.msg)
+        this.$message.error(err.msg);
       })
     },
     // 抽奖页保存按钮
     lotterySave () {
+      if (parseInt(this.isChecked) < 4) {
+        this.previewSrc = this.prizeUrl[this.isChecked];
+      }
       let params = {
           webinar_id: this.$route.params.str,
-          img_path: this.previewSrc,
           title: this.formData.title,
+          img_path: this.previewSrc,
           description: this.formData.description
       }
-      this.$fetch('savePrizeInfo', params).then(res => {
+      this.$fetch('savePrizeInfo', this.$params(params)).then(res => {
+        this.$message.success('保存成功')
+      }).catch((err)=>{
+        this.$message.error(err.msg)
+      })
+    },
+    changeImg() {
+      this.$fetch('uploadImage').then(res => {
         this.$message.success('保存成功')
       }).catch((err)=>{
         this.$message.error(err.msg)
@@ -247,7 +250,7 @@ export default {
       }
       this.givePrizeList.push({
         is_system: 0,
-        field: '自定义',
+        field: `自定义${this.givePrizeList.length - 2}` ,
         field_Key: 'user_define_' + (this.givePrizeList.length + 97),
         is_required: 'is_required_' + (this.givePrizeList.length + 97),
         rank: this.givePrizeList.length + 97,
@@ -260,9 +263,9 @@ export default {
     getGivePrize() {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
         if (res.data.length) {
-          this.givePrizeList = res.data
+          this.givePrizeList = res.data;
+          this.length = res.data.length;
         }
-        console.log('getGivePrize222222',res.data);
       })
     },
     // 保存领奖页信息
@@ -274,13 +277,13 @@ export default {
         }
       })
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
-        console.log(res.data, '保存接口111111111111');
+        if (res.code == 200) {
+          this.$message.success('保存成功');
+        }
       })
-      console.log(this.givePrizeList, this.givePrizeForm, '00000000000000000000')
     },
     handleClick(tab) {
       this.activeName = tab.name;
-      console.log('taba',tab);
       switch (tab.index) {
         case '0':
           this.getGivePrize()
@@ -292,28 +295,13 @@ export default {
     },
     changeType(index) {
       this.isChecked = index;
-      // this.typeList.map(item => {
-      //   item.isChecked = false;
-      //   items.isChecked = true;
-      // });
+      this.backgroundImg = this.prizeImgList[index];
     },
      prizeLoadSuccess(res, file){
-      // console.log('图片上传',res,'ssssss', file);
-      // this.previewSrc = res.data.domain_url
-      // console.log('图片上传的路径',this.previewSrc);
-      this.previewSrc = res.data.file_url;
-      // this.prizeForm.imageUrl = URL.createObjectURL(file.raw);
-      // this.prizeForm.img_path = res.data.file_url;
-      // this.fileList.push({
-      //   url: this.form.imageUrl,
-      //   cover: false
-      // });
-      // if (!this.fileList.some(item => item.cover)) {
-      //   this.fileList[0].cover = true;
-      // }
-      // // 生成图片 ID 添加到 imgIdArr 中
-      // this.generateImgId(this.form.imageUrl);
-      // console.log(this.fileList);
+      console.log('图片上传',res,'ssssss', file);
+      this.previewSrc = res.data.domain_url;
+      this.isChecked = 10;
+      this.backgroundImg = res.data.domain_url;
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -406,6 +394,13 @@ export default {
           cursor: pointer;
         }
       }
+      /deep/.el-form-item__label{
+        height: 40px;
+        width: 100px;
+        overflow: hidden;
+        // text-overflow:ellipsis;
+        // white-space: nowrap;
+      }
       /deep/.el-button{
         margin-top: 25px;
       }
@@ -452,7 +447,13 @@ export default {
           }
         }
         .sureBtn{
+          // text-align: center;
+          width: 180px;
+          margin: auto;
           text-align: center;
+          overflow: hidden;
+          text-overflow:ellipsis;
+          white-space: nowrap;
           /deep/.el-button{
             margin-top: 25px;
           }
@@ -460,6 +461,8 @@ export default {
         .give-msg{
           text-align: center;
           margin: auto;
+          max-height: 170px;
+          padding:20px;
           p{
             margin-top: 24px;
           }

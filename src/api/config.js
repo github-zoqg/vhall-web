@@ -25,6 +25,7 @@ const apis = {
   savePrizeInfo: ['/v3/vss/lottery/save-prize-info', 'POST' ], //抽奖页-保存信息
   getDrawPrizeInfo: ['/v3/vss/lottery/get-draw-prize-info', 'GET' ], //领奖页-获取信息
   saveDrawPrizeInfo: ['/v3/vss/lottery/save-draw-prize', 'POST' ], //领奖页-保存信息
+  saveLotteryPrize: ['/v3/vss/lottery/save-prize', 'POST'], // 奖品设置-资料库选择奖品保存按钮
 
   // 问卷
   createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST' ], //共享库_创建问卷
@@ -515,8 +516,10 @@ const apis = {
   saveLotteryInfo: ['/v3/vss/lottery/award', 'POST'], // 保存中奖人信息,
   v3CreateLottery: ['/v3/vss/lottery/add', 'POST'], // 创建抽奖
   v3SearchUser: ['/v3/vss/lottery/search', 'GET'], // 符合抽奖条件的用户
-  v3CheckLottery: ['/v3/vss/lottery/check', 'POST'], // 检测抽奖
-  v3CreateLottery3: ['/v3/vss/lottery/add', 'POST'], // 创建抽奖
+  v3CheckLottery: ['/v3/vss/lottery/check', 'GET'], // 检测抽奖
+  v3EndLottery: ['/v3/vss/lottery/end', 'POST'], // 结束抽奖
+  v3PartLottery: ['/v3/vss/lottery/participation', 'POST'], // 参数抽奖
+  v3GetStep: ['/v3/vss/lottery/watch/get-draw-prize-info', 'GET'], // 获取中奖页信息
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
   // 签到

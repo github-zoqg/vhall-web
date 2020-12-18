@@ -162,13 +162,13 @@ export default {
       };
       this.$nextTick(()=>{
         this.$emit('sendMsg', data,context)
-        if(!window.localStorage.getItem('localJoinList')){
-          window.localStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].id))
+        if(!window.sessionStorage.getItem('localJoinList')){
+          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].id))
           this.$fetch('v3SetUser', {room_id: this.userInfo.interact.room_id, webinar_id: this.webinar_id, to: this.userList[this.acrivePrivate].id})
         }else{
-          let _arr = window.localStorage.getItem('localJoinList')
+          let _arr = window.sessionStorage.getItem('localJoinList')
            if(_arr.indexOf(this.userList[this.acrivePrivate].id) == -1){
-            window.localStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].id}`)
+            window.sessionStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].id}`)
           }
         }
         let _data = {

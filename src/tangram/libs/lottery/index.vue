@@ -109,76 +109,33 @@
           <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
         </el-form>
       </div>
+
       <!-- 抽奖 -->
       <div class="prize-pending" v-if="prizeShow" >
-        <img src="../../assets/lottery-loading.gif" alt />
-        <p>正在进行抽奖...</p>
-        <el-button v-if="prizeEnd" @click="endLottery" :disabled='disabledTime!=0' class="common-but lottery-end">
+        <img :src="`${domains.upload_url}/${processingObj.url}`" alt />
+        <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
+        <el-button @click="endLottery" :disabled='disabledTime!=0' class="common-but lottery-end">
           结束抽奖 <span v-if="disabledTime!=0">({{disabledTime}}s) </span>
         </el-button>
-        <div class="audience-code"  v-if="!prizeEnd">
-          <p>发送口令<span>“主播666”</span>参与抽奖吧！</p>
-          <el-button  class="common-but">立即参与</el-button>
-        </div>
       </div>
       <!-- 抽奖结果 -->
       <div class="lottery-result" v-if="lotteryResultShow">
-         <!-- 抽奖结果  权限角色 -->
-         <template v-if="false">
-            <div class="result-img">
-              <img :src="$img" alt="">
-              <p>黑碳科技立体电子魔方</p>
+        <div class="result-img">
+          <img :src="`${domains.upload_url}/${lotteryResultObj.url}`" alt="">
+          <p>{{lotteryResultObj.text}}</p>
+        </div>
+        <div class="result-table">
+            <div class="result-table-head">
+              <strong>中奖名单</strong>
             </div>
-            <div class="result-table">
-                <div class="result-table-head">
-                  <strong>中奖名单</strong>
-                </div>
-                <ul>
-                  <li class="awardBgColor"
-                    v-for="(item,index) in lotteryEndResult"
-                    :key="index">
-                    <img :src="$img" alt="" />
-                    <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
-                  </li>
-                </ul>
-                <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
-            </div>
-         </template>
-         <!-- 抽奖结果  观众 -->
-         <template v-if="lotteryChatShow">
-           <!-- lotteryChatShow -->
-            <div class="lottery-chat Audience-lottery">
-              <div class="Audience-one" v-show="lotteryStep == 1">
-                <img class="title-img" :src="$img" alt="">
-                <p :class="{'winning-status': isWinning}">{{ audienceText }}</p>
-              </div>
-              <!-- 领奖信息 -->
-              <!-- reciveAwardShow -->
-              <div class="recive-prize" v-if="lotteryStep == 2">
-                <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
-                <el-form ref="forms" class="form-style">
-                  <el-form-item >
-                    <el-input class="beforeStar"  required v-model="reciveInfo.name" placeholder="请输入姓名"></el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-input class="beforeStar"  v-model="reciveInfo.tel" placeholder="请输入手机号"></el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-input type="textarea" :rows="2" placeholder="请输入地址" v-model="reciveInfo.remarks"> </el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button @click="submitInfo" class="common-but reward-submmit">提交</el-button>
-                  </el-form-item>
-                </el-form>
-              </div>
-              <div class="Audience-one Audience-three" v-show="lotteryStep == 3">
-                <img class="title-img" :src="$img" alt="">
-                <p :class="{'winning-status': submitWinning}">{{ audienceText }}</p>
-              </div>
-              <el-button @click="getAward" class="common-but">{{ getReward }}</el-button>
-            </div>
-         </template>
-        <el-button v-if="reciveRewardShow" @click="getAward" class="lottery-reward">{{ getReward }}</el-button>
+            <ul>
+              <li class="awardBgColor" v-for="(item,index) in lotteryEndResult" :key="index">
+                <img :src="$img" alt="" />
+                <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
+              </li>
+            </ul>
+            <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
+        </div>
       </div>
     </div>
   </div>
@@ -191,12 +148,13 @@ export default {
     roomId: {
       type: String
     },
-    vssToken: {
-      required: true
+    domains:{
+      type: Object
     }
   },
   data () {
     return {
+      processingObj:{}, //正在进行中的抽奖信息
       getReward: '查看中奖名单',
       lotteryChatShow: false, // 已填写过领奖信息的提示
       closeShow: true, // 关闭按钮的显示
@@ -208,8 +166,6 @@ export default {
         tel: '',
         remarks: ''
       },
-      reciveRewardShow: false, // 点我领奖的显示
-      prizeEnd: true,
       getPrizeCount: 0, // 可参与抽奖的人数
       lotteryEndResult: null, // 抽奖的结果
       lotteryInfo: null, // 抽奖的信息
@@ -252,6 +208,7 @@ export default {
       repeatWinning: false ,// 重复中奖
       participationPass: '', // 口令
       disabledTime: 5, // 5秒禁止点击
+      lotteryResultObj: {}, // 中奖信息
       audienceText: '信息提交成功',
       isWinning: false,
       submitWinning: true, // 信息是否提交成功
@@ -294,18 +251,18 @@ export default {
   methods: {
     // 结束抽奖
     endLottery () {
-      this.$vhallFetch('lotteryEnd', {
-        vss_token: this.vssToken,
+      this.$fetch('v3EndLottery', {
         room_id: this.roomId,
         lottery_id: this.lotteryInfo.id
-      }, {}, 2000).then(res => { // 解决17887
+      }, {}, 2000).then(res => {
         if (res.code === 200) {
-          this.dialogTitle = '抽奖结果';
+          console.warn('抽奖完成', res.data);
           this.closeShow = true;
-          console.log(res);
-          this.lotteryEndResult = res.data.lottery_users;
-          this.prizeShow = false;
           this.lotteryResultShow = true;
+          this.lotteryEndResult = res.data.lottery_users; // 中奖用户人信息列表
+          this.lotteryResultObj.url = res.data.award_snapshoot.image_url
+          this.lotteryResultObj.text = res.data.award_snapshoot.award_name
+          this.prizeShow = false;
         }
       });
     },
@@ -350,17 +307,7 @@ export default {
       this.prizeNum = '';
       this.userKeywords = '';
       this.chooseList = [];
-      this.getLotteryCount();
-    },
-    // 观看端开启
-    startLottery (val) {
-      this.payoff = val;
-      this.lotteryResultShow = false;
-      // this.lotteryContentShow = true;
-      this.prizeShow = val;
-      this.prizeEnd = false;
-      this.dialogTitle = '趣味抽奖！';
-      console.log('valll', val);
+      this.checkLottery()
     },
     // 提交领奖人信息
     // TODO:
@@ -397,62 +344,7 @@ export default {
         this.lotteryContentShow = false; // 发起抽奖
         this.prizeShow = false; // 趣味抽奖
         this.payoff = false;
-      } else {
-        // this.reciveAwardShow = true;
-        // this.dialogTitle = '请填写个人信息，方便主办方联系您！';
-        // this.lotteryResultShow = false;
-        this.lotteryStep = 2;
       }
-    },
-    // 抽奖结果通知
-    endRecive (item, ownerId) {
-      this.reciveAwardShow = false;
-      this.lotteryChatShow = false;
-      this.getReward = '点击领奖';
-      // lotteryUsersGet
-      this.deliverItem = item;
-      this.payoff = true;
-
-      // this.lotteryResultShow = true;
-      // this.prizeShow = false;
-      this.prizeEnd = false;
-      this.$vhallFetch('lotteryUsersGet', {
-        vss_token: this.vssToken,
-        room_id: this.roomId,
-        lottery_id: item.lottery_id,
-        offset: 0,
-        limit: 999
-      }).then(res => {
-        if (res.code === 200) {
-          console.log(res);
-          this.lotteryEndResult = res.data ? res.data.list : [];
-          this.prizeShow = false;
-          this.lotteryResultShow = true;
-          console.log('lotteryEndResult', this.lotteryEndResult);
-          console.log('owerId', ownerId);
-          if (
-            this.lotteryEndResult.find(item => item.lottery_user_id == ownerId)
-          ) {
-            let awardUserId = this.lotteryEndResult.find(
-              item => item.lottery_user_id == ownerId
-            );
-            this.lotteryEndResult = [];
-            this.lotteryEndResult.push(awardUserId);
-            console.log('awardUserId', awardUserId);
-            console.log('lotteryEndResult', this.lotteryEndResult);
-            this.reciveRewardShow = true;
-            this.dialogTitle = '恭喜您中奖了！';
-            if (awardUserId.lottery_user_phone) {
-              this.hasAward = true;
-              this.lotteryChatShow = true;
-              this.getReward = '确定';
-            }
-          } else {
-            // this.dialogTitle = '很遗憾,您没有中奖！';
-            // this.reciveRewardShow = false;
-          }
-        }
-      });
     }
   }
 };
@@ -747,17 +639,6 @@ export default {
           }
         }
       }
-      .lottery-reward {
-        display: block;
-        width: 314px;
-        height: 40px;
-        background: #ffc217;
-        color: #fff;
-        font-size: 16px;
-        margin: 0 auto;
-        border: none;
-        margin-bottom: 20px;
-      }
     }
 
     .recive-prize {
@@ -779,19 +660,6 @@ export default {
         background: #fe6a6a;
         color: #fff;
       }
-    }
-  }
-}
-.audience-code{
-  p{
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #222222;
-    line-height: 18px;
-    margin-bottom: 24px;
-    span{
-      color: rgba(252, 86, 89, 1);
     }
   }
 }

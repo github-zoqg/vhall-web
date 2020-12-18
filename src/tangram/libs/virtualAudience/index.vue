@@ -7,6 +7,13 @@
       <p class="v-data">
         实际：{{ preson.onlineNum }}人在线<span class="v-line"></span
         >{{ preson.pv }}次观看
+        <el-tooltip class="item" effect="dark" placement="right">
+          <i class="el-icon-question ques"></i>
+          <div slot="content">
+            1.人数：当前活动在线人数<br/>
+            2.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
+          </div>
+        </el-tooltip>
       </p>
     </div>
     <div class="v-cumulativenumber">

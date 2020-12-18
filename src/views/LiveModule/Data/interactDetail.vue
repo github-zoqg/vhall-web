@@ -98,7 +98,7 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-import {  textToEmoji } from '@/tangram/libs/chat/js/emoji';
+import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
 export default {
   components: {
     PageTitle,
@@ -412,12 +412,33 @@ export default {
         this.tableList = res.data.list;
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
-          item.imgOrText = this.emojiToText(item.data.text_content) || this.emojiToText(item.data.barrage_txt);
+          // let contImg = this.emojiToText(item.data.text_content) || this.emojiToText(item.data.barrage_txt);
+          if((/\[|\]/g).test(item.data.barrage_txt)) {
+            item.chatEmoji = this.emojiToText(item.data.barrage_txt) || '';
+          } else {
+            item.chatEmoji = '';
+          }
+          item.chatText = item.data.text_content || '';
+          if (item.data.image_urls) {
+            item.chatImg = this.chartsImgs(item.data.image_urls);
+          } else {
+            item.chatImg = '';
+          }
+          item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
           item.statusText = '通过';
           item.revice = '主持人';
         })
         this.totalNum = res.data.total;
       });
+    },
+    chartsImgs(list) {
+      let arr = '';
+      if (list.length) {
+        list.map(item => {
+          arr = `<img width="100" width="100"  src="${item}" border="0" />`;
+        }).join(' ')
+      }
+      return arr;
     },
     //删除聊天（二次确认）
     chatConfirmSure(id) {

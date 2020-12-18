@@ -433,6 +433,8 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         if (res && res.code === 200) {
           this.channel_id = res.data.vss_channel_id;
+          this.initPage();
+          this.initChat();
         }
       }).catch(error=>{
         console.log(error);
@@ -447,9 +449,9 @@ export default {
       this.getWebinarInfo();
     } else {
       this.channel_id = 'ch_729e035c'; // TODO 后续这块要从用户那边取值
+      this.initPage();
+      this.initChat();
     }
-    this.initPage();
-    this.initChat();
   },
   mounted() {
     EventBus.$on('converted_process_msg', res => { // 转码进度
@@ -468,15 +470,19 @@ export default {
           const status = Number(res.status);
           if (statusJpeg === 0 && status === 0) {
             item.transform_schedule_str = '待转码';
+            item.page = Number(res.page);
             item.transcoded = false;
           } else if (statusJpeg === 100 || status === 100) {
             item.transform_schedule_str = '转码中';
+            item.page = Number(res.page);
             item.transcoded = false;
           } else if (statusJpeg === 200 || status === 200) {
             item.transform_schedule_str = '转码完成';
+            item.page = Number(res.page);
             item.transcoded = true;
           } else {
             item.transform_schedule_str = '转码失败';
+            item.page = Number(res.page);
             item.transcoded = false;
           }
         }

@@ -1,5 +1,6 @@
 // session存储（设置、获取、删除）
-import Env from "@/api/env";
+import fetchData from "@/api/fetch";
+import NProgress from "nprogress";
 
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
@@ -170,4 +171,90 @@ export function getQueryString(name) {
   let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
   let r = window.location.search.substr(1).match(reg);
   if(r!=null)return  unescape(r[2]); return null;
+}
+
+// 判断是否登录成功
+export function checkAuth(to, from, next) {
+  if(to.path.indexOf('/keylogin-host') !== -1 ||
+    to.path.indexOf('/keylogin') !== -1 ||
+    from.path.indexOf('/keylogin') !== -1 ||
+    to.path.indexOf('/subscribe') !== -1 ||
+    to.path.indexOf('/login') !== -1 ||
+    to.path.indexOf('/register') !== -1 ||
+    to.path.indexOf('/forgetPassword') !== -1) {
+    // 不验证直接进入
+    next();
+    NProgress.done();
+    return;
+  }
+  // 第一步，判断是否第三方快捷登录
+  let user_auth_key = getQueryString('user_auth_key');
+  if (user_auth_key) {
+    console.log('第三方登录，需要调取回调函数存储token');
+    let params = {
+      key: getQueryString('user_auth_key'),
+      scene_id: 1
+    };
+    fetchData('callbackUserInfo', params).then(res => {
+      if (res && res.code === 200) {
+        sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+        next({path: '/'})
+      } else {
+        // 获取回调token失败
+        this.$message.error('登录信息获取失败，请重新登录');
+        sessionOrLocal.clear('localStorage');
+        sessionOrLocal.clear();
+      }
+    });
+    return;
+  }
+  // 第二步，判断是否控制台 或者 地址栏token携带进入
+  let token = sessionOrLocal.get('token', 'localStorage') || '';
+  if (token) {
+    console.log('正常登录、快捷登录，存在token数据');
+    // 已登录不准跳转登录页
+    if (to.path === '/login') {
+      next({ path: '/' });
+      NProgress.done();
+      return;
+    }
+    // 获取配置项所有内容
+    fetchData('planFunctionGet', {}).then(res => {
+      if(res && res.code === 200) {
+        let permissions = res.data.permissions;
+        if(permissions) {
+          sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
+        } else {
+          sessionOrLocal.removeItem('SAAS_VS_PES');
+        }
+      }
+    }).catch(e => {
+      console.log(e);
+      sessionOrLocal.removeItem('SAAS_VS_PES');
+    });
+    // 登录后，获取用户基本信息
+    fetchData('getInfo', {scene_id: 2}).then(res => {
+      // debugger;
+      if(res.code === 200) {
+        sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+        sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+      } else {
+        sessionOrLocal.set('userInfo', null);
+      }
+      // 获取子账号数据
+      fetchData('sonCountGet', {}).then(result => {
+        if( result && result.code === 200) {
+          sessionOrLocal.set(SAAS_V3_COL.KEY_1, JSON.stringify(result.data || {}));
+        }
+      }).catch(e=> {});
+      next();
+      NProgress.done();
+    }).catch(e=>{
+      console.log(e);
+      NProgress.done();
+    });
+  } else {
+    next({path: '/login'});
+    NProgress.done();
+  }
 }
