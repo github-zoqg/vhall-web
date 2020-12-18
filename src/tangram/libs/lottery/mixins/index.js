@@ -3,7 +3,22 @@ const mixins = {
     checkLottery(){
       this.$fetch('v3CheckLottery', {}).then(res=>{
         if(res.code == 200){
-          console.warn(res, '检测当前是否在抽奖');
+          console.warn(res.data, '检测当前是否在抽奖');
+          this.lotteryInfo = res.data
+          console.warn(this.lotteryInfo)
+          if(res.data.lottery_status == 0){
+            this.prizeShow = true
+            this.lotteryContentShow = false
+            this.processingObj = {
+              url: res.data.icon,
+              text: res.data.remark,
+              title: res.data.title
+            }
+            this.dialogTitle = res.data.title
+          }else{
+            // 未开始抽奖  开始获取可抽奖人数及其他信息
+            this.getLotteryCount()
+          }
         }else{
           this.$message.warning(res.msg)
         }
@@ -66,6 +81,11 @@ const mixins = {
     },
     // 开始抽奖
     startReward () {
+      if(this.lotteryResultShow){
+        this.lotteryResultShow = false
+        this.lotteryContentShow = true
+        return
+      }
       if (this.prizeNum > this.getPrizeCount) {
         this.$message.customerror('中奖人数不可以大于参与抽奖人员数');
         return;
@@ -101,6 +121,12 @@ const mixins = {
       this.$fetch('v3CreateLottery', _data).then(res=>{
         if(res.code == 200){
           console.warn('创建抽奖成功',res.data);
+          this.lotteryInfo = res.data
+          this.lotteryContentShow = false
+          this.prizeShow = true
+          this.processingObj.url = res.data.icon
+          this.processingObj.text = res.data.remark
+          this.processingObj.title = this.dialogTitle = res.data.title
         }else{
           this.$message.warning(res.msg)
         }
@@ -109,9 +135,6 @@ const mixins = {
       //   this.startButtonDisabled = false;
       //   if (res.code === 200) {
       //     console.log(res, 'res------');
-      //     this.lotteryInfo = res.data;
-      //     this.lotteryContentShow = false;
-      //     this.prizeShow = true;
       //     this.disTimeSet = setInterval(() => {
       //         this.disabledTime--;
       //       if(this.disabledTime<=0){

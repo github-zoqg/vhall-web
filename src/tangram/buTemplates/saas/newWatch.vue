@@ -145,13 +145,6 @@
               >下麦</el-button
             >
           </div>
-          <div class="table-lottery">
-            <lottery
-              :roomId="roomId"
-              :vssToken="vssToken"
-              ref="lotterySon"
-            ></lottery>
-          </div>
           <div class="player-active" v-show="!isEmbed">
             <div class="table-praise" v-if="userModules.like.show == 1">
               <praise :roomId="roomId" :times="roomInfo.like"></praise>
@@ -175,6 +168,15 @@
               ></getCoupon>
             </div>
             <!-- <span>打赏</span> -->
+          </div>
+          <div class="table-lottery">
+            <lottery
+              :roomId="roomId"
+              :domains="domains"
+              :webinarId="ilId"
+              :isEmbed='isEmbed'
+              ref="lotterySon"
+            ></lottery>
           </div>
         </div>
         <!-- 活动工具栏Done -->
@@ -515,7 +517,7 @@ import Interactive from '../../libs/interactive'; // 互动
 import praise from '../../libs/praise'; // 点赞
 // import question from '../../libs/question/saas'; // 问卷
 import reward from '../../libs/reward'; // 打赏
-import lottery from '../../libs/lottery'; // 抽奖
+import lottery from '../../libs/lottery/audience'; // 抽奖
 import playbill from '../../libs/playbill'; // 开屏海报
 // import Signin from '../../libs/saas-signin'; // 签到
 import Signin from '../../libs/saas-signin/watchSigin'; // 签到
@@ -737,7 +739,8 @@ export default {
       giveMoneyPayWay: '1',
       giveMoneyDes: '',
       giveMoneyUrl: '',
-      showGiveMoneyQr: false
+      showGiveMoneyQr: false,
+      showLottery: false
     };
   },
   created () {
@@ -775,7 +778,6 @@ export default {
   mounted () {
     this.getInavInfo();
     this.redPacketInit();
-    this.getPrize()
     this.FIRST = true;
     this.repeatStatus = false; // 防止重复点击上麦
     if (!browserSupport()) {
@@ -793,6 +795,13 @@ export default {
     this.eventListener()
   },
   methods: {
+    checkLottery(){
+      this.$fetch('v3CheckLottery', {}).then(res=>{
+        if(res.code == 200 && res.data.award_snapshoot.id){
+          this.showLottery = true
+        }
+      })
+    },
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
         if (msg.type == "gift_send_success") {
@@ -893,15 +902,6 @@ export default {
           // this.imageInfo = res.data ? res.data.list : []
           // console.log('礼物列表',this.giftContentControl);
           this.giftList = res.data.list
-        }
-      })
-    },
-    getPrize(){
-      this.$fetch('getLivePrizeInfo', {webinar_id: this.ilId}).then(res=>{
-        if(res.code == 200){
-          console.warn(res.data, '获取');
-        }else{
-          this.$message.warning(res.msg)
         }
       })
     },
@@ -1741,9 +1741,8 @@ export default {
   }
 
   .table-lottery {
-    width: 40px;
-    height: 40px;
     background: red;
+    float: right;
     display: inline-block;
     margin-top: 4px;
   }
