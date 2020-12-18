@@ -379,7 +379,7 @@
                   <p class="sub">秒</p>
                 </div>
               </div>
-              <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
+              <p class="title" v-show="subscribeOptions.show == 1"><span class="red">{{subscribeOptions.num}}</span>人预约</p>
               <div class="bottom">
                 <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
@@ -556,7 +556,10 @@ export default {
       hostName: '',
       hostUrl: '',
       focusCount: 0, // 关注人数
-      subscribe_count: 0,
+      subscribeOptions: {
+        show: 1,
+        num: 0
+      },
       shadeShow: false,
       // 预约计时
       time: '',
@@ -821,7 +824,10 @@ export default {
         this.accountRoute = window.location.origin + '/finance/info'
         this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
         this.myAccountRoute = window.location.origin + '/account/info'
-        this.subscribe_count = this.roomData.subscribe_num
+        this.subscribeOptions = {
+          show: this.roomData.subscribe.show,
+          num: this.roomData.subscribe.num,
+        }
         if (this.signInfo) {
           this.logo = {
             href: this.signInfo.skip_url, // 跳转连接
@@ -1506,8 +1512,12 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           sessionOrLocal.set('interact_token', res.data.live_token)
+          sessionOrLocal.set('token', res.data.live_token, 'localStorage')
           sessionOrLocal.set('visitor_id', res.data.visitor_id)
+          setTimeout(() => {
           this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+
+          }, 300)
           return
         } else {
           this.$message.error(res.msg)

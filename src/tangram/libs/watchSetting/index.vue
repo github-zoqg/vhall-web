@@ -145,18 +145,22 @@ export default {
     vhallCheckings () {
       VhallRTC.getDevices({
       }, (devices) => {
-        console.log(devices, 'devices');
-        this.audioDevices = devices.audioInputDevices.filter((d) => {
-          return d.deviceId != 'default' && d.deviceId != 'communications' && d.label;
-        });
-        if (!this.audioDevices.find(d => d.deviceId == sessionStorage.getItem('selectedAudioDeviceId'))) {
-          sessionStorage.setItem('selectedAudioDeviceId', '');
+        console.log(devices, 'devices12');
+        if (devices) {
+          this.audioDevices = devices.audioInputDevices.filter((d) => {
+            return d.deviceId != 'default' && d.deviceId != 'communications' && d.label;
+          });
+          if (!this.audioDevices.find(d => d.deviceId == sessionStorage.getItem('selectedAudioDeviceId'))) {
+            sessionStorage.setItem('selectedAudioDeviceId', '');
+          }
         }
         this.selectedAudioDeviceId = sessionStorage.getItem('selectedAudioDeviceId') || (this.audioDevices[0] && this.audioDevices[0].deviceId);
         sessionStorage.setItem('selectedAudioDeviceId', this.selectedAudioDeviceId || '');
-        this.videoDevices = devices.videoInputDevices.filter((d) => {
-          return d.deviceId != 'desktopScreen' && d.label;
-        });
+        if (devices) {
+          this.videoDevices = devices.videoInputDevices.filter((d) => {
+            return d.deviceId != 'desktopScreen' && d.label;
+          });
+        }
         if (!this.videoDevices.find(d => d.deviceId == sessionStorage.getItem('selectedVideoDeviceId'))) {
           sessionStorage.setItem('selectedVideoDeviceId', '');
         }

@@ -74,7 +74,7 @@ router.beforeEach((to, from, next) => {
     });
   } else {
     // token不存在时跳转
-    console.log('4444444', to.path, '当前页面');
+    console.log('4444444', from.path, '当前页面');
     /**
      * 获取用户信息需要判断是普通登录还是第三方登录
      * 普通登录直接获取用户信息
@@ -92,7 +92,6 @@ router.beforeEach((to, from, next) => {
         next()
     } else {
       // 跳转之前，清空所有内容
-      console.log('33333333333', to.path, '当前页面');
       sessionOrLocal.clear('localStorage');
       sessionOrLocal.clear();
       if (getQueryString('user_auth_key')) {
