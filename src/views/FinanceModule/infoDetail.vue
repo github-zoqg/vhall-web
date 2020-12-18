@@ -13,6 +13,7 @@
           <search-area
             ref="searchDetail"
             :searchAreaLayout="searchDetail"
+            @onExportData="exportAccount()"
             @onSearchFun="getDetailList('search')"
           >
           </search-area>
@@ -45,6 +46,7 @@ export default {
       activeIndex: '1',
       totalNum: 1000,
       isHandle: true,
+      params: {},
       options: [
         {
           label: '结清并发欠费',
@@ -332,6 +334,7 @@ export default {
       }
       paramsObj.type = type;
       let obj = Object.assign({}, pageInfo, paramsObj);
+      this.params = obj;
       console.log(obj, '111111111111111111111111111');
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, obj).then(res =>{
@@ -381,7 +384,19 @@ export default {
           message: '删除失败!'
         });
       });
-    }
+    },
+    // 导出账单明细
+    exportAccount() {
+      let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
+      this.$fetch(url, this.params).then(res => {
+        if (res.code == 200) {
+          this.params = {};
+          this.$message.success(`账单明细导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`账单明细${res.msg}`);
+        }
+      })
+    },
   }
 };
 </script>

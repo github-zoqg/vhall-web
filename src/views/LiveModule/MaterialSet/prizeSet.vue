@@ -17,12 +17,12 @@
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : 'plaintext-only'" >
                     <el-input v-model="givePrizeForm[item.field_Key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
-                        <el-input v-model="givePrizeForm[item.field_Key]"  type="textarea" placeholder="请输入" :autosize="{ minRows: 4}" v-else></el-input>
+                        <el-input v-model="givePrizeForm[item.field_Key]"  type="textarea" :placeholder="`请输入${item.field}`" :autosize="{ minRows: 4}" v-else readonly></el-input>
                         <div class="isDelete">
                           <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                           <el-switch
                           v-if="index > 1"
-                            v-model="givePrizeForm[item.is_required]"
+                            v-model="item.is_required"
                             inactive-text="必填">
                           </el-switch>
                         </div>
@@ -44,7 +44,7 @@
                     <el-form :model="givePrizeForm">
                       <el-form-item v-for="(item, index) in givePrizeList" :key="index">
                         <el-input v-model="givePrizeForm.file" readonly type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)"></el-input>
-                        <el-input v-model="givePrizeForm.other" readonly type="textarea" placeholder="请输入" v-else></el-input>
+                        <el-input v-model="givePrizeForm.other" readonly type="textarea" :placeholder="`请输入${item.field}`" v-else></el-input>
                       </el-form-item>
                     </el-form>
                   </div>
@@ -155,26 +155,28 @@ export default {
           is_system: 1,
           field: '姓名',
           field_Key: 'name',
+          is_required: true,
           rank: 1,
         },
         {
           is_system: 1,
           field: '手机号',
           field_Key: 'phone',
+          is_required: true,
           rank: 2,
         },
         {
           is_system: 1,
           field: '地址',
           field_Key: 'adress',
-          is_required: 'adressCheced',
+          is_required: false,
           rank: 3,
         },
         {
           is_system: 0,
           field: '自定义1',
           field_Key: 'user_define_100',
-          is_required: 'is_required_100',
+          is_required: false,
           rank: 100,
         },
       ],
@@ -182,6 +184,7 @@ export default {
         name: '',
         imageUrl: ''
       },
+      isError: false,
       rules: {
         name: [
           { required: true, message: '请输入奖品名称', trigger: 'blur' }
@@ -252,7 +255,7 @@ export default {
         is_system: 0,
         field: `自定义${this.givePrizeList.length - 2}` ,
         field_Key: 'user_define_' + (this.givePrizeList.length + 97),
-        is_required: 'is_required_' + (this.givePrizeList.length + 97),
+        is_required: false,
         rank: this.givePrizeList.length + 97,
       });
     },
@@ -264,18 +267,42 @@ export default {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
         if (res.data.length) {
           this.givePrizeList = res.data;
-          this.length = res.data.length;
+          this.givePrizeList.map(item => {
+            item.is_required = Boolean(item.is_required);
+          })
         }
       })
     },
     // 保存领奖页信息
     sureGivePrize() {
       console.log('refssss',this.$refs);
-      this.givePrizeList.forEach((item,index)=>{
+      let nameList = ['姓名','地址', '手机号'];
+      this.givePrizeList.map((item, index) => {
         if (!item.is_system) {
-          item.field =  this.$refs[this.givePrizeList[index].field_Key][0].$el.childNodes[0].innerHTML
+          item.field =  this.$refs[this.givePrizeList[index].field_Key][0].$el.childNodes[0].innerHTML;
+          if (nameList.includes(item.field)) {
+            this.$message.error('输入名字不能相同');
+            this.isError = true;
+          } else {
+            nameList.push(item.field);
+            this.isError = false;
+          }
         }
       })
+      if (this.isError) {
+        return;
+      }
+      // this.givePrizeList.forEach((item, index)=>{
+      //   if (!item.is_system) {
+      //     item.field =  this.$refs[this.givePrizeList[index].field_Key][0].$el.childNodes[0].innerHTML;
+      //    if (nameList.includes(item.field)) {
+      //      this.$message.error('输入名字不能相同');
+      //      return false;
+      //    } else {
+      //      nameList.push(item.field);
+      //    }
+      //   }
+      // })
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
         if (res.code == 200) {
           this.$message.success('保存成功');
