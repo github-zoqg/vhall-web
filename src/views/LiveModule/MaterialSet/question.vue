@@ -14,7 +14,7 @@
       <el-button round  @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList"></el-input>
+        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList" clearable></el-input>
       </div>
     </div>
     <el-card class="question-list">
@@ -115,6 +115,9 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.questionId = rows.question_id;
+      if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+          window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+        }
       that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制

@@ -338,10 +338,18 @@ const apis = {
   getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
   getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
   getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
+
+  // 财务中心导出
   exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
   exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
   exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
   exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //并发明细导出
+  exporOrder: ['/v3/fin/order/export', 'GET'], //账单明细-购买明细 导出
+  exportAdmin:  ['/v3/fin/admin-order/export', 'GET'], //账单明细-开通明细 导出
+  exportWithdraw:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //提现明细 导出
+  exportIncomeDetail:  ['/v3/fin/income/live/details/export', 'GET'], //直播收益详情列表导出
+  exportLiveIncome:  ['/v3/fin/income/live/export', 'GET'], //直播收益明细导出
+  exportRedPacket:  ['/v3/fin/income/red-packet/export', 'GET'], //红包收益明细导出
 
  //账务-账单  财务-购买
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费

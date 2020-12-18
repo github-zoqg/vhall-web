@@ -173,7 +173,6 @@
               <vhall-enjoy-watch-Saas
                 v-if="roominfo.vss_token && !kickOutSass"
                 :playerInfo="roominfo.player"
-                :authInfo="roominfo.auth"
                 :roomId="roominfo.room_id"
                 :ilId="roominfo.webinar_id"
                 :vssToken="roominfo.vss_token"
@@ -616,7 +615,6 @@ export default {
       myMessageNum: '', // 信息数
       submitQuestionShow: false, // 提交问题的显示
       chatFilterData: [], // 聊天过滤的数据
-      userInfo: {},
       attentionContent: '关注', // 关注的内容显示
       kickOutSass: false, // 遮罩层
       chatShow: '', // 聊天的status
@@ -1121,12 +1119,12 @@ export default {
         if (res.code == 200) {
           this.loginDialogShow = false;
           this.shadeShow = false;
-          this.$router.go(0);
           this.phoneKey = ''
           this.smsErrorMessage = ''
           sessionOrLocal.set('sso', res.data.sso_token)
-          sessionOrLocal.set('token', res.data.token, 'localStorage')
+          // sessionOrLocal.set('token', res.data.token, 'localStorage')
           sessionOrLocal.set('userInfo', res.data)
+          this.fetchData()
         } else if (res.code == 10000) {
           this.smsErrorMessage = '当前账号或密码错误'
         } else {
@@ -1166,10 +1164,11 @@ export default {
             this.shadeShow = false
             this.phoneKey = ''
             this.photoCpathaShow = true
-            this.$router.go(0) // 重新进入
             sessionOrLocal.set('sso', res.data.sso_token)
             sessionOrLocal.set('token', res.data.token, 'localStorage')
-            sessionOrLocal.set('userInfo', res.data)
+            // sessionOrLocal.set('userInfo', res.data)
+            this.fetchData()
+
           } else {
             if (res.code == 12042) {
               this.errorMessage = '图片验证码错误'
@@ -1183,6 +1182,19 @@ export default {
             this.errorMessage = '图形码未验证通过'
           }
         });
+    },
+    fetchData () {
+      this.$fetch('getInfo', {scene_id: 2}).then(res => {
+        if(res.code === 200) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        } else {
+          sessionOrLocal.set('userInfo', null);
+        }
+        this.$router.go(0) // 重新进入
+      }).catch(e=>{
+        console.log(e);
+      })
     },
     // 校验登录次数
     checkLoginAccount() {
@@ -1622,7 +1634,8 @@ export default {
           like: {show: this.configList ? this.configList['ui.watch_hide_like'] : 0},
           share: {show: this.configList ? this.configList['ui.hide_share'] : 0},
           chat_login: {show: 1}
-        }
+        },
+        reportOption: data.report_data ? data.report_data : {}
       }
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
@@ -1661,7 +1674,6 @@ export default {
       // 存取图片的主要路径，给七巧板用
       sessionOrLocal.set('imageDomin', this.roominfo.domains.upload)
       // 存取用户信息给七巧板用
-      sessionOrLocal.set('user', JSON.stringify(this.roominfo.user))
       // 存取VssToke
       sessionOrLocal.set('vhall-vsstoken', this.roominfo.vss_token)
       sessionOrLocal.set('moduleShow', JSON.stringify(this.roominfo))

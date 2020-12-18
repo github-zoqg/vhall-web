@@ -66,6 +66,7 @@
         <div class="search-income">
           <search-area
             ref="searchIncome"
+            @onExportData="exportAccount()"
             :searchAreaLayout="searchAccount"
             @onSearchFun="getIncomeList('search')"
           >
@@ -102,6 +103,7 @@ export default {
       money: 0,
       phone: 0,
       type: 0,
+      params: {},
       isHandle: true,
       incomeInfo: {},
       searchAccount: [
@@ -263,6 +265,7 @@ export default {
       }
       paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
+      this.params = obj;
       console.log(obj, '11111111111111111111');
       let url = this.activeIndex == '1' ? "liveIncomeList" : "packetIncomeList";
       this.$fetch(url, obj).then(res =>{
@@ -315,6 +318,18 @@ export default {
       this.$router.push({
         path: '/finance/accountDetail'
       });
+    },
+    // 导出收益明细
+    exportAccount() {
+      let url = this.activeIndex == '1' ? 'exportLiveIncome' : 'exportRedPacket';
+      this.$fetch(url, this.params).then(res => {
+        if (res.code == 200) {
+          this.params = {};
+          this.$message.success(`收益明细导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`收益明细${res.msg}`);
+        }
+      })
     }
   },
 };

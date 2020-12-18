@@ -31,8 +31,9 @@
         } else if (!this.keyCode) {
           this.warnningVal = '直播口令不能为空'
         } else {
+          let role = this.roleName == 1 ? 1 : (this.roleName == 4 ? 2 : 3)
           this.$emit('codeAuthLogin', {
-            role: this.roleName,
+            role: role,
             name: this.name,
             keyCode: this.keyCode
           })

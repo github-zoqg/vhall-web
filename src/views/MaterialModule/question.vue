@@ -99,6 +99,9 @@ export default {
       console.log('预览', rows);
       that.questionId = rows.question_id;
       that.$refs.isPreQuestion.dialogVisible = true;
+      if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+        window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+      }
     },
     // 复制
     cope(that, {rows}) {

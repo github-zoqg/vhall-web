@@ -10,7 +10,7 @@
       </el-col>
       <el-col :span="6">
         <div class="top-item">
-          <p>总并发(方)<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
+          <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
           <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}</p>
         </div>
@@ -33,7 +33,7 @@
       </el-col>
       <el-col :span="6" v-if="userInfo.concurrency.extend_day">
         <div class="top-item">
-          <p>并发扩展包（天</p>
+          <p>并发扩展包（天）</p>
           <h2>{{ userInfo.concurrency.extend_day }}</h2>
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
@@ -118,9 +118,8 @@ export default {
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
-        this.versionType = res.data.edition;
         this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
-        sessionOrLocal.set('versionType', JSON.stringify(res.data.edition));
+        sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
         sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
       }).catch(e=>{
         console.log(e);
