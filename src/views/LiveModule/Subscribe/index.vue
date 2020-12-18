@@ -1506,6 +1506,7 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           sessionOrLocal.set('interact_token', res.data.live_token)
+          sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
           sessionOrLocal.set('visitor_id', res.data.visitor_id)
           this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
           return
