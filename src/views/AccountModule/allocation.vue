@@ -7,10 +7,11 @@
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_end_time}]"
-                   size="medium">{{Number($route.params.str) === 1 ? '批量分配' : '分配并发包'}}</el-button>
+        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_day}]"
+                   size="medium"
+                   v-if="!(is_dynamic > 0) && dataList.length > 0">{{Number($route.params.str) === 1 ? '批量分配' : '分配并发包'}}</el-button>
         <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
-                   v-if="resourcesVo && resourcesVo.extend_end_time">分配扩展包</el-button>
+                   v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_day">分配扩展包</el-button>
 
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
@@ -56,7 +57,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_end_time">
+              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_day">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append"> 方</template>
@@ -92,7 +93,7 @@
             <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}}：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
             <li>有效期至{{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
-          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.extend_end_time">
+          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.extend_day">
             <li>可分配并发扩展包（天）：{{ resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0 }}</li>
             <li>有效期至{{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
@@ -256,7 +257,7 @@
               }
             }
             item.extend_day = item.vip_info.extend_day;
-            item.inputExtendDay = item.vip_info.inputExtendDay;
+            item.inputExtendDay = item.vip_info.extend_day;
             item.isHide = false;
           });
           this.dataList = dao.list;
@@ -318,19 +319,27 @@
       saveMultiSetHandle(){
         this.$refs.multiAllocForm.validate((valid) => {
           if (valid) {
-            if (this.dialogType === 1) {
-              // 流量-批量分配，设置 resources， type为流量
-            } else if (this.dialogType === 2) {
-              // 并发-分配并发包，设置resources， type为并发
-            } else if (this.dialogType === 3) {
-              // 并发-分配扩展包，设置 extend_day， type为并发
-            }
             let childIdList = this.multipleSelection.map(item => {
-              return {
+              let result = {
                 user_id: item.child_id,
-                resources: this.dialogType !== 3 ? Number(this.multiAllocForm.count) : 0,
-                extend_day: this.dialogType === 3 ? Number(this.multiAllocForm.count) : 0
+                resources: 0,
+                extend_day: 0
               }
+              if (this.dialogType === 1) {
+                // 并发-分配并发包，设置resources， type为并发
+                result.resources = Number(this.multiAllocForm.count);
+                result.extend_day = item.extend_day;
+              } else if (this.dialogType === 2) {
+                // 流量-批量分配，设置 resources， type为流量
+                result.resources = Number(this.multiAllocForm.count);
+                result.extend_day = item.extend_day;
+              }  else if (this.dialogType === 3) {
+                // 并发-分配扩展包，设置 extend_day， type为并发
+                result.extend_day = Number(this.multiAllocForm.count);
+                result.resources = item.count;
+              }
+              console.log(result, '批量数据')
+              return result;
             })
             let params = {
               type: Number(this.$route.params.str), // 分配类型 0-并发 1-流量,
