@@ -1119,12 +1119,12 @@ export default {
         if (res.code == 200) {
           this.loginDialogShow = false;
           this.shadeShow = false;
-          this.$router.go(0);
           this.phoneKey = ''
           this.smsErrorMessage = ''
           sessionOrLocal.set('sso', res.data.sso_token)
-          sessionOrLocal.set('token', res.data.token, 'localStorage')
-          // sessionOrLocal.set('userInfo', res.data)
+          // sessionOrLocal.set('token', res.data.token, 'localStorage')
+          sessionOrLocal.set('userInfo', res.data)
+          this.fetchData()
         } else if (res.code == 10000) {
           this.smsErrorMessage = '当前账号或密码错误'
         } else {
@@ -1164,10 +1164,11 @@ export default {
             this.shadeShow = false
             this.phoneKey = ''
             this.photoCpathaShow = true
-            this.$router.go(0) // 重新进入
             sessionOrLocal.set('sso', res.data.sso_token)
             sessionOrLocal.set('token', res.data.token, 'localStorage')
             // sessionOrLocal.set('userInfo', res.data)
+            this.fetchData()
+
           } else {
             if (res.code == 12042) {
               this.errorMessage = '图片验证码错误'
@@ -1181,6 +1182,19 @@ export default {
             this.errorMessage = '图形码未验证通过'
           }
         });
+    },
+    fetchData () {
+      this.$fetch('getInfo', {scene_id: 2}).then(res => {
+        if(res.code === 200) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        } else {
+          sessionOrLocal.set('userInfo', null);
+        }
+        this.$router.go(0) // 重新进入
+      }).catch(e=>{
+        console.log(e);
+      })
     },
     // 校验登录次数
     checkLoginAccount() {

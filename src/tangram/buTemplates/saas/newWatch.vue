@@ -427,7 +427,7 @@
             @click.stop="chooseGift(index)">
             <div class="gift-cover">
               <template v-show="uploadDomain">
-                <img :src="uploadDomain + '/' + item.image_url">
+                <img :src="item.image_url">
               </template>
             </div>
             <div class="gift-info">
@@ -761,7 +761,7 @@ export default {
       handler (val) {
         if (val) {
           this.vssInfo = val
-          this.poster = val.webinar.image_url ? val.domains.upload + '/' + val.webinar.image_url : '';
+          this.poster = val.webinar.image_url ? val.webinar.image_url : '';
           this.userModules = val.modules;
           this.isInteract = val.webinar.is_interact;
           this.uploadDomain = val.domains.upload
