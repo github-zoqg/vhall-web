@@ -178,6 +178,7 @@ export function checkAuth(to, from, next) {
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
+    to.path.indexOf('/subscribe') !== -1 ||
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1) {
