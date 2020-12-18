@@ -1273,7 +1273,7 @@
         class="cxs"
         v-if="!assistantType || (assistantType && assistantType == 'doc')"
         :roomId="roomInfo.interact.room_id"
-        :vssToken="vssToken"
+        :domains="domains"
         ref="lotterySon"
       ></lottery>
     </div>
