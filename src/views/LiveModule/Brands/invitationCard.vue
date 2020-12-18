@@ -21,7 +21,7 @@
           </div>
             <el-button round slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button round :disabled="!invitation">本地下载</el-button>
+        <el-button round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -106,7 +106,7 @@
       </div>
       <div class="invitation-show">
         <p>移动端预览</p>
-        <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1">
+        <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
           <div class="show-container">
             <div class="show-header">
               <div class="show-avator">
@@ -135,7 +135,7 @@
             </div>
           </div>
         </div>
-        <div class="watch-img" v-else-if="showType===2">
+        <div class="watch-img" v-else-if="showType===2"  id="shopInvent">
           <div class="watch-bg" :style="`backgroundImage: url(${img})`">
             <div class="watch-header">
               <div class="watch-avator">
@@ -158,7 +158,7 @@
             </div>
           </div>
         </div>
-        <div class="look-img" :style="`backgroundImage: url(${img})`" v-else>
+        <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
             <div class="look-header">
               <div class="look-avator">
                 <img :src="avatar" alt="">
@@ -197,19 +197,18 @@
 </template>
 <script>
 import addBackground from './components/imgBackground';
-import QRcode from 'qrcode';
 import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   data() {
     return {
       invitation: true,
-      qrcode: '',
-      showCode: '',
+      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      showCode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       showType: 1,
       avatar: '',
       img: '',
       imgType: 0,
-      link: 'http://e.vhall.com/mywebinar/invite-card/923464350/1734888',
       isShowMethod: '1',
       information: {},
       formInvitation: {
@@ -250,14 +249,7 @@ export default {
   },
   created(){
     this.webinarId = this.$route.params.str;
-    QRcode.toDataURL(
-      this.link,
-      (err, url) => {
-        console.log(err, url);
-        this.showCode = url;
-      }
-     );
-     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar;
+    this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar;
     this.getInviteCardInfo();
     // this.isInviteCard();
   },
@@ -290,17 +282,7 @@ export default {
         this.showType = res.data.invite_card.show_type;
         this.invitation = Boolean(res.data.status);
         this.formInvitation.is_show_watermark = Boolean(res.data.invite_card.is_show_watermark);
-        this.getShowCode(res.data.invite_qr_url);
       });
-    },
-    getShowCode(link) {
-      QRcode.toDataURL(
-      link,
-      (err, url) => {
-        console.log(err, url);
-        this.qrcode = url;
-      }
-    );
     },
     changeImg() {
       this.$refs.background.dialogVisible = true;
@@ -332,6 +314,27 @@ export default {
          this.$message.success('保存数据成功');
        }
       });
+    },
+    // 本地下载
+    loadDownInvition() {
+      let image = new Image();
+      let canvas1 = document.createElement('canvas');
+      let _canvas = document.querySelector('#shopInvent');
+      let w = parseInt(window.getComputedStyle(_canvas).width);
+      let h = parseInt(window.getComputedStyle(_canvas).height);
+      canvas1.width = w * 2;
+      canvas1.height = h * 2;
+      canvas1.style.width = w + 'px';
+      canvas1.style.height = h + 'px';
+      let context = canvas1.getContext('2d');
+      context.scale(2,2);
+      context.drawImage(image, 0, 0, canvas1.width, canvas1.height);
+      let url = canvas1.toDataURL("image/png");
+      let a = document.createElement("a"); // 生成一个a元素
+      let event = new MouseEvent("click"); // 创建一个单击事件
+      a.download = `code${new Date().getTime()}`; // 设置图片名称
+      a.href = url; // 将生成的URL设置为a.href属性
+      a.dispatchEvent(event); // 触发a的单击事件
     }
   }
 };

@@ -22,12 +22,12 @@
         >
       </search-area>
     </div>
-    <div class="question-list" v-if="total">
+    <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </div>
-    <div class="no-live" v-else>
+    <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="'暂未创建奖品'">
       </noData>
     </div>
@@ -45,11 +45,12 @@ export default {
     source: {
       type: String,
       required: false,
-      default:'1'
+      default: '1'
     },
     roomId: {
       type: String,
-      required: false
+      required: false,
+      default: ''
     },
   },
   data() {
@@ -101,24 +102,19 @@ export default {
       methodsCombin[val.type](this, val);
     },
     getTableList(params) {
-      let pageInfo = {}
-      if (this.tableData.length) {
-        pageInfo = this.$refs.tableList.pageInfo;
-      } else {
-        pageInfo = {limit:1,pageNum:1,pos:0}
-      }
+      let pageInfo = this.$refs.tableList.pageInfo;
        //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       if (params === 'search') {
-        pageInfo.pageNum= 1;
-        pageInfo.pos= 0;
+        pageInfo.pageNum = 1;
+        pageInfo.pos = 0;
         if (this.tableData.length) {
           this.$refs.tableList.clearSelect();
         }
       }
-        if (this.source == '0') {
-          formParams = {...formParams,...{room_id:this.roomId}}
-        }
+      if (this.source == '0') {
+        formParams.room_id = this.roomId;
+      }
       formParams.source =  this.source;
       let obj = Object.assign({}, pageInfo, formParams);
 
@@ -129,15 +125,19 @@ export default {
           this.nullText = 'search';
         }
         this.tableData.map(item => {
-        // 临时写死的，后期调
-        item.img = `http://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/${item.img_path}`;
-      })
-        // console.log(res.data, '22222');
+          // 临时写死的，后期调
+          item.img = item.img_path;
+        })
       })
     },
     // 复制
     cope(that, {rows}) {
-      that.$fetch('copyPrize', {prize_id: rows.prize_id, source: this.source}).then(res => {
+      let params = {
+        prize_id: rows.prize_id,
+        source: that.source,
+        room_id: that.roomId
+      }
+      that.$fetch('copyPrize', that.$params(params)).then(res => {
         that.$message.success('复制成功');
         that.getTableList();
       })
@@ -146,7 +146,6 @@ export default {
     edit(that, {rows}) {
       that.$refs.createPrize.dialogVisible = true;
       that.prizeInfo = rows;
-      console.log(that.prizeInfo, '0000000000000000000')
     },
     // 删除
     del(that, {rows}) {
@@ -158,7 +157,12 @@ export default {
         cancelButtonText: '取消',
         customClass: 'zdy-message-box'
       }).then(() => {
-        this.$fetch('delPrize', {prize_id: id, source: this.source}).then(res=>{
+        let params = {
+          prize_id: id,
+          source: this.source,
+          room_id: this.roomId
+        }
+        this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
             this.getTableList();
             this.$message.success('删除成功');
@@ -185,6 +189,7 @@ export default {
       if (this.tableData.length) {
          this.$refs.tableList.clearSelect();
       }
+      this.prizeInfo = {};
       this.$refs.createPrize.dialogVisible = true;
     },
     // 从资料库中选择
