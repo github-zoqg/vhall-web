@@ -87,7 +87,7 @@ export default {
       prizeShow: false, //抽奖显示页
       chatLoginStatus: false, //是否需要登录
       lotteryResultShow: false, //
-      showLottery:false, // 观看端打赏展示
+      showLottery:false, //  观看端打赏展示
       promptImg: require('./img/win.png'),
       lotteryResultObj:{}
     };
