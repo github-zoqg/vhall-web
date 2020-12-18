@@ -20,7 +20,7 @@
         </div>
         <!-- 抽奖结果 -->
         <div class="lottery-result " v-if="lotteryResultShow == 1">
-          <div v-if="lotteryInfo.lottery_status==1">
+          <div v-if="lotteryInfo.lottery_status==1" style="text-align: center;">
             <div class="recive-prize"  v-if="lotteryStep == 2" >
               <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
               <el-form ref="forms" class="form-style">
@@ -82,7 +82,7 @@ export default {
       audienceText: '信息提交成功',
       isWinning: false,// 是否中奖
       submitWinning: true, // 信息是否提交成功
-      lotteryStep: 1 ,// 领奖到哪一步
+      lotteryStep: 2 ,// 领奖到哪一步
       processingObj:{}, // 抽奖的标题信息
       lotteryInfo: {}, // 抽奖的详细信息
       showMess: false,
@@ -97,7 +97,7 @@ export default {
       console.warn('isWinning',newValue, oldValue, '发生变化');
       if(newValue){
         this.$nextTick(()=>{
-          this.audienceText = '中奖啦！恭喜您获得“黑碳科技立体电子魔方';
+          this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
           this.isWinning = true;
           this.getReward = '点击领奖';
         });
@@ -134,6 +134,10 @@ export default {
     },
     // 点击领奖
     getAward () {
+      console.warn(this.lotteryStep, '提交到哪一步');
+      if(this.lotteryStep == 1){
+        this.lotteryStep = 2
+      }
       // if (this.hasAward) {
       //   this.lotteryResultShow = false; // 抽奖结果
       //   this.lotteryContentShow = false; // 发起抽奖
@@ -162,7 +166,10 @@ export default {
           }else{
             // 当前不存在抽奖
             this.lotteryResultShow = true
-            this.isWinning = res.data.win == 0
+            this.isWinning = res.data.win == 1
+            if(this.isWinning){
+              this.getStepText()
+            }
             console.warn(this.isWinning, 'his.isWinning');
           }
         }else{
@@ -372,6 +379,7 @@ export default {
 
     .lottery-result {
       background: #fff;
+      text-align: center;
       margin-bottom: 32px;
       .result-img{
         text-align: center;
@@ -490,6 +498,7 @@ export default {
 .Audience-one{
   text-align: center;
   margin: 0 auto;
+
   img{
     margin: 42px auto 24px;
     display: block;

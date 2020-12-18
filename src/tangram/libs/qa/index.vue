@@ -174,13 +174,13 @@ export default {
       }
       e.data = e.data.text_content;
       console.warn('监听到的私聊消息事件---2---', e);
-      if (e.context.to == this.joinId || e.sender_id == this.joinId) {
+      if (e.context.to == '16422715' || e.sender_id == this.joinId) {
+      // if (e.context.to == this.joinId || e.sender_id == this.joinId) {
         // 如果是本用户收发的消息放到私聊消息队列
         if (e.sender_id != this.joinId) {
           // 发消息的人不是本用户
           console.warn('私聊消息的派发---3---', e);
           this.privateMessages.push(e);
-        } else {
         }
       }
     });
@@ -283,20 +283,40 @@ export default {
       if (this.isPrivate) {
         if (!this.hostJoinId) return this.$message('需要@ 私聊对象');
         const msg = this.trimPlaceHolder(this.inputValue.trim());
-        let _data = this.emojiToText(msg)
-        let _content = { user_name: this.hostName, sender_id: this.hostJoinId }
+        let _data = {
+          target_id: this.hostJoinId,
+          // target_id: '16421384',
+          type:'text',
+          text_content: this.emojiToText(msg)
+        };
+        console.warn(this.selfName, 'dsfsdf');
+        // 为保持一致   故传了多个不同key  同value
+        let _content = {
+          to: this.hostJoinId,
+          // to: '16421384',
+          nickname: this.hostName, // 昵称
+          nick_name: this.hostName,
+          // user_id: '16422715',
+          user_id: this.thirdPartyId,
+          user_name: this.hostName,
+          account_id: this.thirdPartyId,
+          // account_id: '16422715',
+          app: 'vhall'
+        };
+        // let _content = { user_name: this.hostName, sender_id: this.hostJoinId }
         window.chatSDK.emit(_data, _content)
+        console.warn(_data, _content, 'look结果');
         if(!window.sessionStorage.getItem('localJoinList')){
-          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].id))
-          this.$fetch('v3SetUser', {room_id: this.userInfo.interact.room_id, webinar_id: this.webinar_id, to: this.userList[this.acrivePrivate].id})
+          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.thirdPartyId))
+          this.$fetch('v3SetUser', {room_id: this.roomId, webinar_id: this.webinarId, to: this.thirdPartyId})
         }else{
           let _arr = window.sessionStorage.getItem('localJoinList')
-           if(_arr.indexOf(this.userList[this.acrivePrivate].id) == -1){
-            window.sessionStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].id}`)
+           if(_arr.indexOf(this.thirdPartyId) == -1){
+            window.sessionStorage.setItem('localJoinList', `${_arr},${this.thirdPartyId}`)
           }
         }
         this.privateMessages.push({
-          data: _data, // TODO:
+          data: _data.text_content, // TODO:
           context: _content
         });
         this.scroll.refresh();
@@ -349,8 +369,9 @@ export default {
       });
     },
     atHost (data) {
+      console.warn(data, '67326478 测试');
       this.hostName = data.name;
-      this.hostJoinId = data.joinId;
+      this.hostJoinId = data.contextUserId;
       this.inputValue = this.inputValue
         ? `我对${this.hostName}说: ${this.trimPlaceHolder()}`
         : `我对${this.hostName}说:`;

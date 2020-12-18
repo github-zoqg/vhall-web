@@ -275,6 +275,7 @@
             :joinId="saasJoinId"
             :thirdPartyId="roomInfo.third_party_user_id"
             :isEmbed="isEmbed"
+            :selfName='userInfo.nick_name'
             :roleName='false'
             ref="qa"
           ></qa>
@@ -739,8 +740,7 @@ export default {
       giveMoneyPayWay: '1',
       giveMoneyDes: '',
       giveMoneyUrl: '',
-      showGiveMoneyQr: false,
-      showLottery: false
+      showGiveMoneyQr: false
     };
   },
   created () {
@@ -795,13 +795,6 @@ export default {
     this.eventListener()
   },
   methods: {
-    checkLottery(){
-      this.$fetch('v3CheckLottery', {}).then(res=>{
-        if(res.code == 200 && res.data.award_snapshoot.id){
-          this.showLottery = true
-        }
-      })
-    },
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
         if (msg.type == "gift_send_success") {
@@ -1065,7 +1058,7 @@ export default {
             this.addSocketsListener();
           })
           window.chatSDK = chat.message;
-          console.log('chatSDK is Ready');
+          console.log('chatSDK is Ready', opt);
 
           if (this.isEmbedVideo) {
             this.embedBarrage();
