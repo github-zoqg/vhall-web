@@ -134,8 +134,8 @@ export default {
       isHandle: false, // 是否有操作项
       sonTableColumn: [
         {
-          label: '账号ID',
-          key: 'child_id',
+          label: '账号',
+          key: 'name',
           width: 200
         },
         {
@@ -286,7 +286,7 @@ export default {
             that.$message.success(`删除成功`);
             that.ids = [];
             that.$refs.sonTab.clearSelection();
-            that.getSonList();viewerRules
+            that.getSonList();
           }else {
             that.$message({
               type: 'error',
@@ -393,13 +393,13 @@ export default {
           list: []
         };
         (dao.list||[]).map(item => {
-          if(item.vip_info.type > 0) {
+          if(this.vipType > 0) {
             if (item.is_dynamic > 0 ) {
               // 流量动态
               item.round = `流量动态`;
             } else {
               // 流量（XXXGB）
-              item.round = `流量（${item.vip_info.total_flow}GB）`;
+              item.round = `流量（${item.vip_info.flow}GB）`;
             }
           } else {
             if (item.is_dynamic > 0 ) {

@@ -1,14 +1,16 @@
 <template>
   <div>
-    <pageTitle :title="`用量分配is_dynamic > 0 ? '动态' : '固定'${vipStatus},${vipSelectStatus}`"></pageTitle>
+    <pageTitle title="用量分配"></pageTitle>
     <div class="ac__allocation__panel">
       <!-- 左侧 -->
       <div class="ac__allocation__panel--left">
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': Number($route.params.str) !== 1}]" size="medium">{{Number($route.params.str) === 1 ? '批量分配' : '分配并发包'}}</el-button>
-        <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium" v-if="Number($route.params.str) !== 1">分配扩展包</el-button>
+        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_end_time}]"
+                   size="medium">{{Number($route.params.str) === 1 ? '批量分配' : '分配并发包'}}</el-button>
+        <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
+                   v-if="resourcesVo && resourcesVo.extend_end_time">分配扩展包</el-button>
 
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
@@ -54,7 +56,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配扩展包" v-if="Number($route.params.str) !== 1">
+              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_end_time">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append"> 方</template>
@@ -172,12 +174,15 @@
         // 按钮限制，若没有选中信息，不可展示
         if (this.multipleSelection && this.multipleSelection.length > 0) {
           if(type === 'more') {
-            // 当前为批量分配扩展包
+            // 当前为批量-并发分配扩展包
+            this.dialogType = 3;
           } else {
             if (Number(this.$route.params.str) === 1) {
               // 当前为流量-批量分配
+              this.dialogType = 2;
             } else {
               // 当前为并发-分配并发包
+              this.dialogType = 1;
             }
           }
           this.multiAllocShow = true;
@@ -228,16 +233,16 @@
             list: []
           };
           (dao.list||[]).map(item => {
-            // 组装数据
-            if(item.vip_info.type > 0) {
+            // 组装数据 type =>  0并发 1流量 [Number(this.$route.params.str)]
+            if(Number(this.$route.params.str) > 0) {
               if (item.is_dynamic > 0 ) {
                 // 流量动态
                 item.count = 0;
                 item.inputCount = '';
               } else {
                 // 流量（XXXGB）
-                item.inputCount = item.vip_info.total_flow;
-                item.count = item.vip_info.total_flow;
+                item.inputCount = item.vip_info.flow;
+                item.count = item.vip_info.flow;
               }
             } else {
               if (item.is_dynamic > 0 ) {
@@ -313,11 +318,18 @@
       saveMultiSetHandle(){
         this.$refs.multiAllocForm.validate((valid) => {
           if (valid) {
+            if (this.dialogType === 1) {
+              // 流量-批量分配，设置 resources， type为流量
+            } else if (this.dialogType === 2) {
+              // 并发-分配并发包，设置resources， type为并发
+            } else if (this.dialogType === 3) {
+              // 并发-分配扩展包，设置 extend_day， type为并发
+            }
             let childIdList = this.multipleSelection.map(item => {
               return {
                 user_id: item.child_id,
-                resources: Number(this.multiAllocForm.count),
-                extend_day: 0
+                resources: this.dialogType !== 3 ? Number(this.multiAllocForm.count) : 0,
+                extend_day: this.dialogType === 3 ? Number(this.multiAllocForm.count) : 0
               }
             })
             let params = {
@@ -338,6 +350,7 @@
             if (row) {
               row.isHide = true;
             }
+            this.multiAllocShow = false;
             this.allocMoreGet();
             // 保存完成后，更新数据
             this.getSonList();
