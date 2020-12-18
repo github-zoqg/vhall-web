@@ -8,7 +8,7 @@
       </div>
       <ul>
         <li>
-          <p>账号ID：</p>
+          <p>账号：</p>
           <h3>{{ sonVo && sonVo.child_id ? sonVo.child_id : '' }}</h3>
         </li>
         <li>
@@ -69,7 +69,6 @@ export default {
   computed: {
     sonText: function () {
       return `账号：${this.sonVo.child_id || '暂无'}
-密码：${this.sonVo.password || '暂无'}
 请登录www.vhall.com，选择账号登录，首次登录请修改密码、绑定手机号后进行使用`;
     }
   },

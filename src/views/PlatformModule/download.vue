@@ -1,7 +1,8 @@
 <template>
 	<div class="download">
-    <pageTitle title="下载中心"></pageTitle>
+    <pageTitle :title="`下载中心${file_name}`"></pageTitle>
     <div class="download-ctx">
+
       <div v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
         <!-- 搜索 -->
         <div class="list--search">
@@ -218,7 +219,6 @@ export default {
         // 第一步，拿取其余服务接口请求地址
         let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
         if(result.code === 200 && result.data) {
-          debugger
           let header = {
             platform: sessionOrLocal.get('platform', 'localStorage') || 17,
             token: sessionOrLocal.get('token', 'localStorage') || '',
@@ -232,14 +232,25 @@ export default {
             headers: header,
             'Content-Type': 'application/x-www-form-urlencoded'
           }
+          console.log(result.data)
           if (result.data.request_method.toUpperCase() === 'POST') {
-            option.body = result.data.select_json; // body data type must match "Content-Type" header
+            let obj =  JSON.parse(result.data.select_json); // body data type must match "Content-Type" header
+            let formData = new FormData();
+            for (let key in obj) {
+              if(obj[key] !== null &&  obj[key] !== undefined && obj[key] !== '') {
+                formData.append(key, obj[key]);
+              }
+            }
+            console.log(obj, '参数1111111111');
+            option.body = formData
           }
           fetch(`${result.data.send_url}`, option).then(res => {
             console.log(res.json(), '模拟导出申请请求，重新下载');
           }).catch(e => {
             console.log(e);
           });
+          // 重新拉取数据
+          this.getTableList();
         }
       } catch (e) {
         console.log(e);

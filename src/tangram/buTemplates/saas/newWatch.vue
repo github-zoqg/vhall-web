@@ -70,6 +70,7 @@
             :exchangeVideoDoc="miniElemtChange"
             :isMini="miniElemt == 'video'"
             :docVisible="watchDocShow && !isEmbedVideo"
+            :roominfo="roomInfo"
           ></Watch>
 
           <!-- 互动桌面共享 -->
@@ -162,7 +163,6 @@
                 :vss_token="vssToken"
                 :room_id="roomInfo.room_id"
                 :red_packet_uuid="redPacketUuid"
-                :authInfo="authInfo"
                 :isHavePacket="isHavePacket"
                 @NoLogin="NoLogin"
               ></getCoupon>
@@ -552,10 +552,6 @@ export default {
       required: true
     },
 
-    authInfo: {
-      default: () => []
-    },
-
     playerInfo: {
       required: false
     },
@@ -661,7 +657,9 @@ export default {
       miniElemt: '', // 取值 doc  = 文档区到右上角， video = 视频区到右上角  interaction = 主讲人区域到右上角 default: '' 不显示右上角区域
       init: false, // 房间业务SDK初始化成功。开始挂载组件
       roomInfo: '',
-      userInfo: '',
+      userInfo: {
+        nick_name: ''
+      },
       chatPlugins: {
         emoji: true,
         audit: {
@@ -744,11 +742,9 @@ export default {
     };
   },
   created () {
-    this.userInfo = sessionOrLocal.get('user') ? JSON.parse(sessionOrLocal.get('user')) : {}
+    this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     // 存取观看端标识
     sessionOrLocal.set('watch', true);
-    // 存取是否登录的标识
-    sessionOrLocal.set('authInfo', JSON.stringify(this.authInfo));
   },
   watch: {
     roomId (newVal) {
@@ -972,10 +968,12 @@ export default {
         room_id: this.bizInfo.room_id,
         status: this.bizInfo.webinar.type,
         subject: this.bizInfo.webinar.subject,
-        third_party_user_id: this.bizInfo.user.third_party_user_id
+        third_party_user_id: this.bizInfo.user.third_party_user_id,
+        join_id: this.bizInfo.user.saas_join_id ? 'join_' + this.bizInfo.user.saas_join_id : (sessionStorage.getItem('visitor_id') ? 'visit_' + sessionStorage.getItem('visitor_id') : ''),
+        parentId: sessionStorage.getItem('userInfo') ? JSON.parse(sessionStorage.getItem('userInfo')).parent_id : '',
+        guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : ''
       }
       this.roomInfo = inavInfo
-
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;
       this.$emit('descripe', this.roomInfo.introduction);
@@ -1025,8 +1023,8 @@ export default {
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
-        nickname: this.userInfo.nick_name, // 昵称
-        avatar: this.userInfo.avatar
+        nickname: this.userInfo ? this.userInfo.nick_name : '', // 昵称
+        avatar: this.userInfo && this.userInfo.avatar
           ? `https:${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
         pv: this.vssInfo.webinar.pv, // pv

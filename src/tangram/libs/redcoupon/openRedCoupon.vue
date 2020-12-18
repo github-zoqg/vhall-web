@@ -93,9 +93,6 @@ export default {
     red_packet_uuid: {
       required: true
     },
-    authInfo: {
-      required: true
-    },
     isHavePacket: {
       required: true
     }
@@ -127,7 +124,7 @@ export default {
       });
     },
     openRedPacket () {
-      if (this.authInfo.length === 0) {
+      if (!sessionStorage.get('userInfo')) {
         this.$emit('NoLogin');
         return;
       }

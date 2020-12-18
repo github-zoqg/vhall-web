@@ -140,8 +140,8 @@ export default {
     }
   },
   mounted () {
-    const authInfo = JSON.parse(sessionStorage.getItem('authInfo'));
-    this.logedIn = (authInfo && authInfo.length == undefined) || this.isEmbed;
+    const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    this.logedIn = (userInfo && userInfo.length == undefined) || this.isEmbed;
     this.emojiList = this.getEmojiList();
     this.init();
 

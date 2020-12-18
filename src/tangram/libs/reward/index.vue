@@ -126,7 +126,7 @@ export default {
   methods: {
     // 点击打赏
     rewardClick () {
-      if (JSON.parse(sessionStorage.getItem('authInfo')).length == undefined) {
+      if (JSON.parse(sessionStorage.getItem('userInfo')).length == undefined) {
         this.showRewardDialog = true;
       } else {
         this.$parent.loginTest();
