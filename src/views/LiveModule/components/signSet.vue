@@ -167,7 +167,7 @@ export default {
             };
           }
           this.domain_url = res.data.logo_url || '';
-          this.$EventBus.$emit('SAAS_V3_SIGN_PREVIEW', this.signSetForm);
+          this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm);
         } else {
           this.signSetForm = {
             organizers_status: 0,

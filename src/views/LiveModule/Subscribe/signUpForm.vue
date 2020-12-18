@@ -161,7 +161,7 @@
                 <template
                   v-if="provicy"
                 >
-                  <el-checkbox v-model="form[provicy.id]">
+                  <el-checkbox class="provicy-checkbox" v-model="form[provicy.id]">
                     <p v-html="provicyText"></p>
                   </el-checkbox>
                 </template>
@@ -437,7 +437,6 @@
         } else {
           phone = this.verifyForm.phone
         }
-        console.log(phone)
         // 获取短信验证码
         if (validPhone('', phone) && this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
@@ -522,29 +521,22 @@
           console.log(valid)
           if (valid) {
             this.formHandler()
-            const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
-            const nameItem = this.list.find(item => item.type === 0 && item.default_type === 1);
             const options = {
               webinar_id: this.webinar_id,
-              // phone: this.form[phoneItem.id],
               verify_code: this.form.code,
               form: JSON.stringify(this.answer),
-              // report: JSON.stringify({
-              //   phone: this.form[phoneItem.id],
-              //   real_name: this.form[nameItem.id]
-              // })
             }
+            sessionStorage.getItem("visitor_id") && (options.visit_id = sessionStorage.getItem("visitor_id"))
             this.$route.query.refer && (options.refer = this.$route.query.refer)
             this.$fetch('regAnswerSubmit', options).then(res => {
-              if (res.code == 12814) {
-                this.$message.error('该手机已报名，请直接验证')
-                this.tabs = 2
-              } else {
+              if (res.code == 200) {
+                res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
-                // this.$emit('changeBtnVal', '已预约')
                 // 判断当前直播状态，进行相应的跳转
                 this.getWebinarStatus()
+              } else {
+                this.$message.error(res.msg)
               }
             })
           } else {
@@ -556,29 +548,27 @@
       submitVerify() {
         this.$refs['verifyForm'].validate((valid) => {
           if (valid) {
-            this.$fetch('regUserCheck', {
+            const options = {
               webinar_id: this.webinar_id,
               phone: this.verifyForm.phone,
               verify_code: this.verifyForm.code,
-              visit_id: sessionStorage.getItem("visitor_id")
-            }).then(res => {
-              if (res.code == 12809) {
-                this.$message.error('短信验证码错误')
-              } else if (res.code == 12002) {
-                this.$message.error('活动不存在或已删除')
-              } else if (res.code == 12502) {
-                this.$message.error('不支持的活动类型(flash)')
-              } else {
+            }
+            sessionStorage.getItem("visitor_id") && (options.visit_id = sessionStorage.getItem("visitor_id"))
+            this.$fetch('regUserCheck', options).then(res => {
+              if (res.code == 200) {
                 // 如果已经报名
                 if (res.data.has_registed == 1) {
                   // 已报名，跳转到直播间
                   this.closePreview()
-                  // this.$emit('changeBtnVal', '已预约')
+                  res.data.visit_id && sessionStorage.setItem('visitor_id', res.data.visit_id)
                   // 判断当前直播状态，进行相应的跳转
                   this.getWebinarStatus()
                 } else {
                   this.$message.warning('请先报名！');
+                  this.tabs = 1;
                 }
+              } else {
+                this.$message.error(res.msg)
               }
             })
           } else {
@@ -924,6 +914,20 @@
       /deep/ .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
         background-color: inherit;
         border: none;
+      }
+    }
+    /deep/ .provicy-checkbox {
+      width: 100%;
+      white-space: normal;
+      height: 40px;
+      .el-checkbox__input {
+        position: absolute;
+        top: 3px;
+      }
+      .el-checkbox__label {
+        width: calc(100% - 16px);
+        padding-left: 20px;
+        position: absolute;
       }
     }
     .entryForm .blue {

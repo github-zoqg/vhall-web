@@ -368,18 +368,6 @@ export default {
         return false;
       }
 
-      // 默认添加题目不需要调用添加接口，直接 push 渲染页面
-      // if (info.name === 'phone' || info.name === 'name') {
-      //   this.questionArr.push({
-      //     ...filedJson,
-      //     question_id: Math.floor(Math.random() * 10000)
-      //   });
-      //   // 这个 if ,等接口通了可以删除，不用判断直接 return
-      //   if(info) {
-      //     return false;
-      //   }
-      // }
-
       // 添加的是题目
       let options = {
         webinar_id: this.webinar_id,

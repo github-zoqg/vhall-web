@@ -207,13 +207,6 @@ export default {
       let promiseArr = [] //promise异步数组
       let obj = {};
       promiseArr.push(
-        this.$fetch('getStatisticsinfo', params).then(res => {
-          obj = {
-            ...res.data
-          };
-        })
-      )
-      promiseArr.push(
         this.$fetch('getWebinarSwitchList', params).then(res => {
           obj.total_live_time = res.data.total_live_time;
           obj.total = res.data.total;
@@ -222,6 +215,13 @@ export default {
       promiseArr.push(
         this.$fetch('getMaxuv', params).then(res => {
           obj.max_onlines = res.data.max_onlines;
+        })
+      )
+      promiseArr.push(
+        this.$fetch('getStatisticsinfo', params).then(res => {
+          obj = {
+            ...res.data
+          };
         })
       )
       Promise.all(promiseArr).then(() => {

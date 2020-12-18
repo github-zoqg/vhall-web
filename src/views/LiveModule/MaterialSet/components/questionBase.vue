@@ -7,14 +7,13 @@
       width="50%">
       <div class="data-base">
         <div class="data-search">
-          <el-input v-model="keyword" suffix-icon="el-icon-search" placeholder="搜索问卷名称" @change="getTableList" style="width: 200px"></el-input>
+          <el-input v-model="keyword" suffix-icon="el-icon-search" placeholder="搜索问卷名称" clearable @change="getTableList" style="width: 200px"></el-input>
         </div>
           <div class="data-base-list">
             <el-table
               :data="tableData"
               style="width: 100%"
               height="300"
-              v-infinite-scroll="load" infinite-scroll-disabled="disabled"
               >
               <el-table-column
                 fixed
@@ -55,40 +54,11 @@ export default {
       keyword: '',
       questionId: '',
       totalPages: 1,
-      tableData: [
-        {
-          title: '1',
-          updated_at: '21'
-        },
-        {
-          title: '1',
-          updated_at: '21'
-        },
-        {
-          title: '1',
-          updated_at: '21'
-        },
-        {
-          title: '1',
-          updated_at: '21'
-        },
-        {
-          title: '1',
-          updated_at: '21'
-        },
-        {
-          title: '1',
-          updated_at: '21'
-        },
-        {
-          title: '1',
-          updated_at: '21'
-        },
-      ],
+      tableData: [],
       pageInfo: {
         pageNum: 1,
         pos: 0,
-        limit: 10
+        limit: 50
       }
     };
   },
@@ -104,14 +74,8 @@ export default {
       return this.loading || this.noMore
     }
   },
-  watch:{
-    dataBaseVisible() {
-      if (this.dataBaseVisible) {
-        setTimeout(()=> {
-          this.getTableList();
-        }, 1000)
-      }
-    }
+  mounted() {
+    this.getTableList();
   },
   methods: {
     load() {
@@ -142,7 +106,7 @@ export default {
       })
     },
      // 预览
-    preview({ rows }) {
+    preview(rows) {
       console.log('预览', rows);
       this.questionId = rows.question_id;
       this.$refs.isPreQuestion.dialogVisible = true;

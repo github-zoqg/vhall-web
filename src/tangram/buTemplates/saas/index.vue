@@ -1785,9 +1785,9 @@ export default {
         this.LiveEndMobild = true;
         this.tooTimeFew = true;
       } else {
-        this.$vhallFetch('createRecord', {
-          params_verify_token: this.params_verify_token,
-          user_id: this.third_party_user_id,
+        this.$fetch('createRecord', {
+          live_token: this.params_verify_token,
+          // user_id: this.third_party_user_id,
           webinar_id: this.ilId
         })
           .then(res => {
@@ -1796,7 +1796,7 @@ export default {
             this.PopAlert.context = `自动生成回放成功，是否设置为默认回放？`;
             this.recordTip == '1' && (this.PopAlert.visible = true);
             this.PopAlert.confirm = true;
-            this.PopAlert.resId = res.data.id;
+            this.PopAlert.resId = res.data.record_id;
           });
       }
       this.localDuration = 0;
@@ -2283,17 +2283,16 @@ export default {
       this.PopAlert.visible = false;
     },
     PopAlertSubmit () {
-      this.$vhallFetch(
+      this.$fetch(
         'defaultRecord',
         {
-          params_verify_token: this.params_verify_token,
-          id: this.PopAlert.resId,
-          user_id: this.third_party_user_id
-        },
-        {
-          'X-Requested-With': 'XMLHttpRequest'
+          webinar_id: this.ilId,
+          live_token: this.params_verify_token,
+          record_id: this.PopAlert.resId,
+          type: 1
+          // user_id: this.third_party_user_id
         }
-      ).then(rs => {
+      ).then(res => {
         this.PopAlert.visible = false;
         this.$message({
           message: '设置成功',

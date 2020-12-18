@@ -18,6 +18,7 @@
           <search-area
             ref="searchArea"
             :searchAreaLayout="searchAreaLayout"
+            @onExportData="exportCenterData()"
             @onSearchFun="getLineList()"
           >
           </search-area>
@@ -36,10 +37,11 @@
         <search-area
             ref="searchAccount"
             :searchAreaLayout="searchAccount"
+            @onExportData="exportAccount()"
             @onSearchFun="getAccountList('search')"
         >
         </search-area>
-      <div class="content-grid" v-if="versionType == '旗舰版'">
+      <div class="content-grid" v-if="versionType == '1'">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
@@ -117,6 +119,8 @@ export default {
       },
       time: '',
       versionType: '',
+      lineParams: {},
+      dataParams: {},
       dataValue: '',
       totalNum: 1000,
       vm: {},
@@ -208,7 +212,7 @@ export default {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    if (this.versionType === '旗舰版') {
+    if (!this.versionType) {
       this.tabelColumn = this.tabelColumns.concat({
         label: '最高并发（方）',
         key: 'webinar_max_uv'
@@ -229,8 +233,8 @@ export default {
     }
   },
   mounted() {
-    let arrear = JSON.parse(sessionOrLocal.get("arrears")).total_fee || 0;
-    if (arrear) {
+    this.status = JSON.parse(sessionOrLocal.get("arrears")).total_fee || 0;
+    if (this.status) {
       this.initPayMessage();
     }
     this.getLineList();
@@ -259,10 +263,11 @@ export default {
         }
       }
       let obj = Object.assign({}, paramsObj);
+      this.lineParams = obj;
       this.getFlowTrend(obj);
     },
     getFlowTrend(obj) {
-      let url = this.versionType == '旗舰版' ? 'getTrendLineInfo' : 'getFlowLineInfo';
+      let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
       this.$fetch(url, obj).then(res =>{
         this.lintData = res.data.list;
       }).catch(e=>{
@@ -271,7 +276,7 @@ export default {
     },
     // 获取并发-最高  流量-活动个数
     getOnlinePay(obj) {
-      let url = this.versionType == '旗舰版' ? 'getTrendHighInfo' : 'getFlowPayInfo';
+      let url = this.versionType == '1' ? 'getFlowPayInfo' : 'getTrendHighInfo';
       this.$fetch(url, obj).then(res =>{
         this.trendData = res.data || {};
       }).catch(e=>{
@@ -299,12 +304,12 @@ export default {
         }
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
-      console.log(obj, '22222222222222222');
+      this.dataParams = obj;
       this.getOnlinePay(obj);
       this.getDataList(obj);
     },
     getDataList(obj) {
-      let url = this.versionType == '旗舰版' ? 'getAccountList' : 'getBusinessList';
+      let url = this.versionType == '1' ? 'getBusinessList' : 'getAccountList';
       this.$fetch(url, obj).then(res =>{
         let costList = res.data.list;
         this.totalNum = res.data.total;
@@ -320,16 +325,20 @@ export default {
     getOrderArrear() {
       let params = {
         user_id: this.userId,
-        type: this.versionType == '旗舰版' ? 2 : 1
+        type: this.versionType == '1' ? 1 : 2
       };
       this.$fetch('orderArrears', params).then(res =>{
-        this.$router.push({
-          name: 'payOrder',
-          query: {
-            userId: this.userId,
-            orderId: res.data.order_id
-          }
-        });
+        if (res.code == 200) {
+          this.$router.push({
+            path: '/finance/payOrder',
+            query: {
+              userId: this.userId,
+              orderId: res.data.order_id
+            }
+          });
+        } else {
+          this.$message.error(res.msg);
+        }
       }).catch(e=>{
         console.log(e);
       });
@@ -348,7 +357,32 @@ export default {
         that.vm.close();
         that.getOrderArrear();
       });
-    }
+    },
+    //导出数据
+    // 导出用量统计
+    exportCenterData() {
+      let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
+      this.$fetch(url, this.lineParams).then(res => {
+        if (res.code == 200) {
+           this.lineParams = {};
+          this.$message.success(`用量统计导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`用量统计${res.msg}`);
+        }
+      })
+    },
+    // 导出消费账单
+    exportAccount() {
+      let url = this.versionType == '1' ? 'exportFlowDetail' : 'exportOnlineDetail';
+      this.$fetch(url, this.lineParams).then(res => {
+        if (res.code == 200) {
+          this.dataParams = {};
+          this.$message.success(`消费账单导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`消费账单${res.msg}`);
+        }
+      })
+    },
   }
 };
 </script>

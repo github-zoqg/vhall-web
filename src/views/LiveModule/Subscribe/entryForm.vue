@@ -30,12 +30,36 @@
       // 报名表单独立链接是否有效
       getFormOpenLinkStatus() {
         this.$fetch('verifyOpenLink', {
-          webinar_id: this.webinar_id
+          webinar_id: this.webinar_id,
+          visit_id: sessionStorage.getItem('visitor_id')
         }).then(res => {
-          if(res.data.available == 0) return;
+          // 如果当前 visitor_id 已经报名，跳转到直播间
+          if (res.data.has_registed) return this.getWebinarStatus()
+          // 如果独立链接无效，显示无效页
+          if (res.data.available == 0) return;
+          // 显示报名表单
           this.formOpenLinkStatus = true;
         })
-      }
+      },
+      // 获取当前活动状态，如果直播中，跳转到直播间
+      getWebinarStatus() {
+        this.$fetch('watchInit', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          const type = res.data.webinar.type
+          if(type == 1 || type == 4 || type == 5) {
+            // 如果直播，回放，点播，跳转到直播观看页
+            this.$router.push({
+              path: `/live/watch/${this.webinar_id}`
+            })
+          } else if(type == 2 || type == 3) {
+            // 如果预约或结束，跳转到预约页
+            this.$router.push({
+              path: `/subscribe/${this.webinar_id}`
+            })
+          }
+        })
+      },
     }
   }
 </script>

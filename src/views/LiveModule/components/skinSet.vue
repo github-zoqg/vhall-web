@@ -124,6 +124,11 @@ export default {
       }
       // 触发验证
       this.$refs.skinSetForm.validateField('bg_url');
+      let showRow = Object.assign(this.skinSetForm, {
+        status: this.skinVo.status,
+        bg_url: this.domain_url
+      })
+      this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -172,7 +177,12 @@ export default {
           this.skinSetForm.bg_url = skin_json_pc.background;
           this.domain_url = skin_json_pc.background;
           this.skinSetForm.skin_id = res.data.skin_id || '';
-          console.log(this.skinType, '页面刷新后');
+          console.log(this.skinSetForm, '页面刷新后');
+          let showRow = Object.assign(this.skinSetForm, {
+             status: this.skinVo.status,
+             bg_url: this.domain_url
+          })
+          this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
         } else {
           this.skinVo = {};
         }

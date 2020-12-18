@@ -213,11 +213,12 @@ const apis = {
   playBackDuration: ['/99/v3/webinars/record/get-record-duration', 'POST', 'mock'], // 获取回放时长 jian.chang
   playBackDemand: ['/v3/webinars/webinar/create-demand', 'POST'], // 回放发布为点播 jian.chang
   playBackPreview: ['/v3/webinars/record/preview', 'POST'], // 回放预览 xiaodong.ding
-  playBackSetDefault: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
+  defaultRecord: ['/v3/webinars/record/set-default', 'POST'], // 设置默认 xiaodong.ding
   playBackChaptersGet: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
   playBackDownUrlGet: ['/v3/webinars/record/check-download', 'POST'], // 获取回放下载地址 xiaodong.ding
   tailorSave: ['/v3/webinars/record/cut', 'POST'], // 视频裁剪保存接口 xiaodong.ding
-  createRecord: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  createRecordinCtrl: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  saveChapters: ['/v3/webinars/record/save-doc-info', 'POST'], // 视频裁剪保存接口 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -337,10 +338,18 @@ const apis = {
   getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
   getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
   getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
+
+  // 财务中心导出
   exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
   exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
   exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
   exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //并发明细导出
+  exporOrder: ['/v3/fin/order/export', 'GET'], //账单明细-购买明细 导出
+  exportAdmin:  ['/v3/fin/admin-order/export', 'GET'], //账单明细-开通明细 导出
+  exportWithdraw:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //提现明细 导出
+  exportIncomeDetail:  ['/v3/fin/income/live/details/export', 'GET'], //直播收益详情列表导出
+  exportLiveIncome:  ['/v3/fin/income/live/export', 'GET'], //直播收益明细导出
+  exportRedPacket:  ['/v3/fin/income/red-packet/export', 'GET'], //红包收益明细导出
 
  //账务-账单  财务-购买
   // orderProfessional: ['/104/v3/finances/order/renew', 'POST', 'mock'], // 专业版购买、续费
@@ -430,6 +439,7 @@ const apis = {
   rebroadcastPreview: ['/v3/webinars/rebroadcast/preview', 'GET'], // 转播预览 √
   v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 √
   v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 √
+  createRecord: ['/v3/webinars/record/live-create-record', 'POST'], // 直播结束生成回放
 
 
   // 授权模块

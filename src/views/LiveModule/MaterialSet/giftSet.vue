@@ -46,7 +46,7 @@
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="defaultImgHost + scope.row.image_url">
+            <img class="gift-cover" :src="scope.row.image_url">
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
@@ -79,8 +79,8 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
-      <el-form>
-        <el-form-item label="图片上传">
+      <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
+        <el-form-item label="图片上传" prop="img">
           <upload
             class="giftUpload"
             v-model="editParams.img"
@@ -94,16 +94,16 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
-            @delete="editParams.img === ''"
+            @delete="editParams.img = ''"
            >
             <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
           </upload>
         </el-form-item>
-        <el-form-item label="礼物名称">
-            <el-input v-model="editParams.name" maxlength="10" show-word-limit style="width:336px" placeholder="请输入礼物名称"></el-input>
+        <el-form-item label="礼物名称" prop="name">
+            <el-input v-model="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
-        <el-form-item label="礼物价格">
-            <el-input v-model="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" style="width:336px" placeholder="￥ 请输入0-9999.99"></el-input>
+        <el-form-item label="礼物价格" prop="price">
+            <el-input v-model="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -160,7 +160,7 @@
           :class="{active: item.isChecked}"
           @click.stop="handleChooseGift(index, item)">
           <div class="gift-cover">
-            <img :src="defaultImgHost + item.img" alt>
+            <img :src="item.img" alt>
           </div>
           <div class="gift-info">
             <span class="gift-name">{{item.name}}</span>
@@ -227,7 +227,18 @@ export default {
       // openGiftIds: [], // 显示礼物列表
       selectIds:[], // 批量操作
       addGiftsIds: [], // 添加礼物
-      domain_url: ''
+      domain_url: '',
+      rules: {
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+        ],
+        img: [
+          { required: true, message: '请选择推广图片', trigger: 'change' }
+        ],
+        price: [
+          { required: true,  message: '请输入礼物价格', trigger: 'blur' }
+        ],
+      },
     };
   },
   components: {
@@ -300,6 +311,7 @@ export default {
         this.editParams.img = file_url;
         this.domain_url = domain_url;
       }
+      this.$refs.editParamsForm.validateField('img');
     },
     // 上传失败处理
     uploadError(err, file, fileList){
@@ -331,7 +343,7 @@ export default {
         price: data.price,
         img: data.image_url
       }
-      this.domain_url = this.defaultImgHost + this.editParams.img
+      this.domain_url = this.editParams.img
       this.dialogVisible = true
     },
     // 新建
@@ -346,24 +358,28 @@ export default {
     },
     // 处理编辑新建
     handleUpdateGift () {
-      let price = Number(this.editParams.price)
-      if (price || price == 0) {
-        if (price < 0 || price > 10000) {
-          this.$message.error('价格必须介于0-10000之间')
-          return
+      this.$refs.editParamsForm.validate((valid) => {
+        if (valid) {
+          let price = Number(this.editParams.price)
+          if (price || price == 0) {
+            if (price < 0 || price > 10000) {
+              this.$message.error('价格必须介于0-10000之间')
+              return
+            }
+            this.editParams.price = price.toFixed(2)
+          } else {
+            this.$message.error('请输入正确礼物价格')
+            return
+          }
+          if(this.editParams.gift_id) {
+            // 编辑
+            this.handleEdit()
+          } else {
+            // 创建
+            this.handleCreate()
+          }
         }
-        this.editParams.price = price.toFixed(2)
-      } else {
-        this.$message.error('请输入正确礼物价格')
-        return
-      }
-      if(this.editParams.gift_id) {
-        // 编辑
-        this.handleEdit()
-      } else {
-        // 创建
-        this.handleCreate()
-      }
+      });
     },
     // 编辑
     handleEdit () {
@@ -560,6 +576,9 @@ export default {
 
 <style lang="less" scoped>
 .live-gift-wrap{
+  /deep/.el-upload{
+    border: 1px solid #ccc;
+  }
   height: 100%;
   width: 100%;
   /deep/.el-card__body{
@@ -567,7 +586,7 @@ export default {
     padding: 32px 24px;
   }
   /deep/.el-upload--picture-card{
-    width:83%;
+    width:100%;
   }
   /deep/.el-upload--picture-card .box img {
     width: auto

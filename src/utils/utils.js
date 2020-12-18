@@ -179,6 +179,8 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
     to.path.indexOf('/subscribe') !== -1 ||
+    to.path.indexOf('/entryform') !== -1 ||
+    to.path.indexOf('/live/watch') !== -1 ||
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/watch') !== -1 ||
