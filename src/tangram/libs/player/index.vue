@@ -207,6 +207,9 @@ export default {
     reportExtra: {
       required: false,
       default: {}
+    },
+    roominfo: {
+      default: () => {}
     }
   },
   data () {
@@ -675,7 +678,7 @@ export default {
       }
     },
     async initSDK () {
-      console.log('sdk initing', this.type);
+      console.log('sdk initing', this.type, this.roominfo);
       let params = {
         appId: this.appId, // 应用ID，必填
         accountId: this.accountId, // 第三方用户ID，必填
@@ -686,7 +689,12 @@ export default {
         autoplay: false,
         forceMSE: false,
         otherOption: {
-          report_extra: this.reportExtra
+          report_extra: this.reportExtra,
+          vid: this.roominfo.account_id, // hostId
+          uid: this.roominfo.third_party_user_id,
+          vfid: this.roominfo.parentId ? this.roominfo.parentId : this.roominfo.account_id,
+          guid: this.roominfo.guid,
+          biz_id: this.$route.params.il_id
         }
       };
       if (this.isLive && this.liveOption && this.type == 'live') {
@@ -1059,7 +1067,7 @@ export default {
       return text;
     },
     getLoginStatus () {
-      return JSON.parse(sessionStorage.getItem('authInfo')).length == undefined;
+      return JSON.parse(sessionStorage.getItem('userInfo')).length == undefined;
     },
     controllerMouseLeave () {
       clearTimeout(this.hoverVideoTimer);

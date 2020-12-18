@@ -1015,7 +1015,7 @@ export default {
       return text;
     },
     getLoginStatus () {
-      return JSON.parse(sessionStorage.getItem('authInfo')) && JSON.parse(sessionStorage.getItem('authInfo')).length == undefined;
+      return JSON.parse(sessionStorage.getItem('userInfo')) && JSON.parse(sessionStorage.getItem('userInfo')).length == undefined;
     },
     controllerMouseLeave () {
       clearTimeout(this.hoverVideoTimer);

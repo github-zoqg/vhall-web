@@ -356,7 +356,9 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <img :src="roomData.urls.upload_url + '/' + roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt="">
+            <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData && (roomData.warmup_paa_record_id || roomData.preview_paas_record_id)">
+            </div>
+            <img :src="roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt="">
           </div>
           <div class="rightWatch">
             <template v-if="!isKeyLogin">
@@ -379,7 +381,7 @@
                   <p class="sub">秒</p>
                 </div>
               </div>
-              <p class="title"><span class="red">{{subscribe_count}}</span>人预约</p>
+              <p class="title" v-show="subscribeOptions.show == 1"><span class="red">{{subscribeOptions.num}}</span>人预约</p>
               <div class="bottom">
                 <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
@@ -556,7 +558,10 @@ export default {
       hostName: '',
       hostUrl: '',
       focusCount: 0, // 关注人数
-      subscribe_count: 0,
+      subscribeOptions: {
+        show: 1,
+        num: 0
+      },
       shadeShow: false,
       // 预约计时
       time: '',
@@ -655,6 +660,14 @@ export default {
     });
   },
   beforeDestroy() {
+    if (this.$PLAYER) {
+      this.$PLAYER.destroy()
+      this.$PLAYER = null
+    }
+    if (window.chatSDK) {
+      window.chatSDK.destroy()
+      window.chatSDK = null
+    }
     window.removeEventListener('resize', () => {})
     this.timer && clearInterval(this.timer)
   },
@@ -809,7 +822,6 @@ export default {
     handleInitRoom () {
       if (this.roomData) {
         // this.btnVal = this.roomData.status === 'subscribe' ? '立即预约' : '进入直播'
-        console.log(111111, this.roomData)
         this.title = this.roomData.webinar.subject
         this.viewCount = this.roomData.pv.num
         this.hostName = this.roomData.webinar.userinfo.nickname
@@ -821,7 +833,10 @@ export default {
         this.accountRoute = window.location.origin + '/finance/info'
         this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
         this.myAccountRoute = window.location.origin + '/account/info'
-        this.subscribe_count = this.roomData.subscribe_num
+        this.subscribeOptions = {
+          show: this.roomData.subscribe.show,
+          num: this.roomData.subscribe.num,
+        }
         if (this.signInfo) {
           this.logo = {
             href: this.signInfo.skip_url, // 跳转连接
@@ -851,6 +866,9 @@ export default {
             this.setCustomTheme(this.theme)
           }
           this.initChat()
+          if (this.roomData.warmup_paa_record_id) {
+            this.initSDK()
+          }
         })
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
@@ -904,6 +922,59 @@ export default {
         },
         err => {
           console.error('聊天SDK实例化失败', err);
+        }
+      )
+    },
+    // 暖场试看初始化
+    initSDK () {
+      console.log('sdk initing', this.type, this.roominfo);
+      let params = {
+        appId: this.roomData.interact.paas_app_id, // 应用ID，必填
+        accountId: this.roomData.join_info.third_party_user_id, // 第三方用户ID，必填
+        token: this.roomData.interact.subscribe_paas_access_token, // access_token，必填
+        videoNode: 'vhall-watch-box',
+        type: 'live', // live 直播  vod 点播  必填
+        poster: '',
+        autoplay: false,
+        forceMSE: false,
+        otherOption: {
+          report_extra: this.roomData.report_data.report_extra,
+          vid: this.roomData.webinar.userinfo.user_id, // hostId
+          uid: this.roomData.join_info.third_party_user_id,
+          vfid: this.userinfo ? this.userinfo.parent_id : this.roomData.webinar.userinfo.user_id,
+          guid: this.roomData.report_data.guid,
+          biz_id: this.$route.params.id
+        },
+        marqueeOption: {
+          text: ''
+        },
+        watermarkOption: {}
+      }
+      if (this.roomData.warmup_paa_record_id) {
+        params = Object.assign({}, params, {
+          type: 0 || isIE() ? 'hls' : 'flv',
+          roomId: this.roomData.interact.room_id
+        })
+      } else if (this.roomData.preview_paas_record_id) {
+        params = Object.assign({}, params, {
+          recordId: this.roomData.preview_paas_record_id,
+          defaultDefinition: 'same'
+        })
+      }
+      console.log(params, '初始化播放器参数');
+      VhallPlayer.createInstance(
+        params,
+        event => {
+          console.log('初始化播放器成功')
+          this.$PLAYER = event.vhallplayer;
+          this.$PLAYER.openControls(false);
+          this.$PLAYER.openUI(false);
+          this.$PLAYER.on(VhallPlayer.LOADED, () => {
+            // 加载中
+          });
+        },
+        e => {
+          console.error('初始化播放器失败', event);
         }
       )
     },
@@ -1508,7 +1579,10 @@ export default {
           sessionOrLocal.set('interact_token', res.data.live_token)
           sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
           sessionOrLocal.set('visitor_id', res.data.visitor_id)
+          setTimeout(() => {
           this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+
+          }, 300)
           return
         } else {
           this.$message.error(res.msg)

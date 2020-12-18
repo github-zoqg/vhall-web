@@ -6,6 +6,7 @@
       <search-area
           ref="searchAccount"
           :searchAreaLayout="searchDetail"
+          @onExportData="exportAccount()"
           @onSearchFun="getDetailList('search')"
         >
       </search-area>
@@ -29,6 +30,7 @@ export default {
   data() {
     return {
       totalNum: 1000,
+      params: {},
       searchDetail: [
         {
           type: '2',
@@ -158,6 +160,7 @@ export default {
       paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
+      this.params = obj;
       this.$fetch('accountList', obj).then(res =>{
         console.log(res);
         this.totalNum = res.data.total;
@@ -174,6 +177,16 @@ export default {
         item.status = item.withdraw_status;
       });
     },
+    exportAccount() {
+       this.$fetch('exportWithdraw', this.params).then(res => {
+        if (res.code == 200) {
+          this.params = {};
+          this.$message.success(`账单明细导出成功，请去下载中心下载`);
+        } else {
+          this.$message.error(`账单明细${res.msg}`);
+        }
+      })
+    }
   }
 };
 </script>

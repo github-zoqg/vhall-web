@@ -193,7 +193,8 @@ export default {
       this.imageIndex = index
     },
     giftClick () {
-      if(JSON.parse(sessionStorage.getItem('authInfo')).length == undefined){
+      let userInfo = sessionStorage.getItem('userInfo')
+      if(userInfo){
         //登录状态
         this.getList()
       }else {

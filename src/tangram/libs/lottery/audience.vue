@@ -115,7 +115,7 @@ export default {
     // 1--是需要登录才能参与互动   0--不登录也能参与互动
     if (sessionStorage.getItem('watch')) {
       if (JSON.parse(sessionStorage.getItem('moduleShow')).modules.chat_login.show == 1) {
-        if ( JSON.parse(sessionStorage.getItem('authInfo')).length == undefined || this.isEmbed
+        if ( sessionStorage.getItem('userInfo') || this.isEmbed
         ) {
           // 登录状态
           this.chatLoginStatus = false;

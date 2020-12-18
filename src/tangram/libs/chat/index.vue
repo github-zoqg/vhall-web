@@ -303,7 +303,7 @@ export default {
     if (sessionStorage.getItem('watch')) {
       if (JSON.parse(sessionStorage.getItem('moduleShow')).modules.chat_login.show == 1) {
         if (
-          JSON.parse(sessionStorage.getItem('authInfo')).length == undefined ||
+          sessionStorage.getItem('userInfo') ||
           this.isEmbed
         ) {
           // 登录状态
