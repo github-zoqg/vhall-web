@@ -14,8 +14,8 @@
         <el-tab-pane label="领奖页设置" name="first">
           <div class="give-item">
             <div class="give-prize">
-              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
-                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="Boolean(item.is_system) ? item.field : `${item.field}${index - 2}`" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : true" >
+              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
+                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : 'plaintext-only'" >
                     <el-input v-model="givePrizeForm[item.field_Key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
                         <el-input v-model="givePrizeForm[item.field_Key]"  type="textarea" placeholder="请输入" :autosize="{ minRows: 4}" v-else></el-input>
                         <div class="isDelete">
@@ -146,6 +146,7 @@ export default {
       },
       action: `${process.env.VUE_APP_BASE_URL}/v3/vss/lottery/save-prize-image`,
       total: 100,
+      length: 0,
       isChecked: 0,
       prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
       prizeUrl: ['http://t-alistatic01.e.vhall.com/upload/sys/img_url/e0/2b/e02b57d63947b5ec20c57c144686cd7d.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/47/2a/472ab6904c58829ebcf91d801e146945.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/12/80/12806c4743aec43498cef45ea732c977.gif'],
@@ -171,7 +172,7 @@ export default {
         },
         {
           is_system: 0,
-          field: '自定义',
+          field: '自定义1',
           field_Key: 'user_define_100',
           is_required: 'is_required_100',
           rank: 100,
@@ -196,7 +197,6 @@ export default {
   },
   mounted() {
     this.getGivePrize();
-     console.log('refssss',this.$refs);
     // this.getReward()
   },
   methods: {
@@ -250,7 +250,7 @@ export default {
       }
       this.givePrizeList.push({
         is_system: 0,
-        field: '自定义',
+        field: `自定义${this.givePrizeList.length - 2}` ,
         field_Key: 'user_define_' + (this.givePrizeList.length + 97),
         is_required: 'is_required_' + (this.givePrizeList.length + 97),
         rank: this.givePrizeList.length + 97,
@@ -263,7 +263,8 @@ export default {
     getGivePrize() {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
         if (res.data.length) {
-          this.givePrizeList = res.data
+          this.givePrizeList = res.data;
+          this.length = res.data.length;
         }
       })
     },
@@ -392,6 +393,13 @@ export default {
           margin: 7px 10px 0 0;
           cursor: pointer;
         }
+      }
+      /deep/.el-form-item__label{
+        height: 40px;
+        width: 100px;
+        overflow: hidden;
+        // text-overflow:ellipsis;
+        // white-space: nowrap;
       }
       /deep/.el-button{
         margin-top: 25px;
