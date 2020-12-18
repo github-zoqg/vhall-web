@@ -976,7 +976,6 @@ export default {
         status: this.bizInfo.webinar.type,
         subject: this.bizInfo.webinar.subject,
         third_party_user_id: this.bizInfo.user.third_party_user_id,
-        join_id: this.bizInfo.user.saas_join_id ? 'join_' + this.bizInfo.user.saas_join_id : (sessionStorage.getItem('visitor_id') ? 'visit_' + sessionStorage.getItem('visitor_id') : ''),
         parentId: sessionStorage.getItem('userInfo') ? JSON.parse(sessionStorage.getItem('userInfo')).parent_id : '',
         guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : ''
       }

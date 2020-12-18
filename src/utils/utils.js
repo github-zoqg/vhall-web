@@ -181,6 +181,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/subscribe') !== -1 ||
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
+    to.path.indexOf('/live/watch') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1) {
     // 不验证直接进入
     next();
