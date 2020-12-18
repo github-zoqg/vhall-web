@@ -433,6 +433,8 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         if (res && res.code === 200) {
           this.channel_id = res.data.vss_channel_id;
+          this.initPage();
+          this.initChat();
         }
       }).catch(error=>{
         console.log(error);
@@ -447,9 +449,9 @@ export default {
       this.getWebinarInfo();
     } else {
       this.channel_id = 'ch_729e035c'; // TODO 后续这块要从用户那边取值
+      this.initPage();
+      this.initChat();
     }
-    this.initPage();
-    this.initChat();
   },
   mounted() {
     EventBus.$on('converted_process_msg', res => { // 转码进度
