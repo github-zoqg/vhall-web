@@ -4,8 +4,8 @@
     <div class="role--list--search">
       <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-input placeholder="搜索角色名称" v-model.trim="role_name">
-        <i class="el-icon-search el-input__icon" slot="suffix"></i>
+      <el-input placeholder="搜索角色名称" v-model.trim="role_name" @keyup.enter.native="getRoleList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="getRoleList"></i>
       </el-input>
     </div>
     <!-- 有消息内容 -->
