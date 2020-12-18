@@ -178,7 +178,7 @@
             // 当前为批量-并发分配扩展包
             this.dialogType = 3;
           } else {
-            if (Number(this.$route.params.str) === 1) {
+            if (Number(this.resourcesVo.type) === 1) {
               // 当前为流量-批量分配
               this.dialogType = 2;
             } else {
@@ -234,8 +234,8 @@
             list: []
           };
           (dao.list||[]).map(item => {
-            // 组装数据 type =>  0并发 1流量 [Number(this.$route.params.str)]
-            if(Number(this.$route.params.str) > 0) {
+            // 组装数据 type =>  0并发 1流量 [Number(this.resourcesVo.type)]
+            if(Number(this.resourcesVo.type) > 0) {
               if (item.is_dynamic > 0 ) {
                 // 流量动态
                 item.count = 0;
@@ -288,7 +288,7 @@
       },
       // 保存单个子账户分配
       save(row) {
-        let regA = Number(this.$route.params.str) === 1 ? /^\d+(\.\d{1,2})?$/ :  /^\d+$/; // 允许二位小数点输入
+        let regA = Number(this.resourcesVo.type) === 1 ? /^\d+(\.\d{1,2})?$/ :  /^\d+$/; // 允许二位小数点输入
         console.log(regA);
         let flag = true;
         if (row === null || row === undefined || row === '') {
@@ -296,7 +296,7 @@
         } else if (row.inputCount === null || row.inputCount === undefined) {
           flag = true;
         } else if (regA.test(row.inputCount)) {
-          row.inputCount = Number(this.$route.params.str) === 1 ? parseFloat(row.inputCount) : parseInt(row.inputCount);
+          row.inputCount = Number(this.resourcesVo.type) === 1 ? parseFloat(row.inputCount) : parseInt(row.inputCount);
           flag = true;
         } else {
           flag = false;
@@ -306,7 +306,7 @@
 
         // 判断流量是否超出可分配流量
         let params = {
-          type: Number(this.$route.params.str), // 分配类型 0-并发 1-流量,
+          type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
           pid: sessionOrLocal.get('userId'),
           kv: [{
             user_id: row.child_id,
@@ -342,7 +342,7 @@
               return result;
             })
             let params = {
-              type: Number(this.$route.params.str), // 分配类型 0-并发 1-流量,
+              type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
               pid: sessionOrLocal.get('userId'),
               kv: childIdList
             };

@@ -223,7 +223,7 @@ export default {
     toAllocationPage() {
       // 1表示并发
       this.$router.push({
-        path: `/allocation/${this.vipType}`,
+        path: `/allocation`,
       });
     },
     // 批量选择
