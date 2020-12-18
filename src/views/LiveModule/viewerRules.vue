@@ -171,7 +171,7 @@
                   <span>{{item.subject}}</span>
                 </li>
                 <li class="tab__btn--dashed">
-                  <router-link target="_blank" :to="{path:'/material-viewer'}"><i class="el-icon-plus"></i>添加观众组</router-link>
+                  <router-link :to="{path:'/material/viewer'}"><i class="el-icon-plus"></i>添加观众组</router-link>
                 </li>
               </ul>
             </el-form-item>
@@ -510,6 +510,7 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.$message.success('邀请码下载申请成功，请去下载中心查看');
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(res.msg || '邀请码下载申请失败');
         }

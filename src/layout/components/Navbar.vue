@@ -9,7 +9,7 @@
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
-        <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload > 0">
+        <el-badge is-dot class="item" :hidden="!isDownload > 0">
           <span @click.prevent.stop="toDownloadPage">
              <icon icon-class="saasicon_download"></icon>
           </span>
@@ -82,6 +82,7 @@ export default {
       this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
+      this.isDownload = 0;
       this.$router.push({path: '/other/downloadList'});
     },
     toAccountPage() {
@@ -124,6 +125,9 @@ export default {
     updateAccount(account) {
       this.userInfo = account;
       this.avatarImgUrl = account ?  account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    },
+    updateDownload() {
+      this.isDownload = 1;
     }
   },
   mounted() {
@@ -147,6 +151,8 @@ export default {
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
     // 监听用户信息变化
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
+    // 监听控制台是否触发导出
+    this.$EventBus.$on('saas_vs_download_change', this.updateDownload);
   },
   created() {
     this.getUnreadNum();

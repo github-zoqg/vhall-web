@@ -1,7 +1,8 @@
 <template>
 	<div class="download">
-    <pageTitle title="下载中心"></pageTitle>
+    <pageTitle :title="`下载中心${file_name}`"></pageTitle>
     <div class="download-ctx">
+
       <div v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
         <!-- 搜索 -->
         <div class="list--search">
@@ -248,6 +249,8 @@ export default {
           }).catch(e => {
             console.log(e);
           });
+          // 重新拉取数据
+          this.getTableList();
         }
       } catch (e) {
         console.log(e);
