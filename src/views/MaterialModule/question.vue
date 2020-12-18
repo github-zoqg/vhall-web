@@ -75,7 +75,6 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      pageInfo.limit = 20;
       let formParams = {
         user_id: this.userId,
         keyword: this.keyword

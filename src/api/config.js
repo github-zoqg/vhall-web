@@ -25,6 +25,7 @@ const apis = {
   savePrizeInfo: ['/v3/vss/lottery/save-prize-info', 'POST' ], //抽奖页-保存信息
   getDrawPrizeInfo: ['/v3/vss/lottery/get-draw-prize-info', 'GET' ], //领奖页-获取信息
   saveDrawPrizeInfo: ['/v3/vss/lottery/save-draw-prize', 'POST' ], //领奖页-保存信息
+  saveLotteryPrize: ['/v3/vss/lottery/save-prize', 'POST'], // 奖品设置-资料库选择奖品保存按钮
 
   // 问卷
   createQuestion: ['/v3/vss/survey/create-shared-survey', 'POST' ], //共享库_创建问卷
