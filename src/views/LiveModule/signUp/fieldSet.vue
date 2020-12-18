@@ -76,8 +76,10 @@
               v-if="item.type=='input' || item.type=='select'"
               v-model="node.value"
               v-bind="node.props"
-              :maxlength="node.key == 'url'? '200' : '60'"
               show-word-limit
+              :type="node.key == 'url'? 'textarea' : 'text'"
+              :autosize="node.key == 'url' ? { minRows: 2 } : ''"
+              :maxlength="node.key == 'url'? '200' : '60'"
               :key='`${index}-${nodeIndex}`'
               @change="selectOptChange(item, node, item.type=='select', item.privacy)"
             >
@@ -502,6 +504,8 @@ export default {
       let privacy1 = nodes[1].value;
       if(!privacy1 || !nodes[0].value.match(privacy1)){
         return this.$message.error('请完善可点击文字');
+      } else if (nodes[0].value.length >= 53) {
+        return this.$message.error('添加隐私协议会超出预览字数，请删减后再添加');
       }
       let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
       let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
@@ -555,19 +559,6 @@ export default {
 
       return text;
     },
-    // beforeUploadHnadler(file){
-    //   console.log(file);
-    //   const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-    //   const isType = typeList.includes(file.type.toLowerCase());
-    //   const isLt2M = file.size / 1024 / 1024 < 2;
-    //   if (!isType) {
-    //     this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
-    //   }
-    //   if (!isLt2M) {
-    //     this.$message.error('上传封面图片大小不能超过 2MB!');
-    //   }
-    //   return isType && isLt2M;
-    // },
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
@@ -580,11 +571,6 @@ export default {
       this.imageUrl = 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
       this.$emit('setBaseInfo', { cover: this.imageUrl });
     },
-    // 重置头图
-    // resetBanner(event){
-    //   this.imageUrl= 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
-    //   this.$emit('setBaseInfo', { cover: this.imageUrl });
-    // },
     // 题目顺序修改
     sortChange(val, arr){
       console.log('sortChange-->', this.renderQuestion);
@@ -594,8 +580,6 @@ export default {
         return acc + curr.question_id + ',';
       }, '');
       question_ids = question_ids.substring(0, question_ids.length - 1);
-      // console.log(question_ids);
-      // console.log(question_ids.splice(question_ids.index, 1));
 
       // 以问题数组的 index + 1 作为顺序提交更新顺序接口
       this.$fetch('regQSort', {
