@@ -35,12 +35,12 @@
       width="588px">
      <div class="prizeList">
        <div class="search">
-         <el-input v-model="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" style="width:220px"></el-input>
+         <el-input v-model="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
        </div>
        <el-scrollbar>
          <div class="prize">
-           <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click="choisePrize(item)">
-             <img src="@/common/images/avatar.jpg" alt="">
+           <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
+             <img :src="item.img_path" alt="">
              <div class="prize-title">
                <h1>{{item.prize_name}}</h1>
                <p>{{item.prize_id}}</p>
@@ -53,7 +53,7 @@
        </el-scrollbar>
        <div class="prize-check"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
        <div class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round>确 定</el-button>
+        <el-button type="primary" @click="sureChoisePrize" round>确 定</el-button>
         <el-button @click.prevent.stop="dialogPrizeVisible = false" round>取 消</el-button>
        </div>
      </div>
@@ -80,38 +80,7 @@ export default {
           { required: true, message: '请输入奖品名称', trigger: 'blur' }
         ]
       },
-      list: [
-        {
-          name: '请输入奖品名称1',
-          type: '001',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称2',
-          type: '002',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称3',
-          type: '003',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称4',
-          type: '004',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称5',
-          type: '005',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称6',
-          type: '006',
-          isChecked: false
-        }
-      ]
+      list: []
     };
   },
   computed: {
@@ -161,6 +130,22 @@ export default {
         }
       });
     },
+    sureChoisePrize() {
+      let params = {
+        room_id: this.$route.query.roomId,
+        prize_id: this.checkedList.join(',')
+      }
+      this.$fetch('saveLotteryPrize', params).then(res => {
+        if (res.code == 200) {
+          this.$message.success('选择成功');
+          this.dialogPrizeVisible = false;
+          this.$emit('getTableList');
+        }
+      })
+    },
+    inputChange() {
+      this.getPrizeList();
+    },
     getPrizeList() {
       let params = {
         keyword: this.keyword,
@@ -170,18 +155,18 @@ export default {
       }
       this.$fetch('getPrizeList', params).then(res => {
         this.list = res.data.list;
-        console.log(this.list, '??????????????????????');
-        // this.total = res.data.count;
         this.list.map(item => {
-          // 临时写死的，后期调
-          item.img = `http://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/${item.img_path}`;
+          item.isChecked = false;
         })
+        console.log(this.list, '???????????????')
+        // this.total = res.data.count;
       })
     },
     prizeLoadSuccess(res, file){
       console.log(res, file);
       // this.prizeForm.imageUrl = URL.createObjectURL(file.raw);
-      this.prizeForm.img_path = res.data.file_url;
+      // this.prizeForm.img_path = res.data.file_url;
+      this.prizeForm.img_path = res.data.domain_url;
       // this.fileList.push({
       //   url: this.form.imageUrl,
       //   cover: false
@@ -235,10 +220,9 @@ export default {
       this.$refs[prizeForm].resetFields();
     },
     choisePrize(item) {
+      console.log(item, '111111111111');
       item.isChecked = !item.isChecked;
-      let arr = [];
-      arr = this.list.filter(items => items.isChecked);
-      this.checkedList = arr;
+      this.checkedList = this.list.filter(items => items.isChecked).map(item => item.prize_id);
     }
   }
 };
