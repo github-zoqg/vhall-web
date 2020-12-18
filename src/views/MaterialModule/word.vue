@@ -470,15 +470,19 @@ export default {
           const status = Number(res.status);
           if (statusJpeg === 0 && status === 0) {
             item.transform_schedule_str = '待转码';
+            item.page = Number(res.page);
             item.transcoded = false;
           } else if (statusJpeg === 100 || status === 100) {
             item.transform_schedule_str = '转码中';
+            item.page = Number(res.page);
             item.transcoded = false;
           } else if (statusJpeg === 200 || status === 200) {
             item.transform_schedule_str = '转码完成';
+            item.page = Number(res.page);
             item.transcoded = true;
           } else {
             item.transform_schedule_str = '转码失败';
+            item.page = Number(res.page);
             item.transcoded = false;
           }
         }

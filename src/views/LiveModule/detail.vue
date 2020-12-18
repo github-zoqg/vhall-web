@@ -77,7 +77,6 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
-import QRcode from 'qrcode';
 import Env from "@/api/env";
 import { formateDate } from "@/utils/general.js"
 export default {

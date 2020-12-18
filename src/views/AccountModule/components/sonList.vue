@@ -48,6 +48,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+
             @change="sonCountGetHandle"
           >
           </el-switch>
@@ -254,6 +255,7 @@ export default {
       this.$fetch('sonChildExport', params).then(res=>{
         if (res && res.code === 200) {
           this.$message.success('下载申请成功，请去下载中心下载该项！');
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(res.msg);
         }

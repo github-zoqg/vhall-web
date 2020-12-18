@@ -316,10 +316,11 @@ export default {
       this.$fetch('loginInfo', params).then(res => {
         if(res && res.code === 200) {
           this.mobileKey = '';
-          sessionOrLocal.set('token', res.data.token, 'localStorage');
+          sessionOrLocal.set('token', res.data.token || '', 'localStorage');
           this.$router.push({path: '/'});
         } else {
           this.$message.error(res.msg || '登录失败！');
+          sessionOrLocal.set('token', '', 'localStorage');
         }
       });
     },

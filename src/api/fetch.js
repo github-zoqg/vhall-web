@@ -52,6 +52,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
         formData.append(key, data[key]);
       }
     }
+  } else if (header['Content-Type'] === 'application/json') {
+    headers['Content-Type'] = 'application/json';
   } else {
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
   }
@@ -62,8 +64,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
     // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
-  if (method === 'POST') {
+  if (method === 'POST' && header['Content-Type'] !== 'application/json') {
     option.body = formData || qs.stringify(data); // body data type must match "Content-Type" header
+  } else if (method === 'POST' && header['Content-Type'] === 'application/json') {
+    option.body = JSON.stringify(data);
   }
   // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
