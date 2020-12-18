@@ -410,7 +410,7 @@ export default {
           data.type = 'image';
         }
         console.log(11111122222, this.imgUrls)
-        let userInfo = JSON.parse(sessionStorage.getItem('user'));
+        let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
         console.warn('获取当前的本地用户信息', userInfo)
         let context = {
           nickname: userInfo.nickname ? userInfo.nickname : userInfo.nick_name, // 昵称

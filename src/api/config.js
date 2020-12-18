@@ -504,7 +504,8 @@ const apis = {
   giftList: ['/v3/interacts/gift/get-webinar-using-gift-list', 'GET'], // 礼物列表
   setRelevance: ['/v3/interacts/gift/set-webinar-map-gifts', 'POST'], // 设置活动关联礼物
   createWebinarGift: ['/v3/interacts/gift/create-webinar-gift', 'POST'], // 设置活动关联礼物
-
+  // 红包
+  getLastRedInfo: ['/v3/interacts/redpacket/get-latest-redpacket-usage', 'GET'], // 发起端_获取当前活动最新创建红包的消费情况.
 
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞

@@ -106,29 +106,20 @@ export default {
     },
 
     getQuestionList () {
-      let params =
-        this.questionType == 'room'
-          ? {
-            room_id: this.roomId,
-            keyword: this.searchKey,
-            from_room_id: this.roomId,
-            pagesize: '100',
-            page: '1'
-          }
-          : {
-            account_id: this.accountId,
-            keyword: this.searchKey,
-            pagesize: '100',
-            page: '1'
-          };
-
-      this.$fetch('questionList', params).then(res => {
+      let params = {
+        webinar_id: this.$route.params.il_id,
+        room_id: this.roomId,
+        keyword: this.searchKey,
+        limit: '20',
+        pos: '0'
+      }
+      this.$fetch('getLiveQuestionList', params).then(res => {
         console.log('问卷 列表', res);
         this.docList = res.data.list || [];
 
         this.pageInfo = {
-          currentPage: res.data.page,
-          pagesize: res.data.pagesize,
+          currentPage: res.data.pos,
+          pagesize: res.data.limit,
           total: res.data.total
         };
       });
@@ -270,12 +261,12 @@ export default {
 
     createQuestionAction (id, title, description) {
       this.$fetch('createQuestion', {
-        room_id: this.roomId,
+        // room_id: this.roomId,
         title: title,
-        question_id: id,
+        survey_id: id,
         description,
-        account_id: this.accountId,
-        app_id: this.appId
+        // account_id: this.accountId,
+        // app_id: this.appId
       }).then(() => {
         console.log('vss 接口创建成功');
         this.isCreate = false;

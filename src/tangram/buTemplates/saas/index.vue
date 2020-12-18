@@ -2804,16 +2804,17 @@ export default {
     },
     openRedPacketPopup () {
       const obj = {
-        vss_token: this.vssToken,
         room_id: this.roomId
       };
-      this.$vhallFetch('getPacketLastInfo', obj).then(res => {
-        if (res.data.get_user_count < res.data.number && res.data.status == 1) {
-          // 红包未领取完成
-          this.hadEnvelopeVisible = true;
-          return;
+      this.$fetch('getLastRedInfo', obj).then(res => {
+        if (res.code == 200 && res.data) {
+          if (Number(res.data.get_user_count) < Number(res.data.number) && res.data.status == 1) {
+            // 红包未领取完成
+            this.hadEnvelopeVisible = true;
+            return;
+          }
+          this.RedPacketVisible = true;
         }
-        this.RedPacketVisible = true;
       });
     },
     ContinueSendRed () {
