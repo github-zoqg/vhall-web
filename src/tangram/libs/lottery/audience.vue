@@ -1,6 +1,6 @@
 <template>
   <div class="audience-wrap">
-    <div class="audience-icon" v-if="lotteryInfo.award_snapshoot">
+    <div class="audience-icon" v-if="showLottery">
       <img @click="lookLottery" src="../../../common/images/h5-show-phone-logo2x.png" alt="">
     </div>
     <div class="vhall-lottery" v-if="showMess">
@@ -19,7 +19,7 @@
           </div>
         </div>
         <!-- 抽奖结果 -->
-        <div class="lottery-result " v-if="lotteryResultShow">
+        <div class="lottery-result " v-if="lotteryResultShow == 1">
           <div v-if="lotteryInfo.lottery_status==1">
             <div class="recive-prize"  v-if="lotteryStep == 2" >
               <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
@@ -61,6 +61,9 @@ export default {
     },
     isEmbed:{
       type: String
+    },
+    webinarId:{
+      type: [String,Number]
     }
   },
   data() {
@@ -86,10 +89,12 @@ export default {
       prizeShow: false, //抽奖显示页
       chatLoginStatus: false, //是否需要登录
       lotteryResultShow: false, //
+      showLottery:false, // 观看端打赏展示
     };
   },
   watch: {
     isWinning(newValue, oldValue){
+      console.warn('isWinning',newValue, oldValue, '发生变化');
       if(newValue){
         this.$nextTick(()=>{
           this.audienceText = '中奖啦！恭喜您获得“黑碳科技立体电子魔方';
@@ -147,9 +152,18 @@ export default {
               text: res.data.remark,
               title: res.data.title
           }
+          if(res.data){
+            this.showLottery = true
+          }
           if(res.data.lottery_status == 0){
+            // 当前正在抽奖
             this.prizeShow = true
             this.lotteryContentShow = false
+          }else{
+            // 当前不存在抽奖
+            this.lotteryResultShow = true
+            this.isWinning = res.data.win == 0
+            console.warn(this.isWinning, 'his.isWinning');
           }
         }else{
           this.$message.warning(res.msg)
@@ -163,10 +177,22 @@ export default {
     startLottery (val) {
       this.showMess = true
     },
+    getStepText(){
+      this.$fetch('v3GetStep',{
+        webinar_id: this.webinarId
+      }).then(res=>{
+        if(res.code == 200){
+          console.warn('获取当前页面中奖以后', res.data);
+        }else{
+          this.$message.warning(res.msg)
+        }
+      })
+    },
     endRecive(msg, WinningID){
       console.warn(msg, WinningID, '中奖信息----');
       if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
         this.lotteryResultShow = true
+        this.getStepText()
         this.isWinning = true
         let awardUserId = this.lotteryEndResult.find(
           item => item.lottery_user_id == ownerId
@@ -417,6 +443,9 @@ export default {
         border: none;
         margin-bottom: 20px;
       }
+      .common-but{
+        margin: 0 auto!important;
+      }
     }
 
     .recive-prize {
@@ -434,12 +463,9 @@ export default {
         width: 356px;
         margin: 0 auto;
       }
-      .common-but{
-        margin: 0 auto;
-        &:hover {
-          background: #fe6a6a;
-          color: #fff;
-        }
+      .common-but:hover {
+        background: #fe6a6a;
+        color: #fff;
       }
     }
   }

@@ -173,6 +173,7 @@
             <lottery
               :roomId="roomId"
               :domains="domains"
+              :webinarId="ilId"
               :isEmbed='isEmbed'
               ref="lotterySon"
             ></lottery>
@@ -738,7 +739,8 @@ export default {
       giveMoneyPayWay: '1',
       giveMoneyDes: '',
       giveMoneyUrl: '',
-      showGiveMoneyQr: false
+      showGiveMoneyQr: false,
+      showLottery: false
     };
   },
   created () {
@@ -793,6 +795,13 @@ export default {
     this.eventListener()
   },
   methods: {
+    checkLottery(){
+      this.$fetch('v3CheckLottery', {}).then(res=>{
+        if(res.code == 200 && res.data.award_snapshoot.id){
+          this.showLottery = true
+        }
+      })
+    },
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
         if (msg.type == "gift_send_success") {
