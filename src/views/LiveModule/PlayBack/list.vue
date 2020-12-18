@@ -176,7 +176,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$fetch('playBackSetDefault', {
+        this.$fetch('defaultRecord', {
           webinar_id: this.webinar_id,
           record_id: row.id,
           type: row.type === 6 ? 0 :1
