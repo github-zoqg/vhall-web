@@ -4,9 +4,9 @@
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
       :rules="[
-        { required: true, message: '请输入直播标题', trigger: 'blur' },
+        { required: true, max: 100,  message: '请输入直播标题', trigger: 'blur' },
       ]">
-        <el-input v-model="formData.title" limit='100'></el-input>
+        <el-input v-model="formData.title" maxlength="100"  show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
         <!-- <el-row :gutter="20"> -->
@@ -28,6 +28,18 @@
         <!-- </el-row> -->
       </el-form-item>
       <el-form-item label="直播模式：" required v-if="webniarType=='live'">
+        <div class="titleBox">
+          <span class="pageTitle">直播创建成功后，不允许修改直播模式</span>
+          <el-tooltip>
+            <div slot="content">
+              <p>1.视频直播：音频+视频直播，需要保证摄像头和麦克风正常</p>
+              <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
+              <p>3.音频直播：音频直播，需要保证麦克风正常</p>
+            </div>
+            <i class="el-icon-question"></i>
+          </el-tooltip>
+          <slot name="default"></slot>
+        </div>
         <div class="modeBox">
           <div @click='liveModeChange(2)' :class="{active: liveMode== 2}">
             <el-container class='model'>
@@ -421,13 +433,17 @@ export default {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
           this.$fetch(url, this.$params(data)).then(res=>{
-            this.$message.success(`${this.title}成功`);
-            console.log(res);
-            setTimeout(()=>{
-              this.$router.push({path: '/live/list'});
-            }, 500);
+            if(res && res.code === 200) {
+              this.$message.success(`${this.title}成功`);
+              console.log(res);
+              setTimeout(()=>{
+                this.$router.push({path: '/live/list'});
+              }, 500);
+            } else{
+              this.$message.error(res.msg || '操作失败');
+            }
           }).catch(error=>{
-            this.$message.error(`创建失败，${error.message}`);
+            this.$message.error(`操作失败，${error.message}`);
           }).finally(()=>{
             this.loading = false;
           });
@@ -441,6 +457,7 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      // 重置直播模式、直播封面、直播简介。
     },
     mediaSelected(media){
       this.selectMedia = media;
@@ -476,6 +493,17 @@ export default {
   .line{
     text-align: center;
     width: 20px;
+  }
+  .pageTitle {
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
+    margin-right: 9px;
+  }
+  .el-icon-question {
+    color: #999999;
   }
   .modeBox{
     display: flex;

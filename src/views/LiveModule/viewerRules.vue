@@ -381,6 +381,14 @@ export default {
           if(valid) {
             flag = true;
             params = Object.assign(this.form, this[formName]);
+            // 若是非白名单，不传递white_id
+            if(formName !== 'whiteForm') {
+              try {
+                delete params.white_id;
+              } catch (e) {
+                console.log('去除白名单参数', e);
+              }
+            }
           }
         });
       } else if(formName === 'whiteForm') {
