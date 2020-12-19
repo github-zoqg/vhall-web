@@ -93,7 +93,7 @@ export default {
       let bind_Result = sessionOrLocal.get('bind_result');
       if (bind_Result) {
         let auth_tag = sessionOrLocal.get('tag', 'localStorage');
-        let res = JSON.stringify(bind_Result);
+        let res = JSON.parse(bind_Result);
         if (res.code === 11042) {
           // 若是账号绑定异常，提示用户信息
           this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {

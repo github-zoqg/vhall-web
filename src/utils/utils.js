@@ -208,7 +208,7 @@ export function checkAuth(to, from, next) {
         return;
       } else {
         if (auth_tag.indexOf('bind') !== -1) {
-          sessionOrLocal.set('bind_result', JSON.parse(res));
+          sessionOrLocal.set('bind_result', JSON.stringify(res));
           // 绑定成功
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
         } else {
