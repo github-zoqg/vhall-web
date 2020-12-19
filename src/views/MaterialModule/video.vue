@@ -115,13 +115,13 @@ export default {
       console.log(name, beforeName,  '22222222222222222222222222');
       let onlyId = this.uploadId--;
       file.id = onlyId;
-      if(!reg.test(name)){
-        this.$message({
-          type: 'warning',
-          message: '请确认上传的文件是否为中文、英文、数字和下划线组成'
-        });
-        return;
-      }
+      // if(!reg.test(name)){
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '请确认上传的文件是否为中文、英文、数字和下划线组成'
+      //   });
+      //   return;
+      // }
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
@@ -204,20 +204,24 @@ export default {
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
           res.data.list.forEach(ele => {
             switch (ele.transcode_status) {
-              case 0:
+              case '0':
                 ele.transcode_status_text = '新增排队中';
+                ele.duration = '——';
                 break;
-              case 1:
+              case '1':
                 ele.transcode_status_text = '转码成功';
                 break;
-              case 2:
+              case '2':
                 ele.transcode_status_text = '转码失败';
+                ele.duration = '——'
                 break;
-              case 3:
+              case '3':
                 ele.transcode_status_text = '转码中';
+                ele.duration = '——'
                 break;
               default:
                 ele.transcode_status_text = '新增排队中';
+                ele.duration = '——'
                 break;
             }
           });
@@ -278,6 +282,7 @@ export default {
       //  this.videoParam 进本信息
       if (rows.transcode_status == 1) {
         that.showDialog = true;
+        that.videoParam = rows;
       } else {
         that.$message.warning('只有转码成功才能查看');
       }

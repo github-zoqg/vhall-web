@@ -287,15 +287,15 @@ export default {
     },
     cash(title) {
       if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
-        this.$message.error('当前余额不足2元，不支持提现');
+        this.$message.error('当前余额不足1元，不支持提现');
         return false;
       }
       if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) < 1) {
-        this.$message.error('当前余额不足2元，不支持提现');
+        this.$message.error('当前余额不足1元，不支持提现');
         return false;
       }
       let flag = this.isBangWeixin();
-      // 1 未绑定微信   2绑定微信
+      // （false）未绑定微信   绑定微信(true)
       if (flag) {
         this.$refs.cashBox.dialogCashVisible = true;
         this.phone = this.userInfo.phone;
@@ -325,7 +325,7 @@ export default {
       this.$fetch(url, this.params).then(res => {
         if (res.code == 200) {
           this.params = {};
-          this.$message.success(`收益明细导出成功，请去下载中心下载`);
+          this.$message.success(`${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出成功，请去下载中心下载`);
         } else {
           this.$message.error(`收益明细${res.msg}`);
         }

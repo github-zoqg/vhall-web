@@ -49,6 +49,7 @@
 <script>
 import { secondToDateZH } from '@/utils/general';
 import controle from './js/control';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     this.$Vhallplayer = null;
@@ -72,19 +73,15 @@ export default {
     };
   },
   mixins: [controle],
+  props: ['videoParam'],
   filters: {
     secondToDate (val) {
       return secondToDateZH(val);
     },
   },
   created() {
-    this.initSDK().then(() => {
-      this.initSlider();
-      this.totalTime = this.$Vhallplayer.getDuration(() => {
-        console.log('获取总时间失败');
-      });
-      this.listen();
-    });
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getVideoAppid();
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
@@ -92,15 +89,26 @@ export default {
     }
   },
   methods: {
-    initSDK() {
+    getVideoAppid() {
+      this.$fetch('getAppid').then(res => {
+        this.initSDK(res.data.app_id, res.data.access_token).then(() => {
+          this.initSlider();
+          this.totalTime = this.$Vhallplayer.getDuration(() => {
+            console.log('获取总时间失败');
+          });
+          this.listen();
+        });
+      })
+    },
+    initSDK(app_id, access_token) {
       const incomingData = {
-        appId: 'fd8d3653', // 应用ID，必填
-        accountId: 'join_1735023' || 1, // 第三方用户ID，必填
-        token: 'vhall', // access_token，必填
+        appId: app_id, // 应用ID，必填
+        accountId: this.userId || 1, // 第三方用户ID，必填
+        token: access_token, // access_token，必填
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
-        vodOption: { recordId: '78fb64f', forceMSE: false },
+        vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption:{ // 选填
           enable:true, // 默认 false
           text:"xxx",    // 跑马灯的文字

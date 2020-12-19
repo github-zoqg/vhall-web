@@ -155,11 +155,6 @@ export default {
           key: 'imgOrText',
         },
         {
-          label: '审核状态',
-          key: 'statusText',
-          width:100
-        },
-        {
           label: '接收方',
           key: 'revice',
           width:100
@@ -425,7 +420,6 @@ export default {
             item.chatImg = '';
           }
           item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
-          item.statusText = '通过';
           item.revice = '主持人';
         })
         this.totalNum = res.data.total;
