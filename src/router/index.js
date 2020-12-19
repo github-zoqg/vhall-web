@@ -25,7 +25,7 @@ Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 router.beforeEach((to, from, next) => {
-  checkAuth(to, from, next, this);
+  checkAuth(to, from, next);
 });
 router.afterEach(() => {
   NProgress.done();

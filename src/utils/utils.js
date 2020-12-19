@@ -174,7 +174,7 @@ export function getQueryString(name) {
 }
 
 // 判断是否登录成功
-export function checkAuth(to, from, next, that) {
+export function checkAuth(to, from, next) {
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
@@ -204,35 +204,13 @@ export function checkAuth(to, from, next, that) {
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
         sessionOrLocal.set('sso_token', res.data.sso_token);
         sessionOrLocal.set('userId', res.data.user_id);
-        // next({path: '/home'})
         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
         return;
       } else {
         if (auth_tag.indexOf('bind') !== -1) {
-          if (res.code === 11042) {
-            // 若是账号绑定异常，提示用户信息
-            that.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
-              confirmButtonText: '绑定',
-              cancelButtonText: '取消',
-              customClass: 'zdy-message-box'
-            }).then(() => {
-              fetchData('callbackUserInfo', {
-                key: getQueryString('user_auth_key'),
-                scene_id: 3,
-                force: 1
-              }).then(res => {
-                // 绑定成功
-                window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
-                return;
-              }).catch(e => {})
-            }).catch(() => {
-            });
-          } else {
-            // 绑定失败，不做任何处理
-            this.$message.error(res.msg || '绑定失败');
-            next({ path: '/login' });
-            return;
-          }
+          sessionOrLocal.set('bind_result', JSON.parse(res));
+          // 绑定成功
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
         } else {
           // 获取回调token失败
           this.$message.error('登录信息获取失败，请重新登录');

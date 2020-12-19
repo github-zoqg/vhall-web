@@ -30,7 +30,8 @@
 </template>
 
 <script>
-import {sessionOrLocal} from "@/utils/utils";
+import {getQueryString, sessionOrLocal} from "@/utils/utils";
+import fetchData from "@/api/fetch";
 
 export default {
   name: "accountSet.vue",
@@ -87,6 +88,37 @@ export default {
       }).then(() => {
         this.$message.success('解绑成功');
       }).catch(() => {})
+    },
+    created() {
+      let bind_Result = sessionOrLocal.get('bind_result');
+      if (bind_Result) {
+        let auth_tag = sessionOrLocal.get('tag', 'localStorage');
+        let res = JSON.stringify(bind_Result);
+        if (res.code === 11042) {
+          // 若是账号绑定异常，提示用户信息
+          this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
+            confirmButtonText: '绑定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box'
+          }).then(() => {
+            fetchData('callbackUserInfo', {
+              key: getQueryString('user_auth_key'),
+              scene_id: 3,
+              force: 1
+            }).then(res => {
+              // 绑定成功
+              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+              return;
+            }).catch(e => {})
+          }).catch(() => {
+          });
+        } else {
+          // 绑定失败，不做任何处理
+          this.$message.error(res.msg || '绑定失败');
+          next({ path: '/login' });
+          return;
+        }
+      }
     }
   }
 };
