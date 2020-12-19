@@ -1,11 +1,13 @@
 <template>
-  <VhallDialog
+ <div id="showQuestion" v-if="dialogVisible">
+ </div>
+  <!-- <VhallDialog
       title="问卷预览"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="50%">
       <div id="showQuestion"></div>
-    </VhallDialog>
+    </VhallDialog> -->
 </template>
 <script>
 import { sessionOrLocal } from '@/utils/utils';
@@ -43,6 +45,9 @@ export default {
         isLoadElementCss: true,
         notify: true //是否开启消息提示，非必填,默认是true
       });
+      if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+        window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+      }
       service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
         service.renderPagePC("#showQuestion", this.questionId, {
           isPreview: true,

@@ -38,6 +38,7 @@ export default {
       total: 100,
       selectChecked: [],
       keyword: '',
+      isPreview: false,
       questionId: '',
       tabelColumn: [
         {
@@ -60,20 +61,7 @@ export default {
       tableRowBtnFun: [
         {name:'预览', methodName: 'preview'}, {name:'复制', methodName: 'cope'} ,{name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
-      tableData: [
-        {
-          survey_id: '12312413',
-          title: '请输入000',
-          updated_at: '2020-10-03',
-          topic_num: 100
-        },
-        {
-          survey_id: '1212345',
-          title: '请输入111',
-          updated_at: '2020-10-12',
-          topic_num: 200
-        }
-      ]
+      tableData: []
     };
   },
   components: {
@@ -106,6 +94,7 @@ export default {
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list || [];
         this.total = res.data.total;
+        // window.sessionStorage.setItem("vhallyunFormAnswerDetail", JSON.stringify(res.data.list))
         if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
           window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
         }
@@ -115,9 +104,9 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.questionId = rows.question_id;
-      if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
-          window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
-        }
+      // if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+      //     window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+      //   }
       that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制
