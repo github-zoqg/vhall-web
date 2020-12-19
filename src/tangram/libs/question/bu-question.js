@@ -66,6 +66,7 @@ export default {
   },
 
   created () {
+    console.log(11)
     this.assistantType = this.$route.query.assistantType;
     this.webviewType = this.$route.query.webviewType;
     this.initQuestionSDK();
@@ -75,7 +76,10 @@ export default {
   },
 
   mounted () {
-    this.getQuestionList();
+    let role_value = sessionStorage.getItem('role_val') ? sessionStorage.getItem('role_val') : ''
+    if (!role_value) {
+      this.getQuestionList();
+    }
   },
   watch: {
     $route (to, from) {
@@ -157,9 +161,10 @@ export default {
     publishPreview () {
       this.publish(this.previewId, this.previewDoc);
     },
+    // 发布问卷
     publish (questionId, doc) {
-      this.$fetch('publicQuestion', {
-        question_id: questionId,
+      this.$fetch('sendQuestion', {
+        survey_id: questionId,
         room_id: this.roomId
       }).then(res => {
         this.$service
@@ -258,19 +263,17 @@ export default {
       document.querySelector('#qs-create-box').innerHTML = '';
       this.$service.renderPageEdit('#qs-create-box', id || '');
     },
-
     createQuestionAction (id, title, description) {
-      this.$fetch('createQuestion', {
-        // room_id: this.roomId,
+      this.$fetch('createLiveQuestion', {
+        room_id: this.roomId,
         title: title,
         survey_id: id,
         description,
-        // account_id: this.accountId,
-        // app_id: this.appId
+        webinar_id: this.ilId,
+        user_id: this.userId
       }).then(() => {
         console.log('vss 接口创建成功');
         this.isCreate = false;
-        // this.$router.push({ query: {creat: ''} })
         localStorage.setItem('create', '');
         this.showPreview = false;
         this.getQuestionList();

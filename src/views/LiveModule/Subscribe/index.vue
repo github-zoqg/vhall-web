@@ -621,7 +621,8 @@ export default {
       getWxImg: false,
       getZFBlink: false,
       wxPayImg: '',
-      zfbLink: ''
+      zfbLink: '',
+      chatSDK: null
     };
   },
   async created(){
@@ -630,7 +631,7 @@ export default {
     await this.getAdsInfo() // 获取活动广告信息
     await this.getSkin() // 获取皮肤
     await this.getPublisAdv() // 获取公众号广告
-    await this.getTryWatch()
+    // await this.getTryWatch()
     this.handleInitRoom()
     this.getGoodsInfo();
   },
@@ -664,21 +665,21 @@ export default {
       this.$PLAYER.destroy()
       this.$PLAYER = null
     }
-    if (window.chatSDK) {
-      window.chatSDK.destroy()
-      window.chatSDK = null
+    if (this.chatSDK) {
+      this.chatSDK.destroy()
+      this.chatSDK = null
     }
     window.removeEventListener('resize', () => {})
     this.timer && clearInterval(this.timer)
   },
   methods:{
-    getTryWatch () {
-      this.$fetch('viewerSetGet', {
-        webinar_id: this.$route.params.id
-      }).then(res => {
-        console.log(120, res)
-      })
-    },
+    // getTryWatch () {
+    //   this.$fetch('viewerSetGet', {
+    //     webinar_id: this.$route.params.id
+    //   }).then(res => {
+    //     console.log(120, res)
+    //   })
+    // },
     closeWXCode () {
       this.showOfficialAccountQRCode = false
     },
@@ -693,6 +694,7 @@ export default {
         this.handleErrorCode(res)
       }).catch(e => {
         console.log('获取房间信息失败:', e)
+        this.handleErrorCode(e)
       })
     },
     // 初始化错误信息处理
@@ -716,7 +718,11 @@ export default {
         case 12546: // 该视频正在转码中
         case 12541: // 活动现场太火爆，已超过人数上限
           this.$EventBus.$emit('loaded');
-          this.tipMsg = res.msg;
+          this.$message.error(res.msg)
+          break;
+        default:
+          this.$EventBus.$emit('loaded');
+          this.$message.error(res.msg)
           break;
       }
     },
@@ -820,7 +826,7 @@ export default {
       window.location.href = `${process.env.VUE_APP_WAP_WATCH}/register`
     },
     handleInitRoom () {
-      if (this.roomData) {
+      if (this.roomData.webinar) {
         // this.btnVal = this.roomData.status === 'subscribe' ? '立即预约' : '进入直播'
         this.title = this.roomData.webinar.subject
         this.viewCount = this.roomData.pv.num
@@ -898,9 +904,9 @@ export default {
       VhallChat.createInstance(
         opt,
         chat => {
-          window.chatSDK = chat.message;
+          this.chatSDK = chat.message;
           console.log('成功了居然')
-          window.chatSDK.onRoomMsg(msg => {
+          this.chatSDK.onRoomMsg(msg => {
             console.log('==========房间消息1===========', msg);
 
             if (typeof msg !== 'object') {
@@ -1339,19 +1345,22 @@ export default {
             this.limitText = `邀请码`
           }
         } else {
-          if (reg_form == 1) {
-            ret = `立即预约`
-          } else {
-            if (type == 1 || type == 4 || type == 5) {
-              console.log(1010101)
-              this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
-            } else if (type == 2) {
-              ret = `已预约`
-              this.limitText = ``
-              this.btnDisabled = true
-            }
-          }
+          // 通过观看限制但没有报名
+          ret = `立即预约`
           this.limitText = ``
+          // if (reg_form == 1) {
+          //   ret = `立即预约`
+          // } else {
+          //   if (type == 1 || type == 4 || type == 5) {
+          //     console.log(1010101)
+          //     this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+          //   } else if (type == 2) {
+          //     ret = `已预约`
+          //     this.limitText = ``
+          //     this.btnDisabled = true
+          //   }
+          // }
+          // this.limitText = ``
         }
       }
       this.btnVal = ret
@@ -1436,7 +1445,11 @@ export default {
         ...params
       }).then(res => {
         if (res.code == 200) {
-          window.location.reload()
+          if (res.data.status == 'live') {
+            this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+          } else {
+            window.location.reload()
+          }
         } else {
           this.handleAuthErrorCode(res.code, res.msg)
           this.hasClick = false
@@ -1448,6 +1461,7 @@ export default {
     },
     // 鉴权code处理
     handleAuthErrorCode (code, msg) {
+      this.showModile = false
       switch (code) {
         case 10008: // 未登录
           this.callLogin()

@@ -104,6 +104,13 @@ export default {
     EventBus.$on('Leave', res => { // 关闭微信二维码弹窗
       this.onlineAmount = res.uv;
     });
+    EventBus.$on('red_envelope_ok', (e) => {
+      this.describe = '多谢大家支持'
+      this.amount = '0.00'
+      this.numbers = ''
+      this.channel = 'WEIXIN'
+      this.closeMobild()
+    })
     this.$vhallFetch('getOnlineUsers', {room_id: this.roomId, page: 1}).then(res => {
       this.onlineAmount = res.data.total;
     });
@@ -139,17 +146,16 @@ export default {
       }
       if (!this.PayIng) { this.PayIng = true; }
       // this.loading = true
-      let serviceCode;
-      this.channel === 'ALIPAY' ? serviceCode = 'CASHIER' : serviceCode = 'QR_PAY';
-      this.$vhallFetch('redpacketCreate', {
-        vss_token: this.vssToken,
+      // let serviceCode;
+      // this.channel === 'ALIPAY' ? serviceCode = 'H5_PAY' : serviceCode = 'QR_PAY';
+      this.$fetch('createRed', {
+        room_id: this.roomId,
         type: this.redcouponType,
         describe: this.describe,
         number: this.numbers,
         amount: parseFloat(this.amount),
         channel: this.channel,
-        service_code: serviceCode,
-        room_id: this.roomId
+        service_code: 'QR_PAY'
       }).then((res) => {
         this.PayIng = false;
         if (res.code === 200) {

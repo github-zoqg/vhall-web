@@ -111,17 +111,17 @@ export default {
         return;
       }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
-      let name = beforeName.split('.m')[0];
-      console.log(name, beforeName,  '22222222222222222222222222');
+      // let name = beforeName.split('.m')[0];
+      // console.log(name, beforeName,  '22222222222222222222222222');
       let onlyId = this.uploadId--;
       file.id = onlyId;
-      if(!reg.test(name)){
-        this.$message({
-          type: 'warning',
-          message: '请确认上传的文件是否为中文、英文、数字和下划线组成'
-        });
-        return;
-      }
+      // if(!reg.test(name)){
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '请确认上传的文件是否为中文、英文、数字和下划线组成'
+      //   });
+      //   return;
+      // }
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4

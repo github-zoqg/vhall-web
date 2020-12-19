@@ -57,10 +57,10 @@
                 </a>
               </li>
               <li>
-                <a :href="webDominUrl + '/auth/logout'">
+                <!-- <a :href="webDominUrl + '/auth/logout'"> -->
                   <i></i>
-                  <span>退出登录</span>
-                </a>
+                  <span @click="quitLive">退出登录</span>
+                <!-- </a> -->
               </li>
             </ul>
           </div>
@@ -730,6 +730,7 @@ export default {
   },
   mounted() {
     window.EventBridge = this.$EventBus;
+    sessionStorage.setItem('role_val', '2')
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
@@ -1356,11 +1357,11 @@ export default {
      * @author Sean
      */
     chatFilter() {
-      this.$fetch('getWatchFilterWords', {
+      this.$fetch('getAudinceKeyWordList', {
         room_id: this.roomData.interact.room_id
       }).then(res => {
-        if (res.code == 200) {
-          this.chatFilterData = res.data.list;
+        if (res.code == 200 && res.data) {
+          this.chatFilterData = res.data.list
         }
       });
     },
@@ -1761,8 +1762,26 @@ export default {
           window.vhallReport && window.vhallReport.report('LEAVE_WATCH', {}, false);
         }
       })
+    },
+    // 退出登录
+    quitLive () {
+      this.$fetch('loginOut').then(res => {
+        if (res.code == 200) {
+          sessionOrLocal.clear('localStorage')
+          sessionOrLocal.clear()
+          this.$nextTick(() => {
+            window.location.reload()
+          })
+        } else {
+          this.$message.error('退出失败')
+          console.log('退出失败', res)
+        }
+      }).catch(e => {
+        console.log('退出失败', e)
+      })
     }
   }
+
 };
 </script>
 <style lang="less">
