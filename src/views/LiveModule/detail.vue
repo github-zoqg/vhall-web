@@ -53,12 +53,8 @@
         </div>
       </el-col>
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
-        <div class="inner liveTime">
+        <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
-          <div v-if="outLiveTime">
-            <p class="subColor">直播即将开始</p>
-            <p><span>观众等待中</span></p>
-          </div>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
             <span>{{ time.day }}</span>
             <i>天</i>
@@ -70,6 +66,11 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
+          <el-button round type="primary" @click="toRoom">发起直播</el-button>
+        </div>
+        <div class="inner liveTime" v-else>
+          <p class="subColor">直播即将开始</p>
+          <p><span>观众等待中</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
@@ -263,6 +264,7 @@ export default {
       let targetStart = new Date(targetStartDate);
       let targetEnd = new Date(targetEndDate);
       if (targetEnd.getTime() - targetStart.getTime() < 0) {
+        this.outLiveTime = true;
         return false;
       } else {
         let diff = targetEnd.getTime() - targetStart.getTime();
@@ -279,16 +281,14 @@ export default {
         let limit3 = limit2 % (60 * 1000);
         let second = Math.floor(limit3 / 1000);
         this.time.second = second > 9 ? second : `0${second}`;
+        console.log(diff, '????????????????????')
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
-            // if (this.time.day === '00' && this.time.hours === '00'  && this.time.minute === '00' && this.time.second === '00') {
-            //   this.outLiveTime = true;
-            // }
             this.downTime(targetStart, targetEnd);
             window.clearTimeout(diffSetTime);
           }, 1000);
         } else {
-          this.outLiveTime = true;
+          return `0天0时0分0秒`;
         }
       }
     }
