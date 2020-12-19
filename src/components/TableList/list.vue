@@ -90,14 +90,16 @@
           :width="width"
         >
           <template slot-scope="scope">
-            <el-button
-              v-for="(item, index) in tableRowBtnFun"
-              :key="index"
-              size="mini"
-              type="text"
-              @click="handleBtnClick(scope, item)"
+            <template  v-for="(item, index) in tableRowBtnFun">
+              <el-button
+                :key="index"
+                size="mini"
+                type="text"
+                @click="handleBtnClick(scope, item)"
+                v-if="checkShowHandle(scope.row, item)"
               >{{ item.name }}</el-button
-            >
+              >
+            </template>
           </template>
         </el-table-column>
       </template>
@@ -189,6 +191,13 @@ export default {
         type: item.methodName,
       };
       this.$emit('onHandleBtnClick', Object.assign({}, obj));
+    },
+    checkShowHandle(row, item) {
+      if (this.scene === 'accountList') {
+        return row.parent_id > 0 || (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0);
+      } else {
+        return true;
+      }
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {
