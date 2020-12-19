@@ -174,7 +174,7 @@ export function getQueryString(name) {
 }
 
 // 判断是否登录成功
-export function checkAuth(to, from, next) {
+export function checkAuth(to, from, next, that) {
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
@@ -211,7 +211,7 @@ export function checkAuth(to, from, next) {
         if (auth_tag.indexOf('bind') !== -1) {
           if (res.code === 11042) {
             // 若是账号绑定异常，提示用户信息
-            this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
+            that.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
               confirmButtonText: '绑定',
               cancelButtonText: '取消',
               customClass: 'zdy-message-box'
