@@ -58,7 +58,9 @@ export default {
   data() {
     return {
       tabType: 'sonList',
-      sonInfo: null
+      sonInfo: {
+        vip_info: null
+      }
     };
   },
   computed: {
@@ -85,9 +87,13 @@ export default {
         if(res && res.code === 200) {
           this.sonInfo = res.data;
           this.tabType = 'sonList';
-          this.$nextTick(() => {
-            this.$refs[`sonListComp`].initComp();
-          });
+          try {
+            this.$nextTick(() => {
+              this.$refs[`sonListComp`].initComp();
+            });
+          } catch (e) {
+            console.log(e);
+          }
         }
       }).catch(e => {
         console.log(e);

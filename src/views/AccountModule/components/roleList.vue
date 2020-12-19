@@ -271,11 +271,11 @@ export default {
       });
     },
     // 获取列表数据
-    getRoleList() {
+    getRoleList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
       this.$fetch('sonRoleList', this.$params({
         role_name: this.role_name,
-        pos: 0,
-        limit: 11
+        pos: pageInfo.pos,
+        limit: pageInfo.limit
       })).then(res =>{
         this.roleDao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
