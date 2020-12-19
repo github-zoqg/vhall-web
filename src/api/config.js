@@ -346,7 +346,7 @@ const apis = {
   exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //并发明细导出
   exporOrder: ['/v3/fin/order/export', 'GET'], //账单明细-购买明细 导出
   exportAdmin:  ['/v3/fin/admin-order/export', 'GET'], //账单明细-开通明细 导出
-  exportWithdraw:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //提现明细 导出
+  exportWithdraw:  ['/v3/fin/withdraw/export', 'GET'], //提现明细 导出
   exportIncomeDetail:  ['/v3/fin/income/live/details/export', 'GET'], //直播收益详情列表导出
   exportLiveIncome:  ['/v3/fin/income/live/export', 'GET'], //直播收益明细导出
   exportRedPacket:  ['/v3/fin/income/red-packet/export', 'GET'], //红包收益明细导出
