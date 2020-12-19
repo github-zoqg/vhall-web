@@ -6,8 +6,8 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @change="getSonList">
-        <i class="el-icon-search el-input__icon" slot="suffix"></i>
+      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @keyup.enter.native="getSonList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="getSonList"></i>
       </el-input>
       <el-select placeholder="全部" round  v-model="query.role_id" @change="getSonList">
         <el-option
@@ -352,10 +352,10 @@ export default {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
           let params = Object.assign(
             this.sonDialog.type === 'add' ? {
-            } : {
-              id: this.sonDialog.row.id,
-              child_id: this.sonDialog.row.child_id
-            }, this.sonForm);
+          } : {
+            id: this.sonDialog.row.id,
+            child_id: this.sonDialog.row.child_id
+          }, this.sonForm);
           this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
             if (res && res.code === 200) {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
@@ -379,15 +379,15 @@ export default {
       });
     },
     // 获取列表数据
-    getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
+    getSonList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
       let params = {
         role_id: this.query.role_id,
         user_id: sessionOrLocal.get('userId'),
-        pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize,
-        scene_id: 2 // 场景id：1子账号列表 2用量分配获取子账号列表
+        pos: pageInfo.pos,
+        limit: pageInfo.limit,
+        scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
-      this.$fetch('getSonList', this.$params(params)).then(res =>{
+      this.$fetch('getSonList', params).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
