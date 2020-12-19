@@ -194,7 +194,6 @@ export function checkAuth(to, from, next) {
   let user_auth_key = getQueryString('user_auth_key');
   let auth_tag = sessionOrLocal.get('tag', 'localStorage');
   if (user_auth_key) {
-    debugger
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
       key: getQueryString('user_auth_key'),
@@ -230,6 +229,9 @@ export function checkAuth(to, from, next) {
             });
           } else {
             // 绑定失败，不做任何处理
+            this.$message.error(res.msg || '绑定失败');
+            next({ path: '/login' });
+            return;
           }
         } else {
           // 获取回调token失败
