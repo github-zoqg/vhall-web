@@ -448,7 +448,7 @@ export default {
     if(id) {
       this.getWebinarInfo();
     } else {
-      this.channel_id = 'ch_729e035c'; // TODO 后续这块要从用户那边取值
+      this.channel_id = sessionOrLocal.get('SAAS_V3_CHANNEL_ID', 'localStorage') || '';
       this.initPage();
       this.initChat();
     }

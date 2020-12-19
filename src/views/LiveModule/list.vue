@@ -9,8 +9,8 @@
     </pageTitle>
     <!-- 操作栏 -->
       <div class="operaBox">
-        <el-button type="primary" round @click="createLiveAction('1')">创建直播</el-button>
-        <el-button round @click="createLiveAction('2')">创建点播</el-button>
+        <el-button type="primary" round @click="createLiveAction('1')" size="medium" class="length104">创建直播</el-button>
+        <el-button round @click="createLiveAction('2')" size="medium">创建点播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -30,7 +30,7 @@
           </el-select>
           <el-input
             class="search-tag"
-            placeholder="请输入直播标题"
+            placeholder="搜索直播标题"
             v-model="keyWords"
             @keyup.enter.native="searchHandler">
             <i
@@ -251,9 +251,12 @@ export default {
         background: #fc615b;
       }
     }
-    .el-button.is-round{
-      padding: 10px 23px;
+    /deep/.el-button{
+      padding: 4px 24px;
     }
+    /*.el-button.is-round{
+      padding: 10px 23px;
+    }*/
   }
   .pageTitle{
     color: #1A1A1A;
@@ -271,7 +274,7 @@ export default {
           width: 120px;
         }
         &:nth-child(2){
-          width: 140px;
+          width: 175px;
           margin-left: 12px;
           margin-right: 20px;
         }

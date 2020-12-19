@@ -4,8 +4,8 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item">
-        <a :href="env.staticLinkVo.downOldUrl">旧版控制台</a>
+      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)">
+        <a :href="env.staticLinkVo.downOldUrl">返回旧版</a>
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
