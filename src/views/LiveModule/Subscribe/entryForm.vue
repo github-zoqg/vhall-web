@@ -46,13 +46,11 @@
         this.$fetch('watchInit', {
           webinar_id: this.webinar_id
         }).then(res => {
-          const type = res.data.webinar.type
-          if(type == 1 || type == 4 || type == 5) {
-            // 如果直播，回放，点播，跳转到直播观看页
+          if(res.data.status == 'live') {
             this.$router.push({
               path: `/live/watch/${this.webinar_id}`
             })
-          } else if(type == 2 || type == 3) {
+          } else if(res.data.status == 'subscribe') {
             // 如果预约或结束，跳转到预约页
             this.$router.push({
               path: `/subscribe/${this.webinar_id}`
