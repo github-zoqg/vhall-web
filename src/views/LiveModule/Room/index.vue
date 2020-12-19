@@ -101,6 +101,7 @@ export default {
           sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
           sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
           sessionStorage.setItem('roomId', mockResult.interact.room_id);
+          sessionStorage.setItem('report_extra', JSON.stringify(mockResult.report_data.report_extra))
           sessionStorage['vhall-vsstoken'] = mockResult.join_info.interact_token;
           sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
           sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???
