@@ -252,9 +252,10 @@ export default {
         this.$message.error(`最多只能添加三个自定义选项`);
         return false
       }
+      this.index ++;
       this.givePrizeList.push({
         is_system: 0,
-        field: `自定义${this.index++}`,
+        field: `自定义${this.index}`,
         field_key: 'user_define_' + (this.givePrizeList.length + 97),
         is_required: false,
         rank: this.givePrizeList.length + 97,
@@ -266,12 +267,16 @@ export default {
     // 获取领奖页信息
     getGivePrize() {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
-        if (res.data.length) {
-          this.givePrizeList = res.data;
-          this.givePrizeList.map(item => {
-            item.is_required = Boolean(item.is_required);
-          })
-        }
+        this.givePrizeList = res.data;
+        this.givePrizeList.map(item => {
+          item.is_required = Boolean(item.is_required);
+        })
+        // if (res.data.length) {
+        //   this.givePrizeList = res.data;
+        //   this.givePrizeList.map(item => {
+        //     item.is_required = Boolean(item.is_required);
+        //   })
+        // }
       })
     },
     // 保存领奖页信息
