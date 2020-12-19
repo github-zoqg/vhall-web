@@ -195,7 +195,7 @@
         inactive-text="最高并发"
         :active-text="limitCapacityDesc">
       </el-switch>
-      <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput"></el-input>
+      <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       <el-form-item class="btnGroup">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" round>取消</el-button>
@@ -271,6 +271,7 @@ export default {
     },
     limitCapacityDesc(){
       if(this.limitCapacitySwtich){
+        this.getHighLimit();
         return '已开启，限制进入活动的观众最大并发数';
       }else{
         return "开启后，限制进入活动的观众最大并发数";
@@ -405,6 +406,9 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
+      // if (this.limitCapacity) {
+      //   this.getHighLimit();
+      // }
       let data = {
         webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
@@ -454,6 +458,11 @@ export default {
           return false;
         }
       });
+    },
+    getHighLimit() {
+      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
+        console.log(res.data, '11111111111111');
+      })
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();

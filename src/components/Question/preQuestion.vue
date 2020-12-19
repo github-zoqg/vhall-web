@@ -1,13 +1,7 @@
 <template>
- <div id="showQuestion" v-if="dialogVisible">
- </div>
-  <!-- <VhallDialog
-      title="问卷预览"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      width="50%">
-      <div id="showQuestion"></div>
-    </VhallDialog> -->
+<div v-loading="loading">
+   <div id="showQuestion"></div>
+</div>
 </template>
 <script>
 import { sessionOrLocal } from '@/utils/utils';
@@ -15,6 +9,7 @@ export default {
   props: ['questionId'],
   data() {
     return {
+      loading: true,
       dialogVisible: false
     };
   },
@@ -25,15 +20,18 @@ export default {
       }
     }
   },
+  created() {
+    this.getVideoAppid();
+  },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
   },
   methods: {
     getVideoAppid() {
-    this.$fetch('getPassId').then(res => {
-      this.initQuestion(res.data.app_id, res.data.third_party_user_id, res.data.access_token);
-    })
-  },
+      this.$fetch('getPassId').then(res => {
+        this.initQuestion(res.data.app_id, res.data.third_party_user_id, res.data.access_token);
+      })
+    },
     initQuestion(appId, userId, token) {
       let service = new VHall_Questionnaire_Service({
         auth: {
@@ -53,6 +51,7 @@ export default {
           isPreview: true,
           isPc: true
         }); //预览
+        this.loading = false;
       })
     }
   }

@@ -22,8 +22,12 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
-    <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question>
-    <base-question ref="dataBase"></base-question>
+    <template v-if="isShowQuestion">
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
+        <pre-question  :questionId="questionId"></pre-question>
+      </el-dialog>
+    </template>
+    <base-question ref="dataBase" @getTableList="getTableList"></base-question>
   </div>
 </template>
 
@@ -38,7 +42,7 @@ export default {
       total: 100,
       selectChecked: [],
       keyword: '',
-      isPreview: false,
+      isShowQuestion: false,
       questionId: '',
       tabelColumn: [
         {
@@ -103,11 +107,11 @@ export default {
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.isShowQuestion = true;
       that.questionId = rows.question_id;
       // if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
       //     window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
       //   }
-      that.$refs.isPreQuestion.dialogVisible = true;
     },
     // 复制
     cope(that, {rows}) {

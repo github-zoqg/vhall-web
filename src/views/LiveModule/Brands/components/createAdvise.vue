@@ -48,8 +48,8 @@
       width="590px">
       <div class="content">
         <div class="search"><el-input v-model="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @click="changeAdverment"></el-input></div>
-        <el-scrollbar>
-          <div class="ad-list" v-infinite-scroll="load">
+        <el-scrollbar v-loadMore="moreLoadData">
+          <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <img :src="`${item.img_url}`" alt="">
               <p>{{ item.subject }}</p>
@@ -59,6 +59,7 @@
             </div>
           </div>
         </el-scrollbar>
+        <p class="text">当前选中<span>{{ selectChecked.length }}</span>个</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="advSaveToWebinar(null)" round>确 定</el-button>
@@ -98,9 +99,10 @@ export default {
       },
       advertPageInfo: {
         pos: 0,
-        limit: 12,
+        limit: 6,
         page: 1
       },
+      maxPage: 0,
       adList: []
     };
   },
@@ -179,6 +181,7 @@ export default {
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
+          this.clearForm();
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
           // 获取列表数据
           this.$emit('reload');
@@ -187,6 +190,14 @@ export default {
           this.$message.error('链接格式不正确');
         }
       });
+    },
+    moreLoadData() {
+      if (this.advertPageInfo.page >= this.maxPage) {
+        return false;
+      }
+      this.advertPageInfo.page ++ ;
+      this.advertPageInfo.pos = parseInt((this.advertPageInfo.page - 1) * this.advertPageInfo.limit);
+      this.activityData();
     },
     activityData() {
       this.$fetch('getAdvList', this.$params({
@@ -198,19 +209,22 @@ export default {
           adList.map(item => {
             item.isChecked = false;
           });
-          this.adList = adList;
+          this.adList.push(...adList);
+          this.maxPage = Math.ceil(res.data.total / this.advertPageInfo.limit);
+          console.log(this.maxPage, '111111111111111');
         } else {
           this.adList = [];
         }
       });
     },
     changeAdverment() {
-      this.activityData();
       this.advertPageInfo = {
         pos: 0,
         limit: 6,
         page: 1
       }
+      this.adList = [];
+      this.activityData();
     },
     load() {
       // this.advertPageInfo.page ++;
@@ -219,11 +233,11 @@ export default {
     },
     choiseAdvisetion(items) {
       items.isChecked = !items.isChecked;
+      this.selectChecked = this.adList.filter(item => item.isChecked).map(item => item.adv_id);
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
       if (!id) {
-        this.selectChecked = this.adList.filter(item => item.isChecked).map(item => item.adv_id);
         if (this.selectChecked.length < 1) {
           this.dialogAdverVisible = false;
           return;
@@ -236,8 +250,12 @@ export default {
         adv_ids: id
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
-        this.$message.info(res.msg);
-        this.$emit('reload');
+        if (res.code == 200) {
+          this.$message.info('选择广告成功');
+          this.$emit('reload');
+        } else {
+          this.$message.info('选择广告失败');
+        }
       })
     },
     uploadAdvSuccess(res, file) {
@@ -299,8 +317,8 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       max-height: 300px;
-       overflow: auto;
+       height: 200px;
+      //  overflow: auto;
        .ad-item{
          width: 150px;
          margin-bottom: 20px;
@@ -340,6 +358,13 @@ export default {
            font-weight: 400px;
            padding-right: 5px;
          }
+       }
+     }
+     .text{
+       margin-top: 20px;
+       span{
+         color: #FB3A32;
+         padding: 0 5px;
        }
      }
    }

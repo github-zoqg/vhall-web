@@ -37,7 +37,7 @@
        <div class="search">
          <el-input v-model="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
        </div>
-       <el-scrollbar>
+       <el-scrollbar v-loadMore="moreLoadData">
          <div class="prize">
            <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
              <img :src="item.img_path" alt="">
@@ -68,8 +68,13 @@ export default {
       dialogVisible: false,
       dialogPrizeVisible: false,
       keyword: '',
-      pos: 0,
       checkedList: [],
+      maxPage: 0,
+      prizePageInfo: {
+        pos: 0,
+        limit: 6,
+        page: 1,
+      },
       prizeForm: {
         source: 1,
         img_path: '',
@@ -144,22 +149,35 @@ export default {
       })
     },
     inputChange() {
+      this.prizePageInfo = {
+        pos: 0,
+        page: 1,
+        limit: 6
+      }
+      this.list = [];
+      this.getPrizeList();
+    },
+    moreLoadData() {
+      if (this.prizePageInfo.page >= this.maxPage) {
+        return false;
+      }
+      this.prizePageInfo.page ++ ;
+      this.prizePageInfo.pos = parseInt((this.prizePageInfo.page - 1) * this.prizePageInfo.limit);
       this.getPrizeList();
     },
     getPrizeList() {
       let params = {
         keyword: this.keyword,
-        pos: this.pos,
-        limit: 20,
-        source: 1
+        source: 1,
+        ...this.prizePageInfo
       }
       this.$fetch('getPrizeList', params).then(res => {
-        this.list = res.data.list;
-        this.list.map(item => {
+        let adList = res.data.list;
+        adList.map(item => {
           item.isChecked = false;
-        })
-        console.log(this.list, '???????????????')
-        // this.total = res.data.count;
+        });
+        this.list.push(...adList);
+        this.maxPage = Math.ceil(res.data.count / this.prizePageInfo.limit);
       })
     },
     prizeLoadSuccess(res, file){

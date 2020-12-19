@@ -55,6 +55,10 @@
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
         <div class="inner liveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
+          <div v-if="outLiveTime">
+            <p class="subColor">直播即将开始</p>
+            <p><span>观众等待中</span></p>
+          </div>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
             <span>{{ time.day }}</span>
             <i>天</i>
@@ -87,6 +91,7 @@ export default {
   data(){
     return {
       msg: '',
+      outLiveTime: false,
       liveDetailInfo: {
         webinar_state: ''
       },
@@ -276,14 +281,14 @@ export default {
         this.time.second = second > 9 ? second : `0${second}`;
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
-            if (this.time.day === '00' && this.time.hours === '00'  && this.time.minute === '00' && this.time.second === '00') {
-              this.liveDetailInfo.webinar_state = '1';
-            }
+            // if (this.time.day === '00' && this.time.hours === '00'  && this.time.minute === '00' && this.time.second === '00') {
+            //   this.outLiveTime = true;
+            // }
             this.downTime(targetStart, targetEnd);
             window.clearTimeout(diffSetTime);
           }, 1000);
         } else {
-          return `天0时0分0秒`;
+          this.outLiveTime = true;
         }
       }
     }
