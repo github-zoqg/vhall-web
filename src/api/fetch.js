@@ -11,6 +11,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
   let data = Object.assign(data1);
+  let _live_token = sessionOrLocal.get('live_token', 'localStorage')
+  if(_live_token){
+    data.live_token = _live_token
+  }
   const interact_token = sessionStorage.getItem('interact_token') || null;
   let formData = null;
 

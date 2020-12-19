@@ -1,9 +1,8 @@
 <template>
- <!-- v-if="payoff" -->
   <div class="vhall-lottery" v-if="payoff">
     <div class="payment-dialog" @click="closeUserList">
       <div class="payment-title" :class="lottHeadStyle?'lottery-headleft':'lottery-right'">
-        <span class="payment-title--text">{{ dialogTitle }}</span>
+        <span class="payment-title--text">{{ processingObj.title ? processingObj.title : '抽奖' }}</span>
         <span v-show="closeShow" class="payment-title--close iconfont iconguanbi" @click="close"></span>
       </div>
       <!-- 发起抽奖 -->
@@ -112,7 +111,7 @@
 
       <!-- 抽奖 -->
       <div class="prize-pending" v-if="prizeShow" >
-        <img :src="`${domains.upload_url}/${processingObj.url}`" alt />
+        <img :src="processingObj.url ? `${domains.upload_url}/${processingObj.url}` : defaultImg" alt />
         <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
         <el-button @click="endLottery" :disabled='disabledTime!=0' class="common-but lottery-end">
           结束抽奖 <span v-if="disabledTime!=0">({{disabledTime}}s) </span>
@@ -120,25 +119,10 @@
       </div>
       <!-- 抽奖结果 -->
       <template  v-if="lotteryResultShow">
-        <Result :domains='domains' :lotteryResultObj='lotteryResultObj'></Result>
-        <!-- <div class="lottery-result">
-          <div class="result-img">
-            <img :src="`${domains.upload_url}/${lotteryResultObj.url}`" alt="">
-            <p>{{lotteryResultObj.text}}</p>
-          </div>
-          <div class="result-table">
-              <div class="result-table-head">
-                <strong>中奖名单</strong>
-              </div>
-              <ul>
-                <li class="awardBgColor" v-for="(item,index) in lotteryEndResult" :key="index">
-                  <img :src="$img" alt="" />
-                  <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
-                </li>
-              </ul>
-              <el-button @startReward="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
-          </div>
-        </div> -->
+        <Result @startReward='startReward' :domains='domains'
+        :userHost='true' :lotteryResultObj='lotteryResultObj'
+        :prizeObj='prizeObj'
+        :lotteryEndResult='lotteryEndResult'></Result>
       </template>
     </div>
   </div>
@@ -148,8 +132,8 @@ import EventBus from '@/utils/Events';
 import prize from './mixins'
 import Result from './common/result'
 export default {
-  component:{
-      Result
+  components :{
+    Result
   },
   props: {
     roomId: {
@@ -165,19 +149,11 @@ export default {
       getReward: '查看中奖名单',
       lotteryChatShow: false, // 已填写过领奖信息的提示
       closeShow: true, // 关闭按钮的显示
-      deliverItem: {},
       reciveAwardShow: false, // 领奖信息的展示
-      reciveInfo: {
-        // 领奖人信息
-        name: '',
-        tel: '',
-        remarks: ''
-      },
       getPrizeCount: 0, // 可参与抽奖的人数
       lotteryEndResult: null, // 抽奖的结果
       lotteryInfo: null, // 抽奖的信息
       lottHeadStyle: true,
-      dialogTitle: '抽奖',
       lotteryResultShow: false, // 抽奖结果
       lotteryContentShow: false, // 发起抽奖
       prizeShow: false, // 趣味抽奖
@@ -216,10 +192,8 @@ export default {
       participationPass: '', // 口令
       disabledTime: 5, // 5秒禁止点击
       lotteryResultObj: {}, // 中奖信息
-      audienceText: '信息提交成功',
-      isWinning: false,
-      submitWinning: true, // 信息是否提交成功
-      lotteryStep: 3 // 领奖到哪一步
+      prizeObj: {}, // 奖品信息
+      defaultImg: require('./img/prize.gif')
     };
   },
   mixins: [prize],
@@ -237,21 +211,6 @@ export default {
       newValue.length > 0
         ? (this.userButtonShow = true)
         : (this.userButtonShow = false);
-    },
-    isWinning(newValue, oldValue){
-      if(newValue){
-        this.$nextTick(()=>{
-          this.audienceText = '中奖啦！恭喜您获得“黑碳科技立体电子魔方';
-          this.isWinning = true;
-          this.getReward = '点击领奖';
-        });
-      }else{
-        this.$nextTick(()=>{
-          this.getReward = '查看中奖名单';
-          this.isWinning = false;
-          this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！';
-        });
-      }
     }
   },
 
@@ -293,7 +252,6 @@ export default {
     },
     // 关闭
     close () {
-      console.log('x');
       this.lotteryResultShow = false; // 抽奖结果
       this.lotteryContentShow = false; // 发起抽奖
       this.reciveAwardShow = false; // 领奖信息
@@ -307,6 +265,7 @@ export default {
     },
     // 点击抽奖
     lotteryShow () {
+      console.warn('点击的是抽奖----');
       this.payoff = true;
       this.lotteryContentShow = true;
       this.lotteryResultShow = false;
@@ -315,34 +274,6 @@ export default {
       this.userKeywords = '';
       this.chooseList = [];
       this.checkLottery()
-    },
-    // 提交领奖人信息
-    // TODO:
-    submitInfo () {
-      console.log('ssssss', this.deliverItem);
-      if (!this.reciveInfo.tel || !this.reciveInfo.name) return this.$message.customerror('手机号与姓名不能为空');
-      const phone = this.reciveInfo.tel.replace(/\s/g, '');// 去除空格
-      const regs = /^1(3|4|5|6|7|8|9)\d{9}$/;
-      if (!regs.test(phone)) return this.$message.customerror('手机号格式错误');
-      // lotteryAward
-      this.$fetch('saveLotteryInfo', {
-        room_id: this.roomId,
-        lottery_id: this.deliverItem.lottery_id,
-        lottery_user_name: this.reciveInfo.name,
-        lottery_user_phone: this.reciveInfo.tel,
-        lottery_user_remark: this.reciveInfo.remarks
-      }).then(res => {
-        if (res.code === 200) {
-          this.reciveAwardShow = false;
-          this.payoff = false;
-          this.reciveInfo = {};
-          this.audienceText = '信息提交成功';
-          // this.$message.customsuccess('提交成功');
-        } else {
-          this.audienceText = '信息提交失败';
-          // this.$message.customerror(res.msg);
-        }
-      });
     },
     // 点击领奖
     getAward () {
@@ -374,6 +305,7 @@ export default {
     position: fixed;
     left: 50%;
     margin-left: -300px;
+    // height: 700px;
     top: 50%;
     margin-top: -200px;
     background: #fff;
@@ -587,6 +519,7 @@ export default {
       }
       .result-table-head{
         text-align: center;
+        color: #333;
         background: #F5F5F5;
         width: 396px;
         line-height: 42px;

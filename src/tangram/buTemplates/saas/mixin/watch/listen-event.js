@@ -104,7 +104,7 @@ export const listenEvent = {
 
       EventBus.$on('lottery_push', msg => {
         console.log('faqichoujiang', msg);
-        this.$refs.lotterySon.startLottery(true);
+        this.$refs.lotterySon.startLottery(msg,true);
       });
 
       // 监听举手上麦

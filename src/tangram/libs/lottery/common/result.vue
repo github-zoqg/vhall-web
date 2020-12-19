@@ -1,8 +1,8 @@
 <template>
   <div class="lottery-result">
     <div class="result-img">
-      <img :src="`${domains.upload_url}/${lotteryResultObj.url}`" alt="">
-      <p>{{lotteryResultObj.text}}</p>
+      <img :src="prizeObj.image_url" alt="">
+      <p>{{prizeObj.award_name}}</p>
     </div>
     <div class="result-table">
         <div class="result-table-head">
@@ -14,29 +14,43 @@
             <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
           </li>
         </ul>
-        <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
+        <el-button v-if="userHost" @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
     </div>
   </div>
 </template>
 <script>
 export default {
   props: {
-    roomId: {
+    roomId: { // 房间id
       type: String
     },
     domains:{
       type: Object
+    },
+    prizeObj:{ // 奖品信息
+      type: Object
+    },
+    lotteryEndResult:{
+      type: Array
+    },
+    userHost: {
+      type: [String, Boolean]
     }
   },
   data() {
     return {
-      defaultImg: require('@/common/images/avatar_min.png')
+      defaultImg: require('@/common/images/avatar_min.png'),
+      startButtonDisabled: false, // 开始按钮禁用状态
+    }
+  },
+  methods: {
+    startReward(){
+      this.$emit('startReward')
     }
   },
 }
 </script>
 <style lang="less" scoped>
-
     .lottery-result {
       background: #fff;
       margin-bottom: 32px;
@@ -61,6 +75,7 @@ export default {
         text-align: center;
         background: #F5F5F5;
         width: 396px;
+        color: #333;
         line-height: 42px;
         margin: 0 auto;
         border-radius: 8px 8px 0px 0px;

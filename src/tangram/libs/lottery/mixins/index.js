@@ -3,10 +3,8 @@ const mixins = {
     checkLottery(){
       this.$fetch('v3CheckLottery', {}).then(res=>{
         if(res.code == 200){
-          console.warn(res.data, '检测当前是否在抽奖');
-          this.lotteryInfo = res.data
-          console.warn(this.lotteryInfo)
           if(res.data.lottery_status == 0){
+            this.lotteryInfo = res.data
             this.prizeShow = true
             this.lotteryContentShow = false
             this.processingObj = {
@@ -14,9 +12,11 @@ const mixins = {
               text: res.data.remark,
               title: res.data.title
             }
-            this.dialogTitle = res.data.title
+            this.processingObj.title = res.data.title
           }else{
             // 未开始抽奖  开始获取可抽奖人数及其他信息
+            this.joinLottery = '1'
+            this.participationPass = ''
             this.getLotteryCount()
           }
         }else{
@@ -61,9 +61,6 @@ const mixins = {
         if(res.code == 200){
           console.warn('获取符合抽奖的人数',res);
           this.getPrizeCount = res.data.count || 0;
-          // this.lotteryInfo = res.data;
-          // this.lotteryContentShow = false;
-          // this.prizeShow = true;
           this.userList = res.data.list
           if(res.data.list.length !=0){
             this.userList = res.data.list.filter((u) => {
@@ -81,7 +78,14 @@ const mixins = {
     },
     // 开始抽奖
     startReward () {
+      if(this.prizeList.length ==0 ){
+        this.$message.warning('中奖商品不能为空，请先去控制台进行添加!!!')
+        return
+      }
       if(this.lotteryResultShow){
+        this.getPrizeCount = 0
+        this.getLotteryCount()
+
         this.lotteryResultShow = false
         this.lotteryContentShow = true
         return
@@ -127,27 +131,11 @@ const mixins = {
           this.processingObj.url = res.data.icon
           this.processingObj.text = res.data.remark
           this.processingObj.title = this.dialogTitle = res.data.title
+          this.prizeObj = res.data.award_snapshoot
         }else{
           this.$message.warning(res.msg)
         }
       })
-      // this.$vhallFetch('add',).then(res => {
-      //   this.startButtonDisabled = false;
-      //   if (res.code === 200) {
-      //     console.log(res, 'res------');
-      //     this.disTimeSet = setInterval(() => {
-      //         this.disabledTime--;
-      //       if(this.disabledTime<=0){
-      //         clearInterval(this.disTimeSet);
-      //       }
-      //     }, 1000);
-      //     console.log('dialogtitle>>>>>>>>>>>>>', this.dialogTitle);
-      //     this.dialogTitle = '趣味抽奖！';
-      //     this.closeShow = false;
-      //   }
-      // }).catch(() => {
-      //   this.startButtonDisabled = false;
-      // });
     },
 
 
