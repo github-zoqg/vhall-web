@@ -15,9 +15,9 @@
           <div class="give-item">
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
-                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`" :contenteditable="Boolean(item.is_system) ? false : 'plaintext-only'" >
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
-                        <el-input v-model="givePrizeForm[item.field_key]"  type="textarea" :placeholder="`请输入${item.field}`" :autosize="{ minRows: 4}" v-else readonly></el-input>
+                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_Key}`" :contenteditable="Boolean(item.is_system) ? false : 'plaintext-only'" >
+                    <el-input v-model="givePrizeForm[item.field_Key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
+                        <el-input v-model="givePrizeForm[item.field_Key]"  type="textarea" :placeholder="`请输入${item.field}`" :autosize="{ minRows: 4}" v-else readonly></el-input>
                         <div class="isDelete">
                           <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                           <el-switch
@@ -154,28 +154,28 @@ export default {
         {
           is_system: 1,
           field: '姓名',
-          field_key: 'name',
+          field_Key: 'name',
           is_required: true,
           rank: 1,
         },
         {
           is_system: 1,
           field: '手机号',
-          field_key: 'phone',
+          field_Key: 'phone',
           is_required: true,
           rank: 2,
         },
         {
           is_system: 1,
           field: '地址',
-          field_key: 'adress',
+          field_Key: 'adress',
           is_required: false,
           rank: 3,
         },
         {
           is_system: 0,
           field: '自定义1',
-          field_key: 'user_define_100',
+          field_Key: 'user_define_100',
           is_required: false,
           rank: 100,
         },
@@ -256,7 +256,7 @@ export default {
       this.givePrizeList.push({
         is_system: 0,
         field: `自定义${this.index}`,
-        field_key: 'user_define_' + (this.givePrizeList.length + 97),
+        field_Key: 'user_define_' + (this.givePrizeList.length + 97),
         is_required: false,
         rank: this.givePrizeList.length + 97,
       });
@@ -285,7 +285,7 @@ export default {
       let nameList = ['姓名','地址', '手机号'];
       this.givePrizeList.map((item, index) => {
         if (!item.is_system) {
-          item.field =  this.$refs[this.givePrizeList[index].field_key][0].$el.childNodes[0].innerHTML;
+          item.field =  this.$refs[this.givePrizeList[index].field_Key][0].$el.childNodes[0].innerHTML;
           if (nameList.includes(item.field)) {
             this.$message.error('输入名字不能相同');
             this.isError = true;
