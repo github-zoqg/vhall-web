@@ -24,15 +24,19 @@
 </template>
 
 <script>
+import {sessionOrLocal} from "@/utils/utils";
+
 export default {
   name: "accountSet.vue",
   methods: {
     initComp() {
     },
     bindWx() {
+      sessionOrLocal.set('tag', 'bind', 'localStorage');
       window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
     },
     bindQQ() {
+      sessionOrLocal.set('tag', 'bind', 'localStorage');
       window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
     }
   }

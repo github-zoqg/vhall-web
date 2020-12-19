@@ -192,12 +192,13 @@ export function checkAuth(to, from, next) {
   }
   // 第一步，判断是否第三方快捷登录
   let user_auth_key = getQueryString('user_auth_key');
-  // debugger
+  let auth_tag = sessionOrLocal.get('tag', 'localStorage');
   if (user_auth_key) {
+    debugger
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
       key: getQueryString('user_auth_key'),
-      scene_id: 1
+      scene_id: auth_tag === 'bind' ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
@@ -208,10 +209,34 @@ export function checkAuth(to, from, next) {
         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
         return;
       } else {
-        // 获取回调token失败
-        this.$message.error('登录信息获取失败，请重新登录');
-        sessionOrLocal.clear('localStorage');
-        sessionOrLocal.clear();
+        if (auth_tag === 'bind') {
+          if (res.code === 11042) {
+            // 若是账号绑定异常，提示用户信息
+            this.$confirm('当前微信已在别的账号绑定，是否强制绑定?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              customClass: 'zdy-message-box'
+            }).then(() => {
+              fetchData('callbackUserInfo', {
+                key: getQueryString('user_auth_key'),
+                scene_id: 3,
+                force: 1
+              }).then(res => {
+                // 绑定成功
+                window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+                return;
+              }).catch(e => {})
+            }).catch(() => {
+            });
+          } else {
+            // 绑定失败，不做任何处理
+          }
+        } else {
+          // 获取回调token失败
+          this.$message.error('登录信息获取失败，请重新登录');
+          sessionOrLocal.clear('localStorage');
+          sessionOrLocal.clear();
+        }
       }
     });
     return;
