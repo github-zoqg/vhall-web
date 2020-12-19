@@ -206,15 +206,16 @@ export default {
     getAllData(params) {
       let promiseArr = [] //promise异步数组
       let obj = {};
+      let total = {};
       promiseArr.push(
         this.$fetch('getWebinarSwitchList', params).then(res => {
-          obj.total_live_time = res.data.total_live_time;
-          obj.total = res.data.total;
+          total.total_live_time = res.data.total_live_time;
+          total.total = res.data.total;
         })
       )
       promiseArr.push(
         this.$fetch('getMaxuv', params).then(res => {
-          obj.max_onlines = res.data.max_onlines;
+          total.max_onlines = res.data.max_onlines;
         })
       )
       promiseArr.push(
@@ -225,7 +226,8 @@ export default {
         })
       )
       Promise.all(promiseArr).then(() => {
-        this.mainKeyData = { ...obj }
+        this.mainKeyData = {...obj, ...total};
+        console.log(this.mainKeyData, '???????????????');
       })
       // 获取用户统计
       this.$fetch('getDateUvinfo', params).then(res => {

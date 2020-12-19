@@ -65,6 +65,13 @@ export default {
   components: {
     preQuestion
   },
+  watch: {
+    dataBaseVisible() {
+      if (this.dataBaseVisible) {
+        this.getTableList();
+      }
+    }
+  },
   computed: {
     noMore() {
       //当起始页数大于总页数时停止加载
@@ -75,7 +82,9 @@ export default {
     }
   },
   mounted() {
-    this.getTableList();
+    // if (this.dataBaseVisible) {
+    //   this.getTableList();
+    // }
   },
   methods: {
     load() {

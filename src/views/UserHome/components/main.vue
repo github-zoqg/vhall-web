@@ -43,7 +43,7 @@
                 <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label>{{item | liveTag}}
               </span>
               <span class="hot"><i class="el-icon-view"></i>{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</span>
-              <img :src="item.img_url" alt="" />
+              <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
             </div>
             <div class="bottom">
               <div class="">

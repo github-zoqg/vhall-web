@@ -56,22 +56,21 @@ export default {
     onlyChatMess: {
       handler(newValue, oldValue){
         if(newValue.type){
+          console.warn(newValue, 7777777);
           this.$nextTick(()=>{
             let isFlag = this.userList.some((ele, index) =>{
               this.acrivePrivate = index
-              return ele.id == newValue.item.join_id
+              return ele.user_id == newValue.item.account_id
             })
             if(!isFlag){
               if(newValue.item){
-                newValue.id = newValue.item.join_id
+                newValue.user_id = newValue.item.account_id
               }
               this.userList.push(newValue)
               this.acrivePrivate = this.userList.length - 1
-            }else{
-              // this
             }
             this.activeName = newValue.nickname
-            this.getDefaultContent(newValue.item.join_id)
+            this.getDefaultContent(newValue.item.account_id)
           })
         }
       },
@@ -87,13 +86,14 @@ export default {
     }
   },
   methods: {
-    getDefaultContent(to_userID){
+    getDefaultContent(toAccountID){
       let _data = {
         room_id: this.userInfo.interact.room_id,
         start_time: '',
         pos: 0,
         limit: 100,
-        to_user: to_userID,
+        // to_user: '16422715',
+        to_user: toAccountID,
         webinar_id: this.webinar_id
       }
       this.chatList = []
@@ -124,7 +124,7 @@ export default {
       this.activeName = user.nickname
       this.acrivePrivate = index
       console.warn(this.userList[index]);
-      this.getDefaultContent(this.userList[index].id)
+      this.getDefaultContent(this.userList[index].user_id)
     },
     roleClassFilter (value) {
       return value == '1' ? 'host' : value == '3' ? 'assistant' : 'guest';
@@ -142,22 +142,23 @@ export default {
       }
       let data = {
         avatar: this.userInfo.join_info.avatar,
-        target_id: this.userList[this.acrivePrivate].id,
+        // target_id: '16422715',
+        target_id: this.userList[this.acrivePrivate].user_id,
         type:'text',
         barrageTxt: this.privateValue.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>'),
         text_content: this.privateValue
       };
       // 为保持一致   故传了多个不同key  同value
-      console.warn(this.userList[this.acrivePrivate], 'this.userList[this.acrivePrivate]');
       let context = {
-        to: this.userList[this.acrivePrivate].id,
+        // to: '16422715',
+        to: this.userList[this.acrivePrivate].user_id,
         nickname: this.userInfo.join_info.nickname, // 昵称
-        account_id: '16421384',
         nick_name: this.userInfo.join_info.nickname,
         user_name:  this.userInfo.join_info.nickname,
         role_name: this.roleClassFilter(this.userInfo.join_info.role_name), // 角色 1主持人2观众3助理4嘉宾
         user_role: this.roleClassFilter(this.userInfo.join_info.role_name),
-        user_id: this.userInfo.join_info.join_id,
+        user_id: this.userInfo.join_info.third_party_user_id,
+        // user_id: '16421384',
         app: 'vhall'
       };
       this.$nextTick(()=>{

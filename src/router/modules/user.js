@@ -73,11 +73,11 @@ const router = [
         meta: { auth: true, title: '子账号管理', name: 'sonMgr'}
       },
       {
-        path: `${window.location.origin}/user/home/${sessionOrLocal.get('userId')}`,
+        path: `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/user/home/${sessionOrLocal.get('userId')}`,
         meta: { auth: true, title: '个人主页', name: 'homeMain' }
       },
       {
-        path: '/allocation/:str(\\d+)',
+        path: '/allocation',
         component: () => import('@/views/AccountModule/allocation'),
         meta:{ auth: true, title: '用量分配', name: 'allocation', activeMenu: '/account/son'},
         hidden: true

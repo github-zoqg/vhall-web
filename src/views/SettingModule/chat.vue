@@ -340,7 +340,8 @@ export default {
     },
     // 下载模板
     downloadHrefHandle() {
-      window.open(this.downloadHref);
+      let winDom = window.open('_blank'); // 先打开页面
+      winDom.location = `${this.downloadHref}`; // 后更改页面地址
     },
     // 文件上传成功
     uploadSuccess(res, file){

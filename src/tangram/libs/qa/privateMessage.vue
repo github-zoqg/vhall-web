@@ -5,7 +5,7 @@
         class="meto"
         href="javascript:;"
         :title="msg.context.user_name"
-        @click="atHost({name:msg.context.user_name,joinId:msg.sender_id})"
+        @click="atHost({name:msg.context.user_name,joinId:msg.sender_id, contextUserId: msg.context.user_id})"
       >{{msg.context.user_name}}</a>对我说
     </p>
     <p v-else class="userinfo">
@@ -14,7 +14,7 @@
         class="tome"
         href="javascript:;"
         :title="msg.context.user_name"
-        @click="atHost({name:msg.context.user_name,joinId:msg.context.sender_id})"
+        @click="atHost({name:msg.context.user_name,joinId:msg.context.sender_id, contextUserId: msg.context.user_id})"
       >{{msg.context.user_name}}</a>说
     </p>
     <p class="content" v-html="msg.data"></p>

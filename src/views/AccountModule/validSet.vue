@@ -4,11 +4,11 @@
       <span class="pwd--circle blue"></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">账号密码</label></li>
-        <li><label class="card--txt">当前密码强度：</label>
-          <span class="card--status level_high" v-if="pwdLevel === 'high'">强</span>
-          <span class="card--status level_center" v-else-if="pwdLevel === 'center'">一般</span>
-          <span class="card--status level_min" v-else-if="pwdLevel === 'min'">弱</span>
-          <span class="card--status" v-else>--</span>
+        <!--<li><label class="card&#45;&#45;txt">当前密码强度：</label>-->
+        <!--  <span class="card&#45;&#45;status level_high" v-if="pwdLevel === 'high'">强</span>
+          <span class="card&#45;&#45;status level_center" v-else-if="pwdLevel === 'center'">一般</span>
+          <span class="card&#45;&#45;status level_min" v-else-if="pwdLevel === 'min'">弱</span>
+          <span class="card&#45;&#45;status" v-else>&#45;&#45;</span>-->
         </li>
       </ul>
       <div class="card--blue">

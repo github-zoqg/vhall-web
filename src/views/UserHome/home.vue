@@ -1,7 +1,7 @@
 <template>
  <div class="home-main">
    <OldHeader></OldHeader>
-   <div class="v-head-bg" :style="`background: url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) repeat-x rgb(49, 49, 49);`">
+   <div class="v-head-bg" :style="{ backgroundImage: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'})`}">
      <div class="v-head-img"></div>
    </div>
    <div class="home-main-container">

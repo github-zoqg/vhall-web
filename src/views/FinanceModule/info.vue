@@ -41,17 +41,17 @@
             @onSearchFun="getAccountList('search')"
         >
         </search-area>
-      <div class="content-grid" v-if="versionType == '1'">
+      <div class="content-grid" v-if="!versionType">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
-            <h1>{{ trendData.webinar_num }}</h1>
+            <h1>{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
          <div class="grid-item">
           <div class="grid-content">
             <p>最高并发（方）</p>
-            <h1>{{ trendData.max_uv }}</h1>
+            <h1>{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
       </div>
@@ -59,25 +59,25 @@
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
-            <h1>{{ trendData.webinar_num | formatMoney }}</h1>
+            <h1>{{ trendData.webinar_num | formatMoney || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>累计使用流量（GB）</p>
-            <h1>{{ trendData.total_flow | formatMoney }}</h1>
+            <h1>{{ trendData.total_flow | formatMoney || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>直播使用流量（GB）</p>
-            <h1>{{ trendData.live_flow | formatMoney }}</h1>
+            <h1>{{ trendData.live_flow | formatMoney || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>回放使用流量（GB）</p>
-            <h1>{{ trendData.vod_flow | formatMoney }}</h1>
+            <h1>{{ trendData.vod_flow | formatMoney || 0 }}</h1>
           </div>
         </div>
       </div>
@@ -365,7 +365,7 @@ export default {
       this.$fetch(url, this.lineParams).then(res => {
         if (res.code == 200) {
            this.lineParams = {};
-          this.$message.success(`用量统计导出成功，请去下载中心下载`);
+          this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出成功，请去下载中心下载`);
         } else {
           this.$message.error(`用量统计${res.msg}`);
         }
@@ -374,10 +374,10 @@ export default {
     // 导出消费账单
     exportAccount() {
       let url = this.versionType == '1' ? 'exportFlowDetail' : 'exportOnlineDetail';
-      this.$fetch(url, this.lineParams).then(res => {
+      this.$fetch(url, this.dataParams).then(res => {
         if (res.code == 200) {
           this.dataParams = {};
-          this.$message.success(`消费账单导出成功，请去下载中心下载`);
+          this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出成功，请去下载中心下载`);
         } else {
           this.$message.error(`消费账单${res.msg}`);
         }

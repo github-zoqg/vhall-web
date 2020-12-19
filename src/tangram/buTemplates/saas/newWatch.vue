@@ -275,6 +275,7 @@
             :joinId="saasJoinId"
             :thirdPartyId="roomInfo.third_party_user_id"
             :isEmbed="isEmbed"
+            :selfName='userInfo.nick_name'
             :roleName='false'
             ref="qa"
           ></qa>
@@ -1079,7 +1080,6 @@ export default {
           window.chatSDK = chat.message;
           this.initChat = true
           console.log('chatSDK is Ready');
-
           if (this.isEmbedVideo) {
             this.embedBarrage();
             this.initNotice();

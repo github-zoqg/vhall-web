@@ -386,7 +386,7 @@ export default {
       this.privateFlag = true
       this.$nextTick(()=>{
         if(this.priteChatList.length!=0){
-          this.$refs.private.getDefaultContent(this.priteChatList[0].id, 'father')
+          this.$refs.private.getDefaultContent(this.priteChatList[0].user_id, 'father')
         }
       })
     },
@@ -446,7 +446,7 @@ export default {
           console.log(e);
         }
         Object.assign(msg, msg.data);
-        // console.warn('坚挺到消息的派发----1-', msg);
+        console.warn('私聊处send****************************', msg);
          this.$EventBus.$emit(msg.type, msg);
       })
     },

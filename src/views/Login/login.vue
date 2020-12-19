@@ -317,6 +317,8 @@ export default {
         if(res && res.code === 200) {
           this.mobileKey = '';
           sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+          // 存储控制台-channel_id频道
+          sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
           this.$router.push({path: '/'});
         } else {
           this.$message.error(res.msg || '登录失败！');

@@ -192,6 +192,7 @@ export function checkAuth(to, from, next) {
   }
   // 第一步，判断是否第三方快捷登录
   let user_auth_key = getQueryString('user_auth_key');
+  // debugger
   if (user_auth_key) {
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
@@ -199,9 +200,13 @@ export function checkAuth(to, from, next) {
       scene_id: 1
     };
     fetchData('callbackUserInfo', params).then(res => {
-      if (res && res.code === 200) {
+      if (res.data && res.code === 200) {
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-        next({path: '/'})
+        sessionOrLocal.set('sso_token', res.data.sso_token);
+        sessionOrLocal.set('userId', res.data.user_id);
+        // next({path: '/home'})
+        window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+        return;
       } else {
         // 获取回调token失败
         this.$message.error('登录信息获取失败，请重新登录');

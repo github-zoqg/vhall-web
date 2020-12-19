@@ -17,7 +17,7 @@
         <li><label class="card--txt">当前尚未绑定微信</label></li>
       </ul>
       <div class="card--blue">
-        <el-button type="text">绑定</el-button>
+        <el-button type="text" @click="bindWx">绑定</el-button>
       </div>
     </div>
   </div>
@@ -29,9 +29,11 @@ export default {
   methods: {
     initComp() {
     },
-    bindWx() {},
+    bindWx() {
+      window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
+    },
     bindQQ() {
-      window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?platform=17&jump_url=${encodeURI('http://localhost:8080/#/account/info')}`)
+      window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
     }
   }
 };

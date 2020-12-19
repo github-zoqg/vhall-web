@@ -20,28 +20,22 @@
         </div>
         <!-- 抽奖结果 -->
         <div class="lottery-result " v-if="lotteryResultShow == 1">
-          <div v-if="lotteryInfo.lottery_status==1">
+          <div v-if="lotteryInfo.lottery_status==1" style="text-align: center;">
             <div class="recive-prize"  v-if="lotteryStep == 2" >
               <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
               <el-form ref="forms" class="form-style">
-                <el-form-item >
-                  <el-input class="beforeStar"  required v-model="reciveInfo.name" placeholder="请输入姓名"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-input class="beforeStar"  v-model="reciveInfo.tel" placeholder="请输入手机号"></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-input type="textarea" :rows="2" placeholder="请输入地址" v-model="reciveInfo.remarks"> </el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button @click="submitInfo" class="common-but reward-submmit">提交</el-button>
+                <el-form-item :label="item.field" v-for="(item, index) in [12, 21]" :key="index">
+                  <el-input class="beforeStar"  :required='item.is_required' v-model="inddex" placeholder="请输入姓名"></el-input>
                 </el-form-item>
               </el-form>
             </div>
             <div class="Audience-one" v-show="lotteryStep == 1 || lotteryStep == 3">
-              <img class="title-img" :src="$img" alt="">
+              <img class="title-img" :src="promptImg" alt="">
               <p :class="{'winning-status': submitWinning}">{{ audienceText }}</p>
             </div>
+            <template  v-if="lotteryStep == 4">
+              <Result :domains='domains' :lotteryResultObj='lotteryResultObj'></Result>
+            </template>
             <el-button @click="getAward" class="common-but">{{ getReward }}</el-button>
           </div>
         </div>
@@ -51,7 +45,11 @@
   </div>
 </template>
 <script>
+import Result from './common/result'
 export default {
+  component:{
+      Result
+  },
   props: {
     roomId: {
       type: String
@@ -89,7 +87,9 @@ export default {
       prizeShow: false, //抽奖显示页
       chatLoginStatus: false, //是否需要登录
       lotteryResultShow: false, //
-      showLottery:false, // 观看端打赏展示
+      showLottery:false, //  观看端打赏展示
+      promptImg: require('./img/win.png'),
+      lotteryResultObj:{}
     };
   },
   watch: {
@@ -97,7 +97,8 @@ export default {
       console.warn('isWinning',newValue, oldValue, '发生变化');
       if(newValue){
         this.$nextTick(()=>{
-          this.audienceText = '中奖啦！恭喜您获得“黑碳科技立体电子魔方';
+          this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
+          this.promptImg = require('./img/win.png')
           this.isWinning = true;
           this.getReward = '点击领奖';
         });
@@ -105,7 +106,9 @@ export default {
         this.$nextTick(()=>{
           this.getReward = '查看中奖名单';
           this.isWinning = false;
+          this.promptImg = require('./img/noWin.png')
           this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！';
+          this.getReward = '查看中奖名单';
         });
       }
     }
@@ -134,6 +137,53 @@ export default {
     },
     // 点击领奖
     getAward () {
+      console.warn(this.lotteryStep, '提交到哪一步');
+      if(this.lotteryStep == 1){
+        this.lotteryStep = 2
+        if(this.getReward != '立即领奖'){
+          console.warn('点击   进入下一步查看中奖名单');
+          return
+        }
+        this.getReward = '提交';
+      }else if(this.lotteryStep == 2){
+        // if (!this.reciveInfo.tel || !this.reciveInfo.name) return this.$message.customerror('手机号与姓名不能为空');
+        // const phone = this.reciveInfo.tel.replace(/\s/g, '');// 去除空格
+        // const regs = /^1(3|4|5|6|7|8|9)\d{9}$/;
+        // if (!regs.test(phone)) return this.$message.customerror('手机号格式错误');
+        this.$fetch('saveLotteryInfo', {
+          room_id: this.roomId,
+          lottery_id: 1751933,
+          lottery_user_name: 'cxs',
+          lottery_user_phone: 13783451023,
+          // lottery_id: this.deliverItem.lottery_id,
+          // lottery_user_name: this.reciveInfo.name,
+          // lottery_user_phone: this.reciveInfo.tel,
+        }).then(res => {
+          if (res.code === 200) {
+            // this.reciveAwardShow = false;
+            // this.payoff = false;
+            // this.reciveInfo = {};
+            this.audienceText = '信息提交成功';
+
+          } else {
+            this.audienceText = '信息提交失败';
+          }
+          this.lotteryStep = 3
+          this.getReward = '查看中奖名单';
+        });
+      }else if(this.lotteryStep == 3){
+        console.warn();
+        this.$fetch('v3GetWineList', {
+          room_id: this.roomId,
+          lottery_id: 1751933
+        }).then(res=>{
+          if (res.code === 200) {
+            console.warn('获取到的中奖人列表---', res.data);
+          } else {
+            this.$message.warning(res.msg)
+          }
+        })
+      }
       // if (this.hasAward) {
       //   this.lotteryResultShow = false; // 抽奖结果
       //   this.lotteryContentShow = false; // 发起抽奖
@@ -162,7 +212,10 @@ export default {
           }else{
             // 当前不存在抽奖
             this.lotteryResultShow = true
-            this.isWinning = res.data.win == 0
+            this.isWinning = res.data.win == 1
+            if(this.isWinning){
+              this.getStepText()
+            }
             console.warn(this.isWinning, 'his.isWinning');
           }
         }else{
@@ -183,6 +236,7 @@ export default {
       }).then(res=>{
         if(res.code == 200){
           console.warn('获取当前页面中奖以后', res.data);
+          this.stepHtmlList = res.data
         }else{
           this.$message.warning(res.msg)
         }
@@ -372,6 +426,7 @@ export default {
 
     .lottery-result {
       background: #fff;
+      text-align: center;
       margin-bottom: 32px;
       .result-img{
         text-align: center;
@@ -459,9 +514,19 @@ export default {
         text-align: left;
         width: 356px;
       }
-      .form-style {
+      .form-style ::v-deep{
         width: 356px;
         margin: 0 auto;
+        .el-form-item{
+          margin-bottom: 12px;
+        }
+        .el-form-item__label{
+          width: 55px;
+        }
+        .el-form-item__content{
+          width: calc(100% - 70px);
+          display: inline-block;
+        }
       }
       .common-but:hover {
         background: #fe6a6a;
@@ -490,6 +555,7 @@ export default {
 .Audience-one{
   text-align: center;
   margin: 0 auto;
+
   img{
     margin: 42px auto 24px;
     display: block;

@@ -179,8 +179,8 @@
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
-                  :active-value="1"
-                  :inactive-value="0"
+                  :active-value=1
+                  :inactive-value=0
                   active-color="#FB3A32"
                   inactive-color="#CECECE">
                 </el-switch>
@@ -324,6 +324,7 @@ export default {
       this.form.fee = null;
       this.form.is_preview = 0;
       this.form.preview_time = 5;
+      console.log(this.form, '切换后表单值')
     },
     // 获取已经设置过的观看限制信息
     viewerSetGet() {
@@ -380,6 +381,14 @@ export default {
           if(valid) {
             flag = true;
             params = Object.assign(this.form, this[formName]);
+            // 若是非白名单，不传递white_id
+            if(formName !== 'whiteForm') {
+              try {
+                delete params.white_id;
+              } catch (e) {
+                console.log('去除白名单参数', e);
+              }
+            }
           }
         });
       } else if(formName === 'whiteForm') {

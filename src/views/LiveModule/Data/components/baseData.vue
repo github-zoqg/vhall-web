@@ -344,7 +344,6 @@ export default {
       });
     },
     getOtherInfo() {
-      console.log('111111111111');
       //问答
       this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.recordNum = res.data.total || 0;
