@@ -21,7 +21,10 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
-    <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question>
+    <div class="preQuestion" v-if="isShowQuestion">
+
+    </div>
+    <!-- <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question> -->
   </div>
 </template>
 <script>
