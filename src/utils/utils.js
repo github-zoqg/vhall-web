@@ -197,7 +197,7 @@ export function checkAuth(to, from, next) {
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
       key: getQueryString('user_auth_key'),
-      scene_id: auth_tag === 'bind' ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
+      scene_id: auth_tag.indexOf('bind') !== -1 ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
