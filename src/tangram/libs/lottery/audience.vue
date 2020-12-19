@@ -11,7 +11,7 @@
         </div>
         <!-- 抽奖进行中 -->
         <div class="prize-pending" v-if="lotteryInfo.lottery_status==0 || !lotteryResultShow">
-          <img :src="processingObj.url ? `${domains.upload}/${processingObj.url}` : defaultImg" alt />
+          <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
           <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
           <div class="audience-code" v-if="lotteryInfo.lottery_type == 8 || codeLottery">
             <p>发送口令<span>“{{lotteryInfo.command}}”</span>参与抽奖吧！</p>
