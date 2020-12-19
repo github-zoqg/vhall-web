@@ -37,7 +37,7 @@ import 'moment/locale/zh-cn';
 
 import { getParams } from './utils/general';
 import fetchData from './api/fetch';
-
+window.test = sessionOrLocal
 Vue.prototype.$fetch = fetchData;
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;

@@ -105,7 +105,6 @@
               </div>
               <div class="icon-warp" v-show="localitem.document_id">
                 <i class="el-icon-delete" @click="showDeleteDialog(localitem.id, index, true)"></i>
-
               </div>
             </li>
             <li v-for="doc in docListFiltered" :key="doc.document_id">
@@ -381,6 +380,56 @@ export default {
     },
     // ===============================对外暴露方法 end==============================
     listenEvent () {
+      window.chatSDK.onCustomMsg(msg =>{
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============直播间内监听进度消息==============', msg.data)
+        if(msg.data.type === 'host_msg_webinar') {
+          // 开始进行对比
+          let _msgData = msg.data.data
+          console.warn(msg.data.data);
+          this.$nextTick(()=>{
+            this.locaListFiltered.forEach(item=>{
+              if (_msgData.document_id === item.document_id) {
+                const statusJpeg = Number(_msgData.status_jpeg);
+                const status = Number(_msgData.status);
+                console.warn('简体信息----', item, statusJpeg);
+                if (statusJpeg === 0 && status === 0) {
+                  item.transform_schedule_str = '待转码';
+                  item.page = Number(_msgData.page);
+                  item.transcoded = false;
+                } else if (statusJpeg === 100 || status === 100) {
+                  item.transform_schedule_str = '转码中';
+                  item.page = Number(_msgData.page);
+                  item.transcoded = false;
+                } else if (statusJpeg === 200 || status === 200) {
+                  item.transform_schedule_str = '转码完成';
+                  item.page = Number(_msgData.page);
+                  item.transcoded = true;
+                } else {
+                  item.transform_schedule_str = '转码失败';
+                  item.page = Number(_msgData.page);
+                  item.transcoded = false;
+                }
+              }
+            })
+          })
+          console.warn(this.locaListFiltered);
+          // this.locaListFiltered.forEach((item) => {
+          // })
+        }
+      })
       EventBus.$on('doc_convert_jpeg', res => { // 极速版
         console.log('监听到doc_convert_jpeg事件');
         let data = res.data;

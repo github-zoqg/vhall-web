@@ -1527,7 +1527,7 @@ export default {
           let context = {
             nickname: this.userInfo.nick_name, // 昵称
             avatar: this.userInfo.avatar
-              ? `https:${this.userInfo.avatar}`
+              ? `${this.userInfo.avatar}`
               : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
             // pv: 100, // pv
             role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
