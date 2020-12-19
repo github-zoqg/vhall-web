@@ -199,9 +199,12 @@ export function checkAuth(to, from, next) {
       scene_id: 1
     };
     fetchData('callbackUserInfo', params).then(res => {
-      if (res && res.code === 200) {
+      if (res.data && res.code === 200) {
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-        next({path: '/'})
+        sessionOrLocal.set('sso_token', res.data.sso_token);
+        sessionOrLocal.set('userId', res.data.user_id);
+        next({path: '/home'})
+        return;
       } else {
         // 获取回调token失败
         this.$message.error('登录信息获取失败，请重新登录');

@@ -99,6 +99,7 @@
 </template>
 <script>
 import QRcode from 'qrcode';
+import Env from "@/api/env";
 export default {
   props: ['money', 'type', 'userInfo'],
   data() {
@@ -136,7 +137,6 @@ export default {
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
-      link: 'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?platform=wab&jump_url=https://t-saas-dispatch.vhall.com/bangWeixin',
       rules: {
         money: [
           { validator: validateMoney, trigger: 'blur'  }
@@ -165,16 +165,6 @@ export default {
           this.nickName = item.nick_name;
         }
       });
-    },
-    // 获取绑定微信二维码
-    getBangWeinCode() {
-      QRcode.toDataURL(
-        this.link,
-        (err, url) => {
-          console.log(err, url);
-          this.qrcode = url;
-        }
-      );
     },
     // 提现短信验证码
     getCode() {
@@ -223,9 +213,9 @@ export default {
       //  this.dialogCashVisible = false;
       });
     },
-    // 绑定微信
+    // 绑定微信 ---获取绑定微信二维码
     bangWeixin() {
-      this.getBangWeinCode();
+      this.qrcode = `${Env.staticLinkVo.aliQr}https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/bangWeixin`;
     },
     /**
      * 倒计时函数
