@@ -208,11 +208,11 @@ export function checkAuth(to, from, next) {
         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
         return;
       } else {
-        if (auth_tag === 'bind') {
+        if (auth_tag.indexOf('bind') !== -1) {
           if (res.code === 11042) {
             // 若是账号绑定异常，提示用户信息
-            this.$confirm('当前微信已在别的账号绑定，是否强制绑定?', '提示', {
-              confirmButtonText: '确定',
+            this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
+              confirmButtonText: '绑定',
               cancelButtonText: '取消',
               customClass: 'zdy-message-box'
             }).then(() => {
