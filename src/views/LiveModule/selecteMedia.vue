@@ -97,7 +97,6 @@ export default {
         pageNum: 1
       },
       totalPages: 0,
-      recordInfo: {},
       tableSelect: [],
       keyWords:''
     };
@@ -109,7 +108,8 @@ export default {
     dialogVisible() {
       //获取资料中心的音视频
       if (this.dialogVisible) {
-        this.recordInfo = {};
+        this.tableSelect = [];
+        this.docList = [];
         this.getMediaList();
       }
     }

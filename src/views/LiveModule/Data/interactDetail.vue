@@ -292,7 +292,7 @@ export default {
         {
           name: '查看',
           methodName: 'lookDetail',
-          path: '/lookSingleQuestion',
+          path: '/live/lookSingleQuestion',
         }
       ]
     };
@@ -656,7 +656,8 @@ export default {
     // 红包列表
     getRedpacketList() {
       let pageInfo = this.$refs.tableList.pageInfo;
-      pageInfo.pos ++;
+      pageInfo.pos ++ ;
+      // pageInfo.limit--;
       // if (!pageInfo.pos) {
       //   pageInfo.pos = 1;
       // } else
@@ -793,7 +794,7 @@ export default {
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
-      that.$router.push({path: val.path, query: {id:this.webinarId,surveyId: rows.survey_id, subject: rows.subject}});
+      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id, subject: rows.subject}});
     }
   }
 };
