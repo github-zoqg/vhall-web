@@ -656,7 +656,7 @@ export default {
     // 红包列表
     getRedpacketList() {
       let pageInfo = this.$refs.tableList.pageInfo;
-      pageInfo.pos ++ ;
+      pageInfo.pos = pageInfo.pageNum;
       // pageInfo.limit--;
       // if (!pageInfo.pos) {
       //   pageInfo.pos = 1;
