@@ -418,6 +418,7 @@ export default {
       }
       window.VhallChat.createInstance(option, (event) => {
         this.$Chat = event.message; // 聊天实例句柄
+        window.privateChat = event.message
         let disable = event.disable; // 个人是否被禁言，bool值
         let disable_all = event.disable_all; // 是否频道被禁言，bool值
         this.monitor()

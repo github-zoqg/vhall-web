@@ -85,6 +85,25 @@ export default {
       }
     }
   },
+  mounted() {
+    // this.$EventBus.$on('live_broadcast_stop',
+    window.privateChat.onChat((msg)=>{
+      if (typeof msg !== 'object') {
+        msg = JSON.parse(msg);
+      }
+      try {
+        if (typeof msg.context !== 'object') {
+          msg.context = JSON.parse(msg.context);
+        }
+        if (typeof msg.data !== 'object') {
+          msg.data = JSON.parse(msg.data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+      console.log('============私聊消息发送===============',msg);
+    })
+  },
   methods: {
     getDefaultContent(toAccountID){
       let _data = {
