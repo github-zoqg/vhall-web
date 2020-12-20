@@ -111,7 +111,7 @@
 
       <!-- 抽奖 -->
       <div class="prize-pending" v-if="prizeShow" >
-        <img :src="processingObj.url ? `${domains.upload_url}/${processingObj.url}` : defaultImg" alt />
+        <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
         <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
         <el-button @click="endLottery" :disabled='disabledTime!=0' class="common-but lottery-end">
           结束抽奖 <span v-if="disabledTime!=0">({{disabledTime}}s) </span>
