@@ -189,14 +189,13 @@ const apis = {
 
   // 关键词
   getKeywordList: ['/v3/interacts/keyword/get-list', 'POST'], // 获取关键词列表[控制台调用] jia.li  √
-  getAllKeywordList: ['/v3/interacts/keyword/get-all', 'POST'], // 获取所有关键词列表[观看端/发起端调用] jia.li  √
   multiKeywordAdd: ['/v3/interacts/keyword/batch-create', 'POST'], // 添加关键词-可批量 jia.li  √
   multiKeywordEdit: ['/v3/interacts/keyword/edit', 'POST'], // 修改关键词 jia.li  √
   multiKeywordDel: ['/v3/interacts/keyword/batch-delete', 'POST'], // 批量删除关键词 jia.li  √
   checkUploadKeyword: ['/v3/interacts/keyword/check-upload-file', 'POST'], // 校验上传文件可以上传的关键词 jia.li •••暂时不用
   uploadKeywordAdd: ['/v3/interacts/keyword/upload-file-and-create', 'POST'], // 上传关键词文件并添加关键词 jia.li
   getKeywordTemplate: ['/v3/interacts/keyword/get-template-url', 'POST'], // 获取关键词模板地址 jia.li  √
-
+  getAudinceKeyWordList: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键词列表
   // 消息管理
   getMsgList: ['/v3/commons/msgcenter/list', 'POST'], // 站内消息列表接口 jia.li  √
   msgDel: ['/v3/commons/msgcenter/delete', 'POST'], // 站内消息删除接口 jia.li  √
@@ -303,6 +302,8 @@ const apis = {
   exportDetailLottery: ['/v3/vss/lottery/export-lottery-user-detail', 'GET'], //导出-抽奖-详情
   exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
   exportDetailRedpacket: ['/v3/interacts/redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个红包的领取明细
+
+  getQuestionDetailList: ['/v3/vss/survey/get-survey-question-detail', 'GET'], //回答问题人数统计
 
 
 
@@ -519,7 +520,9 @@ const apis = {
   createWebinarGift: ['/v3/interacts/gift/create-webinar-gift', 'POST'], // 设置活动关联礼物
   // 红包
   getLastRedInfo: ['/v3/interacts/redpacket/get-latest-redpacket-usage', 'GET'], // 发起端_获取当前活动最新创建红包的消费情况.
-
+  createRed: ['/v3/interacts/redpacket/create', 'POST'], // 创建红包
+  v3CreateRed: ['/v3/interacts/redpacket/create', 'POST'], // 创建红包
+  getpacketCreate: ['/v3/interacts/redpacket/open-redpacket', 'GET'], // 抢红包
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
   // 打赏
@@ -537,6 +540,10 @@ const apis = {
   v3GetWineList: ['/v3/vss/lottery/users-get', 'GET'], // 查看中奖列表
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
+  sendQuestion: ['/v3/vss/survey/publish-survey', 'POST'], // 直播发布问卷
+  liveEditQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST'], // 直播编辑问卷
+  checkSurvey: ['/v3/vss/survey/check-can-answer', 'GET'], // 是否提交问卷
+
   // 签到
   userSingin: ['/v3/interacts/sign/user-sign', 'POST'], // 用户签到
   // 开平海报
@@ -581,6 +588,7 @@ const apis = {
   tipOff: ['/v3/interacts/report/user-create-report', 'POST'], // 观众举报
   videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
   pay: ['/v3/fin/webinar-pay', 'GET'], //支付二维码
+  userSendQuestion: ['/v3/vss/survey/submit-answer', 'POST'], // 观众提交问卷
 };
 
 const getApi = api => {

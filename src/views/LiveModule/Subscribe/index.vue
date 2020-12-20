@@ -356,9 +356,27 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData && (roomData.warmup_paa_record_id || roomData.preview_paas_record_id)">
+            <!-- <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData && (roomData.warmup_paa_record_id || roomData.preview_paas_record_id)">
+            </div> -->
+            <!-- <img :src="roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt=""> -->
+             <!-- <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData"> -->
+            <!-- </div> -->
+            <div class="subscribe-video">
+              <Watch
+                v-if="initPlayer"
+                :appId="videoParams.appId"
+                :playerInfo="{}"
+                :accountId="videoParams.accountId"
+                :token="videoParams.token"
+                :type="videoParams.type"
+                :liveOption="{}"
+                :vodOption="videoParams.vodOption"
+                :poster="videoParams.poster"
+                ref="vhallPlayer"
+                :reportExtra='videoParams.report_extra'
+                :roominfo="videoParams.roominfo"
+              ></Watch>
             </div>
-            <img :src="roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt="">
           </div>
           <div class="rightWatch">
             <template v-if="!isKeyLogin">
@@ -527,12 +545,14 @@ import keyLogin from '../components/keyLogin';
 import { sessionOrLocal } from '@/utils/utils';
 import Popup from '../../../tangram/libs/saas-popup'; // 弹窗
 import SignForm from './signUpForm'
+import Watch from '@/tangram/libs/player/index';
 // import Env from '@/api/env.js';
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import QRcode from 'qrcode'
 
 export default {
   components: {
+    Watch,
     feedBack,
     share,
     custoMenu,
@@ -621,7 +641,10 @@ export default {
       getWxImg: false,
       getZFBlink: false,
       wxPayImg: '',
-      zfbLink: ''
+      zfbLink: '',
+      chatSDK: null,
+      videoParams: {},
+      initPlayer: false
     };
   },
   async created(){
@@ -630,7 +653,7 @@ export default {
     await this.getAdsInfo() // 获取活动广告信息
     await this.getSkin() // 获取皮肤
     await this.getPublisAdv() // 获取公众号广告
-    await this.getTryWatch()
+    // await this.getTryWatch()
     this.handleInitRoom()
     this.getGoodsInfo();
   },
@@ -664,21 +687,21 @@ export default {
       this.$PLAYER.destroy()
       this.$PLAYER = null
     }
-    if (window.chatSDK) {
-      window.chatSDK.destroy()
-      window.chatSDK = null
+    if (this.chatSDK) {
+      this.chatSDK.destroy()
+      this.chatSDK = null
     }
     window.removeEventListener('resize', () => {})
     this.timer && clearInterval(this.timer)
   },
   methods:{
-    getTryWatch () {
-      this.$fetch('viewerSetGet', {
-        webinar_id: this.$route.params.id
-      }).then(res => {
-        console.log(120, res)
-      })
-    },
+    // getTryWatch () {
+    //   this.$fetch('viewerSetGet', {
+    //     webinar_id: this.$route.params.id
+    //   }).then(res => {
+    //     console.log(120, res)
+    //   })
+    // },
     closeWXCode () {
       this.showOfficialAccountQRCode = false
     },
@@ -693,6 +716,7 @@ export default {
         this.handleErrorCode(res)
       }).catch(e => {
         console.log('获取房间信息失败:', e)
+        this.handleErrorCode(e)
       })
     },
     // 初始化错误信息处理
@@ -716,7 +740,11 @@ export default {
         case 12546: // 该视频正在转码中
         case 12541: // 活动现场太火爆，已超过人数上限
           this.$EventBus.$emit('loaded');
-          this.tipMsg = res.msg;
+          this.$message.error(res.msg)
+          break;
+        default:
+          this.$EventBus.$emit('loaded');
+          this.$message.error(res.msg)
           break;
       }
     },
@@ -820,7 +848,7 @@ export default {
       window.location.href = `${process.env.VUE_APP_WAP_WATCH}/register`
     },
     handleInitRoom () {
-      if (this.roomData) {
+      if (this.roomData.webinar) {
         // this.btnVal = this.roomData.status === 'subscribe' ? '立即预约' : '进入直播'
         this.title = this.roomData.webinar.subject
         this.viewCount = this.roomData.pv.num
@@ -866,9 +894,9 @@ export default {
             this.setCustomTheme(this.theme)
           }
           this.initChat()
-          if (this.roomData.warmup_paa_record_id) {
-            this.initSDK()
-          }
+          // if (this.roomData.warmup_paa_record_id) {
+          this.initPlayerSDK()
+          // }
         })
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
@@ -898,9 +926,9 @@ export default {
       VhallChat.createInstance(
         opt,
         chat => {
-          window.chatSDK = chat.message;
+          this.chatSDK = chat.message;
           console.log('成功了居然')
-          window.chatSDK.onRoomMsg(msg => {
+          this.chatSDK.onRoomMsg(msg => {
             console.log('==========房间消息1===========', msg);
 
             if (typeof msg !== 'object') {
@@ -926,57 +954,25 @@ export default {
       )
     },
     // 暖场试看初始化
-    initSDK () {
-      console.log('sdk initing', this.type, this.roominfo);
-      let params = {
-        appId: this.roomData.interact.paas_app_id, // 应用ID，必填
-        accountId: this.roomData.join_info.third_party_user_id, // 第三方用户ID，必填
-        token: this.roomData.interact.subscribe_paas_access_token, // access_token，必填
-        videoNode: 'vhall-watch-box',
-        type: 'live', // live 直播  vod 点播  必填
+    initPlayerSDK () {
+      this.videoParams = {
+        appId: this.roomData.interact.paas_app_id,
+        accountId: this.roomData.join_info.third_party_user_id,
+        token: this.roomData.interact.subscribe_paas_access_token,
+        type: 'vod',
         poster: '',
-        autoplay: false,
-        forceMSE: false,
-        otherOption: {
-          report_extra: this.roomData.report_data.report_extra,
-          vid: this.roomData.webinar.userinfo.user_id, // hostId
-          uid: this.roomData.join_info.third_party_user_id,
-          vfid: this.userinfo ? this.userinfo.parent_id : this.roomData.webinar.userinfo.user_id,
-          guid: this.roomData.report_data.guid,
-          biz_id: this.$route.params.id
+        report_extra: this.roomData.report_data.report_extra ? this.roomData.report_data.report_extra : {},
+        vodOption: {
+          recordId: '63e352fd' // TODO: this.roomData.preview_paas_record_id
         },
-        marqueeOption: {
-          text: ''
-        },
-        watermarkOption: {}
-      }
-      if (this.roomData.warmup_paa_record_id) {
-        params = Object.assign({}, params, {
-          type: 0 || isIE() ? 'hls' : 'flv',
-          roomId: this.roomData.interact.room_id
-        })
-      } else if (this.roomData.preview_paas_record_id) {
-        params = Object.assign({}, params, {
-          recordId: this.roomData.preview_paas_record_id,
-          defaultDefinition: 'same'
-        })
-      }
-      console.log(params, '初始化播放器参数');
-      VhallPlayer.createInstance(
-        params,
-        event => {
-          console.log('初始化播放器成功')
-          this.$PLAYER = event.vhallplayer;
-          this.$PLAYER.openControls(false);
-          this.$PLAYER.openUI(false);
-          this.$PLAYER.on(VhallPlayer.LOADED, () => {
-            // 加载中
-          });
-        },
-        e => {
-          console.error('初始化播放器失败', event);
+        roominfo: {
+          account_id: this.roomData.webinar.userinfo.user_id,
+          third_party_user_id: this.roomData.join_info.third_party_user_id,
+          parentId: '',
+          guid: this.roomData.report_data.guid
         }
-      )
+      }
+      this.initPlayer = true
     },
     // startTime  YYYY-MM-DD HH:MM
     remainTimes(startTime){
@@ -1339,19 +1335,22 @@ export default {
             this.limitText = `邀请码`
           }
         } else {
-          if (reg_form == 1) {
-            ret = `立即预约`
-          } else {
-            if (type == 1 || type == 4 || type == 5) {
-              console.log(1010101)
-              this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
-            } else if (type == 2) {
-              ret = `已预约`
-              this.limitText = ``
-              this.btnDisabled = true
-            }
-          }
+          // 通过观看限制但没有报名
+          ret = `立即预约`
           this.limitText = ``
+          // if (reg_form == 1) {
+          //   ret = `立即预约`
+          // } else {
+          //   if (type == 1 || type == 4 || type == 5) {
+          //     console.log(1010101)
+          //     this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+          //   } else if (type == 2) {
+          //     ret = `已预约`
+          //     this.limitText = ``
+          //     this.btnDisabled = true
+          //   }
+          // }
+          // this.limitText = ``
         }
       }
       this.btnVal = ret
@@ -1436,7 +1435,11 @@ export default {
         ...params
       }).then(res => {
         if (res.code == 200) {
-          window.location.reload()
+          if (res.data.status == 'live') {
+            this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+          } else {
+            window.location.reload()
+          }
         } else {
           this.handleAuthErrorCode(res.code, res.msg)
           this.hasClick = false
@@ -1448,6 +1451,7 @@ export default {
     },
     // 鉴权code处理
     handleAuthErrorCode (code, msg) {
+      this.showModile = false
       switch (code) {
         case 10008: // 未登录
           this.callLogin()
@@ -1518,7 +1522,7 @@ export default {
       }
       if (type == 'wx') {
         params.type = 2
-        params.service_code = 'H5_PAY'
+        params.service_code = 'QR_PAY'
       } else {
         params.type = 1
       }
@@ -2142,6 +2146,15 @@ export default {
         display: inline-block;
         width: 100%;
         height: 100%;
+      }
+      .subscribe-video{
+        width: 100%;
+        height: 100%;
+        /deep/ .vhall-watch .vod-controller{
+          .right-box{
+            display:none!important;
+          }
+        }
       }
     }
     .rightWatch{

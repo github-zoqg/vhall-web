@@ -97,7 +97,7 @@ export default {
             key_name: '隐藏点赞',
             openShow: '已开启，观看端点赞按钮已被隐藏',
             closeShow: '开启后，观看端点赞按钮将被隐藏',
-            value: Number(dataVo['ui.hide_like'])
+            value: Number(dataVo['ui.watch_hide_like'])
           },
           {
             type: 'ui.hide_gifts',
@@ -120,7 +120,7 @@ export default {
             key_name: '回放禁言',
             openShow: '已开启，回放默认已开启聊天禁言',
             closeShow: '开启后，回放默认开启聊天禁言',
-            value: Number(dataVo['record_no_chatting'])
+            value: Number(dataVo['ui.watch_record_no_chatting'])
           },
           {
             type: 'ui.watch_record_chapter',

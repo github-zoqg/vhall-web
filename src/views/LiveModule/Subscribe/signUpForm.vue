@@ -497,20 +497,39 @@
         this.$fetch('watchInit', {
           webinar_id: this.webinar_id
         }).then(res => {
-          const type = res.data.webinar.type
-          if(res.data.status == 'live') {
-            this.$router.push({
-              path: `/live/watch/${this.webinar_id}`
-            })
-          } else if(res.data.status == 'subscribe') {
-            if(this.isEntryForm) {
+          // const type = res.data.webinar.type
+          const status = res.data.status
+          if (res.code == 200) {
+            if (res.data.status == 'live') {
               this.$router.push({
-                path: `/subscribe/${this.webinar_id}`
+                path: `/live/watch/${this.webinar_id}`
               })
             } else {
-              this.$router.go(0)
+              // 如果预约或结束，跳转到预约页
+              if(this.isEntryForm) {
+                this.$router.push({
+                  path: `/subscribe/${this.webinar_id}`
+                })
+              } else {
+                this.$router.go(0)
+              }
             }
           }
+          // if(type == 1 || type == 4 || type == 5) {
+          //   // 如果直播，回放，点播，跳转到直播观看页
+          //   this.$router.push({
+          //     path: `/live/watch/${this.webinar_id}`
+          //   })
+          // } else if(type == 2 || type == 3) {
+          //   // 如果预约或结束，跳转到预约页
+          //   if(this.isEntryForm) {
+          //     this.$router.push({
+          //       path: `/subscribe/${this.webinar_id}`
+          //     })
+          //   } else {
+          //     this.$router.go(0)
+          //   }
+          // }
         })
       },
       // 提交表单

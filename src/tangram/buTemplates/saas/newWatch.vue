@@ -148,11 +148,11 @@
           </div>
           <div class="player-active" v-show="!isEmbed">
             <div class="table-praise" v-if="userModules.like.show == 1">
-              <praise :roomId="roomId" :times="roomInfo.like"></praise>
+              <praise :roomId="roomId" :times="roomInfo.like" :isLogin="isLogin" @login="NoLogin"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3" @click="showGiveMoneyPannel">
+            <div class="table-reward" v-if="userModules.reward.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <!-- <reward :roomId="roomId"></reward> -->
-              <img src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
+              <img @click="showGiveMoneyPannel" src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
             </div>
             <div class="table-gift" v-if="userModules.gift.show == 1 && roomInfo.role_name == 2">
               <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
@@ -160,7 +160,6 @@
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <getCoupon
                 v-if="roomInfo.room_id"
-                :vss_token="vssToken"
                 :room_id="roomInfo.room_id"
                 :red_packet_uuid="redPacketUuid"
                 :isHavePacket="isHavePacket"
@@ -247,7 +246,7 @@
         <!-- 增加 - 是否单视频嵌入的判断 -->
         <div class="vhall-saas-chatsbox__content"  v-if="!isEmbedVideo">
           <chat
-            v-show="tabIndex == 0 && chatStatusShow"
+            v-show="tabIndex == 0 && chatStatusShow && initChat"
             :showControl="false"
             :appId="roomInfo.app_id"
             v-if="roomInfo.channel_id"
@@ -299,12 +298,12 @@
     <template v-if="!isEmbedVideo">
     <popup
       :onClose="closeQuestion"
-      :headerShow="showQA"
       :visible="showQA"
       :width="'600px'"
       title="问卷"
     >
-      <!-- <question
+      <question
+        :isEmbed="isEmbed"
         :roomId="roomId"
         :ilId="ilId"
         :userId="roomInfo.third_party_user_id"
@@ -315,7 +314,7 @@
         @onCloses="closeQuestion"
         :roleName="roomInfo.role_name"
         ref="questions"
-      ></question> -->
+      ></question>
     </popup>
     </template>
     <popup
@@ -516,7 +515,7 @@ import WatchDoc from '@/components/Doc/watch-doc';
 import streams from '../../libs/interactive/remoteStreams'; // 订阅流
 import Interactive from '../../libs/interactive'; // 互动
 import praise from '../../libs/praise'; // 点赞
-// import question from '../../libs/question/saas'; // 问卷
+import question from '../../libs/question/saas'; // 问卷
 import reward from '../../libs/reward'; // 打赏
 import lottery from '../../libs/lottery/audience'; // 抽奖
 import playbill from '../../libs/playbill'; // 开屏海报
@@ -613,7 +612,7 @@ export default {
     streams,
     Interactive,
     praise,
-    // question,
+    question,
     Signin,
     reward,
     lottery,
@@ -738,11 +737,13 @@ export default {
       giveMoneyPayWay: '1',
       giveMoneyDes: '',
       giveMoneyUrl: '',
-      showGiveMoneyQr: false
+      showGiveMoneyQr: false,
+      showLottery: false,
+      initChat: false,
+      isLogin: false
     };
   },
   created () {
-    this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     // 存取观看端标识
     sessionOrLocal.set('watch', true);
   },
@@ -772,6 +773,10 @@ export default {
     }
   },
   mounted () {
+    this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
+    if (this.userInfo && this.userInfo.user_id) {
+      this.isLogin = true
+    }
     this.getInavInfo();
     this.redPacketInit();
     this.FIRST = true;
@@ -793,29 +798,34 @@ export default {
   methods: {
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
-        if (msg.type == "gift_send_success") {
-          this.showGiftSend = false
-          this.showPayQrCode = false
-          this.showPayWay = false
-          this.selectGiftId = ''
-          this.payQrCode = ''
-          this.payWay = 1
-        }
         if (msg.data.type == "gift_send_success") {
-          this.closeGiveMoneyQr = false
-          this.showGiveMoney = false
-          this.giveMoneyIndex = 1
-          this.giveMoneyPayWay = 1
-          this.giveMoney = ''
-          this.giveMoneyDes = ''
+          this.closePayQrCode()
+          this.closePayWay()
+          this.$message.success('支付成功')
+        }
+        if (msg.data.type == "reward_pay_ok") {
+          this.closeGiveMoneyQr()
+          this.$message.success('支付成功')
         }
       });
     },
+    checkLottery(){
+      this.$fetch('v3CheckLottery', {}).then(res=>{
+        if(res.code == 200 && res.data.award_snapshoot.id){
+          this.showLottery = true
+        }
+      })
+    },
     showGiveMoneyPannel () {
-      this.showGiveMoney = true
+      if (this.isLogin) {
+        this.showGiveMoney = true
+      } else {
+        this.NoLogin()
+      }
     },
     closeGiveMoneyQr () {
       this.showGiveMoneyQr = false
+      this.giveMoneyUrl = ''
     },
     handleGiveMoney () {
       this.$fetch('seadAwardMsg', {
@@ -823,7 +833,7 @@ export default {
         reward_amount: Number(this.giveMoney).toFixed(2),
         channel: this.giveMoneyPayWay == 1 ? 'WEIXIN' : 'ALIPAY',
         service_code: 'QR_PAY',
-        describe: this.giveMoneyDes
+        describe: this.giveMoneyDes ? this.giveMoneyDes : '很精彩 来赞一个'
       }).then(res => {
         if (res.code == 200 && res.data.pay_data) {
           let a = QRcode.toDataURL(
@@ -836,14 +846,24 @@ export default {
         }
       })
     },
+    // 关闭打赏面板
     closeGiveMoney () {
+      this.giveMoneyIndex = 1
+      this.giveMoney = ''
+      this.giveMoneyDes = ''
+      this.giveMoneyPayWay = '1'
       this.showGiveMoney = false
     },
     openGiftPannel () {
-      this.showGiftSend = true
+      if (this.isLogin) {
+        this.showGiftSend = true
+      } else {
+        this.NoLogin()
+      }
     },
     closePayWay () {
       this.showPayWay = false
+      this.payWay = '1'
     },
     // 礼物支付获取二维码
     checkPayWay (type) {
@@ -872,7 +892,9 @@ export default {
     },
     closePayQrCode () {
       this.showPayQrCode = false
+      this.payQrCode = ''
     },
+    // 关闭礼物面板
     closeGiftsPannel () {
       this.showGiftSend = false
       this.selectGiftId = ''
@@ -969,7 +991,7 @@ export default {
         status: this.bizInfo.webinar.type,
         subject: this.bizInfo.webinar.subject,
         third_party_user_id: this.bizInfo.user.third_party_user_id,
-        parentId: sessionStorage.getItem('userInfo') ? JSON.parse(sessionStorage.getItem('userInfo')).parent_id : '',
+        parentId: this.userInfo ?  this.userInfo.parent_id : '',
         guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : ''
       }
       this.roomInfo = inavInfo
@@ -1055,8 +1077,8 @@ export default {
             this.addSocketsListener();
           })
           window.chatSDK = chat.message;
-          console.log('chatSDK is Ready', opt);
-
+          this.initChat = true
+          console.log('chatSDK is Ready');
           if (this.isEmbedVideo) {
             this.embedBarrage();
             this.initNotice();
@@ -1206,6 +1228,7 @@ export default {
     },
     // 关闭问卷
     closeQuestion (msg) {
+      console.log(12)
       this.showQA = false;
     },
     changeTab (idx) {

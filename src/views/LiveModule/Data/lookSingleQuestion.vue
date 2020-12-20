@@ -4,7 +4,7 @@
     <el-card>
       <div class="question-title">
         <h1>
-          这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示
+          {{ title }}
         </h1>
         <p>填写人数:<span>100</span></p>
         <div class="export">
@@ -72,6 +72,7 @@ import echarts from 'echarts';
 export default {
   data() {
     return {
+      title: '问卷标题',
       genderList: [
         {
           name: '女',
@@ -118,8 +119,22 @@ export default {
   mounted() {
     this.initEchart();
     this.initBarEcharts();
+    this.getQuerstionList();
   },
   methods: {
+    getQuerstionList() {
+      let params = {
+        webinar_id: this.$route.params.str,
+        survey_id: this.$route.query.surveyId,
+        subject: this.$route.query.subject || ''
+      }
+      this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
+        if (res.code == 200 && res.data) {
+          console.log(res.data.list);
+          res.data.list.filter(item => item.num)
+        }
+      })
+    },
     initEchart() {
       let that = this;
       let terBarCharts = echarts.init(this.$refs.terBroEchart);
@@ -192,7 +207,7 @@ export default {
     },
     // 导出数据
     exportSingleQuerstion() {
-      this.$fetch('exportSurveyDetial',{webinar_id: this.$route.query.id, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
+      this.$fetch('exportSurveyDetial',{webinar_id: this.$route.params.str, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
       })
     }
