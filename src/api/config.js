@@ -135,10 +135,10 @@ const apis = {
 
 
   // 暖场视频
-  warmCreate: ['/99/v3/webinars/warm/create', 'POST', 'mock'], // 添加暖场视频
-  warnInfo: ['/99/v3/webinars/warm/info', 'POST', 'mock'], // 获取暖场视频详情接口 •••
-  warnDelete: ['/99/v3/webinars/warm/delete', 'POST', 'mock'], // 删除暖场视频 •••
-  warnEdit: ['/99/v3/webinars/warm/edit', 'POST', 'mock'], // 修改暖场视频封面图片接口 •••
+  warmCreate: ['/v3/webinars/warm/create', 'POST'], // 添加暖场视频
+  warnInfo: ['/v3/webinars/warm/info', 'POST'], // 获取暖场视频详情接口
+  warnDelete: ['/v3/webinars/warm/delete', 'POST'], // 删除暖场视频
+  warnEdit: ['/v3/webinars/warm/edit', 'POST'], // 修改暖场视频封面图片接口
 
   // 商品
   goodsGet: ['/v3/interacts/goods/get-webinar-goods-list', 'GET'], // 获取活动下商品列表

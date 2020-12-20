@@ -111,7 +111,7 @@ export default {
         this.getpacketCreateObj = data.red_packet; // 红包信息
         if (data.status == 1) { // 我已抢到红包
           this.isSuccessRed = true;
-          this.myAmount = this.getpacketCreateObj.amount;
+          this.myAmount = data.amount;
         } else { // 我没抢到红包
           if (data.red_packet.number == data.red_packet.get_user_count) { // 如果红包数量和领红包人数相等，说明已抢光
             this.emptyRefCoupon = true;

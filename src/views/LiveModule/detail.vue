@@ -68,7 +68,7 @@
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
-        <div class="inner liveTime" v-else>
+        <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
           <p class="subColor">直播即将开始</p>
           <p><span>观众等待中</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
@@ -109,8 +109,8 @@ export default {
           { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
           { icon: 'saasicon_gongnengpeizhi', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
           { icon: 'saasicon_guankanxianzhi', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
-          { icon: 'saasicon_jiaoseyaoqing', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
-          { icon: 'saasicon_nuanchangshipin', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
+          { icon: 'saasicon_jiaoseyaoqing', title: '角色邀请', subText: '设置不同角色参与直播的权限', index: 4, path: `/live/roleInvitation/${this.$route.params.str}`},
+          { icon: 'saasicon_nuanchangshipin', title: '暖场视频', subText: '开启后设置暖场视频',index: 4, path: `/live/warm/${this.$route.params.str}`},
           { icon: 'saasicon_xunirenshu', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
           { icon: 'saasicon_baomingbiaodan', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
           { icon: 'saasicon_tuiguangqianru', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
@@ -165,9 +165,13 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
-        let date = new Date();
-        let nowTime = date.setTime(date.getTime());
-        this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
+        // if (this.liveDetailInfo.webinar_state == 4) {
+        // }
+        if (res.data.webinar_state == 2) {
+          let date = new Date();
+          let nowTime = date.setTime(date.getTime());
+          this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
+        }
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -281,7 +285,7 @@ export default {
         let limit3 = limit2 % (60 * 1000);
         let second = Math.floor(limit3 / 1000);
         this.time.second = second > 9 ? second : `0${second}`;
-        console.log(diff, '????????????????????')
+        // console.log(diff, '????????????????????')
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
             this.downTime(targetStart, targetEnd);
