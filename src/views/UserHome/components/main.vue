@@ -9,15 +9,17 @@
       placement="bottom-end"
       trigger="click">
       <div>
-        <share slot="content" url="http://t-webinar.e.vhall.com/658143687"></share>
+        <share slot="content" :url="home_link"></share>
       </div>
-      <el-button class="panel-btn length104" size="medium" round slot="reference">分享直播</el-button>
+      <el-button class="panel-btn length104" size="medium" round slot="reference">分享主页</el-button>
     </el-popover>
     <div class="search">
       <div class="search-query">
         <el-input
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
-          v-model="query.keyword">
+          v-model="query.keyword"
+          @keyup.enter.native="searchHandle"
+          >
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"
@@ -43,7 +45,9 @@
                 <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label>{{item | liveTag}}
               </span>
               <span class="hot"><i class="el-icon-view"></i>{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</span>
-              <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
+              <a :href="item.share_link" target="_blank">
+                <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
+              </a>
             </div>
             <div class="bottom">
               <div class="">
@@ -65,22 +69,26 @@
       @current-change="changeHandle" align="center"
       v-if="tabType === 'live' ? tabList[0].total > 0 : tabList[1].total > 0"
     ></SPagination>
+    <!-- 无消息内容 -->
+    <null-page v-else></null-page>
   </div>
 </template>
 
 <script>
 import Share from '@/components/Share';
 import Env from "@/api/env";
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
 export default {
   name: "list.vue",
   components: {
-    Share
+    Share,
+    NullPage
   },
   data() {
    return {
      query: {
        pos: 0,
-       limit: 10,
+       limit: 12,
        pageNumber: 1,
        keyword: ''
      },
@@ -97,7 +105,8 @@ export default {
        }
      ],
      tabType: null,
-     dataList: []
+     dataList: [],
+     home_link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str}`
    };
   },
   methods: {
@@ -116,7 +125,7 @@ export default {
     // 分页点击
     changeHandle(pageNum) {
       this.query.pageNumber = pageNum;
-      this.query.pos = (pageNum-1)*this.query.limit;
+      this.query.pos = (Number(pageNum)-1)*this.query.limit;
       this.getDataList();
     },
     // 区分是获取直播列表 还是 主题列表
@@ -142,11 +151,10 @@ export default {
       this.$fetch('liveList', this.$params(params)).then(res=>{
         if (res && res.code === 200) {
           let list = res.data.list;
-          /*list.map(item => {
-            item.img_url =
-              // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.img_url) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-webinar.png`;
-          });*/
-          this.dataList = res.data.list;
+          list.map(item => {
+            item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${item.webinar_id}`
+          });
+          this.dataList = list;
           this.tabList[0].total = res.data.total;
         } else {
           this.dataList = [];
@@ -173,10 +181,11 @@ export default {
       this.$fetch('subjectList', this.$params(params)).then(res=>{
         console.log(res);
         let list = res.data.list;
-        /*list.map(item => {
-          item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
-        });*/
-        this.dataList = res.data.list;
+        list.map(item => {
+          item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/special/detail?id=${item.id}`;
+          // item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
+        });
+        this.dataList = list;
         this.tabList[1].total = res.data.total;
       }).catch(error=>{
         console.log(error);

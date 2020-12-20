@@ -91,7 +91,7 @@ export default {
   methods: {
     queryList() {
       this.query.pos = 0;
-      this.query.pageNumber = 0;
+      this.query.pageNumber = 1;
       this.query.limit = 10;
       // 表格切换到第一页
       try {
