@@ -150,7 +150,6 @@ const eventMixin = {
           }
 
           EventBus.$emit('roomAllInfo', msg);
-
           // 发起抽奖
           if (msg.type == 'lottery_push' && this.roleName == '2') {
             let data = new Msg({
@@ -237,6 +236,7 @@ const eventMixin = {
           }
           // 推送问卷
           if (msg.type == 'questionnaire_push') {
+            EventBus.$emit('questionnaireCheck', msg.questionnaire_id);
             let text =
               msg.room_role == '3' ? `助理${msg.nick_name}` : msg.room_role == '4' ? `嘉宾${msg.nick_name}` : '主持人';
             let data = new Msg({

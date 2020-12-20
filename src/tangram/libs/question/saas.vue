@@ -2,13 +2,11 @@
   <div class="vhall-question-box">
     <div
       class="vhall-question__content"
-      :class="assistantType ? 'assistantStyle' : ''"
       v-show="!showPreview && !isCreate && questionShow"
     >
       <div class="popbody">
         <ul
           class="vhall-question__content-list"
-          :class="assistantType ? 'assistantStyle' : ''"
           id="surveyslist"
           v-if="docList.length"
         >
@@ -55,7 +53,7 @@
               </el-tooltip>
               <el-tooltip effect="dark" content="详情" placement="bottom" :open-delay="600">
                 <span
-                  v-if="doc.publish == 1 && !isEmbed && roleName == '1' && !assistantType"
+                  v-if="doc.is_public == 0 && !isEmbed && roleName == '1'"
                 >
                   <a
                     class="vhall-question__content-list__colmun-action--detail"
@@ -300,6 +298,9 @@
   .vhall-question-title {
     overflow-x: hidden;
   }
+}
+.q-wrap{
+  padding-bottom: 30px;
 }
 .cef-q-wrap{
   .q-wrap{

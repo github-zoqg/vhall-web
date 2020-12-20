@@ -299,12 +299,12 @@
     <template v-if="!isEmbedVideo">
     <popup
       :onClose="closeQuestion"
-      :headerShow="showQA"
       :visible="showQA"
       :width="'600px'"
       title="问卷"
     >
       <question
+        :isEmbed="isEmbed"
         :roomId="roomId"
         :ilId="ilId"
         :userId="roomInfo.third_party_user_id"
@@ -1229,6 +1229,7 @@ export default {
     },
     // 关闭问卷
     closeQuestion (msg) {
+      console.log(12)
       this.showQA = false;
     },
     changeTab (idx) {

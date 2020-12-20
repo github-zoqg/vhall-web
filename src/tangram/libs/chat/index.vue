@@ -612,7 +612,7 @@ export default {
     },
     // 子组件查看问卷
     questionnaireCheck (questionnaire_id) {
-      console.log('ss', questionnaire_id);
+      console.log('ss1', questionnaire_id);
       EventBus.$emit('questionnaireCheck', questionnaire_id);
     },
     // 子组件预览聊天图片

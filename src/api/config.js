@@ -533,7 +533,10 @@ const apis = {
   v3GetWineList: ['/v3/vss/lottery/users-get', 'GET'], // 查看中奖列表
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
-  sendQuestion: ['/v3/vss/survey/publish-survey', 'POST'], // 发布问卷
+  sendQuestion: ['/v3/vss/survey/publish-survey', 'POST'], // 直播发布问卷
+  liveEditQuestion: ['/v3/vss/survey/update-webinar-survey', 'POST'], // 直播编辑问卷
+  checkSurvey: ['/v3/vss/survey/check-can-answer', 'GET'], // 是否提交问卷
+
   // 签到
   userSingin: ['/v3/interacts/sign/user-sign', 'POST'], // 用户签到
   // 开平海报
@@ -578,6 +581,7 @@ const apis = {
   tipOff: ['/v3/interacts/report/user-create-report', 'POST'], // 观众举报
   videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
   pay: ['/v3/fin/webinar-pay', 'GET'], //支付二维码
+  userSendQuestion: ['/v3/vss/survey/submit-answer', 'POST'], // 观众提交问卷
 };
 
 const getApi = api => {

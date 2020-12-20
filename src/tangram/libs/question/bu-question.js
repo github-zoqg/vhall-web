@@ -4,8 +4,7 @@
  * 问卷模块
  *
  */
-import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '../../utils/questionnaire_service';
-console.log('VHall_Questionnaire_Service', VHall_Questionnaire_Service);
+import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/common/js/questionarie/questionnaire_service';
 export default {
   props: {
     roleName: {
@@ -48,6 +47,7 @@ export default {
 
   data () {
     return {
+      formSDK: null,
       questionnaireId: '', // 问卷Id
       sdkInitReady: false,
       isDoListcShow: false,
@@ -60,14 +60,11 @@ export default {
       previewId: '',
 
       isCreate: false,
-      assistantType: '',
       webviewType: ''
     };
   },
 
   created () {
-    console.log(11)
-    this.assistantType = this.$route.query.assistantType;
     this.webviewType = this.$route.query.webviewType;
     this.initQuestionSDK();
     if (sessionStorage.getItem('watch')) {
@@ -90,8 +87,7 @@ export default {
   },
   methods: {
     goDetail (questionId) {
-      if (this.webviewType == 'cef') return;
-      window.open(`/user/question/detail?survey_id=${questionId}&webinar_id=${this.ilId}`);
+      window.open(`/live/lookSingleQuestion/${questionId}`);
     },
     blackCreate () {
       this.isCreate = false;
@@ -147,15 +143,10 @@ export default {
       this.showPreview = true;
       this.previewId = questionId;
       console.log('chat>>>>>>>>>>>>>', chat);
+      document.getElementById('qs-preview-box').innerHTML = '';
+      this.$service['renderPagePC']('#qs-preview-box', questionId);
       if (chat) {
-        this.$nextTick(() => {
-          document.getElementById('qs-preview-box').innerHTML = '';
-          this.$service['renderPagePC']('#qs-preview-box', questionId);
           document.querySelector('.q-btns').style.display = 'none';
-        });
-      } else {
-        document.getElementById('qs-preview-box').innerHTML = '';
-        this.$service['renderPagePC']('#qs-preview-box', questionId);
       }
     },
     publishPreview () {
@@ -170,7 +161,6 @@ export default {
         this.$service
           .$http(VHall_Questionnaire_Const.HTTP.PUBLISH_QUESTIONNAIRE, questionId)
           .then(res => {
-            console.log('问卷发布成功3');
             this.showPreview = false;
             this.$message({
               message: '问卷发布成功',
@@ -203,61 +193,53 @@ export default {
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
-        console.log('初始化完成');
         this.sdkInitReady = true;
       });
 
-      this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, data => {
-        console.log('提交问卷成功', data);
-        this.$emit('onCloses', '111111');
-        this.submitQuestion(data.naire_id, data.data, data.report);
+      this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {
+          this.submitQuestion(data);
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
-        console.log('创建问卷成功', data);
-
         // data  回答Id
         // naire_id  问卷Id
-        this.$emit('createSuccess', { ...data });
-        console.log('data>>>>>>>>>>>>>>>>>>>', data);
         this.createQuestionAction(data.id, data.title, data.description);
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
-        this.$fetch('updatesurvey', {
+        this.$fetch('liveEditQuestion', {
           survey_id: data.id,
+          webinar_id: this.ilId,
+          room_id: this.roomId,
+          title: data.title,
+          description: data.description,
           user_id: this.accountId
         })
           .then(res => {
-            console.log('res', res);
+            this.isCreate = false;
+            this.showPreview = false;
+            this.getQuestionList();
+            this.$message.success('编辑成功')
           })
           .catch(e => {
-            console.log('error', e);
+            console.log('编辑问卷失败>>>', e);
           });
-        console.log('更新问卷成功了', data);
-        // data  回答Id
-        this.updateQuestionAction(data.id, data.title, data.description);
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.ERROR, data => {
-        console.log('错误1', data);
+        console.log('问卷错误', data);
       });
     },
 
     answerQuestion (questionId) {
       this.questionnaireId = questionId;
-      console.log('zoudao >>>>>>>>>>>>>>>>>>>>>>>>>>', questionId);
-      console.log('thisss>>>>>>>>>>>>>>>>', this);
       this.showPreview = true;
       document.getElementById('qs-preview-box').innerHTML = '';
       this.$service['renderPagePC']('#qs-preview-box', questionId);
       this.isDoListcShow = true;
-
-      // debugger;
     },
 
     createQuestion (id) {
-      // this.$router.push({ query: { creat: 'true' } })
       localStorage.setItem('create', 'true');
       this.isCreate = true;
       document.querySelector('#qs-create-box').innerHTML = '';
@@ -279,26 +261,12 @@ export default {
         this.getQuestionList();
       });
     },
-
-    updateQuestionAction (id, title, description) {
-      this.$fetch('updateQuestion', {
-        room_id: this.roomId,
-        title: title,
-        question_id: id,
-        description,
-        account_id: this.accountId,
-        app_id: this.appId
-      }).then(() => {
-        console.log('vss 接口创建成功');
-        this.isCreate = false;
-        this.showPreview = false;
-        this.getQuestionList();
-      });
-    },
-
-    submitQuestion (questionId, answerId, report) {
+    // 提交问卷
+    submitQuestion (opt) {
+      let {naire_id, data, answer} = opt
       let quesData = {};
-      report.forEach(item => {
+      // vss数据
+      opt.report && opt.report.length > 0 && opt.report.forEach(item => {
         switch (item.style) {
           case 'name':
             quesData.real_name = item.value;
@@ -333,15 +301,26 @@ export default {
             break;
         }
       });
-      // TODO:
-      this.$fetch('submitQuestion', {
-        survey_id: questionId,
+      this.$fetch('userSendQuestion', {
+        survey_id: naire_id,
         room_id: this.roomId,
-        answers: JSON.stringify(quesData)
+        answer_id: data,
+        user_id: this.userId,
+        visit_id: sessionStorage.getItem('visitor_id') ? sessionStorage.getItem('visitor_id') : '',
+        webinar_id: this.ilId,
+        vss_token: this.accessToken,
+        extend: JSON.stringify(quesData),
+        res: answer
       }).then(res => {
         this.showPreview = false;
         this.isDoListcShow = false;
+      }).catch(e => {
+        this.$message.error('提交失败')
+        console.log('提交失败', e)
+        this.showPreview = false;
+        this.isDoListcShow = false;
       });
+      this.$emit('onCloses', '');
     },
     // content样式修改
     contentQuestion (questionId) {

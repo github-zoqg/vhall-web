@@ -356,9 +356,11 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData && (roomData.warmup_paa_record_id || roomData.preview_paas_record_id)">
+            <!-- <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData && (roomData.warmup_paa_record_id || roomData.preview_paas_record_id)">
+            </div> -->
+            <!-- <img :src="roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt=""> -->
+             <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData">
             </div>
-            <img :src="roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt="">
           </div>
           <div class="rightWatch">
             <template v-if="!isKeyLogin">
@@ -872,9 +874,9 @@ export default {
             this.setCustomTheme(this.theme)
           }
           this.initChat()
-          if (this.roomData.warmup_paa_record_id) {
+          // if (this.roomData.warmup_paa_record_id) {
             this.initSDK()
-          }
+          // }
         })
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
@@ -934,42 +936,60 @@ export default {
     // 暖场试看初始化
     initSDK () {
       console.log('sdk initing', this.type, this.roominfo);
-      let params = {
-        appId: this.roomData.interact.paas_app_id, // 应用ID，必填
-        accountId: this.roomData.join_info.third_party_user_id, // 第三方用户ID，必填
-        token: this.roomData.interact.subscribe_paas_access_token, // access_token，必填
-        videoNode: 'vhall-watch-box',
-        type: 'live', // live 直播  vod 点播  必填
-        poster: '',
-        autoplay: false,
-        forceMSE: false,
-        otherOption: {
-          report_extra: this.roomData.report_data.report_extra,
-          vid: this.roomData.webinar.userinfo.user_id, // hostId
-          uid: this.roomData.join_info.third_party_user_id,
-          vfid: this.userinfo ? this.userinfo.parent_id : this.roomData.webinar.userinfo.user_id,
-          guid: this.roomData.report_data.guid,
-          biz_id: this.$route.params.id
-        },
-        marqueeOption: {
-          text: ''
-        },
-        watermarkOption: {}
-      }
-      if (this.roomData.warmup_paa_record_id) {
-        params = Object.assign({}, params, {
-          type: 0 || isIE() ? 'hls' : 'flv',
-          roomId: this.roomData.interact.room_id
-        })
-      } else if (this.roomData.preview_paas_record_id) {
-        params = Object.assign({}, params, {
-          recordId: this.roomData.preview_paas_record_id,
-          defaultDefinition: 'same'
-        })
-      }
-      console.log(params, '初始化播放器参数');
+      // let params = {
+      //   appId: this.roomData.interact.paas_app_id, // 应用ID，必填
+      //   accountId: this.roomData.join_info.third_party_user_id, // 第三方用户ID，必填
+      //   token: this.roomData.interact.subscribe_paas_access_token, // access_token，必填
+      //   videoNode: 'vhall-watch-box',
+      //   type: 'vod', // live 直播  vod 点播  必填
+      //   poster: '',
+      //   autoplay: false,
+      //   forceMSE: false,
+      //   otherOption: {
+      //     report_extra: this.roomData.report_data.report_extra,
+      //     vid: this.roomData.webinar.userinfo.user_id, // hostId
+      //     uid: this.roomData.join_info.third_party_user_id,
+      //     vfid: this.userinfo ? this.userinfo.parent_id : this.roomData.webinar.userinfo.user_id,
+      //     guid: this.roomData.report_data.guid,
+      //     biz_id: this.$route.params.id
+      //   },
+      //   marqueeOption: {
+      //     text: ''
+      //   },
+      //   watermarkOption: {}
+      // }
+      // if (this.roomData.warmup_paa_record_id) {
+      //   params = Object.assign({}, params, {
+      //     type: 0 || isIE() ? 'hls' : 'flv',
+      //     roomId: this.roomData.interact.room_id
+      //   })
+      // } else if (this.roomData.preview_paas_record_id) {
+      //   params = Object.assign({}, params, {
+      //     // recordId: this.roomData.preview_paas_record_id,
+      //     recordId: '111409',
+      //     defaultDefinition: 'same'
+      //   })
+      // }
+      // console.log(params, '初始化播放器参数');
       VhallPlayer.createInstance(
-        params,
+        // params,
+        {
+          "videoNode": 'vhall-watch-box',
+          "accountId": 16423152,
+          "appId": "fd8d3653",
+          "channelId": "ch_c875302e",
+          "channel_id": "ch_c875302e",
+          "nickName": "123",
+          "openPlayerUI": false,
+          "playerInfo": {},
+          "recordId": "63e352fd",
+          "roomId": "lss_ab8d76dd",
+          "token": "access:fd8d3653:2c829492563f06b6",
+          "type": "vod",
+          "vodOption": {
+            "recordId": "63e352fd",
+          }
+        },
         event => {
           console.log('初始化播放器成功')
           this.$PLAYER = event.vhallplayer;
@@ -977,10 +997,11 @@ export default {
           this.$PLAYER.openUI(false);
           this.$PLAYER.on(VhallPlayer.LOADED, () => {
             // 加载中
+            this.$PLAYER.play()
           });
         },
         e => {
-          console.error('初始化播放器失败', event);
+          console.error('初始化播放器失败', e);
         }
       )
     },
@@ -1532,7 +1553,7 @@ export default {
       }
       if (type == 'wx') {
         params.type = 2
-        params.service_code = 'H5_PAY'
+        params.service_code = 'QR_PAY'
       } else {
         params.type = 1
       }

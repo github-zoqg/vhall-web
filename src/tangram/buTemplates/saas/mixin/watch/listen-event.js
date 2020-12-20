@@ -243,26 +243,27 @@ export const listenEvent = {
         this.mainScreen = e.data.room_join_id;
       });
 
-      // 观众查看问卷 TODO: 永正
+      // 观众查看问卷
       EventBus.$on('questionnaireCheck', questionnaireId => {
-        // this.$vhallFetch('checkSurvey', {
-        //   survey_id: questionnaireId,
-        //   user_id: this.roomInfo.third_party_user_id,
-        //   webinar_id: this.ilId
-        // }).then(res => {
-        //   if (res.code == 200) {
-        //     this.showQA = true;
-        //     setTimeout(() => {
-        //       this.$refs.questions.chatPreview(questionnaireId, false);
-        //     }, 200);
-        //   } else {
-        //     this.showQA = true;
-        //     console.log('checksss>>>>>>>>>>>>>');
-        //     setTimeout(() => {
-        //       this.$refs.questions.chatPreview(questionnaireId, true);
-        //     }, 200);
-        //   }
-        // });
+        this.showQA = true;
+        this.$fetch('checkSurvey', {
+          survey_id: questionnaireId,
+          webinar_id: this.ilId
+        }).then(res => {
+          if (res.code == 200) {
+            if (res.data) { // 未提交
+              setTimeout(() => {
+                this.showQA = true;
+                this.$refs.questions.chatPreview(questionnaireId, false);
+              }, 200);
+            } else {
+              setTimeout(() => {
+                this.showQA = true;
+                this.$refs.questions.chatPreview(questionnaireId, true);
+              }, 200);
+            }
+          }
+        })
       });
       // 监听直播开启
       EventBus.$on('startPlay', msg => {
