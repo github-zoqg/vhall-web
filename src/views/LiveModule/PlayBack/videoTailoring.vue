@@ -55,12 +55,17 @@ export default {
       titleEdit: '',
       editLoading: false,
       roomInfo: {},
-      isAdd: true, // 是否可添加视频裁剪 一般情况下为true，当在某个回放中点击裁剪时设置为false
+      isAdd: false, // 是否可添加视频裁剪 一般情况下为true，当在某个回放中点击裁剪时设置为false
       timeVal: []
     };
   },
   created() {
-    this.getPlayBackInfo()
+    if (this.$route.query.recordId) {
+      this.getPlayBackInfo();
+    } else {
+      this.isAdd = true;
+      this.dataReady = true;
+    }
   },
   methods:{
     confirmTitle() {
