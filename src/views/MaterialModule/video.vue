@@ -111,8 +111,8 @@ export default {
         return;
       }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
-      let name = beforeName.split('.m')[0];
-      console.log(name, beforeName,  '22222222222222222222222222');
+      // let name = beforeName.split('.m')[0];
+      // console.log(name, beforeName,  '22222222222222222222222222');
       let onlyId = this.uploadId--;
       file.id = onlyId;
       // if(!reg.test(name)){

@@ -409,7 +409,6 @@ export default {
           data.image_urls = this.imgUrls;
           data.type = 'image';
         }
-        console.log(11111122222, this.imgUrls)
         let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
         console.warn('获取当前的本地用户信息', userInfo)
         let context = {
@@ -422,11 +421,10 @@ export default {
         console.log('获取当前的本地用户信息 -context', context);
         // data.role_name = this.roleName
         let filterStatus = true;
-        console.log(JSON.stringify(data));
         if (sessionStorage.getItem('watch')) {
           if (this.chatFilterData && this.chatFilterData.length > 0) {
             this.chatFilterData.map(item => {
-              if (inputValue.includes(item)) {
+              if (inputValue.includes(item.name)) {
                 filterStatus = false;
               }
             });
@@ -614,7 +612,7 @@ export default {
     },
     // 子组件查看问卷
     questionnaireCheck (questionnaire_id) {
-      console.log('ss', questionnaire_id);
+      console.log('ss1', questionnaire_id);
       EventBus.$emit('questionnaireCheck', questionnaire_id);
     },
     // 子组件预览聊天图片

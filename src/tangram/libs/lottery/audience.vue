@@ -13,7 +13,7 @@
         <div class="prize-pending" v-if="lotteryInfo.lottery_status==0 || !lotteryResultShow">
           <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
           <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
-          <div class="audience-code" v-if="lotteryInfo.lottery_type == 8 || codeLottery">
+          <div class="audience-code" v-if="lotteryInfo.lottery_type == 8">
             <p>发送口令<span>“{{lotteryInfo.command}}”</span>参与抽奖吧！</p>
             <el-button class="common-but" @click="participate">立即参与</el-button>
           </div>
@@ -25,7 +25,7 @@
               <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
               <el-form ref="forms" class="form-style">
                 <el-form-item :label="item.field" :required='item.is_required == 1' v-for="(item, index) in stepHtmlList" :key="index">
-                  <el-input  v-model="reciveInfo[item.field_Key]" :placeholder="`请输入${item.field}`"></el-input>
+                  <el-input  v-model="reciveInfo[item.field_key]" :placeholder="`请输入${item.field}`"></el-input>
                 </el-form-item>
               </el-form>
             </div>
@@ -146,11 +146,11 @@ export default {
         try {
           this.stepHtmlList.forEach((ele, index)=>{
             if(ele.is_required == 1 ){
-              if(this.reciveInfo[ele.field_Key] == ''){
+              if(this.reciveInfo[ele.field_key] == ''){
                 throw ele.field
               }
-              if(ele.field_Key == 'phone'){
-                const phone = this.reciveInfo[ele.field_Key].replace(/\s/g, '')
+              if(ele.field_key == 'phone'){
+                const phone = this.reciveInfo[ele.field_key].replace(/\s/g, '')
                 let regs = /^1(3|4|5|6|7|8|9)\d{9}$/;
                 if (!regs.test(phone)) {
                   throw '手机号格式错误'
@@ -281,7 +281,6 @@ export default {
         this.lotteryInfo.lottery_type = 8
         this.lotteryInfo.id = msg.lottery_id
         this.lotteryInfo.command = msg.command
-        this.codeLottery = true
       }
     },
     getStepText(){
@@ -292,7 +291,7 @@ export default {
           console.warn('获取当前页面中奖以后', res.data);
           this.stepHtmlList = res.data
           res.data.forEach(element => {
-            this.reciveInfo[element.field_Key] = ''
+            this.reciveInfo[element.field_key] = ''
           });
           this.reciveInfo = Object.assign({},this.reciveInfo)
         }else{
@@ -300,12 +299,17 @@ export default {
         }
       })
     },
+    // 结束抽奖
     endRecive(msg, WinningID){
       console.warn(msg, WinningID, '中奖信息----', msg.lottery_winners);
       if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
+        console.warn('找得到了-----');
         this.lotteryResultShow = true
         this.getStepText()
         this.isWinning = true
+        this.lotteryInfo.award_snapshoot = {
+          award_name: "奖品1"
+        }
         let awardUserId = this.lotteryEndResult.find(
           item => item.lottery_user_id == WinningID
         );
@@ -322,7 +326,16 @@ export default {
             lottery_id: this.lotteryInfo.id
           }).then(res=>{
             if(res.code ==200) {
-              // window.chatSDK.emit(_data, _content)
+              let _data = {
+                type: 'text',
+                text_content: this.lotteryInfo.command
+              }
+              let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+              let context = {
+                nickname: userInfo.nick_name, // 昵称
+                avatar: userInfo.avatar, // 头像
+              };
+              window.chatSDK.emit(_data, _content)
             } else {
               this.$message.warning(res.msg)
             }

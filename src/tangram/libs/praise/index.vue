@@ -17,6 +17,10 @@ export default {
     },
     times: {
       type: Number
+    },
+    isLogin: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -111,23 +115,27 @@ export default {
         : Math.floor(Math.random() * (max + 1));
     },
     support () {
-      this.startZanAnimation();
-      // startZanAnimation();
+      if (this.isLogin) {
+        this.startZanAnimation();
+        // startZanAnimation();
 
-      if (this.clearSet) {
-        window.clearTimeout(this.clearSet);
+        if (this.clearSet) {
+          window.clearTimeout(this.clearSet);
+        } else {
+          this.clearSet = null;
+        }
+        this.timess++;
+        this.timesPage = this.timesPage + 1;
+        this.timeShowAccount = this.transformWatchNum(this.timesPage);
+        this.getRandom(5);
+        this.imgList.push(require(`./img/zan-${this.getRandom(5)}.png`));
+        this.clearSet = setTimeout(() => {
+          this.praise();
+          this.timess = 0;
+        }, 2000);
       } else {
-        this.clearSet = null;
+        this.$emit('login')
       }
-      this.timess++;
-      this.timesPage = this.timesPage + 1;
-      this.timeShowAccount = this.transformWatchNum(this.timesPage);
-      this.getRandom(5);
-      this.imgList.push(require(`./img/zan-${this.getRandom(5)}.png`));
-      this.clearSet = setTimeout(() => {
-        this.praise();
-        this.timess = 0;
-      }, 2000);
     },
     transformWatchNum (num) {
       if (num < 10000) {
