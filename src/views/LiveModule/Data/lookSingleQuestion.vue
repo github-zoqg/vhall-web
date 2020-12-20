@@ -135,6 +135,58 @@ export default {
           this.questionList = res.data.list;
           this.initEchart();
           this.initBarEcharts();
+          let list = [
+            {
+              itemTypeChinese: "单选" ,
+              item_id: 82110,
+              item_type: 1,
+              ques_id: 557831,
+              title: "性别",
+              total: 11111,
+              list: [
+                {
+                  name: '女',
+                  value: '40',
+                },
+                {
+                  name: '男',
+                  value: '30',
+                }
+              ]
+            },
+            {
+              itemTypeChinese: "null" ,
+              item_id: 82111,
+              item_type: 0,
+              ques_id: 557831,
+              title: "地域",
+              total: 1000,
+              list: [
+                {
+                  name: '北京',
+                  value: '10',
+                },
+                {
+                  name: '天津',
+                  value: '30',
+                },
+                {
+                  name: '上海',
+                  value: '20',
+                }
+              ]
+            },
+            {
+              itemTypeChinese: "多选" ,
+              item_id: 82112,
+              item_type: 2,
+              ques_id: 557831,
+              title: "爱好",
+              total: 100,
+              name: ['写代码', '睡觉', '看书', '唱歌'],
+              value: [20, 30, 40, 50]
+            }
+          ]
         }
       })
     },

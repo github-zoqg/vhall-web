@@ -228,6 +228,7 @@ export default {
           // border: 1px solid #ccc;
           /deep/.svg-icon{
             font-size: 32px;
+            color: #FB3A32;
           }
         }
         h3{

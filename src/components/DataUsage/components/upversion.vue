@@ -183,7 +183,7 @@ export default {
     },
     goPayList(id) {
       this.$router.push({
-        path: '/payOrder',
+        path: '/finance/payOrder',
         query: {
           userId: this.userId,
           orderId: id

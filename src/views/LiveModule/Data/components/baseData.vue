@@ -487,6 +487,7 @@ export default {
           display: flex;
           /deep/.svg-icon{
             font-size: 38px;
+            color: #FB3A32;
           }
           .base-text{
             margin-left: 15px;
