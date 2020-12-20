@@ -469,6 +469,7 @@ export default {
       // 重置直播模式、直播封面、直播简介。
     },
     mediaSelected(media){
+      console.log(media, '111111111');
       this.selectMedia = media;
     }
   },

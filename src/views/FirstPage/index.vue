@@ -44,7 +44,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.webinar_count"
                   :duration="1500"
-                  v-if="mainKeyData.webinar_count > 0">
+                  v-if="mainKeyData.webinar_count >= 0">
                 </count-to>
               </h2>
             </div>
@@ -56,7 +56,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_times"
                   :duration="1500"
-                  v-if="mainKeyData.watch_times > 0">
+                  v-if="mainKeyData.watch_times >= 0">
                 </count-to>
               </h2>
             </div>
@@ -68,7 +68,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_number"
                   :duration="1500"
-                  v-if="mainKeyData.watch_number > 0">
+                  v-if="mainKeyData.watch_number >= 0">
                 </count-to>
               </h2>
             </div>
@@ -80,7 +80,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_duration"
                   :duration="1500"
-                  v-if="mainKeyData.watch_duration > 0">
+                  v-if="mainKeyData.watch_duration >= 0">
                 </count-to>
                 </h2>
             </div>
@@ -185,7 +185,7 @@ export default {
         type: 1
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
-        this.mainKeyData = res.data.key_data;
+        this.mainKeyData = {...res.data.key_data};
         this.lineDataList = res.data.trend.live;
       }).catch(e=>{
         console.log(e);

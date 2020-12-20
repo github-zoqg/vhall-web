@@ -216,7 +216,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'lookSingleQuestion',
+        path: 'lookSingleQuestion/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/lookSingleQuestion'),
         meta:{ auth: true, title: '查看问卷详情', name: 'lookSingleQuestion', activeMenu: '/live/list'},
         hidden: true
