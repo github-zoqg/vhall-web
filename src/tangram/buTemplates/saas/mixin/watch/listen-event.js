@@ -82,7 +82,16 @@ export const listenEvent = {
         this.liveEnded = false;
       });
 
-      EventBus.$on('red_envelope_push', msg => {
+      // EventBus.$on('red_envelope_push', msg => {
+      //   // 发红包
+      //   this.redPacketUuid = msg.red_packet_uuid;
+      //   this.redPacketShowBut = false;
+      //   setTimeout(() => {
+      //     this.redPacketShowBut = true;
+      //     this.isHavePacket = true;
+      //   }, 300);
+      // });
+      EventBus.$on('red_envelope_ok', msg => {
         // 发红包
         this.redPacketUuid = msg.red_packet_uuid;
         this.redPacketShowBut = false;
