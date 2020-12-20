@@ -13,52 +13,54 @@
       </div>
     </el-card>
     <el-card class="question-item">
-      <div class="question-gender">
-        <p>性别统计(单选题)</p>
-        <div class="terEchart">
-          <div
-            :style="{ height: '300px', width: '50%' }"
-            ref="terBroEchart"
-          ></div>
-          <div class="terList">
-            <table border="0">
-              <tr>
-                <th>性别</th>
-                <th>填写人数</th>
-                <th>占比</th>
-              </tr>
-              <tr v-for="(item, index) in genderList" :key="index">
-                <td>{{ item.name }}</td>
-                <td>100</td>
-                <td>{{ (item.value / 100) * 100 }}%</td>
-              </tr>
-            </table>
+      <div v-for="(item, index) in questionList" :key="index">
+        <div class="question-gender" v-show="item.item_type == 1">
+          <p>{{ item.title }}(单选题)</p>
+          <div class="terEchart">
+            <div
+              :style="{ height: '300px', width: '50%' }"
+              ref="terBroEchart"
+            ></div>
+            <!-- <div class="terList">
+              <table border="0">
+                <tr>
+                  <th>性别</th>
+                  <th>填写人数</th>
+                  <th>占比</th>
+                </tr>
+                <tr v-for="(opt, index) in item" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>100</td>
+                  <td>{{ (item.value / 100) * 100 }}%</td>
+                </tr>
+              </table>
+            </div> -->
           </div>
         </div>
-      </div>
-      <div class="question-city">
-        <p>地域统计(城市题目)</p>
-        <div class="map-charts">
-          <map-echarts :areaDataList="areaDataList"></map-echarts>
+        <div class="question-city" v-show="item.item_type == 0">
+          <p>{{item.title}}统计(城市题目)</p>
+          <div class="map-charts">
+            <map-echarts :areaDataList="areaDataList"></map-echarts>
+          </div>
         </div>
-      </div>
-      <div class="question-subject">
-        <p>这里是题目名称1（单选题）</p>
-        <div class="barEchart">
-          <div :style="{ height: '300px', width: '50%' }" ref="barEchart"></div>
-          <div class="terList">
-            <table border="0">
-              <tr>
-                <th>性别</th>
-                <th>填写人数</th>
-                <th>占比</th>
-              </tr>
-              <tr v-for="(item, index) in barDataList" :key="index">
-                <td>{{ item.name }}</td>
-                <td>100</td>
-                <td>{{ (item.value / 100) * 100 }}%</td>
-              </tr>
-            </table>
+        <div class="question-subject" v-show="item.item_type == 2">
+          <p>{{ item.title }}（多选题）</p>
+          <div class="barEchart">
+            <div :style="{ height: '300px', width: '50%' }" ref="barEchart"></div>
+            <div class="terList">
+              <table border="0">
+                <tr>
+                  <th>性别</th>
+                  <th>填写人数</th>
+                  <th>占比</th>
+                </tr>
+                <tr v-for="(item, index) in barDataList" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>100</td>
+                  <td>{{ (item.value / 100) * 100 }}%</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -73,6 +75,7 @@ export default {
   data() {
     return {
       title: '问卷标题',
+      questionList: [],
       genderList: [
         {
           name: '女',
@@ -117,8 +120,6 @@ export default {
     mapEcharts,
   },
   mounted() {
-    this.initEchart();
-    this.initBarEcharts();
     this.getQuerstionList();
   },
   methods: {
@@ -131,7 +132,9 @@ export default {
       this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
         if (res.code == 200 && res.data) {
           console.log(res.data.list);
-          res.data.list.filter(item => item.num)
+          this.questionList = res.data.list;
+          this.initEchart();
+          this.initBarEcharts();
         }
       })
     },
