@@ -97,7 +97,7 @@ export default {
       lotteryResultObj:{},
       defaultImg: require('./img/prize.gif'),
       stepHtmlList: [], // 领奖页信息
-      codeText: '立即参与1'
+      codeText: '立即参与'
     };
   },
   watch: {
