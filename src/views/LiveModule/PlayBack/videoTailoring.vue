@@ -49,29 +49,18 @@ export default {
     return {
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
-      recordName: this.$route.params.recordName,
-      dataReady: true,
+      recordName: this.$route.query.recordName,
+      dataReady: false,
       titleDialogVisible: false,
       titleEdit: '',
       editLoading: false,
-      roomInfo: {
-        app_id: 'd317f559', // 应用 ID
-        third_party_user_id: 10000127, // 当前房间用户id
-        paas_access_token: 'access:d317f559:75107dced08acdb1', // pass 身份标识
-        roomeId: "lss_706f5237", // 当前活动房间id
-        record_id: "922013fa", // 当前活动回放的id
-        webinar_id: "561752317", // 当前活动id
-        roleName: 2, // 角色名称 1主持人2观众3助理4嘉宾(此处回放+文档模式只能是已观众角色初始化)
-        channel_id: 'ch_1a348b67', // 频道Id
-        name: '回访名称1',
-        joinId: 287484
-      },
+      roomInfo: {},
       isAdd: true, // 是否可添加视频裁剪 一般情况下为true，当在某个回放中点击裁剪时设置为false
       timeVal: []
     };
   },
   created() {
-    // this.getPlayBackInfo()
+    this.getPlayBackInfo()
   },
   methods:{
     confirmTitle() {
@@ -116,27 +105,19 @@ export default {
         console.log(res)
         const data = res.data
         this.roomInfo = {
-          app_id: 'd317f559', // 应用 ID
-          third_party_user_id: 10000127, // 当前房间用户id
-          paas_access_token: 'access:d317f559:75107dced08acdb1', // pass 身份标识
-          roomeId: "lss_706f5237", // 当前活动房间id
-          record_id: "922013fa", // 当前活动回放的id
-          webinar_id: "561752317", // 当前活动id
+          app_id: data.paasAppId, // 应用 ID
+          third_party_user_id: data.accountId, // 当前房间用户id
+          paas_access_token: data.paasAccessToken, // pass 身份标识
+          roomeId: data.doc.roomId, // 当前活动房间id
+          record_id: data.player.paasRecordId, // 当前活动回放的id
+          webinar_id: this.webinar_id, // 当前活动id
+          channel_id: data.doc.channelId, // 频道Id
           roleName: 2, // 角色名称 1主持人2观众3助理4嘉宾(此处回放+文档模式只能是已观众角色初始化)
-          channel_id: 'ch_1a348b67', // 频道Id
-          name: '回访名称1',
-          joinId: 287484
+          name: this.recordName,
+          joinId: data.accountId,
         }
-        this.roomInfo.app_id = data.paasAppId
-        this.roomInfo.third_party_user_id = data.accountId
-        this.roomInfo.paas_access_token = data.paasAccessToken
-        this.roomInfo.roomeId = data.doc.roomId
-        this.roomInfo.record_id = this.recordId
-        this.roomInfo.webinar_id = this.webinar_id
-        this.roomInfo.channel_id = data.doc.channelId
-        this.roomInfo.name = this.recordName
-        this.showDoc = true
-        this.dataReady = true
+        this.showDoc = true;
+        this.dataReady = true;
       })
     },
     // isAdd 为false 没有该方法
@@ -168,7 +149,7 @@ export default {
           channel_id: '', //活动频道ID
           id: '', //点播ID
         }];
-        console.log('createVideo', datae);
+        console.log('createVideo', data);
       // 将生成的视频通过该方法传给视频裁剪组件
       this.$refs.videoTailoringComponent.pushDataList(data);
     },
@@ -186,18 +167,16 @@ export default {
         // this.roomInfo.paas_access_token = data.access_token
     },
     saveVideoHandler (param) {
-      console.log('saveVideoHandler', param);
       const cut_sections = param.cut_sections && JSON.parse(param.cut_sections)
       const point_sections = param.point_sections && JSON.parse(param.point_sections)
-      console.log(cut_sections, point_sections)
       // 将param作为参数请求保存接口
       this.$fetch('tailorSave', {
-        record_id: param.record_id,
+        record_id: this.recordId,
         webinar_id: param.il_id,
         cut_type: param.cut_type,
         name: param.name,
-        cut_sections,
-        point_sections
+        cut_sections: JSON.stringify(cut_sections),
+        point_sections: JSON.stringify(point_sections)
       }).then(res => {
         console.log(res)
         if (res.code == 200) {
@@ -207,16 +186,15 @@ export default {
       })
     },
     exportVideoHandler (param) {
-      console.log(param)
       const cut_sections = param.cut_sections && JSON.parse(param.cut_sections)
       const point_sections = param.point_sections && JSON.parse(param.point_sections)
       this.$fetch('tailorSave', {
-        record_id: param.record_id,
+        record_id: this.recordId,
         webinar_id: param.il_id,
         cut_type: param.cut_type,
         name: param.name,
-        cut_sections,
-        point_sections
+        cut_sections: JSON.stringify(cut_sections),
+        point_sections: JSON.stringify(point_sections)
       }).then(res => {
         console.log(res)
         if (res.code == 200) {
