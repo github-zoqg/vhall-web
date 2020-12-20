@@ -736,12 +736,12 @@ export default {
           size: ['80px'] // 水印大小，支持px,vh,vw,%
         };
       }
-      console.log(params, '初始化播放器参数');
+      console.log(params, '初始化播放器参数1');
       return new Promise((resolve, reject) => {
         VhallPlayer.createInstance(
           params,
           event => {
-            console.log('ffffffffffffffffffffffffff', event);
+            console.log('初始化播放器成功', event);
             this.$PLAYER = event.vhallplayer;
             window.ppp = this.$PLAYER;
             this.$PLAYER.openControls(false);
@@ -756,7 +756,7 @@ export default {
             }
           },
           e => {
-            console.error('ffffffffffffffffffffffffff', event);
+            console.error('初始化播放器失败', event);
             reject(e);
           }
         );
