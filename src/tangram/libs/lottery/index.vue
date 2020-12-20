@@ -211,6 +211,10 @@ export default {
       newValue.length > 0
         ? (this.userButtonShow = true)
         : (this.userButtonShow = false);
+    },
+    repeatWinning(newValue){
+      console.warn(newValue, '是否开启重复中奖');
+      this.getLotteryCount()
     }
   },
 
