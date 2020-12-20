@@ -264,6 +264,7 @@ const eventMixin = {
             });
             this.chatList.push(data);
           }
+          console.warn('派发的消息，查看数据类型和数据', msg, msg.type);
           EventBus.$emit(msg.type, msg);
         });
       }

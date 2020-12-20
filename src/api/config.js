@@ -302,6 +302,8 @@ const apis = {
   exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
   exportDetailRedpacket: ['/v3/interacts/redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个红包的领取明细
 
+  getQuestionDetailList: ['/v3/vss/survey/get-survey-question-detail', 'GET'], //回答问题人数统计
+
 
 
   // 账户管理
@@ -518,6 +520,8 @@ const apis = {
   // 红包
   getLastRedInfo: ['/v3/interacts/redpacket/get-latest-redpacket-usage', 'GET'], // 发起端_获取当前活动最新创建红包的消费情况.
   createRed: ['/v3/interacts/redpacket/create', 'POST'], // 创建红包
+  v3CreateRed: ['/v3/interacts/redpacket/create', 'POST'], // 创建红包
+  getpacketCreate: ['/v3/interacts/redpacket/open-redpacket', 'GET'], // 抢红包
   // 点赞
   like: ['/v3/interacts/like/create-user-like', 'POST'], // 点赞
   // 打赏

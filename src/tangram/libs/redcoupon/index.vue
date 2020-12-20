@@ -91,10 +91,16 @@ export default {
       redcouponMinNum: false
     };
   },
-  watch: {
-  },
   mounted () {
-    EventBus.$on('red_envelope_push', e => { // 关闭微信二维码弹窗
+    // EventBus.$on('red_envelope_push', e => { // 关闭微信二维码弹窗
+    //  派发消息类型改变   进行注释删除
+    //   console.warn('兼听到红包派发的消息----');
+    //   this.paySuccess = true;
+    //   this.wechatPayMobild = true;
+    // });
+
+    EventBus.$on('red_envelope_ok', e => { // 关闭微信二维码弹窗
+      console.warn('兼听到红包派发的消息----');
       this.paySuccess = true;
       this.wechatPayMobild = true;
     });
@@ -111,8 +117,13 @@ export default {
       this.channel = 'WEIXIN'
       this.closeMobild()
     })
-    this.$vhallFetch('getOnlineUsers', {room_id: this.roomId, page: 1}).then(res => {
-      this.onlineAmount = res.data.total;
+    this.$fetch('getOnlineList', {room_id: this.roomId, pos: 0, limit:100}).then(res => {
+      console.warn('获取到最大的在线人数----', res.data);
+      if(res.code == 200){
+        this.onlineAmount = res.data.total;
+      }else{
+        this.$message.warning(res.msg)
+      }
     });
   },
   props: {
@@ -146,10 +157,7 @@ export default {
       }
       if (!this.PayIng) { this.PayIng = true; }
       // this.loading = true
-      // let serviceCode;
-      // this.channel === 'ALIPAY' ? serviceCode = 'H5_PAY' : serviceCode = 'QR_PAY';
-      this.$fetch('createRed', {
-        room_id: this.roomId,
+      this.$fetch('v3CreateRed', {
         type: this.redcouponType,
         describe: this.describe,
         number: this.numbers,

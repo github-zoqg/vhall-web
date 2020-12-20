@@ -160,7 +160,6 @@
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <getCoupon
                 v-if="roomInfo.room_id"
-                :vss_token="vssToken"
                 :room_id="roomInfo.room_id"
                 :red_packet_uuid="redPacketUuid"
                 :isHavePacket="isHavePacket"

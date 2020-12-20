@@ -112,7 +112,7 @@
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
-            <i class="el-icon-moon-night"></i>
+            <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
           <div class="abRight" v-if="!!selectMedia">
@@ -411,7 +411,7 @@ export default {
       // }
       let data = {
         webinar_id: this.webinarId || '',
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.paas_record_id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
@@ -698,6 +698,9 @@ export default {
       cursor: pointer;
       i{
         font-size: 30px;
+      }
+      /deep/.iconfont-v3{
+        font-size: 26px;
       }
     }
     .el-tooltip{
