@@ -220,6 +220,7 @@ const apis = {
   tailorSave: ['/v3/webinars/record/cut', 'POST'], // 视频裁剪保存接口 xiaodong.ding
   createRecordinCtrl: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
   saveChapters: ['/v3/webinars/record/save-doc-info', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  checkChapterSave: ['/v3/webinars/record/check-chatper-save', 'POST'], // 视频裁剪保存接口 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √

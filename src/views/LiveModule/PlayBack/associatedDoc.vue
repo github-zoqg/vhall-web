@@ -3,7 +3,6 @@
     title="关联文档"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    :before-close="handleBeforeClose"
     width="810px"
   >
     <!-- <div class="tabs">
@@ -99,6 +98,8 @@ export default {
         }).then(() => {
           // this.tabs = 2
           this.$emit('getChapters', this.tableSelect);
+          this.$refs.docList.clearSelection()
+          this.tableSelect = []
           this.dialogVisible = false;
         })
       }
@@ -107,10 +108,6 @@ export default {
     //   this.dialogVisible = false
     //   this.tabs = 1
     // },
-    handleBeforeClose(done) {
-      this.tableSelect = []
-      done()
-    },
     handleSelectionChange(val){
       let ids = []
       val.length > 0 && val.forEach((item, index) => {
@@ -128,7 +125,8 @@ export default {
         pos: (this.pageInfo.currentPage - 1) * this.pageInfo.pageSize,
         limit: this.pageInfo.pageSize,
         webinar_id: this.webinar_id,
-        type: '1'
+        type: '1',
+        keyword: 'ppt'
       };
       this.$fetch('getWordList', data).then(res => {
         if (res.code == 200) {
@@ -206,7 +204,7 @@ export default {
   }
   .pagination-wrapper {
     display: flex;
-    margin-top: 60px;
+    margin-top: 10px;
     justify-content: center;
   }
 </style>
