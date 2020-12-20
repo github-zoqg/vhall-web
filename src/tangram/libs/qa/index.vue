@@ -174,8 +174,9 @@ export default {
       }
       e.data = e.data.text_content;
       console.warn('监听到的私聊消息事件---2---', e);
-      if (e.context.to == '16422715' || e.sender_id == this.joinId) {
-      // if (e.context.to == this.joinId || e.sender_id == this.joinId) {
+      console.warn('监听到的私聊消息事件---5---', e.sender_id, this.joinId, this.thirdPartyId, e.context);
+      // if (e.context.to == '16422715' || e.sender_id == this.joinId) {
+      if (e.context.to == this.thirdPartyId || e.sender_id == this.joinId) {
         // 如果是本用户收发的消息放到私聊消息队列
         if (e.sender_id != this.joinId) {
           // 发消息的人不是本用户

@@ -9,7 +9,11 @@
     </pageTitle>
     <div>
       <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
-      <el-button class="length104" size="medium" round  @click="downloadHrefHandle" v-if="downloadHref">下载模板</el-button>
+      <a :href="downloadHref" class="btn-a">
+        <el-button class="length104" size="medium" round v-if="downloadHref">
+          下载模板
+        </el-button>
+      </a>
     </div>
     <div class="setting-chat-main">
       <el-form :model="chatForm" ref="chatForm" label-width="120px">
@@ -392,6 +396,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.btn-a {
+  margin-left: 12px;
+}
 .setting-chat-main {
   .layout--right--main();
   margin-top: 24px;

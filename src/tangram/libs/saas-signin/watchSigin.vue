@@ -1,6 +1,6 @@
 <template>
   <VhallDialog :visible.sync="showSign" title="签到" width="468px" class="sign" >
-    <CountDown :duration="60" :consume="sign_time" class="sign-counter"></CountDown>
+    <CountDown :duration="30" :consume="sign_time" class="sign-counter"></CountDown>
     <div class="sign-title">设计师的信息觅食指南第三讲</div>
     <el-button type="danger" class="sign-btn" @click="signin">立即签到</el-button>
   </VhallDialog>
@@ -38,7 +38,7 @@ export default {
   methods: {
     bindEvents () {
       this.$EventBus.$on('sign_in_push', e => {
-        console.log('监听到这个');
+        console.log('监听到这个', e);
         console.log('处理签到信令');
         this.sign_id = e.data.sign_id
         this.showSign = true;
@@ -66,6 +66,7 @@ export default {
       this.timer = setInterval(() => {
         if (this.sign_time == 0) {
           clearInterval(this.timer)
+          this.showSign = false
           return
         }
         this.sign_time --

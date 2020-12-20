@@ -86,6 +86,7 @@ const apis = {
 
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
+  getHighLimit: ['/v3/fin/user-vip/get-balance', 'GET'], // 最高并发值 --获取付费用户余量
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
   getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
@@ -248,6 +249,7 @@ const apis = {
   getDeviceinfo: ['/v3/data-center/webinar-device-info', 'GET'], //获取活动设备信息
   getBrowserinfo: ['/v3/data-center/webinar-browser-info', 'GET'], //获取活动浏览器信息
   getDateUvinfo: ['/v3/data-center/webinar-date-uv', 'GET'], //获取观看人数趋势
+  getWebinarinfo: ['/v3/data-center/webinar-date-pv', 'GET'], //获取并发趋势
 
   exportWebinarInfo: ['/v3/data-center/export', 'GET'], //导出 -- 直播下数据报告
 

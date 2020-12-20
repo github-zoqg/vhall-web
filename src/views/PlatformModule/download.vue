@@ -63,7 +63,9 @@
             label="操作"
             width="200">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">下载</el-button>
+              <a :href="scope.row.dow_url" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">
+                <el-button size="mini" type="text">下载</el-button>
+              </a>
               <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
               <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
             </template>
@@ -207,7 +209,7 @@ export default {
     },
     // 下载
     download(rows) {
-      window.open(rows.dow_url, "_blank");
+      // window.open(rows.dow_url, "_blank");
       // 如果当前已经是下载状态，不触发状态修改
       if (Number(rows.dow_status) !== 1) {
         this.downloadedEdit(rows.dow_task_id);

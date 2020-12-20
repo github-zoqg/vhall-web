@@ -140,6 +140,7 @@ export default {
       if (!this.privateValue.trim()) {
         return this.$message.error('内容不能为空');
       }
+      console.warn(this.userList, '当前的userlIst', this.acrivePrivate);
       let data = {
         avatar: this.userInfo.join_info.avatar,
         // target_id: '16422715',
@@ -151,7 +152,7 @@ export default {
       // 为保持一致   故传了多个不同key  同value
       let context = {
         // to: '16422715',
-        to: this.userList[this.acrivePrivate].user_id,
+        to: this.userList[this.acrivePrivate].user_id ,
         nickname: this.userInfo.join_info.nickname, // 昵称
         nick_name: this.userInfo.join_info.nickname,
         user_name:  this.userInfo.join_info.nickname,

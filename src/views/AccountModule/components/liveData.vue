@@ -14,8 +14,8 @@
         :clearable=false
         @change="queryList"
       />
-      <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList()">
-        <i class="el-icon-search el-input__icon" slot="suffix"></i>
+      <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>
       </el-input>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
     </div>
@@ -93,9 +93,21 @@ export default {
       this.query.pos = 0;
       this.query.pageNumber = 0;
       this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.sonTab.pageInfo.pageNum = 1;
+        this.$refs.sonTab.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
       this.getUserPayDetail();
     },
-    getUserPayDetail() {
+    getUserPayDetail(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+        this.query.limit = 10;
+      }
       let params = {
         account_id: sessionOrLocal.get('userId'), // b端账号id
         type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
@@ -103,7 +115,7 @@ export default {
         limit: this.query.limit,
         subject: this.query.title,
       };
-      if (this.timeStr) {
+      if (this.query.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }

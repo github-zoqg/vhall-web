@@ -6,10 +6,11 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @keyup.enter.native="getSonList">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="getSonList"></i>
+      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @keyup.enter.native="initQuerySonList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
       </el-input>
-      <el-select placeholder="全部" round v-model="query.role_id" @change="getSonList">
+      <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
+        <el-option value="">全部</el-option>
         <el-option
           v-for="item in roleList"
           :key="'v_' + item.id"
@@ -29,6 +30,7 @@
         :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
+        max-height="auto"
         scene="accountList"
         @getTableList="getSonList"
         @changeTableCheckbox="checkMoreRow"
@@ -129,7 +131,8 @@ export default {
         role_id: null,
         keyword: '',
         pos: 0,
-        limit: 1000
+        limit: 1000,
+        pageNumber: 1
       },
       roleList: [],
       sonDao: {
@@ -384,12 +387,17 @@ export default {
       });
     },
     // 获取列表数据
-    getSonList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
+    getSonList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
       let params = {
         role_id: this.query.role_id,
         // user_id: sessionOrLocal.get('userId'),
-        pos: pageInfo.pos,
-        limit: pageInfo.limit,
+        pos: this.query.pos,
+        limit: this.query.limit,
+        keyword: this.query.keyword,
         scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
       this.$fetch('getSonList', this.$params(params)).then(res => {
@@ -440,7 +448,7 @@ export default {
           this.roleList = [];
         }
         if (this.roleList.length > 0) {
-          this.getSonList();
+          this.initQuerySonList();
         }
       }).catch(e => {
         console.log(e);
@@ -453,6 +461,19 @@ export default {
     },
     initComp() {
       this.getRoleList(); // 获取可选角色列表
+    },
+    initQuerySonList() {
+      this.query.pos = 0;
+      this.query.pageNumber = 0;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.sonTab.pageInfo.pageNum = 1;
+        this.$refs.sonTab.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
+      this.getSonList();
     }
   },
   computed: {

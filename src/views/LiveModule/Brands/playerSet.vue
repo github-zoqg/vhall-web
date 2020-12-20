@@ -196,8 +196,6 @@ export default {
         bulletChat: true,
         doubleSpeed: true,
       },
-      prizeImg:
-        'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
       prizeForm: {
         name: '',
         imageUrl: '',
@@ -261,30 +259,42 @@ export default {
       this.formHorse.webinar_id = this.$route.params.str
       this.formHorse.interval = this.formHorse.interval || 20;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
-      this.formHorse.scrolling_open = this.scrolling_open ? 1 : 0;
+      this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.$fetch('setScrolling',this.formHorse).then(res => {
-         console.log(res.data, '111111111111');
+         if (res.code == 200) {
+           this.$message.success("保存跑马灯成功");
+         } else {
+           this.$message.success("保存跑马灯失败");
+         }
       });
     },
     // 保存水印
     preWatermark() {
       this.formWatermark.webinar_id = this.$route.params.str
       this.formWatermark.img_url = this.formWatermark.img_url || 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100';
-      this.formWatermark.watermark_open = this.watermark_open ? 1 : 0;
+      this.formWatermark.watermark_open = Number(this.watermark_open);
       this.$fetch('setWatermark',this.formWatermark).then(res => {
-         console.log(res.data, '22222222222222222');
+         if (res.code == 200) {
+           this.$message.success("保存水印成功");
+         } else {
+           this.$message.success("保存水印灯失败");
+         }
       });
     },
     // 保存播放器其他设置
     preOthersOptions () {
       let params = {
-        barrage_button: this.formOther.bulletChat ? 1 : 0,
-        progress_bar: this.formOther.progress ? 1 : 0,
-        speed: this.formOther.doubleSpeed ? 1 : 0,
+        barrage_button: Number(this.formOther.bulletChat),
+        progress_bar: Number(this.formOther.progress),
+        speed: Number(this.formOther.doubleSpeed),
         webinar_id: this.$route.params.str
       }
       this.$fetch('setOtherOption', {...params}).then(res => {
-        this.$message.success('设置成功')
+        if (res.code == 200) {
+          this.$message.success('设置成功');
+        } else {
+          this.$message.success('设置失败');
+        }
       })
     },
     uploadAdvSuccess(res, file) {

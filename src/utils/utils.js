@@ -192,26 +192,31 @@ export function checkAuth(to, from, next) {
   }
   // 第一步，判断是否第三方快捷登录
   let user_auth_key = getQueryString('user_auth_key');
-  // debugger
+  let auth_tag = sessionOrLocal.get('tag', 'localStorage');
   if (user_auth_key) {
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
       key: getQueryString('user_auth_key'),
-      scene_id: 1
+      scene_id: auth_tag.indexOf('bind') !== -1 ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
         sessionOrLocal.set('sso_token', res.data.sso_token);
         sessionOrLocal.set('userId', res.data.user_id);
-        // next({path: '/home'})
         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
         return;
       } else {
-        // 获取回调token失败
-        this.$message.error('登录信息获取失败，请重新登录');
-        sessionOrLocal.clear('localStorage');
-        sessionOrLocal.clear();
+        if (auth_tag.indexOf('bind') !== -1) {
+          sessionOrLocal.set('bind_result', JSON.stringify(res));
+          // 绑定成功
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+        } else {
+          // 获取回调token失败
+          this.$message.error('登录信息获取失败，请重新登录');
+          sessionOrLocal.clear('localStorage');
+          sessionOrLocal.clear();
+        }
       }
     });
     return;

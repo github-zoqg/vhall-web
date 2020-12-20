@@ -12,6 +12,7 @@
         type="selection"
         width="55"
         align="left"
+        :selectable="checkSelectable"
         v-if="isCheckout"
       />
       <template>
@@ -218,6 +219,13 @@ export default {
     clearSelect() {
       this.$refs.elTable.clearSelection();
     },
+    checkSelectable(row) {
+      if (this.scene === 'accountList') {
+        return row.parent_id > 0;
+      } else {
+        return true;
+      }
+    }
   },
 };
 </script>

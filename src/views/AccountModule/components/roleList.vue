@@ -4,8 +4,8 @@
     <div class="role--list--search">
       <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-input placeholder="搜索角色名称" v-model.trim="role_name" @keyup.enter.native="getRoleList">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="getRoleList"></i>
+      <el-input placeholder="搜索角色名称" v-model.trim="role_name" @keyup.enter.native="initQuerySonList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
       </el-input>
     </div>
     <!-- 有消息内容 -->
@@ -21,7 +21,6 @@
         :tabelColumnLabel="roleTableColumn"
         :totalNum="roleDao.total"
         :tableRowBtnFun="tableRowBtnFun"
-        :needPagination=false
         @getTableList="getRoleList"
         @changeTableCheckbox="checkMoreRow"
         @onHandleBtnClick="onHandleBtnClick"
@@ -102,6 +101,11 @@ export default {
   },
   data() {
     return {
+      query: {
+        pos: 0,
+        limit: 10,
+        pageNumber: 1
+      },
       role_name: '',
       roleDao: {
         total: 0,
@@ -271,12 +275,16 @@ export default {
       });
     },
     // 获取列表数据
-    getRoleList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
-      this.$fetch('sonRoleList', this.$params({
+    getRoleList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
+      this.$fetch('sonRoleList', {
         role_name: this.role_name,
-        pos: pageInfo.pos,
-        limit: pageInfo.limit
-      })).then(res =>{
+        pos: this.query.pos,
+        limit: this.query.limit
+      }).then(res =>{
         this.roleDao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
@@ -290,6 +298,19 @@ export default {
       });
     },
     initComp() {
+      this.initQuerySonList();
+    },
+    initQuerySonList() {
+      this.query.pos = 0;
+      this.query.pageNumber = 0;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.roleTab.pageInfo.pageNum = 1;
+        this.$refs.roleTab.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
       this.getRoleList();
     }
   }

@@ -17,10 +17,20 @@
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
+        <span>并发趋势图</span>
+        <el-tooltip effect="dark" placement="right-start">
+          <div slot="content">
+            筛选条件内，并发随时间变化的趋势图
+          </div>
+          <i class="el-icon-question"></i>
+        </el-tooltip>
+        <lint-charts :lineDataList="limitDataList"></lint-charts>
+      </div>
+      <div class="statistical-line statistical-dark">
         <span>观众访问趋势图</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
-            当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
+            筛选条件内，观看人数随时间变化的趋势图
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
@@ -70,6 +80,7 @@ export default {
       },
       liveDetailInfo: {},
       allDataList: {},
+      limitDataList: [],
       lineDataList: [],
       areaDataList: {},
       highMax: 0,
@@ -234,6 +245,10 @@ export default {
         this.allDataList = res.data;
         this.lineDataList = this.allDataList.live;
       });
+      // 获取并发趋势图
+      this.$fetch('getWebinarinfo', params).then(res => {
+        this.limitDataList = res.data.list;
+      });
       // 获取观看地域
       this.$fetch('getProvinceinfo', params).then(res => {
         this.areaDataList = res.data;
@@ -282,7 +297,7 @@ export default {
     font-size: 16px;
     color: #1a1a1a;
     line-height: 22px;
-    padding: 12px 0 75px 12px;
+    padding: 12px 0 50px 12px;
   }
 }
 .statistical-line {
@@ -296,11 +311,14 @@ export default {
       padding-left: 34px;
     }
   }
+  .statistical-dark{
+    padding-top: 30px;
+  }
 .changeOption {
   border-radius: 100px;
   border: 1px solid #ccc;
   position: absolute;
-  top: -10px;
+  top: 20px;
   right: 40px;
   cursor: pointer;
   span {

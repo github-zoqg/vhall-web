@@ -10,6 +10,8 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         style="width: 240px"
+        :clearable=false
+        @change="getDateInfo"
       />
     </div>
    <div class="echarts--line" ref="dateLineChartDom" id="dateLineChartDom"></div>

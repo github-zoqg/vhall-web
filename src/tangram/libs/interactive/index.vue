@@ -319,7 +319,8 @@ export default {
               appId: this.appId, // 应用ID，必填
               token: this.token, // access_token，必填
               role: this.role,
-              roomId: this.roomId // 如需开启旁路，必填
+              roomId: this.roomId, // 如需开启旁路，必填
+              report_extra: sessionStorage.getItem('report_extra')
             }, '查询初始化的值');
           VhallRTC.createInstance(
             {
@@ -328,7 +329,8 @@ export default {
               appId: this.appId, // 应用ID，必填
               token: this.token, // access_token，必填
               role: this.role,
-              roomId: this.roomId // 如需开启旁路，必填
+              roomId: this.roomId, // 如需开启旁路，必填
+              report_extra: sessionStorage.getItem('report_extra')
             },
             e => {
               this.$SDKINSTANCE = e.vhallrtc;
