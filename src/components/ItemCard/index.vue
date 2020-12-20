@@ -23,6 +23,16 @@ export default {
       type: Object
     }
   },
+  // computed: {
+  //   operas() {
+  //     if (this.status != 4) {
+  //       return;
+  //     } else {
+  //       console.log(this.operas);
+  //       return;
+  //     }
+  //   }
+  // },
   methods: {
     blockHandler(item) {
       this.$emit('blockHandler', item);
@@ -84,6 +94,7 @@ export default {
     text-align: center;
     font-size: 50px;
     vertical-align: top;
+    color: #FB3A32;
   }
   .desc{
     .mainText{

@@ -419,7 +419,7 @@ export default {
       // }
       let data = {
         webinar_id: this.webinarId || '',
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.paas_record_id : '',
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
@@ -482,6 +482,7 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
+      console.log(this.selectMedia);
     }
   },
 };
