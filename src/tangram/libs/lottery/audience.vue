@@ -9,18 +9,19 @@
           <span class="payment-title--text">{{ processingObj.title ? processingObj.title : '抽奖' }}</span>
           <span class="payment-title--close iconfont iconguanbi" @click="close"></span>
         </div>
-        <!-- 抽奖进行中 -->
-        <div class="prize-pending" v-if="lotteryInfo.lottery_status==0 || !lotteryResultShow">
+        <!-- 抽奖中 -->
+        <div class="prize-pending" v-if="currentLotStatus">
           <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
           <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
           <div class="audience-code" v-if="lotteryInfo.lottery_type == 8">
             <p>发送口令<span>“{{lotteryInfo.command}}”</span>参与抽奖吧！</p>
-            <el-button class="common-but" @click="participate">立即参与</el-button>
+            <el-button class="common-but" @click="participate" :disabled='codeText !="立即参与"'>{{codeText}}</el-button>
           </div>
         </div>
-        <!-- 抽奖结果 -->
-        <div class="lottery-result " v-if="lotteryResultShow">
-          <div v-if="lotteryInfo.lottery_status==1" style="text-align: center;">
+        <!-- 抽奖结束 -->
+         <!-- v-if="lotteryInfo.lottery_status==1" -->
+        <div class="lottery-result " v-if="!currentLotStatus">
+          <div style="text-align: center;">
             <div class="recive-prize"  v-if="lotteryStep == 2" >
               <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
               <el-form ref="forms" class="form-style">
@@ -36,7 +37,7 @@
             <template  v-if="lotteryStep == 4">
               <Result :domains='domains' :lotteryResultObj='lotteryResultObj' :prizeObj='prizeObj' :lotteryEndResult='lotteryEndResult'></Result>
             </template>
-            <el-button v-if="lotteryStep!=4" @click="getAward" class="common-but">{{ getReward }}</el-button>
+            <el-button v-if="showButton" @click="getAward" class="common-but">{{ getReward }}</el-button>
           </div>
         </div>
       </div>
@@ -46,6 +47,9 @@
 </template>
 <script>
 import Result from './common/result'
+import Msg from '../chat/js/msg-class';
+import getAvatar from '../chat/js/get-avatar';
+import { formatTime, handleTime } from '../chat/js/handle-time';
 export default {
   components:{
       Result
@@ -64,10 +68,17 @@ export default {
       type: [String,Number]
     }
   },
+  computed:{
+    showButton(){
+      console.warn('this.lotteryStep的值发生变化------', this.lotteryStep, this.lotteryInfo.publish_winner);
+      return this.lotteryStep==1 || this.lotteryStep==2 || this.lotteryInfo.publish_winner == 1 && this.lotteryStep==3
+    }
+  },
   data() {
     return {
       reciveInfo: {},// 领奖人信息
       getReward: '查看中奖名单',
+      currentLotStatus: false, // 当前抽奖状态   true 代表正在抽奖    false代表未抽奖/抽奖已结束
       WinningList: false, // 中奖名单
       repeatWinning: false ,// 重复中奖
       participationPass: '', // 口令
@@ -81,12 +92,12 @@ export default {
       showMess: false,
       prizeShow: false, //抽奖显示页
       chatLoginStatus: false, //是否需要登录
-      lotteryResultShow: false, //
       showLottery:false, //  观看端打赏展示
       promptImg: require('./img/win.png'),
       lotteryResultObj:{},
       defaultImg: require('./img/prize.gif'),
       stepHtmlList: [], // 领奖页信息
+      codeText: '立即参与1'
     };
   },
   watch: {
@@ -131,6 +142,7 @@ export default {
   methods: {
     close(){
       this.showMess = false
+      this.lotteryStep = 1
     },
     // 点击领奖
     getAward () {
@@ -176,16 +188,21 @@ export default {
           lottery_user_phone: this.reciveInfo['phone'],
           lottery_user_remark: _lottery_user_remark
         }).then(res => {
-          if (res.code === 200) {
-            this.audienceText = '信息提交成功';
-            this.promptImg = require('./img/summit.png')
-          } else {
-            this.audienceText = '信息提交失败';
-            this.$message.warning(res.msg)
-            this.promptImg = require('./img/submit_fail.png')
-          }
-          this.lotteryStep = 3
-          this.getReward = '查看中奖名单';
+          this.$nextTick(()=>{
+            this.lotteryStep = 3
+            console.warn('走到第三步----', this.lotteryStep);
+            this.getReward = '查看中奖名单';
+            if (res.code === 200) {
+              this.audienceText = '信息提交成功';
+              this.lotteryInfo.take_award = 1
+              this.promptImg = require('./img/summit.png')
+            } else {
+              this.audienceText = '信息提交失败';
+              this.lotteryInfo.take_award = 0
+              this.$message.warning(res.msg)
+              this.promptImg = require('./img/submit_fail.png')
+            }
+          })
         });
       }else if(this.lotteryStep == 3){
         console.warn();
@@ -222,9 +239,10 @@ export default {
             // 当前正在抽奖
             this.prizeShow = true
             this.lotteryContentShow = false
+            this.currentLotStatus = true
           }else{
             // 当前不存在抽奖
-            this.lotteryResultShow = true
+            this.currentLotStatus = false
             this.isWinning = res.data.win == 1
             if(this.isWinning){
               this.getStepText()
@@ -238,41 +256,53 @@ export default {
     },
     lookLottery(){
       this.showMess = true
-      console.warn(this.lotteryInfo, 'dsfsd');
-      if(this.lotteryInfo.win == 1){
-        // 已中奖
-        if(this.lotteryInfo.take_award == 1){
-          // 已领奖
-          this.lotteryStep = 3
-          this.promptImg = require('./img/summit.png')
-          this.getReward = '查看中奖名单';
-          this.audienceText = '信息已提交'
-          this.submitWinning = true
-        }else{
-          // 未领奖
-          this.getAward()
-          this.lotteryStep = 1
-          this.promptImg = require('./img/win.png')
-          this.getReward = '查看中奖名单';
-          this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`
-          this.submitWinning = true
+      console.warn(this.lotteryInfo, '获取当前的抽奖信息', this.currentLotStatus);
+      if(this.currentLotStatus){
+        // 抽奖中
+        if(this.lotteryInfo.submit_command == 1 && this.lotteryInfo.lottery_type == 8){
+          // 提交过口令
+          this.codeText = '您已参与过'
+        }else if(this.lotteryInfo.submit_command == 0 && this.lotteryInfo.lottery_type == 8){
+          // 未提交过口令
+          this.codeText = '立即参与'
         }
       }else{
-        // 未中奖
-        this.lotteryStep = 3
-        this.promptImg = require('./img/noWin.png')
-        this.getReward = '查看中奖名单';
-        this.submitWinning = false
-        this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！'
-
+        // 抽奖结束
+        if(this.lotteryInfo.win == 1){
+          // 已中奖
+          if(this.lotteryInfo.take_award == 1){
+            // 已领奖
+            this.lotteryStep = 3
+            this.promptImg = require('./img/summit.png')
+            this.getReward = '查看中奖名单';
+            this.audienceText = '信息已提交'
+            this.submitWinning = true
+          }else{
+            // 未领奖
+            this.getAward()
+            this.lotteryStep = 1
+            this.promptImg = require('./img/win.png')
+            this.getReward = '点击领奖';
+            this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`
+            this.submitWinning = true
+          }
+        }else{
+          // 未中奖
+          this.lotteryStep = 3
+          this.promptImg = require('./img/noWin.png')
+          this.getReward = '查看中奖名单';
+          this.submitWinning = false
+          this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！'
+        }
       }
     },
-    // 观看端开启
+    // 观看端开启--消息
     startLottery (msg, val) {
       this.showMess = true
+      this.currentLotStatus = true
       console.warn('监听收到发起消息',msg);
       this.lotteryInfo = {}
-      this.lotteryResultShow = false // 不开启抽奖结果
+      this.lotteryInfo.award_snapshoot = msg.award_snapshoot
       this.processingObj.url = msg.icon
       this.processingObj.text = msg.remark
       this.processingObj.title = msg.title
@@ -283,6 +313,34 @@ export default {
         this.lotteryInfo.command = msg.command
       }
     },
+    // 结束抽奖--消息
+    endRecive(msg, WinningID){
+      // 初始化消息
+      this.currentLotStatus = false
+      this.lotteryInfo.publish_winner = msg.publish_winner  // 当前是否显示 查看中奖名单
+      console.warn(msg, WinningID, '中奖信息----',this.isWinning, msg.lottery_winners, this.lotteryInfo);
+      if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
+        this.getStepText()
+        this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
+        this.isWinning = true
+        this.lotteryInfo.id = msg.lottery_id
+        this.lotteryInfo.win = 1
+        this.$nextTick(()=>{
+          this.lotteryStep = 1
+          this.getReward = '立即领奖'
+        })
+      }else{
+        this.$nextTick(()=>{
+          this.lotteryStep = 3
+          this.promptImg = require('./img/noWin.png')
+          this.getReward = '查看中奖名单';
+          this.submitWinning = false
+          this.lotteryInfo.id = msg.lottery_id
+          this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！'
+        })
+      }
+    },
+    // 获取领奖页 页面信息
     getStepText(){
       this.$fetch('v3GetStep',{
         webinar_id: this.webinarId
@@ -299,23 +357,6 @@ export default {
         }
       })
     },
-    // 结束抽奖
-    endRecive(msg, WinningID){
-      console.warn(msg, WinningID, '中奖信息----', msg.lottery_winners);
-      if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
-        console.warn('找得到了-----');
-        this.lotteryResultShow = true
-        this.getStepText()
-        this.isWinning = true
-        this.lotteryInfo.award_snapshoot = {
-          award_name: "奖品1"
-        }
-        let awardUserId = this.lotteryEndResult.find(
-          item => item.lottery_user_id == WinningID
-        );
-      }
-      this.lotteryStep = 1
-    },
     participate(){
       if(this.lotteryInfo.lottery_type == 8){
         if(this.chatLoginStatus){
@@ -326,15 +367,29 @@ export default {
             lottery_id: this.lotteryInfo.id
           }).then(res=>{
             if(res.code ==200) {
+              this.lotteryInfo.submit_command = 1
               let _data = {
                 type: 'text',
                 text_content: this.lotteryInfo.command
               }
               let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-              let context = {
+              let _content = {
                 nickname: userInfo.nick_name, // 昵称
                 avatar: userInfo.avatar, // 头像
               };
+              this.showMess = false
+              let tempData = new Msg({
+                avatar: getAvatar(_content.avatar),
+                nickName: _content.nickname,
+                type: 'text',
+                content: _data,
+                sendId: userInfo.user_id,
+                sendTime: formatTime(new Date()),
+                client: 'pc',
+                replyMsg: [],
+                atList: []
+              });
+              this.$EventBus.$emit('codeText', tempData);
               window.chatSDK.emit(_data, _content)
             } else {
               this.$message.warning(res.msg)
@@ -568,6 +623,7 @@ export default {
         margin-bottom: 20px;
       }
       .common-but{
+        padding: 0;
         margin: 0 auto!important;
       }
     }
