@@ -91,7 +91,7 @@
         <div class="line-tip">
           <p>用量统计</p>
         </div>
-        <line-echarts :lineDataList="lineDataList"></line-echarts>
+        <line-echarts :lineDataList="lineDataList" :type="1"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">

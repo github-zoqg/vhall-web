@@ -6,7 +6,7 @@
 <script>
 import echarts from 'echarts';
 export default {
-  props: ['lineDataList'],
+  props: ['lineDataList', 'type'],
   data() {
     return {
       isActive: true,
@@ -33,7 +33,7 @@ export default {
         visitDataValue.push(item.value);
       });
       // console.log(visitDataDate, visitDataValue);
-      // let that = this;
+      let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
       let options = {
         visualMap: {
@@ -51,7 +51,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           show: true,
-          formatter: '{b0}<br />观看人数: {c0}',
+          formatter: `{b0}<br />${that.type == 1 ? '并发' : '观看人数'}: {c0}${that.type == 1 ? '方' : ''}`,
         },
         xAxis: {
           data: visitDataDate,
