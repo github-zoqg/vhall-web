@@ -116,7 +116,7 @@
             <p>{{selectMedia.name}}</p>
           </div>
           <div class="abRight" v-if="!!selectMedia">
-            <el-button type="text" class="operaBtn">预览</el-button>
+            <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
             <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
           </div>
           <el-tooltip>
@@ -205,6 +205,11 @@
       </p> -->
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
+    <template v-if="showDialog">
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+        <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
+      </el-dialog>
+    </template>
   </div>
 </template>
 
@@ -214,6 +219,7 @@ import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
 import { sessionOrLocal } from '@/utils/utils';
+import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 import Env from "@/api/env";
 
 export default {
@@ -221,7 +227,8 @@ export default {
     PageTitle,
     upload,
     selectMedia,
-    VEditor
+    VEditor,
+    VideoPreview
   },
   computed: {
     pathUrl: function() {
@@ -307,6 +314,7 @@ export default {
       docSwtich: false,
       reservation: false,
       online: false,
+      showDialog: false,
       hot: false,
       home: false,
       capacity: false,
@@ -411,7 +419,7 @@ export default {
       // }
       let data = {
         webinar_id: this.webinarId || '',
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.paas_record_id : '',
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
@@ -459,6 +467,10 @@ export default {
         }
       });
     },
+     // 预览
+    previewVideo() {
+      this.showDialog = true;
+    },
     getHighLimit() {
       this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
         console.log(res.data, '11111111111111');
@@ -469,8 +481,8 @@ export default {
       // 重置直播模式、直播封面、直播简介。
     },
     mediaSelected(media){
-      console.log(media, '111111111');
       this.selectMedia = media;
+      console.log(this.selectMedia);
     }
   },
 };

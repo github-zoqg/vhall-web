@@ -96,9 +96,7 @@
         >
           <span class="vh-iconfont vh-icon-shanchu_icon"></span>
           删除
-          <!-- {{
-          t('删除')
-          }}-->
+          <!-- <icon class="icon" icon-class="saasicon-trash"></icon> -->
         </el-button>
 
         <el-button
@@ -108,7 +106,7 @@
         >
           <span class="vh-iconfont vh-icon-fangdaicon"></span>
           放大
-          <!-- {{ t('放大') }} -->
+          <!-- <icon class="icon" icon-class="saasicon_plus"></icon> -->
         </el-button>
 
         <el-button
@@ -118,7 +116,7 @@
         >
           <span class="vh-iconfont vh-icon-suoxiaoicon"></span>
           缩小
-          <!-- {{ t('缩小') }} -->
+          <!-- <icon class="icon" icon-class="saasicon_delete"></icon> -->
         </el-button>
         <el-button @click="qp" class="fl vh-btn vh-video-tailoring__qp-btn" v-if="!isFullScreen">
           <span class="vh-iconfont vh-icon-full-screen"></span>

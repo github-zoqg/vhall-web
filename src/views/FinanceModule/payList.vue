@@ -33,17 +33,17 @@
           <p>支付方式</p>
           <div class="pay-list">
             <div class="pay-item" @click="changeColor('1')" :class="isChecked == '1' ? 'isActive' : ''">
-              <icon icon-class="saaszhifubao"></icon>
+              <icon icon-class="saaszhifubao" class="payColor"></icon>
               <span>支付宝</span>
               <label class="img-tangle" v-show="isChecked== '1'">
-                <icon icon-class="saasicon-choose-01"></icon>
+                <i class="el-icon-check"></i>
               </label>
             </div>
             <div class="pay-item" @click="changeColor('2')" :class="isChecked == '2' ? 'isActive' : ''">
-              <icon icon-class="saasweixinzhifu"></icon>
+              <icon icon-class="saasweixinzhifu" class="weixinColor"></icon>
               <span>微信</span>
               <label class="img-tangle" v-show="isChecked== '2'">
-                <icon icon-class="saasicon-choose-01"></icon>
+                <i class="el-icon-check"></i>
               </label>
             </div>
           </div>
@@ -310,13 +310,28 @@ export default {
               font-size: 32px;
               vertical-align: middle;
             }
+            .payColor{
+              color:#02a9f1;
+            }
+            .weixinColor{
+              color: #09bb07;
+            }
             .img-tangle{
-              position: absolute;
-              right: 0;
-              top:-40%;
-              /deep/.svg-icon{
-                font-size: 24px;
-              }
+               position: absolute;
+                right: 0;
+                top:0;
+                width: 0;
+                height: 0;
+                border: 10px solid transparent;
+                border-right-color: #FB3A32;
+                border-top-color: #FB3A32;
+                i{
+                  color:#fff;
+                  position: absolute;
+                  top: -8px;
+                  right:-11px;
+                  font-size: 10px;
+                }
             }
             &.isActive{
                 box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);

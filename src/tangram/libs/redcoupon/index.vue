@@ -158,6 +158,7 @@ export default {
       if (!this.PayIng) { this.PayIng = true; }
       // this.loading = true
       this.$fetch('v3CreateRed', {
+        room_id: this.roomId,
         type: this.redcouponType,
         describe: this.describe,
         number: this.numbers,
@@ -189,6 +190,8 @@ export default {
             )
             /* eslint-disable */
           }
+        }else{
+          this.$message.warning(res.msg)
         }
       }).catch(error => {
           console.log(error)

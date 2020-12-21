@@ -57,7 +57,7 @@ export default {
       handler(newValue, oldValue){
         if(newValue.type){
           console.warn(newValue, 7777777);
-          this.$nextTick(()=>{
+          this.$nextTick(async ()=>{
             let isFlag = this.userList.some((ele, index) =>{
               this.acrivePrivate = index
               return ele.user_id == newValue.item.account_id
@@ -70,7 +70,8 @@ export default {
               this.acrivePrivate = this.userList.length - 1
             }
             this.activeName = newValue.nickname
-            this.getDefaultContent(newValue.item.account_id)
+            let _testData = await this.getDefaultContent(newValue.item.account_id)
+            this.delCom(_testData)
           })
         }
       },
@@ -85,25 +86,57 @@ export default {
       }
     }
   },
-  methods: {
-    getDefaultContent(toAccountID){
-      let _data = {
-        room_id: this.userInfo.interact.room_id,
-        start_time: '',
-        pos: 0,
-        limit: 100,
-        // to_user: '16422715',
-        to_user: toAccountID,
-        webinar_id: this.webinar_id
+  mounted() {
+    // this.$EventBus.$on('live_broadcast_stop',
+    window.privateChat.onChat((msg)=>{
+      if (typeof msg !== 'object') {
+        msg = JSON.parse(msg);
       }
-      this.chatList = []
-      this.$fetch('v3GetPrivCon', _data).then(res=>{
-        console.warn(res);
-        if(res.code == 200){
-          this.chatList = res.data.list
-        }else{
-          this.$message.warning(res.msg)
+      try {
+        if (typeof msg.context !== 'object') {
+          msg.context = JSON.parse(msg.context);
         }
+        if (typeof msg.data !== 'object') {
+          msg.data = JSON.parse(msg.data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+      console.log('============私聊消息发送===============',msg);
+    })
+  },
+  methods: {
+    delCom(val){
+      if(val.code !=200){
+        console.warn('发送私聊肯定不成功----', val);
+        if(this.userList.length == 1){
+          this.userList = []
+          this.activeName = ''
+        }
+      }
+    },
+    getDefaultContent(toAccountID){
+      return new Promise((resolve, reject)=>{
+        let _data = {
+          room_id: this.userInfo.interact.room_id,
+          start_time: '',
+          pos: 0,
+          limit: 100,
+          // to_user: '16422715',
+          to_user: toAccountID,
+          webinar_id: this.webinar_id
+        }
+        this.chatList = []
+        this.$fetch('v3GetPrivCon', _data).then(res=>{
+          console.warn(res);
+          if(res.code == 200){
+            resolve(res)
+            this.chatList = res.data.list
+          }else{
+            resolve(res)
+            this.$message.warning(res.msg)
+          }
+        })
       })
     },
     closeUser(user, index){
@@ -119,12 +152,13 @@ export default {
     emojiInput (value) {
       this.privateValue += value;
     },
-    selectUser(user, index){
+    async selectUser(user, index){
       // 设置当前私聊title名字
+      this.privateValue = ''
       this.activeName = user.nickname
       this.acrivePrivate = index
-      console.warn(this.userList[index]);
-      this.getDefaultContent(this.userList[index].user_id)
+      let _testData = await this.getDefaultContent(this.userList[index].user_id)
+      this.delCom(_testData)
     },
     roleClassFilter (value) {
       return value == '1' ? 'host' : value == '3' ? 'assistant' : 'guest';
@@ -139,6 +173,9 @@ export default {
     privateSend(){
       if (!this.privateValue.trim()) {
         return this.$message.error('内容不能为空');
+      }
+      if(this.activeName == ''){
+         return this.$message.error('请选择私聊人员');
       }
       console.warn(this.userList, '当前的userlIst', this.acrivePrivate);
       let data = {

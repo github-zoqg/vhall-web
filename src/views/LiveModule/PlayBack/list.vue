@@ -3,7 +3,7 @@
     <pageTitle title="回放管理"></pageTitle>
     <div class="operaBlock">
       <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-      <el-button size="medium" plain round>录制</el-button>
+      <el-button size="medium" plain round @click="toRecord">录制</el-button>
       <el-button size="medium" round @click="settingHandler">回放设置</el-button>
       <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
       <el-input
@@ -72,7 +72,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="stagingDate"
+          prop="save_time"
           label="暂存至"
           width="180"
           show-overflow-tooltip>
@@ -85,9 +85,9 @@
           <template slot-scope="scope">
             {{ scope.row.date }}
             <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-            <el-button type="text" @click="downPlayBack(scope.row)">下载</el-button>
+            <el-button v-if="!isDemand" type="text" @click="downPlayBack(scope.row)">下载</el-button>
             <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
-            <el-dropdown @command="handleCommand">
+            <el-dropdown v-if="!isDemand" @command="handleCommand">
               <el-button type="text">更多</el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
@@ -134,6 +134,8 @@ export default {
       editLoading: false,
       selectDatas: [],
       recordType: '-1',
+      liveDetailInfo: {},
+      isDemand: false,
       typeOptions: [
         { label: '来源', value: '-1' },
         { label: '回放', value: '0' },
@@ -153,6 +155,7 @@ export default {
   },
   created(){
     this.getList();
+    this.getLiveDetail();
   },
   mounted(){
     this.tipMsg = this.$message({
@@ -166,6 +169,31 @@ export default {
     this.tipMsg.close();
   },
   methods: {
+    // 获取当前活动基本信息
+    getLiveDetail() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
+        this.liveDetailInfo = res.data;
+        this.isDemand = this.liveDetailInfo.document_id == 1;
+        if (this.isDemand) {
+          this.typeOptions = [
+            { label: '上传', value: '2' }
+          ]
+        } else {
+          this.typeOptions = [
+            { label: '来源', value: '-1' },
+            { label: '回放', value: '0' },
+            { label: '录制', value: '1' },
+            { label: '上传', value: '2' },
+            { label: '打点录制', value: '3' }
+          ]
+        }
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      }).finally(()=>{
+        this.loading = false;
+      });
+    },
     typeChange(column, index) {
       this.getList()
     },
@@ -196,7 +224,7 @@ export default {
       }else if(param.command == 'tailoring'){
         this.toTailoring(param.data.id, param.data.name);
       } else if (param.command == 'publish') {
-        this.toCreateVod(param.data);
+        this.toCreateDemand(param.data);
       }
     },
     currentChangeHandler(num){
@@ -288,13 +316,16 @@ export default {
     toCreate() {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
     },
+    toRecord() {
+      this.$router.push({path: `/live/room/${this.webinar_id}`});
+    },
     toTailoring(recordId, recordName){
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
     },
     toChapter(recordId){
-      this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId}});
+      this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
     },
-    toCreateVod(recordData) {
+    toCreateDemand(recordData) {
       this.$router.push({path: `/live/vodEdit`});
     }
   },
@@ -441,7 +472,6 @@ export default {
     }
   }
   .input-with-select{
-    width: 350px;
     vertical-align: text-top;
   }
 </style>

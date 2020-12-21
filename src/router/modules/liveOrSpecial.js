@@ -14,6 +14,12 @@ const router = [
     hidden: true
   },
   {
+    path: '/previewChapter/:str(\\d+)',
+    component: () => import('@/views/LiveModule/PlayBack/previewChapter'),
+    meta:{ auth: true, title: '回放-章节预览', name: 'previewChapter', activeMenu: '/live/list'},
+    hidden: true
+  },
+  {
     path: '/live',
     component: Layout,
     redirect: '/live/list',

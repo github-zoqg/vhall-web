@@ -330,6 +330,10 @@ export default {
     // document.addEventListener('mousewheel', e => {
     //   this.personStatus.canOpen = false
     // })
+    this.$EventBus.$on('codeText', msg=>{
+      // 口令登录显示  自身显示消息
+      this.chatList.push(msg);
+    })
   },
 
   methods: {
