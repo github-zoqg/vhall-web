@@ -263,35 +263,12 @@
             <div class="third-way-choose" v-if="otherWayShow && roomData.webinar.id">
               <div class="third-auth">
                 <a
-                  :href="
-                    webinarDominUrl +
-                      '/auth/weibo?after_register=' +
-                      webinarDominUrl +
-                      '/' +
-                      roomData.webinar.id
-                  "
-                  class="weibo"
-                  title="微博登录"
-                ></a>
-                <a
-                  :href="
-                    webinarDominUrl +
-                      '/auth/qq?after_register=' +
-                      webinarDominUrl +
-                      '/' +
-                      roomData.webinar.id
-                  "
+                  :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?source=pc&jump_url=' + location + '/subscribe/' + roomData.webinar.id"
                   class="qq"
                   title="QQ登录"
                 ></a>
                 <a
-                  :href="
-                    webinarDominUrl +
-                      '/auth/weixinweb?after_register=' +
-                      webinarDominUrl +
-                      '/' +
-                      roomData.webinar.id
-                  "
+                  :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=' + location + '/subscribe/' + roomData.webinar.id"
                   class="weixin"
                   title="微信登录"
                 ></a>
@@ -565,6 +542,7 @@ export default {
   },
   data(){
     return {
+      location: process.env.VUE_APP_WAP_WATCH,
       btnDisabled: false,
       showSignForm: false,
       tipContent: '',
@@ -653,6 +631,8 @@ export default {
     };
   },
   async created(){
+    sessionOrLocal.set('tag', 'helloworld', 'localStorage'); // 第三方绑定信息 场景
+    sessionOrLocal.set('sourceTag', 'watch'); // 第三方绑定信息 场景
     await this.getWatchInfo()
     await this.getSignInfo()
     await this.getAdsInfo() // 获取活动广告信息
@@ -689,6 +669,9 @@ export default {
         watch && (watch.style.height = `${docHeight}px`)
       }
     });
+    if (this.$route.query.platform) {
+      this.bindUserInfo()
+    }
   },
   beforeDestroy() {
     if (this.$PLAYER) {
@@ -893,7 +876,7 @@ export default {
     },
     // 点击注册
     registerClick() {
-      window.location.href = `${process.env.VUE_APP_WAP_WATCH}/register`
+      window.location.href = `${process.env.VUE_APP_WAP_WATCH}/register?source=2`
     },
     handleInitRoom () {
       if (this.roomData.webinar) {

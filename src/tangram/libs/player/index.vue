@@ -691,7 +691,6 @@ export default {
         otherOption: {
           report_extra: this.reportExtra,
           vid: this.roominfo.account_id, // hostId
-          uid: this.roominfo.third_party_user_id,
           vfid: this.roominfo.parentId ? this.roominfo.parentId : this.roominfo.account_id,
           guid: this.roominfo.guid,
           biz_id: this.$route.params.il_id

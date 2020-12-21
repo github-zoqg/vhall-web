@@ -394,35 +394,12 @@
                       <div class="third-way-choose" v-if="otherWayShow && roominfo.webinar.id">
                         <div class="third-auth">
                           <a
-                            :href="
-                              webinarDominUrl +
-                                '/auth/weibo?after_register=' +
-                                webinarDominUrl +
-                                '/' +
-                                roominfo.webinar.id
-                            "
-                            class="weibo"
-                            title="微博登录"
-                          ></a>
-                          <a
-                            :href="
-                              webinarDominUrl +
-                                '/auth/qq?after_register=' +
-                                webinarDominUrl +
-                                '/' +
-                                roominfo.webinar.id
-                            "
+                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
                             class="qq"
                             title="QQ登录"
                           ></a>
                           <a
-                            :href="
-                              webinarDominUrl +
-                                '/auth/weixinweb?after_register=' +
-                                webinarDominUrl +
-                                '/' +
-                                roominfo.webinar.id
-                            "
+                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
                             class="weixin"
                             title="微信登录"
                           ></a>
@@ -712,7 +689,8 @@ export default {
       initStatus: true,
       configList: {},
       openScreenConfig: {}, // 开屏海报
-      userInfo: {}
+      userInfo: {},
+      location: process.env.VUE_APP_WAP_WATCH
     };
   },
   components: {
@@ -724,6 +702,8 @@ export default {
     products
   },
   created() {
+    sessionOrLocal.set('tag', 'helloworld', 'localStorage'); // 第三方绑定信息 场景
+    sessionOrLocal.set('sourceTag', 'watch'); // 第三方绑定信息 场景
     this.$loadingStatus = this.$loading({
       background: 'rgba(0,0,0,0.5)',
       text: '加载中'
@@ -1011,29 +991,9 @@ export default {
         }
       );
     },
-    // 新浪登录入口
-    sinaclick() {
-      window.open(
-        `${window.location.host}/auth/weibo?after_register=${window.location.href}`,
-        '_blank'
-      );
-    },
-    // qq登录入口
-    qqClick() {
-      window.open(
-        `${window.location.host}/auth/qq?after_register=${window.location.href}`,
-        '_blank'
-      );
-    },
-    weChatClick() {
-      window.open(
-        `${window.location.host}/auth/weixinweb?after_register=${window.location.href}`,
-        '_blank'
-      );
-    },
     // 点击注册
     registerClick() {
-      window.location.href = `${this.webDominUrl}/auth/register`
+      window.location.href = `${this.webDominUrl}/register?source=2`
     },
     // 超过登录次数 唤起图片验证码
     callCaptcha(element) {
@@ -1648,6 +1608,7 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
+      console.log(119 , this.configList)
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
