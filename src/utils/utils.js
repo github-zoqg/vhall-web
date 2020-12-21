@@ -2,6 +2,7 @@
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
 
+
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;

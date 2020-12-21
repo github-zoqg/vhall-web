@@ -356,12 +356,10 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <!-- <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData && (roomData.warmup_paa_record_id || roomData.preview_paas_record_id)">
-            </div> -->
-            <!-- <img :src="roomData.webinar.img_url" v-if="roomData && roomData.webinar && roomData.webinar.img_url" alt=""> -->
-             <!-- <div class="vhall-watch-box" id="vhall-watch-box" v-if="roomData"> -->
-            <!-- </div> -->
-            <div class="subscribe-video">
+            <img 
+              :src="roomData.webinar.img_url"
+              v-if="roomData && roomData.webinar && ((roomData.warmup_paa_record_id && roomData.verified == 0) || (!roomData.preview_paas_record_id && !roomData.warmup_paa_record_id))" alt="">
+            <div class="subscribe-video" v-else>
               <Watch
                 v-if="initPlayer"
                 :appId="videoParams.appId"
@@ -542,7 +540,7 @@ import custoMenu from '../components/customMenuView';
 import goodsPop from '../Room/rankList/goodsPop';
 import products from '../components/products';
 import keyLogin from '../components/keyLogin';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, isIE } from '@/utils/utils';
 import Popup from '../../../tangram/libs/saas-popup'; // 弹窗
 import SignForm from './signUpForm'
 import Watch from '@/tangram/libs/player/index';
@@ -723,6 +721,10 @@ export default {
     handleErrorCode (res) {
       switch (res.code) {
         case 200:
+          if (res.data.status == 'live') {
+            this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+            return
+          }
           this.roomData = res.data
           this.webinarType = this.roomData.webinar.type
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
@@ -781,6 +783,9 @@ export default {
       let title = document.querySelector('.active-second>h3')
       let webinarStr = document.querySelector('.topInfo .tag')
       let joinBtn = document.querySelector('.watchContainer .watchBox .el-button')
+      let content = document.querySelector('.emptyWrapper')
+      let watchContent = document.querySelector('.watchContainer')
+
       setTimeout(() => {
         let sell = document.querySelector('.sell-goods')
         let sellBtn = document.querySelector('.sell-goods .el-carousel__item .selling')
@@ -794,6 +799,12 @@ export default {
       let bc = document.querySelector('.area')
       if (wrap) {
         wrap.style.background = bgColor
+      }
+      if (watchContent) {
+        watchContent.style.background = bgColor
+      }
+      if (content) {
+        content.style.background = bgColor
       }
       if (register) {
         register.style.background = pageStyle
@@ -890,13 +901,13 @@ export default {
         }
         this.getBtnText()
         this.$nextTick(() => {
-          if (this.theme) {
+          if (this.theme && this.skinInfo.status == 1) {
             this.setCustomTheme(this.theme)
           }
           this.initChat()
-          // if (this.roomData.warmup_paa_record_id) {
-          this.initPlayerSDK()
-          // }
+          if ((this.roomData.webinar.verified == 1 && this.roomData.warmup_paa_record_id) || (this.roomData.preview_paas_record_id)) {
+            this.initPlayerSDK()
+          }
         })
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
@@ -953,16 +964,28 @@ export default {
     },
     // 暖场试看初始化
     initPlayerSDK () {
+      let vodOption = {},
+          liveOption = {},
+          type = ''
+      if (this.roomData.preview_paas_record_id) { // 暖场视频
+        type = 'live',
+        liveOption = {
+          type: 0 || isIE() ? 'hls' : 'flv',
+          roomId: this.roomData.interact.room_id
+        }
+      } else if (this.roomData.warmup_paa_record_id) {
+        type = 'vod'
+        vodOption = {
+          recordId: this.roomData.warmup_paa_record_id
+        }
+      }
       this.videoParams = {
         appId: this.roomData.interact.paas_app_id,
         accountId: this.roomData.join_info.third_party_user_id,
         token: this.roomData.interact.subscribe_paas_access_token,
-        type: 'vod',
+        type: type,
         poster: '',
         report_extra: this.roomData.report_data.report_extra ? this.roomData.report_data.report_extra : {},
-        vodOption: {
-          recordId: '63e352fd' // TODO: this.roomData.preview_paas_record_id
-        },
         roominfo: {
           account_id: this.roomData.webinar.userinfo.user_id,
           third_party_user_id: this.roomData.join_info.third_party_user_id,
@@ -970,7 +993,12 @@ export default {
           guid: this.roomData.report_data.guid
         }
       }
+      this.videoParams.vodOption = vodOption
+      this.videoParams.liveOption = liveOption
       this.initPlayer = true
+      // vodOption: {
+      //   recordId: '63e352fd' // TODO: this.roomData.preview_paas_record_id
+      // },
     },
     // startTime  YYYY-MM-DD HH:MM
     remainTimes(startTime){
@@ -1304,13 +1332,9 @@ export default {
         return
       }
       if (is_subscribe == 1) {
-        if (type == 1 || type == 4 || type == 5) {
-          this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
-        } else if (type == 2) {
-          ret = `已预约`
-          this.limitText = ``
-          this.btnDisabled = true
-        }
+        ret = `已预约`
+        this.limitText = ``
+        this.btnDisabled = true
       } else {
         if (verified == 0) {
           if (verify == 0) {
@@ -1336,19 +1360,6 @@ export default {
           // 通过观看限制但没有报名
           ret = `立即预约`
           this.limitText = ``
-          // if (reg_form == 1) {
-          //   ret = `立即预约`
-          // } else {
-          //   if (type == 1 || type == 4 || type == 5) {
-          //     console.log(1010101)
-          //     this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
-          //   } else if (type == 2) {
-          //     ret = `已预约`
-          //     this.limitText = ``
-          //     this.btnDisabled = true
-          //   }
-          // }
-          // this.limitText = ``
         }
       }
       this.btnVal = ret

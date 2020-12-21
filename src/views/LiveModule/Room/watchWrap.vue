@@ -1727,7 +1727,7 @@ export default {
       // 初始化邀请卡
       this.invitePartner();
       this.$nextTick(() => {
-        if (this.theme) {
+        if (this.theme && this.skinInfo.status == 1) {
           this.setCustomTheme(this.theme)
         }
       })
