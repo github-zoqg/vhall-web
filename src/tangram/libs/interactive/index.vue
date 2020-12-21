@@ -319,11 +319,11 @@ export default {
             appId: this.appId, // 应用ID，必填
             token: this.token, // access_token，必填
             role: this.role,
-            roomId: this.roomId, // 如需开启旁路，必填
-            otherOption: {
-              ...JSON.parse(sessionStorage.getItem('report_extra'))
-            }
+            roomId: this.roomId // 如需开启旁路，必填
           }
+          // otherOption: {
+          //   ...JSON.parse(sessionStorage.getItem('report_extra'))
+          // }
           console.warn(_data, '查询初始化的值');
           VhallRTC.createInstance(_data,
             e => {
