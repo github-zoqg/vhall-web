@@ -237,7 +237,7 @@ a {
 //     }
 //   }
 //   .title {
-//     font-family: PingFangSC-Regular;
+//     font-family: @fontRegular;
 //     font-size: 16px;
 //     color: #b8bbca;
 //     // width:360px;

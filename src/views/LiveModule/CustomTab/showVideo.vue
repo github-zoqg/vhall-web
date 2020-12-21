@@ -65,7 +65,7 @@ export default {
       opacity: 0.65;
       z-index: 5;
       font-size: 10px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #FFFFFF;
       line-height: 15px;

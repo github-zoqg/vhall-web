@@ -239,11 +239,11 @@ export default {
   font-weight: 700;
   font-size: 16px;
   color: #1a1a1a;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
 }
 /deep/.el-form-item__label {
   color: #1a1a1a;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
 }
 /deep/.el-dialog__body {
   padding: 20px;
@@ -258,7 +258,7 @@ export default {
 }
 /deep/.el-input.is-disabled .el-input__inner{
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 600;
   color: #FB3A32;
 }
@@ -345,7 +345,7 @@ export default {
     height: 90px;
     background: #f7f7f7;
     border-radius: 4px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     padding: 15px 0 15px 12px;
     h3 {
       font-size: 14px;

@@ -154,7 +154,8 @@ export default {
       this.$fetch('exportIncomeDetail', this.params).then(res => {
         if (res.code == 200) {
           this.params = {};
-          this.$message.success(`收益详情导出成功，请去下载中心下载`);
+          this.$message.success(`收益详情导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`收益详情${res.msg}`);
         }
@@ -172,7 +173,7 @@ export default {
       text-align: left;
       p{
         font-size: 22px;
-        font-family: PingFangSC-Semibold, PingFang SC;
+        font-family: @fontSemibold;
         font-weight: 600;
         color: #1a1a1a;
         padding-bottom: 4px;

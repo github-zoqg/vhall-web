@@ -2,6 +2,7 @@
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
 
+
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
@@ -23,6 +24,7 @@ export const sessionOrLocal = {
     window[saveType].clear();
   }
 };
+window.testSess = sessionOrLocal
 // 判断是否IE
 export function isIE () {
   return (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1);
@@ -172,9 +174,10 @@ export function getQueryString(name) {
   let r = window.location.search.substr(1).match(reg);
   if(r!=null)return  unescape(r[2]); return null;
 }
-
 // 判断是否登录成功
 export function checkAuth(to, from, next) {
+  console.warn(to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'), 'look**********************************');
+  console.warn(to.path.indexOf('/live/room') !== -1,sessionOrLocal.get('interact_token'), 'look**********************************');
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
@@ -184,7 +187,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/watch') !== -1 ||
-    to.path.indexOf('/forgetPassword') !== -1) {
+    to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token')) ) {
     // 不验证直接进入
     next();
     NProgress.done();
@@ -193,9 +196,11 @@ export function checkAuth(to, from, next) {
   // 第一步，判断是否第三方快捷登录
   let user_auth_key = getQueryString('user_auth_key');
   let auth_tag = sessionOrLocal.get('tag', 'localStorage');
+  let sourceTag = sessionOrLocal.get('sourceTag')
   if (user_auth_key) {
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
+      source: sourceTag ? 2 : 1, // 1 控制塔 2观看端 3admin
       key: getQueryString('user_auth_key'),
       scene_id: auth_tag.indexOf('bind') !== -1 ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
     };
@@ -204,11 +209,14 @@ export function checkAuth(to, from, next) {
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
         sessionOrLocal.set('sso_token', res.data.sso_token);
         sessionOrLocal.set('userId', res.data.user_id);
-        window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
-        return;
+        if (!sourceTag) {
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          return;
+        }
       } else {
         if (auth_tag.indexOf('bind') !== -1) {
           sessionOrLocal.set('bind_result', JSON.stringify(res));
+          sessionOrLocal.set('user_auth_key', user_auth_key);
           // 绑定成功
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
         } else {

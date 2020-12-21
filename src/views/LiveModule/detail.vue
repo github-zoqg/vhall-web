@@ -104,7 +104,7 @@ export default {
         minute: 0,
         second: 0
       },
-      operas: {
+      operasOld: {
         '准备': [
           { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
           { icon: 'saasicon_gongnengpeizhi', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
@@ -143,6 +143,25 @@ export default {
       }
     };
   },
+  computed: {
+    operas() {
+      if (this.liveDetailInfo && this.liveDetailInfo.webinar_state === 4) {
+        // 点播
+        let { keys, values} = Object;
+        let operas = this.operasOld;
+        keys(this.operasOld).map((item, ins) => {
+          operas[item] = values(this.operasOld)[ins].filter(vItem => vItem.index !== 4);
+        })
+        if (keys(this.operasOld).includes('直播')) {
+          delete operas['直播'];
+        }
+        // console.log(operas, '过滤后内容');
+        return operas;
+      } else {
+        return this.operasOld;
+      }
+    }
+  },
   created(){
     // console.log(this.link, '1111111111111111');
     this.getLiveDetail(this.$route.params.str);
@@ -165,8 +184,6 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
-        // if (this.liveDetailInfo.webinar_state == 4) {
-        // }
         if (res.data.webinar_state == 2) {
           let date = new Date();
           let nowTime = date.setTime(date.getTime());

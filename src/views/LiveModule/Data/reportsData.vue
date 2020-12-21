@@ -266,7 +266,8 @@ export default {
     exportCenterData() {
       this.$fetch('exportWebinarInfo', this.params).then(res => {
         if (res.code == 200) {
-          this.$message.success(`活动数据报告导出成功，请去下载中心下载`);
+          this.$message.success(`活动数据报告导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`活动数据报告${res.msg}`);
         }

@@ -4,9 +4,9 @@
     <el-card>
       <div class="question-title">
         <h1>
-          {{ title }}
+          {{ $route.query.subject }}
         </h1>
-        <p>填写人数:<span>100</span></p>
+        <p>填写人数:<span> {{ $route.query.number }}</span></p>
         <div class="export">
           <el-button type="primary" round @click="exportSingleQuerstion">导出数据</el-button>
         </div>
@@ -127,6 +127,7 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         survey_id: this.$route.query.surveyId,
+        filled_number: this.$route.query.number,
         subject: this.$route.query.subject || ''
       }
       this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
@@ -264,6 +265,7 @@ export default {
     exportSingleQuerstion() {
       this.$fetch('exportSurveyDetial',{webinar_id: this.$route.params.str, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     }
   },

@@ -165,7 +165,7 @@ export default {
         padding: 8px 16px;
         text-align: center;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666666;
         cursor: pointer;
@@ -195,7 +195,7 @@ export default {
       cursor: pointer;
       span {
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666;
       }

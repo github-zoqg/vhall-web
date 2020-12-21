@@ -62,7 +62,7 @@ const apis = {
   setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
   setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
   setOtherOption: ['/v3/interacts/players/set-other-set-info', 'POST'], // 设置播放器其他配置
-  getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息 •••
+  getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息
   getWatermark: ['/v3/interacts/players/get-watermark-config', 'GET'], //观看端_获取水印设置 •••
   getOtherOptions: ['/v3/interacts/players/watch-get-other-set-info', 'GET'], // 获取观看端播放器其他配置
 
@@ -92,6 +92,7 @@ const apis = {
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
+  checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
 
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建 √
@@ -139,6 +140,7 @@ const apis = {
   warnInfo: ['/v3/webinars/warm/info', 'POST'], // 获取暖场视频详情接口
   warnDelete: ['/v3/webinars/warm/delete', 'POST'], // 删除暖场视频
   warnEdit: ['/v3/webinars/warm/edit', 'POST'], // 修改暖场视频封面图片接口
+  warmOpen: ['/v3/webinars/warm/open-warm', 'POST'], // 开启暖场视频
 
   // 商品
   goodsGet: ['/v3/interacts/goods/get-webinar-goods-list', 'GET'], // 获取活动下商品列表
@@ -394,6 +396,7 @@ const apis = {
   resetPassword: ['/v3/users/user/reset-password', 'POST'], // 修改密码/密码找回/设置密码接口 Jia.li
   codeCheck: ['/v3/users/code/check', 'POST'], // check Jia.li
   bindInfo: ['/v3/users/user/bind-info', 'POST'], // 绑定邮箱、手机号接口 Jia.li
+  unBindInfo: ['/v3/users/oauth/unbind', 'POST'],// 解除绑定
 
   // 下载中心
   downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √
@@ -539,6 +542,7 @@ const apis = {
   v3PartLottery: ['/v3/vss/lottery/participation', 'POST'], // 参数抽奖
   v3GetStep: ['/v3/vss/lottery/watch/get-draw-prize-info', 'GET'], // 获取中奖页信息
   v3GetWineList: ['/v3/vss/lottery/users-get', 'GET'], // 查看中奖列表
+  v3ClearUserList: ['/v3/vss/lottery/update-user-status', 'GET'], // 只给服务端配合使用
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
   sendQuestion: ['/v3/vss/survey/publish-survey', 'POST'], // 直播发布问卷

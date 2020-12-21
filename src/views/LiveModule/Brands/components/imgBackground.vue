@@ -52,11 +52,23 @@ export default {
       imageUrl: '',
       domain_url: '',
       isType: 1,
-      fileList: [require('@/common/images/avatar.jpg'), require('@/common/images/custom-tab/doc-bg-new-h5.png'), require('@/common/images/custom-tab/pc_bg-new-h5.png'), require('@/common/images/custom-tab/chat-temp-new-h5.png'), require('@/common/images/custom-tab/detail-bg-new-h5.png'), require('@/common/images/custom-tab/que02.png'), require('@/common/images/custom-tab/private-chat-new.png')],
+      fileList: ['https://t-alistatic01.e.vhall.com/static/images/invitation/bg_1@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_2@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_3@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_4@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_5@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_6@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_7@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_8@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0'],
     };
   },
   components: {
     upload
+  },
+  props: ['url'],
+  watch: {
+   dialogVisible() {
+     if (this.dialogVisible) {
+        this.domain_url  = this.url || '';
+        this.imageUrl = this.url;
+        if (this.imageUrl) {
+          this.isType = 0;
+        }
+     }
+   }
   },
   methods: {
     choseBackground(index) {
@@ -102,7 +114,6 @@ export default {
     },
     handleFileChange(file) {
       console.log(file);
-      // this.handleuploadSuccess(file);
     }
   }
 };

@@ -165,8 +165,10 @@ export default {
         subject: this.input,
         limit: 100
       }).then(res=>{
+        if(res.code == 200){
           this.loading = false;
           this.list = res.data ? res.data.list : [];
+        }
           console.warn('获取转播列表准确------', res);
       }).catch(err=>{
           this.loading = false;
@@ -206,21 +208,22 @@ export default {
         source_id: this.current
       }).then(res=>{
         console.warn('v3RebroadcastStart', res);
-        this.rebroadcastingRoomId = this.current;
-        this.getList();
-
-        this.$EventBus.$emit('rebroadcastStart', {
-          roomId: this.roomId,
-          // vssToken: this.vssToken,
-          sourceRoomId: this.current,
-          recordId: this.webinar.record_id, // ??
-          token: this.webinar.paas_access_token,
-          accountId: this.webinar.third_party_user_id,
-          appId: this.webinar.paas_app_id, // ??
-          layout: this.webinar.layout, // ?
-          liveOption: { roomId: this.roomId, type: 'flv' },
-          channelId: this.webinar.channel_id // ??
-        });
+        if(res.code == 200){
+          console.warn(1559);
+          this.getList();
+          this.rebroadcastingRoomId = this.current;
+          this.$EventBus.$emit('rebroadcastStart', {
+            roomId: this.roomId,
+            sourceRoomId: this.current,
+            recordId: this.webinar.record_id,
+            token: this.webinar.paas_access_token,
+            accountId: this.webinar.third_party_user_id,
+            appId: this.webinar.paas_app_id,
+            layout: this.webinar.layout,
+            liveOption: { roomId: this.roomId, type: 'flv' },
+            channelId: this.webinar.channel_id
+          });
+        }
         if (res.code == 200) {
           this.$emit('onClose');
           this.$message.success('转播成功！');
@@ -274,7 +277,7 @@ export default {
 <style lang="less">
 .vhall-rebroadcast-container {
   background-color: #fff;
-  font-family: '微软雅黑';
+  font-family: @fontRegular;
   padding-left: 27px;
   padding-right: 27px;
   padding-bottom: 27px;

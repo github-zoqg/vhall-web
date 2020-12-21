@@ -192,7 +192,7 @@
         <el-button type="primary" :disabled="!invitation" @click="onSubmit">保存</el-button>
       </div>
     </div>
-    <add-background ref="background" @onChangePic="onSubmitImg"></add-background>
+    <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
   </div>
 </template>
 <script>
@@ -211,20 +211,13 @@ export default {
       imgType: 0,
       isShowMethod: '1',
       information: {},
+      imgUrl: '',
       formInvitation: {
         show_type: 1,
         img_type: 0,
         is_show_watermark: false,
       },
-      fileList: [
-        require('@/common/images/avatar.jpg'),
-        require('@/common/images/custom-tab/doc-bg-new-h5.png'),
-        require('@/common/images/custom-tab/pc_bg-new-h5.png'),
-        require('@/common/images/custom-tab/chat-temp-new-h5.png'),
-        require('@/common/images/custom-tab/detail-bg-new-h5.png'),
-        require('@/common/images/custom-tab/que02.png'),
-        require('@/common/images/custom-tab/private-chat-new.png')
-      ],
+       fileList: ['https://t-alistatic01.e.vhall.com/static/images/invitation/bg_1@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_2@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_3@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_4@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_5@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_6@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_7@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_8@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0'],
       showList: [
         {
           url: '../../../common/images/invite-card/tmpl1.png',
@@ -249,9 +242,8 @@ export default {
   },
   created(){
     this.webinarId = this.$route.params.str;
-    this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar;
+    this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     this.getInviteCardInfo();
-    // this.isInviteCard();
   },
   components: {
     addBackground
@@ -278,10 +270,11 @@ export default {
       };
       this.$fetch('getCardDetailInfo', params).then(res => {
         this.formInvitation = res.data.invite_card;
-        this.img = res.data.invite_card.img || this.fileList[0];
-        this.showType = res.data.invite_card.show_type;
+        this.img = this.formInvitation.img || this.fileList[0];
+        this.imgUrl = this.formInvitation.img || '';
+        this.showType = this.formInvitation.show_type;
         this.invitation = Boolean(res.data.status);
-        this.formInvitation.is_show_watermark = Boolean(res.data.invite_card.is_show_watermark);
+        this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
       });
     },
     changeImg() {
@@ -291,7 +284,8 @@ export default {
       this.$router.push({path: '/code'});
     },
     onSubmitImg(type, url, trueImg) {
-      if (url) {
+      console.log(type, url, trueImg, '??????????????');
+      if (!type) {
         this.formInvitation.img = url;
         this.img = trueImg;
       } else {
@@ -356,7 +350,7 @@ export default {
     margin-left: -12px;
   }
   /deep/.el-form-item__label {
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1a1a1a;
   }
@@ -450,7 +444,7 @@ export default {
     padding-right: 200px;
     p {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1a1a1a;
       padding-bottom: 16px;
@@ -751,7 +745,7 @@ export default {
     display: flex;
     p {
       font-size: 22px;
-      font-family: PingFangSC-Semibold, PingFang SC;
+      font-family: @fontSemibold;
       font-weight: 600;
       color: #1a1a1a;
       padding-right: 8px;

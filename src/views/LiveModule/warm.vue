@@ -4,6 +4,7 @@
       <template  slot="default">
         <el-switch
           v-model="warmFlag"
+          @change="openCloseWarm"
           :active-text="warmFlag ? '已开启，观看页面开播前已显示暖场视频': '开启后，观看页面开播前将显示暖场视频'">
         </el-switch>
       </template>
@@ -26,11 +27,11 @@
             </div>
           </div>
         </el-form-item>
-        <el-form-item label="播放模式" required  prop="resource">
+        <!-- <el-form-item label="播放模式" required  prop="resource">
            <el-radio-group v-model="warmForm.resource">
               <el-radio label="单次播放" :disabled='!warmFlag'></el-radio>
             </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="视频封面">
           <upload
             class="upload__avatar"
@@ -55,7 +56,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
+    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedia>
     <!-- 预览 -->
     <template v-if="showDialog">
     <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
@@ -81,12 +82,13 @@ export default {
     return {
       warmFlag: false,
       loading: false,
+      videoSize: '200MB',
+      videoType: 'MP4',
       warmId: '',
       selectMedia: null,
       showDialog: false,
       warmForm: {
         record_id: '',
-        resource:'单次播放',
         imageUrl: ''
       },
       domain_url: ''
@@ -96,6 +98,18 @@ export default {
     this.getWarmVideoInfo();
   },
   methods: {
+    // 开启或关闭暖场视频
+    openCloseWarm() {
+      let params = {
+        webinar_id: this.$route.params.str,
+        is_open_warm_video: Number(this.warmFlag)
+      }
+      this.$fetch('warmOpen', params).then(res=>{
+        if(res.code == 200){
+          this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
+        }
+      });
+    },
     // 获取暖场视频详情
     getWarmVideoInfo() {
       this.$fetch('warnInfo', {webinar_id: this.$route.params.str}).then(res => {
@@ -104,9 +118,8 @@ export default {
           this.warmId = res.data.warm_id;
           this.domain_url = res.data.img_url;
           this.warmForm.imageUrl = res.data.img_url;
-          if (res.data.record_id) {
-            this.getMediaList(res.data.record_id)
-          }
+          this.selectMedia.paas_record_id = res.data.record_id;
+          this.selectMedia.name = res.data.record_name;
         }
       })
     },
@@ -120,17 +133,6 @@ export default {
     // 预览
     previewVideo() {
       this.showDialog = true;
-    },
-    getMediaList(id) {
-      let params = {
-        pos:0,
-        limit: 50
-      }
-      this.$fetch('dataVideoList', params).then(res=>{
-        if(res.code == 200){
-          this.selectMedia = res.data.list.filter(item => item.paas_record_id === id)[0];
-        }
-      });
     },
     handleUploadSuccess(res, file) {
       if(res.data) {
@@ -172,27 +174,21 @@ export default {
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
         }).then(() => {
-          this.setWarmBackground();
-          // this.saveWarmInfo();
+          // this.setWarmBackground();
+          this.saveWarmInfo();
         }).catch(() => {});
       }
     },
     saveWarmInfo() {
-      this.$fetch('warmCreate', {webinar_id: this.$route.params.str, record_id: this.warmForm.record_id}).then(res => {
-        if (res.code == 200) {
-          this.$message.success('创建暖场视频成功');
-        }
-      })
-    },
-    setWarmBackground() {
       let params = {
+        is_open_warm_video: Number(this.warmFlag),
+        img_url:  this.domain_url,
         webinar_id: this.$route.params.str,
-        warm_id: this.warmId,
-        img_url: this.domain_url
+        warm_id: this.warmId
       }
-      this.$fetch('warnEdit', params).then(res => {
+      this.$fetch('warmCreate', this.$params(params)).then(res => {
         if (res.code == 200) {
-          this.saveWarmInfo();
+          this.$message.success('保存暖场视频成功');
         }
       })
     }

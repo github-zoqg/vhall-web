@@ -167,7 +167,7 @@ export default {
   padding-top: 22px;
   margin-top: 24px;
   p {
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     margin-top: 10px;
     &:first-child {

@@ -748,15 +748,12 @@ export default {
             this.docInfo.showInWatch = false;
             this.$EventBus.$emit('docInfo', this.docInfo);
             this.docSDK.setRole(window.roleTypeMap[2]);
-            alert(1)
             this.docSDK.setPlayMode(window.VHDocSDK.PlayMode.FLV);
-            alert(2)
             this.hasDocPermission = false;
           }
           this.loadRemote();
         } else {
           if (this.liveStatus == 1) {
-            alert(3)
             this.loadRemote();
           }
         }

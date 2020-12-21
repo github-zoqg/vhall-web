@@ -990,9 +990,11 @@ export default {
         room_id: this.bizInfo.room_id,
         status: this.bizInfo.webinar.type,
         subject: this.bizInfo.webinar.subject,
+        vfid: this.bizInfo.reportOption ? this.bizInfo.reportOption.vfid : '',
+        guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : '',
+        vid: this.bizInfo.reportOption ? this.bizInfo.reportOption.vid : '',
         third_party_user_id: this.bizInfo.user.third_party_user_id,
         parentId: this.userInfo ?  this.userInfo.parent_id : '',
-        guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : ''
       }
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
@@ -1070,6 +1072,7 @@ export default {
         window.EventBridge.$emit('loaded');
         return;
       }
+      console.log(9999999, opt)
       VhallChat.createInstance(
         opt,
         chat => {

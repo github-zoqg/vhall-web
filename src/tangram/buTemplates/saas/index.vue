@@ -25,7 +25,6 @@
             class="vhall-main-area-tools--doc-control"
             v-if="roomInfo.interact.room_id"
           ></div>
-          <!-- {{permission}} -->
           <record
             v-auth="100020"
             @recordFun="recordFun"
@@ -525,6 +524,8 @@
             :vodControllerShow="true"
             :isMini="true"
             :docVisible="true"
+            :isAudience='false'
+            :roominfo='reportData'
             :exchangeVideoDoc="exchange"
             ref="vhallPlayer"
           ></player>
@@ -1439,6 +1440,7 @@ export default {
 
   data () {
     return {
+      reportData: {},
       acxs: '7889999',
       chatTip: false,
       memberTip: false,
@@ -1645,6 +1647,11 @@ export default {
   mounted () {
     window.saasindex = this;
     this.getInavInfo();
+    try {
+      let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
+      delete _otherOption.report_extra
+      this.reportData = _otherOption
+    } catch (error) {}
     console.warn(this.domains, '图片地址   ***********************');
     this.shareUrl = this.domains.custom ? `${this.domains.custom}/v3/live/watch/${this.ilId}` : `https:${this.domains.web_url}live/watch/${this.ilId}`;
     this.localDuration = this.duration;
@@ -2640,10 +2647,8 @@ export default {
           webinar_id: this.webinar_id,
           start_type: 4
         }).then(() => {
-          alert(13);
           this.$EventBus.$emit('startLive');
         }).catch(err=>{
-          alert(14);
         });
       } else {
         if (flag == 1) {
@@ -3458,7 +3463,7 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  font-family: '微软雅黑';
+  font-family: @fontRegular;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -3912,7 +3917,7 @@ export default {
             width: 208px;
             height: 22px;
             font-size: 16px;
-            font-family: '微软雅黑';
+            font-family: @fontRegular;
             font-weight: 400;
             color: rgba(153, 153, 153, 1);
             line-height: 22px;
@@ -4008,7 +4013,7 @@ export default {
                 font-size: 12px;
                 line-height: 14px;
                 text-align: center;
-                font-family: '微软雅黑';
+                font-family: @fontRegular;
                 position: absolute;
                 left: 0;
                 bottom: 0;

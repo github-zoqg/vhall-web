@@ -2006,7 +2006,7 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  font-family: '微软雅黑';
+  font-family: @fontRegular;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -2520,7 +2520,7 @@ export default {
             width: 208px;
             height: 22px;
             font-size: 16px;
-            font-family: '微软雅黑';
+            font-family: @fontRegular;
             font-weight: 400;
             color: rgba(153, 153, 153, 1);
             line-height: 22px;
@@ -2618,7 +2618,7 @@ export default {
                 font-size: 12px;
                 line-height: 14px;
                 text-align: center;
-                font-family: '微软雅黑';
+                font-family: @fontRegular;
                 position: absolute;
                 left: 0;
                 bottom: 0;

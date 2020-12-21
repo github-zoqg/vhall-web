@@ -215,7 +215,7 @@ export default {
     p {
       height: 26px;
       font-size: 16px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1a1a1a;
       line-height: 26px;
@@ -235,7 +235,7 @@ export default {
     text-align: left;
     span {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       color: #999;
       margin: 0;
     }
@@ -243,7 +243,7 @@ export default {
       padding-top: 6px;
       span{
         font-size: 28px;
-        font-family: DINAlternate-Bold, DINAlternate;
+        font-family: @fontDINAL;
         font-weight: bold;
         color: #1a1a1a;
         margin: 0;

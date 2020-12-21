@@ -83,11 +83,11 @@
               :class="{'hide': item.hidePattern && !scope.row[item.hidePattern]}"
               >{{ item.name }}</el-button
             >-->
-            <el-button v-if="scope.row.status === 0" @click="handleBtnClick(scope, {
+            <el-button v-if="Number(scope.row.status) === 0" @click="handleBtnClick(scope, {
               name: '启用',
               methodName: 'restartApp'
             })" size="mini" type="text">启用</el-button>
-            <el-button v-if="scope.row.status === 1" @click="handleBtnClick(scope, {
+            <el-button v-if="Number(scope.row.status) === 1" @click="handleBtnClick(scope, {
               name: '停用',
               methodName: 'stopApp'
             })" size="mini" type="text">停用</el-button>
@@ -102,17 +102,6 @@
           </template>
         </el-table-column>
       </template>
-      <div slot="empty" v-else>
-        <div>
-          <img
-            src="../../common/images/v35-webinar.png"
-            alt=""
-            width="140"
-            height="140"
-          />
-        </div>
-        <p :style="{ marginTop: '23px' }">没有数据</p>
-      </div>
     </el-table>
     <SPagination
       :total="totalNum"

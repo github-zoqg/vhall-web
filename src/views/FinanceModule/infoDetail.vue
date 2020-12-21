@@ -391,7 +391,8 @@ export default {
       this.$fetch(url, this.params).then(res => {
         if (res.code == 200) {
           this.params = {};
-          this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出成功，请去下载中心下载`);
+          this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`账单明细${res.msg}`);
         }

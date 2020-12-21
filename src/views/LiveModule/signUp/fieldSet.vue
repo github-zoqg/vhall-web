@@ -739,11 +739,11 @@ export default {
   }
   .el-textarea {
     /deep/ .el-textarea__inner {
-      font-family: Arial, Arial, 'Microsoft Yahei';
+      font-family: @fontRegular;
     }
     /deep/ .el-input__count {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #666666;
     }

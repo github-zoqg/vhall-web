@@ -24,28 +24,28 @@
             <el-button class="no-border" size="mini" slot="append" @click="getDyCode()"
                        :class="showCaptcha ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick">
-              {{ time === 10 ? '发送验证码' : `${time}s` }}
+              {{ time === 60 ? '发送验证码' : `${time}s` }}
             </el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="1邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
         </el-form-item>
-        <el-form-item label="1手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入邮箱地址"/>
         </el-form-item>
-        <el-form-item label="1图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <div id="setCaptcha1">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
           <p class="errorText" v-show="errorMsgShow1">1图形码错误</p>
         </el-form-item>
-        <el-form-item label="1验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
             <el-button class="no-border" size="mini" slot="append"
                        @click="getDyCode1()"
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
-                       :disabled="isDisabledClick1">{{ time1 === 10 ? '发送验证码' : `${time1}s` }}</el-button>
+                       :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
@@ -61,13 +61,13 @@
     </div>
     <span slot="footer">
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" @click="changePhoneOrEmailStep">下一步1</el-button>
+                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" @click="changePhoneOrEmailStep">下一步</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" @click="changePwdStep">确定2</el-button>
+                 v-if="showVo.executeType === 'pwd'" @click="changePwdStep">确定</el-button>
       <el-button class="dialog-btn" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" @click="cancelPwdStep">取消3</el-button>
+                 v-if="showVo.executeType === 'pwd'" @click="cancelPwdStep">取消</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" @click="sendBindHandle">立即绑定4</el-button>
+                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" @click="sendBindHandle">立即绑定</el-button>
     </span>
   </VhallDialog>
 </template>
@@ -148,7 +148,7 @@ export default {
         ]
       },
       downTimer: null,
-      time: 10, // 倒计时
+      time: 60, // 倒计时
       isDisabledClick: false,
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
@@ -158,7 +158,7 @@ export default {
       errorMsgShow: '',
 
       downTimer1: null,
-      time1: 10, // 倒计时
+      time1: 60, // 倒计时
       isDisabledClick1: false,
       showCaptcha1: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey1: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
@@ -303,7 +303,7 @@ export default {
         }, 1000);
       } else {
         // 倒计时结束
-        this.time = 10;
+        this.time = 60;
         this.isDisabledClick = false;
         this.callCaptcha();
       }
@@ -317,7 +317,7 @@ export default {
           this.countDown1();
         }, 1000);
       } else {
-        this.time1 = 10;
+        this.time1 = 60;
         this.isDisabledClick1 = false;
         this.callCaptcha(1);
       }
@@ -446,7 +446,7 @@ export default {
               scene_id: !(this.vo && this.vo.has_password > 0) ? 9 : 1,
               key: this.codeKey
             };
-            this.$fetch('resetPassword', this.params(params)).then(res => {
+            this.$fetch('resetPassword', this.$params(params)).then(res => {
               if (res && res.code === 200) {
                 this.$message.success('操作成功');
                 this.visible = false;
@@ -525,12 +525,12 @@ export default {
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
-          this.time = 10;
+          this.time = 60;
         }
         if(this.downTimer1) {
           window.clearTimeout(this.downTimer1);
           this.isDisabledClick1 = false;
-          this.time1 = 10;
+          this.time1 = 60;
         }
         if(this.showVo.executeType !== 'email') {
           this.callCaptcha();

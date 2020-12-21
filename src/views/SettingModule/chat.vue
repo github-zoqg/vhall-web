@@ -408,7 +408,7 @@ export default {
 .words-white {
   padding: 10px 12px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 20px;
@@ -461,14 +461,14 @@ export default {
     padding: 8px 12px;
     line-height: 20px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #999999;
     resize: none;
   }
   /deep/.el-input__count {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #999999;
     line-height: 20px;

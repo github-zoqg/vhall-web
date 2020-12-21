@@ -242,7 +242,7 @@ export default {
         height: 146px;
         background: #fff;
         .list-title{
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-size: 16px;
           font-weight: 400;
           color: #1A1A1A;
@@ -317,7 +317,7 @@ export default {
           border-radius: 4px;
           color: #fff;
           padding: 32px 17px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           h1{
             font-size: 18px;
             line-height: 25px;
