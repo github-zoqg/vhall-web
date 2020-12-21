@@ -356,7 +356,7 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <img 
+            <img
               :src="roomData.webinar.img_url"
               v-if="roomData && roomData.webinar && ((roomData.warmup_paa_record_id && roomData.verified == 0) || (!roomData.preview_paas_record_id && !roomData.warmup_paa_record_id))" alt="">
             <div class="subscribe-video" v-else>
@@ -936,7 +936,7 @@ export default {
             this.showOfficialAccountMiniQRCode = true
           }
         }
-        
+
         this.getBtnText()
         this.$nextTick(() => {
           if (this.theme && this.skinInfo.status == 1) {

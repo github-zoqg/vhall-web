@@ -266,7 +266,7 @@ export default {
       this.getLotteryCount();
     },
     // 点击抽奖
-    lotteryShow () {
+    async lotteryShow () {
       console.warn('点击的是抽奖----');
       this.payoff = true;
       this.lotteryContentShow = true;
@@ -275,6 +275,7 @@ export default {
       this.prizeNum = '';
       this.userKeywords = '';
       this.chooseList = [];
+      await this.ClearUserList()
       this.checkLottery()
     },
     // 点击领奖

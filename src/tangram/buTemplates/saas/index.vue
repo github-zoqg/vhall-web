@@ -25,7 +25,6 @@
             class="vhall-main-area-tools--doc-control"
             v-if="roomInfo.interact.room_id"
           ></div>
-          <!-- {{permission}} -->
           <record
             v-auth="100020"
             @recordFun="recordFun"
