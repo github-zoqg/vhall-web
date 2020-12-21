@@ -39,7 +39,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
     'request-id': uuidV1()
-    // 'Content-Type': 'application/json'
   };
 
   interact_token && (headers['interact-token'] = interact_token)
@@ -49,7 +48,8 @@ export default function fetchData(url, data1 = {}, header = {}) {
     // pc观看等
     headers.platform = 7;
   }
-  if (header['Content-Type'] === 'multipart/form-data') {
+  // 针对微吼云  通过审核接口  单独进行修改传参类型--- 勿删
+  if (header['Content-Type'] === 'multipart/form-data' || api.indexOf('apply-message-send')!=-1) {
     formData = new FormData();
     for (let key in data) {
       if(data[key] !== null &&  data[key] !== undefined && data[key] !== '') {
@@ -61,7 +61,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
   } else {
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
   }
-
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
@@ -73,18 +72,15 @@ export default function fetchData(url, data1 = {}, header = {}) {
   } else if (method === 'POST' && header['Content-Type'] === 'application/json') {
     option.body = JSON.stringify(data);
   }
-  // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
   } else if (paas || staticdata){
     api = `${api}`
     option.headers = {}
-    // if(api.indexOf('apply-message-send')!=-1){
-    //   option.headers = headers
-    // }
   } else {
     api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
+
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
