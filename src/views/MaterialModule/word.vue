@@ -44,6 +44,7 @@
           :on-success='uploadSuccess'
           :on-error="uploadError"
           :before-upload="beforeUploadHandler"
+          :on-progress="uploadProcess"
           :on-preview="uploadPreview"
         >
           <el-button round type="primary" size="medium">上传</el-button>
@@ -422,9 +423,7 @@ export default {
           console.log(e)
         }
         console.log('============收到聊天消息2===============' + JSON.stringify(msg.data))
-        if (msg.data.type === 'converted_process_msg') {
-          EventBus.$emit('converted_process_msg', msg.data.data)
-        } else if (msg.data.type === 'host_msg_webinar') {
+        if (msg.data.type === 'host_msg_webinar') {
           EventBus.$emit('host_msg_webinar', msg.data.data)
         }
       })
@@ -454,21 +453,116 @@ export default {
     }
   },
   mounted() {
-    EventBus.$on('converted_process_msg', res => { // 转码进度
+    /* EventBus.$on('converted_process_msg', res => { // 转码进度
       // console.log(res, '监听到converted_process_msg转码进度事件');
       this.tableList.forEach((item) => {
         if (res.document_id === item.document_id && !item.transcoded) {
           item.codeProcess = Number(res.converted_process.replaceAll('%', ''));
         }
       });
-    });
+    }); */
+    function CalculatePercent(convert, total, dynamic_convert) {
+        total = total >= 1 ? total : 1;
+        var _percent = typeof dynamic_convert !== "undefined" ? (parseInt(convert) + parseInt(dynamic_convert)) / 2 / total * 100 : parseInt(convert) / parseInt(total) * 100;
+        return (_percent + "").substr(0, 4) + "%";
+    }
+    function getDocErrorText(error_status) {
+        var textArr = {
+            "500": "转换失败",
+            "501": "文档打开失败",
+            "502": "转换失败",
+            "503": "文档不可用",
+            "504": "文档受保护"
+        };
+        return textArr[error_status + ""];
+    }
     EventBus.$on('host_msg_webinar', res => { // 转码状态
       console.log(res, '监听到host_msg_webinar转码状态事件');
+      /*
+        converted_page: "0"
+        converted_page_jpeg: "1"
+        document_id: "01b17b82"
+        page: "1"
+        status: "200"
+        status_jpeg: "200"
+      */
       this.tableList.forEach((item) => {
         if (res.document_id === item.document_id) {
           const statusJpeg = Number(res.status_jpeg);
           const status = Number(res.status);
-          if (statusJpeg === 0 && status === 0) {
+          if (status === 0) {
+            if(statusJpeg === 200) {
+              if (!/pptx?/.text(item.ext)) {
+                 item.transform_schedule_str = '转码完成';
+                 item.page = Number(res.page);
+                 item.transcoded = true;
+              } else {
+                 item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+              }
+            } else if(statusJpeg > 500){
+              item.transform_schedule_str = getDocErrorText(statusJpeg);
+            } else if (statusJpeg === 100) {
+              if (/pptx?/.test(item.ext)) {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+              } else {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page)}`;
+              }
+            } else {
+                item.transform_schedule_str = '等待转换';
+            }
+          } else if (status === 100) {
+             if (/pptx?/.test(item.ext)) {
+                item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+            }
+            if (statusJpeg == 200) {
+                if (!/pptx?/.test(item.ext)) {
+                  item.transform_schedule_str = '转码完成';
+                  item.page = Number(res.page);
+                  item.transcoded = true;
+                }
+            } else if (statusJpeg >= 500) {
+                item.transform_schedule_str = getDocErrorText(res.status_jpeg);
+            }
+          } else if (status === 200) {
+            if (statusJpeg == 0) {
+                if (/pptx?/.test(item.ext)) {
+                   item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+                } else {
+                    item.transform_schedule_str = '等待转换';
+                }
+            } else if (statusJpeg >= 500) {
+                item.transform_schedule_str = getDocErrorText(res.status_jpeg);
+            } else if (statusJpeg === 100) {
+                if (/pptx?/.test(item.ext)) {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+                } else {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page)}`;
+                }
+            } else if (statusJpeg === 200) {
+                item.transform_schedule_str = '转码完成';
+                item.page = Number(res.page);
+                item.transcoded = true;
+            }
+          } else if (status >= 500) {
+            if (statusJpeg === 0) {
+               item.transform_schedule_str = '等待转换';
+            } else if (statusJpeg === 100) {
+                if (/pptx?/.test(item.ext)) {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+                } else {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page)}`;
+                }
+            } else if (statusJpeg === 200) {
+                if (/pptx?/.test(item.ext)) {
+                  item.transform_schedule_str = "动画版转换失败，请尝试极速版";
+                } else {
+                  item.transform_schedule_str = `转换${CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page)}`;
+                }
+            } else if (r.status_jpeg >= 500) {
+                item.transform_schedule_str = getDocErrorText(res.status_jpeg);
+            }
+          }
+          /* if (statusJpeg === 0 && status === 0) {
             item.transform_schedule_str = '待转码';
             item.page = Number(res.page);
             item.transcoded = false;
@@ -484,7 +578,7 @@ export default {
             item.transform_schedule_str = '转码失败';
             item.page = Number(res.page);
             item.transcoded = false;
-          }
+          } */
         }
       });
     });
