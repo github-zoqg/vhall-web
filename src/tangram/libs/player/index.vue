@@ -690,17 +690,17 @@ export default {
         type: this.type, // live 直播  vod 点播  必填
         poster: '',
         autoplay: false,
-        forceMSE: false
-      };
-      if(this.isAudience){
-        // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
-        params.otherOption = {
-          report_extra: this.reportExtra,
+        forceMSE: false,
+        otherOption: {
           vid: this.roominfo.vid, // hostId
           vfid: this.roominfo.vfid,
           guid: this.roominfo.guid,
           biz_id: this.$route.params.il_id
         }
+      };
+      if(this.isAudience){
+        // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
+        params.otherOption.report_extra = this.reportExtra
       }
       console.log('1a', this.roominfo)
       if (this.isLive && this.liveOption && this.type == 'live') {

@@ -321,6 +321,11 @@ export default {
             role: this.role,
             roomId: this.roomId // 如需开启旁路，必填
           }
+          try {
+            let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
+            delete _otherOption.report_extra
+            _data.otherOption = _otherOption
+          } catch (error) {}
           // otherOption: {
           //   ...JSON.parse(sessionStorage.getItem('report_extra'))
           // }

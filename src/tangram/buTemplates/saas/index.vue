@@ -525,6 +525,7 @@
             :isMini="true"
             :docVisible="true"
             :isAudience='false'
+            :roominfo='reportData'
             :exchangeVideoDoc="exchange"
             ref="vhallPlayer"
           ></player>
@@ -1439,6 +1440,7 @@ export default {
 
   data () {
     return {
+      reportData: {},
       acxs: '7889999',
       chatTip: false,
       memberTip: false,
@@ -1645,6 +1647,11 @@ export default {
   mounted () {
     window.saasindex = this;
     this.getInavInfo();
+    try {
+      let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
+      delete _otherOption.report_extra
+      this.reportData = _otherOption
+    } catch (error) {}
     console.warn(this.domains, '图片地址   ***********************');
     this.shareUrl = this.domains.custom ? `${this.domains.custom}/v3/live/watch/${this.ilId}` : `https:${this.domains.web_url}live/watch/${this.ilId}`;
     this.localDuration = this.duration;
