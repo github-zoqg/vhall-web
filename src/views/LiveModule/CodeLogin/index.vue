@@ -20,6 +20,16 @@
         <div class="enterBtn" @click="entryLive">进入直播</div>
       </div>
     </div>
+    <!-- <div style="width:100%; baclground:white"> -->
+      <div class="foot">
+        <p class="text">
+          <span>活动简介</span>
+        </p>
+        <div class="foot-con">
+          <p v-html="baseObj.introduction"></p>
+        </div>
+      </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -113,6 +123,7 @@ import { liveTag } from '@/utils/filter';
 <style lang="less" scoped>
 .code-login-wrap{
   width:100%;
+  padding-bottom: 100px;
   margin: 0 auto;
   .title{
     width: 75%;
@@ -149,7 +160,7 @@ import { liveTag } from '@/utils/filter';
     }
     p{
       &:nth-child(2){
-        margin-bottom: 50px;
+        margin-bottom: 30px;
         span{
           color: #1087dc;
           margin-right: 20px;
@@ -161,7 +172,7 @@ import { liveTag } from '@/utils/filter';
     width: 75%;
     min-width: 1100px;
     height: 670px;
-    margin: 0 auto;
+    margin: 0 auto 40px;
     .img-box{
       display: inline-block;
       width: calc(100% - 300px);
@@ -236,6 +247,28 @@ import { liveTag } from '@/utils/filter';
         }
       }
     }
+  }
+  .foot{
+    .text{
+      font-size: 18px;
+      border-bottom: 1px solid #e1e1e1;
+      height: 40px;
+      line-height: 38px;
+      span{
+        border-bottom: 2px solid #fc5659;
+        display: inline-block;
+        padding: 0 10px;
+        // width: ;
+      }
+    }
+    &-con{
+      padding: 20px 15px;
+      margin-bottom: 40px;
+    }
+    border: 1px solid #d2d2d2;
+    width: 75%;
+    min-width: 1100px;
+    margin: 0 auto;
   }
 }
 
