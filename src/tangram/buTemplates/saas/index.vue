@@ -524,6 +524,7 @@
             :vodControllerShow="true"
             :isMini="true"
             :docVisible="true"
+            :isAudience='false'
             :exchangeVideoDoc="exchange"
             ref="vhallPlayer"
           ></player>
