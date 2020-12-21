@@ -799,7 +799,7 @@ export default {
 .title-data {
   span{
     font-size: 22px;
-    font-family: PingFangSC-Semibold, PingFang SC;
+    font-family: @fontSemibold;
     font-weight: 600;
     color: #1a1a1a;
   }

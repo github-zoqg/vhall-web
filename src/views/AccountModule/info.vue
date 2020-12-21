@@ -188,7 +188,7 @@ export default {
   }
   label {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
@@ -196,7 +196,7 @@ export default {
   }
   p {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
     line-height: 20px;
@@ -218,7 +218,7 @@ export default {
   list-style: none;
   position: relative;
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #666666;
   line-height: 55px;

@@ -274,7 +274,7 @@ export default {
 <style lang="less">
 .vhall-rebroadcast-container {
   background-color: #fff;
-  font-family: '微软雅黑';
+  font-family: @fontRegular;
   padding-left: 27px;
   padding-right: 27px;
   padding-bottom: 27px;

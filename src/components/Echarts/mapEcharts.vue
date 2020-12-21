@@ -127,7 +127,7 @@ export default {
       td {
         padding: 0 20px;
         text-align: left;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
       }
       th {
         font-size: 16px;

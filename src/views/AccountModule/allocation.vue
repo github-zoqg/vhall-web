@@ -430,7 +430,7 @@
   .ac__allocation--user {
     .title {
       font-size: 16px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 22px;
@@ -438,7 +438,7 @@
     p {
       text-align: center;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #999999;
       line-height: 20px;
@@ -456,7 +456,7 @@
         list-style-type: none;
         text-align: left;
         font-size: 12px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #999999;
         line-height: 20px;
@@ -464,7 +464,7 @@
     }
     .result_val {
       font-size: 36px;
-      font-family: DINAlternate-Bold, DINAlternate;
+      font-family: @fontDINAL;
       font-weight: bold;
       color: #1A1A1A;
       line-height: 42px;
@@ -480,7 +480,7 @@
     padding-top: 22px;
     li {
       font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #999999;
       line-height: 17px;
@@ -523,7 +523,7 @@
     list-style: none;
     position: relative;
     font-size: 16px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 55px;

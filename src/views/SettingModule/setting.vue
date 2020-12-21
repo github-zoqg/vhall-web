@@ -85,14 +85,14 @@ export default {
     .mainText{
       margin-bottom: 10px;
       font-size: 18px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 25px;
     }
     .subText{
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #666666;
       line-height: 20px;

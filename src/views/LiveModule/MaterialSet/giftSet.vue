@@ -696,7 +696,7 @@ export default {
         vertical-align: top;
         margin-left: 12px;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         .gift-name{
           display: block;

@@ -357,7 +357,7 @@ export default {
     margin-left: -12px;
   }
   /deep/.el-form-item__label {
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1a1a1a;
   }
@@ -451,7 +451,7 @@ export default {
     padding-right: 200px;
     p {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1a1a1a;
       padding-bottom: 16px;
@@ -752,7 +752,7 @@ export default {
     display: flex;
     p {
       font-size: 22px;
-      font-family: PingFangSC-Semibold, PingFang SC;
+      font-family: @fontSemibold;
       font-weight: 600;
       color: #1a1a1a;
       padding-right: 8px;

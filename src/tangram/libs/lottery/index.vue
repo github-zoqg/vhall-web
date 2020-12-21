@@ -368,7 +368,7 @@ export default {
         }
         span{
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-weight: 400;
           color: #555555;
           line-height: 20px;
@@ -491,7 +491,7 @@ export default {
         font-size: 18px;
         color: #444;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #FC5659;
         margin-bottom: 24px;
@@ -512,7 +512,7 @@ export default {
         }
         p{
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-weight: 400;
           color: #222222;
           line-height: 22px;
@@ -545,7 +545,7 @@ export default {
           padding-left: 20px;
           line-height: 42px;
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-weight: 400;
           color: #222222;
           img{
@@ -570,7 +570,7 @@ export default {
           }
           p{
             font-size: 16px;
-            font-family: PingFangSC-Regular, PingFang SC;
+            font-family: @fontRegular;
             font-weight: 400;
             color: #222222;
             line-height: 22px;
@@ -586,7 +586,7 @@ export default {
     .recive-prize {
       .title{
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #222222;
         line-height: 20px;

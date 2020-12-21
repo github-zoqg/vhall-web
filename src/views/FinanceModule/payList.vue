@@ -227,7 +227,7 @@ export default {
     }
     h1{
       font-size: 22px;
-      font-family: PingFangSC-Semibold, PingFang SC;
+      font-family: @fontSemibold;
       color: #1A1A1A;
       margin-bottom: 24px;
     }

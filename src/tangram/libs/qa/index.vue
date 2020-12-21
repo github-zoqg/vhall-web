@@ -499,7 +499,7 @@ export default {
       }
       & > .private-messages-button {
         font-size: 12px;
-        font-family: '微软雅黑';
+        font-family: @fontRegular;
         position: absolute;
         right: 5px;
         bottom: 4px;

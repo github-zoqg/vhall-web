@@ -440,7 +440,7 @@ export default {
       width: 168px;
       height: 24px;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 24px;
@@ -477,7 +477,7 @@ export default {
       height: 40px;
       line-height: 40px;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #666666;
       margin-left: 24px;

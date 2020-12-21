@@ -188,7 +188,7 @@ export default {
     }
     .el-dialog__title{
       font-size: 16px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       height: 48px;
       line-height: 48px;
