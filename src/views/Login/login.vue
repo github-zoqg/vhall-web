@@ -340,6 +340,7 @@ export default {
     },
     registerAccount() {
       this.registerForm.captcha = this.mobileKey;
+      this.registerForm.source = this.$route.query.source || 1;
       this.$fetch('register', this.registerForm).then(res => {
         if(res && res.code === 200) {
           this.$message.success('注册成功');
