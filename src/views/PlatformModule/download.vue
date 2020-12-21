@@ -38,10 +38,17 @@
             :selectable="checkSelectable"
             ></el-table-column>
           <el-table-column
-            prop="file_name"
             label="文件名"
             show-overflow-tooltip
-          ></el-table-column>
+          >
+            <template slot-scope="scope">
+              <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0"></i>
+              <p class="text">
+               <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
+                {{ scope.row.file_name }}
+              </p>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="webinar_name"
             label="所属活动"
@@ -373,6 +380,16 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .icon_tag {
+    width: 8px;
+    height: 8px;
+    background: #FB3A32;
+    position: absolute;
+    border-radius: 100%;
+    z-index: 20;
+    margin-top: 0;
+    margin-left: -4px;
   }
   /deep/.el-button.el-button--text {
     color: #1A1A1A;
