@@ -945,8 +945,6 @@ export default {
 
             Object.assign(msg, msg.data);
           })
-          this.$EventBus.$on('sdkReady', () => {
-          });
         },
         err => {
           console.error('聊天SDK实例化失败', err);
