@@ -409,6 +409,10 @@
                 @codeAuthLogin="handleCodeAuthLogin"
               ></key-login>
             </template>
+            <div class="open-screen" v-show="openScreenConfig.status == 0">
+              <div class="open-count-time" @click="closeOpenScreen">关闭<span v-show="openScreenConfig.shutdown_type == 1">{{'(' + openScreenTime + ')'}}</span></div>
+              <img @click="openScreenJump" :src="openScreenConfig.img" alt="">
+            </div>
           </div>
         </div>
       </div>
@@ -642,7 +646,10 @@ export default {
       zfbLink: '',
       chatSDK: null,
       videoParams: {},
-      initPlayer: false
+      initPlayer: false,
+      openScreenConfig: {},
+      openScreenTimer: null,
+      openScreenTime: 3
     };
   },
   async created(){
@@ -651,9 +658,12 @@ export default {
     await this.getAdsInfo() // 获取活动广告信息
     await this.getSkin() // 获取皮肤
     await this.getPublisAdv() // 获取公众号广告
+    await this.getOpenScreenConfig() // 开屏广告
     // await this.getTryWatch()
-    this.handleInitRoom()
-    this.getGoodsInfo();
+    this.$nextTick(() => {
+      this.handleInitRoom()
+      this.getGoodsInfo();
+    })
   },
   mounted() {
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
@@ -693,6 +703,14 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods:{
+    closeOpenScreen () {
+      this.openScreenConfig.status = 1
+      if (this.openScreenTimer) clearInterval(this.openScreenTimer)
+      this.openScreenTime = 3
+    },
+    openScreenJump () {
+      window.location.href = this.openScreenConfig.url
+    },
     // getTryWatch () {
     //   this.$fetch('viewerSetGet', {
     //     webinar_id: this.$route.params.id
@@ -749,6 +767,25 @@ export default {
           this.$message.error(res.msg)
           break;
       }
+    },
+    getOpenScreenConfig () {
+      this.$fetch('getPlaybillInfo', {
+        webinar_id: this.$route.params.id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.openScreenConfig = res.data['screen-posters']
+          if (this.openScreenConfig.status == 0 && this.openScreenConfig.shutdown_type == 1) {
+            if (this.openScreenTimer) clearInterval(this.openScreenTimer)
+            this.openScreenTimer = setInterval(() => {
+              if (this.openScreenTime <= 0) {
+                this.closeOpenScreen()
+                return
+              }
+              this.openScreenTime --
+            }, 1000)
+          }
+        }
+      })
     },
     // 获取活动广告信息
     getAdsInfo () {
@@ -899,6 +936,7 @@ export default {
             this.showOfficialAccountMiniQRCode = true
           }
         }
+        
         this.getBtnText()
         this.$nextTick(() => {
           if (this.theme && this.skinInfo.status == 1) {
@@ -952,9 +990,11 @@ export default {
             } catch (e) {
               console.log(e);
             }
-            console.log('==========房间消息===========', msg);
-
-            Object.assign(msg, msg.data);
+            if (msg.data.type == 'pay_success') {
+              window.location.reload()
+            } else if (msg.data.type == 'live_start') {
+              this.$message.success('房间已开播')
+            }
           })
         },
         err => {
@@ -1527,7 +1567,8 @@ export default {
     handleShowPay (type) {
       let params = {
         user_id: this.userInfo.user_id,
-        webinar_id: this.$route.params.id
+        webinar_id: this.$route.params.id,
+        show_url: window.location.href
       }
       if (type == 'wx') {
         params.type = 2
@@ -2215,6 +2256,35 @@ export default {
         }
         .extra-verify:hover{
           cursor: pointer;
+        }
+      }
+      .open-screen{
+        width: 100%;
+        height: 100%;
+        position:absolute;
+        top: 0px;
+        left: 0px;
+        &:hover{
+          cursor: pointer;
+        }
+        .open-count-time{
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          min-width: 40px;
+          height: 30px;
+          border-radius: 20px;
+          background: #333;
+          opacity: .8;
+          line-height: 30px;
+          text-align: center;
+          box-sizing: border-box;
+          padding: 0px 10px;
+        }
+        img{
+          display: inline-block;
+          width: 100%;
+          height: 100%;
         }
       }
     }

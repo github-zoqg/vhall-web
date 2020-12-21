@@ -711,6 +711,7 @@ export default {
       isLogin: false, // 是否登录
       initStatus: true,
       configList: {},
+      openScreenConfig: {}, // 开屏海报
       userInfo: {}
     };
   },
@@ -1387,6 +1388,15 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.ads = res.data.adv_list
+        }
+      })
+    },
+    getOpenScreenConfig () {
+      this.$fetch('getPlaybillInfo', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.openScreenConfig = res.data['screen-posters']
         }
       })
     },
