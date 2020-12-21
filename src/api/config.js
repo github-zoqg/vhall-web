@@ -217,9 +217,10 @@ const apis = {
   playBackChaptersGet: ['/v3/interacts/document/get-chapters', 'POST'], // 设置默认 xiaodong.ding
   playBackDownUrlGet: ['/v3/webinars/record/check-download', 'POST'], // 获取回放下载地址 xiaodong.ding
   tailorSave: ['/v3/webinars/record/cut', 'POST'], // 视频裁剪保存接口 xiaodong.ding
-  createRecordinCtrl: ['/v3/webinars/record/create', 'POST'], // 视频裁剪保存接口 xiaodong.ding
-  saveChapters: ['/v3/webinars/record/save-doc-info', 'POST'], // 视频裁剪保存接口 xiaodong.ding
-  checkChapterSave: ['/v3/webinars/record/check-chatper-save', 'POST'], // 视频裁剪保存接口 xiaodong.ding
+  createRecordinCtrl: ['/v3/webinars/record/create', 'POST'], // 创建回放 xiaodong.ding
+  saveChapters: ['/v3/webinars/record/save-doc-info', 'POST'], // 保存章节信息 xiaodong.ding
+  checkChapterSave: ['/v3/webinars/record/check-chatper-save', 'POST'], // 检查章节保存状态 xiaodong.ding
+  msgInitConsole: ['/v3/webinars/record/msg-init-console', 'POST'], // 初始化消息 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
