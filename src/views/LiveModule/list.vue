@@ -88,7 +88,7 @@
             </div>
           </el-col>
       </el-row>
-      <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
+      <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
     </div>
     <div class="no-live" v-else>
       <noData :nullType="nullText" :text="'您还没有直播，快来创建吧！'">
@@ -151,7 +151,11 @@ export default {
     },
     commandMethod(command) {
       if (command === '删除') {
-         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
+        if (this.webinarInfo.webinar_state == 1) {
+          this.$message.error('正在直播的活动不能删除');
+          return;
+        }
+        this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
            customClass: 'zdy-message-box'

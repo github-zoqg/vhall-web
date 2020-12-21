@@ -196,6 +196,7 @@ export default {
       this.$fetch('withdrawal', params).then(res => {
        this.$message.success('提现成功');
        this.dialogCashVisible = false;
+       this.$emit('onreload');
       });
     },
     // 绑定微信短信验证码

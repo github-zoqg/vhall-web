@@ -67,7 +67,7 @@
             </div>
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
-                <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
+                <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '2' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
             <div v-else-if="item.key === 'imgOrText'">
@@ -107,7 +107,7 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum"
+      v-if="needPagination && totalNum > 10"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"

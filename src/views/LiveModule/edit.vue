@@ -177,7 +177,7 @@
         :active-text="homeDesc">
       </el-switch>
       <el-switch
-         v-if="webniarType=='live'"
+        v-if="webniarType=='live' || !this.versionType"
         style="display: block"
         v-model="capacity"
         active-color="#FB3A32"
@@ -191,7 +191,8 @@
         active-color="#FB3A32"
         inactive-color="#CECECE"
         inactive-text="最高并发"
-        :active-text="limitCapacityDesc">
+        :active-text="limitCapacityDesc"
+        >
       </el-switch>
       <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       <el-form-item class="btnGroup">
@@ -271,12 +272,12 @@ export default {
       if(this.capacity){
         return '已开启，观看并发人数扩容X人';
       }else{
-        return "开启后，使用扩展包扩容并发人数（扩展包剩余X人）";
+        // return "开启后，使用扩展包扩容并发人数（扩展包剩余人）"
+        return `开启后，使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
       if(this.limitCapacitySwtich){
-        this.getHighLimit();
         return '已开启，限制进入活动的观众最大并发数';
       }else{
         return "开启后，限制进入活动的观众最大并发数";
@@ -308,6 +309,7 @@ export default {
         date1: '',
         date2: ''
       },
+      limitInfo: {},
       content: ``,
       docSwtich: false,
       reservation: false,
@@ -316,6 +318,7 @@ export default {
       hot: false,
       home: false,
       capacity: false,
+      isSaveInfo: false,
       limitCapacity: '',
       limitCapacitySwtich: false,
       liveTags: ["金融", '互联网', '汽车', '教育', '健康', '其他'],
@@ -327,7 +330,23 @@ export default {
       selectMedia: null
     };
   },
+  beforeRouteLeave(to, from, next) {
+    if (!this.isSaveInfo && this.title === '编辑') {
+    this.$confirm('是否取消编辑的直播内容？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-alert-box',
+        type: 'warning'
+      }).then(() => {
+        next();
+      }).catch(() => {
+      });
+    } else {
+      next();
+    }
+  },
   created(){
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     if (this.$route.query.id) {
       this.webinarId = this.$route.query.id;
       this.title = this.$route.query.type == 2 ? '编辑' : '复制';
@@ -336,7 +355,7 @@ export default {
       this.title = '创建';
       this.webinarId = '';
     }
-    console.log(JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact, '????????????')
+    this.getHighLimit();
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -390,7 +409,7 @@ export default {
       }
     },
     beforeUploadHnadler(file){
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
       const isType = typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
@@ -412,9 +431,9 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      // if (this.limitCapacity) {
-      //   this.getHighLimit();
-      // }
+      if (this.limitCapacity > this.limitInfo.total) {
+        this.$message.error(`最大并发数不能大于并发剩余量`);
+      }
       let data = {
         webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
@@ -445,6 +464,7 @@ export default {
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
+              this.isSaveInfo = true;
               console.log(res);
               setTimeout(()=>{
                 this.$router.push({path: '/live/list'});
@@ -470,8 +490,8 @@ export default {
       this.showDialog = true;
     },
     getHighLimit() {
-      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
-        console.log(res.data, '11111111111111');
+      this.$fetch('getHighLimit').then(res => {
+        this.limitInfo = res.data;
       })
     },
     resetForm(formName) {

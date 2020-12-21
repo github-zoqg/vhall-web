@@ -166,14 +166,15 @@ export default {
         this.totalNum = res.data.total;
         this.tableList = res.data.list;
         this.rowsList(this.tableList);
+        console.log(this.tableList, '111111111111');
       }).catch(e=>{
         console.log(e);
       });
     },
     rowsList(data) {
       data.map(item => {
-        item.type = item.withdraw_type == '1' ? '红包': '直播';
-        item.statusText = item.withdraw_status == '1' ? '成功': item.pay_type == '2' ? '失败' : '审核中';
+        item.type = item.withdraw_type == 1 ? '红包': '直播';
+        item.statusText = item.withdraw_status == 1 ? '成功': item.withdraw_status == 2 ? '失败' : '审核中';
         item.status = item.withdraw_status;
       });
     },

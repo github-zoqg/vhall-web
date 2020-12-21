@@ -102,7 +102,7 @@
         </table-list>
       </el-tabs>
     </el-card>
-    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type"></cash-box>
+    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
   </div>
 </template>
 
@@ -325,6 +325,9 @@ export default {
       } else {
         this.$refs.cashBox.dialogVisible = true;
       }
+    },
+    onreload() {
+      this.getIncomeInfo();
     },
     isBangWeixin() {
       return this.userInfo.user_thirds.some(item => item.type == 3);
