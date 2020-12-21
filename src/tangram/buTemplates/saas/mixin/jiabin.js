@@ -38,14 +38,18 @@ export default {
       }
 
       if (this.applyWating) {
-        this.$vhallFetch('cancleApply', {
+        this.$fetch('cancelApplySpeakOn', {
           room_id: this.roomInfo.room_id
         }).then(res => {
-          this.isApplying = false;
-          // 结束倒计时
-          this.applyWating = false;
-          this.applyTimerCount = null;
-          clearTimeout(this.applyTimer);
+          if(res.code == 200){
+            this.isApplying = false;
+            // 结束倒计时
+            this.applyWating = false;
+            this.applyTimerCount = null;
+            clearTimeout(this.applyTimer);
+          }else{
+            this.$message.warning(res.msg)
+          }
         });
         return;
       }
@@ -54,23 +58,27 @@ export default {
         return;
       }
 
-      this.$vhallFetch('apply', {
+      this.$fetch('applySpeakOn', {
         room_id: this.roomInfo.room_id
       }).then(res => {
-        this.applyWating = true;
-        this.applyTimerCount = 30;
-        this.applyTimer = setInterval(() => {
-          this.applyTimerCount = this.applyTimerCount - 1;
-          if (this.applyTimerCount == 0) {
-            this.$message.warning({ message: `主持人拒绝了您的上麦请求` });
-            clearInterval(this.applyTimer);
-            this.applyWating = false;
-            this.isApplying = false;
-            this.$vhallFetch('cancleApply', {
-              room_id: this.roomInfo.room_id
-            });
-          }
-        }, 1000);
+        if(res.code == 200){
+          this.applyWating = true;
+          this.applyTimerCount = 30;
+          this.applyTimer = setInterval(() => {
+            this.applyTimerCount = this.applyTimerCount - 1;
+            if (this.applyTimerCount == 0) {
+              this.$message.warning({ message: `主持人拒绝了您的上麦请求` });
+              clearInterval(this.applyTimer);
+              this.applyWating = false;
+              this.isApplying = false;
+              this.$fetch('cancelApplySpeakOn', {
+                room_id: this.roomInfo.room_id
+              });
+            }
+          }, 1000);
+        }else{
+          this.$message.warning(res.msg)
+        }
       });
     },
 
