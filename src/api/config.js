@@ -92,6 +92,7 @@ const apis = {
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
+  checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
 
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建 √
