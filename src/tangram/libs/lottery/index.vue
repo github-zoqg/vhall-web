@@ -149,7 +149,6 @@ export default {
       getReward: '查看中奖名单',
       lotteryChatShow: false, // 已填写过领奖信息的提示
       closeShow: true, // 关闭按钮的显示
-      reciveAwardShow: false, // 领奖信息的展示
       getPrizeCount: 0, // 可参与抽奖的人数
       lotteryEndResult: null, // 抽奖的结果
       lotteryInfo: null, // 抽奖的信息
@@ -258,7 +257,6 @@ export default {
     close () {
       this.lotteryResultShow = false; // 抽奖结果
       this.lotteryContentShow = false; // 发起抽奖
-      this.reciveAwardShow = false; // 领奖信息
       this.prizeShow = false; // 趣味抽奖
       this.payoff = false;
     },

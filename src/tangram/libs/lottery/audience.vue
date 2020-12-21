@@ -232,7 +232,7 @@ export default {
               text: res.data.remark,
               title: res.data.title
           }
-          if(res.data.award_snapshoot.id){
+          if(res.data.award_snapshoot&&res.data.award_snapshoot.id){
             this.showLottery = true
           }
           if(res.data.lottery_status == 0){
@@ -360,6 +360,7 @@ export default {
     participate(){
       if(this.lotteryInfo.lottery_type == 8){
         if(this.chatLoginStatus){
+          this.showMess = false
           this.$parent.NoLogin();
         }else{
           this.$fetch('v3PartLottery', {
