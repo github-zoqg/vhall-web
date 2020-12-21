@@ -140,6 +140,10 @@ export default {
 
 <style lang="less" scoped>
     .btn-box-authChat {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
         .butt {
             width: 58px;
             height: 32px;
@@ -149,8 +153,11 @@ export default {
             cursor: pointer;
             color: #666666;
             font-size: 14px;
+            margin-left: 10px;
             background-color: #fff;
-
+            &:nth-child(1){
+              margin-left: 0px;
+            }
             &:hover {
                 background-color: #FC5659;
                 border: 1px solid #FC5659;
