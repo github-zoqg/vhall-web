@@ -44,6 +44,7 @@ export default {
   },
   data(){
     return {
+      action: 'detail',
       env: Env,
       appForm: {
         app_name: '',
@@ -170,14 +171,9 @@ export default {
     };
   },
   created(){
-    if(this.$route.meta.action != 'add'){
-      this.getAppInfo();
-    }
+    this.getAppInfo();
   },
   computed:{
-    action(){
-      return this.$route.meta.action;
-    },
     pageTitle(){
       if(this.action == 'modify'){
         return '应用修改';
@@ -249,13 +245,14 @@ export default {
     cancel(){
       if(this.action == 'modify'){
         this.getAppInfo();
-        this.$route.meta.action= 'detail';
-        this.$route.meta.title= this.pageTitle;
+        this.action = 'detail';
+        // this.$route.meta.title= this.pageTitle;
       }
     },
     modify(){
-      this.$route.meta.action = 'modify';
-      this.$route.meta.title= this.pageTitle;
+      // this.$route.meta.action = 'modify';
+      this.action = 'modify'
+      // this.$route.meta.title= this.pageTitle;
     }
   }
 };
