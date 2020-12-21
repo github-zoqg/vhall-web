@@ -690,13 +690,13 @@ export default {
         forceMSE: false,
         otherOption: {
           report_extra: this.reportExtra,
-          vid: this.roominfo.account_id, // hostId
-          uid: this.roominfo.third_party_user_id,
-          vfid: this.roominfo.parentId ? this.roominfo.parentId : this.roominfo.account_id,
+          vid: this.roominfo.vid, // hostId
+          vfid: this.roominfo.vfid,
           guid: this.roominfo.guid,
           biz_id: this.$route.params.il_id
         }
       };
+      console.log('1a', this.roominfo)
       if (this.isLive && this.liveOption && this.type == 'live') {
         params = Object.assign(params, {
           liveOption: this.liveOption
