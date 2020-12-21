@@ -111,7 +111,7 @@ export default {
     handleSelectionChange(val){
       let ids = []
       val.length > 0 && val.forEach((item, index) => {
-        ids.push(item.id)
+        ids.push(item.document_id)
       })
       this.tableSelect = ids
     },

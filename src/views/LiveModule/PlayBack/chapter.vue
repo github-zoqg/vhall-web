@@ -42,8 +42,8 @@
     </div>
     <div class="cont">
       <div class="btnGroup">
-        <el-button v-if="!$route.query.isDemand" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
-        <el-button size="medium" round @click="addChapter">新增章节</el-button>
+        <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
+        <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button>
         <el-button size="medium" round @click="deleteChapter">批量删除</el-button>
         <div class="right">
           <el-button size="medium" round @click="saveChapters">保存</el-button>
@@ -125,6 +125,7 @@ export default {
       VUE_APP_HOST_URL: process.env.VUE_APP_HOST_URL,
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
+      isDemand: this.$route.query.isDemand,
       showDoc: false,
       userId: window.sessionStorage.getItem('userId'),
       playerProps: {},
@@ -254,6 +255,7 @@ export default {
     },
     saveChapters() {
       const createTimeArr = [];
+      console.log('tableData', this.tableData)
       const doc_titles = this.tableData.map(item => {
         createTimeArr.push(this.secondsReverse(item.createTime))
         return {
@@ -267,6 +269,7 @@ export default {
           subsection: item.sub.map(subItem => {
             createTimeArr.push(this.secondsReverse(subItem.createTime))
             return {
+              document_id: subItem.docId,
               created_at: this.secondsReverse(subItem.createTime),
               page: subItem.slideIndex,
               step: subItem.stepIndex,
@@ -277,19 +280,23 @@ export default {
           })
         }
       })
-      console.log(createTimeArr)
-      const createTimeArrSet = new Set(createTimeArr)
-      console.log(createTimeArrSet)
+      const createTimeArrSet = new Set(createTimeArr);
       if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
+      console.log(doc_titles)
+      console.log('isDemand', this.isDemand ? 2 : 1)
       this.$fetch('saveChapters', {
         record_id: this.recordId,
-        type: 1,
+        type: this.isDemand == 'true' ? 2 : 1,
         doc_titles: JSON.stringify(doc_titles)
       }).then(res => {
         if (res.code == 200) {
-          this.$message.success('保存成功')
+          this.$message.success('保存成功');
+          this.$router.go(-1);
         } else if (res.code == 12563) {
-          this.$message.warning('请勿在短时间内重复提交保存')
+          // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
+          this.$message.warning('上次保存尚未完成,请稍后提交保存');
+        } else {
+          this.$message.warning('保存失败');
         }
       })
     },
@@ -327,7 +334,7 @@ export default {
       }).then(res => {
         this.tableData = res.data.doc_titles.map((item, index) => {
           return {
-            createTime: this.secondsFormmat(item.created_at),
+            createTime: '00:00:00',
             docId: item.document_id,
             slideIndex: item.page,
             stepIndex: item.step,
@@ -335,7 +342,7 @@ export default {
             index: index + 1,
             sub: item.subsection.length ?
               item.subsection.map((subItem, subIndex) => ({
-                createTime: this.secondsFormmat(subItem.created_at),
+                createTime: '00:00:00',
                 docId: subItem.document_id,
                 slideIndex: subItem.page,
                 stepIndex: subItem.step,
@@ -414,6 +421,7 @@ export default {
     // 添加子章节
     addSonNode(row) {
       const currentDocInfo = this.docsdk._currentDoc.getDocInfo();
+      console.log(currentDocInfo)
       const currentContainerInfo = this.docsdk._currentDoc._currentContainer;
       row.sub.push({
         title: '',
