@@ -35,7 +35,9 @@
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
-              v-model="query.keyword">
+              v-model="query.keyword"
+              @keyup.enter.native="getKeywordList"
+              >
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
@@ -57,8 +59,11 @@
           @getTableList="getKeywordList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
+          v-if="keyWordDao.total > 0"
         >
         </table-list>
+        <!-- 无消息内容 -->
+        <null-page v-else></null-page>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -112,12 +117,14 @@
 <script>
 import FileUpload from '@/components/FileUpload/main';
 import PageTitle from '@/components/PageTitle';
+import NullPage from '../PlatformModule/Error/nullPage.vue';
 import Env from "@/api/env";
 export default {
   name: "chat.vue",
   components: {
     PageTitle,
-    FileUpload
+    FileUpload,
+    NullPage
   },
   data() {
     return {
@@ -273,8 +280,7 @@ export default {
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
-        customClass: 'zdy-message-box',
-        type: 'warning'
+        customClass: 'zdy-message-box'
       }).then(() => {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id
@@ -331,6 +337,12 @@ export default {
     // 打开批量添加弹出框
     multiUploadKeywordShow() {
       this.multiUploadShow = true;
+      this.fileUrl = '';
+      // 清空面板
+      this.importResult = {
+        success: 0,
+        fail: 0
+      }
     },
     // 获取模板下载地址
     getKeywordTemplate() {
@@ -356,7 +368,12 @@ export default {
         this.$fetch('uploadKeywordAdd', {
           file: res.data.file_url
         }).then(resV => {
-          resV.code === 200 ? this.importResult = resV.data : null;
+          if (resV && resV.code === 200) {
+            this.importResult = resV.data;
+            this.multiUploadShow = false;
+            // 重新刷新列表数据
+            this.getKeywordList();
+          }
         }).catch(e => {
           this.$message.error('导入聊天严禁词信息失败！');
         });
