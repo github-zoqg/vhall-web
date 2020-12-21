@@ -338,6 +338,13 @@ export default {
       this.title = '创建';
       this.webinarId = '';
     }
+    if (this.$route.query.record_id) {
+      this.selectMedia = {
+        id: this.$route.query.record_id,
+        paas_record_id: this.$route.query.paas_record_id,
+        name: this.$route.query.name
+      }
+    }
     console.log(JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact, '????????????')
   },
   methods: {
