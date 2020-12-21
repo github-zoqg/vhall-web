@@ -130,13 +130,8 @@ export default {
       } else {
         this.clearForm();
       }
-    }
+    },
   },
-  // created() {
-  //  /* if(this.dialogAdverVisible) {
-  //     this.activityData();
-  //   }*/
-  // },
   methods: {
     clearForm() {
       this.$set(this.advertisement, 'img_url', '');
@@ -211,7 +206,6 @@ export default {
           });
           this.adList.push(...adList);
           this.maxPage = Math.ceil(res.data.total / this.advertPageInfo.limit);
-          console.log(this.maxPage, '111111111111111');
         } else {
           this.adList = [];
         }
@@ -225,11 +219,6 @@ export default {
       }
       this.adList = [];
       this.activityData();
-    },
-    load() {
-      // this.advertPageInfo.page ++;
-      // this.advertPageInfo.pos = parseInt((this.advertPageInfo.page - 1) * this.advertPageInfo.limit);
-      // this.activityData();
     },
     choiseAdvisetion(items) {
       items.isChecked = !items.isChecked;
@@ -251,10 +240,15 @@ export default {
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
-          this.$message.info('选择广告成功');
+          this.$message.success('选择广告成功');
+          this.dialogAdverVisible = false;
+          this.selectChecked = [];
+          this.adList.map(item => {
+            item.isChecked = false;
+          });
           this.$emit('reload');
         } else {
-          this.$message.info('选择广告失败');
+          this.$message.error('选择广告失败');
         }
       })
     },

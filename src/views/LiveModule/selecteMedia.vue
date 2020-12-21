@@ -85,6 +85,7 @@
 <script>
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
+  props: ['videoSize', 'videoType'],
   data(){
     return {
       dialogVisible: false,
@@ -126,6 +127,8 @@ export default {
     getMediaList() {
       let params = {
         title: this.keyWords,
+        storage: this.videoSize,
+        file_type: this.videoType,
         ...this.pageInfo
       }
       this.$fetch('dataVideoList', this.$params(params)).then(res=>{

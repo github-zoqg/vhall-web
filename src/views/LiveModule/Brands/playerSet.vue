@@ -13,12 +13,13 @@
                     active-color="#ff4949"
                     inactive-color="#ccc"
                     :active-text="horseLampText"
+                    @change="editHorseData"
                   >
                   </el-switch>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-radio v-model="formHorse.text_type" label="1" :disabled="!scrolling_open">固定文本</el-radio>
-                  <el-radio v-model="formHorse.text_type" label="2" :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
+                  <el-radio v-model="formHorse.text_type" label='1' :disabled="!scrolling_open">固定文本</el-radio>
+                  <el-radio v-model="formHorse.text_type" label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                 </el-form-item>
                 <el-form-item label="固定文本">
                   <el-input
@@ -59,7 +60,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
+                  <el-button type="primary" @click="preFormHorse">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -78,6 +79,7 @@
                     active-color="#ff4949"
                     inactive-color="#ccc"
                     :active-text="waterMarkText"
+                    @change="editWatermarkData"
                   >
                   </el-switch>
                 </el-form-item>
@@ -114,7 +116,7 @@
                   <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                  <el-button type="primary" @click="preWatermark">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -182,7 +184,8 @@ export default {
         size: 20,
         speed: '6000',
         position: '2',
-        alpha: 50
+        alpha: 50,
+        interval: 0
       },
       fontList: [],
       formWatermark: {
@@ -245,6 +248,7 @@ export default {
   },
   created() {
     this.getFontList();
+    this.getBasescrollingList();
   },
   methods: {
     getFontList() {
@@ -253,6 +257,53 @@ export default {
         this.fontList.push({value: num });
         num = num + 2;
       }
+    },
+    // 获取跑马灯基本信息
+    getBasescrollingList() {
+      this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
+        if (res.code == 200) {
+          this.formHorse = {...res.data};
+          this.formHorse.text_type = String(res.data.text_type);
+          this.formHorse.position = String(res.data.position);
+          this.formHorse.speed = String(res.data.speed);
+          this.formHorse.alpha = Number(res.data.alpha);
+          this.scrolling_open = Boolean(res.data.scrolling_open);
+        } else {
+          this.$message.success('获取信息失败');
+        }
+      })
+    },
+     // 获取水印基本信息
+    getBaseWaterList() {
+       this.$fetch('getWatermark', {webinar_id: this.$route.params.str}).then(res => {
+        if (res.code == 200) {
+          this.formWatermark = {...res.data};
+          this.domain_url = res.data.img_url;
+          this.watermark_open = Boolean(res.data.watermark_open);
+        } else {
+          this.$message.success('获取信息失败');
+        }
+      })
+    },
+    // 获取其他基本信息
+     getBaseOtherList() {
+       this.$fetch('getOtherOptions', {webinar_id: this.$route.params.str}).then(res => {
+        if (res.code == 200) {
+          this.formOther.bulletChat = Boolean(res.data.barrage_button);
+          this.formOther.progress = Boolean(res.data.progress_bar);
+          this.formOther.doubleSpeed = Boolean(res.data.speed);
+        } else {
+          this.$message.success('获取信息失败');
+        }
+      })
+    },
+    // 关闭或开启跑马灯
+    editHorseData() {
+      this.preFormHorse();
+    },
+     // 关闭或开启水印
+    editWatermarkData() {
+      this.preWatermark();
     },
     // 保存跑马灯
     preFormHorse() {
@@ -331,10 +382,16 @@ export default {
     },
     handleFileChange(file) {
       console.log(file);
-      // this.handleuploadSuccess(file);
     },
     handleClick(tab) {
       this.activeName = tab.name;
+      if (tab.name === 'first') {
+        this.getBasescrollingList();
+      } else if(tab.name === 'second') {
+        this.getBaseWaterList();
+      } else {
+        this.getBaseOtherList();
+      }
     },
   },
 };

@@ -110,6 +110,7 @@
           <div class="show-container">
             <div class="show-header">
               <div class="show-avator">
+                <!-- <img src="../../../common/images/avatar.png" alt=""> -->
                 <img :src="avatar" alt="">
               </div>
               <p>微吼直播</p>
@@ -249,9 +250,8 @@ export default {
   },
   created(){
     this.webinarId = this.$route.params.str;
-    this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar;
+    this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     this.getInviteCardInfo();
-    // this.isInviteCard();
   },
   components: {
     addBackground
@@ -293,7 +293,8 @@ export default {
     onSubmitImg(type, url, trueImg) {
       if (url) {
         this.formInvitation.img = url;
-        this.img = trueImg;
+        this.img = url;
+        // this.img = trueImg;
       } else {
         this.img = this.fileList[type - 1];
       }

@@ -657,10 +657,6 @@ export default {
     getRedpacketList() {
       let pageInfo = this.$refs.tableList.pageInfo;
       pageInfo.pos = pageInfo.pageNum;
-      // pageInfo.limit--;
-      // if (!pageInfo.pos) {
-      //   pageInfo.pos = 1;
-      // } else
       let formParams = {
         webinar_id: this.webinarId
       }
@@ -794,7 +790,7 @@ export default {
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
-      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id, subject: rows.subject}});
+      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id, subject: rows.subject, number: rows.filled_number}});
     }
   }
 };
