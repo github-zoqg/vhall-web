@@ -365,7 +365,8 @@ export default {
       this.$fetch(url, this.lineParams).then(res => {
         if (res.code == 200) {
            this.lineParams = {};
-          this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出成功，请去下载中心下载`);
+          this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`用量统计${res.msg}`);
         }
@@ -377,7 +378,8 @@ export default {
       this.$fetch(url, this.dataParams).then(res => {
         if (res.code == 200) {
           this.dataParams = {};
-          this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出成功，请去下载中心下载`);
+          this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`消费账单${res.msg}`);
         }

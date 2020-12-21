@@ -158,6 +158,7 @@ export default {
       this.$fetch('exportWebinar', this.params).then(res => {
         if (res.code == 200) {
           this.$message.success(`活动数据导出成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`活动数据${res.msg}`);
         }

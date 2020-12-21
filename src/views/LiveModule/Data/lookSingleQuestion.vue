@@ -265,6 +265,7 @@ export default {
     exportSingleQuerstion() {
       this.$fetch('exportSurveyDetial',{webinar_id: this.$route.params.str, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     }
   },

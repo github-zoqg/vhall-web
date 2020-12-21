@@ -228,7 +228,8 @@ export default {
     exportCenterData() {
       this.$fetch('exportUserinfo', this.params).then(res => {
         if (res.code == 200) {
-          this.$message.success(`用户统计数据导出成功，请去下载中心下载`);
+          this.$message.success(`用户统计数据导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`用户统计数据${res.msg}`);
         }
