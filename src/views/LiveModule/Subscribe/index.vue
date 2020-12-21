@@ -1010,10 +1010,9 @@ export default {
         poster: '',
         report_extra: this.roomData.report_data.report_extra ? this.roomData.report_data.report_extra : {},
         roominfo: {
-          account_id: this.roomData.webinar.userinfo.user_id,
-          third_party_user_id: this.roomData.join_info.third_party_user_id,
-          parentId: '',
-          guid: this.roomData.report_data.guid
+          vfid: this.roomData.report_data ? this.roomData.report_data.vfid : '',
+          guid: this.roomData.report_data ? this.roomData.report_data.guid : '',
+          vid: this.roomData.report_data ? this.roomData.report_data.vid : ''
         }
       }
       this.videoParams.vodOption = vodOption
