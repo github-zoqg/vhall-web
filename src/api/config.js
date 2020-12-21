@@ -62,7 +62,7 @@ const apis = {
   setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
   setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
   setOtherOption: ['/v3/interacts/players/set-other-set-info', 'POST'], // 设置播放器其他配置
-  getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息 •••
+  getScrolling: ['/v3/interacts/players/get-scrolling-screen-config', 'GET'], //观看端_获取跑马灯设置配置信息
   getWatermark: ['/v3/interacts/players/get-watermark-config', 'GET'], //观看端_获取水印设置 •••
   getOtherOptions: ['/v3/interacts/players/watch-get-other-set-info', 'GET'], // 获取观看端播放器其他配置
 
@@ -139,6 +139,7 @@ const apis = {
   warnInfo: ['/v3/webinars/warm/info', 'POST'], // 获取暖场视频详情接口
   warnDelete: ['/v3/webinars/warm/delete', 'POST'], // 删除暖场视频
   warnEdit: ['/v3/webinars/warm/edit', 'POST'], // 修改暖场视频封面图片接口
+  warmOpen: ['/v3/webinars/warm/open-warm', 'POST'], // 开启暖场视频
 
   // 商品
   goodsGet: ['/v3/interacts/goods/get-webinar-goods-list', 'GET'], // 获取活动下商品列表

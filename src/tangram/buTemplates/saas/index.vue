@@ -2640,10 +2640,8 @@ export default {
           webinar_id: this.webinar_id,
           start_type: 4
         }).then(() => {
-          alert(13);
           this.$EventBus.$emit('startLive');
         }).catch(err=>{
-          alert(14);
         });
       } else {
         if (flag == 1) {
