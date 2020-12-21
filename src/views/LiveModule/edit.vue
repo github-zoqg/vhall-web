@@ -6,15 +6,14 @@
       :rules="[
         { required: true, max: 100,  message: '请输入直播标题', trigger: 'blur' },
       ]">
-        <el-input v-model="formData.title" maxlength="100"  show-word-limit></el-input>
+        <el-input v-model="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
-        <!-- <el-row :gutter="20"> -->
           <el-col :span="11">
             <el-form-item prop="date1" :rules="[
               { required: true, message: '请选择直播开始日期', trigger: 'blur' }
             ]">
-              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
@@ -22,10 +21,9 @@
             <el-form-item prop="date2" :rules="[
               { required: true, message: '请选择直播开始时间', trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
-        <!-- </el-row> -->
       </el-form-item>
       <el-form-item label="直播模式：" required v-if="webniarType=='live'">
         <div class="titleBox">
@@ -285,7 +283,6 @@ export default {
       }
     },
     webniarType(){
-      console.log(this.$route.meta.webniarType, '12314324254235');
       return this.$route.meta.webniarType;
     },
     webniarTypeToZH(){
@@ -296,6 +293,7 @@ export default {
       return zh[this.$route.meta.webniarType];
     },
     webniarIntact() {
+      // new_interact 1:有互动权限  0:无权限
       if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact == '1') {
         return false;
       } else {
@@ -508,6 +506,10 @@ export default {
   /deep/ .el-form-item{
     // width: 100%;
     max-width: 660px;
+    margin-bottom: 26px;
+  }
+  /deep/.el-col-11{
+    height: 40px;
   }
   // /deep/ .el-form-item__label{
   //   float: none;
@@ -521,8 +523,9 @@ export default {
     font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
-    line-height: 20px;
+    line-height: 40px;
     margin-right: 9px;
+    // padding-bottom: 5px;
   }
   .el-icon-question {
     color: #999999;
