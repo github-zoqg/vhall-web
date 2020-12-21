@@ -41,7 +41,7 @@ const router = [
       {
         path: '/keylogin/:id/:role_name',
         name: 'KeyLogin',
-        component: () => import('@/views/LiveModule/Subscribe/index'),
+        component: () => import('@/views/LiveModule/CodeLogin/index'),
         meta: { title: '口令登录' }
       },
       {

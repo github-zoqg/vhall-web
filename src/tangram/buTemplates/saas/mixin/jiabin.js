@@ -39,7 +39,7 @@ export default {
 
       if (this.applyWating) {
         this.$fetch('cancelApplySpeakOn', {
-          room_id: this.roomInfo.room_id
+          room_id: this.roomInfo.interact.room_id
         }).then(res => {
           if(res.code == 200){
             this.isApplying = false;
@@ -57,9 +57,9 @@ export default {
       if (this.applyWating || this.isApplying) {
         return;
       }
-
+      console.warn(this.roomInfo, '测试');
       this.$fetch('applySpeakOn', {
-        room_id: this.roomInfo.room_id
+        room_id: this.roomInfo.interact.room_id
       }).then(res => {
         if(res.code == 200){
           this.applyWating = true;
@@ -72,7 +72,7 @@ export default {
               this.applyWating = false;
               this.isApplying = false;
               this.$fetch('cancelApplySpeakOn', {
-                room_id: this.roomInfo.room_id
+                room_id: this.roomInfo.interact.room_id
               });
             }
           }, 1000);
@@ -105,7 +105,7 @@ export default {
       });
       // 同意互动连麦
       EventBus.$on('vrtc_connect_agree', e => {
-        if (e.room_join_id == this.roomInfo.third_party_user_id) {
+        if (e.room_join_id == this.roomInfo.join_info.third_party_user_id) {
           if (this.splitStatus == 2) {
             this.$nextTick(() => {
               this.$refs.interactive.speakOn().then(() => {
@@ -141,7 +141,7 @@ export default {
 
       // 互动连麦- 失败
       EventBus.$on('vrtc_connect_failure', e => {
-        if (e.room_join_id == this.roomInfo.third_party_user_id) {
+        if (e.room_join_id == this.roomInfo.join_info.third_party_user_id) {
           this.applyWating = false;
           this.applyTimerCount = null;
           clearTimeout(this.applyTimer);
@@ -150,7 +150,7 @@ export default {
 
       // 互动连麦- 拒绝
       EventBus.$on('vrtc_connect_refused', e => {
-        if (e.room_join_id == this.roomInfo.third_party_user_id) {
+        if (e.room_join_id == this.roomInfo.join_info.third_party_user_id) {
           this.applyWating = false;
           this.isApplying = false;
           this.applyTimerCount = null;
@@ -160,7 +160,7 @@ export default {
 
       // 主持人邀请上麦
       EventBus.$on('vrtc_connect_invite', msg => {
-        if (msg.room_join_id != this.roomInfo.third_party_user_id) {
+        if (msg.room_join_id != this.roomInfo.join_info.third_party_user_id) {
           return;
         }
 
@@ -173,7 +173,7 @@ export default {
 
       // 被下麦消息
       EventBus.$on('vrtc_disconnect_success', (e) => {
-        if (e.data.target_id == this.roomInfo.third_party_user_id) {
+        if (e.data.target_id == this.roomInfo.join_info.third_party_user_id) {
           this.isApplying = false;
         }
       });
@@ -184,7 +184,7 @@ export default {
 
       EventBus.$on('room_kickout', e => {
         console.log('用户被踢出', e);
-        if (e.target_id == this.roomInfo.third_party_user_id) {
+        if (e.target_id == this.roomInfo.join_info.third_party_user_id) {
           this.isKicked = true;
           // this.$message({
           //   type: 'warning',
@@ -194,7 +194,7 @@ export default {
       });
       // 被禁言后隐藏邀请上麦弹框
       EventBus.$on('disable', (msg) => {
-        if (msg.data.target_id == this.roomInfo.third_party_user_id) {
+        if (msg.data.target_id == this.roomInfo.join_info.third_party_user_id) {
           this.UpperVisible = false;
         }
       });

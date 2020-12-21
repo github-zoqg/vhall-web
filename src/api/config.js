@@ -540,6 +540,7 @@ const apis = {
   v3PartLottery: ['/v3/vss/lottery/participation', 'POST'], // 参数抽奖
   v3GetStep: ['/v3/vss/lottery/watch/get-draw-prize-info', 'GET'], // 获取中奖页信息
   v3GetWineList: ['/v3/vss/lottery/users-get', 'GET'], // 查看中奖列表
+  v3ClearUserList: ['/v3/vss/lottery/update-user-status', 'GET'], // 只给服务端配合使用
   // 问卷
   submitQuestion: ['/v3/interacts/survey/submit-survey-answer', 'POST'], // 提交问卷
   sendQuestion: ['/v3/vss/survey/publish-survey', 'POST'], // 直播发布问卷

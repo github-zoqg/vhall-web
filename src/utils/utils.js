@@ -24,6 +24,7 @@ export const sessionOrLocal = {
     window[saveType].clear();
   }
 };
+window.testSess = sessionOrLocal
 // 判断是否IE
 export function isIE () {
   return (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1);
@@ -173,9 +174,10 @@ export function getQueryString(name) {
   let r = window.location.search.substr(1).match(reg);
   if(r!=null)return  unescape(r[2]); return null;
 }
-
 // 判断是否登录成功
 export function checkAuth(to, from, next) {
+  console.warn(to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'), 'look**********************************');
+  console.warn(to.path.indexOf('/live/room') !== -1,sessionOrLocal.get('interact_token'), 'look**********************************');
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
@@ -185,7 +187,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/watch') !== -1 ||
-    to.path.indexOf('/forgetPassword') !== -1) {
+    to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token')) ) {
     // 不验证直接进入
     next();
     NProgress.done();
