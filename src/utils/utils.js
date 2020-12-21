@@ -210,6 +210,7 @@ export function checkAuth(to, from, next) {
       } else {
         if (auth_tag.indexOf('bind') !== -1) {
           sessionOrLocal.set('bind_result', JSON.stringify(res));
+          sessionOrLocal.set('user_auth_key', user_auth_key);
           // 绑定成功
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
         } else {

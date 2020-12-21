@@ -394,6 +394,7 @@ const apis = {
   resetPassword: ['/v3/users/user/reset-password', 'POST'], // 修改密码/密码找回/设置密码接口 Jia.li
   codeCheck: ['/v3/users/code/check', 'POST'], // check Jia.li
   bindInfo: ['/v3/users/user/bind-info', 'POST'], // 绑定邮箱、手机号接口 Jia.li
+  unBindInfo: ['/v3/users/oauth/unbind', 'POST'],// 解除绑定
 
   // 下载中心
   downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √

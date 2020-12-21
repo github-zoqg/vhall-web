@@ -70,55 +70,36 @@ export default {
       window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
     },
     unBindQQ() {
-      alert('解绑开发中');
       this.$confirm('解绑 QQ 后你将无法使用 QQ 登录，你确定要解绑吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box'
       }).then(() => {
-        this.$message.success('解绑成功');
+        // 1微博 2QQ 3微信 4 阿里 5 SDK打赏生的用户6小程序观看端
+        this.unBindSend(2);
       }).catch(() => {})
     },
     unBindWx() {
-      alert('解绑开发中');
       this.$confirm('解绑 微信 后你将无法使用 微信 登录，你确定要解绑吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box'
       }).then(() => {
-        this.$message.success('解绑成功');
+        this.unBindSend(3);
       }).catch(() => {})
     },
-    created() {
-      let bind_Result = sessionOrLocal.get('bind_result');
-      if (bind_Result) {
-        let auth_tag = sessionOrLocal.get('tag', 'localStorage');
-        let res = JSON.parse(bind_Result);
-        if (res.code === 11042) {
-          // 若是账号绑定异常，提示用户信息
-          this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
-            confirmButtonText: '绑定',
-            cancelButtonText: '取消',
-            customClass: 'zdy-message-box'
-          }).then(() => {
-            fetchData('callbackUserInfo', {
-              key: getQueryString('user_auth_key'),
-              scene_id: 3,
-              force: 1
-            }).then(res => {
-              // 绑定成功
-              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
-              return;
-            }).catch(e => {})
-          }).catch(() => {
-          });
-        } else {
-          // 绑定失败，不做任何处理
-          this.$message.error(res.msg || '绑定失败');
-          next({ path: '/login' });
-          return;
+    unBindSend(type) {
+      this.$fetch('unBindInfo', {
+        platform: type
+      }).then(res => {
+        if(res && res.code === 200) {
+          this.$message.success('解绑成功');
+        } else{
+          this.$message.error(res.msg || '解绑失败');
         }
-      }
+      })
+    },
+    created() {
     }
   }
 };

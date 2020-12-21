@@ -49,8 +49,9 @@ import PageTitle from '@/components/PageTitle';
 import BaseSet from '../AccountModule/baseSet';
 import ValidSet from '../AccountModule/validSet';
 import AccountSet from '../AccountModule/accountSet';
-import {sessionOrLocal} from "@/utils/utils";
+import {getQueryString, sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import fetchData from "@/api/fetch";
 export default {
   name: 'info.vue',
   components: {
@@ -85,6 +86,51 @@ export default {
     this.tabType = 'baseSet';
     this.$refs[`baseSetComp`].initComp();
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
+  },
+  created() {
+    let bind_Result = sessionOrLocal.get('bind_result');
+    if (bind_Result) {
+      let auth_tag = sessionOrLocal.get('tag', 'localStorage');
+      let res = JSON.parse(bind_Result);
+      if (res.code === 11042) {
+        // 若是账号绑定异常，提示用户信息
+        this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
+          confirmButtonText: '绑定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
+        }).then(() => {
+          let user_auth_key = sessionOrLocal.get('user_auth_key');
+          fetchData('callbackUserInfo', {
+            key: user_auth_key,
+            scene_id: 3,
+            force: 1
+          }).then(res => {
+            if (res && res.code === 200) {
+              // 绑定成功
+              // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+              sessionOrLocal.removeItem.set('tag', 'localStorage');
+              sessionOrLocal.removeItem('bind_result');
+              window.location.reload();
+            } else {
+              this.$message.error('绑定失败');
+            }
+          }).catch(e => {
+            // 清除缓存
+            sessionOrLocal.removeItem.set('tag', 'localStorage');
+            sessionOrLocal.removeItem('bind_result');
+            sessionOrLocal.removeItem('user_auth_key');
+          })
+        }).catch(() => {
+          // 清除缓存
+          sessionOrLocal.removeItem.set('tag', 'localStorage');
+          sessionOrLocal.removeItem('bind_result');
+          sessionOrLocal.removeItem('user_auth_key');
+        });
+      } else {
+        // 绑定失败，不做任何处理
+        this.$message.error(res.msg || '绑定失败');
+      }
+    }
   }
 };
 </script>
