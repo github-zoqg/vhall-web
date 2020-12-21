@@ -9,7 +9,7 @@
             v-else
             :key="index"
             :prop="node.modelKey"
-            :label="`${node.label}`"
+            :label="node.label"
             :rules="node.validateRules || []"
           >
             <template v-if="action!='detail' && node.nodeType != 'text'">
@@ -18,7 +18,8 @@
                 <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
               </el-radio-group>
             </template>
-            <span v-else>{{['MD5', 'RSA'][appForm[node.modelKey]]}}</span>
+            <span v-else-if="node.modelKey === 'sign_type'">{{['MD5', 'RSA'][appForm[node.modelKey]]}}</span>
+            <span v-else>{{appForm[node.modelKey]}}</span>
           </el-form-item>
         </template>
         <el-form-item v-if="action!='detail'">
@@ -79,7 +80,7 @@ export default {
         {
           nodeType: 'text',
           label: 'APPKey',
-          modelKey: 'app_key',
+          modelKey: 'app_key'
         },
         {
           nodeType: 'text',
@@ -197,7 +198,6 @@ export default {
       });
     },
     addApp(){
-      console.log();
       let param = JSON.parse(JSON.stringify(this.appForm));
       delete param.APPKey;
       delete param.SecretKey;
