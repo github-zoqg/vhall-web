@@ -6,7 +6,7 @@
       :close-on-click-modal="false"
       width="468px">
       <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px">
-        <el-form-item label="图片上传">
+        <el-form-item label="图片上传" required>
           <upload
             class="giftUpload"
             v-model="prizeForm.img_path"
@@ -20,11 +20,11 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <el-input v-model="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
+            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name">确 定</el-button>
+        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name" v-preventReClick>确 定</el-button>
         <el-button @click.prevent.stop="dialogVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -35,7 +35,7 @@
       width="588px">
      <div class="prizeList">
        <div class="search">
-         <el-input v-model="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+         <el-input v-model.trim="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
        </div>
        <el-scrollbar v-loadMore="moreLoadData">
          <div class="prize">
@@ -53,7 +53,7 @@
        </el-scrollbar>
        <div class="prize-check"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
        <div class="dialog-footer">
-        <el-button type="primary" @click="sureChoisePrize" round>确 定</el-button>
+        <el-button type="primary" @click="sureChoisePrize" v-preventReClick round>确 定</el-button>
         <el-button @click.prevent.stop="dialogPrizeVisible = false" round>取 消</el-button>
        </div>
      </div>
@@ -109,6 +109,7 @@ export default {
   watch: {
     dialogPrizeVisible() {
       if (this.dialogPrizeVisible) {
+        this.list = [];
         this.getPrizeList();
       }
     }
@@ -122,13 +123,21 @@ export default {
       }
     },
     surePrize() {
+      if (!this.prizeForm.img_path) {
+        this.$message.error("请上传图片");
+        return;
+      }
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
           this.dialogVisible = false;
           this.prizeForm.room_id = this.$route.query.roomId || '';
           this.$fetch('createPrize', this.prizeForm).then(res => {
-            this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
-            this.$emit('getTableList');
+            if (res.code == 200) {
+              this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
+              this.$emit('getTableList');
+            } else {
+              this.$message.error(res.msg);
+            }
           })
         } else {
           return false;
@@ -144,7 +153,14 @@ export default {
         if (res.code == 200) {
           this.$message.success('选择成功');
           this.dialogPrizeVisible = false;
+          this.list.map(item => {
+            item.isChecked = false;
+          });
+          this.list = [];
+          this.checkedList = [];
           this.$emit('getTableList');
+        } else {
+          this.$message.error(res.msg);
         }
       })
     },

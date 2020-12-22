@@ -128,6 +128,7 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
+      console.log(this.selectMedia, '??????????????')
       this.warmForm.record_id = media.paas_record_id;
     },
     // 预览
@@ -187,7 +188,8 @@ export default {
         is_open_warm_video: Number(this.warmFlag),
         img_url:  this.domain_url,
         webinar_id: this.$route.params.str,
-        warm_id: this.warmId
+        warm_id: this.warmId,
+        record_id: this.warmForm.record_id
       }
       this.$fetch('warmCreate', this.$params(params)).then(res => {
         if (res.code == 200) {
