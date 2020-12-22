@@ -136,7 +136,7 @@
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
           <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="100px">
             <el-form-item label="观看密码" prop="password">
-              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="8"></el-input>
+              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
               <div class="switch__box">
@@ -222,20 +222,22 @@ export default {
   data() {
     let checkNums = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('生成数量不能为空'));
+        return callback(new Error('邀请码数量1-1000'));
       } else if (value > 1000 || value < 1) {
-        return callback(new Error('生成数量1~1000'));
+        return callback(new Error('邀请码数量1-1000'));
+      } else if (isNaN(value)) {
+        return callback(new Error('邀请码数量1-1000'));
       } else {
         callback();
       }
     };
     let checkFee = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('请按正确格式填写，如10.00'));
+        return callback(new Error('请按正确格式填写，0.01-99999.99'));
       } else if (isNaN(value)) {
-        return callback(new Error('请按正确格式填写，如10.00'));
+        return callback(new Error('请按正确格式填写，0.01-99999.99'));
       } else if (parseFloat(value) < 0.01 || parseFloat(value) > 99999.99) {
-        return callback(new Error('请按正确格式填写，如10.00'));
+        return callback(new Error('请按正确格式填写，0.01-99999.99'));
       } else {
         callback();
       }
@@ -277,8 +279,8 @@ export default {
       },
       payFormRules: {
         fee: [
-          { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'},
+          { required: true, message: '请按正确格式填写，0.01-99999.99', trigger: 'blur' },
+          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'},
           { validator: checkFee, trigger: 'blur' }
         ]
       },
@@ -287,7 +289,7 @@ export default {
       },
       fCodeFormRules: {
         nums: [
-          { required: true, message: '1~1000', trigger: 'blur' },
+          { required: true, message: '邀请码数量1-1000', trigger: 'blur' },
           { validator: checkNums, trigger: 'blur' }
         ]
       },
@@ -300,8 +302,8 @@ export default {
           { validator: checkNums, trigger: 'blur' }
         ],
         fee: [
-          { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
+          { required: true, message: '请按正确格式填写，0.01-99999.99', trigger: 'blur' },
+          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
         ]
       },
       pwdForm: {
@@ -487,13 +489,11 @@ export default {
     },
     // 验证码生成
     fCodeExecute(formName) {
-      let flag = true;
-      this.$refs[formName].validateField('nums', (valid) => {
-        if(valid) {
-          flag = false;
-        }
+      let errorMsg = '';
+      this.$refs[formName].validateField('nums', (msg) => {
+        errorMsg = msg;
       });
-      if(flag) {
+      if(!errorMsg) {
         this.$fetch('fCodeExecute', {
           webinar_id: this.$route.params.str,
           nums: this[formName].nums

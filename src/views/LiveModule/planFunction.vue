@@ -5,7 +5,7 @@
       <div class="div__view__title">观看页设置</div>
       <ul>
         <li class="switch__box" v-for="(item, ins) in keyList[0]" :key="`view_`+ins">
-          <label class="leve3_title label__r12">{{ item.key_name }}</label>
+          <label class="leve3_title label__r12">{{ item.key_name }}{{item.value}}</label>
           <el-switch
             v-model="item.value"
             :active-value="1"
@@ -22,7 +22,7 @@
       <div class="div__view__title">回放设置</div>
       <ul>
         <li class="switch__box" v-for="(item, ins) in keyList[1]" :key="`playback_`+ins">
-          <label class="leve3_title label__r12">{{ item.key_name }}</label>
+          <label class="leve3_title label__r12">{{ item.key_name }}{{item.value}}</label>
           <el-switch
             v-model="item.value"
             :active-value="1"
