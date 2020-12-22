@@ -1753,6 +1753,12 @@ export default {
     position: absolute;
     left: 50%;
     margin-left: -52px;
+    padding: 0px;
+    span{
+      display: inline-block;
+      width: 104px!important;
+      text-align: center;
+    }
   }
 
   .table-lottery {

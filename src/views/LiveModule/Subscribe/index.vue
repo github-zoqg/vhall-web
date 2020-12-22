@@ -621,7 +621,8 @@ export default {
       initPlayer: false,
       openScreenConfig: {},
       openScreenTimer: null,
-      openScreenTime: 3
+      openScreenTime: 3,
+      initCount: 0
     };
   },
   async created(){
@@ -673,8 +674,13 @@ export default {
       this.$PLAYER = null
     }
     if (this.chatSDK) {
+      console.log(9901, this.chatSDK)
       this.chatSDK.destroy()
+      console.log(9902, this.chatSDK)
+
       this.chatSDK = null
+      console.log(9903, this.chatSDK)
+
     }
     window.removeEventListener('resize', () => {})
     this.timer && clearInterval(this.timer)
@@ -699,6 +705,7 @@ export default {
       this.showOfficialAccountQRCode = false
     },
     getWatchInfo() {
+      this.initCount = 1
       return this.$fetch('watchInit', {
         webinar_id: this.$route.params.id,
         visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '',
@@ -717,7 +724,7 @@ export default {
       switch (res.code) {
         case 200:
           if (res.data.status == 'live') {
-            this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+            this.$router.push({path: `/live/watch/${this.$route.params.id}`})
             return
           }
           this.roomData = res.data
@@ -916,6 +923,7 @@ export default {
 
         this.getBtnText()
         this.$nextTick(() => {
+          if (this.initCount > 1) return
           if (this.theme && this.skinInfo.status == 1) {
             this.setCustomTheme(this.theme)
           }
@@ -971,6 +979,13 @@ export default {
               window.location.reload()
             } else if (msg.data.type == 'live_start') {
               this.$message.success('房间已开播')
+              if (this.roomData.is_subscribe == 1) {
+                this.chatSDK.destroy()
+                this.chatSDK = null
+                setTimeout(() => {
+                  this.$router.push({path: `/live/watch/${this.$route.params.id}`})
+                }, 2000)
+              }
             }
           })
         },
@@ -1087,7 +1102,6 @@ export default {
     },
     // 点击商品获得详细的信息
     sellGoodsInfo(goodInfo) {
-      console.log(999999, goodInfo)
       this.goodInfo = goodInfo;
       this.shadeShow = true;
       this.goodsPopShow = true;
@@ -1461,9 +1475,10 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           if (res.data.status == 'live') {
-            this.$router.push({name: 'LiveWatch', params: {il_id: this.$route.params.id}})
+            this.$router.push({path: `/live/watch/${this.$route.params.id}`})
           } else {
-            window.location.reload()
+            // window.location.reload()
+            this.getWatchInfo().then(this.handleInitRoom())
           }
         } else {
           this.handleAuthErrorCode(res.code, res.msg)
@@ -1519,6 +1534,13 @@ export default {
             this.$message.warning('白名单观众不存在')
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
+        case 12526:
+            this.$message.warning('检测类型和活动观看限制类型不一致')
+            this.chatSDK.destroy()
+            this.chatSDK = null
+            setTimeout(() => {
+              window.location.reload()
+            }, 2000)
         case 12523:
             // this.$message.warning('需要支付')
             if (this.getWxImg && this.getZFBlink) {

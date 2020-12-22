@@ -731,7 +731,8 @@ export default {
         };
       } else {
         params.marqueeOption = {
-          text: ''
+          text: '',
+          enable: false
         };
       }
       if (this.water) {
