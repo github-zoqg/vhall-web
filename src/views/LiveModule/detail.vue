@@ -1,12 +1,14 @@
 <template>
   <div class="detailBox">
-    <pageTitle title='直播详情'></pageTitle>
+    <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
         <div class="inner">
           <div class="thumb">
             <img :src="liveDetailInfo.img_url" alt="">
-            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
+            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>
+              {{ liveDetailInfo | liveTag }}
+            </span>
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"></i>
               {{ liveDetailInfo.pv | unitCovert }}
@@ -145,13 +147,28 @@ export default {
     };
   },
   computed: {
+    titleText(){
+      return function(val){
+        let _text = '直播'
+        val == 5 ? _text = '回放' : val == 4 ? _text = '点播' : _text = '直播'
+        return _text
+      }
+    },
     operas() {
       if (this.liveDetailInfo && this.liveDetailInfo.webinar_state === 4) {
         // 点播
         let { keys, values} = Object;
         let operas = this.operasOld;
         keys(this.operasOld).map((item, ins) => {
-          operas[item] = values(this.operasOld)[ins].filter(vItem => vItem.index !== 4);
+          operas[item] = values(this.operasOld)[ins].filter(vItem =>{
+            vItem.subText = vItem.subText.replace(/直播/, '点播')
+            console.warn(vItem);
+            if(vItem.title == '基本信息'){
+              vItem.path = `/live/vodEdit/${this.$route.params.str}`
+            }
+            console.warn(vItem.path);
+            return vItem.index !== 4
+          });
         })
         if (keys(this.operasOld).includes('直播')) {
           delete operas['直播'];
