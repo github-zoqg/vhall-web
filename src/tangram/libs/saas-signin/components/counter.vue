@@ -1,6 +1,6 @@
 <template>
   <div class="counter" functional>
-    <h3>{{ title || '主持人发起了签到' }}</h3>
+    <h3 style="margin-bottom: 20px">{{ title || '主持人发起了签到' }}</h3>
     <p>{{ tip }}</p>
     <CountDown class="counter-down" :duration="total" :consume="remaining" :redius="94"></CountDown>
     <div class="end" v-if="autoSign">

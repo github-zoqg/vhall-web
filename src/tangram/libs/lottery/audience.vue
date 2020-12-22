@@ -1,7 +1,7 @@
 <template>
   <div class="audience-wrap">
     <div class="audience-icon" v-if="showLottery">
-      <img @click="lookLottery" src="../../../common/images/h5-show-phone-logo2x.png" alt="">
+      <img @click="lookLottery" src="./img/icon_lottery.png" alt="">
     </div>
     <div class="vhall-lottery" v-if="showMess">
       <div class="payment-dialog">
@@ -106,7 +106,11 @@ export default {
       if(newValue){
         this.$nextTick(()=>{
           this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
-          this.promptImg = require('./img/win.png')
+          if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.award_name){
+            this.promptImg = this.lotteryInfo.award_snapshoot.image_url
+          }else{
+            this.promptImg = require('./img/win.png')
+          }
           this.isWinning = true;
           this.getReward = '点击领奖';
         });
@@ -114,7 +118,15 @@ export default {
         this.$nextTick(()=>{
           this.getReward = '查看中奖名单';
           this.isWinning = false;
-          this.promptImg = require('./img/noWin.png')
+          try {
+            if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.award_name){
+              this.promptImg = this.lotteryInfo.award_snapshoot.image_url
+            }else{
+              this.promptImg = require('./img/noWin.png')
+            }
+          } catch (error) {
+            this.promptImg = require('./img/noWin.png')
+          }
           this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！';
           this.getReward = '查看中奖名单';
         });
@@ -281,15 +293,24 @@ export default {
             // 未领奖
             this.getAward()
             this.lotteryStep = 1
-            this.promptImg = require('./img/win.png')
+            if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.image_url){
+              this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`
+              this.promptImg = this.lotteryInfo.award_snapshoot.image_url
+            }else{
+              this.audienceText = `中奖啦！恭喜您获得 默认奖品`
+              this.promptImg = require('./img/win.png')
+            }
             this.getReward = '点击领奖';
-            this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`
             this.submitWinning = true
           }
         }else{
           // 未中奖
           this.lotteryStep = 3
-          this.promptImg = require('./img/noWin.png')
+          if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.image_url){
+            this.promptImg = this.lotteryInfo.award_snapshoot.image_url
+          }else{
+            this.promptImg = require('./img/noWin.png')
+          }
           this.getReward = '查看中奖名单';
           this.submitWinning = false
           this.audienceText = '很遗憾，您与大奖擦肩而过，感谢您的参与！'
@@ -325,7 +346,13 @@ export default {
       console.warn(msg, WinningID, '中奖信息----',this.isWinning, msg.lottery_winners, this.lotteryInfo);
       if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
         this.getStepText()
-        this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
+        if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.image_url){
+          this.promptImg = this.lotteryInfo.award_snapshoot.image_url
+          this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
+        }else{
+          this.promptImg = require('./img/win.png')
+          this.audienceText = `中奖啦！恭喜您获得 默认奖品`;
+        }
         this.isWinning = true
         this.lotteryInfo.id = msg.lottery_id
         this.lotteryInfo.win = 1
@@ -336,7 +363,11 @@ export default {
       }else{
         this.$nextTick(()=>{
           this.lotteryStep = 3
-          this.promptImg = require('./img/noWin.png')
+          if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.image_url){
+            this.promptImg = this.lotteryInfo.award_snapshoot.image_url
+          }else{
+            this.promptImg = require('./img/noWin.png')
+          }
           this.getReward = '查看中奖名单';
           this.submitWinning = false
           this.lotteryInfo.id = msg.lottery_id
@@ -409,9 +440,10 @@ export default {
 <style lang="less" scoped>
 .audience-wrap{
   .audience-icon{
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     img{
+      margin-top: 2px;
       display: inline-block;
       width: 100%;
     }

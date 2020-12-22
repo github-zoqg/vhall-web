@@ -1757,7 +1757,6 @@ export default {
   }
 
   .table-lottery {
-    background: red;
     float: right;
     display: inline-block;
     margin-top: 4px;
