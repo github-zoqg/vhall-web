@@ -103,7 +103,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <associateDoc @getChapters="getChapters" ref="associateDialog"></associateDoc>
+    <associateDoc :tableDataLength="tableData.length" @getChapters="getChapters" ref="associateDialog"></associateDoc>
     <div v-if="previewVisible" class="wraper">
       <div class="preViewChapters">
         <span class="close" @click="closePreview">&times;</span>
@@ -378,7 +378,7 @@ export default {
       });
     },
     deleteChapter(){
-      if(!this.selectedData.length > 0) return this.$message.warning('请选择要删除得章节');
+      if(!this.selectedData.length > 0) return this.$message.warning('请选择要删除的章节');
       this.$confirm('删除后章节不可恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
