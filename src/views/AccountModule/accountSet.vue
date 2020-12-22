@@ -94,6 +94,8 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.$message.success('解绑成功');
+          // 解绑成功后，刷新页面
+          window.location.reload();
         } else{
           this.$message.error(res.msg || '解绑失败');
         }
