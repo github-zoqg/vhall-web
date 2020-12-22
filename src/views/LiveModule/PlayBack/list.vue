@@ -317,13 +317,26 @@ export default {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
     },
     toRecord() {
-      this.$router.push({path: `/live/room/${this.webinar_id}`});
+      this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
     },
     toTailoring(recordId, recordName){
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
     },
     toChapter(recordId){
-      this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+      if (this.isDemand) {
+        this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        return false
+      }
+      this.$fetch('getDocInfo', {
+        record_id: recordId
+      }).then(res => {
+        console.log(res)
+        if (res.data.doc_titles.length) {
+          this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        } else {
+          this.$message.warning('当前回放不支持章节功能')
+        }
+      })
     },
     // 发布
     toCreateDemand(recordData) {
