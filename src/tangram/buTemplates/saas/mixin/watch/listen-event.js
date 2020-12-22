@@ -23,7 +23,6 @@ export const listenEvent = {
       }
     },
     addSocketsListener () {
-      console.log(66666666, this.speakerList)
       EventBus.$on('room_kickout', e => {
         console.log('用户被踢出', e);
         if (e.target_id == this.roomInfo.third_party_user_id) {

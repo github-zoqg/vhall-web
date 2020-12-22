@@ -41,13 +41,14 @@
           ></Interactive>
         </streams>
       </div>
+
       <!-- 文档内容主显示区域 -->
       <div class="vhall-saas-watchbox__mainContent__bigArea" :class="{'video-only': !watchDocShow}" ref="bigArea">
         <!-- player -->
         <div
           class="vhall-saas-watchbox__mainContent__bigArea-placeholder"
           :class="{ embedvideo: isEmbedVideo }"
-          v-if="!liveEnded && this.roomInfo.role_name == 2 || !liveEnded && this.playerType == 'vod'"
+          v-if="roomInfo.status != 3 && roomInfo.role_name == 2"
         >
           <Watch
             v-if="roomInfo.paas_access_token && !interactiveShow"
@@ -94,7 +95,7 @@
             :appId="roomInfo.app_id"
             :roleType="2"
             :token="roomInfo.paas_access_token"
-            :isVod="(roomInfo.status == 2 || roomInfo.status == 0 )&& roomInfo.record_id"
+            :isVod="(roomInfo.status == 4 || roomInfo.status == 5 ) && roomInfo.record_id"
             :isMini="miniElemt == 'doc'"
             :rebroadcastChannelId="rebroadcastChannelId"
             :playMode="0"
@@ -926,9 +927,9 @@ export default {
       })
     },
     getRoomStatus () {
-      this.$fetch('getToolStatus', {
+      return this.$fetch('getToolStatus', {
         room_id: this.bizInfo.room_id
-      }).then(res => {
+      }).then(res => { 
         if (res.code == 200 && res.data) {
           this.layout = res.data.layout
           this.mainScreen = res.data.main_screen
@@ -955,6 +956,7 @@ export default {
           window.EventBridge.$emit('loaded');
           this.init = true;
           this.isDesktop = res.data.is_desktop;
+          console.log(110, this.interactiveShow)
           setTimeout(() => {
             if (this.isPlayback || this.interactiveShow || !this.watchDocShow) return;
             if (res.data.is_desktop == 1) {
@@ -971,11 +973,16 @@ export default {
           sessionOrLocal.set('speakerDefinition', res.data.definition || '');
         }
       }).catch (e => {
-        console.log(e);
+        console.log(e, 3);
       })
+
     },
     async getInavInfo () {
-      await this.getRoomStatus()
+      if (this.bizInfo.webinar.type == 1) {
+        await this.getRoomStatus()
+      } else {
+        this.rebroadcastChannelId = this.bizInfo.rebroadcast
+      }
       let inavInfo = {
         account_id: this.bizInfo.host.id,
         app_id: this.bizInfo.app_id,
@@ -997,7 +1004,6 @@ export default {
         third_party_user_id: this.bizInfo.user.third_party_user_id,
         parentId: this.userInfo ?  this.userInfo.parent_id : ''
       }
-      console.log(555555, inavInfo)
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;
@@ -1055,9 +1061,9 @@ export default {
           roomId: this.roomInfo.room_id
         };
       }
+      console.log(12, this.playerType, this.vodOption, this.playerLiveOption)
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
-      console.log(998889, this.userInfo.nick_name, this.bizInfo.user.nick_name)
       let context = {
         nickname: this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name, // 昵称
         avatar: this.userInfo && this.userInfo.avatar
@@ -1080,11 +1086,12 @@ export default {
         token: this.roomInfo.paas_access_token,
         client: 'pc_browser'
       };
-      if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
+      // if (this.roomInfo.role_name != 2 && this.playerType != 'vod') {
         this.init = true;
         window.EventBridge.$emit('loaded');
-        return;
-      }
+        // return;
+      // }
+      console.log(1, this.watchDocShow)
       VhallChat.createInstance(
         opt,
         chat => {

@@ -714,6 +714,7 @@ export default {
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
     }
+    
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
       // 是否显示公众号
@@ -1596,7 +1597,6 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-        console.log(9090,  this.configList)
 
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
