@@ -611,6 +611,7 @@ export default {
     },
     // 子组件查看抽奖
     lotteryCheck (msg, userId) {
+      console.warn('点击的组件查看抽奖', msg, userId);
       EventBus.$emit('lotteryCheck', msg, userId);
     },
     // 子组件查看问卷

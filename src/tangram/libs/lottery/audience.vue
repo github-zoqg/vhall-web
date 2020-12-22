@@ -300,6 +300,7 @@ export default {
     startLottery (msg, val) {
       this.showMess = true
       this.currentLotStatus = true
+      this.showLottery = true
       console.warn('监听收到发起消息',msg);
       this.lotteryInfo = {}
       this.lotteryInfo.award_snapshoot = msg.award_snapshoot
@@ -318,6 +319,9 @@ export default {
       // 初始化消息
       this.currentLotStatus = false
       this.lotteryInfo.publish_winner = msg.publish_winner  // 当前是否显示 查看中奖名单
+      if(!this.showMess){
+        this.showMess = true
+      }
       console.warn(msg, WinningID, '中奖信息----',this.isWinning, msg.lottery_winners, this.lotteryInfo);
       if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
         this.getStepText()
