@@ -218,12 +218,20 @@ export function checkAuth(to, from, next) {
           return;
         }
       } else {
-        if (auth_tag.indexOf('bind') !== -1) {
-          sessionOrLocal.set('bind_result', JSON.stringify(res));
-          sessionOrLocal.set('user_auth_key', user_auth_key);
-          // 绑定成功
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
-        } else {
+        if(auth_tag) {
+          if (auth_tag.indexOf('bind') !== -1) {
+            sessionOrLocal.set('bind_result', JSON.stringify(res));
+            sessionOrLocal.set('user_auth_key', user_auth_key);
+            // 绑定成功
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+          } else {
+            // 获取回调token失败
+            this.$message.error('登录信息获取失败，请重新登录');
+            sessionOrLocal.clear('localStorage');
+            sessionOrLocal.clear();
+          }
+        } else{
+          this.$message.error(res.msg || '异常请求，无法操作');
           // 获取回调token失败
           this.$message.error('登录信息获取失败，请重新登录');
           sessionOrLocal.clear('localStorage');
