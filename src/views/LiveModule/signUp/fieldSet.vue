@@ -31,6 +31,7 @@
         :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
+        :before-upload="beforeUploadHandler"
         :restPic="true"
         @delete="deleteBanner"
       >
@@ -558,6 +559,20 @@ export default {
       }
 
       return text;
+    },
+    // 上传格式校验
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
+      const isType = typeList.includes(file.type.toLowerCase());
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+      }
+      if (!isLt2M) {
+        this.$message.error('上传封面图片大小不能超过 2MB!');
+      }
+      return isType && isLt2M;
     },
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
