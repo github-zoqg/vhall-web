@@ -6,8 +6,8 @@
       </p>
       <p class="v-data">
         实际：{{ preson.onlineNum }}人在线<span class="v-line"></span
-        >{{ preson.pv }}次观看
-        <el-tooltip class="item" effect="dark" placement="right">
+        >热度 {{ preson.pv }}&nbsp;&nbsp;
+        <el-tooltip class="item" effect="dark" placement="right" style="margin-left:5px">
           <i class="el-icon-question ques"></i>
           <div slot="content">
             1.人数：当前活动在线人数<br/>
