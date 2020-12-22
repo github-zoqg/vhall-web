@@ -1596,7 +1596,6 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-      console.log(119 , this.configList)
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`

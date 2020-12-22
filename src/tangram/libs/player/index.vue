@@ -205,7 +205,7 @@ export default {
       default: false
     },
     reportExtra: {
-      type: [Array, Object],
+      type: [Array, Object, String],
       required: false
     },
     roominfo: {
