@@ -107,7 +107,7 @@
     <div v-if="previewVisible" class="wraper">
       <div class="preViewChapters">
         <span class="close" @click="closePreview">&times;</span>
-        <iframe width="100%" height="100%" :src="`${VUE_APP_HOST_URL}/previewChapter/${webinar_id}?recordId=${recordId}`" frameborder="0"></iframe>
+        <iframe width="100%" height="100%" :src="`${VUE_APP_WEB_URL}/previewChapter/${webinar_id}?recordId=${recordId}`" frameborder="0"></iframe>
       </div>
     </div>
   </div>
@@ -122,7 +122,7 @@ export default {
   name: 'Chapters',
   data(){
     return {
-      VUE_APP_HOST_URL: process.env.VUE_APP_HOST_URL,
+      VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
       isDemand: this.$route.query.isDemand,
