@@ -107,12 +107,13 @@ export default {
           }).then(res => {
             if (res && res.code === 200) {
               // 绑定成功
+              this.$message.success('绑定成功');
               // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
-              sessionOrLocal.removeItem.set('tag', 'localStorage');
+              sessionOrLocal.removeItem('tag', 'localStorage');
               sessionOrLocal.removeItem('bind_result');
               window.location.reload();
             } else {
-              this.$message.error('绑定失败');
+              this.$message.error(res.msg || '绑定失败');
             }
           }).catch(e => {
             // 清除缓存
