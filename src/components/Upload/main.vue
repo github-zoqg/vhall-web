@@ -28,7 +28,7 @@
           </div>
         </div>
         <div v-else class="noPic">
-          <i class="el-icon-upload"></i>
+          <i class="iconfont-v3 saasicon_shangchuan"></i>
           <div class="tips">
             <slot name="tip"></slot>
           </div>
@@ -175,6 +175,10 @@ export default {
     height: 140px;
     line-height: unset;
     overflow: hidden;
+    border: 1px solid #CCCCCC;
+    i {
+      color: #999999;
+    }
     .box{
       width: 100%;
       height: 100%;

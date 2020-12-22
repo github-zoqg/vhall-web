@@ -67,10 +67,10 @@
       :page-size='query.limit'
       :current-page='query.pageNumber'
       @current-change="changeHandle" align="center"
-      v-if="tabType === 'live' ? tabList[0].total > 0 : tabList[1].total > 0"
+      v-if="tabType === 'live' ? tabList[0].total > query.limit : tabList[1].total > query.limit"
     ></SPagination>
     <!-- 无消息内容 -->
-    <null-page v-else></null-page>
+    <null-page v-if="tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0"></null-page>
   </div>
 </template>
 

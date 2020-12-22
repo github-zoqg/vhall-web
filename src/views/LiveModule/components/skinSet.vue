@@ -17,7 +17,7 @@
           </el-form-item>
           <el-form-item label="背景图：" prop="bg_url" v-if="skinType === 1">
             <upload
-              class="upload__skin heightMore"
+              class="upload__skin"
               v-model="skinSetForm.bg_url"
               :domain_url="domain_url"
               :saveData="{
@@ -270,31 +270,10 @@ export default {
   /deep/.el-upload--picture-card {
     width: 280px;
     height: 130px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
   /deep/.box > div {
     width: 280px;
     height: 130px;
-  }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
   }
 }
 .p-notice {

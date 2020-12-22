@@ -1,6 +1,6 @@
 <template>
  <div class="home-main">
-   <OldHeader></OldHeader>
+   <OldHeader class="head-wrap"></OldHeader>
    <div class="v-head-bg" :style="{ backgroundImage: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'})`}">
      <div class="v-head-img"></div>
    </div>
@@ -106,7 +106,29 @@ export default {
 .home-main {
   width: 100%;
   background: #f7f7f7;
+  height: auto;
+  overflow: hidden;
+  padding-bottom: 40px;
 }
+
+::v-deep.head-wrap{
+  .collapse{
+    height: 100%;
+    .login-reg{
+      height: 100%;
+      .head{
+        margin-top: -8px;
+        border: none;
+        vertical-align: middle;
+        display: inline-block;
+      }
+      .caret{
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
 .v-head-bg {
   width: 100%;
   height: 205px;

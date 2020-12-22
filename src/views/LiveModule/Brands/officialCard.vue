@@ -146,7 +146,7 @@ export default {
       return this.title==='公众号展示' ? `interacts/wechat-official-imgs` : `interacts/screen-imgs`;
     },
     title() {
-      return this.$route.meta.title === '品牌—开屏海报' ? '开屏海报' : '公众号展示';
+      return this.$route.meta.title === '开屏海报' ? '开屏海报' : '公众号展示';
     },
     activeTitle(){
       if (this.title==='公众号展示') {

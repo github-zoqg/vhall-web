@@ -35,7 +35,7 @@
         <el-tab-pane label="角色" name="roleList"></el-tab-pane>
       </el-tabs>
       <!-- 列表区域 -->
-      <son-list ref="sonListComp" v-if="tabType === 'sonList' && sonInfo && sonInfo.vip_info" :vipType="sonInfo.vip_info.type"></son-list>
+      <son-list ref="sonListComp" v-if="tabType === 'sonList'" :vipType="sonInfo && sonInfo.vip_info && sonInfo.vip_info ? sonInfo.vip_info.type : ''"></son-list>
       <role-list ref="roleListComp" v-if="tabType === 'roleList'"></role-list>
     </div>
   </div>
@@ -94,6 +94,8 @@ export default {
           } catch (e) {
             console.log(e);
           }
+        } else {
+          // this.$message.error(res.msg || '获取信息失败');
         }
       }).catch(e => {
         console.log(e);
