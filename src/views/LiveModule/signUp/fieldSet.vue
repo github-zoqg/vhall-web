@@ -767,6 +767,26 @@ export default {
       color: #666666;
     }
   }
+  /deep/ .el-input__inner {
+    height: 40px;
+    padding: 0 10px;
+  }
+  /deep/ .el-upload--picture-card {
+    i {
+      font-size: 18px;
+    }
+    .box {
+      span {
+        font-size: 14px
+      }
+      i {
+        font-size: 18px;
+      }
+    }
+    &:hover {
+      border: 1px dashed #c0ccda!important;
+    }
+  }
 }
 .sureBtn{
   background: none;

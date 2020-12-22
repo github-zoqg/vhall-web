@@ -11,7 +11,68 @@
     </pageTitle>
     <el-card>
        <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="领奖页设置" name="first">
+        <el-tab-pane label="抽奖页设置" name="first">
+            <div class="give-item">
+            <div class="give-prize">
+              <el-form :model="formData" ref="ruleForm" label-width="100px">
+                <el-form-item label="图片上传">
+                  <upload
+                    class="giftUpload"
+                    v-model="previewSrc"
+                    :domain_url="previewSrc"
+                    :on-success="prizeLoadSuccess"
+                    :on-progress="uploadProcess"
+                    :on-error="uploadError"
+                    :on-preview="uploadPreview"
+                    @delete="deleteImg"
+                    :before-upload="beforeUploadHandler">
+                    <p slot="tip">推荐尺寸：240*240px，小于2MB <br/> 支持jpg、gif、png、bmp</p>
+                  </upload>
+                </el-form-item>
+                <el-form-item label="模板库">
+                    <div class="prize-type">
+                      <p :class="isChecked == 0 ? 'active' : ''" @click="changeType(0)">
+                        <img src="../../../common/images/gif/prize03.gif" alt="">
+                        <label class="img-tangle" v-show="isChecked == 0" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                      <p :class="isChecked == 1 ? 'active' : ''" @click="changeType(1)">
+                        <img src="../../../common/images/gif/prize01.gif" alt="" >
+                        <label class="img-tangle" v-show="isChecked == 1" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                      <p :class="isChecked == 2 ? 'active' : ''" @click="changeType(2)">
+                        <img src="../../../common/images/gif/prize02.gif" alt="">
+                        <label class="img-tangle" v-show="isChecked == 2" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                    </div>
+                </el-form-item>
+                <el-form-item label="抽奖标题">
+                    <el-input v-model.trim="formData.title" maxlength="10" placeholder="请输入抽奖标题" show-word-limit></el-input>
+                </el-form-item>
+                <el-form-item label="文字说明">
+                    <el-input v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" round @click="lotterySave">保存</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div class="give-show">
+              <div class="give-people">
+                <h3>{{ formData.title || '抽奖标题' }}<i class="el-icon-close"></i></h3>
+                <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
+                </div>
+                <div class="sureBtn">{{ formData.description || '正在进行抽奖...' }}</div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+         <el-tab-pane label="领奖页设置" name="second">
           <div class="give-item">
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
@@ -50,67 +111,6 @@
                   </div>
                 </el-scrollbar>
                 <div class="sureBtn"><el-button type="primary" round>确定</el-button></div>
-              </div>
-            </div>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="抽奖页设置" name="second">
-            <div class="give-item">
-            <div class="give-prize">
-              <el-form :model="formData" ref="ruleForm" label-width="100px">
-                <el-form-item label="图片上传">
-
-                  <upload
-                    class="giftUpload"
-                    v-model="previewSrc"
-                    :domain_url="previewSrc"
-                    :on-success="prizeLoadSuccess"
-                    :on-progress="uploadProcess"
-                    :on-error="uploadError"
-                    :on-preview="uploadPreview"
-                    :before-upload="beforeUploadHandler">
-                    <p slot="tip">推荐尺寸：240*240px，小于2MB <br/> 支持jpg、gif、png、bmp</p>
-                  </upload>
-                </el-form-item>
-                <el-form-item label="模板库">
-                    <div class="prize-type">
-                      <p :class="isChecked == 0 ? 'active' : ''" @click="changeType(0)">
-                        <img src="../../../common/images/gif/prize03.gif" alt="">
-                        <label class="img-tangle" v-show="isChecked == 0" >
-                          <i class="el-icon-check"></i>
-                        </label>
-                      </p>
-                      <p :class="isChecked == 1 ? 'active' : ''" @click="changeType(1)">
-                        <img src="../../../common/images/gif/prize01.gif" alt="" >
-                        <label class="img-tangle" v-show="isChecked == 1" >
-                          <i class="el-icon-check"></i>
-                        </label>
-                      </p>
-                      <p :class="isChecked == 2 ? 'active' : ''" @click="changeType(2)">
-                        <img src="../../../common/images/gif/prize02.gif" alt="">
-                        <label class="img-tangle" v-show="isChecked == 2" >
-                          <i class="el-icon-check"></i>
-                        </label>
-                      </p>
-                    </div>
-                </el-form-item>
-                <el-form-item label="抽奖标题">
-                    <el-input v-model="formData.title" maxlength="10" placeholder="请输入抽奖标题" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="文字说明">
-                    <el-input v-model="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" round @click="lotterySave">保存</el-button>
-                </el-form-item>
-              </el-form>
-            </div>
-            <div class="give-show">
-              <div class="give-people">
-                <h3>{{ formData.title }}<i class="el-icon-close"></i></h3>
-                <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
-                </div>
-                <div class="sureBtn">{{ formData.description }}</div>
               </div>
             </div>
           </div>
@@ -200,8 +200,7 @@ export default {
     prizeList
   },
   mounted() {
-    this.getGivePrize();
-    // this.getReward()
+    this.lotteryGet();
   },
   methods: {
     // 抽奖页面获取信息
@@ -210,15 +209,19 @@ export default {
         webinar_id: this.$route.params.str,
       }
       this.$fetch('getLivePrizeInfo', params).then(res => {
-        this.previewSrc = res.data.img_path || '';
-        this.backgroundImg = res.data.img_path || prizeImgList[0];
-        if (res.data.img_path) {
-          this.isChecked = 10;
-        } else {
-          this.isChecked = 0;
-        }
-        this.formData.description = res.data.description;
-        this.formData.title = res.data.title;
+        if (res.code == 200 && res.data) {
+          this.previewSrc = res.data.img_path || '';
+          this.backgroundImg = res.data.img_path || this.prizeImgList[0];
+          if (res.data.img_path) {
+            this.isChecked = 10;
+          } else {
+            this.isChecked = 0;
+          }
+          this.formData.description = res.data.description;
+          this.formData.title = res.data.title;
+          } else {
+            this.backgroundImg = this.prizeImgList[0];
+          }
       }).catch((err)=>{
         this.$message.error(err.msg);
       })
@@ -235,7 +238,11 @@ export default {
           description: this.formData.description
       }
       this.$fetch('savePrizeInfo', this.$params(params)).then(res => {
-        this.$message.success('保存成功')
+        if (res.code == 200) {
+          this.$message.success('保存成功');
+        } else {
+          this.$message.error(res.msg ||'保存失败');
+        }
       }).catch((err)=>{
         this.$message.error(err.msg)
       })
@@ -312,19 +319,23 @@ export default {
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
         if (res.code == 200) {
           this.$message.success('保存成功');
+        } else {
+          this.$message.error(res.msg ||'保存失败');
         }
       })
     },
     handleClick(tab) {
       this.activeName = tab.name;
-      switch (tab.index) {
-        case '0':
-          this.getGivePrize()
-          break
-        case '1':
-           this.lotteryGet()
-          break
+      if (tab.name === 'first') {
+        this.lotteryGet();
+      } else if (tab.name === 'second') {
+        this.getGivePrize();
       }
+    },
+    deleteImg() {
+      this.previewSrc = '';
+      this.isChecked = 0;
+      this.backgroundImg = this.prizeImgList[0];
     },
     changeType(index) {
       this.isChecked = index;

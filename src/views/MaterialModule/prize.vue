@@ -10,9 +10,9 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="createPrize">新建</el-button>
-      <el-button round v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
-      <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="createPrize" v-preventReClick>新建</el-button>
+      <el-button round v-if="$route.meta.title !== '奖品'" @click="prizeMeterial" v-preventReClick>资料库</el-button>
+      <el-button round class="head-btn batch-del" @click="allDelete(null)" v-preventReClick>批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -58,6 +58,7 @@ export default {
       total: 1,
       nullText: 'noData',
       prizeInfo: {},
+      isDelete: false,
       searchAreaLayout: [
         {
           key: 'keyword'
@@ -152,7 +153,7 @@ export default {
       that.deleteConfirm(rows.prize_id);
     },
     deleteConfirm(id) {
-      this.$confirm('确定要删除此奖品吗？', '提示', {
+      this.$confirm('删除后，此奖品将无法使用，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box'
@@ -170,7 +171,8 @@ export default {
             this.$message.success('删除失败');
           }
         });
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     allDelete(id) {
        if (this.prizeChecked.length < 1) {

@@ -178,6 +178,10 @@ export default {
       });
     },
     handlerConfirm(){
+      if (this.tableSelect[0].transcode_status != 1) {
+        this.$message.error('只能选择已经转码成功的视频');
+        return;
+      }
       this.$emit('selected', this.tableSelect[0]);
       this.dialogVisible = false;
     },
