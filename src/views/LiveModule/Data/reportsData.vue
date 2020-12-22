@@ -9,6 +9,7 @@
     <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
+      :active="active"
       @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
       >
@@ -68,10 +69,12 @@ import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import titleData from './components/title';
 import PageTitle from '@/components/PageTitle';
+import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
       titleType: '直播',
+      active: 2,
       params: {}, //导出的时候用来记录参数
       mainKeyData: {
         max_onlines: 0,
@@ -117,6 +120,25 @@ export default {
         },
         {
           type: "1",
+          active: 2,
+          options: [
+            {
+              title: '全部',
+              active: 1,
+            },
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
         },
         {
           type: "2",
@@ -189,7 +211,8 @@ export default {
       let formParams = this.$refs.searchArea.searchParams;
       let paramsObj = {
         webinar_id: this.$route.params.str,
-        switch_id: formParams.switchId || 0
+        switch_id: formParams.switchId || 0,
+        end_time: getRangeDays(1)
       };
       if (parseInt(formParams.searchIsTime) === 2) {
         formParams.searchTime = '';
@@ -200,6 +223,9 @@ export default {
       } else {
         this.searchAreaLayout = this.searchLayout;
       }
+      if (this.active!= 1) {
+        paramsObj.start_time = getRangeDays(this.active);
+      }
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
           paramsObj['start_time'] = formParams[i][0];
@@ -207,9 +233,6 @@ export default {
         } else {
           paramsObj[i] = formParams[i];
         }
-      }
-      if (paramsObj.start_time) {
-        paramsObj.start_time = paramsObj.start_time.substring(0, 10);
       }
       this.params = this.$params(paramsObj);
       this.getAllData(paramsObj);
