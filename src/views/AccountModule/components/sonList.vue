@@ -65,8 +65,8 @@
                     :minlength="1" show-word-limit/>
         </el-form-item>
         <el-form-item label="预设密码：" prop="password">
-          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入12个字符"
-                    :maxlength="12" :minlength="1"/>
+          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" :minlength="6"/>
         </el-form-item>
         <el-form-item label="账号角色：" prop="role_id">
           <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
@@ -126,6 +126,16 @@ export default {
         callback();
       }
     };*/
+    let verifyEnterPwd = (rule, value, callback) => {
+      let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
+      if (value === '') {
+        callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else if (!pattern.exec(value)) {
+        callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else {
+        callback();
+      }
+    };
     return {
       query: {
         role_id: null,
@@ -205,7 +215,7 @@ export default {
           {required: false, message: '请输入账号昵称，不输入默认使用账号ID', trigger: 'blur'}
         ],
         password: [
-          {required: true, message: '请输入预设密码', trigger: 'blur'}
+          {required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30, message: '支持数字，大小写英文，6-30个字符'}
         ],
         role_id: [
           {required: true, message: '请输入账号角色', trigger: 'change'}
