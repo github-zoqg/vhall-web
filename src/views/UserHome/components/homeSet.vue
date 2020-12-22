@@ -149,14 +149,18 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`主页头像只能是 ${typeList.join('、')} 格式!`);
+        return;
       }
       if (!isLt2M) {
         this.$message.error('上传主页头像图片大小不能超过 2MB!');
+        return;
       }
       let imgSrc = window.URL.createObjectURL(file);
       let img = new Image();
@@ -197,14 +201,18 @@ export default {
     },
     beforeUploadHandlerBg(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传背景图片只能是 ${typeList.join('、')} 格式!`);
+        return;
       }
       if (!isLt2M) {
         this.$message.error('上传背景图片大小不能超过 2MB!');
+        return;
       }
       let imgSrc = window.URL.createObjectURL(file);
       let img = new Image();
@@ -258,9 +266,10 @@ export default {
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
               // 回到前一个页面
-              this.$router.push({
+              /*this.$router.push({
                 path: `/user/home/${this.$route.params.str}`
-              });
+              });*/
+              window.location.reload();
             } else {
               this.$message.error(res.msg || '保存基本设置失败');
             }

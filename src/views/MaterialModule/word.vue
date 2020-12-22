@@ -240,9 +240,11 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 100;
       if (!isType) {
         this.$message.error(`上传文件只能是 ${typeList.join('、')} 格式!`);
+        return;
       }
       if (!isLt2M) {
         this.$message.error('上传文件大小不能超过 100MB!');
+        return;
       }
       return isType && isLt2M;
     },
