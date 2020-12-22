@@ -156,6 +156,9 @@ export default {
         return false;
       }
       if (!this.PayIng) { this.PayIng = true; }
+      let serviceCode
+      this.channel === 'ALIPAY' ? serviceCode = 'CASHIER' : serviceCode = 'QR_PAY'
+
       // this.loading = true
       this.$fetch('v3CreateRed', {
         room_id: this.roomId,
@@ -164,7 +167,7 @@ export default {
         number: this.numbers,
         amount: parseFloat(this.amount),
         channel: this.channel,
-        service_code: 'QR_PAY'
+        service_code: serviceCode
       }).then((res) => {
         this.PayIng = false;
         if (res.code === 200) {
