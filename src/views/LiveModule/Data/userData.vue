@@ -22,6 +22,7 @@
           <search-area
             ref="searchArea"
             :placeholder="placeholder"
+            :active="active"
             @onExportData="exportCenterData()"
             :searchAreaLayout="searchAreaLayout"
             @onSearchFun="getTableList('search')"
@@ -46,10 +47,12 @@
 </template>
 <script>
 import titleData from './components/title';
+import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
       status: 2,
+      active: 2,
       totalNum: 100,
       isHandle: false,
       params: {}, //导出的时候用来记录参数
@@ -130,7 +133,21 @@ export default {
           ]
         },
         {
-          type: "1"
+          type: "1",
+          options: [
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
         },
         {
           type: "2",
@@ -195,8 +212,12 @@ export default {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,
         service_names: this.activeName,
-        merge_type: formParams.merge_type ? 1 : 2
+        merge_type: formParams.merge_type ? 1 : 2,
+        end_time: getRangeDays(1)
       };
+      if (this.active!= 1) {
+        paramsObj.start_time = getRangeDays(this.active);
+      }
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;

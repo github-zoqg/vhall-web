@@ -78,9 +78,9 @@
               <span v-else-if="scope.row.transcoded">转码完成</span>
               <span v-else>{{scope.row.transform_schedule_str}}</span>
             </div>
-            <p v-else class="text">
+            <p v-else class="text" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] }}
+              {{ scope.row[item.key] || '----' }}
             </p>
           </template>
         </el-table-column>

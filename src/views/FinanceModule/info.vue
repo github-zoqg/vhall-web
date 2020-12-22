@@ -129,32 +129,12 @@ export default {
         {
           type: "2",
           key: "searchTime",
-        },
-        {
-          type: "3",
-          key: "type",
-          options: [
-            {
-              label: '主账号',
-              value: 1
-            }
-          ]
         }
       ],
       searchAccount:[
         {
           type: "2",
           key: "searchTime",
-        },
-        {
-          type: "3",
-          key: "type",
-          options: [
-            {
-              label: '主账号',
-              value: 1
-            }
-          ]
         },
         {
           key: "subject"
@@ -224,12 +204,28 @@ export default {
       })
     }
     if (this.parentId) {
-      this.searchAreaLayout.map(item => {
-        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      })
-      this.searchAccount.map(item => {
-        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      })
+      let mainParams = {
+        type: '3',
+        key: 'type',
+        options: [
+          {
+            label: '主账号',
+            value: 1,
+          },
+          {
+            label: '主账号+子账号',
+            value: 2,
+          }
+        ]
+      }
+      this.searchAreaLayout.push(mainParams);
+      this.searchAccount.push(mainParams);
+      // this.searchAreaLayout.map(item => {
+      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      // })
+      // this.searchAccount.map(item => {
+      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      // })
     }
   },
   mounted() {
