@@ -227,20 +227,6 @@ export default {
         this.$message.error('上传奖品图片大小不能超过 2MB!');
         return false;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.imgType = 'heightMore';
-        } else {
-          that.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){

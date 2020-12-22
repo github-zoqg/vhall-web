@@ -44,7 +44,7 @@
           </el-form-item>
           <el-form-item label="标志替换：" prop="logo_url">
             <upload
-              class="upload__sign heightMore"
+              class="upload__sign"
               v-model="signSetForm.logo_url"
               :domain_url="domain_url"
               :saveData="{
@@ -259,31 +259,10 @@ export default {
   /deep/.el-upload--picture-card {
     width: 280px;
     height: 130px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
   /deep/.box > div {
     width: 280px;
     height: 130px;
-  }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
   }
 }
 

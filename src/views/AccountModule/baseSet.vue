@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="账号头像：" prop="avatar">
         <upload
-          :class="'upload__avatar ' + imgType"
+          :class="upload__avatar"
           v-model="baseSetForm.avatar"
           :domain_url="domain_url"
           :saveData="{
@@ -50,7 +50,6 @@ export default {
   },
   data() {
     return {
-      imgType: 'default', // 默认宽高相等
       domain_url: '',
       baseSetForm: {
         nick_name: '',
@@ -99,20 +98,6 @@ export default {
         this.$message.error('上传封面图片大小不能超过 2MB!');
         return false;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.imgType = 'heightMore';
-        } else {
-          that.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -193,31 +178,10 @@ export default {
   /deep/.el-upload--picture-card {
     width: 180px;
     height: 180px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
   /deep/.box > div {
     width: 180px;
     height: 180px;
-  }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
   }
 }
 .save-btn {

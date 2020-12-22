@@ -11,7 +11,7 @@
       <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="100px">
         <el-form-item label="标志替换：" prop="logo">
           <upload
-            :class="'upload__avatar ' + imgType"
+            class="upload__avatar"
             v-model="logoForm.logo"
             :domain_url="domain_url"
             :saveData="{
@@ -24,7 +24,7 @@
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
             @delete="logoForm.logo = ''">
-            <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+            <p slot="tip">最佳头图尺寸：156*56px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
           </upload>
         </el-form-item>
         <el-form-item label="标志链接：" prop="logo_jump_url">
@@ -68,7 +68,6 @@ export default {
           { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       },
-      imgType: 'default',
       domain_url: '',
       auth_show: false
     };
@@ -121,20 +120,6 @@ export default {
         this.$message.error('上传封面图片大小不能超过 2MB!');
         return false;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.imgType = 'heightMore';
-        } else {
-          that.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -220,30 +205,10 @@ export default {
       width: 180px;
       height: 180px;
       border: 1px solid #CCCCCC;
-      img {
-        width: 100%;
-        height: auto;
-      }
     }
     /deep/.box > div {
       width: 180px;
       height: 180px;
-    }
-    &.withMore {
-      /deep/.el-upload--picture-card {
-        img {
-          width: 100%;
-          height: auto;
-        }
-      }
-    }
-    &.heightMore {
-      /deep/.el-upload--picture-card {
-        img {
-          width: auto;
-          height: 100%;
-        }
-      }
     }
   }
   .save-btn {

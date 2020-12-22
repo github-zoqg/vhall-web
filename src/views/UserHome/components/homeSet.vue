@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="主页头像：" prop="homepage_avatar">
         <upload
-          :class="'upload__avatar ' + avatarImgType"
+          class="upload__avatar"
           v-model="homeSetInfoForm.homepage_avatar"
           :domain_url="domain_url"
           :saveData="{
@@ -34,7 +34,7 @@
       </el-form-item>
       <el-form-item label="背景图片：" prop="img_url">
         <upload
-          :class="'upload__bg__avatar ' + imgType"
+          class="upload__bg__avatar"
           v-model="homeSetInfoForm.img_url"
           :domain_url="domain_bg_url"
           :saveData="{
@@ -114,8 +114,6 @@ export default {
   },
   data() {
     return {
-      avatarImgType: 'default',
-      imgType: 'default',
       homeSetInfoForm: {
         homepage_avatar: '',
         content: '',
@@ -162,20 +160,6 @@ export default {
         this.$message.error('上传主页头像图片大小不能超过 2MB!');
         return;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.homeSetInfoForm.avatarImgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.homeSetInfoForm.avatarImgType = 'heightMore';
-        } else {
-          that.homeSetInfoForm.avatarImgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -214,20 +198,6 @@ export default {
         this.$message.error('上传背景图片大小不能超过 2MB!');
         return;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.homeSetInfoForm.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.homeSetInfoForm.imgType = 'heightMore';
-        } else {
-          that.homeSetInfoForm.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcessBg(event, file, fileList){
@@ -251,7 +221,7 @@ export default {
         if(valid) {
           let params = {
             img_url: this.$parseURL(this.homeSetInfoForm.img_url).path,
-            homepage_avatar: this.$parseURL(this.homeSetInfoForm.homepage_avatar).path,
+            homepage_avatar: this.homeSetInfoForm.homepage_avatar ? this.$parseURL(this.homeSetInfoForm.homepage_avatar).path : '',
             content: this.homeSetInfoForm.content,
             show_share: this.homeSetInfoForm.show_share, // 分享
             show_webinar_list: this.homeSetInfoForm.show_webinar_list, // 直播列表展示：0不展示 1展示
@@ -339,31 +309,10 @@ export default {
   /deep/.el-upload--picture-card {
     width: 180px;
     height: 180px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
   /deep/.box > div {
     width: 180px;
     height: 180px;
-  }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
   }
 }
 .upload__bg__avatar {
@@ -373,28 +322,12 @@ export default {
     border: 1px solid #CCCCCC;
     img {
       width: 100%;
-      height: auto;
+      object-fit: contain;
     }
   }
   /deep/.box > div {
     width: 180px;
     height: 180px;
-  }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
   }
 }
 </style>
