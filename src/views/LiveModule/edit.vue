@@ -133,68 +133,79 @@
       <el-form-item :label="`${webniarTypeToZH}类别：`" required>
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
       </el-form-item>
-      <el-switch
-         v-if="webniarType=='live'"
-        style="display: block"
-        v-model="docSwtich"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="文档翻页"
-        :active-text="docSwtichDesc">
-      </el-switch>
-      <el-switch
-         v-if="webniarType=='live'"
-        style="display: block"
-        v-model="reservation"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="预约人数"
-        :active-text="reservationDesc">
-      </el-switch>
-      <el-switch
-         v-if="webniarType=='live'"
-        style="display: block"
-        v-model="online"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="在线人数"
-        :active-text="onlineDesc">
-      </el-switch>
-      <el-switch
-        style="display: block"
-        v-model="hot"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="活动热度"
-        :active-text="hotDesc">
-      </el-switch>
-      <el-switch
-        style="display: block"
-        v-model="home"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="关联主页"
-        :active-text="homeDesc">
-      </el-switch>
-      <el-switch
-        v-if="webniarType=='live' || !this.versionType"
-        style="display: block"
-        v-model="capacity"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="并发扩容"
-        :active-text="capacityDesc">
-      </el-switch>
-      <el-switch
-        style="display: block"
-        v-model="limitCapacitySwtich"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="最高并发"
-        :active-text="limitCapacityDesc"
-        >
-      </el-switch>
-      <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+      <p class="switch__box" v-if="webniarType=='live'">
+        <el-switch
+          style="display: block"
+          v-model="docSwtich"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="文档翻页"
+          :active-text="docSwtichDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box" v-if="webniarType=='live'">
+        <el-switch
+          style="display: block"
+          v-model="reservation"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="预约人数"
+          :active-text="reservationDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box" v-if="webniarType=='live'">
+        <el-switch
+          style="display: block"
+          v-model="online"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="在线人数"
+          :active-text="onlineDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box">
+        <el-switch
+          style="display: block"
+          v-model="hot"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="活动热度"
+          :active-text="hotDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box">
+        <el-switch
+          style="display: block"
+          v-model="home"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="关联主页"
+          :active-text="homeDesc">
+        </el-switch>
+        </p>
+      <p class="switch__box" v-if="webniarType=='live' || !this.versionType">
+         <el-switch
+          style="display: block"
+          v-model="capacity"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="并发扩容"
+          :disabled="!limitInfo.extend"
+          :active-text="capacityDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box">
+        <el-switch
+          style="display: block"
+          v-model="limitCapacitySwtich"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="最高并发"
+          :active-text="limitCapacityDesc"
+          >
+        </el-switch>
+         <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+      </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
@@ -270,7 +281,7 @@ export default {
     },
     capacityDesc(){
       if(this.capacity){
-        return '已开启，观看并发人数扩容X人';
+        return `已开启，观看并发人数扩容${this.limitInfo.extend}人`;
       }else{
         // return "开启后，使用扩展包扩容并发人数（扩展包剩余人）"
         return `开启后，使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
@@ -316,13 +327,13 @@ export default {
         }
       },
       content: ``,
-      docSwtich: false,
-      reservation: false,
-      online: false,
+      docSwtich: true,
+      reservation: true,
+      online: true,
       showDialog: false,
-      hot: false,
-      home: false,
-      capacity: false,
+      hot: true,
+      home: true,
+      capacity: true,
       isSaveInfo: false,
       limitCapacity: '',
       limitCapacitySwtich: false,

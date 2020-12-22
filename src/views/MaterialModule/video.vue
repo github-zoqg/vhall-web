@@ -14,6 +14,7 @@
       <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
+        :placeholder="`请输入音视频名称`"
         :isExports='false'
         :searchAreaLayout="searchAreaLayout"
         @onSearchFun="getTableList('search')"
@@ -99,6 +100,9 @@ export default {
       }
       let obj = Object.assign({}, pageInfo, formParams);
       this.getList(obj);
+    },
+    getVideoList() {
+      // this.getTableList('search')
     },
     tirggerFile(event){
       let file = event.target.files[0];
