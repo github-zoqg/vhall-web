@@ -162,11 +162,9 @@ export default {
         keys(this.operasOld).map((item, ins) => {
           operas[item] = values(this.operasOld)[ins].filter(vItem =>{
             vItem.subText = vItem.subText.replace(/直播/, '点播')
-            console.warn(vItem);
             if(vItem.title == '基本信息'){
               vItem.path = `/live/vodEdit/${this.$route.params.str}`
             }
-            console.warn(vItem.path);
             return vItem.index !== 4
           });
         })
