@@ -335,19 +335,23 @@ export default {
       paramsObj.type = type;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = obj;
-      console.log(obj, '111111111111111111111111111');
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
         tableList.map(item=> {
           item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
-          item.type = this.culesType(item.type);
+          item.source = this.buyMethods(item.source);
+          item.type = this.culesType(item.type)[0];
         });
         this.tableList = tableList;
       }).catch(e=>{
         console.log(e);
       });
+    },
+    buyMethods(source) {
+      let arrType = ['其他', '购买', '升级', '注册赠送', ' 试用赠送', '其他'];
+      return arrType[source];
     },
     culesType(type) {
       if (this.activeIndex == '1') {

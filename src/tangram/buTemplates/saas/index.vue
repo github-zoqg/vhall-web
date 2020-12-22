@@ -1649,7 +1649,10 @@ export default {
     this.getInavInfo();
     try {
       let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
-      delete _otherOption.report_extra
+      let _report_extra = JSON.parse(_otherOption.report_extra)
+      _otherOption.report_extra = JSON.stringify({
+        join_id: _report_extra.join_id
+      })
       this.reportData = _otherOption
     } catch (error) {}
     console.warn(this.domains, '图片地址   ***********************');

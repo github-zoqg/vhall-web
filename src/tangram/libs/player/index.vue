@@ -701,6 +701,9 @@ export default {
       if(this.isAudience){
         // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
         params.otherOption.report_extra = this.reportExtra
+      }else{
+        // 助理上报     不需要switch_id
+        params.otherOption.report_extra = this.roominfo.report_extra
       }
       console.log('1a', this.roominfo)
       if (this.isLive && this.liveOption && this.type == 'live') {

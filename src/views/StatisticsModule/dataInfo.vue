@@ -7,6 +7,7 @@
     </pageTitle>
     <search-area
       ref="searchArea"
+      :active="active"
       :searchAreaLayout="searchAreaLayout"
       @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
@@ -60,6 +61,7 @@ import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
+import { getRangeDays } from '@/utils/general';
 export default {
   name: 'dataInfo',
   components: {
@@ -72,26 +74,31 @@ export default {
   data() {
     return {
       isActive: true,
+      active: 1,
       loading: true,
       params: {}, //导出的时候用来记录参数
       searchAreaLayout: [
         {
           type: '1',
+          options: [
+            {
+              title: '全部',
+              active: 1,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
         },
         {
           type: '2',
           key: 'searchTime',
-        },
-        {
-          type: '3',
-          key: 'type',
-          options: [
-            {
-              label: '主账号',
-              value: 1,
-            }
-          ],
-        },
+        }
       ],
       allDataList: {},
       titleType: '全部',
@@ -105,9 +112,23 @@ export default {
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     if (this.parentId) {
-      this.searchAreaLayout.map(item => {
-        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      this.searchAreaLayout.push({
+        type: '3',
+        key: 'type',
+        options: [
+          {
+            label: '主账号',
+            value: 1,
+          },
+          {
+            label: '主账号+子账号',
+            value: 2,
+          }
+        ],
       })
+      // this.searchAreaLayout.map(item => {
+      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      // })
     }
   },
   mounted() {
@@ -118,7 +139,8 @@ export default {
     getDataList() {
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       let paramsObj = {
-        account_id: this.userId
+        account_id: this.userId,
+        end_time: getRangeDays(1)
       };
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -127,9 +149,6 @@ export default {
         } else {
           paramsObj[i] = formParams[i];
         }
-      }
-      if (paramsObj.start_time) {
-        paramsObj.start_time = paramsObj.start_time.substring(0, 10);
       }
       let obj = Object.assign({}, paramsObj);
       this.loading = true;

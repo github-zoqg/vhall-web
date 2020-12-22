@@ -1,6 +1,7 @@
 <template>
-  <div class="login">
-    <div class="login-main">
+  <div class="loginPage">
+    <div class="login">
+      <div class="login-main">
       <div class="login-header"></div>
       <div class="login-form" v-if="$route.path==='/login'">
         <div class="login-navs">
@@ -156,6 +157,7 @@
           </el-form>
         </div>
       </div>
+    </div>
     </div>
     <div class="login-footer">
       <footer-section></footer-section>
@@ -319,6 +321,8 @@ export default {
           sessionOrLocal.set('token', res.data.token || '', 'localStorage');
           // 存储控制台-channel_id频道
           sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
+          // 存储控制台-channel_id频道
+          sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
           this.$router.push({path: '/'});
         } else {
           this.$message.error(res.msg || '登录失败！');
@@ -413,10 +417,20 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.loginPage{
+  height: 100%;
+  .login-footer{
+      position: relative;
+      z-index: 1;
+    }
+}
   .login{
     height: 100%;
     width: 100%;
-    // min-height: 720px;
+    min-height: 720px;
+    margin-bottom: -139px;
+    text-align: center;
+    font-size: 0;
     background-image: url(//t-alistatic01.e.vhall.com/static/images/account/loginbg.jpg);
     background-size: cover;
     position: relative;
@@ -425,7 +439,7 @@ export default {
       position: absolute;
       top: 50%;
       left: 50%;
-      margin-top: -300px;
+      margin-top: -350px;
       margin-left: -204px;
       width: 400px;
       .login-header{
@@ -590,12 +604,6 @@ export default {
     }
     .closePwd{
       cursor: pointer;
-    }
-    .login-footer{
-      position: absolute;
-      left: 50%;
-      bottom: 20px;
-      transform: translate(-50%);
     }
   }
 </style>
