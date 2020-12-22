@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="账号头像：" prop="avatar">
         <upload
-          :class="upload__avatar"
+          class="upload__avatar"
           v-model="baseSetForm.avatar"
           :domain_url="domain_url"
           :saveData="{
@@ -33,7 +33,7 @@
         <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="length152" round @click.prevent.stop="baseSetSave">保 存</el-button>
+        <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="baseSetSave">保 存</el-button>
       </el-form-item>
     </el-form>
   </div>

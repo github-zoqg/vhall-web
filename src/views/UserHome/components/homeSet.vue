@@ -319,15 +319,10 @@ export default {
   /deep/.el-upload--picture-card {
     width: 400px;
     height: 169px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      object-fit: contain;
-    }
   }
   /deep/.box > div {
-    width: 180px;
-    height: 180px;
+    width: 400px;
+    height: 169px;
   }
 }
 </style>

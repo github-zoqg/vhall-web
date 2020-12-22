@@ -22,6 +22,7 @@
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
           <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
             <el-button class="no-border" size="mini" slot="append" @click="getDyCode()"
+                       v-preventReClick
                        :class="showCaptcha ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick">
               {{ time === 60 ? '发送验证码' : `${time}s` }}
@@ -38,11 +39,12 @@
           <div id="setCaptcha1">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
-          <p class="errorText" v-show="errorMsgShow1">1图形码错误</p>
+          <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
         <el-form-item label="验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
             <el-button class="no-border" size="mini" slot="append"
+                       v-preventReClick
                        @click="getDyCode1()"
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
@@ -61,13 +63,13 @@
     </div>
     <span slot="footer">
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" @click="changePhoneOrEmailStep">下一步</el-button>
+                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" v-preventReClick @click="changePhoneOrEmailStep">下一步</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" @click="changePwdStep">确定</el-button>
+                 v-if="showVo.executeType === 'pwd'" v-preventReClick @click="changePwdStep">确定</el-button>
       <el-button class="dialog-btn" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" @click="cancelPwdStep">取消</el-button>
+                 v-if="showVo.executeType === 'pwd'" v-preventReClick @click="cancelPwdStep">取消</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" @click="sendBindHandle">立即绑定</el-button>
+                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" v-preventReClick @click="sendBindHandle">立即绑定</el-button>
     </span>
   </VhallDialog>
 </template>

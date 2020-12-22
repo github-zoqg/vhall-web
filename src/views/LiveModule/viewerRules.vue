@@ -393,6 +393,22 @@ export default {
                 console.log('去除白名单参数', e);
               }
             }
+            // 若是非观看密码
+            if(formName !== 'pwdForm') {
+              try {
+                delete params.password;
+              } catch (e) {
+                console.log('去除观看密码参数', e);
+              }
+            }
+            // 若是非支付类
+            if(formName !== 'fCodePayForm' && formName !== 'payForm') {
+              try {
+                delete params.fee;
+              } catch (e) {
+                console.log('去除支付金额参数', e);
+              }
+            }
           }
         });
       } else if(formName === 'whiteForm') {

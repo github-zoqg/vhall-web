@@ -9,7 +9,7 @@
           <span class="card&#45;&#45;status level_center" v-else-if="pwdLevel === 'center'">一般</span>
           <span class="card&#45;&#45;status level_min" v-else-if="pwdLevel === 'min'">弱</span>
           <span class="card&#45;&#45;status" v-else>&#45;&#45;</span>-->
-        </li>
+        <!--</li>-->
       </ul>
       <div class="card--blue">
         <el-button type="text" @click.prevent.stop="bindShowHandle('pwd')">{{accountInfo && accountInfo.has_password>0 ? '修改' : '设置'}}</el-button>
