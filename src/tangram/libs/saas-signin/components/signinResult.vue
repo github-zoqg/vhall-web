@@ -50,7 +50,7 @@ export default {
   computed: {
     signTime(){
       return function(val){
-        return this.$moment(val).format('hh:mm')
+        return this.$moment(val).format('HH:mm')
       }
     }
   },
