@@ -118,7 +118,6 @@ function clientToken(param) {
   if (ret) {
     ret = decodeURIComponent(ret[1]);
   }
-  console.log(ret, '当前hash判断')
   return ret || '';
 }
 let clientTokenVal = clientToken('token');

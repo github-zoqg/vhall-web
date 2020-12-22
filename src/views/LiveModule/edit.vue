@@ -352,10 +352,14 @@ export default {
   },
   created(){
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    if (this.$route.query.id) {
-      this.webinarId = this.$route.query.id;
-      this.title = this.$route.query.type == 2 ? '编辑' : '复制';
-      this.getLiveBaseInfo(this.$route.query.id);
+    if (this.$route.query.id || this.$route.params.id) {
+      this.webinarId = this.$route.query.id || this.$route.params.id;
+      if(this.$route.query.id){
+        this.title = this.$route.query.type == 2 ? '编辑' : '复制';
+      }else{
+        this.title = '编辑'
+      }
+      this.getLiveBaseInfo(this.webinarId);
     } else {
       this.title = '创建';
       this.webinarId = '';
@@ -372,6 +376,9 @@ export default {
   methods: {
     getLiveBaseInfo(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+        if( res.code != 200 ){
+          return this.$message.warning(res.msg)
+        }
         this.liveDetailInfo = res.data;
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
