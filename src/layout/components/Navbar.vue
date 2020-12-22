@@ -33,9 +33,7 @@
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
             <img :src="avatarImgUrl" class="user-avatar" alt="" />
-            <span>{{
-                userInfo && userInfo.nick_name ? userInfo.nick_name : ''
-              }}</span>
+            <span>{{show_name}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
             <el-dropdown-item divided @click.native="toAccountPage">
@@ -76,6 +74,17 @@ export default {
   computed: {
     oldUrl: function() {
       return `${this.env.staticLinkVo.downOldUrl}/auth/check-token?after_login=mywebinar/main&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
+    },
+    show_name: function() {
+      if (this.userInfo && this.userInfo.nick_name) {
+        if(this.userInfo.nick_name.length > 5) {
+          return this.userInfo.nick_name.substring(0, 5) + '...';
+        } else {
+          return this.userInfo.nick_name
+        }
+      } else {
+        return '';
+      }
     }
   },
   // inject: [],
