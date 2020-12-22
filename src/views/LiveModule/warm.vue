@@ -163,7 +163,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`标志上传失败`);
+      this.$message.error(`封面图片上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -192,6 +192,8 @@ export default {
       this.$fetch('warmCreate', this.$params(params)).then(res => {
         if (res.code == 200) {
           this.$message.success('保存暖场视频成功');
+        } else {
+          this.$message.error(res.msg || '保持暖场视频失败');
         }
       })
     }

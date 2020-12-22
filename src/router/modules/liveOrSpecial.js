@@ -28,7 +28,7 @@ const router = [
       {
         path: 'list',
         component: () => import('@/views/LiveModule/list'),
-        meta: { auth: true, title: '直播列表', level: 2 , name: 'liveList'},
+        meta: { auth: true, title: '直播列表', level: 2 , name: 'liveList'}
       },
       {
         path: 'edit',

@@ -1,8 +1,8 @@
 <template>
   <div class="lottery-result">
     <div class="result-img">
-      <img :src="prizeObj.image_url" alt="">
-      <p>{{prizeObj.award_name}}</p>
+      <img :src="prizeObj && prizeObj.image_url ? prizeObj.image_url : defaultPrizeImg" alt="">
+      <p>{{prizeObj&&prizeObj.award_name ? prizeObj.award_name : '奖品'}}</p>
     </div>
     <div class="result-table">
         <div class="result-table-head">
@@ -40,6 +40,7 @@ export default {
   data() {
     return {
       defaultImg: require('@/common/images/avatar_min.png'),
+      defaultPrizeImg: require('./../img/win.png'),
       startButtonDisabled: false, // 开始按钮禁用状态
     }
   },

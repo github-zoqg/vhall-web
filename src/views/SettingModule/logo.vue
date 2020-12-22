@@ -31,8 +31,8 @@
           <el-input type="text" placeholder="请输入标志链接" v-model="logoForm.logo_jump_url"/>
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
-          <el-button round @click="saveConsoleLogo('default')">恢复默认</el-button>
+          <el-button type="primary" v-preventReClick round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
+          <el-button round v-preventReClick @click="saveConsoleLogo('default')">恢复默认</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -152,28 +152,50 @@ export default {
         this.saveSend({
           logo: '',
           logo_jump_url: ''
-        });
+        }, type);
       } else {
         this.$refs.logoForm.validate((valid) => {
           if (valid) {
             this.saveSend({
               logo: this.$parseURL(this.logoForm.logo).path,
               logo_jump_url: this.logoForm.logo_jump_url
-            });
+            }, type);
           }
         });
       }
     },
-    saveSend(params) {
+    saveSend(params, type) {
       this.$fetch('userEdit', params).then(res => {
         if(res && res.code === 200) {
           this.$message.success('保存设置成功');
-          // this.$router.go(0);
+          if (type === 'default') {
+            this.logoForm.logo_jump_url = '';
+            this.logoForm.logo = '';
+            try {
+              this.$ref.logoForm.resetFields();
+            } catch (e) {
+              console.log(e);
+            }
+          }
+          this.getAccountInfo();
         } else {
           this.$message.error(res.msg || '保存设置失败');
         }
       }).catch(e => {
         this.$message.error('保存设置失败');
+      });
+    },
+    getAccountInfo() {
+      this.$fetch('getInfo', {
+        scene_id: 2
+      }).then(res =>{
+        if(res.code === 200 && res.data) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+          this.$EventBus.$emit('saas_vs_account_change', res.data);
+        } else {
+          this.$message.error(res.msg);
+        }
       });
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 0 15px;" @click="toggleClick">
-    <icon icon-class="saasicon_more"></icon>
+    <icon icon-class="saasicon_more" style="color: #ffffff;"></icon>
   </div>
 </template>
 
