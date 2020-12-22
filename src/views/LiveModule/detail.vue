@@ -19,7 +19,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
+            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -42,9 +42,9 @@
                   placement="bottom"
                   trigger="hover"
                 >
-                <div class="invitation-code">
-                  <p>直播观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
-                  <p style="margin-top:20px;text-align: center;">
+                <div class="invitation-code urlCopy">
+                  <p>观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
+                  <p>
                     <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
                     <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
                 </div>
@@ -404,7 +404,7 @@ export default {
         // background: rgba(247, 245, 245, 0.7);
         color: #fff;
         font-size: 12px;
-        padding: 2px 9px;
+        padding: 4px 12px;
         border-radius: 20px;
         position: absolute;
         top: 12px;
@@ -434,6 +434,36 @@ export default {
     }
   }
 }
+//
+.invitation-code{
+  text-align: center;
+  padding: 2px 40px;
+  display: block!important;
+  left: 50%;
+  p{
+    line-height: 40px;
+  }
+  img{
+    margin-bottom: 10px;
+  }
+}
+.urlCopy{
+  padding: 2px 15px;
+  p{
+    margin-top: 20px;
+    &:nth-child(2){
+      padding: 4px;
+      font-size: 16px;
+      ::v-deep.el-button{
+        font-size: 14px;
+        line-height: 24px;
+        padding: 2px 20px;
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
 .mainColor{
   color: #1A1A1A;
 }
