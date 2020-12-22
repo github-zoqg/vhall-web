@@ -6,7 +6,7 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @keyup.enter.native="initQuerySonList">
+      <el-input placeholder="搜索子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword" @keyup.enter.native="initQuerySonList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
       </el-input>
       <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
@@ -58,10 +58,10 @@
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span v-if="sonCountVo.available_num">当前可创建子账号数量{{ sonCountVo.available_num }}个</span>
+          <span>当前可创建子账号数量{{ sonCountVo.available_num }}个</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
-          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30"
+          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入账号昵称，不输入默认使用账号ID" :maxlength="30"
                     :minlength="1" show-word-limit/>
         </el-form-item>
         <el-form-item label="预设密码：" prop="password">
@@ -202,7 +202,7 @@ export default {
       },
       sonFormRules: {
         nick_name: [
-          {required: true, message: '请输入账号昵称', trigger: 'blur'}
+          {required: false, message: '请输入账号昵称，不输入默认使用账号ID', trigger: 'blur'}
         ],
         password: [
           {required: true, message: '请输入预设密码', trigger: 'blur'}

@@ -260,5 +260,15 @@ export default {
   .developmentWrap{
     padding: 32px 24px;
     background: #fff;
+    /deep/.el-button[readonly] {
+      background: @999;
+      color: #FFFFFF;
+      border: 1px solid @999;
+      &:hover {
+        background: @999;
+        color: #FFFFFF;
+        border: 1px solid @999;
+      }
+    }
   }
 </style>
