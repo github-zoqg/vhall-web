@@ -434,7 +434,7 @@ export default {
 }
 .title--label {
   font-size: 24px;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
   font-weight: 500;
   line-height: 33px;
   margin-right: 8px;
@@ -450,7 +450,7 @@ export default {
 }
 .role-remark {
   font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #666666;
   line-height: 20px;
@@ -460,7 +460,7 @@ export default {
   margin-top: 32px;
   /deep/.el-form-item__label {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     padding: 0 10px 0 0;
@@ -506,7 +506,7 @@ export default {
     background: #F7F7F7;
     border-radius: 4px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
@@ -525,7 +525,7 @@ export default {
 }
 .role-qx-title {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #666666;
   line-height: 20px;
@@ -540,7 +540,7 @@ export default {
 .role-qx-list {
   height: 118px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 20px;
@@ -576,7 +576,7 @@ export default {
 }
 /deep/.el-checkbox__input.is-checked+.el-checkbox__label, /deep/.el-checkbox__label {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 20px;

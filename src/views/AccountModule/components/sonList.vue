@@ -294,7 +294,11 @@ export default {
           if (res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.$refs.sonTab.clearSelection();
+            try{
+              that.$refs.sonTab.clearSelection();
+            } catch (e) {
+              console.log(e);
+            }
             that.getSonList();
           } else {
             that.$message({

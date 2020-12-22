@@ -109,14 +109,14 @@ export default {
   .no-redirect {
     cursor: text;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
   }
 }
 /deep/.el-breadcrumb__inner a, /deep/.el-breadcrumb__inner.is-link {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
 }

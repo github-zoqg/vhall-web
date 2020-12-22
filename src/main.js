@@ -16,7 +16,7 @@ import 'tinymce/plugins/quickbars';//快速栏插件
 import 'tinymce/plugins/fullscreen';//全屏插件
 
 import EventBus from './utils/Events';
-import {copy, dealObjectValue, domainCovert, parseURL, sessionOrLocal} from './utils/utils';
+import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
@@ -48,6 +48,7 @@ Vue.prototype.$params = dealObjectValue; //去除空值参数转换
 Vue.prototype.$domainCovert = domainCovert;// 添加域名
 Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
 Vue.prototype.$img = require('./common/images/small.png');
+Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
 Vue.use(ElementUI);
 Vue.use(vhallSaas, {
   config: {

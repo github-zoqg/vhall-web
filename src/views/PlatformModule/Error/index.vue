@@ -82,7 +82,7 @@ export default {
   }
   .heading {
     font-size: 80px;
-    font-family: PingFangSC-Semibold, PingFang SC;
+    font-family: @fontSemibold;
     font-weight: 600;
     color: #1A1A1A;
     line-height: 112px;
@@ -90,7 +90,7 @@ export default {
   &.sysUnder {
     .heading {
       font-size: 32px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 45px;
@@ -104,7 +104,7 @@ export default {
     margin-top: calc((100vh - 292px)/2);
     .heading {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #666666;
       line-height: 20px;
@@ -120,7 +120,7 @@ export default {
 .subheading {
   height: 22px;
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 22px;
@@ -129,7 +129,7 @@ export default {
   margin-top: 16px;
   width: 266px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 22px;

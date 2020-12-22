@@ -5,7 +5,7 @@
     <!-- 登录用户等 -->
     <div class="right-menu">
       <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)">
-        <a :href="env.staticLinkVo.downOldUrl">返回旧版</a>
+        <a :href="oldUrl">返回旧版</a>
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
@@ -72,6 +72,11 @@ export default {
       userInfo: null,
       env: Env
     };
+  },
+  computed: {
+    oldUrl: function() {
+      return `${this.env.staticLinkVo.downOldUrl}/auth/check-token?after_login=mywebinar/main&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
+    }
   },
   // inject: [],
   methods: {

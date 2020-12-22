@@ -6,10 +6,10 @@
         <!-- 快速选择时间 -->
         <div class="time-kuai" v-else-if="item.type==1">
           <span
-            v-for="(opt, optIndex) in allTime"
+            v-for="(opt, optIndex) in item.options"
             :key="optIndex"
             :class="opt.active === isActive ? 'active' : ''"
-            @click="changeTime(opt)"
+            @click="changeTime(opt.active)"
             >{{ opt.title }}</span
           >
         </div>
@@ -87,6 +87,10 @@ export default {
   },
   props: {
     searchAreaLayout: Array,
+    active: {
+      type: Number,
+      default: 1
+    },
     isExports: {
       type: Boolean,
       default: true
@@ -97,18 +101,19 @@ export default {
     }
   },
   created() {
+    this.isActive = this.active;
   },
   methods: {
-    changeTime(opt) {
-      if (this.$route.path === '/infoDetail') {
+    changeTime(index) {
+      if (this.$route.path === '/finance/infoDetail') {
         return;
       }
-      this.isActive = opt.active;
-      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(opt.active);
+      this.isActive = index || this.active;
+      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(this.isActive);
       this.$emit("onSearchFun");
     },
     changeDate(){
-      if (this.$route.path === '/infoDetail') {
+      if (this.$route.path === '/finance/infoDetail') {
         return;
       }
       this.$emit("onSearchFun");
@@ -159,13 +164,13 @@ export default {
       border: 1px solid #ccc;
       border-radius: 18px;
       background: transparent;
-      line-height: 36px;
+      line-height: 33px;
       span {
         border-radius: 18px;
-        padding: 8px 16px;
+        padding: 9px 16px;
         text-align: center;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666666;
         cursor: pointer;
@@ -195,7 +200,7 @@ export default {
       cursor: pointer;
       span {
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666;
       }

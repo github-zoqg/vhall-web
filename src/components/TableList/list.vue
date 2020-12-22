@@ -67,7 +67,7 @@
             </div>
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
-                <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
+                <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '2' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
             <div v-else-if="item.key === 'imgOrText'">
@@ -78,9 +78,9 @@
               <span v-else-if="scope.row.transcoded">转码完成</span>
               <span v-else>{{scope.row.transform_schedule_str}}</span>
             </div>
-            <p v-else class="text">
+            <p v-else class="text" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] }}
+              {{ scope.row[item.key] || '----' }}
             </p>
           </template>
         </el-table-column>
@@ -107,7 +107,7 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum"
+      v-if="needPagination && totalNum > 10"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"

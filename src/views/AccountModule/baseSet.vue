@@ -86,14 +86,18 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
       let imgSrc = window.URL.createObjectURL(file);
       let img = new Image();

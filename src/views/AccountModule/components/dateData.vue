@@ -124,7 +124,7 @@ export default {
               formatter: '{value}',
               color: '#999999',
               fontSize: 12,
-              fontFamily: 'PingFangSC-Regular, PingFang SC'
+              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
             }
           }
         ],
@@ -148,7 +148,7 @@ export default {
               textStyle: {
                 color: '#999999',
                 fontSize: 12,
-                fontFamily: 'PingFangSC-Regular, PingFang SC'
+                fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
               }
 
             },

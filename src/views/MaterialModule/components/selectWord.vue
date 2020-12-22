@@ -20,7 +20,9 @@
         :data="dialogTableList"
         :row-key="setRowKeyFun"
         @selection-change="changeDialogCheck"
-        max-height="336px"
+        style="width: 100%"
+        height="336"
+        v-loadMore="moreLoadData"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
       >
         <el-table-column
@@ -34,7 +36,7 @@
           width="280"
         >
           <template slot-scope="scope">
-            <p class="text"><icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row.file_name }}</p>
+            <p class="text"><icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row.file_name }},{{scope.row.id}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -93,28 +95,33 @@ export default {
       formParams: {
         keyword: ''
       },
-      currentPage: 1,
-      pageSize: 5,
-      totalPage: 0
+      pageInfo: {
+        pos: 0,
+        limit: 6,
+        pageNum: 1
+      },
+      totalPages: 0
     }
   },
   methods: {
+    moreLoadData() {
+      if (this.pageInfo.pageNum >= this.totalPages) {
+        return false;
+      }
+      this.pageInfo.pageNum ++ ;
+      this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit);
+      this.getDialogTableList();
+    },
     // 获取资料库-弹出框内容
-    getDialogTableList(pageInfo = {pos: 0, limit: 5, pageNumber: 1}) {
+    getDialogTableList() {
       let params = {
-        pos: pageInfo.pos,
-        limit: pageInfo.limit,
         keyword: this.formParams.keyword,
         type: 1,
-        webinar_id: this.$route.params.str
-      };
+        webinar_id: this.$route.params.str,
+        ...this.pageInfo
+      }
       this.$fetch('getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
-          // 当内容为空时，查询到总条数
-          if(this.formParams.keyword === '') {
-            let dialog = res.data.total;
-            this.totalPage = (dialog%this.pageSize) > 0 ? (dialog/this.pageSize) + 1 : dialog/this.pageSize;
-          }
           let list = res.data.list;
           list.map(item => {
             // 转换状态 0待转换 100转换中 200完成 500失败
@@ -126,27 +133,15 @@ export default {
             }
             item.progress = statusStr[item.status];
           })
-          if (this.currentPage === 1) {
-            this.dialogTotal = res.data.total;
+          if (this.pageInfo.pos === 0) {
             this.dialogTableList = res.data.list;
           } else {
-            this.dialogTableList.concat(res.data.list)
+            this.dialogTableList.push(...res.data.list);
           }
-        } else {
-          if (this.currentPage === 1) {
-            this.dialogTableList = [];
-          } else {
-            this.dialogTableList.concat([])
-          }
-          // this.dialogTotal = 0;
+          this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
         }
       }).catch(e => {
         console.log(e);
-        if (this.currentPage === 1) {
-          this.dialogTableList = [];
-        } else {
-          this.dialogTableList.concat([])
-        }
       }).finally(()=>{
       });
     },
@@ -154,6 +149,8 @@ export default {
     searchHandle() {
       this.dialogMulti = [];
       this.$refs.elTable.clearSelection();
+      this.pageInfo.pos = 0;
+      this.pageInfo.pageNum = 1;
       this.getDialogTableList();
     },
     // 改变资料库-弹出框内容

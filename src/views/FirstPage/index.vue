@@ -91,7 +91,7 @@
         <div class="line-tip">
           <p>用量统计</p>
         </div>
-        <line-echarts :lineDataList="lineDataList"></line-echarts>
+        <line-echarts :lineDataList="lineDataList" :type="1"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">
@@ -242,7 +242,7 @@ export default {
         height: 146px;
         background: #fff;
         .list-title{
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-size: 16px;
           font-weight: 400;
           color: #1A1A1A;
@@ -317,7 +317,7 @@ export default {
           border-radius: 4px;
           color: #fff;
           padding: 32px 17px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           h1{
             font-size: 18px;
             line-height: 25px;

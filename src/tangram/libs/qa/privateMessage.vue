@@ -42,7 +42,7 @@ export default {
   text-align: left;
   padding: 10px 22px;
   border-bottom: 1px solid #38383b;
-  font-family: '微软雅黑';
+  font-family: @fontRegular;
   & > p.userinfo {
     line-height: 18px;
     font-size: 14px;

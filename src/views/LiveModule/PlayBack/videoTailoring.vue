@@ -8,6 +8,7 @@
       <span class="time-label">选择回放时间</span>
       <el-date-picker
         v-model="timeVal"
+        value-format="yyyy-MM-dd HH:mm:ss"
         type="datetimerange"
         range-separator="至"
         start-placeholder="开始时间"
@@ -44,6 +45,7 @@
 
 <script>
 import videoTailoring from '@/components/VideoTailoring';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data(){
     return {
@@ -56,18 +58,78 @@ export default {
       editLoading: false,
       roomInfo: {},
       isAdd: false, // 是否可添加视频裁剪 一般情况下为true，当在某个回放中点击裁剪时设置为false
-      timeVal: []
+      timeVal: [],
+      chatSDK: null,
+      msgInfo: {}
     };
   },
   created() {
     if (this.$route.query.recordId) {
       this.getPlayBackInfo();
     } else {
-      this.isAdd = true;
-      this.dataReady = true;
+      this.getInitMsgInfo();
+    }
+  },
+  beforeDestroy() {
+    if (this.$PLAYER) {
+      this.$PLAYER.destroy()
+      this.$PLAYER = null
+    }
+    if (this.chatSDK) {
+      this.chatSDK.destroy()
+      this.chatSDK = null
     }
   },
   methods:{
+    getInitMsgInfo() {
+      this.$fetch('msgInitConsole').then(res => {
+        this.msgInfo = res.data;
+        this.initChat(res.data);
+      })
+    },
+    initChat (params) {
+      let opt = {
+        appId: params.paasAppId,
+        accountId: params.accountId,
+        channelId: params.channelId,
+        token: params.paasAccessToken
+      };
+      VhallChat.createInstance(
+        opt,
+        chat => {
+          this.dataReady = true;
+          this.chatSDK = chat.message;
+          console.log('成功了居然', this.chatSDK)
+          // TODO: 监听消息,判断 userId 获取playbackInfo
+          // 聊天消息
+          this.chatSDK.onChat(msg => console.log(msg))
+          // 自定义消息
+          this.chatSDK.onCustomMsg(msg => console.log(msg))
+          this.chatSDK.onRoomMsg(msg => {
+            console.log('==========房间消息1===========', msg);
+
+            if (typeof msg !== 'object') {
+              msg = JSON.parse(msg);
+            }
+            try {
+              if (msg.data && typeof msg.data !== 'object') {
+                msg.data = JSON.parse(msg.data);
+              }
+            } catch (e) {
+              console.log(e);
+            }
+            console.log('==========房间消息===========', msg);
+
+            Object.assign(msg, msg.data);
+          })
+          this.$EventBus.$on('sdkReady', () => {
+          });
+        },
+        err => {
+          console.error('聊天SDK实例化失败', err);
+        }
+      )
+    },
     confirmTitle() {
       if (!this.titleEdit) {
         this.$message.warning('请输入视频名称');
@@ -75,17 +137,18 @@ export default {
       }
       this.editLoading = true;
       const name = this.titleEdit;
-      const start_time = this.$moment(this.timeVal[0]).format('YYYY-MM-DD hh:mm:ss');
-      const end_time = this.$moment(this.timeVal[1]).format('YYYY-MM-DD hh:mm:ss');
-      this.$fetch('createRecord', {
+      this.$fetch('createRecordinCtrl', {
         webinar_id: this.webinar_id,
-        start_time,
-        end_time,
+        start_time: this.timeVal[0],
+        end_time: this.timeVal[1],
         name,
-        type: 1
+        type: 2
       }).then(res => {
         if (res.code == 200) {
-          this.getPlayBackInfo(res.data.record_id);
+          this.$message.success('视频生成中,请稍后...')
+          this.titleDialogVisible = false;
+          this.editLoading = false;
+          // this.getPlayBackInfo('', true);
         } else {
           this.$message.warning('生成失败');
           this.titleDialogVisible = false;
@@ -101,12 +164,18 @@ export default {
         this.titleDialogVisible = true;
       }
     },
-    getPlayBackInfo(recordId) {
-      this.$fetch('playBackPreview', {
+    getPlayBackInfo(recordId, isCreate) {
+      const opts = {
         webinar_id: this.webinar_id,
-        record_id: recordId || this.recordId,
         type: 0
-      }).then(res => {
+      }
+      if (!isCreate) {
+        opts.record_id = recordId || this.recordId
+      } else {
+        opts.type = 1;
+        opts.paas_record_id = ''
+      }
+      this.$fetch('playBackPreview', opts).then(res => {
         console.log(res)
         const data = res.data
         this.roomInfo = {

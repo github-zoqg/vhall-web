@@ -43,13 +43,13 @@ export default {
   width: 100%;
   height: 100%;
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #E2E2E2;
 }
 .router-link-active {
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FA3F37;
 }

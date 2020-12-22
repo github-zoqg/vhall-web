@@ -300,6 +300,7 @@ export default {
     startLottery (msg, val) {
       this.showMess = true
       this.currentLotStatus = true
+      this.showLottery = true
       console.warn('监听收到发起消息',msg);
       this.lotteryInfo = {}
       this.lotteryInfo.award_snapshoot = msg.award_snapshoot
@@ -318,6 +319,9 @@ export default {
       // 初始化消息
       this.currentLotStatus = false
       this.lotteryInfo.publish_winner = msg.publish_winner  // 当前是否显示 查看中奖名单
+      if(!this.showMess){
+        this.showMess = true
+      }
       console.warn(msg, WinningID, '中奖信息----',this.isWinning, msg.lottery_winners, this.lotteryInfo);
       if (msg.lottery_winners.find(item => item.lottery_user_id == WinningID)) {
         this.getStepText()
@@ -491,7 +495,7 @@ export default {
         }
         span{
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-weight: 400;
           color: #555555;
           line-height: 20px;
@@ -541,7 +545,7 @@ export default {
         font-size: 18px;
         color: #444;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #FC5659;
         margin-bottom: 24px;
@@ -563,7 +567,7 @@ export default {
         }
         p{
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-weight: 400;
           color: #222222;
           line-height: 22px;
@@ -595,7 +599,7 @@ export default {
           padding-left: 20px;
           line-height: 42px;
           font-size: 14px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-weight: 400;
           color: #222222;
           img{
@@ -632,7 +636,7 @@ export default {
     .recive-prize {
       .title{
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #222222;
         line-height: 20px;
@@ -664,7 +668,7 @@ export default {
 .audience-code{
   p{
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #222222;
     line-height: 18px;
@@ -691,7 +695,7 @@ export default {
   }
   p{
     font-size: 16px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #222222;
     line-height: 22px;

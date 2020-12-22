@@ -333,7 +333,7 @@
         </div>
         <div class="watchBox">
           <div class="leftWatch">
-            <img 
+            <img
               :src="roomData.webinar.img_url"
               v-if="roomData && roomData.webinar && ((roomData.warmup_paa_record_id && roomData.verified == 0) || (!roomData.preview_paas_record_id && !roomData.warmup_paa_record_id))" alt="">
             <div class="subscribe-video" v-else>
@@ -354,7 +354,7 @@
             </div>
           </div>
           <div class="rightWatch">
-            <template v-if="!isKeyLogin">
+            <template>
               <div class="title">距离直播开始还有</div>
               <div class="timeBox">
                 <div>
@@ -380,11 +380,6 @@
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
                 <p class="limit" v-else>{{limitText}}</p>
               </div>
-            </template>
-            <template v-else>
-              <key-login
-                @codeAuthLogin="handleCodeAuthLogin"
-              ></key-login>
             </template>
             <div class="open-screen" v-show="openScreenConfig.status == 0">
               <div class="open-count-time" @click="closeOpenScreen">关闭<span v-show="openScreenConfig.shutdown_type == 1">{{'(' + openScreenTime + ')'}}</span></div>
@@ -551,7 +546,6 @@ export default {
       dialogPlaceholder: '',
       showOfficialAccountQRCode: false, // 刷新后是否显示公众号弹窗
       showOfficialAccountMiniQRCode: false, // head栏是否显示微信公众号图标
-      isKeyLogin: this.$route.path.startsWith('/keylogin'),
       title: '',
       webinarType: 1,
       viewCount: 0,
@@ -919,7 +913,7 @@ export default {
             this.showOfficialAccountMiniQRCode = true
           }
         }
-        
+
         this.getBtnText()
         this.$nextTick(() => {
           if (this.theme && this.skinInfo.status == 1) {

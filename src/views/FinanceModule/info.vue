@@ -129,32 +129,12 @@ export default {
         {
           type: "2",
           key: "searchTime",
-        },
-        {
-          type: "3",
-          key: "type",
-          options: [
-            {
-              label: '主账号',
-              value: 1
-            }
-          ]
         }
       ],
       searchAccount:[
         {
           type: "2",
           key: "searchTime",
-        },
-        {
-          type: "3",
-          key: "type",
-          options: [
-            {
-              label: '主账号',
-              value: 1
-            }
-          ]
         },
         {
           key: "subject"
@@ -224,12 +204,28 @@ export default {
       })
     }
     if (this.parentId) {
-      this.searchAreaLayout.map(item => {
-        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      })
-      this.searchAccount.map(item => {
-        item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      })
+      let mainParams = {
+        type: '3',
+        key: 'type',
+        options: [
+          {
+            label: '主账号',
+            value: 1,
+          },
+          {
+            label: '主账号+子账号',
+            value: 2,
+          }
+        ]
+      }
+      this.searchAreaLayout.push(mainParams);
+      this.searchAccount.push(mainParams);
+      // this.searchAreaLayout.map(item => {
+      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      // })
+      // this.searchAccount.map(item => {
+      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
+      // })
     }
   },
   mounted() {
@@ -365,7 +361,8 @@ export default {
       this.$fetch(url, this.lineParams).then(res => {
         if (res.code == 200) {
            this.lineParams = {};
-          this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出成功，请去下载中心下载`);
+          this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`用量统计${res.msg}`);
         }
@@ -377,7 +374,8 @@ export default {
       this.$fetch(url, this.dataParams).then(res => {
         if (res.code == 200) {
           this.dataParams = {};
-          this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出成功，请去下载中心下载`);
+          this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`消费账单${res.msg}`);
         }
@@ -398,7 +396,7 @@ export default {
       line-height: 30px;
       span{
         font-size: 22px;
-        font-family: PingFangSC-Semibold, PingFang SC;
+        font-family: @fontSemibold;
         font-weight: 600;
         color: #1a1a1a;
       }

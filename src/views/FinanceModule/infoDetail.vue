@@ -335,19 +335,23 @@ export default {
       paramsObj.type = type;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = obj;
-      console.log(obj, '111111111111111111111111111');
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
         tableList.map(item=> {
           item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
-          item.type = this.culesType(item.type);
+          item.source = this.buyMethods(item.source);
+          item.type = this.culesType(item.type)[0];
         });
         this.tableList = tableList;
       }).catch(e=>{
         console.log(e);
       });
+    },
+    buyMethods(source) {
+      let arrType = ['其他', '购买', '升级', '注册赠送', ' 试用赠送', '其他'];
+      return arrType[source];
     },
     culesType(type) {
       if (this.activeIndex == '1') {
@@ -391,7 +395,8 @@ export default {
       this.$fetch(url, this.params).then(res => {
         if (res.code == 200) {
           this.params = {};
-          this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出成功，请去下载中心下载`);
+          this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`账单明细${res.msg}`);
         }

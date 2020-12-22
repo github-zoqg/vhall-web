@@ -196,6 +196,7 @@ export default {
       this.$fetch('withdrawal', params).then(res => {
        this.$message.success('提现成功');
        this.dialogCashVisible = false;
+       this.$emit('onreload');
       });
     },
     // 绑定微信短信验证码
@@ -215,7 +216,7 @@ export default {
     },
     // 绑定微信 ---获取绑定微信二维码
     bangWeixin() {
-      this.qrcode = `${Env.staticLinkVo.aliQr}https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/bangWeixin`;
+      this.qrcode = `${Env.staticLinkVo.aliQr}https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${encodeURI(process.env.VUE_APP_WEB_URL/bangWeixin)}`;
     },
     /**
      * 倒计时函数

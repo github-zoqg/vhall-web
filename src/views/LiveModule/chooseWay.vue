@@ -78,9 +78,24 @@ export default {
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          this.$router.push({
-            path: this.watchUrl
-          })
+          debugger
+          if (Number(this.arr[1]) === 1) {
+            // 进入直播前检测，若是直接发起
+            this.$fetch('checkLive', this.$params({
+              webinar_id: this.arr[0]
+            })).then((res) => {
+              if(res && res.code === 200) {
+                this.$router.push({
+                  path: this.watchUrl
+                })
+              } else {
+                this.$message.error(res.msg || '检测异常');
+              }
+            }).catch(e => {
+              console.log(e);
+              this.$message.error(res.msg || '检测异常');
+            });
+          }
         } else {
           this.$router.push({path: '/browser'})
         }

@@ -61,7 +61,7 @@ export default {
     box-sizing: border-box;
   }
   .vhall-popup-dialog {
-    font-family: '微软雅黑';
+    font-family: @fontRegular;
     /*background-color: white;*/
     position: relative;
     border-radius: 6px !important;

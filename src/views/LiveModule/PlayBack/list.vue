@@ -1,7 +1,7 @@
 <template>
   <div class="listBox">
     <pageTitle title="回放管理"></pageTitle>
-    <div class="operaBlock">
+    <div v-if="!isDemand" class="operaBlock">
       <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
       <el-button size="medium" plain round @click="toRecord">录制</el-button>
       <el-button size="medium" round @click="settingHandler">回放设置</el-button>
@@ -173,7 +173,7 @@ export default {
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
-        this.isDemand = this.liveDetailInfo.document_id == 1;
+        this.isDemand = this.liveDetailInfo.is_demand == 1;
         if (this.isDemand) {
           this.typeOptions = [
             { label: '上传', value: '2' }
@@ -325,8 +325,16 @@ export default {
     toChapter(recordId){
       this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
     },
+    // 发布
     toCreateDemand(recordData) {
-      this.$router.push({path: `/live/vodEdit`});
+      this.$router.push({
+        path: `/live/vodEdit`,
+        query: {
+          record_id: recordData.id,
+          paas_record_id: recordData.paas_record_id,
+          name: recordData.name
+        }
+      });
     }
   },
   filters: {

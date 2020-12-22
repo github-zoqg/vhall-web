@@ -2,14 +2,14 @@
   <div class="doc-preview-wrap">
     <ul class="Thumbnail">
       <li :class="activeIns === index ? 'imgActive' : ''" v-for="index of docParam.page" :key="index">
-        <img :index="index" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${index}.jpg?x-oss-process=image/resize,w_100,h_100`" @click="activeIns = index">
+        <img :index="index" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${index}.jpg`" @click="activeIns = index">
         <span>{{index}}</span>
       </li>
     </ul>
     <div class="del_imgBox">
       <img class="imgLoading" :src="`${env.staticLinkVo.tmplDownloadUrl}/images/delFlash/load.gif`" v-show="isLoading">
       <div class="imgBox">
-        <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg?x-oss-process=image/resize,w_3000,h_200`">
+        <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`">
       </div>
       <p class="arrow">
         <span class="left" @click="showLastImg">&lt;</span>

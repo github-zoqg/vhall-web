@@ -1203,7 +1203,7 @@ export default {
 }
 .unit-title {
   font-size: 14px;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
   font-weight: 500;
   color: #1A1A1A;
   line-height: 20px;
@@ -1397,7 +1397,7 @@ export default {
     /*简介4*/
     .pc-ctx-4 {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 22px;

@@ -148,7 +148,7 @@ export default {
   line-height: 18px;
   font-size: 12px;
   width: 238px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FFFFFF;
   line-height: 18px;

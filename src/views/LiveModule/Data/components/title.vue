@@ -70,7 +70,7 @@ export default {
     b {
       display: inline-block;
       font-size: 12px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       color: #fff;
       vertical-align: top;
       // line-height: 18px;
@@ -85,7 +85,7 @@ export default {
     p {
       font-size: 20px;
       font-weight: 700;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       color: #1a1a1a;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -96,7 +96,7 @@ export default {
   .box-time {
     height: 20px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     color: #555;
     line-height: 20px;
   }

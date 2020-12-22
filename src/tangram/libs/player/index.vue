@@ -205,11 +205,14 @@ export default {
       default: false
     },
     reportExtra: {
-      required: false,
-      default: {}
+      type: [Array, Object],
+      required: false
     },
     roominfo: {
       default: () => {}
+    },
+    isAudience:{
+      default: true
     }
   },
   data () {
@@ -689,13 +692,19 @@ export default {
         autoplay: false,
         forceMSE: false,
         otherOption: {
-          report_extra: this.reportExtra,
           vid: this.roominfo.vid, // hostId
           vfid: this.roominfo.vfid,
           guid: this.roominfo.guid,
           biz_id: this.$route.params.il_id
         }
       };
+      if(this.isAudience){
+        // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
+        params.otherOption.report_extra = this.reportExtra
+      }else{
+        // 助理上报     不需要switch_id
+        params.otherOption.report_extra = this.roominfo.report_extra
+      }
       if (this.isLive && this.liveOption && this.type == 'live') {
         params = Object.assign(params, {
           liveOption: this.liveOption
@@ -1207,7 +1216,7 @@ export default {
   left: 50%;
   bottom: 48px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: rgba(236, 236, 236, 1);
   line-height: 44px;

@@ -166,14 +166,15 @@ export default {
         this.totalNum = res.data.total;
         this.tableList = res.data.list;
         this.rowsList(this.tableList);
+        console.log(this.tableList, '111111111111');
       }).catch(e=>{
         console.log(e);
       });
     },
     rowsList(data) {
       data.map(item => {
-        item.type = item.withdraw_type == '1' ? '红包': '直播';
-        item.statusText = item.withdraw_status == '1' ? '成功': item.pay_type == '2' ? '失败' : '审核中';
+        item.type = item.withdraw_type == 1 ? '红包': '直播';
+        item.statusText = item.withdraw_status == 1 ? '成功': item.withdraw_status == 2 ? '失败' : '审核中';
         item.status = item.withdraw_status;
       });
     },
@@ -181,7 +182,8 @@ export default {
        this.$fetch('exportWithdraw', this.params).then(res => {
         if (res.code == 200) {
           this.params = {};
-          this.$message.success(`账单明细导出成功，请去下载中心下载`);
+          this.$message.success(`账单明细导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`账单明细${res.msg}`);
         }

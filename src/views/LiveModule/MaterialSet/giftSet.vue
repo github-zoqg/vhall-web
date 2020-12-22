@@ -316,7 +316,7 @@ export default {
     // 上传失败处理
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`礼物上传失败`);
     },
     // 上传预览
     uploadPreview(file){
@@ -324,14 +324,18 @@ export default {
     },
     // 上传格式校验
     beforeUploadHandler(file){
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`上传礼物图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('上传礼物图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -696,7 +700,7 @@ export default {
         vertical-align: top;
         margin-left: 12px;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         .gift-name{
           display: block;

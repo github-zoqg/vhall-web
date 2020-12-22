@@ -31,6 +31,7 @@
         :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
+        :before-upload="beforeUploadHandler"
         :restPic="true"
         @delete="deleteBanner"
       >
@@ -559,6 +560,24 @@ export default {
 
       return text;
     },
+    // 上传格式校验
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传表单头图只能是 ${typeList.join('、')} 格式!`);
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message.error('上传表单头图大小不能超过 2MB!');
+        return false;
+      }
+      return isType && isLt2M;
+    },
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
@@ -739,11 +758,11 @@ export default {
   }
   .el-textarea {
     /deep/ .el-textarea__inner {
-      font-family: Arial, Arial, 'Microsoft Yahei';
+      font-family: @fontRegular;
     }
     /deep/ .el-input__count {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #666666;
     }

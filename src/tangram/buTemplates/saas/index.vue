@@ -25,7 +25,6 @@
             class="vhall-main-area-tools--doc-control"
             v-if="roomInfo.interact.room_id"
           ></div>
-          <!-- {{permission}} -->
           <record
             v-auth="100020"
             @recordFun="recordFun"
@@ -525,6 +524,8 @@
             :vodControllerShow="true"
             :isMini="true"
             :docVisible="true"
+            :isAudience='false'
+            :roominfo='reportData'
             :exchangeVideoDoc="exchange"
             ref="vhallPlayer"
           ></player>
@@ -1439,6 +1440,7 @@ export default {
 
   data () {
     return {
+      reportData: {},
       acxs: '7889999',
       chatTip: false,
       memberTip: false,
@@ -1644,7 +1646,17 @@ export default {
 
   mounted () {
     window.saasindex = this;
-    this.getInavInfo();
+    this.getInavInfo(2);
+    try {
+      let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
+      let _report_extra = JSON.parse(_otherOption.report_extra)
+      _otherOption.report_extra = JSON.stringify({
+        join_id: _report_extra.join_id
+      })
+      this.reportData = _otherOption
+    } catch (error) {
+      console.log(error)
+    }
     console.warn(this.domains, '图片地址   ***********************');
     this.shareUrl = this.domains.custom ? `${this.domains.custom}/v3/live/watch/${this.ilId}` : `https:${this.domains.web_url}live/watch/${this.ilId}`;
     this.localDuration = this.duration;
@@ -2220,7 +2232,8 @@ export default {
   },
   watch: {
     roomId (newVal) {
-      this.getInavInfo();
+      console.warn('watch----进入');
+      this.getInavInfo(1);
       this.shareUrl = this.domains.custom
         ? `${this.domains.custom}/v3/live/watch/${this.ilId}`
         : `https:${this.domains.web_url}live/watch/${this.ilId}`;
@@ -2451,31 +2464,32 @@ export default {
       this.thirdPartyMobild = false;
       this.NoDocShow = false;
     },
-    getInavInfo () {
-      console.warn(this.roomStatus, 'roomStatus*************');
+    getInavInfo (val) {
+      console.warn(this.roomStatus, 'roomStatus*************',val);
       // res.data.stream.definition--speakerDefinition  不确定是否使用  先存'' res.data.stream.screen_definition --screenDefinition
       sessionStorage.setItem('speakerDefinition','');
       sessionStorage.setItem('screenDefinition', '');
-      console.warn(this.rootActive, 'this.rootActive*************');
+      console.warn(this.rootActive, 'this.rootActive*************', this.rootActive.webinar.type ,this.rootActive.webinar.type==1);
       this.$fetch('initiatorInfo', {
         webinar_id: this.webinar_id
       }).then(async res => {
           this.roomInfo = this.rootActive;
           this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-          // 因早期设置值不同  进行根源影射   更换接口时产生的问题  备注勿删
+          // 因早期设置值不同  进行根源映射   更换接口时产生的问题  备注勿删
           if(this.rootActive.webinar.type == 1){
             this.status = 1;
           }else if(this.rootActive.webinar.type == 2){
             this.status = 0;
-          }else{
+          } else {
            this.status = 2;
           }
+          console.warn(this.status, 'this.status');
           this.isPublishing = this.status == 1;
           this.isQAEnabled = this.qaStatus == 1; // ??
           this.isQAEnabled = this.roomStatus.question_status == 1; // ??
           this.roleName = this.rootActive.join_info.role_name;
 
-          this.layout =  this.roomStatus.layout;
+          this.layout =  this.rootActive.webinar.mode;
           this.localDuration = this.duration;
 
           if (this.status == 1) {
@@ -2487,7 +2501,7 @@ export default {
           if (this.roomInfo.join_info.role_name == 1) {
             console.warn('cxs--设备检测---',!this.assistantType, mediacheckStatus != 'yes', this.status != 1 );
             if (!this.assistantType && mediacheckStatus != 'yes' && this.status != 1) {
-              // this.popAlertCheckVisible = true;
+              this.popAlertCheckVisible = true;
             }
           } else if (this.roomInfo.join_info.role_name == 4 && mediacheckStatus != 'no') {
             if (!this.assistantType && mediacheckStatus != 'yes') {
@@ -3456,7 +3470,7 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
-  font-family: '微软雅黑';
+  font-family: @fontRegular;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -3910,7 +3924,7 @@ export default {
             width: 208px;
             height: 22px;
             font-size: 16px;
-            font-family: '微软雅黑';
+            font-family: @fontRegular;
             font-weight: 400;
             color: rgba(153, 153, 153, 1);
             line-height: 22px;
@@ -4006,7 +4020,7 @@ export default {
                 font-size: 12px;
                 line-height: 14px;
                 text-align: center;
-                font-family: '微软雅黑';
+                font-family: @fontRegular;
                 position: absolute;
                 left: 0;
                 bottom: 0;

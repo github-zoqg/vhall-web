@@ -20,9 +20,17 @@
                 <span @click="cash('直播')">提现</span>
                 <el-tooltip effect="dark" placement="right-start">
                   <div slot="content">
-                    1. 大于800元的提现审核，用户提交后无需人工审核，实现程序化自动到账<br>
-                    2. 小于或等于800的需要线下审核提现<br>
-                    3. 不管是人工审核还是自动审核，在admin中都需要有提现记录，进行对账审计
+                   Q1: 平台提现额度为多少？<br>
+                    A1: 平台余额1元以上方可提现。线上最大支持单笔提现额度为800元。<br>应国家税务局要求，个人用户单次提现超过800元将产生个人所得税，<br>请发送以下资料至：finance@vhall.com<br>
+                    ● 个人用户：微吼账号、姓名、身份证号、银行账户姓名、账号、开户行、提现类型（直播收益或红包收益）<br>
+                    ● 公司用户：微吼账号、营业执照扫描件加盖公章、银行账户名称、账号、开户行<br>
+                    *公司/个人信息与银行信息必须对应<br>
+                    Q2: 平台提现有手续费么，手续费具体为多少？<br>
+                    A2: 平台目前提现付费采用分成模式，平台分成5%<br>
+                    Q3: 提现申请后，几天内到账<br>
+                    A3: 从提现当天算起，7-15个工作日内到账，最终以实际到账时间为准。<br>
+                    Q4: 提现还有什么其他注意事项？<br>
+                    A4: 在提现周期内不能再次提现，到账后方可重新进行提现操作
                   </div>
                   <i class="el-icon-question"></i>
                 </el-tooltip>
@@ -45,9 +53,17 @@
                 <span @click="cash('红包')">提现</span>
                 <el-tooltip effect="dark" placement="right-start">
                   <div slot="content">
-                    1. 大于800元的提现审核，用户提交后无需人工审核，实现程序化自动到账<br>
-                    2. 小于或等于800的需要线下审核提现<br>
-                    3. 不管是人工审核还是自动审核，在admin中都需要有提现记录，进行对账审计
+                   Q1: 红包提现额度为多少？<br>
+                    A1: 红包余额1元以上方可提现，线上最大支持单笔提现额度为800元。<br>应国家税务局要求，个人用户单次提现超过800元将产生个人所得税，<br>请发送以下资料至：finance@vhall.com<br>
+                    ● 个人用户：微吼账号、姓名、身份证号、银行账户姓名、账号、开户行、提现类型（直播收益或红包收益）<br>
+                    ● 公司用户：微吼账号、营业执照扫描件加盖公章、银行账户名称、账号、开户行<br>
+                    *公司/个人信息与银行信息必须对应<br>
+                    Q2: 平台提现有手续费么，手续费具体为多少？<br>
+                    A2: 无手续费<br>
+                    Q3: 提现申请后，几天内到账<br>
+                    A3: 从提现当天算起，7-15个工作日内到账，最终以实际到账时间为准。<br>
+                    Q4: 提现还有什么其他注意事项？<br>
+                    A4: 在提现周期内不能再次提现，到账后方可重新进行提现操作
                   </div>
                    <i class="el-icon-question"></i>
                 </el-tooltip>
@@ -86,7 +102,7 @@
         </table-list>
       </el-tabs>
     </el-card>
-    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type"></cash-box>
+    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
   </div>
 </template>
 
@@ -283,15 +299,20 @@ export default {
       data.map(item => {
         item.red_packet = item.red_packet_type == '1' ? '固定金额': '拼手气';
       });
-      console.log(this.tableList, '1111111111111111111');
     },
     cash(title) {
       if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
-        this.$message.error('当前余额不足1元，不支持提现');
+        this.$message.warning('当前余额不足1元，不支持提现');
+        return false;
+      } else if (title === '直播' && parseInt(this.incomeInfo.live_balance) > 800) {
+        this.$message.warning('需要线下审核提现');
         return false;
       }
       if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) < 1) {
-        this.$message.error('当前余额不足1元，不支持提现');
+        this.$message.warning('当前余额不足1元，不支持提现');
+        return false;
+      } else if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) > 800) {
+        this.$message.warning('需要线下审核提现');
         return false;
       }
       let flag = this.isBangWeixin();
@@ -304,6 +325,9 @@ export default {
       } else {
         this.$refs.cashBox.dialogVisible = true;
       }
+    },
+    onreload() {
+      this.getIncomeInfo();
     },
     isBangWeixin() {
       return this.userInfo.user_thirds.some(item => item.type == 3);
@@ -325,7 +349,8 @@ export default {
       this.$fetch(url, this.params).then(res => {
         if (res.code == 200) {
           this.params = {};
-          this.$message.success(`${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出成功，请去下载中心下载`);
+          this.$message.success(`${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`收益明细${res.msg}`);
         }

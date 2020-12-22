@@ -6,15 +6,14 @@
       :rules="[
         { required: true, max: 100,  message: '请输入直播标题', trigger: 'blur' },
       ]">
-        <el-input v-model="formData.title" maxlength="100"  show-word-limit></el-input>
+        <el-input v-model="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
-        <!-- <el-row :gutter="20"> -->
           <el-col :span="11">
             <el-form-item prop="date1" :rules="[
               { required: true, message: '请选择直播开始日期', trigger: 'blur' }
             ]">
-              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%;"></el-date-picker>
+              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
@@ -22,10 +21,9 @@
             <el-form-item prop="date2" :rules="[
               { required: true, message: '请选择直播开始时间', trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%;"></el-time-picker>
+              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
-        <!-- </el-row> -->
       </el-form-item>
       <el-form-item label="直播模式：" required v-if="webniarType=='live'">
         <div class="titleBox">
@@ -179,7 +177,7 @@
         :active-text="homeDesc">
       </el-switch>
       <el-switch
-         v-if="webniarType=='live'"
+        v-if="webniarType=='live' || !this.versionType"
         style="display: block"
         v-model="capacity"
         active-color="#FB3A32"
@@ -193,7 +191,8 @@
         active-color="#FB3A32"
         inactive-color="#CECECE"
         inactive-text="最高并发"
-        :active-text="limitCapacityDesc">
+        :active-text="limitCapacityDesc"
+        >
       </el-switch>
       <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       <el-form-item class="btnGroup">
@@ -273,19 +272,18 @@ export default {
       if(this.capacity){
         return '已开启，观看并发人数扩容X人';
       }else{
-        return "开启后，使用扩展包扩容并发人数（扩展包剩余X人）";
+        // return "开启后，使用扩展包扩容并发人数（扩展包剩余人）"
+        return `开启后，使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
       if(this.limitCapacitySwtich){
-        this.getHighLimit();
         return '已开启，限制进入活动的观众最大并发数';
       }else{
         return "开启后，限制进入活动的观众最大并发数";
       }
     },
     webniarType(){
-      console.log(this.$route.meta.webniarType, '12314324254235');
       return this.$route.meta.webniarType;
     },
     webniarTypeToZH(){
@@ -296,6 +294,7 @@ export default {
       return zh[this.$route.meta.webniarType];
     },
     webniarIntact() {
+      // new_interact 1:有互动权限  0:无权限
       if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact == '1') {
         return false;
       } else {
@@ -310,6 +309,7 @@ export default {
         date1: '',
         date2: ''
       },
+      limitInfo: {},
       content: ``,
       docSwtich: false,
       reservation: false,
@@ -318,6 +318,7 @@ export default {
       hot: false,
       home: false,
       capacity: false,
+      isSaveInfo: false,
       limitCapacity: '',
       limitCapacitySwtich: false,
       liveTags: ["金融", '互联网', '汽车', '教育', '健康', '其他'],
@@ -329,7 +330,23 @@ export default {
       selectMedia: null
     };
   },
+  beforeRouteLeave(to, from, next) {
+    if (!this.isSaveInfo && this.title === '编辑') {
+    this.$confirm('是否取消编辑的直播内容？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-alert-box',
+        type: 'warning'
+      }).then(() => {
+        next();
+      }).catch(() => {
+      });
+    } else {
+      next();
+    }
+  },
   created(){
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     if (this.$route.query.id) {
       this.webinarId = this.$route.query.id;
       this.title = this.$route.query.type == 2 ? '编辑' : '复制';
@@ -338,7 +355,14 @@ export default {
       this.title = '创建';
       this.webinarId = '';
     }
-    console.log(JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact, '????????????')
+    if (this.$route.query.record_id) {
+      this.selectMedia = {
+        id: this.$route.query.record_id,
+        paas_record_id: this.$route.query.paas_record_id,
+        name: this.$route.query.name
+      }
+    }
+    this.getHighLimit();
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -392,14 +416,18 @@ export default {
       }
     },
     beforeUploadHnadler(file){
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -414,9 +442,9 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      // if (this.limitCapacity) {
-      //   this.getHighLimit();
-      // }
+      if (this.limitCapacity > this.limitInfo.total) {
+        this.$message.error(`最大并发数不能大于并发剩余量`);
+      }
       let data = {
         webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
@@ -447,6 +475,7 @@ export default {
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
+              this.isSaveInfo = true;
               console.log(res);
               setTimeout(()=>{
                 this.$router.push({path: '/live/list'});
@@ -472,8 +501,8 @@ export default {
       this.showDialog = true;
     },
     getHighLimit() {
-      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
-        console.log(res.data, '11111111111111');
+      this.$fetch('getHighLimit').then(res => {
+        this.limitInfo = res.data;
       })
     },
     resetForm(formName) {
@@ -508,6 +537,10 @@ export default {
   /deep/ .el-form-item{
     // width: 100%;
     max-width: 660px;
+    margin-bottom: 26px;
+  }
+  /deep/.el-col-11{
+    height: 40px;
   }
   // /deep/ .el-form-item__label{
   //   float: none;
@@ -518,11 +551,12 @@ export default {
   }
   .pageTitle {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
-    line-height: 20px;
+    line-height: 40px;
     margin-right: 9px;
+    // padding-bottom: 5px;
   }
   .el-icon-question {
     color: #999999;

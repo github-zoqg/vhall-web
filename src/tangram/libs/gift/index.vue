@@ -303,7 +303,7 @@ export default {
                     color: #fff;
                     outline: none;
                     margin-right: 10px;
-                    font-family: PingFangSC-Regular;
+                    font-family: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif';
                     font-size: 12px;
                     text-align: center;
                     vertical-align: middle;

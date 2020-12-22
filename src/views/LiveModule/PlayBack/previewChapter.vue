@@ -181,7 +181,7 @@ export default {
         record_id: this.recordId
       }).then(res => {
         if (res.data && res.data.chatper_callbanck_status == 0) {
-          this.$message.warning('上次章节保存任务尚未完成，当前章节信息为为保存章节')
+          this.$message.warning('上次章节保存任务尚未完成，当前章节信息为前一次保存的章节')
         }
       })
     },

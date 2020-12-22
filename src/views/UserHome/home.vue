@@ -15,7 +15,7 @@
        <!-- 右侧名片 -->
        <div class="ac__home__panel--right">
          <div class="ac__home--user">
-           <img :src="avatarImgUrl" alt="" />
+           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" />
            <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
            <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>
          </div>
@@ -167,7 +167,7 @@ export default {
   padding-top: 22px;
   margin-top: 24px;
   p {
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     margin-top: 10px;
     &:first-child {

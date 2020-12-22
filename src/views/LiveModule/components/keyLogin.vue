@@ -23,6 +23,10 @@
         roleName: this.$route.params.role_name
       }
     },
+    beforeRouteLeave (to, from, next) {
+      // ...
+      console.warn('计划进入  准备出走');
+    },
     methods: {
       entryLive() {
         console.log(this.$route.params)

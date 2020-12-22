@@ -1,5 +1,18 @@
 const mixins = {
   methods: {
+    ClearUserList(){
+      return new Promise((resolve, reject)=>{
+        this.$fetch('v3ClearUserList',{}).then(res=>{
+          console.warn(999);
+          if(res.code != 200){
+            this.$message.warning(res.msg)
+          }
+          resolve()
+        }).catch(err=>{
+          resolve()
+        })
+      })
+    },
     checkLottery(){
       this.$fetch('v3CheckLottery', {}).then(res=>{
         if(res.code == 200){
@@ -27,14 +40,13 @@ const mixins = {
     // 获取奖品列表
     getPrizeList(){
       console.warn('wa');
-      this.$fetch('getPrizeList', {
+      this.$fetch('v3GetPrizeList', {
         room_id: this.roomId,
         pos: 0,
         limit: 20,
         source: 0
       }).then(res=>{
         if(res.code == 200){
-          console.warn(res.data.list, '奖品列表');
           this.prizeList = res.data.list
           this.prize = res.data.list[1]
         }else{

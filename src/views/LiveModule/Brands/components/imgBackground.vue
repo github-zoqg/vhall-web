@@ -52,11 +52,23 @@ export default {
       imageUrl: '',
       domain_url: '',
       isType: 1,
-      fileList: [require('@/common/images/avatar.jpg'), require('@/common/images/custom-tab/doc-bg-new-h5.png'), require('@/common/images/custom-tab/pc_bg-new-h5.png'), require('@/common/images/custom-tab/chat-temp-new-h5.png'), require('@/common/images/custom-tab/detail-bg-new-h5.png'), require('@/common/images/custom-tab/que02.png'), require('@/common/images/custom-tab/private-chat-new.png')],
+      fileList: ['https://t-alistatic01.e.vhall.com/static/images/invitation/bg_1@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_2@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_3@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_4@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_5@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_6@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_7@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_8@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0'],
     };
   },
   components: {
     upload
+  },
+  props: ['url'],
+  watch: {
+   dialogVisible() {
+     if (this.dialogVisible) {
+        this.domain_url  = this.url || '';
+        this.imageUrl = this.url;
+        if (this.imageUrl) {
+          this.isType = 0;
+        }
+     }
+   }
   },
   methods: {
     choseBackground(index) {
@@ -79,14 +91,18 @@ export default {
     },
     beforeUploadHnadler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`背景图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('背景图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -95,14 +111,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`背景图片上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
     handleFileChange(file) {
       console.log(file);
-      // this.handleuploadSuccess(file);
     }
   }
 };

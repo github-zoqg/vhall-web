@@ -66,7 +66,7 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
-          <el-button round type="primary" @click="toRoom">发起直播</el-button>
+          <el-button round type="primary" @click="toRoom" :disabled="liveDetailInfo.webinar_state==1">发起直播</el-button>
         </div>
         <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
           <p class="subColor">直播即将开始</p>
