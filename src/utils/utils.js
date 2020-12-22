@@ -197,12 +197,16 @@ export function checkAuth(to, from, next) {
   let user_auth_key = getQueryString('user_auth_key');
   let auth_tag = sessionOrLocal.get('tag', 'localStorage');
   let sourceTag = sessionOrLocal.get('sourceTag')
+  let scene_id = 1;
+  if (auth_tag) {
+    scene_id = auth_tag.indexOf('bind') !== -1 ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
+  }
   if (user_auth_key) {
     console.log('第三方登录，需要调取回调函数存储token');
     let params = {
       source: sourceTag ? 2 : 1, // 1 控制塔 2观看端 3admin
       key: getQueryString('user_auth_key'),
-      scene_id: auth_tag.indexOf('bind') !== -1 ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
+      scene_id: scene_id
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
@@ -214,12 +218,20 @@ export function checkAuth(to, from, next) {
           return;
         }
       } else {
-        if (auth_tag.indexOf('bind') !== -1) {
-          sessionOrLocal.set('bind_result', JSON.stringify(res));
-          sessionOrLocal.set('user_auth_key', user_auth_key);
-          // 绑定成功
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
-        } else {
+        if(auth_tag) {
+          if (auth_tag.indexOf('bind') !== -1) {
+            sessionOrLocal.set('bind_result', JSON.stringify(res));
+            sessionOrLocal.set('user_auth_key', user_auth_key);
+            // 绑定成功
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+          } else {
+            // 获取回调token失败
+            this.$message.error('登录信息获取失败，请重新登录');
+            sessionOrLocal.clear('localStorage');
+            sessionOrLocal.clear();
+          }
+        } else{
+          this.$message.error(res.msg || '异常请求，无法操作');
           // 获取回调token失败
           this.$message.error('登录信息获取失败，请重新登录');
           sessionOrLocal.clear('localStorage');

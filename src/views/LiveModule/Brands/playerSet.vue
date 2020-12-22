@@ -80,7 +80,7 @@
                       >
                       </el-switch>
                     </el-form-item>
-                    <el-form-item label="水印图片" prop="img_url" required>
+                    <el-form-item label="水印图片" required>
                       <upload
                         class="giftUpload"
                         v-model="formWatermark.img_url"
@@ -113,7 +113,7 @@
                       <span class="isNum">{{formWatermark.img_alpha}}%</span>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="preWatermark" :disabled="formWatermark.img_url">保存</el-button>
+                      <el-button type="primary" @click="preWatermark">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -282,20 +282,20 @@ export default {
           this.formHorse.alpha = Number(res.data.alpha);
           this.scrolling_open = Boolean(res.data.scrolling_open);
         } else {
-          this.$message.success('获取信息失败');
+          // this.$message.error('获取信息失败');
         }
       })
     },
      // 获取水印基本信息
     getBaseWaterList() {
        this.$fetch('getWatermark', {webinar_id: this.$route.params.str}).then(res => {
-        if (res.code == 200) {
+        if (res.code == 200 && res.data.webinar_id) {
           this.formWatermark = {...res.data};
+          this.formWatermark.img_alpha = Number(res.data.img_alpha);
           this.domain_url = res.data.img_url;
-          this.formWatermark.img_url = res.data.img_url;
           this.watermark_open = Boolean(res.data.watermark_open);
         } else {
-          this.$message.success('获取信息失败');
+          // this.$message.error('获取信息失败');
         }
       })
     },
@@ -317,26 +317,31 @@ export default {
       this.formHorse.interval = this.formHorse.interval || 20;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
-      this.$fetch('setScrolling',this.formHorse).then(res => {
+      this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
          if (res.code == 200) {
            this.$message.success("保存跑马灯成功");
           //  this.initPlayer();
          } else {
-           this.$message.success("保存跑马灯失败");
+           this.$message.error("保存跑马灯失败");
          }
       });
     },
     // 保存水印
     preWatermark() {
+      if (!this.domain_url && this.watermark_open) {
+        this.$message.error('水印图片不能为空');
+        return;
+      }
       this.formWatermark.webinar_id = this.$route.params.str;
-      this.formWatermark.img_url = this.audioImg;
+      this.formWatermark.img_url = this.$parseURL(this.domain_url).path;
       this.formWatermark.watermark_open = Number(this.watermark_open);
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
          if (res.code == 200) {
           //  this.initPlayer();
-           this.$message.success("保存水印成功");
+          this.getBaseWaterList();
+          this.$message.success("保存水印成功");
          } else {
-           this.$message.success("保存水印灯失败");
+          this.$message.error("保存水印灯失败");
          }
       });
     },
