@@ -214,7 +214,7 @@ export default {
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
-      checked: false,
+      checked: true,
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值

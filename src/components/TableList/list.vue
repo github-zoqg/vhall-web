@@ -46,8 +46,6 @@
               <img
                 class="imgs"
                 :src="scope.row.img"
-                width="40"
-                height="40"
               />
             </div>
             <div v-else-if="item.key === 'img_url'">
@@ -235,8 +233,9 @@ export default {
     margin-right: 12px;
   }
   /deep/.cell .imgs {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
+    // object-fit: cover;
   }
    /deep/.cell .advImg {
     width: 142px;
