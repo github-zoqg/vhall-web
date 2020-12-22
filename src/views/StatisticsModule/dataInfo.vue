@@ -111,7 +111,8 @@ export default {
   },
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    if (this.parentId) {
+    this.childNum = JSON.parse(sessionOrLocal.get('userInfo')).child_num;
+    if (this.parentId && this.childNum) {
       this.searchAreaLayout.push({
         type: '3',
         key: 'type',

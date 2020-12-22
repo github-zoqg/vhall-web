@@ -258,6 +258,7 @@ export default {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning',
+            customClass: 'zdy-message-box',
             center: true
           }).then(() => {
             that.allDelete(rows.id);

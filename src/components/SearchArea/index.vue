@@ -109,6 +109,11 @@ export default {
         return;
       }
       this.isActive = index || this.active;
+       if (this.isActive == 3 || this.isActive == 4) {
+        this.searchParams.end_time = getRangeDays(5);
+      } else {
+        this.searchParams.end_time = getRangeDays(2);
+      }
       this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(this.isActive);
       this.$emit("onSearchFun");
     },
