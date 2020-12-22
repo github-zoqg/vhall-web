@@ -3,7 +3,6 @@
     <el-table
       ref="elTable"
       :data="manageTableData"
-      :row-key="setRowKeyFun"
       @selection-change="handleTableCheckbox"
       :max-height="maxHeight"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
@@ -96,6 +95,7 @@
                 :key="index"
                 size="mini"
                 type="text"
+                v-preventReClick
                 @click="handleBtnClick(scope, item)"
                 v-if="checkShowHandle(scope.row, item)"
               >{{ item.name }}</el-button

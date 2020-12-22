@@ -421,7 +421,7 @@ export default {
       }
     },
     beforeUploadHnadler(file){
-      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      const typeList = ['png', 'jpeg', 'gif', 'bmp']
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
