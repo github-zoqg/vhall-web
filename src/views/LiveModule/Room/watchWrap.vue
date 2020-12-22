@@ -559,8 +559,6 @@
     </popup>
     <!--弹窗蒙层-->
     <div class="shade" @click="shadeClick" v-if="shadeShow"></div>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="sdkLoadHandler('chat')"></remote-script>
-    <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="sdkLoadHandler('interact')"></remote-script>
   </div>
 </template>
 <script>
@@ -781,6 +779,7 @@ export default {
      * 使用setTimeout30min后请求接口，延续cookie时间
      */
     this.heartbeatLink()
+    this.startRoomInitProcess()
   },
   computed: {
     showOnline() {
@@ -820,17 +819,6 @@ export default {
             console.log('心跳检测失败:', e)
           })
       }, 1000 * 60 * 30)
-    },
-    // 聊天或互动sdk加载完成
-    sdkLoadHandler (type) {
-      if (type == 'chat') {
-        this.chatSdkLoaded = true;
-      } else {
-        this.interactionSdkLoaded = true;
-      }
-      if(this.chatSdkLoaded && this.interactionSdkLoaded) {
-        this.startRoomInitProcess()
-      }
     },
     async startRoomInitProcess () {
       try {

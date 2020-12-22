@@ -696,7 +696,6 @@ export default {
           biz_id: this.$route.params.il_id
         }
       };
-      console.log('1a', this.roominfo)
       if (this.isLive && this.liveOption && this.type == 'live') {
         params = Object.assign(params, {
           liveOption: this.liveOption
@@ -713,7 +712,7 @@ export default {
         // 跑马灯
         params.marqueeOption = {
           enable: true,
-          text: this.marquee.text, // 跑马灯的文字
+          text: this.marquee.text ? this.marquee.text : '', // 跑马灯的文字
           alpha: this.marquee.alpha, // 透明度,100完全显示,0 隐藏
           size: this.marquee.size, // 文字大小
           color: this.marquee.color, // 文字颜色
