@@ -1478,6 +1478,8 @@ export default {
             this.$router.push({path: `/live/watch/${this.$route.params.id}`})
           } else {
             // window.location.reload()
+            this.handleCancelDelete()
+            this.$message.success('您已预约成功，直播当天访问直播间参与直播')
             this.getWatchInfo().then(this.handleInitRoom())
           }
         } else {
