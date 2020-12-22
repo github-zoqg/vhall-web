@@ -68,7 +68,7 @@ export default {
     },
     countDownTime () {
       this.timer = setInterval(() => {
-        if (this.sign_time == 0) {
+        if (this.sign_time <=1 ) {
           clearInterval(this.timer)
           this.showSign = false
           return

@@ -9,9 +9,9 @@
     </pageTitle>
     <!-- 操作栏 -->
       <div class="operaBox">
-        <el-button type="primary" round @click="createLiveAction('1')" size="medium" class="length104">创建直播</el-button>
-        <el-button round @click="createLiveAction('2')" size="medium">创建点播</el-button>
-        <div class="searchBox search-tag-box">
+        <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
+        <el-button round @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
+        <div class="searchBox search-tag-box" v-if="totalElement">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
               v-for="item in statusOptions"
@@ -50,7 +50,7 @@
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
-                  <i class="el-icon-view"></i>
+                  <i class="iconfont-v3 saasicon_redu"></i>
                   {{item.pv | unitCovert}}
                 </span>
                 <img :src="`${item.img_url}`" alt="">
@@ -361,6 +361,9 @@ export default {
           color: #fff;
           font-size: 14px;
           z-index: 2;
+          // i{
+          //   color: #FB3A32;
+          // }
         }
       }
       .bottom{

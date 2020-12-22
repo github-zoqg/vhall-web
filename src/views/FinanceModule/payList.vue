@@ -70,6 +70,7 @@
             <div class="reBtn">
              <img :src="payCode" alt="">
              <p>请用微信扫描二维码,完成支付</p>
+             <el-button @click="finishPay">完成支付</el-button>
             </div>
           </div>
           </el-dialog>

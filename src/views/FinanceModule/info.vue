@@ -190,6 +190,7 @@ export default {
   },
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+    this.childNum = JSON.parse(sessionOrLocal.get('userInfo')).child_num;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     if (!this.versionType) {
@@ -203,7 +204,7 @@ export default {
         key: 'webinar_flow'
       })
     }
-    if (this.parentId) {
+    if (this.parentId && this.childNum) {
       let mainParams = {
         type: '3',
         key: 'type',

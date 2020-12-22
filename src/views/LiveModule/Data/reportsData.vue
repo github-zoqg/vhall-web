@@ -25,7 +25,7 @@
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
-        <lint-charts :lineDataList="limitDataList"></lint-charts>
+        <lint-charts :lineDataList="limitDataList" :type="1"></lint-charts>
       </div>
       <div class="statistical-line statistical-dark">
         <span>观众访问趋势图</span>
@@ -211,8 +211,7 @@ export default {
       let formParams = this.$refs.searchArea.searchParams;
       let paramsObj = {
         webinar_id: this.$route.params.str,
-        switch_id: formParams.switchId || 0,
-        end_time: getRangeDays(1)
+        switch_id: formParams.switchId || 0
       };
       if (parseInt(formParams.searchIsTime) === 2) {
         formParams.searchTime = '';
@@ -223,10 +222,14 @@ export default {
       } else {
         this.searchAreaLayout = this.searchLayout;
       }
-      if (this.active!= 1) {
+      if (formParams.end_time && !formParams.start_time) {
+        formParams.end_time = '';
+        formParams.start_time = '';
+      } else {
         paramsObj.start_time = getRangeDays(this.active);
+        paramsObj.end_time = getRangeDays(this.active);
       }
-      for (let i in formParams) {
+      for (let i in this.$params(formParams)) {
         if (i === 'searchTime' && formParams.searchTime) {
           paramsObj['start_time'] = formParams[i][0];
           paramsObj['end_time'] = formParams[i][1];

@@ -134,11 +134,13 @@ export default {
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      let paramsObj = {
-        end_time: getRangeDays(1),
-      };
-      if (this.active!= 1) {
+      let paramsObj = {};
+      if (this.active == 1) {
+        paramsObj.start_time = '';
+        paramsObj.end_time = '';
+      } else {
         paramsObj.start_time = getRangeDays(this.active);
+        paramsObj.end_time = getRangeDays(5);
       }
        if (params === 'search') {
           pageInfo.pageNum = 1;
