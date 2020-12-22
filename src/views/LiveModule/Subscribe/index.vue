@@ -909,7 +909,7 @@ export default {
         this.joinCommonParam = {
           webinar_id: this.$route.params.id,
           refer: this.$route.query.refer,
-          record_id: this.roomData.paas_record_id,
+          record_id: this.$route.query.record_id,
           visitor_id: sessionStorage.getItem('visitor_id') ? sessionStorage.getItem('visitor_id') : ''
         }
         if (this.publicAdv) {
