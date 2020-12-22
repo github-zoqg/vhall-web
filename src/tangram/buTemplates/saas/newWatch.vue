@@ -60,7 +60,7 @@
             :liveOption="playerLiveOption"
             :vodOption="vodOption"
             :poster="poster"
-            :isAudio="roomInfo.layout == 2"
+            :isAudio="roomInfo.mode == 1"
             :voiceBack="voiceBack"
             :vodControllerShow="true"
             ref="vhallPlayer"
@@ -983,6 +983,7 @@ export default {
         inav_id: this.bizInfo.inav_id,
         introduction: this.bizInfo.introduction,
         layout: this.layout,
+        mode: this.bizInfo.webinar.mode,
         like: this.bizInfo.webinar.like,
         paas_access_token: this.bizInfo.paas_access_token,
         record_id: this.bizInfo.paas_record_id,
@@ -996,6 +997,7 @@ export default {
         third_party_user_id: this.bizInfo.user.third_party_user_id,
         parentId: this.userInfo ?  this.userInfo.parent_id : ''
       }
+      console.log(555555, inavInfo)
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;

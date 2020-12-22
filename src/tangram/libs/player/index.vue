@@ -8,7 +8,7 @@
         alt
       />
       <div class="audio" v-show="audioStatus || isAudio">
-        <img src="./img/bg2x.png" />
+        <img src="../../assets/voice.png" />
         {{$t("message.voicePlaying")}}
       </div>
       <div class="loading" v-if="loading && !(audioStatus || isAudio)">
@@ -297,7 +297,7 @@ export default {
     }
   },
   async mounted () {
-    console.log(this.$route, 999, this.$route.query.embed == 'video');
+    console.log(9991, this.isAudio, this.audioStatus);
     if (this.$route.query.embed == 'video') {
       this.isEmbedVideo = true;
     }

@@ -836,7 +836,7 @@ export default {
         await this.getSkin() // 获取皮肤
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
-        await this.getMenuList()
+        // await this.getMenuList()
         // 预约后的活动才显示邀请卡
         if (this.isLogin) {
           await this.getAttentionStatus()
@@ -1596,6 +1596,8 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
+        console.log(9090,  this.configList)
+
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
