@@ -1,7 +1,8 @@
 <template>
  <div class="home-main">
    <OldHeader class="head-wrap"></OldHeader>
-   <div class="v-head-bg" :style="{ backgroundImage: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'})`}">
+   <div class="v-head-bg"
+        :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}">
      <div class="v-head-img"></div>
    </div>
    <div class="home-main-container">
@@ -9,7 +10,7 @@
      <div class="ac__home__panel">
        <!-- 左侧 [列表区域] -->
        <div class="ac__home__panel--left">
-         <home-main @showSet="showSetHandle" v-if="!isSetShow"></home-main>
+         <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
          <home-set  @showSet="showSetHandle" v-if="isSetShow"></home-set>
        </div>
        <!-- 右侧名片 -->
@@ -58,6 +59,7 @@ export default {
   methods: {
     showSetHandle(type) {
       this.isSetShow = type;
+      this.getHomePageInfo();
     },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
@@ -75,6 +77,7 @@ export default {
           this.attentioned_count = attentioned_count;
           this.follow = follow;
           this.content = homepage_info.content;
+          this.$refs.homeMain.initComp(homepage_info);
         } else {
           this.userHomeVo = null;
         }

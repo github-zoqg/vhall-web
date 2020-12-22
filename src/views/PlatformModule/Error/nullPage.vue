@@ -4,6 +4,9 @@
       <img src="../../../common/images/sys/no-search.svg" class="no-search" />
       <p class="null-info">暂未搜索到您想要的内容</p>
     </div>
+    <div v-if="nullType === 'no-show'" class="no-show">
+      <p class="null-info" v-html="text"></p>
+    </div>
     <div v-else>
       <img src="../../../common/images/sys/no-create.svg" class="no-create" />
       <p class="null-info" v-html="text"></p>
@@ -39,6 +42,9 @@ export default {
 }
 .search {
   padding-bottom: 137px;
+}
+.no-show {
+  margin: 230px 0 27px 0;
 }
 .no-create {
   margin: 185px 0 27px 0;
