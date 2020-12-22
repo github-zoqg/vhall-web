@@ -67,11 +67,15 @@ export default {
       defaultText: tipText,
       form: {
         signTip: tipText, //签到提示语
-        duration: 30, // 签到显示的时间，单位秒，
+        duration: 10, // 签到显示的时间，单位秒，
         autoSign: false, // 是否自动发起签到，1自动，0取消自动
         interval: 300 // 自动发起签到的轮询定时时间，单位秒
       },
       durationOps: [
+        {
+          value: 10,
+          label: '10秒'
+        },
         {
           value: 30,
           label: '30秒'
