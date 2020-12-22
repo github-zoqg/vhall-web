@@ -38,12 +38,14 @@
         <div class="tab">
           <span>章节</span>
         </div>
-        <ul class="chapterList">
-          <li v-for="(item, index) in tableData" @click="chapterHandler(index)" :key="index">
-            <span class="title">{{item.index}}. {{item.title}}</span>
-            <span class="times">{{item.createTimeShow}}</span>
-          </li>
-        </ul>
+        <div class="listBox">
+          <ul class="chapterList">
+            <li v-for="(item, index) in tableData" @click="chapterHandler(index)" :key="index">
+              <span class="title">{{item.index}}. {{item.title}}</span>
+              <span class="times">{{item.createTimeShow}}</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -319,6 +321,10 @@ export default {
             padding-bottom: 6px;
             font-size: 14px;
           }
+        }
+        .listBox {
+          height: calc(100% - 32px);
+          overflow-y: auto;
         }
         .chapterList{
           li{

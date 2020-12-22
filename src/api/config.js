@@ -223,6 +223,8 @@ const apis = {
   saveChapters: ['/v3/webinars/record/save-doc-info', 'POST'], // 保存章节信息 xiaodong.ding
   checkChapterSave: ['/v3/webinars/record/check-chatper-save', 'POST'], // 检查章节保存状态 xiaodong.ding
   msgInitConsole: ['/v3/webinars/record/msg-init-console', 'POST'], // 初始化消息 xiaodong.ding
+  initRecord: ['/v3/webinars/record/init', 'POST'], // 回放录制初始化 xiaodong.ding
+  getDocInfo: ['/v3/webinars/record/get-doc-info', 'POST'], // 查询章节信息 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √

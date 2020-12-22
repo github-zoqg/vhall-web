@@ -83,6 +83,11 @@ export default {
       tableSelect: []
     };
   },
+  props: {
+    tableDataLength: {
+      required: true
+    }
+  },
   created() {
     this.getDocList()
   },
@@ -91,17 +96,24 @@ export default {
       if (!this.tableSelect.length) {
         this.$message.error('请选择要关联的文档');
       } else {
-        this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
-        }).then(() => {
-          // this.tabs = 2
+        if (this.tableDataLength) {
+          this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box'
+          }).then(() => {
+            // this.tabs = 2
+            this.$emit('getChapters', this.tableSelect);
+            this.$refs.docList.clearSelection()
+            this.tableSelect = []
+            this.dialogVisible = false;
+          })
+        } else {
           this.$emit('getChapters', this.tableSelect);
           this.$refs.docList.clearSelection()
           this.tableSelect = []
           this.dialogVisible = false;
-        })
+        }
       }
     },
     // transOver() {

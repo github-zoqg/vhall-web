@@ -9,7 +9,7 @@
         </el-tabs>
         <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_day}]"
                    size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0">{{Number($route.params.str) === 1 ? '批量分配' : '分配并发包'}}</el-button>
+                   v-if="!(is_dynamic > 0) && dataList.length > 0">{{resourcesVo && Number(resourcesVo.type) === 1 ? '批量分配' : '分配并发包'}}</el-button>
         <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
                    v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_day">分配扩展包</el-button>
 
@@ -39,7 +39,7 @@
               label="手机号">
             </el-table-column>
             <el-table-column
-              label="预设流量" v-if="Number($route.params.str) === 1">
+              label="预设流量" v-if="resourcesVo && (resourcesVo.type > 0)">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append">GB</template>
@@ -48,7 +48,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配并发" v-if="Number($route.params.str) !== 1">
+              label="分配并发" v-if="resourcesVo && !(resourcesVo.type > 0)">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append"> 方</template>
@@ -110,7 +110,7 @@
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="120px">
         <el-form-item label="分配数量：" prop="count">
           <el-input v-model.trim="multiAllocForm.count" auto-complete="off" placeholder="请输入分配数量" class="btn-relative">
-            <template slot="append"> {{ Number($route.params.str) === 1 ? 'GB' : '方' }}</template>
+            <template slot="append"> {{resourcesVo && Number(resourcesVo.type) === 1 ? 'GB' : '方' }}</template>
           </el-input>
         </el-form-item>
       </el-form>
@@ -161,7 +161,12 @@
           ]
         },
         sonDao: {},
-        multipleSelection: []
+        multipleSelection: [],
+        query: {
+          pos: 0,
+          limit: 500,
+          pageNumber: 1
+        },
       };
     },
     methods: {
@@ -221,11 +226,15 @@
         }
       },
       // 获取列表数据
-      getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
+      getSonList(row) {
+        if (row) {
+          this.query.pos = row.pos;
+          this.query.pageNumber = row.pageNum;
+        }
         let params = {
           user_id: sessionOrLocal.get('userId'),
-          pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-          limit: pageInfo.pageSize,
+          pos: this.query.pos,
+          limit: this.query.limit,
           scene_id: 2 // 场景id：1子账号列表 2用量分配获取子账号列表
         };
         this.$fetch('getSonList', this.$params(params)).then(res =>{
@@ -384,6 +393,7 @@
       this.allocMoreGet();
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       if(userInfo) {
+        // is_dynamic > 0 表示动态， 其它表示固定。
         this.tabType = userInfo.is_dynamic > 0 ? 'trends' : 'regular';
         this.is_dynamic = userInfo.is_dynamic;
         if(!(this.is_dynamic > 0)) {

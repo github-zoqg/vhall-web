@@ -27,10 +27,10 @@
         </upload>
       </el-form-item>
       <el-form-item label="公司名称：" prop="company">
-        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" maxlength="30" />
+        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" />
       </el-form-item>
       <el-form-item label="您的职业：" prop="position">
-        <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" maxlength="15" />
+        <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="length152" round @click.prevent.stop="baseSetSave">保 存</el-button>
@@ -63,13 +63,13 @@ export default {
           { required: true, message: '账号昵称不能为空', trigger: 'blur' },
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入账号昵称', trigger: 'blur' }
-        ],
-        company: [
+        ]
+        /*,company: [
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
         ],
         position: [
           { max: 15, message: '最多可输入15个字符', trigger: 'blur' },
-        ],
+        ],*/
       },
       accountInfo: null
     };
