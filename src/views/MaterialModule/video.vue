@@ -241,9 +241,10 @@ export default {
       that.$prompt('', '编辑',{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          inputPlaceholder: '请输入名称'
+          inputPlaceholder: '请输入名称',
+          inputErrorMessage: '名字格式不正确'
         }).then(({ value }) => {
-          let flag = Boolean(value.match(/^[ ]*$/));
+          let flag = Boolean(value.match(/[ ]*$/));
           if(!flag && value!=null){
             that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, filename: value}).then(res=>{
               that.$message.success('修改成功');
