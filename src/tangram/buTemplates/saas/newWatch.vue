@@ -60,7 +60,7 @@
             :liveOption="playerLiveOption"
             :vodOption="vodOption"
             :poster="poster"
-            :isAudio="roomInfo.layout == 2"
+            :isAudio="roomInfo.mode == 1"
             :voiceBack="voiceBack"
             :vodControllerShow="true"
             ref="vhallPlayer"
@@ -109,7 +109,7 @@
         </div>
         <!-- 固定工具栏区域 -->
         <div class="player-funct" v-show="!isEmbedVideo" :class="{'video-only': watchDocShow}">
-          <div class="player-share" @click="toggleShare" v-if="!isEmbed && userModules.share.show == 1 ">
+          <div class="player-share" @click="toggleShare" v-if="!isEmbed && userModules.share.show == 0 ">
             <span
               class="iconfont"
               style="color: #ccc; display: inline-block;vertical-align: middle"
@@ -147,14 +147,14 @@
             >
           </div>
           <div class="player-active" v-show="!isEmbed">
-            <div class="table-praise" v-if="userModules.like.show == 1">
+            <div class="table-praise" v-if="userModules.like.show == 0">
               <praise :roomId="roomId" :times="roomInfo.like" :isLogin="isLogin" @login="NoLogin"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show == 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
+            <div class="table-reward" v-if="userModules.reward.show == 0 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <!-- <reward :roomId="roomId"></reward> -->
               <img @click="showGiveMoneyPannel" src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
             </div>
-            <div class="table-gift" v-if="userModules.gift.show == 1 && roomInfo.role_name == 2">
+            <div class="table-gift" v-if="userModules.gift.show == 0 && roomInfo.role_name == 2">
               <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
@@ -983,6 +983,7 @@ export default {
         inav_id: this.bizInfo.inav_id,
         introduction: this.bizInfo.introduction,
         layout: this.layout,
+        mode: this.bizInfo.webinar.mode,
         like: this.bizInfo.webinar.like,
         paas_access_token: this.bizInfo.paas_access_token,
         record_id: this.bizInfo.paas_record_id,
@@ -994,8 +995,9 @@ export default {
         guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : '',
         vid: this.bizInfo.reportOption ? this.bizInfo.reportOption.vid : '',
         third_party_user_id: this.bizInfo.user.third_party_user_id,
-        parentId: this.userInfo ?  this.userInfo.parent_id : '',
+        parentId: this.userInfo ?  this.userInfo.parent_id : ''
       }
+      console.log(555555, inavInfo)
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;
@@ -1046,7 +1048,7 @@ export default {
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
-        nickname: this.userInfo ? this.userInfo.nick_name : '', // 昵称
+        nickname: this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name, // 昵称
         avatar: this.userInfo && this.userInfo.avatar
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
@@ -1072,7 +1074,6 @@ export default {
         window.EventBridge.$emit('loaded');
         return;
       }
-      console.log(9999999, opt)
       VhallChat.createInstance(
         opt,
         chat => {
@@ -1754,10 +1755,15 @@ export default {
     position: absolute;
     left: 50%;
     margin-left: -52px;
+    padding: 0px;
+    span{
+      display: inline-block;
+      width: 104px!important;
+      text-align: center;
+    }
   }
 
   .table-lottery {
-    background: red;
     float: right;
     display: inline-block;
     margin-top: 4px;

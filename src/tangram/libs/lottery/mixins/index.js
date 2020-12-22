@@ -47,7 +47,6 @@ const mixins = {
         source: 0
       }).then(res=>{
         if(res.code == 200){
-          console.warn(res.data.list, '奖品列表');
           this.prizeList = res.data.list
           this.prize = res.data.list[1]
         }else{
@@ -127,7 +126,7 @@ const mixins = {
         lottery_user_ids: deliverId,// 设置中奖用户ID
         is_repetition: Number(this.repeatWinning),  // 是否允许重复中奖1:允许0:不允许
         is_publish: Number(this.WinningList), // 是否公布中奖名单1:公布0:不公布
-        prize_id: this.prize.prize_id,// 奖品ID
+        prize_id: this.prize && this.prize.prize_id ? this.prize.prize_id : '',// 奖品ID
       }
       if(this.joinLottery == 8){
         //  口令 <=15个字符, lottery_type=8时不能为空

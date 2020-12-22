@@ -623,7 +623,6 @@ export default {
       }
     },
     initSDK () {
-      console.log('sdk initing', this.type);
       let params = {
         appId: this.appId, // 应用ID，必填
         accountId: this.accountId, // 第三方用户ID，必填

@@ -63,10 +63,10 @@
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
                 <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
-                  <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
+                  <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
-                <el-button class="down-btn" round @click="downFCodeHandle">下载邀请码</el-button>
+                <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
@@ -97,15 +97,17 @@
         <div v-show="Number(form.verify) === 6" class="viewer-rules-ctx--6">
           <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="100px">
             <el-form-item label="付费金额" prop="fee">
-              <el-input v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
+              <el-input v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative">
+                <template slot="append">元</template>
+              </el-input>
             </el-form-item>
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
                 <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
-                  <el-button class="no-border" size="mini" slot="append" @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
+                  <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
-                <el-button class="down-btn" round @click="downFCodeHandle">下载邀请码</el-button>
+                <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
@@ -136,7 +138,7 @@
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
           <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="100px">
             <el-form-item label="观看密码" prop="password">
-              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="8"></el-input>
+              <el-input v-model.number="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></el-input>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
               <div class="switch__box">
@@ -203,7 +205,7 @@
       <!-- 保存 -->
       <div class="save-margin-top40">
         <el-form label-width="100px">
-          <el-button type="primary" class="length152" round @click.prevent.stop="viewerSetSave">保 存</el-button>
+          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="viewerSetSave">保 存</el-button>
         </el-form>
       </div>
     </div>
@@ -222,20 +224,22 @@ export default {
   data() {
     let checkNums = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('生成数量不能为空'));
+        return callback(new Error('邀请码数量1-1000'));
       } else if (value > 1000 || value < 1) {
-        return callback(new Error('生成数量1~1000'));
+        return callback(new Error('邀请码数量1-1000'));
+      } else if (isNaN(value)) {
+        return callback(new Error('邀请码数量1-1000'));
       } else {
         callback();
       }
     };
     let checkFee = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('请按正确格式填写，如10.00'));
+        return callback(new Error('请按正确格式填写，0.01-99999.99'));
       } else if (isNaN(value)) {
-        return callback(new Error('请按正确格式填写，如10.00'));
+        return callback(new Error('请按正确格式填写，0.01-99999.99'));
       } else if (parseFloat(value) < 0.01 || parseFloat(value) > 99999.99) {
-        return callback(new Error('请按正确格式填写，如10.00'));
+        return callback(new Error('请按正确格式填写，0.01-99999.99'));
       } else {
         callback();
       }
@@ -277,8 +281,8 @@ export default {
       },
       payFormRules: {
         fee: [
-          { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'},
+          { required: true, message: '请按正确格式填写，0.01-99999.99', trigger: 'blur' },
+          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'},
           { validator: checkFee, trigger: 'blur' }
         ]
       },
@@ -287,7 +291,7 @@ export default {
       },
       fCodeFormRules: {
         nums: [
-          { required: true, message: '1~1000', trigger: 'blur' },
+          { required: true, message: '邀请码数量1-1000', trigger: 'blur' },
           { validator: checkNums, trigger: 'blur' }
         ]
       },
@@ -300,8 +304,8 @@ export default {
           { validator: checkNums, trigger: 'blur' }
         ],
         fee: [
-          { required: true, message: '请按正确格式填写，如10.00', trigger: 'blur' },
-          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，如10.00' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
+          { required: true, message: '请按正确格式填写，0.01-99999.99', trigger: 'blur' },
+          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
         ]
       },
       pwdForm: {
@@ -487,13 +491,11 @@ export default {
     },
     // 验证码生成
     fCodeExecute(formName) {
-      let flag = true;
-      this.$refs[formName].validateField('nums', (valid) => {
-        if(valid) {
-          flag = false;
-        }
+      let errorMsg = '';
+      this.$refs[formName].validateField('nums', (msg) => {
+        errorMsg = msg;
       });
-      if(flag) {
+      if(!errorMsg) {
         this.$fetch('fCodeExecute', {
           webinar_id: this.$route.params.str,
           nums: this[formName].nums

@@ -559,8 +559,6 @@
     </popup>
     <!--弹窗蒙层-->
     <div class="shade" @click="shadeClick" v-if="shadeShow"></div>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="sdkLoadHandler('chat')"></remote-script>
-    <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="sdkLoadHandler('interact')"></remote-script>
   </div>
 </template>
 <script>
@@ -781,6 +779,7 @@ export default {
      * 使用setTimeout30min后请求接口，延续cookie时间
      */
     this.heartbeatLink()
+    this.startRoomInitProcess()
   },
   computed: {
     showOnline() {
@@ -821,17 +820,6 @@ export default {
           })
       }, 1000 * 60 * 30)
     },
-    // 聊天或互动sdk加载完成
-    sdkLoadHandler (type) {
-      if (type == 'chat') {
-        this.chatSdkLoaded = true;
-      } else {
-        this.interactionSdkLoaded = true;
-      }
-      if(this.chatSdkLoaded && this.interactionSdkLoaded) {
-        this.startRoomInitProcess()
-      }
-    },
     async startRoomInitProcess () {
       try {
         await this.getRoomInfo() // 初始化房间信息
@@ -848,7 +836,7 @@ export default {
         await this.getSkin() // 获取皮肤
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
-        await this.getMenuList()
+        // await this.getMenuList()
         // 预约后的活动才显示邀请卡
         if (this.isLogin) {
           await this.getAttentionStatus()
@@ -1608,7 +1596,8 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-      console.log(119 , this.configList)
+        console.log(9090,  this.configList)
+
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`

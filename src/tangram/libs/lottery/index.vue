@@ -225,12 +225,12 @@ export default {
         lottery_id: this.lotteryInfo.id
       }, {}, 2000).then(res => {
         if (res.code === 200) {
-          console.warn('抽奖完成', res.data);
+          console.warn('抽奖完成', res.data, res.data.award_snapshoot);
           this.closeShow = true;
           this.lotteryResultShow = true;
           this.lotteryEndResult = res.data.lottery_users; // 中奖用户人信息列表
-          this.lotteryResultObj.url = res.data.award_snapshoot.image_url
-          this.lotteryResultObj.text = res.data.award_snapshoot.award_name
+          this.lotteryResultObj.url = res.data.award_snapshoot && res.data.award_snapshoot.image_url ? res.data.award_snapshoot.image_url:''
+          this.lotteryResultObj.text = res.data.award_snapshoot && res.data.award_snapshoot.award_name ? res.data.award_snapshoot.award_name: ''
           this.prizeShow = false;
         }
       });

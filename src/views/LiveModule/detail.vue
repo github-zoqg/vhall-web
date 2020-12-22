@@ -8,7 +8,7 @@
             <img :src="liveDetailInfo.img_url" alt="">
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
             <span class="hot">
-              <i class="el-icon-view"></i>
+              <i class="iconfont-v3 saasicon_redu"></i>
               {{ liveDetailInfo.pv | unitCovert }}
             </span>
           </div>
@@ -66,7 +66,7 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
-          <el-button round type="primary" @click="toRoom" :disabled="liveDetailInfo.webinar_state==1">发起直播</el-button>
+          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen">发起直播</el-button>
         </div>
         <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
           <p class="subColor">直播即将开始</p>
@@ -92,6 +92,7 @@ export default {
   data(){
     return {
       msg: '',
+      isAnginOpen: false,
       outLiveTime: false,
       liveDetailInfo: {
         webinar_state: ''
@@ -184,6 +185,9 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
+        if (res.data.webinar_state == 1) {
+          this.getOpenLive();
+        }
         if (res.data.webinar_state == 2) {
           let date = new Date();
           let nowTime = date.setTime(date.getTime());
@@ -254,6 +258,22 @@ export default {
       }).catch(error=>{
         this.$message.error(`恢复预告失败，${error.message}`);
       });
+    },
+    // 判断是否有起直播的权限
+    getOpenLive() {
+      this.$fetch('checkLive', this.$params({
+          webinar_id: this.$route.params.str
+          })).then((res) => {
+            if(res && res.code === 200) {
+              this.isAnginOpen = false;
+            } else {
+              this.isAnginOpen = true;
+              this.$message.error(res.msg || '检测异常');
+            }
+          }).catch(e => {
+            this.isAnginOpen = true;
+            this.$message.error(res.msg || '检测异常');
+          });
     },
     blockHandler(item){
       if(item.path){

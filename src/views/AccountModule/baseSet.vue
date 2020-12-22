@@ -27,10 +27,10 @@
         </upload>
       </el-form-item>
       <el-form-item label="公司名称：" prop="company">
-        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" maxlength="30" />
+        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" />
       </el-form-item>
       <el-form-item label="您的职业：" prop="position">
-        <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" maxlength="15" />
+        <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="length152" round @click.prevent.stop="baseSetSave">保 存</el-button>
@@ -63,13 +63,13 @@ export default {
           { required: true, message: '账号昵称不能为空', trigger: 'blur' },
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入账号昵称', trigger: 'blur' }
-        ],
-        company: [
+        ]
+        /*,company: [
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
         ],
         position: [
           { max: 15, message: '最多可输入15个字符', trigger: 'blur' },
-        ],
+        ],*/
       },
       accountInfo: null
     };
@@ -86,14 +86,18 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
       let imgSrc = window.URL.createObjectURL(file);
       let img = new Image();

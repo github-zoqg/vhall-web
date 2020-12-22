@@ -44,7 +44,6 @@
       ></div>
     </div>
      <!-- v-if="!VhallMsgSdk" -->
-    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.7.js"></remote-script>
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.4-1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>

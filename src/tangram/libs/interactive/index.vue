@@ -20,7 +20,7 @@
     <!-- 主持人 - 直播未开始 ， 音频直播 ， 音频直播 结束 遮罩图 -->
     <div
       :class="status == 1 ? 'audio-img':'audio-img--beforestart'"
-      v-show="layout == 2 || videoToAudio"
+      v-show="layout == 1 || videoToAudio"
       v-if="roleName == 1"
     >
       <div class="voicebg">
@@ -457,7 +457,8 @@ export default {
       //  主持人 - 无视频自动切换音频直播 (4.9.7版本去掉该逻辑)
 
       // 音频直播
-      if (this.layout == 2) {
+      console.warn('this.layout----------', this.layout);
+      if (this.layout == 1) {
         // 显示遮罩层
         // 禁用视频
         // 不采集 视频设备信息
@@ -479,7 +480,7 @@ export default {
         }
         profile = VhallRTC[profileConst];
       }
-      console.log('设备变更了', profileConst, this.$profile, profile, this.mainScreen, this.accountId);
+      console.log('设备变更了',vidoeDeviceStatus, profileConst, this.$profile, profile, this.mainScreen, this.accountId);
       let options = Object.assign(
         {
           videoNode: `stream-${this.accountId}`, // 传入本地视频显示容器，必填
@@ -657,7 +658,7 @@ export default {
      */
 
     async startLive (status) {
-      console.warn('-----------------------------------', this.webinadId, this.$route)
+      console.warn('点击的是开支直播-----------------------------------', this.webinadId, this.$route, status)
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
@@ -1879,7 +1880,7 @@ export default {
     background-size: 400px;
     width: 100%;
     height: 100%;
-    z-index: 3;
+    z-index: 4;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -105,7 +105,7 @@
           <p slot="tip" v-else>请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click="multiUploadShow = false" size="mini" round>确 定</el-button>
+          <el-button type="primary" @click="saveUploadKey" size="mini" round>确 定</el-button>
           <el-button @click="multiUploadShow = false" size="mini" round>取 消</el-button>
         </div>
       </div>
@@ -365,31 +365,46 @@ export default {
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
         // 文件上传成功，保存信息
-        this.$fetch('uploadKeywordAdd', {
+        this.$fetch('checkUploadKeyword', {
           file: res.data.file_url
         }).then(resV => {
           if (resV && resV.code === 200) {
             this.importResult = resV.data;
-            this.multiUploadShow = false;
-            // 重新刷新列表数据
-            this.getKeywordList();
+          } else {
+            this.$message.error(res.msg || '');
           }
         }).catch(e => {
-          this.$message.error('导入聊天严禁词信息失败！');
+          this.$message.error('导入聊天严禁词校验失败！');
         });
       }
     },
+    saveUploadKey() {
+      this.$fetch('uploadKeywordAdd', {
+        file: this.fileUrl
+      }).then(resV => {
+        if (resV && resV.code === 200) {
+          this.importResult = resV.data;
+          this.multiUploadShow = false;
+          // 重新刷新列表数据
+          this.getKeywordList();
+        }
+      }).catch(e => {
+        this.$message.error('导入聊天严禁词信息失败！');
+      });
+    },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['csv', 'xls', 'xlsx'];
+      const typeList = ['xls', 'xlsx'];
       let nameArr = file.name.split('.');
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+        return;
       }
       if (!isLt2M) {
         this.$message.error('上传文件大小不能超过 2MB!');
+        return;
       }
       return isType && isLt2M;
     },

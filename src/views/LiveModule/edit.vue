@@ -13,7 +13,7 @@
             <el-form-item prop="date1" :rules="[
               { required: true, message: '请选择直播开始日期', trigger: 'blur' }
             ]">
-              <el-date-picker type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
+              <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
@@ -197,7 +197,7 @@
       <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       <el-form-item class="btnGroup">
         <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
-        <el-button @click="resetForm('ruleForm')" round>取消</el-button>
+        <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 
@@ -310,6 +310,11 @@ export default {
         date2: ''
       },
       limitInfo: {},
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 8.64e7;
+        }
+      },
       content: ``,
       docSwtich: false,
       reservation: false,
@@ -417,13 +422,17 @@ export default {
     },
     beforeUploadHnadler(file){
       const typeList = ['png', 'jpeg', 'gif', 'bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },

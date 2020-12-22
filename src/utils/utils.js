@@ -169,6 +169,31 @@ export function parseURL(url) {
     };
   }
 }
+
+/**
+ * 验证文件格式与大小
+ * @param file 文件
+ * @param that 提示消息类型
+ * @param type 类型
+ * @returns {Boolean} 验证通过还是失败
+ */
+export function checkUploadType(file, that, type = 1) {
+  const typeList = type === 1 ? ['png', 'jpeg', 'gif', 'bmp'] : [];
+  console.log(file.type.toLowerCase())
+  let typeArr = file.type.toLowerCase().split('/');
+  const isType = typeList.includes(typeArr[typeArr.length - 1]);
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isType) {
+    that.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+    return false;
+  }
+  if (!isLt2M) {
+    that.$message.error('上传封面图片大小不能超过 2MB!');
+    return false;
+  }
+  return isType && isLt2M;
+}
+
 export function getQueryString(name) {
   let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
   let r = window.location.search.substr(1).match(reg);

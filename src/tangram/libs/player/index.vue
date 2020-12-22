@@ -8,7 +8,7 @@
         alt
       />
       <div class="audio" v-show="audioStatus || isAudio">
-        <img src="./img/bg2x.png" />
+        <img src="../../assets/voice.png" />
         {{$t("message.voicePlaying")}}
       </div>
       <div class="loading" v-if="loading && !(audioStatus || isAudio)">
@@ -205,7 +205,7 @@ export default {
       default: false
     },
     reportExtra: {
-      type: [Array, Object],
+      type: [Array, Object, String],
       required: false
     },
     roominfo: {
@@ -297,7 +297,7 @@ export default {
     }
   },
   async mounted () {
-    console.log(this.$route, 999, this.$route.query.embed == 'video');
+    console.log(9991, this.isAudio, this.audioStatus);
     if (this.$route.query.embed == 'video') {
       this.isEmbedVideo = true;
     }
@@ -705,7 +705,6 @@ export default {
         // 助理上报     不需要switch_id
         params.otherOption.report_extra = this.roominfo.report_extra
       }
-      console.log('1a', this.roominfo)
       if (this.isLive && this.liveOption && this.type == 'live') {
         params = Object.assign(params, {
           liveOption: this.liveOption
@@ -722,7 +721,7 @@ export default {
         // 跑马灯
         params.marqueeOption = {
           enable: true,
-          text: this.marquee.text, // 跑马灯的文字
+          text: this.marquee.text ? this.marquee.text : '', // 跑马灯的文字
           alpha: this.marquee.alpha, // 透明度,100完全显示,0 隐藏
           size: this.marquee.size, // 文字大小
           color: this.marquee.color, // 文字颜色
@@ -732,7 +731,8 @@ export default {
         };
       } else {
         params.marqueeOption = {
-          text: ''
+          text: '',
+          enable: false
         };
       }
       if (this.water) {

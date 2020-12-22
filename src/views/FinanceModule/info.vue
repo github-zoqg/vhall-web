@@ -59,25 +59,25 @@
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
-            <h1>{{ trendData.webinar_num | formatMoney || 0 }}</h1>
+            <h1>{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>累计使用流量（GB）</p>
-            <h1>{{ trendData.total_flow | formatMoney || 0 }}</h1>
+            <h1>{{ trendData.total_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>直播使用流量（GB）</p>
-            <h1>{{ trendData.live_flow | formatMoney || 0 }}</h1>
+            <h1>{{ trendData.live_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
             <p>回放使用流量（GB）</p>
-            <h1>{{ trendData.vod_flow | formatMoney || 0 }}</h1>
+            <h1>{{ trendData.vod_flow || 0 }}</h1>
           </div>
         </div>
       </div>
@@ -190,6 +190,7 @@ export default {
   },
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+    this.childNum = JSON.parse(sessionOrLocal.get('userInfo')).child_num;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     if (!this.versionType) {
@@ -203,7 +204,7 @@ export default {
         key: 'webinar_flow'
       })
     }
-    if (this.parentId) {
+    if (this.parentId && this.childNum) {
       let mainParams = {
         type: '3',
         key: 'type',

@@ -240,7 +240,7 @@ export default {
       this.$fetch('getUserBaseinfo', params).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
-          item.userName = `${item.nick_name}${item.w_name}`;
+          item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
         })
         this.totalNum = res.data.total;
       });

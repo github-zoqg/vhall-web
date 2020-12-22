@@ -1,7 +1,7 @@
 <template>
   <VhallDialog :visible.sync="showSign" title="签到" width="468px" class="sign" >
     <CountDown :duration="duration" :consume="sign_time" class="sign-counter"></CountDown>
-    <div class="sign-title">设计师的信息觅食指南第三讲</div>
+    <div class="sign-title">{{title}}</div>
     <el-button type="danger" class="sign-btn" @click="signin">立即签到</el-button>
   </VhallDialog>
 </template>
@@ -18,7 +18,8 @@ export default {
       showSign: false,
       sign_id: '',
       sign_time: 0,
-      duration: 30
+      duration: 30,
+      title: '主持人发起了签到...'
     };
   },
   created() {
@@ -43,6 +44,7 @@ export default {
         console.log('处理签到信令');
         this.sign_id = e.data.sign_id
         this.showSign = true;
+        this.title = e.title
         this.sign_time = Number(e.data.sign_show_time)
         this.duration = Number(e.data.sign_show_time)
         this.countDownTime()
@@ -66,7 +68,7 @@ export default {
     },
     countDownTime () {
       this.timer = setInterval(() => {
-        if (this.sign_time == 0) {
+        if (this.sign_time <=1 ) {
           clearInterval(this.timer)
           this.showSign = false
           return

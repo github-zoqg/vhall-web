@@ -36,7 +36,7 @@
           width="280"
         >
           <template slot-scope="scope">
-            <p class="text"><icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row.file_name }},{{scope.row.id}}</p>
+            <p class="text"><icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row.file_name }}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -58,6 +58,7 @@
         </el-table-column>
       </el-table>
       <div class="btn-center">
+        <span class="btn-select">已勾选 <strong>{{this.dialogMulti.length}}</strong> 条</span>
         <el-button type="primary" round size="medium" @click="saveCheckHandle">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
       </div>
@@ -239,6 +240,12 @@ export default {
     margin-right: 12px;
     &:last-child {
       margin-right: 0;
+    }
+  }
+  .btn-select {
+    float: left;
+    strong {
+      color: #FB3A32;
     }
   }
 }

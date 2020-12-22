@@ -15,7 +15,7 @@
        <!-- 右侧名片 -->
        <div class="ac__home__panel--right">
          <div class="ac__home--user">
-           <img :src="avatarImgUrl" alt="" />
+           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" />
            <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
            <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>
          </div>

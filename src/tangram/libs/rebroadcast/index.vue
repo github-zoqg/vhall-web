@@ -169,7 +169,6 @@ export default {
           this.loading = false;
           this.list = res.data ? res.data.list : [];
         }
-          console.warn('获取转播列表准确------', res);
       }).catch(err=>{
           this.loading = false;
           console.log(error);
