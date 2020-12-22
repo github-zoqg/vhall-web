@@ -11,7 +11,9 @@
           <a :href="logo_jump_url" v-if="logo" class="sidebar-logo2">
             <img v-if="logo" :src="logo">
           </a>
-          <img v-else src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
+          <a :href="logo_jump_url" v-else class="sidebar-logo2">
+            <img src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
+          </a>
         </div>
       </transition>
       <!-- 是否收缩按钮 -->
