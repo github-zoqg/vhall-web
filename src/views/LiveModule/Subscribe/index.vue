@@ -335,7 +335,7 @@
           <div class="leftWatch">
             <img
               :src="roomData.webinar.img_url"
-              v-if="roomData && roomData.webinar && ((roomData.warmup_paa_record_id && roomData.verified == 0) || (!roomData.preview_paas_record_id && !roomData.warmup_paa_record_id))" alt="">
+              v-if="roomData && roomData.webinar && (roomData.warmup_paas_record_id || roomData.warmup_paas_record_id) && roomData.verified == 0" alt="">
             <div class="subscribe-video" v-else>
               <Watch
                 v-if="initPlayer"
@@ -381,7 +381,7 @@
                 <p class="limit" v-else>{{limitText}}</p>
               </div>
             </template>
-            <div class="open-screen" v-show="openScreenConfig.status == 0">
+            <div class="open-screen" v-if="openScreenConfig && openScreenConfig.status == 0">
               <div class="open-count-time" @click="closeOpenScreen">关闭<span v-show="openScreenConfig.shutdown_type == 1">{{'(' + openScreenTime + ')'}}</span></div>
               <img @click="openScreenJump" :src="openScreenConfig.img" alt="">
             </div>
@@ -674,22 +674,17 @@ export default {
       this.$PLAYER = null
     }
     if (this.chatSDK) {
-      console.log(9901, this.chatSDK)
       this.chatSDK.destroy()
-      console.log(9902, this.chatSDK)
-
       this.chatSDK = null
-      console.log(9903, this.chatSDK)
-
     }
     window.removeEventListener('resize', () => {})
     this.timer && clearInterval(this.timer)
   },
   methods:{
     closeOpenScreen () {
-      this.openScreenConfig.status = 1
-      if (this.openScreenTimer) clearInterval(this.openScreenTimer)
-      this.openScreenTime = 3
+      // this.openScreenConfig.status = 1
+      // if (this.openScreenTimer) clearInterval(this.openScreenTimer)
+      // this.openScreenTime = 3
     },
     openScreenJump () {
       window.location.href = this.openScreenConfig.url
@@ -731,6 +726,9 @@ export default {
           this.webinarType = this.roomData.webinar.type
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
           this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
+          if ((this.roomData.preview_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 1) {
+            this.initPlayer = true
+          }
           this.getAttentionNum()
           break
         case 12514: // 您已被踢出，请联系活动组织者
@@ -758,11 +756,11 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.openScreenConfig = res.data['screen-posters']
-          if (this.openScreenConfig.status == 0 && this.openScreenConfig.shutdown_type == 1) {
+          if (this.openScreenConfig && this.openScreenConfig.status == 0 && this.openScreenConfig.shutdown_type == 1) {
             if (this.openScreenTimer) clearInterval(this.openScreenTimer)
             this.openScreenTimer = setInterval(() => {
               if (this.openScreenTime <= 0) {
-                this.closeOpenScreen()
+                // this.closeOpenScreen()
                 return
               }
               this.openScreenTime --
@@ -928,7 +926,7 @@ export default {
             this.setCustomTheme(this.theme)
           }
           this.initChat()
-          if ((this.roomData.webinar.verified == 1 && this.roomData.warmup_paa_record_id) || (this.roomData.preview_paas_record_id)) {
+          if (this.roomData.verified == 1 && (this.roomData.warmup_paas_record_id || this.roomData.preview_paas_record_id)) {
             this.initPlayerSDK()
           }
         })
@@ -940,7 +938,7 @@ export default {
     },
     initChat () {
       let context = {
-        nickname: '', // 昵称
+        nickname: this.roomData.join_info.nickname, // 昵称
         avatar: 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
         // pv: 100, // pv
         role_name: (this.$route.params.role_name && this.$route.params.role_name != 4) ? this.$route.params.role_name : 2, // 角色 1主持人2观众3助理4嘉宾
@@ -956,7 +954,6 @@ export default {
         token: this.roomData.interact.subscribe_paas_access_token,
         hide: 0
       };
-
       VhallChat.createInstance(
         opt,
         chat => {
@@ -996,26 +993,11 @@ export default {
     },
     // 暖场试看初始化
     initPlayerSDK () {
-      let vodOption = {},
-          liveOption = {},
-          type = ''
-      if (this.roomData.preview_paas_record_id) { // 暖场视频
-        type = 'live',
-        liveOption = {
-          type: 0 || isIE() ? 'hls' : 'flv',
-          roomId: this.roomData.interact.room_id
-        }
-      } else if (this.roomData.warmup_paa_record_id) {
-        type = 'vod'
-        vodOption = {
-          recordId: this.roomData.warmup_paa_record_id
-        }
-      }
       this.videoParams = {
         appId: this.roomData.interact.paas_app_id,
         accountId: this.roomData.join_info.third_party_user_id,
         token: this.roomData.interact.subscribe_paas_access_token,
-        type: type,
+        type: 'vod',
         poster: '',
         report_extra: this.roomData.report_data.report_extra ? this.roomData.report_data.report_extra : {},
         roominfo: {
@@ -1024,12 +1006,10 @@ export default {
           vid: this.roomData.report_data ? this.roomData.report_data.vid : ''
         }
       }
-      this.videoParams.vodOption = vodOption
-      this.videoParams.liveOption = liveOption
+      this.videoParams.vodOption = {
+        recordId: this.roomData.warmup_paas_record_id ? this.roomData.warmup_paas_record_id : this.roomData.preview_paas_record_id
+      }
       this.initPlayer = true
-      // vodOption: {
-      //   recordId: '63e352fd' // TODO: this.roomData.preview_paas_record_id
-      // },
     },
     // startTime  YYYY-MM-DD HH:MM
     remainTimes(startTime){
@@ -1480,7 +1460,9 @@ export default {
             // window.location.reload()
             this.handleCancelDelete()
             this.$message.success('您已预约成功，直播当天访问直播间参与直播')
-            this.getWatchInfo().then(this.handleInitRoom())
+            this.getWatchInfo().then(res => {
+              this.handleInitRoom()
+            })
           }
         } else {
           this.handleAuthErrorCode(res.code, res.msg)
