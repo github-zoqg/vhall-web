@@ -40,7 +40,7 @@ const mixins = {
     // 获取奖品列表
     getPrizeList(){
       console.warn('wa');
-      this.$fetch('getPrizeList', {
+      this.$fetch('v3GetPrizeList', {
         room_id: this.roomId,
         pos: 0,
         limit: 20,

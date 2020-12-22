@@ -323,7 +323,11 @@ export default {
           }
           try {
             let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
-            delete _otherOption.report_extra
+            let _report_extra = JSON.parse(_otherOption.report_extra)
+            // delete _otherOption.report_extra.switch_id
+            _otherOption.report_extra = JSON.stringify({
+              join_id: _report_extra.join_id
+            })
             _data.otherOption = _otherOption
           } catch (error) {}
           // otherOption: {
