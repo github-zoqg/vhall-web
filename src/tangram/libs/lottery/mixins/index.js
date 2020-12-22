@@ -47,7 +47,6 @@ const mixins = {
         source: 0
       }).then(res=>{
         if(res.code == 200){
-          console.warn(res.data.list, '奖品列表');
           this.prizeList = res.data.list
           this.prize = res.data.list[1]
         }else{

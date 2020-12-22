@@ -542,7 +542,6 @@ export default {
         pos: Number(this.curr_page )* 50,
         limit: 50
       }).then(res => {
-        console.warn(res, '请求历时消息接口为空')
         if (res.data.list.length) {
           let list = res.data.list
             .map(item => {
