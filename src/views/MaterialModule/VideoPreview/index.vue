@@ -110,7 +110,7 @@ export default {
         poster: '', // 封面地址  仅支持.jpg
         vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption:{ // 选填
-          enable:true, // 默认 false
+          enable:false, // 默认 false
           text:"xxx",    // 跑马灯的文字
           alpha:100,    // 透明度  100 完全显示   0 隐藏
           size:18,      // 文字大小
@@ -120,7 +120,7 @@ export default {
           position:1   // 跑马灯位置 ， 1 随机 2上  3中 4下
         },
         watermarkOption: { // 选填
-          enable:true, // 默认 false
+          enable: false, // 默认 false
           url: this.audioImg, // 水印图片的路径
           align: 'tr', // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%

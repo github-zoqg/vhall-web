@@ -118,6 +118,7 @@ export default {
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
+        this.versionType = res.data.edition;
         this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
         sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
@@ -147,7 +148,7 @@ export default {
       });
     },
     buyVersion() {
-      if (this.$route.path === '/finance/info') {
+      if (this.$route.path !== '/finance/info') {
         this.$router.push({
           path: '/finance/info'
         });

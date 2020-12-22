@@ -24,7 +24,7 @@
       <div class="table-order_2">
         <p>总金额：<span>￥{{ payInfo.amount }}</span></p>
       </div>
-      <div class="pay-over-time" v-if="time=== '0:0'">
+      <div class="pay-over-time" v-if="timeOut">
         <p><img src="//t-alistatic01.e.vhall.com/static/images/vhall3.0/pay-fail.png" alt=""></p>
         <p>支付超时</p>
         <span @click="repurchase">重新购买</span>
@@ -75,21 +75,21 @@
           </el-dialog>
       </div>
     </el-card>
-    <div class="down-time" v-if="time != '0:0'">
+    <div class="down-time" v-if="!timeOut">
       <p><i class="el-icon-warning-outline"></i> 请在<span>{{ time }}</span>内完成支付</p>
     </div>
   </div>
 </template>
 <script>
-import QRcode from 'qrcode';
 import { diffToTime } from '@/utils/general.js';
+import Env from "@/api/env";
 export default {
   data() {
     return {
-      isChecked: '',
+      isChecked: '1',
+      timeOut: false,
       dialogBuyVisible: false,
       dialogweiXinVisible: false,
-      link: '',
       payCode: '',
       time:'0:0',
       payInfo: {},
@@ -116,6 +116,7 @@ export default {
       let targetStart = new Date(targetStartDate);
       let targetEnd = new Date(targetEndDate);
       if (targetEnd.getTime() - targetStart.getTime() < 0) {
+        this.timeOut = true;
         return false;
       } else {
         let diff = targetEnd.getTime() - targetStart.getTime();
@@ -132,14 +133,11 @@ export default {
         this.time = `${minute}:${second}`;
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
-            if (this.time === '0:0') {
-              this.$message.error('支付超时');
-            }
             this.downTime(targetStart, targetEnd);
             window.clearTimeout(diffSetTime);
           }, 1000);
-          // return diffTime;
         } else {
+          this.timeOut = true;
           return this.time;
         }
       }
@@ -154,6 +152,9 @@ export default {
         order_id:  this.$route.query.orderId,
         type: index
       };
+      if (index == 1) {
+        params.show_url = `${process.env.VUE_APP_WEB_URL}/finance/infoDetail`;
+      }
       this.$fetch('payOrder', params).then(res =>{
         if (index == '1') {
           this.dialogBuyVisible = true;
@@ -167,21 +168,17 @@ export default {
       });
     },
     getweiXinCode(link) {
-       QRcode.toDataURL(
-        link,
-        (err, url) => {
-          console.log(err, url);
-          this.payCode = url;
-        }
-      );
+      this.payCode = `${Env.staticLinkVo.aliQr}${link}`;
     },
     repurchase() {
       this.$router.push({
-        path: '/finance'
+        path: '/finance/info'
       });
     },
     finishPay() {
-      this.payOrder(this.isChecked);
+      this.$router.push({
+        path: '/finance/infoDetail'
+      });
     }
   }
 };
