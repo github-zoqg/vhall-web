@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="signup-main">
     <div class="head">
       <pageTitle title="报名表单">
         <el-switch
@@ -18,8 +18,8 @@
       </pageTitle>
       <div class="settingBox">
         <ul class="options">
-          <template v-for="(item, key) in setOptions">
-            <section class="block" :key="key">{{key}}</section>
+          <template v-for="(item, key, index) in setOptions">
+            <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
             <li
               :class="{
                 item: true,
@@ -493,6 +493,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .signup-main {
+    /deep/ .el-switch__core{
+      height: 16px;
+      width: 28px!important;
+      &:after {
+        width: 12px;
+        height: 12px;
+      }
+    }
+    /deep/ .el-switch.is-checked .el-switch__core::after {
+      margin-left: -13px;
+    }
+  }
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
     pointer-events: none;
@@ -515,13 +528,18 @@ export default {
       .block{
         font-size: 16px;
         color: #666666;
-        margin-bottom: 20px;
+        height: 40px;
+        line-height: 40px;
+      }
+      .block-bto{
+        margin-top: 10px;
       }
       .item{
         font-size: 14px;
         color: #1A1A1A;
-        margin-bottom: 20px;
         width: fit-content;
+        height: 40px;
+        line-height: 40px;
         cursor: pointer;
         &.active{
           color: #FB3A32;
