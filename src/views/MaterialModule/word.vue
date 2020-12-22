@@ -479,8 +479,8 @@ export default {
     EventBus.$on('host_msg_webinar', res => { // 转码状态
       console.log(res, '监听到host_msg_webinar转码状态事件');
       /*
-        converted_page: "0"
-        converted_page_jpeg: "1"
+        converted_page: "0" // 动态页数
+        converted_page_jpeg: "1" // 静态页数
         document_id: "01b17b82"
         page: "1"
         status: "200"
