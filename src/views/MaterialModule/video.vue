@@ -252,32 +252,38 @@ export default {
           }
         }).catch(() => {});
     },
+    confirmDelete(id) {
+      this.$confirm('确定要删除此视频或音频吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'zdy-message-box',
+        center: true
+      }).then(() => {
+        this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
+          if (res.code == 200) {
+            this.getTableList();
+            this.$message.success('删除成功');
+          } else {
+            this.$message.error(res.msg);
+          }
+
+        });
+      }).catch(() => {});
+    },
     del(that, { rows }) {
       that.checkedList = [];
-      that.$confirm('确定要删除此视频或音频吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-            customClass: 'zdy-message-box',
-            center: true
-          }).then(() => {
-            that.allDelete(rows.id);
-          }).catch(() => {});
+      that.confirmDelete(rows.id);
     },
     // 批量删除
-    allDelete(id) {
-      if (!id) {
-        if(this.checkedList.length <= 0) {
+    allDelete() {
+      if(this.checkedList.length <= 0) {
           this.$message.error('请至少选择一条视频删除');
           return;
         } else {
-          id = this.checkedList.join(',');
+          let id = this.checkedList.join(',');
+          this.confirmDelete(id);
         }
-      }
-      this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
-        this.getTableList();
-        this.$message.success('删除成功');
-      });
     },
     preview(that, { rows }) {
       //  this.videoParam 进本信息

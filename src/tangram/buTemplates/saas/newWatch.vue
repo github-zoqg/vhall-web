@@ -1030,13 +1030,23 @@ export default {
       if (inavInfo.status == 2 && inavInfo.record_id == '') {
         // 跳转到直播结束
         // window.location.href = `/${this.ilId}`
-      } else if ((inavInfo.status == 2 || inavInfo.status == 0) && inavInfo.record_id != '') {
+      } else if ((inavInfo.status == 2 && (this.bizInfo.preview_paas_record_id || this.bizInfo.warmup_paas_record_id)) || ((inavInfo.status == 4 || inavInfo.status == 5) && this.bizInfo.paas_record_id)) {
+        let _id = ''
+        if (inavInfo.status == 2) {
+          if (this.bizInfo.warmup_paas_record_id) {
+            _id = this.bizInfo.warmup_paas_record_id
+          } else {
+            _id = this.bizInfo.preview_paas_record_id
+          }
+        } else {
+          _id = this.bizInfo.paas_record_id
+        }
         // 回放
         this.playerType = 'vod';
-        this.vodOption['recordId'] = this.roomInfo.record_id;
+        this.vodOption['recordId'] = _id
         this.vodOption['defaultDefinition'] = 'same';
         this.playerLiveOption = {};
-      } else {
+      } else if (inavInfo.status == 1){
         // 直播
         this.playerType = 'live';
         this.vodOption = {};
@@ -1047,6 +1057,7 @@ export default {
       }
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
+      console.log(998889, this.userInfo.nick_name, this.bizInfo.user.nick_name)
       let context = {
         nickname: this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name, // 昵称
         avatar: this.userInfo && this.userInfo.avatar
