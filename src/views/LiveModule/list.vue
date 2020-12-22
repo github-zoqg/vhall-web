@@ -50,7 +50,7 @@
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
-                  <i class="el-icon-view"></i>
+                  <i class="iconfont-v3 saasicon_redu"></i>
                   {{item.pv | unitCovert}}
                 </span>
                 <img :src="`${item.img_url}`" alt="">
@@ -361,6 +361,9 @@ export default {
           color: #fff;
           font-size: 14px;
           z-index: 2;
+          // i{
+          //   color: #FB3A32;
+          // }
         }
       }
       .bottom{
