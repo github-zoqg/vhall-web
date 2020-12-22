@@ -1553,7 +1553,7 @@ export default {
             }
             break;
         default:
-          this.$message.warning(res.msg)
+          this.$message.warning(msg)
           break
       }
     },
