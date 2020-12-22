@@ -1046,7 +1046,7 @@ export default {
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
-        nickname: this.userInfo ? this.userInfo.nick_name : '', // 昵称
+        nickname: this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name, // 昵称
         avatar: this.userInfo && this.userInfo.avatar
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
