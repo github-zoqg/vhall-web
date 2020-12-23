@@ -451,6 +451,7 @@ export default {
               background: #f5f5f5;
               color: #383838;
               font-size: 12px;
+              cursor: pointer;
             }
             .findCaptcha{
               width: 270px;
