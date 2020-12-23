@@ -35,7 +35,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="活动热度:">
+      <el-form-item label="热度:">
         <p class="switch__box">
           <el-switch
             v-model="hot"
@@ -56,7 +56,7 @@
         </p>
       </el-form-item>
       <el-form-item label="专题目录:" required>
-        <el-button size="small" @click="showActiveSelect = true">添加</el-button>
+        <el-button size="small" type="primary" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
@@ -317,7 +317,17 @@ export default {
       });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      if (this.$route.query.id) {
+        this.initInfo()
+      } else {
+        this.$refs[formName].resetFields();
+        this.imageUrl = '';
+        this.content = '';
+        this.home = true;
+        this.reservation = true;
+        this.hot = true;
+        this.selectedActives = [];
+      }
     },
     deleteImg() {
       this.imageUrl = '';
