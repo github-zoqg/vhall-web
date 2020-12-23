@@ -50,6 +50,15 @@ export function resize () {
   }
 }
 
+// 防抖
+export const debounce = (function () {
+  let timer = 0
+  return function (callback, ms) {
+    clearTimeout(timer)
+    timer = setTimeout(callback, ms)
+  }
+})()
+
 export function calculateAudioLevel (level) {
   let audioLevelValue = 1;
   if (level > 0 && level <= 0.04) {
