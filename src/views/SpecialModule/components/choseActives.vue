@@ -5,6 +5,9 @@
       :close-on-click-modal="false"
       @close="cancelSelect"
       width="592px">
+      <div class="search">
+        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+      </div>
       <div class="vh-chose-active-box"
         v-infinite-scroll="getActiveList"
         :infinite-scroll-disabled="disabled"
@@ -18,12 +21,18 @@
           :class="{'checkedActive': item.checked}"
         >
           <div class="vh-chose-active-item__cover">
-            <img src="" alt="">
+            <img :src="item.img_url" alt="">
             <div class="vh-chose-active-item__cover-status">
-              <template v-if="item.webinar_state == 1">
+              <span class="liveTag">
+                <label class="live-status" v-if="item.webinar_state == 1">
+                  <img src="../../../common/images/live.gif" alt="">
+                </label>
+                {{item | liveTag}}
+              </span>
+              <!-- <template v-if="item.webinar_state == 1">
                 <img src="../../../common/images/live/live.gif" alt=""> 直播 | 互动直播
-              </template>
-              <template v-if="item.webinar_state == 2">
+              </template> -->
+              <!-- <template v-if="item.webinar_state == 2">
                 预告 | 互动直播
               </template>
               <template v-if="item.webinar_state == 3">
@@ -34,10 +43,10 @@
               </template>
               <template v-if="item.webinar_state == 5">
                 回放 | 互动直播
-              </template>
+              </template> -->
             </div>
             <div class="vh-chose-active-item__cover-hots">
-             <i class="el-icon-view"></i>
+             <i class="iconfont-v3 saasicon_redu"></i>
              {{ item.pv }}
             </div>
 
@@ -67,6 +76,7 @@ export default {
       page: 1,
       pageSize: 9,
       activeList: [],
+      keyword: '',
       lock: false,
       loading: false,
       visible: true
@@ -86,18 +96,23 @@ export default {
   },
 
   methods: {
+    inputChange() {
+      this.getActiveList();
+    },
     getActiveList() {
       this.loading = true
       const pos = (this.page - 1) * this.pageSize
       const limit = this.page * this.pageSize
       const userId = sessionStorage.getItem('userId')
-
-      this.$fetch('liveList', {
+      let params = {
         pos: pos,
         user_id: userId,
         limit: limit,
+        title: this.keyword,
         order_type: 1,
-      }).then((res) => {
+      }
+
+      this.$fetch('liveList', this.$params(params)).then((res) => {
         if(res.code == 200) {
           this.page = this.page + 1
           if(res.data.list.length == 0) {
@@ -105,7 +120,8 @@ export default {
             this.loading = false
           } else {
             this.activeList =  this.activeList.concat(res.data.list)
-            this.syncCheckStatus()
+            // 老控制台选择不需要回显选中的
+            // this.syncCheckStatus()
             this.loading = false
           }
         } else {
@@ -179,6 +195,9 @@ export default {
     overflow: auto;
     overflow-x: hidden;
   }
+  .search{
+    margin-bottom: 20px;
+  }
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
@@ -199,11 +218,18 @@ export default {
       background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
+      img{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top:0;
+        left: 0;
+      }
       &-status{
         position: absolute;
         left: 8px;
         top: 8px;
-        width: 110px;
+        // width: 110px;
         height: 20px;
         line-height: 20px;
         background: rgba(0, 0, 0, 0.65);
@@ -240,6 +266,15 @@ export default {
       font-weight: 400;
       color: #666666;
       line-height: 16px;
+    }
+    .liveTag{
+      background: rgba(0,0,0, .7);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      position: relative;
+      z-index: 2;
     }
   }
 </style>

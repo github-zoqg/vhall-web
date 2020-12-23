@@ -111,6 +111,7 @@
                   placeholder="请输入手机号"
                   maxlength="11"
                   clearable
+                  @input="checkPhone"
                   v-model="registerForm.phone">
                   <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
                 </el-input>
@@ -288,9 +289,7 @@ export default {
     loginDynamic() {
       this.$refs.dynamicForm.validate((valid) => {
         if (valid) {
-          let params = this.dynamicForm;
-          params.account = this.dynamicForm.phoneNumber;
-          this.login(params);
+          this.checkedAccount();
         } else {
           console.log('error submit!!');
           return false;
@@ -299,13 +298,24 @@ export default {
     },
     // 登录账号锁定检测
     checkedAccount() {
-      this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
+      let account = this.isActive == 1 ? this.loginForm.account : this.dynamicForm.phoneNumber;
+      this.$fetch('loginCheck', {account: account}).then(res => {
         if (res && res.code === 200) {
-          //check_result  : 1 锁定    0未锁定
-          if (res.data.check_result && !this.mobileKey) {
-            this.isLogin = true;
+          //检测结果check_result  : 1 锁定    0未锁定
+          if (this.isActive == 1) {
+            if (res.data.check_result && !this.mobileKey) {
+              this.isLogin = true;
+            } else {
+              this.login(this.loginForm);
+            }
           } else {
-            this.login(this.loginForm);
+            // 账号是否存在：1存在 0不存在
+            if (res.data.account_exist) {
+              this.dynamicForm.account = account;
+              this.login(this.dynamicForm);
+            } else {
+              this.$message.error('账号不存在');
+            }
           }
         } else {
           this.$message.error(res.msg || '登录验证失败');
@@ -329,6 +339,20 @@ export default {
           sessionOrLocal.set('token', '', 'localStorage');
         }
       });
+    },
+    // 注册判断手机号是否已经注册
+    checkPhone() {
+      if (this.checkMobile(this.registerForm.phone)) {
+         this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
+          if (res && res.code === 200) {
+            if (res.data.account_exist) {
+              this.$message.error('该手机号已注册');
+            }
+          } else {
+            this.$message.error(res.msg || '注册失败');
+          }
+        });
+      }
     },
     getRegisterCode() {
       if (this.checkMobile(this.registerForm.phone) && this.mobileKey) {
@@ -427,7 +451,7 @@ export default {
   .login{
     height: 100%;
     width: 100%;
-    min-height: 720px;
+    min-height: 800px;
     margin-bottom: -139px;
     text-align: center;
     font-size: 0;
@@ -448,7 +472,7 @@ export default {
         width: 162px;
         height: 92px;
         background: url(../../common/images/login_logo.png) no-repeat;
-        margin-bottom: 40px;
+        margin-bottom: 20px;
         background-size: contain;
         background-position: center;
         margin-top: 40px;

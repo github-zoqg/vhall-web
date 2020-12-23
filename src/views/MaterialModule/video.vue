@@ -105,15 +105,22 @@ export default {
       // this.getTableList('search')
     },
     tirggerFile(event){
+      const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
-      if(beforeName.indexOf('.mp')==-1){
-        this.$message({
-          type: 'error',
-          message: '请选择Mp4和Mp3格式的视频'
-        });
-        return;
+      let videoArr = beforeName.toLowerCase().split('.');
+      const videoType = typeList.includes(videoArr[videoArr.length - 1]);
+      if (!videoType) {
+        this.$message.error(`您上传的文件格式不正确`);
+        return false;
       }
+      // if(beforeName.indexOf('.mp')==-1){
+      //   this.$message({
+      //     type: 'error',
+      //     message: '您上传的文件格式不正确'
+      //   });
+      //   return;
+      // }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
       // let name = beforeName.split('.m')[0];
       // console.log(name, beforeName,  '22222222222222222222222222');
