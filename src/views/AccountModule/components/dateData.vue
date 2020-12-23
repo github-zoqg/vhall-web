@@ -48,7 +48,7 @@ export default {
     getUserPayDetail() {
       console.log(this.vip_info, 'this.vip_info')
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', {
-        account_id: sessionOrLocal.get('userId'),
+        account_id: this.$route.params.str, // 子账号内容，传递子账号数据
         start_time: this.timeStr[0],
         end_time: this.timeStr[1],
         type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
