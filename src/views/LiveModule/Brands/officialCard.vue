@@ -18,7 +18,7 @@
       <el-card>
       <div class="form-phone">
         <div class="official-form">
-          <el-form label-width="120px">
+          <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
             <el-form-item :label="title!=='公众号展示' ? '图片' : '二维码'">
               <div class="img-box">
                 <upload
@@ -40,8 +40,8 @@
                 </upload>
               </div>
             </el-form-item>
-            <el-form-item label="链接" v-if="title !== '公众号展示'">
-              <el-input v-model="url" placeholder="请输入跳转链接"></el-input>
+            <el-form-item label="链接" v-if="title !== '公众号展示'" prop="url">
+              <el-input v-model="form.url" placeholder="请输入跳转链接"></el-input>
             </el-form-item>
             <el-form-item :label="title">
               <!--{{status  - 0开启，1关闭}}-->
@@ -140,11 +140,19 @@ export default {
     return {
       img: '',
       domain_url: '',
-      url: '',
       imgShowUrl: '',
       status: null,
       alertType: null,
-      switchType: 'pc'
+      switchType: 'pc',
+      form: {
+        url: ''
+      },
+      formRules: {
+        url: [
+          { required: false, message: '请填写标志链接', trigger: 'blur'},
+          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+        ]
+      }
     };
   },
   computed: {
@@ -201,14 +209,10 @@ export default {
     },
     preSure() {
       let url = '';
-      if(!this.img) {
-        this.$message.error('上传图片不能为空');
-        return;
-      }
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.$parseURL(this.img).path // 公众号/开屏海报  图片地址
+        img: this.img ? this.$parseURL(this.img).path : '' // 公众号/开屏海报  图片地址
       };
       let type = this.alertType;
       if (this.title === '公众号展示') {
@@ -219,12 +223,16 @@ export default {
         params.url = this.url;
         url = 'setPosterInfo';
       }
-      this.$fetch(url, this.$params(params)).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('保存成功');
-          this.getData();
-        } else {
-          this.$message.error(res.msg || '保存失败');
+      this.$refs.officialForm.validate((valid) => {
+        if (valid) {
+          this.$fetch(url, this.$params(params)).then(res => {
+            if(res && res.code === 200) {
+              this.$message.success('保存成功');
+              this.getData();
+            } else {
+              this.$message.error(res.msg || '保存失败');
+            }
+          });
         }
       });
     },
