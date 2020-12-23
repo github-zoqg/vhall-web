@@ -7,8 +7,8 @@
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.organizers_status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value=1
+                :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
                 :active-text="signSetForm.organizers_status ? '已开启，观看端主办方信息、个人主页入口和关注按钮显示' : '开启后，观看端主办方信息、个人主页入口和关注按钮显示'"
@@ -33,8 +33,8 @@
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.view_status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value=1
+                :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
                 :active-text="signSetForm.view_status ? '已开启，观看端显示品牌标志' : '开启后，观看端显示品牌标志'"
@@ -91,9 +91,9 @@ export default {
   data() {
     return {
       signSetForm: {
-        organizers_status: 0,
-        reserved_status: 0,
-        view_status: 0,
+        organizers_status: null,
+        reserved_status: null,
+        view_status: null,
         logo_url: null,
         skip_url: null
       },
@@ -159,13 +159,13 @@ export default {
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
-          if (res.data.logo_url) {
+          if (res.data) {
             this.signSetForm = res.data;
           } else {
             this.signSetForm = {
-              organizers_status: 0,
-              reserved_status: 0,
-              view_status: 0,
+              organizers_status: null,
+              reserved_status: null,
+              view_status: null,
               logo_url: null,
               skip_url: null
             };
@@ -174,9 +174,9 @@ export default {
           this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm);
         } else {
           this.signSetForm = {
-            organizers_status: 0,
-            reserved_status: 0,
-            view_status: 0,
+            organizers_status: null,
+            reserved_status: null,
+            view_status: null,
             logo_url: null,
             skip_url: null
           };

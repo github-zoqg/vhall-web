@@ -19,7 +19,7 @@
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px">
-            <el-form-item label="二维码">
+            <el-form-item :label="title!=='公众号展示' ? '图片' : '二维码'">
               <div class="img-box">
                 <upload
                   class="giftUpload"
@@ -40,44 +40,50 @@
                 </upload>
               </div>
             </el-form-item>
+            <el-form-item label="链接" v-if="title !== '公众号展示'">
+              <el-input v-model="url" placeholder="请输入跳转链接"></el-input>
+            </el-form-item>
             <el-form-item :label="title">
               <!--{{status  - 0开启，1关闭}}-->
-              <el-switch
-                v-model="status"
-                :active-value="0"
-                :inactive-value="1"
-                active-color="#ff4949"
-                inactive-color="#ccc"
-                :active-text="activeTitle"
-              >
-              </el-switch>
+              <div class="switch__box">
+                <el-switch
+                  v-model="status"
+                  :active-value="0"
+                  :inactive-value="1"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="activeTitle"
+                >
+                </el-switch>
+              </div>
             </el-form-item>
             <el-form-item label="自动弹出" v-if="title==='公众号展示'">
               <!--{{alertType 0自动弹出；1-手动弹出}}-->
-              <el-switch
-                v-model="alertType"
-                :active-value="0"
-                :inactive-value="1"
-                active-color="#ff4949"
-                inactive-color="#ccc"
-                :active-text="autoUpText"
-              >
-              </el-switch>
+              <div class="switch__box">
+                <el-switch
+                  v-model="alertType"
+                  :active-value="0"
+                  :inactive-value="1"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="autoUpText"
+                >
+                </el-switch>
+              </div>
             </el-form-item>
             <el-form-item label="自动关闭" v-else>
               <!--{{alertType 0手动关闭 1自动关闭}}-->
-              <el-switch
-                v-model="alertType"
-                :active-value="1"
-                :inactive-value="0"
-                active-color="#ff4949"
-                inactive-color="#ccc"
-                :active-text="autoUpText"
-              >
-              </el-switch>
-            </el-form-item>
-            <el-form-item label="海报链接" v-if="title !== '公众号展示'">
-              <el-input v-model="url" placeholder="请输入跳转链接"></el-input>
+              <div class="switch__box">
+                <el-switch
+                  v-model="alertType"
+                  :active-value="1"
+                  :inactive-value="0"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="autoUpText"
+                >
+                </el-switch>
+              </div>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" round @click="preSure">保存</el-button>
@@ -157,9 +163,9 @@ export default {
     },
     autoUpText(){
       if (this.title==='公众号展示') {
-        return this.alertType > 0 ? '开启后，进入活动页公众中自动展示' : '已开启，进入活动页公众中自动展示';
+        return this.alertType > 0 ? '开启后，进入活动页公众号自动展示' : '已开启，进入活动页公众号自动展示';
       } else {
-        return this.alertType > 0 ? '已开启，倒计时结束后自动关闭' : '开启后，倒计时结束后自动关闭';
+        return this.alertType > 0 ? '已开启，5秒倒计时结束后自动关闭' : '开启后，5秒倒计时结束后自动关闭';
       }
     }
   },
@@ -240,11 +246,11 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`二维码图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`${this.title!=='公众号展示' ? '图片' : '二维码图片'}只能是 ${typeList.join('、')} 格式!`);
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('二维码图片大小不能超过 2MB!');
+        this.$message.error(`${this.title!=='公众号展示' ? '图片' : '二维码图片'}大小不能超过 2MB!`);
         return false;
       }
       return isType && isLt2M;
@@ -254,7 +260,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`二维码图片上传失败`);
+      this.$message.error(`${this.title!=='公众号展示' ? '图片' : '二维码图片'}上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
