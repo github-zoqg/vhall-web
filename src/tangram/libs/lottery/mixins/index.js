@@ -47,7 +47,7 @@ const mixins = {
         source: 0
       }).then(res=>{
         if(res.code == 200){
-          this.prizeList = res.data.list
+          this.prizeList = this.prizeList.concat(res.data.list)
           this.prize = res.data.list[1]
         }else{
           this.$message.warning(res.msg)

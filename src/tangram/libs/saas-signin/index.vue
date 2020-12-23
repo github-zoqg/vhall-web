@@ -55,6 +55,7 @@ export default {
               this.nowSignObj = res.data
               this.signInfo.autoSign = res.data.is_auto_sign == 1 ? true : false
               this.remaining = res.data.auto_sign_time_ttl
+              this.totalTime =  res.data.auto_sign_time
               this.setIntervalAction()
               console.warn('this.starting',this.starting, 'remaining', this.remaining, !!this.remaining)
             }else{
@@ -137,8 +138,14 @@ export default {
     setIntervalAction() {
       clearInterval(this.timer);
       this.timer = setInterval(() => {
+        console.warn('咯ok');
         if (--this.remaining <= 0) {
-          clearInterval(this.timer);
+          if( window.sessionStorage.isAutoSign &&  window.sessionStorage.isAutoSign == 'true'){
+             this.remaining = this.totalTime
+            this.showSignin = true;
+          }else{
+            clearInterval(this.timer);
+          }
         }
       }, 1000);
       this.$once('hook:beforeDestory', () => {
@@ -195,8 +202,12 @@ export default {
       color: #222222;
     }
   }
+  ::v-deep.el-dialog{
+    min-height: 400px;
+  }
   ::v-deep.el-dialog__body{
     padding: 0 32px 34px;
+
   }
   ::v-deep.el-message-box--center .el-message-box__header{
     padding-top: 15px;

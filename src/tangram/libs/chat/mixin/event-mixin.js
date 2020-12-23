@@ -136,8 +136,7 @@ const eventMixin = {
           } catch (e) {
             console.log(e);
           }
-          console.log('==========房间消息===========', msg);
-
+          console.log('==========房间消息========1===', msg);
           Object.assign(msg, msg.data);
           setTimeout(() => {
             if (msg.type == 'live_start') {
