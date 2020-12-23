@@ -18,8 +18,8 @@
       <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '用户报名'}}</div>
       <div :class="{active: tabs=='valite'}" @click="tabs='valite'">{{title2 || '验证'}}</div>
     </div>
-    <el-input v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名"></el-input>
-    <el-input v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证"></el-input>
+    <el-input maxlength="8" show-word-limit v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名"></el-input>
+    <el-input maxlength="8" show-word-limit v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证"></el-input>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="save" round size="medium">保存</el-button>
     </span>
