@@ -1,5 +1,5 @@
 <template>
-  <div class="detailBox" v-loading="loading" element-loading-text="数据获取中">
+  <div class="detailBox">
     <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
@@ -27,28 +27,28 @@
             <div class="action-look">
               <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
-                  placement="bottom"
-                  trigger="hover"
-                  style="margin-right:15px"
-                >
+                placement="bottom"
+                trigger="hover"
+                style="margin-right:15px"
+              >
                 <div class="invitation-code">
                   <p>活动观看页</p>
                   <img :src="h5WapLink" alt="" v-if="h5WapLink">
                   <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
                 </div>
-                  <el-button round size="mini" slot="reference">扫码</el-button>
+                <el-button round size="mini" slot="reference">扫码</el-button>
               </el-popover>
-               <el-popover
-                  placement="bottom"
-                  trigger="hover"
-                >
+              <el-popover
+                placement="bottom"
+                trigger="hover"
+              >
                 <div class="invitation-code urlCopy">
                   <p>观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
                   <p>
                     <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
                     <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
                 </div>
-                  <el-button round size="mini" slot="reference">查看</el-button>
+                <el-button round size="mini" slot="reference">查看</el-button>
               </el-popover>
             </div>
           </div>
@@ -96,10 +96,8 @@ export default {
       msg: '',
       isAnginOpen: false,
       outLiveTime: false,
-      loading: true,
       liveDetailInfo: {
-        webinar_state: '',
-        webinar_type: ''
+        webinar_state: ''
       },
       link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
@@ -200,7 +198,6 @@ export default {
   methods: {
     // 获取基本信息
     getLiveDetail(id) {
-      this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         if (res.data.webinar_state == 1) {
@@ -280,18 +277,18 @@ export default {
     // 判断是否有起直播的权限
     getOpenLive() {
       this.$fetch('checkLive', this.$params({
-          webinar_id: this.$route.params.str
-          })).then((res) => {
-            if(res && res.code === 200) {
-              this.isAnginOpen = false;
-            } else {
-              this.isAnginOpen = true;
-              this.$message.error(res.msg || '检测异常');
-            }
-          }).catch(e => {
-            this.isAnginOpen = true;
-            this.$message.error(res.msg || '检测异常');
-          });
+        webinar_id: this.$route.params.str
+      })).then((res) => {
+        if(res && res.code === 200) {
+          this.isAnginOpen = false;
+        } else {
+          this.isAnginOpen = true;
+          this.$message.error(res.msg || '检测异常');
+        }
+      }).catch(e => {
+        this.isAnginOpen = true;
+        this.$message.error(res.msg || '检测异常');
+      });
     },
     blockHandler(item){
       if(item.path){

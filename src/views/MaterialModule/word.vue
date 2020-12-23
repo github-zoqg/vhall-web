@@ -428,6 +428,9 @@ export default {
         if (msg.data.type === 'host_msg_webinar') {
           EventBus.$emit('host_msg_webinar', msg.data.data)
         }
+        if (msg.data.type === 'doc_convert_jpeg') {
+          EventBus.$emit('doc_convert_jpeg', msg.data.data)
+        }
       })
     },
     getWebinarInfo() {
@@ -478,6 +481,26 @@ export default {
         };
         return textArr[error_status + ""];
     }
+    EventBus.$on('doc_convert_jpeg', res => { // 转码状态
+      console.log(res, '监听到doc_convert_jpeg转码状态事件');
+      this.tableList.forEach((item) => {
+        if (res.document_id === item.document_id) {
+          const statusJpeg = Number(res.status_jpeg);
+          const status = Number(res.status);
+          if (status === 200) {
+            item.transform_schedule_str ='动画版转换失败，请尝试极速版';
+          }else {
+            let _percent = CalculatePercent(res.data.converted_page, res.data.page, 0);
+            if (_percent == "100%") {
+              item.transform_schedule_str = '转换成功';
+            } else {
+              item.transform_schedule_str = `转换${_percent}`;
+            }
+          }
+        }
+      });
+    });
+
     EventBus.$on('host_msg_webinar', res => { // 转码状态
       console.log(res, '监听到host_msg_webinar转码状态事件');
       /*

@@ -6,105 +6,71 @@
       <el-card>
         <div class="special-main">
           <div class="special-img">
-            <img src="//cnstatic01.e.vhall.com/static/img/v35-subject.png">
+            <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
           </div>
           <div class="special-detail">
-            <h1>看的见</h1>
-            <p>2020-03-20 10:08</p>
-            <h2>共<b>3</b>个直播<span><b>32</b>次观看</span><b>0</b>次预约</h2>
-            <h3 @click="specialShare"><i class="el-icon-share"></i>分享</h3>
+            <h1>{{ specialInfo.title }}</h1>
+            <p>{{ specialInfo.created_at }}</p>
+            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><b>{{ specialInfo.pv }}</b>次观看</span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
+            <div class="shareText">
+              <el-popover
+                placement="bottom-end"
+                trigger="click">
+                <div>
+                  <share slot="content" :url="home_link"></share>
+                </div>
+                <h3 slot="reference"><i class="el-icon-share"></i>分享</h3>
+              </el-popover>
+            </div>
           </div>
         </div>
       </el-card>
       <el-card class="special-list">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="专题简介" name="first">
-            <p class="text">专题简介............</p>
+            <p class="text" v-html="specialInfo.intro"></p>
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
             <el-row :gutter="40" class="lives">
               <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
                 <div class="inner">
                   <div class="top">
-                    <span class="liveTag">{{item.status}}</span>
-                    <!-- <span class="hot">
-                      <i class="el-icon-view"></i>
-                      {{item.pv}}
-                    </span> -->
-                    <img :src="item.img_url" alt="">
+                    <span class="liveTag">{{item.type | actionText }}</span>
+                    <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
                   </div>
                   <div class="bottom">
                     <div class="">
                       <p class="liveTitle">{{item.subject}}</p>
-                      <p class="liveTime">{{item.start_time}} <span><i class="el-icon-view"></i> {{item.pv}}</span></p>
+                      <p class="liveTime">{{item.start_time}} <span><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
                     </div>
                   </div>
                 </div>
               </el-col>
             </el-row>
+            <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
           </el-tab-pane>
         </el-tabs>
       </el-card>
-      <share ref="share"></share>
     </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import OldHeader from '@/components/OldHeader';
-import share from './share';
+import share from '@/components/Share'
+import Env from '@/api/env.js';
 export default {
   data() {
     return {
-      activeName: 'second',
-      liveList: [
-        {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        },
-         {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        },
-         {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        },
-         {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        },
-         {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        }, {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        },
-         {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        }, {
-          status: '直播',
-          pv: 1232,
-          subject:'哈哈哈哈哈',
-          start_time: '2020-12-10'
-        }
-      ]
+      activeName: 'first',
+      specialInfo: {},
+      env: Env,
+      pageSize: 12,
+      pageNum: 1,
+      pagePos: 0,
+      totalElement: 0,
+      home_link: `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`,
+      liveList: []
     };
   },
   components: {
@@ -112,12 +78,28 @@ export default {
     OldHeader,
     share
   },
+  created() {
+    this.getSpecialList();
+  },
   methods: {
+    getSpecialList() {
+      this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
+        if (res.code == 200) {
+          this.specialInfo = res.data.webinar_subject;
+          this.liveList = res.data.webinar_subject.webinar_list;
+          this.totalElement = res.data.webinar_subject.webinar_num;
+        } else {
+          this.$message.error('获取失败');
+        }
+      })
+    },
+    currentChangeHandler(current) {
+      this.pageNum = current;
+      this.pagePos = parseInt((current - 1) * this.pageSize);
+      this.getSpecialList();
+    },
     handleClick(tab) {
       this.activeName = tab.name;
-    },
-    specialShare() {
-      this.$refs.share.specialVisible = true;
     }
   }
 
@@ -171,10 +153,13 @@ export default {
           padding: 0 3px;
         }
       }
-      h3{
+      .shareText{
         font-size: 12px;
         color: #999999;
         cursor: pointer;
+        span{
+          color: #1A1A1A;
+        }
         i{
           padding-right: 5px;
           font-size: 14px;
@@ -254,6 +239,7 @@ export default {
               color: #666;
               span{
                 float: right;
+                margin-top: -3px;
               }
             }
             .liveOpera{

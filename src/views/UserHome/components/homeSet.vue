@@ -62,7 +62,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_share ? '关闭后，主页分享按钮将隐藏' : '已关闭，主页分享按钮已隐藏'"
+            :active-text="homeSetInfoForm.show_share ? '已开启，主页分享功能显示' : '开启后，主页分享功能显示'"
           >
           </el-switch>
         </div>
@@ -75,7 +75,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_webinar_list ? '关闭后，主页将隐藏【直播】列表' : '已关闭，主页已隐藏【直播】列表'"
+            :active-text="homeSetInfoForm.show_webinar_list ? '已开启，个人主页直播列表Tab页显示' : '开启后，个人主页直播列表Tab页显示'"
           >
           </el-switch>
         </div>
@@ -88,7 +88,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_subject ? '关闭后，主页将隐藏【专题】列表' : '已关闭，主页已隐藏【专题】列表'"
+            :active-text="homeSetInfoForm.show_subject ? '已开启，个人主页专题列表Tab页显示' : '开启后，个人主页专题列表Tab页显示'"
           >
           </el-switch>
         </div>

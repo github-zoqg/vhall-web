@@ -421,13 +421,13 @@ export default {
     },
     updateDeviceSetting () {
       if (this.roleName == '1') {
-        this.$vhallFetch('saveMediaSettings', {
-          vss_token: this.vssToken,
+        this.$fetch('saveMediaSettings', {
           room_id: this.roomId,
           definition: this.selectedRate,
           layout: this.selectedLayout,
           screen_definition: this.selectedScreenRate
         }).then(res => {
+          if(res.code !=200 ) return this.$message.warning(res.msg)
           const options = {
             videoDevice: this.selectedVideoDeviceId, // 视频Id
             audioDevice: this.selectedAudioDeviceId, // 音频Id,

@@ -2,7 +2,8 @@
  <div class="home-main">
    <OldHeader class="head-wrap"></OldHeader>
    <div class="v-head-bg"
-        :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}">
+        :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' :
+        '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}">
      <div class="v-head-img"></div>
    </div>
    <div class="home-main-container">
@@ -18,7 +19,7 @@
          <div class="ac__home--user">
            <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" />
            <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
-           <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>
+          <!-- <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>-->
          </div>
          <div class="ac__home--info">
            <p class="ac__home--title"></p>
@@ -69,15 +70,17 @@ export default {
         if (res && res.code === 200) {
           // 粉丝数、是否关注、主页信息
           let {attentioned_count, follow, homepage_info } = res.data;
-          homepage_info.homepage_avatar = homepage_info.homepage_avatar || '';
+          // homepage_info.homepage_avatar = homepage_info.homepage_avatar || '';
           // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
-          homepage_info.img_url = homepage_info.img_url || '';
+          // homepage_info.img_url = homepage_info.img_url || '';
             // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
-          this.userHomeVo = homepage_info;
-          this.attentioned_count = attentioned_count;
-          this.follow = follow;
-          this.content = homepage_info.content;
-          this.$refs.homeMain.initComp(homepage_info);
+          this.$nextTick(() => {
+            this.userHomeVo = homepage_info;
+            this.attentioned_count = attentioned_count;
+            this.follow = follow;
+            this.content = homepage_info.content;
+            this.$refs.homeMain.initComp(homepage_info);
+          })
         } else {
           this.userHomeVo = null;
         }

@@ -95,6 +95,10 @@ export default {
       ],
       intervalOps: [
         {
+          value: 60,
+          label: '1分钟'
+        },
+        {
           value: 300,
           label: '5分钟'
         },
@@ -108,6 +112,11 @@ export default {
         }
       ]
     };
+  },
+  mounted() {
+    if(process.env.VUE_APP_NODE_ENV != 'test' && process.env.VUE_APP_NODE_ENV != 'development' ){
+      this.intervalOps = this.intervalOps.slice(1)
+    }
   },
   methods: {
     autoSignChange(value){

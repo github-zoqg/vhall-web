@@ -33,7 +33,7 @@
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
         </el-form-item>
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入邮箱地址"/>
+          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号"/>
         </el-form-item>
         <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <div id="setCaptcha1">
@@ -398,10 +398,10 @@ export default {
       // 确认绑定新功能
       this.$fetch('bindInfo', params).then(res => {
         if (res && res.code === 200) {
-          this.$message.success('绑定成功！');
+          this.$message.success('绑定成功');
           this.visible = false;
         } else {
-          this.$message.error(res.msg || '绑定失败！');
+          this.$message.error(res.msg || '绑定失败');
         }
       }).catch(e => {
         console.log(e);
@@ -452,9 +452,12 @@ export default {
               if (res && res.code === 200) {
                 this.$message.success('操作成功');
                 this.visible = false;
+              } else {
+                this.$message.error(res.msg || '操作失败');
               }
             }).catch(e => {
               console.log(e);
+              this.$message.error('操作失败');
             });
           }
         }

@@ -129,15 +129,17 @@ export default {
     },
     downloadHandle() {
       let params = {
-        account_id: sessionOrLocal.get('userId'),
+        account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        subject: this.query.title,
         pos: 0,
         limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
         type: 1
       };
-      if (this.timeStr) {
+      if (this.query.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
+      debugger
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', params).then(res=>{
         if (res && res.code === 200) {
           this.$message.success('下载申请成功，请去下载中心下载该项！');

@@ -19,7 +19,8 @@
       <span class="pwd--circle orange"></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">密保手机</label></li>
-        <li><label class="card--txt">已绑定手机：{{accountInfo && accountInfo.phone ? `${accountInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '--'}}</label></li>
+        <!--<li><label class="card&#45;&#45;txt">已绑定手机：{{accountInfo && accountInfo.phone ? `${accountInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '&#45;&#45;'}}</label></li>-->
+        <li><label class="card--txt">已绑定手机：{{accountInfo && accountInfo.phone ? accountInfo.phone : '--'}}</label></li>
       </ul>
       <div class="card--blue">
         <el-button type="text" @click.prevent.stop="bindShowHandle('phone')">{{ accountInfo && accountInfo.phone ? '修改' : '设置' }}</el-button>
@@ -29,7 +30,7 @@
       <span class="pwd--circle green"></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">关联邮箱</label></li>
-        <li><label class="card--txt">已绑定邮箱：{{accountInfo && accountInfo.email ? `${accountInfo.email.replace(/(?<=.{2})[^@]+(?=.{2}@)/,"*****")}`: '--'}}</label></li>
+        <li><label class="card--txt">已绑定邮箱：{{accountInfo && accountInfo.email ? accountInfo.email : '--'}}</label></li>
       </ul>
       <div class="card--blue">
         <el-button type="text" @click.prevent.stop="bindShowHandle('email')">{{ accountInfo && accountInfo.email ? '修改' : '设置' }}</el-button>

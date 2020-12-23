@@ -17,11 +17,14 @@
           <div class="searchBox">
             <el-input
               placeholder="搜索内容"
-              v-model="query.keyword">
+              v-model="query.keyword"
+              clearable
+              @keyup.enter.native="queryList"
+              @clear="queryList">
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
-                @click="viewerList">
+                @click="queryList">
               </i>
             </el-input>
           </div>
@@ -79,24 +82,22 @@
     <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="680px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名：" prop="name">
-          <el-input v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（1-30个字符）" :maxlength="30"
-                    :minlength="1"/>
+          <el-input v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="行业：" prop="industry">
-          <el-input v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（1-15个字符）" :maxlength="15"
-                    :minlength="1"/>
+          <el-input v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="邮箱：" prop="email">
           <el-input v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
         <el-form-item label="手机号码：" prop="phone">
-          <el-input v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"  :minlength="1"/>
+          <el-input v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
         </el-form-item>
         <el-form-item label="工号：" prop="job_number">
-          <el-input v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（1-50个字符）" :maxlength="50"  :minlength="1"/>
+          <el-input v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="其他：" prop="other">
-          <el-input v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（1-50个字符）" :maxlength="50"  :minlength="1"/>
+          <el-input v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -188,7 +189,8 @@ export default {
         keyword: '',
         group_id: null,
         pos: 0, // 当前第n页
-        limit: 10 // 每页多少条
+        limit: 10, // 每页多少条
+        pageNumber: 1
       },
       groupList: [],
       viewerDao: {
@@ -231,13 +233,13 @@ export default {
       viewerFormRules: {
         name: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
-          { max: 30, message: '请输入姓名（1-30个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入姓名（1-30个字符）', trigger: 'blur' }
+          { max: 50, message: '请输入姓名（最多50个字符）', trigger: 'blur' },
+          { min: 1, message: '请输入姓名（最多50个字符）', trigger: 'blur' }
         ],
         industry: [
-          { required: true, message: '请输入行业', trigger: 'blur' },
-          { max: 15, message: '请输入姓名（1-15个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入姓名（1-15个字符）', trigger: 'blur' }
+          { required: false, message: '请输入行业', trigger: 'blur' },
+          { max: 50, message: '请输入行业（最多50个字符）', trigger: 'blur' },
+          { min: 1, message: '请输入行业（最多50个字符）', trigger: 'blur' }
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -250,12 +252,13 @@ export default {
           { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
         job_number: [
-          { max: 50, message: '请输入工号（1-50个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入工号（1-50个字符）', trigger: 'blur' }
+          { required: false, message: '请输入姓名', trigger: 'blur' },
+          { max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur' },
+          { min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur' }
         ],
         other: [
-          { max: 50, message: '请输入其他内容（1-50个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入其他内容（1-50个字符）', trigger: 'blur' }
+          { max: 50, message: '请输入其他内容（最多50个字符）', trigger: 'blur' },
+          { min: 1, message: '请输入其他内容（最多50个字符）', trigger: 'blur' }
         ]
       },
       multipleSelection: [],
@@ -264,8 +267,8 @@ export default {
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
       importResult: {
-        fail_count: 0,
-        success_count: 0
+        fail: 0,
+        success: 0
       }
     };
   },
@@ -323,7 +326,7 @@ export default {
         // 默认第一个展示
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
-          this.viewerList();
+          this.queryList();
         }
       }).catch(e => {
         console.log(e);
@@ -393,9 +396,25 @@ export default {
       }).catch(() => {
       });
     },
+    queryList() {
+      this.query.pos = 0;
+      this.query.pageNumber = 0;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.viewerTable.pageInfo.pageNum = 1;
+        this.$refs.viewerTable.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
+      this.viewerList();
+    },
     // 白名单根据分组获取观众列表
-    viewerList(pageInfo = {pos: 0, pageNum: 1, pageSize: 10}) {
-      this.query.pos = pageInfo.pos;
+    viewerList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
       this.$fetch('viewerList', this.$params(this.query)).then(res => {
         res && res.code === 200 && res.data && res.data.total > 0 ? this.viewerDao = res.data : this.viewerDao = {
           total: 0,
@@ -414,8 +433,8 @@ export default {
       this.importFileShow = true;
       this.fileUrl = null;
       this.importResult = {
-        fail_count: 0,
-        success_count: 0
+        fail: 0,
+        success: 0
       };
     },
     // 创建观众
@@ -467,7 +486,7 @@ export default {
               this.$message.success(`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`);
               this.viewerDialog.visible = false;
               // 重查当前分组下观众信息
-              this.viewerList();
+              this.queryList();
             } else {
               this.$message({
                 type: 'error',
@@ -502,7 +521,7 @@ export default {
             if(res && res.code === 200) {
               this.$message.success(`删除观众-操作成功`);
               this.$refs.viewerTable.clearSelect();
-              this.viewerList();
+              this.queryList();
             } else {
               this.$message({
                 type: 'error',
@@ -528,7 +547,7 @@ export default {
     // 每次改变，重新查询观众信息
     changeViewerList(item) {
       this.query.group_id = item.id;
-      this.viewerList();
+      this.queryList();
     },
     // 文件上传成功
     uploadSuccess(res, file){
@@ -540,7 +559,12 @@ export default {
           file_url: res.data.file_url,
           group_id: this.query.group_id
         }).then(resV => {
-          resV.code === 200 ? this.importResult = resV.data : null;
+          if (resV && resV.code === 200) {
+            this.importResult.success = resV.data.success_count;
+            this.importResult.fail = resV.data.fail_count;
+          } else {
+            this.$message.error(resV.msg || '导入观众信息失败！');
+          }
         }).catch(e => {
           this.$message.error('导入观众信息失败！');
         });
@@ -576,7 +600,7 @@ export default {
     reloadViewerList() {
       this.importFileShow = false;
       // 刷新列表数据
-      this.viewerList();
+      this.queryList();
     },
   },
   created() {

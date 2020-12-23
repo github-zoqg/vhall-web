@@ -7,11 +7,11 @@
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.organizers_status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value=1
+                :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.organizers_status ? '关闭后，观看端主办方信息，个人主页入口和关注按钮将被隐藏' : '已关闭，观看端主办方信息，个人主页入口和关注按钮已被隐藏'"
+                :active-text="signSetForm.organizers_status ? '已开启，观看端主办方信息、个人主页入口和关注按钮显示' : '开启后，观看端主办方信息、个人主页入口和关注按钮显示'"
               >
               </el-switch>
             </div>
@@ -24,7 +24,7 @@
                 :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.reserved_status ? '关闭后，观看端的底部版权信息将被隐藏' : '已关闭，观看端的底部版权信息已被隐藏'"
+                :active-text="signSetForm.reserved_status ? '已开启，观看端底部版权信息显示' : '开启后，观看端显示底部版权信息'"
               >
               </el-switch>
             </div>
@@ -33,11 +33,11 @@
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.view_status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value=1
+                :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.view_status ? '关闭后，观看端的标志将被隐藏' : '已关闭，观看端的标志已被隐藏'"
+                :active-text="signSetForm.view_status ? '已开启，观看端显示品牌标志' : '开启后，观看端显示品牌标志'"
               >
               </el-switch>
             </div>
@@ -91,19 +91,19 @@ export default {
   data() {
     return {
       signSetForm: {
-        organizers_status: 0,
-        reserved_status: 0,
-        view_status: 0,
+        organizers_status: null,
+        reserved_status: null,
+        view_status: null,
         logo_url: null,
         skip_url: null
       },
       domain_url: '',
       signSetFormRules: {
         logo_url: [
-          { required: true, message: '请选择标志', trigger: 'change'}
+          { required: false, message: '请选择标志', trigger: 'change'}
         ],
         skip_url: [
-          { required: true, message: '请填写标志链接', trigger: 'blur'}
+          { required: false, message: '请填写标志链接', trigger: 'blur'}
         ]
       }
     };
@@ -159,13 +159,13 @@ export default {
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
-          if (res.data.logo_url) {
+          if (res.data) {
             this.signSetForm = res.data;
           } else {
             this.signSetForm = {
-              organizers_status: 0,
-              reserved_status: 0,
-              view_status: 0,
+              organizers_status: null,
+              reserved_status: null,
+              view_status: null,
               logo_url: null,
               skip_url: null
             };
@@ -174,9 +174,9 @@ export default {
           this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm);
         } else {
           this.signSetForm = {
-            organizers_status: 0,
-            reserved_status: 0,
-            view_status: 0,
+            organizers_status: null,
+            reserved_status: null,
+            view_status: null,
             logo_url: null,
             skip_url: null
           };

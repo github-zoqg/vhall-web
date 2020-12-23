@@ -373,7 +373,7 @@
             // 保存完成后，更新数据
             this.getSonList();
           } else {
-            this.$message.success(res.msg ||'保存失败！');
+            this.$message.error(res.msg ||'保存失败！');
           }
         }).catch(e=>{
           console.log(e);

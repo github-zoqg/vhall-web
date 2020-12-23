@@ -17,6 +17,7 @@
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
+          @delete="deleteImg"
           :before-upload="beforeUploadHnadler">
           <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
@@ -28,8 +29,6 @@
         <p class="switch__box">
           <el-switch
             v-model="reservation"
-            :active-value="1"
-            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             :active-text="reservationDesc">
@@ -40,8 +39,6 @@
         <p class="switch__box">
           <el-switch
             v-model="hot"
-            :active-value="1"
-            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             :active-text="hotDesc">
@@ -52,8 +49,6 @@
         <p class="switch__box">
           <el-switch
             v-model="home"
-            :active-value="1"
-            :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             :active-text="homeDesc">
@@ -99,19 +94,19 @@
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
-                  <template v-if="item.webinar_state == 1">
+                  <template v-if="item.webinar_type == 1">
                     直播
                   </template>
-                  <template v-if="item.webinar_state == 2">
+                  <template v-if="item.webinar_type == 2">
                     预告
                   </template>
-                  <template v-if="item.webinar_state == 3">
+                  <template v-if="item.webinar_type == 3">
                     结束
                   </template>
-                  <template v-if="item.webinar_state == 4">
+                  <template v-if="item.webinar_type == 4">
                     点播
                   </template>
-                  <template v-if="item.webinar_state == 5">
+                  <template v-if="item.webinar_type == 5">
                     回放
                   </template>
                 </div>
@@ -119,7 +114,7 @@
                   {{ item.pv }}
                 </div>
                 <div class="vh-sort-tables__tbody-editor">
-                  <i class="iconfont-v3 saasicon-trash"></i>
+                  <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>
                   <i class="iconfont-v3 saasicon_move"></i>
                 </div>
               </div>
@@ -159,10 +154,10 @@ export default {
   },
   computed: {
     reservationDesc(){
-      return this.reservation ?  '关闭后，观看端将隐藏预约人数' : '已关闭，观看端已隐藏预约人数';
+      return this.reservation ?  '关闭后，专题观看端将隐藏预约人数' : '已关闭，观看端已隐藏预约人数';
     },
     hotDesc(){
-      return this.hot ? '关闭后，观看端将隐藏活动热度' : "已关闭，观看端已隐藏活动热度";
+      return this.hot ? '关闭后，专题目录直播热度将被隐藏' : "已关闭，专题目录直播热度已被隐藏";
     },
     homeDesc(){
       return this.home ? '关闭后，该直播将不在个人主页显示' : "已关闭，该直播已不在个人主页显示";
@@ -176,9 +171,9 @@ export default {
         title: '',
       },
       subject_id: '',
-      reservation: false,
-      hot: false,
-      home: false,
+      reservation: true,
+      hot: true,
+      home: true,
       loading: false,
       imageUrl: '',
       domain_url:'',
@@ -212,12 +207,13 @@ export default {
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
           res.data.webinar_subject.cover && (this.imageUrl = res.data.webinar_subject.cover)
+          this.domain_url = res.data.webinar_subject.cover;
           this.content = res.data.webinar_subject.intro
 
           // 配置项
-          this.home = +res.data.webinar_subject.is_open // 是否显示个人主页
-          this.hot = +res.data.webinar_subject.hide_pv // 是否显示 人气
-          this.reservation = +res.data.webinar_subject.hide_appointment // 是否显示预约人数
+          this.home = Boolean(res.data.webinar_subject.is_open) // 是否显示个人主页
+          this.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
+          this.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
 
         }
       })
@@ -278,9 +274,9 @@ export default {
             subject: this.formData.title,
             introduction: this.content,
             img_url: this.imageUrl,
-            is_private: this.home,
-            hide_appointment: this.reservation,
-            hide_pv: this.hot,
+            is_private: Number(this.home),
+            hide_appointment: Number(this.reservation),
+            hide_pv: Number(this.hot),
           };
 
           if (webinar_ids.length) {
@@ -323,10 +319,35 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-
+    deleteImg() {
+      this.imageUrl = '';
+      this.domain_url = '';
+    },
     doSelectedActives (selectedActives) {
-      this.selectedActives = selectedActives
+      selectedActives.map(item => {
+        this.selectedActives.push(item);
+      })
+      console.log(this.selectedActives, '11111111111')
       this.showActiveSelect = false
+    },
+    // 删除事件
+    deleteSpecial(id) {
+      this.$confirm('您确定要删除选中的专题吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
+        }).then(() => {
+          this.selectedActives.map((opt, index) => {
+            if (opt.webinar_id == id) {
+              this.selectedActives.splice(index, 1);
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)
@@ -431,8 +452,8 @@ export default {
     }
 
     &__tbody{
-      height: 120px;
-      overflow-y: scroll;
+      // height: 120px;
+      // overflow-y: scroll;
       &-selected {
         border: 1px solid #FB3A32;
       }

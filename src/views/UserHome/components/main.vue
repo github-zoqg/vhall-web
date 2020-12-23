@@ -113,9 +113,13 @@ export default {
      ],
      tabType: null,
      dataList: [],
-     home_link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str}`,
      vo: {}
    };
+  },
+  computed: {
+    home_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str}&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false`;
+    }
   },
   methods: {
     // 切换选项卡

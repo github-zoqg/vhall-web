@@ -210,8 +210,6 @@ export function getQueryString(name) {
 }
 // 判断是否登录成功
 export function checkAuth(to, from, next) {
-  console.warn(to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'), 'look**********************************');
-  console.warn(to.path.indexOf('/live/room') !== -1,sessionOrLocal.get('interact_token'), 'look**********************************');
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||

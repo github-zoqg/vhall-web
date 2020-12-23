@@ -1,13 +1,6 @@
 <template>
   <div class="prize-card">
     <pageTitle title="抽奖">
-      <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
-        <br>
-        2.上蔟韩视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
-        <br>
-        3.上传的视频，不支持剪辑和下载
-      </div>
     </pageTitle>
     <el-card>
        <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -58,13 +51,13 @@
                     <el-input v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" round @click="lotterySave">保存</el-button>
+                  <el-button type="primary" :disabled='isDisabled' round @click="lotterySave">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>{{ formData.title || '抽奖标题' }}<i class="el-icon-close"></i></h3>
+                <h3>{{ formData.title || '抽奖' }}<i class="el-icon-close"></i></h3>
                 <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
                 </div>
                 <div class="sureBtn">{{ formData.description || '正在进行抽奖...' }}</div>
@@ -76,36 +69,34 @@
           <div class="give-item">
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
-                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`" :contenteditable="Boolean(item.is_system) ? false : 'plaintext-only'" >
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)" readonly></el-input>
-                        <el-input v-model="givePrizeForm[item.field_key]"  type="textarea" :placeholder="`请输入${item.field}`" :autosize="{ minRows: 4}" v-else readonly></el-input>
-                        <div class="isDelete">
-                          <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
-                          <el-switch
-                          v-if="index > 1"
-                            v-model="item.is_required"
-                            inactive-text="必填">
-                          </el-switch>
-                        </div>
-                    </el-form-item>
+                  <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
+                    <el-input v-model="givePrizeForm[item.field_key]" type="text" :placeholder="item.placeholder"></el-input>
+                    <div class="isDelete">
+                      <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
+                      <el-switch
+                      v-if="index > 1"
+                        v-model="item.is_required"
+                        inactive-text="必填">
+                      </el-switch>
+                    </div>
+                </el-form-item>
                 <div class="add-prize" @click="addField">
                   <i class="el-icon-plus"></i>
                   添加字段
                 </div>
                 <el-form-item>
-                  <el-button type="primary" round @click="sureGivePrize">保存</el-button>
+                  <el-button type="primary" round @click="sureGivePrize" :disabled='lotteryPage'>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
             <div class="give-show">
               <div class="give-people">
                 <h3>领奖<i class="el-icon-close"></i></h3>
-                <el-scrollbar>
+                <el-scrollbar class="scroll-bar">
                   <div class="give-msg">
                     <el-form :model="givePrizeForm">
                       <el-form-item v-for="(item, index) in givePrizeList" :key="index">
-                        <el-input v-model="givePrizeForm.file" readonly type="text" :placeholder="`请输入${item.field}`" v-if="Boolean(item.is_system)"></el-input>
-                        <el-input v-model="givePrizeForm.other" readonly type="textarea" :placeholder="`请输入${item.field}`" v-else></el-input>
+                        <el-input v-model="givePrizeForm[item.field_key]" readonly type="text" :placeholder="item.placeholder"></el-input>
                       </el-form-item>
                     </el-form>
                   </div>
@@ -115,7 +106,16 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="奖品设置" name="third">
+        <el-tab-pane name="third">
+           <span slot="label"><i class="el-icon-date"></i>
+           奖品设置
+            <el-tooltip class="prize--set" effect="dark" placement="right" style="margin-left:5px">
+              <i class="el-icon-question ques"></i>
+              <div slot="content">
+                每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除
+              </div>
+          </el-tooltip>
+          </span>
           <div class="prize-info">
             <prize-list :source = "'0'" :roomId = '$route.query.roomId'></prize-list>
           </div>
@@ -142,12 +142,17 @@ export default {
       },
       previewSrc: null,
       givePrizeForm: {
-        adressCheced: false
+        adressCheced: false,
+        name: '',
+        phone: '',
+        address: '',
+        placeholder: ''
       },
       action: `${process.env.VUE_APP_BASE_URL}/v3/vss/lottery/save-prize-image`,
       total: 100,
       length: 0,
       isChecked: 0,
+      localImg: 0,
       prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
       prizeUrl: ['http://t-alistatic01.e.vhall.com/upload/sys/img_url/e0/2b/e02b57d63947b5ec20c57c144686cd7d.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/47/2a/472ab6904c58829ebcf91d801e146945.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/12/80/12806c4743aec43498cef45ea732c977.gif'],
       givePrizeList: [
@@ -156,6 +161,7 @@ export default {
           field: '姓名',
           field_key: 'name',
           is_required: true,
+          placeholder: '请输入姓名',
           rank: 1,
         },
         {
@@ -163,6 +169,7 @@ export default {
           field: '手机号',
           field_key: 'phone',
           is_required: true,
+          placeholder: '请输入手机号',
           rank: 2,
         },
         {
@@ -170,6 +177,7 @@ export default {
           field: '地址',
           field_key: 'adress',
           is_required: false,
+          placeholder: '请输入地址',
           rank: 3,
         },
         {
@@ -177,6 +185,7 @@ export default {
           field: '自定义1',
           field_key: 'user_define_100',
           is_required: false,
+          placeholder: '',
           rank: 100,
         },
       ],
@@ -191,7 +200,14 @@ export default {
           { required: true, message: '请输入奖品名称', trigger: 'blur' }
         ]
       },
-    };
+      isLive: false,
+      localLottery: { // 抽奖页信息
+        description: ''
+      },
+      lotteryPageMessage: {  // 领奖页信息
+
+      }
+    }
   },
   components: {
     PageTitle,
@@ -199,10 +215,49 @@ export default {
     // createPrize,
     prizeList
   },
-  mounted() {
+  computed: {
+    isDisabled: function(){
+      console.warn(this.localLottery, this.formData, 785);
+      if(this.formData.description != this.localLottery.description || this.isChecked != this.localImg || this.formData.title != this.localLottery.title || this.previewSrc != this.localLottery.img_path){
+        return false
+      }else{
+        return true
+      }
+    },
+    lotteryPage: function(){
+      console.warn(this.givePrizeForm, 889);
+      try {
+        this.givePrizeList.forEach(ele=>{
+          if(ele.placeholder != this.givePrizeForm[ele.field_key]){
+            throw '改变'
+          }
+        })
+      } catch (err) {
+        console.warn(err);
+        return false
+      }
+      return true
+    }
+  },
+  async mounted() {
+    await this.getActice()
     this.lotteryGet();
   },
   methods: {
+    getActice(){
+      return new Promise((resolve, reject)=>{
+        this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+          if(res.code == 200){
+            if(res.data.webinar_state == 1){
+              this.isLive = true
+            }
+          }else{
+            this.$message.warning(res.msg)
+          }
+          resolve()
+        })
+      })
+    },
     // 抽奖页面获取信息
     lotteryGet () {
       let params = {
@@ -210,15 +265,17 @@ export default {
       }
       this.$fetch('getLivePrizeInfo', params).then(res => {
         if (res.code == 200 && res.data) {
+          this.formData.description = res.data.description;
+          this.formData.title = res.data.title;
+          this.localLottery = res.data
           this.previewSrc = res.data.img_path || '';
           this.backgroundImg = res.data.img_path || this.prizeImgList[0];
           if (res.data.img_path) {
+            this.localImg = 10
             this.isChecked = 10;
           } else {
             this.isChecked = 0;
           }
-          this.formData.description = res.data.description;
-          this.formData.title = res.data.title;
           } else {
             this.backgroundImg = this.prizeImgList[0];
           }
@@ -236,6 +293,9 @@ export default {
           title: this.formData.title,
           img_path: this.previewSrc,
           description: this.formData.description
+      }
+      if(this.isLive){
+        return this.$message.error('当前活动正在开播中，无法更改')
       }
       this.$fetch('savePrizeInfo', this.$params(params)).then(res => {
         if (res.code == 200) {
@@ -265,6 +325,7 @@ export default {
         field: `自定义${this.index}`,
         field_key: 'user_define_' + (this.givePrizeList.length + 97),
         is_required: false,
+        placeholder: '请输入',
         rank: this.givePrizeList.length + 97,
       });
     },
@@ -274,48 +335,27 @@ export default {
     // 获取领奖页信息
     getGivePrize() {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
+        console.warn(res.data, '获取领奖页信息');
         this.givePrizeList = res.data;
+        this.lotteryPageMessage = res.data
+        this.givePrizeList.forEach(ele=>{
+          this.givePrizeForm[ele.field_key] = ele.placeholder
+        })
         this.givePrizeList.map(item => {
           item.is_required = Boolean(item.is_required);
         })
-        // if (res.data.length) {
-        //   this.givePrizeList = res.data;
-        //   this.givePrizeList.map(item => {
-        //     item.is_required = Boolean(item.is_required);
-        //   })
-        // }
       })
     },
     // 保存领奖页信息
     sureGivePrize() {
-      console.log('refssss',this.$refs);
-      let nameList = ['姓名','地址', '手机号'];
-      this.givePrizeList.map((item, index) => {
-        if (!item.is_system) {
-          item.field =  this.$refs[this.givePrizeList[index].field_key][0].$el.childNodes[0].innerHTML;
-          if (nameList.includes(item.field)) {
-            this.$message.error('输入名字不能相同');
-            this.isError = true;
-          } else {
-            nameList.push(item.field);
-            this.isError = false;
-          }
-        }
+      // if(this.isLive){
+      //   return this.$message.error('当前活动正在开播中，无法更改')
+      // }
+      this.givePrizeList.forEach(ele=>{
+        console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
+        ele.placeholder = this.givePrizeForm[ele.field_key]
       })
-      if (this.isError) {
-        return;
-      }
-      // this.givePrizeList.forEach((item, index)=>{
-      //   if (!item.is_system) {
-      //     item.field =  this.$refs[this.givePrizeList[index].field_key][0].$el.childNodes[0].innerHTML;
-      //    if (nameList.includes(item.field)) {
-      //      this.$message.error('输入名字不能相同');
-      //      return false;
-      //    } else {
-      //      nameList.push(item.field);
-      //    }
-      //   }
-      // })
+      console.warn(this.givePrizeList);
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
         if (res.code == 200) {
           this.$message.success('保存成功');
@@ -481,13 +521,10 @@ export default {
           }
         }
         .sureBtn{
-          // text-align: center;
           width: 180px;
           margin: auto;
           text-align: center;
-          overflow: hidden;
-          text-overflow:ellipsis;
-          white-space: nowrap;
+          color: #FB3A32;
           /deep/.el-button{
             margin-top: 25px;
           }
@@ -495,8 +532,8 @@ export default {
         .give-msg{
           text-align: center;
           margin: auto;
-          max-height: 170px;
-          padding:20px;
+          height: 170px;
+          padding:0 20px;
           p{
             margin-top: 24px;
           }
@@ -561,5 +598,8 @@ export default {
     text-align: center;
     margin-top: 268px;
   }
+}
+.prize--set{
+  // position: absolute;
 }
 </style>
