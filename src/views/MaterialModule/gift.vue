@@ -22,11 +22,18 @@
         class="head-btn fr search"
         v-model="searchName"
         placeholder="请输入礼物名称"
-        suffix-icon="el-icon-search"/>
+      >
+        <i
+          style="cursor: pointer;"
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchGifts">
+        </i>
+      </el-input>
     </div>
     <el-card class="gift-list">
       <el-table
-        :data="currentTableData"
+        :data="tableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
         ref="multipleTable"
@@ -113,6 +120,7 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
+import { debounce } from "@/utils/utils"
 import Env from "@/api/env";
 
 export default {
@@ -127,6 +135,7 @@ export default {
         page_size: 10,
         page: 1
       },
+      pos: 0,
       selectIds:[],
       defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
@@ -163,6 +172,8 @@ export default {
   },
   methods: {
     searchGifts() {
+      this.searchParams.page = 1
+      this.pos = 0;
       this.getTableList(true)
     },
     selectHandle(row) {
@@ -170,25 +181,27 @@ export default {
     },
     // 获取礼物列表
     getTableList (isSearch) {
-      this.$fetch('shareGiftList', {
-        ...this.searchParams
-      }).then((res) => {
+      const opts = {
+        limit: this.searchParams.page_size,
+        pos: this.pos
+      }
+      this.searchName && (opts.name = this.searchName)
+      this.$fetch('shareGiftList', opts).then((res) => {
         if (res.code == 200 && res.data) {
-          this.searchParams.page = 1
           this.tableData = res.data.list
-          if (isSearch) {
-            const resultData = []
-            this.tableData.forEach(item => {
-              if(item.name.indexOf(this.searchName) != -1) {
-                resultData.push(item)
-              }
-            })
-            this.tableData = resultData
-          }
-          this.currentTableData = this.tableData.filter((item, index) => {
-            return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-          })
-          this.total = this.tableData.length
+          // if (isSearch) {
+          //   const resultData = []
+          //   this.tableData.forEach(item => {
+          //     if(item.name.indexOf(this.searchName) != -1) {
+          //       resultData.push(item)
+          //     }
+          //   })
+          //   this.tableData = resultData
+          // }
+          // this.currentTableData = this.tableData.filter((item, index) => {
+          //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+          // })
+          this.total = res.data.total
         }
       })
     },
@@ -336,29 +349,33 @@ export default {
       this.selectIds.push(data.gift_id)
     },
     handleDeleteGift () {
-      this.$fetch('deleteGift', {
-        gift_ids: this.selectIds.join(',')
-      }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success('删除成功')
-          this.getTableList()
-          this.selectIds = []
-          this.dialogTipVisible = false
-        }
-      }).catch((e) => {
-          this.$message.error('创建失败')
-      })
+      debounce(() => {
+        this.$fetch('deleteGift', {
+          gift_ids: this.selectIds.join(',')
+        }).then((res) => {
+          if (res.code == 200) {
+            this.$message.success('删除成功')
+            this.getTableList()
+            this.selectIds = []
+            this.dialogTipVisible = false
+          }
+        }).catch((e) => {
+            this.$message.error('删除失败')
+        })
+      }, 100)
     },
     handleCancelDelete () {
       this.dialogTipVisible = false
     },
     // 翻页
     currentChangeHandler (val) {
-      this.searchParams.page = val
+      this.searchParams.page = val;
+      this.pos = (val - 1) * this.searchParams.page_size;
+      this.getTableList();
       // 切换table显示的内容
-      this.currentTableData = this.tableData.filter((item, index) => {
-        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-      })
+      // this.currentTableData = this.tableData.filter((item, index) => {
+      //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      // })
     }
   },
 };
