@@ -48,7 +48,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'chooseWay/:str',
+        path: 'chooseWay/:str/:role?',
         component: () => import('@/views/LiveModule/chooseWay'),
         meta: { auth: true, title: '选择发起方式', name: 'chooseWay', activeMenu: '/live/list' },
         hidden: true
@@ -248,7 +248,7 @@ const router = [
     ]
   },
   {
-    path: '/chooseWay/:str',
+    path: '/chooseWay/:str/:role?',
     component: () => import('@/views/LiveModule/chooseWay'),
     meta: { auth: true, title: '选择发起方式', name: 'chooseWay'},
     hidden: true

@@ -66,9 +66,9 @@ export default {
     };
   },
   created(){
-    console.log(this.$route);
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
-    this.arr = this.$route.params.str.split(','); // id，role
+    let _data = this.$route.params
+    this.arr = [_data.str, _data.role]
     this.getRoleUrl();
   },
   methods: {
@@ -110,7 +110,7 @@ export default {
       let params = {
         webinar_id: this.arr[0],
         type: this.arr[1],
-        live_token: Number( this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
+        live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
       }; // 若非主持人登录，需传递用户token
       this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
         if(res && res.code === 200) {

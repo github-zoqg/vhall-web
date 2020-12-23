@@ -515,7 +515,6 @@ import share from '@/components/Share';
 import custoMenu from '../components/customMenuView';
 import goodsPop from '../Room/rankList/goodsPop';
 import products from '../components/products';
-import keyLogin from '../components/keyLogin';
 import { sessionOrLocal, isIE } from '@/utils/utils';
 import Popup from '../../../tangram/libs/saas-popup'; // 弹窗
 import SignForm from './signUpForm'
@@ -532,7 +531,6 @@ export default {
     custoMenu,
     goodsPop,
     products,
-    keyLogin,
     SignForm
   },
   data(){
@@ -1600,31 +1598,6 @@ export default {
       this.dialogPlaceholder = ''
       this.tipContent = ''
     },
-    // 邀请登录
-    handleCodeAuthLogin (data) {
-      let {role, name, keyCode} = data
-      this.$fetch('roleLogin', {
-        webinar_id: this.$route.params.id,
-        type: role, // 1主持 2嘉宾 3观众
-        password: keyCode,
-        refer: '',
-        nickname: name,
-        visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : ''
-      }).then(res => {
-        if (res.code == 200) {
-          sessionOrLocal.set('interact_token', res.data.live_token)
-          sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
-          sessionOrLocal.set('visitor_id', res.data.visitor_id)
-          setTimeout(() => {
-          this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
-
-          }, 300)
-          return
-        } else {
-          this.$message.error(res.msg)
-        }
-      })
-    }
   },
   filters: {
     webinarTypeToText(val){
