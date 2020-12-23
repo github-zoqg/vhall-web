@@ -1,6 +1,6 @@
 <template>
   <div class="detailBox" v-loading="loading" element-loading-text="数据获取中">
-    <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
+    <pageTitle :title='titleText'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
         <div class="inner">
@@ -149,11 +149,15 @@ export default {
     };
   },
   computed: {
-    titleText(){
-      return function(val){
-        let _text = '直播'
-        val == 5 ? _text = '回放' : val == 4 ? _text = '点播' : _text = '直播'
-        return _text
+    titleText() {
+      // webinar_state  2 预告 1 直播 3 结束 5 回放 4 点播
+      let state = this.liveDetailInfo && this.liveDetailInfo.webinar_state ? this.liveDetailInfo.webinar_state : '';
+      if (state === 4) {
+        return `点播详情`;
+      } else if(state === 5) {
+        return `回放详情`;
+      } else {
+        return `直播详情`;
       }
     },
     operas() {
@@ -212,7 +216,7 @@ export default {
           this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
       }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        this.$message.error(`获取信息失败`);
         console.log(error);
       }).finally(()=>{
         this.loading = false;
