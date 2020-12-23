@@ -779,7 +779,7 @@ export default {
     },
     // 抽奖单个
     exportPrizeDetailInfo(item) {
-      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId}).then(res => {
+      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
         this.$EventBus.$emit('saas_vs_download_change');
       })
