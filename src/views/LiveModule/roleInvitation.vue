@@ -14,7 +14,8 @@
         @change="updateSwitch"
         active-color="#FB3A32"
         inactive-color="#CECECE"
-        active-text="开启后，可邀请特殊角色加入直播">
+        :active-text="roleSwitch > 0 ? `已开启，支持邀请特殊角色加入直播` : `开启后，支持邀请特殊角色加入直播`"
+      >
       </el-switch>
     </pageTitle>
     <!-- 角色邀请卡片 -->
@@ -27,7 +28,7 @@
             <div class="title--box">
               <label class="title--label role1">主持人</label>
             </div>
-            <p class="role-remark">主持人发起直播，进行推流、文档演示等操作</p>
+            <p class="role-remark">主持人可发起直播，进行推流、文档演示等操作</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
@@ -82,14 +83,17 @@
           <div class="role-card-qx-content">
             <div class="role-qx-title">
               <label>嘉宾权限</label>
-              <el-button size="mini" round @click="savePremHandle('guest')">保存</el-button>
+              <el-button size="mini" round @click="savePremHandle('guest')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
-              <el-checkbox v-model="item.check"
-                           :true-label="1"
-                           :false-label="0"
-                           v-for="(item, key, ins) in privilegeVo.permission_data.guest"
-                           :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
+              <el-checkbox  :value="true" disabled>文档白板</el-checkbox>
+              <template v-for="(item, key, ins) in privilegeVo.permission_data.guest">
+                <el-checkbox v-model="item.check"
+                             :true-label="1"
+                             :false-label="0"
+                             v-if="key !== 'white_board'"
+                             :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
+              </template>
             </div>
           </div>
           <div>
@@ -125,15 +129,17 @@
           <div class="role-card-qx-content">
             <div class="role-qx-title">
               <label>助理权限</label>
-              <el-button size="mini" round @click="savePremHandle('assistant')">保存</el-button>
+              <el-button size="mini" round @click="savePremHandle('assistant')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
               <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
-              <el-checkbox v-model="item.check"
-                           :true-label="1"
-                           :false-label="0"
-                           v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []"
-                           :key="`assistant_${key + ins}`">{{ item.label }}</el-checkbox>
+              <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []">
+                <el-checkbox v-model="item.check"
+                             :true-label="1"
+                             :false-label="0"
+                             v-if="key !== 'white_board'"
+                             :key="`assistant_${key + ins}`">{{ item.label }}</el-checkbox>
+              </template>
             </div>
           </div>
           <div>
@@ -325,7 +331,7 @@ export default {
       let keysObj = this.privilegeVo.permission_data[keyName];
       let {keys,values} = Object;
       let obj = {};
-      keys(keysObj).forEach((keyItem, ins) => {
+      keys(keysObj).filter(item => item !== 'white_board').forEach((keyItem, ins) => {
         console.log(keyItem + ',' + ins);
         obj[keyItem] = Number(values(keysObj)[ins].check);
       });
