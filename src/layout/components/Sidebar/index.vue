@@ -88,7 +88,7 @@ export default {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
     this.logo = userInfo.user_extends ? userInfo.user_extends.logo : '';
-    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : process.env.VUE_APP_WEB_URL;
+    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url ||  process.env.VUE_APP_WEB_URL : process.env.VUE_APP_WEB_URL;
       // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
@@ -96,7 +96,7 @@ export default {
     this.$EventBus.$on("saas_vs_account_change", (res) => {
       let user_extends = res.user_extends;
       this.logo = user_extends.logo;
-      this.logo_jump_url = user_extends.logo_jump_url;
+      this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_WEB_URL;
     });
   },
   destroyed() {
