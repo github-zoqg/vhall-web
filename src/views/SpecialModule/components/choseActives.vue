@@ -58,8 +58,8 @@
             {{ item.created_at }}
           </div>
         </div>
-
       </div>
+      <div class="select-option">已选择<span>{{ selectedOption.length }}</span>个</div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" round @click="saveSelect">确 定</el-button>
         <el-button round @click="cancelSelect">取 消</el-button>
@@ -76,6 +76,7 @@ export default {
       page: 1,
       pageSize: 9,
       activeList: [],
+      selectedOption: [],
       keyword: '',
       lock: false,
       loading: false,
@@ -156,23 +157,25 @@ export default {
 
     doSelect(item) {
       console.log( item )
-      this.activeList = this.activeList.map(active => {
-        if (item.webinar_id == active.webinar_id) {
-          if(active.checked) {
-            return{
-              ...active,
-              checked: false
-            }
-          } else {
-            return{
-              ...active,
-              checked: true
-            }
-          }
-        } else {
-          return {...active}
-        }
-      })
+      item.checked = !item.checked;
+      this.selectedOption = this.activeList.filter(item => item.checked);
+      // this.activeList = this.activeList.map(active => {
+      //   if (item.webinar_id == active.webinar_id) {
+      //     if(active.checked) {
+      //       return{
+      //         ...active,
+      //         checked: false
+      //       }
+      //     } else {
+      //       return{
+      //         ...active,
+      //         checked: true
+      //       }
+      //     }
+      //   } else {
+      //     return {...active}
+      //   }
+      // })
     },
 
     saveSelect() {
@@ -194,6 +197,7 @@ export default {
     height: 320px;
     overflow: auto;
     overflow-x: hidden;
+    position: relative;
   }
   .search{
     margin-bottom: 20px;
@@ -275,6 +279,17 @@ export default {
       border-radius: 20px;
       position: relative;
       z-index: 2;
+    }
+  }
+  .select-option{
+    position: absolute;
+    bottom: 40px;
+    left: 32px;
+    line-height: 20px;
+    span{
+      color: #FB3A32;
+      font-size: 16px;
+      padding: 0 10px;
     }
   }
 </style>
