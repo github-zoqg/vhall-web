@@ -7,7 +7,7 @@
         @mousemove="vhControlWrapMouseMove"
         @mouseleave="vhControlWrapMouseLeave"
       >-->
-      <div class="vh-video-tailoring__control fl" ref="vhControlWrap">
+      <div class="vh-video-tailoring__control fl" ref="vhControlWrap" v-if="videoTime">
         <el-slider
           v-model="sliderVal"
           :show-tooltip="false"
@@ -43,7 +43,7 @@
 
       <div class="vh-video-tailoring__volume-box">
         <span @click="jingYin" class="vh-video-tailoring__icon-voice-warp">
-          <span class="vh-iconfont " :class="{ 'vh-icon-icon-volumeon-01': voice > 0, 'vh-icon-icon-volumeoff-01': voice <= 0}"></span>
+          <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
         </span>
         <div class="vh-video-tailoring__slider">
           <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
@@ -57,13 +57,17 @@
     </span>-->
     <div class="vh-video-tailoring__button-operation-warp clearfix" :class="{'vh-video-tailoring__button-operation-warp-active': vodReady}">
       <div>
-        <span @click="seekBack" class="vh-btn vh-video-tailoring__seek-back"></span>
-        <span
-          @click="videoPlayBtn"
-          class="vh-btn vh-video-tailoring__play"
-          :class="{ 'is-pause': statePaly }"
-        ></span>
-        <span @click="seekForward" class="vh-btn vh-video-tailoring__seek-forward"></span>
+        <div class="vh-video-tailoring__operate fl">
+          <span @click="seekBack" class="vh-btn vh-video-tailoring__seek-back"></span>
+          <span
+            @click="videoPlayBtn"
+            class="vh-btn vh-video-tailoring__play"
+            :class="{ 'is-pause': statePaly }"
+          >
+            <icon :icon-class="statePaly ? 'saasicon_zanting' : 'saasicon_bofang'"></icon>
+          </span>
+          <span @click="seekForward" class="vh-btn vh-video-tailoring__seek-forward"></span>
+        </div>
         <span class="vh-video-tailoring__time fr">
           <span class="vh-video-tailoring__hover-time">{{ showTime }}</span>
           /
@@ -72,31 +76,21 @@
       </div>
       <div class="vh-video-select__button">
         <el-button @click="addEvent" class="fl vh-video-tailoring__add-event" :disabled="!vodReady">
-          <span class="vh-iconfont vh-icon-shijiandianicon"></span>
-          事件点
-          <!-- {{
-        t('事件点')
-          }}-->
+          <icon icon-class="saasicon_shijiandian"></icon>
         </el-button>
         <el-button
           @click="addCutVideoEvent"
           class="fl vh-video-tailoring__cut-video-event"
           :disabled="!vodReady"
         >
-          <span class="vh-iconfont vh-icon-jianqiedianicon"></span>
-          剪切点
-          <!-- {{
-          t('剪切点')
-          }}-->
+          <icon icon-class="saasicon_caijian"></icon>
         </el-button>
         <el-button
           @click="delCuttingPointFun"
           class="fl vh-video-tailoring__del-video-event"
           :disabled="!vodReady"
         >
-          <span class="vh-iconfont vh-icon-shanchu_icon"></span>
-          删除
-          <!-- <icon class="icon" icon-class="saasicon-trash"></icon> -->
+          <icon class="icon" icon-class="saasicon_shanchu"></icon>
         </el-button>
 
         <el-button
@@ -104,9 +98,7 @@
           class="fl vh-video-tailoring__enlarge"
           :disabled="this.currentUnit <= 1 && !vodReady"
         >
-          <span class="vh-iconfont vh-icon-fangdaicon"></span>
-          放大
-          <!-- <icon class="icon" icon-class="saasicon_plus"></icon> -->
+          <icon class="icon" icon-class="saasicon_fangda"></icon>
         </el-button>
 
         <el-button
@@ -114,9 +106,7 @@
           class="fl vh-video-tailoring__narrow"
           :disabled="this.currentUnit >= this.maxValue && !vodReady"
         >
-          <span class="vh-iconfont vh-icon-suoxiaoicon"></span>
-          缩小
-          <!-- <icon class="icon" icon-class="saasicon_delete"></icon> -->
+          <icon class="icon" icon-class="saasicon_suoxiao"></icon>
         </el-button>
         <el-button @click="qp" class="fl vh-btn vh-video-tailoring__qp-btn" v-if="!isFullScreen">
           <span class="vh-iconfont vh-icon-full-screen"></span>
@@ -204,8 +194,9 @@
     <div
       class="vh-video-tailoring__operation-empty-warp"
       v-show="!vodReady"
-    >{{ t('添加媒体资源后，开始创建您的视频！')}}{{t('立即')}}
-      <el-link type="primary" @click="addVideo">{{t('添加回放')}}</el-link>
+    >{{ t('添加媒体资源后，开始创建您的视频！')}}
+    <!-- {{t('立即')}}
+      <el-link type="primary" @click="addVideo">{{t('添加回放')}}</el-link> -->
     </div>
     <el-dialog
       class="vh-video-tailoring__popbody"
@@ -924,13 +915,9 @@ export default {
     width: 1306px;
     height: 28px;
     background-color: #000;
-    padding: 0px 40px 0px 20px;
-    // width: 1306px;
-    // margin: 0 auto;
-    // height: 28px;
+    padding: 0px 10px 0px 20px;
     .vh-video-tailoring__control {
-      width: 97%;
-      // width: 1130px;
+      width: calc(100% - 60px);
       position: relative;
       .vh-currentPointTime {
         position: absolute;
@@ -970,9 +957,6 @@ export default {
         background-size: 12px 12px;
         border: 0;
         cursor: default !important;
-        // width: 0;
-        // height: 0;
-        // border: 0;
       }
       &:hover {
         .el-slider__button {
@@ -984,32 +968,29 @@ export default {
       }
     }
     .vh-video-tailoring__volume-box {
-      align-items: center;
+      position: relative;
+      width: 60px;
+      height: 28px;
+      line-height: 40px;
+      float: left;
       display: flex;
-      margin-right: 20px;
-      position: absolute;
-      top: -5px;
-      // right: 140px;
-      right: 11px;
+      align-items: center;
+      justify-content: center;
       .vh-iconfont {
         display: inline-block;
         font-size: 22px;
         color: #FAFAFA;
-        // width: 19px;
-        // height: 20px;
         cursor: pointer;
-        // background-image: url('../image/voice-default@2x.png');
-        // background-size: 19px 20px;
         &:hover {
           color: #1890FF;
-          // background-image: url('../image/voice-default-hover@2x.png');
         }
       }
       .vh-video-tailoring__icon-voice-warp {
-        display: inline-block;
-        width: 22px;
-        height: 23px;
-        padding-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 28px;
         &:hover {
           & + .vh-video-tailoring__slider {
             display: block;
@@ -1021,7 +1002,7 @@ export default {
         width: 70px;
         position: absolute;
         z-index: 3;
-        right: -48px;
+        right: -8px;
         top: -110px;
         &:hover {
           display: inline-block;
@@ -1097,6 +1078,9 @@ export default {
         }
         .vh-iconfont {
           font-size: 22px;
+        }
+        .iconfont-v3 {
+          font-size: 18px;
         }
         // &.vh-video-tailoring__add-event {
         //   margin-left: 30px;
@@ -1184,15 +1168,13 @@ export default {
         width: 20px;
         height: 22px;
         background-size: 20px 22px;
-        margin: 0 17px;
-        background-image: url('../image/play@2x.png');
-        &:hover {
-          background-image: url('../image/play-hover@2x.png');
-        }
-        &.is-pause {
-          background-image: url('../image/pause@2x.png');
+        margin: 0 26px;
+        line-height: 1;
+        i {
+          color: #D8D8D8;
+          font-size: 22px;
           &:hover {
-            background-image: url('../image/pause-hover@2x.png');
+            color: #fff;
           }
         }
       }
@@ -1249,6 +1231,12 @@ export default {
     }
     .vh-video-tailoring__time {
       color: #888888
+    }
+    .vh-video-tailoring__operate {
+      height:72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     &.vh-video-tailoring__button-operation-warp-active{
       .vh-video-tailoring__time{
@@ -1507,6 +1495,9 @@ export default {
     .vh-video-tailoring__slider-ruler {
       width: 100%;
     }
+  }
+  /deep/ .svg-icon[data-v-26c99969] {
+    vertical-align: -0.15em;
   }
 }
 </style>
