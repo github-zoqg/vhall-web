@@ -441,6 +441,7 @@ export default {
   .audience-icon{
     width: 36px;
     height: 36px;
+    margin: 0 5px;
     img{
       margin-top: 2px;
       display: inline-block;
