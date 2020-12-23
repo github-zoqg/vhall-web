@@ -158,11 +158,9 @@ export default {
     },
     // 点击领奖
     getAward () {
-      console.warn(this.lotteryStep, '提交到哪一步');
       if(this.lotteryStep == 1){
         this.lotteryStep = 2
         if(this.getReward != '立即领奖'){
-          console.warn('点击   进入下一步查看中奖名单');
           return
         }
         this.getReward = '提交';
@@ -186,13 +184,14 @@ export default {
           this.$message.error(`请输入必填信息: ${error}`)
           return
         }
-        let _lottery_user_remark = {}
-        Object.keys(this.reciveInfo).map(ele=>{
-          if(ele != 'name' && ele!='phone'){
-            _lottery_user_remark[ele] = this.reciveInfo[ele]
+        let _lottery_user_remark = []
+        this.stepHtmlList.forEach((ele,index)=>{
+          if(ele.field_key != 'name' && ele.field_key!='phone'){
+            ele.field_value = this.reciveInfo[ele.field_key]
+            _lottery_user_remark.push(ele)
           }
         })
-        console.warn(this.lotteryInfo);
+        console.warn(this.lotteryInfo, _lottery_user_remark);
         this.$fetch('saveLotteryInfo', {
           room_id: this.roomId,
           lottery_id:  this.lotteryInfo.id,
