@@ -61,11 +61,9 @@
 
 export default {
   props: {
-    roomId: {
-      type: String
-    },
-    vssToken: {
-      type: String
+    webinarId:{
+      type: String,
+      required: true
     }
   },
   data () {
@@ -75,12 +73,13 @@ export default {
     };
   },
   created () {
-    this.$vhallFetch('getPushInfo', {
-      vss_token: this.vssToken,
-      room_id: this.roomId
+    this.$fetch('getStreamPushAddress', {
+      webinar_id: this.webinarId
     }).then((res) => {
-      this.stream_number = res.data.stream_number;
-      this.push_address = res.data.push_address;
+      console.warn(res, '第三方推流');
+      if(res.code != 200) return this.$message.warning(res.msg)
+      this.stream_number = res.data.stream_code;
+      this.push_address = res.data.stream_address;
     });
   },
   mounted () {

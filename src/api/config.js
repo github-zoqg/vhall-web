@@ -450,6 +450,8 @@ const apis = {
   v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 √
   v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 √
   createRecord: ['/v3/webinars/record/live-create-record', 'POST'], // 直播结束生成回放
+  // 媒体设置
+  saveMediaSettings: ['/v3/interacts/room/set-stream', 'POST'], // 保存媒体设置属性
 
 
   // 授权模块

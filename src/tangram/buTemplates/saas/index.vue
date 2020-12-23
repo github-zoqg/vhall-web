@@ -184,10 +184,7 @@
           class="thirdParty-warp"
           v-if="!assistantType && thirdPartyMobild && NoDocShow && roleName != 3"
         >
-          <thirdParty
-            :roomId="roomInfo.interact.room_id"
-            :vssToken="vssToken"
-          ></thirdParty>
+          <thirdParty :webinarId='ilId'></thirdParty>
         </div>
         <div
           v-if="!assistantType || (assistantType && assistantType == 'doc')"
