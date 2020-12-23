@@ -2,11 +2,11 @@
   <div class="question-wrap">
     <pageTitle title="奖品" v-if="$route.meta.title === '奖品'">
       <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
+        1.创建奖品不限制数量
         <br>
-        2.上蔟韩视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
+        2.奖品名称：不支持特殊符号、表情
         <br>
-        3.上传的视频，不支持剪辑和下载
+        3.奖品图片：尺寸XX*XX，大小不超过2M
       </div>
     </pageTitle>
     <div class="head-operat">

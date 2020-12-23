@@ -2511,6 +2511,7 @@ export default {
           this.isBanned = this.roomStatus.is_banned == 1;
           this.isKicked = this.roomStatus.is_kicked == 1;
           this.getRoomStatus();
+          console.warn(this.userInfo, '*********this.userInfo***********');
           let context = {
             nickname: this.userInfo.nickname, // 昵称
             avatar: this.userInfo.avatar

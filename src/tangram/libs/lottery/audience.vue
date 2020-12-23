@@ -25,8 +25,9 @@
             <div class="recive-prize"  v-if="lotteryStep == 2" >
               <p class="title">请填写您的领奖信息，方便主办方与您联系。</p>
               <el-form ref="forms" class="form-style">
-                <el-form-item :label="item.field" :required='item.is_required == 1' v-for="(item, index) in stepHtmlList" :key="index">
-                  <el-input  v-model="reciveInfo[item.field_key]" :placeholder="`请输入${item.field}`"></el-input>
+                <el-form-item v-for="(item, index) in stepHtmlList" :key="index" :required='true'>
+                  <span v-if="item.is_required==1">*</span>
+                  <el-input v-model="reciveInfo[item.field_key]" :placeholder="item.placeholder"></el-input>
                 </el-form-item>
               </el-form>
             </div>
@@ -102,13 +103,14 @@ export default {
   },
   watch: {
     isWinning(newValue, oldValue){
-      console.warn('isWinning',newValue, oldValue, '发生变化');
+      console.warn('isWinning',newValue, oldValue, '发生变化', this.lotteryInfo);
       if(newValue){
         this.$nextTick(()=>{
-          this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
           if(this.lotteryInfo.award_snapshoot && this.lotteryInfo.award_snapshoot.award_name){
+            this.audienceText = `中奖啦！恭喜您获得 ${this.lotteryInfo.award_snapshoot.award_name}`;
             this.promptImg = this.lotteryInfo.award_snapshoot.image_url
           }else{
+            this.audienceText = `中奖啦！恭喜您获得 默认奖品`;
             this.promptImg = require('./img/win.png')
           }
           this.isWinning = true;
@@ -197,7 +199,7 @@ export default {
           lottery_id:  this.lotteryInfo.id,
           lottery_user_name: this.reciveInfo['name'],
           lottery_user_phone: this.reciveInfo['phone'],
-          lottery_user_remark: _lottery_user_remark
+          lottery_user_remark: JSON.stringify(_lottery_user_remark)
         }).then(res => {
           this.$nextTick(()=>{
             this.lotteryStep = 3
@@ -680,13 +682,22 @@ export default {
         width: 356px;
         margin: 0 auto;
         .el-form-item{
+          position: relative;
           margin-bottom: 12px;
         }
         .el-form-item__label{
           width: 70px;
         }
-        .el-form-item__content{
-          width: calc(100% - 70px);
+        span{
+          position: absolute;
+          left: -15px;
+          top: 0;
+          display: inline-block;
+          color: #fe6a6a;
+          margin-right: 10px;
+        }
+        .el-input{
+          width: 100%;
           display: inline-block;
         }
       }
