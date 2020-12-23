@@ -55,7 +55,7 @@ export default {
               this.nowSignObj = res.data
               this.signInfo.autoSign = res.data.is_auto_sign == 1 ? true : false
               this.remaining = res.data.auto_sign_time_ttl
-              this.totalTime =  res.data.auto_sign_time
+              this.totalTime = res.data.auto_sign_time
               this.setIntervalAction()
               console.warn('this.starting',this.starting, 'remaining', this.remaining, !!this.remaining)
             }else{
@@ -111,6 +111,7 @@ export default {
         console.warn('创建签到',res)
         if(res.code == 200){
           if(state.autoSign){
+            this.totalTime = state.interval
             window.sessionStorage.setItem('isAutoSign', 'true')
           }
           this.signId = res.data.id
@@ -138,10 +139,9 @@ export default {
     setIntervalAction() {
       clearInterval(this.timer);
       this.timer = setInterval(() => {
-        console.warn('咯ok');
         if (--this.remaining <= 0) {
           if( window.sessionStorage.isAutoSign &&  window.sessionStorage.isAutoSign == 'true'){
-             this.remaining = this.totalTime
+            this.remaining = this.totalTime
             this.showSignin = true;
           }else{
             clearInterval(this.timer);
