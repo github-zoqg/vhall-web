@@ -453,7 +453,7 @@ export default {
       this.$fetch('sonRoleList', {
         role_name: '',
         pos: 0,
-        limit: 11
+        limit: 500
       }).then(res => {
         console.log(res && res.code === 200 && res.data && res.data.list);
         if (res && res.code === 200 && res.data) {
