@@ -1,5 +1,5 @@
 <template>
-  <div class="detailBox">
+  <div class="detailBox" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
@@ -96,8 +96,10 @@ export default {
       msg: '',
       isAnginOpen: false,
       outLiveTime: false,
+      loading: true,
       liveDetailInfo: {
-        webinar_state: ''
+        webinar_state: '',
+        webinar_type: ''
       },
       link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
@@ -198,6 +200,7 @@ export default {
   methods: {
     // 获取基本信息
     getLiveDetail(id) {
+      this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         if (res.data.webinar_state == 1) {

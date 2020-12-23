@@ -6,7 +6,7 @@
       :rules="[
         { required: true, max: 100,  message: '请输入直播标题', trigger: 'blur' },
       ]">
-        <el-input v-model="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
+        <el-input v-model.trim="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
           <el-col :span="11">
@@ -183,7 +183,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="webniarType=='live' || !this.versionType">
+      <p class="switch__box" v-if="webniarType=='live' && !this.versionType">
          <el-switch
           style="display: block"
           v-model="capacity"
@@ -204,10 +204,10 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="versionType ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
@@ -348,7 +348,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (!this.isSaveInfo && this.title === '编辑') {
-    this.$confirm('是否取消编辑的直播内容？', '提示', {
+    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-alert-box',
@@ -406,7 +406,8 @@ export default {
         this.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
         this.online = Boolean(this.liveDetailInfo.hide_watch);
         this.reservation = Boolean(this.liveDetailInfo.hide_appointment);
-        this.$refs.unitImgTxtEditor.content = this.liveDetailInfo.introduction;
+        this.content = this.liveDetailInfo.introduction;
+        // this.$refs.unitImgTxtEditor.content = this.liveDetailInfo.introduction;
         this.hot = Boolean(this.liveDetailInfo.hide_pv);
         if (this.liveDetailInfo.webinar_curr_num) {
           this.limitCapacity = this.liveDetailInfo.webinar_curr_num;

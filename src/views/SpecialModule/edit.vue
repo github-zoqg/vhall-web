@@ -3,7 +3,7 @@
     <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="100px">
       <el-form-item label="专题标题:" prop="title">
-        <el-input v-model="formData.title" limit='100'></el-input>
+        <el-input v-model.trim="formData.title" maxlength="100" placeholder="请输入专题标题" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="专题封面:">
         <upload
@@ -25,38 +25,44 @@
         <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
-         <el-switch
-          v-model="reservation"
-          :active-value="1"
-          :inactive-value="0"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          :active-text="reservationDesc">
-        </el-switch>
+        <p class="switch__box">
+          <el-switch
+            v-model="reservation"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            :active-text="reservationDesc">
+          </el-switch>
+        </p>
       </el-form-item>
       <el-form-item label="活动热度:">
-        <el-switch
-          v-model="hot"
-          :active-value="1"
-          :inactive-value="0"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          :active-text="hotDesc">
-        </el-switch>
+        <p class="switch__box">
+          <el-switch
+            v-model="hot"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            :active-text="hotDesc">
+          </el-switch>
+        </p>
       </el-form-item>
       <el-form-item label="关联主页:">
-        <el-switch
-          v-model="home"
-          :active-value="1"
-          :inactive-value="0"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          :active-text="homeDesc">
-        </el-switch>
+        <p class="switch__box">
+          <el-switch
+            v-model="home"
+            :active-value="1"
+            :inactive-value="0"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            :active-text="homeDesc">
+          </el-switch>
+        </p>
       </el-form-item>
-      <el-form-item label="专题目录:">
+      <el-form-item label="专题目录:" required>
         <el-button size="small" @click="showActiveSelect = true">添加</el-button>
-        <div class="vh-sort-tables">
+        <div class="vh-sort-tables" v-show="selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
               序号
@@ -122,8 +128,8 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
-        <el-button @click="resetForm('ruleForm')" round>取消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
     <chose-actives
@@ -259,6 +265,10 @@ export default {
     },
 
     submitForm(formName) {
+      if (!this.selectedActives.length) {
+        this.$message.error('请选择专题目录');
+        return;
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const webinar_ids = this.selectedActives.map((item) => {
