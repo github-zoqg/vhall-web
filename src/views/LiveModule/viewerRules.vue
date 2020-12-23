@@ -29,7 +29,7 @@
                 <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
                 <span class="ctx-span">元</span>
               </div>-->
-              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative">
+              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
@@ -97,7 +97,7 @@
         <div v-show="Number(form.verify) === 6" class="viewer-rules-ctx--6">
           <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="100px">
             <el-form-item label="付费金额" prop="fee">
-              <el-input v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative">
+              <el-input v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>

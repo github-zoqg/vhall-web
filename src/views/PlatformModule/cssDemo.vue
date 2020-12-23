@@ -34,10 +34,11 @@
     <br />
     <br />
     {{content}}
-    <v-editor save-type='live' :isReturn=true @returnChange="sendData1" ref="unitImgTxtEditor" v-model="content"></v-editor>
+    <v-editor save-type='live' ref="unitImgTxtEditor" v-model="content"></v-editor>
     {{content2}}
-    <v-editor save-type='live' :isReturn=true @returnChange="sendData2" ref="unitImgTxtEditor" v-model="content2"></v-editor>
-    <v-editor save-type='live'></v-editor>
+    <v-editor save-type='live' ref="unitImgTxtEditor" v-model="content2"></v-editor>
+    {{content3}}
+    <v-editor save-type='live' v-model="content3"></v-editor>
   </div>
 </template>
 
@@ -51,16 +52,11 @@ export default {
       content:
         `第一个编辑器`,
       content2:
-        `第二个编辑器`
+        `第二个编辑器`,
+      content3: ''
     };
   },
   methods: {
-    sendData1(content) {
-     this.content = content;
-    },
-    sendData2(content) {
-      this.content2 = content;
-    }
   }
 };
 </script>

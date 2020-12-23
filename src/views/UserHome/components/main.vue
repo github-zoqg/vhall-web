@@ -153,6 +153,7 @@ export default {
         title: this.query.keyword,
         order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
         webinar_states: this.liveStatus, // 直播状态 默认为0 可以传入多个值 使用逗号分隔  0 全部 2 预告 1 直播 3 结束 5 回放 4 点播
+        is_private: 1, // 展示所有公开的
         need_flash: 0 // 是否需要flash数据 0 否 1 是
       };
       this.loading = true;
@@ -183,6 +184,7 @@ export default {
         user_id: this.$route.params.str,
         limit: this.query.limit,
         title: this.query.keyword,
+        is_private: 1, // 展示所有公开的
         order_type: 1 // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
       };
       this.loading = true;

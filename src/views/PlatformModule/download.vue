@@ -1,6 +1,6 @@
 <template>
 	<div class="download">
-    <pageTitle :title="`下载中心${file_name}`"></pageTitle>
+    <pageTitle title="下载中心"></pageTitle>
     <div class="download-ctx">
 
       <div v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
@@ -63,7 +63,8 @@
             label="生成状态"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}</span>
+              <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
+              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -100,6 +101,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {v1 as uuidV1} from "uuid";
 import {sessionOrLocal} from "@/utils/utils";
 import qs from "qs";
+import EventBus from "@/utils/Events";
 export default {
   name: "download.vue",
   components: {
@@ -204,6 +206,7 @@ export default {
           item.dowStatusStr = ['未下载' ,'已下载'][item['dow_status']]; // 0:未下载1已下载
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
+          item.percentage = 90;
         });
         this.docDao =  dao;
       }).catch(e=>{
@@ -280,7 +283,11 @@ export default {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.$refs.downloadTable.clearSelection();
+            try {
+              that.$refs.downloadTable.clearSelection();
+            } catch (e) {
+              console.log(e);
+            }
             that.initPage();
           }else {
             that.$message({
@@ -297,10 +304,70 @@ export default {
         });
       }).catch(() => {
       });
-    }
+    },
+    // 监听
+    monitor(){
+      /**
+       * 接收聊天自定义消息*/
+      this.$Chat.onCustomMsg(async msg => {
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============收到聊天消息2===============' + JSON.stringify(msg.data))
+        if (msg.data.type === 'down_center_msg') {
+          EventBus.$emit('down_center_msg', {
+            dow_task_id: msg.data.dow_task_id,
+            status: msg.data.status
+          })
+        }
+      })
+    },
+    // 初始化
+    async initChat(){
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        console.log(result, '值');
+        let option = {
+          appId: result.data.paasAppId || '', // appId 必须
+          accountId: result.data.accountId || '', // 第三方用户ID
+          channelId: result.data.channelId || '', // 频道id 必须
+          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+        }
+        window.VhallChat.createInstance(option, (event) => {
+          this.$Chat = event.message; // 聊天实例句柄
+          this.monitor()
+        },err=>{
+          // alert('初始化错误')
+          console.error(err);
+        })
+      }
+    },
+  },
+  created() {
+    this.initChat();
   },
   mounted() {
     this.initPage();
+    EventBus.$on('down_center_msg', res => { // 转码状态
+      console.log(res, '监听到down_center_msg转码状态事件');
+      this.docDao.list.map(item => {
+        if (Number(item.dow_task_id) === Number(res.dow_task_id)) {
+          item.fileStatusCss = ['wating', 'success', 'failer'][res.status];
+          item.fileStatusStr = ['生成中', '生成成功', '生成失败'][res.status]; // 0:初始(生成中),1:生成成功2:生成失败
+          item.file_status = Number(res.status);
+        }
+      })
+    });
   }
 };
 </script>
