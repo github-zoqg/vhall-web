@@ -182,7 +182,14 @@ export default {
         }
       ],
       prize: {},
-      prizeList: [], // 奖品列表
+      prizeList: [
+        {
+          create_time: "",
+          img_path: "",
+          prize_id: "",
+          prize_name: "默认奖品"
+        }
+      ], // 奖品列表
       payoff: false,
       hasAward: false,
       startButtonDisabled: false, // 开始按钮禁用状态
