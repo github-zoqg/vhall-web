@@ -33,7 +33,7 @@
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
         </el-form-item>
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入邮箱地址"/>
+          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号"/>
         </el-form-item>
         <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <div id="setCaptcha1">
