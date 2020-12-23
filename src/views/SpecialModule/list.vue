@@ -41,7 +41,7 @@
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"></i>
-              {{item.view_num | unitCovert}}
+              {{item.pv | unitCovert}}
             </span>
             <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
           </div>
@@ -105,9 +105,7 @@ export default {
       liveDropDownVisible: false,
       orderOptions: [
         { label: '按创建时间排序', value: 1 },
-        { label: '全部', value: 2 },
-        {label: '近7日', value: 3},
-        {label: '近30日', value: 4},
+        { label: '按照标题排序', value: 2 }
       ],
       loading: true,
       liveList: [],
