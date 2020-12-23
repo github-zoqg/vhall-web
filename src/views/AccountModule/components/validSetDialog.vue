@@ -398,10 +398,10 @@ export default {
       // 确认绑定新功能
       this.$fetch('bindInfo', params).then(res => {
         if (res && res.code === 200) {
-          this.$message.success('绑定成功！');
+          this.$message.success('绑定成功');
           this.visible = false;
         } else {
-          this.$message.error(res.msg || '绑定失败！');
+          this.$message.error(res.msg || '绑定失败');
         }
       }).catch(e => {
         console.log(e);
@@ -452,9 +452,12 @@ export default {
               if (res && res.code === 200) {
                 this.$message.success('操作成功');
                 this.visible = false;
+              } else {
+                this.$message.error(res.msg || '操作失败');
               }
             }).catch(e => {
               console.log(e);
+              this.$message.error('操作失败');
             });
           }
         }

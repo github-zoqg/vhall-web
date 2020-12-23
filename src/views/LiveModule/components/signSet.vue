@@ -100,10 +100,10 @@ export default {
       domain_url: '',
       signSetFormRules: {
         logo_url: [
-          { required: true, message: '请选择标志', trigger: 'change'}
+          { required: false, message: '请选择标志', trigger: 'change'}
         ],
         skip_url: [
-          { required: true, message: '请填写标志链接', trigger: 'blur'}
+          { required: false, message: '请填写标志链接', trigger: 'blur'}
         ]
       }
     };

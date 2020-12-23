@@ -83,6 +83,10 @@ export default {
         dateData.push(time);
         valData.push(Number(value));
       });
+      let max = 60;
+      if (valData.length > 0) {
+        max = Math.max(...valData);
+      }
       //数据
       let options = {
         grid: {
@@ -102,7 +106,7 @@ export default {
           {
             name: '并发',
             min: 0,
-            max: 60,
+            max: max,
             interval: 15,
             type: 'value',
             position: 'left',

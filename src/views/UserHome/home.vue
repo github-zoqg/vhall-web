@@ -18,7 +18,7 @@
          <div class="ac__home--user">
            <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" />
            <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
-           <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>
+          <!-- <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>-->
          </div>
          <div class="ac__home--info">
            <p class="ac__home--title"></p>
