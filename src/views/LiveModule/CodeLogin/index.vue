@@ -108,7 +108,8 @@ import { liveTag } from '@/utils/filter';
               sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
               sessionOrLocal.set('visitor_id', res.data.visitor_id)
               setTimeout(() => {
-                this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+                // this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+                this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}`})
               }, 300)
             } else {
               this.$message.error(res.msg)
