@@ -20,7 +20,7 @@
       <el-input
         @keyup.enter.native="searchGifts"
         class="head-btn fr search"
-        v-model="searchName"
+        v-model.trim="searchName"
         placeholder="请输入礼物名称"
       >
         <i
@@ -90,15 +90,15 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <el-input v-model="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
+            <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input v-model="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
+            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" round>取 消</el-button>
+        <el-button @click="handleUpdateGift" v-preventReClick  round>确 定</el-button>
+        <el-button @click="handleCancelEdit" v-preventReClick round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -110,8 +110,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete">取 消</el-button>
-        <el-button type="primary" @click="handleDeleteGift">确 定</el-button>
+        <el-button @click="handleCancelDelete" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="handleDeleteGift" v-preventReClick>确 定</el-button>
       </span>
     </el-dialog>
   </div>

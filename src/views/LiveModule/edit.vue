@@ -130,9 +130,9 @@
       <el-form-item :label="`${webniarTypeToZH}简介：`">
         <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
-      <el-form-item :label="`${webniarTypeToZH}类别：`" required>
+      <!-- <el-form-item :label="`${webniarTypeToZH}类别：`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
-      </el-form-item>
+      </el-form-item> -->
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
           style="display: block"

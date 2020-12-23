@@ -11,7 +11,7 @@
     <!-- 操作栏 -->
     <div class="operaBox">
       <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
-      <div class="searchBox">
+      <div class="searchBox" v-show="totalElement || isSearch">
         <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
           <el-option
             v-for="item in orderOptions"
@@ -23,6 +23,7 @@
         <el-input
           placeholder="请输入专题标题"
           clearable
+          @change="searchHandler"
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
@@ -34,7 +35,7 @@
     </div>
     <!-- 操作栏 -->
 
-    <el-row :gutter="40" class="lives">
+    <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
           <div class="top">
@@ -73,6 +74,10 @@
       </el-col>
     </el-row>
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
+     <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text">
+      </noData>
+    </div>
     <VhallDialog
       title="分享"
       :visible.sync="dialogShareVisible"
@@ -87,13 +92,16 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
-// import share from './components/share';
+import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from '@/components/Share'
 export default {
   data() {
     return {
       liveStatus: 0,
+      isSearch: false,
+      nullText: 'nullData',
+      text: '你还没有创建专题',
       dialogShareVisible: false,
       orderBy: 1,
       keyWords: '',
@@ -115,7 +123,8 @@ export default {
   },
   components: {
     PageTitle,
-    share
+    share,
+    noData
   },
   created() {
     this.getLiveList();
@@ -143,9 +152,19 @@ export default {
       this.loading = true;
       console.log(data);
       this.$fetch('subjectList', this.$params(data)).then(res=>{
-        console.log(res);
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
+        if (this.orderBy == 1 && !this.keyWords) {
+          // 默认状态
+          this.nullText = 'nullData';
+          this.text = '您还没有专题，快来创建吧！';
+          this.isSearch = false;
+        } else {
+          // 搜索状态
+          this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        }
       }).catch(error=>{
         this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);
         console.log(error);
