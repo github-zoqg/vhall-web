@@ -99,27 +99,27 @@
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
-                  <template v-if="item.webinar_state == 1">
+                  <template v-if="item.webinar_type == 1">
                     直播
                   </template>
-                  <template v-if="item.webinar_state == 2">
+                  <template v-if="item.webinar_type == 2">
                     预告
                   </template>
-                  <template v-if="item.webinar_state == 3">
+                  <template v-if="item.webinar_type == 3">
                     结束
                   </template>
-                  <template v-if="item.webinar_state == 4">
+                  <template v-if="item.webinar_type == 4">
                     点播
                   </template>
-                  <template v-if="item.webinar_state == 5">
+                  <template v-if="item.webinar_type == 5">
                     回放
                   </template>
                 </div>
                 <div class="vh-sort-tables__tbody-hots">
-                  {{ item.pv }}
+                  {{ item.num }}
                 </div>
                 <div class="vh-sort-tables__tbody-editor">
-                  <i class="iconfont-v3 saasicon-trash"></i>
+                  <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.id)"></i>
                   <i class="iconfont-v3 saasicon_move"></i>
                 </div>
               </div>
@@ -212,6 +212,7 @@ export default {
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
           res.data.webinar_subject.cover && (this.imageUrl = res.data.webinar_subject.cover)
+          this.domain_url = res.data.webinar_subject.cover;
           this.content = res.data.webinar_subject.intro
 
           // 配置项
@@ -325,8 +326,26 @@ export default {
     },
 
     doSelectedActives (selectedActives) {
-      this.selectedActives = selectedActives
+      this.selectedActives.push(selectedActives[0]);
+      console.log(this.selectedActives, '111111111111')
       this.showActiveSelect = false
+    },
+    // 删除事件
+    deleteSpecial(id) {
+      // this.$fetch('subjectDel', {subject_ids: id}).then(res=>{
+      //   if(res && res.code === 200) {
+      //     this.$message({
+      //       type: 'success',
+      //       message: '删除成功!'
+      //     });
+      //     // 刷新列表
+      //     this.searchHandler();
+      //   }
+      // }).catch(error=>{
+      //   this.$message.error(`删除失败，${error.message}`);
+      // }).finally(()=>{
+      //   this.loading = false;
+      // });
     },
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)
@@ -431,8 +450,8 @@ export default {
     }
 
     &__tbody{
-      height: 120px;
-      overflow-y: scroll;
+      // height: 120px;
+      // overflow-y: scroll;
       &-selected {
         border: 1px solid #FB3A32;
       }

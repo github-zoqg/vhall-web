@@ -1,11 +1,11 @@
 <template>
   <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle title="专题管理">
-      <div slot="content">
+      <!-- <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
         <br/>
         2.控制台数据为真实数据，不统计虚拟数据
-      </div>
+      </div> -->
     </pageTitle>
 
     <!-- 操作栏 -->
@@ -40,7 +40,7 @@
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
-              <i class="el-icon-view"></i>
+              <i class="iconfont-v3 saasicon_redu"></i>
               {{item.view_num | unitCovert}}
             </span>
             <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
@@ -72,29 +72,42 @@
         </div>
       </el-col>
     </el-row>
-    <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
-    <share ref="share" :url="shareUrl" linkId="linkShareBox" v-if="shareUrl"></share>
+    <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
+    <VhallDialog
+      title="分享"
+      :visible.sync="dialogShareVisible"
+      :close-on-click-modal="false"
+      width="28%">
+      <div class="content">
+        <share slot="content" :url="home_link"></share>
+      </div>
+   </VhallDialog>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import share from './components/share';
+// import share from './components/share';
 import Env from '@/api/env.js';
+import share from '@/components/Share'
 export default {
   data() {
     return {
       liveStatus: 0,
+      dialogShareVisible: false,
       orderBy: 1,
       keyWords: '',
       pageSize: 12,
       pageNum: 1,
       pos: 0,
+      home_link: '',
       totalElement: 0,
       liveDropDownVisible: false,
       orderOptions: [
         { label: '按创建时间排序', value: 1 },
-        { label: '按最后直播时间排序', value: 2 }
+        { label: '全部', value: 2 },
+        {label: '近7日', value: 3},
+        {label: '近30日', value: 4},
       ],
       loading: true,
       liveList: [],
@@ -144,7 +157,7 @@ export default {
     },
     // 删除
     deleteHandle(id) {
-      this.$confirm('此操作将永久删除该文件, 确认继续？', '提示', {
+      this.$confirm('您确定要删除选中的专题吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
@@ -174,12 +187,12 @@ export default {
       });
     },
     toShare(id) {
-      this.shareUrl = `${Env.staticLinkVo.WEB_SHARE_URL}/special/detail?id=${id}`;
-      this.$refs.share.dialogVisible = true;
+      this.home_link = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
+      this.dialogShareVisible = true;
     },
     // 预览页面
     specialDetail(item) {
-      let routeData = this.$router.resolve({ path: '/special/detail', query: {  id: item.id } });
+      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     }
   },
@@ -239,6 +252,9 @@ export default {
       &:hover{
         background: #fc615b;
       }
+    }
+    /deep/.el-dialog__body{
+      padding-bottom: 20px;
     }
     .el-button.is-round{
       padding: 10px 23px;

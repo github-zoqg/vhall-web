@@ -4,14 +4,14 @@
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
       :rules="[
-        { required: true, max: 100,  message: '请输入直播标题', trigger: 'blur' },
+        { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
         <el-input v-model.trim="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
           <el-col :span="11">
             <el-form-item prop="date1" :rules="[
-              { required: true, message: '请选择直播开始日期', trigger: 'blur' }
+              { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
               <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
             </el-form-item>
@@ -19,7 +19,7 @@
           <el-col class="line" :span="1">-</el-col>
           <el-col :span="11">
             <el-form-item prop="date2" :rules="[
-              { required: true, message: '请选择直播开始时间', trigger: 'blur' }
+              { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
               <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
@@ -327,13 +327,13 @@ export default {
         }
       },
       content: ``,
-      docSwtich: true,
+      docSwtich: false,
       reservation: true,
       online: true,
       showDialog: false,
       hot: true,
       home: true,
-      capacity: true,
+      capacity: false,
       isSaveInfo: false,
       limitCapacity: '',
       limitCapacitySwtich: false,
