@@ -59,6 +59,9 @@
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
           <el-input v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
         </el-form-item>
+        <el-form-item label="" class="link__to" v-if="showVo.step === 1">
+          <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
+        </el-form-item>
       </el-form>
     </div>
     <span slot="footer">
@@ -75,6 +78,8 @@
 </template>
 
 <script>
+import {sessionOrLocal} from "@/utils/utils";
+
 export default {
   name: "validSetDialog.vue",
   data() {
@@ -136,9 +141,9 @@ export default {
         new_password: [
           {required: true, trigger: 'blur', validator: verifyAgainEnterPwd, min: 6, max: 30,}
         ],
-        phone: [
+        /*phone: [
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
-        ],
+        ],*/
         code: [
           {required: true, message: '请输入验证码', trigger: 'blur'}
         ],
@@ -173,6 +178,9 @@ export default {
   computed: {
     title () {
       return this.getScenedTitle().title;
+    },
+    openLink() {
+      return `http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=${sessionOrLocal.get('userId')}`;
     }
   },
   methods: {
@@ -212,10 +220,10 @@ export default {
       let data = this.form.phone;
       let flag = false;
       if (this.showVo.executeType !== 'email') {
-        if(!(/^1[0-9]{10}$/.test(this.form.phone))) {
+        /*if(!(/^1[0-9]{10}$/.test(this.form.phone))) {
           this.$message.error('手机号校验失败');
           flag = false;
-        } else if(!this.mobileKey) {
+        } else */if(!this.mobileKey) {
           this.$message.error('图形验证码校验失败');
           flag = false;
         } else {
@@ -465,22 +473,24 @@ export default {
     },
     // 取消修改密码
     cancelPwdStep() {
-      if(this.showVo.step === 2) {
+      // 关闭弹出框
+      this.visible = false;
+     /* if(this.showVo.step === 2) {
         // 返回上一步
         this.showVo.step = 1;
       } else {
         // 关闭弹出框
         this.visible = false;
-      }
+      }*/
     },
     initComp(vo, btnType) {
       // btnType => pwd 密码；email 邮箱； phone手机号
       // 场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码 9设置密码（密码不存在情况）
-      // vo = {
-      //   has_password: 0,
-      //   phone: '18310410764',
-      //   email: '1538986328@qq.com'
-      // };
+      vo = {
+        has_password: 0,
+        phone: '183****0764',
+        email: '18*****0764@sina.cn'
+      };
       this.vo = vo;
       this.showVo.executeType = btnType;
       if(!vo) {
@@ -595,5 +605,10 @@ export default {
 }
 .info {
   margin-bottom: 16px;
+}
+/deep/.el-form-item.link__to {
+  text-align: right;
+  margin-bottom: 0;
+  margin-top: -20px;
 }
 </style>
