@@ -176,7 +176,7 @@ export default {
     },
     // 联系我们
     contactUs() {
-      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=${this.userId}`, "_blank");
+      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, "_blank");
     },
     getLiveList() {
       // parent_id > 0 子账号

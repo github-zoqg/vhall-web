@@ -6,7 +6,10 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword" @keyup.enter.native="initQuerySonList">
+      <el-input placeholder="搜索子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
+                clearable
+                @clear="initQuerySonList"
+                @keyup.enter.native="initQuerySonList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
       </el-input>
       <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
@@ -45,16 +48,18 @@
                  width="680px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
         <el-form-item label="批量创建：" prop="is_batch" v-if="sonDialog.type === 'add'">
-          <el-switch
-            v-model="sonForm.is_batch"
-            :active-value="1"
-            :inactive-value="0"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-
-            @change="sonCountGetHandle"
-          >
-          </el-switch>
+          <div class="switch__box">
+            <el-switch
+              v-model="sonForm.is_batch"
+              :active-value="1"
+              :inactive-value="0"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+              @change="sonCountGetHandle"
+            >
+            </el-switch>
+            <span class="leve3_title title--999" v-if="sonForm.is_batch">批量创建时，所生成子账号的昵称，密码，角色一致</span>
+          </div>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
@@ -309,7 +314,7 @@ export default {
             } catch (e) {
               console.log(e);
             }
-            that.getSonList();
+            that.initQuerySonList();
           } else {
             that.$message({
               type: 'error',
@@ -373,6 +378,11 @@ export default {
       this.$refs.sonForm.validate((valid) => {
         if (valid) {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
+          // 判断子账号个数, 批量验证输入个数。
+          if(this.sonForm.is_batch && Number(this.sonForm.nums) >  Number(this.sonCountVo.available_num)) {
+            this.$message.error('超过当前可创建的子账号数量');
+            return;
+          }
           let params = Object.assign(
             this.sonDialog.type === 'add' ? {} : {
               id: this.sonDialog.row.id,
@@ -383,7 +393,7 @@ export default {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
               this.sonDialog.visible = false;
               // 新增成功后，重查列表
-              this.getSonList();
+              this.initQuerySonList();
             } else {
               this.$message({
                 type: 'error',
@@ -449,7 +459,7 @@ export default {
       });
     },
     // 查询所有可选择角色列表，加上默认最多可查询出11个
-    async getRoleList() {
+    getRoleList() {
       this.$fetch('sonRoleList', {
         role_name: '',
         pos: 0,
@@ -478,7 +488,7 @@ export default {
     },
     initQuerySonList() {
       this.query.pos = 0;
-      this.query.pageNumber = 0;
+      this.query.pageNumber = 1;
       this.query.limit = 10;
       // 表格切换到第一页
       try {
@@ -504,6 +514,7 @@ export default {
 // 初始化查询子账号列表信息
 .son--list {
   .padding41-40();
+  padding-bottom: 40px;
 }
 
 .list--search {

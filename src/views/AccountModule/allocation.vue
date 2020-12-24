@@ -78,6 +78,13 @@
               </template>
             </el-table-column>
           </el-table>
+          <SPagination
+            :total="total"
+            :currentPage="query.pageNumber"
+            @current-change="currentChangeHandler"
+            align="center"
+          >
+          </SPagination>
         </div>
         <!-- 动态分配，无查询列表 -->
         <div v-if="tabType === 'trends'" :class="['trends-ctx', {'trends-list': vipStatus === 'trends_1'}]">
@@ -167,7 +174,7 @@
         multipleSelection: [],
         query: {
           pos: 0,
-          limit: 500,
+          limit: 10,
           pageNumber: 1
         },
       };
@@ -227,6 +234,12 @@
           // 获取子账户数据
           this.getSonList();
         }
+      },
+      // 页码改变按钮事件
+      currentChangeHandler(current) {
+        this.query.pageNumber = current;
+        this.query.pos = parseInt((current - 1) * this.query.limit);
+        this.getSonList();
       },
       // 获取列表数据
       getSonList(row) {
@@ -422,6 +435,9 @@
     &.regular-list {
       padding: 24px 32px;
     }
+  }
+  .pageBox {
+    margin-top: 40px;
   }
   .trends-ctx {
     padding-top: 225px;

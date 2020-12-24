@@ -4,7 +4,10 @@
     <div class="role--list--search">
       <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-input placeholder="搜索角色名称" v-model.trim="role_name" @keyup.enter.native="initQuerySonList">
+      <el-input placeholder="搜索角色名称" v-model.trim="role_name"
+                clearable
+                @clear="initQuerySonList"
+                @keyup.enter.native="initQuerySonList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
       </el-input>
     </div>
@@ -302,7 +305,7 @@ export default {
     },
     initQuerySonList() {
       this.query.pos = 0;
-      this.query.pageNumber = 0;
+      this.query.pageNumber = 1;
       this.query.limit = 10;
       // 表格切换到第一页
       try {
@@ -319,6 +322,7 @@ export default {
 <style lang="less" scoped>
 .role--list {
   .padding41-40();
+  padding-bottom: 40px;
 }
 .role--list--search{
   margin-bottom: 20px;

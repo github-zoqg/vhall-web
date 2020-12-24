@@ -112,7 +112,7 @@ export default {
         this.query.limit = 10;
       }
       let params = {
-        account_id: sessionOrLocal.get('userId'), // b端账号id
+        account_id: this.$route.params.str, // b端账号id
         type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
         pos: this.query.pos,
         limit: this.query.limit,

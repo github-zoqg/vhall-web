@@ -104,7 +104,7 @@ export default {
         },
         yAxis: [
           {
-            name: '并发',
+            name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
             min: 0,
             max: max,
             interval: 15,
