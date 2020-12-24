@@ -87,19 +87,6 @@ export function formateDate(timer) {
   return (
     `${y}-${mat(m)}-${mat(d)}`
   );
-  // return (
-  //   y +
-  //   '-' +
-  //   mat(m) +
-  //   '-' +
-  //   mat(d) +
-  //   ' ' +
-  //   mat(h) +
-  //   ':' +
-  //   mat(mm) +
-  //   ':' +
-  //   mat(s)
-  // );
 }
 
 export function getRangeDays(value) {
@@ -123,40 +110,19 @@ export function getRangeDays(value) {
     return formateDate(date);
   }
 }
-
-export function diffToTime(targetStartDate, targetEndDate) {
-  let targetStart = new Date(targetStartDate);
-  let targetEnd = new Date(targetEndDate);
-  if (targetEnd.getTime() - targetStart.getTime() < 0) {
-    return false;
-  } else {
-    targetStart.setTime(targetStart.getTime() + 1000);
-    let diff = targetEnd.getTime() - targetStart.getTime();
-    let day = Math.floor(diff / (24 * 3600 * 1000));
-    let limit1 = diff % (24 * 3600 * 1000);
-    let hour = Math.floor(limit1 / (3600 * 1000));
-
-    let limit2 = limit1 % (3600 * 1000);
-    let minute = Math.floor(limit2 / (60 * 1000));
-
-    let limit3 = limit2 % (60 * 1000);
-    let second = Math.floor(limit3 / 1000);
-    if (diff) {
-      //
-      let diffTime = `${minute}:${second}`;
-      console.log('diffTime', diffTime);
-      let diffSetTime = window.setTimeout(() => {
-        diffToTime(targetStart, targetEnd);
-        window.clearTimeout(diffSetTime);
-      }, 1000);
-      return diffTime;
-    } else {
-      return false;
-    }
-  }
+import moment from 'moment';
+export function difSeconds(start, end) {
+  // console.warn(start, end);
+  let dif = end ? moment(end).diff(moment(), 'seconds') : moment(start).diff(moment(), 'seconds')
+  // console.warn(dif, 78, moment(end).diff(moment(), 'seconds'));
+  if (dif < 0) return '-1';
+  let days = Math.floor(dif / (24 * 60 * 60))
+  let hours = Math.floor(dif / (60 * 60)) - days * 24
+  let minutes = Math.floor(dif / 60) - days * 24 * 60 - hours * 60
+  let seconds = dif % 60
+  return [days, hours, minutes, seconds]
 }
 
-import moment from 'moment';
 // 最近7天、30天和90天
 export function getRangeDay() {
   let ret = [];

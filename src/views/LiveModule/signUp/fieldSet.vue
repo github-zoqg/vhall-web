@@ -35,7 +35,10 @@
         :restPic="true"
         @delete="deleteBanner"
       >
-        <p slot="tip">最佳头图尺寸：840*240px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+        <div slot="tip">
+          <p>建议尺寸：840*240px，小于2M</p>
+          <p>支持jpg、gif、png、bmp</p>
+        </div>
       </upload>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->

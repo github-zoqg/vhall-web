@@ -392,6 +392,7 @@ export default {
             }
             const layout = this.getLayout(totalStreamCount, info.streaming);
             const layoutAndMainscreenStreamId = { layout };
+            console.error('this.mainScreen', this.mainScreen, 'this.accountId',this.accountId);
             if (info.streaming) { // 如果是插播或者桌面共享则把插播或桌面共享的流设置为主屏
               layoutAndMainscreenStreamId.mainScreenStreamId = info.streamId;
             } else if (this.accountId == this.mainScreen) { // 如果主持人是主讲人把主屏设置为主持人

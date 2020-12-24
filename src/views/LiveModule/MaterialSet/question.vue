@@ -9,19 +9,24 @@
         3.上传的视频，不支持剪辑和下载
       </div>
     </pageTitle>
-    <div class="head-operat">
+    <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
       <el-button round  @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList" clearable></el-input>
+        <el-input v-model.trim="keyword" placeholder="请输入问卷名称" @change="getTableList" clearable></el-input>
       </div>
     </div>
-    <el-card class="question-list">
+    <el-card class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
+    <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
+      </noData>
+    </div>
     <template v-if="isShowQuestion">
       <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
         <pre-question  :questionId="questionId"></pre-question>
@@ -35,11 +40,15 @@
 import PageTitle from '@/components/PageTitle';
 import preQuestion from '@/components/Question/preQuestion';
 import baseQuestion from './components/questionBase';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "question",
   data() {
     return {
-      total: 100,
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
       isShowQuestion: false,
@@ -71,7 +80,8 @@ export default {
   components: {
     PageTitle,
     preQuestion,
-    baseQuestion
+    baseQuestion,
+    noData
   },
   mounted() {
     this.getTableList();
@@ -93,15 +103,18 @@ export default {
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
+        this.nullText = 'search';
+        this.text = '';
+        this.isSearch = true;
+      } else {
+        this.nullText = 'nullData';
+        this.text = '您还没有问卷，快来创建吧！';
+        this.isSearch = false;
       }
       let obj = Object.assign({}, pageInfo, formParams);
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list || [];
         this.total = res.data.total;
-        // window.sessionStorage.setItem("vhallyunFormAnswerDetail", JSON.stringify(res.data.list))
-        if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
-          window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
-        }
       })
     },
     // 预览
@@ -109,9 +122,6 @@ export default {
       console.log('预览', rows);
       that.isShowQuestion = true;
       that.questionId = rows.question_id;
-      // if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
-      //     window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
-      //   }
     },
     // 复制
     cope(that, {rows}) {
@@ -134,9 +144,10 @@ export default {
       that.$router.push({
         path: '/live/addQuestion',
         query: {
-          id: rows.question_id,
+          questionId: rows.question_id,
           webinarId: that.$route.query.id,
-          roomId: that.$route.query.roomId
+          roomId: that.$route.query.roomId,
+          type: 2
         }
         }
       );
@@ -182,7 +193,7 @@ export default {
     },
     addQuestion() {
       this.$router.push({
-        path: '/live/addQuestion', query: {webinarId: this.$route.query.id, roomId: this.$route.query.roomId}});
+        path: '/live/addQuestion', query: {webinarId: this.$route.query.id, roomId: this.$route.query.roomId, type: 2}});
     },
     dataBase() {
       this.$refs.dataBase.dataBaseVisible = true;

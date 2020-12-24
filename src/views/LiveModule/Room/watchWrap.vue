@@ -719,7 +719,7 @@ export default {
     this.$EventBus.$on('Join', (msg) => {
       if (this.roomData && this.roomData.online ) {
         this.roomData.online.num = msg.uv
-        this.roomData.pv.num += 1
+        this.roomData.pv.num = msg.context.pv
       }
     })
     // 离开消息
@@ -839,7 +839,11 @@ export default {
       try {
         await this.getRoomInfo() // 初始化房间信息
         if (this.roomData && this.roomData.status == 'subscribe') {
-          this.$router.push({name: 'Subscribe', params: {id: this.$route.params.il_id}})
+          if(location.pathname.indexOf('/embedclient/' != -1)){
+            this.$router.push({name: 'embedSubscribe', params: {id: this.$route.params.il_id}})
+          }else{
+            this.$router.push({name: 'Subscribe', params: {id: this.$route.params.il_id}})
+          }
           return
         }
         if (this.roomData && this.roomData.status == 'live') {
@@ -1601,6 +1605,8 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
+      console.log('a122', this.roominfo)
+
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
@@ -1652,7 +1658,6 @@ export default {
         ? (this.onlineShow = true)
         : (this.onlineShow = false);
       // 观看次数的显示
-      console.log(111, this.roominfo.modules.pv)
       this.roominfo.modules.pv.show == 1
         ? (this.pvShow = true)
         : (this.pvShow = false);

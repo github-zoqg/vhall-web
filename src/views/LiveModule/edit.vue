@@ -100,7 +100,10 @@
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
           @delete="imageUrl = ''">
-          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <div slot="tip">
+            <p>建议尺寸：1280*720px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
+          </div>
         </upload>
       </el-form-item>
       <el-form-item label="选择视频："  v-if="webniarType=='vod'">
@@ -449,7 +452,7 @@ export default {
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('上传封面图片大小不能超过 2M!');
         return false;
       }
       return isType && isLt2M;

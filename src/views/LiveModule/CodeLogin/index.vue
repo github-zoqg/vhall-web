@@ -98,7 +98,7 @@ import { liveTag } from '@/utils/filter';
           let role = this.roleName == 1 ? 1 : (this.roleName == 4 ? 2 : 3)
           let _data ={
             webinar_id: this.$route.params.id,
-            type: role, // 1主持 2嘉宾 3观众
+            type: role, // 1主持 2嘉宾 3助理
             password: this.keyCode,
             refer: '',
             nickname: this.name,
@@ -110,8 +110,12 @@ import { liveTag } from '@/utils/filter';
               sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
               sessionOrLocal.set('visitor_id', res.data.visitor_id)
               setTimeout(() => {
+                if(role == 3){
+                  this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+                }else{
+                  this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}`})
+                }
                 // this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
-                this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}`})
               }, 300)
             } else {
               this.$message.error(res.msg)

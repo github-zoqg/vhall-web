@@ -3,7 +3,7 @@
     <pageTitle title="播放器设置"></pageTitle>
     <el-card>
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="14">
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="防录屏跑马灯" name="first">
               <div class="give-item">
@@ -96,17 +96,17 @@
                         :before-upload="beforeUploadHnadler"
                         :disabled="!watermark_open"
                       >
-                        <p slot="tip">
-                          推荐尺寸：240*240px，小于2MB <br />
-                          支持jpg、gif、png、bmp
-                        </p>
+                        <div slot="tip">
+                          <p>建议尺寸：98*28px，小于2M</p>
+                          <p>支持jpg、gif、png、bmp</p>
+                        </div>
                       </upload>
                     </el-form-item>
                     <el-form-item label="水印位置">
-                      <el-radio v-model="formWatermark.img_position" label="1" :disabled="!watermark_open">左上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" label="2" :disabled="!watermark_open">右上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" label="3" :disabled="!watermark_open">左下角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" label="4" :disabled="!watermark_open">右下角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="1" :disabled="!watermark_open">左上角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="2" :disabled="!watermark_open">右上角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">左下角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">右下角</el-radio>
                     </el-form-item>
                     <el-form-item label="透明度">
                       <el-slider v-model="formWatermark.img_alpha" style="width: 350px" :disabled="!watermark_open"></el-slider>

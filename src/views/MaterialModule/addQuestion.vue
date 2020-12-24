@@ -6,6 +6,16 @@
         </div>
       </pageTitle>
       <div id="settingBox">
+        <question
+          v-if="initQuestion"
+          :userId="questionInfo.third_party_user_id"
+          :accountId="userId"
+          :questionType="'user'"
+          :accessToken="questionInfo.access_token"
+          :appId="questionInfo.app_id"
+          @onCloses="closeQuestion"
+          ref="questions"
+        ></question>
       </div>
   </div>
 </template>
@@ -13,69 +23,48 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
+import question from '@/tangram/libs/question/saas'; // 问卷
 export default {
-  name: 'question',
+  name: 'addQuestionMgr',
   data() {
     return {
-      rightComponent: 'fieldSet'
+      rightComponent: 'fieldSet',
+      userId: '',
+      questionInfo: {},
+      initQuestion: false
     };
   },
   components: {
     PageTitle,
+    question
   },
-  mounted() {
+  created() {
+    console.log(99999)
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.questionId = this.$route.query.id || '';
     this.getVideoAppid();
-    // this.initQuestion();
   },
   computed: {
     title() {
       return this.$route.query.id ? '编辑' : '新建';
     }
   },
+  mounted() {
+    // this.$refs.questions.createQuestion(this.$route.query.id);
+    // this.$nextTick(() => {
+    //   // this.createQuestion(this.$route.query.id);
+    //   this.$refs.questions.createQuestion(this.$route.query.id);
+    // })
+  },
   methods: {
     getVideoAppid() {
       this.$fetch('getPassId').then(res => {
-        this.initQuestion(res.data.app_id, res.data.third_party_user_id, res.data.access_token);
+        if (res.code == 200 && res.data) {
+          this.initQuestion = true
+          this.questionInfo = res.data;
+        }
+        console.log(this.questionInfo);
       })
-    },
-    initQuestion(appId, userId, token) {
-      let params = {};
-      let service = new VHall_Questionnaire_Service({
-        auth: {
-          appId: appId, //paas的应用id,必填
-          accountId: this.userId, //paas的第三方用户id,必填
-          owner_id: userId,
-          token: token, //paas的授权token,必填
-        },
-        isLoadElementCss: true,
-        notify: true //是否开启消息提示，非必填,默认是true
-      });
-      service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
-        service.renderPageEdit("#settingBox", this.questionId);
-        // this.service.renderPagePC("#settingBox"); //预览
-      })
-      service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {
-        console.log("提交成功", data);
-        data.question_id = params.question_id;
-      });
-      service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
-        params.survey_id = data.id;
-        params.description = data.description;
-        params.title = data.title;
-        this.createQuest(params);
-      })
-      service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
-        params.survey_id = data.id;
-        params.description = data.description;
-        params.title = data.title;
-        this.editQuest(params);
-      })
-      setTimeout(() => {
-        let text = document.querySelector('.text');
-        text.innerHTML = '';
-      }, 1000);
     },
     createQuest(params) {
       this.$fetch('createQuestion', params).then(res => {
@@ -95,6 +84,11 @@ export default {
     },
     submitFinish(data) {
       console.log(data, '1111111111111');
+    },
+    // 关闭问卷
+    closeQuestion (msg) {
+      // console.log(12)
+      // this.showQA = false;
     },
     returnBack() {
       this.$router.push({

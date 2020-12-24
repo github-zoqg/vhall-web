@@ -9,9 +9,11 @@
         <!-- 展开情况下 -->
         <div v-else key="expand" class="sidebar-logo-link">
           <a :href="logo_jump_url" v-if="logo" class="sidebar-logo2">
+            {{logo_jump_url}}
             <img v-if="logo" :src="logo">
           </a>
           <a :href="logo_jump_url" v-else class="sidebar-logo2">
+            {{logo_jump_url}}
             <img src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
           </a>
         </div>
@@ -88,15 +90,26 @@ export default {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
     this.logo = userInfo.user_extends ? userInfo.user_extends.logo : '';
-    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url ||  process.env.VUE_APP_WEB_URL : process.env.VUE_APP_WEB_URL;
-      // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
+    console.log(this.logo, process.env.VUE_APP_COMPANY_URL, '2222222222222222')
+
+    if(this.logo) {
+      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : '';
+    } else {
+      this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
+    }
+    // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
     });
     this.$EventBus.$on("saas_vs_account_change", (res) => {
       let user_extends = res.user_extends;
       this.logo = user_extends.logo;
-      this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_WEB_URL;
+      console.log(this.logo,process.env.VUE_APP_COMPANY_URL, '1111111111111111')
+      if(this.logo) {
+        this.logo_jump_url = user_extends.logo_jump_url || '';
+      } else {
+        this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
+      }
     });
   },
   destroyed() {

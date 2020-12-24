@@ -22,7 +22,10 @@
             :restPic="true"
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
-            <p slot="tip">最佳尺寸750*1624<br />支持jpg、png、bmp</p>
+            <div slot="tip">
+              <p>建议尺寸：750*1624px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
           </upload>
           <label class="img-tangle" v-show="isType==0">
             <i class="el-icon-check"></i>
