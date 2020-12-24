@@ -3263,13 +3263,13 @@ export default {
     },
 
     roleQuit () {
-      this.$vhallFetch('roleQuit', {
-        webinar_id: this.ilId,
-        params_verify_token: this.params_verify_token,
-        join_uid: this.saas_join_id
+      this.$fetch('roleLogout', {
+        webinar_id: this.ilId
       })
         .then(res => {
-          window.location.href = `${window.location.origin}/mywebinar/login/${this.ilId}`;
+          if(res.code != 200) return this.$message.warning(res.msg)
+          // this.$route.push({name: 'KeyLogin', params:{id: } })
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/keylogin/${this.ilId}/${this.roomInfo.join_info.role_name}`;
         })
         .catch(res => {});
     },

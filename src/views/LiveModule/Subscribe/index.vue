@@ -332,8 +332,6 @@
           </p>
         </div>
         <div class="watchBox">
-          --{{roomData.warmup_paas_record_id}}--
-            {{roomData && roomData.webinar && (roomData.warmup_paas_record_id || roomData.warmup_paas_record_id) && roomData.verified == 0}}
           <div class="leftWatch">
             <img
               :src="roomData.webinar.img_url"
@@ -519,7 +517,7 @@
         <el-button type="primary" @click="btnClick">确定</el-button>
       </div>
     </popup>
-    
+
   </div>
 </template>
 
@@ -639,9 +637,9 @@ export default {
     };
   },
   computed: {
-    showWatch () {
-      if (this.roomData && this.roomData.webinar) {
-        if (((this.roomData.warmup_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.warmup_paas_record_id && !this.roomData.warmup_paas_record_id)) {
+    showWatch(){
+      if (this.roomData && this.roomData.webinar){
+        if (((this.roomData.preview_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.preview_paas_record_id && !this.roomData.warmup_paas_record_id)) {
           return true
         } else {
           return false
@@ -2605,7 +2603,7 @@ export default {
       font-size: 12px;
       margin: 20px auto 0px auto;
     }
-      
+
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{
