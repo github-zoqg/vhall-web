@@ -719,8 +719,7 @@ export default {
     this.$EventBus.$on('Join', (msg) => {
       if (this.roomData && this.roomData.online ) {
         this.roomData.online.num = msg.uv
-        console.log(1212121212121212, msg)
-        this.roomData.pv.num = msg.pv
+        this.roomData.pv.num = msg.context.pv
       }
     })
     // 离开消息
