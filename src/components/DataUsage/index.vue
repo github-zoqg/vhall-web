@@ -141,9 +141,10 @@ export default {
           path: '/finance/info'
         });
       } else {
+        console.log("2222222222222");
         this.$refs.levelVersion.dialogVisible = true;
         this.title = title;
-         this.concurrentPrice = this.userInfo.concurrency;
+         this.concurrentPrice = this.userInfo;
       }
     },
     goAccountDetail() {
@@ -163,7 +164,7 @@ export default {
         });
       } else {
         this.title = this.versionType;
-        this.concurrentPrice = this.userInfo.flow;
+        this.concurrentPrice = this.userInfo;
         this.$refs.levelVersion.dialogBuyVisible = true;
       }
     }

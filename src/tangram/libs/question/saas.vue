@@ -65,9 +65,9 @@
           </li>
         </ul>
         <p class="text-center show-no-msg" v-if="docList.length == 0">
+
           <span class="no-msg">您还没有创建过问卷！</span>
         </p>
-
         <p
           class="creatBtn"
           style="height: 50px;border-top:1px solid #e5e5e5; text-align: center;"
@@ -82,7 +82,7 @@
     <!-- 预览 -->
     <div id="qs-preview-box" class="vhall-list-dialog-content" v-show="showPreview">
       <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content"></div>
-      <div class="btn-container">
+      <div class="btn-container" v-if="!preQuestionId">
         <button class="btn vhall-question-btn small blue-line" @click="publishPreview()">
           发布
         </button>
