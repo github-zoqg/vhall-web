@@ -517,7 +517,7 @@ export default {
           const status = Number(res.status);
           if (status === 0) {
             if(statusJpeg === 200) {
-              if (!/pptx?/.text(item.ext)) {
+              if (!/pptx?/.test(item.ext)) {
                  item.transform_schedule_str = '转码完成';
                  item.page = Number(res.page);
                  item.transcoded = true;
