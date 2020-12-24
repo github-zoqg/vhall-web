@@ -5,14 +5,14 @@
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }}</h2>
-          <p>有效期: {{ userInfo.edition_valid_time || '' }}</p>
+          <p>有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="6">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
-          <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}</p>
+          <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="6">
@@ -97,6 +97,7 @@ export default {
   data() {
     return {
       title: '流量包',
+      isOutTime: false, //是否过期
       versionType: '',
       userInfo: {
         concurrency: {},
@@ -119,12 +120,20 @@ export default {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
         this.versionType = res.data.edition;
+        this.outTime(res.data.edition_valid_time);
         this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
         sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
       }).catch(e=>{
         console.log(e);
       });
+    },
+    outTime(time) {
+      let newDate = new Date().getTime(); //获取本地当前时间
+      let diff = newDate - new Date(time).getTime();
+      if (diff > 0) {
+        this.isOutTime = true;
+      }
     },
     levelVersion(title) {
       if (this.$route.path !== '/finance/info') {
