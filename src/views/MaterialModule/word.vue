@@ -55,6 +55,8 @@
           class="head-btn search-tag"
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
+          clearable
+          @clear="initPage"
           @keyup.enter.native="initPage">
           <i
             class="el-icon-search el-input__icon"
@@ -88,7 +90,7 @@
       </el-dialog>
     </template>
     <!-- 文档列表 -->
-    <select-word ref="dialogWordComp" @reload="getTableWordList"></select-word>
+    <select-word ref="dialogWordComp" @reload="initPage"></select-word>
   </div>
 </template>
 <script>
@@ -159,7 +161,12 @@ export default {
       dialogTotal: 0,
       dialogTableList: [],
       dialogMulti: [],
-      channel_id: null
+      channel_id: null,
+      query: {
+        pos: 0,
+        limit: 1000,
+        pageNumber: 1
+      }
     };
   },
   computed: {
@@ -287,10 +294,14 @@ export default {
       }
     },
     // 获取文档列表数据
-    getTableWordList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
+    getTableWordList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
       let params = {
-        pos: pageInfo.pos,
-        limit: pageInfo.limit,
+        pos: this.query.pos,
+        limit: this.query.limit,
         keyword: this.formParams.keyword,
         type: 1,
         webinar_id: this.$route.params.str
@@ -387,6 +398,16 @@ export default {
       methodsCombin[val.type](this, val);
     },
     initPage() {
+      this.query.pos = 0;
+      this.query.pageNumber = 1;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.tableListWord.pageInfo.pageNum = 1;
+        this.$refs.tableListWord.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
       this.getTableWordList();
     },
     // 初始化
