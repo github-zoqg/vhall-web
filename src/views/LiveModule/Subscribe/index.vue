@@ -332,6 +332,8 @@
           </p>
         </div>
         <div class="watchBox">
+          --{{roomData.warmup_paas_record_id}}--
+            {{roomData && roomData.webinar && (roomData.warmup_paas_record_id || roomData.warmup_paas_record_id) && roomData.verified == 0}}
           <div class="leftWatch">
             <img
               :src="roomData.webinar.img_url"
