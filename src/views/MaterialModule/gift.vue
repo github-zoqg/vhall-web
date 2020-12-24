@@ -2,9 +2,11 @@
   <div class="gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
-        1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
+        1.支持创建免费礼物，观看端最多显示40个礼物
         <br>
-        2.礼物名称不支持特殊字符、表情
+        2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp
+        <br>
+        3.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
@@ -91,7 +93,7 @@
             :on-preview="uploadPreview"
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
-            <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
+            <p slot="tip">建议尺寸：120*120px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
@@ -158,7 +160,7 @@ export default {
       deleteId: '',
       rules: {
         name: [
-          { required: true, message: '请输入标题', trigger: 'blur' },
+          { required: true, validator: this.validTitle, trigger: 'blur' }
         ],
         img: [
           { required: true, message: '请选择推广图片', trigger: 'change' }
@@ -178,6 +180,20 @@ export default {
     this.getTableList()
   },
   methods: {
+    validTitle(rule, value, callback) {
+      const reg = /[^\w\u4e00-\u9fa5]/g;
+      if (!value) {
+        return callback ? callback(new Error('请输入礼物名称')) : false
+      } else if (reg.test(value)) {
+        return callback ? callback(new Error('请输入正确的礼物名称')) : false
+      }else{
+        if (callback) {
+          callback()
+        } else {
+          return true
+        }
+      }
+    },
     freeFilter({row}) {
       if(row.source_status == 0){
         return "mycell"

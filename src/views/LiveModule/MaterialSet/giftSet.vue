@@ -4,9 +4,9 @@
       <div slot="content">
         1.支持创建免费礼物
         <br>
-        1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
+        2.为保证显示效果，建议尺寸：120*120px, 文件大小不超过2MB,格式jpg、gif、png、bmp
         <br>
-        2.礼物名称不支持特殊字符、表情
+        3.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
@@ -103,7 +103,7 @@
             :before-upload="beforeUploadHandler"
             @delete="editParams.img = ''"
            >
-            <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
+            <p slot="tip">建议尺寸：120*120px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
@@ -239,7 +239,7 @@ export default {
       domain_url: '',
       rules: {
         name: [
-          { required: true, message: '请输入礼物名称', trigger: 'blur' },
+          { required: true, validator: this.validTitle, trigger: 'blur' }
         ],
         img: [
           { required: true, message: '请选择礼物图片', trigger: 'change' }
@@ -260,6 +260,20 @@ export default {
   },
   mounted() {},
   methods: {
+    validTitle(rule, value, callback) {
+      const reg = /[^\w\u4e00-\u9fa5]/g;
+      if (!value) {
+        return callback ? callback(new Error('请输入礼物名称')) : false
+      } else if (reg.test(value)) {
+        return callback ? callback(new Error('请输入正确的礼物名称')) : false
+      }else{
+        if (callback) {
+          callback()
+        } else {
+          return true
+        }
+      }
+    },
     freeFilter({row}) {
       if(row.source_status == 0){
         return "mycell"
@@ -380,7 +394,7 @@ export default {
         if (valid) {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
-            if (price < 0 || price >= 9999.99) {
+            if (price < 0 || price > 9999.99) {
               this.$message.error('价格必须介于0-9999.99之间')
               return
             }
