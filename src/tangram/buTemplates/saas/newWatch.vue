@@ -1074,14 +1074,13 @@ export default {
         avatar: this.userInfo && this.userInfo.avatar
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        pv: this.bizInfo.pv.num, // pv
+        pv: this.bizInfo.webinar.pv, // pv
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
         is_banned: this.isBanned, // 是否禁言 1是0否
         audience: true
       };
-
       sessionOrLocal.set('vhall_chat_context', JSON.stringify(context));
       const opt = {
         appId: this.roomInfo.app_id,
