@@ -762,12 +762,16 @@ export default {
     bizInfo: {
       handler (val) {
         if (val) {
+
           this.vssInfo = val
           this.poster = val.webinar.image_url ? val.webinar.image_url : '';
           this.userModules = val.modules;
           this.isInteract = val.webinar.is_interact;
           this.uploadDomain = val.domains.upload
+
         }
+      console.log('a121', this.bizInfo)
+
       },
       deep: true,
       immediate: true
@@ -1065,6 +1069,7 @@ export default {
       }
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
+      console.log('a110', this.userInfo, this.bizInfo)
       let context = {
         nickname: this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name, // 昵称
         avatar: this.userInfo && this.userInfo.avatar

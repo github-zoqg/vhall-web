@@ -1601,6 +1601,8 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
+      console.log('a122', this.roominfo)
+
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
@@ -1652,7 +1654,6 @@ export default {
         ? (this.onlineShow = true)
         : (this.onlineShow = false);
       // 观看次数的显示
-      console.log(111, this.roominfo.modules.pv)
       this.roominfo.modules.pv.show == 1
         ? (this.pvShow = true)
         : (this.pvShow = false);
