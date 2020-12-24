@@ -83,6 +83,13 @@ export default {
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
       console.log(dataVo, '功能配置');
+      let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      let perVo = {
+        'ui.record_chapter': 1, // 默认打开
+      };
+      if(permissions) {
+        perVo = JSON.parse(permissions);
+      }
       this.keyList = [
         [
           {
@@ -114,7 +121,7 @@ export default {
             value: Number(dataVo['ui.watch_hide_share'])
           }
         ],
-        [
+        perVo['ui.record_chapter'] > 0 ? [
           {
             type: 'ui.watch_record_no_chatting',
             key_name: '回放禁言',
@@ -128,6 +135,14 @@ export default {
             openShow: '已开启，回放/点播观看端显示文档章节',
             closeShow: '开启后，回放/点播观看端显示文档章节',
             value: Number(dataVo['ui.watch_record_chapter'])
+          }
+        ] : [
+          {
+            type: 'ui.watch_record_no_chatting',
+            key_name: '回放禁言',
+            openShow: '已开启，回放/点播不支持聊天',
+            closeShow: '开启后，回放/点播不支持聊天',
+            value: Number(dataVo['ui.watch_record_no_chatting'])
           }
         ]
       ]
