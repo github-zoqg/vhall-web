@@ -82,7 +82,6 @@
   </div>
 </template>
 <script>
-import { diffToTime } from '@/utils/general.js';
 import Env from "@/api/env";
 export default {
   data() {

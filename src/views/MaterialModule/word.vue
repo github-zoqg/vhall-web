@@ -101,7 +101,6 @@ import SelectWord from './components/selectWord.vue';
 
 import {sessionOrLocal} from "@/utils/utils";
 import EventBus from "@/utils/Events";
-import {formateDate} from "@/utils/general";
 export default {
   name: 'word.vue',
   components: {
