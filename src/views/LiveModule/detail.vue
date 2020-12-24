@@ -318,7 +318,7 @@ export default {
     toRoom(){
       // 跳转至发起页面
       // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
-      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
+      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1`});
       window.open(href);
     },
     downTime(targetStartDate, targetEndDate) {
