@@ -388,7 +388,7 @@ export default {
               id: this.sonDialog.row.id,
               child_id: this.sonDialog.row.child_id
             }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
             if (res && res.code === 200) {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
               this.sonDialog.visible = false;
