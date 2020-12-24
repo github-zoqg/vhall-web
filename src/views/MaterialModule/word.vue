@@ -511,7 +511,7 @@ export default {
           if (status === 200) {
             item.transform_schedule_str ='动画版转换失败，请尝试极速版';
           }else {
-            let _percent = CalculatePercent(res.data.converted_page, res.data.page, 0);
+            let _percent = CalculatePercent(res.converted_page, res.page, 0);
             if (_percent == "100%") {
               item.transform_schedule_str = '转换成功';
             } else {
