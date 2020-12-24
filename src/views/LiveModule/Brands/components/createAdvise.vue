@@ -54,7 +54,7 @@
         <el-scrollbar v-loadMore="moreLoadData">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <img :src="`${item.img_url}`" alt="">
+              <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
               <p>{{ item.subject }}</p>
               <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
@@ -122,11 +122,25 @@ export default {
     upload
   },
   watch: {
-    title() {
+    dialogVisible() {
+      if (this.dialogVisible) {
+        this.editShow();
+      } else {
+        this.clearForm();
+      }
+    },
+    dialogAdverVisible() {
+      if (this.dialogAdverVisible) {
+        this.adList = [];
+        this.selectChecked = [];
+      }
+    }
+  },
+  methods: {
+    editShow() {
       if (this.title === '编辑') {
         this.$set(this.advertisement, 'img_url', this.advInfo.img_url);
         this.domain_url = this.advInfo.img_url;
-        console.log(this.domain_url, this.advertisement.img_url, '广告推荐图片地址');
         this.$set(this.advertisement, 'subject', this.advInfo.subject);
         this.$set(this.advertisement, 'url', this.advInfo.url);
         this.$set(this.advertisement, 'adv_id', this.advInfo.adv_id);
@@ -134,8 +148,6 @@ export default {
         this.clearForm();
       }
     },
-  },
-  methods: {
     clearForm() {
       this.$set(this.advertisement, 'img_url', '');
       this.$set(this.advertisement, 'subject', '');
@@ -179,6 +191,7 @@ export default {
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
+          this.advertisement = {};
           this.clearForm();
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
           // 获取列表数据
@@ -326,16 +339,24 @@ export default {
        height: 200px;
       //  overflow: auto;
        .ad-item{
-         width: 150px;
-         margin-bottom: 20px;
-         background: #F7F7F7;
-         position: relative;
-         margin-right: 15px;
-         &.active{
-          background: #FFFFFF;
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
-          border: 1px solid #FB3A32;
-         }
+          width: 165px;
+          margin-bottom: 20px;
+          background: #F7F7F7;
+          position: relative;
+          margin-right: 15px;
+          height: 150px;
+          border: 1px solid transparent;
+          // background-size: 100% 100%;
+          // animation: gradientBG 15s ease infinite;
+          // padding: 10px 10px;
+          // box-sizing: border-box;
+          // position: relative;
+          border-radius: 4px;
+          &.active{
+            background: #FFFFFF;
+            box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+            border: 1px solid #FB3A32;
+          }
          .img-tangle{
           position: absolute;
           right: 0;
@@ -353,16 +374,22 @@ export default {
             font-size: 10px;
           }
         }
-         img{
-           width:145px;
-           height: 93px;
+        .spanImg{
+          display: block;
+          width: 165px;
+          height: 93px;
+          img{
+           width:100%;
+           height:100%;
+           object-fit: scale-down;
          }
+        }
          p{
+           padding: 10px 0 0 5px;
            color:#1A1A1A;
            font-size: 14px;
            line-height: 20px;
            font-weight: 400px;
-           padding-right: 5px;
          }
        }
      }
