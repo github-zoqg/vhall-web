@@ -49,6 +49,7 @@
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
+          <p v-if="sendText">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
           <el-input v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
@@ -172,7 +173,8 @@ export default {
       mobileKey1: '', // 云盾值
       captcha1: null, // 云盾本身
       codeKey1: null, // 短信、邮箱验证码校验接口返回key值
-      errorMsgShow1: ''
+      errorMsgShow1: '',
+      sendText: ``
     };
   },
   computed: {
@@ -248,13 +250,16 @@ export default {
             if(this.downTimer) {
               window.clearTimeout(this.downTimer);
             }
+            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
             this.countDown();
           } else {
             this.$message.error(res.msg || '验证码发送失败');
+            this.sendText = ``;
           }
         }).catch(e => {
           console.log(e);
-          this.$message.error('验证码发送失败');
+          this.$message.error(e.msg || '验证码发送失败');
+          this.sendText = ``;
         });
       }
     },
@@ -293,13 +298,16 @@ export default {
             if(this.downTimer1) {
               window.clearTimeout(this.downTime1);
             }
+            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
             this.countDown1();
           } else {
+            this.sendText = ``;
             this.$message.error(res.msg || '验证码发送失败');
           }
         }).catch(e => {
           console.log(e);
-          this.$message.error('验证码发送失败');
+          this.sendText = ``;
+          this.$message.error(e.msg || '验证码发送失败');
         });
       }
     },
@@ -360,7 +368,7 @@ export default {
             }
           }).catch(e => {
             console.log(e);
-            this.$message.error('验证失败，无法操作');
+            this.$message.error(e.msg || '验证失败，无法操作');
           });
         }
       });
@@ -382,14 +390,14 @@ export default {
                 this.codeKey1 = res.data.key || '';
                 this.bindSave();
               } else {
-                this.$message.error(res.msg || '验证失败，无法操作');
+                this.$message.error('验证结果不成功，无法操作');
               }
             } else {
               this.$message.error(res.msg || '验证失败，无法操作');
             }
           }).catch(e => {
             console.log(e);
-            this.$message.error('验证失败，无法操作');
+            this.$message.error(e.msg || '验证失败，无法操作');
           });
         }
       });
@@ -413,7 +421,7 @@ export default {
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error('绑定失败');
+        this.$message.error(e.msg || '绑定失败');
       });
     },
     // 确定按钮（场景使用： 设置密码第一、二步，修改密码第一、二步）
@@ -444,7 +452,7 @@ export default {
               }
             }).catch(e => {
               console.log(e);
-              this.$message.error('验证失败，无法操作');
+              this.$message.error(e.msg || '验证失败，无法操作');
             });
           } else {
             // 第二步密码保存 => 存储密码  scene_id场景ID：1账户信息-修改密码  4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 9设置密码（密码不存在情况）
@@ -465,7 +473,7 @@ export default {
               }
             }).catch(e => {
               console.log(e);
-              this.$message.error('操作失败');
+              this.$message.error(e.msg || '操作失败');
             });
           }
         }
