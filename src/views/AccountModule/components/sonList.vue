@@ -156,33 +156,7 @@ export default {
       },
       sonCountVo: {},
       isHandle: false, // 是否有操作项
-      sonTableColumn: [
-        {
-          label: '账号',
-          key: 'name',
-          width: 200
-        },
-        {
-          label: '昵称',
-          key: 'nick_name',
-          width: 'auto'
-        },
-        {
-          label: '手机号码',
-          key: 'phone',
-          width: 200
-        },
-        {
-          label: '角色',
-          key: 'role_name',
-          width: 200
-        },
-        {
-          label: '用量分配',
-          key: 'round',
-          width: 200
-        }
-      ],
+      sonTableColumn: [],
       tableRowBtnFun: [
         {
           name: "详情",
@@ -442,9 +416,11 @@ export default {
             if (item.is_dynamic > 0) {
               // 流量动态
               item.round = `并发动态`;
+              item.extend_day = `并发动态`
             } else {
               // 并发（XXX方）
               item.round = `并发（${item.vip_info.total}方）`;
+              item.extend_day = `并发（${item.vip_info.extend_day}方）`
             }
           }
           // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
@@ -484,6 +460,41 @@ export default {
       this.sonForm[type] = '';
     },
     initComp() {
+      this.sonTableColumn = [
+        {
+          label: '账号',
+          key: 'name',
+          width: 200
+        },
+        {
+          label: '昵称',
+          key: 'nick_name',
+          width: 'auto'
+        },
+        {
+          label: '手机号码',
+          key: 'phone',
+          width: 200
+        },
+        {
+          label: '角色',
+          key: 'role_name',
+          width: 200
+        },
+        {
+          label: '用量分配',
+          key: 'round',
+          width: 200
+        }
+      ]
+      // 是并发，展示并发包列
+      if (!(this.vipType > 0)) {
+        this.sonTableColumn.push({
+          label: '扩展用量分配',
+          key: 'extend_day',
+          width: 200
+        })
+      }
       this.getRoleList(); // 获取可选角色列表
     },
     initQuerySonList() {
