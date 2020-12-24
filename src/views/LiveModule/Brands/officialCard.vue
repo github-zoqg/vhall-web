@@ -153,7 +153,8 @@ export default {
       formRules: {
         url: [
           { required: false, message: '请填写标志链接', trigger: 'blur'},
-          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       }
     };
@@ -227,7 +228,7 @@ export default {
         url = 'setPublicInfo';
       } else {
         params.shutdown_type = type;
-        params.url = this.url;
+        params.url = this.form.url;
         url = 'setPosterInfo';
       }
       this.$refs.officialForm.validate((valid) => {

@@ -107,7 +107,8 @@ export default {
           { required: true, message: '请输入商品原价', trigger: 'blur' }
         ],
         url: [
-          { required: true, message: '请输入商品链接', trigger: 'blur' }
+          { required: true, message: '请输入商品链接', trigger: 'blur' },
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的商品链接' , trigger: 'blur'}
         ]
       },
     };
