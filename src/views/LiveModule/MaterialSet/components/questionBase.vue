@@ -36,20 +36,20 @@
                 fixed
                 label="操作">
                 <template slot-scope="scope">
-                  <span @click="preview(scope.row)">预览</span>
+                  <span style="cursor: pointer;" @click="preview(scope.row)">预览</span>
                 </template>
               </el-table-column>
             </el-table>
-            <p class="text">已选择<span>{{ checkList.length }}</span>个</p>
         </div>
         <div class="no-live" v-show="!total">
           <noData :nullType="nullText" :text="text" :height="50">
-            <el-button type="primary" v-if="nullText == 'nullData'" round  v-preventReClick>创建问卷</el-button>
+            <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
           </noData>
         </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button round @click.prevent.stop="dataBaseVisible = false">取 消</el-button>
-          <el-button round type="primary" @click.prevent.stop="choseSureQuestion">确 定</el-button>
+        <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个</p>
+        <div slot="footer" class="dialog-footer" v-show="total || isSearch">
+          <el-button round @click.prevent.stop="dataBaseVisible = false" v-preventReClick>取 消</el-button>
+          <el-button round type="primary" @click.prevent.stop="choseSureQuestion" v-preventReClick>确 定</el-button>
         </div>
       </div>
   </VhallDialog>
@@ -81,7 +81,7 @@ export default {
       pageInfo: {
         pageNum: 1,
         pos: 0,
-        limit: 5
+        limit: 10
       }
     };
   },
@@ -138,10 +138,11 @@ export default {
       let obj = Object.assign({}, this.pageInfo, formParams);
       this.$fetch('getQuestionList', this.$params(obj)).then(res => {
         this.loading = false;
+        this.total = res.data.total;
         let list = res.data.list;
         this.tableData.push(...list);
+        console.log(this.tableData, '55555555555');
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
-        console.log(this.totalPages, '1111111111111')
       })
     },
     // 选择资料库中的问卷
@@ -162,6 +163,14 @@ export default {
         }
       })
     },
+    addQuestion() {
+      this.$router.push({
+        path: '/material/addQuestion',
+        query: {
+          type: 1
+        }
+      });
+    },
      // 预览
     preview(rows) {
       console.log('预览', rows);
@@ -179,13 +188,13 @@ export default {
 .data-base-list {
   width: 100%;
   margin: 24px 0;
+  }
   .text{
-    padding-top: 30px;
+    height: 40px;
     span{
       color: #fb3a32;
       padding: 0 5px;
     }
-  }
   // max-height: 300px;
   /deep/.el-table th{
     background: #f7f7f7;
