@@ -102,11 +102,11 @@ export default {
           value: Number(dataVo['ui.hide_reward'])
         },
         {
-          type: 'ui.hide_share',
+          type: 'ui.watch_hide_like',
           key_name: '点赞功能',
           openShow: '开启后，观看页显示点赞功能',
           closeShow: '已开启，观看页显示点赞功能',
-          value: Number(dataVo['ui.hide_share'])
+          value: Number(dataVo['ui.watch_hide_like'])
         },
         {
           type: 'ui.hide_gifts',
