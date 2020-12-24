@@ -122,7 +122,7 @@
                   {{ roomData && roomData.pv ? roomData.pv.num : 0 }}次观看
                 </span>
                 <span
-                  v-show="pvShow & onlineShow && iconPlay == '直播'"
+                  v-show="pvShow && onlineShow && iconPlay == '直播'"
                   style="margin-left: 7px;color: #BFBFBF; float:right;"
                   >|</span
                 >
