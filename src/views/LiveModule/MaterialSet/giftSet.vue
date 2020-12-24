@@ -379,10 +379,11 @@ export default {
         if (valid) {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
-            if (price < 0 || price >= 10000) {
-              this.$message.error('价格必须介于0-10000之间')
+            if (price < 0 || price >= 9999.99) {
+              this.$message.error('价格必须介于0-9999.99之间')
               return
             }
+            price=Math.floor(price*100)/100;
             this.editParams.price = price.toFixed(2)
           } else {
             this.$message.error('请输入正确礼物价格')
