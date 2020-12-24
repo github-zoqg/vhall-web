@@ -9,9 +9,9 @@
     </pageTitle>
 
     <!-- 操作栏 -->
-    <div class="operaBox">
+    <div class="operaBox" v-show="totalElement || isSearch">
       <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
-      <div class="searchBox" v-show="totalElement || isSearch">
+      <div class="searchBox">
         <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
           <el-option
             v-for="item in orderOptions"
@@ -74,8 +74,9 @@
       </el-col>
     </el-row>
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
-     <div class="no-live" v-show="!total">
+     <div class="no-live" v-show="!totalElement">
       <noData :nullType="nullText" :text="text">
+        <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
     <VhallDialog
@@ -101,7 +102,7 @@ export default {
       liveStatus: 0,
       isSearch: false,
       nullText: 'nullData',
-      text: '你还没有创建专题',
+      text: '暂未创建专题活动',
       dialogShareVisible: false,
       orderBy: 1,
       keyWords: '',
@@ -157,13 +158,13 @@ export default {
         if (this.orderBy == 1 && !this.keyWords) {
           // 默认状态
           this.nullText = 'nullData';
-          this.text = '您还没有专题，快来创建吧！';
           this.isSearch = false;
+          this.text = '暂未创建专题活动';
         } else {
           // 搜索状态
           this.nullText = 'search';
-          this.text = '';
           this.isSearch = true;
+          this.text = '';
         }
       }).catch(error=>{
         this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);

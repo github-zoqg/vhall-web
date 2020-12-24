@@ -8,10 +8,10 @@
       </div>
     </pageTitle>
     <!-- 操作栏 -->
-      <div class="operaBox">
+      <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
         <el-button round @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
-        <div class="searchBox search-tag-box" v-if="totalElement || isSearch">
+        <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
               v-for="item in statusOptions"
@@ -64,7 +64,7 @@
                 </div>
                 <p class="liveOpera">
                   <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
-                    <router-link :to="`chooseWay/${item.webinar_id},1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
+                    <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top">
                   <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
@@ -94,6 +94,8 @@
     </div>
     <div class="no-live" v-else>
       <noData :nullType="nullText" :text="text">
+        <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
+        <el-button round v-if="nullText == 'nullData'"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
       </noData>
     </div>
   </div>

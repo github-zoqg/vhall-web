@@ -132,6 +132,7 @@ export const listenEvent = {
 
       // 直播中sdk控制显示隐藏文档
       EventBus.$on('watchDocShow', flag => {
+        console.log(111111111111111, flag)
         this.watchDocShow = flag; // true false
         if (flag) {
           this.showDocPlaceholderForSharescreen = false;
@@ -253,6 +254,7 @@ export const listenEvent = {
 
       // 观众查看问卷
       EventBus.$on('questionnaireCheck', questionnaireId => {
+        console.log(123)
         this.showQA = true;
         this.$fetch('checkSurvey', {
           survey_id: questionnaireId,
@@ -262,6 +264,7 @@ export const listenEvent = {
             if (res.data) { // 未提交
               setTimeout(() => {
                 this.showQA = true;
+                console.log(99)
                 this.$refs.questions.chatPreview(questionnaireId, false);
               }, 200);
             } else {

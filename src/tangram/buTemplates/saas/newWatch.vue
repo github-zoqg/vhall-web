@@ -149,7 +149,7 @@
           </div>
           <div class="player-active" v-show="!isEmbed">
             <div class="table-praise" v-if="userModules.like.show == 0">
-              <praise :roomId="roomId" :times="roomInfo.like" :isLogin="isLogin" @login="NoLogin"></praise>
+              <praise :roomId="roomId" :isLogin="isLogin" @login="NoLogin"></praise>
             </div>
             <div class="table-reward" v-if="userModules.reward.show == 0 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <!-- <reward :roomId="roomId"></reward> -->
@@ -1002,7 +1002,9 @@ export default {
         guid: this.bizInfo.reportOption ? this.bizInfo.reportOption.guid : '',
         vid: this.bizInfo.reportOption ? this.bizInfo.reportOption.vid : '',
         third_party_user_id: this.bizInfo.user.third_party_user_id,
-        parentId: this.userInfo ?  this.userInfo.parent_id : ''
+        parentId: this.userInfo ?  this.userInfo.parent_id : '',
+        userId: this.userInfo ?  this.userInfo.user_id : '',
+        nickName: this.bizInfo.user.nick_name
       }
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
@@ -1061,7 +1063,6 @@ export default {
           roomId: this.roomInfo.room_id
         };
       }
-      console.log(12, this.playerType, this.vodOption, this.playerLiveOption)
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
@@ -1069,7 +1070,7 @@ export default {
         avatar: this.userInfo && this.userInfo.avatar
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        pv: this.vssInfo.webinar.pv, // pv
+        pv: this.bizInfo.webinar.pv.num, // pv
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
@@ -1091,7 +1092,6 @@ export default {
         window.EventBridge.$emit('loaded');
         // return;
       // }
-      console.log(1, this.watchDocShow)
       VhallChat.createInstance(
         opt,
         chat => {

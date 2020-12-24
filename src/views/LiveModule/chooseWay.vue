@@ -95,6 +95,8 @@ export default {
               console.log(e);
               this.$message.error(res.msg || '检测异常');
             });
+          }else{
+            this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
           }
         } else {
           this.$router.push({path: '/browser'})

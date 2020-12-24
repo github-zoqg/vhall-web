@@ -378,13 +378,17 @@ export default {
             this.rates = constraints.filter(item => {
               return item.label == 'RTC_VIDEO_PROFILE_240P_16x9_M' || item.label == 'RTC_VIDEO_PROFILE_480P_16x9_M' || item.label == 'RTC_VIDEO_PROFILE_360P_16x9_M';
             });
-            console.log('媒体设置过滤后的设备分辨路', this.rates);
+            console.warn('媒体设置过滤后的设备分辨路', this.rates);
             const speakerDefinition = sessionStorage.getItem('speakerDefinition');
             if (!this.selectedRate) { // 摄像头画质初始值
               if (speakerDefinition && speakerDefinition != 'null' && speakerDefinition != 'undefined') {
                 this.selectedRate = speakerDefinition;
               } else {
-                this.selectedRate = this.formatDefinition(sessionStorage.getItem('defaultMainscreenDefinition'));
+                if(sessionStorage.getItem('defaultMainscreenDefinition')){
+                  this.selectedRate = this.formatDefinition(sessionStorage.getItem('defaultMainscreenDefinition'));
+                }else{
+                  this.selectedRate = this.formatDefinition();
+                }
               }
             }
             const screenDefinition = sessionStorage.getItem('screenDefinition');

@@ -213,7 +213,7 @@ export function checkAuth(to, from, next) {
   console.warn(to, 9999);
 
   if(to.path.indexOf('/keylogin-host') !== -1 ||
-    to.path.indexOf('/keylogin') !== -1 ||
+    to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
     to.path.indexOf('/subscribe') !== -1 ||
     to.path.indexOf('/entryform') !== -1 ||

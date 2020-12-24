@@ -302,8 +302,9 @@ export default {
         client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
         token: this.token
       };
-      console.log('实例化文档参数', opt);
+      console.log('实例化文档参数1', opt);
       let success = () => {
+        console.log('实例化文档成功')
         if (!this.isVod) {
           this.loadRemote();
         }

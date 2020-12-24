@@ -335,7 +335,7 @@
           <div class="leftWatch">
             <img
               :src="roomData.webinar.img_url"
-              v-if="roomData && roomData.webinar && (roomData.warmup_paas_record_id || roomData.warmup_paas_record_id) && roomData.verified == 0" alt="">
+              v-if="showWatch" alt="">
             <div class="subscribe-video" v-else>
               <Watch
                 v-if="initPlayer"
@@ -506,6 +506,18 @@
     <div class="shade" v-if="shadeShow" @click="(shadeShow = false), (loginDialogShow = false)"></div>
     <!-- 商品详情的弹窗 -->
     <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
+    <popup
+      :visible="showLive"
+      :width="'340px'"
+      :onClose="handleCloseLiveTip"
+      class="live-tip-wrap"
+    >
+      <div class="live-tip">
+        <span>直播已开始，请观看直播吧</span>
+        <el-button type="primary" @click="btnClick">确定</el-button>
+      </div>
+    </popup>
+    
   </div>
 </template>
 
@@ -535,6 +547,7 @@ export default {
   },
   data(){
     return {
+      showLive: false,
       location: process.env.VUE_APP_WAP_WATCH,
       btnDisabled: false,
       showSignForm: false,
@@ -623,6 +636,17 @@ export default {
       initCount: 0
     };
   },
+  computed: {
+    showWatch () {
+      if (this.roomData && this.roomData.webinar) {
+        if (((this.roomData.warmup_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.warmup_paas_record_id && !this.roomData.warmup_paas_record_id)) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  },
   async created(){
     sessionOrLocal.set('tag', 'helloworld', 'localStorage'); // 第三方绑定信息 场景
     sessionOrLocal.set('sourceTag', 'watch'); // 第三方绑定信息 场景
@@ -679,6 +703,9 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods:{
+    handleCloseLiveTip () {
+      this.showLive = false
+    },
     closeOpenScreen () {
       // this.openScreenConfig.status = 1
       // if (this.openScreenTimer) clearInterval(this.openScreenTimer)
@@ -879,7 +906,7 @@ export default {
       if (this.roomData.webinar) {
         // this.btnVal = this.roomData.status === 'subscribe' ? '立即预约' : '进入直播'
         this.title = this.roomData.webinar.subject
-        this.viewCount = this.roomData.pv.num
+        this.viewCount = this.roomData.pv.num + 1
         this.hostName = this.roomData.webinar.userinfo.nickname
         this.hostUrl = process.env.VUE_APP_WAP_WATCH + `/user/home/${this.roomData.webinar.userinfo.user_id}`
         this.shareUrl = process.env.VUE_APP_WAP_WATCH + `/live/watch/${this.$route.params.id}`
@@ -938,7 +965,7 @@ export default {
       let context = {
         nickname: this.roomData.join_info.nickname, // 昵称
         avatar: 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        // pv: 100, // pv
+        pv: this.roomData.pv.num + 1,
         role_name: (this.$route.params.role_name && this.$route.params.role_name != 4) ? this.$route.params.role_name : 2, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 0未检测
         device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
@@ -973,14 +1000,7 @@ export default {
             if (msg.data.type == 'pay_success') {
               window.location.reload()
             } else if (msg.data.type == 'live_start') {
-              this.$message.success('房间已开播')
-              if (this.roomData.is_subscribe == 1) {
-                this.chatSDK.destroy()
-                this.chatSDK = null
-                setTimeout(() => {
-                  this.$router.push({path: `/live/watch/${this.$route.params.id}`})
-                }, 2000)
-              }
+              this.showLive = true
             }
           })
         },
@@ -1597,7 +1617,7 @@ export default {
       this.authCheckValue = ''
       this.dialogPlaceholder = ''
       this.tipContent = ''
-    },
+    }
   },
   filters: {
     webinarTypeToText(val){
@@ -2548,6 +2568,42 @@ export default {
     .wrap {
       background: #1a1a1a;
     }
+  }
+  .live-tip-wrap /deep/ .vhall-popup-dialog{
+    height: 250px;
+    background: #fff;
+  }
+  .live-tip{
+    width: 340px;
+    height: 250px;
+    border: 4px;
+    overflow: hidden;
+    position:absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url('../../../common/images/popup-publish-start.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    text-align: center;
+    span{
+      font-size: 18px;
+      color: #666;
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      margin-top: 45%;
+    }
+    .el-button{
+      width: 200px;
+      height: 40px;
+      color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 20px auto 0px auto;
+    }
+      
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{
