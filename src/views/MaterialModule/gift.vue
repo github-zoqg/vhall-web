@@ -81,6 +81,7 @@
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
           <upload
+            ref="uploadimg"
             :domain_url="domain_url"
             class="giftUpload"
             v-model="editParams.img"
@@ -103,8 +104,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" v-preventReClick  round>确 定</el-button>
-        <el-button @click="handleCancelEdit" v-preventReClick round>取 消</el-button>
+        <el-button @click="handleUpdateGift" round>确 定</el-button>
+        <el-button @click="handleCancelEdit" round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -346,6 +347,7 @@ export default {
       this.editParams.img = ''
       this.editParams.price = ''
       this.dialogVisible = false
+      this.$refs.uploadimg.domainUrl = ''
     },
     // 删除礼品
     handleDelete (data) {

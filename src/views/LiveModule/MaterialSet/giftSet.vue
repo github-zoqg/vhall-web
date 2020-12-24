@@ -88,6 +88,7 @@
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
           <upload
+            ref="uploadimg"
             class="giftUpload"
             v-model="editParams.img"
             :domain_url="domain_url"
@@ -449,6 +450,7 @@ export default {
       this.editParams.img = ''
       this.editParams.price = ''
       this.dialogVisible = false
+      this.$refs.uploadimg.domainUrl = ''
     },
     // 选择资料库礼品添加
     handleAddGift () {
