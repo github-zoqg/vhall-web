@@ -2,6 +2,8 @@
   <div class="live-gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
+        1.支持创建免费礼物
+        <br>
         1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
         <br>
         2.礼物名称不支持特殊字符、表情
@@ -104,10 +106,12 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <el-input v-model="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
+            <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input v-model="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
+            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
+              <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
+            </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -234,10 +238,10 @@ export default {
       domain_url: '',
       rules: {
         name: [
-          { required: true, message: '请输入标题', trigger: 'blur' },
+          { required: true, message: '请输入礼物名称', trigger: 'blur' },
         ],
         img: [
-          { required: true, message: '请选择推广图片', trigger: 'change' }
+          { required: true, message: '请选择礼物图片', trigger: 'change' }
         ],
         price: [
           { required: true,  message: '请输入礼物价格', trigger: 'blur' }
@@ -339,7 +343,7 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传礼物图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`文件格式不支持，请检查图片`);
         return false;
       }
       if (!isLt2M) {
@@ -375,7 +379,7 @@ export default {
         if (valid) {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
-            if (price < 0 || price > 10000) {
+            if (price < 0 || price >= 10000) {
               this.$message.error('价格必须介于0-10000之间')
               return
             }

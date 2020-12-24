@@ -97,7 +97,9 @@
             <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
+            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
+              <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
+            </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -255,7 +257,7 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`文件格式不支持，请检查图片`);
         return false;
       }
       if (!isLt2M) {
@@ -291,7 +293,7 @@ export default {
         if (valid) {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
-            if (price < 0 || price > 10000) {
+            if (price < 0 || price >= 10000) {
               this.$message.error('价格必须介于0-10000之间')
               return
             }
