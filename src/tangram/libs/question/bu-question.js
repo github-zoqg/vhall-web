@@ -203,6 +203,7 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
+        console.log(1212,)
         this.createQuestionAction(data.id, data.title, data.description);
       });
 

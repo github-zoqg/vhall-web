@@ -119,7 +119,7 @@
                     v-show="pvShow"
                     class="iconfont iconguankancishu"
                   ></span>
-                  {{ showPv }}次观看
+                  {{ roomData && roomData.pv ? roomData.pv.num : 0 }}次观看
                 </span>
                 <span
                   v-show="pvShow & onlineShow && iconPlay == '直播'"
@@ -134,7 +134,7 @@
                     v-show="onlineShow"
                     class="iconfont iconzaixianrenshu"
                   ></span>
-                  {{ showOnline }}人在线
+                  {{ roomData && roomData.online ? roomData.online.num : 0 }}人在线
                 </span>
               </div>
               <div class="seeding-funct">
@@ -436,7 +436,7 @@
                       {{ simpleContent }}
                     </div>
                     <template v-if="activeIndex + 1 == index + 1">
-                      <custom-tab
+                      <!-- <custom-tab
                         v-if="items.type == 1"
                         :roominfo="roominfo"
                         :components="items.components"
@@ -448,7 +448,7 @@
                         @invitedTopClick="topShow = true"
                         @rewardListClick="topShow = false"
                       >
-                      </custom-tab>
+                      </custom-tab> -->
                     </template>
                   </div>
                 </div>
@@ -579,6 +579,7 @@ import { sessionOrLocal } from '@/utils/utils'
 export default {
   data() {
     return {
+      roomData: {},
       myliveRoute: '',
       accountRoute: '',
       myPageRoute: '',
@@ -714,7 +715,20 @@ export default {
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
     }
-    
+    // 加入消息 增加uv
+    this.$EventBus.$on('Join', (msg) => {
+      if (this.roomData && this.roomData.online ) {
+        this.roomData.online.num = msg.uv
+        this.roomData.pv.num += 1
+      }
+    })
+    // 离开消息
+    this.$EventBus.$on('Leave', (msg) => {
+      if (this.roomData && this.roomData.online ) {
+        this.roomData.online.num = msg.uv
+        // this.roomData.pv.num = msg.pv
+      }
+    })
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
       // 是否显示公众号
@@ -783,14 +797,14 @@ export default {
     this.startRoomInitProcess()
   },
   computed: {
-    showOnline() {
-      return (
-        Number(this.roomUser.uvOnline) + Number(this.baseRoomUser.baseOnlineNum)
-      )
-    },
-    showPv() {
-      return Number(this.roomUser.pvCount) + Number(this.baseRoomUser.basePv)
-    }
+    // showOnline() {
+    //   return (
+    //     Number(this.roomUser.uvOnline) + Number(this.baseRoomUser.baseOnlineNum)
+    //   )
+    // },
+    // showPv() {
+    //   return Number(this.roomUser.pvCount) + Number(this.baseRoomUser.basePv)
+    // }
   },
   beforeDestroy() {
     window.removeEventListener('resize', () => {})
@@ -829,7 +843,6 @@ export default {
           return
         }
         if (this.roomData && this.roomData.status == 'live') {
-          await this.getTotalLike() // 获取总点赞数
           await this.queryRoomInterInfo() // 获取房间活动状态
           await this.getFirstPost() // 开屏
         }
@@ -873,6 +886,8 @@ export default {
       switch (res.code) {
         case 200:
           this.roomData = res.data && res.data
+          this.roomData.online.num += 1 // 需要手动加自己
+          this.roomData.pv.num += 1 // TODO: 待确定
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
           this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
           break
@@ -1318,16 +1333,6 @@ export default {
     handleSkipLogo () {
       window.location.href = this.roominfo.modules.logo.href
     },
-    // 获取总点赞数
-    getTotalLike () {
-      return this.$fetch('likeTotal', {
-        room_id: this.roomData.interact.room_id
-      }).then((res) => {
-        if (res.code == 200) {
-          this.stars = res.data.total
-        }
-      })
-    },
     // 获取活动广告信息
     getAdsInfo () {
       return this.$fetch('queryAdsInfo', {
@@ -1512,7 +1517,6 @@ export default {
         webinar: Object.assign({}, data.webinar, {
           image_url: data.webinar.img_url,
           is_interact: data.webinar.mode == 3 ? 1 : 0,
-          like: this.stars ? this.stars : 0,
           pv: data.pv.num
         }),
         advs: this.ads,
@@ -1597,7 +1601,6 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`

@@ -335,7 +335,7 @@
           <div class="leftWatch">
             <img
               :src="roomData.webinar.img_url"
-              v-if="roomData && roomData.webinar && (roomData.warmup_paas_record_id || roomData.warmup_paas_record_id) && roomData.verified == 0" alt="">
+              v-if="showWatch" alt="">
             <div class="subscribe-video" v-else>
               <Watch
                 v-if="initPlayer"
@@ -506,6 +506,18 @@
     <div class="shade" v-if="shadeShow" @click="(shadeShow = false), (loginDialogShow = false)"></div>
     <!-- 商品详情的弹窗 -->
     <goodsPop v-if="goodsPopShow" @closeGoodPop="closeGoodPop" :goodsAllInfo="goodInfo"></goodsPop>
+    <popup
+      :visible="showLive"
+      :width="'340px'"
+      :onClose="handleCloseLiveTip"
+      class="live-tip-wrap"
+    >
+      <div class="live-tip">
+        <span>直播已开始，请观看直播吧</span>
+        <el-button type="primary" @click="btnClick">确定</el-button>
+      </div>
+    </popup>
+    
   </div>
 </template>
 
@@ -537,6 +549,7 @@ export default {
   },
   data(){
     return {
+      showLive: false,
       location: process.env.VUE_APP_WAP_WATCH,
       btnDisabled: false,
       showSignForm: false,
@@ -625,6 +638,17 @@ export default {
       initCount: 0
     };
   },
+  computed: {
+    showWatch () {
+      if (this.roomData && this.roomData.webinar) {
+        if (((this.roomData.warmup_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.warmup_paas_record_id && !this.roomData.warmup_paas_record_id)) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  },
   async created(){
     sessionOrLocal.set('tag', 'helloworld', 'localStorage'); // 第三方绑定信息 场景
     sessionOrLocal.set('sourceTag', 'watch'); // 第三方绑定信息 场景
@@ -681,6 +705,9 @@ export default {
     this.timer && clearInterval(this.timer)
   },
   methods:{
+    handleCloseLiveTip () {
+      this.showLive = false
+    },
     closeOpenScreen () {
       // this.openScreenConfig.status = 1
       // if (this.openScreenTimer) clearInterval(this.openScreenTimer)
@@ -975,14 +1002,7 @@ export default {
             if (msg.data.type == 'pay_success') {
               window.location.reload()
             } else if (msg.data.type == 'live_start') {
-              this.$message.success('房间已开播')
-              if (this.roomData.is_subscribe == 1) {
-                this.chatSDK.destroy()
-                this.chatSDK = null
-                setTimeout(() => {
-                  this.$router.push({path: `/live/watch/${this.$route.params.id}`})
-                }, 2000)
-              }
+              this.showLive = true
             }
           })
         },
@@ -1616,8 +1636,7 @@ export default {
           sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
           sessionOrLocal.set('visitor_id', res.data.visitor_id)
           setTimeout(() => {
-          this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
-
+            this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
           }, 300)
           return
         } else {
@@ -2575,6 +2594,42 @@ export default {
     .wrap {
       background: #1a1a1a;
     }
+  }
+  .live-tip-wrap /deep/ .vhall-popup-dialog{
+    height: 250px;
+    background: #fff;
+  }
+  .live-tip{
+    width: 340px;
+    height: 250px;
+    border: 4px;
+    overflow: hidden;
+    position:absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url('../../../common/images/popup-publish-start.png');
+    background-repeat: no-repeat;
+    background-size: 100%;
+    text-align: center;
+    span{
+      font-size: 18px;
+      color: #666;
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      margin-top: 45%;
+    }
+    .el-button{
+      width: 200px;
+      height: 40px;
+      color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 20px auto 0px auto;
+    }
+      
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{
