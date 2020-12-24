@@ -216,20 +216,13 @@ export default {
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
         this.sdkInitReady = true;
-        if (this.$route.query.questionId) {
-          this.isCreate = true;
-          this.$nextTick(() => {
-            this.$service.renderPageEdit('#qs-create-box', this.$route.query.questionId);
-          })
+        if (this.type) {
+          // 编辑或新增
+          this.createQuestion(this.$route.query.questionId || '');
         }
+        // 预览
         if (this.preQuestionId) {
-          this.$nextTick(() => {
-            this.showPreview = true;
-            this.previewId = this.preQuestionId;
-            this.$service['renderPagePC']('#qs-preview-box-content', this.preQuestionId);
-            document.querySelector('#qs-preview-box-content .q-btns').style.display = 'none';
-          })
-
+          this.preview(this.preQuestionId);
         }
       });
       this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {

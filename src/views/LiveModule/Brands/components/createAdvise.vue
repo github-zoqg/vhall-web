@@ -50,8 +50,8 @@
       :close-on-click-modal="false"
       width="590px">
       <div class="content">
-        <div class="search"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @click="changeAdverment"></el-input></div>
-        <el-scrollbar v-loadMore="moreLoadData">
+        <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @change="changeAdverment"></el-input></div>
+        <el-scrollbar v-loadMore="moreLoadData" v-show="total">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
@@ -62,9 +62,14 @@
             </div>
           </div>
         </el-scrollbar>
-        <p class="text">当前选中<span>{{ selectChecked.length }}</span>个</p>
       </div>
-      <span slot="footer" class="dialog-footer">
+       <div class="no-live" v-show="!total">
+          <noData :nullType="nullText" :text="text" :height="0">
+            <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
+          </noData>
+        </div>
+      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
+      <span slot="footer" class="dialog-footer" v-show="total || isSearch">
         <el-button type="primary" @click="advSaveToWebinar(null)" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
       </span>
@@ -74,6 +79,7 @@
 <script>
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
@@ -82,6 +88,10 @@ export default {
       advertisementTitle: '',
       baseImgUrl: Env.staticLinkVo.uploadBaseUrl,
       selectChecked: [],
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有广告，快来创建吧！',
       rules: {
         subject: [
           { required: true, message: '请输入广告标题', trigger: 'blur' },
@@ -119,7 +129,8 @@ export default {
     }
   },
   components: {
-    upload
+    upload,
+    noData
   },
   watch: {
     dialogVisible() {
@@ -211,12 +222,22 @@ export default {
       this.activityData();
     },
     activityData() {
+      if (this.advertisementTitle) {
+        this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有广告，快来创建吧！';
+          this.isSearch = false;
+        }
       this.$fetch('getAdvList', this.$params({
         keyword: this.advertisementTitle,
         ...this.advertPageInfo
       })).then(res => {
         if(res && res.code === 200) {
           let adList = res.data.adv_list;
+          this.total = res.data.total;
           adList.map(item => {
             item.isChecked = false;
           });
@@ -234,6 +255,7 @@ export default {
         page: 1
       }
       this.adList = [];
+      this.selectChecked = [];
       this.activityData();
     },
     choiseAdvisetion(items) {
