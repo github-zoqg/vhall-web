@@ -213,7 +213,7 @@ export default {
     preSure() {
       let url = '';
       if (Number(this.status === 0) && !this.img) {
-        this.$message.error('请上传图片')
+        this.$message.error(`${this.title === '公众号展示' ? ' 请上传二维码图片' : '请上传图片'}`);
         return;
       }
       let params = {
