@@ -200,6 +200,16 @@ export function checkUploadType(file, that, type = 1) {
     that.$message.error('上传封面图片大小不能超过 2MB!');
     return false;
   }
+  let imgSrc = window.URL.createObjectURL(file);
+  let img = new Image();
+  img.src = imgSrc;
+  img.onload = function () {
+    // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
+    if (img.width !== 1280 && img.height !== 720 ) {
+      that.$message.error(`请上传1280*720尺寸图片!`);
+      return false;
+    }
+  };
   return isType && isLt2M;
 }
 
