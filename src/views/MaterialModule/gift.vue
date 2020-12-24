@@ -90,7 +90,10 @@
             :on-preview="uploadPreview"
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
-            <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
+            <div slot="tip">
+              <p>建议尺寸：160*160px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">

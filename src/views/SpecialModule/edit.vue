@@ -19,7 +19,10 @@
           :on-preview="uploadPreview"
           @delete="deleteImg"
           :before-upload="beforeUploadHnadler">
-          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <div slot="tip">
+            <p>建议尺寸：1280*720px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
+          </div>
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>

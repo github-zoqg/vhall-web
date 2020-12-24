@@ -19,7 +19,10 @@
                     :on-preview="uploadPreview"
                     @delete="deleteImg"
                     :before-upload="beforeUploadHandler">
-                    <p slot="tip">推荐尺寸：240*240px，小于2MB <br/> 支持jpg、gif、png、bmp</p>
+                    <div slot="tip">
+                      <p>建议尺寸：240*240px，小于2M</p>
+                      <p>支持jpg、gif、png、bmp</p>
+                    </div>
                   </upload>
                 </el-form-item>
                 <el-form-item label="模板库">

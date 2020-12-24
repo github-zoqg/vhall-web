@@ -58,11 +58,10 @@
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>最佳尺寸：240*78px</p>
-                <p>小于2MB(支持jpg、gif、png、bmp)</p>
+                <p>建议尺寸：240*78px，小于2M</p>
+                <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
-            <p class="p-notice">开启时支持更换品牌标志</p>
           </el-form-item>
           <el-form-item label="标志链接" prop="skip_url">
             <el-input v-model.trim="signSetForm.skip_url" />
@@ -258,11 +257,11 @@ export default {
 /* 标志上传 */
 .upload__sign {
   /deep/.el-upload--picture-card {
-    width: 280px;
+    width: 400px;
     height: 130px;
   }
   /deep/.box > div {
-    width: 280px;
+    width: 400px;
     height: 130px;
   }
 }

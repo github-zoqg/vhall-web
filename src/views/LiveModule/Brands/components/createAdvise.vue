@@ -25,7 +25,10 @@
               :before-upload="beforeUploadHnadler"
               @delete="deleteImg"
               >
-              <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
+             <div slot="tip">
+               <p>建议尺寸：400*225px，小于2M</p>
+               <p>支持jpg、gif、png、bmp</p>
+             </div>
             </upload>
         </div>
       </el-form-item>
