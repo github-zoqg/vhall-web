@@ -52,7 +52,10 @@
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="价格" prop="price" show-overflow-tooltip>
+        <el-table-column label="价格" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ `￥${scope.row.price}` }}
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
@@ -315,13 +318,6 @@ export default {
     },
     // 创建
     handleCreate () {
-      let price = Number(this.editParams.price)
-      if (price) {
-        this.editParams.price = price.toFixed(2)
-      } else {
-        this.$message.error('请输入正确礼物价格')
-        return
-      }
       this.$fetch('createGiftInfo', this.$params({
         ...this.editParams
       })).then((res) => {
