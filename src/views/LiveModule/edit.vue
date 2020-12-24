@@ -484,10 +484,11 @@ export default {
         hide_appointment: Number(this.reservation),// 是否显示预约人数 1 是 0 否
         hide_pv: Number(this.hot),// 是否显示活动热度 1 是 0 否
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
-        is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
+        is_capacity: Number(this.capacity),// 是否扩容 1 是 0 否
+        img_url: this.$parseURL(this.imageUrl).path // 封面图
       };
-      if(this.$route.query.type == 2 ) {
-        data.img_url = this.$parseURL(this.imageUrl).path // 封面图
+      if(this.$route.query.type != 2 ) {
+         data = this.$params(data)
       }
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -498,7 +499,7 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, this.$params(data)).then(res=>{
+          this.$fetch(url, data).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
               this.isSaveInfo = true;

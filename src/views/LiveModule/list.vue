@@ -64,7 +64,7 @@
                 </div>
                 <p class="liveOpera">
                   <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
-                    <router-link :to="`chooseWay/${item.webinar_id},1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
+                    <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top">
                   <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
