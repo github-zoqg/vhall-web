@@ -36,7 +36,7 @@
               <div class="imageBox">
                 <el-image :src='scope.row.img_url'>
                   <div slot="error" class="image-slot">
-                    <img :src="defaultImg" alt="">
+                    <img @click="preview(scope.row)" :src="defaultImg" alt="">
                   </div>
                 </el-image>
                 <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
@@ -113,15 +113,25 @@
         <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
       </span>
     </el-dialog>
+    <!-- 预览功能 -->
+    <template v-if="showDialog">
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
+      <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
+      </el-dialog>
+    </template>
   </div>
 </template>
 
 <script>
+import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data(){
     return {
+      // 预览
+      showDialog: false,
+      videoParam: {},
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
       keyWords: '',
@@ -178,7 +188,20 @@ export default {
     }
   },
   methods: {
-    // 获取当前活动基本信息
+    preview(data) {
+      //  this.videoParam 进本信息
+      if (data.transcode_status == 1) {
+        this.showDialog = true;
+        this.videoParam = data;
+      } else {
+        this.$message.warning('只有转码成功才能查看');
+      }
+    },
+    closeBefore(done){
+      this.$refs.videoPreview.destroy();
+      done();
+    },
+    // 获取当前活动基本信息 判断是点播还是直播回放
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
@@ -457,11 +480,17 @@ export default {
     }
   },
   components: {
-    PageTitle
+    PageTitle,
+    VideoPreview
   }
 };
 </script>
 
+<style lang="less">
+  .dialog-padding_playbackpreview{
+    padding: 0px 0px 30px;
+  }
+</style>
 <style lang="less" scoped>
   .listBox{
     min-width: 1020px;
@@ -515,6 +544,9 @@ export default {
           }
         }
         // opacity: 0.66;
+      }
+      .image-slot img {
+        cursor: pointer;
       }
     }
     .info{

@@ -126,6 +126,9 @@ export default {
           position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%
           size: ['80px', '35px'], // 水印大小，支持px,vh,vw,%
         },
+        subtitleOption: {
+          enable: true
+        }
       };
       return new Promise((resolve) => {
         console.log('======实例化播放器参数======', incomingData);
