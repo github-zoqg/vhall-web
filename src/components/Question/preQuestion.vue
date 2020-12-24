@@ -8,7 +8,8 @@
         :questionType="'user'"
         :accessToken="questionInfo.access_token"
         :appId="questionInfo.app_id"
-        ref="questions"
+        :preQuestionId="questionInfo.questionId"
+        ref="preQuestions"
       ></question>
    </div>
 </div>
@@ -49,7 +50,11 @@ export default {
         if (res.code == 200 && res.data) {
           this.initQuestion = true
           this.questionInfo = res.data;
+          console.log(this.$refs, '???????????????')
           this.questionInfo.questionId = this.questionId;
+          this.loading = false;
+          // this.$refs.preQuestions.showPreview = true;
+          // this.$refs.preQuestions.preview(this.questionId);
         }
       })
     },

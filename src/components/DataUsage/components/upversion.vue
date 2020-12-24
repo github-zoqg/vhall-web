@@ -9,21 +9,21 @@
       <el-form label-width="85px">
         <el-form-item label="套餐单价">
           <div class="img-box">
-            <h3>{{ title === '升级'?  `￥${ concurrentPrice.concurrency_fee }` : `￥${ concurrentPrice.extend_fee }`}}</h3>
+            <h3>{{ title === '升级'?  `￥${ concurrentPrice.concurrency.concurrency_fee }` : `￥${ concurrentPrice.concurrency.extend_fee }`}}</h3>
             <p>{{ title === '升级'? '元/人/月' : '元/人'}}</p>
             <span>{{ title === '升级'? '升级套餐' : '扩展包'}}</span>
           </div>
         </el-form-item>
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
           <el-input v-model="number" style="width: 398px"
-            oninput="this.value=this.value.replace(/[^\d]/g, '')"><template slot="append">人</template></el-input
+            oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><template slot="append">人</template></el-input
           >
-          <p class="inputNums">当前并发20人 20-99999</p>
+          <p class="inputNums">当前并发{{ concurrentPrice.concurrency.total_concurrency}}人 {{ concurrentPrice.concurrency.total_concurrency }}-99999</p>
         </el-form-item>
         <el-form-item label="订单信息">
           <div class="informtion">
             <div class="inform-pay">
-              <h3>支付金额: <b>{{ title === '升级'? concurrentPrice.concurrency_fee * number :  concurrentPrice.extend_fee * number }}</b></h3>
+              <h3>支付金额: <b>{{ title === '升级'? concurrentPrice.concurrency.concurrency_fee * number :  concurrentPrice.concurrency.extend_fee * number }}</b></h3>
               <p>有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
             </div>
             <div class="xieyi">
@@ -64,9 +64,9 @@
         <el-form-item label="流量包">
           <div class="img-boxs">
             <div class="img-box img-liu" v-for="(item, index) in nomalBuyList" :key="index" :class="item.isChose ? 'active' : ''" @click="choseVersion(item)">
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.send }}</p>
-              <b class="isMark">{{ item.price }}</b>
+              <h3>{{ item.flow }}GB</h3>
+              <p>+{{ item.gift_flow }}GB(赠送)</p>
+              <b class="isMark">{{ concurrentPrice.flow.flow_fee }}元/GB</b>
               <label class="img-tangle" v-if="item.isChose">
                 <i class="el-icon-check"></i>
               </label>
@@ -74,10 +74,21 @@
           </div>
         </el-form-item>
         <el-form-item label="支付金额">
-          <el-input v-model="currentPrice" style="width: 398px" disabled></el-input>
-          <div class="xieyi">
-            <el-checkbox v-model="checked">同意<span>《微吼直播服务协议》</span></el-checkbox>
+           <div class="informtion">
+            <div class="inform-pay">
+              <h3>支付金额: <b>{{ currentPrice }}</b></h3>
+              <p>有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
+            </div>
+            <div class="xieyi">
+              <el-checkbox v-model="checked"
+                >同意<span>《微吼直播服务协议》</span></el-checkbox
+              >
+            </div>
           </div>
+          <!-- <el-input v-model="currentPrice" style="width: 398px" disabled></el-input> -->
+          <!-- <div class="xieyi">
+            <el-checkbox v-model="checked">同意<span>《微吼直播服务协议》</span></el-checkbox>
+          </div> -->
         </el-form-item>
       </el-form>
       <div class="sum">
@@ -92,7 +103,7 @@
       <div class="instest">
         <div class="speak">说明:</div>
         <div>
-          1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包<br />3、自启用之日起，购买的流量包有效期为一年 <br />4、流量包到期后自动失效
+          1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包<br />3、购买的套餐有效期为当前套餐剩下的完整自然月
         </div>
       </div>
     </VhallDialog>
@@ -107,44 +118,44 @@ export default {
       dialogVisible: false,
       dialogBuyVisible: false,
       checked: false,
-      flows: 500,
-      number: 120,
-      nomalBuyList: [
-        {
-          title: '500GB',
-          send: '+20GB(赠送)',
-          price: '8元/GB',
-          isChose: true,
-          numFlow: 500
-        },
-        {
-          title: '1000GB',
-          send: '+50GB(赠送)',
-          price: '8元/GB',
-          isChose: false,
-          numFlow: 1000
-        },
-        {
-          title: '2000GB',
-          send: '+20GB(赠送)',
-          price: '8元/GB',
-          isChose: false,
-          numFlow: 2000
-        }
-      ]
+      flows: 0,
+      number: 500,
+      currentFlowPrice: '',
+      nomalBuyList: []
     };
+  },
+  watch: {
+    dialogBuyVisible() {
+      if (this.dialogBuyVisible) {
+        this.nomalBuyList = this.concurrentPrice.flow.plans,
+        this.nomalBuyList.map(item => item.isChose = false)
+        console.log(this.nomalBuyList, '1111111111111');
+        this.flows = this.nomalBuyList[0].flow;
+         this.nomalBuyList[0].isChose = true;
+      }
+    },
+    dialogVisible() {
+      this.number = this.concurrentPrice.concurrency.total_concurrency + 100;
+      // this.currentFlowPrice = this.number * concurrentPrice.concurrency.concurrency_fee;
+      console.log("1111111111111111");
+    }
   },
   computed: {
     currentPrice() {
-      return '￥' + this.concurrentPrice.flow_fee * this.flows;
+      if (this.dialogBuyVisible) {
+        return '￥' + this.concurrentPrice.flow.flow_fee * this.flows;
+      } else {
+        return 0;
+      }
     }
   },
   created() {
+    console.log()
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
   },
   methods: {
     choseVersion(items) {
-      this.flows = items.numFlow;
+      this.flows = items.flow;
       this.nomalBuyList.map(item => {
         item.isChose = false;
         items.isChose = true;
@@ -215,6 +226,12 @@ export default {
         console.log(e);
       });
     },
+    changeInput() {
+      if (this.number <= this.concurrentPrice.concurrency.total_concurrency) {
+        this.$message.error('请输入比当前并发数大的值');
+        return;
+      }
+    }
   }
 };
 </script>
