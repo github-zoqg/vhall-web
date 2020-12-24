@@ -761,9 +761,6 @@ export default {
     }
   }
   .pageBox{
-    /deep/.el-pagination__total, /deep/.el-pagination__jump {
-      display: none;
-    }
     margin-bottom: 20px;
   }
   .control{
