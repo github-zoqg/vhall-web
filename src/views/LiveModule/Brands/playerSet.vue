@@ -48,9 +48,9 @@
                       <el-radio v-model="formHorse.speed" label="3000" :disabled="!scrolling_open">快</el-radio>
                     </el-form-item>
                     <el-form-item label="显示位置">
-                      <el-radio v-model="formHorse.position" label="1" :disabled="!scrolling_open">上</el-radio>
-                      <el-radio v-model="formHorse.position" label="2" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.position" label="3" :disabled="!scrolling_open">下</el-radio>
+                      <el-radio v-model="formHorse.position" label="2" :disabled="!scrolling_open">上</el-radio>
+                      <el-radio v-model="formHorse.position" label="3" :disabled="!scrolling_open">中</el-radio>
+                      <el-radio v-model="formHorse.position" label="4" :disabled="!scrolling_open">下</el-radio>
                     </el-form-item>
                     <el-form-item label="间隔时间">
                       <el-input
@@ -183,14 +183,14 @@ export default {
       activeName: 'first',
       showVideo: false,
       totalTime: 0,
-      scrolling_open: true,
-      watermark_open: true,
+      scrolling_open: false,
+      watermark_open: false,
       formHorse: {
         color: '#FFFFFF', // 六位
         text_type: '2',
         size: 20,
         speed: '6000',
-        position: '2',
+        position: '3',
         alpha: 50,
         interval: 0
       },
@@ -227,35 +227,35 @@ export default {
       if(this.scrolling_open){
         return '已开启，文字以跑马灯的形式出现在播放器画面中';
       }else{
-        return "开启后，文字将以跑马灯的形式出现在播放器画面中";
+        return "开启后，文字以跑马灯的形式出现在播放器画面中";
       }
     },
     waterMarkText(){
       if(this.watermark_open){
-        return '已开启，可在播放器画面中添加水印';
+        return '已开启，可在播放器中增加图片、水印';
       }else{
-        return "开启后，可在播放器画面中添加水印";
+        return "开启后，可在播放器中增加图片、水印";
       }
     },
     progressText(){
       if(this.formOther.progress){
-        return '关闭后，回放/点播播放器画面不显示进度条';
+        return '已开启，回放/点播播放器画面进度条显示';
       }else{
-        return "已关闭，回放/点播播放器画面不显示进度条";
+        return "开启后，回放/点播播放器画面进度条不显示";
       }
     },
     bulletChatText(){
       if(this.formOther.bulletChat){
-        return '关闭后，观看端播放器画面不显示弹幕按钮';
+        return '已开启，观看端播放器画面弹幕功能显示';
       }else{
-        return "已关闭，观看端播放器画面不显示弹幕按钮";
+        return "开启后，观看端播放器画面弹幕功能不显示";
       }
     },
     doubleSpeedText(){
       if(this.formOther.doubleSpeed){
-        return '关闭后，回放/点播播放器画面不显示倍速按钮';
+        return '已开启，回放/点播播放器画面倍速功能显示';
       }else{
-        return "已关闭，回放/点播播放器画面不显示倍速按钮";
+        return "开启后，回放/点播播放器画面倍速功能不显示";
       }
     }
   },

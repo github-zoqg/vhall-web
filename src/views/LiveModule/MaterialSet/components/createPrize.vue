@@ -20,7 +20,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
+            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit  oninput="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\?\<\>\。\，\-\——\=\;\！\!\+\$]/g,'')" οnpaste="return false" οncοntextmenu="return false;"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

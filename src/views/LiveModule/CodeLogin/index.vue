@@ -2,7 +2,9 @@
   <div class="code-login-wrap">
     <div class="title">
       <p class="subject">标题：{{baseObj.subject}}<span :class="['type', activeClass]"> {{type(baseObj.webinar_state || 1)}}</span></p>
-      <p>主办方：<span>{{baseObj.user_name}}</span> 时间：{{baseObj.start_time}}</p>
+      <p>
+        <i class="iconfont iconzhubanfang1-copy"></i> 主办方：<span>{{baseObj.user_name}}</span>
+        <i class="iconfont iconshijian"></i> 时间：{{baseObj.start_time}}</p>
     </div>
     <div class="content clearFix">
       <div class="img-box fl">
@@ -108,7 +110,8 @@ import { liveTag } from '@/utils/filter';
               sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
               sessionOrLocal.set('visitor_id', res.data.visitor_id)
               setTimeout(() => {
-                this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+                // this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
+                this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}`})
               }, 300)
             } else {
               this.$message.error(res.msg)
@@ -161,6 +164,10 @@ import { liveTag } from '@/utils/filter';
     p{
       &:nth-child(2){
         margin-bottom: 30px;
+        line-height: 26px;
+        i{
+          vertical-align: middle;
+        }
         span{
           color: #1087dc;
           margin-right: 20px;

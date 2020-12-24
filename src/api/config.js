@@ -95,10 +95,10 @@ const apis = {
   checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
 
   // 专题
-  subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建 √
-  subjectList: ['/v3/webinars/subject/get-list', 'POST'], // 专题列表 √有问题
-  subjectEdit: ['/v3/webinars/subject/edit', 'POST'], // 专题修改  •••
-  subjectInfo: ['/v3/webinars/subject/info', 'POST'], // 获取专题详情接口(专题预览)  •••
+  subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建
+  subjectList: ['/v3/webinars/subject/get-list', 'POST'], // 专题列表
+  subjectEdit: ['/v3/webinars/subject/edit', 'POST'], // 专题修改
+  subjectInfo: ['/v3/webinars/subject/info', 'POST'], // 获取专题详情接口(专题预览)
   subjectDel: ['/v3/webinars/subject/delete', 'POST'], // 专题删除接口 •••
   // 角色邀请
   privilegeInfo:  ['/v3/webinars/privilege/info', 'POST'], // 获取活动角色配置接口  √
@@ -450,6 +450,8 @@ const apis = {
   v3RebroadcastStart: ['/v3/webinars/rebroadcast/start', 'GET'], // 转播开始 √
   v3RebroadcastStop: ['/v3/webinars/rebroadcast/stop', 'GET'], // 转播结束 √
   createRecord: ['/v3/webinars/record/live-create-record', 'POST'], // 直播结束生成回放
+  // 媒体设置
+  saveMediaSettings: ['/v3/interacts/room/set-stream', 'POST'], // 保存媒体设置属性
 
 
   // 授权模块

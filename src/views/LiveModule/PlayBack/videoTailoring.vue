@@ -29,12 +29,14 @@
       :class="[recordId ? 'vh-video-tailoring__editwarp' : '']"
     ></videoTailoring>
     <el-dialog
-      title="请输入生成视频名称"
+      title="请输入视频名称"
       v-loading="editLoading"
       :visible.sync="titleDialogVisible"
       :close-on-click-modal="false"
+      custom-class="save-title"
+      center
       width="480px">
-      <el-input placeholder="请输入标题" maxlength="30" :autosize="{ minRows: 1 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
+      <el-input placeholder="请输入标题" maxlength="100" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmTitle" :disabled="editLoading" round size="medium">确 定</el-button>
         <el-button @click="titleDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
@@ -51,7 +53,9 @@ export default {
     return {
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
+      isNew: false,
       recordName: this.$route.query.recordName,
+      saveParam: {},
       dataReady: false,
       titleDialogVisible: false,
       titleEdit: '',
@@ -60,13 +64,15 @@ export default {
       isAdd: false, // 是否可添加视频裁剪 一般情况下为true，当在某个回放中点击裁剪时设置为false
       timeVal: [],
       chatSDK: null,
-      msgInfo: {}
+      msgInfo: {},
+      handleMsgTimer: ''
     };
   },
   created() {
     if (this.$route.query.recordId) {
       this.getPlayBackInfo();
     } else {
+      this.dataReady = true;
       this.getInitMsgInfo();
     }
   },
@@ -81,6 +87,7 @@ export default {
     }
   },
   methods:{
+    // 初始化消息
     getInitMsgInfo() {
       this.$fetch('msgInitConsole').then(res => {
         this.msgInfo = res.data;
@@ -97,17 +104,12 @@ export default {
       VhallChat.createInstance(
         opt,
         chat => {
-          this.dataReady = true;
+          // this.dataReady = true;
           this.chatSDK = chat.message;
           console.log('成功了居然', this.chatSDK)
           // TODO: 监听消息,判断 userId 获取playbackInfo
-          // 聊天消息
-          this.chatSDK.onChat(msg => console.log(msg))
           // 自定义消息
-          this.chatSDK.onCustomMsg(msg => console.log(msg))
-          this.chatSDK.onRoomMsg(msg => {
-            console.log('==========房间消息1===========', msg);
-
+          this.chatSDK.onCustomMsg(msg => {
             if (typeof msg !== 'object') {
               msg = JSON.parse(msg);
             }
@@ -118,12 +120,21 @@ export default {
             } catch (e) {
               console.log(e);
             }
-            console.log('==========房间消息===========', msg);
 
             Object.assign(msg, msg.data);
+              console.log('==========自定义消息==========', msg)
+            if (msg.type == "vod_cut_preview" && msg.user_id == sessionOrLocal.get('userId')) {
+              console.log('回放生成了')
+              // 消息会下发三次，只处理第一次
+              if (!this.handleMsgTimer) {
+                this.isNew = true;
+                this.getPlayBackInfo(msg.data.paas_record_id, true, msg.data.paas_record_id);
+                this.handleMsgTimer = setTimeout(() => {
+                  this.handleMsgTimer = ''
+                }, 2000)
+              }
+            }
           })
-          this.$EventBus.$on('sdkReady', () => {
-          });
         },
         err => {
           console.error('聊天SDK实例化失败', err);
@@ -137,23 +148,38 @@ export default {
       }
       this.editLoading = true;
       const name = this.titleEdit;
-      this.$fetch('createRecordinCtrl', {
-        webinar_id: this.webinar_id,
-        start_time: this.timeVal[0],
-        end_time: this.timeVal[1],
-        name,
-        type: 2
-      }).then(res => {
+      const param = this.saveParam;
+      const cut_sections = param.cut_sections && JSON.parse(param.cut_sections);
+      const point_sections = param.point_sections && JSON.parse(param.point_sections);
+      // 将param作为参数请求保存接口
+      const opts = {
+        record_id: this.recordId,
+        webinar_id: param.il_id,
+        scene_type: param.cut_type,
+        name: this.titleEdit,
+        cut_sections: JSON.stringify(cut_sections),
+        point_sections: JSON.stringify(point_sections)
+      }
+      console.log('==============', param)
+      if (this.isNew) {
+        opts.scene_type = 1
+      }else {
+        opts.record_id = this.recordId
+      }
+      this.$fetch('tailorSave', opts).then(res => {
+        console.log(res);
         if (res.code == 200) {
-          this.$message.success('视频生成中,请稍后...')
-          this.titleDialogVisible = false;
-          this.editLoading = false;
-          // this.getPlayBackInfo('', true);
+          this.$message.success('保存成功');
+          this.recordId = res.data.record_id;
+          this.isNew = false;
+          this.recordName = this.titleEdit;
+          this.getPlayBackInfo(res.data.record_id);
         } else {
-          this.$message.warning('生成失败');
-          this.titleDialogVisible = false;
-          this.editLoading = false;
+          this.$message.success('保存失败');
         }
+        this.editLoading = false;
+        this.titleEdit = '';
+        this.titleDialogVisible = false;
       })
     },
     createRecord() {
@@ -161,10 +187,25 @@ export default {
         this.$message.warning('请选择时间');
         return false;
       } else {
-        this.titleDialogVisible = true;
+        this.$fetch('createRecordinCtrl', {
+          webinar_id: this.webinar_id,
+          start_time: this.timeVal[0],
+          end_time: this.timeVal[1],
+          name: '111', // 无效名称，写死不影响
+          type: 2
+        }).then(res => {
+          if (res.code == 200) {
+            this.$message.success('视频生成中,请稍后...')
+            this.editLoading = false;
+            // this.getPlayBackInfo('', true);
+          } else {
+            this.$message.warning('生成失败');
+            this.editLoading = false;
+          }
+        })
       }
     },
-    getPlayBackInfo(recordId, isCreate) {
+    getPlayBackInfo(recordId, isCreate, paasRecordId) {
       const opts = {
         webinar_id: this.webinar_id,
         type: 0
@@ -173,7 +214,7 @@ export default {
         opts.record_id = recordId || this.recordId
       } else {
         opts.type = 1;
-        opts.paas_record_id = ''
+        opts.paas_record_id = recordId
       }
       this.$fetch('playBackPreview', opts).then(res => {
         console.log(res)
@@ -183,81 +224,19 @@ export default {
           third_party_user_id: data.accountId, // 当前房间用户id
           paas_access_token: data.paasAccessToken, // pass 身份标识
           roomeId: data.doc.roomId, // 当前活动房间id
-          record_id: data.player.paasRecordId, // 当前活动回放的id
+          record_id: paasRecordId || data.player.paasRecordId, // 当前活动回放的id
           webinar_id: this.webinar_id, // 当前活动id
           channel_id: data.doc.channelId, // 频道Id
           roleName: 2, // 角色名称 1主持人2观众3助理4嘉宾(此处回放+文档模式只能是已观众角色初始化)
-          name: this.recordName,
+          name: data.recordName,
           joinId: data.accountId,
         }
-        this.showDoc = true;
         this.dataReady = true;
       })
     },
-    // isAdd 为false 没有该方法
-    getVod(param) {
-      // 获取点播视频
-        let data = [{
-          name: '', //回放文件名
-          duration: '', //回放时长
-          created_at: '', //回放的生成时间
-          room_id: '', //房间ID：内部ID
-          record_id: '', //回放的视频文件ID
-          channel_id: '', //活动频道ID
-          webinar_id: '', //回放活动/房间ID
-          id: '', //点播ID
-          app_id: '', //APP_ID
-          account_id: '', //用户ID
-          paas_access_token: '' //回放的	PAAS_ACCESS_TOKEN
-        }];
-        console.log(param);
-      // 将获取的列表，通过该方法传给视频裁剪组件
-      this.$refs.videoTailoringComponent.bindDataList(data);
-    },
-    // isAdd 为false 没有该方法
-    createVideo(datae) {
-      // 生成的视频
-        let data = [{
-          name: '', //回放文件名
-          duration: '', //回放时长
-          channel_id: '', //活动频道ID
-          id: '', //点播ID
-        }];
-        console.log('createVideo', data);
-      // 将生成的视频通过该方法传给视频裁剪组件
-      this.$refs.videoTailoringComponent.pushDataList(data);
-    },
-    // isAdd 为false 没有该方法
-    selectVideo() {
-      // 选定要裁剪的视频，将选择的视频信息赋值给roomInfo即可，组件根据roomInfo.record_id改变而重新渲染视频及裁剪组件 id
-        // this.roomInfo.room_id = room_id
-        // this.roomInfo.record_id = vod_id
-        // this.roomInfo.channel_id = channel_id
-        // this.roomInfo.webinar_id = il_id
-        // this.roomInfo.id = id
-        // this.roomInfo.name = name
-        // this.roomInfo.app_id = app_id
-        // this.roomInfo.third_party_user_id = account_id
-        // this.roomInfo.paas_access_token = data.access_token
-    },
     saveVideoHandler (param) {
-      const cut_sections = param.cut_sections && JSON.parse(param.cut_sections)
-      const point_sections = param.point_sections && JSON.parse(param.point_sections)
-      // 将param作为参数请求保存接口
-      this.$fetch('tailorSave', {
-        record_id: this.recordId,
-        webinar_id: param.il_id,
-        cut_type: param.cut_type,
-        name: param.name,
-        cut_sections: JSON.stringify(cut_sections),
-        point_sections: JSON.stringify(point_sections)
-      }).then(res => {
-        console.log(res)
-        if (res.code == 200) {
-          this.$message.success('保存成功')
-          this.getPlayBackInfo(res.data.record_id)
-        }
-      })
+      this.titleDialogVisible = true;
+      this.saveParam = param;
     },
     exportVideoHandler (param) {
       const cut_sections = param.cut_sections && JSON.parse(param.cut_sections)
@@ -265,7 +244,7 @@ export default {
       this.$fetch('tailorSave', {
         record_id: this.recordId,
         webinar_id: param.il_id,
-        cut_type: param.cut_type,
+        scene_type: param.cut_type,
         name: param.name,
         cut_sections: JSON.stringify(cut_sections),
         point_sections: JSON.stringify(point_sections)
@@ -273,12 +252,19 @@ export default {
         console.log(res)
         if (res.code == 200) {
           this.$message.success('导出成功')
+          this.isNew = false;
         } else {
           this.$message.success('导出失败')
         }
         this.$refs.videoTailoringComponent.cancelExportVideoFun()
       })
-    }
+    },
+    // isAdd 为false 没有该方法
+    getVod(param) {},
+    // isAdd 为false 没有该方法
+    createVideo(datae) {},
+    // isAdd 为false 没有该方法
+    selectVideo() {},
   },
   components: {
     videoTailoring
@@ -400,6 +386,9 @@ export default {
           color: #666666;
         }
       }
+    }
+    .save-title{
+      margin-top: 34vh;
     }
     /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp {
       background-color: #000;

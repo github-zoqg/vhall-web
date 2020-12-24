@@ -65,8 +65,8 @@ export default {
   },
   computed: {
     vipTotal: function() {
-      if (this.sonInfo !== null && this.sonInfo.vip_info !== null) {
-        return this.sonInfo.vip_info.type > 0 ? Number(this.sonInfo.vip_info.total_flow) : Number(this.sonInfo.vip_info.total);
+      if (this.sonInfo && this.sonInfo.vip_info) {
+        return this.sonInfo.vip_info.type > 0 ? Number(this.sonInfo.vip_info.flow) : Number(this.sonInfo.vip_info.total);
       } else {
         return 0;
       }

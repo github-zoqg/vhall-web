@@ -117,7 +117,8 @@ export function getfiledJson({name, type}){
           "bottomBtn": ["move"],
           reqType: 0,
           default_type: 1,
-          subject: '名字'
+          subject: '名字',
+          disabledEdit: true
         });
 
         break;
@@ -131,7 +132,8 @@ export function getfiledJson({name, type}){
           reqType: 0,
           default_type: 2,
           subject: '手机号',
-          phoneValide: true
+          phoneValide: true,
+          disabledEdit: true
         });
 
         break;
@@ -170,7 +172,8 @@ export function getfiledJson({name, type}){
           "required": true,
           reqType: 0,
           default_type: 3,
-          subject: '邮箱'
+          subject: '邮箱',
+          disabledEdit: true
         });
 
         break;
@@ -184,7 +187,8 @@ export function getfiledJson({name, type}){
           "bottomBtn": ["delete", "move", "requireSwtich"],
           options: {
             type: 7,
-          }
+          },
+          disabledEdit: true
         });
 
         break;
@@ -205,14 +209,15 @@ export function getfiledJson({name, type}){
           label: '地域',
           "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
-          "nodes": ["省/自治区/直辖市", "市", "区/县"].map(item=>{
+          "nodes": ["省/自治区/直辖市", "市", "区/县"].map((item, index)=>{
             return {
               props: {
                 disabled: true,
                 placeholder: item,
-                class: ['selectInput']
+                class: ['selectInput', 'regionalInput']
               },
-              "value":""
+              "value":"",
+              index
             };
           }),
           reqType: 5,
@@ -222,7 +227,8 @@ export function getfiledJson({name, type}){
             show_province: 1,
             show_city: 1,
             show_district: 1
-          }
+          },
+          disabledEdit: true
         });
 
         break;

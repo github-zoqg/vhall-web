@@ -43,7 +43,7 @@ const router = [
       }
     ]
   },
-  /*{
+ /* {
     path: '/css-demo',
     component: Layout,
     meta: { auth: false, title: '样式Demo', name: 'cssDemoAll', icon: 'el-icon-s-help' },

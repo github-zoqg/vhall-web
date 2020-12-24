@@ -24,13 +24,13 @@
         <el-col :span="5">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
-            <h3>账号数据</h3>
+            <h3>数据中心</h3>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
-            <h3>财务总览</h3>
+            <h3>财务中心</h3>
           </div>
         </el-col>
       </el-row>
@@ -102,7 +102,7 @@
         </div>
         <div class="ad-text">
           <h1>微吼直播客户端</h1>
-          <p>强大稳定的直播工具，支持插播 视频、桌面</p>
+          <p>强大稳定的直播工具，支持插播视频、桌面共享等功能。</p>
         </div>
         <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank">立即下载</a>
       </div>
@@ -112,7 +112,7 @@
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
-          <p>强大稳定的直播工具，支持插播 视频、桌面共享等功能</p>
+          <p>把微吼装进口袋，随时随地发直播，让直播更便捷</p>
         </div>
         <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
       </div>

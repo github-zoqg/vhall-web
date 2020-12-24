@@ -9,22 +9,31 @@
         3.上传的视频，不支持剪辑和下载
       </div>
     </pageTitle>
-    <div class="head-operat">
+    <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
       <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
+        :placeholder="`请输入音视频名称`"
         :isExports='false'
         :searchAreaLayout="searchAreaLayout"
         @onSearchFun="getTableList('search')"
         >
       </search-area>
     </div>
-    <el-card class="video-list">
+    <el-card class="video-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="240" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
     </el-card>
+    <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" round class="head-btn set-upload" v-if="nullText==='nullData'">
+          上传
+          <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)">
+        </el-button>
+      </noData>
+    </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
@@ -37,13 +46,17 @@
 import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: 'video.vue',
   data() {
     return {
-      total: 100,
+      total: 0,
       // 预览
       showDialog: false,
+      isSearch: false,
+      nullText: 'nullData',
+      text: '暂未上传音视频',
       videoParam: {},
       // 表格
       tableData: [],
@@ -81,6 +94,7 @@ export default {
   components: {
     PageTitle,
     VideoPreview,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -100,16 +114,26 @@ export default {
       let obj = Object.assign({}, pageInfo, formParams);
       this.getList(obj);
     },
+    getVideoList() {
+      // this.getTableList('search')
+    },
     tirggerFile(event){
+      const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
-      if(beforeName.indexOf('.mp')==-1){
-        this.$message({
-          type: 'error',
-          message: '请选择Mp4和Mp3格式的视频'
-        });
-        return;
+      let videoArr = beforeName.toLowerCase().split('.');
+      const videoType = typeList.includes(videoArr[videoArr.length - 1]);
+      if (!videoType) {
+        this.$message.error(`您上传的文件格式不正确`);
+        return false;
       }
+      // if(beforeName.indexOf('.mp')==-1){
+      //   this.$message({
+      //     type: 'error',
+      //     message: '您上传的文件格式不正确'
+      //   });
+      //   return;
+      // }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
       // let name = beforeName.split('.m')[0];
       // console.log(name, beforeName,  '22222222222222222222222222');
@@ -229,6 +253,15 @@ export default {
             this.$refs.tableList.clearSelect();
           }
           this.tableData = res.data.list;
+          if (obj.title) {
+            this.isSearch = true;
+            this.nullText = 'search';
+            this.text = '';
+          } else {
+            this.isSearch = false;
+            this.nullText = 'nullData';
+            this.text = '暂未上传音视频';
+          }
           // this.checkedList = [];
           // if(this.uploadList.length!=0){
           //   this.tableData =this.uploadList.concat(this.tableData);
@@ -241,9 +274,10 @@ export default {
       that.$prompt('', '编辑',{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          inputPlaceholder: '请输入名称'
+          inputPlaceholder: '请输入名称',
+          inputErrorMessage: '名字格式不正确'
         }).then(({ value }) => {
-          let flag = Boolean(value.match(/^[ ]*$/));
+          let flag = Boolean(value.match(/[ ]*$/));
           if(!flag && value!=null){
             that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, filename: value}).then(res=>{
               that.$message.success('修改成功');
@@ -339,7 +373,7 @@ export default {
       }
     }
   }
-  .head-operat{
+  .head-operat, .no-live{
     margin-bottom: 20px;
     .head-btn{
       display: inline-block;

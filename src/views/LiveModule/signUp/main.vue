@@ -121,9 +121,9 @@ export default {
   computed: {
     signUpSwtichDesc(){
       if(this.signUpSwtich){
-        return '已开启，观看直播需要填写以下信息';
+        return '已开启，观看直播需要填写报名表单';
       }else{
-        return '开启后，观看直播需要填写报名信息';
+        return '开启后，观看直播需要填写报名表单';
       }
     },
     ques() {

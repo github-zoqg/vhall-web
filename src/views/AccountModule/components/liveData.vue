@@ -14,7 +14,10 @@
         :clearable=false
         @change="queryList"
       />
-      <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList">
+      <el-input placeholder="请输入活动标题" v-model.trim="query.title"
+                clearable
+                @keyup.enter.native="queryList"
+                @clear="queryList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>
       </el-input>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
@@ -76,7 +79,7 @@ export default {
           width: 'auto'
         },
         {
-          label: '开播时间',
+          label: '消耗时间',
           key: 'pay_date',
           width: 200
         },
@@ -129,12 +132,13 @@ export default {
     },
     downloadHandle() {
       let params = {
-        account_id: sessionOrLocal.get('userId'),
+        account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        subject: this.query.title,
         pos: 0,
         limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
         type: 1
       };
-      if (this.timeStr) {
+      if (this.query.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }

@@ -47,7 +47,13 @@ const mixins = {
         source: 0
       }).then(res=>{
         if(res.code == 200){
-          this.prizeList = res.data.list
+          let defaultList = [{
+            create_time: "",
+            img_path: "",
+            prize_id: "",
+            prize_name: "默认奖品"
+          }]
+          this.prizeList = defaultList.concat(res.data.list)
           this.prize = res.data.list[1]
         }else{
           this.$message.warning(res.msg)

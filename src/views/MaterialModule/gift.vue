@@ -20,13 +20,20 @@
       <el-input
         @keyup.enter.native="searchGifts"
         class="head-btn fr search"
-        v-model="searchName"
+        v-model.trim="searchName"
         placeholder="请输入礼物名称"
-        suffix-icon="el-icon-search"/>
+      >
+        <i
+          style="cursor: pointer;"
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchGifts">
+        </i>
+      </el-input>
     </div>
     <el-card class="gift-list">
       <el-table
-        :data="currentTableData"
+        :data="tableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
         ref="multipleTable"
@@ -45,7 +52,10 @@
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="价格" prop="price" show-overflow-tooltip>
+        <el-table-column label="价格" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ `￥${scope.row.price}` }}
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
@@ -83,15 +93,15 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <el-input v-model="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
+            <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input v-model="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
+            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" placeholder="￥ 请输入0-9999.99"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" round>取 消</el-button>
+        <el-button @click="handleUpdateGift" v-preventReClick  round>确 定</el-button>
+        <el-button @click="handleCancelEdit" v-preventReClick round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -103,8 +113,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete">取 消</el-button>
-        <el-button type="primary" @click="handleDeleteGift">确 定</el-button>
+        <el-button @click="handleCancelDelete" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="handleDeleteGift" v-preventReClick>确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -113,6 +123,7 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
+import { debounce } from "@/utils/utils"
 import Env from "@/api/env";
 
 export default {
@@ -127,6 +138,7 @@ export default {
         page_size: 10,
         page: 1
       },
+      pos: 0,
       selectIds:[],
       defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
@@ -163,6 +175,8 @@ export default {
   },
   methods: {
     searchGifts() {
+      this.searchParams.page = 1
+      this.pos = 0;
       this.getTableList(true)
     },
     selectHandle(row) {
@@ -170,25 +184,27 @@ export default {
     },
     // 获取礼物列表
     getTableList (isSearch) {
-      this.$fetch('shareGiftList', {
-        ...this.searchParams
-      }).then((res) => {
+      const opts = {
+        limit: this.searchParams.page_size,
+        pos: this.pos
+      }
+      this.searchName && (opts.name = this.searchName)
+      this.$fetch('shareGiftList', opts).then((res) => {
         if (res.code == 200 && res.data) {
-          this.searchParams.page = 1
           this.tableData = res.data.list
-          if (isSearch) {
-            const resultData = []
-            this.tableData.forEach(item => {
-              if(item.name.indexOf(this.searchName) != -1) {
-                resultData.push(item)
-              }
-            })
-            this.tableData = resultData
-          }
-          this.currentTableData = this.tableData.filter((item, index) => {
-            return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-          })
-          this.total = this.tableData.length
+          // if (isSearch) {
+          //   const resultData = []
+          //   this.tableData.forEach(item => {
+          //     if(item.name.indexOf(this.searchName) != -1) {
+          //       resultData.push(item)
+          //     }
+          //   })
+          //   this.tableData = resultData
+          // }
+          // this.currentTableData = this.tableData.filter((item, index) => {
+          //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+          // })
+          this.total = res.data.total
         }
       })
     },
@@ -302,13 +318,6 @@ export default {
     },
     // 创建
     handleCreate () {
-      let price = Number(this.editParams.price)
-      if (price) {
-        this.editParams.price = price.toFixed(2)
-      } else {
-        this.$message.error('请输入正确礼物价格')
-        return
-      }
       this.$fetch('createGiftInfo', this.$params({
         ...this.editParams
       })).then((res) => {
@@ -336,29 +345,33 @@ export default {
       this.selectIds.push(data.gift_id)
     },
     handleDeleteGift () {
-      this.$fetch('deleteGift', {
-        gift_ids: this.selectIds.join(',')
-      }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success('删除成功')
-          this.getTableList()
-          this.selectIds = []
-          this.dialogTipVisible = false
-        }
-      }).catch((e) => {
-          this.$message.error('创建失败')
-      })
+      debounce(() => {
+        this.$fetch('deleteGift', {
+          gift_ids: this.selectIds.join(',')
+        }).then((res) => {
+          if (res.code == 200) {
+            this.$message.success('删除成功')
+            this.getTableList()
+            this.selectIds = []
+            this.dialogTipVisible = false
+          }
+        }).catch((e) => {
+            this.$message.error('删除失败')
+        })
+      }, 100)
     },
     handleCancelDelete () {
       this.dialogTipVisible = false
     },
     // 翻页
     currentChangeHandler (val) {
-      this.searchParams.page = val
+      this.searchParams.page = val;
+      this.pos = (val - 1) * this.searchParams.page_size;
+      this.getTableList();
       // 切换table显示的内容
-      this.currentTableData = this.tableData.filter((item, index) => {
-        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-      })
+      // this.currentTableData = this.tableData.filter((item, index) => {
+      //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      // })
     }
   },
 };

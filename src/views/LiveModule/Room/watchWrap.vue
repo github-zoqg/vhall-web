@@ -1426,7 +1426,7 @@ export default {
       if (seedIcon) {
         seedIcon.style.background = pageStyle
       }
-      
+
       if (follow) {
         follow.style.background = pageStyle
       }
@@ -1606,7 +1606,7 @@ export default {
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
       this.myAccountRoute = window.location.origin + '/account/info'
       this.followStyle = this.roominfo.modules.attention.follow == 1
-      
+
       this.userChatId = this.roominfo.user.third_party_user_id
       // 获取所有的主域名
       this.webDominUrl = this.roominfo.domains.web

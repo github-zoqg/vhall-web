@@ -32,6 +32,7 @@
     </div>
     <el-card class="gift-list">
       <el-table
+        :cell-class-name="freeFilter"
         :data="currentTableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
@@ -51,7 +52,10 @@
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="价格" prop="price" show-overflow-tooltip>
+        <el-table-column label="价格" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ `￥${scope.row.price}` }}
+          </template>
         </el-table-column>
         <!-- 暂时不支持,隐藏 -->
         <!-- <el-table-column label="显示">
@@ -251,6 +255,12 @@ export default {
   },
   mounted() {},
   methods: {
+    freeFilter(row) {
+      console.log(row)
+      if(row.is_default == 0){
+        return "mycell"
+      }
+    },
     // 获取礼物列表
     getTableList (isSearch) {
       this.$fetch('liveGiftList', {
@@ -580,6 +590,9 @@ export default {
 
 <style lang="less" scoped>
 .live-gift-wrap{
+  /deep/ .mycell.el-checkbox__input {
+    display: none
+  }
   /deep/.el-upload{
     border: 1px solid #ccc;
   }

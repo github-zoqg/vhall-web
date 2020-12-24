@@ -53,7 +53,7 @@
             <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
                 1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
-                2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
+                2.自启用之日起，赠送的流量包有效期为7天<br>
                 3.流量包到期后自动失效
               </div>
               <i class="el-icon-question"></i>
@@ -69,7 +69,7 @@
           <el-tooltip effect="dark" placement="right-start" >
               <div slot="content">
                 1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
-                2.自启用之日起，购买的流量包有效期为1年，赠送的流量包有效期为7天<br>
+                2.自启用之日起，赠送的流量包有效期为7天<br>
                 3.流量包到期后自动失效
               </div>
               <i class="el-icon-question"></i>

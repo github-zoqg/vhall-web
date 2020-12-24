@@ -11,7 +11,9 @@
           <a :href="logo_jump_url" v-if="logo" class="sidebar-logo2">
             <img v-if="logo" :src="logo">
           </a>
-          <img v-else src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
+          <a :href="logo_jump_url" v-else class="sidebar-logo2">
+            <img src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
+          </a>
         </div>
       </transition>
       <!-- 是否收缩按钮 -->
@@ -86,7 +88,7 @@ export default {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
     this.logo = userInfo.user_extends ? userInfo.user_extends.logo : '';
-    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : process.env.VUE_APP_WEB_URL;
+    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url ||  process.env.VUE_APP_WEB_URL : process.env.VUE_APP_WEB_URL;
       // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
@@ -94,7 +96,7 @@ export default {
     this.$EventBus.$on("saas_vs_account_change", (res) => {
       let user_extends = res.user_extends;
       this.logo = user_extends.logo;
-      this.logo_jump_url = user_extends.logo_jump_url;
+      this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_WEB_URL;
     });
   },
   destroyed() {

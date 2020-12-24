@@ -31,8 +31,8 @@
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>最佳尺寸：240*78px</p>
-                <p>支持jpg、gif、png、bmp</p>
+                <p>最佳尺寸：1920*1080px</p>
+                <p>小于2MB(支持jpg、gif、png、bmp)</p>
               </div>
             </upload>
             <p class="p-notice">开启时支持更换品牌标志</p>

@@ -73,30 +73,42 @@
 
             <!-- 输入框类型 || 设置表单时下拉框类型 -->
             {{node.other ? "其他" : ''}}
-            <el-input
+            <template
               v-if="item.type=='input' || item.type=='select'"
-              v-model="node.value"
-              v-bind="node.props"
-              show-word-limit
-              :type="node.key == 'url'? 'textarea' : 'text'"
-              :autosize="node.key == 'url' ? { minRows: 2 } : ''"
-              :maxlength="node.key == 'url'? '200' : '60'"
-              :key='`${index}-${nodeIndex}`'
-              @change="selectOptChange(item, node, item.type=='select', item.privacy)"
             >
-              <i
-                class="el-icon-remove-outline removeIcon"
-                slot="suffix"
-                v-if="!!node.canRemove"
-                @click="deleteOptions(item, nodeIndex, item.privacy ? 'privacy' : 'select')"
-              ></i>
-              <i
-                class="el-icon-circle-plus-outline removeIcon"
-                slot="suffix"
-                v-if="!!node.privacyAdd && item.nodes.length < 4"
-                @click="privacyAdd(item.nodes, item)"
-              ></i>
-            </el-input>
+              <el-input
+                :disabled="item.disabledEdit"
+                v-model="node.value"
+                v-bind="node.props"
+                show-word-limit
+                :type="node.key == 'url'? 'textarea' : 'text'"
+                :autosize="node.key == 'url' ? { minRows: 2 } : ''"
+                :maxlength="node.key == 'url'? '200' : '60'"
+                :key='`${index}-${nodeIndex}`'
+                @change="selectOptChange(item, node, item.type=='select', item.privacy)"
+              >
+                <i
+                  class="el-icon-remove-outline removeIcon"
+                  slot="suffix"
+                  v-if="!!node.canRemove"
+                  @click="deleteOptions(item, nodeIndex, item.privacy ? 'privacy' : 'select')"
+                ></i>
+                <i
+                  class="el-icon-circle-plus-outline removeIcon"
+                  slot="suffix"
+                  v-if="!!node.privacyAdd && item.nodes.length < 4"
+                  @click="privacyAdd(item.nodes, item)"
+                ></i>
+              </el-input>
+              <!-- 区域级别下拉开启状态控制 -->
+              <el-switch
+                v-model="regionalLevel[node.index]"
+                @change="regionalLevelChange(node.index, item)"
+                v-if="item.reqType == 5 && node.index != 0"
+                class="regionalBtn"
+                :key="`statusctrl${index}-${nodeIndex}`"
+              ></el-switch>
+            </template>
             <!-- 单选类型 -->
             <el-radio-group
               v-model="item.value"
@@ -288,7 +300,11 @@ export default {
       signUpSwtich: false,
       radio: 3,
       imageUrl: '',
-      renderQuestion: []
+      renderQuestion: [],
+      regionalLevel: {
+        1: true, // 市
+        2: true // 区/县
+      }
     };
   },
   computed: {
@@ -307,6 +323,18 @@ export default {
     }
   },
   methods: {
+    // 区域级别下拉菜单开启状态控制
+    regionalLevelChange(level, question) {
+      if (level == 1 && !this.regionalLevel[1]) {
+        this.regionalLevel[2] = false;
+      }
+      if (level == 2 && this.regionalLevel[2]) {
+        this.regionalLevel[1] = true;
+      }
+      question.options.show_city = this.regionalLevel[1] ? 1 : 0;
+      question.options.show_country = this.regionalLevel[2] ? 1 : 0;
+      this.subjectChange(question);
+    },
     onMove({ relatedContext, draggedContext }) {
       const relatedElement = relatedContext.element;
       const draggedElement = draggedContext.element;
@@ -326,6 +354,10 @@ export default {
     },
     // 添加一个题目选项
     addOption(data, other){
+      if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
+        this.$alert('最多可添加20个选项')
+        return false;
+      }
       console.log(data);
       let itemType = other ? 1: 0;
       let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
@@ -544,14 +576,14 @@ export default {
       let text = JSON.parse(JSON.stringify(item[0].value));
       // let privacy =
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
-      if(matchPrivacy1){
+      if(matchPrivacy1 && item[2].value){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
         text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`);
       }else{
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
-      if(matchPrivacy2){
+      if(matchPrivacy2 && item[4].value){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
         text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`);
       }else{
@@ -617,7 +649,19 @@ export default {
       this.$emit('setBaseInfo', obj);
     },
     // 短信验证开关
-    phoneSwitchChange(question) {
+    async phoneSwitchChange(question) {
+      let isConfirm = true;
+      if (!question.phoneValide) {
+        await this.$confirm('关闭短信验证将会导致无法验证用户手机号码，同时用户将无法接收预约短信，确认是否关闭？', '提示', {
+          confirmButtonText: '仍然关闭',
+          cancelButtonText: '暂不关闭',
+          center: true
+        }).then(() => {}).catch(() => {
+          isConfirm = false;
+          question.phoneValide = true;
+        });
+      }
+      if (!isConfirm) return false;
       const options = {
         question_id: question.question_id,
         options: JSON.stringify({
@@ -752,6 +796,12 @@ export default {
   }
   .selectInput{
     margin-bottom: 16px;
+  }
+  .regionalInput{
+    width: calc(100% - 38px)
+  }
+  .regionalBtn{
+    margin-left: 10px;
   }
   /deep/ .box .avatar {
     width: auto;

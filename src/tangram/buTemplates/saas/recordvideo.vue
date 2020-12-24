@@ -99,7 +99,7 @@
     </div>
     <div class="vhall-main-area" :class="assistantType ? 'assistantStyle':''">
       <div class="thirdParty-warp" v-if="!assistantType && thirdPartyMobild && NoDocShow">
-        <thirdParty :roomId="roomInfo.room_id" :vssToken="vssToken"></thirdParty>
+        <thirdParty  :webinarId='ilId'></thirdParty>
       </div>
       <div
         v-if="!assistantType || (assistantType && assistantType == 'doc')"

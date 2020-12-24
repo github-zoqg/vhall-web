@@ -83,43 +83,50 @@ export default {
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
       console.log(dataVo, '功能配置');
+      let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      let perVo = {
+        'ui.record_chapter': 1, // 默认打开
+      };
+      if(permissions) {
+        perVo = JSON.parse(permissions);
+      }
       this.keyList = [
         [
           {
             type: 'ui.hide_reward',
             key_name: '隐藏打赏',
-            openShow: '已开启，观看端打赏按钮已被隐藏',
-            closeShow: '开启后，观看端打赏按钮将被隐藏',
+            openShow: '已开启，观看端打赏按钮不显示',
+            closeShow: '开启后，观看端打赏按钮不显示',
             value: Number(dataVo['ui.hide_reward'])
           },
           {
-            type: 'ui.watch_hide_like',
+            type: 'ui.hide_share',
             key_name: '隐藏点赞',
-            openShow: '已开启，观看端点赞按钮已被隐藏',
-            closeShow: '开启后，观看端点赞按钮将被隐藏',
-            value: Number(dataVo['ui.watch_hide_like'])
+            openShow: '已开启，观看端点赞按钮不显示',
+            closeShow: '开启后，观看端点赞按钮不显示',
+            value: Number(dataVo['ui.hide_share'])
           },
           {
             type: 'ui.hide_gifts',
             key_name: '隐藏礼物',
-            openShow: '已开启，观看端礼物按钮已被隐藏',
-            closeShow: '开启后，观看端礼物按钮将被隐藏',
+            openShow: '已开启，观看端礼物按钮不显示',
+            closeShow: '开启后，观看端礼物按钮不显示',
             value: Number(dataVo['ui.hide_gifts'])
           },
           {
-            type: 'ui.hide_share',
+            type: 'ui.watch_hide_share',
             key_name: '隐藏分享',
-            openShow: '已开启，观看端的分享已被隐藏（PC端分享按钮和手机端的微信分享）',
-            closeShow: '开启后，观看端的分享将被隐藏（PC端分享按钮和手机端的微信分享）',
-            value: Number(dataVo['ui.hide_share'])
+            openShow: '已开启，观看端的分享功能不显示（PC端分享按钮和手机端的微信分享）',
+            closeShow: '开启后，观看端的分享功能不显示（PC端分享按钮和手机端的微信分享）',
+            value: Number(dataVo['ui.watch_hide_share'])
           }
         ],
-        [
+        perVo['ui.record_chapter'] > 0 ? [
           {
             type: 'ui.watch_record_no_chatting',
             key_name: '回放禁言',
-            openShow: '已开启，回放默认已开启聊天禁言',
-            closeShow: '开启后，回放默认开启聊天禁言',
+            openShow: '已开启，回放/点播不支持聊天',
+            closeShow: '开启后，回放/点播不支持聊天',
             value: Number(dataVo['ui.watch_record_no_chatting'])
           },
           {
@@ -128,6 +135,14 @@ export default {
             openShow: '已开启，回放/点播观看端显示文档章节',
             closeShow: '开启后，回放/点播观看端显示文档章节',
             value: Number(dataVo['ui.watch_record_chapter'])
+          }
+        ] : [
+          {
+            type: 'ui.watch_record_no_chatting',
+            key_name: '回放禁言',
+            openShow: '已开启，回放/点播不支持聊天',
+            closeShow: '开启后，回放/点播不支持聊天',
+            value: Number(dataVo['ui.watch_record_no_chatting'])
           }
         ]
       ]

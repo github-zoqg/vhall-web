@@ -4,14 +4,14 @@
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
       :rules="[
-        { required: true, max: 100,  message: '请输入直播标题', trigger: 'blur' },
+        { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
-        <el-input v-model="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
+        <el-input v-model.trim="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
           <el-col :span="11">
             <el-form-item prop="date1" :rules="[
-              { required: true, message: '请选择直播开始日期', trigger: 'blur' }
+              { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
               <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
             </el-form-item>
@@ -19,7 +19,7 @@
           <el-col class="line" :span="1">-</el-col>
           <el-col :span="11">
             <el-form-item prop="date2" :rules="[
-              { required: true, message: '请选择直播开始时间', trigger: 'blur' }
+              { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
               <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
@@ -100,7 +100,7 @@
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
           @delete="imageUrl = ''">
-          <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
       <el-form-item label="选择视频："  v-if="webniarType=='vod'">
@@ -130,73 +130,84 @@
       <el-form-item :label="`${webniarTypeToZH}简介：`">
         <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
-      <el-form-item :label="`${webniarTypeToZH}类别：`" required>
+      <!-- <el-form-item :label="`${webniarTypeToZH}类别：`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
-      </el-form-item>
-      <el-switch
-         v-if="webniarType=='live'"
-        style="display: block"
-        v-model="docSwtich"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="文档翻页"
-        :active-text="docSwtichDesc">
-      </el-switch>
-      <el-switch
-         v-if="webniarType=='live'"
-        style="display: block"
-        v-model="reservation"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="预约人数"
-        :active-text="reservationDesc">
-      </el-switch>
-      <el-switch
-         v-if="webniarType=='live'"
-        style="display: block"
-        v-model="online"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="在线人数"
-        :active-text="onlineDesc">
-      </el-switch>
-      <el-switch
-        style="display: block"
-        v-model="hot"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="活动热度"
-        :active-text="hotDesc">
-      </el-switch>
-      <el-switch
-        style="display: block"
-        v-model="home"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="关联主页"
-        :active-text="homeDesc">
-      </el-switch>
-      <el-switch
-        v-if="webniarType=='live' || !this.versionType"
-        style="display: block"
-        v-model="capacity"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="并发扩容"
-        :active-text="capacityDesc">
-      </el-switch>
-      <el-switch
-        style="display: block"
-        v-model="limitCapacitySwtich"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        inactive-text="最高并发"
-        :active-text="limitCapacityDesc"
-        >
-      </el-switch>
-      <el-input placeholder="请输入限制并发数" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+      </el-form-item> -->
+      <p class="switch__box" v-if="webniarType=='live'">
+        <el-switch
+          style="display: block"
+          v-model="docSwtich"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="文档翻页"
+          :active-text="docSwtichDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box" v-if="webniarType=='live'">
+        <el-switch
+          style="display: block"
+          v-model="reservation"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="预约人数"
+          :active-text="reservationDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box" v-if="webniarType=='live'">
+        <el-switch
+          style="display: block"
+          v-model="online"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="在线人数"
+          :active-text="onlineDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box">
+        <el-switch
+          style="display: block"
+          v-model="hot"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="活动热度"
+          :active-text="hotDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box">
+        <el-switch
+          style="display: block"
+          v-model="home"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="关联主页"
+          :active-text="homeDesc">
+        </el-switch>
+        </p>
+      <p class="switch__box" v-if="webniarType=='live' && !this.versionType">
+         <el-switch
+          style="display: block"
+          v-model="capacity"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="并发扩容"
+          :disabled="!limitInfo.extend"
+          :active-text="capacityDesc">
+        </el-switch>
+      </p>
+      <p class="switch__box">
+        <el-switch
+          style="display: block"
+          v-model="limitCapacitySwtich"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="最高并发"
+          :active-text="limitCapacityDesc"
+          >
+        </el-switch>
+         <el-input placeholder="请输入限制并发数" :maxlength="versionType ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+      </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
         <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
@@ -235,45 +246,44 @@ export default {
     },
     docSwtichDesc(){
       if(this.docSwtich){
-        return '已开启，支持观众直播中提前预览文档，进行文档翻页';
+        return '已开启，直播中观众可以提前预览文档，进行文档翻页';
       }else{
-        return "开启后，支持观众直播中提前预览文档，进行文档翻页";
+        return "开启后，直播中观众可以提前预览文档，进行文档翻页";
       }
     },
     reservationDesc(){
       if(this.reservation){
-        return '关闭后，观看端将隐藏预约人数';
+        return '已开启，观看端显示预约人数';
       }else{
-        return "已关闭，观看端已隐藏预约人数";
+        return "开启后，观看端显示预约人数";
       }
     },
     onlineDesc(){
       if(this.online){
-        return '关闭后，观看端将隐藏在线人数';
+        return '已开启，观看端显示在线人数';
       }else{
-        return "已关闭，观看端已隐藏在线人数";
+        return "开启后，观看端显示在线人数";
       }
     },
     hotDesc(){
       if(this.hot){
-        return '关闭后，观看端将隐藏活动热度';
+        return '已开启，观看端显示活动热度';
       }else{
-        return "已关闭，观看端已隐藏活动热度";
+        return "开启后，观看端显示活动热度";
       }
     },
     homeDesc(){
       if(this.home){
-        return '关闭后，该直播将不在个人主页显示';
+        return '已开启，该活动在个人主页中显示';
       }else{
-        return "已关闭，该直播已不在个人主页显示";
+        return "开启后，该活动在个人主页显示";
       }
     },
     capacityDesc(){
       if(this.capacity){
-        return '已开启，观看并发人数扩容X人';
+        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }else{
-        // return "开启后，使用扩展包扩容并发人数（扩展包剩余人）"
-        return `开启后，使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
+        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
@@ -317,11 +327,11 @@ export default {
       },
       content: ``,
       docSwtich: false,
-      reservation: false,
-      online: false,
+      reservation: true,
+      online: true,
       showDialog: false,
-      hot: false,
-      home: false,
+      hot: true,
+      home: true,
       capacity: false,
       isSaveInfo: false,
       limitCapacity: '',
@@ -337,7 +347,7 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (!this.isSaveInfo && this.title === '编辑') {
-    this.$confirm('是否取消编辑的直播内容？', '提示', {
+    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-alert-box',
@@ -395,7 +405,8 @@ export default {
         this.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
         this.online = Boolean(this.liveDetailInfo.hide_watch);
         this.reservation = Boolean(this.liveDetailInfo.hide_appointment);
-        this.$refs.unitImgTxtEditor.content = this.liveDetailInfo.introduction;
+        this.content = this.liveDetailInfo.introduction;
+        // this.$refs.unitImgTxtEditor.content = this.liveDetailInfo.introduction;
         this.hot = Boolean(this.liveDetailInfo.hide_pv);
         if (this.liveDetailInfo.webinar_curr_num) {
           this.limitCapacity = this.liveDetailInfo.webinar_curr_num;
@@ -465,7 +476,6 @@ export default {
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
-        img_url: this.$parseURL(this.imageUrl).path, // 封面图
         is_private: Number(this.home), // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
         hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否
@@ -473,8 +483,12 @@ export default {
         hide_appointment: Number(this.reservation),// 是否显示预约人数 1 是 0 否
         hide_pv: Number(this.hot),// 是否显示活动热度 1 是 0 否
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
-        is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
+        is_capacity: Number(this.capacity),// 是否扩容 1 是 0 否
+        img_url: this.$parseURL(this.imageUrl).path // 封面图
       };
+      if(this.$route.query.type != 2 ) {
+         data = this.$params(data)
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -484,7 +498,7 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, this.$params(data)).then(res=>{
+          this.$fetch(url, data).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
               this.isSaveInfo = true;

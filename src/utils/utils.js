@@ -50,6 +50,15 @@ export function resize () {
   }
 }
 
+// 防抖
+export const debounce = (function () {
+  let timer = 0
+  return function (callback, ms) {
+    clearTimeout(timer)
+    timer = setTimeout(callback, ms)
+  }
+})()
+
 export function calculateAudioLevel (level) {
   let audioLevelValue = 1;
   if (level > 0 && level <= 0.04) {
@@ -201,10 +210,10 @@ export function getQueryString(name) {
 }
 // 判断是否登录成功
 export function checkAuth(to, from, next) {
-  console.warn(to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'), 'look**********************************');
-  console.warn(to.path.indexOf('/live/room') !== -1,sessionOrLocal.get('interact_token'), 'look**********************************');
+  console.warn(to, 9999);
+
   if(to.path.indexOf('/keylogin-host') !== -1 ||
-    to.path.indexOf('/keylogin') !== -1 ||
+    to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
     to.path.indexOf('/subscribe') !== -1 ||
     to.path.indexOf('/entryform') !== -1 ||
@@ -212,7 +221,8 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/watch') !== -1 ||
-    to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token')) ) {
+    to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
+    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
     // 不验证直接进入
     next();
     NProgress.done();

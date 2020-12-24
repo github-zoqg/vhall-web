@@ -1,7 +1,9 @@
 <template>
   <div class="vh-video-tailoring__cutting-warp" ref="rulersWarp" @mousedown="rulersMouseDown">
     <div class="vh-video-tailoring__left-border" :style="{ left: pointerLeft + 'px' }" @mousedown.stop="clearMouse">
-      <div attr_id="letf_target" class="vh-video-tailoring__pull-left-warp" @mousedown.stop="targetMousedown"></div>
+      <div attr_id="letf_target" class="vh-video-tailoring__pull-left-warp" @mousedown.stop="targetMousedown">
+        <icon class="icon" icon-class="saasicon_quyubianjiezuo"></icon>
+      </div>
     </div>
     <div
       class="vh-video-tailoring__content"
@@ -13,7 +15,9 @@
       </div>
     </div>
     <div class="vh-video-tailoring__right-border" :style="{ left: pointerRight + 'px' }" @mousedown.stop="clearMouse">
-      <div attr_id="right_target" class="vh-video-tailoring__pull-right-warp" @mousedown.stop="targetMousedown"></div>
+      <div attr_id="right_target" class="vh-video-tailoring__pull-right-warp" @mousedown.stop="targetMousedown">
+        <icon class="icon" icon-class="saasicon_quyubianjieyou"></icon>
+      </div>
     </div>
   </div>
 </template>
@@ -340,9 +344,7 @@ export default {
       height: 30px;
       background-repeat: no-repeat;
       background-size: 8px 30px;
-      background-image: url('../image/pull-left@2x.png');
       &:hover {
-        background-image: url('../image/pull-left-hover@2x.png');
         cursor: pointer;
         display: block;
       }
@@ -363,9 +365,7 @@ export default {
       height: 30px;
       background-repeat: no-repeat;
       background-size: 8px 30px;
-      background-image: url('../image/pull-right@2x.png');
       &:hover {
-        background-image: url('../image/pull-right-hover@2x.png');
         cursor: pointer;
         display: block;
       }

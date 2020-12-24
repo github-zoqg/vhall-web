@@ -929,7 +929,7 @@ export default {
     getRoomStatus () {
       return this.$fetch('getToolStatus', {
         room_id: this.bizInfo.room_id
-      }).then(res => { 
+      }).then(res => {
         if (res.code == 200 && res.data) {
           this.layout = res.data.layout
           this.mainScreen = res.data.main_screen

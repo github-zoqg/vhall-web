@@ -27,28 +27,28 @@
             <div class="action-look">
               <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
-                  placement="bottom"
-                  trigger="hover"
-                  style="margin-right:15px"
-                >
+                placement="bottom"
+                trigger="hover"
+                style="margin-right:15px"
+              >
                 <div class="invitation-code">
                   <p>活动观看页</p>
                   <img :src="h5WapLink" alt="" v-if="h5WapLink">
                   <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
                 </div>
-                  <el-button round size="mini" slot="reference">扫码</el-button>
+                <el-button round size="mini" slot="reference">扫码</el-button>
               </el-popover>
-               <el-popover
-                  placement="bottom"
-                  trigger="hover"
-                >
-                <div class="invitation-code">
-                  <p>直播观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
-                  <p style="margin-top:20px;text-align: center;">
+              <el-popover
+                placement="bottom"
+                trigger="hover"
+              >
+                <div class="invitation-code urlCopy">
+                  <p>观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
+                  <p>
                     <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
                     <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
                 </div>
-                  <el-button round size="mini" slot="reference">查看</el-button>
+                <el-button round size="mini" slot="reference">查看</el-button>
               </el-popover>
             </div>
           </div>
@@ -77,7 +77,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :operas="operas" @blockHandler="blockHandler"></item-card>
+    <item-card :operas="operas" :type='liveDetailInfo.webinar_state' @blockHandler="blockHandler"></item-card>
   </div>
 </template>
 
@@ -97,7 +97,8 @@ export default {
       isAnginOpen: false,
       outLiveTime: false,
       liveDetailInfo: {
-        webinar_state: ''
+        webinar_state: 0,
+        webinar_type: 0
       },
       link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
@@ -161,7 +162,11 @@ export default {
         let operas = this.operasOld;
         keys(this.operasOld).map((item, ins) => {
           operas[item] = values(this.operasOld)[ins].filter(vItem =>{
+            vItem.title = vItem.title.replace(/回放/, '点播')
             vItem.subText = vItem.subText.replace(/直播/, '点播')
+            if(vItem.title == '点播管理'){
+               vItem.subText = '管理点播内容'
+            }
             if(vItem.title == '基本信息'){
               vItem.path = `/live/vodEdit/${this.$route.params.str}`
             }
@@ -277,18 +282,18 @@ export default {
     // 判断是否有起直播的权限
     getOpenLive() {
       this.$fetch('checkLive', this.$params({
-          webinar_id: this.$route.params.str
-          })).then((res) => {
-            if(res && res.code === 200) {
-              this.isAnginOpen = false;
-            } else {
-              this.isAnginOpen = true;
-              this.$message.error(res.msg || '检测异常');
-            }
-          }).catch(e => {
-            this.isAnginOpen = true;
-            this.$message.error(res.msg || '检测异常');
-          });
+        webinar_id: this.$route.params.str
+      })).then((res) => {
+        if(res && res.code === 200) {
+          this.isAnginOpen = false;
+        } else {
+          this.isAnginOpen = true;
+          this.$message.error(res.msg || '检测异常');
+        }
+      }).catch(e => {
+        this.isAnginOpen = true;
+        this.$message.error(res.msg || '检测异常');
+      });
     },
     blockHandler(item){
       if(item.path){
@@ -313,7 +318,7 @@ export default {
     toRoom(){
       // 跳转至发起页面
       // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
-      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
+      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1`});
       window.open(href);
     },
     downTime(targetStartDate, targetEndDate) {
@@ -404,7 +409,7 @@ export default {
         // background: rgba(247, 245, 245, 0.7);
         color: #fff;
         font-size: 12px;
-        padding: 2px 9px;
+        padding: 4px 12px;
         border-radius: 20px;
         position: absolute;
         top: 12px;
@@ -434,6 +439,36 @@ export default {
     }
   }
 }
+//
+.invitation-code{
+  text-align: center;
+  padding: 2px 40px;
+  display: block!important;
+  left: 50%;
+  p{
+    line-height: 40px;
+  }
+  img{
+    margin-bottom: 10px;
+  }
+}
+.urlCopy{
+  padding: 2px 15px;
+  p{
+    margin-top: 20px;
+    &:nth-child(2){
+      padding: 4px;
+      font-size: 16px;
+      ::v-deep.el-button{
+        font-size: 14px;
+        line-height: 24px;
+        padding: 2px 20px;
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
 .mainColor{
   color: #1A1A1A;
 }

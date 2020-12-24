@@ -570,19 +570,15 @@ export default {
     },
     lotteryType(type) {
       if (type == 1) {
-        return '全体参会用户';
+        return '全体参会者';
       } else if (type == 2) {
-        return '参与问卷的参会者';
+        return '参与问卷的用户';
       } else if (type == 3) {
-        return '参与签到的参会者';
-      } else if (type == 4) {
-        return '全体观众';
-      } else if (type == 5) {
-        return '已登录观众';
-      } else if (type == 6) {
-        return '参与问卷的观众';
+        return '参与签到的用户';
+      } else if (type == 8) {
+        return '口令抽奖';
       } else {
-        return '参与签到的观众';
+        return '全体参会者';
       }
 
     },
@@ -779,7 +775,7 @@ export default {
     },
     // 抽奖单个
     exportPrizeDetailInfo(item) {
-      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId}).then(res => {
+      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
         this.$EventBus.$emit('saas_vs_download_change');
       })

@@ -46,6 +46,7 @@ export default {
       }
       else if (type === 'sina') {
         // http://service.weibo.com/share/share.php?url=你的分享网址&sharesource=weibo&title=你的分享标题&pic=你的分享图片&appkey=你的key，需要在新浪微博开放平台中申请
+        // https://service.weibo.com/share/share.php?url=https://t.e.vhall.com/user/home/16421384&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false
         url = `http://service.weibo.com/share/share.php?url=${url}`
       }
       else if (type === 'qq') {
