@@ -31,15 +31,18 @@
             </el-table-column>
             <el-table-column
               label="帐号昵称"
-              width="120">
+              width="120"
+              show-overflow-tooltip
+            >
               <template slot-scope="scope">{{ scope.row.nick_name }}</template>
             </el-table-column>
             <el-table-column
               prop="phone"
-              label="手机号">
+              label="手机号"
+              show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              label="预设流量" v-if="resourcesVo && (resourcesVo.type > 0)">
+              label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append">GB</template>

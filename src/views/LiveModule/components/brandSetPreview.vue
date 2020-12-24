@@ -28,7 +28,7 @@
                 </p>
                 <p class="top-bottom" >
                   <span class="mrR" v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">紫禁之巅</a></span>
-                  <span v-if="signSetVo && signSetVo.organizers_status == 1">时间：2020-12-18 00:00:00</span>
+                  <span>时间：2020-12-18 00:00:00</span>
                   <span class="right iconBtn" v-if="signSetVo && signSetVo.organizers_status == 1">
                     <icon icon-class="saasyijianfankui">反馈</icon>
                     <template>

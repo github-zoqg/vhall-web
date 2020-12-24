@@ -19,7 +19,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -77,7 +77,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :operas="operas" @blockHandler="blockHandler"></item-card>
+    <item-card :operas="operas" :type='liveDetailInfo.webinar_state' @blockHandler="blockHandler"></item-card>
   </div>
 </template>
 
@@ -97,7 +97,8 @@ export default {
       isAnginOpen: false,
       outLiveTime: false,
       liveDetailInfo: {
-        webinar_state: ''
+        webinar_state: 0,
+        webinar_type: 0
       },
       link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
@@ -161,7 +162,11 @@ export default {
         let operas = this.operasOld;
         keys(this.operasOld).map((item, ins) => {
           operas[item] = values(this.operasOld)[ins].filter(vItem =>{
+            vItem.title = vItem.title.replace(/回放/, '点播')
             vItem.subText = vItem.subText.replace(/直播/, '点播')
+            if(vItem.title == '点播管理'){
+               vItem.subText = '管理点播内容'
+            }
             if(vItem.title == '基本信息'){
               vItem.path = `/live/vodEdit/${this.$route.params.str}`
             }
@@ -313,7 +318,7 @@ export default {
     toRoom(){
       // 跳转至发起页面
       // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
-      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
+      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1`});
       window.open(href);
     },
     downTime(targetStartDate, targetEndDate) {

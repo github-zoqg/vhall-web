@@ -5,13 +5,14 @@
       :close-on-click-modal="false"
       @close="cancelSelect"
       width="592px">
-      <div class="search">
-        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+      <div class="search" v-show="total || isSearch">
+        <el-input v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
       </div>
       <div class="vh-chose-active-box"
         v-infinite-scroll="getActiveList"
         :infinite-scroll-disabled="disabled"
         :infinite-scroll-immediate="true"
+        v-show="total"
       >
         <!-- 单个视频 -->
         <div class="vh-chose-active-item"
@@ -59,14 +60,19 @@
           </div>
         </div>
       </div>
+      <div class="no-live" v-show="!total">
+        <noData :nullType="nullText" :text="text">
+        </noData>
+      </div>
       <div class="select-option">已选择<span>{{ selectedOption.length }}</span>个</div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" round @click="saveSelect">确 定</el-button>
-        <el-button round @click="cancelSelect">取 消</el-button>
+        <el-button type="primary" round @click="saveSelect" v-preventReClick>确 定</el-button>
+        <el-button round @click="cancelSelect" v-preventReClick>取 消</el-button>
       </span>
     </el-dialog>
 </template>
 <script>
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
 
   props: ['checkedList'],
@@ -75,15 +81,21 @@ export default {
     return {
       page: 1,
       pageSize: 9,
+      nullText: 'nullData',
+      text: '你还没有创建活动',
+      total: 0,
       activeList: [],
       selectedOption: [],
       keyword: '',
       lock: false,
       loading: false,
-      visible: true
+      visible: true,
+      isSearch: false
     }
   },
-
+  components: {
+    noData
+  },
   computed: {
     disabled () {
       return this.loading || this.lock
@@ -91,6 +103,7 @@ export default {
   },
 
   created() {
+    this.getActiveList();
   },
 
   mounted() {
@@ -99,6 +112,7 @@ export default {
   methods: {
     inputChange() {
       this.getActiveList();
+      this.selectedOption = []
     },
     getActiveList() {
       this.loading = true
@@ -116,11 +130,24 @@ export default {
       this.$fetch('liveList', this.$params(params)).then((res) => {
         if(res.code == 200) {
           this.page = this.page + 1
-          if(res.data.list.length == 0) {
+          if (!this.keyword) {
+          // 默认状态
+            this.nullText = 'nullData';
+            this.text = '你还没有创建活动！';
+            this.isSearch = false;
+          } else {
+            // 搜索状态
+            this.nullText = 'search';
+            this.text = '';
+            this.isSearch = true;
+          }
+          if(res.data.total == 0) {
             this.lock = true
             this.loading = false
+            this.total = 0
           } else {
             this.activeList =  this.activeList.concat(res.data.list)
+            this.total = res.data.total
             // 老控制台选择不需要回显选中的
             // this.syncCheckStatus()
             this.loading = false
@@ -291,5 +318,8 @@ export default {
       font-size: 16px;
       padding: 0 10px;
     }
+  }
+  .no-create{
+    margin-top: 80px !important;
   }
 </style>

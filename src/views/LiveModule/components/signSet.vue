@@ -59,7 +59,7 @@
               @delete="resetLogoUrl">
               <div slot="tip">
                 <p>最佳尺寸：240*78px</p>
-                <p>支持jpg、gif、png、bmp</p>
+                <p>小于2MB(支持jpg、gif、png、bmp)</p>
               </div>
             </upload>
             <p class="p-notice">开启时支持更换品牌标志</p>
@@ -103,7 +103,8 @@ export default {
           { required: false, message: '请选择标志', trigger: 'change'}
         ],
         skip_url: [
-          { required: false, message: '请填写标志链接', trigger: 'blur'}
+          { required: false, message: '请填写标志链接', trigger: 'blur'},
+          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       }
     };
@@ -146,7 +147,7 @@ export default {
     },
     resetLogoUrl() {
       this.$nextTick(()=> {
-        this.signSetForm.logoUrl = '';
+        this.signSetForm.logo_url = '';
       });
     },
     uploadPreview(file){
