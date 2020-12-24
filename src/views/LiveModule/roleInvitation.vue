@@ -87,7 +87,7 @@
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
               <el-checkbox  :value="true" disabled>文档白板</el-checkbox>
-              <template v-for="(item, key, ins) in privilegeVo.permission_data.guest">
+              <template v-for="(item, key, ins) in privilegeVo.permission_data.guest || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
@@ -133,7 +133,7 @@
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
               <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
-              <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []">
+              <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
@@ -218,7 +218,9 @@ export default {
         one: '',
         two: '',
         three: ''
-      }
+      },
+      guestVo: null,
+      assistantVo: null
     };
   },
   computed: {
@@ -361,6 +363,16 @@ export default {
               res.data.host_password = '';
               res.data.guest_password = '';
               res.data.assistant_password = '';
+            }
+            try {
+              delete res.data.permission_data.guest['white_board'];
+            }catch (e) {
+              console.log('guest',0);
+            }
+            try {
+              delete res.data.permission_data.assistant['white_board'];
+            }catch (e) {
+              console.log('assistant', 1);
             }
             this.roleSwitch = Number(res.data.is_privilege);
             this.privilegeVo = res.data;
