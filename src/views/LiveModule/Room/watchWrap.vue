@@ -887,7 +887,7 @@ export default {
         case 200:
           this.roomData = res.data && res.data
           this.roomData.online.num += 1 // 需要手动加自己
-          this.roomData.pv.num += 1 // TODO: 待确定
+          this.roomData.pv.num += 1
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
           this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
           break

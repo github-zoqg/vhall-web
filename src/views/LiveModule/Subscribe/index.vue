@@ -906,7 +906,7 @@ export default {
       if (this.roomData.webinar) {
         // this.btnVal = this.roomData.status === 'subscribe' ? '立即预约' : '进入直播'
         this.title = this.roomData.webinar.subject
-        this.viewCount = this.roomData.pv.num
+        this.viewCount = this.roomData.pv.num + 1
         this.hostName = this.roomData.webinar.userinfo.nickname
         this.hostUrl = process.env.VUE_APP_WAP_WATCH + `/user/home/${this.roomData.webinar.userinfo.user_id}`
         this.shareUrl = process.env.VUE_APP_WAP_WATCH + `/live/watch/${this.$route.params.id}`
@@ -965,7 +965,7 @@ export default {
       let context = {
         nickname: this.roomData.join_info.nickname, // 昵称
         avatar: 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        // pv: 100, // pv
+        pv: this.roomData.pv.num + 1,
         role_name: (this.$route.params.role_name && this.$route.params.role_name != 4) ? this.$route.params.role_name : 2, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 0未检测
         device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
