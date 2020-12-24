@@ -1652,6 +1652,7 @@ export default {
         ? (this.onlineShow = true)
         : (this.onlineShow = false);
       // 观看次数的显示
+      console.log(111, this.roominfo.modules.pv)
       this.roominfo.modules.pv.show == 1
         ? (this.pvShow = true)
         : (this.pvShow = false);
