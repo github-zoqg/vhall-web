@@ -20,9 +20,8 @@
           :before-upload="beforeUploadHandler"
           @delete="homeSetInfoForm.homepage_avatar = ''">
           <div slot="tip">
-            <p>推荐尺寸：100*100px</p>
-            <p>图片不超过100K</p>
-            <p>(支持jpg、gif、png、bmp)</p>
+            <p>建议尺寸：128*128px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
       </el-form-item>
@@ -48,9 +47,8 @@
           :before-upload="beforeUploadHandlerBg"
           @delete="homeSetInfoForm.img_url = ''">
           <div slot="tip">
-            <p>推荐尺寸：100*100px,图片比例 16:9</p>
-            <p>图片不超过2MB</p>
-            <p>(支持jpg、gif、png、bmp)</p>
+            <p>建议尺寸：1280*768px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
       </el-form-item>
@@ -62,7 +60,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_share ? '已开启，主页分享功能显示' : '开启后，主页分享功能显示'"
+            :active-text="homeSetInfoForm.show_share ? '已开启，主页显示分享功能' : '开启后，主页显示分享功能'"
           >
           </el-switch>
         </div>
@@ -75,7 +73,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_webinar_list ? '已开启，个人主页直播列表Tab页显示' : '开启后，个人主页直播列表Tab页显示'"
+            :active-text="homeSetInfoForm.show_webinar_list ? '已开启，个人主页显示直播列表Tab页' : '开启后，个人主页显示直播列表Tab页'"
           >
           </el-switch>
         </div>
@@ -88,7 +86,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_subject ? '已开启，个人主页专题列表Tab页显示' : '开启后，个人主页专题列表Tab页显示'"
+            :active-text="homeSetInfoForm.show_subject ? '已开启，个人主页显示专题列表Tab页' : '开启后，个人主页显示专题列表Tab页'"
           >
           </el-switch>
         </div>
@@ -157,7 +155,7 @@ export default {
         return;
       }
       if (!isLt2M) {
-        this.$message.error('上传主页头像图片大小不能超过 2MB!');
+        this.$message.error('上传主页头像图片大小不能超过 2M!');
         return;
       }
       return isType && isLt2M;

@@ -5,7 +5,7 @@
         <el-switch
           v-model="warmFlag"
           @change="openCloseWarm"
-          :active-text="warmFlag ? '已开启，观看页面开播前已显示暖场视频': '开启后，观看页面开播前将显示暖场视频'">
+          :active-text="warmFlag ? '已开启，预告状态观看端显示暖场视频': '开启后，预告状态观看端显示暖场视频'">
         </el-switch>
       </template>
     </pageTitle>
@@ -48,7 +48,10 @@
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
             @delete="warmForm.imageUrl = ''">
-            <p slot="tip">最佳头图尺寸：1600*900px <br/>小于2MB(支持jpg、png、gif)</p>
+            <div slot="tip">
+              <p>建议尺寸：1280*720px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
           </upload>
         </el-form-item>
         <el-form-item>

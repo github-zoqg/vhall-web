@@ -36,7 +36,10 @@
                   @handleFileChange="handleFileChange"
                   :before-upload="beforeUploadHnadler"
                   @delete="img = '', domain_url = ''">
-                  <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
+                  <div slot="tip">
+                    <p>建议尺寸：{{title !== '公众号展示' ? '750*1334' : '160*160'}}px，小于2M</p>
+                    <p>支持jpg、gif、png、bmp</p>
+                  </div>
                 </upload>
               </div>
             </el-form-item>
@@ -86,7 +89,7 @@
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" round @click="preSure">保存</el-button>
+              <el-button type="primary"  v-preventReClick  round @click="preSure">保存</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -209,6 +212,10 @@ export default {
     },
     preSure() {
       let url = '';
+      if (Number(this.status === 0) && !this.img) {
+        this.$message.error('请上传图片')
+        return;
+      }
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭

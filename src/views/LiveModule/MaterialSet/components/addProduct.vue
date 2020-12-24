@@ -41,7 +41,7 @@
               </upload>
             </div>
           </div>
-          <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，尺寸：600*600</p>
+          <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，建议尺寸：600*600px</p>
         </el-form-item>
         <el-form-item label="商品描述" prop="description">
           <el-input type="textarea" v-model="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></el-input>

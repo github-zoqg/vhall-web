@@ -17,9 +17,8 @@
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
           <div slot="tip">
-            <p>推荐尺寸：600*600px</p>
-            <p>图片不超过100K</p>
-            <p>(支持jpg、gif、png、bmp)</p>
+            <p>建议尺寸：600*600px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
       </el-form-item>
