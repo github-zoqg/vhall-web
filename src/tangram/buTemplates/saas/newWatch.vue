@@ -1082,6 +1082,8 @@ export default {
         is_banned: this.isBanned, // 是否禁言 1是0否
         audience: true
       };
+      console.log('a115', context, this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name,  this.userInfo, this.bizInfo)
+
       sessionOrLocal.set('vhall_chat_context', JSON.stringify(context));
       const opt = {
         appId: this.roomInfo.app_id,
