@@ -182,7 +182,7 @@ export default {
       return this.getScenedTitle().title;
     },
     openLink() {
-      return `http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=${sessionOrLocal.get('userId')}`;
+      return `http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`;
     }
   },
   methods: {
