@@ -8,10 +8,10 @@ import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/common/j
 export default {
   props: {
     roleName: {
-      required: true
+      required: false
     },
     roomId: {
-      required: true
+      required: false
     },
     accountId: {
       required: true
@@ -23,7 +23,7 @@ export default {
       required: true
     },
     ilId: {
-      required: true // webinarid
+      required: false // webinarid
     },
     userId: {
       required: false // userId
@@ -60,12 +60,13 @@ export default {
       previewId: '',
 
       isCreate: false,
-      webviewType: ''
+      webviewType: '',
     };
   },
 
   created () {
     this.webviewType = this.$route.query.webviewType;
+    this.type = this.$route.query.type;
     this.initQuestionSDK();
     if (sessionStorage.getItem('watch')) {
       this.questionShow = false;
@@ -74,7 +75,7 @@ export default {
 
   mounted () {
     let role_value = sessionStorage.getItem('role_val') ? sessionStorage.getItem('role_val') : ''
-    if (!role_value) {
+    if (!role_value && !this.type) {
       this.getQuestionList();
     }
   },
@@ -124,7 +125,24 @@ export default {
         };
       });
     },
+    // 资料库列表
+    materialQuestionList() {
+      let params = {
+        keyword: this.searchKey,
+        limit: '20',
+        pos: '0'
+      }
+      this.$fetch('getLiveQuestionList', params).then(res => {
+        console.log('问卷 列表', res);
+        this.docList = res.data.list || [];
 
+        this.pageInfo = {
+          currentPage: res.data.pos,
+          pagesize: res.data.limit,
+          total: res.data.total
+        };
+      });
+    },
     handlePageChange (page) {
       this.pageInfo.currentPage = page;
       this.getDocList();
@@ -178,6 +196,7 @@ export default {
      * 初始化 问卷SDK
      */
     initQuestionSDK () {
+      console.log(90,this.appId )
       this.$service = new VHall_Questionnaire_Service({
         auth: {
           // paas的应用id,必填
@@ -194,8 +213,13 @@ export default {
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
         this.sdkInitReady = true;
+        if (this.$route.query.questionId) {
+          this.isCreate = true;
+          this.$nextTick(() => {
+            this.$service.renderPageEdit('#qs-create-box', this.$route.query.questionId);
+          })
+        }
       });
-
       this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {
           this.submitQuestion(data);
       });
@@ -204,27 +228,41 @@ export default {
         // data  回答Id
         // naire_id  问卷Id
         console.log(1212,)
-        this.createQuestionAction(data.id, data.title, data.description);
+        if (this.type == 1) {
+          // 资料库问卷创建
+          this.materialQuestion(data.id, data.title, data.description);
+        } else if (this.type == 2) {
+          this.liveMaterialQuestion(data.id, data.title, data.description);
+        }else {
+          this.createQuestionAction(data.id, data.title, data.description);
+        }
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
-        this.$fetch('liveEditQuestion', {
-          survey_id: data.id,
-          webinar_id: this.ilId,
-          room_id: this.roomId,
-          title: data.title,
-          description: data.description,
-          user_id: this.accountId
-        })
-          .then(res => {
-            this.isCreate = false;
-            this.showPreview = false;
-            this.getQuestionList();
-            this.$message.success('编辑成功')
+        if (this.type == 1) {
+          // 资料库问卷编辑
+          this.materialEditQuestion(data.id, data.title, data.description);
+        } else if (this.type == 2) {
+          this.liveMaterialEditQuestion(data.id, data.title, data.description);
+        }else {
+          this.$fetch('liveEditQuestion', {
+            survey_id: data.id,
+            webinar_id: this.ilId,
+            room_id: this.roomId,
+            title: data.title,
+            description: data.description,
+            user_id: this.accountId
           })
-          .catch(e => {
-            console.log('编辑问卷失败>>>', e);
-          });
+            .then(res => {
+              this.isCreate = false;
+              this.showPreview = false;
+              this.getQuestionList();
+              this.$message.success('编辑成功')
+            })
+            .catch(e => {
+              console.log('编辑问卷失败>>>', e);
+            });
+          }
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.ERROR, data => {
@@ -243,6 +281,7 @@ export default {
     createQuestion (id) {
       localStorage.setItem('create', 'true');
       this.isCreate = true;
+      console.log("1111111111111111");
       document.querySelector('#qs-create-box').innerHTML = '';
       this.$service.renderPageEdit('#qs-create-box', id || '');
     },
@@ -261,6 +300,60 @@ export default {
         this.showPreview = false;
         this.getQuestionList();
       });
+    },
+    materialQuestion(id, title, description) {
+      this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
+        this.$message.success('新建成功');
+        this.$router.push({
+          path: '/material/question',
+        });
+      })
+    },
+    materialEditQuestion(id, title, description) {
+      this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
+        this.$message.success('编辑成功');
+        this.$router.push({
+          path: '/material/question',
+        });
+      })
+    },
+    liveMaterialQuestion(id, title, description) {
+      let params = {
+        survey_id: id,
+        webinar_id: this.$route.query.webinarId,
+        room_id: this.$route.query.roomId,
+        title: title,
+        description: description,
+      }
+      this.$fetch('createLiveQuestion', params).then(res => {
+        this.$message.success('新建成功');
+         this.$router.push({
+            path: '/live/question',
+            query: {
+              id: this.$route.query.webinarId,
+              roomId: this.$route.query.roomId
+            }
+          });
+      })
+    },
+    liveMaterialEditQuestion(id, title, description) {
+      let params = {
+        survey_id: id,
+        webinar_id: this.$route.query.webinarId,
+        room_id: this.$route.query.roomId,
+        title: title,
+        description: description,
+      }
+      this.$fetch('editLiveQuestion', params).then(res => {
+        this.$message.success('编辑成功');
+         this.$router.push({
+            path: '/live/question',
+            query: {
+              id: this.$route.query.webinarId,
+              roomId: this.$route.query.roomId
+            }
+          });
+      })
     },
     // 提交问卷
     submitQuestion (opt) {

@@ -128,6 +128,7 @@ export default {
         limit: limit,
         title: this.keyword,
         order_type: 1,
+        webinar_state: 0
       }
 
       this.$fetch('liveList', this.$params(params)).then((res) => {
