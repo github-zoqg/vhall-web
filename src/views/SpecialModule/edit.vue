@@ -19,7 +19,7 @@
           :on-preview="uploadPreview"
           @delete="deleteImg"
           :before-upload="beforeUploadHnadler">
-          <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
@@ -182,7 +182,7 @@ export default {
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
-        ]
+        ],
       }
     };
   },
@@ -261,6 +261,10 @@ export default {
     },
 
     submitForm(formName) {
+      if (!this.content) {
+        this.$message.error('请选择专题简介');
+        return;
+      }
       if (!this.selectedActives.length) {
         this.$message.error('请选择专题目录');
         return;

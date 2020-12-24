@@ -94,28 +94,28 @@ export default {
         [
           {
             type: 'ui.hide_reward',
-            key_name: '隐藏打赏',
+            key_name: '打赏功能',
             openShow: '已开启，观看端打赏按钮不显示',
             closeShow: '开启后，观看端打赏按钮不显示',
             value: Number(dataVo['ui.hide_reward'])
           },
           {
             type: 'ui.hide_share',
-            key_name: '隐藏点赞',
+            key_name: '点赞功能',
             openShow: '已开启，观看端点赞按钮不显示',
             closeShow: '开启后，观看端点赞按钮不显示',
             value: Number(dataVo['ui.hide_share'])
           },
           {
             type: 'ui.hide_gifts',
-            key_name: '隐藏礼物',
+            key_name: '礼物功能',
             openShow: '已开启，观看端礼物按钮不显示',
             closeShow: '开启后，观看端礼物按钮不显示',
             value: Number(dataVo['ui.hide_gifts'])
           },
           {
             type: 'ui.watch_hide_share',
-            key_name: '隐藏分享',
+            key_name: '分享功能',
             openShow: '已开启，观看端的分享功能不显示（PC端分享按钮和手机端的微信分享）',
             closeShow: '开启后，观看端的分享功能不显示（PC端分享按钮和手机端的微信分享）',
             value: Number(dataVo['ui.watch_hide_share'])

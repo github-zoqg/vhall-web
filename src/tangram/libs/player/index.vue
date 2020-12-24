@@ -14,7 +14,9 @@
       <div class="loading" v-if="loading && !(audioStatus || isAudio)">
         <img src="./img/load.gif" />
       </div>
-      <div class="overEnd live-end" v-show="liveEnded"></div>
+      <div class="overEnd live-end" v-show="liveEnded">
+        <h1>结束</h1>
+      </div>
       <div class="overEnd" v-show="BackEnd">
         <i @click="play">{{$t("message.replay")}}</i>
       </div>
@@ -721,10 +723,20 @@ export default {
         throw new Error('参数异常');
       }
       if (this.marquee) {
+        let marqueeText = ''
+        if (this.marquee.text_type == 1 ) {
+          marqueeText = this.marquee.text
+        } else {
+          if (this.roominfo.userId) {
+            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.userId : this.roominfo.userId 
+          } else {
+            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.nickName : this.roominfo.nickName
+          }
+        }
         // 跑马灯
         params.marqueeOption = {
           enable: true,
-          text: this.marquee.text ? this.marquee.text : '', // 跑马灯的文字
+          text: marqueeText, // 跑马灯的文字
           alpha: this.marquee.alpha, // 透明度,100完全显示,0 隐藏
           size: this.marquee.size, // 文字大小
           color: this.marquee.color, // 文字颜色
@@ -1182,7 +1194,18 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    position: absolute;
+    z-index: 15;
+    h1 {
+      margin: auto;
+      font-size: 24px;
+      line-height: 80px;
+      height: 80px;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 1px;
+      width: 100%;
+    }
     i {
       font-style: normal;
       width: 100px;
@@ -1195,7 +1218,7 @@ export default {
       border-radius: 4px;
     }
     &.live-end {
-      background: url('../../assets/livebg.png') no-repeat center center;
+      background: url('../../assets/endcover.jpg') no-repeat center center;
       background-color: #2d2d2d;
     }
   }

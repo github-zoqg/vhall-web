@@ -61,11 +61,12 @@
         </div>
       </div>
       <div class="no-live" v-show="!total">
-        <noData :nullType="nullText" :text="text">
+        <noData :nullType="nullText" :text="text" :height="50">
+          <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
         </noData>
       </div>
-      <div class="select-option">已选择<span>{{ selectedOption.length }}</span>个</div>
-      <span slot="footer" class="dialog-footer">
+      <div class="select-option" v-if="total || isSearch">已选择<span>{{ selectedOption.length }}</span>个</div>
+      <span slot="footer" class="dialog-footer" v-if="total || isSearch">
         <el-button type="primary" round @click="saveSelect" v-preventReClick>确 定</el-button>
         <el-button round @click="cancelSelect" v-preventReClick>取 消</el-button>
       </span>
@@ -80,9 +81,9 @@ export default {
   data() {
     return {
       page: 1,
-      pageSize: 9,
+      pageSize: 6,
       nullText: 'nullData',
-      text: '你还没有创建活动',
+      text: '你还没有创建直播',
       total: 0,
       activeList: [],
       selectedOption: [],
@@ -112,7 +113,9 @@ export default {
   methods: {
     inputChange() {
       this.getActiveList();
-      this.selectedOption = []
+      this.activeList.map(item => item.checked = false);
+      this.selectedOption = [];
+      this.page = 1;
     },
     getActiveList() {
       this.loading = true
@@ -133,7 +136,7 @@ export default {
           if (!this.keyword) {
           // 默认状态
             this.nullText = 'nullData';
-            this.text = '你还没有创建活动！';
+            this.text = '你还没有创建直播！';
             this.isSearch = false;
           } else {
             // 搜索状态
@@ -320,6 +323,6 @@ export default {
     }
   }
   .no-create{
-    margin-top: 80px !important;
+    margin-bottom: 20px;
   }
 </style>

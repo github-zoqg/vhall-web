@@ -112,7 +112,7 @@
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
-          <p>随时随地发直播，让直播更便捷</p>
+          <p>把微吼装进口袋，随时随地发直播，让直播更便捷</p>
         </div>
         <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
       </div>
