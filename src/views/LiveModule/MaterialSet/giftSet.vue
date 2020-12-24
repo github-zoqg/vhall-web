@@ -255,9 +255,8 @@ export default {
   },
   mounted() {},
   methods: {
-    freeFilter(row) {
-      console.log(row)
-      if(row.is_default == 0){
+    freeFilter({row}) {
+      if(row.source_status == 0){
         return "mycell"
       }
     },
@@ -590,7 +589,7 @@ export default {
 
 <style lang="less" scoped>
 .live-gift-wrap{
-  /deep/ .mycell.el-checkbox__input {
+  /deep/ .mycell .el-checkbox {
     display: none
   }
   /deep/.el-upload{

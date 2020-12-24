@@ -33,6 +33,7 @@
     </div>
     <el-card class="gift-list">
       <el-table
+        :cell-class-name="freeFilter"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
@@ -174,6 +175,11 @@ export default {
     this.getTableList()
   },
   methods: {
+    freeFilter({row}) {
+      if(row.source_status == 0){
+        return "mycell"
+      }
+    },
     searchGifts() {
       this.searchParams.page = 1
       this.pos = 0;
@@ -379,6 +385,9 @@ export default {
 
 <style lang="less" scoped>
 .gift-wrap{
+  /deep/ .mycell .el-checkbox {
+    display: none
+  }
   /deep/.el-upload{
     border: 1px solid #ccc;
   }
