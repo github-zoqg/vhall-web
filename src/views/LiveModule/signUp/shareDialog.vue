@@ -4,7 +4,7 @@
       title="分享"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      width="30%">
+      width="570px">
       <div class="content">
         <div v-show="!shareSwtich" class="content-wrap"></div>
         <p>

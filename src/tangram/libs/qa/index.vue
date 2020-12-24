@@ -140,8 +140,8 @@ export default {
     }
   },
   mounted () {
-    const authInfo = JSON.parse(sessionStorage.getItem('authInfo'));
-    this.logedIn = (authInfo && authInfo.length == undefined) || this.isEmbed;
+    const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    this.logedIn = (userInfo && userInfo.length == undefined) || this.isEmbed;
     this.emojiList = this.getEmojiList();
     this.init();
 
@@ -174,13 +174,14 @@ export default {
       }
       e.data = e.data.text_content;
       console.warn('监听到的私聊消息事件---2---', e);
-      if (e.context.to == this.joinId || e.sender_id == this.joinId) {
+      console.warn('监听到的私聊消息事件---5---', e.sender_id, this.joinId, this.thirdPartyId, e.context);
+      // if (e.context.to == '16422715' || e.sender_id == this.joinId) {
+      if (e.context.to == this.thirdPartyId || e.sender_id == this.joinId) {
         // 如果是本用户收发的消息放到私聊消息队列
         if (e.sender_id != this.joinId) {
           // 发消息的人不是本用户
           console.warn('私聊消息的派发---3---', e);
           this.privateMessages.push(e);
-        } else {
         }
       }
     });
@@ -283,39 +284,43 @@ export default {
       if (this.isPrivate) {
         if (!this.hostJoinId) return this.$message('需要@ 私聊对象');
         const msg = this.trimPlaceHolder(this.inputValue.trim());
-        this.$fetch('sendPrivateMsg', {
-          room_id: this.roomId,
-          client: 'h5_browser', // TODO:
-          body: JSON.stringify({ text: msg }),
-          to: this.hostJoinId
-        }).then((res) => {
-          if (res.code == 200) {
-            // let chatContext = sessionStorage.getItem('vhall_chat_context')
-            // chatContext = chatContext ? JSON.parse(chatContext) : {}
-            // data.text_content = textToEmojiText(data.text_content)
-            // const tempData = new Msg({
-            //   avatar: getAvatar(chatContext.avatar),
-            //   nickName: chatContext.nickname,
-            //   type: 'text',
-            //   content: data,
-            //   sendId: this.userInfo.third_party_user_id,
-            //   sendTime: formatTime(new Date()),
-            //   roleName: this.userInfo.role_name,
-            //   client: 'mobile',
-            //   self: true
-            //   // showTime: handleTime(item.sendTime)
-            // })
-            // this.privateChatList.push(tempData)
-            // this.scrollTop()
-            this.privateMessages.push({
-              data: this.emojiToText(msg), // TODO:
-              context: { user_name: this.hostName, sender_id: this.hostJoinId }
-            });
-            this.scroll.refresh();
+        let _data = {
+          target_id: this.hostJoinId,
+          // target_id: '16421384',
+          type:'text',
+          text_content: this.emojiToText(msg)
+        };
+        console.warn(this.selfName, 'dsfsdf');
+        // 为保持一致   故传了多个不同key  同value
+        let _content = {
+          to: this.hostJoinId,
+          // to: '16421384',
+          nickname: this.hostName, // 昵称
+          nick_name: this.hostName,
+          // user_id: '16422715',
+          user_id: this.thirdPartyId,
+          user_name: this.hostName,
+          account_id: this.thirdPartyId,
+          // account_id: '16422715',
+          app: 'vhall'
+        };
+        // let _content = { user_name: this.hostName, sender_id: this.hostJoinId }
+        window.chatSDK.emit(_data, _content)
+        console.warn(_data, _content, 'look结果');
+        if(!window.sessionStorage.getItem('localJoinList')){
+          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.thirdPartyId))
+          this.$fetch('v3SetUser', {room_id: this.roomId, webinar_id: this.webinarId, to: this.thirdPartyId})
+        }else{
+          let _arr = window.sessionStorage.getItem('localJoinList')
+           if(_arr.indexOf(this.thirdPartyId) == -1){
+            window.sessionStorage.setItem('localJoinList', `${_arr},${this.thirdPartyId}`)
           }
-        }).catch(() => {
-          this.$message.error('发送失败');
+        }
+        this.privateMessages.push({
+          data: _data.text_content, // TODO:
+          context: _content
         });
+        this.scroll.refresh();
       } else {
         if (this.questionGap > 0) {
           this.lock = sessionStorage.getItem('QALock');
@@ -365,8 +370,9 @@ export default {
       });
     },
     atHost (data) {
+      console.warn(data, '67326478 测试');
       this.hostName = data.name;
-      this.hostJoinId = data.joinId;
+      this.hostJoinId = data.contextUserId;
       this.inputValue = this.inputValue
         ? `我对${this.hostName}说: ${this.trimPlaceHolder()}`
         : `我对${this.hostName}说:`;
@@ -493,7 +499,7 @@ export default {
       }
       & > .private-messages-button {
         font-size: 12px;
-        font-family: '微软雅黑';
+        font-family: @fontRegular;
         position: absolute;
         right: 5px;
         bottom: 4px;

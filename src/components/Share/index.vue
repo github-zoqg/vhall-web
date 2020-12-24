@@ -4,21 +4,15 @@
       <div class="left">
         <p class="title">分享直播</p>
         <div class="icons">
-          <i class="icon" @click="toShare('wechat')">
-            <icon icon-class="saasicon_wechat"></icon>
-          </i>
-          <i class="icon" @click="toShare('sina')">
-            <icon icon-class="saasicon_sina"></icon>
-          </i>
-          <i class="icon" @click="toShare('qq')">
-            <icon icon-class="saasicon_qq"></icon>
-          </i>
+          <img class="icon icon_wechat" src="../../common/images/sys/icon_wechat.png" alt="" @click="toShare('wechat')"/>
+          <img class="icon icon_sina" src="../../common/images/sys/icon_sina.png" alt="" @click="toShare('sina')"/>
+          <img class="icon icon_qq" src="../../common/images/sys/icon_qq.png" alt="" @click="toShare('qq')"/>
         </div>
 
       </div>
       <div class="right">
         <p class="title">手机扫码观看</p>
-        <img :src="qrcode" alt="二维码加载失败" class="qrcode">
+        <img :src="env.staticLinkVo.aliQr + url" alt="二维码加载失败" class="qrcode">
       </div>
     </div>
     <div class="bottom">
@@ -30,11 +24,11 @@
 </template>
 
 <script>
-import QRcode from 'qrcode';
+import Env from '@/api/env';
 export default {
   data(){
     return {
-      qrcode: '',
+      env: Env
     };
   },
   props: {
@@ -42,22 +36,6 @@ export default {
       type: String,
       required: true
     }
-  },
-  watch: {
-    url: {
-      handler (val) {
-        if (val) {
-          let a = QRcode.toDataURL(
-            val,
-            (err, url) => {
-              console.log(err, url);
-              this.qrcode = url;
-            }
-          );
-        }
-      }
-    },
-    immediate: true
   },
   methods: {
     toShare(type) {
@@ -68,6 +46,7 @@ export default {
       }
       else if (type === 'sina') {
         // http://service.weibo.com/share/share.php?url=你的分享网址&sharesource=weibo&title=你的分享标题&pic=你的分享图片&appkey=你的key，需要在新浪微博开放平台中申请
+        // https://service.weibo.com/share/share.php?url=https://t.e.vhall.com/user/home/16421384&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false
         url = `http://service.weibo.com/share/share.php?url=${url}`
       }
       else if (type === 'qq') {
@@ -123,6 +102,14 @@ export default {
   }
   .icons{
     margin-top: 20px;
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      margin-right: 12px;
+    }
   }
   .linkUrl{
     background-color: #e5e5e5;
@@ -135,29 +122,5 @@ export default {
     padding: 4px 10px;
     vertical-align: middle;
     margin-top: -2px;
-  }
-  .icon{
-    width: 44px;
-    height: 44px;
-    color: #fff;
-    border-radius: 50%;
-    display: inline-block;
-    text-align: center;
-    line-height: 44px;
-    margin-right: 30px;
-    cursor: pointer;
-    .iconContainer{
-      font-size: 44px;
-    }
-   /* &:nth-child(1){
-      background: rgb(97, 233, 44);
-    }
-    &:nth-child(2){
-      background: rgb(255, 51, 51);
-    }
-    &:nth-child(3){
-      background: rgb(80, 149, 255);
-      margin-right: 0px;
-    }*/
   }
 </style>

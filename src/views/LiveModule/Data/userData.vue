@@ -22,6 +22,7 @@
           <search-area
             ref="searchArea"
             :placeholder="placeholder"
+            :active="active"
             @onExportData="exportCenterData()"
             :searchAreaLayout="searchAreaLayout"
             @onSearchFun="getTableList('search')"
@@ -46,10 +47,12 @@
 </template>
 <script>
 import titleData from './components/title';
+import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
       status: 2,
+      active: 2,
       totalNum: 100,
       isHandle: false,
       params: {}, //导出的时候用来记录参数
@@ -130,7 +133,21 @@ export default {
           ]
         },
         {
-          type: "1"
+          type: "1",
+          options: [
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
         },
         {
           type: "2",
@@ -195,8 +212,12 @@ export default {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,
         service_names: this.activeName,
-        merge_type: formParams.merge_type ? 1 : 2
+        merge_type: formParams.merge_type ? 1 : 2,
+        end_time: getRangeDays(1)
       };
+      if (this.active!= 1) {
+        paramsObj.start_time = getRangeDays(this.active);
+      }
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
@@ -219,7 +240,7 @@ export default {
       this.$fetch('getUserBaseinfo', params).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
-          item.userName = `${item.nick_name}${item.w_name}`;
+          item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
         })
         this.totalNum = res.data.total;
       });
@@ -228,7 +249,8 @@ export default {
     exportCenterData() {
       this.$fetch('exportUserinfo', this.params).then(res => {
         if (res.code == 200) {
-          this.$message.success(`用户统计数据导出成功，请去下载中心下载`);
+          this.$message.success(`用户统计数据导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`用户统计数据${res.msg}`);
         }
@@ -268,7 +290,7 @@ export default {
     line-height: 30px;
     span {
       font-size: 22px;
-      font-family: PingFangSC-Semibold, PingFang SC;
+      font-family: @fontSemibold;
       font-weight: 600;
       color: #1a1a1a;
     }

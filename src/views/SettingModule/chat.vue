@@ -9,7 +9,11 @@
     </pageTitle>
     <div>
       <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
-      <el-button class="length104" size="medium" round  @click="downloadHrefHandle" v-if="downloadHref">下载模板</el-button>
+      <a :href="downloadHref" class="btn-a">
+        <el-button class="length104" size="medium" round v-if="downloadHref">
+          下载模板
+        </el-button>
+      </a>
     </div>
     <div class="setting-chat-main">
       <el-form :model="chatForm" ref="chatForm" label-width="120px">
@@ -31,7 +35,9 @@
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
-              v-model="query.keyword">
+              v-model="query.keyword"
+              @keyup.enter.native="getKeywordList"
+              >
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
@@ -53,8 +59,11 @@
           @getTableList="getKeywordList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
+          v-if="keyWordDao.total > 0"
         >
         </table-list>
+        <!-- 无消息内容 -->
+        <null-page v-else></null-page>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -96,7 +105,7 @@
           <p slot="tip" v-else>请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click="multiUploadShow = false" size="mini" round>确 定</el-button>
+          <el-button type="primary" @click="saveUploadKey" size="mini" round>确 定</el-button>
           <el-button @click="multiUploadShow = false" size="mini" round>取 消</el-button>
         </div>
       </div>
@@ -108,12 +117,14 @@
 <script>
 import FileUpload from '@/components/FileUpload/main';
 import PageTitle from '@/components/PageTitle';
+import NullPage from '../PlatformModule/Error/nullPage.vue';
 import Env from "@/api/env";
 export default {
   name: "chat.vue",
   components: {
     PageTitle,
-    FileUpload
+    FileUpload,
+    NullPage
   },
   data() {
     return {
@@ -269,8 +280,7 @@ export default {
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
-        customClass: 'zdy-message-box',
-        type: 'warning'
+        customClass: 'zdy-message-box'
       }).then(() => {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id
@@ -327,6 +337,12 @@ export default {
     // 打开批量添加弹出框
     multiUploadKeywordShow() {
       this.multiUploadShow = true;
+      this.fileUrl = '';
+      // 清空面板
+      this.importResult = {
+        success: 0,
+        fail: 0
+      }
     },
     // 获取模板下载地址
     getKeywordTemplate() {
@@ -340,7 +356,8 @@ export default {
     },
     // 下载模板
     downloadHrefHandle() {
-      window.open(this.downloadHref);
+      let winDom = window.open('_blank'); // 先打开页面
+      winDom.location = `${this.downloadHref}`; // 后更改页面地址
     },
     // 文件上传成功
     uploadSuccess(res, file){
@@ -348,26 +365,46 @@ export default {
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
         // 文件上传成功，保存信息
-        this.$fetch('uploadKeywordAdd', {
+        this.$fetch('checkUploadKeyword', {
           file: res.data.file_url
         }).then(resV => {
-          resV.code === 200 ? this.importResult = resV.data : null;
+          if (resV && resV.code === 200) {
+            this.importResult = resV.data;
+          } else {
+            this.$message.error(res.msg || '');
+          }
         }).catch(e => {
-          this.$message.error('导入聊天严禁词信息失败！');
+          this.$message.error('导入聊天严禁词校验失败！');
         });
       }
     },
+    saveUploadKey() {
+      this.$fetch('uploadKeywordAdd', {
+        file: this.fileUrl
+      }).then(resV => {
+        if (resV && resV.code === 200) {
+          this.importResult = resV.data;
+          this.multiUploadShow = false;
+          // 重新刷新列表数据
+          this.getKeywordList();
+        }
+      }).catch(e => {
+        this.$message.error('导入聊天严禁词信息失败！');
+      });
+    },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['csv', 'xls', 'xlsx'];
+      const typeList = ['xls', 'xlsx'];
       let nameArr = file.name.split('.');
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+        return;
       }
       if (!isLt2M) {
         this.$message.error('上传文件大小不能超过 2MB!');
+        return;
       }
       return isType && isLt2M;
     },
@@ -391,6 +428,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.btn-a {
+  margin-left: 12px;
+}
 .setting-chat-main {
   .layout--right--main();
   margin-top: 24px;
@@ -400,7 +440,7 @@ export default {
 .words-white {
   padding: 10px 12px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 20px;
@@ -453,14 +493,14 @@ export default {
     padding: 8px 12px;
     line-height: 20px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #999999;
     resize: none;
   }
   /deep/.el-input__count {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #999999;
     line-height: 20px;

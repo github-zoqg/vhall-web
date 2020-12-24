@@ -2,14 +2,14 @@
   <div class="vhall-mediasetting-content">
   <div id="check-preview-videos" style="width:0; height:0; overflow:hidden"> </div>
     <div class="preview-wrap">
-      <div  v-show="layout != 2 && !videoError" class="loading-wrapper" v-loading="layout==2 ? false : !ready" element-loading-background="#2d2d2d">
+      <div  v-show="layout != 1 && !videoError" class="loading-wrapper" v-loading="layout==1 ? false : !ready" element-loading-background="#2d2d2d">
         <div id="preview-video" class="preview-video"></div>
       </div>
       <div v-show="videoError" class="preview-video-error"><span class="iconfont iconshexiangtou"></span></div>
       <preview-audio :visible="visible" :audioId="selectedAudioDeviceId"></preview-audio>
     </div>
     <div class="form-group">
-      <div class="form-item" v-if="layout != 2">
+      <div class="form-item" v-if="layout != 1">
         <span class="label">摄像头</span>
         <div class="form-content">
           <el-select class="v-item" v-model="selectedVideoDeviceId" placeholder="请选择摄像头">
@@ -37,7 +37,7 @@
       </div>
       <div
         class="form-item"
-        v-if="roleName == '1' && selectedVideoDeviceId && layout!=2"
+        v-if="roleName == '1' && selectedVideoDeviceId && layout!=1"
       >
         <span class="label">画质</span>
         <div class="form-content">
@@ -48,7 +48,7 @@
       </div>
       <div
         class="form-item"
-        v-if="roleName == '1' && layout!=2"
+        v-if="roleName == '1' && layout!=1"
       >
         <span class="label">桌面共享</span>
         <div class="form-content">
@@ -378,13 +378,17 @@ export default {
             this.rates = constraints.filter(item => {
               return item.label == 'RTC_VIDEO_PROFILE_240P_16x9_M' || item.label == 'RTC_VIDEO_PROFILE_480P_16x9_M' || item.label == 'RTC_VIDEO_PROFILE_360P_16x9_M';
             });
-            console.log('媒体设置过滤后的设备分辨路', this.rates);
+            console.warn('媒体设置过滤后的设备分辨路', this.rates);
             const speakerDefinition = sessionStorage.getItem('speakerDefinition');
             if (!this.selectedRate) { // 摄像头画质初始值
               if (speakerDefinition && speakerDefinition != 'null' && speakerDefinition != 'undefined') {
                 this.selectedRate = speakerDefinition;
               } else {
-                this.selectedRate = this.formatDefinition(sessionStorage.getItem('defaultMainscreenDefinition'));
+                if(sessionStorage.getItem('defaultMainscreenDefinition')){
+                  this.selectedRate = this.formatDefinition(sessionStorage.getItem('defaultMainscreenDefinition'));
+                }else{
+                  this.selectedRate = this.formatDefinition();
+                }
               }
             }
             const screenDefinition = sessionStorage.getItem('screenDefinition');
@@ -405,7 +409,7 @@ export default {
       });
     },
     openConfirm () {
-      if ((!this.ready || !document.querySelector('#preview-video').innerHTML) && this.layout != 2) return this.$message.error('请检查设备！');
+      if ((!this.ready || !document.querySelector('#preview-video').innerHTML) && this.layout != 1) return this.$message.error('请检查设备！');
       if (this.status == 1) {
         this.popAlertVisible = true;
       } else {
@@ -421,13 +425,13 @@ export default {
     },
     updateDeviceSetting () {
       if (this.roleName == '1') {
-        this.$vhallFetch('saveMediaSettings', {
-          vss_token: this.vssToken,
+        this.$fetch('saveMediaSettings', {
           room_id: this.roomId,
           definition: this.selectedRate,
           layout: this.selectedLayout,
           screen_definition: this.selectedScreenRate
         }).then(res => {
+          if(res.code !=200 ) return this.$message.warning(res.msg)
           const options = {
             videoDevice: this.selectedVideoDeviceId, // 视频Id
             audioDevice: this.selectedAudioDeviceId, // 音频Id,

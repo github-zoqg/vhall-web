@@ -4,12 +4,12 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item">
-        <a :href="env.staticLinkVo.downOldUrl">旧版控制台</a>
+      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)">
+        <a :href="oldUrl">返回旧版</a>
       </div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
-        <el-badge :value="isDownload" :max="99" class="item" :hidden="!isDownload > 0">
+        <el-badge is-dot class="item" :hidden="!isDownload > 0">
           <span @click.prevent.stop="toDownloadPage">
              <icon icon-class="saasicon_download"></icon>
           </span>
@@ -33,9 +33,7 @@
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
             <img :src="avatarImgUrl" class="user-avatar" alt="" />
-            <span>{{
-                userInfo && userInfo.nick_name ? userInfo.nick_name : ''
-              }}</span>
+            <span>{{show_name}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
             <el-dropdown-item divided @click.native="toAccountPage">
@@ -73,6 +71,22 @@ export default {
       env: Env
     };
   },
+  computed: {
+    oldUrl: function() {
+      return `${this.env.staticLinkVo.downOldUrl}/auth/check-token?after_login=mywebinar/main&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
+    },
+    show_name: function() {
+      if (this.userInfo && this.userInfo.nick_name) {
+        if(this.userInfo.nick_name.length > 5) {
+          return this.userInfo.nick_name.substring(0, 5) + '...';
+        } else {
+          return this.userInfo.nick_name
+        }
+      } else {
+        return '';
+      }
+    }
+  },
   // inject: [],
   methods: {
     toHelpPage() {
@@ -82,6 +96,7 @@ export default {
       this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
+      this.isDownload = 0;
       this.$router.push({path: '/other/downloadList'});
     },
     toAccountPage() {
@@ -111,11 +126,22 @@ export default {
       }).catch(e=>{
         console.log(e);
         this.$message.error('退出失败');
+      }).finally(() => {
+        sessionOrLocal.clear();
+        sessionOrLocal.clear('localStorage');
+        // 监听消息变化
+        this.$EventBus.$emit('saas_vs_login_out', true);
+        this.$router.push({
+          path: '/login'
+        });
       });
     },
     updateAccount(account) {
       this.userInfo = account;
       this.avatarImgUrl = account ?  account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    },
+    updateDownload() {
+      this.isDownload = 1;
     }
   },
   mounted() {
@@ -139,6 +165,8 @@ export default {
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
     // 监听用户信息变化
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
+    // 监听控制台是否触发导出
+    this.$EventBus.$on('saas_vs_download_change', this.updateDownload);
   },
   created() {
     this.getUnreadNum();

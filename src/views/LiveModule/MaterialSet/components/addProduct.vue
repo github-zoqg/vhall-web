@@ -34,6 +34,7 @@
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
+                :before-upload="beforeUploadHandler"
                 :restPic="true"
                 >
                 <p slot="tip">上传图片</p>
@@ -61,7 +62,7 @@
           <el-input v-model="form.shop_url" placeholder="请输入店铺链接"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round @click="onSubmit">保存</el-button>
+          <el-button type="primary" round @click="onSubmit" v-preventReClick>保存</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -163,29 +164,19 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.imgType = 'heightMore';
-        } else {
-          that.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -409,7 +400,7 @@ export default {
           //   display: block;
           // }
         }
-        &::hover .hover-item{
+        &:hover .hover-item{
           display: block;
          }
       }

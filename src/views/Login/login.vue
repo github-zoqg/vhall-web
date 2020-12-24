@@ -1,6 +1,7 @@
 <template>
-  <div class="login">
-    <div class="login-main">
+  <div class="loginPage">
+    <div class="login">
+      <div class="login-main">
       <div class="login-header"></div>
       <div class="login-form" v-if="$route.path==='/login'">
         <div class="login-navs">
@@ -110,6 +111,7 @@
                   placeholder="请输入手机号"
                   maxlength="11"
                   clearable
+                  @input="checkPhone"
                   v-model="registerForm.phone">
                   <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
                 </el-input>
@@ -156,6 +158,7 @@
           </el-form>
         </div>
       </div>
+    </div>
     </div>
     <div class="login-footer">
       <footer-section></footer-section>
@@ -212,7 +215,7 @@ export default {
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
-      checked: false,
+      checked: true,
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
@@ -286,9 +289,7 @@ export default {
     loginDynamic() {
       this.$refs.dynamicForm.validate((valid) => {
         if (valid) {
-          let params = this.dynamicForm;
-          params.account = this.dynamicForm.phoneNumber;
-          this.login(params);
+          this.checkedAccount();
         } else {
           console.log('error submit!!');
           return false;
@@ -297,13 +298,24 @@ export default {
     },
     // 登录账号锁定检测
     checkedAccount() {
-      this.$fetch('loginCheck', {account: this.loginForm.account}).then(res => {
+      let account = this.isActive == 1 ? this.loginForm.account : this.dynamicForm.phoneNumber;
+      this.$fetch('loginCheck', {account: account}).then(res => {
         if (res && res.code === 200) {
-          //check_result  : 1 锁定    0未锁定
-          if (res.data.check_result && !this.mobileKey) {
-            this.isLogin = true;
+          //检测结果check_result  : 1 锁定    0未锁定
+          if (this.isActive == 1) {
+            if (res.data.check_result && !this.mobileKey) {
+              this.isLogin = true;
+            } else {
+              this.login(this.loginForm);
+            }
           } else {
-            this.login(this.loginForm);
+            // 账号是否存在：1存在 0不存在
+            if (res.data.account_exist) {
+              this.dynamicForm.account = account;
+              this.login(this.dynamicForm);
+            } else {
+              this.$message.error('账号不存在');
+            }
           }
         } else {
           this.$message.error(res.msg || '登录验证失败');
@@ -316,12 +328,31 @@ export default {
       this.$fetch('loginInfo', params).then(res => {
         if(res && res.code === 200) {
           this.mobileKey = '';
-          sessionOrLocal.set('token', res.data.token, 'localStorage');
+          sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+          // 存储控制台-channel_id频道
+          sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
+          // 存储控制台-channel_id频道
+          sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
           this.$router.push({path: '/'});
         } else {
           this.$message.error(res.msg || '登录失败！');
+          sessionOrLocal.set('token', '', 'localStorage');
         }
       });
+    },
+    // 注册判断手机号是否已经注册
+    checkPhone() {
+      if (this.checkMobile(this.registerForm.phone)) {
+         this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
+          if (res && res.code === 200) {
+            if (res.data.account_exist) {
+              this.$message.error('该手机号已注册');
+            }
+          } else {
+            this.$message.error(res.msg || '注册失败');
+          }
+        });
+      }
     },
     getRegisterCode() {
       if (this.checkMobile(this.registerForm.phone) && this.mobileKey) {
@@ -337,6 +368,7 @@ export default {
     },
     registerAccount() {
       this.registerForm.captcha = this.mobileKey;
+      this.registerForm.source = this.$route.query.source || 1;
       this.$fetch('register', this.registerForm).then(res => {
         if(res && res.code === 200) {
           this.$message.success('注册成功');
@@ -409,10 +441,20 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.loginPage{
+  height: 100%;
+  .login-footer{
+      position: relative;
+      z-index: 1;
+    }
+}
   .login{
     height: 100%;
     width: 100%;
-    // min-height: 720px;
+    min-height: 800px;
+    margin-bottom: -139px;
+    text-align: center;
+    font-size: 0;
     background-image: url(//t-alistatic01.e.vhall.com/static/images/account/loginbg.jpg);
     background-size: cover;
     position: relative;
@@ -421,7 +463,7 @@ export default {
       position: absolute;
       top: 50%;
       left: 50%;
-      margin-top: -300px;
+      margin-top: -350px;
       margin-left: -204px;
       width: 400px;
       .login-header{
@@ -430,7 +472,7 @@ export default {
         width: 162px;
         height: 92px;
         background: url(../../common/images/login_logo.png) no-repeat;
-        margin-bottom: 40px;
+        margin-bottom: 20px;
         background-size: contain;
         background-position: center;
         margin-top: 40px;
@@ -586,12 +628,6 @@ export default {
     }
     .closePwd{
       cursor: pointer;
-    }
-    .login-footer{
-      position: absolute;
-      left: 50%;
-      bottom: 20px;
-      transform: translate(-50%);
     }
   }
 </style>

@@ -17,7 +17,7 @@
           </el-form-item>
           <el-form-item label="背景图：" prop="bg_url" v-if="skinType === 1">
             <upload
-              class="upload__skin heightMore"
+              class="upload__skin"
               v-model="skinSetForm.bg_url"
               :domain_url="domain_url"
               :saveData="{
@@ -31,8 +31,8 @@
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>最佳尺寸：240*78px</p>
-                <p>支持jpg、gif、png、bmp</p>
+                <p>最佳尺寸：1920*1080px</p>
+                <p>小于2MB(支持jpg、gif、png、bmp)</p>
               </div>
             </upload>
             <p class="p-notice">开启时支持更换品牌标志</p>
@@ -124,17 +124,26 @@ export default {
       }
       // 触发验证
       this.$refs.skinSetForm.validateField('bg_url');
+      let showRow = Object.assign(this.skinSetForm, {
+        status: this.skinVo.status,
+        bg_url: this.domain_url
+      })
+      this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`背景图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('背景图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -143,7 +152,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`背景图片上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -172,7 +181,12 @@ export default {
           this.skinSetForm.bg_url = skin_json_pc.background;
           this.domain_url = skin_json_pc.background;
           this.skinSetForm.skin_id = res.data.skin_id || '';
-          console.log(this.skinType, '页面刷新后');
+          console.log(this.skinSetForm, '页面刷新后');
+          let showRow = Object.assign(this.skinSetForm, {
+             status: this.skinVo.status,
+             bg_url: this.domain_url
+          })
+          this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
         } else {
           this.skinVo = {};
         }
@@ -256,36 +270,15 @@ export default {
   /deep/.el-upload--picture-card {
     width: 280px;
     height: 130px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
   /deep/.box > div {
     width: 280px;
     height: 130px;
   }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
-  }
 }
 .p-notice {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 20px;

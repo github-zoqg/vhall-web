@@ -623,7 +623,6 @@ export default {
       }
     },
     initSDK () {
-      console.log('sdk initing', this.type);
       let params = {
         appId: this.appId, // 应用ID，必填
         accountId: this.accountId, // 第三方用户ID，必填
@@ -1015,7 +1014,7 @@ export default {
       return text;
     },
     getLoginStatus () {
-      return JSON.parse(sessionStorage.getItem('authInfo')) && JSON.parse(sessionStorage.getItem('authInfo')).length == undefined;
+      return JSON.parse(sessionStorage.getItem('userInfo')) && JSON.parse(sessionStorage.getItem('userInfo')).length == undefined;
     },
     controllerMouseLeave () {
       clearTimeout(this.hoverVideoTimer);
@@ -1159,7 +1158,7 @@ export default {
   left: 50%;
   bottom: 48px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: rgba(236, 236, 236, 1);
   line-height: 44px;

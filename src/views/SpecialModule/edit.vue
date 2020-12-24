@@ -3,7 +3,7 @@
     <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="100px">
       <el-form-item label="专题标题:" prop="title">
-        <el-input v-model="formData.title" limit='100'></el-input>
+        <el-input v-model.trim="formData.title" maxlength="100" placeholder="请输入专题标题" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="专题封面:">
         <upload
@@ -17,46 +17,47 @@
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
+          @delete="deleteImg"
           :before-upload="beforeUploadHnadler">
-          <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
         <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
-         <el-switch
-          v-model="reservation"
-          :active-value="1"
-          :inactive-value="0"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          :active-text="reservationDesc">
-        </el-switch>
+        <p class="switch__box">
+          <el-switch
+            v-model="reservation"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            :active-text="reservationDesc">
+          </el-switch>
+        </p>
       </el-form-item>
-      <el-form-item label="活动热度:">
-        <el-switch
-          v-model="hot"
-          :active-value="1"
-          :inactive-value="0"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          :active-text="hotDesc">
-        </el-switch>
+      <el-form-item label="热度:">
+        <p class="switch__box">
+          <el-switch
+            v-model="hot"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            :active-text="hotDesc">
+          </el-switch>
+        </p>
       </el-form-item>
       <el-form-item label="关联主页:">
-        <el-switch
-          v-model="home"
-          :active-value="1"
-          :inactive-value="0"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          :active-text="homeDesc">
-        </el-switch>
+        <p class="switch__box">
+          <el-switch
+            v-model="home"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            :active-text="homeDesc">
+          </el-switch>
+        </p>
       </el-form-item>
-      <el-form-item label="专题目录:">
-        <el-button size="small" @click="showActiveSelect = true">添加</el-button>
-        <div class="vh-sort-tables">
+      <el-form-item label="专题目录:" required>
+        <el-button size="small" type="primary" round @click="showActiveSelect = true">添加</el-button>
+        <div class="vh-sort-tables" v-show="selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
               序号
@@ -93,19 +94,19 @@
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
-                  <template v-if="item.webinar_state == 1">
+                  <template v-if="item.webinar_type == 1">
                     直播
                   </template>
-                  <template v-if="item.webinar_state == 2">
+                  <template v-if="item.webinar_type == 2">
                     预告
                   </template>
-                  <template v-if="item.webinar_state == 3">
+                  <template v-if="item.webinar_type == 3">
                     结束
                   </template>
-                  <template v-if="item.webinar_state == 4">
+                  <template v-if="item.webinar_type == 4">
                     点播
                   </template>
-                  <template v-if="item.webinar_state == 5">
+                  <template v-if="item.webinar_type == 5">
                     回放
                   </template>
                 </div>
@@ -113,7 +114,7 @@
                   {{ item.pv }}
                 </div>
                 <div class="vh-sort-tables__tbody-editor">
-                  <i class="iconfont-v3 saasicon-trash"></i>
+                  <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>
                   <i class="iconfont-v3 saasicon_move"></i>
                 </div>
               </div>
@@ -122,8 +123,8 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" @click="submitForm('ruleForm')" round>保存</el-button>
-        <el-button @click="resetForm('ruleForm')" round>取消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
     <chose-actives
@@ -153,10 +154,10 @@ export default {
   },
   computed: {
     reservationDesc(){
-      return this.reservation ?  '关闭后，观看端将隐藏预约人数' : '已关闭，观看端已隐藏预约人数';
+      return this.reservation ?  '关闭后，专题观看端将隐藏预约人数' : '已关闭，观看端已隐藏预约人数';
     },
     hotDesc(){
-      return this.hot ? '关闭后，观看端将隐藏活动热度' : "已关闭，观看端已隐藏活动热度";
+      return this.hot ? '关闭后，专题目录直播热度将被隐藏' : "已关闭，专题目录直播热度已被隐藏";
     },
     homeDesc(){
       return this.home ? '关闭后，该直播将不在个人主页显示' : "已关闭，该直播已不在个人主页显示";
@@ -170,9 +171,9 @@ export default {
         title: '',
       },
       subject_id: '',
-      reservation: false,
-      hot: false,
-      home: false,
+      reservation: true,
+      hot: true,
+      home: true,
       loading: false,
       imageUrl: '',
       domain_url:'',
@@ -181,7 +182,7 @@ export default {
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
-        ]
+        ],
       }
     };
   },
@@ -206,12 +207,13 @@ export default {
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
           res.data.webinar_subject.cover && (this.imageUrl = res.data.webinar_subject.cover)
+          this.domain_url = res.data.webinar_subject.cover;
           this.content = res.data.webinar_subject.intro
 
           // 配置项
-          this.home = +res.data.webinar_subject.is_open // 是否显示个人主页
-          this.hot = +res.data.webinar_subject.hide_pv // 是否显示 人气
-          this.reservation = +res.data.webinar_subject.hide_appointment // 是否显示预约人数
+          this.home = Boolean(res.data.webinar_subject.is_open) // 是否显示个人主页
+          this.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
+          this.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
 
         }
       })
@@ -231,14 +233,18 @@ export default {
     },
     beforeUploadHnadler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`上传专题封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('上传专题封面图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -248,13 +254,21 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`专题封面上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
 
     submitForm(formName) {
+      if (!this.content) {
+        this.$message.error('请选择专题简介');
+        return;
+      }
+      if (!this.selectedActives.length) {
+        this.$message.error('请选择专题目录');
+        return;
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const webinar_ids = this.selectedActives.map((item) => {
@@ -264,9 +278,9 @@ export default {
             subject: this.formData.title,
             introduction: this.content,
             img_url: this.imageUrl,
-            is_private: this.home,
-            hide_appointment: this.reservation,
-            hide_pv: this.hot,
+            is_private: Number(this.home),
+            hide_appointment: Number(this.reservation),
+            hide_pv: Number(this.hot),
           };
 
           if (webinar_ids.length) {
@@ -307,12 +321,47 @@ export default {
       });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      if (this.$route.query.id) {
+        this.initInfo()
+      } else {
+        this.$refs[formName].resetFields();
+        this.imageUrl = '';
+        this.content = '';
+        this.home = true;
+        this.reservation = true;
+        this.hot = true;
+        this.selectedActives = [];
+      }
     },
-
+    deleteImg() {
+      this.imageUrl = '';
+      this.domain_url = '';
+    },
     doSelectedActives (selectedActives) {
-      this.selectedActives = selectedActives
+      selectedActives.map(item => {
+        this.selectedActives.push(item);
+      })
+      console.log(this.selectedActives, '11111111111')
       this.showActiveSelect = false
+    },
+    // 删除事件
+    deleteSpecial(id) {
+      this.$confirm('您确定要删除选中的专题吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
+        }).then(() => {
+          this.selectedActives.map((opt, index) => {
+            if (opt.webinar_id == id) {
+              this.selectedActives.splice(index, 1);
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
     },
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)
@@ -417,8 +466,8 @@ export default {
     }
 
     &__tbody{
-      height: 120px;
-      overflow-y: scroll;
+      // height: 120px;
+      // overflow-y: scroll;
       &-selected {
         border: 1px solid #FB3A32;
       }

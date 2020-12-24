@@ -69,7 +69,7 @@ export default {
         signTip: tipText, //签到提示语
         duration: 30, // 签到显示的时间，单位秒，
         autoSign: false, // 是否自动发起签到，1自动，0取消自动
-        interval: 10 // 自动发起签到的轮询定时时间，单位秒
+        interval: 900 // 自动发起签到的轮询定时时间，单位秒
       },
       durationOps: [
         {
@@ -95,8 +95,8 @@ export default {
       ],
       intervalOps: [
         {
-          value: 10,
-          label: 'test时间10秒'
+          value: 60,
+          label: '1分钟'
         },
         {
           value: 300,
@@ -112,6 +112,11 @@ export default {
         }
       ]
     };
+  },
+  mounted() {
+    if(process.env.VUE_APP_NODE_ENV != 'test' && process.env.VUE_APP_NODE_ENV != 'development' ){
+      this.intervalOps = this.intervalOps.slice(1)
+    }
   },
   methods: {
     autoSignChange(value){
@@ -156,7 +161,7 @@ export default {
   line-height: 18px;
   font-size: 12px;
   width: 238px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FFFFFF;
   line-height: 18px;

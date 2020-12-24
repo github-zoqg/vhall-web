@@ -22,31 +22,34 @@
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
           <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
             <el-button class="no-border" size="mini" slot="append" @click="getDyCode()"
+                       v-preventReClick
                        :class="showCaptcha ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick">
-              {{ time === 10 ? '发送验证码' : `${time}s` }}
+              {{ time === 60 ? '发送验证码' : `${time}s` }}
             </el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="1邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
         </el-form-item>
-        <el-form-item label="1手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入邮箱地址"/>
+        <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号"/>
         </el-form-item>
-        <el-form-item label="1图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <div id="setCaptcha1">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
-          <p class="errorText" v-show="errorMsgShow1">1图形码错误</p>
+          <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
-        <el-form-item label="1验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
             <el-button class="no-border" size="mini" slot="append"
+                       v-preventReClick
                        @click="getDyCode1()"
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
-                       :disabled="isDisabledClick1">{{ time1 === 10 ? '发送验证码' : `${time1}s` }}</el-button>
+                       :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
+          <p v-if="sendText">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
           <el-input v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
@@ -57,22 +60,27 @@
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
           <el-input v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
         </el-form-item>
+        <el-form-item label="" class="link__to" v-if="showVo.step === 1">
+          <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
+        </el-form-item>
       </el-form>
     </div>
     <span slot="footer">
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" @click="changePhoneOrEmailStep">下一步1</el-button>
+                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" v-preventReClick @click="changePhoneOrEmailStep">下一步</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" @click="changePwdStep">确定2</el-button>
+                 v-if="showVo.executeType === 'pwd'" v-preventReClick @click="changePwdStep">确定</el-button>
       <el-button class="dialog-btn" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" @click="cancelPwdStep">取消3</el-button>
+                 v-if="showVo.executeType === 'pwd'" v-preventReClick @click="cancelPwdStep">取消</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" @click="sendBindHandle">立即绑定4</el-button>
+                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" v-preventReClick @click="sendBindHandle">立即绑定</el-button>
     </span>
   </VhallDialog>
 </template>
 
 <script>
+import {sessionOrLocal} from "@/utils/utils";
+
 export default {
   name: "validSetDialog.vue",
   data() {
@@ -134,9 +142,9 @@ export default {
         new_password: [
           {required: true, trigger: 'blur', validator: verifyAgainEnterPwd, min: 6, max: 30,}
         ],
-        phone: [
+        /*phone: [
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
-        ],
+        ],*/
         code: [
           {required: true, message: '请输入验证码', trigger: 'blur'}
         ],
@@ -148,7 +156,7 @@ export default {
         ]
       },
       downTimer: null,
-      time: 10, // 倒计时
+      time: 60, // 倒计时
       isDisabledClick: false,
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
@@ -158,19 +166,23 @@ export default {
       errorMsgShow: '',
 
       downTimer1: null,
-      time1: 10, // 倒计时
+      time1: 60, // 倒计时
       isDisabledClick1: false,
       showCaptcha1: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey1: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey1: '', // 云盾值
       captcha1: null, // 云盾本身
       codeKey1: null, // 短信、邮箱验证码校验接口返回key值
-      errorMsgShow1: ''
+      errorMsgShow1: '',
+      sendText: ``
     };
   },
   computed: {
     title () {
       return this.getScenedTitle().title;
+    },
+    openLink() {
+      return `http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`;
     }
   },
   methods: {
@@ -210,10 +222,10 @@ export default {
       let data = this.form.phone;
       let flag = false;
       if (this.showVo.executeType !== 'email') {
-        if(!(/^1[0-9]{10}$/.test(this.form.phone))) {
+        /*if(!(/^1[0-9]{10}$/.test(this.form.phone))) {
           this.$message.error('手机号校验失败');
           flag = false;
-        } else if(!this.mobileKey) {
+        } else */if(!this.mobileKey) {
           this.$message.error('图形验证码校验失败');
           flag = false;
         } else {
@@ -238,13 +250,16 @@ export default {
             if(this.downTimer) {
               window.clearTimeout(this.downTimer);
             }
+            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
             this.countDown();
           } else {
             this.$message.error(res.msg || '验证码发送失败');
+            this.sendText = ``;
           }
         }).catch(e => {
           console.log(e);
-          this.$message.error('验证码发送失败');
+          this.$message.error(e.msg || '验证码发送失败');
+          this.sendText = ``;
         });
       }
     },
@@ -283,13 +298,16 @@ export default {
             if(this.downTimer1) {
               window.clearTimeout(this.downTime1);
             }
+            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
             this.countDown1();
           } else {
+            this.sendText = ``;
             this.$message.error(res.msg || '验证码发送失败');
           }
         }).catch(e => {
           console.log(e);
-          this.$message.error('验证码发送失败');
+          this.sendText = ``;
+          this.$message.error(e.msg || '验证码发送失败');
         });
       }
     },
@@ -303,7 +321,7 @@ export default {
         }, 1000);
       } else {
         // 倒计时结束
-        this.time = 10;
+        this.time = 60;
         this.isDisabledClick = false;
         this.callCaptcha();
       }
@@ -317,7 +335,7 @@ export default {
           this.countDown1();
         }, 1000);
       } else {
-        this.time1 = 10;
+        this.time1 = 60;
         this.isDisabledClick1 = false;
         this.callCaptcha(1);
       }
@@ -350,7 +368,7 @@ export default {
             }
           }).catch(e => {
             console.log(e);
-            this.$message.error('验证失败，无法操作');
+            this.$message.error(e.msg || '验证失败，无法操作');
           });
         }
       });
@@ -372,14 +390,14 @@ export default {
                 this.codeKey1 = res.data.key || '';
                 this.bindSave();
               } else {
-                this.$message.error(res.msg || '验证失败，无法操作');
+                this.$message.error('验证结果不成功，无法操作');
               }
             } else {
               this.$message.error(res.msg || '验证失败，无法操作');
             }
           }).catch(e => {
             console.log(e);
-            this.$message.error('验证失败，无法操作');
+            this.$message.error(e.msg || '验证失败，无法操作');
           });
         }
       });
@@ -396,14 +414,14 @@ export default {
       // 确认绑定新功能
       this.$fetch('bindInfo', params).then(res => {
         if (res && res.code === 200) {
-          this.$message.success('绑定成功！');
+          this.$message.success('绑定成功');
           this.visible = false;
         } else {
-          this.$message.error(res.msg || '绑定失败！');
+          this.$message.error(res.msg || '绑定失败');
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error('绑定失败');
+        this.$message.error(e.msg || '绑定失败');
       });
     },
     // 确定按钮（场景使用： 设置密码第一、二步，修改密码第一、二步）
@@ -434,7 +452,7 @@ export default {
               }
             }).catch(e => {
               console.log(e);
-              this.$message.error('验证失败，无法操作');
+              this.$message.error(e.msg || '验证失败，无法操作');
             });
           } else {
             // 第二步密码保存 => 存储密码  scene_id场景ID：1账户信息-修改密码  4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 9设置密码（密码不存在情况）
@@ -446,13 +464,16 @@ export default {
               scene_id: !(this.vo && this.vo.has_password > 0) ? 9 : 1,
               key: this.codeKey
             };
-            this.$fetch('resetPassword', this.params(params)).then(res => {
+            this.$fetch('resetPassword', this.$params(params)).then(res => {
               if (res && res.code === 200) {
                 this.$message.success('操作成功');
                 this.visible = false;
+              } else {
+                this.$message.error(res.msg || '操作失败');
               }
             }).catch(e => {
               console.log(e);
+              this.$message.error(e.msg || '操作失败');
             });
           }
         }
@@ -460,21 +481,23 @@ export default {
     },
     // 取消修改密码
     cancelPwdStep() {
-      if(this.showVo.step === 2) {
+      // 关闭弹出框
+      this.visible = false;
+     /* if(this.showVo.step === 2) {
         // 返回上一步
         this.showVo.step = 1;
       } else {
         // 关闭弹出框
         this.visible = false;
-      }
+      }*/
     },
     initComp(vo, btnType) {
       // btnType => pwd 密码；email 邮箱； phone手机号
       // 场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码 9设置密码（密码不存在情况）
       // vo = {
       //   has_password: 0,
-      //   phone: '18310410764',
-      //   email: '1538986328@qq.com'
+      //   phone: '183****0764',
+      //   email: '18*****0764@sina.cn'
       // };
       this.vo = vo;
       this.showVo.executeType = btnType;
@@ -525,12 +548,12 @@ export default {
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
-          this.time = 10;
+          this.time = 60;
         }
         if(this.downTimer1) {
           window.clearTimeout(this.downTimer1);
           this.isDisabledClick1 = false;
-          this.time1 = 10;
+          this.time1 = 60;
         }
         if(this.showVo.executeType !== 'email') {
           this.callCaptcha();
@@ -590,5 +613,10 @@ export default {
 }
 .info {
   margin-bottom: 16px;
+}
+/deep/.el-form-item.link__to {
+  text-align: right;
+  margin-bottom: 0;
+  margin-top: -20px;
 }
 </style>

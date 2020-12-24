@@ -55,19 +55,14 @@
       </div>
     </VhallDialog>
     <VhallDialog
-      :title="'购买' + title"
+      title="购买流量包"
       :visible.sync="dialogBuyVisible"
       :close-on-click-modal="false"
       width="560px"
     >
       <el-form label-width="85px">
-        <el-form-item :label="title === '专业版'? '单价' : '流量包'">
-          <div class="img-box" v-if="title==='专业版'">
-            <h3>￥8000.00</h3>
-            <p>元/年</p>
-            <span>专业版功能费</span>
-          </div>
-          <div class="img-boxs" v-else>
+        <el-form-item label="流量包">
+          <div class="img-boxs">
             <div class="img-box img-liu" v-for="(item, index) in nomalBuyList" :key="index" :class="item.isChose ? 'active' : ''" @click="choseVersion(item)">
               <h3>{{ item.title }}</h3>
               <p>{{ item.send }}</p>
@@ -96,10 +91,7 @@
       </div>
       <div class="instest">
         <div class="speak">说明:</div>
-        <div v-if="title==='专业版'">
-          1、购买专业版功能后还需购买流量包才可发起直播<br />2、专业版过期将自动降为标准版，流量包可继续使用
-        </div>
-        <div v-else>
+        <div>
           1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包<br />3、自启用之日起，购买的流量包有效期为一年 <br />4、流量包到期后自动失效
         </div>
       </div>
@@ -143,13 +135,8 @@ export default {
     };
   },
   computed: {
-    // eslint-disable-next-line vue/return-in-computed-property
     currentPrice() {
-      if (this.title == '流量版') {
-        return '￥' + this.concurrentPrice.flow_fee * this.flows;
-      } else if (this.title == '专业版'){
-        return `￥8000`;
-      }
+      return '￥' + this.concurrentPrice.flow_fee * this.flows;
     }
   },
   created() {
@@ -183,7 +170,7 @@ export default {
     },
     goPayList(id) {
       this.$router.push({
-        path: '/payOrder',
+        path: '/finance/payOrder',
         query: {
           userId: this.userId,
           orderId: id
@@ -239,11 +226,11 @@ export default {
   font-weight: 700;
   font-size: 16px;
   color: #1a1a1a;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
 }
 /deep/.el-form-item__label {
   color: #1a1a1a;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
 }
 /deep/.el-dialog__body {
   padding: 20px;
@@ -258,7 +245,7 @@ export default {
 }
 /deep/.el-input.is-disabled .el-input__inner{
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 600;
   color: #FB3A32;
 }
@@ -345,7 +332,7 @@ export default {
     height: 90px;
     background: #f7f7f7;
     border-radius: 4px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     padding: 15px 0 15px 12px;
     h3 {
       font-size: 14px;

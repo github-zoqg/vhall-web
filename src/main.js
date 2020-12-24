@@ -16,7 +16,7 @@ import 'tinymce/plugins/quickbars';//快速栏插件
 import 'tinymce/plugins/fullscreen';//全屏插件
 
 import EventBus from './utils/Events';
-import {copy, dealObjectValue, domainCovert, parseURL, sessionOrLocal} from './utils/utils';
+import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
 import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
@@ -27,6 +27,7 @@ import vhallSaas from './tangram/buTemplates/index.js';
 import 'nprogress/nprogress.css';
 // 系统通用重置样式
 import '@/common/css/index.less';
+import { loadMore }  from '@/utils/directive';
 
 //过滤器
 import * as filters from './utils/filter';
@@ -37,7 +38,7 @@ import 'moment/locale/zh-cn';
 
 import { getParams } from './utils/general';
 import fetchData from './api/fetch';
-
+window.test = sessionOrLocal
 Vue.prototype.$fetch = fetchData;
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false;
@@ -47,6 +48,7 @@ Vue.prototype.$params = dealObjectValue; //去除空值参数转换
 Vue.prototype.$domainCovert = domainCovert;// 添加域名
 Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
 Vue.prototype.$img = require('./common/images/small.png');
+Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
 Vue.use(ElementUI);
 Vue.use(vhallSaas, {
   config: {
@@ -95,6 +97,7 @@ Vue.directive('preventReClick', {    // 限制按钮重复点击
 // 国际化
 import VueI18n from 'vue-i18n';
 Vue.use(VueI18n);
+Vue.use(loadMore)
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
   messages: {
@@ -115,7 +118,6 @@ function clientToken(param) {
   if (ret) {
     ret = decodeURIComponent(ret[1]);
   }
-  console.log(ret, '当前hash判断')
   return ret || '';
 }
 let clientTokenVal = clientToken('token');

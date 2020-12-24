@@ -73,7 +73,8 @@ export default {
       looEeverybody: false,
       initCompleted: false,
       page: 1,
-      scrollLock: false
+      scrollLock: false,
+      opening: false // 是否开启过红包
     };
   },
   watch: {
@@ -87,13 +88,7 @@ export default {
     room_id: {
       required: true
     },
-    vss_token: {
-      required: true
-    },
     red_packet_uuid: {
-      required: true
-    },
-    authInfo: {
       required: true
     },
     isHavePacket: {
@@ -103,9 +98,9 @@ export default {
   methods: {
     initInfo () {
       const obj = {
-        vss_token: this.vss_token,
         room_id: this.room_id,
-        red_packet_uuid: this.red_packet_uuid
+        red_packet_uuid: this.red_packet_uuid,
+
       };
       this.$fetch('redPackInfo', {
         room_id: this.room_id,
@@ -116,7 +111,7 @@ export default {
         this.getpacketCreateObj = data.red_packet; // 红包信息
         if (data.status == 1) { // 我已抢到红包
           this.isSuccessRed = true;
-          this.myAmount = this.getpacketCreateObj.amount;
+          this.myAmount = data.amount;
         } else { // 我没抢到红包
           if (data.red_packet.number == data.red_packet.get_user_count) { // 如果红包数量和领红包人数相等，说明已抢光
             this.emptyRefCoupon = true;
@@ -127,7 +122,7 @@ export default {
       });
     },
     openRedPacket () {
-      if (this.authInfo.length === 0) {
+      if (!sessionStorage.getItem('userInfo')) {
         this.$emit('NoLogin');
         return;
       }
@@ -136,7 +131,6 @@ export default {
     },
     openEveryOne () {
       const obj = {
-        vss_token: this.vss_token,
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid,
         order: 'created_at'
@@ -145,16 +139,17 @@ export default {
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid,
         order: 'created_at',
-        pos: 0,
+        pos: this.page,
         limit: 10
       }).then((res) => {
-        this.isSuccessRed = true; // 显示金额
-        this.looEeverybody = true; // 显示记录
-        this.getpacketCreateObj = res.data.red_packet;
-        this.EeverybodyList = res.data ? res.data.list : [];
-        this.scrollLock = false;
-        this.page = 1;
-        this.$refs.packetList.addEventListener('scroll', this.scrollBottom);
+        if(res.code == 200){
+          this.isSuccessRed = true; // 显示金额
+          this.looEeverybody = true; // 显示记录
+          this.getpacketCreateObj = res.data.red_packet;
+          this.EeverybodyList = res.data ? res.data.list : [];
+          this.scrollLock = false;
+          this.$refs.packetList.addEventListener('scroll', this.scrollBottom);
+        }
       }).catch(error => {
         console.log(error);
       });
@@ -165,7 +160,6 @@ export default {
       }
       this.opening = true;
       const obj = {
-        vss_token: this.vss_token,
         room_id: this.room_id,
         red_packet_uuid: this.red_packet_uuid
       };

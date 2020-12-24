@@ -1,15 +1,15 @@
 <template>
   <div class="search-area">
-    <el-form :inline="true" :model="searchParams" ref="searchForm">
+    <el-form :inline="true" :model="searchParams" ref="searchForm" onsubmit="return false;">
       <el-form-item v-for="(item, index) in searchAreaLayout" :key="index">
         <el-button v-if="item.type==5" @click="deletedChecked" round>批量删除</el-button>
         <!-- 快速选择时间 -->
         <div class="time-kuai" v-else-if="item.type==1">
           <span
-            v-for="(opt, optIndex) in allTime"
+            v-for="(opt, optIndex) in item.options"
             :key="optIndex"
             :class="opt.active === isActive ? 'active' : ''"
-            @click="changeTime(opt)"
+            @click="changeTime(opt.active)"
             >{{ opt.title }}</span
           >
         </div>
@@ -46,7 +46,7 @@
         <el-checkbox v-model="searchParams[item.key]" v-else-if="item.type==7"  @change="changeDate">{{ item.name }}</el-checkbox>
         <el-button v-else-if="item.type==6" @click="searchList" class="search" round>查询</el-button>
         <!-- 输入框 -->
-        <el-input v-model="searchParams[item.key]" suffix-icon="el-icon-search" :placeholder="placeholder" style="width: 180px" v-else @change="changeDate"></el-input>
+        <el-input v-model.trim="searchParams[item.key]" suffix-icon="el-icon-search" :placeholder="placeholder" style="width: 180px" v-else  @keyup.enter.native="changeInput" @change="changeInput"  clearable></el-input>
 
       </el-form-item>
     </el-form>
@@ -87,6 +87,10 @@ export default {
   },
   props: {
     searchAreaLayout: Array,
+    active: {
+      type: Number,
+      default: 1
+    },
     isExports: {
       type: Boolean,
       default: true
@@ -97,20 +101,29 @@ export default {
     }
   },
   created() {
+    this.isActive = this.active;
   },
   methods: {
-    changeTime(opt) {
-      if (this.$route.path === '/infoDetail') {
+    changeTime(index) {
+      if (this.$route.path === '/finance/infoDetail') {
         return;
       }
-      this.isActive = opt.active;
-      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(opt.active);
+      this.isActive = index || this.active;
+       if (this.isActive == 3 || this.isActive == 4) {
+        this.searchParams.end_time = getRangeDays(5);
+      } else {
+        this.searchParams.end_time = getRangeDays(2);
+      }
+      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(this.isActive);
       this.$emit("onSearchFun");
     },
     changeDate(){
-      if (this.$route.path === '/infoDetail') {
+      if (this.$route.path === '/finance/infoDetail') {
         return;
       }
+      this.$emit("onSearchFun");
+    },
+    changeInput() {
       this.$emit("onSearchFun");
     },
     deletedChecked() {
@@ -159,13 +172,13 @@ export default {
       border: 1px solid #ccc;
       border-radius: 18px;
       background: transparent;
-      line-height: 36px;
+      line-height: 33px;
       span {
         border-radius: 18px;
-        padding: 8px 16px;
+        padding: 9px 16px;
         text-align: center;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666666;
         cursor: pointer;
@@ -195,7 +208,7 @@ export default {
       cursor: pointer;
       span {
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666;
       }

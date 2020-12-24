@@ -9,6 +9,7 @@
       <search-area
         ref="incomeDetils"
         :searchAreaLayout="searchDetail"
+        @onExportData="exportAccount()"
         @onSearchFun="getIncomeDetailList('search')"
       >
       </search-area>
@@ -35,6 +36,7 @@ export default {
     return {
       totalNum: 1,
       liveDetailInfo: {},
+      params: {},
       searchDetail: [
         {
           type: '2',
@@ -129,6 +131,7 @@ export default {
       paramsObj.user_id = this.userId;
       paramsObj.webinar_id = this.$route.params.str;
       let obj = Object.assign({}, pageInfo, paramsObj);
+      this.params = obj;
       console.log(obj);
       this.$fetch('liveIncomeDetailList', obj).then(res =>{
         this.totalNum = res.data.total;
@@ -146,6 +149,18 @@ export default {
       console.log(this.tableList);
       // .map(item => {"red_packet": item.red_packet_type == '1' ? '固定金额': '拼手气' })
     },
+    // 导出收益详情
+    exportAccount() {
+      this.$fetch('exportIncomeDetail', this.params).then(res => {
+        if (res.code == 200) {
+          this.params = {};
+          this.$message.success(`收益详情导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
+        } else {
+          this.$message.error(`收益详情${res.msg}`);
+        }
+      })
+    }
   },
 };
 </script>
@@ -158,7 +173,7 @@ export default {
       text-align: left;
       p{
         font-size: 22px;
-        font-family: PingFangSC-Semibold, PingFang SC;
+        font-family: @fontSemibold;
         font-weight: 600;
         color: #1a1a1a;
         padding-bottom: 4px;

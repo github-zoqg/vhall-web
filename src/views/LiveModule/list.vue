@@ -8,9 +8,9 @@
       </div>
     </pageTitle>
     <!-- 操作栏 -->
-      <div class="operaBox">
-        <el-button type="primary" round @click="createLiveAction('1')">创建直播</el-button>
-        <el-button round @click="createLiveAction('2')">创建点播</el-button>
+      <div class="operaBox" v-if="totalElement || isSearch">
+        <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
+        <el-button round @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -30,8 +30,10 @@
           </el-select>
           <el-input
             class="search-tag"
-            placeholder="请输入直播标题"
+            placeholder="搜索直播标题"
             v-model="keyWords"
+            clearable
+            @change="searchHandler"
             @keyup.enter.native="searchHandler">
             <i
               class="el-icon-search el-input__icon"
@@ -50,19 +52,19 @@
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
-                  <i class="el-icon-view"></i>
+                  <i class="iconfont-v3 saasicon_redu"></i>
                   {{item.pv | unitCovert}}
                 </span>
                 <img :src="`${item.img_url}`" alt="">
               </div>
               <div class="bottom">
                 <div class="">
-                  <p class="liveTitle">{{item.subject}}</p>
+                  <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
                   <p class="liveTime">{{item.start_time}}</p>
                 </div>
                 <p class="liveOpera">
-                  <el-tooltip class="item" effect="dark" content="开播" placement="top">
-                    <router-link :to="`chooseWay/${item.webinar_id},1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
+                  <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
+                    <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top">
                   <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
@@ -88,10 +90,12 @@
             </div>
           </el-col>
       </el-row>
-      <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
+      <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
     </div>
     <div class="no-live" v-else>
-      <noData :nullType="nullText" :text="'您还没有直播，快来创建吧！'">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
+        <el-button round v-if="nullText == 'nullData'"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
       </noData>
     </div>
   </div>
@@ -108,6 +112,8 @@ export default {
       liveStatus: 0,
       nullText: 'nullData',
       orderBy: 1,
+      isSearch: false, //是否是搜索
+      text: '您还没有直播，快来创建吧！',
       keyWords: '',
       imgBaseUrl: Env.staticLinkVo.uploadBaseUrl,
       pageSize: 12,
@@ -151,7 +157,11 @@ export default {
     },
     commandMethod(command) {
       if (command === '删除') {
-         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
+        if (this.webinarInfo.webinar_state == 1) {
+          this.$message.error('正在直播的活动不能删除');
+          return;
+        }
+        this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
            customClass: 'zdy-message-box'
@@ -186,8 +196,16 @@ export default {
       this.$fetch('liveList', this.$params(data)).then(res=>{
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
-        if ((this.orderBy || this.keyWords || this.liveStatus) && !res.data.total) {
+        if (!this.liveStatus && this.orderBy == 1 && !this.keyWords) {
+          // 默认状态
+          this.nullText = 'nullData';
+          this.text = '您还没有直播，快来创建吧！';
+          this.isSearch = false;
+        } else {
+          // 搜索状态
           this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
         }
       }).catch(error=>{
         this.$message.error(`获取直播列表失败,${error.msg || error.message}`);
@@ -251,9 +269,12 @@ export default {
         background: #fc615b;
       }
     }
-    .el-button.is-round{
-      padding: 10px 23px;
+    /deep/.el-button{
+      padding: 4px 24px;
     }
+    /*.el-button.is-round{
+      padding: 10px 23px;
+    }*/
   }
   .pageTitle{
     color: #1A1A1A;
@@ -271,7 +292,7 @@ export default {
           width: 120px;
         }
         &:nth-child(2){
-          width: 140px;
+          width: 175px;
           margin-left: 12px;
           margin-right: 20px;
         }
@@ -323,10 +344,12 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
+        border-radius: 4px;
         img{
           width: 100%;
           height: 100%;
           position: absolute;
+          border-radius: 4px;
           top:0;
           left: 0;
         }
@@ -354,6 +377,9 @@ export default {
           color: #fff;
           font-size: 14px;
           z-index: 2;
+          // i{
+          //   color: #FB3A32;
+          // }
         }
       }
       .bottom{
@@ -368,6 +394,13 @@ export default {
           color: #1A1A1A;
           font-size: 16px;
           margin-bottom: 6px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
         .liveTime{
           font-size: 14px;

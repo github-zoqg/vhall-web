@@ -14,7 +14,8 @@
         @change="updateSwitch"
         active-color="#FB3A32"
         inactive-color="#CECECE"
-        active-text="开启后，可邀请特殊角色加入直播">
+        :active-text="roleSwitch > 0 ? `已开启，支持邀请特殊角色加入直播` : `开启后，支持邀请特殊角色加入直播`"
+      >
       </el-switch>
     </pageTitle>
     <!-- 角色邀请卡片 -->
@@ -27,7 +28,7 @@
             <div class="title--box">
               <label class="title--label role1">主持人</label>
             </div>
-            <p class="role-remark">主持人发起直播，进行推流、文档演示等操作</p>
+            <p class="role-remark">主持人可发起直播，进行推流、文档演示等操作</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
@@ -82,14 +83,17 @@
           <div class="role-card-qx-content">
             <div class="role-qx-title">
               <label>嘉宾权限</label>
-              <el-button size="mini" round @click="savePremHandle('guest')">保存</el-button>
+              <el-button size="mini" round @click="savePremHandle('guest')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
-              <el-checkbox v-model="item.check"
-                           :true-label="1"
-                           :false-label="0"
-                           v-for="(item, key, ins) in privilegeVo.permission_data.guest"
-                           :key="`guest_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
+              <el-checkbox  :value="true" disabled>文档白板</el-checkbox>
+              <template v-for="(item, key, ins) in privilegeVo.permission_data.guest || {}">
+                <el-checkbox v-model="item.check"
+                             :true-label="1"
+                             :false-label="0"
+                             v-if="key !== 'white_board'"
+                             :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
+              </template>
             </div>
           </div>
           <div>
@@ -125,15 +129,17 @@
           <div class="role-card-qx-content">
             <div class="role-qx-title">
               <label>助理权限</label>
-              <el-button size="mini" round @click="savePremHandle('assistant')">保存</el-button>
+              <el-button size="mini" round @click="savePremHandle('assistant')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
               <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
-              <el-checkbox v-model="item.check"
-                           :true-label="1"
-                           :false-label="0"
-                           v-for="(item, key, ins) in privilegeVo.permission_data.assistant || []"
-                           :key="`assistant_${key + ins}`">{{ item.label }}{{item.check}}</el-checkbox>
+              <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || {}">
+                <el-checkbox v-model="item.check"
+                             :true-label="1"
+                             :false-label="0"
+                             v-if="key !== 'white_board'"
+                             :key="`assistant_${key + ins}`">{{ item.label }}</el-checkbox>
+              </template>
             </div>
           </div>
           <div>
@@ -212,7 +218,9 @@ export default {
         one: '',
         two: '',
         three: ''
-      }
+      },
+      guestVo: null,
+      assistantVo: null
     };
   },
   computed: {
@@ -240,12 +248,15 @@ export default {
 助理口令：${this.privilegeVo && this.privilegeVo.assistant_password ? this.privilegeVo.assistant_password : '未设置'}
 加入链接：${this.privilegeVo && this.assistant_join_link ? this.assistant_join_link : ''}`;
     },
+    // 主持人
     host_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
     },
+    // 嘉宾
     join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/2`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/4`;
     },
+    // 助理
     assistant_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/3`;
     }
@@ -322,7 +333,7 @@ export default {
       let keysObj = this.privilegeVo.permission_data[keyName];
       let {keys,values} = Object;
       let obj = {};
-      keys(keysObj).forEach((keyItem, ins) => {
+      keys(keysObj).filter(item => item !== 'white_board').forEach((keyItem, ins) => {
         console.log(keyItem + ',' + ins);
         obj[keyItem] = Number(values(keysObj)[ins].check);
       });
@@ -353,6 +364,17 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
+            try {
+              delete res.data.permission_data.guest['white_board'];
+            }catch (e) {
+              console.log('guest',0);
+            }
+            try {
+              delete res.data.permission_data.assistant['white_board'];
+            }catch (e) {
+              console.log('assistant', 1);
+            }
+            this.roleSwitch = Number(res.data.is_privilege);
             this.privilegeVo = res.data;
           } else {
             this.privilegeVo = {};
@@ -430,7 +452,7 @@ export default {
 }
 .title--label {
   font-size: 24px;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
   font-weight: 500;
   line-height: 33px;
   margin-right: 8px;
@@ -446,7 +468,7 @@ export default {
 }
 .role-remark {
   font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #666666;
   line-height: 20px;
@@ -456,7 +478,7 @@ export default {
   margin-top: 32px;
   /deep/.el-form-item__label {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     padding: 0 10px 0 0;
@@ -502,7 +524,7 @@ export default {
     background: #F7F7F7;
     border-radius: 4px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
@@ -521,7 +543,7 @@ export default {
 }
 .role-qx-title {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #666666;
   line-height: 20px;
@@ -536,7 +558,7 @@ export default {
 .role-qx-list {
   height: 118px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 20px;
@@ -572,7 +594,7 @@ export default {
 }
 /deep/.el-checkbox__input.is-checked+.el-checkbox__label, /deep/.el-checkbox__label {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 20px;

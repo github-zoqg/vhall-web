@@ -6,10 +6,14 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（ID/昵称/手机号码）" v-model.trim="query.keyword" @change="getSonList">
-        <i class="el-icon-search el-input__icon" slot="suffix"></i>
+      <el-input placeholder="搜索子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
+                clearable
+                @clear="initQuerySonList"
+                @keyup.enter.native="initQuerySonList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
       </el-input>
-      <el-select placeholder="全部" round  v-model="query.role_id" @change="getSonList">
+      <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
+        <el-option value="">全部</el-option>
         <el-option
           v-for="item in roleList"
           :key="'v_' + item.id"
@@ -29,6 +33,8 @@
         :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
+        max-height="auto"
+        scene="accountList"
         @getTableList="getSonList"
         @changeTableCheckbox="checkMoreRow"
         @onHandleBtnClick="onHandleBtnClick"
@@ -42,28 +48,33 @@
                  width="680px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
         <el-form-item label="批量创建：" prop="is_batch" v-if="sonDialog.type === 'add'">
-          <el-switch
-            v-model="sonForm.is_batch"
-            :active-value="1"
-            :inactive-value="0"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="sonCountGetHandle"
-          >
-          </el-switch>
+          <div class="switch__box">
+            <el-switch
+              v-model="sonForm.is_batch"
+              :active-value="1"
+              :inactive-value="0"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+              @change="sonCountGetHandle"
+            >
+            </el-switch>
+            <span class="leve3_title title--999" v-if="sonForm.is_batch">批量创建时，所生成子账号的昵称，密码，角色一致</span>
+          </div>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
           <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
-          <span v-if="sonCountVo.available_num">当前可创建子账号数量{{sonCountVo.available_num}}个</span>
+          <span>当前可创建子账号数量{{ sonCountVo.available_num }}个</span>
         </el-form-item>
         <el-form-item label="账号昵称：" prop="nick_name">
-          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="30字以内" :maxlength="30" :minlength="1" show-word-limit/>
+          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入账号昵称，不输入默认使用账号ID" :maxlength="30"
+                    :minlength="1" show-word-limit/>
         </el-form-item>
         <el-form-item label="预设密码：" prop="password">
-          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入12个字符" :maxlength="12" :minlength="1"/>
+          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" :minlength="6"/>
         </el-form-item>
         <el-form-item label="账号角色：" prop="role_id">
-          <el-select placeholder="请选择角色" clearable round  v-model="sonForm.role_id">
+          <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
             <el-option
               v-for="item in roleList"
               :key="item.id"
@@ -73,12 +84,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="手机号码：">
-          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative" :maxlength="30" disabled>
+          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
+                    :maxlength="30" disabled>
             <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="邮箱地址：">
-          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative" :maxlength="30" disabled>
+          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
+                    :maxlength="30" disabled>
             <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
           </el-input>
         </el-form-item>
@@ -95,6 +108,7 @@
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
+
 export default {
   name: "sonList.vue",
   components: {
@@ -117,12 +131,23 @@ export default {
         callback();
       }
     };*/
+    let verifyEnterPwd = (rule, value, callback) => {
+      let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
+      if (value === '') {
+        callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else if (!pattern.exec(value)) {
+        callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else {
+        callback();
+      }
+    };
     return {
       query: {
         role_id: null,
         keyword: '',
         pos: 0,
-        limit: 1000
+        limit: 1000,
+        pageNumber: 1
       },
       roleList: [],
       sonDao: {
@@ -133,8 +158,8 @@ export default {
       isHandle: false, // 是否有操作项
       sonTableColumn: [
         {
-          label: '账号ID',
-          key: 'child_id',
+          label: '账号',
+          key: 'name',
           width: 200
         },
         {
@@ -154,7 +179,7 @@ export default {
         },
         {
           label: '用量分配',
-          key: 'rond',
+          key: 'round',
           width: 200
         }
       ],
@@ -192,16 +217,16 @@ export default {
       },
       sonFormRules: {
         nick_name: [
-          { required: true, message: '请输入账号昵称', trigger: 'blur' }
+          {required: false, message: '请输入账号昵称，不输入默认使用账号ID', trigger: 'blur'}
         ],
         password: [
-          { required: true, message: '请输入预设密码', trigger: 'blur' }
+          {required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30, message: '支持数字，大小写英文，6-30个字符'}
         ],
         role_id: [
-          { required: true, message: '请输入账号角色', trigger: 'change' }
+          {required: true, message: '请输入账号角色', trigger: 'change'}
         ],
         nums: [
-          { required: true, message: '请填写账号数量', trigger: 'blur' }
+          {required: true, message: '请填写账号数量', trigger: 'blur'}
         ]
       },
     };
@@ -213,7 +238,7 @@ export default {
       methodsCombin[val.type](this, val);
     },
     // 跳转消息详情页
-    toSonDetail(that, { rows }) {
+    toSonDetail(that, {rows}) {
       that.$router.push({
         path: `/sonDetail/${rows.child_id}`,
       });
@@ -222,7 +247,7 @@ export default {
     toAllocationPage() {
       // 1表示并发
       this.$router.push({
-        path: `/allocation/${this.vipType}`,
+        path: `/allocation`,
       });
     },
     // 批量选择
@@ -251,27 +276,28 @@ export default {
         pos: 0,
         limit: 999999, // TODO 跟大龙确定，传值大于0，后台下载依然是所有符合条件的全部数据
       };
-      this.$fetch('sonChildExport', params).then(res=>{
+      this.$fetch('sonChildExport', params).then(res => {
         if (res && res.code === 200) {
           this.$message.success('下载申请成功，请去下载中心下载该项！');
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(res.msg);
         }
-      }).catch(e=>{
+      }).catch(e => {
         console.log(e);
       });
     },
     // 获取子账号个数
     sonCountGetHandle() {
-      this.$fetch('sonCountGet', {}).then(res =>{
-        this.sonCountVo = res && res.code === 200 ? res.data || {} : (this.$message.error(res.msg || '获取子账号个数失败') );
+      this.$fetch('sonCountGet', {}).then(res => {
+        this.sonCountVo = res && res.code === 200 ? res.data || {} : (this.$message.error(res.msg || '获取子账号个数失败'));
       }).catch(e => {
         console.log(e);
         this.sonCountVo = {};
       });
     },
     // 删除单条消息数据
-    sonDel(that, { rows }) {
+    sonDel(that, {rows}) {
       that.$confirm('正在直播或有未提现收益的账号不会被删除，确定删除？', '提示', {
         confirmButtonText: '确定',
         customClass: 'zdy-message-box',
@@ -280,12 +306,16 @@ export default {
         that.$fetch('sonDel', {
           child_ids: rows.child_id
         }).then(res => {
-          if(res && res.code === 200) {
+          if (res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.$refs.sonTab.clearSelection();
-            that.getSonList();viewerRules
-          }else {
+            try{
+              that.$refs.sonTab.clearSelection();
+            } catch (e) {
+              console.log(e);
+            }
+            that.initQuerySonList();
+          } else {
             that.$message({
               type: 'error',
               message: res.msg || '删除失败'
@@ -295,7 +325,7 @@ export default {
           console.log(e);
           that.$message({
             type: 'error',
-            message:  '删除失败'
+            message: '删除失败'
           });
         });
       }).catch(() => {
@@ -303,11 +333,11 @@ export default {
     },
     // 新增子账号
     addSonShow() {
-      try{
+      try {
         if (this.$refs.sonForm) {
           this.$refs.sonForm.resetFields();
         }
-      }catch (e){
+      } catch (e) {
         console.log(e);
       }
       this.sonDialog.type = 'add';
@@ -322,12 +352,12 @@ export default {
       this.sonDialog.visible = true;
     },
     // 编辑子账号
-    editSonShow(that, { rows }) {
-      try{
+    editSonShow(that, {rows}) {
+      try {
         if (that.$refs.sonForm) {
           that.$refs.sonForm.resetFields();
         }
-      }catch (e){
+      } catch (e) {
         console.log(e);
       }
       that.sonDialog.type = 'edit';
@@ -348,63 +378,79 @@ export default {
       this.$refs.sonForm.validate((valid) => {
         if (valid) {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
+          // 判断子账号个数, 批量验证输入个数。
+          if(this.sonForm.is_batch && Number(this.sonForm.nums) >  Number(this.sonCountVo.available_num)) {
+            this.$message.error('超过当前可创建的子账号数量');
+            return;
+          }
           let params = Object.assign(
-            this.sonDialog.type === 'add' ? {
-            } : {
+            this.sonDialog.type === 'add' ? {} : {
               id: this.sonDialog.row.id,
               child_id: this.sonDialog.row.child_id
             }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', this.$params(params)).then(res => {
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
             if (res && res.code === 200) {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
               this.sonDialog.visible = false;
               // 新增成功后，重查列表
-              this.getSonList();
+              this.initQuerySonList();
             } else {
               this.$message({
                 type: 'error',
                 message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
-              })
+              });
             }
           }).catch(e => {
             console.log(e);
             this.$message({
               type: 'error',
-              message:`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
+              message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
             });
           });
         }
       });
     },
     // 获取列表数据
-    getSonList(pageInfo = {pageNum: 1, pageSize: 10}) {
+    getSonList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
       let params = {
         role_id: this.query.role_id,
-        user_id: sessionOrLocal.get('userId'),
-        pos: (pageInfo.pageNum-1)*pageInfo.pageSize,
-        limit: pageInfo.pageSize,
-        scene_id: 2 // 场景id：1子账号列表 2用量分配获取子账号列表
+        // user_id: sessionOrLocal.get('userId'),
+        pos: this.query.pos,
+        limit: this.query.limit,
+        keyword: this.query.keyword,
+        scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
-      this.$fetch('getSonList', this.$params(params)).then(res =>{
-        let dao =  res && res.code === 200 && res.data ? res.data : {
+      this.$fetch('getSonList', this.$params(params)).then(res => {
+        let dao = res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
         };
-        (dao.list||[]).map(item => {
-          if(item.vip_info.type > 0) {
-            if (item.is_dynamic > 0 ) {
+        (dao.list || []).map(item => {
+          if (this.vipType > 0) {
+            if (item.is_dynamic > 0) {
               // 流量动态
               item.round = `流量动态`;
             } else {
               // 流量（XXXGB）
-
+              item.round = `流量（${item.vip_info.flow}GB）`;
+            }
+          } else {
+            if (item.is_dynamic > 0) {
+              // 流量动态
+              item.round = `并发动态`;
+            } else {
+              // 并发（XXX方）
+              item.round = `并发（${item.vip_info.total}方）`;
             }
           }
-
-          item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
+          // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
         this.sonDao = dao;
-      }).catch(e=>{
+      }).catch(e => {
         console.log(e);
         this.sonDao = {
           total: 0,
@@ -413,11 +459,11 @@ export default {
       });
     },
     // 查询所有可选择角色列表，加上默认最多可查询出11个
-    async getRoleList() {
+    getRoleList() {
       this.$fetch('sonRoleList', {
         role_name: '',
         pos: 0,
-        limit: 11
+        limit: 500
       }).then(res => {
         console.log(res && res.code === 200 && res.data && res.data.list);
         if (res && res.code === 200 && res.data) {
@@ -426,7 +472,7 @@ export default {
           this.roleList = [];
         }
         if (this.roleList.length > 0) {
-          this.getSonList();
+          this.initQuerySonList();
         }
       }).catch(e => {
         console.log(e);
@@ -434,11 +480,24 @@ export default {
       });
     },
     // 重置选项
-    resetPhoneOrEmail(type){
+    resetPhoneOrEmail(type) {
       this.sonForm[type] = '';
     },
     initComp() {
       this.getRoleList(); // 获取可选角色列表
+    },
+    initQuerySonList() {
+      this.query.pos = 0;
+      this.query.pageNumber = 1;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.sonTab.pageInfo.pageNum = 1;
+        this.$refs.sonTab.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
+      this.getSonList();
     }
   },
   computed: {
@@ -455,13 +514,17 @@ export default {
 // 初始化查询子账号列表信息
 .son--list {
   .padding41-40();
+  padding-bottom: 40px;
 }
-.list--search{
+
+.list--search {
   margin-bottom: 20px;
-  .el-select{
+
+  .el-select {
     float: right;
     margin-right: 20px;
-    /deep/ .el-input__inner{
+
+    /deep/ .el-input__inner {
       user-select: none;
       border-radius: 50px;
       font-size: 14px;
@@ -470,16 +533,20 @@ export default {
       line-height: 36px;
     }
   }
-  .el-input{
+
+  .el-input {
     width: 270px;
     float: right;
-    /deep/ .el-input__inner{
+
+    /deep/ .el-input__inner {
       border-radius: 20px;
       height: 36px;
     }
-    /deep/ .el-input__suffix{
+
+    /deep/ .el-input__suffix {
       cursor: pointer;
-      /deep/ .el-input__icon{
+
+      /deep/ .el-input__icon {
         line-height: 36px;
       }
     }

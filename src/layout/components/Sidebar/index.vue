@@ -2,13 +2,19 @@
   <div :class="{'has-logo':showLogo}">
     <div class="sidebar-logo-container" :class="{'collapse':!sidebar.opened}">
       <transition name="sidebarLogoFade">
+        <!-- 关闭情况下 -->
         <router-link v-if="!sidebar.opened" key="collapse" class="sidebar-logo-link" to="/">
           <img v-if="logo" :src="logo" class="sidebar-logo">
         </router-link>
-        <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-          <img v-if="logo" :src="logo" class="sidebar-logo">
-          <img v-else src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
-        </router-link>
+        <!-- 展开情况下 -->
+        <div v-else key="expand" class="sidebar-logo-link">
+          <a :href="logo_jump_url" v-if="logo" class="sidebar-logo2">
+            <img v-if="logo" :src="logo">
+          </a>
+          <a :href="logo_jump_url" v-else class="sidebar-logo2">
+            <img src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
+          </a>
+        </div>
       </transition>
       <!-- 是否收缩按钮 -->
       <hamburger :is-active="sidebar.opened" :class="`hamburger-container ${sidebar.opened ? 'right' : 'left' }`" @toggleClick="toggleSideBar" />
@@ -19,7 +25,7 @@
         :collapse="!sidebar.opened"
         background-color="#1A1A1A"
         text-color="#E2E2E2"
-        :unique-opened="false"
+        :unique-opened="true"
         active-text-color="#FB3A32"
         :collapse-transition="false"
         mode="vertical"
@@ -47,7 +53,8 @@ export default {
         opened: true,
         withoutAnimation: false
       },
-      logo: null
+      logo: null,
+      logo_jump_url: ''
     };
   },
   computed: {
@@ -81,10 +88,15 @@ export default {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
     this.logo = userInfo.user_extends ? userInfo.user_extends.logo : '';
-    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : '';
+    this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url ||  process.env.VUE_APP_WEB_URL : process.env.VUE_APP_WEB_URL;
       // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, userInfo.user_extends.logo || '') : '';
     this.$EventBus.$on("hamburger", (status) => {
       this.sidebar.opened = status;
+    });
+    this.$EventBus.$on("saas_vs_account_change", (res) => {
+      let user_extends = res.user_extends;
+      this.logo = user_extends.logo;
+      this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_WEB_URL;
     });
   },
   destroyed() {
@@ -119,6 +131,20 @@ export default {
         width: 156px;
         float: left;
         margin: 4px 0;
+      }
+    }
+
+    a.sidebar-logo2 {
+      float: left;
+      padding: 4px 0;
+      text-align: left;
+      width: 156px!important;
+      height: 100%;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
       }
     }
   }

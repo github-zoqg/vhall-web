@@ -1,15 +1,15 @@
 <template>
   <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle title="专题管理">
-      <div slot="content">
+      <!-- <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
         <br/>
         2.控制台数据为真实数据，不统计虚拟数据
-      </div>
+      </div> -->
     </pageTitle>
 
     <!-- 操作栏 -->
-    <div class="operaBox">
+    <div class="operaBox" v-show="totalElement || isSearch">
       <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
       <div class="searchBox">
         <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
@@ -23,6 +23,7 @@
         <el-input
           placeholder="请输入专题标题"
           clearable
+          @change="searchHandler"
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
@@ -34,14 +35,14 @@
     </div>
     <!-- 操作栏 -->
 
-    <el-row :gutter="40" class="lives">
+    <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
-              <i class="el-icon-view"></i>
-              {{item.view_num | unitCovert}}
+              <i class="iconfont-v3 saasicon_redu"></i>
+              {{item.pv | unitCovert}}
             </span>
             <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
           </div>
@@ -72,29 +73,48 @@
         </div>
       </el-col>
     </el-row>
-    <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
-    <share ref="share" :url="shareUrl" linkId="linkShareBox" v-if="shareUrl"></share>
+    <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
+     <div class="no-live" v-show="!totalElement">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
+      </noData>
+    </div>
+    <VhallDialog
+      title="分享"
+      :visible.sync="dialogShareVisible"
+      :close-on-click-modal="false"
+      width="28%">
+      <div class="content">
+        <share slot="content" :url="home_link"></share>
+      </div>
+   </VhallDialog>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import share from './components/share';
+import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
+import share from '@/components/Share'
 export default {
   data() {
     return {
       liveStatus: 0,
+      isSearch: false,
+      nullText: 'nullData',
+      text: '暂未创建专题活动',
+      dialogShareVisible: false,
       orderBy: 1,
       keyWords: '',
       pageSize: 12,
       pageNum: 1,
       pos: 0,
+      home_link: '',
       totalElement: 0,
       liveDropDownVisible: false,
       orderOptions: [
         { label: '按创建时间排序', value: 1 },
-        { label: '按最后直播时间排序', value: 2 }
+        { label: '按照标题排序', value: 2 }
       ],
       loading: true,
       liveList: [],
@@ -104,7 +124,8 @@ export default {
   },
   components: {
     PageTitle,
-    share
+    share,
+    noData
   },
   created() {
     this.getLiveList();
@@ -132,9 +153,19 @@ export default {
       this.loading = true;
       console.log(data);
       this.$fetch('subjectList', this.$params(data)).then(res=>{
-        console.log(res);
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
+        if (this.orderBy == 1 && !this.keyWords) {
+          // 默认状态
+          this.nullText = 'nullData';
+          this.isSearch = false;
+          this.text = '暂未创建专题活动';
+        } else {
+          // 搜索状态
+          this.nullText = 'search';
+          this.isSearch = true;
+          this.text = '';
+        }
       }).catch(error=>{
         this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -144,7 +175,7 @@ export default {
     },
     // 删除
     deleteHandle(id) {
-      this.$confirm('此操作将永久删除该文件, 确认继续？', '提示', {
+      this.$confirm('您确定要删除选中的专题吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
@@ -174,12 +205,12 @@ export default {
       });
     },
     toShare(id) {
-      this.shareUrl = `${Env.staticLinkVo.WEB_SHARE_URL}/special/detail?id=${id}`;
-      this.$refs.share.dialogVisible = true;
+      this.home_link = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
+      this.dialogShareVisible = true;
     },
     // 预览页面
     specialDetail(item) {
-      let routeData = this.$router.resolve({ path: '/special/detail', query: {  id: item.id } });
+      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     }
   },
@@ -239,6 +270,9 @@ export default {
       &:hover{
         background: #fc615b;
       }
+    }
+    /deep/.el-dialog__body{
+      padding-bottom: 20px;
     }
     .el-button.is-round{
       padding: 10px 23px;

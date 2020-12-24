@@ -8,6 +8,7 @@
     <el-card class="box-card">
       <search-area
         ref="searchArea"
+        :active="active"
         :searchAreaLayout="searchAreaLayout"
         @onExportData="exportCenterData()"
         @onSearchFun="getTableList('search')"
@@ -38,6 +39,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import { getRangeDays } from '@/utils/general';
 export default {
   name: "dataLive",
   components: {
@@ -47,6 +49,7 @@ export default {
   data() {
     return {
       isCheckout: false,
+      active: 3,
       nullText: 'noData',
       totalNum: 0,
       params: {}, //导出的时候用来记录参数
@@ -93,7 +96,21 @@ export default {
       ],
       searchAreaLayout: [
         {
-          type: "1"
+          type: "1",
+          options: [
+            {
+              title: '全部',
+              active: 1,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
         },
         {
           type: "2",
@@ -117,10 +134,17 @@ export default {
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-       let paramsObj = {};
+      let paramsObj = {};
+      if (this.active == 1) {
+        paramsObj.start_time = '';
+        paramsObj.end_time = '';
+      } else {
+        paramsObj.start_time = getRangeDays(this.active);
+        paramsObj.end_time = getRangeDays(5);
+      }
        if (params === 'search') {
-          pageInfo.pageNum= 1;
-          pageInfo.pos= 0;
+          pageInfo.pageNum = 1;
+          pageInfo.pos = 0;
         }
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -158,6 +182,7 @@ export default {
       this.$fetch('exportWebinar', this.params).then(res => {
         if (res.code == 200) {
           this.$message.success(`活动数据导出成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`活动数据${res.msg}`);
         }

@@ -13,6 +13,7 @@
           <search-area
             ref="searchDetail"
             :searchAreaLayout="searchDetail"
+            @onExportData="exportAccount()"
             @onSearchFun="getDetailList('search')"
           >
           </search-area>
@@ -45,26 +46,23 @@ export default {
       activeIndex: '1',
       totalNum: 1000,
       isHandle: true,
+      params: {},
       options: [
         {
-          label: '结清并发欠费',
-          value: 7
-        },
-        {
-          label: '结清流量欠费',
-          value: 8
+          label: '流量包',
+          value: 'flow'
         },
         {
           label: '并发包',
-          value: 10
+          value: 'concurrency'
         },
         {
-          label: '流量包',
-          value: 11
+          label: '并发扩展包(人次)',
+          value: 'extend_people'
         },
         {
-          label: '并发扩展包(人/次)',
-          value: 12
+          label: '并发扩展包(天)',
+          value: 'extend_day'
         }
       ],
       orderOptions: [
@@ -85,7 +83,8 @@ export default {
           value: 'extend_day'
         },
       ],
-      searchDetail: [
+      // 购买明细
+      searchList: [
         {
           type: '2',
           key: "searchTime"
@@ -123,25 +122,17 @@ export default {
           placeholder: '请选择订单状态',
           options: [
             {
-              label: '未使用',
+              label: '失败',
+              value: -1
+            },
+            {
+              label: '待支付',
               value: 0
             },
-             {
-              label: '使用中',
+            {
+              label: '成功',
               value: 1
-            },
-             {
-              label: '已用完',
-              value: 2
-            },
-            {
-              label: '已过期 ',
-              value: 3
-            },
-            {
-              label: '已废弃',
-              value: 4
-            },
+            }
           ]
         },
         {
@@ -150,16 +141,8 @@ export default {
           placeholder: '请选择订单来源',
           options: [
             {
-              label: '开通购买',
+              label: '下单购买',
               value: 1
-            },
-            {
-              label: '注册赠送',
-              value: 3
-            },
-             {
-              label: '试用赠送',
-              value: 4
             }
           ]
         },
@@ -167,6 +150,73 @@ export default {
           type: '6'
         },
       ],
+      // 开通明细
+      searchOrder: [
+        {
+          type: '2',
+          key: "searchTime"
+        },
+        {
+          type: '3',
+          key: "orderType",
+          placeholder: '请选择订单类型',
+          options: []
+        },
+        {
+          type: '3',
+          key: "status",
+          placeholder: '请选择订单状态',
+          options: [
+            {
+              label: '待生效 ',
+              value: 0
+            },
+             {
+              label: '生效中',
+              value: 1
+            },
+             {
+              label: '已失效',
+              value: -1
+            }
+          ]
+        },
+        {
+          type: '3',
+          key: "source",
+          placeholder: '请选择订单来源',
+          options: [
+            {
+              label: '线下购买',
+              value: 5
+            },
+            {
+              label: '线上购买',
+              value: 6
+            },
+             {
+              label: '商务合作',
+              value: 7
+            },
+            {
+              label: '客户试用',
+              value: 8
+            },
+            {
+              label: '员工账号',
+              value: 9
+            },
+            {
+              label: '研发测试',
+              value: 10
+            }
+          ]
+        },
+        {
+          type: '6'
+        },
+      ],
+      searchDetail: [],
       tableList: [],
       tabelColumn: [],
       tabelColumns: [
@@ -255,6 +305,7 @@ export default {
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.tabelColumn = this.tabelColumns;
+    this.searchDetail = this.searchList;
     this.getDetailList();
   },
   watch: {
@@ -267,31 +318,28 @@ export default {
       } else {
         // 购买明细
         this.isHandle = true;
+        this.searchDetail = this.searchList;
         this.tabelColumn = this.tabelColumns;
-        this.searchDetail.map(item => {
-          if (item.key === 'orderType') {
-            item.options = this.options;
-          }
-        })
       }
     }
   },
   methods: {
     getRoleList() {
+      let arrList = JSON.parse(JSON.stringify(this.options));
       this.$fetch('getRoleRbacList', {category_id: 1,limit: 50, pos: 0}).then(res => {
-       let roleList = res.data.list;
-        roleList.map(item => {
-          this.orderOptions.push({
+        res.data.list.map(item => {
+          arrList.push({
             label: item.role_name,
             value: item.id
           })
         })
       })
-      this.searchDetail.map(item => {
+      this.searchOrder.map(item => {
         if (item.key === 'orderType') {
-          item.options = this.orderOptions;
+          item.options = arrList;
         }
       })
+      this.searchDetail = this.searchOrder;
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -310,7 +358,7 @@ export default {
       let type;
       if (this.activeIndex == '1') {
         // 购买明细 type必须大于等于7
-        type = formParams.orderType || 7;
+        type = formParams.orderType || '';
       } else {
         type = formParams.orderType || '';
       }
@@ -332,19 +380,24 @@ export default {
       }
       paramsObj.type = type;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      console.log(obj, '111111111111111111111111111');
+      this.params = obj;
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
         tableList.map(item=> {
           item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
-          item.type = this.culesType(item.type);
+          item.source = this.buyMethods(item.source);
+          item.type = this.culesType(item.type)[0];
         });
         this.tableList = tableList;
       }).catch(e=>{
         console.log(e);
       });
+    },
+    buyMethods(source) {
+      let arrType = ['其他', '购买', '升级', '注册赠送', ' 试用赠送', '其他'];
+      return arrType[source];
     },
     culesType(type) {
       if (this.activeIndex == '1') {
@@ -381,7 +434,20 @@ export default {
           message: '删除失败!'
         });
       });
-    }
+    },
+    // 导出账单明细
+    exportAccount() {
+      let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
+      this.$fetch(url, this.params).then(res => {
+        if (res.code == 200) {
+          this.params = {};
+          this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
+        } else {
+          this.$message.error(`账单明细${res.msg}`);
+        }
+      })
+    },
   }
 };
 </script>

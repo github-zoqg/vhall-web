@@ -3,7 +3,7 @@
     <!-- v-model="list" -->
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
-      <p class="label">表单名称（必填）</p>
+      <p class="label">表单名称</p>
       <el-input
         maxlength="50"
         show-word-limit
@@ -31,6 +31,7 @@
         :domain_url="imageUrl"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
+        :before-upload="beforeUploadHandler"
         :restPic="true"
         @delete="deleteBanner"
       >
@@ -60,7 +61,7 @@
             </template>
             <el-input
               v-else
-              axlength="50"
+              maxlength="60"
               show-word-limit
               placeholder="请输入题目"
               v-model="item.label"
@@ -72,26 +73,42 @@
 
             <!-- 输入框类型 || 设置表单时下拉框类型 -->
             {{node.other ? "其他" : ''}}
-            <el-input
+            <template
               v-if="item.type=='input' || item.type=='select'"
-              v-model="node.value"
-              v-bind="node.props"
-              :key='`${index}-${nodeIndex}`'
-              @change="selectOptChange(item, node, item.type=='select', item.privacy)"
             >
-              <i
-                class="el-icon-remove-outline removeIcon"
-                slot="suffix"
-                v-if="!!node.canRemove"
-                @click="deleteOptions(item, nodeIndex, item.privacy ? 'privacy' : 'select')"
-              ></i>
-              <i
-                class="el-icon-circle-plus-outline removeIcon"
-                slot="suffix"
-                v-if="!!node.privacyAdd && item.nodes.length < 4"
-                @click="privacyAdd(item.nodes, item)"
-              ></i>
-            </el-input>
+              <el-input
+                :disabled="item.disabledEdit"
+                v-model="node.value"
+                v-bind="node.props"
+                show-word-limit
+                :type="node.key == 'url'? 'textarea' : 'text'"
+                :autosize="node.key == 'url' ? { minRows: 2 } : ''"
+                :maxlength="node.key == 'url'? '200' : '60'"
+                :key='`${index}-${nodeIndex}`'
+                @change="selectOptChange(item, node, item.type=='select', item.privacy)"
+              >
+                <i
+                  class="el-icon-remove-outline removeIcon"
+                  slot="suffix"
+                  v-if="!!node.canRemove"
+                  @click="deleteOptions(item, nodeIndex, item.privacy ? 'privacy' : 'select')"
+                ></i>
+                <i
+                  class="el-icon-circle-plus-outline removeIcon"
+                  slot="suffix"
+                  v-if="!!node.privacyAdd && item.nodes.length < 4"
+                  @click="privacyAdd(item.nodes, item)"
+                ></i>
+              </el-input>
+              <!-- 区域级别下拉开启状态控制 -->
+              <el-switch
+                v-model="regionalLevel[node.index]"
+                @change="regionalLevelChange(node.index, item)"
+                v-if="item.reqType == 5 && node.index != 0"
+                class="regionalBtn"
+                :key="`statusctrl${index}-${nodeIndex}`"
+              ></el-switch>
+            </template>
             <!-- 单选类型 -->
             <el-radio-group
               v-model="item.value"
@@ -100,20 +117,19 @@
               :key='`${index}-${nodeIndex}`'
             >
               <el-radio
+                disabled
                 :name="item.id"
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
                 :label="radioItem.item_id"
               >
-                {{radioItem.other ? "其他" : ''}}
                 <el-input
-                  :disabled="radioItem.other"
                   @change="(chooseOptChange(item, radioItem))"
-                  maxlength="50"
+                  maxlength="60"
                   show-word-limit
-                  :placeholder="`选项${raionIndex+1}`"
+                  placeholder="选项"
                   v-model="radioItem.value"
-                  :class="{noFull: !!radioItem.other, radioInput: true}"
+                  class="radioInput"
                 >
                   <i
                     class="el-icon-remove-outline removeIcon"
@@ -122,6 +138,15 @@
                   ></i>
                 </el-input>
                 <br/>
+                <el-input
+                  class="other-input"
+                  placeholder="观众输入区"
+                  disabled
+                  v-if="radioItem.other"
+                  :maxlength="60"
+                  show-word-limit
+                  :key='`${index}-${nodeIndex}disabled`'
+                ></el-input>
               </el-radio>
             </el-radio-group>
             <!-- 复选框类型 -->
@@ -132,19 +157,19 @@
               :key='`${index}-${nodeIndex}`'
             >
               <el-checkbox
+                disabled
                 v-for="(radioItem, raionIndex) in node.children"
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
                 :label="radioItem.item_id"
                 :name="item.id"
+                :class="{'other-checkbox': radioItem.other}"
               >
-                {{radioItem.other ? "其他" : ''}}
                 <el-input
-                  :disabled="radioItem.other"
-                  maxlength="50"
+                  maxlength="60"
                   show-word-limit
-                  :placeholder="`选项${raionIndex+1}`"
+                  placeholder="选项"
                   v-model="radioItem.value"
-                  :class="{noFull: !!radioItem.other, radioInput: true}"
+                  class="radioInput"
                   @change="chooseOptChange(item, radioItem)"
                 >
                   <i
@@ -154,6 +179,15 @@
                   ></i>
                 </el-input>
                 <br/>
+                <el-input
+                  class="other-input"
+                  placeholder="观众输入区"
+                  disabled
+                  v-if="radioItem.other"
+                  :maxlength="60"
+                  show-word-limit
+                  :key='`${index}-${nodeIndex}disabled`'
+                ></el-input>
               </el-checkbox>
             </el-checkbox-group>
           </template>
@@ -255,7 +289,6 @@ export default {
         this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover ? newVal.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`;
       },
       deep: true,
-      immediate: true
     }
   },
   data(){
@@ -266,8 +299,12 @@ export default {
       drag: false,
       signUpSwtich: false,
       radio: 3,
-      imageUrl: `http:${Env.staticLinkVo.uploadBaseUrl}sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png`,
-      renderQuestion: []
+      imageUrl: '',
+      renderQuestion: [],
+      regionalLevel: {
+        1: true, // 市
+        2: true // 区/县
+      }
     };
   },
   computed: {
@@ -286,6 +323,18 @@ export default {
     }
   },
   methods: {
+    // 区域级别下拉菜单开启状态控制
+    regionalLevelChange(level, question) {
+      if (level == 1 && !this.regionalLevel[1]) {
+        this.regionalLevel[2] = false;
+      }
+      if (level == 2 && this.regionalLevel[2]) {
+        this.regionalLevel[1] = true;
+      }
+      question.options.show_city = this.regionalLevel[1] ? 1 : 0;
+      question.options.show_country = this.regionalLevel[2] ? 1 : 0;
+      this.subjectChange(question);
+    },
     onMove({ relatedContext, draggedContext }) {
       const relatedElement = relatedContext.element;
       const draggedElement = draggedContext.element;
@@ -301,14 +350,14 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
-      if (!this.title) {
-        this.$message.error('请填写表单名称！');
-      } else {
-        this.$message.success('保存成功！');
-      }
+      this.$message.success('保存成功');
     },
     // 添加一个题目选项
     addOption(data, other){
+      if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
+        this.$alert('最多可添加20个选项')
+        return false;
+      }
       console.log(data);
       let itemType = other ? 1: 0;
       let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
@@ -414,14 +463,19 @@ export default {
     },
     // 删除一个题目
     deleteQuestion(arr, index) {
-      this.$fetch('regQDelete', {
-        question_id: arr[index].question_id
-      }).then(res => {
-        arr.splice(index, 1);
-        console.log(res);
-      }).catch(err => {
-        console.log(err);
-      });
+      this.$confirm('删除后已收集信息会被清空，确认删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        this.$fetch('regQDelete', {
+          question_id: arr[index].question_id
+        }).then(res => {
+          arr.splice(index, 1);
+          console.log(res);
+        }).catch(err => {
+          console.log(err);
+        });
+      })
     },
     // 删除一个题目选项
     deleteOptions(item, index, type){
@@ -483,6 +537,8 @@ export default {
       let privacy1 = nodes[1].value;
       if(!privacy1 || !nodes[0].value.match(privacy1)){
         return this.$message.error('请完善可点击文字');
+      } else if (nodes[0].value.length >= 53) {
+        return this.$message.error('添加隐私协议会超出预览字数，请删减后再添加');
       }
       let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
       let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
@@ -520,14 +576,14 @@ export default {
       let text = JSON.parse(JSON.stringify(item[0].value));
       // let privacy =
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
-      if(matchPrivacy1){
+      if(matchPrivacy1 && item[2].value){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
         text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`);
       }else{
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
-      if(matchPrivacy2){
+      if(matchPrivacy2 && item[4].value){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
         text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`);
       }else{
@@ -536,19 +592,24 @@ export default {
 
       return text;
     },
-    // beforeUploadHnadler(file){
-    //   console.log(file);
-    //   const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-    //   const isType = typeList.includes(file.type.toLowerCase());
-    //   const isLt2M = file.size / 1024 / 1024 < 2;
-    //   if (!isType) {
-    //     this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
-    //   }
-    //   if (!isLt2M) {
-    //     this.$message.error('上传封面图片大小不能超过 2MB!');
-    //   }
-    //   return isType && isLt2M;
-    // },
+    // 上传格式校验
+    beforeUploadHandler(file){
+      console.log(file);
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message.error(`上传表单头图只能是 ${typeList.join('、')} 格式!`);
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message.error('上传表单头图大小不能超过 2MB!');
+        return false;
+      }
+      return isType && isLt2M;
+    },
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
@@ -561,11 +622,6 @@ export default {
       this.imageUrl = 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
       this.$emit('setBaseInfo', { cover: this.imageUrl });
     },
-    // 重置头图
-    // resetBanner(event){
-    //   this.imageUrl= 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png';
-    //   this.$emit('setBaseInfo', { cover: this.imageUrl });
-    // },
     // 题目顺序修改
     sortChange(val, arr){
       console.log('sortChange-->', this.renderQuestion);
@@ -575,8 +631,6 @@ export default {
         return acc + curr.question_id + ',';
       }, '');
       question_ids = question_ids.substring(0, question_ids.length - 1);
-      // console.log(question_ids);
-      // console.log(question_ids.splice(question_ids.index, 1));
 
       // 以问题数组的 index + 1 作为顺序提交更新顺序接口
       this.$fetch('regQSort', {
@@ -595,7 +649,19 @@ export default {
       this.$emit('setBaseInfo', obj);
     },
     // 短信验证开关
-    phoneSwitchChange(question) {
+    async phoneSwitchChange(question) {
+      let isConfirm = true;
+      if (!question.phoneValide) {
+        await this.$confirm('关闭短信验证将会导致无法验证用户手机号码，同时用户将无法接收预约短信，确认是否关闭？', '提示', {
+          confirmButtonText: '仍然关闭',
+          cancelButtonText: '暂不关闭',
+          center: true
+        }).then(() => {}).catch(() => {
+          isConfirm = false;
+          question.phoneValide = true;
+        });
+      }
+      if (!isConfirm) return false;
       const options = {
         question_id: question.question_id,
         options: JSON.stringify({
@@ -646,10 +712,7 @@ export default {
       margin-top: 20px;
     }
     /deep/ .el-checkbox__label{
-      width: 100%;
-    }
-    .el-checkbox:last-child{
-      margin-right: 30px;
+      width: calc(100% - 14px);
     }
   }
   .el-radio-group{
@@ -658,9 +721,34 @@ export default {
     .el-radio{
       display: block;
       margin-top: 20px;
+      margin-right: 0px;
+      /deep/ .el-radio__label {
+        .radioInput {
+          width: calc(100% - 24px);
+        }
+        .other-input {
+          margin-top: 10px;
+        }
+      }
     }
-    .el-radio:last-child{
-      margin-right: 30px;
+  }
+  /deep/ .el-input .el-input__count .el-input__count-inner {
+    background: inherit;
+  }
+  .el-checkbox {
+    margin-right: 0px;
+  }
+  .other-checkbox {
+    /deep/ .el-checkbox__input {
+      position: absolute;
+      top: 11px;
+    }
+    /deep/ .el-checkbox__label {
+      padding-left: 24px;
+      width: 100%;
+    }
+    .other-input {
+      margin-top: 10px;
     }
   }
   .bottomBtn{
@@ -709,12 +797,46 @@ export default {
   .selectInput{
     margin-bottom: 16px;
   }
-}
-/deep/ .box .avatar {
-  width: auto;
-}
-/deep/ .el-textarea__inner {
-  font-family: Arial, Arial, 'Microsoft Yahei';
+  .regionalInput{
+    width: calc(100% - 38px)
+  }
+  .regionalBtn{
+    margin-left: 10px;
+  }
+  /deep/ .box .avatar {
+    width: auto;
+  }
+  .el-textarea {
+    /deep/ .el-textarea__inner {
+      font-family: @fontRegular;
+    }
+    /deep/ .el-input__count {
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #666666;
+    }
+  }
+  /deep/ .el-input__inner {
+    height: 40px;
+    padding: 0 10px;
+  }
+  /deep/ .el-upload--picture-card {
+    i {
+      font-size: 18px;
+    }
+    .box {
+      span {
+        font-size: 14px
+      }
+      i {
+        font-size: 18px;
+      }
+    }
+    &:hover {
+      border: 1px dashed #c0ccda!important;
+    }
+  }
 }
 .sureBtn{
   background: none;

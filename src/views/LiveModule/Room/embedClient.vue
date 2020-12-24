@@ -1533,7 +1533,7 @@ export default {
       .sell-info {
         font-size: 14px;
         line-height: 20px;
-        font-family: PingFangSC-Regular;
+        font-family: @fontRegular;
         font-weight: 400;
         color: rgba(102, 102, 102, 1);
         margin-top: 20px;

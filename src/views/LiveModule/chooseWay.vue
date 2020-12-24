@@ -32,7 +32,7 @@
         </div>
         <div class="choose-btn">
           <el-button type="primary" round @click="goLive">发起直播</el-button>
-          <iframe :src="scheme" class="hide" frameborder="0" scrolling="no" id="start_live">发起直播</iframe>
+          <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
         <div class="v-download" v-if="chooseType === 'client'">
           客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服400-888-9970
@@ -58,32 +58,53 @@ export default {
     return {
       chooseType: 'browser',
       scheme: '',
+      schemeUrl: '',
       watchUrl: '',
       arr: [],
-      browserStatus: false
+      browserStatus: false,
+      clientOpen: ''
     };
   },
   created(){
-    console.log(this.$route);
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
-    this.arr = this.$route.params.str.split(','); // id，role
+    let _data = this.$route.params
+    this.arr = [_data.str, _data.role]
     this.getRoleUrl();
   },
   methods: {
     changeChoose(type) {
       this.chooseType = type;
-      this.scheme = '';
     },
     goLive(){
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          this.$router.push({
-            path: this.watchUrl
-          })
+          if (Number(this.arr[1]) === 1) {
+            // 进入直播前检测，若是直接发起
+            this.$fetch('checkLive', this.$params({
+              webinar_id: this.arr[0]
+            })).then((res) => {
+              if(res && res.code === 200) {
+                this.$router.push({
+                  path: this.watchUrl
+                })
+              } else {
+                this.$message.error(res.msg || '检测异常');
+              }
+            }).catch(e => {
+              console.log(e);
+              this.$message.error(res.msg || '检测异常');
+            });
+          }else{
+            this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
+          }
         } else {
           this.$router.push({path: '/browser'})
         }
+      } else {
+        // 客户端启动
+        document.querySelector('#start_live').setAttribute('src', this.scheme);
+        document.querySelector('#start_live').click();
       }
     },
     getRoleUrl() {
@@ -91,7 +112,7 @@ export default {
       let params = {
         webinar_id: this.arr[0],
         type: this.arr[1],
-        live_token: Number( this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
+        live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
       }; // 若非主持人登录，需传递用户token
       this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
         if(res && res.code === 200) {

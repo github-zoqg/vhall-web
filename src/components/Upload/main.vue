@@ -8,7 +8,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="domainUrl || domain_url" class="avatar" alt="" />
+          <img :src="domainUrl || domain_url" class="avatar" alt="" @click.stop="false"/>
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
@@ -21,14 +21,14 @@
               删除
             </span>
             <span v-if="!!$props.restPic">
-              <i class="el-icon-refresh-left" @click="refresh($event)"></i>
+              <i class="el-icon-refresh-left" @click.self="refresh($event)"></i>
               <br/>
               重置
             </span>
           </div>
         </div>
         <div v-else class="noPic">
-          <i class="el-icon-upload"></i>
+          <i class="iconfont-v3 saasicon_shangchuan"></i>
           <div class="tips">
             <slot name="tip"></slot>
           </div>
@@ -175,6 +175,10 @@ export default {
     height: 140px;
     line-height: unset;
     overflow: hidden;
+    border: 1px solid #CCCCCC;
+    i {
+      color: #999999;
+    }
     .box{
       width: 100%;
       height: 100%;
@@ -197,9 +201,9 @@ export default {
       }
     }
     img{
-      // width: 100%;
       height: 100%;
-      // object-fit: cover;
+      object-fit: scale-down;
+      width: 100%;
     }
   }
   .mask{

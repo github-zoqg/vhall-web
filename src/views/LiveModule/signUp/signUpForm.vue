@@ -90,7 +90,7 @@
             required
             label="请输入报名时您填写的手机号"
           >
-            <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入手机号"></el-input>
+            <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
           </el-form-item>
           <el-form-item>
             <div id="setCaptcha1">
@@ -132,6 +132,7 @@ export default {
       Env: Env,
       time: 60,
       form: {
+        phone: '',
         imgCode: '',
         code: ''
       },

@@ -18,7 +18,7 @@ export const liveTag = (val) => {
      * webinar_state  1直播 2预约 3结束 4点播 5回放
      * webinar_type  1音频直播 2视频直播 3互动直播
      */
-    const liveTypeStr = ['', '直播', '预约', '结束', '点播', '回放'];
+    const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
     const liveStatusStr = ['', '音频直播', '视频直播', '互动直播'];
     let str = liveTypeStr[val.webinar_state];
     if (val.webinar_state != 4) {
@@ -28,7 +28,7 @@ export const liveTag = (val) => {
 };
 export const actionText = (val) => {
   // webinar_state  1直播 2预约 3结束 4点播 5回放
-  const liveTypeStr = ['', '直播', '预约', '结束', '点播', '回放'];
+  const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
   let str = liveTypeStr[val];
   return str;
 };
@@ -45,7 +45,7 @@ export const unitCovert = (val) => {
 };
 export const orderTypeText = (val) => {
   // val  7-结清并发欠费,8-结清流量欠费,10-并发包,11-流量包12-扩展包，13-专业版 ，14回放流量包，15-免费回放流量包，16-并发预充值
-  const orderList = ['结清并发欠费', '结清流量欠费', '', '并发包', '流量包12', '扩展包', '专业版', '回放流量包', '免费回放流量包', '并发预充值'];
+  const orderList = ['结清并发欠费', '结清流量欠费', '', '并发包', '流量包', '扩展包', '专业版', '回放流量包', '免费回放流量包', '并发预充值'];
   let text = orderList[val - 7];
   return text;
 };
@@ -77,21 +77,21 @@ export const filterPhone = (value) => {
 
 export const wordStatusCss = (ext) => {
   if (ext === 'pdf') {
-    return 'saasPDFwenjian';
+    return 'saasPDFwenjian color-E34522';
   } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'bmp') {
-    return 'saastupianwenjian';
+    return 'saastupianwenjian color-794CC5';
   } else if (ext === 'video') {
-    return 'saasshipinwenjian';
+    return 'saasshipinwenjian color-3562FA';
   } else if (ext === 'doc' || ext === 'docx') {
-    return 'saaswordwendang';
+    return 'saaswordwendang color-3562FA';
   } else if (ext === 'ppt' || ext === 'pptx') {
-    return 'saaspptwendang';
+    return 'saaspptwendang color-FA9A32';
   } else if (ext === 'csv') {
-    return 'saasCSVwenjian';
+    return 'saasCSVwenjian color-14BA6A';
   } else if (ext === 'xls' || ext === 'xlsx') {
-    return 'saasexcelwendang';
+    return 'saasexcelwendang color-14BA6A';
   } else if (ext === 'media') {
-    return 'saasyinpinwenjian';
+    return 'saasyinpinwenjian color-3562FA';
   }
 }
 

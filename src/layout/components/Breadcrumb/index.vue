@@ -55,9 +55,9 @@ export default {
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title);
       const first = matched[0];
-      if (!this.isDashboard(first)) {
+      /*if (!this.isDashboard(first)) {
         matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched);
-      }
+      }*/
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false);
     },
     isDashboard(route) {
@@ -109,14 +109,14 @@ export default {
   .no-redirect {
     cursor: text;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
   }
 }
 /deep/.el-breadcrumb__inner a, /deep/.el-breadcrumb__inner.is-link {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
 }

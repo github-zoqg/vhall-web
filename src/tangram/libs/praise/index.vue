@@ -15,8 +15,9 @@ export default {
     roomId: {
       type: String
     },
-    times: {
-      type: Number
+    isLogin: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -37,31 +38,31 @@ export default {
     };
   },
   created () {
-    // this.praise();
-    this.timesPage = JSON.parse(sessionStorage.getItem('moduleShow')).webinar.like + this.times;
-    this.timeShowAccount = this.transformWatchNum(this.timesPage);
+    this.getTotalLike()
   },
-  mounted () {},
-
   methods: {
+    // 获取总点赞数
+    getTotalLike () {
+      return this.$fetch('likeTotal', {
+        room_id: this.roomId
+      }).then((res) => {
+        if (res.code == 200) {
+          this.timesPage = res.data.total
+          this.timeShowAccount = this.transformWatchNum(this.timesPage);
+        }
+      })
+    },
     startZanAnimation () {
       /* global $ */
-      let imgIndex = parseInt(Math.random() * 5);
-      console.log(imgIndex, '2132132131');
-      var random = this.getRandom(10) * 3;
-      var img = new Image();
-      img.src = `${this.imgList[imgIndex]}`
-      img.style.cssText = `z-index:666;position:absolute;bottom:0;left:${random}px`;
-      // var img = $(
-      //   `<img style="z-index:666;position:absolute;bottom:0;left:${random}px" src=${this.imgList[imgIndex]}>`
-      // );
-      let helloDom = document.querySelector('.hello')
-      let supportDom = document.querySelector('.support-heart')
-      helloDom.style.left = supportDom.style.left + 'px'
-      helloDom.append(img)
-      // $('.hello')
-      //   .css('left', $('.support-heart').position().left + 'px')
-      //   .append(img);
+      let imgIndex = parseInt(Math.random() * 5)
+      console.log(imgIndex, '2132132131')
+      var random = this.getRandom(10) * 3
+      var img = $(
+        `<img style="z-index:666;position:absolute;bottom:0;left:${random}px" src=${this.imgList[imgIndex]}>`
+      )
+      $('.hello')
+        .css('left', $('.support-heart').position().left + 'px')
+        .append(img)
       img.animate(
         {
           bottom: '90px',
@@ -89,13 +90,13 @@ export default {
                 1500,
                 'linear',
                 function () {
-                  img.remove();
+                  img.remove()
                 }
-              );
+              )
             }
-          );
+          )
         }
-      );
+      )
     },
     getRandom (max, flag) {
       var num;
@@ -111,23 +112,27 @@ export default {
         : Math.floor(Math.random() * (max + 1));
     },
     support () {
-      this.startZanAnimation();
-      // startZanAnimation();
+      if (this.isLogin) {
+        this.startZanAnimation();
+        // startZanAnimation();
 
-      if (this.clearSet) {
-        window.clearTimeout(this.clearSet);
+        if (this.clearSet) {
+          window.clearTimeout(this.clearSet);
+        } else {
+          this.clearSet = null;
+        }
+        this.timess++;
+        this.timesPage = this.timesPage + 1;
+        this.timeShowAccount = this.transformWatchNum(this.timesPage);
+        this.getRandom(5);
+        this.imgList.push(require(`./img/zan-${this.getRandom(5)}.png`));
+        this.clearSet = setTimeout(() => {
+          this.praise();
+          this.timess = 0;
+        }, 2000);
       } else {
-        this.clearSet = null;
+        this.$emit('login')
       }
-      this.timess++;
-      this.timesPage = this.timesPage + 1;
-      this.timeShowAccount = this.transformWatchNum(this.timesPage);
-      this.getRandom(5);
-      this.imgList.push(require(`./img/zan-${this.getRandom(5)}.png`));
-      this.clearSet = setTimeout(() => {
-        this.praise();
-        this.timess = 0;
-      }, 2000);
     },
     transformWatchNum (num) {
       if (num < 10000) {

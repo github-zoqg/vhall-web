@@ -9,6 +9,7 @@
     <search-area
       ref="searchArea"
       :searchAreaLayout="searchAreaLayout"
+      :active="active"
       @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
       >
@@ -17,10 +18,20 @@
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
+        <span>并发趋势图</span>
+        <el-tooltip effect="dark" placement="right-start">
+          <div slot="content">
+            筛选条件内，并发随时间变化的趋势图
+          </div>
+          <i class="el-icon-question"></i>
+        </el-tooltip>
+        <lint-charts :lineDataList="limitDataList" :type="1"></lint-charts>
+      </div>
+      <div class="statistical-line statistical-dark">
         <span>观众访问趋势图</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
-            当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
+            筛选条件内，观看人数随时间变化的趋势图
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
@@ -58,10 +69,12 @@ import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import titleData from './components/title';
 import PageTitle from '@/components/PageTitle';
+import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
       titleType: '直播',
+      active: 2,
       params: {}, //导出的时候用来记录参数
       mainKeyData: {
         max_onlines: 0,
@@ -70,6 +83,7 @@ export default {
       },
       liveDetailInfo: {},
       allDataList: {},
+      limitDataList: [],
       lineDataList: [],
       areaDataList: {},
       highMax: 0,
@@ -106,6 +120,25 @@ export default {
         },
         {
           type: "1",
+          active: 2,
+          options: [
+            {
+              title: '全部',
+              active: 1,
+            },
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
         },
         {
           type: "2",
@@ -189,7 +222,14 @@ export default {
       } else {
         this.searchAreaLayout = this.searchLayout;
       }
-      for (let i in formParams) {
+      if (formParams.end_time && !formParams.start_time) {
+        formParams.end_time = '';
+        formParams.start_time = '';
+      } else {
+        paramsObj.start_time = getRangeDays(this.active);
+        paramsObj.end_time = getRangeDays(this.active);
+      }
+      for (let i in this.$params(formParams)) {
         if (i === 'searchTime' && formParams.searchTime) {
           paramsObj['start_time'] = formParams[i][0];
           paramsObj['end_time'] = formParams[i][1];
@@ -197,15 +237,24 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      if (paramsObj.start_time) {
-        paramsObj.start_time = paramsObj.start_time.substring(0, 10);
-      }
       this.params = this.$params(paramsObj);
       this.getAllData(paramsObj);
     },
     getAllData(params) {
       let promiseArr = [] //promise异步数组
       let obj = {};
+      let total = {};
+      promiseArr.push(
+        this.$fetch('getWebinarSwitchList', params).then(res => {
+          total.total_live_time = res.data.total_live_time;
+          total.total = res.data.total;
+        })
+      )
+      promiseArr.push(
+        this.$fetch('getMaxuv', params).then(res => {
+          total.max_onlines = res.data.max_onlines;
+        })
+      )
       promiseArr.push(
         this.$fetch('getStatisticsinfo', params).then(res => {
           obj = {
@@ -213,24 +262,18 @@ export default {
           };
         })
       )
-      promiseArr.push(
-        this.$fetch('getWebinarSwitchList', params).then(res => {
-          obj.total_live_time = res.data.total_live_time;
-          obj.total = res.data.total;
-        })
-      )
-      promiseArr.push(
-        this.$fetch('getMaxuv', params).then(res => {
-          obj.max_onlines = res.data.max_onlines;
-        })
-      )
       Promise.all(promiseArr).then(() => {
-        this.mainKeyData = { ...obj }
+        this.mainKeyData = {...obj, ...total};
+        console.log(this.mainKeyData, '???????????????');
       })
       // 获取用户统计
       this.$fetch('getDateUvinfo', params).then(res => {
         this.allDataList = res.data;
         this.lineDataList = this.allDataList.live;
+      });
+      // 获取并发趋势图
+      this.$fetch('getWebinarinfo', params).then(res => {
+        this.limitDataList = res.data.list;
       });
       // 获取观看地域
       this.$fetch('getProvinceinfo', params).then(res => {
@@ -249,7 +292,8 @@ export default {
     exportCenterData() {
       this.$fetch('exportWebinarInfo', this.params).then(res => {
         if (res.code == 200) {
-          this.$message.success(`活动数据报告导出成功，请去下载中心下载`);
+          this.$message.success(`活动数据报告导出申请成功，请去下载中心下载`);
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(`活动数据报告${res.msg}`);
         }
@@ -280,7 +324,7 @@ export default {
     font-size: 16px;
     color: #1a1a1a;
     line-height: 22px;
-    padding: 12px 0 75px 12px;
+    padding: 12px 0 50px 12px;
   }
 }
 .statistical-line {
@@ -294,11 +338,14 @@ export default {
       padding-left: 34px;
     }
   }
+  .statistical-dark{
+    padding-top: 30px;
+  }
 .changeOption {
   border-radius: 100px;
   border: 1px solid #ccc;
   position: absolute;
-  top: -10px;
+  top: 20px;
   right: 40px;
   cursor: pointer;
   span {

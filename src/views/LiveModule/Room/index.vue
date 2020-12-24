@@ -31,6 +31,7 @@
 <script>
 import VhallReport from '@/components/VhallReport/main';
 import { browserSupport } from '@/utils/getBrowserType';
+import { sessionOrLocal } from '@/utils/utils';
 import chrome from './chrome';
 import tip from './tip';
 export default {
@@ -87,6 +88,7 @@ export default {
       }, 1000 * 60 * 30);
     },
   getUserinfo() {
+    window.se = sessionOrLocal
       this.$fetch('initiatorInfo', { webinar_id: this.il_id })
         .then(async res => {
           if (res.code != 200) {
@@ -94,10 +96,12 @@ export default {
             return this.tipMsg = res.msg;
           }
           const mockResult =  this.rootActive = res.data;
+          console.warn('*************this.rootActive*************', this.rootActive);
           sessionStorage.setItem('host_uid', JSON.stringify(mockResult.join_info.third_party_user_id));
           sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
           sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
           sessionStorage.setItem('roomId', mockResult.interact.room_id);
+          sessionStorage.setItem('report_extra', JSON.stringify(mockResult.report_data))
           sessionStorage['vhall-vsstoken'] = mockResult.join_info.interact_token;
           sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
           sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???

@@ -46,7 +46,7 @@
         <div class="step-2" v-if="findStep===2">
           <div class="find-phone" v-if="isType==='phone'">
             <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email')">邮箱找回密码</span></p>
-            <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules" label-width="100px">
+            <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules" label-width="120px">
             <el-form-item label="手机号码："  prop="phone">
               <el-input
                 placeholder="请输入手机号"
@@ -72,13 +72,13 @@
               </el-input>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click="sureFindPassword">确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" @click.stop="sureFindPassword()">确&nbsp;&nbsp;&nbsp;认</el-button>
             </div>
           </el-form>
           </div>
           <div class="find-phone" v-if="isType==='email'">
             <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone')">手机找回密码</span></p>
-            <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules" label-width="100px">
+            <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules" label-width="120px">
             <el-form-item label="邮箱：" prop="email">
               <el-input
                 placeholder="请输入邮箱"
@@ -102,12 +102,12 @@
         </div>
         <div class="step-3" v-if="findStep===3">
           <el-form ref="resetPassword" :model="dynamicForm" :rules="loginRules" label-width="100px">
-            <el-form-item label="新密码：" prop="possword">
+            <el-form-item label="新密码：" prop="password">
               <el-input
                 placeholder="请输入新密码"
                 style="width:270px"
                 type="password"
-                v-model="dynamicForm.possword">
+                v-model="dynamicForm.password">
               </el-input>
             </el-form-item>
             <el-form-item prop="checkPossword" label="确认密码：">
@@ -115,11 +115,11 @@
                 placeholder="请再次输入密码"
                 style="width:270px"
                 type="password"
-                v-model="dynamicForm.checkPossword">
+                v-model="dynamicForm.checkPassword">
               </el-input>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click="resetPassword">确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" @click="resetPassword()">确&nbsp;&nbsp;&nbsp;认</el-button>
             </div>
           </el-form>
         </div>
@@ -142,7 +142,7 @@ export default {
     OldHeader
   },
   data() {
-     let validatePhone = (rule, value, callback) => {
+    let validatePhone = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -152,36 +152,36 @@ export default {
         callback();
       }
     };
-    let validatePossword = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.loginRules.password) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
+    let validateCheckPass = (rule, value, callback) => {
+     if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.dynamicForm.password) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
     return {
-      findStep: 3,
+      findStep: 1,
       time: 60,
       isType: 'phone',
       codeKey: 0,
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
-      dynamicForm: {phone: '',possword: '', checkPossword: '', code: ''},
+      dynamicForm: {phone: '', password: '', checkPassword: '', code: ''},
       loginRules: {
         phone: [
           { validator: validatePhone, trigger: 'blur' }
         ],
-        possword: [
-          { required: true, message: '请输入新密码', trigger: 'blur' }
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入验证码', trigger: 'blur' }
         ],
-        checkPossword: [
-          { validator: validatePossword, trigger: 'blur' }
+        checkPassword: [
+          { validator: validateCheckPass, trigger: 'blur' }
         ]
       }
     };
@@ -203,7 +203,7 @@ export default {
     getDyCode() {
       if (this.checkMobile()) {
         if (!this.mobileKey) {
-          this.$message.error('图形验证码未通过');
+          this.$message.error('请先校验图形验证码');
           return;
         }
         this.$fetch('sendCode', {
@@ -218,15 +218,16 @@ export default {
     },
     // 第二步确定 检测短信验证码
     sureFindPassword() {
-      this.$refs.dynamicForm.validate((valid) => {
+      this.$refs['checkDynamicForm'].validate((valid) => {
         if (valid) {
-          this.$fetch('checkedCode', {
-          type: this.isType === 'phone' ? 1 : 2,
-          data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
-          code: this.dynamicForm.code,
-          scene_id: this.isType === 'phone' ? 5 : 4
-        }).then(() => {
-          if (res.code == 200 && res.data.check_result === 1) {
+          let params = {
+            type: this.isType === 'phone' ? 1 : 2,
+            data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
+            code: this.dynamicForm.code,
+            scene_id: this.isType === 'phone' ? 5 : 4
+          }
+          this.$fetch('codeCheck', params).then(res => {
+          if (res.code == 200 && res.data) {
             this.codeKey = res.data.key;
             this.findStep = 3;
           } else {
@@ -241,12 +242,13 @@ export default {
     },
     // 第三步重置密码
     resetPassword() {
-      this.$refs.resetPassword.validate((valid) => {
+      console.log(this.dynamicForm.checkPassword, this.dynamicForm.password);
+      this.$refs['resetPassword'].validate((valid) => {
           if (valid) {
             let params = {
               old_password: '',
               password: this.dynamicForm.password,
-              confirm_password: this.dynamicForm.checkPossword,
+              confirm_password: this.dynamicForm.checkPassword,
               scene_id: this.isType === 'phone' ? 5 : 4,
               key: this.codeKey
             };
@@ -255,7 +257,9 @@ export default {
                 this.findStep = 4;
                 setTimeout(() => {
                   this.$router.push({path: '/'});
-                }, 3000);
+                }, 1000);
+              } else {
+                this.$message.error(res.msg);
               }
             });
           } else {
@@ -447,6 +451,7 @@ export default {
               background: #f5f5f5;
               color: #383838;
               font-size: 12px;
+              cursor: pointer;
             }
             .findCaptcha{
               width: 270px;

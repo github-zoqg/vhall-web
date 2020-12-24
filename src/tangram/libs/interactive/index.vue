@@ -20,7 +20,7 @@
     <!-- 主持人 - 直播未开始 ， 音频直播 ， 音频直播 结束 遮罩图 -->
     <div
       :class="status == 1 ? 'audio-img':'audio-img--beforestart'"
-      v-show="layout == 2 || videoToAudio"
+      v-show="layout == 1 || videoToAudio"
       v-if="roleName == 1"
     >
       <div class="voicebg">
@@ -313,23 +313,28 @@ export default {
         if (this.$SDKINSTANCE) {
           resolve(this.$SDKINSTANCE);
         } else {
-          console.warn({
-              accountId: this.accountId, // 第三方用户ID，必填     *不能是中文
-              inavId: this.inavId, // 房间ID，必填
-              appId: this.appId, // 应用ID，必填
-              token: this.token, // access_token，必填
-              role: this.role,
-              roomId: this.roomId // 如需开启旁路，必填
-            }, '查询初始化的值');
-          VhallRTC.createInstance(
-            {
-              accountId: this.accountId, // 第三方用户ID，必填     *不能是中文
-              inavId: this.inavId, // 房间ID，必填
-              appId: this.appId, // 应用ID，必填
-              token: this.token, // access_token，必填
-              role: this.role,
-              roomId: this.roomId // 如需开启旁路，必填
-            },
+          let _data = {
+            accountId: this.accountId, // 第三方用户ID，必填     *不能是中文
+            inavId: this.inavId, // 房间ID，必填
+            appId: this.appId, // 应用ID，必填
+            token: this.token, // access_token，必填
+            role: this.role,
+            roomId: this.roomId // 如需开启旁路，必填
+          }
+          try {
+            let _otherOption = JSON.parse(sessionStorage.getItem('report_extra'))
+            let _report_extra = JSON.parse(_otherOption.report_extra)
+            // delete _otherOption.report_extra.switch_id
+            _otherOption.report_extra = JSON.stringify({
+              join_id: _report_extra.join_id
+            })
+            _data.otherOption = _otherOption
+          } catch (error) {}
+          // otherOption: {
+          //   ...JSON.parse(sessionStorage.getItem('report_extra'))
+          // }
+          console.warn(_data, '查询初始化的值');
+          VhallRTC.createInstance(_data,
             e => {
               this.$SDKINSTANCE = e.vhallrtc;
               window.hudong = e.vhallrtc;
@@ -452,7 +457,8 @@ export default {
       //  主持人 - 无视频自动切换音频直播 (4.9.7版本去掉该逻辑)
 
       // 音频直播
-      if (this.layout == 2) {
+      console.warn('this.layout----------', this.layout);
+      if (this.layout == 1) {
         // 显示遮罩层
         // 禁用视频
         // 不采集 视频设备信息
@@ -474,7 +480,7 @@ export default {
         }
         profile = VhallRTC[profileConst];
       }
-      console.log('设备变更了', profileConst, this.$profile, profile, this.mainScreen, this.accountId);
+      console.log('设备变更了',vidoeDeviceStatus, profileConst, this.$profile, profile, this.mainScreen, this.accountId);
       let options = Object.assign(
         {
           videoNode: `stream-${this.accountId}`, // 传入本地视频显示容器，必填
@@ -652,7 +658,7 @@ export default {
      */
 
     async startLive (status) {
-      console.warn('-----------------------------------', this.webinadId, this.$route)
+      console.warn('点击的是开支直播-----------------------------------', this.webinadId, this.$route, status)
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
@@ -706,9 +712,13 @@ export default {
           return this.$fetch('liveEnd', {
             webinar_id: this.webinadId,
             end_type: 1
-          }).then(() => {
-            EventBus.$emit('endLive');
-            // 广播 直播结束
+          }).then((res) => {
+            if(res.code == 200){
+              EventBus.$emit('endLive');
+              // 广播 直播结束
+            }else{
+              this.$message.warning(res.msg)
+            }
           });
         }).catch((e) => {
           console.error(e, 333);
@@ -724,9 +734,13 @@ export default {
           return this.$fetch('liveEnd', {
             webinar_id: this.webinadId,
             end_type: 1
-          }).then(() => {
-            EventBus.$emit('endLive');
-            // 广播 直播结束
+          }).then((res) => {
+            if(res.code == 200){
+              EventBus.$emit('endLive');
+              // 广播 直播结束
+            }else{
+              this.$message.warning(res.msg)
+            }
           });
         });
     },
@@ -1866,7 +1880,7 @@ export default {
     background-size: 400px;
     width: 100%;
     height: 100%;
-    z-index: 3;
+    z-index: 4;
     display: flex;
     justify-content: center;
     align-items: center;

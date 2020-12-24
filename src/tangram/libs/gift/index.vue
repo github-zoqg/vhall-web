@@ -174,20 +174,6 @@ export default {
           console.log('礼物列表',this.giftContentControl);
         }
       })
-      // if (this.radio == 1) {
-      //     let link = document.createElement('a')
-      //     link.href = res.data.pay_data
-      //     link.target = '_blank'
-      //     link.click()
-      // } else {
-      //     let a = QRcode.toDataURL(
-      //     res.data.pay_data,
-      //     (err, url) => {
-      //     this.wechatPay = true
-      //     this.wechatPayImg = url
-      //     }
-      //     )
-      // }
     },
     // 送礼物
     sendGift (item) {
@@ -207,7 +193,8 @@ export default {
       this.imageIndex = index
     },
     giftClick () {
-      if(JSON.parse(sessionStorage.getItem('authInfo')).length == undefined){
+      let userInfo = sessionStorage.getItem('userInfo')
+      if(userInfo){
         //登录状态
         this.getList()
       }else {
@@ -316,7 +303,7 @@ export default {
                     color: #fff;
                     outline: none;
                     margin-right: 10px;
-                    font-family: PingFangSC-Regular;
+                    font-family: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif';
                     font-size: 12px;
                     text-align: center;
                     vertical-align: middle;

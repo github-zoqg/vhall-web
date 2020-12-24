@@ -44,7 +44,6 @@
       ></div>
     </div>
      <!-- v-if="!VhallMsgSdk" -->
-    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.7.js"></remote-script>
     <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.4-1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
@@ -303,8 +302,9 @@ export default {
         client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
         token: this.token
       };
-      console.log('实例化文档参数', opt);
+      console.log('实例化文档参数1', opt);
       let success = () => {
+        console.log('实例化文档成功')
         if (!this.isVod) {
           this.loadRemote();
         }

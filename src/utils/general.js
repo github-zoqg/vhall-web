@@ -85,34 +85,40 @@ export function formateDate(timer) {
   let mm = time.getMinutes();
   let s = time.getSeconds();
   return (
-    y +
-    '-' +
-    mat(m) +
-    '-' +
-    mat(d) +
-    ' ' +
-    mat(h) +
-    ':' +
-    mat(mm) +
-    ':' +
-    mat(s)
+    `${y}-${mat(m)}-${mat(d)}`
   );
+  // return (
+  //   y +
+  //   '-' +
+  //   mat(m) +
+  //   '-' +
+  //   mat(d) +
+  //   ' ' +
+  //   mat(h) +
+  //   ':' +
+  //   mat(mm) +
+  //   ':' +
+  //   mat(s)
+  // );
 }
 
 export function getRangeDays(value) {
   let date = new Date();
   if (value == 2) {
-    // 昨日
-    let oldDate = date.setTime(date.getTime() - 3600 * 1000 * 24);
+    // 今日
+    let oldDate = date.setTime(date.getTime());
     return formateDate(oldDate);
   } else if (value == 3) {
     // 近7日
-    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 8);
     return formateDate(oldWeek);
   } else if (value == 4) {
     // 近30日
-    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
+    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 31);
     return formateDate(oldMonth);
+  } else if (value == 5){
+    let yesDate = date.setTime(date.getTime() - 3600 * 1000 * 24);
+    return formateDate(yesDate);
   } else {
     return formateDate(date);
   }

@@ -14,8 +14,11 @@
         :clearable=false
         @change="queryList"
       />
-      <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList()">
-        <i class="el-icon-search el-input__icon" slot="suffix"></i>
+      <el-input placeholder="请输入活动标题" v-model.trim="query.title"
+                clearable
+                @keyup.enter.native="queryList"
+                @clear="queryList">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>
       </el-input>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
     </div>
@@ -76,7 +79,7 @@ export default {
           width: 'auto'
         },
         {
-          label: '开播时间',
+          label: '消耗时间',
           key: 'pay_date',
           width: 200
         },
@@ -91,19 +94,31 @@ export default {
   methods: {
     queryList() {
       this.query.pos = 0;
-      this.query.pageNumber = 0;
+      this.query.pageNumber = 1;
       this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.sonTab.pageInfo.pageNum = 1;
+        this.$refs.sonTab.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
       this.getUserPayDetail();
     },
-    getUserPayDetail() {
+    getUserPayDetail(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+        this.query.limit = 10;
+      }
       let params = {
-        account_id: sessionOrLocal.get('userId'), // b端账号id
+        account_id: this.$route.params.str, // b端账号id
         type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
         pos: this.query.pos,
         limit: this.query.limit,
         subject: this.query.title,
       };
-      if (this.timeStr) {
+      if (this.query.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
@@ -117,18 +132,20 @@ export default {
     },
     downloadHandle() {
       let params = {
-        account_id: sessionOrLocal.get('userId'),
+        account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        subject: this.query.title,
         pos: 0,
         limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
         type: 1
       };
-      if (this.timeStr) {
+      if (this.query.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', params).then(res=>{
         if (res && res.code === 200) {
           this.$message.success('下载申请成功，请去下载中心下载该项！');
+          this.$EventBus.$emit('saas_vs_download_change');
         } else {
           this.$message.error(res.msg);
         }

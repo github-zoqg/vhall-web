@@ -303,7 +303,7 @@ export default {
     if (sessionStorage.getItem('watch')) {
       if (JSON.parse(sessionStorage.getItem('moduleShow')).modules.chat_login.show == 1) {
         if (
-          JSON.parse(sessionStorage.getItem('authInfo')).length == undefined ||
+          sessionStorage.getItem('userInfo') ||
           this.isEmbed
         ) {
           // 登录状态
@@ -330,6 +330,10 @@ export default {
     // document.addEventListener('mousewheel', e => {
     //   this.personStatus.canOpen = false
     // })
+    this.$EventBus.$on('codeText', msg=>{
+      // 口令登录显示  自身显示消息
+      this.chatList.push(msg);
+    })
   },
 
   methods: {
@@ -409,8 +413,7 @@ export default {
           data.image_urls = this.imgUrls;
           data.type = 'image';
         }
-        console.log(11111122222, this.imgUrls)
-        let userInfo = JSON.parse(sessionStorage.getItem('user'));
+        let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
         console.warn('获取当前的本地用户信息', userInfo)
         let context = {
           nickname: userInfo.nickname ? userInfo.nickname : userInfo.nick_name, // 昵称
@@ -422,11 +425,10 @@ export default {
         console.log('获取当前的本地用户信息 -context', context);
         // data.role_name = this.roleName
         let filterStatus = true;
-        console.log(JSON.stringify(data));
         if (sessionStorage.getItem('watch')) {
           if (this.chatFilterData && this.chatFilterData.length > 0) {
             this.chatFilterData.map(item => {
-              if (inputValue.includes(item)) {
+              if (inputValue.includes(item.name)) {
                 filterStatus = false;
               }
             });
@@ -540,7 +542,6 @@ export default {
         pos: Number(this.curr_page )* 50,
         limit: 50
       }).then(res => {
-        console.warn(res, '请求历时消息接口为空')
         if (res.data.list.length) {
           let list = res.data.list
             .map(item => {
@@ -610,11 +611,12 @@ export default {
     },
     // 子组件查看抽奖
     lotteryCheck (msg, userId) {
+      console.warn('点击的组件查看抽奖', msg, userId);
       EventBus.$emit('lotteryCheck', msg, userId);
     },
     // 子组件查看问卷
     questionnaireCheck (questionnaire_id) {
-      console.log('ss', questionnaire_id);
+      console.log('ss1', questionnaire_id);
       EventBus.$emit('questionnaireCheck', questionnaire_id);
     },
     // 子组件预览聊天图片

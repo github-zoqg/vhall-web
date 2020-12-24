@@ -44,7 +44,7 @@ export default {
 .goods-info .goods-title {
   display: block;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 20px;
@@ -53,7 +53,7 @@ export default {
   margin-top: 9px;
   span {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
@@ -77,7 +77,7 @@ export default {
   border-radius: 20px;
   line-height: 32px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FFFFFF;
   margin-top: 16px;
@@ -88,14 +88,14 @@ export default {
 }
 span.tips-title {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FB3A32;
   line-height: 20px;
 }
 .tips-content {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 20px;

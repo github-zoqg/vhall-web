@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="signup-main">
     <div class="head">
       <pageTitle title="报名表单">
         <el-switch
@@ -18,19 +18,20 @@
       </pageTitle>
       <div class="settingBox">
         <ul class="options">
-          <template v-for="(item, key) in setOptions">
-            <section class="block" :key="key">{{key}}</section>
+          <template v-for="(item, key, index) in setOptions">
+            <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
             <li
               :class="{
-                item: true, active: item.name &&
-                questionArr.some(qes => qes.name == item.name)
+                item: true,
+                active: item.isActive || item.name && questionArr.some(qes => qes.name == item.name)
               }"
               v-for="item in item"
               :key="item.label"
               @click="addFiled(item)"
             >
               <!-- <icon :class="item.icon"></icon> -->
-              <icon :icon-class="item.icon">{{item.label}}</icon>
+              <icon class="icon" :icon-class="item.icon"></icon>
+              <span>{{item.label}}</span>
             </li>
           </template>
         </ul>
@@ -46,9 +47,9 @@
           <!-- 表单预览组件 -->
           <signUpForm
             :baseInfo="baseInfo"
-            v-show="rightComponent == 'signUpForm'"
+            v-if="rightComponent == 'signUpForm'"
             :questionArr.sync="questionArr"
-            @closePreview="closePreview"
+            @closeSignUp="closePreview"
           ></signUpForm>
         </div>
       </div>
@@ -70,7 +71,7 @@
 import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
-import signUpForm from './signUpForm';
+import signUpForm from '../Subscribe/signUpForm';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
 export default {
@@ -92,26 +93,26 @@ export default {
         tab_form_title: '用户报名',
         title: '',
         intro: '',
-        cover: 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'
+        cover: ''
       },
       radio: 3,
       rightComponent: 'fieldSet',
       setOptions: {
         "基本信息": [
-          {icon: 'saasicon_xingming', label: "姓名", name: 'name'},
-          {icon: 'el-icon-male', label: "性别", name: 'gender'},
-          {icon: 'el-icon-phone', label: "手机", name: 'phone'},
-          {icon: 'el-icon-message', label: "邮箱", name: 'email'},
-          {icon: 'el-icon-location', label: "地域", name: 'regional'},
-          {icon: 'el-icon-office-building', label: "公司", name: 'company'},
-          {icon: 'el-icon-info', label: "职务", name: 'duty'},
+          {icon: 'saasicon_name', label: "姓名", name: 'name'},
+          {icon: 'saasicon_gender', label: "性别", name: 'gender'},
+          {icon: 'saasicon_phone', label: "手机", name: 'phone'},
+          {icon: 'saasicon_mail', label: "邮箱", name: 'email'},
+          {icon: 'saasicon_regional', label: "地域", name: 'regional'},
+          {icon: 'saasicon_company', label: "公司", name: 'company'},
+          {icon: 'saasicon_position', label: "职务", name: 'duty'},
         ],
         "题目类型": [
-          {icon: 'el-icon-user-solid', label: "单选题", type: 'radio'},
-          {icon: 'el-icon-user-solid', label: "多选题", type: 'checkBox'},
-          {icon: 'el-icon-tickets', label: "问答题", type: 'input'},
-          {icon: 'el-icon-caret-bottom', label: "下拉题", type: 'select'},
-          {icon: 'el-icon-user-solid', label: "隐私声明", name: 'privacy'},
+          {icon: 'saasicon_radio', label: "单选题", type: 'radio'},
+          {icon: 'saasicon_multi-select', label: "多选题", type: 'checkBox'},
+          {icon: 'saasicon_question', label: "问答题", type: 'input'},
+          {icon: 'saasicon_drop-down', label: "下拉题", type: 'select'},
+          {icon: 'saasicon_Privacystatement', label: "隐私声明", name: 'privacy'},
         ]
       },
       questionArr: [],
@@ -120,9 +121,9 @@ export default {
   computed: {
     signUpSwtichDesc(){
       if(this.signUpSwtich){
-        return '已开启，观看直播需要填写以下信息';
+        return '已开启，观看直播需要填写报名表单';
       }else{
-        return '开启后，观看直播需要填写报名信息';
+        return '开启后，观看直播需要填写报名表单';
       }
     },
     ques() {
@@ -131,6 +132,22 @@ export default {
           return item;
         }
       });
+    }
+  },
+  watch: {
+    questionArr: {
+      deep: true,
+      immediate: true,
+      handler(newValue) {
+        const sumObj = {}
+        newValue.forEach(item => {
+          sumObj[item.reqType] ? sumObj[item.reqType]++ : sumObj[item.reqType] = 1
+        })
+        this.setOptions["题目类型"][2].isActive = sumObj[1] >= 20;
+        this.setOptions["题目类型"][0].isActive = sumObj[2] >= 20;
+        this.setOptions["题目类型"][1].isActive = sumObj[3] >= 20;
+        this.setOptions["题目类型"][3].isActive = sumObj[4] >= 20;
+      }
     }
   },
   created(){
@@ -351,18 +368,6 @@ export default {
         return false;
       }
 
-      // 默认添加题目不需要调用添加接口，直接 push 渲染页面
-      // if (info.name === 'phone' || info.name === 'name') {
-      //   this.questionArr.push({
-      //     ...filedJson,
-      //     question_id: Math.floor(Math.random() * 10000)
-      //   });
-      //   // 这个 if ,等接口通了可以删除，不用判断直接 return
-      //   if(info) {
-      //     return false;
-      //   }
-      // }
-
       // 添加的是题目
       let options = {
         webinar_id: this.webinar_id,
@@ -488,6 +493,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+  .signup-main {
+    /deep/ .el-switch__core{
+      height: 16px;
+      width: 28px!important;
+      &:after {
+        width: 12px;
+        height: 12px;
+      }
+    }
+    /deep/ .el-switch.is-checked .el-switch__core::after {
+      margin-left: -13px;
+    }
+  }
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
     pointer-events: none;
@@ -510,13 +528,18 @@ export default {
       .block{
         font-size: 16px;
         color: #666666;
-        margin-bottom: 20px;
+        height: 40px;
+        line-height: 40px;
+      }
+      .block-bto{
+        margin-top: 10px;
       }
       .item{
         font-size: 14px;
         color: #1A1A1A;
-        margin-bottom: 20px;
         width: fit-content;
+        height: 40px;
+        line-height: 40px;
         cursor: pointer;
         &.active{
           color: #FB3A32;
@@ -528,6 +551,13 @@ export default {
         i{
           margin-right: 4px;
           color: #1A1A1A;
+        }
+        .icon {
+          width: 14px;
+          height: 14px;
+          font-size: 14px;
+          display: inline-block;
+          margin-right: 8px;
         }
       }
     }

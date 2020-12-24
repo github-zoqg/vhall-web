@@ -4,61 +4,63 @@
     <el-card>
       <div class="question-title">
         <h1>
-          这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示这是问卷标题，固定宽度，超过折行显示
+          {{ $route.query.subject }}
         </h1>
-        <p>填写人数:<span>100</span></p>
+        <p>填写人数:<span> {{ $route.query.number }}</span></p>
         <div class="export">
           <el-button type="primary" round @click="exportSingleQuerstion">导出数据</el-button>
         </div>
       </div>
     </el-card>
     <el-card class="question-item">
-      <div class="question-gender">
-        <p>性别统计(单选题)</p>
-        <div class="terEchart">
-          <div
-            :style="{ height: '300px', width: '50%' }"
-            ref="terBroEchart"
-          ></div>
-          <div class="terList">
-            <table border="0">
-              <tr>
-                <th>性别</th>
-                <th>填写人数</th>
-                <th>占比</th>
-              </tr>
-              <tr v-for="(item, index) in genderList" :key="index">
-                <td>{{ item.name }}</td>
-                <td>100</td>
-                <td>{{ (item.value / 100) * 100 }}%</td>
-              </tr>
-            </table>
+      <div v-for="(item, index) in questionList" :key="index">
+        <div class="question-gender" v-show="item.item_type == 1">
+          <p>{{ item.title }}(单选题)</p>
+          <div class="terEchart">
+            <div
+              :style="{ height: '300px', width: '50%' }"
+              ref="terBroEchart"
+            ></div>
+            <!-- <div class="terList">
+              <table border="0">
+                <tr>
+                  <th>性别</th>
+                  <th>填写人数</th>
+                  <th>占比</th>
+                </tr>
+                <tr v-for="(opt, index) in item" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>100</td>
+                  <td>{{ (item.value / 100) * 100 }}%</td>
+                </tr>
+              </table>
+            </div> -->
           </div>
         </div>
-      </div>
-      <div class="question-city">
-        <p>地域统计(城市题目)</p>
-        <div class="map-charts">
-          <map-echarts :areaDataList="areaDataList"></map-echarts>
+        <div class="question-city" v-show="item.item_type == 0">
+          <p>{{item.title}}统计(城市题目)</p>
+          <div class="map-charts">
+            <map-echarts :areaDataList="areaDataList"></map-echarts>
+          </div>
         </div>
-      </div>
-      <div class="question-subject">
-        <p>这里是题目名称1（单选题）</p>
-        <div class="barEchart">
-          <div :style="{ height: '300px', width: '50%' }" ref="barEchart"></div>
-          <div class="terList">
-            <table border="0">
-              <tr>
-                <th>性别</th>
-                <th>填写人数</th>
-                <th>占比</th>
-              </tr>
-              <tr v-for="(item, index) in barDataList" :key="index">
-                <td>{{ item.name }}</td>
-                <td>100</td>
-                <td>{{ (item.value / 100) * 100 }}%</td>
-              </tr>
-            </table>
+        <div class="question-subject" v-show="item.item_type == 2">
+          <p>{{ item.title }}（多选题）</p>
+          <div class="barEchart">
+            <div :style="{ height: '300px', width: '50%' }" ref="barEchart"></div>
+            <div class="terList">
+              <table border="0">
+                <tr>
+                  <th>性别</th>
+                  <th>填写人数</th>
+                  <th>占比</th>
+                </tr>
+                <tr v-for="(item, index) in barDataList" :key="index">
+                  <td>{{ item.name }}</td>
+                  <td>100</td>
+                  <td>{{ (item.value / 100) * 100 }}%</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -72,6 +74,8 @@ import echarts from 'echarts';
 export default {
   data() {
     return {
+      title: '问卷标题',
+      questionList: [],
       genderList: [
         {
           name: '女',
@@ -116,10 +120,77 @@ export default {
     mapEcharts,
   },
   mounted() {
-    this.initEchart();
-    this.initBarEcharts();
+    this.getQuerstionList();
   },
   methods: {
+    getQuerstionList() {
+      let params = {
+        webinar_id: this.$route.params.str,
+        survey_id: this.$route.query.surveyId,
+        filled_number: this.$route.query.number,
+        subject: this.$route.query.subject || ''
+      }
+      this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
+        if (res.code == 200 && res.data) {
+          console.log(res.data.list);
+          this.questionList = res.data.list;
+          this.initEchart();
+          this.initBarEcharts();
+          let list = [
+            {
+              itemTypeChinese: "单选" ,
+              item_id: 82110,
+              item_type: 1,
+              ques_id: 557831,
+              title: "性别",
+              total: 11111,
+              list: [
+                {
+                  name: '女',
+                  value: '40',
+                },
+                {
+                  name: '男',
+                  value: '30',
+                }
+              ]
+            },
+            {
+              itemTypeChinese: "null" ,
+              item_id: 82111,
+              item_type: 0,
+              ques_id: 557831,
+              title: "地域",
+              total: 1000,
+              list: [
+                {
+                  name: '北京',
+                  value: '10',
+                },
+                {
+                  name: '天津',
+                  value: '30',
+                },
+                {
+                  name: '上海',
+                  value: '20',
+                }
+              ]
+            },
+            {
+              itemTypeChinese: "多选" ,
+              item_id: 82112,
+              item_type: 2,
+              ques_id: 557831,
+              title: "爱好",
+              total: 100,
+              name: ['写代码', '睡觉', '看书', '唱歌'],
+              value: [20, 30, 40, 50]
+            }
+          ]
+        }
+      })
+    },
     initEchart() {
       let that = this;
       let terBarCharts = echarts.init(this.$refs.terBroEchart);
@@ -192,8 +263,9 @@ export default {
     },
     // 导出数据
     exportSingleQuerstion() {
-      this.$fetch('exportSurveyDetial',{webinar_id: this.$route.query.id, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
+      this.$fetch('exportSurveyDetial',{webinar_id: this.$route.params.str, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     }
   },

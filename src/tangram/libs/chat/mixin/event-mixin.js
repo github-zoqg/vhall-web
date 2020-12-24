@@ -136,8 +136,7 @@ const eventMixin = {
           } catch (e) {
             console.log(e);
           }
-          console.log('==========房间消息===========', msg);
-
+          console.log('==========房间消息========1===', msg);
           Object.assign(msg, msg.data);
           setTimeout(() => {
             if (msg.type == 'live_start') {
@@ -150,7 +149,6 @@ const eventMixin = {
           }
 
           EventBus.$emit('roomAllInfo', msg);
-
           // 发起抽奖
           if (msg.type == 'lottery_push' && this.roleName == '2') {
             let data = new Msg({
@@ -185,18 +183,18 @@ const eventMixin = {
             });
           }
           // 打赏成功
-          if (msg.type == 'reward_pay_success') {
+          if (msg.data.type == 'reward_pay_ok') {
             let data = new Msg({
-              nickName: msg.rewarder_nickname,
+              nickName: msg.data.rewarder_nickname,
               content: {
-                text_content: msg.reward_describe ? msg.reward_describe : '很精彩，赞一个！'
+                text_content: msg.data.reward_describe ? msg.data.reward_describe : '很精彩，赞一个！'
               },
-              type: msg.type
+              type: msg.data.type
             });
             this.chatList.push(data);
           }
           // 礼物
-          if (msg.type == 'gift_send_success') {
+          if (msg.data.type == "gift_send_success") {
             let uploadUrl = sessionStorage.getItem('imageDomin');
             let data = new Msg({
               nickName: msg.gift_user_nickname,
@@ -237,6 +235,7 @@ const eventMixin = {
           }
           // 推送问卷
           if (msg.type == 'questionnaire_push') {
+            EventBus.$emit('questionnaireCheck', msg.questionnaire_id);
             let text =
               msg.room_role == '3' ? `助理${msg.nick_name}` : msg.room_role == '4' ? `嘉宾${msg.nick_name}` : '主持人';
             let data = new Msg({
@@ -264,6 +263,7 @@ const eventMixin = {
             });
             this.chatList.push(data);
           }
+          // console.warn('派发的消息，查看数据类型和数据', msg, msg.type);
           EventBus.$emit(msg.type, msg);
         });
       }

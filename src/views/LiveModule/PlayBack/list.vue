@@ -1,9 +1,9 @@
 <template>
   <div class="listBox">
     <pageTitle title="回放管理"></pageTitle>
-    <div class="operaBlock">
+    <div v-if="!isDemand" class="operaBlock">
       <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-      <el-button size="medium" plain round>录制</el-button>
+      <el-button size="medium" plain round @click="toRecord">录制</el-button>
       <el-button size="medium" round @click="settingHandler">回放设置</el-button>
       <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
       <el-input
@@ -72,7 +72,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="stagingDate"
+          prop="save_time"
           label="暂存至"
           width="180"
           show-overflow-tooltip>
@@ -85,9 +85,9 @@
           <template slot-scope="scope">
             {{ scope.row.date }}
             <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-            <el-button type="text" @click="downPlayBack(scope.row)">下载</el-button>
+            <el-button :disabled="!!scope.row.transcoding" v-if="!isDemand" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
             <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
-            <el-dropdown @command="handleCommand">
+            <el-dropdown v-if="!isDemand" @command="handleCommand">
               <el-button type="text">更多</el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
@@ -118,6 +118,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data(){
     return {
@@ -133,7 +134,12 @@ export default {
       editRecord: {},
       editLoading: false,
       selectDatas: [],
+      transcodingArr: [],
       recordType: '-1',
+      liveDetailInfo: {},
+      isDemand: false,
+      chatSDK: '',
+      handleMsgTimer: '',
       typeOptions: [
         { label: '来源', value: '-1' },
         { label: '回放', value: '0' },
@@ -152,7 +158,9 @@ export default {
     }
   },
   created(){
+    this.getInitMsgInfo();
     this.getList();
+    this.getLiveDetail();
   },
   mounted(){
     this.tipMsg = this.$message({
@@ -164,8 +172,37 @@ export default {
   },
   beforeDestroy(){
     this.tipMsg.close();
+    if (this.chatSDK) {
+      this.chatSDK.destroy()
+      this.chatSDK = null
+    }
   },
   methods: {
+    // 获取当前活动基本信息
+    getLiveDetail() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
+        this.liveDetailInfo = res.data;
+        this.isDemand = this.liveDetailInfo.is_demand == 1;
+        if (this.isDemand) {
+          this.typeOptions = [
+            { label: '上传', value: '2' }
+          ]
+        } else {
+          this.typeOptions = [
+            { label: '来源', value: '-1' },
+            { label: '回放', value: '0' },
+            { label: '录制', value: '1' },
+            { label: '上传', value: '2' },
+            { label: '打点录制', value: '3' }
+          ]
+        }
+      }).catch(error=>{
+        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+        console.log(error);
+      }).finally(()=>{
+        this.loading = false;
+      });
+    },
     typeChange(column, index) {
       this.getList()
     },
@@ -176,7 +213,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$fetch('playBackSetDefault', {
+        this.$fetch('defaultRecord', {
           webinar_id: this.webinar_id,
           record_id: row.id,
           type: row.type === 6 ? 0 :1
@@ -196,7 +233,7 @@ export default {
       }else if(param.command == 'tailoring'){
         this.toTailoring(param.data.id, param.data.name);
       } else if (param.command == 'publish') {
-        this.toCreateVod(param.data);
+        this.toCreateDemand(param.data);
       }
     },
     currentChangeHandler(num){
@@ -214,6 +251,7 @@ export default {
       this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
+        res.data.list.forEach(item => (item.transcoding = false))
         this.tableData = res.data.list;
         this.totalElement = res.data.total;
         console.log(res);
@@ -229,6 +267,63 @@ export default {
       this.editDialogVisible = true;
       this.editRecord = data;
     },
+    // 初始化消息
+    getInitMsgInfo() {
+      this.$fetch('msgInitConsole').then(res => {
+        this.initChat(res.data);
+      })
+    },
+    initChat (params) {
+      let opt = {
+        appId: params.paasAppId,
+        accountId: params.accountId,
+        channelId: params.channelId,
+        token: params.paasAccessToken
+      };
+      VhallChat.createInstance(
+        opt,
+        chat => {
+          this.chatSDK = chat.message;
+          console.log('成功了居然', this.chatSDK)
+          // TODO: 监听消息,判断 userId 获取playbackInfo
+          // 自定义消息
+          this.chatSDK.onCustomMsg(msg => {
+            if (typeof msg !== 'object') {
+              msg = JSON.parse(msg);
+            }
+            try {
+              if (msg.data && typeof msg.data !== 'object') {
+                msg.data = JSON.parse(msg.data);
+              }
+            } catch (e) {
+              console.log(e);
+            }
+
+            Object.assign(msg, msg.data);
+              console.log('==========自定义消息==========', msg)
+            if (msg.type == "record_download" && msg.user_id == sessionOrLocal.get('userId')) {
+              console.log('视频转码完成了')
+              // 消息会下发三次，只处理第一次
+              if (!this.handleMsgTimer) {
+                this.transcodingArr = this.transcodingArr.filter(item => {
+                  if(item.id == msg.data.record_id) {
+                    item.transcoding = false;
+                    return false;
+                  }
+                })
+                window.open(msg.data.download_url)
+                this.handleMsgTimer = setTimeout(() => {
+                  this.handleMsgTimer = ''
+                }, 2000)
+              }
+            }
+          })
+        },
+        err => {
+          console.error('聊天SDK实例化失败', err);
+        }
+      )
+    },
     // 下载回放
     downPlayBack(data) {
       console.log(data);
@@ -237,10 +332,12 @@ export default {
       }).then(res => {
         console.log(res)
         if (res.data.has_download_url == 0) {
-          this.$message.warning('回放暂未生成');
+          data.transcoding = true;
+          this.transcodingArr.push(data);
+          this.$message.success('正在转码，请稍等...');
           return false;
         }
-        window.open(rees.data.download_url);
+        window.open(res.data.download_url);
       })
     },
     deletePlayBack(ids){
@@ -288,14 +385,38 @@ export default {
     toCreate() {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
     },
+    toRecord() {
+      this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
+    },
     toTailoring(recordId, recordName){
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
     },
     toChapter(recordId){
-      this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId}});
+      if (this.isDemand) {
+        this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        return false
+      }
+      this.$fetch('getDocInfo', {
+        record_id: recordId
+      }).then(res => {
+        console.log(res)
+        if (res.data.doc_titles.length) {
+          this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        } else {
+          this.$message.warning('当前回放内容未演示PPT格式的文案，不支持章节功能')
+        }
+      })
     },
-    toCreateVod(recordData) {
-      this.$router.push({path: `/live/vodEdit`});
+    // 发布
+    toCreateDemand(recordData) {
+      this.$router.push({
+        path: `/live/vodEdit`,
+        query: {
+          record_id: recordData.id,
+          paas_record_id: recordData.paas_record_id,
+          name: recordData.name
+        }
+      });
     }
   },
   filters: {
@@ -441,7 +562,6 @@ export default {
     }
   }
   .input-with-select{
-    width: 350px;
     vertical-align: text-top;
   }
 </style>

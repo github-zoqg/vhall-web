@@ -98,7 +98,7 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-import {  textToEmoji } from '@/tangram/libs/chat/js/emoji';
+import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
 export default {
   components: {
     PageTitle,
@@ -153,11 +153,6 @@ export default {
         {
           label: '消息内容',
           key: 'imgOrText',
-        },
-        {
-          label: '审核状态',
-          key: 'statusText',
-          width:100
         },
         {
           label: '接收方',
@@ -297,7 +292,7 @@ export default {
         {
           name: '查看',
           methodName: 'lookDetail',
-          path: '/lookSingleQuestion',
+          path: '/live/lookSingleQuestion',
         }
       ]
     };
@@ -412,12 +407,32 @@ export default {
         this.tableList = res.data.list;
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
-          item.imgOrText = this.emojiToText(item.data.text_content) || this.emojiToText(item.data.barrage_txt);
-          item.statusText = '通过';
+          // let contImg = this.emojiToText(item.data.text_content) || this.emojiToText(item.data.barrage_txt);
+          if((/\[|\]/g).test(item.data.barrage_txt)) {
+            item.chatEmoji = this.emojiToText(item.data.barrage_txt) || '';
+          } else {
+            item.chatEmoji = '';
+          }
+          item.chatText = item.data.text_content || '';
+          if (item.data.image_urls) {
+            item.chatImg = this.chartsImgs(item.data.image_urls);
+          } else {
+            item.chatImg = '';
+          }
+          item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
           item.revice = '主持人';
         })
         this.totalNum = res.data.total;
       });
+    },
+    chartsImgs(list) {
+      let arr = '';
+      if (list.length) {
+        list.map(item => {
+          arr = `<img width="100" width="100"  src="${item}" border="0" />`;
+        }).join(' ')
+      }
+      return arr;
     },
     //删除聊天（二次确认）
     chatConfirmSure(id) {
@@ -555,19 +570,15 @@ export default {
     },
     lotteryType(type) {
       if (type == 1) {
-        return '全体参会用户';
+        return '全体参会者';
       } else if (type == 2) {
-        return '参与问卷的参会者';
+        return '参与问卷的用户';
       } else if (type == 3) {
-        return '参与签到的参会者';
-      } else if (type == 4) {
-        return '全体观众';
-      } else if (type == 5) {
-        return '已登录观众';
-      } else if (type == 6) {
-        return '参与问卷的观众';
+        return '参与签到的用户';
+      } else if (type == 8) {
+        return '口令抽奖';
       } else {
-        return '参与签到的观众';
+        return '全体参会者';
       }
 
     },
@@ -641,10 +652,7 @@ export default {
     // 红包列表
     getRedpacketList() {
       let pageInfo = this.$refs.tableList.pageInfo;
-      pageInfo.pos ++;
-      // if (!pageInfo.pos) {
-      //   pageInfo.pos = 1;
-      // } else
+      pageInfo.pos = pageInfo.pageNum;
       let formParams = {
         webinar_id: this.webinarId
       }
@@ -714,71 +722,82 @@ export default {
     exportInviteDetailInfo(id) {
        this.$fetch('exportDetailInvite', {webinar_id: this.webinarId, join_id: id }).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 邀请导出
     exportInviteInfo() {
       this.$fetch('exportInvite', {webinar_id: this.webinarId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 聊天
     exportChatInfo() {
       this.$fetch('exportChat', {room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 问答
     exportRecordInfo() {
       this.$fetch('exportRecodrder', this.params).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 签到
     exportSignInfo() {
       this.$fetch('exportSign', {room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     exportDetailSignInfo(id) {
       this.$fetch('exportDetailSign',{room_id: this.roomId, sign_id: id}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 问卷
     exportQuestionInfo() {
       this.$fetch('exportSurvey',{room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 抽奖
     exportPrizeInfo() {
       this.$fetch('exportLottery', this.params).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 抽奖单个
     exportPrizeDetailInfo(item) {
-      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId}).then(res => {
+      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 发群红包
     exportRedpacketInfo() {
       this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
      // 发群红包---导出明细
     exportRedpacketDetailInfo(uuid, type) {
       this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
-      that.$router.push({path: val.path, query: {id:this.webinarId,surveyId: rows.survey_id, subject: rows.subject}});
+      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id, subject: rows.subject, number: rows.filled_number}});
     }
   }
 };
@@ -787,7 +806,7 @@ export default {
 .title-data {
   span{
     font-size: 22px;
-    font-family: PingFangSC-Semibold, PingFang SC;
+    font-family: @fontSemibold;
     font-weight: 600;
     color: #1a1a1a;
   }

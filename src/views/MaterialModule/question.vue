@@ -21,7 +21,11 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
-    <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question>
+    <template v-if="isShowQuestion">
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :before-close='closeClose' width="50%" center>
+        <pre-question  :questionId="questionId"></pre-question>
+      </el-dialog>
+    </template>
   </div>
 </template>
 <script>
@@ -36,6 +40,7 @@ export default {
       selectChecked: [],
       keyword: '',
       questionId: '',
+      isShowQuestion: false,
       tabelColumn: [
         {
           label: '问卷ID',
@@ -75,7 +80,6 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      pageInfo.limit = 20;
       let formParams = {
         user_id: this.userId,
         keyword: this.keyword
@@ -98,8 +102,11 @@ export default {
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.isShowQuestion = true;
       that.questionId = rows.question_id;
-      that.$refs.isPreQuestion.dialogVisible = true;
+      // if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+      //   window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+      // }
     },
     // 复制
     cope(that, {rows}) {
@@ -162,6 +169,9 @@ export default {
       this.$router.push({
         path: '/material/addQuestion'
       });
+    },
+    closeClose(done){
+      this.isShowQuestion = false;
     }
   },
 };

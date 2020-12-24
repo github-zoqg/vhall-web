@@ -3,7 +3,6 @@
     title="关联文档"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    :before-close="handleBeforeClose"
     width="810px"
   >
     <!-- <div class="tabs">
@@ -84,6 +83,11 @@ export default {
       tableSelect: []
     };
   },
+  props: {
+    tableDataLength: {
+      required: true
+    }
+  },
   created() {
     this.getDocList()
   },
@@ -92,29 +96,34 @@ export default {
       if (!this.tableSelect.length) {
         this.$message.error('请选择要关联的文档');
       } else {
-        this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
-        }).then(() => {
-          // this.tabs = 2
+        if (this.tableDataLength) {
+          this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box'
+          }).then(() => {
+            // this.tabs = 2
+            this.$emit('getChapters', this.tableSelect);
+            this.$refs.docList.clearSelection()
+            this.tableSelect = []
+            this.dialogVisible = false;
+          })
+        } else {
           this.$emit('getChapters', this.tableSelect);
+          this.$refs.docList.clearSelection()
+          this.tableSelect = []
           this.dialogVisible = false;
-        })
+        }
       }
     },
     // transOver() {
     //   this.dialogVisible = false
     //   this.tabs = 1
     // },
-    handleBeforeClose(done) {
-      this.tableSelect = []
-      done()
-    },
     handleSelectionChange(val){
       let ids = []
       val.length > 0 && val.forEach((item, index) => {
-        ids.push(item.id)
+        ids.push(item.document_id)
       })
       this.tableSelect = ids
     },
@@ -128,7 +137,8 @@ export default {
         pos: (this.pageInfo.currentPage - 1) * this.pageInfo.pageSize,
         limit: this.pageInfo.pageSize,
         webinar_id: this.webinar_id,
-        type: '1'
+        type: '1',
+        keyword: 'ppt'
       };
       this.$fetch('getWordList', data).then(res => {
         if (res.code == 200) {
@@ -206,7 +216,7 @@ export default {
   }
   .pagination-wrapper {
     display: flex;
-    margin-top: 60px;
+    margin-top: 10px;
     justify-content: center;
   }
 </style>

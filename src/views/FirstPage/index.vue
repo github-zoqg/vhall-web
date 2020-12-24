@@ -24,13 +24,13 @@
         <el-col :span="5">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
-            <h3>账号数据</h3>
+            <h3>数据中心</h3>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
-            <h3>财务总览</h3>
+            <h3>财务中心</h3>
           </div>
         </el-col>
       </el-row>
@@ -44,7 +44,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.webinar_count"
                   :duration="1500"
-                  v-if="mainKeyData.webinar_count > 0">
+                  v-if="mainKeyData.webinar_count >= 0">
                 </count-to>
               </h2>
             </div>
@@ -56,7 +56,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_times"
                   :duration="1500"
-                  v-if="mainKeyData.watch_times > 0">
+                  v-if="mainKeyData.watch_times >= 0">
                 </count-to>
               </h2>
             </div>
@@ -68,7 +68,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_number"
                   :duration="1500"
-                  v-if="mainKeyData.watch_number > 0">
+                  v-if="mainKeyData.watch_number >= 0">
                 </count-to>
               </h2>
             </div>
@@ -80,7 +80,7 @@
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_duration"
                   :duration="1500"
-                  v-if="mainKeyData.watch_duration > 0">
+                  v-if="mainKeyData.watch_duration >= 0">
                 </count-to>
                 </h2>
             </div>
@@ -91,7 +91,7 @@
         <div class="line-tip">
           <p>用量统计</p>
         </div>
-        <line-echarts :lineDataList="lineDataList"></line-echarts>
+        <line-echarts :lineDataList="lineDataList" :type="1"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">
@@ -102,7 +102,7 @@
         </div>
         <div class="ad-text">
           <h1>微吼直播客户端</h1>
-          <p>强大稳定的直播工具，支持插播 视频、桌面</p>
+          <p>强大稳定的直播工具，支持插播视频、桌面共享等功能。</p>
         </div>
         <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank">立即下载</a>
       </div>
@@ -112,7 +112,7 @@
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
-          <p>强大稳定的直播工具，支持插播 视频、桌面共享等功能</p>
+          <p>把微吼装进口袋，随时随地发直播，让直播更便捷</p>
         </div>
         <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
       </div>
@@ -176,7 +176,7 @@ export default {
     },
     // 联系我们
     contactUs() {
-      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=${this.userId}`, "_blank");
+      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, "_blank");
     },
     getLiveList() {
       // parent_id > 0 子账号
@@ -185,7 +185,7 @@ export default {
         type: 1
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
-        this.mainKeyData = res.data.key_data;
+        this.mainKeyData = {...res.data.key_data};
         this.lineDataList = res.data.trend.live;
       }).catch(e=>{
         console.log(e);
@@ -228,6 +228,7 @@ export default {
           // border: 1px solid #ccc;
           /deep/.svg-icon{
             font-size: 32px;
+            color: #FB3A32;
           }
         }
         h3{
@@ -241,7 +242,7 @@ export default {
         height: 146px;
         background: #fff;
         .list-title{
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           font-size: 16px;
           font-weight: 400;
           color: #1A1A1A;
@@ -316,7 +317,7 @@ export default {
           border-radius: 4px;
           color: #fff;
           padding: 32px 17px;
-          font-family: PingFangSC-Regular, PingFang SC;
+          font-family: @fontRegular;
           h1{
             font-size: 18px;
             line-height: 25px;

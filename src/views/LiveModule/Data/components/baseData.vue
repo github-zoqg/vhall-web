@@ -344,7 +344,6 @@ export default {
       });
     },
     getOtherInfo() {
-      console.log('111111111111');
       //问答
       this.$fetch('getRecodrderInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.recordNum = res.data.total || 0;
@@ -376,42 +375,49 @@ export default {
     exportSubscribeInfo() {
       this.$fetch('exportSubscribe',{webinar_id: this.$route.params.str}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 试看-导出
     exportPreviewInfo() {
       this.$fetch('exportPreview',{webinar_id: this.$route.params.str}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 分享导出
     exportShare() {
       this.$fetch('exportShareInfo',{room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     //报名表单导出
     exportAnswer() {
       this.$fetch('exportForm',{webinar_id: this.$route.params.str}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
      //打赏---导出
     exportReward() {
       this.$fetch('exportReward',{webinar_id: this.$route.params.str}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 礼物---导出
     exportGift() {
       this.$fetch('exportGift',{room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 连麦---导出
     exportSpeak() {
        this.$fetch('exportSpeak',{room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
+        this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     lookOption(title) {
@@ -488,6 +494,7 @@ export default {
           display: flex;
           /deep/.svg-icon{
             font-size: 38px;
+            color: #FB3A32;
           }
           .base-text{
             margin-left: 15px;

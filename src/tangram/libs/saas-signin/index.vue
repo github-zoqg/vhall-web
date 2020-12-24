@@ -55,6 +55,7 @@ export default {
               this.nowSignObj = res.data
               this.signInfo.autoSign = res.data.is_auto_sign == 1 ? true : false
               this.remaining = res.data.auto_sign_time_ttl
+              this.totalTime = res.data.auto_sign_time
               this.setIntervalAction()
               console.warn('this.starting',this.starting, 'remaining', this.remaining, !!this.remaining)
             }else{
@@ -110,6 +111,7 @@ export default {
         console.warn('创建签到',res)
         if(res.code == 200){
           if(state.autoSign){
+            this.totalTime = state.interval
             window.sessionStorage.setItem('isAutoSign', 'true')
           }
           this.signId = res.data.id
@@ -138,7 +140,12 @@ export default {
       clearInterval(this.timer);
       this.timer = setInterval(() => {
         if (--this.remaining <= 0) {
-          clearInterval(this.timer);
+          if( window.sessionStorage.isAutoSign &&  window.sessionStorage.isAutoSign == 'true'){
+            this.remaining = this.totalTime
+            this.showSignin = true;
+          }else{
+            clearInterval(this.timer);
+          }
         }
       }, 1000);
       this.$once('hook:beforeDestory', () => {
@@ -188,15 +195,19 @@ export default {
     }
     .el-dialog__title{
       font-size: 16px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       height: 48px;
       line-height: 48px;
       color: #222222;
     }
   }
+  ::v-deep.el-dialog{
+    min-height: 400px;
+  }
   ::v-deep.el-dialog__body{
     padding: 0 32px 34px;
+
   }
   ::v-deep.el-message-box--center .el-message-box__header{
     padding-top: 15px;

@@ -1,5 +1,7 @@
 // session存储（设置、获取、删除）
-import Env from "@/api/env";
+import fetchData from "@/api/fetch";
+import NProgress from "nprogress";
+
 
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
@@ -22,6 +24,7 @@ export const sessionOrLocal = {
     window[saveType].clear();
   }
 };
+window.testSess = sessionOrLocal
 // 判断是否IE
 export function isIE () {
   return (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1);
@@ -46,6 +49,15 @@ export function resize () {
     window.dispatchEvent(resizeEvent);
   }
 }
+
+// 防抖
+export const debounce = (function () {
+  let timer = 0
+  return function (callback, ms) {
+    clearTimeout(timer)
+    timer = setTimeout(callback, ms)
+  }
+})()
 
 export function calculateAudioLevel (level) {
   let audioLevelValue = 1;
@@ -166,8 +178,151 @@ export function parseURL(url) {
     };
   }
 }
+
+/**
+ * 验证文件格式与大小
+ * @param file 文件
+ * @param that 提示消息类型
+ * @param type 类型
+ * @returns {Boolean} 验证通过还是失败
+ */
+export function checkUploadType(file, that, type = 1) {
+  const typeList = type === 1 ? ['png', 'jpeg', 'gif', 'bmp'] : [];
+  console.log(file.type.toLowerCase())
+  let typeArr = file.type.toLowerCase().split('/');
+  const isType = typeList.includes(typeArr[typeArr.length - 1]);
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isType) {
+    that.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+    return false;
+  }
+  if (!isLt2M) {
+    that.$message.error('上传封面图片大小不能超过 2MB!');
+    return false;
+  }
+  return isType && isLt2M;
+}
+
 export function getQueryString(name) {
   let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
   let r = window.location.search.substr(1).match(reg);
   if(r!=null)return  unescape(r[2]); return null;
+}
+// 判断是否登录成功
+export function checkAuth(to, from, next) {
+  console.warn(to, 9999);
+
+  if(to.path.indexOf('/keylogin-host') !== -1 ||
+    to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
+    from.path.indexOf('/keylogin') !== -1 ||
+    to.path.indexOf('/subscribe') !== -1 ||
+    to.path.indexOf('/entryform') !== -1 ||
+    to.path.indexOf('/live/watch') !== -1 ||
+    to.path.indexOf('/login') !== -1 ||
+    to.path.indexOf('/register') !== -1 ||
+    to.path.indexOf('/live/watch') !== -1 ||
+    to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
+    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
+    // 不验证直接进入
+    next();
+    NProgress.done();
+    return;
+  }
+  // 第一步，判断是否第三方快捷登录
+  let user_auth_key = getQueryString('user_auth_key');
+  let auth_tag = sessionOrLocal.get('tag', 'localStorage');
+  let sourceTag = sessionOrLocal.get('sourceTag')
+  let scene_id = 1;
+  if (auth_tag) {
+    scene_id = auth_tag.indexOf('bind') !== -1 ? 3 : auth_tag === 'withdraw' ? 2 : 1 // 场景id：1登录 2提现绑定 3账户信息-账号绑定
+  }
+  if (user_auth_key) {
+    console.log('第三方登录，需要调取回调函数存储token');
+    let params = {
+      source: sourceTag ? 2 : 1, // 1 控制塔 2观看端 3admin
+      key: getQueryString('user_auth_key'),
+      scene_id: scene_id
+    };
+    fetchData('callbackUserInfo', params).then(res => {
+      if (res.data && res.code === 200) {
+        sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+        sessionOrLocal.set('sso_token', res.data.sso_token);
+        sessionOrLocal.set('userId', res.data.user_id);
+        if (!sourceTag) {
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          return;
+        }
+      } else {
+        if(auth_tag) {
+          if (auth_tag.indexOf('bind') !== -1) {
+            sessionOrLocal.set('bind_result', JSON.stringify(res));
+            sessionOrLocal.set('user_auth_key', user_auth_key);
+            // 绑定成功
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+          } else {
+            // 获取回调token失败
+            this.$message.error('登录信息获取失败，请重新登录');
+            sessionOrLocal.clear('localStorage');
+            sessionOrLocal.clear();
+          }
+        } else{
+          this.$message.error(res.msg || '异常请求，无法操作');
+          // 获取回调token失败
+          this.$message.error('登录信息获取失败，请重新登录');
+          sessionOrLocal.clear('localStorage');
+          sessionOrLocal.clear();
+        }
+      }
+    });
+    return;
+  }
+  // 第二步，判断是否控制台 或者 地址栏token携带进入
+  let token = sessionOrLocal.get('token', 'localStorage') || '';
+  if (token) {
+    console.log('正常登录、快捷登录，存在token数据');
+    // 已登录不准跳转登录页
+    if (to.path === '/login') {
+      next({ path: '/' });
+      NProgress.done();
+      return;
+    }
+    // 获取配置项所有内容
+    fetchData('planFunctionGet', {}).then(res => {
+      if(res && res.code === 200) {
+        let permissions = res.data.permissions;
+        if(permissions) {
+          sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
+        } else {
+          sessionOrLocal.removeItem('SAAS_VS_PES');
+        }
+      }
+    }).catch(e => {
+      console.log(e);
+      sessionOrLocal.removeItem('SAAS_VS_PES');
+    });
+    // 登录后，获取用户基本信息
+    fetchData('getInfo', {scene_id: 2}).then(res => {
+      // debugger;
+      if(res.code === 200) {
+        sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+        sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+      } else {
+        sessionOrLocal.set('userInfo', null);
+      }
+      // 获取子账号数据
+      fetchData('sonCountGet', {}).then(result => {
+        if( result && result.code === 200) {
+          sessionOrLocal.set(SAAS_V3_COL.KEY_1, JSON.stringify(result.data || {}));
+        }
+      }).catch(e=> {});
+      next();
+      NProgress.done();
+    }).catch(e=>{
+      console.log(e);
+      NProgress.done();
+    });
+  } else {
+    next({path: '/login'});
+    NProgress.done();
+  }
 }

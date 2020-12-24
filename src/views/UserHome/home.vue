@@ -1,7 +1,9 @@
 <template>
  <div class="home-main">
-   <OldHeader></OldHeader>
-   <div class="v-head-bg" :style="`background: url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' : '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) repeat-x rgb(49, 49, 49);`">
+   <OldHeader class="head-wrap"></OldHeader>
+   <div class="v-head-bg"
+        :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' :
+        '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}">
      <div class="v-head-img"></div>
    </div>
    <div class="home-main-container">
@@ -9,15 +11,15 @@
      <div class="ac__home__panel">
        <!-- 左侧 [列表区域] -->
        <div class="ac__home__panel--left">
-         <home-main @showSet="showSetHandle" v-if="!isSetShow"></home-main>
+         <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
          <home-set  @showSet="showSetHandle" v-if="isSetShow"></home-set>
        </div>
        <!-- 右侧名片 -->
        <div class="ac__home__panel--right">
          <div class="ac__home--user">
-           <img :src="avatarImgUrl" alt="" />
+           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" />
            <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
-           <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>
+          <!-- <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>-->
          </div>
          <div class="ac__home--info">
            <p class="ac__home--title"></p>
@@ -58,6 +60,7 @@ export default {
   methods: {
     showSetHandle(type) {
       this.isSetShow = type;
+      this.getHomePageInfo();
     },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
@@ -67,14 +70,17 @@ export default {
         if (res && res.code === 200) {
           // 粉丝数、是否关注、主页信息
           let {attentioned_count, follow, homepage_info } = res.data;
-          homepage_info.homepage_avatar = homepage_info.homepage_avatar || '';
+          // homepage_info.homepage_avatar = homepage_info.homepage_avatar || '';
           // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
-          homepage_info.img_url = homepage_info.img_url || '';
+          // homepage_info.img_url = homepage_info.img_url || '';
             // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
-          this.userHomeVo = homepage_info;
-          this.attentioned_count = attentioned_count;
-          this.follow = follow;
-          this.content = homepage_info.content;
+          this.$nextTick(() => {
+            this.userHomeVo = homepage_info;
+            this.attentioned_count = attentioned_count;
+            this.follow = follow;
+            this.content = homepage_info.content;
+            this.$refs.homeMain.initComp(homepage_info);
+          })
         } else {
           this.userHomeVo = null;
         }
@@ -106,7 +112,29 @@ export default {
 .home-main {
   width: 100%;
   background: #f7f7f7;
+  height: auto;
+  overflow: hidden;
+  padding-bottom: 40px;
 }
+
+::v-deep.head-wrap{
+  .collapse{
+    height: 100%;
+    .login-reg{
+      height: 100%;
+      .head{
+        margin-top: -8px;
+        border: none;
+        vertical-align: middle;
+        display: inline-block;
+      }
+      .caret{
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
 .v-head-bg {
   width: 100%;
   height: 205px;
@@ -167,7 +195,7 @@ export default {
   padding-top: 22px;
   margin-top: 24px;
   p {
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     margin-top: 10px;
     &:first-child {

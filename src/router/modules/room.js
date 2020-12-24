@@ -27,10 +27,22 @@ const router = [
         meta: { title: '观看直播' },
       },
       {
+        path: '/embedclient/watch/:il_id',
+        component: () => import('@/views/LiveModule/Room/watchWrap'),
+        name: 'embedWatch',
+        meta: { title: '嵌入观看直播' },
+      },
+      {
         path: '/subscribe/:id',
         name: 'Subscribe',
         component: () => import('@/views/LiveModule/Subscribe/index'),
         meta: { title: '预约' }
+      },
+      {
+        path: '/embedclient/subscribe/:id?',
+        component: () => import('@/views/LiveModule/Subscribe/index'),
+        name: 'embedSubscribe',
+        meta: { title: '嵌入预约页' },
       },
       {
         path: '/entryform/:id',
@@ -41,13 +53,13 @@ const router = [
       {
         path: '/keylogin/:id/:role_name',
         name: 'KeyLogin',
-        component: () => import('@/views/LiveModule/Subscribe/index'),
+        component: () => import('@/views/LiveModule/CodeLogin/index'),
         meta: { title: '口令登录' }
       },
       {
         path: '/keylogin-host/:id/:role_name',
         name: 'KeyLoginHost',
-        component: () => import('@/views/LiveModule/Subscribe/index'),
+        component: () => import('@/views/LiveModule/CodeLogin/index'),
         meta: { title: '口令登录' }
       },
       {

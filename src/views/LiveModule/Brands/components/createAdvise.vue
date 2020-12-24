@@ -23,17 +23,17 @@
               :on-preview="uploadPreview"
               @handleFileChange="handleFileChange"
               :before-upload="beforeUploadHnadler"
-              @delete="advertisement.img_url = ''"
+              @delete="deleteImg"
               >
               <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
             </upload>
         </div>
       </el-form-item>
       <el-form-item label="标题" prop="subject">
-        <el-input v-model="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></el-input>
+        <el-input v-model.trim="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></el-input>
       </el-form-item>
       <el-form-item label="链接" prop="url">
-        <el-input v-model="advertisement.url" placeholder="请输入广告链接"></el-input>
+        <el-input v-model.trim="advertisement.url" placeholder="请输入广告链接"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -47,9 +47,9 @@
       :close-on-click-modal="false"
       width="590px">
       <div class="content">
-        <div class="search"><el-input v-model="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @click="changeAdverment"></el-input></div>
-        <el-scrollbar>
-          <div class="ad-list" v-infinite-scroll="load">
+        <div class="search"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @click="changeAdverment"></el-input></div>
+        <el-scrollbar v-loadMore="moreLoadData">
+          <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <img :src="`${item.img_url}`" alt="">
               <p>{{ item.subject }}</p>
@@ -59,10 +59,11 @@
             </div>
           </div>
         </el-scrollbar>
+        <p class="text">当前选中<span>{{ selectChecked.length }}</span>个</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="advSaveToWebinar(null)" round>确 定</el-button>
-        <el-button @click="dialogAdverVisible = false" round>取 消</el-button>
+        <el-button type="primary" @click="advSaveToWebinar(null)" v-preventReClick round>确 定</el-button>
+        <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
       </span>
     </VhallDialog>
   </div>
@@ -98,9 +99,10 @@ export default {
       },
       advertPageInfo: {
         pos: 0,
-        limit: 12,
+        limit: 6,
         page: 1
       },
+      maxPage: 0,
       adList: []
     };
   },
@@ -128,13 +130,8 @@ export default {
       } else {
         this.clearForm();
       }
-    }
+    },
   },
-  // created() {
-  //  /* if(this.dialogAdverVisible) {
-  //     this.activityData();
-  //   }*/
-  // },
   methods: {
     clearForm() {
       this.$set(this.advertisement, 'img_url', '');
@@ -179,6 +176,7 @@ export default {
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
+          this.clearForm();
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
           // 获取列表数据
           this.$emit('reload');
@@ -187,6 +185,14 @@ export default {
           this.$message.error('链接格式不正确');
         }
       });
+    },
+    moreLoadData() {
+      if (this.advertPageInfo.page >= this.maxPage) {
+        return false;
+      }
+      this.advertPageInfo.page ++ ;
+      this.advertPageInfo.pos = parseInt((this.advertPageInfo.page - 1) * this.advertPageInfo.limit);
+      this.activityData();
     },
     activityData() {
       this.$fetch('getAdvList', this.$params({
@@ -198,32 +204,29 @@ export default {
           adList.map(item => {
             item.isChecked = false;
           });
-          this.adList = adList;
+          this.adList.push(...adList);
+          this.maxPage = Math.ceil(res.data.total / this.advertPageInfo.limit);
         } else {
           this.adList = [];
         }
       });
     },
     changeAdverment() {
-      this.activityData();
       this.advertPageInfo = {
         pos: 0,
         limit: 6,
         page: 1
       }
-    },
-    load() {
-      // this.advertPageInfo.page ++;
-      // this.advertPageInfo.pos = parseInt((this.advertPageInfo.page - 1) * this.advertPageInfo.limit);
-      // this.activityData();
+      this.adList = [];
+      this.activityData();
     },
     choiseAdvisetion(items) {
       items.isChecked = !items.isChecked;
+      this.selectChecked = this.adList.filter(item => item.isChecked).map(item => item.adv_id);
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
       if (!id) {
-        this.selectChecked = this.adList.filter(item => item.isChecked).map(item => item.adv_id);
         if (this.selectChecked.length < 1) {
           this.dialogAdverVisible = false;
           return;
@@ -236,9 +239,23 @@ export default {
         adv_ids: id
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
-        this.$message.info(res.msg);
-        this.$emit('reload');
+        if (res.code == 200) {
+          this.$message.success('选择广告成功');
+          this.dialogAdverVisible = false;
+          this.selectChecked = [];
+          this.adList.map(item => {
+            item.isChecked = false;
+          });
+          this.$emit('reload');
+        } else {
+          this.$message.error('选择广告失败');
+        }
       })
+    },
+    // 删除
+    deleteImg() {
+      this.advertisement.img_url = '';
+      this.domain_url = '';
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
@@ -253,14 +270,18 @@ export default {
     },
     beforeUploadHnadler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`推广图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('推广图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -269,7 +290,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`图片上传失败`);
+      this.$message.error(`推广图片上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -299,8 +320,8 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       max-height: 300px;
-       overflow: auto;
+       height: 200px;
+      //  overflow: auto;
        .ad-item{
          width: 150px;
          margin-bottom: 20px;
@@ -340,6 +361,13 @@ export default {
            font-weight: 400px;
            padding-right: 5px;
          }
+       }
+     }
+     .text{
+       margin-top: 20px;
+       span{
+         color: #FB3A32;
+         padding: 0 5px;
        }
      }
    }

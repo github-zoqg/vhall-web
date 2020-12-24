@@ -3,7 +3,6 @@
     <el-table
       ref="elTable"
       :data="manageTableData"
-      :row-key="setRowKeyFun"
       @selection-change="handleTableCheckbox"
       :max-height="maxHeight"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
@@ -12,6 +11,7 @@
         type="selection"
         width="55"
         align="left"
+        :selectable="checkSelectable"
         v-if="isCheckout"
       />
       <template>
@@ -46,8 +46,6 @@
               <img
                 class="imgs"
                 :src="scope.row.img"
-                width="40"
-                height="40"
               />
             </div>
             <div v-else-if="item.key === 'img_url'">
@@ -66,15 +64,20 @@
             </div>
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
-                <span :class="scope.row.status =='1' ? 'active-success': scope.row.status =='2' ? 'active-error' : 'active-waiting'"></span>
+                <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '2' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
             <div v-else-if="item.key === 'imgOrText'">
               <p v-html="scope.row.imgOrText"></p>
             </div>
-            <p v-else class="text">
+            <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
+              <el-progress :percentage="scope.row.codeProcess" v-if="scope.row.codeProcess && !scope.row.transcoded"></el-progress>
+              <span v-else-if="scope.row.transcoded">转码完成</span>
+              <span v-else>{{scope.row.transform_schedule_str}}</span>
+            </div>
+            <p v-else class="text" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] }}
+              {{ scope.row[item.key] || '----' }}
             </p>
           </template>
         </el-table-column>
@@ -85,21 +88,24 @@
           :width="width"
         >
           <template slot-scope="scope">
-            <el-button
-              v-for="(item, index) in tableRowBtnFun"
-              :key="index"
-              size="mini"
-              type="text"
-              @click="handleBtnClick(scope, item)"
+            <template  v-for="(item, index) in tableRowBtnFun">
+              <el-button
+                :key="index"
+                size="mini"
+                type="text"
+                v-preventReClick
+                @click="handleBtnClick(scope, item)"
+                v-if="checkShowHandle(scope.row, item)"
               >{{ item.name }}</el-button
-            >
+              >
+            </template>
           </template>
         </el-table-column>
       </template>
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum"
+      v-if="needPagination && totalNum > 10"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
@@ -185,6 +191,13 @@ export default {
       };
       this.$emit('onHandleBtnClick', Object.assign({}, obj));
     },
+    checkShowHandle(row, item) {
+      if (this.scene === 'accountList') {
+        return row.parent_id > 0 || (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0);
+      } else {
+        return true;
+      }
+    },
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current;
@@ -204,6 +217,13 @@ export default {
     clearSelect() {
       this.$refs.elTable.clearSelection();
     },
+    checkSelectable(row) {
+      if (this.scene === 'accountList') {
+        return row.parent_id > 0;
+      } else {
+        return true;
+      }
+    }
   },
 };
 </script>
@@ -213,8 +233,9 @@ export default {
     margin-right: 12px;
   }
   /deep/.cell .imgs {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
+    // object-fit: cover;
   }
    /deep/.cell .advImg {
     width: 142px;

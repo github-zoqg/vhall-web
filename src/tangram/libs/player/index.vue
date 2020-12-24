@@ -8,13 +8,15 @@
         alt
       />
       <div class="audio" v-show="audioStatus || isAudio">
-        <img src="./img/bg2x.png" />
+        <img src="../../assets/voice.png" />
         {{$t("message.voicePlaying")}}
       </div>
       <div class="loading" v-if="loading && !(audioStatus || isAudio)">
         <img src="./img/load.gif" />
       </div>
-      <div class="overEnd live-end" v-show="liveEnded"></div>
+      <div class="overEnd live-end" v-show="liveEnded">
+        <h1>结束</h1>
+      </div>
       <div class="overEnd" v-show="BackEnd">
         <i @click="play">{{$t("message.replay")}}</i>
       </div>
@@ -205,8 +207,14 @@ export default {
       default: false
     },
     reportExtra: {
-      required: false,
-      default: {}
+      type: [Array, Object, String],
+      required: false
+    },
+    roominfo: {
+      default: () => {}
+    },
+    isAudience:{
+      default: true
     }
   },
   data () {
@@ -290,8 +298,11 @@ export default {
       }
     }
   },
+  created() {
+    console.log(1001)
+  },
   async mounted () {
-    console.log(this.$route, 999, this.$route.query.embed == 'video');
+    console.log(9991, this.isAudio, this.audioStatus);
     if (this.$route.query.embed == 'video') {
       this.isEmbedVideo = true;
     }
@@ -675,7 +686,7 @@ export default {
       }
     },
     async initSDK () {
-      console.log('sdk initing', this.type);
+      console.log('sdk initing', this.type, this.roominfo);
       let params = {
         appId: this.appId, // 应用ID，必填
         accountId: this.accountId, // 第三方用户ID，必填
@@ -686,9 +697,19 @@ export default {
         autoplay: false,
         forceMSE: false,
         otherOption: {
-          report_extra: this.reportExtra
+          vid: this.roominfo.vid, // hostId
+          vfid: this.roominfo.vfid,
+          guid: this.roominfo.guid,
+          biz_id: this.$route.params.il_id
         }
       };
+      if(this.isAudience){
+        // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
+        params.otherOption.report_extra = this.reportExtra
+      }else{
+        // 助理上报     不需要switch_id
+        params.otherOption.report_extra = this.roominfo.report_extra
+      }
       if (this.isLive && this.liveOption && this.type == 'live') {
         params = Object.assign(params, {
           liveOption: this.liveOption
@@ -702,10 +723,20 @@ export default {
         throw new Error('参数异常');
       }
       if (this.marquee) {
+        let marqueeText = ''
+        if (this.marquee.text_type == 1 ) {
+          marqueeText = this.marquee.text
+        } else {
+          if (this.roominfo.userId) {
+            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.userId : this.roominfo.userId 
+          } else {
+            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.nickName : this.roominfo.nickName
+          }
+        }
         // 跑马灯
         params.marqueeOption = {
           enable: true,
-          text: this.marquee.text, // 跑马灯的文字
+          text: marqueeText, // 跑马灯的文字
           alpha: this.marquee.alpha, // 透明度,100完全显示,0 隐藏
           size: this.marquee.size, // 文字大小
           color: this.marquee.color, // 文字颜色
@@ -715,7 +746,8 @@ export default {
         };
       } else {
         params.marqueeOption = {
-          text: ''
+          text: '',
+          enable: false
         };
       }
       if (this.water) {
@@ -728,12 +760,12 @@ export default {
           size: ['80px'] // 水印大小，支持px,vh,vw,%
         };
       }
-      console.log(params, '初始化播放器参数');
+      console.log(params, '初始化播放器参数1');
       return new Promise((resolve, reject) => {
         VhallPlayer.createInstance(
           params,
           event => {
-            console.log('ffffffffffffffffffffffffff', event);
+            console.log('初始化播放器成功', event);
             this.$PLAYER = event.vhallplayer;
             window.ppp = this.$PLAYER;
             this.$PLAYER.openControls(false);
@@ -748,7 +780,7 @@ export default {
             }
           },
           e => {
-            console.error('ffffffffffffffffffffffffff', event);
+            console.error('初始化播放器失败', event);
             reject(e);
           }
         );
@@ -1059,7 +1091,7 @@ export default {
       return text;
     },
     getLoginStatus () {
-      return JSON.parse(sessionStorage.getItem('authInfo')).length == undefined;
+      return JSON.parse(sessionStorage.getItem('userInfo')).length == undefined;
     },
     controllerMouseLeave () {
       clearTimeout(this.hoverVideoTimer);
@@ -1162,7 +1194,18 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
+    position: absolute;
+    z-index: 15;
+    h1 {
+      margin: auto;
+      font-size: 24px;
+      line-height: 80px;
+      height: 80px;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 1px;
+      width: 100%;
+    }
     i {
       font-style: normal;
       width: 100px;
@@ -1175,7 +1218,7 @@ export default {
       border-radius: 4px;
     }
     &.live-end {
-      background: url('../../assets/livebg.png') no-repeat center center;
+      background: url('../../assets/endcover.jpg') no-repeat center center;
       background-color: #2d2d2d;
     }
   }
@@ -1200,7 +1243,7 @@ export default {
   left: 50%;
   bottom: 48px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: rgba(236, 236, 236, 1);
   line-height: 44px;

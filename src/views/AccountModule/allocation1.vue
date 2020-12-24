@@ -47,7 +47,7 @@
             width="180">
           </el-table-column>
           <el-table-column
-            label="预设流量">
+            label="分配流量">
             <template slot-scope="{ rows }">
               <el-input type="text" v-model="rows.inputCount" v-if="rows.isHide"/>
               <span v-else>{{rows.count}}</span>

@@ -1,7 +1,7 @@
 let filedJson = {
   radio: {
     "label": "单选题",
-    "required": false,
+    "required": true,
     "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "radio",
     value: '',
@@ -20,7 +20,7 @@ let filedJson = {
   },
   checkBox: {
     "label": "多选题",
-    "required": false,
+    "required": true,
     "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "checkBox",
     value: "",
@@ -39,7 +39,7 @@ let filedJson = {
   },
   select: {
     "label": "下拉题",
-    "required": false,
+    "required": true,
     "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
     "type": "select",
     value: '',
@@ -70,7 +70,7 @@ let filedJson = {
   },
   input: {
     "label": "问答题",
-    "required": false,
+    "required": true,
     "bottomBtn": ["delete", "move", "requireSwtich"],
     "type": "input",
     value:'',
@@ -114,10 +114,11 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '名字',
           "required": true,
-          "bottomBtn": [],
+          "bottomBtn": ["move"],
           reqType: 0,
           default_type: 1,
-          subject: '名字'
+          subject: '名字',
+          disabledEdit: true
         });
 
         break;
@@ -131,7 +132,8 @@ export function getfiledJson({name, type}){
           reqType: 0,
           default_type: 2,
           subject: '手机号',
-          phoneValide: true
+          phoneValide: true,
+          disabledEdit: true
         });
 
         break;
@@ -153,7 +155,7 @@ export function getfiledJson({name, type}){
 
         json = Object.assign(json, {
           label: '性别',
-          "required": false,
+          "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
           reqType: 0,
           default_type: 4,
@@ -170,7 +172,8 @@ export function getfiledJson({name, type}){
           "required": true,
           reqType: 0,
           default_type: 3,
-          subject: '邮箱'
+          subject: '邮箱',
+          disabledEdit: true
         });
 
         break;
@@ -184,7 +187,8 @@ export function getfiledJson({name, type}){
           "bottomBtn": ["delete", "move", "requireSwtich"],
           options: {
             type: 7,
-          }
+          },
+          disabledEdit: true
         });
 
         break;
@@ -205,14 +209,15 @@ export function getfiledJson({name, type}){
           label: '地域',
           "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
-          "nodes": ["省/自治区/直辖市", "市", "区/县"].map(item=>{
+          "nodes": ["省/自治区/直辖市", "市", "区/县"].map((item, index)=>{
             return {
               props: {
                 disabled: true,
                 placeholder: item,
-                class: ['selectInput']
+                class: ['selectInput', 'regionalInput']
               },
-              "value":""
+              "value":"",
+              index
             };
           }),
           reqType: 5,
@@ -222,7 +227,8 @@ export function getfiledJson({name, type}){
             show_province: 1,
             show_city: 1,
             show_district: 1
-          }
+          },
+          disabledEdit: true
         });
 
         break;
@@ -237,7 +243,6 @@ export function getfiledJson({name, type}){
           "nodes": ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
             return {
               props: {
-                disabled: item !='其他',
                 placeholder: "选项",
                 class: ['selectInput']
               },

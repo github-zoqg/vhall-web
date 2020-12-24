@@ -926,8 +926,14 @@ export default {
           };
           this.$fetch('v3InviteMic', data).then(res => {
             console.warn(res, '邀请上麦');
-            this.$message.success({ message: '邀请发送成功' });
-          }).catch(() => {});
+            if(res.code == 200){
+              this.$message.success({ message: '邀请发送成功' });
+            }else{
+              this.$message.warning(res.msg)
+            }
+          }).catch((err) => {
+            console.warn('邀请上麦接口错误---', err)
+          });
         }
       }
     },
@@ -942,6 +948,9 @@ export default {
       console.warn('对上麦的用户进行下麦操作---------',data);
       this.$fetch('speakUserOff', data).then((res) => {
         console.warn(res, '8888');
+        if(res.code != 200){
+          this.$message.warning(res.msg)
+        }
       }).catch(error => {
         console.error('邀请上麦接口错误', error);
       });

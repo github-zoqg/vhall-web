@@ -11,7 +11,7 @@
       <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="100px">
         <el-form-item label="标志替换：" prop="logo">
           <upload
-            :class="'upload__avatar ' + imgType"
+            class="upload__avatar"
             v-model="logoForm.logo"
             :domain_url="domain_url"
             :saveData="{
@@ -24,15 +24,15 @@
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
             @delete="logoForm.logo = ''">
-            <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+            <p slot="tip">最佳头图尺寸：156*56px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
           </upload>
         </el-form-item>
         <el-form-item label="标志链接：" prop="logo_jump_url">
           <el-input type="text" placeholder="请输入标志链接" v-model="logoForm.logo_jump_url"/>
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
-          <el-button round @click="saveConsoleLogo('default')">恢复默认</el-button>
+          <el-button type="primary" v-preventReClick round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
+          <el-button round v-preventReClick @click="saveConsoleLogo('default')">恢复默认</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -68,7 +68,6 @@ export default {
           { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       },
-      imgType: 'default',
       domain_url: '',
       auth_show: false
     };
@@ -79,7 +78,7 @@ export default {
       if(permissions) {
         let perVo = JSON.parse(permissions);
         console.log(perVo, '权限-用户');
-        perVo['ui.console_logo'] = 1;
+        perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
         if (perVo['ui.console_logo'] > 0) {
           // 开启
           this.auth_show = true;
@@ -108,29 +107,19 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.imgType = 'heightMore';
-        } else {
-          that.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -148,28 +137,50 @@ export default {
         this.saveSend({
           logo: '',
           logo_jump_url: ''
-        });
+        }, type);
       } else {
         this.$refs.logoForm.validate((valid) => {
           if (valid) {
             this.saveSend({
               logo: this.$parseURL(this.logoForm.logo).path,
               logo_jump_url: this.logoForm.logo_jump_url
-            });
+            }, type);
           }
         });
       }
     },
-    saveSend(params) {
+    saveSend(params, type) {
       this.$fetch('userEdit', params).then(res => {
         if(res && res.code === 200) {
           this.$message.success('保存设置成功');
-          // this.$router.go(0);
+          if (type === 'default') {
+            this.logoForm.logo_jump_url = '';
+            this.logoForm.logo = '';
+            try {
+              this.$ref.logoForm.resetFields();
+            } catch (e) {
+              console.log(e);
+            }
+          }
+          this.getAccountInfo();
         } else {
           this.$message.error(res.msg || '保存设置失败');
         }
       }).catch(e => {
         this.$message.error('保存设置失败');
+      });
+    },
+    getAccountInfo() {
+      this.$fetch('getInfo', {
+        scene_id: 2
+      }).then(res =>{
+        if(res.code === 200 && res.data) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+          this.$EventBus.$emit('saas_vs_account_change', res.data);
+        } else {
+          this.$message.error(res.msg);
+        }
       });
     }
   },
@@ -194,30 +205,10 @@ export default {
       width: 180px;
       height: 180px;
       border: 1px solid #CCCCCC;
-      img {
-        width: 100%;
-        height: auto;
-      }
     }
     /deep/.box > div {
       width: 180px;
       height: 180px;
-    }
-    &.withMore {
-      /deep/.el-upload--picture-card {
-        img {
-          width: 100%;
-          height: auto;
-        }
-      }
-    }
-    &.heightMore {
-      /deep/.el-upload--picture-card {
-        img {
-          width: auto;
-          height: 100%;
-        }
-      }
     }
   }
   .save-btn {

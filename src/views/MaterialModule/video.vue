@@ -9,22 +9,31 @@
         3.上传的视频，不支持剪辑和下载
       </div>
     </pageTitle>
-    <div class="head-operat">
+    <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
       <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
+        :placeholder="`请输入音视频名称`"
         :isExports='false'
         :searchAreaLayout="searchAreaLayout"
         @onSearchFun="getTableList('search')"
         >
       </search-area>
     </div>
-    <el-card class="video-list">
+    <el-card class="video-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="240" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
     </el-card>
+    <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" round class="head-btn set-upload" v-if="nullText==='nullData'">
+          上传
+          <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)">
+        </el-button>
+      </noData>
+    </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
@@ -37,13 +46,17 @@
 import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: 'video.vue',
   data() {
     return {
-      total: 100,
+      total: 0,
       // 预览
       showDialog: false,
+      isSearch: false,
+      nullText: 'nullData',
+      text: '暂未上传音视频',
       videoParam: {},
       // 表格
       tableData: [],
@@ -81,6 +94,7 @@ export default {
   components: {
     PageTitle,
     VideoPreview,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -100,28 +114,38 @@ export default {
       let obj = Object.assign({}, pageInfo, formParams);
       this.getList(obj);
     },
+    getVideoList() {
+      // this.getTableList('search')
+    },
     tirggerFile(event){
+      const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
-      if(beforeName.indexOf('.mp')==-1){
-        this.$message({
-          type: 'error',
-          message: '请选择Mp4和Mp3格式的视频'
-        });
-        return;
+      let videoArr = beforeName.toLowerCase().split('.');
+      const videoType = typeList.includes(videoArr[videoArr.length - 1]);
+      if (!videoType) {
+        this.$message.error(`您上传的文件格式不正确`);
+        return false;
       }
+      // if(beforeName.indexOf('.mp')==-1){
+      //   this.$message({
+      //     type: 'error',
+      //     message: '您上传的文件格式不正确'
+      //   });
+      //   return;
+      // }
       let reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{0,10}$/;
-      let name = beforeName.split('.m')[0];
-      console.log(name, beforeName,  '22222222222222222222222222');
+      // let name = beforeName.split('.m')[0];
+      // console.log(name, beforeName,  '22222222222222222222222222');
       let onlyId = this.uploadId--;
       file.id = onlyId;
-      if(!reg.test(name)){
-        this.$message({
-          type: 'warning',
-          message: '请确认上传的文件是否为中文、英文、数字和下划线组成'
-        });
-        return;
-      }
+      // if(!reg.test(name)){
+      //   this.$message({
+      //     type: 'warning',
+      //     message: '请确认上传的文件是否为中文、英文、数字和下划线组成'
+      //   });
+      //   return;
+      // }
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
@@ -204,20 +228,24 @@ export default {
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
           res.data.list.forEach(ele => {
             switch (ele.transcode_status) {
-              case 0:
+              case '0':
                 ele.transcode_status_text = '新增排队中';
+                ele.duration = '——';
                 break;
-              case 1:
+              case '1':
                 ele.transcode_status_text = '转码成功';
                 break;
-              case 2:
+              case '2':
                 ele.transcode_status_text = '转码失败';
+                ele.duration = '——'
                 break;
-              case 3:
+              case '3':
                 ele.transcode_status_text = '转码中';
+                ele.duration = '——'
                 break;
               default:
                 ele.transcode_status_text = '新增排队中';
+                ele.duration = '——'
                 break;
             }
           });
@@ -225,6 +253,15 @@ export default {
             this.$refs.tableList.clearSelect();
           }
           this.tableData = res.data.list;
+          if (obj.title) {
+            this.isSearch = true;
+            this.nullText = 'search';
+            this.text = '';
+          } else {
+            this.isSearch = false;
+            this.nullText = 'nullData';
+            this.text = '暂未上传音视频';
+          }
           // this.checkedList = [];
           // if(this.uploadList.length!=0){
           //   this.tableData =this.uploadList.concat(this.tableData);
@@ -237,9 +274,10 @@ export default {
       that.$prompt('', '编辑',{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          inputPlaceholder: '请输入名称'
+          inputPlaceholder: '请输入名称',
+          inputErrorMessage: '名字格式不正确'
         }).then(({ value }) => {
-          let flag = Boolean(value.match(/^[ ]*$/));
+          let flag = Boolean(value.match(/[ ]*$/));
           if(!flag && value!=null){
             that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, filename: value}).then(res=>{
               that.$message.success('修改成功');
@@ -248,36 +286,44 @@ export default {
           }
         }).catch(() => {});
     },
+    confirmDelete(id) {
+      this.$confirm('确定要删除此视频或音频吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'zdy-message-box',
+        center: true
+      }).then(() => {
+        this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
+          if (res.code == 200) {
+            this.getTableList();
+            this.$message.success('删除成功');
+          } else {
+            this.$message.error(res.msg);
+          }
+
+        });
+      }).catch(() => {});
+    },
     del(that, { rows }) {
       that.checkedList = [];
-      that.$confirm('确定要删除此视频或音频吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-            center: true
-          }).then(() => {
-            that.allDelete(rows.id);
-          }).catch(() => {});
+      that.confirmDelete(rows.id);
     },
     // 批量删除
-    allDelete(id) {
-      if (!id) {
-        if(this.checkedList.length <= 0) {
+    allDelete() {
+      if(this.checkedList.length <= 0) {
           this.$message.error('请至少选择一条视频删除');
           return;
         } else {
-          id = this.checkedList.join(',');
+          let id = this.checkedList.join(',');
+          this.confirmDelete(id);
         }
-      }
-      this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
-        this.getTableList();
-        this.$message.success('删除成功');
-      });
     },
     preview(that, { rows }) {
       //  this.videoParam 进本信息
       if (rows.transcode_status == 1) {
         that.showDialog = true;
+        that.videoParam = rows;
       } else {
         that.$message.warning('只有转码成功才能查看');
       }
@@ -327,7 +373,7 @@ export default {
       }
     }
   }
-  .head-operat{
+  .head-operat, .no-live{
     margin-bottom: 20px;
     .head-btn{
       display: inline-block;

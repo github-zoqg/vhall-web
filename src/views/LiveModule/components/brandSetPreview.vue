@@ -9,83 +9,88 @@
     <div>
       <!--PC预览,begin-->
       <div class="pc" v-show="switchType === 'pc'">
-        <div :class="`skin-preview preview-${switchType} ${bgColorType}`">
-          <div></div>
-          <div class="header" v-show="!(signSetVo && signSetVo.view_status > 0)">
-            <div class="img-logo">
-              <img :src="signSetVo.logo_url" alt="" v-if="signSetVo"/>
+        <div :class="`skin-preview preview-${switchType}`" :style="{ backgroundColor: `${skinSetVo.bgColor}`}">
+          <header class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
+            <img class="logo-image" :src="signSetVo.logo_url" alt v-if="signSetVo && signSetVo.logo_url"/>
+            <div class="title-right">
+              <el-button class="button-style button-login" size="mini">登录</el-button>
+              <el-button class="button-style button-register" size="mini" type="primary">注册</el-button>
             </div>
-          </div>
-          <div class="player">
-            <div class="player-content">
-              <div class="player-title">
-                <div class="player-title-logo">
-                  <img class="logo-img" title="logo" />
-                  <img height="21" width="112" class="player-title-img" src="../../../common/images/skin/black/player-title.png" v-if="bgColorType === 'black'" />
-                  <img height="21" width="112" class="player-title-img" src="../../../common/images/skin/white/player-title.png" v-else/>
-                </div>
-                <div class="player-title-online">
-                  <div class="blog">
-                    <div class="online"></div>
+          </header>
+          <section class="watchContainer"
+                   :style="{background: `url(${skinSetVo.bg_url}) 0% 0% / cover no-repeat`}">
+            <div class="area">
+              <div class="topInfo">
+                <p class="">
+                  <b>活动标题发布会{{skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'}}</b>
+                  <span class="tag">直播</span>
+                  <span class="right gray font-14">131237次观看</span>
+                </p>
+                <p class="top-bottom" >
+                  <span class="mrR" v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">紫禁之巅</a></span>
+                  <span>时间：2020-12-18 00:00:00</span>
+                  <span class="right iconBtn" v-if="signSetVo && signSetVo.organizers_status == 1">
+                    <icon icon-class="saasyijianfankui">反馈</icon>
+                    <template>
+                      <i class="focusBtn" :style="{'backgroundColor': skinSetVo.pageStyle}">关注</i>
+                      <i class="focusCount">1314520</i>
+                    </template>
+                    </span>
+                </p>
+              </div>
+              <div class="player">
+                <div class="player-content">
+                  <div class="player-video">
+                    <img width="401" height="186" src="../../../common/images/skin/white/player.png"/>
                   </div>
-                  <img width="83" height="20" class="play-follow-img" src="../../../common/images/skin/black/blog-follow.png" v-if="bgColorType === 'black'" />
-                  <img width="83" height="20" class="play-follow-img" src="../../../common/images/skin/white/blog-follow.png" v-else/>
                 </div>
               </div>
-              <div class="player-video">
-                <img width="401" height="186" src="../../../common/images/skin/black/player.png" v-if="bgColorType === 'black'"/>
-                <img width="401" height="186" src="../../../common/images/skin/white/player.png" v-else/>
-              </div>
             </div>
-          </div>
+          </section>
           <div class="recommend">
             <div class="rcm-list">
               <div class="rcm-title">
-                <div class="title-text">
-                  <img width="28" height="10" src="../../../common/images/skin/black/recommend-title.png" v-if="bgColorType === 'black'"/>
-                  <img width="28" height="10" src="../../../common/images/skin/white/recommend-title.png" v-else/>
+                <div class="title-text" :style="{'borderBottomColor': skinSetVo.pageStyle}">
+                  <img width="30" height="10" src="../../../common/images/skin/white/recommend-title.png"
+                       v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'"/>
+                  <img width="28" height="10" src="../../../common/images/skin/black/recommend-title.png"
+                       v-else/>
                 </div>
               </div>
               <div class="rcm-li">
-                <img width="369" height="69" src="../../../common/images/skin/black/recommend-list.png" v-if="bgColorType === 'black'" />
-                <img width="369" height="69" src="../../../common/images/skin/white/recommend-list.png" v-else/>
+                <img width="369" height="69" src="../../../common/images/skin/white/recommend-list.png"
+                     v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
+                <img width="369" height="69" src="../../../common/images/skin/black/recommend-list.png"
+                     v-else/>
               </div>
             </div>
           </div>
           <div class="discription">
             <div class="dct-list">
               <div class="dct-title">
-                <div class="title-text">
-                  <img width="28" height="10" src="../../../common/images/skin/black/discription-title.png"  v-if="bgColorType === 'black'" />
-                  <img width="28" height="10" src="../../../common/images/skin/white/discription-title.png" v-else/>
+                <div class="title-text" :style="{'borderBottomColor': skinSetVo.pageStyle}">
+                  <img width="28" height="10" src="../../../common/images/skin/white/discription-title.png"
+                       v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
+                  <img width="28" height="10" src="../../../common/images/skin/black/discription-title.png"
+                       v-else/>
                 </div>
               </div>
               <div class="dct-cont">
-                <img width="371" height="68" src="../../../common/images/skin/black/discription-content.png" v-if="bgColorType === 'black'" />
-                <img width="371" height="68" src="../../../common/images/skin/white/discription-content.png" v-else/>
+                <img width="371" height="68" src="../../../common/images/skin/white/discription-content.png"
+                     v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'"/>
+                <img width="371" height="68" src="../../../common/images/skin/black/discription-content.png"
+                     v-else/>
               </div>
             </div>
           </div>
-          <div class="copyright" v-show="!(signSetVo && signSetVo.reserved_status > 0)">
+          <div class="copyright" v-show="(signSetVo && signSetVo.reserved_status > 0)">
             <div class="content">
-              <img width="176" height="25" src="../../../common/images/skin/black/copyright.png"  v-if="bgColorType === 'black'" />
-              <img width="176" height="25" src="../../../common/images/skin/white/copyright.png" v-else/>
+              <img width="176" height="25" src="../../../common/images/skin/white/copyright.png"
+                   v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
+              <img width="176" height="25" src="../../../common/images/skin/black/copyright.png"
+                   v-else/>
             </div>
           </div>
-          <!--弹窗,beigin-->
-          <div :class="'pop-window ' + bgColorType">
-            <div class="pop-title">
-              <img width="168" height="16" src="../../../common/images/skin/black/pop-title.png"  v-if="bgColorType === 'black'" />
-              <img width="168" height="16" src="../../../common/images/skin/white/pop-title.png" v-else/>
-            </div>
-            <div class="pop-content">
-              <div class="pop-price-btn"></div>
-              <div class="pop-pay-btn"></div>
-              <img width="168" height="105" src="../../../common/images/skin/black/pop-content.png"  v-if="bgColorType === 'black'" />
-              <img width="168" height="105" src="../../../common/images/skin/white/pop-content.png" v-else/>
-            </div>
-          </div>
-          <!--弹窗,end-->
         </div>
       </div>
       <!--PC预览,end-->
@@ -93,10 +98,10 @@
       <div class="app" v-show="switchType === 'app'">
         <div :class="`skin-preview preview-${switchType} ${bgColorType}`">
           <div class="panel__preview">
-            <header class="h5-title">
-              <img src="../../../common/images/h5-show-phone-logo2x.png" class="logo"/>
+            <header class="h5-title"  v-if="signSetVo && signSetVo.view_status == 1">
+              <img :src="signSetVo.logo_url" alt v-if="signSetVo && signSetVo.logo_url" class="logo"/>
               <span class="title">北京微吼时代科技有限公司</span>
-              <div class="title-icons">
+              <div class="title-icons" :style="{'color': skinSetVo.pageStyle }">
                 <icon icon-class="saasguanzhu"></icon>
                 <icon icon-class="saasbiaoji"></icon>
               </div>
@@ -106,7 +111,7 @@
             <ul class="h5-menu">
               <li>文档</li>
               <li>聊天</li>
-              <li class="active">简介</li>
+              <li class="active" :style="{ 'borderBottomColor': skinSetVo.pageStyle, 'color': skinSetVo.pageStyle }">简介</li>
               <li>推荐</li>
               <li>商品</li>
             </ul>
@@ -129,6 +134,11 @@ export default {
       switchType: 'pc',
       bgColorType: 'black',
       signSetVo: null,
+      skinSetVo: {
+        bgColor: 'ffffff', // 背景色
+        pageStyle: 'ff3333', // 按钮色
+        bg_url: '' // 背景图
+      },
       logoUrl: null
     };
   },
@@ -139,126 +149,234 @@ export default {
     signSetVoInfo(vo) {
       this.$nextTick(() => {
         this.signSetVo = vo;
+        console.log(this.signSetVo, '4444444444444444')
       });
+    },
+    skinSetVoInfo(vo) {
+      this.$nextTick(() => {
+        this.skinSetVo = vo;
+        if (vo.status > 0)  {
+          // 页面赋值
+          this.skinSetVo = vo;
+          this.skinSetVo.bg_url = vo.bg_url || vo.domain_url;
+        } else {
+          this.skinSetVo = {
+            bgColor: '#FFFFFF', // 背景色
+            pageStyle: '#ff3333', // 按钮色
+            bg_url: '' // 背景图
+          };
+        }
+        console.log(this.skinSetVo, '11111111111111')
+      });
+    },
+    getSignInfo() {
+      this.$fetch('getInterWebinarTag', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        console.log(res);
+        if (res && res.code === 200) {
+          this.signSetVo = res.data;
+        } else {
+          this.signSetVo = {};
+        }
+        console.log(this.signSetVo, '2222222222222')
+      }).catch(err=>{
+        console.log(err);
+        this.signSetVo = {};
+      });
+    },
+    getInterWebinarSkin() {
+      this.$fetch('getInterWebinarSkin', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        if (res && res.code === 200) {
+          this.skinSetVo.status = res.data.status
+          if (this.skinSetVo.status > 0)  {
+            // 页面赋值
+            let skin_json_pc = JSON.parse(res.data.skin_json_pc);
+            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#FFFFFF';
+            this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#ff3333';
+            this.skinSetVo.bg_url = skin_json_pc.background;
+          } else {
+            this.skinSetVo = {
+              bgColor: '#FFFFFF', // 背景色
+              pageStyle: '#ff3333', // 按钮色
+              bg_url: '' // 背景图
+            };
+          }
+          console.log(this.skinSetVo, '333333333333333')
+        } else {
+          this.skinSetVo = {
+            bgColor: '#FFFFFF', // 背景色
+            pageStyle: '#ff3333', // 按钮色
+            bg_url: '' // 背景图
+          };
+        }
+      }).catch(err=>{
+        console.log(err);
+        this.skinSetVo = {
+          bgColor: '#FFFFFF', // 背景色
+          pageStyle: '#ff3333', // 按钮色
+          bg_url: '' // 背景图
+        };
+      });
+    },
+    initPage() {
+      this.getSignInfo();
+      this.getInterWebinarSkin();
     }
   },
-  mounted() {
-    this.$EventBus.$on('SAAS_V3_SIGN_PREVIEW', this.signSetVoInfo);
+  created() {
+   this.initPage();
   }
 };
 </script>
 
 <style lang="less" scoped>
 /*预览区域样式开始*/
-.skin-preview.preview-pc {
+.skin-preview.preview-pc{
   width: 445px;
-  height: 565px;
   border: 1px solid #d2d2d2;
-  img {
-    vertical-align: middle;
-    border: none;
-  }
-  .header {
-    background: none;
-    width: 443px;
-    height: 117px;
-    border: none;
-    margin-bottom: -91px;
-    .img-logo {
-      width: 100%;
-      height: 27px;
-      background: #ffffff;
-      img {
-        margin: 0 0 0 20px;
-        padding: 0;
-        width: auto;
-        height: 27px;
-        cursor: pointer;
-      }
-    }
-  }
-  .player {
-    height: 236px;
-    width: 443px;
-    padding-top: 10px;
-    background-size: 443px 236px;
-  }
-  .player-content {
-    margin: 0 auto;
-    height: 236px;
-    width: 402px;
-  }
-  .player-title {
-    height: 29px;
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    .player-title-logo {
-      display: inline;
-    }
-    .logo-img {
-      display: none;
-      width: 27px;
-      height: 27px;
-      border: 1px solid #d2d2d2;
-      border-radius: 2px;
-    }
-    .player-title-img {
-      width: 112px;
-      height: 21px;
-    }
-    .player-title-online {
-      display: inline;
-      float: right;
-    }
-  }
-  .blog {
-    z-index: 98;
-    height: 10px;
-    width: 54px;
-    background-color: #ff3333;
-    border-radius: 2px;
+  padding-bottom: 40px;
+}
+.pc-header {
+  padding: 0 24px;
+  .logo-image {
+    width: auto;
+    height: 26px;
+    float: left;
     margin-top: 10px;
+    margin-bottom: 10px;
   }
-  .online {
+  .title-right {
     float: right;
-    height: 10px;
-    width: 27px;
-    border-bottom-right-radius: 2px;
-    border-top-right-radius: 2px;
-    background: url(../../../common/images/skin/online-count.png) no-repeat;
-    background-size: 27px 10px;
-  }
-  .play-follow-img {
-    width: 83px;
-    height: 20px;
-    position: absolute;
-    margin-top: -20px;
-    margin-left: -29px;
-  }
-  .player-video {
-    img {
-      width: 401px;
-      height: 186px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    /deep/.el-button {
+      width: 48px;
+      height: 26px;
+      line-height: 26px;
+      padding: 0 0;
     }
   }
-  .recommend {
-    width: 100%;
-    height: 110px;
-    margin-top: 10px;
+}
+.watchContainer{
+  clear: both;
+}
+.area {
+  margin: 0 24px;
+  overflow: hidden;
+  width: auto;
+  padding: 12px 0;
+}
+.topInfo{
+  b{
+    font-size: 12px;
+    font-weight: normal;
   }
-  .rcm-list {
+  .tag{
+    display: inline-block;
+    font-size: 10px;
+    width: 34px;
+    height: 16px;
+    background: red;
+    line-height: 16px;
+    vertical-align: middle;
+    margin-left: 8px;
+    text-align: center;
+    color: #ffffff;
+    border-radius: 3px;
+  }
+  .top-bottom {
+    margin-bottom: 12px;
+    span {
+      color: #7c8287;
+      font-size: 10px;
+    }
+  }
+  .right{
+    float: right;
+    width: auto;
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    color: #7c8287;
+    font-size: 10px;
+  }
+  .focusBtn {
+    display: inline-block;
+    background-color: #ff3333;
+    color: #fff;
+    text-align: center;
+    border-radius: 3px 0 0 3px;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1;
+    padding: 2px 5px;
+  }
+  .focusCount {
+    background-color: #fbdcdc;
+    display: inline-block;
+    text-align: center;
+    border-radius: 0 3px 3px 0;
+    cursor: pointer;
+    font-size: 10px;
+    line-height: 1;
+    padding: 2px 5px;
+    color: #ff3333;
+  }
+}
+.recommend {
+  width: 100%;
+  height: 110px;
+  margin-top: 10px;
+}
+.rcm-list {
+  margin: 0 auto;
+  height: 110px;
+  width: 402px;
+  border: 1px solid rgba(210,210,210,0.08);
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+}
+.rcm-title {
+  height: 18px;
+  border-bottom: 1px solid rgba(210,210,210,0.08);
+}
+.title-text {
+  text-align: center;
+  vertical-align: middle;
+  height: 18px;
+  line-height: 18px;
+  width: 60px;
+  border-bottom: 2px solid #ff0000;
+  img {
     margin: 0 auto;
-    height: 110px;
-    width: 402px;
-    border: 1px solid rgba(210,210,210,0.08);
-    border-radius: 2px;
-    background: rgba(255,255,255,0.08);
+    padding-bottom: 3px;
   }
-  .rcm-title {
-    height: 18px;
-    border-bottom: 1px solid rgba(210,210,210,0.08);
-  }
+}
+.rcm-li {
+  height: 90px;
+  line-height: 90px;
+  text-align: center;
+  margin-top: 10px;
+}
+.discription {
+  height: 110px;
+  width: 100%;
+  margin-top: 5px;
+}
+.dct-list {
+  margin: 0 auto;
+  height: 110px;
+  width: 402px;
+  border: 1px solid rgba(210,210,210,0.08);
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+}
+.dct-title {
+  height: 18px;
+  border-bottom: 1px solid rgba(210, 210, 210, 0.08);
   .title-text {
     text-align: center;
     vertical-align: middle;
@@ -271,49 +389,16 @@ export default {
       padding-bottom: 3px;
     }
   }
-  .rcm-li {
-    height: 90px;
-    line-height: 90px;
-    text-align: center;
-  }
-  .discription {
-    height: 110px;
-    width: 100%;
-    margin-top: 5px;
-  }
-  .dct-list {
-    margin: 0 auto;
-    height: 110px;
-    width: 402px;
-    border: 1px solid rgba(210,210,210,0.08);
-    border-radius: 2px;
-    background: rgba(255,255,255,0.08);
-  }
-  .dct-title {
-    height: 18px;
-    border-bottom: 1px solid rgba(210, 210, 210, 0.08);
-    .title-text {
-      text-align: center;
-      vertical-align: middle;
-      height: 18px;
-      line-height: 18px;
-      width: 60px;
-      border-bottom: 2px solid #ff0000;
-      img {
-        margin: 0 auto;
-        padding-bottom: 3px;
-      }
-    }
-  }
-  .dct-cont {
-    text-align: center;
-    height: 90px;
-    line-height: 90px;
-  }
-  .copyright {
-    width: 100%;
-    margin-top: 10px;
-  }
+}
+.dct-cont {
+  text-align: center;
+  height: 90px;
+  line-height: 90px;
+  margin-top: 10px;
+}
+.copyright {
+  width: 100%;
+  margin-top: 10px;
   .content {
     margin: 0 auto;
     height: 42px;
@@ -321,66 +406,7 @@ export default {
     width: 402px;
     text-align: center;
     border-top: 1px solid rgba(210,210,210,0.08);
-  }
-  .pop-window {
-    display: none;
-    position: absolute;
-    width: 168px;
-    height: 121px;
-    border-radius: 2px;
-    margin-top: -436px;
-    margin-left: 130px;
-    &.black {
-      background-color: rgb(21, 21, 24);
-    }
-    &.white {
-      background-color: #fff;
-    }
-  }
-  .pop-title {
-    width: 168px;
-    height: 16px;
-    line-height: 16px;
-    background: rgba(0,0,0,0.15);
-    vertical-align: middle;
-  }
-  .pop-content {
-    width: 168px;
-    height: 105px;
-    background-color: rgba(255,255,255,0.1);
-    img {
-      position: absolute;
-    }
-  }
-  .pop-price-btn {
-    position: absolute;
-    width: 49px;
-    height: 13px;
-    border-radius: 2px;
-    margin-top: 8px;
-    margin-left: 31px;
-    background-color: #ff3333;
-  }
-  .pop-pay-btn {
-    position: absolute;
-    width: 105px;
-    height: 13px;
-    border-radius: 2px;
-    margin-top: 83px;
-    margin-left: 32px;
-    background-color: #ff3333;
-  }
-  &.black {
-    background: rgb(51, 51, 51);
-  }
-  &.white {
-    background: #ffffff;
-    .rcm-list,.dct-list {
-      border-color: rgba(210, 210, 210, 0.8);
-    }
-    .rcm-title,.dct-title {
-      border-bottom-color: rgba(210, 210, 210, 0.8);
-    }
+    padding-top: 20px;
   }
 }
 .skin-preview.preview-app {
@@ -414,7 +440,7 @@ export default {
       width: 168px;
       height: 24px;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 24px;
@@ -451,7 +477,7 @@ export default {
       height: 40px;
       line-height: 40px;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #666666;
       margin-left: 24px;

@@ -27,10 +27,12 @@
         stopApp: 1,
         restartApp: 0
       }"
+      v-if="totalNum > 0"
       @onHandleBtnClick="onHandleBtnClick"
       @getTableList="getTableList"
     >
     </dev-table>
+    <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
   </div>
 </template>
 
@@ -137,7 +139,6 @@ export default {
         this.$alert('如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970', '提示', {
           confirmButtonText: '我知道了',
           customClass: 'zdy-alert-box',
-          type: 'warning',
           center: true
         }).then(()=>{
         }).catch(()=>{});
@@ -153,7 +154,6 @@ export default {
           this.$alert('添加成功，请手动添加包名签名信息', '提示', {
             confirmButtonText: '我知道了',
             customClass: 'zdy-alert-box',
-            type: 'warning',
             center: true
           }).then(()=>{
             // 添加成功，刷新列表
@@ -203,9 +203,7 @@ export default {
       that.$confirm('是否确认停用APP？', '提示', {
         confirmButtonText: '确定',
         showClose: true,
-        customClass: 'zdy-message-box',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(()=>{
         that.appEditStatus(rows, 0);
       });
@@ -214,9 +212,7 @@ export default {
       that.$confirm('是否确认启用APP？', '提示', {
         confirmButtonText: '确定',
         showClose: true,
-        customClass: 'zdy-message-box',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(()=>{
         that.appEditStatus(rows, 1);
       });
@@ -225,9 +221,7 @@ export default {
       that.$confirm('是否确认删除APP？', '提示', {
         confirmButtonText: '确定',
         showClose: true,
-        customClass: 'zdy-message-box',
-        type: 'warning',
-        center: true
+        customClass: 'zdy-message-box'
       }).then(()=>{
         that.appEditStatus(rows, 2);
       });
@@ -266,5 +260,15 @@ export default {
   .developmentWrap{
     padding: 32px 24px;
     background: #fff;
+    /deep/.el-button[readonly] {
+      background: @999;
+      color: #FFFFFF;
+      border: 1px solid @999;
+      &:hover {
+        background: @999;
+        color: #FFFFFF;
+        border: 1px solid @999;
+      }
+    }
   }
 </style>

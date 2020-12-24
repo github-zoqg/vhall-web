@@ -14,7 +14,7 @@
       <el-button round  @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList"></el-input>
+        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList" clearable></el-input>
       </div>
     </div>
     <el-card class="question-list">
@@ -22,8 +22,12 @@
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </el-card>
-    <pre-question ref="isPreQuestion" :questionId="questionId"></pre-question>
-    <base-question ref="dataBase"></base-question>
+    <template v-if="isShowQuestion">
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
+        <pre-question  :questionId="questionId"></pre-question>
+      </el-dialog>
+    </template>
+    <base-question ref="dataBase" @getTableList="getTableList"></base-question>
   </div>
 </template>
 
@@ -38,6 +42,7 @@ export default {
       total: 100,
       selectChecked: [],
       keyword: '',
+      isShowQuestion: false,
       questionId: '',
       tabelColumn: [
         {
@@ -60,20 +65,7 @@ export default {
       tableRowBtnFun: [
         {name:'预览', methodName: 'preview'}, {name:'复制', methodName: 'cope'} ,{name:'编辑', methodName: 'edit'},{name:'删除', methodName: 'del'}
       ],
-      tableData: [
-        {
-          survey_id: '12312413',
-          title: '请输入000',
-          updated_at: '2020-10-03',
-          topic_num: 100
-        },
-        {
-          survey_id: '1212345',
-          title: '请输入111',
-          updated_at: '2020-10-12',
-          topic_num: 200
-        }
-      ]
+      tableData: []
     };
   },
   components: {
@@ -106,6 +98,7 @@ export default {
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list || [];
         this.total = res.data.total;
+        // window.sessionStorage.setItem("vhallyunFormAnswerDetail", JSON.stringify(res.data.list))
         if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
           window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
         }
@@ -114,8 +107,11 @@ export default {
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.isShowQuestion = true;
       that.questionId = rows.question_id;
-      that.$refs.isPreQuestion.dialogVisible = true;
+      // if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+      //     window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+      //   }
     },
     // 复制
     cope(that, {rows}) {

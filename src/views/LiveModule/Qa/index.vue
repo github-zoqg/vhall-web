@@ -49,7 +49,7 @@
                   <span>{{item.created_at}}</span>
                   <span style="color:#169bd5">{{baseObj.join_info.nickname}} <span class="mark">标记为语音回复</span>  {{filterTime(item.updated_at)}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                   <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
@@ -65,7 +65,7 @@
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                   <el-button @click="reply({type: 'private'}, item, index)" size="small" class="setBut">私聊</el-button>
@@ -78,7 +78,7 @@
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
                       <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
-                    <p>{{ite.content}}</p>
+                    <p v-html="ite.content"></p>
                   </li>
                 </ul>
               </li>
@@ -91,7 +91,7 @@
                   <span>{{item.nick_name}}</span>
                   <span>{{item.created_at}}</span>
                  </p>
-                 <p class="await-content">{{item.content}}</p>
+                 <p class="await-content" v-html="item.content"></p>
                </div>
                <div class="fr">
                     <span>操作时间：{{filterTime(item.updated_at)}}</span>
@@ -262,7 +262,6 @@ export default {
       }).then(res=>{
         if(res.code == 200){
           try {
-            console.warn(res.data.list);
             res.data.list.forEach(item=>{
               if (item.content) {
                 item.content = textToEmojiText(item.content);
@@ -387,7 +386,7 @@ export default {
       this.privateFlag = true
       this.$nextTick(()=>{
         if(this.priteChatList.length!=0){
-          this.$refs.private.getDefaultContent(this.priteChatList[0].id, 'father')
+          this.$refs.private.getDefaultContent(this.priteChatList[0].user_id, 'father')
         }
       })
     },
@@ -395,15 +394,12 @@ export default {
       this.privateFlag = false
     },
     privateSendMsg(data,msg){
-      console.warn('发送私聊消息, 走到消息通道', msg);
       this.$Chat.emit(data,msg)
     },
     revoke(val, index, fatherIndex){
       // 撤销回复
-      console.warn('撤销回复', this.textDealList[fatherIndex].answer[index]);
       this.$fetch('v3Revoke', {answer_id: val.id, room_id: this.baseObj.interact.room_id}).then(res=>{
         if(res.code == 200){
-          console.warn(res, '撤销成功');
           this.$nextTick(() => {
             this.textDealList[fatherIndex].answer[index].is_backout = 1
           })
@@ -422,6 +418,7 @@ export default {
       }
       window.VhallChat.createInstance(option, (event) => {
         this.$Chat = event.message; // 聊天实例句柄
+        window.privateChat = event.message
         let disable = event.disable; // 个人是否被禁言，bool值
         let disable_all = event.disable_all; // 是否频道被禁言，bool值
         this.monitor()
@@ -439,7 +436,6 @@ export default {
     // 监听
     monitor(){
       this.$Chat.onRoomMsg(msg => {
-        console.warn('坚挺到消息的派发----0-', msg);
         if (typeof msg !== 'object') {
           msg = JSON.parse(msg);
         }
@@ -451,7 +447,7 @@ export default {
           console.log(e);
         }
         Object.assign(msg, msg.data);
-        // console.warn('坚挺到消息的派发----1-', msg);
+        console.warn('私聊处send****************************', msg);
          this.$EventBus.$emit(msg.type, msg);
       })
     },
@@ -463,7 +459,6 @@ export default {
         type: 3,
         room_id: this.baseObj.interact.room_id
       }
-      console.warn('点击的文字回复----准备到最终', data, this.sendMessage,);
       this.$fetch('v3ReplayUserQu', data).then(res=>{
         if(res.code == 200){
             this.textDalog = false
@@ -488,13 +483,8 @@ export default {
     getPrivateList(){
       return new Promise((resolve, reject)=>{
         this.$fetch('v3GetPrivateList', {room_id: this.baseObj.interact.room_id, webinar_id: this.$router.currentRoute.params.id }).then(res=>{
-          console.warn(res);
           if(res.code == 200){
-            console.warn('开始准备', res);
             this.priteChatList = res.data.list
-            // if(res.data.list.length!=0){
-            //   this.$refs.private.getDefaultContent(res.data.list[0].id, 'father')
-            // }
           }else{
             this.$message.warning(res.msg)
           }

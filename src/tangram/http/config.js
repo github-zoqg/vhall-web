@@ -50,7 +50,6 @@ const Apis = {
   sendQuestion: ['/api/webinar/v1/webinar/addquestion', 'POST', 't.e'], // 问答模块发送问题
   getQAHistroy: ['/api/webinar/v1/webinar/qahistory', 'POST', 't.e'], // 获取问答聊天记录
   redpacketCreate: ['/cmpt/redpacket/create', 'POST'], // 发红包
-  getpacketCreate: ['/cmpt/redpacket/get', 'POST'], // 抢红包
   getRecordsPacket: ['/cmpt/redpacket/records-get', 'POST'], // 获取红包领取记录
   getPacketLastInfo: ['/cmpt/redpacket/get-last-info', 'POST'], // 获取房间内最新的一个红包信息
   myPacketLastInfo: ['/cmpt/redpacket/get-my-info', 'POST'], // 获取房间内最新的红包我抢到红包信息
@@ -60,9 +59,7 @@ const Apis = {
   setSpeaker: ['/cmpt/inav/set-doc-permission', 'POST'], // 设置主讲人
   muteDevic: ['/cmpt/inav/set-device-status', 'POST'], // 禁用设备 - device 1, audio 2, vido
   roleQuit: ['/api/webinar/v1/interact/logout', 'POST', 't.e'], // 角色退出
-  saveMediaSettings: ['/cmpt/inav/set-stream', 'POST'], // 保存媒体设置属性
   getHistoryMsg: ['/cmpt/chat/lists', 'POST'], // 获取历史消息
-  getPushInfo: ['/cmpt/room/get-push-info', 'POST'], // 获取推流信息
   defaultRecord: ['/api/webinar/v1/webinar/defaultrecord', 'POST', 't.e'],
   setDevice: ['/cmpt/inav/set-device', 'POST'],
   startrecord: ['/api/webinar/v1/webinar/startrecord', 'POST', 't.e'], // 开始录制

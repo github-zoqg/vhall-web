@@ -1,15 +1,15 @@
 <template>
   <div class="page-padding">
     <pageTitle title="功能配置"></pageTitle>
-    <div class="div__func div__view" v-if="keyList && keyList.length > 0">
+    <div class="div__func div__view" v-if="keyList">
       <div class="div__view__title">观看页设置</div>
       <ul>
-        <li class="switch__box" v-for="(item, ins) in keyList[0]" :key="`view_`+ins">
+        <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
           <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
             v-model="item.value"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="0"
+            :inactive-value="1"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             @change="changeStatus($event, item)">
@@ -18,10 +18,10 @@
         </li>
       </ul>
     </div>
-    <div class="div__func div__playback" v-if="keyList && keyList.length > 1">
+    <div class="div__func div__playback" v-if="liveKeyList && liveKeyList">
       <div class="div__view__title">回放设置</div>
       <ul>
-        <li class="switch__box" v-for="(item, ins) in keyList[1]" :key="`playback_`+ins">
+        <li class="switch__box" v-for="(item, ins) in liveKeyList" :key="`playback_`+ins">
           <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
             v-model="item.value"
@@ -49,7 +49,8 @@ export default {
   data() {
     return {
       query: {},
-      keyList: []
+      keyList: [],
+      liveKeyList: []
     };
   },
   methods: {
@@ -63,14 +64,18 @@ export default {
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
         console.log(res);
+        let str = `${!callback ? '开启' : '关闭'}`
+        if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
+          str = `${!callback ? '关闭' : '开启' } `
+        }
         if(res && res.code === 200) {
           this.$message({
-            message:  `${callback ? '开启' : '关闭'} ${item.key_name} 成功`,
+            message:  `${str} ${item.key_name} 成功`,
             type: 'success'
           });
           item.value = Number(callback);
         } else {
-          this.$message.error(res.msg || `${callback ? '开启' : '关闭'} ${item.key_name} 失败`);
+          this.$message.error(res.msg || `${str} ${item.key_name} 失败`);
         }
       }).catch(e => {
         console.log(e);
@@ -83,53 +88,56 @@ export default {
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
       console.log(dataVo, '功能配置');
+      let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      let perVo = permissions ? JSON.parse(permissions) : {};
+      if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
+        perVo['ui.record_chapter'] = 1;
+      }
       this.keyList = [
-        [
-          {
-            type: 'ui.hide_reward',
-            key_name: '隐藏打赏',
-            openShow: '已开启，观看端打赏按钮已被隐藏',
-            closeShow: '开启后，观看端打赏按钮将被隐藏',
-            value: Number(dataVo['ui.hide_reward'])
-          },
-          {
-            type: 'ui.watch_hide_like',
-            key_name: '隐藏点赞',
-            openShow: '已开启，观看端点赞按钮已被隐藏',
-            closeShow: '开启后，观看端点赞按钮将被隐藏',
-            value: Number(dataVo['ui.hide_like'])
-          },
-          {
-            type: 'ui.hide_gifts',
-            key_name: '隐藏礼物',
-            openShow: '已开启，观看端礼物按钮已被隐藏',
-            closeShow: '开启后，观看端礼物按钮将被隐藏',
-            value: Number(dataVo['ui.hide_gifts'])
-          },
-          {
-            type: 'ui.hide_share',
-            key_name: '隐藏分享',
-            openShow: '已开启，观看端的分享已被隐藏（PC端分享按钮和手机端的微信分享）',
-            closeShow: '开启后，观看端的分享将被隐藏（PC端分享按钮和手机端的微信分享）',
-            value: Number(dataVo['ui.hide_share'])
-          }
-        ],
-        [
-          {
-            type: 'ui.watch_record_no_chatting',
-            key_name: '回放禁言',
-            openShow: '已开启，回放默认已开启聊天禁言',
-            closeShow: '开启后，回放默认开启聊天禁言',
-            value: Number(dataVo['record_no_chatting'])
-          },
-          {
-            type: 'ui.watch_record_chapter',
-            key_name: '回放章节',
-            openShow: '已开启，回放/点播观看端显示文档章节',
-            closeShow: '开启后，回放/点播观看端显示文档章节',
-            value: Number(dataVo['ui.watch_record_chapter'])
-          }
-        ]
+        {
+          type: 'ui.hide_reward',
+          key_name: '打赏功能',
+          openShow: '开启后，观看页显示打赏功能',
+          closeShow: '已开启，观看页显示打赏功能',
+          value: Number(dataVo['ui.hide_reward'])
+        },
+        {
+          type: 'ui.watch_hide_like',
+          key_name: '点赞功能',
+          openShow: '开启后，观看页显示点赞功能',
+          closeShow: '已开启，观看页显示点赞功能',
+          value: Number(dataVo['ui.watch_hide_like'])
+        },
+        {
+          type: 'ui.hide_gifts',
+          key_name: '礼物功能',
+          openShow: '开启后，观看页显示礼物功能',
+          closeShow: '已开启，观看页显示礼物功能',
+          value: Number(dataVo['ui.hide_gifts'])
+        },
+        {
+          type: 'ui.watch_hide_share',
+          key_name: '分享功能',
+          openShow: '开启后，观看页显示分享功能（PC端分享按钮和手机端的微信分享）',
+          closeShow: '已开启，观看页显示分享功能（PC端分享按钮和手机端的微信分享）',
+          value: Number(dataVo['ui.watch_hide_share'])
+        }
+      ];
+      this.liveKeyList = [
+        {
+          type: 'ui.watch_record_no_chatting',
+          key_name: '回放禁言',
+          openShow: '已开启，回放/点播不支持聊天',
+          closeShow: '开启后，回放/点播不支持聊天',
+          value: Number(dataVo['ui.watch_record_no_chatting'])
+        },
+        {
+          type: 'ui.watch_record_chapter',
+          key_name: '回放章节',
+          openShow: '已开启，回放/点播观看端显示文档章节',
+          closeShow: '开启后，回放/点播观看端显示文档章节',
+          value: Number(dataVo['ui.watch_record_chapter'])
+        }
       ]
     },
     planErrorRender(err) {

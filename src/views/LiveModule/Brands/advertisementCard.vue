@@ -6,7 +6,7 @@
     <div class="advertisement-main">
       <div class="search-data">
         <el-button type="primary" @click="createAdvise()" round>创建</el-button>
-        <el-button class="head-btn set-upload" round @click="createCenter()" v-if="$route.meta.title==='品牌—广告推荐'">资料库</el-button>
+        <el-button class="head-btn set-upload" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button class="head-btn set-upload" round @click="allDelete(null)">批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model="paramsObj.keyword" placeholder="请输入标题"
@@ -172,7 +172,7 @@ export default {
     line-height: 30px;
     span {
       font-size: 22px;
-      font-family: PingFangSC-Semibold, PingFang SC;
+      font-family: @fontSemibold;
       font-weight: 600;
       color: #1a1a1a;
     }

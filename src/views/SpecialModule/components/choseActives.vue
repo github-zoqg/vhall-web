@@ -5,10 +5,14 @@
       :close-on-click-modal="false"
       @close="cancelSelect"
       width="592px">
+      <div class="search" v-show="total || isSearch">
+        <el-input v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+      </div>
       <div class="vh-chose-active-box"
         v-infinite-scroll="getActiveList"
         :infinite-scroll-disabled="disabled"
         :infinite-scroll-immediate="true"
+        v-show="total"
       >
         <!-- 单个视频 -->
         <div class="vh-chose-active-item"
@@ -18,12 +22,18 @@
           :class="{'checkedActive': item.checked}"
         >
           <div class="vh-chose-active-item__cover">
-            <img src="" alt="">
+            <img :src="item.img_url" alt="">
             <div class="vh-chose-active-item__cover-status">
-              <template v-if="item.webinar_state == 1">
+              <span class="liveTag">
+                <label class="live-status" v-if="item.webinar_state == 1">
+                  <img src="../../../common/images/live.gif" alt="">
+                </label>
+                {{item | liveTag}}
+              </span>
+              <!-- <template v-if="item.webinar_state == 1">
                 <img src="../../../common/images/live/live.gif" alt=""> 直播 | 互动直播
-              </template>
-              <template v-if="item.webinar_state == 2">
+              </template> -->
+              <!-- <template v-if="item.webinar_state == 2">
                 预告 | 互动直播
               </template>
               <template v-if="item.webinar_state == 3">
@@ -34,10 +44,10 @@
               </template>
               <template v-if="item.webinar_state == 5">
                 回放 | 互动直播
-              </template>
+              </template> -->
             </div>
             <div class="vh-chose-active-item__cover-hots">
-             <i class="el-icon-view"></i>
+             <i class="iconfont-v3 saasicon_redu"></i>
              {{ item.pv }}
             </div>
 
@@ -49,15 +59,21 @@
             {{ item.created_at }}
           </div>
         </div>
-
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" round @click="saveSelect">确 定</el-button>
-        <el-button round @click="cancelSelect">取 消</el-button>
+      <div class="no-live" v-show="!total">
+        <noData :nullType="nullText" :text="text" :height="50">
+          <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
+        </noData>
+      </div>
+      <div class="select-option" v-if="total || isSearch">已选择<span>{{ selectedOption.length }}</span>个</div>
+      <span slot="footer" class="dialog-footer" v-if="total || isSearch">
+        <el-button type="primary" round @click="saveSelect" v-preventReClick>确 定</el-button>
+        <el-button round @click="cancelSelect" v-preventReClick>取 消</el-button>
       </span>
     </el-dialog>
 </template>
 <script>
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
 
   props: ['checkedList'],
@@ -65,14 +81,22 @@ export default {
   data() {
     return {
       page: 1,
-      pageSize: 9,
+      pageSize: 6,
+      nullText: 'nullData',
+      text: '你还没有创建直播',
+      total: 0,
       activeList: [],
+      selectedOption: [],
+      keyword: '',
       lock: false,
       loading: false,
-      visible: true
+      visible: true,
+      isSearch: false
     }
   },
-
+  components: {
+    noData
+  },
   computed: {
     disabled () {
       return this.loading || this.lock
@@ -80,32 +104,55 @@ export default {
   },
 
   created() {
+    this.getActiveList();
   },
 
   mounted() {
   },
 
   methods: {
+    inputChange() {
+      this.getActiveList();
+      this.activeList.map(item => item.checked = false);
+      this.selectedOption = [];
+      this.page = 1;
+    },
     getActiveList() {
       this.loading = true
       const pos = (this.page - 1) * this.pageSize
       const limit = this.page * this.pageSize
       const userId = sessionStorage.getItem('userId')
-
-      this.$fetch('liveList', {
+      let params = {
         pos: pos,
         user_id: userId,
         limit: limit,
+        title: this.keyword,
         order_type: 1,
-      }).then((res) => {
+      }
+
+      this.$fetch('liveList', this.$params(params)).then((res) => {
         if(res.code == 200) {
           this.page = this.page + 1
-          if(res.data.list.length == 0) {
+          if (!this.keyword) {
+          // 默认状态
+            this.nullText = 'nullData';
+            this.text = '你还没有创建直播！';
+            this.isSearch = false;
+          } else {
+            // 搜索状态
+            this.nullText = 'search';
+            this.text = '';
+            this.isSearch = true;
+          }
+          if(res.data.total == 0) {
             this.lock = true
             this.loading = false
+            this.total = 0
           } else {
             this.activeList =  this.activeList.concat(res.data.list)
-            this.syncCheckStatus()
+            this.total = res.data.total
+            // 老控制台选择不需要回显选中的
+            // this.syncCheckStatus()
             this.loading = false
           }
         } else {
@@ -140,23 +187,25 @@ export default {
 
     doSelect(item) {
       console.log( item )
-      this.activeList = this.activeList.map(active => {
-        if (item.webinar_id == active.webinar_id) {
-          if(active.checked) {
-            return{
-              ...active,
-              checked: false
-            }
-          } else {
-            return{
-              ...active,
-              checked: true
-            }
-          }
-        } else {
-          return {...active}
-        }
-      })
+      item.checked = !item.checked;
+      this.selectedOption = this.activeList.filter(item => item.checked);
+      // this.activeList = this.activeList.map(active => {
+      //   if (item.webinar_id == active.webinar_id) {
+      //     if(active.checked) {
+      //       return{
+      //         ...active,
+      //         checked: false
+      //       }
+      //     } else {
+      //       return{
+      //         ...active,
+      //         checked: true
+      //       }
+      //     }
+      //   } else {
+      //     return {...active}
+      //   }
+      // })
     },
 
     saveSelect() {
@@ -178,6 +227,10 @@ export default {
     height: 320px;
     overflow: auto;
     overflow-x: hidden;
+    position: relative;
+  }
+  .search{
+    margin-bottom: 20px;
   }
   .vh-chose-active-item{
     cursor: pointer;
@@ -199,11 +252,18 @@ export default {
       background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
+      img{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top:0;
+        left: 0;
+      }
       &-status{
         position: absolute;
         left: 8px;
         top: 8px;
-        width: 110px;
+        // width: 110px;
         height: 20px;
         line-height: 20px;
         background: rgba(0, 0, 0, 0.65);
@@ -241,5 +301,28 @@ export default {
       color: #666666;
       line-height: 16px;
     }
+    .liveTag{
+      background: rgba(0,0,0, .7);
+      color: #fff;
+      font-size: 12px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      position: relative;
+      z-index: 2;
+    }
+  }
+  .select-option{
+    position: absolute;
+    bottom: 40px;
+    left: 32px;
+    line-height: 20px;
+    span{
+      color: #FB3A32;
+      font-size: 16px;
+      padding: 0 10px;
+    }
+  }
+  .no-create{
+    margin-bottom: 20px;
   }
 </style>

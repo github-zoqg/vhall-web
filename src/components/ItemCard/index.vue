@@ -1,7 +1,7 @@
 <template>
   <div>
     <section v-for="(item, index) in operas" :key="index">
-      <p class="subject">{{index}}</p>
+      <p class="subject">{{type == 4 && index == '回放' ? '点播' : index}}</p>
       <div class="subjectOuter">
         <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
           <icon class="icon" :icon-class="opera.icon"></icon>
@@ -21,6 +21,10 @@ export default {
   props: {
     operas: {
       type: Object
+    },
+    type:{
+      type: Number,
+      default: 1
     }
   },
   methods: {
@@ -84,6 +88,7 @@ export default {
     text-align: center;
     font-size: 50px;
     vertical-align: top;
+    color: #FB3A32;
   }
   .desc{
     .mainText{

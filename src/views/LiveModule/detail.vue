@@ -1,14 +1,16 @@
 <template>
   <div class="detailBox">
-    <pageTitle title='直播详情'></pageTitle>
+    <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
         <div class="inner">
           <div class="thumb">
             <img :src="liveDetailInfo.img_url" alt="">
-            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>{{ liveDetailInfo | liveTag }}</span>
+            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>
+              {{ liveDetailInfo | liveTag }}
+            </span>
             <span class="hot">
-              <i class="el-icon-view"></i>
+              <i class="iconfont-v3 saasicon_redu"></i>
               {{ liveDetailInfo.pv | unitCovert }}
             </span>
           </div>
@@ -25,35 +27,35 @@
             <div class="action-look">
               <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
-                  placement="bottom"
-                  trigger="hover"
-                  style="margin-right:15px"
-                >
+                placement="bottom"
+                trigger="hover"
+                style="margin-right:15px"
+              >
                 <div class="invitation-code">
                   <p>活动观看页</p>
                   <img :src="h5WapLink" alt="" v-if="h5WapLink">
                   <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
                 </div>
-                  <el-button round size="mini" slot="reference">扫码</el-button>
+                <el-button round size="mini" slot="reference">扫码</el-button>
               </el-popover>
-               <el-popover
-                  placement="bottom"
-                  trigger="hover"
-                >
-                <div class="invitation-code">
-                  <p>直播观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
-                  <p style="margin-top:20px;text-align: center;">
+              <el-popover
+                placement="bottom"
+                trigger="hover"
+              >
+                <div class="invitation-code urlCopy">
+                  <p>观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
+                  <p>
                     <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
                     <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
                 </div>
-                  <el-button round size="mini" slot="reference">查看</el-button>
+                <el-button round size="mini" slot="reference">查看</el-button>
               </el-popover>
             </div>
           </div>
         </div>
       </el-col>
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
-        <div class="inner liveTime">
+        <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
             <span>{{ time.day }}</span>
@@ -66,18 +68,22 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
+          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen">发起直播</el-button>
+        </div>
+        <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
+          <p class="subColor">直播即将开始</p>
+          <p><span>观众等待中</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
     </el-row>
-    <item-card :operas="operas" @blockHandler="blockHandler"></item-card>
+    <item-card :operas="operas" :type='liveDetailInfo.webinar_state' @blockHandler="blockHandler"></item-card>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
-import QRcode from 'qrcode';
 import Env from "@/api/env";
 import { formateDate } from "@/utils/general.js"
 export default {
@@ -88,8 +94,11 @@ export default {
   data(){
     return {
       msg: '',
+      isAnginOpen: false,
+      outLiveTime: false,
       liveDetailInfo: {
-        webinar_state: ''
+        webinar_state: 0,
+        webinar_type: 0
       },
       link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
@@ -99,13 +108,13 @@ export default {
         minute: 0,
         second: 0
       },
-      operas: {
+      operasOld: {
         '准备': [
           { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
           { icon: 'saasicon_gongnengpeizhi', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
           { icon: 'saasicon_guankanxianzhi', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
-          { icon: 'saasicon_jiaoseyaoqing', title: '角色邀请', subText: '设置不同角色参与直播的权限', path: `/live/roleInvitation/${this.$route.params.str}`},
-          { icon: 'saasicon_nuanchangshipin', title: '暖场视频', subText: '开启后设置暖场视频', path: `/live/warm/${this.$route.params.str}`},
+          { icon: 'saasicon_jiaoseyaoqing', title: '角色邀请', subText: '设置不同角色参与直播的权限', index: 4, path: `/live/roleInvitation/${this.$route.params.str}`},
+          { icon: 'saasicon_nuanchangshipin', title: '暖场视频', subText: '开启后设置暖场视频',index: 4, path: `/live/warm/${this.$route.params.str}`},
           { icon: 'saasicon_xunirenshu', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
           { icon: 'saasicon_baomingbiaodan', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
           { icon: 'saasicon_tuiguangqianru', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
@@ -138,6 +147,42 @@ export default {
       }
     };
   },
+  computed: {
+    titleText(){
+      return function(val){
+        let _text = '直播'
+        val == 5 ? _text = '回放' : val == 4 ? _text = '点播' : _text = '直播'
+        return _text
+      }
+    },
+    operas() {
+      if (this.liveDetailInfo && this.liveDetailInfo.webinar_state === 4) {
+        // 点播
+        let { keys, values} = Object;
+        let operas = this.operasOld;
+        keys(this.operasOld).map((item, ins) => {
+          operas[item] = values(this.operasOld)[ins].filter(vItem =>{
+            vItem.title = vItem.title.replace(/回放/, '点播')
+            vItem.subText = vItem.subText.replace(/直播/, '点播')
+            if(vItem.title == '点播管理'){
+               vItem.subText = '管理点播内容'
+            }
+            if(vItem.title == '基本信息'){
+              vItem.path = `/live/vodEdit/${this.$route.params.str}`
+            }
+            return vItem.index !== 4
+          });
+        })
+        if (keys(this.operasOld).includes('直播')) {
+          delete operas['直播'];
+        }
+        // console.log(operas, '过滤后内容');
+        return operas;
+      } else {
+        return this.operasOld;
+      }
+    }
+  },
   created(){
     // console.log(this.link, '1111111111111111');
     this.getLiveDetail(this.$route.params.str);
@@ -160,9 +205,14 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
-        let date = new Date();
-        let nowTime = date.setTime(date.getTime());
-        this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
+        if (res.data.webinar_state == 1) {
+          this.getOpenLive();
+        }
+        if (res.data.webinar_state == 2) {
+          let date = new Date();
+          let nowTime = date.setTime(date.getTime());
+          this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
+        }
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -229,6 +279,22 @@ export default {
         this.$message.error(`恢复预告失败，${error.message}`);
       });
     },
+    // 判断是否有起直播的权限
+    getOpenLive() {
+      this.$fetch('checkLive', this.$params({
+        webinar_id: this.$route.params.str
+      })).then((res) => {
+        if(res && res.code === 200) {
+          this.isAnginOpen = false;
+        } else {
+          this.isAnginOpen = true;
+          this.$message.error(res.msg || '检测异常');
+        }
+      }).catch(e => {
+        this.isAnginOpen = true;
+        this.$message.error(res.msg || '检测异常');
+      });
+    },
     blockHandler(item){
       if(item.path){
         if (item.path === '/live/edit') {
@@ -252,13 +318,14 @@ export default {
     toRoom(){
       // 跳转至发起页面
       // const { href } = this.$router.resolve({path: `/live/room/${this.$route.params.str}`});
-      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str},1`});
+      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1`});
       window.open(href);
     },
     downTime(targetStartDate, targetEndDate) {
       let targetStart = new Date(targetStartDate);
       let targetEnd = new Date(targetEndDate);
       if (targetEnd.getTime() - targetStart.getTime() < 0) {
+        this.outLiveTime = true;
         return false;
       } else {
         let diff = targetEnd.getTime() - targetStart.getTime();
@@ -275,16 +342,14 @@ export default {
         let limit3 = limit2 % (60 * 1000);
         let second = Math.floor(limit3 / 1000);
         this.time.second = second > 9 ? second : `0${second}`;
+        // console.log(diff, '????????????????????')
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
-            if (this.time.day === '00' && this.time.hours === '00'  && this.time.minute === '00' && this.time.second === '00') {
-              this.liveDetailInfo.webinar_state = '1';
-            }
             this.downTime(targetStart, targetEnd);
             window.clearTimeout(diffSetTime);
           }, 1000);
         } else {
-          return `天0时0分0秒`;
+          return `0天0时0分0秒`;
         }
       }
     }
@@ -344,7 +409,7 @@ export default {
         // background: rgba(247, 245, 245, 0.7);
         color: #fff;
         font-size: 12px;
-        padding: 2px 9px;
+        padding: 4px 12px;
         border-radius: 20px;
         position: absolute;
         top: 12px;
@@ -374,6 +439,36 @@ export default {
     }
   }
 }
+//
+.invitation-code{
+  text-align: center;
+  padding: 2px 40px;
+  display: block!important;
+  left: 50%;
+  p{
+    line-height: 40px;
+  }
+  img{
+    margin-bottom: 10px;
+  }
+}
+.urlCopy{
+  padding: 2px 15px;
+  p{
+    margin-top: 20px;
+    &:nth-child(2){
+      padding: 4px;
+      font-size: 16px;
+      ::v-deep.el-button{
+        font-size: 14px;
+        line-height: 24px;
+        padding: 2px 20px;
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
 .mainColor{
   color: #1A1A1A;
 }

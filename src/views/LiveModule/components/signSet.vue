@@ -7,11 +7,11 @@
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.organizers_status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value=1
+                :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.organizers_status ? '关闭后，观看端主办方信息，个人主页入口和关注按钮将被隐藏' : '已关闭，观看端主办方信息，个人主页入口和关注按钮已被隐藏'"
+                :active-text="signSetForm.organizers_status ? '已开启，观看端主办方信息、个人主页入口和关注按钮显示' : '开启后，观看端主办方信息、个人主页入口和关注按钮显示'"
               >
               </el-switch>
             </div>
@@ -24,7 +24,7 @@
                 :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.reserved_status ? '关闭后，观看端的底部版权信息将被隐藏' : '已关闭，观看端的底部版权信息已被隐藏'"
+                :active-text="signSetForm.reserved_status ? '已开启，观看端底部版权信息显示' : '开启后，观看端显示底部版权信息'"
               >
               </el-switch>
             </div>
@@ -33,18 +33,18 @@
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.view_status"
-                :active-value="1"
-                :inactive-value="0"
+                :active-value=1
+                :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.view_status ? '关闭后，观看端的标志将被隐藏' : '已关闭，观看端的标志已被隐藏'"
+                :active-text="signSetForm.view_status ? '已开启，观看端显示品牌标志' : '开启后，观看端显示品牌标志'"
               >
               </el-switch>
             </div>
           </el-form-item>
           <el-form-item label="标志替换：" prop="logo_url">
             <upload
-              class="upload__sign heightMore"
+              class="upload__sign"
               v-model="signSetForm.logo_url"
               :domain_url="domain_url"
               :saveData="{
@@ -59,7 +59,7 @@
               @delete="resetLogoUrl">
               <div slot="tip">
                 <p>最佳尺寸：240*78px</p>
-                <p>支持jpg、gif、png、bmp</p>
+                <p>小于2MB(支持jpg、gif、png、bmp)</p>
               </div>
             </upload>
             <p class="p-notice">开启时支持更换品牌标志</p>
@@ -91,19 +91,20 @@ export default {
   data() {
     return {
       signSetForm: {
-        organizers_status: 0,
-        reserved_status: 0,
-        view_status: 0,
+        organizers_status: null,
+        reserved_status: null,
+        view_status: null,
         logo_url: null,
         skip_url: null
       },
       domain_url: '',
       signSetFormRules: {
         logo_url: [
-          { required: true, message: '请选择标志', trigger: 'change'}
+          { required: false, message: '请选择标志', trigger: 'change'}
         ],
         skip_url: [
-          { required: true, message: '请填写标志链接', trigger: 'blur'}
+          { required: false, message: '请填写标志链接', trigger: 'blur'},
+          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       }
     };
@@ -122,14 +123,18 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`标志图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('标志图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -138,11 +143,11 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`标志图片上传失败`);
     },
     resetLogoUrl() {
       this.$nextTick(()=> {
-        this.signSetForm.logoUrl = '';
+        this.signSetForm.logo_url = '';
       });
     },
     uploadPreview(file){
@@ -155,24 +160,24 @@ export default {
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
-          if (res.data.logo_url) {
+          if (res.data) {
             this.signSetForm = res.data;
           } else {
             this.signSetForm = {
-              organizers_status: 0,
-              reserved_status: 0,
-              view_status: 0,
+              organizers_status: null,
+              reserved_status: null,
+              view_status: null,
               logo_url: null,
               skip_url: null
             };
           }
           this.domain_url = res.data.logo_url || '';
-          this.$EventBus.$emit('SAAS_V3_SIGN_PREVIEW', this.signSetForm);
+          this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm);
         } else {
           this.signSetForm = {
-            organizers_status: 0,
-            reserved_status: 0,
-            view_status: 0,
+            organizers_status: null,
+            reserved_status: null,
+            view_status: null,
             logo_url: null,
             skip_url: null
           };
@@ -244,7 +249,7 @@ export default {
 }
 .p-notice {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #999999;
   line-height: 20px;
@@ -255,31 +260,10 @@ export default {
   /deep/.el-upload--picture-card {
     width: 280px;
     height: 130px;
-    border: 1px solid #CCCCCC;
-    img {
-      width: 100%;
-      height: auto;
-    }
   }
   /deep/.box > div {
     width: 280px;
     height: 130px;
-  }
-  &.withMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: 100%;
-        height: auto;
-      }
-    }
-  }
-  &.heightMore {
-    /deep/.el-upload--picture-card {
-      img {
-        width: auto;
-        height: 100%;
-      }
-    }
   }
 }
 

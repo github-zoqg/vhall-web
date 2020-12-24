@@ -30,11 +30,12 @@
             <i class="el-icon-question"></i>
           </el-tooltip>
            <h3>
-            <count-to :startVal="0"
+             {{ mainKeyData.total_live_time }}
+            <!-- <count-to :startVal="0"
               :endVal="mainKeyData.total_live_time"
               :duration="1500"
               v-if="mainKeyData.total_live_time >= 0">
-            </count-to>
+            </count-to> -->
           </h3>
         </div>
       </el-col>
@@ -152,11 +153,7 @@
             <i class="el-icon-question"></i>
           </el-tooltip>
           <h3>
-            <count-to :startVal="0"
-              :endVal="mainKeyData.watch_duration"
-              :duration="1500"
-              v-if="mainKeyData.watch_duration >= 0">
-            </count-to>
+            {{ mainKeyData.watch_duration }}
           </h3>
         </div>
       </el-col>
@@ -170,11 +167,7 @@
           <i class="el-icon-question"></i>
           </el-tooltip>
           <h3>
-            <count-to :startVal="0"
-              :endVal="mainKeyData.watch_duration_avg"
-              :duration="1500"
-              v-if="mainKeyData.watch_duration_avg >= 0">
-            </count-to>
+            {{ mainKeyData.watch_duration_avg }}
          </h3>
         </div>
       </el-col>
@@ -215,7 +208,7 @@ export default {
     p {
       height: 26px;
       font-size: 16px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #1a1a1a;
       line-height: 26px;
@@ -235,15 +228,19 @@ export default {
     text-align: left;
     span {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       color: #999;
       margin: 0;
     }
     h3{
       padding-top: 6px;
+      font-size: 28px;
+      font-family: @fontDINAL;
+      font-weight: bold;
+      color: #1a1a1a;
       span{
         font-size: 28px;
-        font-family: DINAlternate-Bold, DINAlternate;
+        font-family: @fontDINAL;
         font-weight: bold;
         color: #1a1a1a;
         margin: 0;

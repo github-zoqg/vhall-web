@@ -6,7 +6,7 @@
       :close-on-click-modal="false"
       width="468px">
       <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px">
-        <el-form-item label="图片上传">
+        <el-form-item label="图片上传" required>
           <upload
             class="giftUpload"
             v-model="prizeForm.img_path"
@@ -20,11 +20,11 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <el-input v-model="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
+            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit  oninput="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\?\<\>\。\，\-\——\=\;\！\!\+\$]/g,'')" οnpaste="return false" οncοntextmenu="return false;"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name">确 定</el-button>
+        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name" v-preventReClick>确 定</el-button>
         <el-button @click.prevent.stop="dialogVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -35,12 +35,12 @@
       width="588px">
      <div class="prizeList">
        <div class="search">
-         <el-input v-model="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" style="width:220px"></el-input>
+         <el-input v-model.trim="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
        </div>
-       <el-scrollbar>
+       <el-scrollbar v-loadMore="moreLoadData">
          <div class="prize">
-           <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click="choisePrize(item)">
-             <img src="@/common/images/avatar.jpg" alt="">
+           <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
+             <img :src="item.img_path" alt="">
              <div class="prize-title">
                <h1>{{item.prize_name}}</h1>
                <p>{{item.prize_id}}</p>
@@ -53,7 +53,7 @@
        </el-scrollbar>
        <div class="prize-check"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
        <div class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round>确 定</el-button>
+        <el-button type="primary" @click="sureChoisePrize" v-preventReClick round>确 定</el-button>
         <el-button @click.prevent.stop="dialogPrizeVisible = false" round>取 消</el-button>
        </div>
      </div>
@@ -68,8 +68,13 @@ export default {
       dialogVisible: false,
       dialogPrizeVisible: false,
       keyword: '',
-      pos: 0,
       checkedList: [],
+      maxPage: 0,
+      prizePageInfo: {
+        pos: 0,
+        limit: 6,
+        page: 1,
+      },
       prizeForm: {
         source: 1,
         img_path: '',
@@ -80,38 +85,7 @@ export default {
           { required: true, message: '请输入奖品名称', trigger: 'blur' }
         ]
       },
-      list: [
-        {
-          name: '请输入奖品名称1',
-          type: '001',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称2',
-          type: '002',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称3',
-          type: '003',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称4',
-          type: '004',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称5',
-          type: '005',
-          isChecked: false
-        },
-        {
-          name: '请输入奖品名称6',
-          type: '006',
-          isChecked: false
-        }
-      ]
+      list: []
     };
   },
   computed: {
@@ -135,6 +109,7 @@ export default {
   watch: {
     dialogPrizeVisible() {
       if (this.dialogPrizeVisible) {
+        this.list = [];
         this.getPrizeList();
       }
     }
@@ -148,40 +123,84 @@ export default {
       }
     },
     surePrize() {
+      if (!this.prizeForm.img_path) {
+        this.$message.error("请上传图片");
+        return;
+      }
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
           this.dialogVisible = false;
           this.prizeForm.room_id = this.$route.query.roomId || '';
           this.$fetch('createPrize', this.prizeForm).then(res => {
-            this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
-            this.$emit('getTableList');
+            if (res.code == 200) {
+              this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
+              this.$emit('getTableList');
+            } else {
+              this.$message.error(res.msg);
+            }
           })
         } else {
           return false;
         }
       });
     },
+    sureChoisePrize() {
+      let params = {
+        room_id: this.$route.query.roomId,
+        prize_id: this.checkedList.join(',')
+      }
+      this.$fetch('saveLotteryPrize', params).then(res => {
+        if (res.code == 200) {
+          this.$message.success('选择成功');
+          this.dialogPrizeVisible = false;
+          this.list.map(item => {
+            item.isChecked = false;
+          });
+          this.list = [];
+          this.checkedList = [];
+          this.$emit('getTableList');
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
+    },
+    inputChange() {
+      this.prizePageInfo = {
+        pos: 0,
+        page: 1,
+        limit: 6
+      }
+      this.list = [];
+      this.getPrizeList();
+    },
+    moreLoadData() {
+      if (this.prizePageInfo.page >= this.maxPage) {
+        return false;
+      }
+      this.prizePageInfo.page ++ ;
+      this.prizePageInfo.pos = parseInt((this.prizePageInfo.page - 1) * this.prizePageInfo.limit);
+      this.getPrizeList();
+    },
     getPrizeList() {
       let params = {
         keyword: this.keyword,
-        pos: this.pos,
-        limit: 20,
-        source: 1
+        source: 1,
+        ...this.prizePageInfo
       }
       this.$fetch('getPrizeList', params).then(res => {
-        this.list = res.data.list;
-        console.log(this.list, '??????????????????????');
-        // this.total = res.data.count;
-        this.list.map(item => {
-          // 临时写死的，后期调
-          item.img = `http://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/${item.img_path}`;
-        })
+        let adList = res.data.list;
+        adList.map(item => {
+          item.isChecked = false;
+        });
+        this.list.push(...adList);
+        this.maxPage = Math.ceil(res.data.count / this.prizePageInfo.limit);
       })
     },
     prizeLoadSuccess(res, file){
       console.log(res, file);
       // this.prizeForm.imageUrl = URL.createObjectURL(file.raw);
-      this.prizeForm.img_path = res.data.file_url;
+      // this.prizeForm.img_path = res.data.file_url;
+      this.prizeForm.img_path = res.data.domain_url;
       // this.fileList.push({
       //   url: this.form.imageUrl,
       //   cover: false
@@ -195,29 +214,19 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`上传奖品图片只能是 ${typeList.join('、')} 格式!`);
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('上传奖品图片大小不能超过 2MB!');
+        return false;
       }
-      let imgSrc = window.URL.createObjectURL(file);
-      let img = new Image();
-      img.src = imgSrc;
-      let that = this; // onload 里面不能用this
-      img.onload = function () {
-        // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
-        if (img.width > img.height) {
-          that.imgType = 'widthMore';
-        } else if (img.width < img.height) {
-          that.imgType = 'heightMore';
-        } else {
-          that.imgType = 'default';
-        }
-      };
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -225,7 +234,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message.error(`奖品图片上传失败`);
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -235,10 +244,9 @@ export default {
       this.$refs[prizeForm].resetFields();
     },
     choisePrize(item) {
+      console.log(item, '111111111111');
       item.isChecked = !item.isChecked;
-      let arr = [];
-      arr = this.list.filter(items => items.isChecked);
-      this.checkedList = arr;
+      this.checkedList = this.list.filter(items => items.isChecked).map(item => item.prize_id);
     }
   }
 };

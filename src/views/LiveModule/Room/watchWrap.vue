@@ -57,10 +57,10 @@
                 </a>
               </li>
               <li>
-                <a :href="webDominUrl + '/auth/logout'">
+                <!-- <a :href="webDominUrl + '/auth/logout'"> -->
                   <i></i>
-                  <span>退出登录</span>
-                </a>
+                  <span @click="quitLive">退出登录</span>
+                <!-- </a> -->
               </li>
             </ul>
           </div>
@@ -119,7 +119,7 @@
                     v-show="pvShow"
                     class="iconfont iconguankancishu"
                   ></span>
-                  {{ showPv }}次观看
+                  {{ roomData && roomData.pv ? roomData.pv.num : 0 }}次观看
                 </span>
                 <span
                   v-show="pvShow & onlineShow && iconPlay == '直播'"
@@ -134,7 +134,7 @@
                     v-show="onlineShow"
                     class="iconfont iconzaixianrenshu"
                   ></span>
-                  {{ showOnline }}人在线
+                  {{ roomData && roomData.online ? roomData.online.num : 0 }}人在线
                 </span>
               </div>
               <div class="seeding-funct">
@@ -173,7 +173,6 @@
               <vhall-enjoy-watch-Saas
                 v-if="roominfo.vss_token && !kickOutSass"
                 :playerInfo="roominfo.player"
-                :authInfo="roominfo.auth"
                 :roomId="roominfo.room_id"
                 :ilId="roominfo.webinar_id"
                 :vssToken="roominfo.vss_token"
@@ -395,35 +394,12 @@
                       <div class="third-way-choose" v-if="otherWayShow && roominfo.webinar.id">
                         <div class="third-auth">
                           <a
-                            :href="
-                              webinarDominUrl +
-                                '/auth/weibo?after_register=' +
-                                webinarDominUrl +
-                                '/' +
-                                roominfo.webinar.id
-                            "
-                            class="weibo"
-                            title="微博登录"
-                          ></a>
-                          <a
-                            :href="
-                              webinarDominUrl +
-                                '/auth/qq?after_register=' +
-                                webinarDominUrl +
-                                '/' +
-                                roominfo.webinar.id
-                            "
+                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
                             class="qq"
                             title="QQ登录"
                           ></a>
                           <a
-                            :href="
-                              webinarDominUrl +
-                                '/auth/weixinweb?after_register=' +
-                                webinarDominUrl +
-                                '/' +
-                                roominfo.webinar.id
-                            "
+                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
                             class="weixin"
                             title="微信登录"
                           ></a>
@@ -460,7 +436,7 @@
                       {{ simpleContent }}
                     </div>
                     <template v-if="activeIndex + 1 == index + 1">
-                      <custom-tab
+                      <!-- <custom-tab
                         v-if="items.type == 1"
                         :roominfo="roominfo"
                         :components="items.components"
@@ -472,7 +448,7 @@
                         @invitedTopClick="topShow = true"
                         @rewardListClick="topShow = false"
                       >
-                      </custom-tab>
+                      </custom-tab> -->
                     </template>
                   </div>
                 </div>
@@ -583,8 +559,6 @@
     </popup>
     <!--弹窗蒙层-->
     <div class="shade" @click="shadeClick" v-if="shadeShow"></div>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js" @load="sdkLoadHandler('chat')"></remote-script>
-    <remote-script src='//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.1.js' @load="sdkLoadHandler('interact')"></remote-script>
   </div>
 </template>
 <script>
@@ -605,6 +579,7 @@ import { sessionOrLocal } from '@/utils/utils'
 export default {
   data() {
     return {
+      roomData: {},
       myliveRoute: '',
       accountRoute: '',
       myPageRoute: '',
@@ -616,7 +591,6 @@ export default {
       myMessageNum: '', // 信息数
       submitQuestionShow: false, // 提交问题的显示
       chatFilterData: [], // 聊天过滤的数据
-      userInfo: {},
       attentionContent: '关注', // 关注的内容显示
       kickOutSass: false, // 遮罩层
       chatShow: '', // 聊天的status
@@ -713,7 +687,9 @@ export default {
       isLogin: false, // 是否登录
       initStatus: true,
       configList: {},
-      userInfo: {}
+      openScreenConfig: {}, // 开屏海报
+      userInfo: {},
+      location: process.env.VUE_APP_WAP_WATCH
     };
   },
   components: {
@@ -725,6 +701,8 @@ export default {
     products
   },
   created() {
+    sessionOrLocal.set('tag', 'helloworld', 'localStorage'); // 第三方绑定信息 场景
+    sessionOrLocal.set('sourceTag', 'watch'); // 第三方绑定信息 场景
     this.$loadingStatus = this.$loading({
       background: 'rgba(0,0,0,0.5)',
       text: '加载中'
@@ -732,10 +710,25 @@ export default {
   },
   mounted() {
     window.EventBridge = this.$EventBus;
+    sessionStorage.setItem('role_val', '2')
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true
     }
+    // 加入消息 增加uv
+    this.$EventBus.$on('Join', (msg) => {
+      if (this.roomData && this.roomData.online ) {
+        this.roomData.online.num = msg.uv
+        this.roomData.pv.num += 1
+      }
+    })
+    // 离开消息
+    this.$EventBus.$on('Leave', (msg) => {
+      if (this.roomData && this.roomData.online ) {
+        this.roomData.online.num = msg.uv
+        // this.roomData.pv.num = msg.pv
+      }
+    })
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
       // 是否显示公众号
@@ -801,16 +794,17 @@ export default {
      * 使用setTimeout30min后请求接口，延续cookie时间
      */
     this.heartbeatLink()
+    this.startRoomInitProcess()
   },
   computed: {
-    showOnline() {
-      return (
-        Number(this.roomUser.uvOnline) + Number(this.baseRoomUser.baseOnlineNum)
-      )
-    },
-    showPv() {
-      return Number(this.roomUser.pvCount) + Number(this.baseRoomUser.basePv)
-    }
+    // showOnline() {
+    //   return (
+    //     Number(this.roomUser.uvOnline) + Number(this.baseRoomUser.baseOnlineNum)
+    //   )
+    // },
+    // showPv() {
+    //   return Number(this.roomUser.pvCount) + Number(this.baseRoomUser.basePv)
+    // }
   },
   beforeDestroy() {
     window.removeEventListener('resize', () => {})
@@ -841,17 +835,6 @@ export default {
           })
       }, 1000 * 60 * 30)
     },
-    // 聊天或互动sdk加载完成
-    sdkLoadHandler (type) {
-      if (type == 'chat') {
-        this.chatSdkLoaded = true;
-      } else {
-        this.interactionSdkLoaded = true;
-      }
-      if(this.chatSdkLoaded && this.interactionSdkLoaded) {
-        this.startRoomInitProcess()
-      }
-    },
     async startRoomInitProcess () {
       try {
         await this.getRoomInfo() // 初始化房间信息
@@ -860,7 +843,6 @@ export default {
           return
         }
         if (this.roomData && this.roomData.status == 'live') {
-          await this.getTotalLike() // 获取总点赞数
           await this.queryRoomInterInfo() // 获取房间活动状态
           await this.getFirstPost() // 开屏
         }
@@ -868,7 +850,7 @@ export default {
         await this.getSkin() // 获取皮肤
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
-        await this.getMenuList()
+        // await this.getMenuList()
         // 预约后的活动才显示邀请卡
         if (this.isLogin) {
           await this.getAttentionStatus()
@@ -904,6 +886,8 @@ export default {
       switch (res.code) {
         case 200:
           this.roomData = res.data && res.data
+          this.roomData.online.num += 1 // 需要手动加自己
+          this.roomData.pv.num += 1
           this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
           this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
           break
@@ -1011,29 +995,9 @@ export default {
         }
       );
     },
-    // 新浪登录入口
-    sinaclick() {
-      window.open(
-        `${window.location.host}/auth/weibo?after_register=${window.location.href}`,
-        '_blank'
-      );
-    },
-    // qq登录入口
-    qqClick() {
-      window.open(
-        `${window.location.host}/auth/qq?after_register=${window.location.href}`,
-        '_blank'
-      );
-    },
-    weChatClick() {
-      window.open(
-        `${window.location.host}/auth/weixinweb?after_register=${window.location.href}`,
-        '_blank'
-      );
-    },
     // 点击注册
     registerClick() {
-      window.location.href = `${this.webDominUrl}/auth/register`
+      window.location.href = `${this.webDominUrl}/register?source=2`
     },
     // 超过登录次数 唤起图片验证码
     callCaptcha(element) {
@@ -1121,12 +1085,12 @@ export default {
         if (res.code == 200) {
           this.loginDialogShow = false;
           this.shadeShow = false;
-          this.$router.go(0);
           this.phoneKey = ''
           this.smsErrorMessage = ''
           sessionOrLocal.set('sso', res.data.sso_token)
-          sessionOrLocal.set('token', res.data.token, 'localStorage')
+          // sessionOrLocal.set('token', res.data.token, 'localStorage')
           sessionOrLocal.set('userInfo', res.data)
+          this.fetchData()
         } else if (res.code == 10000) {
           this.smsErrorMessage = '当前账号或密码错误'
         } else {
@@ -1166,10 +1130,11 @@ export default {
             this.shadeShow = false
             this.phoneKey = ''
             this.photoCpathaShow = true
-            this.$router.go(0) // 重新进入
             sessionOrLocal.set('sso', res.data.sso_token)
             sessionOrLocal.set('token', res.data.token, 'localStorage')
-            sessionOrLocal.set('userInfo', res.data)
+            // sessionOrLocal.set('userInfo', res.data)
+            this.fetchData()
+
           } else {
             if (res.code == 12042) {
               this.errorMessage = '图片验证码错误'
@@ -1183,6 +1148,19 @@ export default {
             this.errorMessage = '图形码未验证通过'
           }
         });
+    },
+    fetchData () {
+      this.$fetch('getInfo', {scene_id: 2}).then(res => {
+        if(res.code === 200) {
+          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        } else {
+          sessionOrLocal.set('userInfo', null);
+        }
+        this.$router.go(0) // 重新进入
+      }).catch(e=>{
+        console.log(e);
+      })
     },
     // 校验登录次数
     checkLoginAccount() {
@@ -1344,26 +1322,16 @@ export default {
      * @author Sean
      */
     chatFilter() {
-      this.$fetch('getWatchFilterWords', {
+      this.$fetch('getAudinceKeyWordList', {
         room_id: this.roomData.interact.room_id
       }).then(res => {
-        if (res.code == 200) {
-          this.chatFilterData = res.data.list;
+        if (res.code == 200 && res.data) {
+          this.chatFilterData = res.data.list
         }
       });
     },
     handleSkipLogo () {
       window.location.href = this.roominfo.modules.logo.href
-    },
-    // 获取总点赞数
-    getTotalLike () {
-      return this.$fetch('likeTotal', {
-        room_id: this.roomData.interact.room_id
-      }).then((res) => {
-        if (res.code == 200) {
-          this.stars = res.data.total
-        }
-      })
     },
     // 获取活动广告信息
     getAdsInfo () {
@@ -1374,6 +1342,15 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.ads = res.data.adv_list
+        }
+      })
+    },
+    getOpenScreenConfig () {
+      this.$fetch('getPlaybillInfo', {
+        webinar_id: this.$route.params.il_id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.openScreenConfig = res.data['screen-posters']
         }
       })
     },
@@ -1449,7 +1426,7 @@ export default {
       if (seedIcon) {
         seedIcon.style.background = pageStyle
       }
-      
+
       if (follow) {
         follow.style.background = pageStyle
       }
@@ -1540,7 +1517,6 @@ export default {
         webinar: Object.assign({}, data.webinar, {
           image_url: data.webinar.img_url,
           is_interact: data.webinar.mode == 3 ? 1 : 0,
-          like: this.stars ? this.stars : 0,
           pv: data.pv.num
         }),
         advs: this.ads,
@@ -1622,14 +1598,15 @@ export default {
           like: {show: this.configList ? this.configList['ui.watch_hide_like'] : 0},
           share: {show: this.configList ? this.configList['ui.hide_share'] : 0},
           chat_login: {show: 1}
-        }
+        },
+        reportOption: data.report_data ? data.report_data : {}
       }
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
       this.myAccountRoute = window.location.origin + '/account/info'
       this.followStyle = this.roominfo.modules.attention.follow == 1
-      
+
       this.userChatId = this.roominfo.user.third_party_user_id
       // 获取所有的主域名
       this.webDominUrl = this.roominfo.domains.web
@@ -1661,7 +1638,6 @@ export default {
       // 存取图片的主要路径，给七巧板用
       sessionOrLocal.set('imageDomin', this.roominfo.domains.upload)
       // 存取用户信息给七巧板用
-      sessionOrLocal.set('user', JSON.stringify(this.roominfo.user))
       // 存取VssToke
       sessionOrLocal.set('vhall-vsstoken', this.roominfo.vss_token)
       sessionOrLocal.set('moduleShow', JSON.stringify(this.roominfo))
@@ -1714,7 +1690,7 @@ export default {
       // 初始化邀请卡
       this.invitePartner();
       this.$nextTick(() => {
-        if (this.theme) {
+        if (this.theme && this.skinInfo.status == 1) {
           this.setCustomTheme(this.theme)
         }
       })
@@ -1749,8 +1725,26 @@ export default {
           window.vhallReport && window.vhallReport.report('LEAVE_WATCH', {}, false);
         }
       })
+    },
+    // 退出登录
+    quitLive () {
+      this.$fetch('loginOut').then(res => {
+        if (res.code == 200) {
+          sessionOrLocal.clear('localStorage')
+          sessionOrLocal.clear()
+          this.$nextTick(() => {
+            window.location.reload()
+          })
+        } else {
+          this.$message.error('退出失败')
+          console.log('退出失败', res)
+        }
+      }).catch(e => {
+        console.log('退出失败', e)
+      })
     }
   }
+
 };
 </script>
 <style lang="less">

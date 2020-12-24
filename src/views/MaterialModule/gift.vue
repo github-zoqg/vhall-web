@@ -20,13 +20,21 @@
       <el-input
         @keyup.enter.native="searchGifts"
         class="head-btn fr search"
-        v-model="searchName"
+        v-model.trim="searchName"
         placeholder="请输入礼物名称"
-        suffix-icon="el-icon-search"/>
+      >
+        <i
+          style="cursor: pointer;"
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchGifts">
+        </i>
+      </el-input>
     </div>
     <el-card class="gift-list">
       <el-table
-        :data="currentTableData"
+        :cell-class-name="freeFilter"
+        :data="tableData"
         tooltip-effect="dark"
         style="width: 100%;margin-bottom: 30px;"
         ref="multipleTable"
@@ -40,12 +48,15 @@
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="defaultImgHost + scope.row.img">
+            <img class="gift-cover" :src="scope.row.img">
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column label="价格" prop="price" show-overflow-tooltip>
+        <el-table-column label="价格" show-overflow-tooltip>
+          <template slot-scope="scope">
+            {{ `￥${scope.row.price}` }}
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
@@ -67,8 +78,8 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
-      <el-form>
-        <el-form-item label="图片上传">
+      <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
+        <el-form-item label="图片上传" prop="img">
           <upload
             :domain_url="domain_url"
             class="giftUpload"
@@ -77,20 +88,23 @@
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
+            @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
             <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
           </upload>
         </el-form-item>
-        <el-form-item label="礼物名称">
-            <el-input v-model="editParams.name" maxlength="10" show-word-limit style="width:336px" placeholder="请输入礼物名称"></el-input>
+        <el-form-item label="礼物名称" prop="name">
+            <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
-        <el-form-item label="礼物价格">
-            <el-input v-model="editParams.price" maxlength="10" show-word-limit prefix-icon="el-icon-meney" style="width:336px" placeholder="￥ 请输入0-9999.99"></el-input>
+        <el-form-item label="礼物价格" prop="price">
+            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
+              <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
+            </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" round>取 消</el-button>
+        <el-button @click="handleUpdateGift" v-preventReClick  round>确 定</el-button>
+        <el-button @click="handleCancelEdit" v-preventReClick round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -102,8 +116,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete">取 消</el-button>
-        <el-button type="primary" @click="handleDeleteGift">确 定</el-button>
+        <el-button @click="handleCancelDelete" v-preventReClick>取 消</el-button>
+        <el-button type="primary" @click="handleDeleteGift" v-preventReClick>确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -112,6 +126,7 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
+import { debounce } from "@/utils/utils"
 import Env from "@/api/env";
 
 export default {
@@ -126,6 +141,7 @@ export default {
         page_size: 10,
         page: 1
       },
+      pos: 0,
       selectIds:[],
       defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
@@ -138,7 +154,18 @@ export default {
       domain_url: '',
       dialogTipVisible: false,
       dialogVisible: false,
-      deleteId: ''
+      deleteId: '',
+      rules: {
+        name: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+        ],
+        img: [
+          { required: true, message: '请选择推广图片', trigger: 'change' }
+        ],
+        price: [
+          { required: true,  message: '请输入礼物价格', trigger: 'blur' }
+        ],
+      },
     };
   },
   components: {
@@ -150,7 +177,14 @@ export default {
     this.getTableList()
   },
   methods: {
+    freeFilter({row}) {
+      if(row.source_status == 0){
+        return "mycell"
+      }
+    },
     searchGifts() {
+      this.searchParams.page = 1
+      this.pos = 0;
       this.getTableList(true)
     },
     selectHandle(row) {
@@ -158,25 +192,27 @@ export default {
     },
     // 获取礼物列表
     getTableList (isSearch) {
-      this.$fetch('shareGiftList', {
-        ...this.searchParams
-      }).then((res) => {
+      const opts = {
+        limit: this.searchParams.page_size,
+        pos: this.pos
+      }
+      this.searchName && (opts.name = this.searchName)
+      this.$fetch('shareGiftList', opts).then((res) => {
         if (res.code == 200 && res.data) {
-          this.searchParams.page = 1
           this.tableData = res.data.list
-          if (isSearch) {
-            const resultData = []
-            this.tableData.forEach(item => {
-              if(item.name.indexOf(this.searchName) != -1) {
-                resultData.push(item)
-              }
-            })
-            this.tableData = resultData
-          }
-          this.currentTableData = this.tableData.filter((item, index) => {
-            return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-          })
-          this.total = this.tableData.length
+          // if (isSearch) {
+          //   const resultData = []
+          //   this.tableData.forEach(item => {
+          //     if(item.name.indexOf(this.searchName) != -1) {
+          //       resultData.push(item)
+          //     }
+          //   })
+          //   this.tableData = resultData
+          // }
+          // this.currentTableData = this.tableData.filter((item, index) => {
+          //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+          // })
+          this.total = res.data.total
         }
       })
     },
@@ -200,6 +236,7 @@ export default {
         let file_url = res.data.file_url || '';
         this.editParams.img = file_url;
         this.domain_url = domain_url;
+        this.$refs.editParamsForm.validateField('img');
       }
     },
     // 上传失败处理
@@ -214,14 +251,18 @@ export default {
     // 上传格式校验
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['image/png', 'image/jpeg', 'image/gif', 'image/bmp'];
-      const isType = typeList.includes(file.type.toLowerCase());
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`文件格式不支持，请检查图片`);
+        return false;
       }
       if (!isLt2M) {
         this.$message.error('上传封面图片大小不能超过 2MB!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -233,7 +274,7 @@ export default {
         price: data.price,
         img: data.img
       }
-      this.domain_url = this.defaultImgHost + this.editParams.img
+      this.domain_url = this.editParams.img
       this.dialogVisible = true
     },
     // 新建
@@ -248,22 +289,26 @@ export default {
     },
     // 处理编辑新建
     handleUpdateGift () {
-      let price = Number(this.editParams.price)
-      if (price || price == 0) {
-        if (price < 0 || price > 10000) {
-          this.$message.error('价格必须介于0-10000之间')
-          return
+      this.$refs.editParamsForm.validate((valid) => {
+        if (valid) {
+          let price = Number(this.editParams.price)
+          if (price || price == 0) {
+            if (price < 0 || price >= 10000) {
+              this.$message.error('价格必须介于0-10000之间')
+              return
+            }
+            this.editParams.price = price.toFixed(2)
+          } else {
+            this.$message.error('请输入正确礼物价格')
+            return
+          }
+          if(this.editParams.gift_id) {
+            this.handleEdit()
+          } else {
+            this.handleCreate()
+          }
         }
-        this.editParams.price = price.toFixed(2)
-      } else {
-        this.$message.error('请输入正确礼物价格')
-        return
-      }
-      if(this.editParams.gift_id) {
-        this.handleEdit()
-      } else {
-        this.handleCreate()
-      }
+      });
     },
     // 编辑
     handleEdit () {
@@ -281,13 +326,6 @@ export default {
     },
     // 创建
     handleCreate () {
-      let price = Number(this.editParams.price)
-      if (price) {
-        this.editParams.price = price.toFixed(2)
-      } else {
-        this.$message.error('请输入正确礼物价格')
-        return
-      }
       this.$fetch('createGiftInfo', this.$params({
         ...this.editParams
       })).then((res) => {
@@ -315,29 +353,33 @@ export default {
       this.selectIds.push(data.gift_id)
     },
     handleDeleteGift () {
-      this.$fetch('deleteGift', {
-        gift_ids: this.selectIds.join(',')
-      }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success('删除成功')
-          this.getTableList()
-          this.selectIds = []
-          this.dialogTipVisible = false
-        }
-      }).catch((e) => {
-          this.$message.error('创建失败')
-      })
+      debounce(() => {
+        this.$fetch('deleteGift', {
+          gift_ids: this.selectIds.join(',')
+        }).then((res) => {
+          if (res.code == 200) {
+            this.$message.success('删除成功')
+            this.getTableList()
+            this.selectIds = []
+            this.dialogTipVisible = false
+          }
+        }).catch((e) => {
+            this.$message.error('删除失败')
+        })
+      }, 100)
     },
     handleCancelDelete () {
       this.dialogTipVisible = false
     },
     // 翻页
     currentChangeHandler (val) {
-      this.searchParams.page = val
+      this.searchParams.page = val;
+      this.pos = (val - 1) * this.searchParams.page_size;
+      this.getTableList();
       // 切换table显示的内容
-      this.currentTableData = this.tableData.filter((item, index) => {
-        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-      })
+      // this.currentTableData = this.tableData.filter((item, index) => {
+      //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      // })
     }
   },
 };
@@ -345,6 +387,12 @@ export default {
 
 <style lang="less" scoped>
 .gift-wrap{
+  /deep/ .mycell .el-checkbox {
+    display: none
+  }
+  /deep/.el-upload{
+    border: 1px solid #ccc;
+  }
   height: 100%;
   width: 100%;
   /deep/.el-card__body{
@@ -352,7 +400,7 @@ export default {
     padding: 32px 24px;
   }
   /deep/.el-upload--picture-card{
-    width:83%;
+    width:100%;
   }
   /deep/.el-upload--picture-card .box img {
     width: auto

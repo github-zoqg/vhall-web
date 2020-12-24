@@ -2,6 +2,7 @@
 	<div class="download">
     <pageTitle title="下载中心"></pageTitle>
     <div class="download-ctx">
+
       <div v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
         <!-- 搜索 -->
         <div class="list--search">
@@ -17,8 +18,8 @@
             style="margin-left: 24px;width: 240px"
             @change="getTableList(null)"
           />
-          <el-input placeholder="搜索文件名称" v-model.trim="file_name" @change="getTableList(null)">
-            <i class="el-icon-search el-input__icon" slot="suffix"></i>
+          <el-input placeholder="搜索文件名称" v-model.trim="file_name"  @keyup.enter.native="getTableList(null)">
+            <i class="el-icon-search el-input__icon" slot="suffix" @click="getTableList(null)"></i>
           </el-input>
         </div>
         <el-table
@@ -37,32 +38,42 @@
             :selectable="checkSelectable"
             ></el-table-column>
           <el-table-column
-            prop="file_name"
-            label="文件名"></el-table-column>
+            label="文件名"
+            show-overflow-tooltip
+          >
+            <template slot-scope="scope">
+              <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0"></i>
+              <p class="text">
+               <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
+                {{ scope.row.file_name }}
+              </p>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="webinar_name"
             label="所属活动"
-            width="210">
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             prop="created_at"
             label="生成时间"
-            width="210">
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
             label="生成状态"
-            width="260"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}</span>
+              <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
+              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
-            width="260"
-            show-overflow-tooltip>
+            width="200">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">下载</el-button>
+              <a :href="scope.row.dow_url" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">
+                <el-button size="mini" type="text">下载</el-button>
+              </a>
               <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
               <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
             </template>
@@ -88,7 +99,9 @@ import 'whatwg-fetch';
 import PageTitle from '@/components/PageTitle';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {v1 as uuidV1} from "uuid";
-import fetchData from "@/api/fetch";
+import {sessionOrLocal} from "@/utils/utils";
+import qs from "qs";
+import EventBus from "@/utils/Events";
 export default {
   name: "download.vue",
   components: {
@@ -193,6 +206,7 @@ export default {
           item.dowStatusStr = ['未下载' ,'已下载'][item['dow_status']]; // 0:未下载1已下载
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
+          item.percentage = 90;
         });
         this.docDao =  dao;
       }).catch(e=>{
@@ -205,7 +219,7 @@ export default {
     },
     // 下载
     download(rows) {
-      window.open(rows.dow_url, "_blank");
+      // window.open(rows.dow_url, "_blank");
       // 如果当前已经是下载状态，不触发状态修改
       if (Number(rows.dow_status) !== 1) {
         this.downloadedEdit(rows.dow_task_id);
@@ -213,15 +227,46 @@ export default {
     },
     // 重新生成
     async resetDownload(rows) {
-      // 第一步，拿取其余服务接口请求地址
-      let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
-      if(result.code === 200 && result.data) {
-        fetchData(result.send_url, result.select_json).then(res => {
-          console.log('发送成功~~~~~~~');
-          console.log(res);
-        }).catch(e => {
-          console.log(e);
-        });
+      try {
+        // 第一步，拿取其余服务接口请求地址
+        let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
+        if(result.code === 200 && result.data) {
+          let header = {
+            platform: sessionOrLocal.get('platform', 'localStorage') || 17,
+            token: sessionOrLocal.get('token', 'localStorage') || '',
+            'request-id': uuidV1(),
+            'interact-token': sessionStorage.getItem('interact_token') || null
+          };
+          let option = {
+            method: result.data.request_method, // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: header,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+          console.log(result.data)
+          if (result.data.request_method.toUpperCase() === 'POST') {
+            let obj =  JSON.parse(result.data.select_json); // body data type must match "Content-Type" header
+            let formData = new FormData();
+            for (let key in obj) {
+              if(obj[key] !== null &&  obj[key] !== undefined && obj[key] !== '') {
+                formData.append(key, obj[key]);
+              }
+            }
+            console.log(obj, '参数1111111111');
+            option.body = formData
+          }
+          fetch(`${result.data.send_url}`, option).then(res => {
+            console.log(res.json(), '模拟导出申请请求，重新下载');
+          }).catch(e => {
+            console.log(e);
+          });
+          // 重新拉取数据
+          this.getTableList();
+        }
+      } catch (e) {
+        console.log(e);
+        this.$message.error('重新生成失败');
       }
     },
     // 删除某条下载任务
@@ -238,7 +283,11 @@ export default {
           if(res && res.code === 200) {
             that.$message.success(`删除成功`);
             that.ids = [];
-            that.$refs.downloadTable.clearSelection();
+            try {
+              that.$refs.downloadTable.clearSelection();
+            } catch (e) {
+              console.log(e);
+            }
             that.initPage();
           }else {
             that.$message({
@@ -255,10 +304,70 @@ export default {
         });
       }).catch(() => {
       });
-    }
+    },
+    // 监听
+    monitor(){
+      /**
+       * 接收聊天自定义消息*/
+      this.$Chat.onCustomMsg(async msg => {
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============收到聊天消息2===============' + JSON.stringify(msg.data))
+        if (msg.data.type === 'down_center_msg') {
+          EventBus.$emit('down_center_msg', {
+            dow_task_id: msg.data.dow_task_id,
+            status: msg.data.status
+          })
+        }
+      })
+    },
+    // 初始化
+    async initChat(){
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        console.log(result, '值');
+        let option = {
+          appId: result.data.paasAppId || '', // appId 必须
+          accountId: result.data.accountId || '', // 第三方用户ID
+          channelId: result.data.channelId || '', // 频道id 必须
+          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+        }
+        window.VhallChat.createInstance(option, (event) => {
+          this.$Chat = event.message; // 聊天实例句柄
+          this.monitor()
+        },err=>{
+          // alert('初始化错误')
+          console.error(err);
+        })
+      }
+    },
+  },
+  created() {
+    this.initChat();
   },
   mounted() {
     this.initPage();
+    EventBus.$on('down_center_msg', res => { // 转码状态
+      console.log(res, '监听到down_center_msg转码状态事件');
+      this.docDao.list.map(item => {
+        if (Number(item.dow_task_id) === Number(res.dow_task_id)) {
+          item.fileStatusCss = ['wating', 'success', 'failer'][res.status];
+          item.fileStatusStr = ['生成中', '生成成功', '生成失败'][res.status]; // 0:初始(生成中),1:生成成功2:生成失败
+          item.file_status = Number(res.status);
+        }
+      })
+    });
   }
 };
 </script>
@@ -338,6 +447,16 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .icon_tag {
+    width: 8px;
+    height: 8px;
+    background: #FB3A32;
+    position: absolute;
+    border-radius: 100%;
+    z-index: 20;
+    margin-top: 0;
+    margin-left: -4px;
   }
   /deep/.el-button.el-button--text {
     color: #1A1A1A;

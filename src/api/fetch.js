@@ -11,6 +11,10 @@ export default function fetchData(url, data1 = {}, header = {}) {
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
   let data = Object.assign(data1);
+  let _live_token = sessionOrLocal.get('live_token', 'localStorage')
+  if(_live_token){
+    data.live_token = _live_token
+  }
   const interact_token = sessionStorage.getItem('interact_token') || null;
   let formData = null;
 
@@ -35,7 +39,6 @@ export default function fetchData(url, data1 = {}, header = {}) {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
     'request-id': uuidV1()
-    // 'Content-Type': 'application/json'
   };
 
   interact_token && (headers['interact-token'] = interact_token)
@@ -45,38 +48,39 @@ export default function fetchData(url, data1 = {}, header = {}) {
     // pc观看等
     headers.platform = 7;
   }
-  if (header['Content-Type'] === 'multipart/form-data') {
+  // 针对微吼云  通过审核接口  单独进行修改传参类型--- 勿删
+  if (header['Content-Type'] === 'multipart/form-data' || api.indexOf('apply-message-send')!=-1) {
     formData = new FormData();
     for (let key in data) {
       if(data[key] !== null &&  data[key] !== undefined && data[key] !== '') {
         formData.append(key, data[key]);
       }
     }
+  } else if (header['Content-Type'] === 'application/json') {
+    headers['Content-Type'] = 'application/json';
   } else {
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
   }
-
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
     // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
-  if (method === 'POST') {
+  if (method === 'POST' && header['Content-Type'] !== 'application/json') {
     option.body = formData || qs.stringify(data); // body data type must match "Content-Type" header
+  } else if (method === 'POST' && header['Content-Type'] === 'application/json') {
+    option.body = JSON.stringify(data);
   }
-  // http://yapi.vhall.domain/mock/100/v3/users/user/get-info
   if (mock) {
     api = `/mock${api}`;
   } else if (paas || staticdata){
     api = `${api}`
     option.headers = {}
-    // if(api.indexOf('apply-message-send')!=-1){
-    //   option.headers = headers
-    // }
   } else {
     api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
+
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {

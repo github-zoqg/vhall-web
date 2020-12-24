@@ -23,7 +23,6 @@ export const listenEvent = {
       }
     },
     addSocketsListener () {
-      console.log(66666666, this.speakerList)
       EventBus.$on('room_kickout', e => {
         console.log('用户被踢出', e);
         if (e.target_id == this.roomInfo.third_party_user_id) {
@@ -82,7 +81,16 @@ export const listenEvent = {
         this.liveEnded = false;
       });
 
-      EventBus.$on('red_envelope_push', msg => {
+      // EventBus.$on('red_envelope_push', msg => {
+      //   // 发红包
+      //   this.redPacketUuid = msg.red_packet_uuid;
+      //   this.redPacketShowBut = false;
+      //   setTimeout(() => {
+      //     this.redPacketShowBut = true;
+      //     this.isHavePacket = true;
+      //   }, 300);
+      // });
+      EventBus.$on('red_envelope_ok', msg => {
         // 发红包
         this.redPacketUuid = msg.red_packet_uuid;
         this.redPacketShowBut = false;
@@ -104,7 +112,7 @@ export const listenEvent = {
 
       EventBus.$on('lottery_push', msg => {
         console.log('faqichoujiang', msg);
-        this.$refs.lotterySon.startLottery(true);
+        this.$refs.lotterySon.startLottery(msg,true);
       });
 
       // 监听举手上麦
@@ -124,6 +132,7 @@ export const listenEvent = {
 
       // 直播中sdk控制显示隐藏文档
       EventBus.$on('watchDocShow', flag => {
+        console.log(111111111111111, flag)
         this.watchDocShow = flag; // true false
         if (flag) {
           this.showDocPlaceholderForSharescreen = false;
@@ -243,26 +252,29 @@ export const listenEvent = {
         this.mainScreen = e.data.room_join_id;
       });
 
-      // 观众查看问卷 TODO: 永正
+      // 观众查看问卷
       EventBus.$on('questionnaireCheck', questionnaireId => {
-        // this.$vhallFetch('checkSurvey', {
-        //   survey_id: questionnaireId,
-        //   user_id: this.roomInfo.third_party_user_id,
-        //   webinar_id: this.ilId
-        // }).then(res => {
-        //   if (res.code == 200) {
-        //     this.showQA = true;
-        //     setTimeout(() => {
-        //       this.$refs.questions.chatPreview(questionnaireId, false);
-        //     }, 200);
-        //   } else {
-        //     this.showQA = true;
-        //     console.log('checksss>>>>>>>>>>>>>');
-        //     setTimeout(() => {
-        //       this.$refs.questions.chatPreview(questionnaireId, true);
-        //     }, 200);
-        //   }
-        // });
+        console.log(123)
+        this.showQA = true;
+        this.$fetch('checkSurvey', {
+          survey_id: questionnaireId,
+          webinar_id: this.ilId
+        }).then(res => {
+          if (res.code == 200) {
+            if (res.data) { // 未提交
+              setTimeout(() => {
+                this.showQA = true;
+                console.log(99)
+                this.$refs.questions.chatPreview(questionnaireId, false);
+              }, 200);
+            } else {
+              setTimeout(() => {
+                this.showQA = true;
+                this.$refs.questions.chatPreview(questionnaireId, true);
+              }, 200);
+            }
+          }
+        })
       });
       // 监听直播开启
       EventBus.$on('startPlay', msg => {

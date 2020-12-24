@@ -35,7 +35,6 @@ export default {
   watch: {
     areaDataList: {
       handler(data) {
-        console.log(data, '2222222222222222');
         this.initMapEcharts(data);
       }
     }
@@ -45,7 +44,6 @@ export default {
   },
   methods: {
     initMapEcharts(data) {
-      console.log(data, '11111111111111111111');
       // this.mapDataList = [];
       // let that = this;
       let mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
@@ -55,7 +53,13 @@ export default {
           show: true,
           formatter: function (params) {
             let value = params.value ? params.value : 0;
-            let res = params.name + '<br/>观看次数' + '  ' + parseInt(value) + '<br/>观看比列' + '  ' + ((parseInt(value) / data.total) * 100).toFixed(2) + '%';
+            let num = 0;
+            if (!value) {
+              num = 0;
+            } else {
+              num = ((parseInt(value) / data.total) * 100).toFixed(2);
+            }
+            let res = params.name + '<br/>观看次数' + '  ' + parseInt(value) + '<br/>观看比例' + '  ' + num  + '%';
             return res;
           },
         },
@@ -127,7 +131,7 @@ export default {
       td {
         padding: 0 20px;
         text-align: left;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
       }
       th {
         font-size: 16px;

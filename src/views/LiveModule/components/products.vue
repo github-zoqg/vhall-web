@@ -10,7 +10,7 @@
       <el-carousel-item v-for="good in goodsList" :key="good.goods_id">
         <div class="sell-goods-item">
           <div class="sell-image" @click="sellGoodsInfo(good)">
-            <el-carousel 
+            <el-carousel
               height="235px"
               :autoplay="false">
               <el-carousel-item v-for="(item, i) in good.img_list" :key="i">
@@ -94,7 +94,7 @@
       font-size: 19px;
       margin-top: 20px;
       margin-bottom: 10px;
-      font-family: PingFangSC-Semibold;
+      font-family: @fontSemibold;
       font-weight: 600;
       color: rgba(51, 51, 51, 1);
       line-height: 26px;
@@ -107,7 +107,7 @@
     .sell-info {
       font-size: 14px;
       line-height: 20px;
-      font-family: PingFangSC-Regular;
+      font-family: @fontRegular;
       font-weight: 400;
       color: rgba(102, 102, 102, 1);
       margin-top: 20px;
