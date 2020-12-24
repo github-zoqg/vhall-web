@@ -477,7 +477,6 @@ export default {
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
-        img_url: this.$parseURL(this.imageUrl).path, // 封面图
         is_private: Number(this.home), // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
         hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否
@@ -487,6 +486,9 @@ export default {
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.capacity)// 是否扩容 1 是 0 否
       };
+      if(this.$route.query.type == 2 ) {
+        data.img_url = this.$parseURL(this.imageUrl).path // 封面图
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
