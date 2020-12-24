@@ -142,7 +142,6 @@ export default {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      debugger
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', params).then(res=>{
         if (res && res.code === 200) {
           this.$message.success('下载申请成功，请去下载中心下载该项！');
