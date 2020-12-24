@@ -9,7 +9,7 @@
         3.上传的视频，不支持剪辑和下载
       </div>
     </pageTitle>
-    <div class="head-operat">
+    <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
       <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
@@ -21,11 +21,19 @@
         >
       </search-area>
     </div>
-    <el-card class="video-list">
+    <el-card class="video-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="240" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
     </el-card>
+    <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" round class="head-btn set-upload" v-if="nullText==='nullData'">
+          上传
+          <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)">
+        </el-button>
+      </noData>
+    </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
@@ -38,13 +46,17 @@
 import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: 'video.vue',
   data() {
     return {
-      total: 100,
+      total: 0,
       // 预览
       showDialog: false,
+      isSearch: false,
+      nullText: 'nullData',
+      text: '暂未上传音视频',
       videoParam: {},
       // 表格
       tableData: [],
@@ -82,6 +94,7 @@ export default {
   components: {
     PageTitle,
     VideoPreview,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -240,6 +253,15 @@ export default {
             this.$refs.tableList.clearSelect();
           }
           this.tableData = res.data.list;
+          if (obj.title) {
+            this.isSearch = true;
+            this.nullText = 'search';
+            this.text = '';
+          } else {
+            this.isSearch = false;
+            this.nullText = 'nullData';
+            this.text = '暂未上传音视频';
+          }
           // this.checkedList = [];
           // if(this.uploadList.length!=0){
           //   this.tableData =this.uploadList.concat(this.tableData);
@@ -351,7 +373,7 @@ export default {
       }
     }
   }
-  .head-operat{
+  .head-operat, .no-live{
     margin-bottom: 20px;
     .head-btn{
       display: inline-block;

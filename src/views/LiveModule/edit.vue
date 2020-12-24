@@ -100,7 +100,7 @@
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
           @delete="imageUrl = ''">
-          <p slot="tip">最佳头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
         </upload>
       </el-form-item>
       <el-form-item label="选择视频："  v-if="webniarType=='vod'">
@@ -246,45 +246,44 @@ export default {
     },
     docSwtichDesc(){
       if(this.docSwtich){
-        return '已开启，支持观众直播中提前预览文档，进行文档翻页';
+        return '已开启，直播中观众可以提前预览文档，进行文档翻页';
       }else{
-        return "开启后，支持观众直播中提前预览文档，进行文档翻页";
+        return "开启后，直播中观众可以提前预览文档，进行文档翻页";
       }
     },
     reservationDesc(){
       if(this.reservation){
-        return '关闭后，观看端将隐藏预约人数';
+        return '已开启，观看端显示预约人数';
       }else{
-        return "已关闭，观看端已隐藏预约人数";
+        return "开启后，观看端显示预约人数";
       }
     },
     onlineDesc(){
       if(this.online){
-        return '关闭后，观看端将隐藏在线人数';
+        return '已开启，观看端显示在线人数';
       }else{
-        return "已关闭，观看端已隐藏在线人数";
+        return "开启后，观看端显示在线人数";
       }
     },
     hotDesc(){
       if(this.hot){
-        return '关闭后，观看端将隐藏活动热度';
+        return '已开启，观看端显示活动热度';
       }else{
-        return "已关闭，观看端已隐藏活动热度";
+        return "开启后，观看端显示活动热度";
       }
     },
     homeDesc(){
       if(this.home){
-        return '关闭后，该直播将不在个人主页显示';
+        return '已开启，该活动在个人主页中显示';
       }else{
-        return "已关闭，该直播已不在个人主页显示";
+        return "开启后，该活动在个人主页显示";
       }
     },
     capacityDesc(){
       if(this.capacity){
-        return `已开启，观看并发人数扩容${this.limitInfo.extend}人`;
+        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }else{
-        // return "开启后，使用扩展包扩容并发人数（扩展包剩余人）"
-        return `开启后，使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
+        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
