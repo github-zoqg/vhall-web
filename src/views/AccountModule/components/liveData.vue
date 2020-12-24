@@ -14,7 +14,10 @@
         :clearable=false
         @change="queryList"
       />
-      <el-input placeholder="请输入活动标题" v-model.trim="query.title" @keyup.enter.native="queryList">
+      <el-input placeholder="请输入活动标题" v-model.trim="query.title"
+                clearable
+                @keyup.enter.native="queryList"
+                @clear="queryList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>
       </el-input>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
@@ -76,7 +79,7 @@ export default {
           width: 'auto'
         },
         {
-          label: '开播时间',
+          label: '消耗时间',
           key: 'pay_date',
           width: 200
         },
