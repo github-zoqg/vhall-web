@@ -13,7 +13,7 @@
       @onSearchFun="getDataList('search')"
     >
     </search-area>
-    <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
+    <main-data :mainKeyData="mainKeyData"></main-data>
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
@@ -101,7 +101,6 @@ export default {
         }
       ],
       allDataList: {},
-      titleType: '全部',
       mainKeyData: {},
       lineDataList: [],
       areaDataList: {},
