@@ -49,7 +49,9 @@
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="scope.row.image_url">
+            <div class="gift-cover">
+              <img :src="scope.row.image_url" alt="" />
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
@@ -612,6 +614,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.gift-cover{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  border: 1px solid #E6E6E6;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+}
 .live-gift-wrap{
   /deep/ .mycell .el-checkbox {
     display: none
@@ -664,13 +679,6 @@ export default {
   }
   .gift-list{
     width: 100%;
-    /deep/.el-table{
-      .gift-cover{
-        display: inline-block;
-        width: 100px;
-        height: 100px;
-      }
-    }
   }
   /deep/.el-dialog__wrapper {
     .dialog-footer {
@@ -722,11 +730,11 @@ export default {
         display:inline-block;
         width: 70px;
         height: 70px;
+        border-radius: 4px;
         img{
-          display: inline-block;
-          width: 70px;
-          height: 70px;
-          border-radius: 4px;
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
         }
       }
       .gift-info{

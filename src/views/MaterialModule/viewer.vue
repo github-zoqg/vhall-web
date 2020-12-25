@@ -120,14 +120,12 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到4条数据</p>
+          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到0条数据</p>
           <p slot="tip" v-else>请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <div class="dialog-right-btn">
-            <el-button type="primary" @click="reloadViewerList" size="mini" round>确 定</el-button>
-            <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
-          </div>
+          <el-button type="primary" @click="reloadViewerList" size="mini" round>确 定</el-button>
+          <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>

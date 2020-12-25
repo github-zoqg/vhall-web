@@ -65,7 +65,7 @@
           </i>
         </el-input>
       </div>
-      <el-card class="word-list">
+      <div class="word-list">
         <table-list
           ref="tableListWord"
           v-if="totalNum > 0"
@@ -81,7 +81,7 @@
         >
         </table-list>
         <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
-      </el-card>
+      </div>
     </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
