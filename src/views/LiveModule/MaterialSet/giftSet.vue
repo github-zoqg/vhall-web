@@ -78,11 +78,12 @@
       </el-table>
       <SPagination
         :total="total"
-        v-show="total > 10"
+        v-show="total > searchParams.page_size"
         :currentPage="searchParams.page"
         :page-size="searchParams.page_size"
         @current-change="currentChangeHandler"
         align="center"></SPagination>
+      <null-page text="未搜索到相关内容" nullType="search" v-if="total === 0"></null-page>
     </el-card>
     <el-dialog
       :title="editParams.gift_id ? '编辑礼物' : '新建礼物'"
@@ -201,6 +202,7 @@ import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
 
 export default {
   name: "giftSize",
@@ -260,7 +262,8 @@ export default {
   components: {
     PageTitle,
     upload,
-    SPagination
+    SPagination,
+    NullPage
   },
   created() {
     this.getTableList()

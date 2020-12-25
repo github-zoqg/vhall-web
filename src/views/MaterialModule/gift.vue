@@ -19,9 +19,9 @@
         批量删除
       </el-button>
       <el-input
+        @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
-        @keyup.enter.native="searchGifts"
         class="head-btn fr search"
         v-model.trim="searchName"
         placeholder="请输入礼物名称"
