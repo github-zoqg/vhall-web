@@ -21,6 +21,12 @@ const router = [
         meta: { title: '直播间' },
       },
       {
+        path: '/live/recordvideo/:il_id',
+        component: () => import('@/views/LiveModule/Room/recordvideo'),
+        name: 'RecordVideo',
+        meta: { title: '录制视频' },
+      },
+      {
         path: '/live/watch/:il_id',
         component: () => import('@/views/LiveModule/Room/watchWrap'),
         name: 'LiveWatch',

@@ -21,16 +21,21 @@
       :cut_record_status="cut_record_status"
       :documentId="document_id"
       :docLowPriority="docLowPriority"
+      :recordTip="recordTip"
+      :rootActive='rootActive'
+      :roomStatus='roomStatus'
     ></vhall-record-saas>
   </div>
 </template>
 <script>
-import { browserSupport } from '../../utils/getBrowserType'
+import { browserSupport } from '@/utils/getBrowserType';
 import chrome from './chrome'
 export default {
   components: { chrome },
   data () {
     return {
+      rootActive:{}, // 活动信息
+      roomStatus:{}, // 房间信息
       roomId: '',
       il_id: this.$route.params.il_id,
       vss_token: '',
@@ -48,7 +53,9 @@ export default {
       record_notice: 1,
       downloadChrome: !browserSupport(),
       docLowPriority: '', // 文档转换优先级
-      isrecording: 0 // 是否录制中
+      isrecording: 0, // 是否录制中
+      recordTip: '', // 是否弹出默认回放弹框
+      tipMsg: '' // info接口返回的错误信息
     }
   },
 
@@ -74,35 +81,67 @@ export default {
       }, 1000 * 60 * 30)
     },
     getUserinfo () {
-      this.$fetch('getInfo', { webinar_id: this.il_id })
-        .then(res => {
+      this.$fetch('initRecord', { webinar_id: this.il_id })
+        .then(async res => {
+          console.log(res)
           if (res.code != 200) {
-            window.location.href = '//t.e.vhall.com/auth/login'
+            return this.tipMsg = res.msg;
           }
-          this.userInfo = res.data.user
-          this.roomId = res.data.room_id
-          this.vss_token = res.data.vss_token
-          this.joinId = res.data.user.join_id
-          this.third_party_user_id = res.data.user.third_party_user_id
-          this.permission = res.data.permission
-          this.qaStatus = res.data.qa_open
-          this.params_verify_token = res.data.params_verify_token
-          this.saas_join_id = res.data.user.saas_join_id
-          this.domains = res.data.domains
-          this.duration = res.data.live_time
-          this.is_interact = res.data.is_interact
-          this.document_id = res.data.document_id
-          this.cut_record_status = res.data.cut_record_status
-          this.record_notice = res.data.record_notice // 设置默认回放视频提示
-          this.isrecording = res.data.is_recording
-          sessionStorage.setItem('user', JSON.stringify(res.data.user))
-          sessionStorage.setItem('vss_token', res.data.vss_token)
-          sessionStorage.setItem('roomId', res.data.room_id)
-          sessionStorage['vhall-vsstoken'] = res.data.vss_token
-          this.docLowPriority = res.data.doc_low_priority
-          sessionStorage.setItem('defaultMainscreenDefinition', res.data.push_definition || '')
-          sessionStorage.setItem('defaultSmallscreenDefinition', res.data.hd_definition || '')
+          const resultData =  this.rootActive = res.data;
+          sessionStorage.setItem('user', JSON.stringify(resultData.join_info))
+          sessionStorage.setItem('vss_token', resultData.interact.paas_access_token)
+          sessionStorage.setItem('roomId', resultData.interact.room_id)
+          sessionStorage['vhall-vsstoken'] = resultData.interact.paas_access_token
+          sessionStorage.setItem('defaultMainscreenDefinition', resultData.push_definition || '') // 不知道这个字段是干什么的,暂定和发起端一致
+          sessionStorage.setItem('defaultSmallscreenDefinition', resultData.hd_definition || '') // 不知道这个字段是干什么的,暂定和发起端一致
+          sessionStorage.setItem('interact_token', resultData.interact.interact_token);
+          await this.getTools(resultData.interact.room_id);
+          this.userInfo = resultData.join_info
+          this.roomId = resultData.interact.room_id
+          this.vss_token = resultData.interact.paas_access_token
+          this.joinId = resultData.join_info.join_id
+          this.third_party_user_id = resultData.join_info.third_party_user_id
+          this.permission = resultData.permission
+          this.qaStatus = resultData.qa_open || 0;  // 不知道这个字段是干什么的,暂定和发起端一致
+          this.params_verify_token = resultData.interact.interact_token
+          this.saas_join_id = resultData.join_info.join_id
+
+          // 单独增加 static、upload、web  为了减少修改 // ********** 这个字段没有返回,暂定写死和发起端一致
+          this.domains = {
+            ...resultData.urls || {},
+            ...{
+              static: 'https://t-alistatic01.e.vhall.com',
+              upload: 'https://t-alistatic01.e.vhall.com/upload',
+              webinar: '',
+              web: '//t.e.vhall.com/v3/'
+            }
+          };
+          console.log(resultData, 88888, this.domains);
+          sessionStorage.setItem('vhall_domain',JSON.stringify(this.domains));
+
+          this.duration = resultData.webinar.live_time
+          this.is_interact = resultData.webinar.mode == 3  ? 1 : 0 ; // 做一下判断 ??? mode 直播模式：1-音频、2-视频、3-互动
+          this.document_id = resultData.webinar.document_id
+          this.cut_record_status = 3 // 打点录制状态1录制中2暂停3结束/未录制 // ********** 这个字段没有返回,暂定 3
+          this.record_notice = 4 // 设置默认回放视频提示 // ********** 这个字段没有返回,暂定 4
+          this.isrecording = resultData.is_recording
+          this.docLowPriority = resultData.doc_low_priority || 0; // 不知道这个字段是干什么的,暂定和发起端一致
         })
+    },
+    getTools(roomId){
+      return new Promise((resolve, reject) => {
+        this.$fetch('getToolStatus', {room_id: roomId}).then(res=>{
+          if(res.code == 200){
+            this.roomStatus = res.data;
+            resolve();
+          }else{
+            this.$message.warning(res.msg)
+          }
+        }).catch(err=>{
+          console.warn(err, 'catch');
+          resolve();
+        });
+      });
     },
     // 打点录制
     recordFun (data) {
