@@ -37,10 +37,11 @@
       :close-on-click-modal="false"
       width="588px">
      <div class="prizeList">
-       <div class="search">
+       <div class="search" v-show="total || isSearch">
          <el-input v-model.trim="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
        </div>
-       <el-scrollbar v-loadMore="moreLoadData">
+       <div v-show="total">
+        <el-scrollbar v-loadMore="moreLoadData">
          <div class="prize">
            <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
              <img :src="item.img_path" alt="">
@@ -54,10 +55,16 @@
            </div>
          </div>
        </el-scrollbar>
-       <div class="prize-check"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
-       <div class="dialog-footer">
-        <el-button type="primary" @click="sureChoisePrize" v-preventReClick round>确 定</el-button>
-        <el-button @click.prevent.stop="dialogPrizeVisible = false" round>取 消</el-button>
+       </div>
+        <div class="no-live" v-show="!total">
+          <noData :nullType="nullText" :text="text" :height="0">
+            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="dialogVisible == true" v-preventReClick>创建抽奖</el-button>
+          </noData>
+        </div>
+       <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
+       <div class="dialog-footer" v-show="total || isSearch">
+        <el-button type="primary" @click="sureChoisePrize" v-preventReClick round :disabled="!checkedList.length">确 定</el-button>
+        <el-button @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
        </div>
      </div>
     </VhallDialog>
@@ -65,6 +72,7 @@
 </template>
 <script>
 import upload from '@/components/Upload/main';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
@@ -73,6 +81,10 @@ export default {
       keyword: '',
       checkedList: [],
       maxPage: 0,
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false,
+      text: '您还没有奖品，快来创建吧！',
       prizePageInfo: {
         pos: 0,
         limit: 6,
@@ -107,13 +119,17 @@ export default {
   },
   props: ['prizeInfo'],
   components: {
-    upload
+    upload,
+    noData
   },
   watch: {
     dialogPrizeVisible() {
       if (this.dialogPrizeVisible) {
         this.list = [];
+        this.checkedList = [];
+        this.keyword = '';
         this.getPrizeList();
+
       }
     }
   },
@@ -190,12 +206,22 @@ export default {
         source: 1,
         ...this.prizePageInfo
       }
+      if (this.keyword) {
+        this.nullText = 'search';
+        this.text = '';
+        this.isSearch = true;
+      } else {
+        this.nullText = 'nullData';
+        this.text = '您还没有奖品，快来创建吧！';
+        this.isSearch = false;
+      }
       this.$fetch('getPrizeList', params).then(res => {
         let adList = res.data.list;
         adList.map(item => {
           item.isChecked = false;
         });
         this.list.push(...adList);
+        this.total = res.data.count;
         this.maxPage = Math.ceil(res.data.count / this.prizePageInfo.limit);
       })
     },

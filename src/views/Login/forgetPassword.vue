@@ -311,6 +311,7 @@ export default {
             that.mobileKey = '';
             console.log('errr>>>', err);
             that.$message.error('图形验证码错误');
+            that.callCaptcha();
             // that.errorMsgShow = true;
           }
         },

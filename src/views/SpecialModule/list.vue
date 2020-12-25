@@ -24,7 +24,7 @@
           placeholder="请输入专题标题"
           clearable
           @change="searchHandler"
-          v-model="keyWords">
+          v-model.trim="keyWords">
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"

@@ -46,7 +46,7 @@ export default {
 //   margin: 137px 0 27px 0;
 // }
 .search {
-  padding-bottom: 137px;
+  padding-bottom: 100px;
 }
 .no-show {
   margin: 230px 0 27px 0;

@@ -193,6 +193,7 @@ export default {
         text_type: 2,
         size: 20,
         speed: 6000,
+        text: '版权所有，盗版必究',
         position: 3,
         alpha: 50,
         interval: 20
@@ -295,10 +296,6 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          // this.formHorse.text_type = String(res.data.text_type);
-          // this.formHorse.position = String(res.data.position);
-          // this.formHorse.speed = String(res.data.speed);
-          // this.formHorse.alpha = Number(res.data.alpha);
           this.scrolling_open = Boolean(res.data.scrolling_open);
         } else {
           // this.$message.error('获取信息失败');

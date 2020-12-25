@@ -26,7 +26,6 @@
                   v-model="loginForm.text">
                 </el-input>
               </div>
-              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
@@ -40,6 +39,7 @@
                   <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
                 </span>
               </el-input>
+             <p class="errorText" v-show="errorText"><i class="el-icon-error"></i>{{ errorText }}</p>
             </el-form-item>
             <div class="login-btn">
               <el-button type="primary" @click="loginAccount">登&nbsp;&nbsp;&nbsp;录</el-button>
@@ -78,7 +78,6 @@
                   v-model="dynamicForm.text">
                 </el-input>
               </div>
-              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
             </el-form-item>
             <el-form-item prop="dynamic_code">
               <div class="code">
@@ -91,7 +90,7 @@
                 </el-input>
                 <span @click="getDyCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
               </div>
-              <!-- <p class="errorText" v-show="errorMsgShow.dycode"><i class="el-icon-error"></i>验证码错误</p> -->
+             <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>{{ errorMsgShow }}</p>
             </el-form-item>
             <div class="login-btn">
               <el-button type="primary" @click="loginDynamic">登&nbsp;&nbsp;&nbsp;录</el-button>
@@ -133,7 +132,6 @@
                   </el-input>
                   <span @click="getRegisterCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                 </div>
-                <!-- <p class="errorText" v-show="errorMsgShow.dycode"><i class="el-icon-error"></i>验证码错误</p> -->
               </el-form-item>
               <el-form-item prop="password">
                 <el-input
@@ -147,6 +145,7 @@
                     <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
                   </span>
                 </el-input>
+                <p class="errorText" v-show="registerText"><i class="el-icon-error"></i>{{registerText}}</p>
               </el-form-item>
               <div class="login-btn">
                 <el-button type="primary" @click="registerAccount" :disabled="!checked">立 即 注 册</el-button>
@@ -184,6 +183,8 @@ export default {
     return {
       remember: 0,
       isPassWordType: true,
+      errorText: '',
+      registerText: '',
       isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
         account: '',
@@ -232,6 +233,9 @@ export default {
   watch: {
     '$route.path': function() {
       this.callCaptcha();
+      this.registerText = '';
+      this.errorText = '';
+      this.errorMsgShow = '';
     }
   },
   mounted() {
@@ -260,6 +264,7 @@ export default {
       this.mobileKey = '';
       this.showCaptcha = false;
       this.errorMsgShow = '';
+      this.errorText = '';
     },
     getDyCode() {
       // 获取短信验证码
@@ -314,11 +319,12 @@ export default {
               this.dynamicForm.account = account;
               this.login(this.dynamicForm);
             } else {
-              this.$message.error('账号不存在');
+              this.errorText = '账号不存在';
             }
           }
         } else {
-          this.$message.error(res.msg || '登录验证失败');
+          this.errorText = res.msg;
+          // this.$message.error(res.msg || '登录验证失败');
         }
       });
     },
@@ -328,6 +334,8 @@ export default {
       this.$fetch('loginInfo', params).then(res => {
         if(res && res.code === 200) {
           this.mobileKey = '';
+          this.errorText = '';
+          this.errorMsgShow = '';
           sessionOrLocal.set('token', res.data.token || '', 'localStorage');
           // 存储控制台-channel_id频道
           sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
@@ -335,8 +343,13 @@ export default {
           sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
           this.$router.push({path: '/'});
         } else {
-          this.$message.error(res.msg || '登录失败！');
+          if (this.isActive == 1) {
+            this.errorText = res.msg || '登录失败！';
+          } else {
+            this.errorMsgShow = res.msg || '登录失败！';
+          }
           sessionOrLocal.set('token', '', 'localStorage');
+          this.callCaptcha();
         }
       });
     },
@@ -346,10 +359,12 @@ export default {
          this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
           if (res && res.code === 200) {
             if (res.data.account_exist) {
-              this.$message.error('该手机号已注册');
+              this.registerText = '该手机号已注册';
+            } else {
+              this.registerText = '';
             }
           } else {
-            this.$message.error(res.msg || '注册失败');
+            this.registerText = res.msg || '注册失败';
           }
         });
       }
@@ -377,11 +392,11 @@ export default {
             this.$router.push({path:'/login'})
           }, 1000)
         } else {
-          this.$message.error(res.msg || '注册失败');
+          this.registerText = res.msg || '注册失败';
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error('注册失败');
+        this.registerText = res.msg || '注册失败';
       });
     },
     /**
@@ -424,11 +439,16 @@ export default {
             that.mobileKey = data.validate;
             that.showCaptcha = true;
             console.log('data>>>', data);
+            that.errorMsgShow = '';
+            that.errorText = '';
+            that.registerText = '';
           } else {
             that.loginForm.captcha = '';
             that.dynamicForm.captcha = '';
-            console.log('errr>>>', err);
-            that.errorMsgShow = true;
+            that.errorMsgShow = '图形验证码错误';
+            that.errorText = '图形验证码错误';
+            that.registerText = '图形验证码错误';
+            // that.callCaptcha();
           }
         },
         onload(instance) {

@@ -395,13 +395,14 @@ export default {
       return name;
     },
     delete(that, val) {
+      console.log(val, '111111111111');
       that.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteList(val.order_id);
+          that.deleteList(val.rows.order_id);
         }).catch(() => {
           that.$message({
             type: 'info',
@@ -415,6 +416,7 @@ export default {
           type: 'success',
           message: '删除成功!'
         });
+        this.getDetailList();
       }).catch(e=>{
         console.log(e);
         this.$message({
