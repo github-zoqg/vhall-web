@@ -10,7 +10,7 @@
 
     <!-- 操作栏 -->
     <div class="operaBox" v-show="totalElement || isSearch">
-      <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
+      <el-button size="medium" type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
       <div class="searchBox">
         <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
           <el-option
@@ -256,7 +256,7 @@ export default {
   .liveListBox{
     user-select: none;
     // padding: 0px 60px;
-    .el-button{
+  /*  .el-button{
       color:#FB3A32;
       border-color:#FB3A32;
       &:hover{
@@ -270,13 +270,13 @@ export default {
       &:hover{
         background: #fc615b;
       }
-    }
+    }*/
     /deep/.el-dialog__body{
       padding-bottom: 20px;
     }
-    .el-button.is-round{
+  /*  .el-button.is-round{
       padding: 10px 23px;
-    }
+    }*/
   }
   .pageTitle{
     color: #1A1A1A;

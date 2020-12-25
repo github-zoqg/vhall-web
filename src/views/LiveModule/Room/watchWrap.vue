@@ -848,7 +848,6 @@ export default {
       try {
         await this.getRoomInfo() // 初始化房间信息
         if (this.roomData && this.roomData.status == 'subscribe') {
-          console.warn('subscribe', 'sd', this.roomData );
           if(location.pathname.indexOf('/embedclient/') != -1){
             this.$router.push({name: 'embedSubscribe', params: {id: this.$route.params.il_id}})
           }else{
@@ -1729,24 +1728,19 @@ export default {
      *
      */
     initVHallReport() {
-      this.$fetch('sendReportInfo', {
+      window.vhallReport = new VhallReport({
+        pf: 7,
+        user_id: this.roomData.join_info.join_id,
         webinar_id: this.$route.params.il_id,
-        visitor: this.roomData.visitor_id
-      }).then(res => {
-        window.vhallReport = new VhallReport({
-          ...res.data,
-          pf: 7,
-          user_id: this.roominfo.auth.id ?  this.roominfo.auth.id : 0,
-          webinar_id: this.$route.params.il_id,
-          t_start: this.roominfo.webinar.start_time,
-          entry_time: this.roominfo.webinar.start_time,
-          service_names: this.roominfo.is_replay == 1 ? 2 : 1,
-          env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
-        });
-        window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
-          event: this.$route.query.refer // 推广渠道，会在url里传参
-        });
-      })
+        t_start: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        service_names: this.roominfo.is_replay == 1 ? 2 : 1,
+        type: 3,
+        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+      });
+      window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
+        event: this.$route.query.refer // 推广渠道，会在url里传参
+      });
       // 浏览器或者页面关闭时上报
       window.addEventListener('beforeunload', function(e) {
         // 离开H5观看端页面

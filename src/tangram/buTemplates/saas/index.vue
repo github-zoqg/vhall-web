@@ -495,7 +495,7 @@
               :status="status"
               :isInteract="isInteract"
               :splited="splited"
-              :webinadId='ilId'
+              :webinarId='ilId'
               ref="interactive"
             ></Interactive>
           </streams>

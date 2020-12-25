@@ -1,5 +1,4 @@
 function getUrlData(url) {
-  // let url = window.location.href;
   /* eslint-disable no-new-object */
   let theData = new Object();
   if (url.indexOf('?') != -1) {

@@ -1,14 +1,6 @@
 <template>
   <div class="question-wrap">
-    <pageTitle title="商品">
-      <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
-        <br>
-        2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
-        <br>
-        3.上传的视频，不支持剪辑和下载
-      </div>
-    </pageTitle>
+    <pageTitle title="商品"></pageTitle>
       <div class="head-operat" v-show="total || isSearch">
         <el-button type="primary" round  @click="addProduct" v-preventReClick>创建</el-button>
         <el-button round @click="batchDel(null)" v-preventReClick>批量删除</el-button>
@@ -152,12 +144,13 @@ export default {
         webinar_id: this.$route.params.str
       };
       this.$fetch('goodsGet', this.$params(obj)).then(res => {
-        this.tableData = res.data.goods_list;
-        this.tableData.map(item => {
+        let tableData = res.data.goods_list;
+        tableData.map(item => {
           item.watch = Boolean(!item.status);
           item.img = item.img_url;
         });
         this.total = res.data.total;
+        this.tableData = tableData;
         if (formParams.questionName) {
             this.nullText = 'search';
             this.text = '';

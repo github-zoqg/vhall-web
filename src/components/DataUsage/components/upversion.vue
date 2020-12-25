@@ -23,7 +23,7 @@
         <el-form-item label="订单信息">
           <div class="informtion">
             <div class="inform-pay">
-              <h3>支付金额: <b>{{ title === '升级'? currentInfo.concurrency_fee * number :  currentInfo.extend_fee * number }}</b></h3>
+              <h3>支付金额: <b>￥{{ title === '升级'? currentInfo.concurrency_fee * (number - currentInfo.total_concurrency) * concurrentPrice.left_months :  currentInfo.extend_fee * (number - currentInfo.total_concurrency) }}</b></h3>
               <p v-if="title === '升级'">有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
             </div>
             <div class="xieyi">
