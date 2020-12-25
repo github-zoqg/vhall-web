@@ -100,7 +100,7 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '{b} <br/>{a}: {c}（方）'
+          formatter:  `{b} <br/>{a}: {c}（${this.sonVo.vip_info.type > 0 ? 'GB' : '方'}）`
         },
         yAxis: [
           {
@@ -161,7 +161,7 @@ export default {
         ],
         series: [
           {
-            name: '并发',
+            name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
             type: "line",
             smooth: true,
             data: valData,

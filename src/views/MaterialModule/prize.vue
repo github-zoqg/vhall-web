@@ -9,10 +9,10 @@
         3.奖品图片：尺寸120*120px，大小不超过2M
       </div>
     </pageTitle>
-    <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="createPrize" v-preventReClick>新建</el-button>
-      <el-button round v-if="$route.meta.title !== '奖品'" @click="prizeMeterial" v-preventReClick>资料库</el-button>
-      <el-button round class="head-btn batch-del" @click="allDelete(null)" v-preventReClick>批量删除</el-button>
+    <div class="head-operat" v-show="total || isSearch">
+      <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize" v-preventReClick>新建</el-button>
+      <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial" v-preventReClick>资料库</el-button>
+      <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" v-preventReClick>批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -28,7 +28,8 @@
       </table-list>
     </div>
     <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="'暂未创建奖品'">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建抽奖</el-button>
       </noData>
     </div>
     <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo"></create-prize>
@@ -55,8 +56,10 @@ export default {
   },
   data() {
     return {
-      total: 1,
-      nullText: 'noData',
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false,
+      text: '您还没有奖品，快来创建吧！',
       prizeInfo: {},
       isDelete: false,
       searchAreaLayout: [
@@ -95,7 +98,7 @@ export default {
     noData
   },
   mounted() {
-    this.getTableList();
+    // this.getTableList();
   },
   methods: {
     onHandleBtnClick(val) {
@@ -109,9 +112,16 @@ export default {
       if (params === 'search') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
+        this.nullText = 'search';
+        this.text = '';
+        this.isSearch = true;
         if (this.tableData.length) {
           this.$refs.tableList.clearSelect();
         }
+      } else {
+        this.nullText = 'nullData';
+        this.text = '您还没有奖品，快来创建吧！';
+        this.isSearch = false;
       }
       if (this.source == '0') {
         formParams.room_id = this.roomId;
@@ -126,7 +136,6 @@ export default {
           this.nullText = 'search';
         }
         this.tableData.map(item => {
-          // 临时写死的，后期调
           item.img = item.img_path;
         })
       })
@@ -203,12 +212,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.question-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+}
 .question-wrap{
   height: 100%;
   width: 100%;
-  .question-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     width: 100%;
     padding: 32px 24px;

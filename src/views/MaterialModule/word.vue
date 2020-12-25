@@ -65,7 +65,7 @@
           </i>
         </el-input>
       </div>
-      <el-card class="word-list">
+      <div class="word-list">
         <table-list
           ref="tableListWord"
           v-if="totalNum > 0"
@@ -81,7 +81,7 @@
         >
         </table-list>
         <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
-      </el-card>
+      </div>
     </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
@@ -123,18 +123,22 @@ export default {
         {
           label: '文档名称',
           key: 'file_name',
+          width: 'auto'
         },
         {
           label: '上传时间',
           key: 'created_at',
+          width: 160
         },
         {
           label: '页码',
           key: 'page',
+          width: 80
         },
         {
           label: '进度',
           key: 'transform_schedule_str',
+          width: 200
         }
       ],
       tableRowBtnFun: [
@@ -642,11 +646,13 @@ export default {
     border: none;
   }
 }
+.word-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+}
 .word-wrap {
   height: 100%;
-   .word-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     padding: 32px 24px;
   }

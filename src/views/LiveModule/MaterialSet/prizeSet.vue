@@ -54,7 +54,7 @@
                     <el-input v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :disabled='isDisabled' round @click="lotterySave">保存</el-button>
+                  <el-button type="primary" :disabled='isDisabled'  round @click="lotterySave" v-preventReClick>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -88,7 +88,7 @@
                   添加字段
                 </div>
                 <el-form-item>
-                  <el-button type="primary" round @click="sureGivePrize" :disabled='lotteryPage'>保存</el-button>
+                  <el-button type="primary" round @click="sureGivePrize" :disabled='lotteryPage' v-preventReClick>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -104,7 +104,7 @@
                     </el-form>
                   </div>
                 </el-scrollbar>
-                <div class="sureBtn"><el-button type="primary" round>确定</el-button></div>
+                <div class="sureBtn"><el-button type="primary" v-preventReClick round>确定</el-button></div>
               </div>
             </div>
           </div>

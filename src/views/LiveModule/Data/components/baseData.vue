@@ -12,8 +12,8 @@
     </div>
     <el-row :gutter="40">
       <el-col class="liveItem">
-        <div class="base-item" v-if="isStatus!= 4">
-          <p @click="exportSubscribeInfo">导出</p>
+        <div class="base-item" v-if="isStatus!= 4" @click="exportSubscribeInfo">
+          <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_yuyue"></icon>
             <div class="base-text">
@@ -28,8 +28,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="exportAnswer">导出</p>
+        <div class="base-item" @click="exportAnswer">
+          <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_baomingbiaodan"></icon>
             <div class="base-text">
@@ -44,8 +44,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="exportPreviewInfo">导出</p>
+        <div class="base-item" @click="exportPreviewInfo">
+          <p>导出</p>
           <div class="base-main">
            <icon icon-class="saasicon_shikan"></icon>
             <div class="base-text">
@@ -60,8 +60,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="lookOption('邀请排名')">查看</p>
+        <div class="base-item" @click="lookOption('邀请排名')">
+          <p>查看</p>
           <div class="base-main">
             <icon icon-class="saasicon_yaoqingpaiming"></icon>
             <div class="base-text">
@@ -76,8 +76,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="exportShare">导出</p>
+        <div class="base-item" @click="exportShare">
+          <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_fenxiangpaiming"></icon>
             <div class="base-text">
@@ -111,8 +111,8 @@
     </div>
     <el-row :gutter="40">
       <el-col class="liveItem">
-        <div class="base-item">
-          <p @click="lookOption('聊天')">查看</p>
+        <div class="base-item" @click="lookOption('聊天')">
+          <p>查看</p>
           <div class="base-main">
             <icon icon-class="saasicon_liaotian"></icon>
             <div class="base-text">
@@ -127,8 +127,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4">
-          <p @click="lookOption('问答')">查看</p>
+        <div class="base-item" v-if="isStatus!=4" @click="lookOption('问答')">
+          <p >查看</p>
           <div class="base-main">
             <icon icon-class="saasicon_wenda"></icon>
             <div class="base-text">
@@ -143,7 +143,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item">
+         <div class="base-item" style="cursor: default;">
           <div class="base-main">
             <icon icon-class="saasicon_dianzan"></icon>
             <div class="base-text">
@@ -158,8 +158,8 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4">
-          <p @click="lookOption('签到')">查看</p>
+         <div class="base-item" v-if="isStatus!=4" @click="lookOption('签到')">
+          <p>查看</p>
           <div class="base-main">
             <icon icon-class="saasicon_qiandao"></icon>
             <div class="base-text">
@@ -174,8 +174,8 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4">
-          <p @click="lookOption('问卷')">查看</p>
+         <div class="base-item" v-if="isStatus!=4"  @click="lookOption('问卷')">
+          <p>查看</p>
          <div class="base-main">
             <icon icon-class="saasicon_wenjuan"></icon>
             <div class="base-text">
@@ -190,8 +190,8 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4">
-          <p @click="lookOption('抽奖')">查看</p>
+         <div class="base-item" v-if="isStatus!=4" @click="lookOption('抽奖')">
+          <p>查看</p>
           <div class="base-main">
             <icon icon-class="saasicon_choujiang"></icon>
             <div class="base-text">
@@ -206,8 +206,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4">
-          <p @click="lookOption('发群红包')">查看</p>
+        <div class="base-item" v-if="isStatus!=4" @click="lookOption('发群红包')">
+          <p>查看</p>
          <div class="base-main">
             <icon icon-class="saasicon_hongbao"></icon>
             <div class="base-text">
@@ -216,8 +216,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="exportReward">导出</p>
+        <div class="base-item" @click="exportReward">
+          <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_dashang"></icon>
             <div class="base-text">
@@ -226,8 +226,8 @@
             </div>
           </div>
         </div>
-        <div class="base-item">
-          <p @click="exportGift">导出</p>
+        <div class="base-item"  @click="exportGift">
+          <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_liwu"></icon>
             <div class="base-text">
@@ -238,8 +238,8 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType==3">
-          <p @click="exportSpeak">导出</p>
+         <div class="base-item" v-if="isStatus!=4&&webinarType==3" @click="exportSpeak">
+          <p>导出</p>
           <div class="base-main">
             <icon icon-class="saasicon_lianmai"></icon>
             <div class="base-text">
@@ -474,6 +474,7 @@ export default {
         position: relative;
         border-radius: 8px;
         background: #fff;
+        cursor: pointer;
         &:nth-child(3n) {
           margin-right: 0;
         }
@@ -486,7 +487,6 @@ export default {
           top: 10px;
           right:16px;
           color: #666;
-          cursor: pointer;
         }
         .base-main{
           height: 100%;

@@ -284,7 +284,7 @@ export default {
     };
   },
   created () {
-    console.log(888888, this.$route.params.id, this.$route.params)
+    console.log(888888,  this.$route.params)
   },
 
   async mounted () {

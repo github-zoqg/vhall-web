@@ -42,9 +42,8 @@
                 <span>{{ scope.row.transcode_status_text }}</span>
               </p>
             </div>
-            <div v-else-if="item.key === 'img'">
+            <div v-else-if="item.key === 'img'" class="prizeImg">
               <img
-                class="imgs"
                 :src="scope.row.img"
               />
             </div>
@@ -147,7 +146,7 @@ export default {
     },
     maxHeight: {
       type: [Number, String],
-      default: 450,
+      default: '100%',
     },
     scene: {
       type: String,
@@ -231,13 +230,17 @@ export default {
   .word-status {
     margin-right: 12px;
   }
-  /deep/.cell .imgs {
-    width: 100%;
-    height: 100%;
-    // object-fit: cover;
-  }
    /deep/.cell .advImg {
     width: 142px;
+    height: 80px;
+    img{
+      width:100%;
+      height:100%;
+      object-fit: scale-down;
+    }
+  }
+  /deep/.cell .prizeImg{
+    width: 80px;
     height: 80px;
     img{
       width:100%;

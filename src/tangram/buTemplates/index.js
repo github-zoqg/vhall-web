@@ -5,7 +5,7 @@ import enjoyWatchSaas from './saas/newWatch';
 import popup from '../libs/saas-popup';
 
 // import fetch from '../http/http';
-import fetch from '../../api/fetch';
+// import fetch from '../../api/fetch';
 
 import vhallMessage from '../libs/messageBox/vhallMessage';
 import EventBus from '@/utils/Events';
@@ -23,7 +23,7 @@ const install = (Vue, opt = {}) => {
   });
 
   // Vue.prototype.$vhallFetch = fetch(opt.config, opt.baseUrl, opt.buHost);
-  Vue.prototype.$fetch = fetch;
+  // Vue.prototype.$fetch = fetch;
   Vue.prototype.$baseUrl = opt.baseUrl;
   Vue.prototype.$vhallmessage = vhallMessage;
 

@@ -79,7 +79,11 @@ export default {
             this.attentioned_count = attentioned_count;
             this.follow = follow;
             this.content = homepage_info.content;
-            this.$refs.homeMain.initComp(homepage_info);
+            try {
+              this.$refs.homeMain.initComp(homepage_info);
+            }catch (e) {
+              console.log(e);
+            }
           })
         } else {
           this.userHomeVo = null;

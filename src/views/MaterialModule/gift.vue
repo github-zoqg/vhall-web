@@ -2,25 +2,20 @@
   <div class="gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
-        1.支持创建免费礼物，观看端最多显示40个礼物
-        <br>
-        2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp
-        <br>
+        1.支持创建免费礼物。观看端最多显示40个礼物<br/>
+        2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp<br/>
         3.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
-      <el-button
-        round
-        class="head-btn set-upload"
-        :class="{'no-data': selectIds.length <= 0}"
-        :disabled="selectIds.length <= 0"
-        @click="dialogTipVisible = true">
-        批量删除
-      </el-button>
+      <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
+      <el-button round size="medium" :class="{'no-data': selectIds.length <= 0}"
+                 :disabled="selectIds.length <= 0"
+                 @click="dialogTipVisible = true">批量删除</el-button>
       <el-input
         @keyup.enter.native="searchGifts"
+        clearable
+        @clear="searchGifts"
         class="head-btn fr search"
         v-model.trim="searchName"
         placeholder="请输入礼物名称"
@@ -33,7 +28,7 @@
         </i>
       </el-input>
     </div>
-    <el-card class="gift-list">
+    <div class="gift-list">
       <el-table
         :cell-class-name="freeFilter"
         :data="tableData"
@@ -41,6 +36,7 @@
         style="width: 100%;margin-bottom: 30px;"
         ref="multipleTable"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+        v-if="total > 0"
         @selection-change="handleSelectionChange">
         <el-table-column
           :selectable="selectHandle"
@@ -48,9 +44,11 @@
           width="55"
           align="left"
         />
-        <el-table-column label="图片">
+        <el-table-column label="图片" width="120px">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="scope.row.img">
+            <div class="gift-cover">
+              <img :src="scope.row.img" alt="" />
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
@@ -70,11 +68,12 @@
       <SPagination
         :total="total"
         :page-size="10"
-        v-show="total > 10"
+        v-show="total > searchParams.page_size"
         :currentPage="searchParams.page"
         @current-change="currentChangeHandler"
         align="center"></SPagination>
-    </el-card>
+      <null-page text="未搜索到相关内容" nullType="search" v-if="total === 0"></null-page>
+    </div>
     <el-dialog
       :title="editParams.gift_id ? '编辑礼物' : '新建礼物'"
       :visible.sync="dialogVisible"
@@ -108,10 +107,10 @@
             </el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" round>取 消</el-button>
-      </span>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
+        <el-button type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
+      </div>
     </el-dialog>
     <el-dialog
       title="提示"
@@ -133,6 +132,8 @@ import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import { debounce } from "@/utils/utils"
+import NullPage from '../PlatformModule/Error/nullPage.vue';
+
 import Env from "@/api/env";
 
 export default {
@@ -177,7 +178,8 @@ export default {
   components: {
     PageTitle,
     upload,
-    SPagination
+    SPagination,
+    NullPage
   },
   created() {
     this.getTableList()
@@ -408,6 +410,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.gift-cover{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  border: 1px solid #E6E6E6;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+}
 .gift-wrap{
   /deep/ .mycell .el-checkbox {
     display: none
@@ -435,6 +450,7 @@ export default {
     }
     .no-data{
       color: #b3b3b3;
+      background: #ffffff;
     }
     ::v-deep.set-upload{
       position: relative;
@@ -459,31 +475,8 @@ export default {
     }
   }
   .gift-list{
-    width: 100%;
-    /deep/.el-table{
-      .gift-cover{
-        display: inline-block;
-        width: 100px;
-        height: 100px;
-      }
-    }
-  }
-  /deep/.el-dialog__wrapper {
-    .dialog-footer {
-      display: inline-block;
-      width: 100%;
-      .el-button:first-child{
-        float: left;
-        margin-left: 20px;
-      }
-      .el-button:last-child{
-        float: right;
-        margin-right: 20px;
-      }
-      &:after{
-        clear:both;
-      }
-    }
+    .layout--right--main();
+    .padding-table-list();
   }
 }
 </style>

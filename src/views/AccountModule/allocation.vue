@@ -30,19 +30,22 @@
               width="55">
             </el-table-column>
             <el-table-column
-              label="帐号昵称"
-              width="120"
+              label="帐号 / 昵称"
               show-overflow-tooltip
             >
-              <template slot-scope="scope">{{ scope.row.nick_name }}</template>
+              <template slot-scope="scope">
+                {{scope.row.child_id}} / {{ scope.row.nick_name }}
+              </template>
             </el-table-column>
             <el-table-column
               prop="phone"
               label="手机号"
+              width="160"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)">
+              label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)"
+              width="200">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append">GB</template>
@@ -51,7 +54,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配并发" v-if="resourcesVo && !(resourcesVo.type > 0)">
+              label="分配并发" v-if="resourcesVo && !(resourcesVo.type > 0)"
+              width="200">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append"> 方</template>
@@ -60,7 +64,8 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_day">
+              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_day"
+              width="200">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative">
                   <template slot="append"> 方</template>
@@ -70,7 +75,8 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              align="center">
+              align="center"
+              width="140">
               <template slot-scope="scope">
                 <el-button type="text" @click="save(scope.row)" v-if="scope.row.isHide">保存</el-button>
                 <el-button type="text" @click="showInput(scope.row)" v-if="!scope.row.isHide">编辑</el-button>
@@ -83,7 +89,7 @@
             :currentPage="query.pageNumber"
             @current-change="currentChangeHandler"
             align="center"
-          >
+            v-if="!(is_dynamic > 0) && dataList.length > query.limit">
           </SPagination>
         </div>
         <!-- 动态分配，无查询列表 -->
@@ -303,6 +309,15 @@
           } else {
             this.resourcesVo = null;
           }
+          let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+          if(userInfo) {
+            // is_dynamic > 0 表示动态， 其它表示固定。
+            this.tabType = userInfo.is_dynamic > 0 ? 'trends' : 'regular';
+            this.is_dynamic = userInfo.is_dynamic;
+            if(!(this.is_dynamic > 0)) {
+              this.getSonList();
+            }
+          }
         }).catch(e=>{
           console.log(e);
           this.resourcesVo = null;
@@ -407,15 +422,6 @@
     },
     created() {
       this.allocMoreGet();
-      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      if(userInfo) {
-        // is_dynamic > 0 表示动态， 其它表示固定。
-        this.tabType = userInfo.is_dynamic > 0 ? 'trends' : 'regular';
-        this.is_dynamic = userInfo.is_dynamic;
-        if(!(this.is_dynamic > 0)) {
-          this.getSonList();
-        }
-      }
     }
   };
 </script>
@@ -587,6 +593,11 @@
       border-bottom-right-radius: 4px;
       border-top-right-radius: 4px;
       color: #1A1A1A;
+    }
+  }
+  .el-table__row {
+    /deep/.el-input-group {
+      width: 130px;
     }
   }
 </style>

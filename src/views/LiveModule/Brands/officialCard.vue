@@ -211,7 +211,7 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.img = res.data.img || '';
-          this.url = res.data.url || '';
+          this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
           this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
           if (this.title === '公众号展示') {

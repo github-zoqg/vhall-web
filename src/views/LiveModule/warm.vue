@@ -13,7 +13,7 @@
       <el-form :model="warmForm" ref="warmForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="选择视频" required>
           <div class="selet-video">
-            <div class="mediaSlot" v-if="!selectMedia" @click="warmFlag && changeVideo()">
+            <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmFlag && changeVideo()">
             <i class="el-icon-film"></i>
               <p>视频仅支持MP4格式，<br>文件大小不超过200M</p>
             </div>
@@ -21,7 +21,7 @@
               <icon icon-class="saasshipinwenjian"></icon>
               <p>{{selectMedia.name}}</p>
             </div>
-            <div class="abRight" v-if="!!selectMedia">
+            <div class="abRight" v-if="selectMedia.paas_record_id">
               <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
               <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
             </div>
@@ -47,7 +47,7 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
-            @delete="warmForm.imageUrl = ''">
+            @delete="warmFlag && deleteImg()">
             <div slot="tip">
               <p>建议尺寸：1280*720px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
@@ -55,11 +55,11 @@
           </upload>
         </el-form-item>
         <el-form-item>
-          <el-button :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')">提交</el-button>
+          <el-button :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedia>
+    <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedias>
     <!-- 预览 -->
     <template v-if="showDialog">
     <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
@@ -72,13 +72,13 @@
 import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
 import Env from "@/api/env";
-import selectMedia from './selecteMedia';
+import selectMedias from './selecteMedia';
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
   components: {
     PageTitle,
     Upload,
-    selectMedia,
+    selectMedias,
     VideoPreview
   },
   data() {
@@ -88,7 +88,7 @@ export default {
       videoSize: '200MB',
       videoType: 'MP4',
       warmId: '',
-      selectMedia: null,
+      selectMedia: {},
       showDialog: false,
       warmForm: {
         record_id: '',
@@ -121,8 +121,11 @@ export default {
           this.warmId = res.data.warm_id;
           this.domain_url = res.data.img_url;
           this.warmForm.imageUrl = res.data.img_url;
-          this.selectMedia.paas_record_id = res.data.record_id;
-          this.selectMedia.name = res.data.record_name;
+          if (res.data.record_id) {
+            this.selectMedia.paas_record_id = res.data.record_id;
+            this.selectMedia.name = res.data.record_name;
+          }
+          this.warmForm.record_id = res.data.record_id;
         }
       })
     },
@@ -131,7 +134,6 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
-      console.log(this.selectMedia, '??????????????')
       this.warmForm.record_id = media.paas_record_id;
     },
     // 预览
@@ -181,7 +183,6 @@ export default {
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
         }).then(() => {
-          // this.setWarmBackground();
           this.saveWarmInfo();
         }).catch(() => {});
       }
@@ -189,18 +190,22 @@ export default {
     saveWarmInfo() {
       let params = {
         is_open_warm_video: Number(this.warmFlag),
-        img_url:  this.domain_url,
+        img_url:  this.warmForm.imageUrl,
         webinar_id: this.$route.params.str,
         warm_id: this.warmId,
         record_id: this.warmForm.record_id
       }
-      this.$fetch('warmCreate', this.$params(params)).then(res => {
+      this.$fetch('warnEdit', this.$params(params)).then(res => {
         if (res.code == 200) {
           this.$message.success('保存暖场视频成功');
         } else {
           this.$message.error(res.msg || '保持暖场视频失败');
         }
       })
+    },
+    // 删除图片
+    deleteImg() {
+      this.warmForm.imageUrl = '';
     }
   }
 };

@@ -10,11 +10,11 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="addGift" size="medium">新建礼物</el-button>
       <el-button
         round
         class="head-btn set-upload"
-        @click="handleAddGift">
+        @click="handleAddGift" size="medium">
         资料库
       </el-button>
       <el-button
@@ -22,11 +22,13 @@
         class="head-btn set-upload"
         :class="{'no-data': batchDelete}"
         :disabled="batchDelete"
-        @click="batchDialogTipVisible = true">
+        @click="batchDialogTipVisible = true" size="medium">
         批量删除
       </el-button>
       <el-input
         @keyup.enter.native="searchGifts"
+        clearable
+        @clear="searchGifts"
         class="head-btn fr search"
         v-model="searchName"
         placeholder="请输入礼物名称"
@@ -49,7 +51,9 @@
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="scope.row.image_url">
+            <div class="gift-cover">
+              <img :src="scope.row.image_url" alt="" />
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
@@ -74,11 +78,12 @@
       </el-table>
       <SPagination
         :total="total"
-        v-show="total > 10"
+        v-show="total > searchParams.page_size"
         :currentPage="searchParams.page"
         :page-size="searchParams.page_size"
         @current-change="currentChangeHandler"
         align="center"></SPagination>
+      <null-page text="未搜索到相关内容" nullType="search" v-if="total === 0"></null-page>
     </el-card>
     <el-dialog
       :title="editParams.gift_id ? '编辑礼物' : '新建礼物'"
@@ -197,6 +202,7 @@ import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
 
 export default {
   name: "giftSize",
@@ -256,7 +262,8 @@ export default {
   components: {
     PageTitle,
     upload,
-    SPagination
+    SPagination,
+    NullPage
   },
   created() {
     this.getTableList()
@@ -612,6 +619,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.gift-cover{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  border: 1px solid #E6E6E6;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+}
 .live-gift-wrap{
   /deep/ .mycell .el-checkbox {
     display: none
@@ -664,13 +684,6 @@ export default {
   }
   .gift-list{
     width: 100%;
-    /deep/.el-table{
-      .gift-cover{
-        display: inline-block;
-        width: 100px;
-        height: 100px;
-      }
-    }
   }
   /deep/.el-dialog__wrapper {
     .dialog-footer {
@@ -719,14 +732,15 @@ export default {
       padding: 12px;
       border: 1px solid #fff;
       .gift-cover{
-        display:inline-block;
+        display: inline-block;
         width: 70px;
         height: 70px;
+        border-radius: 4px;
+        border: 1px solid #e6e6e6;
         img{
-          display: inline-block;
-          width: 70px;
-          height: 70px;
-          border-radius: 4px;
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
         }
       }
       .gift-info{
