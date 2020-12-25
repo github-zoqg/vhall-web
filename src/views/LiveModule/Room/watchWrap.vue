@@ -839,11 +839,11 @@ export default {
       try {
         await this.getRoomInfo() // 初始化房间信息
         if (this.roomData && this.roomData.status == 'subscribe') {
-          if(location.pathname.indexOf('/embedclient/' != -1)){
-            this.$router.push({name: 'embedSubscribe', params: {id: this.$route.params.il_id}})
-          }else{
+          // if(location.pathname.indexOf('/embedclient/' != -1)){
+          //   this.$router.push({name: 'embedSubscribe', params: {id: this.$route.params.il_id}})
+          // }else{
             this.$router.push({name: 'Subscribe', params: {id: this.$route.params.il_id}})
-          }
+          // }
           return
         }
         if (this.roomData && this.roomData.status == 'live') {

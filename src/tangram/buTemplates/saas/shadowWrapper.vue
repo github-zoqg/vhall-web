@@ -115,6 +115,7 @@ export default {
   },
 
   mounted () {
+    // wa
     // EventBus.$on('close_live', () => {
     //   this.endSplit()
     // })
