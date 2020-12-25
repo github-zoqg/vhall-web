@@ -192,6 +192,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'recordplayback/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/list'),
+        meta:{ auth: true, title: '点播管理', name: 'recordplayback', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'chapter/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/chapter'),
         meta:{ auth: true, title: '章节打点', name: 'chapter', activeMenu: '/live/list'},

@@ -166,6 +166,7 @@ export default {
             vItem.subText = vItem.subText.replace(/直播/, '点播')
             if(vItem.title == '点播管理'){
                vItem.subText = '管理点播内容'
+               vItem.path = `/live/recordplayback/${this.$route.params.str}`
             }
             if(vItem.title == '基本信息'){
               vItem.path = `/live/vodEdit/${this.$route.params.str}`
