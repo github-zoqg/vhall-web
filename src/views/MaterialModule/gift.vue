@@ -102,7 +102,7 @@
             <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
+            <el-input @input="handleInput" v-model.trim.number="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
             </el-input>
         </el-form-item>
@@ -167,7 +167,7 @@ export default {
           { required: true, validator: this.validTitle, trigger: 'blur' }
         ],
         img: [
-          { required: true, message: '请选择推广图片', trigger: 'change' }
+          { required: true, message: '请输入礼物图片', trigger: 'change' }
         ],
         price: [
           { required: true,  message: '请输入礼物价格', trigger: 'blur' }
@@ -185,6 +185,19 @@ export default {
     this.getTableList()
   },
   methods: {
+    handleInput(value) {
+      if (value != '') {
+        if (value.indexOf('.') > -1) {
+          console.log(value.length, value.indexOf('.'))
+          if (value.length - value.indexOf('.') > 3) {
+            this.$message.warning('价格最多支持两位小数')
+          }
+          this.editParams.price = value.slice(0, value.indexOf('.') + 3)
+        } else {
+          this.editParams.price = value
+        }
+      }
+    },
     validTitle(rule, value, callback) {
       const reg = /[^\w\u4e00-\u9fa5]/g;
       if (!value) {
@@ -222,18 +235,6 @@ export default {
       this.$fetch('shareGiftList', opts).then((res) => {
         if (res.code == 200 && res.data) {
           this.tableData = res.data.list
-          // if (isSearch) {
-          //   const resultData = []
-          //   this.tableData.forEach(item => {
-          //     if(item.name.indexOf(this.searchName) != -1) {
-          //       resultData.push(item)
-          //     }
-          //   })
-          //   this.tableData = resultData
-          // }
-          // this.currentTableData = this.tableData.filter((item, index) => {
-          //   return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
-          // })
           this.total = res.data.total
         }
       })

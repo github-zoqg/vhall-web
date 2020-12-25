@@ -229,7 +229,22 @@
     },
     watch: {
       isPhoneValidate: {
+        immediate: true,
         handler(newVal) {
+          if (newVal) {
+            this.verifyRules.phone = {
+              required: true,
+              validator: validPhone,
+              trigger: 'blur'
+            }
+          } else {
+            this.verifyRules.phone = {
+              type: 'number',
+              required: true,
+              message: '请填写正确的手机号码',
+              trigger: 'blur'
+            }
+          }
           if(newVal) {
             this.$nextTick(() => {
               this.callCaptcha('#setCaptcha');
@@ -419,9 +434,10 @@
         },
         verifyRules: {
           phone: {
+            type: 'number',
             required: true,
-            trigger: 'blur',
-            validator: validPhone
+            message: '请填写正确的手机号码',
+            trigger: 'blur'
           },
           code: {
             required: true,
@@ -580,14 +596,13 @@
       // 提交表单
       submitForm() {
         this.$refs['form'].validate((valid, errObj) => {
-          console.log(valid)
           if (valid) {
             this.formHandler()
             const options = {
               webinar_id: this.webinar_id,
-              verify_code: this.form.code,
               form: JSON.stringify(this.answer),
             }
+            this.isPhoneValidate && (options.verify_code = this.form.code);
             sessionStorage.getItem("visitor_id") && (options.visit_id = sessionStorage.getItem("visitor_id"))
             this.$route.query.refer && (options.refer = this.$route.query.refer)
             this.$fetch('regAnswerSubmit', options).then(res => {
