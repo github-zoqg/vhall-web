@@ -242,7 +242,7 @@ export default {
           { min: 1, message: '请输入行业（最多50个字符）', trigger: 'blur' }
         ],
         email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { required: false, message: '请输入邮箱', trigger: 'blur' },
           { pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur' },
         ],
         phone: [
@@ -252,7 +252,7 @@ export default {
           { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
         job_number: [
-          { required: false, message: '请输入姓名', trigger: 'blur' },
+          { required: false, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur' }
         ],

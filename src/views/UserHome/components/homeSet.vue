@@ -2,7 +2,7 @@
   <div class="home--set--info">
     <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
       <el-form-item label="主页标题：" prop="title">
-        <el-input type="text" placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" maxlength="30" show-word-limit />
+        <el-input type="text" placeholder="请输入账号昵称" v-model.trim="homeSetInfoForm.title" maxlength="30" show-word-limit />
       </el-form-item>
       <el-form-item label="主页头像：" prop="homepage_avatar">
         <upload
@@ -26,10 +26,16 @@
         </upload>
       </el-form-item>
       <el-form-item label="主页简介：" prop="content">
-        <v-editor  :isReturn=true @returnChange="sendRewardData" ref="contentEditor"
+        <!--<v-editor  :isReturn=true @returnChange="sendRewardData" ref="contentEditor"
                    v-model="homeSetInfoForm.content"
                    toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen">
-        </v-editor>
+        </v-editor>-->
+        <el-input
+        type="textarea"
+        :rows="5"
+        v-model.trim="homeSetInfoForm.content"
+        maxlength="150"
+        show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="背景图片：" prop="img_url">
         <upload
@@ -101,14 +107,11 @@
 
 <script>
 import Upload from '@/components/Upload/main';
-import VEditor from '@/components/Tinymce';
 import { sessionOrLocal } from "@/utils/utils";
-import Env from "@/api/env";
 export default {
   name: "homeSetInfo.vue",
   components: {
-    Upload,
-    VEditor
+    Upload
   },
   data() {
     return {
@@ -126,6 +129,10 @@ export default {
           { required: true, message: '主页标题不能为空', trigger: 'blur' },
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入主页标题', trigger: 'blur' }
+        ],
+        content: [
+          { required: false, message: '最多可输入150个字符', trigger: 'blur' },
+          { max: 150, message: '最多可输入150个字符', trigger: 'blur' }
         ]
       },
       domain_url: '',
@@ -253,7 +260,7 @@ export default {
     },
     homeInfoGet() {
       this.$fetch('homeInfoGet', {
-        home_user_id: sessionOrLocal.get('userId')
+        home_user_id: this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
