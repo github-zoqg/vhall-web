@@ -28,7 +28,7 @@
       :isEmbed="isEmbed"
     ></publisher>
 
-    <shadow-view
+    <!-- <shadow-view
       v-if="isSplited == 1 && !!roomId "
        v-bind="$attrs"
       :splitStatus="splitStatus"
@@ -48,7 +48,7 @@
       :record_notice="record_notice"
       :cut_record_status="cut_record_status"
       :documentId="documentId"
-    ></shadow-view>
+    ></shadow-view> -->
   </div>
 </template>
 <script>
