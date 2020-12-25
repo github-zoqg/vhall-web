@@ -123,7 +123,7 @@
             <div class="give-item">
               <div class="give-prize">
                   <el-form :model="formOther" ref="ruleForm" label-width="100px">
-                <el-form-item label="弹幕按钮">
+                <el-form-item label="弹幕">
                   <el-switch
                         v-model="formOther.bulletChat"
                         active-color="#ff4949"

@@ -102,32 +102,45 @@
           </div>
           <!--PC预览,begin-->
           <div class="official-pc" v-show="switchType === 'pc'">
+            <!-- status 控制是否阴影 -->
             <div class="v-preview-content" :style="status > 0 ? 'opacity: 0.2;' : ''">
-                <img src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCodeAtuo.png" alt="" v-if="!(alertType > 0)" />
-                <img src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0" />
-                <img :src="domain_url" class="v-code-preview" alt="" v-if="title==='公众号展示' && domain_url && Number(status) === 0 && !(alertType > 0)" />
-            </div>
-            <div class="v-preview-content" v-if="title!=='公众号展示' && domain_url && Number(status) === 0">
-              <img src="../../../common/images/official/poster.png" alt="" />
-              <img :src="domain_url + '?x-oss-process=image/resize,m_fill,w_160,h_160,limit_0'" alt="" class="v-poster-preview" v-if="domain_url && !(this.status > 0)">
+               <!-- 公众号 -->
+               <div class="gzh_pc" v-if="title === '公众号展示'">
+                 <img class="gzh_bg_default" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0"/>
+                 <img class="gzh_bg" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCodeAtuo.png" alt="" v-if="!(alertType > 0)"/>
+                 <div class="gzh_img v-code-preview" v-if="domain_url && !(alertType > 0)">
+                   <img :src="domain_url" alt="" />
+                 </div>
+               </div>
+              <!-- 开屏海报 -->
+              <div class="hb_pc" v-if="title !== '公众号展示'">
+                <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" />
+                <img class="hb_img v-poster-preview" :src="domain_url + '?x-oss-process=image/resize,m_fill,w_160,h_160,limit_0'" alt=""
+                     v-if="domain_url"/>
+              </div>
             </div>
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div class="official-app" v-show="switchType === 'app'">
-            <div class="img-code" v-if="title==='公众号展示' && domain_url && Number(status) === 0 && !(alertType > 0)">
-              <img :src="domain_url" alt="">
+          <div :class="['official-app', {'null-page' : title !== '公众号展示'}]" v-show="switchType === 'app'" :style="status > 0 ? 'opacity: 0.2;' : ''">
+            <!-- 公众号 -->
+            <div class="gzh_app" v-if="title === '公众号展示'">
+              <div class="img-code" v-if="domain_url && alertType > 0">
+                <img :src="domain_url" alt="">
+              </div>
+              <div class="img-code-btn">
+                <img src="../../../common/images/official/mobileCode_btn.png" alt="" />
+              </div>
             </div>
-            <div class="img-code-btn" v-if="title==='公众号展示' && domain_url && Number(status) === 0 && alertType > 0">
-              <img src="../../../common/images/official/mobileCode_btn.png" alt="" />
+            <!-- 开屏海报 -->
+            <div class="hb_app" v-if="title !== '公众号展示'">
+              <div class="poster-img" v-if="domain_url">
+                <img :src="domain_url" alt="">
+              </div>
+              <el-button class="poster-btn" size="mini" round>{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
             </div>
-
-            <div class="poster-img" v-if="title!=='公众号展示' && domain_url && Number(status) === 0">
-              <img :src="domain_url" alt="">
-            </div>
-            <el-button class="poster-btn" size="mini" round v-if="title!=='公众号展示' && domain_url && Number(status) === 0">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
           </div>
-           <!--手机预览,end-->
+          <!--手机预览,end-->
         </div>
       </div>
     </el-card>
@@ -336,12 +349,22 @@ export default {
         margin: 0;
         top: 75px;
         right: 134px;
+        background: #ffffff;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+          margin: 0 0;
+        }
       }
     }
     .official-app{
       width: 326px;
       height: 631px;
       background-image: url('../../../common/images/h5-show-phone.png');
+      &.null-page {
+        background-image: url('../../../common/images/h5-show-phone-null2x.png');
+      }
       background-size: cover;
       margin-top: -15px;
       position: relative;
@@ -351,11 +374,13 @@ export default {
         width: 142px;
         left: 50%;
         top: 50%;
-        border: 1px solid #ccc;
+        /*border: 1px solid #ccc;*/
         transform: translate(-50%, -50%);
+        background: transparent;
         img{
-          width: 142px;
-          height: 142px;
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
         }
       }
       .img-code-btn {

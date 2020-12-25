@@ -578,11 +578,11 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
-        return;
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
-        return;
+        this.$message.error('上传文件大小不能超过 2M!');
+        return false;
       }
       return isType && isLt2M;
     },

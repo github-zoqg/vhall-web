@@ -67,28 +67,7 @@ export default {
         list: []
       },
       isHandle: false, // 是否有操作项
-      sonTableColumn: [
-        {
-          label: '直播ID',
-          key: 'webinar_id',
-          width: 200
-        },
-        {
-          label: '直播标题',
-          key: 'subject',
-          width: 'auto'
-        },
-        {
-          label: '消耗时间',
-          key: 'pay_date',
-          width: 200
-        },
-        {
-          label: '最高并发（方）',
-          key: 'webinar_max_uv',
-          width: 200
-        }
-      ]
+      sonTableColumn: []
     };
   },
   methods: {
@@ -160,6 +139,30 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.query.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      // 设置表格头
+      this.sonTableColumn = [
+        {
+          label: '直播ID',
+          key: 'webinar_id',
+          width: 200
+        },
+        {
+          label: '直播标题',
+          key: 'subject',
+          width: 'auto'
+        },
+        {
+          label: '消耗时间',
+          key: 'pay_date',
+          width: 200
+        },
+        {
+          label: `${this.sonVo.vip_info.type > 0 ? '消耗流量（GB）' : '最高并发（方）'}`,
+          key: 'webinar_max_uv',
+          width: 200
+        }
+      ]
+
       this.$nextTick(() => {
         this.getUserPayDetail();
       });

@@ -27,6 +27,13 @@
                   v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
                 >
                   <el-input
+                    v-if="question.type == 0 && question.default_type == 2"
+                    :maxlength="question.type == 0 ? '' : 60"
+                    :show-word-limit="question.type != 0"
+                    v-model.number="form[question.id]"
+                    :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
+                  <el-input
+                    v-else
                     :maxlength="question.type == 0 ? '' : 60"
                     :show-word-limit="question.type != 0"
                     v-model="form[question.id]"
@@ -178,7 +185,7 @@
                 label="请输入报名时您填写的手机号"
                 prop="phone"
               >
-                <el-input v-model.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+                <el-input v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
               </el-form-item>
               <el-form-item v-if="isPhoneValidate">
                 <div id="setCaptcha1">
@@ -267,10 +274,19 @@
               }
             } else if (item.type === 0 && item.default_type === 2) {
               // 手机号
-              rules[item.id] = {
-                required: !!item.is_must,
-                validator: validPhone,
-                trigger: 'blur'
+              if (this.isPhoneValidate) {
+                rules[item.id] = {
+                  required: !!item.is_must,
+                  validator: validPhone,
+                  trigger: 'blur'
+                }
+              } else {
+                rules[item.id] = {
+                  type: 'number',
+                  required: !!item.is_must,
+                  message: '请填写正确的手机号码',
+                  trigger: 'blur'
+                }
               }
             } else if (item.type === 0 && item.default_type === 4) {
               // 性别
@@ -757,12 +773,12 @@
           // 按照 order_num 从小到大排序
           const list = res.data.ques_list.sort(compare('order_num'));
           !this.isPreview && (this.currentPhone = res.data.phone);
+          // 手机号验证开启状态
+          const phoneItem = list.find(item => (item.type == 0 && item.default_type == 2))
+          this.isPhoneValidate = phoneItem.options && JSON.parse(phoneItem.options).open_verify == 1
           // 默认填写手机号
           !this.isPreview && res.data.phone && (this.verifyForm.phone = res.data.phone)
           this.list = list;
-          // 手机号验证开启状态
-          const phoneItem = this.list.find(item => (item.type == 0 && item.default_type == 2))
-          this.isPhoneValidate = phoneItem.options && JSON.parse(phoneItem.options).open_verify == 1
           // 地域 options 格式化处理
           this.list.some(item => {
             if (item.type == 5) {
