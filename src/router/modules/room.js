@@ -40,7 +40,7 @@ const router = [
       },
       {
         path: '/embedclient/subscribe/:id?',
-        component: () => import('@/views/LiveModule/Subscribe/index'),
+        component: () => import('@/views/LiveModule/Subscribe/embed'),
         name: 'embedSubscribe',
         meta: { title: '嵌入预约页' },
       },

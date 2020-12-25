@@ -31,6 +31,9 @@ export default {
     defaultPhone: {
       required: false // userId
     },
+    preQuestionId: {
+      required: false // 预览用于传值
+    },
     showControl: {
       require: false,
       default: false
@@ -75,7 +78,7 @@ export default {
 
   mounted () {
     let role_value = sessionStorage.getItem('role_val') ? sessionStorage.getItem('role_val') : ''
-    if (!role_value && !this.type) {
+    if (!role_value && !this.type  && !this.preQuestionId) {
       this.getQuestionList();
     }
   },
@@ -213,11 +216,13 @@ export default {
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
         this.sdkInitReady = true;
-        if (this.$route.query.questionId) {
-          this.isCreate = true;
-          this.$nextTick(() => {
-            this.$service.renderPageEdit('#qs-create-box', this.$route.query.questionId);
-          })
+        if (this.type) {
+          // 编辑或新增
+          this.createQuestion(this.$route.query.questionId || '');
+        }
+        // 预览
+        if (this.preQuestionId) {
+          this.preview(this.preQuestionId);
         }
       });
       this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {

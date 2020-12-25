@@ -158,7 +158,7 @@
                   <div class="vhall-user-quit" @click="openVirtualAudience" v-if="
                         permission.includes(100028)" :class="{ disable: !virtualAudienceCanUse }">
                     <i class="iconxuniguanzhong iconfont"></i>
-                    虚拟观众
+                    虚拟人数
                   </div>
                 </div>
               </div>
@@ -328,7 +328,7 @@
           <popup
             :visible="virtualAudienceVisible"
             :onClose="closeVirtualAudience"
-            :title="'虚拟观众'"
+            :title="'虚拟人数'"
             :width="'500px'"
           >
             <virtualAudience
@@ -384,7 +384,7 @@
               enabled: screensharing
             }"
             @click="shareScreen"
-            v-show="layout != 2"
+            v-show="layout != 1"
             v-if="roomInfo.join_info.role_name != 3"
           >
             <!-- 助理， 不能发起桌面共享 -->
@@ -475,7 +475,6 @@
             :layout="layout"
           >
             <!-- 互动区域 -->
-
             <Interactive
               v-if="roomInfo.join_info.third_party_user_id && roomInfo.interact.paas_app_id && !thirdPartyMobild && splitStatus == 2 && speakerList"
               :mainScreen="mainScreen"
@@ -2485,7 +2484,7 @@ export default {
           this.isQAEnabled = this.qaStatus == 1; // ??
           this.isQAEnabled = this.roomStatus.question_status == 1; // ??
           this.roleName = this.rootActive.join_info.role_name;
-
+          console.warn(this.rootActive.webinar.mode, 'this.rootActive.webinar.mode-------');
           this.layout =  this.rootActive.webinar.mode;
           this.localDuration = this.duration;
 
@@ -2600,7 +2599,7 @@ export default {
      * 获取房间状态，是否开启文档/白板/举手/主讲人...
      */
     getRoomStatus () {
-      console.warn(this.roomStatus, '8888');
+      console.warn(this.roomStatus, '开启了额东方红大幅度8888');
       let _data = this.roomStatus;
       if (_data.start_type == 4) {
         this.startType = 4;
@@ -3264,13 +3263,13 @@ export default {
     },
 
     roleQuit () {
-      this.$vhallFetch('roleQuit', {
-        webinar_id: this.ilId,
-        params_verify_token: this.params_verify_token,
-        join_uid: this.saas_join_id
+      this.$fetch('roleLogout', {
+        webinar_id: this.ilId
       })
         .then(res => {
-          window.location.href = `${window.location.origin}/mywebinar/login/${this.ilId}`;
+          if(res.code != 200) return this.$message.warning(res.msg)
+          // this.$route.push({name: 'KeyLogin', params:{id: } })
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/keylogin/${this.ilId}/${this.roomInfo.join_info.role_name}`;
         })
         .catch(res => {});
     },

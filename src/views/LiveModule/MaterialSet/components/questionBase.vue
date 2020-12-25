@@ -6,10 +6,10 @@
       :close-on-click-modal="false"
       width="50%">
       <div class="data-base">
-        <div class="data-search">
-          <el-input v-model="keyword" suffix-icon="el-icon-search" placeholder="搜索问卷名称" clearable @change="getTitle" style="width: 200px"></el-input>
+        <div class="data-search" v-show="total || isSearch">
+          <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="搜索问卷名称" clearable @change="getTitle" style="width: 200px"></el-input>
         </div>
-          <div class="data-base-list">
+        <div class="data-base-list" v-show="total">
             <el-table
               :data="tableData"
               ref="tableList"
@@ -36,15 +36,20 @@
                 fixed
                 label="操作">
                 <template slot-scope="scope">
-                  <span @click="preview(scope.row)">预览</span>
+                  <span style="cursor: pointer;" @click="preview(scope.row)">预览</span>
                 </template>
               </el-table-column>
             </el-table>
-            <p class="text">已选择<span>{{ checkList.length }}</span>个</p>
-          </div>
-        <div slot="footer" class="dialog-footer">
-          <el-button round @click.prevent.stop="dataBaseVisible = false">取 消</el-button>
-          <el-button round type="primary" @click.prevent.stop="choseSureQuestion">确 定</el-button>
+        </div>
+        <div class="no-live" v-show="!total">
+          <noData :nullType="nullText" :text="text" :height="50">
+            <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
+          </noData>
+        </div>
+        <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个</p>
+        <div slot="footer" class="dialog-footer" v-show="total || isSearch">
+          <el-button round @click.prevent.stop="dataBaseVisible = false" v-preventReClick>取 消</el-button>
+          <el-button round type="primary" @click.prevent.stop="choseSureQuestion" v-preventReClick>确 定</el-button>
         </div>
       </div>
   </VhallDialog>
@@ -57,10 +62,14 @@
 </template>
 <script>
 import preQuestion from '@/components/Question/preQuestion';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
-      total: 87,
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有问卷，快来创建吧！',
       dataBaseVisible: false,
       isShowQuestion: false,
       loading: false,
@@ -72,27 +81,20 @@ export default {
       pageInfo: {
         pageNum: 1,
         pos: 0,
-        limit: 5
+        limit: 10
       }
     };
   },
   components: {
-    preQuestion
+    preQuestion,
+    noData
   },
   watch: {
     dataBaseVisible() {
       if (this.dataBaseVisible) {
         this.getTableList();
+        this.tableData = [];
       }
-    }
-  },
-  computed: {
-    noMore() {
-      //当起始页数大于总页数时停止加载
-      return this.pageInfo.pageNum >= this.totalPages;
-    },
-    disabled () {
-      return this.loading || this.noMore
     }
   },
   mounted() {
@@ -109,35 +111,38 @@ export default {
       this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit);
       this.getTableList();
     },
-    load() {
-      this.loading = true;
-      this.pageInfo.pageNum ++ ;
-      this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit)
-      this.getTableList();
-    },
     handleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
     getTitle() {
+      this.tableData = [];
       this.getTableList();
+      this.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 0;
+      this.$refs.tableList.clearSelection();
     },
     getTableList() {
       let formParams = {
         keyword: this.keyword
       }
       if (this.keyword) {
-        this.pageInfo.pageNum= 1;
-        this.pageInfo.pos= 0;
-        this.$refs.tableList.clearSelection();
+        this.nullText = 'search';
+        this.text = '';
+        this.isSearch = true;
+      } else {
+        this.nullText = 'nullData';
+        this.text = '您还没有问卷，快来创建吧！';
+        this.isSearch = false;
       }
       let obj = Object.assign({}, this.pageInfo, formParams);
       this.$fetch('getQuestionList', this.$params(obj)).then(res => {
         this.loading = false;
+        this.total = res.data.total;
         let list = res.data.list;
         this.tableData.push(...list);
+        console.log(this.tableData, '55555555555');
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
-        console.log(this.totalPages, '1111111111111')
       })
     },
     // 选择资料库中的问卷
@@ -158,6 +163,14 @@ export default {
         }
       })
     },
+    addQuestion() {
+      this.$router.push({
+        path: '/material/addQuestion',
+        query: {
+          type: 1
+        }
+      });
+    },
      // 预览
     preview(rows) {
       console.log('预览', rows);
@@ -175,13 +188,13 @@ export default {
 .data-base-list {
   width: 100%;
   margin: 24px 0;
+  }
   .text{
-    padding-top: 30px;
+    height: 40px;
     span{
       color: #fb3a32;
       padding: 0 5px;
     }
-  }
   // max-height: 300px;
   /deep/.el-table th{
     background: #f7f7f7;

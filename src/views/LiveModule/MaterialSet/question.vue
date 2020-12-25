@@ -14,7 +14,7 @@
       <el-button round  @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList" clearable></el-input>
+        <el-input v-model.trim="keyword" placeholder="请输入问卷名称" @change="getTableList" clearable></el-input>
       </div>
     </div>
     <el-card class="question-list" v-show="total">

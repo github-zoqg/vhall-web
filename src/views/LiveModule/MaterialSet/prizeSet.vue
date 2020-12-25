@@ -205,7 +205,8 @@ export default {
       },
       isLive: false,
       localLottery: { // 抽奖页信息
-        description: ''
+        description: '',
+        title: ''
       },
       lotteryPageMessage: {  // 领奖页信息
 
@@ -220,7 +221,6 @@ export default {
   },
   computed: {
     isDisabled: function(){
-      console.warn(this.localLottery, this.formData, 785);
       if(this.formData.description != this.localLottery.description || this.isChecked != this.localImg || this.formData.title != this.localLottery.title || this.previewSrc != this.localLottery.img_path){
         return false
       }else{
@@ -300,7 +300,7 @@ export default {
       if(this.isLive){
         return this.$message.error('当前活动正在开播中，无法更改')
       }
-      this.$fetch('savePrizeInfo', this.$params(params)).then(res => {
+      this.$fetch('savePrizeInfo', params).then(res => {
         if (res.code == 200) {
           this.$message.success('保存成功');
         } else {
@@ -351,9 +351,9 @@ export default {
     },
     // 保存领奖页信息
     sureGivePrize() {
-      // if(this.isLive){
-      //   return this.$message.error('当前活动正在开播中，无法更改')
-      // }
+      if(this.isLive){
+        return this.$message.error('当前活动正在开播中，无法更改')
+      }
       this.givePrizeList.forEach(ele=>{
         console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
         ele.placeholder = this.givePrizeForm[ele.field_key]

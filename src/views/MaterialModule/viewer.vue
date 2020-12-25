@@ -242,7 +242,7 @@ export default {
           { min: 1, message: '请输入行业（最多50个字符）', trigger: 'blur' }
         ],
         email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { required: false, message: '请输入邮箱', trigger: 'blur' },
           { pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur' },
         ],
         phone: [
@@ -252,7 +252,7 @@ export default {
           { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
         job_number: [
-          { required: false, message: '请输入姓名', trigger: 'blur' },
+          { required: false, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur' }
         ],
@@ -578,11 +578,11 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
-        return;
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
-        return;
+        this.$message.error('上传文件大小不能超过 2M!');
+        return false;
       }
       return isType && isLt2M;
     },

@@ -972,7 +972,7 @@ export default {
       width: 60px;
       height: 28px;
       line-height: 40px;
-      float: left;
+      float: right;
       display: flex;
       align-items: center;
       justify-content: center;

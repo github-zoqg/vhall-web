@@ -2,9 +2,11 @@
   <div class="gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
-        1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
+        1.支持创建免费礼物，观看端最多显示40个礼物
         <br>
-        2.礼物名称不支持特殊字符、表情
+        2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp
+        <br>
+        3.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
@@ -81,6 +83,7 @@
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
           <upload
+            ref="uploadimg"
             :domain_url="domain_url"
             class="giftUpload"
             v-model="editParams.img"
@@ -91,7 +94,7 @@
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
-              <p>建议尺寸：160*160px，小于2M</p>
+              <p>建议尺寸：120*120px，小于2MB</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -106,8 +109,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" v-preventReClick  round>确 定</el-button>
-        <el-button @click="handleCancelEdit" v-preventReClick round>取 消</el-button>
+        <el-button @click="handleUpdateGift" round>确 定</el-button>
+        <el-button @click="handleCancelEdit" round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -160,7 +163,7 @@ export default {
       deleteId: '',
       rules: {
         name: [
-          { required: true, message: '请输入标题', trigger: 'blur' },
+          { required: true, validator: this.validTitle, trigger: 'blur' }
         ],
         img: [
           { required: true, message: '请选择推广图片', trigger: 'change' }
@@ -180,6 +183,20 @@ export default {
     this.getTableList()
   },
   methods: {
+    validTitle(rule, value, callback) {
+      const reg = /[^\w\u4e00-\u9fa5]/g;
+      if (!value) {
+        return callback ? callback(new Error('请输入礼物名称')) : false
+      } else if (reg.test(value)) {
+        return callback ? callback(new Error('请输入正确的礼物名称')) : false
+      }else{
+        if (callback) {
+          callback()
+        } else {
+          return true
+        }
+      }
+    },
     freeFilter({row}) {
       if(row.source_status == 0){
         return "mycell"
@@ -296,10 +313,11 @@ export default {
         if (valid) {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
-            if (price < 0 || price >= 10000) {
-              this.$message.error('价格必须介于0-10000之间')
+            if (price < 0 || price > 9999.99) {
+              this.$message.error('价格必须介于0-9999.99之间')
               return
             }
+            price=Math.floor(price*100)/100;
             this.editParams.price = price.toFixed(2)
           } else {
             this.$message.error('请输入正确礼物价格')
@@ -348,6 +366,7 @@ export default {
       this.editParams.img = ''
       this.editParams.price = ''
       this.dialogVisible = false
+      this.$refs.uploadimg.domainUrl = ''
     },
     // 删除礼品
     handleDelete (data) {
