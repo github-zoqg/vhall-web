@@ -231,7 +231,7 @@ export default {
     },
     activityData() {
       if (this.advertisementTitle) {
-        this.nullText = 'search';
+          this.nullText = 'search';
           this.text = '';
           this.isSearch = true;
         } else {

@@ -9,7 +9,7 @@
       <el-form label-width="85px">
         <el-form-item label="套餐单价">
           <div class="img-box">
-            <h3>{{ title === '升级'?  `￥${ concurrentPrice.concurrency.concurrency_fee }` : `￥${ concurrentPrice.concurrency.extend_fee }`}}</h3>
+            <h3>{{ title === '升级'?  `￥${ currentInfo.concurrency_fee }` : `￥${ currentInfo.extend_fee }`}}</h3>
             <p>{{ title === '升级'? '元/人/月' : '元/人'}}</p>
             <span>{{ title === '升级'? '升级套餐' : '扩展包'}}</span>
           </div>
@@ -18,13 +18,13 @@
           <el-input v-model="number" style="width: 398px"
             oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><template slot="append">人</template></el-input
           >
-          <p class="inputNums">当前并发{{ concurrentPrice.concurrency.total_concurrency}}人 {{ concurrentPrice.concurrency.total_concurrency }}-99999</p>
+          <p class="inputNums">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
         </el-form-item>
         <el-form-item label="订单信息">
           <div class="informtion">
             <div class="inform-pay">
-              <h3>支付金额: <b>{{ title === '升级'? concurrentPrice.concurrency.concurrency_fee * number :  concurrentPrice.concurrency.extend_fee * number }}</b></h3>
-              <p>有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
+              <h3>支付金额: <b>{{ title === '升级'? currentInfo.concurrency_fee * number :  currentInfo.extend_fee * number }}</b></h3>
+              <p v-if="title === '升级'">有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
             </div>
             <div class="xieyi">
               <el-checkbox v-model="checked"
@@ -66,7 +66,7 @@
             <div class="img-box img-liu" v-for="(item, index) in nomalBuyList" :key="index" :class="item.isChose ? 'active' : ''" @click="choseVersion(item)">
               <h3>{{ item.flow }}GB</h3>
               <p>+{{ item.gift_flow }}GB(赠送)</p>
-              <b class="isMark">{{ concurrentPrice.flow.flow_fee }}元/GB</b>
+              <b class="isMark">{{ flowInfo.flow_fee }}元/GB</b>
               <label class="img-tangle" v-if="item.isChose">
                 <i class="el-icon-check"></i>
               </label>
@@ -77,7 +77,7 @@
            <div class="informtion">
             <div class="inform-pay">
               <h3>支付金额: <b>{{ currentPrice }}</b></h3>
-              <p>有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
+              <p>有效期至<span>{{ concurrentPrice.edition_valid_time }}</span></p>
             </div>
             <div class="xieyi">
               <el-checkbox v-model="checked"
@@ -103,7 +103,7 @@
       <div class="instest">
         <div class="speak">说明:</div>
         <div>
-          1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包<br />3、购买的套餐有效期为当前套餐剩下的完整自然月
+          1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包
         </div>
       </div>
     </VhallDialog>
@@ -121,23 +121,27 @@ export default {
       flows: 0,
       number: 500,
       currentFlowPrice: '',
-      nomalBuyList: []
+      nomalBuyList: [],
+      currentInfo: {},
+      flowInfo: {}
     };
   },
   watch: {
     dialogBuyVisible() {
       if (this.dialogBuyVisible) {
-        this.nomalBuyList = this.concurrentPrice.flow.plans,
+        this.flowInfo = this.concurrentPrice.flow;
+        this.nomalBuyList = this.flowInfo.plans,
         this.nomalBuyList.map(item => item.isChose = false)
-        console.log(this.nomalBuyList, '1111111111111');
         this.flows = this.nomalBuyList[0].flow;
-         this.nomalBuyList[0].isChose = true;
+        this.nomalBuyList[0].isChose = true;
       }
     },
     dialogVisible() {
-      this.number = this.concurrentPrice.concurrency.total_concurrency + 100;
-      // this.currentFlowPrice = this.number * concurrentPrice.concurrency.concurrency_fee;
-      console.log("1111111111111111");
+      if (this.dialogVisible) {
+        this.currentInfo = this.concurrentPrice.concurrency;
+        this.number = this.currentInfo.total_concurrency + 100;
+      }
+
     }
   },
   computed: {
@@ -150,8 +154,8 @@ export default {
     }
   },
   created() {
-    console.log()
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    console.log(this.flowInfo, '111111111111');
   },
   methods: {
     choseVersion(items) {
@@ -194,8 +198,12 @@ export default {
         number: this.flows
       };
       this.$fetch('orderFlow', params).then(res =>{
-        this.goPayList(res.data.order_id);
-        this.flows = 500;
+        if (res.code == 200) {
+          this.goPayList(res.data.order_id);
+        } else {
+          this.$message.error(res.msg);
+        }
+
       }).catch(e=>{
         this.dialogBuyVisible = false;
         console.log(e);
@@ -207,8 +215,11 @@ export default {
         number: this.number
       };
       this.$fetch('orderUpgrade', params).then(res =>{
-        this.goPayList(res.data.order_id);
-        this.number = 120;
+        if (res.code == 200) {
+          this.goPayList(res.data.order_id);
+        } else {
+          this.$message.error(res.msg);
+        }
       }).catch(e=>{
         this.dialogVisible = false;
         console.log(e);
@@ -220,7 +231,11 @@ export default {
         number: this.number
       };
       this.$fetch('orderExtend', params).then(res =>{
-       this.goPayList(res.data.order_id);
+        if (res.code == 200) {
+          this.goPayList(res.data.order_id);
+        } else {
+          this.$message.error(res.msg);
+        }
       }).catch(e=>{
         this.dialogVisible = false;
         console.log(e);
@@ -309,7 +324,7 @@ export default {
     .isMark{
       display: inline-block;
       font-weight: normal;
-      margin-top: 24px;
+      margin-top: 23px;
       color:#fff;
       background: linear-gradient(270deg, #FF7A00 0%, #FFAD2D 100%);
       border-radius: 0px 12px 0px 4px;

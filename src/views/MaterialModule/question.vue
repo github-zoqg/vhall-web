@@ -13,7 +13,7 @@
       <el-button type="primary" round class="head-btn set-upload" v-preventReClick @click="addQuestion">新建</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)" v-preventReClick>批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model.trim="keyword" placeholder="请输入问卷名称" clearable @change="getTableList"></el-input>
+        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入问卷名称" clearable @change="getTableList"></el-input>
       </div>
     </div>
     <el-card class="question-list" v-show="total">
