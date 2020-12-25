@@ -40,6 +40,7 @@
           <p>支持jpg、gif、png、bmp</p>
         </div>
       </upload>
+      <span class="header-img-tip">建议尺寸：840*240 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <draggable
@@ -292,6 +293,7 @@ export default {
         this.imageUrl = `http:${Env.staticLinkVo.uploadBaseUrl}${newVal.cover ? newVal.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`;
       },
       deep: true,
+      immediate: true
     }
   },
   data(){
@@ -694,6 +696,12 @@ export default {
 }
 .viewItem{
   margin-bottom: 16px;
+  .header-img-tip {
+    display: block;
+    padding-top: 5px;
+    font-size: 14px;
+    color: #999999;
+  }
   .label{
     display: flex;
     align-items: center;
