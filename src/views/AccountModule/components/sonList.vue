@@ -362,12 +362,15 @@ export default {
               id: this.sonDialog.row.id,
               child_id: this.sonDialog.row.child_id
             }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit',
+            this.sonDialog.type === 'add' ? this.$params(params) : params).then(res => {
             if (res && res.code === 200) {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
               this.sonDialog.visible = false;
               // 新增成功后，重查列表
               this.initQuerySonList();
+              // 通知父级头部更新
+              this.$emit('load');
             } else {
               this.$message({
                 type: 'error',
