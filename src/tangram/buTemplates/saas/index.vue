@@ -1,5 +1,5 @@
 <template>
-  <div class="room-container cxs" :class="assistantType ? 'assistantStyle' : ''">
+  <div class="room-container" :class="assistantType ? 'assistantStyle' : ''">
     <div class="main-wrap"
          :class="{'full-screen-doc':isDocFullscreen}"
          v-if="roomReady && !isKicked" ref="mainWrap">
@@ -65,7 +65,7 @@
               正在结束...
             </div>
             <div
-              class="vhall-room-play vhall-room-operation ly-cxs"
+              class="vhall-room-play vhall-room-operation"
               v-if="roomInfo.join_info.role_name == '1' && !isPublishing && !starting"
               @click="push(1)"
             >
@@ -1267,7 +1267,6 @@
         </SassAlert>
       </div>
       <lottery
-        class="cxs"
         v-if="!assistantType || (assistantType && assistantType == 'doc')"
         :roomId="roomInfo.interact.room_id"
         :domains="domains"
@@ -1437,7 +1436,6 @@ export default {
   data () {
     return {
       reportData: {},
-      acxs: '7889999',
       chatTip: false,
       memberTip: false,
       assistantType: '',

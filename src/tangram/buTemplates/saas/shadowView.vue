@@ -5,20 +5,19 @@
         <span class="exit-shadow iconfont iconguanbi" @click="exitShadow" title="退出分屏"></span>
         <span class="v-fullScreen iconfont iconquanping" :class="isFullscreen ? 'iconquanpingguanbi' : 'iconquanping'" title="全屏" @click="enterFullScreen"></span>
     </div>
-    {{roomInfo.join_info.third_party_user_id}}
     <share-screen
-      :ownerId="roomInfo.join_info.third_party_user_id"
+      :ownerId="third_party_user_id"
       :mainScreen="mainScreen"
       :splited="false"
-      :accountId="roomInfo.join_info.third_party_user_id"
-      :roleName="roomInfo.join_info.role_name"
+      :accountId="third_party_user_id"
+      :roleName="roomInfo.join_info && roomInfo.join_info.role_name"
     ></share-screen>
     <streams
       style="height: 100%; margin: 0 auto;"
       :speakerList="speakerList"
-      :accountId="roomInfo.join_info.third_party_user_id"
-      :roomId="roomInfo.interact.room_id"
-      :roleName="roomInfo.join_info.role_name"
+      :accountId="third_party_user_id"
+      :roomId="roomInfo.interact && roomInfo.interact.room_id"
+      :roleName="roomInfo.join_info && roomInfo.join_info.role_name"
       :isDocShow="isDocShow"
       :mainScreen="doc_permission"
       :miniElement="miniElement"
@@ -26,20 +25,20 @@
       :layout="layout"
     >
       <Interactive
-        v-if="roomInfo.join_info.third_party_user_id && roomInfo.interact.paas_app_id && role"
+        v-if="third_party_user_id && roomInfo.interact && roomInfo.interact.paas_app_id && role"
         :miniElement="miniElement"
         :mainScreen="mainScreen || doc_permission"
         :isDocShow="isDocShow"
-        :inavId="roomInfo.inav_id"
-        :roomId="roomInfo.interact.room_id"
-        :appId="roomInfo.interact.paas_app_id"
-        :accountId="roomInfo.join_info.third_party_user_id"
-        :ownerId="roomInfo.join_info.third_party_user_id"
+        :inavId="roomInfo.interact.inav_id"
+        :roomId="roomInfo.interact && roomInfo.interact.room_id"
+        :appId="roomInfo.interact && roomInfo.interact.paas_app_id"
+        :accountId="third_party_user_id"
+        :ownerId="third_party_user_id"
         :nickName="userInfo.nickname"
-        :token="roomInfo.interact.paas_access_token"
+        :token="roomInfo.interact && roomInfo.interact.paas_access_token"
         :speakerList="speakerList"
         :splitStatus="this.splitStatus"
-        :roleName="roomInfo.join_info.role_name"
+        :roleName="roomInfo.join_info&&roomInfo.join_info.role_name"
         :role="role"
         :status="status"
         :isInteract="isInteract"
@@ -148,7 +147,6 @@ export default {
   ],
 
   mounted () {
-    console.warn(this.third_party_user_id, '8651205487845121487451254874125487451214874512148742481487')
     $('.vhall-remote-strams-box').css({
       '-webkit-box-align': 'center',
       'align-items': 'center',
@@ -236,7 +234,7 @@ export default {
       this.$refs.interactive.speakOn();
     });
 
-    // this.getInavInfo();
+    this.getInavInfo();
 
     window.addEventListener('resize', () => {
       this.resize();
@@ -277,7 +275,7 @@ export default {
       this.$fetch('initiatorInfo', {
         webinar_id: this.ilId
       }).then(async res => {
-        console.log('debug info:: vss roomInfo', res);
+        console.log('debug info:: vss roomInfo', res.data);
         if(res.code != 200) return this.$message.warning(res.msg)
         this.roomInfo = res.data;
         await this.getRoomStatus();
@@ -321,7 +319,7 @@ export default {
           this.speakerList = res.data.speaker_list;
           console.warn(this.roomInfo.join_info, 44878);
           this.speakerList.forEach(item => {
-            if (item.account_id == this.roomInfo.join_info.third_party_user_id) {
+            if (item.account_id == this.third_party_user_id) {
               this.isApplying = true;
             }
           });
