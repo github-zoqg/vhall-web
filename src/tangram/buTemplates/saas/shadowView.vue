@@ -43,7 +43,7 @@
         :status="status"
         :isInteract="isInteract"
         :splited="true"
-        :webinadId="ilId"
+        :webinarId="ilId"
         ref="interactive"
       ></Interactive>
     </streams>

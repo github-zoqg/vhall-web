@@ -20,7 +20,7 @@
           :isDocShow="watchDocShow"
         >
           <Interactive
-            :webinadId='ilId'
+            :webinarId='ilId'
             :ownerId="roomInfo.account_id"
             :inavId="roomInfo.inav_id"
             :roomId="roomInfo.room_id"
