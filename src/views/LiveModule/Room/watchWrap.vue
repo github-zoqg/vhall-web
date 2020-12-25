@@ -144,14 +144,22 @@
                     style="font-size: 12px;"
                   ></span>
                 </div>
-                <div
+                <div v-if="attentionShow">
+                  <i class="focusBtn" @click="handleAttention" >
+                    {{attentionContent}}
+                  </i>
+                  <i class="focusCount">{{focusCount}}</i>
+                </div>
+                <!-- <div
                   v-if="attentionShow"
                   :class="followStyle ? 'followShow' : 'follow'"
                   @click="handleAttention"
                 >
+                  <i class="focusBtn">{{ attentionContent }}</i>
+                  <i class="focusCount">{{ focusCount }}</i>
                   <span class="iconfont iconguanzhu"></span>
                   <span style="margin-left: 5px;">{{ attentionContent }}</span>
-                </div>
+                </div> -->
                 <div
                   class="officialaccount-qrcode"
                   v-if="showOfficialAccountMiniQRCode"
@@ -689,7 +697,8 @@ export default {
       configList: {},
       openScreenConfig: {}, // 开屏海报
       userInfo: {},
-      location: process.env.VUE_APP_WAP_WATCH
+      location: process.env.VUE_APP_WAP_WATCH,
+      focusCount: 0
     };
   },
   components: {
@@ -739,7 +748,7 @@ export default {
         modules.adv.public
       ) {
         // alert_type:1 自动弹出
-        if (modules.adv.public.alert_type == 0) {
+        if (modules.adv.public.alert_type == 0 && modules.adv.public.status == 0) {
           this.showOfficialAccountQRCode = true
         }
         if (modules.adv.public.status == 0) {
@@ -1345,6 +1354,15 @@ export default {
         }
       })
     },
+    // 获取关注人被关注数量
+    getAttentionNum () {
+      this.$fetch('getAttentionNum', {
+        at_id: this.roominfo.host.id,
+        type: 1
+      }).then(res => {
+        this.focusCount = res.data.count
+      })
+    },
     getOpenScreenConfig () {
       this.$fetch('getPlaybillInfo', {
         webinar_id: this.$route.params.il_id
@@ -1383,7 +1401,9 @@ export default {
       let content = document.querySelector('.back-content')
       let bottom = document.querySelector('.bottom-bgColor')
       let seedIcon = document.querySelector('.seeding-icon')
-      let follow = document.querySelector('.seeding-inforight .follow')
+      let followBtn = document.querySelector('.seeding-inforight .focusBtn')
+      let followNum = document.querySelector('.seeding-inforight .focusCount')
+
       let fullScreen = document.querySelector('.seeding-inforight .full-screen')
       let watchContent = document.querySelector('.watch-middle-cotent')
       let activeRecommnd = document.querySelector('.active-second')
@@ -1426,9 +1446,11 @@ export default {
       if (seedIcon) {
         seedIcon.style.background = pageStyle
       }
-
-      if (follow) {
-        follow.style.background = pageStyle
+      if (followBtn) {
+        followBtn.style.background = pageStyle
+      }
+      if (followNum) {
+        followNum.style.background = pageStyle
       }
       if (fullScreen) {
         fullScreen.style.background = pageStyle
@@ -1685,7 +1707,7 @@ export default {
       this.getGoodsInfo();
       // end
       this.chatFilter(); // 聊天过滤接口
-
+      this.getAttentionNum()
       this.recordHistoryTime = data.record_history_time; // TODO:
       // 初始化数据上报
       this.initVHallReport();
@@ -2185,7 +2207,26 @@ export default {
         color: #444;
         cursor: pointer;
       }
-
+      .focusBtn{
+        display: inline-block;
+        padding: 3px 12px;
+        background-color: #ff3333;
+        color: #fff;
+        text-align: center;
+        border-radius: 3px 0 0 3px;
+        font-style: normal;
+        line-height: normal;
+        cursor: pointer;
+      }
+      .focusCount{
+        color: #ff3333;
+        background-color: #fbdcdc;
+        border-radius: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px 12px;
+        font-style: normal;
+        line-height: normal;
+      }
       .follow:hover,
       .full-screen:hover {
         color: #fff;
