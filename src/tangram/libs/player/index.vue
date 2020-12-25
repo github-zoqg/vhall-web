@@ -722,7 +722,7 @@ export default {
       } else {
         throw new Error('参数异常');
       }
-      if (this.marquee) {
+      if (this.marquee && this.marquee.scrolling_open == 1) {
         let marqueeText = ''
         if (this.marquee.text_type == 1 ) {
           marqueeText = this.marquee.text
@@ -750,15 +750,20 @@ export default {
           enable: false
         };
       }
-      if (this.water) {
+      if (this.water && this.water.watermark_open == 1) {
         // 水印
         params.watermarkOption = {
           enable: true,
           url: this.water.img_url, // 水印图片的路径
           align: this.fromalAlign(this.water.img_position), // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%
-          size: ['80px'] // 水印大小，支持px,vh,vw,%
+          size: ['80px'], // 水印大小，支持px,vh,vw,%
+          alpha: this.water.img_alpha
         };
+      } else {
+        params.watermarkOption = {
+          enable: false
+        }
       }
       console.log(params, '初始化播放器参数1');
       return new Promise((resolve, reject) => {

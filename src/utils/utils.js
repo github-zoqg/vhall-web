@@ -220,7 +220,6 @@ export function getQueryString(name) {
 }
 // 判断是否登录成功
 export function checkAuth(to, from, next) {
-  console.warn(to, 9999);
 
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||

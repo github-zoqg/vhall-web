@@ -69,6 +69,7 @@ export default {
       return Math.PI * 94 * this.percent;
     },
     remainder() {
+
       let ret = this.consume,
         m,
         s;
@@ -77,6 +78,7 @@ export default {
       s = ret % 60;
       m = m > 9 ? m : `0${m}`;
       s = s > 9 ? s : `0${s}`;
+
       return `${m}:${s}`;
     },
     perimeter() {

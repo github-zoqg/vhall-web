@@ -156,7 +156,33 @@ export default {
       },
       sonCountVo: {},
       isHandle: false, // 是否有操作项
-      sonTableColumn: [],
+      sonTableColumn: [
+        {
+          label: '账号',
+          key: 'name',
+          width: 200
+        },
+        {
+          label: '昵称',
+          key: 'nick_name',
+          width: 'auto'
+        },
+        {
+          label: '手机号码',
+          key: 'phone',
+          width: 200
+        },
+        {
+          label: '角色',
+          key: 'role_name',
+          width: 200
+        },
+        {
+          label: '用量分配',
+          key: 'round',
+          width: 200
+        }
+      ],
       tableRowBtnFun: [
         {
           name: "详情",
@@ -289,6 +315,8 @@ export default {
               console.log(e);
             }
             that.initQuerySonList();
+            // 通知父级头部更新
+            that.$emit('load');
           } else {
             that.$message({
               type: 'error',
@@ -362,12 +390,15 @@ export default {
               id: this.sonDialog.row.id,
               child_id: this.sonDialog.row.child_id
             }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit',
+            this.sonDialog.type === 'add' ? this.$params(params) : params).then(res => {
             if (res && res.code === 200) {
               this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
               this.sonDialog.visible = false;
               // 新增成功后，重查列表
               this.initQuerySonList();
+              // 通知父级头部更新
+              this.$emit('load');
             } else {
               this.$message({
                 type: 'error',
@@ -418,9 +449,13 @@ export default {
               item.round = `并发动态`;
               item.extend_day = `并发动态`
             } else {
-              // 并发（XXX方）
-              item.round = `并发（${item.vip_info.total}方）`;
-              item.extend_day = `并发（${item.vip_info.extend_day}方）`
+              if(item.vip_info.extend_day > 0) {
+                // 并发（XXX方）
+                item.round = `并发（${Number(item.vip_info.total) + Number(item.vip_info.extend_day)}方）`;
+              } else {
+                // 并发（XXX方）
+                item.round = `并发（${item.vip_info.total}方）`;
+              }
             }
           }
           // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
@@ -460,41 +495,6 @@ export default {
       this.sonForm[type] = '';
     },
     initComp() {
-      this.sonTableColumn = [
-        {
-          label: '账号',
-          key: 'name',
-          width: 200
-        },
-        {
-          label: '昵称',
-          key: 'nick_name',
-          width: 'auto'
-        },
-        {
-          label: '手机号码',
-          key: 'phone',
-          width: 200
-        },
-        {
-          label: '角色',
-          key: 'role_name',
-          width: 200
-        },
-        {
-          label: '用量分配',
-          key: 'round',
-          width: 200
-        }
-      ]
-      // 是并发，展示并发包列
-      if (!(this.vipType > 0)) {
-        this.sonTableColumn.push({
-          label: '扩展用量分配',
-          key: 'extend_day',
-          width: 200
-        })
-      }
       this.getRoleList(); // 获取可选角色列表
     },
     initQuerySonList() {
