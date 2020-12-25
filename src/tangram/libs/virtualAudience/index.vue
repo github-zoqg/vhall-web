@@ -27,11 +27,11 @@
     </div>
     <div class="v-form">
       <div class="v-item">
-        执行时间：<el-input v-model="runTime" placeholder="1 - 120" :disabled="!addStatus" ></el-input>分钟
+        <span>执行时间：</span> <el-input v-model="runTime" placeholder="1 - 120" :disabled="!addStatus" ></el-input>分钟
         <p class="v-error" v-if="runTimeObj.err">{{ runTimeObj.err }}</p>
       </div>
       <div class="v-item">
-        在线人数：<el-input
+        <span>在线人数：</span><el-input
           v-model="input.onlineNum"
           placeholder="请输入内容"
           :disabled="!addStatus"
@@ -40,7 +40,7 @@
         <p class="v-error" v-if="error.onlineNum">{{ error.onlineNum }}</p>
       </div>
       <div class="v-item">
-        观看次数：<el-input
+        <span>热度：</span><el-input
           v-model="input.pv"
           placeholder="请输入内容"
           :disabled="!addStatus"
@@ -341,6 +341,11 @@ export default {
     font-size: 12px;
     .v-item {
       position: relative;
+      span{
+        display: inline-block;
+        min-width: 60px;
+        text-align: end;
+      }
       .el-input {
         width: 340px;
         height: 28px;
