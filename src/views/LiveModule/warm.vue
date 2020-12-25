@@ -59,7 +59,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedia>
+    <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedias>
     <!-- 预览 -->
     <template v-if="showDialog">
     <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
@@ -72,13 +72,13 @@
 import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
 import Env from "@/api/env";
-import selectMedia from './selecteMedia';
+import selectMedias from './selecteMedia';
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
   components: {
     PageTitle,
     Upload,
-    selectMedia,
+    selectMedias,
     VideoPreview
   },
   data() {
@@ -88,7 +88,7 @@ export default {
       videoSize: '200MB',
       videoType: 'MP4',
       warmId: '',
-      selectMedia: null,
+      selectMedia: {},
       showDialog: false,
       warmForm: {
         record_id: '',
@@ -123,6 +123,7 @@ export default {
           this.warmForm.imageUrl = res.data.img_url;
           this.selectMedia.paas_record_id = res.data.record_id;
           this.selectMedia.name = res.data.record_name;
+          console.log(this.selectMedia, '111111111111111')
         }
       })
     },
@@ -131,7 +132,6 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
-      console.log(this.selectMedia, '??????????????')
       this.warmForm.record_id = media.paas_record_id;
     },
     // 预览

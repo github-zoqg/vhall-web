@@ -133,7 +133,6 @@ export default {
     edit(that, { rows }) {
       that.title = '编辑';
       that.advInfo = rows;
-      console.log(rows, '111111111')
       that.$refs.adviseSonChild.dialogVisible = true;
     },
     delete(that, { rows }) {

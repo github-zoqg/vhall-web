@@ -143,7 +143,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item">
+         <div class="base-item" style="cursor: default;">
           <div class="base-main">
             <icon icon-class="saasicon_dianzan"></icon>
             <div class="base-text">

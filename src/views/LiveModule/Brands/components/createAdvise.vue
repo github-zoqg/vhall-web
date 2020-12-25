@@ -40,17 +40,17 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="saveAdviseHandle" round>确 定</el-button>
-      <el-button @click="dialogVisible = false" round>取 消</el-button>
+      <el-button type="primary" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+      <el-button v-preventReClick @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
     <VhallDialog
       title="选择广告推荐"
       :visible.sync="dialogAdverVisible"
       :close-on-click-modal="false"
-      width="590px">
+      width="620px">
       <div class="content">
-        <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @change="changeAdverment"></el-input></div>
+        <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" clearable @change="changeAdverment"></el-input></div>
         <el-scrollbar v-loadMore="moreLoadData" v-show="total">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
@@ -70,7 +70,7 @@
         </div>
       <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
       <span slot="footer" class="dialog-footer" v-show="total || isSearch">
-        <el-button type="primary" @click="advSaveToWebinar(null)" v-preventReClick round>确 定</el-button>
+        <el-button type="primary" @click="advSaveToWebinar(null)" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -142,8 +142,11 @@ export default {
     },
     dialogAdverVisible() {
       if (this.dialogAdverVisible) {
+        this.selectChecked = [];
+      } else {
         this.adList = [];
         this.selectChecked = [];
+        this.advertisementTitle = '';
       }
     }
   },
@@ -166,6 +169,11 @@ export default {
       this.$set(this.advertisement, 'adv_id', '');
     },
     saveAdviseHandle() {
+      let reg = /(http|https):\/\/([\w.]+\/?)\S*/g;
+      if (!reg.test(this.advertisement.url)) {
+        this.$message.error('广告链接只能以http://或https://开始');
+        return;
+      }
       this.$refs.advertisementForm.validate((valid) => {
         if (valid) {
           if (this.$route.params.str) {

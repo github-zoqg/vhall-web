@@ -147,7 +147,7 @@ export default {
     },
     maxHeight: {
       type: [Number, String],
-      default: 450,
+      default: '100%',
     },
     scene: {
       type: String,

@@ -14,13 +14,14 @@
                         v-model="scrolling_open"
                         active-color="#ff4949"
                         inactive-color="#ccc"
+                        @change="closeHorseInfo"
                         :active-text="horseLampText"
                       >
                       </el-switch>
                     </el-form-item>
                     <el-form-item label="类型">
-                      <el-radio v-model="formHorse.text_type" label='1' :disabled="!scrolling_open">固定文本</el-radio>
-                      <el-radio v-model="formHorse.text_type" label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
+                      <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
+                      <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                     </el-form-item>
                     <el-form-item label="固定文本">
                       <el-input
@@ -43,14 +44,14 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="移动速度">
-                      <el-radio v-model="formHorse.speed" label="10000" :disabled="!scrolling_open">慢</el-radio>
-                      <el-radio v-model="formHorse.speed" label="6000" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.speed" label="3000" :disabled="!scrolling_open">快</el-radio>
+                      <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
+                      <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
+                      <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open">快</el-radio>
                     </el-form-item>
                     <el-form-item label="显示位置">
-                      <el-radio v-model="formHorse.position" label="2" :disabled="!scrolling_open">上</el-radio>
-                      <el-radio v-model="formHorse.position" label="3" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.position" label="4" :disabled="!scrolling_open">下</el-radio>
+                      <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open">上</el-radio>
+                      <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
+                      <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
                     </el-form-item>
                     <el-form-item label="间隔时间">
                       <el-input
@@ -61,7 +62,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="preFormHorse">保存</el-button>
+                      <el-button type="primary" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -76,6 +77,7 @@
                         v-model="watermark_open"
                         active-color="#ff4949"
                         inactive-color="#ccc"
+                        @change="openWaterMarkInfo"
                         :active-text="waterMarkText"
                       >
                       </el-switch>
@@ -95,6 +97,7 @@
                         :on-preview="uploadPreview"
                         :before-upload="beforeUploadHnadler"
                         :disabled="!watermark_open"
+                        @delete="deleteImg"
                       >
                         <div slot="tip">
                           <p>建议尺寸：98*28px，小于2M</p>
@@ -113,7 +116,7 @@
                       <span class="isNum">{{formWatermark.img_alpha}}%</span>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="preWatermark">保存</el-button>
+                      <el-button type="primary" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -129,6 +132,7 @@
                         active-color="#ff4949"
                         inactive-color="#ccc"
                         :active-text="bulletChatText"
+                        @change="otherOtherInfo"
                       >
                       </el-switch>
                 </el-form-item>
@@ -138,6 +142,7 @@
                         active-color="#ff4949"
                         inactive-color="#ccc"
                         :active-text="progressText"
+                        @change="otherOtherInfo"
                       >
                       </el-switch>
                 </el-form-item>
@@ -147,11 +152,9 @@
                         active-color="#ff4949"
                         inactive-color="#ccc"
                         :active-text="doubleSpeedText"
+                        @change="otherOtherInfo"
                       >
                       </el-switch>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="preOthersOptions">保存</el-button>
                 </el-form-item>
               </el-form>
               </div>
@@ -187,16 +190,16 @@ export default {
       watermark_open: false,
       formHorse: {
         color: '#FFFFFF', // 六位
-        text_type: '2',
+        text_type: 2,
         size: 20,
-        speed: '6000',
-        position: '3',
+        speed: 6000,
+        position: 3,
         alpha: 50,
-        interval: 0
+        interval: 20
       },
       fontList: [],
       formWatermark: {
-        img_position: '1',
+        img_position: 1,
         img_url: '',
         img_alpha: 80
       },
@@ -239,23 +242,23 @@ export default {
     },
     progressText(){
       if(this.formOther.progress){
-        return '已开启，回放/点播播放器画面进度条显示';
+        return '已开启，观看回放时播放器画面显示进度条';
       }else{
-        return "开启后，回放/点播播放器画面进度条不显示";
+        return "开启后，观看回放时播放器画面显示进度条";
       }
     },
     bulletChatText(){
       if(this.formOther.bulletChat){
-        return '已开启，观看端播放器画面弹幕功能显示';
+        return '已开启，观看页播放器画面显示弹幕功能';
       }else{
-        return "开启后，观看端播放器画面弹幕功能不显示";
+        return "开启后，观看页播放器画面显示弹幕功能";
       }
     },
     doubleSpeedText(){
       if(this.formOther.doubleSpeed){
-        return '已开启，回放/点播播放器画面倍速功能显示';
+        return '已开启，观看回放时播放器画面显示倍速功能';
       }else{
-        return "开启后，回放/点播播放器画面倍速功能不显示";
+        return "开启后，观看回放时播放器画面显示倍速功能";
       }
     }
   },
@@ -271,15 +274,31 @@ export default {
         num = num + 2;
       }
     },
+    // 关闭跑马灯
+    closeHorseInfo() {
+      if (!this.scrolling_open) {
+        this.preFormHorse();
+      }
+    },
+    // 关闭水印
+    openWaterMarkInfo() {
+      if (!this.watermark_open) {
+        this.preWatermark();
+      }
+    },
+    // 关闭或保存其他信息
+    otherOtherInfo() {
+      this.preOthersOptions();
+    },
     // 获取跑马灯基本信息
     getBasescrollingList() {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          this.formHorse.text_type = String(res.data.text_type);
-          this.formHorse.position = String(res.data.position);
-          this.formHorse.speed = String(res.data.speed);
-          this.formHorse.alpha = Number(res.data.alpha);
+          // this.formHorse.text_type = String(res.data.text_type);
+          // this.formHorse.position = String(res.data.position);
+          // this.formHorse.speed = String(res.data.speed);
+          // this.formHorse.alpha = Number(res.data.alpha);
           this.scrolling_open = Boolean(res.data.scrolling_open);
         } else {
           // this.$message.error('获取信息失败');
@@ -319,8 +338,7 @@ export default {
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
          if (res.code == 200) {
-           this.$message.success("保存跑马灯成功");
-          //  this.initPlayer();
+           this.$message.success(this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功');
          } else {
            this.$message.error("保存跑马灯失败");
          }
@@ -337,9 +355,8 @@ export default {
       this.formWatermark.watermark_open = Number(this.watermark_open);
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
          if (res.code == 200) {
-          //  this.initPlayer();
           this.getBaseWaterList();
-          this.$message.success("保存水印成功");
+          this.$message.success(this.watermark_open ? "水印开启成功" : "水印关闭成功");
          } else {
           this.$message.error("保存水印灯失败");
          }
@@ -371,6 +388,11 @@ export default {
         });
         // this.listen();
       });
+    },
+    // 删除图片
+    deleteImg() {
+      this.formWatermark.img_url  ='';
+      this.domain_url = '';
     },
     initSDK() {
       const incomingData = {
