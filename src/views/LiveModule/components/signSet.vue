@@ -42,7 +42,7 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="标志替换：" prop="logo_url">
+          <el-form-item label="标志替换" prop="logo_url">
             <upload
               class="upload__sign"
               v-model="signSetForm.logo_url"
@@ -63,7 +63,7 @@
               </div>
             </upload>
           </el-form-item>
-          <el-form-item label="标志链接" prop="skip_url">
+          <el-form-item label="标志链接" prop="skip_url" class="item--skip__url">
             <el-input v-model.trim="signSetForm.skip_url" />
           </el-form-item>
           <el-form-item label="">
@@ -120,6 +120,11 @@ export default {
       }
       // 触发验证
       this.$refs.signSetForm.validateField('logo_url');
+      try {
+        this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm, this.domain_url);
+      } catch (e) {
+        console.log(e);
+      }
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -172,7 +177,11 @@ export default {
             };
           }
           this.domain_url = res.data.logo_url || '';
-          this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm);
+          try {
+            this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm, this.domain_url);
+          } catch (e) {
+            console.log(e);
+          }
         } else {
           this.signSetForm = {
             organizers_status: null,
@@ -266,7 +275,12 @@ export default {
     height: 130px;
   }
 }
-
+.item--skip__url {
+  /deep/.el-input {
+    width: 400px;
+    border-radius: 4px;
+  }
+}
 .btnGroup{
   text-align: center;
   margin: 40px auto;

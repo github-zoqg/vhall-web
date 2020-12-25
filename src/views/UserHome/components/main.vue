@@ -6,6 +6,7 @@
       </template>
       </el-tabs>
     <el-button :class="['length104', `${Number(vo.show_share) === 0 ? 'panel-btn' : 'panel-btn2'}`]" type="primary" size="medium" round
+               v-if="isSameUser"
                @click.prevent.stop="toHomeSetInfo">设置</el-button>
     <el-popover
       placement="bottom-end"
@@ -86,6 +87,7 @@
 import Share from '@/components/Share';
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "list.vue",
   components: {
@@ -122,6 +124,15 @@ export default {
   computed: {
     home_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str}&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false`;
+    },
+    isSameUser: function() {
+      let userId = JSON.parse(sessionOrLocal.get("userId"));
+      // 用户ID 是否 跟当前主页ID相等，不相等，有关注。
+      if(userId === this.$route.params.str) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
   methods: {
