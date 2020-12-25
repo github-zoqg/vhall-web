@@ -19,7 +19,8 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2  ? liveDetailInfo.start_time : liveDetailInfo.webinar_state == 4 ? liveDetailInfo.created_at : liveDetailInfo.actual_start_time}}</p>
+            <p class="subDuration" v-if="liveDetailInfo.webinar_state == 4">点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -377,22 +378,25 @@ export default {
       flex: 1;
       p{
         font-size: 14px;
+        line-height: 28px;
         &:nth-child(1){
           margin-bottom: 16px;
           height: 56px;
           font-size: 20px;
           display: table-cell;
           vertical-align: middle;
-          line-height: 24px;
         }
-        &:nth-child(2){
-          margin-bottom: 10px;
-          line-height: 20px;
-        }
-        &:nth-child(3){
+        &:last-child{
           margin-bottom: 20px;
-          line-height: 20px;
         }
+        // &:nth-child(2){
+        //   margin-bottom: 10px;
+        //   line-height: 20px;
+        // }
+        // &:nth-child(3){
+        //   // margin-bottom: 20px;
+        //   line-height: 20px;
+        // }
       }
     }
     .thumb{
@@ -475,6 +479,9 @@ export default {
 }
 .subColor{
   color: #666666;
+}
+.action-look{
+  margin-top: 10px;
 }
 .font-20{
   font-size: @20;

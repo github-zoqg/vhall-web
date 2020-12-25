@@ -108,7 +108,7 @@
       </el-form-item>
       <el-form-item label="选择视频："  v-if="webniarType=='vod'">
         <div class="mediaBox">
-          <div class="mediaSlot" v-if="!selectMedia" @click="$refs.selecteMedia.dialogVisible=true">
+          <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <i class="el-icon-film"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
@@ -116,7 +116,7 @@
             <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
-          <div class="abRight" v-if="!!selectMedia">
+          <div class="abRight" v-if="selectMedia.id">
             <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
             <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
           </div>
@@ -345,7 +345,7 @@ export default {
       loading: false,
       imageUrl: '',
       domain_url: '',
-      selectMedia: null
+      selectMedia: {}
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -418,6 +418,11 @@ export default {
           this.limitCapacitySwtich = false;
         }
         this.capacity = Boolean(this.liveDetailInfo.is_capacity);
+        if (this.liveDetailInfo.paas_record_id) {
+          this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
+          this.selectMedia.name = this.liveDetailInfo.record_subject;
+        }
+
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -473,7 +478,7 @@ export default {
       }
       let data = {
         webinar_id: this.webinarId || '',
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.paas_record_id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
