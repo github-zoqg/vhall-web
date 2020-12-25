@@ -2,11 +2,13 @@
   <div class="wramUp-wrap">
     <pageTitle title="暖场视频">
       <template  slot="default">
-        <el-switch
-          v-model="warmFlag"
-          @change="openCloseWarm"
-          :active-text="warmFlag ? '已开启，预告状态观看端显示暖场视频': '开启后，预告状态观看端显示暖场视频'">
-        </el-switch>
+        <div class="switch__box">
+          <el-switch
+            v-model="warmFlag"
+            @change="openCloseWarm"
+            :active-text="warmFlag ? '已开启，预告状态观看端显示暖场视频': '开启后，预告状态观看端显示暖场视频'">
+          </el-switch>
+        </div>
       </template>
     </pageTitle>
     <div class="content">
@@ -55,7 +57,7 @@
           </upload>
         </el-form-item>
         <el-form-item>
-          <el-button :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
+          <el-button round class="length152" :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -214,6 +216,21 @@ export default {
 .content {
   .layout--right--main();
   .padding48-40();
+}
+.demo-ruleForm {
+  width: 600px;
+}
+.switch__box {
+  display: inline-block;
+}
+/deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
+  color: #999999;
+  pointer-events: none;
+  user-select: none;
+}
+.el-role-switch{
+  margin-left: 8px;
+  vertical-align: sub;
 }
 .wramUp-wrap::v-deep{
   .avatar-uploader .el-upload {
