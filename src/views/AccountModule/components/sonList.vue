@@ -289,6 +289,8 @@ export default {
               console.log(e);
             }
             that.initQuerySonList();
+            // 通知父级头部更新
+            that.$emit('load');
           } else {
             that.$message({
               type: 'error',
