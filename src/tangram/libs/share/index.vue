@@ -13,7 +13,7 @@
         class="bds_weixin"
         data-cmd="weixin"
         title="分享到微信"
-        :style="{'background-image':`url(https://${domains.static}/static/images/signup-form/share-wx.png)`}"
+        :style="{'background-image':`url(${domains.static}/static/images/signup-form/share-wx.png)`}"
         @click="openQRCode"
       ></a>
       <a
@@ -22,7 +22,7 @@
         class="bds_sqq"
         data-cmd="sqq"
         title="分享到QQ好友"
-        :style="{'background-image':`url(https://${domains.static}/static/images/signup-form/share-qq1.png)`}"
+        :style="{'background-image':`url(${domains.static}/static/images/signup-form/share-qq1.png)`}"
       ></a>
       <a
         href="#"
@@ -30,7 +30,7 @@
         class="bds_tsina"
         data-cmd="tsina"
         title="分享到新浪微博"
-        :style="{'background-image':`url(https://${domains.static}/static/images/signup-form/share-wb.png)`}"
+        :style="{'background-image':`url(${domains.static}/static/images/signup-form/share-wb.png)`}"
       ></a>
     </div>
     <popup

@@ -1,5 +1,5 @@
 <template>
-  <div class="vhall-split-wrapbox cxs">
+  <div class="vhall-split-wrapbox">
     <publisher
        v-if="!!roomId && permission && !isSplited && splitStatus != 0"
        v-bind="$attrs"
@@ -27,10 +27,9 @@
       :recordTip="recordTip"
       :isEmbed="isEmbed"
     ></publisher>
-
-    <!-- <shadow-view
+    <shadow-view
       v-if="isSplited == 1 && !!roomId "
-       v-bind="$attrs"
+      v-bind="$attrs"
       :splitStatus="splitStatus"
       :roomId="roomId"
       :ilId="ilId"
@@ -48,7 +47,7 @@
       :record_notice="record_notice"
       :cut_record_status="cut_record_status"
       :documentId="documentId"
-    ></shadow-view> -->
+    ></shadow-view>
   </div>
 </template>
 <script>
@@ -115,7 +114,7 @@ export default {
   },
 
   mounted () {
-    // wa
+    console.warn('look---差啊',this.third_party_user_id, query('s'));
     // EventBus.$on('close_live', () => {
     //   this.endSplit()
     // })
@@ -189,24 +188,6 @@ export default {
     startSplit () {
       const url = window.location.href.split('#')[0];
       const spltWindow = `${url}?s=1&layout=${sessionStorage.getItem('layout')}`;
-
-      // this.checkShadow().then((w) => {
-      //   if (w) {
-      //     this.splitStatus = 1
-      //     console.log('开着分屏')
-      //     this.startShadow()
-      //     this.initHostEvent()
-      //     // 主持端 - 触发-开始直播的消息
-      //     EventBus.$emit('startLive')
-      //     EventBus.$emit('streamPushed')
-      //   } else {
-      //     this.splitStatus = 2
-      //   }
-      // }).catch((e) => {
-      //   this.startShadow(spltWindow)
-      //   this.splitStatus = 1
-      //   console.log('split is closed')
-      // })
       this.stopShadow();
       setTimeout(() => {
         this.startShadow(spltWindow);
