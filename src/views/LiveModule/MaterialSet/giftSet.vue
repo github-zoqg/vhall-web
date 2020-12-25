@@ -10,11 +10,11 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="addGift" size="medium">新建礼物</el-button>
       <el-button
         round
         class="head-btn set-upload"
-        @click="handleAddGift">
+        @click="handleAddGift" size="medium">
         资料库
       </el-button>
       <el-button
@@ -22,11 +22,13 @@
         class="head-btn set-upload"
         :class="{'no-data': batchDelete}"
         :disabled="batchDelete"
-        @click="batchDialogTipVisible = true">
+        @click="batchDialogTipVisible = true" size="medium">
         批量删除
       </el-button>
       <el-input
         @keyup.enter.native="searchGifts"
+        clearable
+        @clear="searchGifts"
         class="head-btn fr search"
         v-model="searchName"
         placeholder="请输入礼物名称"
@@ -727,10 +729,11 @@ export default {
       padding: 12px;
       border: 1px solid #fff;
       .gift-cover{
-        display:inline-block;
+        display: inline-block;
         width: 70px;
         height: 70px;
         border-radius: 4px;
+        border: 1px solid #e6e6e6;
         img{
           width: 100%;
           height: 100%;
