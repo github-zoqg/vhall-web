@@ -1085,7 +1085,6 @@ export default {
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
-        // accountId: '',
         channelId: this.roomInfo.channel_id,
         context: JSON.stringify(context),
         token: this.roomInfo.paas_access_token,

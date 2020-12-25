@@ -433,7 +433,7 @@ const apis = {
 
   // 直播间内 -- 发起端
   initiatorInfo: ['/v3/webinars/live/init', 'GET'], // 获取房间信息 jian.chang √
-  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √
+  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √ 废弃了
   liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 √
   getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态 √
 
