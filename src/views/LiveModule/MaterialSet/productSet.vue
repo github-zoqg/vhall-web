@@ -152,12 +152,13 @@ export default {
         webinar_id: this.$route.params.str
       };
       this.$fetch('goodsGet', this.$params(obj)).then(res => {
-        this.tableData = res.data.goods_list;
-        this.tableData.map(item => {
+        let tableData = res.data.goods_list;
+        tableData.map(item => {
           item.watch = Boolean(!item.status);
           item.img = item.img_url;
         });
         this.total = res.data.total;
+        this.tableData = tableData;
         if (formParams.questionName) {
             this.nullText = 'search';
             this.text = '';
