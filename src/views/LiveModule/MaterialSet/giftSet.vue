@@ -570,7 +570,7 @@ export default {
     async handleBatchDelete() {
       const isWebinarLiving = await this.isCanDelete()
       if (isWebinarLiving) {
-        this.$message.warning('正在直播中，请直播结束后操作')
+        this.$message.warning('正在直播中，请直播结束后操作！')
         return false;
       }
       this.batchDialogTipVisible = true
@@ -579,7 +579,7 @@ export default {
     async handleDelete (data) {
       const isWebinarLiving = await this.isCanDelete()
       if (isWebinarLiving) {
-        this.$message.warning('正在直播中，请直播结束后操作')
+        this.$message.warning('正在直播中，请直播结束后操作！')
         return false;
       }
       this.dialogTipVisible = true
