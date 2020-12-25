@@ -7,7 +7,7 @@
  * fileBaseUrl = 文件所在域名地址
  */
 let staticLinkVo = {
-  kf: 'http://webim.qiao.baidu.com//im/index?siteid=113762&ucid=2052738',
+  kf: 'http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738',
   aliQr: '//aliqr.e.vhall.com/qr.png?t=',
   uploadBaseUrl: '//t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/', // 图片上传后回显域名（后期字段变化）
   tmplDownloadUrl: '//t-alistatic01.e.vhall.com/static', // 原有静态模板下载地址

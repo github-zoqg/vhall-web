@@ -28,6 +28,7 @@
               {{ time === 60 ? '发送验证码' : `${time}s` }}
             </el-button>
           </el-input>
+          <p v-if="sendText">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
@@ -49,7 +50,7 @@
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
-          <p v-if="sendText">{{sendText}}</p>
+          <p v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
           <el-input v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
@@ -79,7 +80,7 @@
 </template>
 
 <script>
-import {sessionOrLocal} from "@/utils/utils";
+import env from "@/api/env";
 
 export default {
   name: "validSetDialog.vue",
@@ -174,7 +175,8 @@ export default {
       captcha1: null, // 云盾本身
       codeKey1: null, // 短信、邮箱验证码校验接口返回key值
       errorMsgShow1: '',
-      sendText: ``
+      sendText: ``,
+      sendText1: ``
     };
   },
   computed: {
@@ -182,7 +184,7 @@ export default {
       return this.getScenedTitle().title;
     },
     openLink() {
-      return `http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`;
+      return env.staticLinkVo.kf;
     }
   },
   methods: {
@@ -296,17 +298,17 @@ export default {
           if(res && res.code === 200) {
             this.isDisabledClick1 = true;
             if(this.downTimer1) {
-              window.clearTimeout(this.downTime1);
+              window.clearTimeout(this.downTimer1);
             }
-            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+            this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
             this.countDown1();
           } else {
-            this.sendText = ``;
+            this.sendText1 = ``;
             this.$message.error(res.msg || '验证码发送失败');
           }
         }).catch(e => {
           console.log(e);
-          this.sendText = ``;
+          this.sendText1 = ``;
           this.$message.error(e.msg || '验证码发送失败');
         });
       }
@@ -324,6 +326,7 @@ export default {
         this.time = 60;
         this.isDisabledClick = false;
         this.callCaptcha();
+        this.sendText = '';
       }
     },
     // 验证码倒计时（ 场景使用： 设置手机号、修改手机号-第二步、修改邮箱-第二步、设置邮箱）
@@ -338,6 +341,7 @@ export default {
         this.time1 = 60;
         this.isDisabledClick1 = false;
         this.callCaptcha(1);
+        this.sendText1 = '';
       }
     },
     // 下一步按钮，校验 验证码，成功后进入下一步。 （场景使用： 修改手机、修改关联邮箱）
