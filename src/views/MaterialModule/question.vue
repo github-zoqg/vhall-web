@@ -10,17 +10,17 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button type="primary" round class="head-btn set-upload" v-preventReClick @click="addQuestion">新建</el-button>
-      <el-button round class="head-btn batch-del" @click="deleteAll(null)" v-preventReClick>批量删除</el-button>
+      <el-button size="medium" type="primary" round class="length104 head-btn set-upload" v-preventReClick @click="addQuestion">新建</el-button>
+      <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" v-preventReClick>批量删除</el-button>
       <div class="inputKey">
         <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入问卷名称" clearable @change="getTableList"></el-input>
       </div>
     </div>
-    <el-card class="question-list" v-show="total">
+    <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-    </el-card>
+    </div>
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
@@ -197,14 +197,16 @@ export default {
   },
 };
 </script>
-
 <style lang="less" scoped>
+.question-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+  .min-height();
+}
 .question-wrap{
   height: 100%;
   width: 100%;
-  .question-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     width: 100%;
     padding: 32px 24px;

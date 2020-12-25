@@ -63,8 +63,8 @@
         </div>
        <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
        <div class="dialog-footer" v-show="total || isSearch">
-        <el-button type="primary" @click="sureChoisePrize" v-preventReClick round :disabled="!checkedList.length">确 定</el-button>
-        <el-button @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
+        <el-button size="medium" type="primary" @click="sureChoisePrize" v-preventReClick round :disabled="!checkedList.length">确 定</el-button>
+        <el-button size="medium" @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
        </div>
      </div>
     </VhallDialog>

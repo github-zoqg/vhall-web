@@ -5,15 +5,15 @@
     </div>
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
-        <el-button type="primary" @click="createAdvise()" v-preventReClick round>创建</el-button>
-        <el-button class="head-btn set-upload" round @click="createCenter()" v-if="$route.path !='/material/advertCard'" v-preventReClick>资料库</el-button>
-        <el-button class="head-btn set-upload" round @click="allDelete(null)" v-preventReClick>批量删除</el-button>
+        <el-button size="medium" class="length104" type="primary" @click="createAdvise()" v-preventReClick round>创建</el-button>
+        <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'" v-preventReClick>资料库</el-button>
+        <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" v-preventReClick>批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model.trim="paramsObj.keyword" placeholder="请输入标题"
           suffix-icon="el-icon-search" clearable @change="initPage()"></el-input>
         </span>
       </div>
-      <el-card v-show="total">
+      <div class="advert-card-list" v-show="total">
          <table-list
           ref="tableList"
           :manageTableData="tableList"
@@ -25,7 +25,7 @@
           @changeTableCheckbox="changeTableCheckbox"
           >
         </table-list>
-      </el-card>
+      </div>
       <div class="no-live" v-show="!total">
         <noData :nullType="nullText" :text="text">
           <el-button type="primary" v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
@@ -186,6 +186,11 @@ export default {
 };
 </script>
 <style lang="less">
+.advert-card-list {
+  .layout--right--main();
+  .padding-table-list();
+  .min-height();
+}
 .advertisement-card {
   .title-data {
     margin: 10px 0 20px 0;

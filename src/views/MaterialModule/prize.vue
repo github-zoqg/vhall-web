@@ -10,9 +10,9 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button type="primary" round class="head-btn set-upload" @click="createPrize" v-preventReClick>新建</el-button>
-      <el-button round v-if="$route.meta.title !== '奖品'" @click="prizeMeterial" v-preventReClick>资料库</el-button>
-      <el-button round class="head-btn batch-del" @click="allDelete(null)" v-preventReClick>批量删除</el-button>
+      <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize" v-preventReClick>新建</el-button>
+      <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial" v-preventReClick>资料库</el-button>
+      <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" v-preventReClick>批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
@@ -212,12 +212,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.question-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+}
 .question-wrap{
   height: 100%;
   width: 100%;
-  .question-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     width: 100%;
     padding: 32px 24px;

@@ -642,8 +642,7 @@ export default {
 }
 .table__container {
   width: calc(100% - 256px);
-  .padding41-40();
-  padding-bottom: 40px;
+  .padding-table-list();
   background: #FFFFFF;
   min-height: 500px;
 }

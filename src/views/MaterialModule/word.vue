@@ -123,18 +123,22 @@ export default {
         {
           label: '文档名称',
           key: 'file_name',
+          width: 'auto'
         },
         {
           label: '上传时间',
           key: 'created_at',
+          width: 160
         },
         {
           label: '页码',
           key: 'page',
+          width: 80
         },
         {
           label: '进度',
           key: 'transform_schedule_str',
+          width: 200
         }
       ],
       tableRowBtnFun: [
@@ -642,11 +646,13 @@ export default {
     border: none;
   }
 }
+.word-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+}
 .word-wrap {
   height: 100%;
-   .word-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     padding: 32px 24px;
   }

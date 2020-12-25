@@ -9,15 +9,9 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
-      <el-button
-        type="white-primary"
-        round
-        size="medium"
-        :class="{'no-data': selectIds.length <= 0}"
-        :disabled="selectIds.length <= 0"
-        @click="dialogTipVisible = true">
-        批量删除
-      </el-button>
+      <el-button round size="medium" :class="{'no-data': selectIds.length <= 0}"
+                 :disabled="selectIds.length <= 0"
+                 @click="dialogTipVisible = true">批量删除</el-button>
       <el-input
         @keyup.enter.native="searchGifts"
         clearable
@@ -456,6 +450,7 @@ export default {
     }
     .no-data{
       color: #b3b3b3;
+      background: #ffffff;
     }
     ::v-deep.set-upload{
       position: relative;
@@ -481,7 +476,7 @@ export default {
   }
   .gift-list{
     .layout--right--main();
-    .padding41-40();
+    .padding-table-list();
   }
 }
 </style>
