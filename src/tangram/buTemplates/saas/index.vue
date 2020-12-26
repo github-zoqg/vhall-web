@@ -2511,7 +2511,7 @@ export default {
             avatar: this.userInfo.avatar
               ? `${this.userInfo.avatar}`
               : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-            // pv: 100, // pv
+            pv: this.roomInfo.pv + 1, // pv
             role_name: this.roomInfo.join_info.role_name, // 角色 1主持人2观众3助理4嘉宾
             device_type: '2', // 设备类型 1手机端 2PC 0未检测
             device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
