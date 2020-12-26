@@ -9,6 +9,7 @@
       ref="searchArea"
       :active="active"
       :searchAreaLayout="searchAreaLayout"
+      scene="center_data"
       @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
     >

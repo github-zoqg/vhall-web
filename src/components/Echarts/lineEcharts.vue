@@ -54,11 +54,57 @@ export default {
           formatter: `{b0}<br />${that.type == 1 ? '并发' : '观看人数'}: {c0}${that.type == 1 ? '方' : ''}`,
         },
         xAxis: {
+          name: '日期',
+          nameLocation: 'start',
+          nameGap: 30,
+          type: 'category',
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#CCCCCC',
+            }
+          },
+          axisLabel: {
+            inside: false,
+            textStyle: {
+              color: '#999999',
+              fontSize: 12,
+              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
+            }
+
+          },
           data: visitDataDate,
         },
-        yAxis: {
-          splitLine: { show: false },
-        },
+        yAxis: [
+          {
+            type: 'value',
+            position: 'left',
+            splitLine: {
+              show: false,
+              lineStyle: {
+                type: 'dashed',
+              }
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#CCCCCC',
+              }
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              formatter: '{value}',
+              color: '#999999',
+              fontSize: 12,
+              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
+            }
+          }
+        ],
         series: [
           {
             type: 'line',

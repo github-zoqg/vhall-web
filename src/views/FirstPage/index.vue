@@ -179,10 +179,17 @@ export default {
       window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, "_blank");
     },
     getLiveList() {
+      // 初始化设置日期为最近一周
+      const end = new Date();
+      const start = new Date();
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
       // parent_id > 0 子账号
       let params = {
         account_id: this.userId,
-        type: 1
+        type: 1,
+        start_time: this.$moment(start).format('YYYY-MM-DD'),
+        end_time: this.$moment(end).format('YYYY-MM-DD')
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
         this.mainKeyData = {...res.data.key_data};

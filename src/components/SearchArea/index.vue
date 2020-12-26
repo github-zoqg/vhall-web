@@ -23,6 +23,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          :picker-options="pickerOptions"
           style="width: 240px"
         />
         <!-- 日期选择器 -->
@@ -82,6 +83,12 @@ export default {
       searchParams: {
         searchIsTime: '1',
         type: 1
+      },
+      pickerOptions: {
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
+        }
       }
     };
   },
@@ -98,12 +105,32 @@ export default {
     placeholder: {
       type: String,
       default: '请输入标题'
+    },
+    scene: {
+      type: String,
+      require: false,
+      default: ''
     }
   },
   created() {
     this.isActive = this.active;
   },
   methods: {
+    dealDisabledData(time) {
+      // 设置选择的日期小于当前的日期,小于返回true,日期不可选
+      // return time.getTime() < Date.now() - 8.64e7
+      //return time.getTime() < Date.now() - 8.64e7;//设置选择今天以及今天之后的日
+      if (this.scene === 'center_data') {
+        return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+      } else {
+        return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+      }
+      //return time.getTime() < Date.now();//设置选择今天之后的日期（不能选择当天时间）
+      // return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+      // 设置当天23：59：59可选
+      // let currentTime = this.getNowMonthDay() + ` 23:59:59`
+      // return time.getTime() > new Date(currentTime).getTime()
+    },
     changeTime(index) {
       if (this.$route.path === '/finance/infoDetail') {
         return;
