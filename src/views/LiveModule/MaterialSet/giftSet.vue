@@ -208,6 +208,7 @@
         :currentPage="materiaSearchParams.page"
         :page-size="materiaSearchParams.page_size"
         @current-change="materialPageChange"
+        :pagerCount="5"
         align="center"></SPagination>
         <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length === 0"></null-page>
       </div>
