@@ -111,7 +111,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane name="third">
-           <span slot="label"><i class="el-icon-date"></i>
+           <span slot="label">
            奖品设置
             <el-tooltip class="prize--set" effect="dark" placement="right" style="margin-left:5px">
               <i class="el-icon-question ques"></i>
