@@ -218,6 +218,7 @@ export default {
     font-size: 12px;
     color: #999999;
     line-height: 17px;
+    word-break: break-all;
   }
 }
 .ac__home__panel--left {
