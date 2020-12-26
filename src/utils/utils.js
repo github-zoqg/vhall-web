@@ -255,32 +255,33 @@ export function checkAuth(to, from, next) {
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
-        sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-        sessionOrLocal.set('sso_token', res.data.sso_token || '');
-        sessionOrLocal.set('userId', res.data.user_id || '');
+        // 登录场景下，存储直接登录
+        if(Number(scene_id) === 1) {
+          sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+          sessionOrLocal.set('sso_token', res.data.sso_token || '');
+          sessionOrLocal.set('userId', res.data.user_id || '');
+        }
+        // 非观看页第三方登录场景，均跳转/home
         if (!sourceTag) {
-          console.log(1111111111111111111, sourceTag)
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
           return;
         }
-        console.log(22222222222222222222222222)
       } else {
+        // 非200情况下，若是3账户信息-账号绑定，提示当前账号已绑定，请解绑。
         if(auth_tag) {
           if (auth_tag.indexOf('bind') !== -1) {
-            console.log(333333333333333333333333333)
+            // this.$message.success('绑定成功');
             sessionOrLocal.set('bind_result', JSON.stringify(res));
             sessionOrLocal.set('user_auth_key', user_auth_key);
             // 绑定成功
             window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
           } else {
-            console.log(44444444444444444444444444444444)
             // 获取回调token失败
             this.$message.error('登录信息获取失败，请重新登录');
             sessionOrLocal.clear('localStorage');
             sessionOrLocal.clear();
           }
         } else{
-          console.log(5555555555555555555555555555555)
           this.$message.error(res.msg || '异常请求，无法操作');
           // 获取回调token失败
           this.$message.error('登录信息获取失败，请重新登录');
@@ -337,7 +338,6 @@ export function checkAuth(to, from, next) {
       NProgress.done();
     });
   } else {
-    console.log(66666666666666666666666666)
     next({path: '/login'});
     NProgress.done();
   }
