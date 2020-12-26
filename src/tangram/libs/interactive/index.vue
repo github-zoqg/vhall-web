@@ -255,7 +255,7 @@ export default {
       required: false, // 分屏状态
       default: false
     },
-    webinadId: {
+    webinarId: {
       required: true // 活动id
     }
   },
@@ -659,7 +659,7 @@ export default {
      */
 
     async startLive (status) {
-      console.warn('点击的是开支直播-----------------------------------', this.webinadId, this.$route, status)
+      console.warn('点击的是开支直播-----------------------------------', this.webinarId, this.$route, status)
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
@@ -707,11 +707,9 @@ export default {
               () => {}
             );
           });
-        })
-
-        .then(() => {
+        }).then(() => {
           return this.$fetch('liveEnd', {
-            webinar_id: this.webinadId,
+            webinar_id: this.webinarId,
             end_type: 1
           }).then((res) => {
             if(res.code == 200){
@@ -733,7 +731,7 @@ export default {
             );
           });
           return this.$fetch('liveEnd', {
-            webinar_id: this.webinadId,
+            webinar_id: this.webinarId,
             end_type: 1
           }).then((res) => {
             if(res.code == 200){

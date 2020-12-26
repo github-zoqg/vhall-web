@@ -303,7 +303,7 @@
             :layout="roomStatus.layout"
             :status="status"
             :isInteract="isInteract"
-            :webinadId="ilId"
+            :webinarId="ilId"
             ref="interactive"
           ></Interactive>
         </streams>
