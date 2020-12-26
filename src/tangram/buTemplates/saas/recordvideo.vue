@@ -1832,13 +1832,18 @@ export default {
         return;
       }
       if (this.isDocEnabled) {
-        this.$refs.doc && this.$refs.doc.toggleDocContainer(false);
-        this.isDocEnabled = false;
+        // this.$refs.doc && this.$refs.doc.toggleDocContainer(false);
+        // this.isDocEnabled = false;
       } else {
         this.isDocEnabled = true;
         this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
         this.$refs.doc && this.$refs.doc.toggleBoard(false);
         this.isWhiteBoardEnabled = false;
+        this.$nextTick(() => {
+          // 手动触发window resize 事件
+          const resizeEvent = new Event('resize');
+          window.dispatchEvent(resizeEvent);
+        });
       }
       this.NoDocShow = false;
     },
@@ -1848,20 +1853,36 @@ export default {
         return;
       }
       this.NoDocShow = false;
-      if (!this.$refs.doc.docInfo.docContainerShow) {
-        return;
-      }
+      // if (!this.$refs.doc.docInfo.docContainerShow) {
+      //   return;
+      // }
       if (this.isWhiteBoardEnabled) {
-        this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
-        this.$refs.doc && this.$refs.doc.toggleBoard(false);
-        this.isWhiteBoardEnabled = false;
+        // this.$refs.doc.toggleDocContainer(false)
+        // this.$refs.doc.toggleBoard(false)
+        // this.isWhiteBoardEnabled = false
       } else {
+        this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
+        this.$nextTick(() => {
+          // 手动触发window resize 事件
+          const resizeEvent = new Event('resize');
+          window.dispatchEvent(resizeEvent);
+        });
         this.isWhiteBoardEnabled = true;
         this.isDocEnabled = false;
         this.$refs.doc && this.$refs.doc.toggleBoard(true);
         this.isThumbnailEnabled = false;
-        // this.$refs.doc.toggleDocContainer(false);
       }
+      // if (this.isWhiteBoardEnabled) {
+      //   this.$refs.doc && this.$refs.doc.toggleDocContainer(true);
+      //   this.$refs.doc && this.$refs.doc.toggleBoard(false);
+      //   this.isWhiteBoardEnabled = false;
+      // } else {
+      //   this.isWhiteBoardEnabled = true;
+      //   this.isDocEnabled = false;
+      //   this.$refs.doc && this.$refs.doc.toggleBoard(true);
+      //   this.isThumbnailEnabled = false;
+      //   // this.$refs.doc.toggleDocContainer(false);
+      // }
     },
     shareScreen () {
       // if (this.status != 1) return this.$message('录制未开始，不能开启桌面共享')
