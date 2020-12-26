@@ -229,10 +229,9 @@ export default {
       }
     },
     lotteryPage: function(){
-      console.warn(this.givePrizeForm, 889);
       try {
         this.givePrizeList.forEach(ele=>{
-          console.warn(Boolean(this.givePrizeForm[ele.is_required]), ele, 'sf');
+          console.warn(Boolean(this.givePrizeForm[ele.is_required]), ele, '每一项-----');
           //  || ele.is_required != Boolean(this.givePrizeForm[ele.is_required])
           if(ele.placeholder != this.givePrizeForm[ele.field_key]){
             throw '改变'
@@ -300,9 +299,6 @@ export default {
           img_path: this.previewSrc,
           description: this.formData.description
       }
-      if(this.isLive){
-        return this.$message.error('当前活动正在开播中，无法更改')
-      }
       this.$fetch('savePrizeInfo', params).then(res => {
         if (res.code == 200) {
           this.$message.success('保存成功');
@@ -354,9 +350,6 @@ export default {
     },
     // 保存领奖页信息
     sureGivePrize() {
-      if(this.isLive){
-        return this.$message.error('当前活动正在开播中，无法更改')
-      }
       this.givePrizeList.forEach(ele=>{
         console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
         ele.placeholder = this.givePrizeForm[ele.field_key]

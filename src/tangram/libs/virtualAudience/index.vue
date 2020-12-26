@@ -165,7 +165,8 @@ export default {
       return Number(this.preson.onlineNum + this.preson.baseOnlineNum);
     },
     addPv () {
-      return Number(this.preson.pv + this.preson.basePv);
+      console.warn(this.preson.basePv);
+      return Number(this.preson.basePv);
     },
     addStatus () {
       console.log(this.status.pv && this.status.onlineNum);
@@ -272,8 +273,8 @@ export default {
     // 上线
     EventBus.$on('onlineJoin', msg => {
       this.preson.onlineNum = msg.uv;
-      if (msg.context.pv > this.preson.pv) {
-        this.preson.pv = msg.context.pv;
+      if (msg.context.pv > this.preson.basePv) {
+        this.preson.basePv = msg.context.pv;
       }
     });
 
