@@ -5,6 +5,7 @@
     @closed="closeHandler"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
+    :before-close="handleClose"
     width="880px">
     <div class="search">
       <el-input placeholder="请输入音视频名称" v-model="keyWords">
@@ -116,6 +117,10 @@ export default {
     }
   },
   methods: {
+    handleClose(done) {
+      this.pageInfo.pageNum = 1;
+      done();
+    },
     moreLoadData() {
       if (this.pageInfo.pageNum >= this.totalPages) {
         return false;

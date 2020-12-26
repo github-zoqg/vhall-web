@@ -1,6 +1,6 @@
 <template>
   <!-- 文档资料库 -->
-  <VhallDialog title="文档列表" :visible.sync="dialogVisible" :close-on-click-modal="false" width="878px">
+  <VhallDialog title="文档列表" :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="878px">
     <div class="word-list">
       <el-input
         class="head-btn search-tag"
@@ -105,6 +105,10 @@ export default {
     }
   },
   methods: {
+    handleClose(done) {
+      this.pageInfo.pageNum = 1;
+      done();
+    },
     moreLoadData() {
       if (this.pageInfo.pageNum >= this.totalPages) {
         return false;

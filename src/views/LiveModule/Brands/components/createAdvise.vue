@@ -48,6 +48,7 @@
       title="选择广告推荐"
       :visible.sync="dialogAdverVisible"
       :close-on-click-modal="false"
+      :before-close="handleClose"
       width="620px">
       <div class="content">
         <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" clearable @change="changeAdverment"></el-input></div>
@@ -151,6 +152,10 @@ export default {
     }
   },
   methods: {
+    handleClose(done) {
+      this.advertPageInfo.page = 1;
+      done();
+    },
     editShow() {
       if (this.title === '编辑') {
         this.$set(this.advertisement, 'img_url', this.advInfo.img_url);

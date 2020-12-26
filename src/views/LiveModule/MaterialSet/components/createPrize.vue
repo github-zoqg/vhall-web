@@ -35,6 +35,7 @@
       title="资料库选择"
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
+      :before-close="handleClose"
       width="588px">
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
@@ -134,6 +135,10 @@ export default {
     }
   },
   methods: {
+    handleClose(done) {
+      this.prizePageInfo.page = 1;
+      done();
+    },
     prizeResetForm() {
       this.prizeForm = {
         source: this.$parent.source,

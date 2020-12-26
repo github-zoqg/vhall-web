@@ -186,30 +186,24 @@
       </el-input>
       <div class="select-matrial-wrap">
         <div v-show="materiaTableData.length" class="material-box">
-          <div
-            v-for="(item, index) in materiaTableData"
-            :key='index'
-            class="matrial-item"
-            :class="{active: item.isChecked}"
-            @click.stop="handleChooseGift(index, item)">
-            <div class="gift-cover">
-              <img :src="item.img" alt>
+          <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
+            <div
+              v-for="(item, index) in materiaTableData"
+              :key='index'
+              class="matrial-item"
+              :class="{active: item.isChecked}"
+              @click.stop="handleChooseGift(index, item)">
+              <div class="gift-cover">
+                <img :src="item.img" alt>
+              </div>
+              <div class="gift-info">
+                <span class="gift-name">{{item.name}}</span>
+                <span class="gift-price">￥{{item.price}}</span>
+              </div>
+              <i v-if="item.isChecked" class="el-icon-check"></i>
             </div>
-            <div class="gift-info">
-              <span class="gift-name">{{item.name}}</span>
-              <span class="gift-price">￥{{item.price}}</span>
-            </div>
-            <i v-if="item.isChecked" class="el-icon-check"></i>
-          </div>
+          </el-scrollbar>
         </div>
-        <SPagination
-        :total="materialTotal"
-        v-show="materialTotal > materiaSearchParams.page_size"
-        :currentPage="materiaSearchParams.page"
-        :page-size="materiaSearchParams.page_size"
-        @current-change="materialPageChange"
-        :pagerCount="5"
-        align="center"></SPagination>
         <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length === 0"></null-page>
       </div>
       <div class="control">
@@ -253,6 +247,7 @@ export default {
         page_size: 6,
         page: 1
       },
+      maxPage: 0,
       defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
       materiaSearchName: '',
@@ -297,6 +292,13 @@ export default {
   },
   mounted() {},
   methods: {
+    moreLoadData() {
+      if (this.materiaSearchParams.page >= this.maxPage) {
+        return false;
+      }
+      this.materiaSearchParams.page ++ ;
+      this.queryMateriaGifts();
+    },
     handleInput(value) {
       if (value != '') {
         if (value.indexOf('.') > -1) {
@@ -547,8 +549,15 @@ export default {
               })
             }
           })
-          this.materiaTableData = res.data.list
+
+          if (this.materiaSearchParams.page_size * (this.materiaSearchParams.page - 1) === 0) {
+            this.materiaTableData = res.data.list;
+          } else {
+            this.materiaTableData.push(...res.data.list)
+          }
+
           this.materialTotal = res.data.total
+          this.maxPage = Math.ceil(res.data.total / this.materiaSearchParams.page_size);
         }
       })
     },
@@ -769,14 +778,14 @@ export default {
   .select-matrial-wrap {
     box-sizing: border-box;
     width: 100%;
-    height: 370px;
+    height: 320px;
     padding: 10px 0;
     overflow: hidden;
     /deep/ .null-page {
       margin-top: 110px!important;
     }
     .material-box {
-      height: 312px;
+      height: 310px;
       margin-bottom: 10px;
     }
     .head-btn{
@@ -791,7 +800,7 @@ export default {
     }
     .matrial-item {
       display: inline-block;
-      width: 266px;
+      width: 261px;
       height: 92px;
       margin: 6px;
       background: #F5F5F5;

@@ -4,6 +4,7 @@
       title="资料库"
       :visible.sync="dataBaseVisible"
       :close-on-click-modal="false"
+      :before-close="handleClose"
       width="50%">
       <div class="data-base">
         <div class="data-search" v-show="total || isSearch">
@@ -103,6 +104,10 @@ export default {
     // }
   },
   methods: {
+    handleClose(done) {
+      this.pageInfo.pageNum = 1;
+      done();
+    },
     moreLoadData() {
       if (this.pageInfo.pageNum >= this.totalPages) {
         return false;
