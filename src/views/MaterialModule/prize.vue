@@ -98,7 +98,7 @@ export default {
     noData
   },
   mounted() {
-    // this.getTableList();
+    this.getTableList();
   },
   methods: {
     onHandleBtnClick(val) {
@@ -112,16 +112,9 @@ export default {
       if (params === 'search') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
-        this.nullText = 'search';
-        this.text = '';
-        this.isSearch = true;
         if (this.tableData.length) {
           this.$refs.tableList.clearSelect();
         }
-      } else {
-        this.nullText = 'nullData';
-        this.text = '您还没有奖品，快来创建吧！';
-        this.isSearch = false;
       }
       if (this.source == '0') {
         formParams.room_id = this.roomId;
@@ -132,8 +125,14 @@ export default {
       this.$fetch('getPrizeList', obj).then(res => {
         this.tableData = res.data.list;
         this.total = res.data.count;
-        if (!res.data.count && params === 'search') {
+        if (params === 'search') {
           this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有奖品，快来创建吧！';
+          this.isSearch = false;
         }
         this.tableData.map(item => {
           item.img = item.img_path;
