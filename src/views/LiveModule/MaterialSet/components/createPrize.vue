@@ -148,20 +148,31 @@ export default {
       }
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
-          this.dialogVisible = false;
-          this.prizeForm.room_id = this.$route.query.roomId || '';
-          this.$fetch('createPrize', this.prizeForm).then(res => {
-            if (res.code == 200) {
-              this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
-              this.$emit('getTableList');
-            } else {
-              this.$message.error(res.msg);
-            }
-          })
+          this.$confirm('是否同步到资料库？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box'
+          }).then(() => {
+            this.sureConfirmPrize()
+          }).catch(() => {
+            this.sureConfirmPrize()
+          });
         } else {
           return false;
         }
       });
+    },
+    sureConfirmPrize() {
+       this.dialogVisible = false;
+        this.prizeForm.room_id = this.$route.query.roomId || '';
+        this.$fetch('createPrize', this.prizeForm).then(res => {
+          if (res.code == 200) {
+            this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
+            this.$emit('getTableList');
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
     },
     sureChoisePrize() {
       let params = {

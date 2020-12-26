@@ -303,7 +303,7 @@
             :layout="roomStatus.layout"
             :status="status"
             :isInteract="isInteract"
-            :webinarId="ilId"
+            :webinadId="ilId"
             ref="interactive"
           ></Interactive>
         </streams>
@@ -1407,7 +1407,7 @@ export default {
         html = '非默认回放将暂存15天';
       } else if (this.record_notice == 2) {
         html =
-          "非默认回放将暂存15天，联系您的客户经理或 <a href=\"http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738\" style='color: #fc5659' target='_blank'>客服</a> 开通点播服务，即可将非默认回放永久保存和播放";
+          "非默认回放将暂存15天，联系您的客户经理或 <a href=\"http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738\" style='color: #fc5659' target='_blank'>客服</a> 开通点播服务，即可将非默认回放永久保存和播放";
       } else if (this.record_notice == 3) {
         html =
           '非默认回放将暂存15天，发布为点播，即可将非默认回放永久保存和播放';

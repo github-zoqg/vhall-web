@@ -337,7 +337,7 @@ export default {
          if (res.code == 200) {
            this.$message.success(this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功');
          } else {
-           this.$message.error("保存跑马灯失败");
+           this.$message.error(res.msg || "保存跑马灯失败");
          }
       });
     },
@@ -355,7 +355,7 @@ export default {
           this.getBaseWaterList();
           this.$message.success(this.watermark_open ? "水印开启成功" : "水印关闭成功");
          } else {
-          this.$message.error("保存水印灯失败");
+          this.$message.error(res.msg || "保存水印灯失败");
          }
       });
     },
@@ -371,7 +371,7 @@ export default {
         if (res.code == 200) {
           this.$message.success('设置成功');
         } else {
-          this.$message.success('设置失败');
+          this.$message.success(res.msg || '设置失败');
         }
       })
     },

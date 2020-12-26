@@ -108,6 +108,9 @@ export default {
             if (res && res.code === 200) {
               // 绑定成功
               this.$message.success('绑定成功');
+              sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+              sessionOrLocal.set('sso_token', res.data.sso_token);
+              sessionOrLocal.set('userId', res.data.user_id);
               // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
               sessionOrLocal.removeItem('tag', 'localStorage');
               sessionOrLocal.removeItem('bind_result');

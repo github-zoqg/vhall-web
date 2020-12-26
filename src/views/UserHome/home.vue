@@ -64,7 +64,7 @@ export default {
     },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
-        home_user_id: sessionOrLocal.get('userId')
+        home_user_id: this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {

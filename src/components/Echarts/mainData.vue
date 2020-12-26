@@ -4,7 +4,7 @@
       <p>关键数据</p>
     </div>
     <el-row type="flex" class="row-bg" justify="space-around">
-      <el-col :span="6" v-if="titleType==='直播'">
+      <el-col :span="6" v-if="titleType=='1'">
         <div class="grid-content">
           <span>直播场次</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -22,9 +22,9 @@
           </h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType!=='全部'">
+      <el-col :span="6" v-if="titleType">
         <div class="grid-content">
-          <span>{{ titleType }}总时长</span>
+          <span>{{ titleType == 1 ? '直播' : '点播'}}总时长</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">每场直播活动的时长，筛选条件内数据进行相加</div>
             <i class="el-icon-question"></i>
@@ -39,7 +39,7 @@
           </h3>
         </div>
       </el-col>
-       <el-col :span="6" v-if="titleType==='全部'">
+       <el-col :span="6" v-if="!titleType">
         <div class="grid-content">
           <span>活动总数</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -55,7 +55,7 @@
           </h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType!=='点播'">
+      <el-col :span="6" v-if="titleType!='4'">
         <div class="grid-content">
           <span>最高并发</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -91,7 +91,7 @@
           </h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType!=='直播'">
+      <el-col :span="6" v-if="titleType!='1'">
         <div class="grid-content">
           <span>观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -110,8 +110,8 @@
         </div>
       </el-col>
     </el-row>
-    <el-row type="flex" class="row-bg bg-purple" :class="titleType !== '全部' ? 'activeJustify' : ''">
-      <el-col :span="6" v-if="titleType==='直播'">
+    <el-row type="flex" class="row-bg bg-purple" :class="!titleType ? 'activeJustify' : ''">
+      <el-col :span="6" v-if="titleType==='1'">
         <div class="grid-content">
           <span>观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -179,8 +179,8 @@ import CountTo from 'vue-count-to';
 export default {
   props: {
     titleType: {
-      type: String,
-      default: '直播'
+      type: String || Number,
+      default: '0'
     },
     highData: {
       type: Number,

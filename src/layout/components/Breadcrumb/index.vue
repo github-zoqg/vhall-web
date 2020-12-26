@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
-      <span>今日，</span>{{sysDateStr}}，欢迎您回到微吼控制台。
+      今日，{{sysDateStr}}，欢迎您回到微吼控制台。
     </div>
     <el-breadcrumb class="app-breadcrumb" separator="/" v-else>
       <transition-group name="breadcrumb">
@@ -39,7 +39,8 @@ export default {
       window.clearInterval(this.dateUpdateTimer);
     }
     // 获取本地系统时间字符串
-    this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
+    // this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
+    this.sysDateStr = this.$moment(new Date().getTime()).format('YYYY年MM月DD日');
     this.updateData();
     // 获取导航面包屑
     this.getBreadcrumb();
@@ -96,6 +97,8 @@ export default {
   font-size: 14px;
   line-height: 32px;
   margin-left: 8px;
+  font-weight: 400;
+  color: #000000;
   span {
     font-weight: bold;
     font-size: 18px;

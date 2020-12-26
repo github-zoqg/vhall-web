@@ -2,7 +2,7 @@
   <div class="null-page" :style="{marginTop: height + 'px'}">
     <div v-if="nullType === 'search'" class="search">
       <img src="../../../common/images/sys/no-search.svg" class="no-search" />
-      <p class="null-info">暂未搜索到您想要的内容</p>
+      <p class="null-info">{{ noSearchText }}</p>
     </div>
     <div v-else-if="nullType === 'no-show'" class="no-show">
       <p class="null-info" v-html="text"></p>
@@ -32,6 +32,10 @@ export default {
     height: {
       type: Number,
       default: 185
+    },
+    noSearchText: {
+      type: String,
+      default: '暂未搜索到您想要的内容'
     }
   }
 };

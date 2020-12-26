@@ -28,7 +28,7 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
+          <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
         </div>
       </el-col>
       <el-col :span="6" v-if="userInfo.concurrency.extend_day">
@@ -43,7 +43,7 @@
       <el-col :span="9">
         <div class="top-item">
           <p>当前版本</p>
-          <h2>{{ userInfo.edition }} <span class="level" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
+          <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
           <p>有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
@@ -191,13 +191,12 @@ export default {
       text-align: center;
       padding: 1px 7px;
       margin-left: 5px;
-      cursor: pointer;
       border-radius: 10px;
+      cursor: pointer;
     }
     p {
       font-size: 14px;
       color: #999;
-      cursor: pointer;
     }
     i{
       color: #000;
@@ -217,6 +216,7 @@ export default {
       right:0;
       color: #3562FA;
       font-size: 14px;
+      cursor: pointer;
     }
   }
 }
