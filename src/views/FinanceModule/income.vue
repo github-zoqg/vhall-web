@@ -282,7 +282,6 @@ export default {
       paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = obj;
-      console.log(obj, '11111111111111111111');
       let url = this.activeIndex == '1' ? "liveIncomeList" : "packetIncomeList";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
@@ -301,31 +300,30 @@ export default {
       });
     },
     cash(title) {
-      this.$refs.cashBox.dialogCashVisible = true;
-      // if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
-      //   this.$message.warning('当前余额不足1元，不支持提现');
-      //   return false;
-      // } else if (title === '直播' && parseInt(this.incomeInfo.live_balance) > 800) {
-      //   this.$message.warning('需要线下审核提现');
-      //   return false;
-      // }
-      // if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) < 1) {
-      //   this.$message.warning('当前余额不足1元，不支持提现');
-      //   return false;
-      // } else if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) > 800) {
-      //   this.$message.warning('需要线下审核提现');
-      //   return false;
-      // }
-      // let flag = this.isBangWeixin();
-      // // （false）未绑定微信   绑定微信(true)
-      // if (flag) {
-      //   this.$refs.cashBox.dialogCashVisible = true;
-      //   this.phone = this.userInfo.phone;
-      //   this.money = this.title === '直播' ? this.incomeInfo.live_balance : this.incomeInfo.red_packet_balance;
-      //   this.type = this.title === '直播' ? 0 : 1;
-      // } else {
-      //   this.$refs.cashBox.dialogVisible = true;
-      // }
+      if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
+        this.$message.warning('当前余额不足1元，不支持提现');
+        return false;
+      } else if (title === '直播' && parseInt(this.incomeInfo.live_balance) > 800) {
+        this.$message.warning('需要线下审核提现');
+        return false;
+      }
+      if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) < 1) {
+        this.$message.warning('当前余额不足1元，不支持提现');
+        return false;
+      } else if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) > 800) {
+        this.$message.warning('需要线下审核提现');
+        return false;
+      }
+      let flag = this.isBangWeixin();
+      // （false）未绑定微信   绑定微信(true)
+      if (flag) {
+        this.$refs.cashBox.dialogCashVisible = true;
+        this.phone = this.userInfo.phone;
+        this.money = title === '直播' ? this.incomeInfo.live_balance : this.incomeInfo.red_packet_balance;
+        this.type = title === '直播' ? 0 : 1;
+      } else {
+        this.$refs.cashBox.dialogVisible = true;
+      }
     },
     onreload() {
       this.getIncomeInfo();
