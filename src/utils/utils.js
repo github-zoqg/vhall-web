@@ -263,7 +263,14 @@ export function checkAuth(to, from, next) {
         }
         // 非观看页第三方登录场景，均跳转/home
         if (!sourceTag) {
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          if(auth_tag) {
+            if (auth_tag.indexOf('bind') !== -1) {
+              // 绑定成功
+              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            }
+          } else {
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          }
           return;
         }
       } else {
