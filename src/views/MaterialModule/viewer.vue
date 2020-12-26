@@ -9,8 +9,8 @@
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
+          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button round @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
           <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
           <el-link :href="downloadUrl" v-else>下载模板</el-link>
@@ -106,7 +106,7 @@
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog width="468px" title="导入观众" :visible.sync="importFileShow" append-to-body>
+    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="468px">
       <div class="upload-dialog-content">
         <file-upload
           v-model="fileUrl"
@@ -155,26 +155,32 @@ export default {
         {
           label: '姓名',
           key: 'name',
+          width: ''
         },
         {
           label: '行业',
           key: 'industry',
+          width: ''
         },
         {
           label: '邮箱',
           key: 'email',
+          width: ''
         },
         {
           label: '手机号',
           key: 'phone',
+          width: ''
         },
         {
           label: '工号',
           key: 'job_number',
+          width: ''
         },
         {
           label: '其它',
           key: 'other',
+          width: ''
         }
       ],
       tableRowBtnFun: [
@@ -368,7 +374,8 @@ export default {
       this.$confirm('确定要删除当前分组？', '删除组', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false
       }).then(() => {
         let params = {
           group_ids: item.id
@@ -507,7 +514,8 @@ export default {
         this.$confirm('确定从当前组里删除该观众？', '删除观众', {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -642,7 +650,7 @@ export default {
 }
 .table__container {
   width: calc(100% - 256px);
-  .padding-table-list();
+  .padding-table-list2();
   background: #FFFFFF;
   min-height: 500px;
 }
@@ -651,7 +659,7 @@ export default {
   margin-bottom: 32px;
 }
 .group__container {
-  width: 176px;
+  width: 200px;
   min-height: 120px;
   background: #FFFFFF;
   border-radius: 4px;
