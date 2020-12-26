@@ -545,7 +545,7 @@ export default {
       required: true
     },
     chatShow: {
-      required: true
+      required: false
     },
     roomId: {
       type: [String],
@@ -557,7 +557,7 @@ export default {
     },
 
     vssToken: {
-      required: true
+      required: false
     },
 
     vssJoinId: {
@@ -593,7 +593,7 @@ export default {
       default: ''
     },
     menuData: {
-      required: true,
+      required: false,
       default: []
     },
     bizInfo: { // 业务层信息（主要是配置相关信息）
@@ -764,9 +764,9 @@ export default {
         if (val) {
 
           this.vssInfo = val
-          this.poster = val.webinar.image_url ? val.webinar.image_url : '';
+          this.poster = val.webinar && val.webinar.image_url ? val.webinar.image_url : '';
           this.userModules = val.modules;
-          this.isInteract = val.webinar.is_interact;
+          this.isInteract = val.webinar && val.webinar.is_interact;
           this.uploadDomain = val.domains.upload
 
         }

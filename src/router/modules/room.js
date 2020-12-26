@@ -34,7 +34,7 @@ const router = [
       },
       {
         path: '/embedclient/watch/:il_id',
-        component: () => import('@/views/LiveModule/Room/watchWrap'),
+        component: () => import('@/views/LiveModule/Room/embedClient'),
         name: 'embedWatch',
         meta: { title: '嵌入观看直播' },
       },
