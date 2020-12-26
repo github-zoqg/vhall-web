@@ -230,10 +230,8 @@ export default {
     },
     lotteryPage: function(){
       try {
-        this.givePrizeList.forEach(ele=>{
-          console.warn(Boolean(this.givePrizeForm[ele.is_required]), ele, '每一项-----');
-          //  || ele.is_required != Boolean(this.givePrizeForm[ele.is_required])
-          if(ele.placeholder != this.givePrizeForm[ele.field_key]){
+        this.givePrizeList.forEach((ele, index)=>{
+          if(ele.placeholder != this.givePrizeForm[ele.field_key] || ele.is_required != Boolean(this.lotteryPageMessage[index].is_required)){
             throw '改变'
           }
         })
@@ -273,7 +271,7 @@ export default {
           this.formData.description = res.data.description;
           this.formData.title = res.data.title;
           this.localLottery = res.data
-          this.previewSrc = res.data.img_path || '';
+          this.previewSrc = res.data.img_path;
           this.backgroundImg = res.data.img_path || this.prizeImgList[0];
           if (res.data.img_path) {
             this.localImg = 10
@@ -339,7 +337,8 @@ export default {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
         console.warn(res.data, '获取领奖页信息');
         this.givePrizeList = res.data;
-        this.lotteryPageMessage = res.data
+        // 深拷贝一个对象做对比
+        this.lotteryPageMessage = JSON.parse(JSON.stringify(res.data))
         this.givePrizeList.forEach(ele=>{
           this.givePrizeForm[ele.field_key] = ele.placeholder
         })
