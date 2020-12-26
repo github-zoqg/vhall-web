@@ -53,13 +53,15 @@
           <p v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
-          <el-input v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
+          <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
         </el-form-item>
         <el-form-item label="新密码"  key="pasword"  prop="password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input v-model.trim="form.password" auto-complete="off" placeholder="输入新密码"></el-input>
+          <el-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''">
+            <template slot="append" v-if="form.password && form.password.length >= 6">{{pwdLevel}}</template>
+          </el-input>
         </el-form-item>
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
+          <el-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
           <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
@@ -165,7 +167,6 @@ export default {
       captcha: null, // 云盾本身
       codeKey: null, // 短信、邮箱验证码校验接口返回key值
       errorMsgShow: '',
-
       downTimer1: null,
       time1: 60, // 倒计时
       isDisabledClick1: false,
@@ -185,6 +186,26 @@ export default {
     },
     openLink() {
       return env.staticLinkVo.kf;
+    },
+    pwdLevel() {
+      // 密码强度分为：弱/一般/强
+      // （1）弱：密码长度6位，纯数字或者纯字母，如123456、111111、aaaaaa  纯6个
+      // （2）一般：密码长度6位及以上的，数字+字母组合；
+      // （3）一般：密码长度7位及以上的，纯数字或者纯字母组合，如1111111
+      // （4）强：密码长度7位及以上的，数字+字母+特殊符号+大小写字母
+      if(!this.form.password) {
+        return '';
+      } else if(this.form.password.length < 6) {
+        return '';
+      } else if(/^[a-z]{6}$/.test(this.form.password) || /^\d{6}$/.test(this.form.password) || /^A-Z{6}$/.test(this.form.password)) {
+        return '弱';
+      } else if(/^[a-z]{7,}$/.test(this.form.password) || /^\d{7,}$/.test(this.form.password) || /^A-Z{7,}$/.test(this.form.password)) {
+        return '一般';
+      } else if(this.form.password.length >= 6 && (/(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/.test(this.form.password))) {
+        return '一般';
+      } else {
+        return '强';
+      }
     }
   },
   methods: {
@@ -548,6 +569,8 @@ export default {
         // 为表单赋值-初始化
         this.form.phone = vo.phone || '';
         this.form.email = vo.email || '';
+        this.form.code = '';
+        this.form.new_code = '';
 
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);

@@ -39,6 +39,8 @@ export default {
   },
   created() {
     this.getMsgInfo();
+    // 通知右上角导航，需要更新未度消息
+    this.$EventBus.$emit('saas_vs_msg_count', true);
   }
 };
 </script>
