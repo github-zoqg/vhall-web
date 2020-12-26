@@ -186,7 +186,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="webniarType=='live' && !this.versionType">
+      <p class="switch__box" v-if="webniarType=='live' && limitInfo.type == 1">
          <el-switch
           style="display: block"
           v-model="capacity"
@@ -207,7 +207,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="versionType ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="limitInfo.type == 2 ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -284,9 +284,9 @@ export default {
     },
     capacityDesc(){
       if(this.capacity){
-        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
+        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
       }else{
-        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
+        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
       }
     },
     limitCapacityDesc(){
@@ -364,7 +364,6 @@ export default {
     }
   },
   created(){
-    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
       if(this.$route.query.id){
@@ -473,8 +472,9 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (this.limitCapacity > this.limitInfo.total) {
+      if (this.limitCapacity > this.limitInfo.balance) {
         this.$message.error(`最大并发数不能大于并发剩余量`);
+        return;
       }
       let data = {
         webinar_id: this.webinarId || '',
@@ -506,7 +506,7 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, data).then(res=>{
+          this.$fetch(url, this.$params(data)).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
               this.isSaveInfo = true;
@@ -535,8 +535,9 @@ export default {
       this.showDialog = true;
     },
     getHighLimit() {
-      this.$fetch('getHighLimit').then(res => {
+      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
         this.limitInfo = res.data;
+        // this.versionType = res.data.type;
       })
     },
     resetForm(formName) {

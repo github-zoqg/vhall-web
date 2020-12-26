@@ -32,7 +32,7 @@
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
             <el-row :gutter="40" class="lives">
-              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                 <div class="inner">
                   <div class="top">
                     <span class="liveTag">{{item.type | actionText }}</span>
@@ -97,6 +97,9 @@ export default {
       this.pageNum = current;
       this.pagePos = parseInt((current - 1) * this.pageSize);
       this.getSpecialList();
+    },
+    toDetail(id) {
+      this.$router.push({path: `/live/detail/${id}`});
     },
     handleClick(tab) {
       this.activeName = tab.name;

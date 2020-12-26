@@ -23,7 +23,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit  oninput="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\?\<\>\。\，\-\——\=\;\！\!\+\$]/g,'')" οnpaste="return false" οncοntextmenu="return false;"></el-input>
+            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -148,31 +148,42 @@ export default {
       }
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
-          this.$confirm('是否同步到资料库？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            customClass: 'zdy-message-box'
-          }).then(() => {
-            this.sureConfirmPrize()
-          }).catch(() => {
-            this.sureConfirmPrize()
-          });
+          if (this.$parent.source == 1) {
+            this.sureConfirmPrize();
+            console.log(this.$parent.source, '111111111111111');
+          } else {
+             this.$confirm('是否同步到资料库？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              customClass: 'zdy-message-box'
+            }).then(() => {
+              // 保存到资料库
+              console.log(this.$parent.source, '2222222222222222222');
+              this.prizeForm.source = 1;
+              this.sureConfirmPrize();
+            }).catch(() => {
+              // 不保存资料库
+              console.log(this.$parent.source, '33333333333');
+              this.prizeForm.source = 0;
+              this.sureConfirmPrize()
+            });
+          }
         } else {
           return false;
         }
       });
     },
     sureConfirmPrize() {
-       this.dialogVisible = false;
-        this.prizeForm.room_id = this.$route.query.roomId || '';
-        this.$fetch('createPrize', this.prizeForm).then(res => {
-          if (res.code == 200) {
-            this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
-            this.$emit('getTableList');
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
+      this.dialogVisible = false;
+      this.prizeForm.room_id = this.$route.query.roomId || '';
+      this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$emit('getTableList');
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
     },
     sureChoisePrize() {
       let params = {
@@ -217,7 +228,14 @@ export default {
         source: 1,
         ...this.prizePageInfo
       }
-      if (this.keyword) {
+      this.$fetch('getPrizeList', params).then(res => {
+        let adList = res.data.list;
+        adList.map(item => {
+          item.isChecked = false;
+        });
+        this.list.push(...adList);
+        this.total = res.data.count;
+        if (this.keyword) {
         this.nullText = 'search';
         this.text = '';
         this.isSearch = true;
@@ -226,13 +244,6 @@ export default {
         this.text = '您还没有奖品，快来创建吧！';
         this.isSearch = false;
       }
-      this.$fetch('getPrizeList', params).then(res => {
-        let adList = res.data.list;
-        adList.map(item => {
-          item.isChecked = false;
-        });
-        this.list.push(...adList);
-        this.total = res.data.count;
         this.maxPage = Math.ceil(res.data.count / this.prizePageInfo.limit);
       })
     },
@@ -284,7 +295,6 @@ export default {
       this.$refs[prizeForm].resetFields();
     },
     choisePrize(item) {
-      console.log(item, '111111111111');
       item.isChecked = !item.isChecked;
       this.checkedList = this.list.filter(items => items.isChecked).map(item => item.prize_id);
     }

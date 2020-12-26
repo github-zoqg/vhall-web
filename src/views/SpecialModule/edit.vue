@@ -214,7 +214,7 @@ export default {
           this.content = res.data.webinar_subject.intro
 
           // 配置项
-          this.home = Boolean(res.data.webinar_subject.is_open) // 是否显示个人主页
+          this.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
           this.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
           this.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
 
@@ -281,7 +281,7 @@ export default {
             subject: this.formData.title,
             introduction: this.content,
             img_url: this.imageUrl,
-            is_private: Number(this.home),
+            is_private: this.home ? 0 : 1,
             hide_appointment: Number(this.reservation),
             hide_pv: Number(this.hot),
           };
