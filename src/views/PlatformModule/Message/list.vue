@@ -2,13 +2,13 @@
   <div>
     <pageTitle title='消息中心'></pageTitle>
     <!-- 有消息内容 -->
-    <div class="message-list">
-      <div v-if="msgDao.total > 0">
-          <div class="message--title">
-          <el-button type="primary" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-          <el-button round @click.prevent.stop="executeUseRead">标记为已读</el-button>
-        </div>
-        <!-- 表格与分页 -->
+    <div v-if="msgDao.total > 0">
+      <div class="message--title">
+        <el-button size="medium" type="primary" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
+        <el-button size="medium" round @click.prevent.stop="executeUseRead">标记为已读</el-button>
+      </div>
+      <!-- 表格与分页 -->
+      <div class="message-list">
         <table-list
           ref="msgTable"
           :isHandle=true
@@ -22,9 +22,9 @@
         >
         </table-list>
       </div>
-      <!-- 无消息内容 -->
-      <null-page v-else></null-page>
     </div>
+    <!-- 无消息内容 -->
+    <null-page v-else></null-page>
   </div>
 </template>
 
@@ -214,7 +214,7 @@ export default {
 .message-list {
   .layout--right--main();
   .min-height();
-  .padding41-40();
+  .padding-table-list();
 }
 .message--title {
   margin-bottom: 24px;
