@@ -6,7 +6,7 @@
       @close="cancelSelect"
       width="592px">
       <div class="search" v-show="total || isSearch">
-        <el-input v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
       </div>
       <div class="vh-chose-active-box"
         v-infinite-scroll="getActiveList"
@@ -120,7 +120,8 @@ export default {
     getActiveList() {
       this.loading = true
       const pos = (this.page - 1) * this.pageSize
-      const limit = this.page * this.pageSize
+      console.log(pos, '1111111111111111');
+      const limit = this.pageSize
       const userId = sessionStorage.getItem('userId')
       let params = {
         pos: pos,
@@ -133,7 +134,6 @@ export default {
 
       this.$fetch('liveList', this.$params(params)).then((res) => {
         if(res.code == 200) {
-          this.page = this.page + 1
           if (!this.keyword) {
           // 默认状态
             this.nullText = 'nullData';
@@ -152,7 +152,7 @@ export default {
           } else {
             this.activeList =  this.activeList.concat(res.data.list)
             this.total = res.data.total
-            // 老控制台选择不需要回显选中的
+            // this.page = this.page + 1
             // this.syncCheckStatus()
             this.loading = false
           }
@@ -310,6 +310,14 @@ export default {
       border-radius: 20px;
       position: relative;
       z-index: 2;
+      .live-status{
+         padding: 5px;
+          img{
+            margin:6px 7px;
+            width: 8px;
+            height: 8px;
+          }
+        }
     }
   }
   .select-option{

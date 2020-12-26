@@ -14,10 +14,10 @@
       @onSearchFun="getDataList('search')"
       >
     </search-area>
-    <main-data :mainKeyData="mainKeyData" :titleType="liveDetailInfo.webinar_state"></main-data>
+    <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
     <el-card class="statistical-data">
       <div class="statistical-title">用量统计</div>
-      <div class="statistical-line">
+      <div class="statistical-line" v-if="titleType != 4">
         <span>并发趋势图</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
@@ -73,7 +73,7 @@ import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
-      titleType: '直播',
+      titleType: 1,
       active: 2,
       params: {}, //导出的时候用来记录参数
       mainKeyData: {
@@ -191,6 +191,11 @@ export default {
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
+        if (this.liveDetailInfo.webinar_state != 4) {
+          this.titleType = 1;
+        } else {
+          this.titleType = 4;
+        }
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);

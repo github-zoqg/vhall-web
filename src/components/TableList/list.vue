@@ -227,6 +227,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .data-list {
+  min-height: 650px;
   .word-status {
     margin-right: 12px;
   }

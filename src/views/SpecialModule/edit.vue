@@ -344,7 +344,8 @@ export default {
       selectedActives.map(item => {
         this.selectedActives.push(item);
       })
-      console.log(this.selectedActives, '11111111111')
+      let id = 'webinar_id';
+      this.selectedActives = this.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
       this.showActiveSelect = false
     },
     // 删除事件

@@ -4,7 +4,7 @@
       <p>关键数据</p>
     </div>
     <el-row type="flex" class="row-bg" justify="space-around">
-      <el-col :span="6" v-if="titleType=='1'">
+      <el-col :span="6" v-if="titleType==1">
         <div class="grid-content">
           <span>直播场次</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -55,7 +55,7 @@
           </h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType!='4'">
+      <el-col :span="6" v-if="titleType!=4">
         <div class="grid-content">
           <span>最高并发</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -91,7 +91,7 @@
           </h3>
         </div>
       </el-col>
-      <el-col :span="6" v-if="titleType!='1'">
+      <el-col :span="6" v-if="titleType!=1">
         <div class="grid-content">
           <span>观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -110,8 +110,8 @@
         </div>
       </el-col>
     </el-row>
-    <el-row type="flex" class="row-bg bg-purple" :class="!titleType ? 'activeJustify' : ''">
-      <el-col :span="6" v-if="titleType==='1'">
+    <el-row type="flex" class="row-bg bg-purple" :class="titleType ? 'activeJustify' : ''">
+      <el-col :span="6" v-if="titleType==1">
         <div class="grid-content">
           <span>观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -179,8 +179,8 @@ import CountTo from 'vue-count-to';
 export default {
   props: {
     titleType: {
-      type: String || Number,
-      default: '0'
+      type: Number,
+      default: 0
     },
     highData: {
       type: Number,
@@ -192,6 +192,9 @@ export default {
   },
   components: {
     CountTo
+  },
+  created() {
+    console.log(this.titleType, 23234432534535)
   }
 };
 </script>

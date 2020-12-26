@@ -685,8 +685,9 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    height: 180px;
+    height: 130px;
     width: 100%;
+    margin-top: 30px;
   }
   .tag{
     padding: 3px 18px;

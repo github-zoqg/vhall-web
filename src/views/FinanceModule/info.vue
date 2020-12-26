@@ -16,8 +16,8 @@
           <i class="el-icon-question"></i>
         </el-tooltip>
           <search-area
-            ref="searchArea"
-            :searchAreaLayout="searchAreaLayout"
+            ref="searchLineLayout"
+            :searchAreaLayout="searchLineLayout"
             @onExportData="exportCenterData()"
             @onSearchFun="getLineList()"
           >
@@ -35,8 +35,8 @@
           <i class="el-icon-question"></i>
         </el-tooltip>
         <search-area
-            ref="searchAccount"
-            :searchAreaLayout="searchAccount"
+            ref="searchDataAccount"
+            :searchAreaLayout="searchDataAccount"
             @onExportData="exportAccount()"
             @onSearchFun="getAccountList('search')"
         >
@@ -125,13 +125,13 @@ export default {
       totalNum: 1000,
       vm: {},
       status: 0,
-      searchAreaLayout: [
+      searchLineLayout: [
         {
           type: "2",
           key: "searchTime",
         }
       ],
-      searchAccount:[
+      searchDataAccount:[
         {
           type: "2",
           key: "searchTime",
@@ -142,24 +142,7 @@ export default {
       ],
       isCheckout: false,
       isHandle: false,
-      tableList: [
-        {
-          webinar_id: '1',
-          pay_date: '2020-09-17',
-          subject: '哈哈哈',
-          typePay: '123',
-          webinar_max_uv: '124',
-          typeText: '主账号'
-        },
-        {
-          webinar_id: '2',
-          pay_date: '2021-09-17',
-          subject: 'xixiiii',
-          typePay: '111',
-          webinar_max_uv: '222',
-          typeText: '主账号'
-        }
-      ],
+      tableList: [],
       tabelColumn: [],
       tabelColumns: [
         {
@@ -219,14 +202,8 @@ export default {
           }
         ]
       }
-      this.searchAreaLayout.push(mainParams);
-      this.searchAccount.push(mainParams);
-      // this.searchAreaLayout.map(item => {
-      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      // })
-      // this.searchAccount.map(item => {
-      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      // })
+      this.searchLineLayout.push(mainParams);
+      this.searchDataAccount.push(mainParams);
     }
   },
   mounted() {
@@ -246,7 +223,8 @@ export default {
   methods: {
     // 用量统计数据
     getLineList(params) {
-      let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
+      console.log()
+      let formParams = this.$refs.searchLineLayout.searchParams; //获取搜索参数
       let paramsObj = {
         account_id: this.userId,
         type: formParams.type || 1
@@ -283,7 +261,7 @@ export default {
     // 获取消费账单列表
     getAccountList(params) {
       let pageInfo = this.$refs.accountTableList.pageInfo;
-      let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
+      let formParams = this.$refs.searchDataAccount.searchParams; //获取搜索参数
       let paramsObj = {
         account_id: this.userId,
         type: formParams.type || 1

@@ -154,8 +154,7 @@ export default {
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
           if (this.$parent.source == 1) {
-            this.sureConfirmPrize();
-            console.log(this.$parent.source, '111111111111111');
+            this.materiaPrize();
           } else {
              this.$confirm('是否同步到资料库？', '提示', {
               confirmButtonText: '确定',
@@ -163,14 +162,11 @@ export default {
               customClass: 'zdy-message-box'
             }).then(() => {
               // 保存到资料库
-              console.log(this.$parent.source, '2222222222222222222');
-              this.prizeForm.source = 1;
-              this.sureConfirmPrize();
+              this.materiaPrize();
+              this.liveSurePrize();
             }).catch(() => {
               // 不保存资料库
-              console.log(this.$parent.source, '33333333333');
-              this.prizeForm.source = 0;
-              this.sureConfirmPrize()
+              this.liveSurePrize()
             });
           }
         } else {
@@ -178,12 +174,28 @@ export default {
         }
       });
     },
-    sureConfirmPrize() {
+    // 资料库保存奖品
+    materiaPrize() {
       this.dialogVisible = false;
+      this.prizeForm.room_id = '';
+      this.prizeForm.source = 1;
+      this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$emit('getTableList');
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
+    },
+    // 直播下的保存奖品
+    liveSurePrize() {
+      this.dialogVisible = false;
+      this.prizeForm.source = 0;
       this.prizeForm.room_id = this.$route.query.roomId || '';
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
-          this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$message.success(`直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
           this.$emit('getTableList');
         } else {
           this.$message.error(res.msg);
