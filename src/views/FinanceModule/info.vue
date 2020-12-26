@@ -339,7 +339,6 @@ export default {
       let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
       this.$fetch(url, this.lineParams).then(res => {
         if (res.code == 200) {
-           this.lineParams = {};
           this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
         } else {
@@ -352,7 +351,6 @@ export default {
       let url = this.versionType == '1' ? 'exportFlowDetail' : 'exportOnlineDetail';
       this.$fetch(url, this.dataParams).then(res => {
         if (res.code == 200) {
-          this.dataParams = {};
           this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
         } else {

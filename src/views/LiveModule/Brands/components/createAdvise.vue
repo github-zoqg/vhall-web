@@ -138,6 +138,7 @@ export default {
       if (this.dialogVisible) {
         this.editShow();
       } else {
+        this.advertisement = {};
         this.clearForm();
       }
     },

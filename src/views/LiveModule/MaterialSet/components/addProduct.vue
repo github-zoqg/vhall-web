@@ -47,10 +47,10 @@
           <el-input type="textarea" v-model.trim="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></el-input>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <el-input v-model.trim="form.price" placeholder="请输入商品原价0.00元" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"><i slot="suffix">元</i></el-input>
+          <el-input v-model.trim="form.price" placeholder="请输入商品原价0.00元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="优惠价">
-         <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0.00元" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"><i slot="suffix">元</i></el-input>
+         <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0.00元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <el-input v-model.trim="form.url" placeholder="请输入商品链接"></el-input>
@@ -141,7 +141,6 @@ export default {
             img_id: item.img_id
           };
         });
-        console.log(this.fileList, this.form.img_id, '0000000000000000');
         // 图片 ID 处理
         // res.data.img_list.forEach(item => {
         //   this.form.img_id.push(item.img_id);
@@ -287,12 +286,12 @@ export default {
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (!this.form.price) {
-            this.$message.error('商品原价不能为0');
+          if (this.form.price < 1 || this.form.price > 99999999.99) {
+            this.$message.error('价格必须介于1-99999999.99之间');
             return;
           }
-          if (!this.form.discount_price) {
-            this.$message.error('优惠价不能为0');
+          if (this.form.discount_price < 1 || this.form.price > 99999999.99) {
+            this.$message.error('价格必须介于1-99999999.99之间');
             return;
           }
           if (parseFloat(this.form.discount_price) > parseFloat(this.form.price)) {

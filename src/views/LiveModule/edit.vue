@@ -472,9 +472,11 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (this.limitCapacity > this.limitInfo.balance) {
-        this.$message.error(`最大并发数不能大于并发剩余量`);
-        return;
+      if (this.versionType == 1) {
+        if (this.limitCapacity > this.limitInfo.balance) {
+          this.$message.error(`最大并发数不能大于并发剩余量`);
+          return;
+        }
       }
       let data = {
         webinar_id: this.webinarId || '',
