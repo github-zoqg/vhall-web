@@ -409,7 +409,17 @@ export default {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
     },
     toRecord() {
-      this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
+      this.$fetch('recordCheck', {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        if (res.code == 12550) {
+          this.$message.warning('该活动正在直播或录制中，无法重复发起')
+        } else if (res.code == 200) {
+          this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
+        } else {
+          this.$message.warning(res.msg)
+        }
+      })
     },
     toTailoring(recordId, recordName){
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});

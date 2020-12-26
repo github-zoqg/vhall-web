@@ -227,6 +227,7 @@ const apis = {
   getDocInfo: ['/v3/webinars/record/get-doc-info', 'POST'], // 查询章节信息 xiaodong.ding
   startrecord: ['/v3/webinars/record/start-record', 'POST'], // 开始录制 xiaodong.ding
   stoprecord: ['/v3/webinars/record/stop-record', 'POST'], // 结束录制 xiaodong.ding
+  recordCheck: ['/v3/webinars/record/check', 'POST'], // 开始录制前检测 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
