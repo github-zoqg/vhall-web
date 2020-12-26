@@ -11,7 +11,7 @@
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
             <p>{{ specialInfo.created_at }}</p>
-            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><b>{{ specialInfo.pv }}</b>次观看</span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
+            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv">热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <el-popover
                 placement="bottom-end"

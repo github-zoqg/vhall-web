@@ -86,7 +86,7 @@
 import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 import Env from "@/api/env";
-import { formateDate } from "@/utils/general.js"
+import { formateDates } from "@/utils/general.js"
 export default {
   components: {
     PageTitle,
@@ -213,7 +213,7 @@ export default {
         if (res.data.webinar_state == 2) {
           let date = new Date();
           let nowTime = date.setTime(date.getTime());
-          this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
+          this.downTime(formateDates(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
@@ -290,11 +290,9 @@ export default {
           this.isAnginOpen = false;
         } else {
           this.isAnginOpen = true;
-          this.$message.error(res.msg || '检测异常');
         }
       }).catch(e => {
         this.isAnginOpen = true;
-        this.$message.error(res.msg || '检测异常');
       });
     },
     blockHandler(item){

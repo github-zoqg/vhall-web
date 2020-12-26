@@ -11,7 +11,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize" v-preventReClick>新建</el-button>
-      <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial" v-preventReClick>资料库</el-button>
+      <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" v-preventReClick>批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
@@ -30,6 +30,7 @@
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建抽奖</el-button>
+        <el-button type="primary" v-if="nullText == 'nullData'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo"></create-prize>
@@ -59,7 +60,7 @@ export default {
       total: 0,
       nullText: 'nullData',
       isSearch: false,
-      text: '您还没有奖品，快来创建吧！',
+      text: '您还未添加奖品，快去添加吧~',
       prizeInfo: {},
       isDelete: false,
       searchAreaLayout: [
@@ -131,7 +132,7 @@ export default {
           this.isSearch = true;
         } else {
           this.nullText = 'nullData';
-          this.text = '您还没有奖品，快来创建吧！';
+          this.text = '您还未添加奖品，快去添加吧~';
           this.isSearch = false;
         }
         this.tableData.map(item => {
@@ -246,6 +247,9 @@ export default {
     // height: calc(100vh - 260px);
     text-align: center;
     margin-top: 208px;
+  }
+  .no-live{
+    padding-bottom: 150px;
   }
 }
 </style>

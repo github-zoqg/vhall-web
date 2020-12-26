@@ -287,7 +287,9 @@ export default {
 /deep/.el-input__inner:focus {
   border-color: #ccc;
 }
-
+/deep/.el-input__inner {
+  border-radius: 2px;
+}
 /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
   color: #666;
 }
@@ -365,11 +367,10 @@ export default {
   }
   span{
     display: inline-block;
-    width: 112px;
+    width: 113px;
     height: 36px;
-    // padding-top: 4px;
     text-align: center;
-    line-height: 38px;
+    line-height: 36px;
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;

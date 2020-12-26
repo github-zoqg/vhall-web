@@ -73,7 +73,20 @@ export const getParams = name => {
   if (r != null) return unescape(r[2]);
   return 'cn';
 };
-
+//格式化日期
+export function formateDates(timer) {
+  // timer是时间戳
+  let time = new Date(timer);
+  let y = time.getFullYear();
+  let m = time.getMonth() + 1;
+  let d = time.getDate();
+  let h = time.getHours();
+  let mm = time.getMinutes();
+  let s = time.getSeconds();
+  return (
+    `${y}-${mat(m)}-${mat(d)} ${mat(h)}:${mat(mm)}:${mat(s)}`
+  );
+}
 //格式化日期
 export function formateDate(timer) {
   // timer是时间戳
