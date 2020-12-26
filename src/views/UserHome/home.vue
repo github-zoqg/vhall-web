@@ -53,7 +53,7 @@ export default {
       attentioned_count: 0,
       follow: 0,
       content: `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`,
-      avatarImgUrl: null,
+      avatarImgUrl: ``,
       userInfo: null
     };
   },
@@ -95,6 +95,7 @@ export default {
     }
   },
   created() {
+    this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },
   mounted() {

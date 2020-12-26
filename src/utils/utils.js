@@ -255,16 +255,29 @@ export function checkAuth(to, from, next) {
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
-        sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-        sessionOrLocal.set('sso_token', res.data.sso_token);
-        sessionOrLocal.set('userId', res.data.user_id);
+        // 登录场景下，存储直接登录
+        if(Number(scene_id) === 1) {
+          sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+          sessionOrLocal.set('sso_token', res.data.sso_token || '');
+          sessionOrLocal.set('userId', res.data.user_id || '');
+        }
+        // 非观看页第三方登录场景，均跳转/home
         if (!sourceTag) {
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          if(auth_tag) {
+            if (auth_tag.indexOf('bind') !== -1) {
+              // 绑定成功
+              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            }
+          } else {
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          }
           return;
         }
       } else {
+        // 非200情况下，若是3账户信息-账号绑定，提示当前账号已绑定，请解绑。
         if(auth_tag) {
           if (auth_tag.indexOf('bind') !== -1) {
+            // this.$message.success('绑定成功');
             sessionOrLocal.set('bind_result', JSON.stringify(res));
             sessionOrLocal.set('user_auth_key', user_auth_key);
             // 绑定成功

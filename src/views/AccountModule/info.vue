@@ -89,6 +89,7 @@ export default {
   },
   created() {
     let bind_Result = sessionOrLocal.get('bind_result');
+    // 若存在第一步绑定结果提示，表明需要提示具体绑定结果。
     if (bind_Result) {
       let auth_tag = sessionOrLocal.get('tag', 'localStorage');
       let res = JSON.parse(bind_Result);
@@ -108,9 +109,6 @@ export default {
             if (res && res.code === 200) {
               // 绑定成功
               this.$message.success('绑定成功');
-              sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-              sessionOrLocal.set('sso_token', res.data.sso_token);
-              sessionOrLocal.set('userId', res.data.user_id);
               // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
               sessionOrLocal.removeItem('tag', 'localStorage');
               sessionOrLocal.removeItem('bind_result');

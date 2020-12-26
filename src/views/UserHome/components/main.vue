@@ -128,7 +128,7 @@ export default {
     isSameUser: function() {
       let userId = JSON.parse(sessionOrLocal.get("userId"));
       // 用户ID 是否 跟当前主页ID相等，不相等，有关注。
-      if(userId === this.$route.params.str) {
+      if(Number(userId) === Number(this.$route.params.str)) {
         return true;
       } else {
         return false;
@@ -166,7 +166,7 @@ export default {
     getLiveList(){
       const params = {
         pos: this.query.pos,
-        user_id: this.$route.params.str,
+        home_user_id: this.$route.params.str,
         limit: this.query.limit,
         title: this.query.keyword,
         order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
@@ -199,7 +199,7 @@ export default {
     getSpecialList(){
       const params = {
         pos: this.query.pos,
-        user_id: this.$route.params.str,
+        home_user_id: this.$route.params.str,
         limit: this.query.limit,
         title: this.query.keyword,
         is_private: 0, // 展示所有公开的
