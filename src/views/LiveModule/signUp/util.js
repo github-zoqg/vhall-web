@@ -223,7 +223,7 @@ export function getfiledJson({name, type}){
           reqType: 5,
           default_type: '',
           options: {
-            show_country: 0,
+            show_country: 1,
             show_province: 1,
             show_city: 1,
             show_district: 1
