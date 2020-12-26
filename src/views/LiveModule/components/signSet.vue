@@ -204,7 +204,7 @@ export default {
         if(valid) {
           console.log(this.signSetForm, 'signSetForm');
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
-          this.$fetch('setInterWebinarTag', params).then(res => {
+          this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
             console.log(res);
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
