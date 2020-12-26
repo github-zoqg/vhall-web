@@ -163,7 +163,7 @@ export default {
     chatPreview (questionId, chat) {
       this.showPreview = true;
       this.previewId = questionId;
-      console.log('chat>>>>>>>>>>>>>', chat);
+      console.log('chat>>>>>>>>>>>>>', chat,questionId);
       document.getElementById('qs-preview-box').innerHTML = '';
       this.$service['renderPagePC']('#qs-preview-box', questionId);
       if (chat) {
@@ -199,7 +199,6 @@ export default {
      * 初始化 问卷SDK
      */
     initQuestionSDK () {
-      console.log(90,this.appId )
       this.$service = new VHall_Questionnaire_Service({
         auth: {
           // paas的应用id,必填
@@ -232,7 +231,6 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
-        console.log(1212,)
         if (this.type == 1) {
           // 资料库问卷创建
           this.materialQuestion(data.id, data.title, data.description);
@@ -286,7 +284,6 @@ export default {
     createQuestion (id) {
       localStorage.setItem('create', 'true');
       this.isCreate = true;
-      console.log("1111111111111111");
       document.querySelector('#qs-create-box').innerHTML = '';
       this.$service.renderPageEdit('#qs-create-box', id || '');
     },

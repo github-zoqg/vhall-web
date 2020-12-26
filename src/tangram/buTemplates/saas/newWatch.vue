@@ -282,14 +282,6 @@
         </div>
       </div>
     </div>
-    <!-- POP 事件弹出层显示区域 -->
-    <!-- 签到 -->
-    <!-- <Signin
-      v-if="roomInfo.room_id"
-      :vss_token="vssToken"
-      :room_id="roomInfo.room_id"
-      :masterEnd="false"
-    ></Signin> -->
     <Signin
       v-if="roomInfo.room_id"
       :vss_token="vssToken"
@@ -304,6 +296,7 @@
       title="问卷"
     >
       <question
+        v-if="roomInfo.app_id"
         :isEmbed="isEmbed"
         :roomId="roomId"
         :ilId="ilId"
@@ -1010,6 +1003,7 @@ export default {
         userId: this.userInfo ?  this.userInfo.user_id : '',
         nickName: this.bizInfo.user.nick_name
       }
+      console.log(10101010101, inavInfo)
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;

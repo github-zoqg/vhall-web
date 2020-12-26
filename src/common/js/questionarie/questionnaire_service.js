@@ -5070,7 +5070,7 @@
         Object.defineProperty(e, "__esModule", {
             value: !0
         });
-        var i = "//api.vhallyun.com/sdk/v1/datacollect";
+        var i = "//api.vhallyun.com/sdk/v2/datacollect";
         e.default = {
             GET_AREA_JSON: "https://cnstatic01.e.vhall.com/saas/common_libs/area.json",
             POST_CREATE_QUESTIONNAIRE: i + "/index-create",
