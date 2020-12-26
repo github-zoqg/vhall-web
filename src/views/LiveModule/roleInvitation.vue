@@ -559,6 +559,18 @@ export default {
   label {
     margin-right: auto;
   }
+  /deep/button.el-button.el-button--mini {
+    &:focus,&:hover {
+      border-color: #FB3A32;
+      background-color: #FB3A32;
+      color: #ffffff;
+    }
+    &:active,&:visited {
+      border-color: #E2332C;
+      background-color: #E2332C;
+      color: #ffffff;
+    }
+  }
 }
 .role-qx-list {
   height: 118px;

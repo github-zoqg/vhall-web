@@ -1,12 +1,15 @@
 <template>
   <!-- 文档资料库 -->
-  <VhallDialog title="文档列表" :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="878px">
+  <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="878px">
     <div class="word-list">
       <el-input
         class="head-btn search-tag"
         placeholder="请输入文档名称"
         v-model="formParams.keyword"
-        @keyup.enter.native="searchHandle">
+        @keyup.enter.native="searchHandle"
+        clearable
+        @clear="searchHandle"
+        >
         <i
           class="el-icon-search el-input__icon"
           slot="suffix"
@@ -23,6 +26,7 @@
         style="width: 100%"
         height="336"
         v-loadMore="moreLoadData"
+        v-if="dialogTableList.length > 0"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
       >
         <el-table-column
@@ -57,9 +61,10 @@
         >
         </el-table-column>
       </el-table>
+      <null-page text="未搜索到相关内容" nullType="search" v-else :height=60></null-page>
       <div class="btn-center">
         <span class="btn-select">已勾选 <strong>{{this.dialogMulti.length}}</strong> 条</span>
-        <el-button type="primary" round size="medium" @click="saveCheckHandle">确定</el-button>
+        <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
       </div>
     </div>
@@ -67,8 +72,13 @@
 </template>
 
 <script>
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
+
 export default {
   name: "selectWord.vue",
+  components: {
+    NullPage
+  },
   data() {
     return {
       dialogVisible: false,
@@ -153,7 +163,11 @@ export default {
     setRowKeyFun() {},
     searchHandle() {
       this.dialogMulti = [];
-      this.$refs.elTable.clearSelection();
+      try {
+        this.$refs.elTable.clearSelection();
+      } catch (e) {
+        console.log(e);
+      }
       this.pageInfo.pos = 0;
       this.pageInfo.pageNum = 1;
       this.getDialogTableList();
@@ -163,8 +177,11 @@ export default {
       this.dialogMulti = val.map(item => item.document_id);
     },
     initComp() {
+      // 历史已经选择过的数据清空
+      this.dialogTableList = [];
       this.dialogVisible = true;
-      this.getDialogTableList();
+      this.formParams.keyword = '';
+      this.searchHandle();
     },
     saveCheckHandle() {
       if (this.dialogMulti && this.dialogMulti.length > 0) {
@@ -201,7 +218,11 @@ export default {
     },
     cancelCheckHandle() {
       this.dialogMulti = [];
-      this.$refs.elTable.clearSelection();
+      try {
+        this.$refs.elTable.clearSelection();
+      } catch (e) {
+        console.log(e);
+      }
       this.dialogVisible = false;
     }
   },

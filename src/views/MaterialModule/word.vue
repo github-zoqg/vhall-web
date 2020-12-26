@@ -200,7 +200,8 @@ export default {
           this.$confirm('确定同步到资料库？', '提示', {
             confirmButtonText: '同步',
             cancelButtonText: '不同步',
-            customClass: 'zdy-message-box'
+            customClass: 'zdy-message-box',
+            lockScroll: false
           }).then(() => {
             // 同步到资料库
             this.asyncWord(res);
@@ -224,9 +225,7 @@ export default {
         if(res && res.code === 200) {
           this.$message.success('同步成功');
           try {
-            this.$nextTick(() => {
-              this.$refs.tableListWord.clearSelect();
-            })
+            this.$refs.tableListWord.clearSelect();
           } catch(e) {
             console.log(e);
           }
@@ -279,7 +278,8 @@ export default {
         this.$confirm('删除后将会影响文档演示和观看，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -355,7 +355,8 @@ export default {
       that.$confirm(that.$route.params.str ? '删除后将会影响文档演示和观看，确定删除？' : '删除后将会影响文档演示和观看，确定删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false
       }).then(() => {
         that.deleteSend(rows);
       }).catch(() => {
@@ -375,9 +376,7 @@ export default {
         if(res && res.code === 200) {
           this.$message.success('删除成功');
           try {
-            this.$nextTick(() => {
-              this.$refs.tableListWord.clearSelect();
-            })
+            this.$refs.tableListWord.clearSelect();
           } catch(e) {
             console.log(e);
           }
