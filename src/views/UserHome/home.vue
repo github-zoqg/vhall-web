@@ -23,7 +23,7 @@
          </div>
          <div class="ac__home--info">
            <p class="ac__home--title"></p>
-           <p class="ac__home--notice" v-html="content"></p>
+           <p class="ac__home--notice">{{content}}</p>
          </div>
        </div>
      </div>
