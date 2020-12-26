@@ -438,6 +438,9 @@ export default {
   /deep/.el-switch__label.is-active {
     color: #1A1A1A;
 }
+ /deep/.el-tabs__content{
+   min-height: 700px;
+ }
   .prize-info{
     margin: 18px 24px;
   }
