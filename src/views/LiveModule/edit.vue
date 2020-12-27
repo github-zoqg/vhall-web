@@ -579,6 +579,12 @@ export default {
   /deep/.el-col-11{
     height: 40px;
   }
+  /deep/.tox-tinymce{
+    border-radius: 4px;
+  }
+  /deep/.el-upload--picture-card{
+    border-radius: 4px;
+  }
   // /deep/ .el-form-item__label{
   //   float: none;
   // }

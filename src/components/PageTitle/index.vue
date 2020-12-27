@@ -57,5 +57,6 @@ export default {
 }
 .el-icon-question {
   color: #666666;
+  font-size: 14px;
 }
 </style>

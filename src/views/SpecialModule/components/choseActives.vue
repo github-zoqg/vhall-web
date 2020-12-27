@@ -76,9 +76,7 @@
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
-
   props: ['checkedList'],
-
   data() {
     return {
       page: 1,
