@@ -22,7 +22,7 @@
         <div class="vh-chose-active-item__cover-status">
           <span class="liveTag">
             <label class="live-status" v-if="item.webinar_state == 1">
-              <img src="../../../common/images/live.gif" alt="">
+              <img src="../../../../../common/images/live.gif" alt="">
             </label>
             {{item | liveTag}}
           </span>
