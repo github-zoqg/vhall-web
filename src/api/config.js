@@ -374,6 +374,10 @@ const apis = {
   buyDetail: ['/v3/fin/order/list', 'GET'], // 账单明细 - 购买明细
   deleteDetail: ['/v3/fin/order/delete', 'GET'], // 删除购买明细
   orderDetail: ['/v3/fin/admin-order/list', 'GET'], // 账单明细 - 开通明细
+  orderStatus: ['/v3/fin/order/unpaid', 'GET'], //查询待支付订单
+
+  // 为了测试用支付完成接口  只测试用
+  finishPayList: ['/v3/fin/pay/notify', 'POST'], //测试是否支付成功
 
   //财务收益
   incomeInfo: ['/v3/fin/income', 'GET'], // 账户收益总览

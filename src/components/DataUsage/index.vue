@@ -105,6 +105,7 @@ export default {
         arrears: {}
       },
       buttonList: [],
+      orderInfo: {},
       concurrentPrice: {}
     };
   },
@@ -114,6 +115,7 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getVersion();
+    this.getPayListStatus();
   },
   methods: {
     getVersion() {
@@ -135,12 +137,38 @@ export default {
         this.isOutTime = true;
       }
     },
+    getPayListStatus() {
+      this.$fetch('orderStatus').then(res => {
+        this.orderInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    goPayList(id) {
+      this.$router.push({
+        path: '/finance/payOrder',
+        query: {
+          userId: this.userId,
+          orderId: id
+        }
+      });
+    },
     levelVersion(title) {
       if (this.$route.path !== '/finance/info') {
         this.$router.push({
           path: '/finance/info'
         });
       } else {
+        if (this.orderInfo.unpaid) {
+          this.$alert('您有未处理订单', '提示', {
+            confirmButtonText: '立即支付',
+            customClass: 'zdy-message-box',
+            callback: action => {
+              this.goPayList(this.orderInfo.order_id);
+            }
+          });
+          return;
+        }
         if (title === '升级' && this.userInfo.left_months < 1) {
           this.$alert('当前套餐剩余有效时间不满一个月，不支持升级', '提示', {
             confirmButtonText: '知道了',
@@ -170,6 +198,16 @@ export default {
           path: '/finance/info'
         });
       } else {
+        if (this.orderInfo.unpaid) {
+          this.$alert('您有未处理订单', '提示', {
+            confirmButtonText: '立即支付',
+            customClass: 'zdy-message-box',
+            callback: action => {
+              this.goPayList(this.orderInfo.order_id);
+            }
+          });
+          return;
+        }
         this.title = this.versionType;
         this.concurrentPrice = this.userInfo;
         this.$refs.levelVersion.dialogBuyVisible = true;

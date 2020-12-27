@@ -7,11 +7,11 @@
     :close-on-click-modal="false"
     :before-close="handleClose"
     width="880px">
-    <div class="search">
-      <el-input placeholder="请输入音视频名称" v-model="keyWords">
+    <div class="search"  v-show="total || isSearch">
+      <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @change="searchHandler" clearable>
         <i class="el-icon-search el-input__icon"
           slot="suffix"
-          @click="searchHandler">
+        >
         </i>
       </el-input>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
@@ -22,6 +22,7 @@
       tooltip-effect="dark"
       style="width: 100%"
       height="300"
+      v-show="total"
       v-loadMore="moreLoadData"
       @selection-change="handleSelectionChange">
       <el-table-column
@@ -70,8 +71,13 @@
         </template>
       </el-table-column>
     </el-table>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium">确定</el-button>
+    <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text" :height="0">
+        <el-button type="primary" v-if="nullText == 'nullData'" @click="uploadHandler" round size="medium">上传</el-button>
+      </noData>
+    </div>
+    <span slot="footer" class="dialog-footer" v-show="total || isSearch">
+      <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
       <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
     </span>
   </el-dialog>
@@ -85,6 +91,7 @@
 
 <script>
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   props: ['videoSize', 'videoType'],
   data(){
@@ -93,6 +100,10 @@ export default {
       showDialog: false,
       videoParam: {},
       docList: [],
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还上传过音视频，快来创建吧！',
       pageInfo: {
         pos: 0,
         limit: 5,
@@ -104,7 +115,8 @@ export default {
     };
   },
   components: {
-    VideoPreview
+    VideoPreview,
+    noData
   },
   watch: {
     dialogVisible() {
@@ -113,6 +125,8 @@ export default {
         this.tableSelect = [];
         this.docList = [];
         this.getMediaList();
+      } else {
+        this.pageInfo.pageNum = 1;
       }
     }
   },
@@ -163,7 +177,17 @@ export default {
             }
           });
           this.docList.push(...res.data.list);
+          this.total = res.data.total;
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
+          if (this.keyWords) {
+            this.nullText = 'search';
+            this.text = '';
+            this.isSearch = true;
+          } else {
+            this.nullText = 'nullData';
+            this.text = '您还上传过音视频，快来创建吧！';
+            this.isSearch = false;
+          }
         }
       });
     },
@@ -195,11 +219,7 @@ export default {
       // this.tableSelect
     },
     searchHandler(){
-      this.pageInfo = {
-        pageNum: 1,
-        pos: 0,
-        limit: this.pageInfo.limit
-      }
+      this.pageInfo.pageNum = 1;
       this.docList = [];
       this.getMediaList();
     },

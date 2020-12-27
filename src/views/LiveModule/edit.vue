@@ -186,7 +186,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="webniarType=='live' && limitInfo.type == 1">
+      <p class="switch__box" v-if="webniarType=='live' && !versionType">
          <el-switch
           style="display: block"
           v-model="capacity"
@@ -207,7 +207,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="limitInfo.type == 2 ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -284,9 +284,9 @@ export default {
     },
     capacityDesc(){
       if(this.capacity){
-        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
+        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }else{
-        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
+        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
@@ -384,7 +384,11 @@ export default {
         name: this.$route.query.name
       }
     }
-    this.getHighLimit();
+    this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
+    if (!this.versionType) {
+      this.getHighLimit();
+    }
+
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -473,8 +477,8 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (this.versionType == 1) {
-        if (this.limitCapacity > this.limitInfo.balance) {
+      if (!this.versionType) {
+        if (this.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
@@ -538,7 +542,7 @@ export default {
       this.showDialog = true;
     },
     getHighLimit() {
-      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
+      this.$fetch('getHighLimit').then(res => {
         this.limitInfo = res.data;
         // this.versionType = res.data.type;
       })
