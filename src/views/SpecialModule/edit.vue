@@ -264,6 +264,10 @@ export default {
     },
 
     submitForm(formName) {
+      if (!this.formData.title) {
+        this.$message.error('请选择专题标题');
+        return;
+      }
       if (!this.content) {
         this.$message.error('请选择专题简介');
         return;

@@ -5,8 +5,8 @@
     </div>
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
-        <el-button size="medium" class="length104" type="primary" @click="createAdvise()" v-preventReClick round>创建</el-button>
-        <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'" v-preventReClick>资料库</el-button>
+        <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建</el-button>
+        <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" v-preventReClick>批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model.trim="paramsObj.keyword" placeholder="请输入标题"
