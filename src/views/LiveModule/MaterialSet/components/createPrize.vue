@@ -130,7 +130,6 @@ export default {
         this.checkedList = [];
         this.keyword = '';
         this.getPrizeList();
-
       }
     }
   },
