@@ -1,53 +1,37 @@
 <template>
-  <div :class="{
+  <div>
+    <section class="layout__main">
+      <nav class="layout__left" :class="{
         hideSidebar: !openSidebar,
         openSidebar: openSidebar,
         withoutAnimation: false
-      }" class="app-wrapper">
-    <!-- 左侧导航 -->
-    <sidebar class="sidebar-container" />
-
-    <div class="main-container">
-      <!-- 顶部 -->
-      <div :class="{'fixed-header':fixedHeader}">
-        <navbar />
-      </div>
-      <!-- 内容主体 -->
-      <app-main />
-    </div>
+      }">
+        <sidebar class="sidebar-container" />
+      </nav>
+      <section class="layout__right" :class="{
+        hideSidebar: !openSidebar,
+        openSidebar: openSidebar,
+        withoutAnimation: false
+      }">
+        <header class="header__nav">
+          <navbar />
+        </header>
+        <section class="section__main">
+          <app-main />
+        </section>
+      </section>
+    </section>
   </div>
 </template>
 
 <script>
 import { Navbar, Sidebar, AppMain } from './components';
-import Cookies from 'js-cookie';
-import { sessionOrLocal } from "@/utils/utils";
-
 export default {
-  name: 'Layout',
-  components: {
-    Navbar,
-    Sidebar,
-    AppMain
-  },
-  provide() {},
+  components: { Sidebar, Navbar, AppMain },
   data() {
     return {
       openSidebar: true
     };
-  },
-  computed: {
-    sidebar() {
-      return JSON.stringify(sessionOrLocal.get('sidebar')) || {
-        opened: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true, // 左侧导航是否打开
-        withoutAnimation: false // 左侧导航是否动画
-      };
-    },
-    fixedHeader() {
-      return JSON.stringify(sessionOrLocal.get('setting')).fixedHeader; // 头部是否定位
-    }
-  },
-  methods: {
   },
   mounted() {
     this.$EventBus.$on("hamburger", (status) => {
@@ -61,39 +45,46 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import "../common/css/other/mixin.less";
-  @import "../common/css/other/variables.less";
-
-  .app-wrapper {
-    .clearfix {
-      &:after{
-        content: "";
-        clear: left;
-        display: block;
-      }
-    }
-    position: relative;
-    height: 100%;
-    width: 100%;
-    &.mobile.openSidebar{
-      position: fixed;
-      top: 0;
-    }
+@color_f7: #F7F7F7;
+@color_1A: #1A1A1A;
+@color_ff: #FFFFFF;
+/*头部*/
+.header__nav {
+  background: @color_ff;
+  display: block;
+  overflow: hidden;
+  padding: 16px 0;
+  position: fixed;
+  z-index: 100;
+  height: 64px;
+}
+/*主体*/
+.layout__left {
+  min-height: 400px;
+  float: left;
+  font-size: 20px;
+  background: @color_1A;
+  &.hideSidebar {
+    width: 84px;
   }
-  .fixed-header {
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 9;
-    width: calc(100% - @sideBarWidth);
-    transition: width 0.28s;
+  &.openSidebar {
+    width: 224px;
   }
-
-  .hideSidebar .fixed-header {
-    width: calc(100% - 54px)
+}
+.layout__right {
+  overflow: hidden;
+  background: @color_f7;
+}
+.section__main {
+  padding-top: 104px;
+  width: 1020px;
+  min-height: 650px;
+  height: auto;
+  margin: 0 auto;
+}
+@media (min-width: 1920px) {
+  .section__main {
+    width: 1374px;
   }
-
-  .mobile .fixed-header {
-    width: 100%;
-  }
+}
 </style>

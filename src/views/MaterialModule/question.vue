@@ -9,18 +9,23 @@
         3.上传的视频，不支持剪辑和下载
       </div>
     </pageTitle>
-    <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
-      <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
+    <div class="head-operat" v-show="total || isSearch">
+      <el-button size="medium" type="primary" round class="length104 head-btn set-upload" v-preventReClick @click="addQuestion">新建</el-button>
+      <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" v-preventReClick>批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model="keyword" placeholder="请输入问卷名称" @change="getTableList"></el-input>
+        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入问卷名称" clearable @change="getTableList"></el-input>
       </div>
     </div>
-    <el-card class="question-list">
+    <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-    </el-card>
+    </div>
+    <div class="no-live" v-show="!total">
+      <noData :nullType="nullText" :text="text">
+        <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
+      </noData>
+    </div>
     <template v-if="isShowQuestion">
       <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :before-close='closeClose' width="50%" center>
         <pre-question  :questionId="questionId"></pre-question>
@@ -32,11 +37,15 @@
 import PageTitle from '@/components/PageTitle';
 import preQuestion from '@/components/Question/preQuestion';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "question",
   data() {
     return {
-      total: 100,
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
       questionId: '',
@@ -67,7 +76,8 @@ export default {
   },
   components: {
     PageTitle,
-    preQuestion
+    preQuestion,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -89,14 +99,21 @@ export default {
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
+        this.nullText = 'search';
+        this.text = '';
+        this.isSearch = true;
+      } else {
+        this.nullText = 'nullData';
+        this.text = '您还没有问卷，快来创建吧！';
+        this.isSearch = false;
       }
       let obj = Object.assign({}, pageInfo, formParams);
       this.$fetch('getQuestionList', this.$params(obj)).then(res => {
         this.total = res.data.total;
         this.tableData = res.data.list || [];
-        if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
-          window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
-        }
+        // if (window.sessionStorage.getItem("vhallyunFormAnswerDetail")) {
+        //   window.sessionStorage.removeItem("vhallyunFormAnswerDetail");
+        // }
       })
     },
     // 预览
@@ -124,7 +141,8 @@ export default {
       that.$router.push({
         path: '/material/addQuestion',
         query: {
-          id: rows.question_id
+          questionId: rows.question_id,
+          type: 1
         }
       });
     },
@@ -167,7 +185,10 @@ export default {
     },
     addQuestion() {
       this.$router.push({
-        path: '/material/addQuestion'
+        path: '/material/addQuestion',
+        query: {
+          type: 1 //用来判断区分哪里的问卷
+        }
       });
     },
     closeClose(done){
@@ -176,14 +197,16 @@ export default {
   },
 };
 </script>
-
 <style lang="less" scoped>
+.question-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+  .min-height();
+}
 .question-wrap{
   height: 100%;
   width: 100%;
-  .question-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     width: 100%;
     padding: 32px 24px;

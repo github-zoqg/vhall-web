@@ -20,9 +20,9 @@
           :before-upload="beforeUploadHandler"
           @delete="baseSetForm.avatar = ''">
           <div slot="tip">
-            <p>推荐尺寸：100*100px</p>
-            <p>图片不超过100K</p>
-            <p>(支持jpg、gif、png、bmp)</p>
+            <p>建议尺寸：100*100px</p>
+            <p>小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
       </el-form-item>
@@ -95,7 +95,7 @@ export default {
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message.error('上传封面图片大小不能超过 2M!');
         return false;
       }
       return isType && isLt2M;

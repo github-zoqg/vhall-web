@@ -11,7 +11,7 @@
       <div class="pc" v-show="switchType === 'pc'">
         <div :class="`skin-preview preview-${switchType}`" :style="{ backgroundColor: `${skinSetVo.bgColor}`}">
           <header class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
-            <img class="logo-image" :src="signSetVo.logo_url" alt v-if="signSetVo && signSetVo.logo_url"/>
+            <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
             <div class="title-right">
               <el-button class="button-style button-login" size="mini">登录</el-button>
               <el-button class="button-style button-register" size="mini" type="primary">注册</el-button>
@@ -139,16 +139,18 @@ export default {
         pageStyle: 'ff3333', // 按钮色
         bg_url: '' // 背景图
       },
-      logoUrl: null
+      logoUrl: null,
+      domain_url: ''
     };
   },
   methods: {
     changeSwitch(type) {
       this.switchType = type;
     },
-    signSetVoInfo(vo) {
+    signSetVoInfo(vo, domain_url) {
       this.$nextTick(() => {
         this.signSetVo = vo;
+        this.domain_url = domain_url;
         console.log(this.signSetVo, '4444444444444444')
       });
     },
@@ -195,12 +197,12 @@ export default {
             // 页面赋值
             let skin_json_pc = JSON.parse(res.data.skin_json_pc);
             this.skinSetVo.bgColor = skin_json_pc.bgColor || '#FFFFFF';
-            this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#ff3333';
+            this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#FB3A32';
             this.skinSetVo.bg_url = skin_json_pc.background;
           } else {
             this.skinSetVo = {
               bgColor: '#FFFFFF', // 背景色
-              pageStyle: '#ff3333', // 按钮色
+              pageStyle: '#FB3A32', // 按钮色
               bg_url: '' // 背景图
             };
           }
@@ -208,7 +210,7 @@ export default {
         } else {
           this.skinSetVo = {
             bgColor: '#FFFFFF', // 背景色
-            pageStyle: '#ff3333', // 按钮色
+            pageStyle: '#FB3A32', // 按钮色
             bg_url: '' // 背景图
           };
         }
@@ -216,7 +218,7 @@ export default {
         console.log(err);
         this.skinSetVo = {
           bgColor: '#FFFFFF', // 背景色
-          pageStyle: '#ff3333', // 按钮色
+          pageStyle: '#FB3A32', // 按钮色
           bg_url: '' // 背景图
         };
       });

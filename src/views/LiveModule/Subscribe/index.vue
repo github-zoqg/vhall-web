@@ -517,7 +517,7 @@
         <el-button type="primary" @click="btnClick">确定</el-button>
       </div>
     </popup>
-    
+
   </div>
 </template>
 
@@ -632,14 +632,14 @@ export default {
       initPlayer: false,
       openScreenConfig: {},
       openScreenTimer: null,
-      openScreenTime: 3,
+      openScreenTime: 5,
       initCount: 0
     };
   },
   computed: {
-    showWatch () {
-      if (this.roomData && this.roomData.webinar) {
-        if (((this.roomData.warmup_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.warmup_paas_record_id && !this.roomData.warmup_paas_record_id)) {
+    showWatch(){
+      if (this.roomData && this.roomData.webinar){
+        if (((this.roomData.preview_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.preview_paas_record_id && !this.roomData.warmup_paas_record_id)) {
           return true
         } else {
           return false
@@ -656,7 +656,6 @@ export default {
     await this.getSkin() // 获取皮肤
     await this.getPublisAdv() // 获取公众号广告
     await this.getOpenScreenConfig() // 开屏广告
-    // await this.getTryWatch()
     this.$nextTick(() => {
       this.handleInitRoom()
       this.getGoodsInfo();
@@ -707,20 +706,13 @@ export default {
       this.showLive = false
     },
     closeOpenScreen () {
-      // this.openScreenConfig.status = 1
-      // if (this.openScreenTimer) clearInterval(this.openScreenTimer)
-      // this.openScreenTime = 3
+      this.openScreenConfig.status = 1
+      if (this.openScreenTimer) clearInterval(this.openScreenTimer)
+      this.openScreenTime = 5
     },
     openScreenJump () {
       window.location.href = this.openScreenConfig.url
     },
-    // getTryWatch () {
-    //   this.$fetch('viewerSetGet', {
-    //     webinar_id: this.$route.params.id
-    //   }).then(res => {
-    //     console.log(120, res)
-    //   })
-    // },
     closeWXCode () {
       this.showOfficialAccountQRCode = false
     },
@@ -785,7 +777,7 @@ export default {
             if (this.openScreenTimer) clearInterval(this.openScreenTimer)
             this.openScreenTimer = setInterval(() => {
               if (this.openScreenTime <= 0) {
-                // this.closeOpenScreen()
+                this.closeOpenScreen()
                 return
               }
               this.openScreenTime --
@@ -822,7 +814,8 @@ export default {
       let {bgColor, pageStyle, popStyle, background} = data
       let wrap = document.querySelector('.wrap')
       let register = document.querySelector('.title-right .button-register')
-      let follow = document.querySelector('.focusBtn')
+      let followBtn = document.querySelector('.focusBtn')
+      let followCount = document.querySelector('.focusCount')
       let activeRecommnd = document.querySelector('.active-second')
       let title = document.querySelector('.active-second>h3')
       let webinarStr = document.querySelector('.topInfo .tag')
@@ -853,8 +846,11 @@ export default {
       if (register) {
         register.style.background = pageStyle
       }
-      if (follow) {
-        follow.style.background = pageStyle
+      if (followBtn) {
+        followBtn.style.background = pageStyle
+      }
+      if (followCount) {
+        followCount.style.background = pageStyle
       }
       if (joinBtn) {
         joinBtn.style.background = pageStyle
@@ -936,7 +932,7 @@ export default {
           visitor_id: sessionStorage.getItem('visitor_id') ? sessionStorage.getItem('visitor_id') : ''
         }
         if (this.publicAdv) {
-          if (this.publicAdv.alert_type == 0) {
+          if (this.publicAdv.alert_type == 0 && this.publicAdv.status == 0) {
             this.showOfficialAccountQRCode = true
           }
           if (this.publicAdv.status == 0) {
@@ -986,7 +982,6 @@ export default {
           console.log('成功了居然')
           this.chatSDK.onRoomMsg(msg => {
             console.log('==========房间消息1===========', msg);
-
             if (typeof msg !== 'object') {
               msg = JSON.parse(msg);
             }
@@ -1629,13 +1624,13 @@ export default {
         case 2:
           str = "预约";
           break;
-        case 1:
+        case 3:
           str = "结束";
           break;
-        case 1:
+        case 4:
           str = "点播";
           break;
-        case 1:
+        case 5:
           str = "回放";
           break;
         default:
@@ -2603,7 +2598,7 @@ export default {
       font-size: 12px;
       margin: 20px auto 0px auto;
     }
-      
+
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{

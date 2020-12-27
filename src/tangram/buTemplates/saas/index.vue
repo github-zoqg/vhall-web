@@ -1,5 +1,5 @@
 <template>
-  <div class="room-container cxs" :class="assistantType ? 'assistantStyle' : ''">
+  <div class="room-container" :class="assistantType ? 'assistantStyle' : ''">
     <div class="main-wrap"
          :class="{'full-screen-doc':isDocFullscreen}"
          v-if="roomReady && !isKicked" ref="mainWrap">
@@ -65,7 +65,7 @@
               正在结束...
             </div>
             <div
-              class="vhall-room-play vhall-room-operation ly-cxs"
+              class="vhall-room-play vhall-room-operation"
               v-if="roomInfo.join_info.role_name == '1' && !isPublishing && !starting"
               @click="push(1)"
             >
@@ -158,7 +158,7 @@
                   <div class="vhall-user-quit" @click="openVirtualAudience" v-if="
                         permission.includes(100028)" :class="{ disable: !virtualAudienceCanUse }">
                     <i class="iconxuniguanzhong iconfont"></i>
-                    虚拟观众
+                    虚拟人数
                   </div>
                 </div>
               </div>
@@ -328,7 +328,7 @@
           <popup
             :visible="virtualAudienceVisible"
             :onClose="closeVirtualAudience"
-            :title="'虚拟观众'"
+            :title="'虚拟人数'"
             :width="'500px'"
           >
             <virtualAudience
@@ -384,7 +384,7 @@
               enabled: screensharing
             }"
             @click="shareScreen"
-            v-show="layout != 2"
+            v-show="layout != 1"
             v-if="roomInfo.join_info.role_name != 3"
           >
             <!-- 助理， 不能发起桌面共享 -->
@@ -475,7 +475,6 @@
             :layout="layout"
           >
             <!-- 互动区域 -->
-
             <Interactive
               v-if="roomInfo.join_info.third_party_user_id && roomInfo.interact.paas_app_id && !thirdPartyMobild && splitStatus == 2 && speakerList"
               :mainScreen="mainScreen"
@@ -496,7 +495,7 @@
               :status="status"
               :isInteract="isInteract"
               :splited="splited"
-              :webinadId='ilId'
+              :webinarId='ilId'
               ref="interactive"
             ></Interactive>
           </streams>
@@ -1268,7 +1267,6 @@
         </SassAlert>
       </div>
       <lottery
-        class="cxs"
         v-if="!assistantType || (assistantType && assistantType == 'doc')"
         :roomId="roomInfo.interact.room_id"
         :domains="domains"
@@ -1438,7 +1436,6 @@ export default {
   data () {
     return {
       reportData: {},
-      acxs: '7889999',
       chatTip: false,
       memberTip: false,
       assistantType: '',
@@ -2321,7 +2318,7 @@ export default {
         html = '非默认回放将暂存15天';
       } else if (this.record_notice == 2) {
         html =
-          "非默认回放将暂存15天，联系您的客户经理或 <a href=\"http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738\" style='color: #fc5659' target='_blank'>客服</a> 开通点播服务，即可将非默认回放永久保存和播放";
+          "非默认回放将暂存15天，联系您的客户经理或 <a href=\"http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738\" style='color: #fc5659' target='_blank'>客服</a> 开通点播服务，即可将非默认回放永久保存和播放";
       } else if (this.record_notice == 3) {
         html =
           '非默认回放将暂存15天，发布为点播，即可将非默认回放永久保存和播放';
@@ -2485,7 +2482,7 @@ export default {
           this.isQAEnabled = this.qaStatus == 1; // ??
           this.isQAEnabled = this.roomStatus.question_status == 1; // ??
           this.roleName = this.rootActive.join_info.role_name;
-
+          console.warn(this.rootActive.webinar.mode, 'this.rootActive.webinar.mode-------');
           this.layout =  this.rootActive.webinar.mode;
           this.localDuration = this.duration;
 
@@ -2514,7 +2511,7 @@ export default {
             avatar: this.userInfo.avatar
               ? `${this.userInfo.avatar}`
               : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-            // pv: 100, // pv
+            pv: this.roomInfo.pv + 1, // pv
             role_name: this.roomInfo.join_info.role_name, // 角色 1主持人2观众3助理4嘉宾
             device_type: '2', // 设备类型 1手机端 2PC 0未检测
             device_status: '0', // 设备状态  0未检测 1可以上麦 2不可以上麦
@@ -2600,7 +2597,7 @@ export default {
      * 获取房间状态，是否开启文档/白板/举手/主讲人...
      */
     getRoomStatus () {
-      console.warn(this.roomStatus, '8888');
+      console.warn(this.roomStatus, '开启了额东方红大幅度8888');
       let _data = this.roomStatus;
       if (_data.start_type == 4) {
         this.startType = 4;
@@ -3264,13 +3261,13 @@ export default {
     },
 
     roleQuit () {
-      this.$vhallFetch('roleQuit', {
-        webinar_id: this.ilId,
-        params_verify_token: this.params_verify_token,
-        join_uid: this.saas_join_id
+      this.$fetch('roleLogout', {
+        webinar_id: this.ilId
       })
         .then(res => {
-          window.location.href = `${window.location.origin}/mywebinar/login/${this.ilId}`;
+          if(res.code != 200) return this.$message.warning(res.msg)
+          // this.$route.push({name: 'KeyLogin', params:{id: } })
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/keylogin/${this.ilId}/${this.roomInfo.join_info.role_name}`;
         })
         .catch(res => {});
     },

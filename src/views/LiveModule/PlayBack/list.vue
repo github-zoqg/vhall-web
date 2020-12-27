@@ -1,6 +1,6 @@
 <template>
   <div class="listBox">
-    <pageTitle title="回放管理"></pageTitle>
+    <pageTitle :title="isDemand? '点播管理' : '回放管理'"></pageTitle>
     <div v-if="!isDemand" class="operaBlock">
       <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
       <el-button size="medium" plain round @click="toRecord">录制</el-button>
@@ -36,14 +36,14 @@
               <div class="imageBox">
                 <el-image :src='scope.row.img_url'>
                   <div slot="error" class="image-slot">
-                    <img :src="defaultImg" alt="">
+                    <img @click="preview(scope.row)" :src="defaultImg" alt="">
                   </div>
                 </el-image>
-                <span class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
               </div>
               <div class="info">
-                <p class="name ellipsis"><span class="text">{{ scope.row.name }}</span></p>
-                <p>{{ scope.row.created_at }}</p>
+                <p class="name">{{ scope.row.name }}</p>
+                <p class="create-time">{{ scope.row.created_at }}</p>
                 <!-- <span class="tag">章节</span> -->
               </div>
             </div>
@@ -107,21 +107,31 @@
       :visible.sync="editDialogVisible"
       :close-on-click-modal="false"
       width="480px">
-      <el-input placeholder="请输入标题" maxlength="30" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
+      <el-input placeholder="请输入标题" maxlength="100" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
         <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
       </span>
     </el-dialog>
+    <!-- 预览功能 -->
+    <template v-if="showDialog">
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
+      <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
+      </el-dialog>
+    </template>
   </div>
 </template>
 
 <script>
+import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data(){
     return {
+      // 预览
+      showDialog: false,
+      videoParam: {},
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
       keyWords: '',
@@ -178,7 +188,20 @@ export default {
     }
   },
   methods: {
-    // 获取当前活动基本信息
+    preview(data) {
+      //  this.videoParam 进本信息
+      if (data.transcode_status == 1) {
+        this.showDialog = true;
+        this.videoParam = data;
+      } else {
+        this.$message.warning('只有转码成功才能查看');
+      }
+    },
+    closeBefore(done){
+      this.$refs.videoPreview.destroy();
+      done();
+    },
+    // 获取当前活动基本信息 判断是点播还是直播回放
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
@@ -386,7 +409,17 @@ export default {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
     },
     toRecord() {
-      this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
+      this.$fetch('recordCheck', {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        if (res.code == 12550) {
+          this.$message.warning('该活动正在直播或录制中，无法重复发起')
+        } else if (res.code == 200) {
+          this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
+        } else {
+          this.$message.warning(res.msg)
+        }
+      })
     },
     toTailoring(recordId, recordName){
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
@@ -403,7 +436,7 @@ export default {
         if (res.data.doc_titles.length) {
           this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         } else {
-          this.$message.warning('当前回放内容未演示PPT格式的文案，不支持章节功能')
+          this.$message.warning('当前回放内容未演示PPT格式的文案，不支持使用章节功能')
         }
       })
     },
@@ -457,11 +490,17 @@ export default {
     }
   },
   components: {
-    PageTitle
+    PageTitle,
+    VideoPreview
   }
 };
 </script>
 
+<style lang="less">
+  .dialog-padding_playbackpreview{
+    padding: 0px 0px 30px;
+  }
+</style>
 <style lang="less" scoped>
   .listBox{
     min-width: 1020px;
@@ -485,9 +524,9 @@ export default {
     margin-left: 10px;
   }
   .content{
-    display: flex;
     .imageBox{
       position: relative;
+      float: left;
       width: 160px;
       height: 90px;
       .defaultSign{
@@ -516,15 +555,28 @@ export default {
         }
         // opacity: 0.66;
       }
+      .image-slot img {
+        cursor: pointer;
+      }
     }
     .info{
-      flex: 1;
-      padding-left: 12px;
-      // background: lightcoral;
+      margin-left: 12px;
       font-size: 14px;
+      width: 222px;
       color: #1A1A1A;
+      float: left;
       .name{
         line-height: 20px;
+        height: 40px;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+        -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+        -webkit-line-clamp: 2; /** 显示的行数 **/
+        overflow: hidden;  /** 隐藏超出的内容 **/
+      }
+      .create-time{
+        padding-top: 5px;
       }
       .tag{
         display: inline-block;

@@ -25,7 +25,10 @@
               :before-upload="beforeUploadHnadler"
               @delete="deleteImg"
               >
-              <p slot="tip">推荐尺寸：400*225px，小于2MB <br> 支持jpg、gif、png、bmp</p>
+             <div slot="tip">
+               <p>建议尺寸：400*225px，小于2M</p>
+               <p>支持jpg、gif、png、bmp</p>
+             </div>
             </upload>
         </div>
       </el-form-item>
@@ -37,21 +40,22 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="saveAdviseHandle" round>确 定</el-button>
-      <el-button @click="dialogVisible = false" round>取 消</el-button>
+      <el-button type="primary" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+      <el-button v-preventReClick @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
     <VhallDialog
       title="选择广告推荐"
       :visible.sync="dialogAdverVisible"
       :close-on-click-modal="false"
-      width="590px">
+      :before-close="handleClose"
+      width="620px">
       <div class="content">
-        <div class="search"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" @click="changeAdverment"></el-input></div>
-        <el-scrollbar v-loadMore="moreLoadData">
+        <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" clearable @change="changeAdverment"></el-input></div>
+        <el-scrollbar v-loadMore="moreLoadData" v-show="total">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <img :src="`${item.img_url}`" alt="">
+              <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
               <p>{{ item.subject }}</p>
               <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
@@ -59,10 +63,15 @@
             </div>
           </div>
         </el-scrollbar>
-        <p class="text">当前选中<span>{{ selectChecked.length }}</span>个</p>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="advSaveToWebinar(null)" v-preventReClick round>确 定</el-button>
+       <div class="no-live" v-show="!total">
+          <noData :nullType="nullText" :text="text" :height="0">
+            <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
+          </noData>
+        </div>
+      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
+      <span slot="footer" class="dialog-footer" v-show="total || isSearch">
+        <el-button type="primary" @click="advSaveToWebinar(null)" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
       </span>
     </VhallDialog>
@@ -71,6 +80,7 @@
 <script>
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
@@ -79,6 +89,10 @@ export default {
       advertisementTitle: '',
       baseImgUrl: Env.staticLinkVo.uploadBaseUrl,
       selectChecked: [],
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有广告，快来创建吧！',
       rules: {
         subject: [
           { required: true, message: '请输入广告标题', trigger: 'blur' },
@@ -116,14 +130,37 @@ export default {
     }
   },
   components: {
-    upload
+    upload,
+    noData
   },
   watch: {
-    title() {
+    dialogVisible() {
+      if (this.dialogVisible) {
+        this.editShow();
+      } else {
+        this.advertisement = {};
+        this.clearForm();
+      }
+    },
+    dialogAdverVisible() {
+      if (this.dialogAdverVisible) {
+        this.selectChecked = [];
+      } else {
+        this.adList = [];
+        this.selectChecked = [];
+        this.advertisementTitle = '';
+      }
+    }
+  },
+  methods: {
+    handleClose(done) {
+      this.advertPageInfo.page = 1;
+      done();
+    },
+    editShow() {
       if (this.title === '编辑') {
         this.$set(this.advertisement, 'img_url', this.advInfo.img_url);
         this.domain_url = this.advInfo.img_url;
-        console.log(this.domain_url, this.advertisement.img_url, '广告推荐图片地址');
         this.$set(this.advertisement, 'subject', this.advInfo.subject);
         this.$set(this.advertisement, 'url', this.advInfo.url);
         this.$set(this.advertisement, 'adv_id', this.advInfo.adv_id);
@@ -131,8 +168,6 @@ export default {
         this.clearForm();
       }
     },
-  },
-  methods: {
     clearForm() {
       this.$set(this.advertisement, 'img_url', '');
       this.$set(this.advertisement, 'subject', '');
@@ -140,6 +175,11 @@ export default {
       this.$set(this.advertisement, 'adv_id', '');
     },
     saveAdviseHandle() {
+      let reg = /(http|https):\/\/([\w.]+\/?)\S*/g;
+      if (!reg.test(this.advertisement.url)) {
+        this.$message.error('广告链接只能以http://或https://开始');
+        return;
+      }
       this.$refs.advertisementForm.validate((valid) => {
         if (valid) {
           if (this.$route.params.str) {
@@ -176,6 +216,7 @@ export default {
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
+          this.advertisement = {};
           this.clearForm();
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
           // 获取列表数据
@@ -195,12 +236,22 @@ export default {
       this.activityData();
     },
     activityData() {
+      if (this.advertisementTitle) {
+          this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有广告，快来创建吧！';
+          this.isSearch = false;
+        }
       this.$fetch('getAdvList', this.$params({
         keyword: this.advertisementTitle,
         ...this.advertPageInfo
       })).then(res => {
         if(res && res.code === 200) {
           let adList = res.data.adv_list;
+          this.total = res.data.total;
           adList.map(item => {
             item.isChecked = false;
           });
@@ -218,6 +269,7 @@ export default {
         page: 1
       }
       this.adList = [];
+      this.selectChecked = [];
       this.activityData();
     },
     choiseAdvisetion(items) {
@@ -323,16 +375,24 @@ export default {
        height: 200px;
       //  overflow: auto;
        .ad-item{
-         width: 150px;
-         margin-bottom: 20px;
-         background: #F7F7F7;
-         position: relative;
-         margin-right: 15px;
-         &.active{
-          background: #FFFFFF;
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
-          border: 1px solid #FB3A32;
-         }
+          width: 165px;
+          margin-bottom: 20px;
+          background: #F7F7F7;
+          position: relative;
+          margin-right: 15px;
+          height: 150px;
+          border: 1px solid transparent;
+          // background-size: 100% 100%;
+          // animation: gradientBG 15s ease infinite;
+          // padding: 10px 10px;
+          // box-sizing: border-box;
+          // position: relative;
+          border-radius: 4px;
+          &.active{
+            background: #FFFFFF;
+            box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+            border: 1px solid #FB3A32;
+          }
          .img-tangle{
           position: absolute;
           right: 0;
@@ -350,16 +410,22 @@ export default {
             font-size: 10px;
           }
         }
-         img{
-           width:145px;
-           height: 93px;
+        .spanImg{
+          display: block;
+          width: 165px;
+          height: 93px;
+          img{
+           width:100%;
+           height:100%;
+           object-fit: scale-down;
          }
+        }
          p{
+           padding: 10px 0 0 5px;
            color:#1A1A1A;
            font-size: 14px;
            line-height: 20px;
            font-weight: 400px;
-           padding-right: 5px;
          }
        }
      }

@@ -2,7 +2,7 @@
   <div class="home--set--info">
     <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
       <el-form-item label="主页标题：" prop="title">
-        <el-input type="text" placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" maxlength="30" show-word-limit />
+        <el-input type="text" placeholder="请输入账号昵称" v-model.trim="homeSetInfoForm.title" maxlength="30" show-word-limit />
       </el-form-item>
       <el-form-item label="主页头像：" prop="homepage_avatar">
         <upload
@@ -20,17 +20,22 @@
           :before-upload="beforeUploadHandler"
           @delete="homeSetInfoForm.homepage_avatar = ''">
           <div slot="tip">
-            <p>推荐尺寸：100*100px</p>
-            <p>图片不超过100K</p>
-            <p>(支持jpg、gif、png、bmp)</p>
+            <p>建议尺寸：128*128px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
       </el-form-item>
       <el-form-item label="主页简介：" prop="content">
-        <v-editor  :isReturn=true @returnChange="sendRewardData" ref="contentEditor"
+        <!--<v-editor  :isReturn=true @returnChange="sendRewardData" ref="contentEditor"
                    v-model="homeSetInfoForm.content"
                    toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen">
-        </v-editor>
+        </v-editor>-->
+        <el-input
+        type="textarea"
+        :rows="5"
+        v-model.trim="homeSetInfoForm.content"
+        maxlength="150"
+        show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="背景图片：" prop="img_url">
         <upload
@@ -48,9 +53,8 @@
           :before-upload="beforeUploadHandlerBg"
           @delete="homeSetInfoForm.img_url = ''">
           <div slot="tip">
-            <p>推荐尺寸：100*100px,图片比例 16:9</p>
-            <p>图片不超过2MB</p>
-            <p>(支持jpg、gif、png、bmp)</p>
+            <p>建议尺寸：1280*768px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
       </el-form-item>
@@ -62,7 +66,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_share ? '已开启，主页分享功能显示' : '开启后，主页分享功能显示'"
+            :active-text="homeSetInfoForm.show_share ? '已开启，主页显示分享功能' : '开启后，主页显示分享功能'"
           >
           </el-switch>
         </div>
@@ -75,7 +79,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_webinar_list ? '已开启，个人主页直播列表Tab页显示' : '开启后，个人主页直播列表Tab页显示'"
+            :active-text="homeSetInfoForm.show_webinar_list ? '已开启，个人主页显示直播列表Tab页' : '开启后，个人主页显示直播列表Tab页'"
           >
           </el-switch>
         </div>
@@ -88,7 +92,7 @@
             :inactive-value="0"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            :active-text="homeSetInfoForm.show_subject ? '已开启，个人主页专题列表Tab页显示' : '开启后，个人主页专题列表Tab页显示'"
+            :active-text="homeSetInfoForm.show_subject ? '已开启，个人主页显示专题列表Tab页' : '开启后，个人主页显示专题列表Tab页'"
           >
           </el-switch>
         </div>
@@ -103,14 +107,11 @@
 
 <script>
 import Upload from '@/components/Upload/main';
-import VEditor from '@/components/Tinymce';
 import { sessionOrLocal } from "@/utils/utils";
-import Env from "@/api/env";
 export default {
   name: "homeSetInfo.vue",
   components: {
-    Upload,
-    VEditor
+    Upload
   },
   data() {
     return {
@@ -128,6 +129,10 @@ export default {
           { required: true, message: '主页标题不能为空', trigger: 'blur' },
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入主页标题', trigger: 'blur' }
+        ],
+        content: [
+          { required: false, message: '最多可输入150个字符', trigger: 'blur' },
+          { max: 150, message: '最多可输入150个字符', trigger: 'blur' }
         ]
       },
       domain_url: '',
@@ -157,7 +162,7 @@ export default {
         return;
       }
       if (!isLt2M) {
-        this.$message.error('上传主页头像图片大小不能超过 2MB!');
+        this.$message.error('上传主页头像图片大小不能超过 2M!');
         return;
       }
       return isType && isLt2M;
@@ -255,7 +260,7 @@ export default {
     },
     homeInfoGet() {
       this.$fetch('homeInfoGet', {
-        home_user_id: sessionOrLocal.get('userId')
+        home_user_id: this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {

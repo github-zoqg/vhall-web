@@ -4,29 +4,21 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)">
-        <a :href="oldUrl">返回旧版</a>
-      </div>
+      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl">返回旧版</a></div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
         <el-badge is-dot class="item" :hidden="!isDownload > 0">
-          <span @click.prevent.stop="toDownloadPage">
-             <icon icon-class="saasicon_download"></icon>
-          </span>
+          <span @click.prevent.stop="toDownloadPage" class="span--icon"><icon icon-class="saasicon_download"></icon></span>
         </el-badge>
       </div>
       <!-- 帮助中心 -->
       <div class="right-menu-item">
-        <span @click.prevent.stop="toHelpPage">
-             <icon icon-class="saasicon_help_m"></icon>
-          </span>
+        <span @click.prevent.stop="toHelpPage" class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
       </div>
       <!-- 消息中心 -->
       <div class="right-menu-item">
         <el-badge :value="unread_num" :max="99" class="item" :hidden="!unread_num>0">
-          <span @click.prevent.stop="toMsgPage">
-             <icon icon-class="saasicon_bell_m"></icon>
-          </span>
+          <span @click.prevent.stop="toMsgPage" class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
         </el-badge>
       </div>
       <div class="right-menu-item">
@@ -186,21 +178,16 @@ export default {
     margin-right: 12px;
   }
 }
-.navbar {
-  height: 64px;
-  padding: 15px 17px;
-  overflow: hidden;
-  position: relative;
-  background: #fff;
-}
 .breadcrumb-container {
+  text-align: left;
+  height: 32px;
+  line-height: 32px;
   float: left;
+  padding-left: 24px;
 }
 .right-menu {
   float: right;
-  height: 100%;
-  .flex-display();
-  vertical-align: middle;
+  height: 32px;
   line-height: 32px;
   &:focus {
     outline: none;
@@ -208,6 +195,11 @@ export default {
   .right-menu-item {
     margin-right: 16px;
     cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    .span--icon {
+      color: #666666;
+    }
     &:first-child {
       font-size: 14px;
       font-family: @fontRegular;
@@ -237,8 +229,9 @@ export default {
     font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
-    line-height: 20px;
     margin-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
   }
   .el-icon-caret-bottom {
     cursor: pointer;

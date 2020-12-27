@@ -122,7 +122,7 @@
                   {{ roomData && roomData.pv ? roomData.pv.num : 0 }}次观看
                 </span>
                 <span
-                  v-show="pvShow & onlineShow && iconPlay == '直播'"
+                  v-show="pvShow && onlineShow && iconPlay == '直播'"
                   style="margin-left: 7px;color: #BFBFBF; float:right;"
                   >|</span
                 >
@@ -144,14 +144,22 @@
                     style="font-size: 12px;"
                   ></span>
                 </div>
-                <div
+                <div v-if="attentionShow">
+                  <i class="focusBtn" @click="handleAttention" >
+                    {{attentionContent}}
+                  </i>
+                  <i class="focusCount">{{focusCount}}</i>
+                </div>
+                <!-- <div
                   v-if="attentionShow"
                   :class="followStyle ? 'followShow' : 'follow'"
                   @click="handleAttention"
                 >
+                  <i class="focusBtn">{{ attentionContent }}</i>
+                  <i class="focusCount">{{ focusCount }}</i>
                   <span class="iconfont iconguanzhu"></span>
                   <span style="margin-left: 5px;">{{ attentionContent }}</span>
-                </div>
+                </div> -->
                 <div
                   class="officialaccount-qrcode"
                   v-if="showOfficialAccountMiniQRCode"
@@ -689,7 +697,8 @@ export default {
       configList: {},
       openScreenConfig: {}, // 开屏海报
       userInfo: {},
-      location: process.env.VUE_APP_WAP_WATCH
+      location: process.env.VUE_APP_WAP_WATCH,
+      focusCount: 0
     };
   },
   components: {
@@ -719,7 +728,7 @@ export default {
     this.$EventBus.$on('Join', (msg) => {
       if (this.roomData && this.roomData.online ) {
         this.roomData.online.num = msg.uv
-        this.roomData.pv.num += 1
+        this.roomData.pv.num = msg.context.pv
       }
     })
     // 离开消息
@@ -739,7 +748,7 @@ export default {
         modules.adv.public
       ) {
         // alert_type:1 自动弹出
-        if (modules.adv.public.alert_type == 0) {
+        if (modules.adv.public.alert_type == 0 && modules.adv.public.status == 0) {
           this.showOfficialAccountQRCode = true
         }
         if (modules.adv.public.status == 0) {
@@ -839,7 +848,11 @@ export default {
       try {
         await this.getRoomInfo() // 初始化房间信息
         if (this.roomData && this.roomData.status == 'subscribe') {
-          this.$router.push({name: 'Subscribe', params: {id: this.$route.params.il_id}})
+          if(location.pathname.indexOf('/embedclient/') != -1){
+            this.$router.push({name: 'embedSubscribe', params: {id: this.$route.params.il_id}})
+          }else{
+            this.$router.push({name: 'Subscribe', params: {id: this.$route.params.il_id}})
+          }
           return
         }
         if (this.roomData && this.roomData.status == 'live') {
@@ -1345,6 +1358,15 @@ export default {
         }
       })
     },
+    // 获取关注人被关注数量
+    getAttentionNum () {
+      this.$fetch('getAttentionNum', {
+        at_id: this.roominfo.host.id,
+        type: 1
+      }).then(res => {
+        this.focusCount = res.data.count
+      })
+    },
     getOpenScreenConfig () {
       this.$fetch('getPlaybillInfo', {
         webinar_id: this.$route.params.il_id
@@ -1383,7 +1405,9 @@ export default {
       let content = document.querySelector('.back-content')
       let bottom = document.querySelector('.bottom-bgColor')
       let seedIcon = document.querySelector('.seeding-icon')
-      let follow = document.querySelector('.seeding-inforight .follow')
+      let followBtn = document.querySelector('.seeding-inforight .focusBtn')
+      let followNum = document.querySelector('.seeding-inforight .focusCount')
+
       let fullScreen = document.querySelector('.seeding-inforight .full-screen')
       let watchContent = document.querySelector('.watch-middle-cotent')
       let activeRecommnd = document.querySelector('.active-second')
@@ -1426,9 +1450,11 @@ export default {
       if (seedIcon) {
         seedIcon.style.background = pageStyle
       }
-
-      if (follow) {
-        follow.style.background = pageStyle
+      if (followBtn) {
+        followBtn.style.background = pageStyle
+      }
+      if (followNum) {
+        followNum.style.background = pageStyle
       }
       if (fullScreen) {
         fullScreen.style.background = pageStyle
@@ -1601,6 +1627,8 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
+      console.log('a122', this.roominfo)
+
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
@@ -1683,7 +1711,7 @@ export default {
       this.getGoodsInfo();
       // end
       this.chatFilter(); // 聊天过滤接口
-
+      this.getAttentionNum()
       this.recordHistoryTime = data.record_history_time; // TODO:
       // 初始化数据上报
       this.initVHallReport();
@@ -1700,24 +1728,19 @@ export default {
      *
      */
     initVHallReport() {
-      this.$fetch('sendReportInfo', {
+      window.vhallReport = new VhallReport({
+        pf: 7,
+        user_id: this.roomData.join_info.join_id,
         webinar_id: this.$route.params.il_id,
-        visitor: this.roomData.visitor_id
-      }).then(res => {
-        window.vhallReport = new VhallReport({
-          ...res.data,
-          pf: 7,
-          user_id: this.roominfo.auth.id ?  this.roominfo.auth.id : 0,
-          webinar_id: this.$route.params.il_id,
-          t_start: this.roominfo.webinar.start_time,
-          entry_time: this.roominfo.webinar.start_time,
-          service_names: this.roominfo.is_replay == 1 ? 2 : 1,
-          env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
-        });
-        window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
-          event: this.$route.query.refer // 推广渠道，会在url里传参
-        });
-      })
+        t_start: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        service_names: this.roominfo.is_replay == 1 ? 2 : 1,
+        type: 3,
+        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+      });
+      window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
+        event: this.$route.query.refer // 推广渠道，会在url里传参
+      });
       // 浏览器或者页面关闭时上报
       window.addEventListener('beforeunload', function(e) {
         // 离开H5观看端页面
@@ -2183,7 +2206,26 @@ export default {
         color: #444;
         cursor: pointer;
       }
-
+      .focusBtn{
+        display: inline-block;
+        padding: 3px 12px;
+        background-color: #ff3333;
+        color: #fff;
+        text-align: center;
+        border-radius: 3px 0 0 3px;
+        font-style: normal;
+        line-height: normal;
+        cursor: pointer;
+      }
+      .focusCount{
+        color: #ff3333;
+        background-color: #fbdcdc;
+        border-radius: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px 12px;
+        font-style: normal;
+        line-height: normal;
+      }
       .follow:hover,
       .full-screen:hover {
         color: #fff;

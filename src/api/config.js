@@ -225,6 +225,9 @@ const apis = {
   msgInitConsole: ['/v3/webinars/record/msg-init-console', 'POST'], // 初始化消息 xiaodong.ding
   initRecord: ['/v3/webinars/record/init', 'POST'], // 回放录制初始化 xiaodong.ding
   getDocInfo: ['/v3/webinars/record/get-doc-info', 'POST'], // 查询章节信息 xiaodong.ding
+  startrecord: ['/v3/webinars/record/start-record', 'POST'], // 开始录制 xiaodong.ding
+  stoprecord: ['/v3/webinars/record/stop-record', 'POST'], // 结束录制 xiaodong.ding
+  recordCheck: ['/v3/webinars/record/check', 'POST'], // 开始录制前检测 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -431,7 +434,7 @@ const apis = {
 
   // 直播间内 -- 发起端
   initiatorInfo: ['/v3/webinars/live/init', 'GET'], // 获取房间信息 jian.chang √
-  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √
+  getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √ 废弃了
   liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 √
   getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态 √
 

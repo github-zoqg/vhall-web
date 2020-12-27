@@ -136,17 +136,6 @@ export default {
           ]
         },
         {
-          type: '3',
-          key: "source",
-          placeholder: '请选择订单来源',
-          options: [
-            {
-              label: '下单购买',
-              value: 1
-            }
-          ]
-        },
-        {
           type: '6'
         },
       ],
@@ -245,10 +234,6 @@ export default {
           key: 'status',
         },
         {
-          label: '来源',
-          key: 'source',
-        },
-        {
           label: '启用日期',
           key: 'start_time',
         },
@@ -260,7 +245,7 @@ export default {
       tabelColumnes: [
         {
           label: '订单编号',
-          key: 'order_id',
+          key: 'id',
         },
         {
           label: '交易时间',
@@ -355,17 +340,9 @@ export default {
     getDetailList(params) {
       let pageInfo = this.$refs.tableDetail.pageInfo; //获取分页信息
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
-      let type;
-      if (this.activeIndex == '1') {
-        // 购买明细 type必须大于等于7
-        type = formParams.orderType || '';
-      } else {
-        type = formParams.orderType || '';
-      }
       let paramsObj = {
         user_id: this.userId,
       };
-      console.log(type, '000000000000000')
       if (params === 'search') {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
@@ -378,17 +355,21 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
-      paramsObj.type = type;
+      paramsObj.type = formParams.orderType || '';
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = obj;
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
-      this.$fetch(url, obj).then(res =>{
+      this.$fetch(url, this.$params(obj)).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
         tableList.map(item=> {
-          item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
+          if (this.activeIndex == '1') {
+            item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
+            item.type = this.culesType(item.type);
+          } else {
+            item.statusText = item.status== 1 ? '生效中' : item.status== -1 ? '已失效' : '待生效';
+          }
           item.source = this.buyMethods(item.source);
-          item.type = this.culesType(item.type)[0];
         });
         this.tableList = tableList;
       }).catch(e=>{
@@ -396,24 +377,32 @@ export default {
       });
     },
     buyMethods(source) {
-      let arrType = ['其他', '购买', '升级', '注册赠送', ' 试用赠送', '其他'];
-      return arrType[source];
+      let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试'];
+      return arrType[source - 5];
     },
     culesType(type) {
-      if (this.activeIndex == '1') {
-        return this.options.filter(item => item.value == type).map(item => item.label);
-      } else {
-        return this.orderOptions.filter(item => item.value == type).map(item => item.label);
-      }
+      // 购买
+      let name = '';
+      this.searchDetail.map(item => {
+        if (item.key === 'orderType') {
+          item.options.map(items => {
+            if (items.value == type) {
+              name =  items.label;
+            }
+          });
+        }
+      })
+      return name;
     },
     delete(that, val) {
+      console.log(val, '111111111111');
       that.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteList(val.order_id);
+          that.deleteList(val.rows.order_id);
         }).catch(() => {
           that.$message({
             type: 'info',
@@ -427,6 +416,7 @@ export default {
           type: 'success',
           message: '删除成功!'
         });
+        this.getDetailList();
       }).catch(e=>{
         console.log(e);
         this.$message({

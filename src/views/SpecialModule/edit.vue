@@ -19,7 +19,10 @@
           :on-preview="uploadPreview"
           @delete="deleteImg"
           :before-upload="beforeUploadHnadler">
-          <p slot="tip">建议头图尺寸：1280*720px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+          <div slot="tip">
+            <p>建议尺寸：1280*720px，小于2M</p>
+            <p>支持jpg、gif、png、bmp</p>
+          </div>
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
@@ -211,7 +214,7 @@ export default {
           this.content = res.data.webinar_subject.intro
 
           // 配置项
-          this.home = Boolean(res.data.webinar_subject.is_open) // 是否显示个人主页
+          this.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
           this.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
           this.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
 
@@ -261,6 +264,10 @@ export default {
     },
 
     submitForm(formName) {
+      if (!this.formData.title) {
+        this.$message.error('请选择专题标题');
+        return;
+      }
       if (!this.content) {
         this.$message.error('请选择专题简介');
         return;
@@ -278,7 +285,7 @@ export default {
             subject: this.formData.title,
             introduction: this.content,
             img_url: this.imageUrl,
-            is_private: Number(this.home),
+            is_private: this.home ? 0 : 1,
             hide_appointment: Number(this.reservation),
             hide_pv: Number(this.hot),
           };
@@ -341,7 +348,8 @@ export default {
       selectedActives.map(item => {
         this.selectedActives.push(item);
       })
-      console.log(this.selectedActives, '11111111111')
+      let id = 'webinar_id';
+      this.selectedActives = this.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
       this.showActiveSelect = false
     },
     // 删除事件

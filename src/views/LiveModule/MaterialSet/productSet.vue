@@ -1,17 +1,9 @@
 <template>
   <div class="question-wrap">
-    <pageTitle title="商品">
-      <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
-        <br>
-        2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
-        <br>
-        3.上传的视频，不支持剪辑和下载
-      </div>
-    </pageTitle>
-      <div class="head-operat">
-        <el-button type="primary" round  @click="addProduct">创建</el-button>
-        <el-button round @click="batchDel(null)">批量删除</el-button>
+    <pageTitle title="商品"></pageTitle>
+      <div class="head-operat" v-show="total || isSearch">
+        <el-button type="primary" round  @click="addProduct" v-preventReClick>创建</el-button>
+        <el-button round @click="batchDel(null)" v-preventReClick>批量删除</el-button>
         <search-area class="head-btn fr search"
           ref="searchArea"
           :placeholder="'请输入商品名称'"
@@ -37,7 +29,8 @@
         </table-list>
       </el-card>
        <div class="empty" v-show="!total">
-        <noData :nullType="nullText" :text="'暂未创建商品'">
+        <noData :nullType="nullText" :text="text">
+          <el-button type="primary" round v-if="nullText == 'nullData'" @click="addProduct" v-preventReClick>创建</el-button>
         </noData>
       </div>
   </div>
@@ -52,7 +45,9 @@ export default {
     return {
       formData: {},
       imageUrl: '',
-      nullText: 'noData',
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有商品，快来创建吧！',
       checkedGoodsId: [],
       total: 1,
       btnsWidth: 230,
@@ -149,15 +144,22 @@ export default {
         webinar_id: this.$route.params.str
       };
       this.$fetch('goodsGet', this.$params(obj)).then(res => {
-        this.tableData = res.data.goods_list;
-        this.tableData.map(item => {
+        let tableData = res.data.goods_list;
+        tableData.map(item => {
           item.watch = Boolean(!item.status);
           item.img = item.img_url;
         });
         this.total = res.data.total;
-        if (params === 'search' && !res.data.total) {
-          this.nullText = 'search';
-        }
+        this.tableData = tableData;
+        if (formParams.questionName) {
+            this.nullText = 'search';
+            this.text = '';
+            this.isSearch = true;
+          } else {
+            this.nullText = 'nullData';
+            this.text = '您还没有商品，快来创建吧！';
+            this.isSearch = false;
+          }
         this.addCover();
       }).catch(e => {
         console.log(e);

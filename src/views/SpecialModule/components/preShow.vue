@@ -11,7 +11,7 @@
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
             <p>{{ specialInfo.created_at }}</p>
-            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><b>{{ specialInfo.pv }}</b>次观看</span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
+            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv">热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <el-popover
                 placement="bottom-end"
@@ -32,7 +32,7 @@
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
             <el-row :gutter="40" class="lives">
-              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                 <div class="inner">
                   <div class="top">
                     <span class="liveTag">{{item.type | actionText }}</span>
@@ -97,6 +97,9 @@ export default {
       this.pageNum = current;
       this.pagePos = parseInt((current - 1) * this.pageSize);
       this.getSpecialList();
+    },
+    toDetail(id) {
+      this.$router.push({path: `/live/detail/${id}`});
     },
     handleClick(tab) {
       this.activeName = tab.name;

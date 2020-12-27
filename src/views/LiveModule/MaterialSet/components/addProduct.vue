@@ -3,7 +3,7 @@
     <el-card>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">
-          <el-input v-model="form.name" maxlength="30" show-word-limit placeholder="请输入商品名称"></el-input>
+          <el-input v-model.trim="form.name" maxlength="30" show-word-limit placeholder="请输入商品名称"></el-input>
         </el-form-item>
         <el-form-item label="商品图片" prop="img_id">
           <div class="imgList">
@@ -41,25 +41,25 @@
               </upload>
             </div>
           </div>
-          <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，尺寸：600*600</p>
+          <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，建议尺寸：600*600px</p>
         </el-form-item>
         <el-form-item label="商品描述" prop="description">
-          <el-input type="textarea" v-model="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></el-input>
+          <el-input type="textarea" v-model.trim="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></el-input>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <el-input v-model="form.price" placeholder="请输入商品原价0.00元" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"><i slot="suffix">元</i></el-input>
+          <el-input v-model.trim="form.price" placeholder="请输入商品原价0.00元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="优惠价">
-         <el-input v-model="form.discount_price" placeholder="请输入商品优惠价0.00元" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"><i slot="suffix">元</i></el-input>
+         <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0.00元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
-          <el-input v-model="form.url" placeholder="请输入商品链接"></el-input>
+          <el-input v-model.trim="form.url" placeholder="请输入商品链接"></el-input>
         </el-form-item>
         <el-form-item label="淘口令">
-          <el-input v-model="form.tao_password" placeholder="请输入淘口令"></el-input>
+          <el-input v-model.trim="form.tao_password" placeholder="请输入淘口令"></el-input>
         </el-form-item>
         <el-form-item label="店铺链接">
-          <el-input v-model="form.shop_url" placeholder="请输入店铺链接"></el-input>
+          <el-input v-model.trim="form.shop_url" placeholder="请输入店铺链接"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round @click="onSubmit" v-preventReClick>保存</el-button>
@@ -95,7 +95,7 @@ export default {
       fileList: [],
       rules: {
         name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { required: true, message: '请输入商品名称', trigger: 'blur' },
         ],
         img_id: [
           { required: true, validator: imgValidate, trigger: 'change' }
@@ -107,7 +107,8 @@ export default {
           { required: true, message: '请输入商品原价', trigger: 'blur' }
         ],
         url: [
-          { required: true, message: '请输入商品链接', trigger: 'blur' }
+          { required: true, message: '请输入商品链接', trigger: 'blur' },
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的商品链接' , trigger: 'blur'}
         ]
       },
     };
@@ -140,7 +141,6 @@ export default {
             img_id: item.img_id
           };
         });
-        console.log(this.fileList, this.form.img_id, '0000000000000000');
         // 图片 ID 处理
         // res.data.img_list.forEach(item => {
         //   this.form.img_id.push(item.img_id);
@@ -212,7 +212,6 @@ export default {
       if (length > 0 && opt.cover) {
         this.fileList[length-1].cover = true;
       }
-      console.log(this.fileList, '333333333333333');
     },
     // 删除商品图片
     delImg(id) {
@@ -287,6 +286,14 @@ export default {
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
+          if (this.form.price < 1 || this.form.price > 99999999.99) {
+            this.$message.error('价格必须介于1-99999999.99之间');
+            return;
+          }
+          if (this.form.discount_price < 1 || this.form.price > 99999999.99) {
+            this.$message.error('价格必须介于1-99999999.99之间');
+            return;
+          }
           if (parseFloat(this.form.discount_price) > parseFloat(this.form.price)) {
             this.$message.error('优惠价不能大于等于商品原价');
             return;
@@ -298,7 +305,6 @@ export default {
             webinar_id: this.$route.params.str,
             cover_id: this.defaultCover
           };
-          console.log(obj, this.fileList,  '222222222222222222');
           let url;
           if (this.$route.query.goodId) {
             obj.goods_id = this.$route.query.goodId;
@@ -313,7 +319,7 @@ export default {
                 path: `/live/productSet/${this.$route.params.str}`
               });
             } else {
-               this.$message.error('保存失败！');
+               this.$message.error(res.msg || '保存失败！');
             }
           }).catch(err => {
             this.$message.error('保存失败！');

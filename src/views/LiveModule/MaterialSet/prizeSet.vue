@@ -19,7 +19,10 @@
                     :on-preview="uploadPreview"
                     @delete="deleteImg"
                     :before-upload="beforeUploadHandler">
-                    <p slot="tip">推荐尺寸：240*240px，小于2MB <br/> 支持jpg、gif、png、bmp</p>
+                    <div slot="tip">
+                      <p>建议尺寸：240*240px，小于2M</p>
+                      <p>支持jpg、gif、png、bmp</p>
+                    </div>
                   </upload>
                 </el-form-item>
                 <el-form-item label="模板库">
@@ -51,7 +54,7 @@
                     <el-input v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :disabled='isDisabled' round @click="lotterySave">保存</el-button>
+                  <el-button type="primary" :disabled='isDisabled'  round @click="lotterySave" v-preventReClick>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -85,7 +88,7 @@
                   添加字段
                 </div>
                 <el-form-item>
-                  <el-button type="primary" round @click="sureGivePrize" :disabled='lotteryPage'>保存</el-button>
+                  <el-button type="primary" round @click="sureGivePrize" :disabled='lotteryPage' v-preventReClick>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -96,18 +99,19 @@
                   <div class="give-msg">
                     <el-form :model="givePrizeForm">
                       <el-form-item v-for="(item, index) in givePrizeList" :key="index">
+                        <span class="red" v-if="item.is_required==1">*</span>
                         <el-input v-model="givePrizeForm[item.field_key]" readonly type="text" :placeholder="item.placeholder"></el-input>
                       </el-form-item>
                     </el-form>
                   </div>
                 </el-scrollbar>
-                <div class="sureBtn"><el-button type="primary" round>确定</el-button></div>
+                <div class="sureBtn"><el-button type="primary" v-preventReClick round>确定</el-button></div>
               </div>
             </div>
           </div>
         </el-tab-pane>
         <el-tab-pane name="third">
-           <span slot="label"><i class="el-icon-date"></i>
+           <span slot="label">
            奖品设置
             <el-tooltip class="prize--set" effect="dark" placement="right" style="margin-left:5px">
               <i class="el-icon-question ques"></i>
@@ -202,7 +206,8 @@ export default {
       },
       isLive: false,
       localLottery: { // 抽奖页信息
-        description: ''
+        description: '',
+        title: ''
       },
       lotteryPageMessage: {  // 领奖页信息
 
@@ -217,7 +222,6 @@ export default {
   },
   computed: {
     isDisabled: function(){
-      console.warn(this.localLottery, this.formData, 785);
       if(this.formData.description != this.localLottery.description || this.isChecked != this.localImg || this.formData.title != this.localLottery.title || this.previewSrc != this.localLottery.img_path){
         return false
       }else{
@@ -225,10 +229,9 @@ export default {
       }
     },
     lotteryPage: function(){
-      console.warn(this.givePrizeForm, 889);
       try {
-        this.givePrizeList.forEach(ele=>{
-          if(ele.placeholder != this.givePrizeForm[ele.field_key]){
+        this.givePrizeList.forEach((ele, index)=>{
+          if(ele.placeholder != this.givePrizeForm[ele.field_key] || ele.is_required != Boolean(this.lotteryPageMessage[index].is_required)){
             throw '改变'
           }
         })
@@ -268,7 +271,7 @@ export default {
           this.formData.description = res.data.description;
           this.formData.title = res.data.title;
           this.localLottery = res.data
-          this.previewSrc = res.data.img_path || '';
+          this.previewSrc = res.data.img_path;
           this.backgroundImg = res.data.img_path || this.prizeImgList[0];
           if (res.data.img_path) {
             this.localImg = 10
@@ -294,10 +297,7 @@ export default {
           img_path: this.previewSrc,
           description: this.formData.description
       }
-      if(this.isLive){
-        return this.$message.error('当前活动正在开播中，无法更改')
-      }
-      this.$fetch('savePrizeInfo', this.$params(params)).then(res => {
+      this.$fetch('savePrizeInfo', params).then(res => {
         if (res.code == 200) {
           this.$message.success('保存成功');
         } else {
@@ -337,7 +337,8 @@ export default {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
         console.warn(res.data, '获取领奖页信息');
         this.givePrizeList = res.data;
-        this.lotteryPageMessage = res.data
+        // 深拷贝一个对象做对比
+        this.lotteryPageMessage = JSON.parse(JSON.stringify(res.data))
         this.givePrizeList.forEach(ele=>{
           this.givePrizeForm[ele.field_key] = ele.placeholder
         })
@@ -348,9 +349,6 @@ export default {
     },
     // 保存领奖页信息
     sureGivePrize() {
-      // if(this.isLive){
-      //   return this.$message.error('当前活动正在开播中，无法更改')
-      // }
       this.givePrizeList.forEach(ele=>{
         console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
         ele.placeholder = this.givePrizeForm[ele.field_key]
@@ -395,11 +393,11 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message.error(`文件格式不支持，请检查图片`);
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('图片大小不能超过 2MB!');
+        this.$message.error('文件大小超过2MB，请检查图片');
         return false;
       }
       return isType && isLt2M;
@@ -440,6 +438,9 @@ export default {
   /deep/.el-switch__label.is-active {
     color: #1A1A1A;
 }
+ /deep/.el-tabs__content{
+   min-height: 700px;
+ }
   .prize-info{
     margin: 18px 24px;
   }
@@ -501,6 +502,15 @@ export default {
       background-image: url('../../../common/images/h5-show-phone.png');
       background-size: cover;
       margin-top: -15px;
+      position: relative;
+      .give-show-title{
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 16px;
+        color: #666666;
+        line-height: 24px;
+      }
       .give-people{
         margin: auto;
         margin-top: 287px;
@@ -533,9 +543,18 @@ export default {
           text-align: center;
           margin: auto;
           height: 170px;
-          padding:0 20px;
+          padding:20px 20px 0;
+          width: 94%;
           p{
             margin-top: 24px;
+          }
+          .red{
+            position: absolute;
+            left: -15px;
+            top: 0;
+            display: inline-block;
+            color: #fe6a6a;
+            margin-right: 10px;
           }
         }
       }

@@ -28,6 +28,7 @@
               {{ time === 60 ? '发送验证码' : `${time}s` }}
             </el-button>
           </el-input>
+          <p v-if="sendText">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
@@ -49,16 +50,18 @@
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
-          <p v-if="sendText">{{sendText}}</p>
+          <p v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
-          <el-input v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
+          <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
         </el-form-item>
         <el-form-item label="新密码"  key="pasword"  prop="password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input v-model.trim="form.password" auto-complete="off" placeholder="输入新密码"></el-input>
+          <el-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''">
+            <template slot="append" v-if="form.password && form.password.length >= 6">{{pwdLevel}}</template>
+          </el-input>
         </el-form-item>
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
+          <el-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
           <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
@@ -79,7 +82,7 @@
 </template>
 
 <script>
-import {sessionOrLocal} from "@/utils/utils";
+import env from "@/api/env";
 
 export default {
   name: "validSetDialog.vue",
@@ -164,7 +167,6 @@ export default {
       captcha: null, // 云盾本身
       codeKey: null, // 短信、邮箱验证码校验接口返回key值
       errorMsgShow: '',
-
       downTimer1: null,
       time1: 60, // 倒计时
       isDisabledClick1: false,
@@ -174,7 +176,8 @@ export default {
       captcha1: null, // 云盾本身
       codeKey1: null, // 短信、邮箱验证码校验接口返回key值
       errorMsgShow1: '',
-      sendText: ``
+      sendText: ``,
+      sendText1: ``
     };
   },
   computed: {
@@ -182,7 +185,27 @@ export default {
       return this.getScenedTitle().title;
     },
     openLink() {
-      return `http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`;
+      return env.staticLinkVo.kf;
+    },
+    pwdLevel() {
+      // 密码强度分为：弱/一般/强
+      // （1）弱：密码长度6位，纯数字或者纯字母，如123456、111111、aaaaaa  纯6个
+      // （2）一般：密码长度6位及以上的，数字+字母组合；
+      // （3）一般：密码长度7位及以上的，纯数字或者纯字母组合，如1111111
+      // （4）强：密码长度7位及以上的，数字+字母+特殊符号+大小写字母
+      if(!this.form.password) {
+        return '';
+      } else if(this.form.password.length < 6) {
+        return '';
+      } else if(/^[a-z]{6}$/.test(this.form.password) || /^\d{6}$/.test(this.form.password) || /^A-Z{6}$/.test(this.form.password)) {
+        return '弱';
+      } else if(/^[a-z]{7,}$/.test(this.form.password) || /^\d{7,}$/.test(this.form.password) || /^A-Z{7,}$/.test(this.form.password)) {
+        return '一般';
+      } else if(this.form.password.length >= 6 && (/(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/.test(this.form.password))) {
+        return '一般';
+      } else {
+        return '强';
+      }
     }
   },
   methods: {
@@ -296,17 +319,17 @@ export default {
           if(res && res.code === 200) {
             this.isDisabledClick1 = true;
             if(this.downTimer1) {
-              window.clearTimeout(this.downTime1);
+              window.clearTimeout(this.downTimer1);
             }
-            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+            this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
             this.countDown1();
           } else {
-            this.sendText = ``;
+            this.sendText1 = ``;
             this.$message.error(res.msg || '验证码发送失败');
           }
         }).catch(e => {
           console.log(e);
-          this.sendText = ``;
+          this.sendText1 = ``;
           this.$message.error(e.msg || '验证码发送失败');
         });
       }
@@ -324,6 +347,7 @@ export default {
         this.time = 60;
         this.isDisabledClick = false;
         this.callCaptcha();
+        this.sendText = '';
       }
     },
     // 验证码倒计时（ 场景使用： 设置手机号、修改手机号-第二步、修改邮箱-第二步、设置邮箱）
@@ -338,6 +362,7 @@ export default {
         this.time1 = 60;
         this.isDisabledClick1 = false;
         this.callCaptcha(1);
+        this.sendText1 = '';
       }
     },
     // 下一步按钮，校验 验证码，成功后进入下一步。 （场景使用： 修改手机、修改关联邮箱）
@@ -544,6 +569,8 @@ export default {
         // 为表单赋值-初始化
         this.form.phone = vo.phone || '';
         this.form.email = vo.email || '';
+        this.form.code = '';
+        this.form.new_code = '';
 
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);

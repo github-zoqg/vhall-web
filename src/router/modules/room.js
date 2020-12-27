@@ -21,6 +21,12 @@ const router = [
         meta: { title: '直播间' },
       },
       {
+        path: '/live/recordvideo/:il_id',
+        component: () => import('@/views/LiveModule/Room/recordvideo'),
+        name: 'RecordVideo',
+        meta: { title: '录制视频' },
+      },
+      {
         path: '/live/watch/:il_id',
         component: () => import('@/views/LiveModule/Room/watchWrap'),
         name: 'LiveWatch',
@@ -40,7 +46,7 @@ const router = [
       },
       {
         path: '/embedclient/subscribe/:id?',
-        component: () => import('@/views/LiveModule/Subscribe/index'),
+        component: () => import('@/views/LiveModule/Subscribe/embed'),
         name: 'embedSubscribe',
         meta: { title: '嵌入预约页' },
       },

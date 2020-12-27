@@ -42,7 +42,7 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="标志替换：" prop="logo_url">
+          <el-form-item label="标志替换" prop="logo_url">
             <upload
               class="upload__sign"
               v-model="signSetForm.logo_url"
@@ -58,13 +58,12 @@
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>最佳尺寸：240*78px</p>
-                <p>小于2MB(支持jpg、gif、png、bmp)</p>
+                <p>建议尺寸：240*78px，小于2M</p>
+                <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
-            <p class="p-notice">开启时支持更换品牌标志</p>
           </el-form-item>
-          <el-form-item label="标志链接" prop="skip_url">
+          <el-form-item label="标志链接" prop="skip_url" class="item--skip__url">
             <el-input v-model.trim="signSetForm.skip_url" />
           </el-form-item>
           <el-form-item label="">
@@ -104,7 +103,8 @@ export default {
         ],
         skip_url: [
           { required: false, message: '请填写标志链接', trigger: 'blur'},
-          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       }
     };
@@ -120,6 +120,11 @@ export default {
       }
       // 触发验证
       this.$refs.signSetForm.validateField('logo_url');
+      try {
+        this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm, this.domain_url);
+      } catch (e) {
+        console.log(e);
+      }
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -172,7 +177,11 @@ export default {
             };
           }
           this.domain_url = res.data.logo_url || '';
-          this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm);
+          try {
+            this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm, this.domain_url);
+          } catch (e) {
+            console.log(e);
+          }
         } else {
           this.signSetForm = {
             organizers_status: null,
@@ -195,7 +204,7 @@ export default {
         if(valid) {
           console.log(this.signSetForm, 'signSetForm');
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
-          this.$fetch('setInterWebinarTag', params).then(res => {
+          this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
             console.log(res);
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
@@ -258,15 +267,20 @@ export default {
 /* 标志上传 */
 .upload__sign {
   /deep/.el-upload--picture-card {
-    width: 280px;
+    width: 400px;
     height: 130px;
   }
   /deep/.box > div {
-    width: 280px;
+    width: 400px;
     height: 130px;
   }
 }
-
+.item--skip__url {
+  /deep/.el-input {
+    width: 400px;
+    border-radius: 4px;
+  }
+}
 .btnGroup{
   text-align: center;
   margin: 40px auto;

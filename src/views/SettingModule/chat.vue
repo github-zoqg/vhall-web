@@ -31,11 +31,13 @@
         <div class="operaBox">
           <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round>添加</el-button>
           <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round>批量添加</el-button>
-          <el-button @click.prevent.stop="multiKeywordDel" size="medium" round>批量删除</el-button>
+          <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round>批量删除</el-button>
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
               v-model="query.keyword"
+              clearable
+              @clear="getKeywordList"
               @keyup.enter.native="getKeywordList"
               >
               <i
@@ -105,7 +107,7 @@
           <p slot="tip" v-else>请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click="saveUploadKey" size="mini" round>确 定</el-button>
+          <el-button type="primary" v-preventReClick @click="saveUploadKey" size="mini" round>确 定</el-button>
           <el-button @click="multiUploadShow = false" size="mini" round>取 消</el-button>
         </div>
       </div>
@@ -137,7 +139,8 @@ export default {
       query: {
         keyword: '',
         pos: 0,
-        limit: 1000
+        limit: 1000,
+        pageNumber: 1
       },
       downloadHref: null,
       // 列表展示开始
@@ -371,14 +374,18 @@ export default {
           if (resV && resV.code === 200) {
             this.importResult = resV.data;
           } else {
-            this.$message.error(res.msg || '');
+            this.$message.error(resV.msg || '');
           }
         }).catch(e => {
-          this.$message.error('导入聊天严禁词校验失败！');
+          this.$message.error(e.msg || '导入聊天严禁词校验失败！');
         });
       }
     },
     saveUploadKey() {
+      if(!this.fileUrl) {
+        this.$message.error('请先选择文档');
+        return;
+      }
       this.$fetch('uploadKeywordAdd', {
         file: this.fileUrl
       }).then(resV => {
@@ -400,11 +407,11 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
-        return;
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
-        return;
+        this.$message.error('上传文件大小不能超过 2M!');
+        return false;
       }
       return isType && isLt2M;
     },

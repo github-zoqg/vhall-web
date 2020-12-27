@@ -19,7 +19,8 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.start_time : liveDetailInfo.actual_start_time}}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2  ? liveDetailInfo.start_time : liveDetailInfo.webinar_state == 4 ? liveDetailInfo.created_at : liveDetailInfo.actual_start_time}}</p>
+            <p class="subDuration" v-if="liveDetailInfo.webinar_state == 4">点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <!-- <span class="tag">报名表单</span> -->
@@ -85,7 +86,7 @@
 import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 import Env from "@/api/env";
-import { formateDate } from "@/utils/general.js"
+import { formateDates } from "@/utils/general.js"
 export default {
   components: {
     PageTitle,
@@ -166,6 +167,7 @@ export default {
             vItem.subText = vItem.subText.replace(/直播/, '点播')
             if(vItem.title == '点播管理'){
                vItem.subText = '管理点播内容'
+               vItem.path = `/live/recordplayback/${this.$route.params.str}`
             }
             if(vItem.title == '基本信息'){
               vItem.path = `/live/vodEdit/${this.$route.params.str}`
@@ -211,7 +213,7 @@ export default {
         if (res.data.webinar_state == 2) {
           let date = new Date();
           let nowTime = date.setTime(date.getTime());
-          this.downTime(formateDate(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
+          this.downTime(formateDates(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
@@ -288,17 +290,15 @@ export default {
           this.isAnginOpen = false;
         } else {
           this.isAnginOpen = true;
-          this.$message.error(res.msg || '检测异常');
         }
       }).catch(e => {
         this.isAnginOpen = true;
-        this.$message.error(res.msg || '检测异常');
       });
     },
     blockHandler(item){
       if(item.path){
         if (item.path === '/live/edit') {
-          this.$router.push({path: item.path, query: {id:this.$route.params.str, type: 2 }});
+          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
         } else if (item.path === '/live/question') {
           // 问卷
           this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});
@@ -376,22 +376,25 @@ export default {
       flex: 1;
       p{
         font-size: 14px;
+        line-height: 28px;
         &:nth-child(1){
           margin-bottom: 16px;
           height: 56px;
           font-size: 20px;
           display: table-cell;
           vertical-align: middle;
-          line-height: 24px;
         }
-        &:nth-child(2){
-          margin-bottom: 10px;
-          line-height: 20px;
-        }
-        &:nth-child(3){
+        &:last-child{
           margin-bottom: 20px;
-          line-height: 20px;
         }
+        // &:nth-child(2){
+        //   margin-bottom: 10px;
+        //   line-height: 20px;
+        // }
+        // &:nth-child(3){
+        //   // margin-bottom: 20px;
+        //   line-height: 20px;
+        // }
       }
     }
     .thumb{
@@ -474,6 +477,9 @@ export default {
 }
 .subColor{
   color: #666666;
+}
+.action-look{
+  margin-top: 10px;
 }
 .font-20{
   font-size: @20;

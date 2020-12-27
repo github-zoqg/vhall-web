@@ -32,7 +32,7 @@
     <div class="playerBoxContainer">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
-        <player ref="player" v-if="docSDKReady"  v-bind="playerProps"></player>
+        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
       </div>
       <div class="chaptersBox">
         <div class="tab">
@@ -63,6 +63,11 @@ export default {
       showDoc: false,
       userId: window.sessionStorage.getItem('userId'),
       playerProps: {},
+      playerParams: {
+        subtitleOption: {
+          enable: true
+        }
+      },
       docSDKReady: false,
       docsdk: {},
       pageInfo: {pageIndex: 0, total: 0},

@@ -20,7 +20,7 @@
           :isDocShow="watchDocShow"
         >
           <Interactive
-            :webinadId='ilId'
+            :webinarId='ilId'
             :ownerId="roomInfo.account_id"
             :inavId="roomInfo.inav_id"
             :roomId="roomInfo.room_id"
@@ -282,14 +282,6 @@
         </div>
       </div>
     </div>
-    <!-- POP 事件弹出层显示区域 -->
-    <!-- 签到 -->
-    <!-- <Signin
-      v-if="roomInfo.room_id"
-      :vss_token="vssToken"
-      :room_id="roomInfo.room_id"
-      :masterEnd="false"
-    ></Signin> -->
     <Signin
       v-if="roomInfo.room_id"
       :vss_token="vssToken"
@@ -304,6 +296,7 @@
       title="问卷"
     >
       <question
+        v-if="roomInfo.app_id"
         :isEmbed="isEmbed"
         :roomId="roomId"
         :ilId="ilId"
@@ -762,12 +755,16 @@ export default {
     bizInfo: {
       handler (val) {
         if (val) {
+
           this.vssInfo = val
           this.poster = val.webinar.image_url ? val.webinar.image_url : '';
           this.userModules = val.modules;
           this.isInteract = val.webinar.is_interact;
           this.uploadDomain = val.domains.upload
+
         }
+      console.log('a121', this.bizInfo)
+
       },
       deep: true,
       immediate: true
@@ -1006,6 +1003,7 @@ export default {
         userId: this.userInfo ?  this.userInfo.user_id : '',
         nickName: this.bizInfo.user.nick_name
       }
+      console.log(10101010101, inavInfo)
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;
@@ -1066,11 +1064,11 @@ export default {
       this.isBanned = this.bizInfo.user.is_gag == 1
       this.isKicked = this.bizInfo.user.is_kick == 1
       let context = {
-        nickname: this.userInfo ? this.userInfo.nick_name : this.bizInfo.user.nick_name, // 昵称
+        nickname: this.bizInfo.user.nick_name, // 昵称
         avatar: this.userInfo && this.userInfo.avatar
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
-        pv: this.bizInfo.webinar.pv.num, // pv
+        pv: this.bizInfo.webinar.pv, // pv
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
@@ -1081,7 +1079,6 @@ export default {
       const opt = {
         appId: this.roomInfo.app_id,
         accountId: this.roomInfo.third_party_user_id,
-        // accountId: '',
         channelId: this.roomInfo.channel_id,
         context: JSON.stringify(context),
         token: this.roomInfo.paas_access_token,

@@ -9,8 +9,8 @@
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
+          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button round @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
           <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
           <el-link :href="downloadUrl" v-else>下载模板</el-link>
@@ -106,7 +106,7 @@
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog width="468px" title="导入观众" :visible.sync="importFileShow" append-to-body>
+    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="468px">
       <div class="upload-dialog-content">
         <file-upload
           v-model="fileUrl"
@@ -120,14 +120,12 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到4条数据</p>
+          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到0条数据</p>
           <p slot="tip" v-else>请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <div class="dialog-right-btn">
-            <el-button type="primary" @click="reloadViewerList" size="mini" round>确 定</el-button>
-            <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
-          </div>
+          <el-button type="primary" @click="reloadViewerList" size="mini" round>确 定</el-button>
+          <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -157,26 +155,32 @@ export default {
         {
           label: '姓名',
           key: 'name',
+          width: ''
         },
         {
           label: '行业',
           key: 'industry',
+          width: ''
         },
         {
           label: '邮箱',
           key: 'email',
+          width: ''
         },
         {
           label: '手机号',
           key: 'phone',
+          width: ''
         },
         {
           label: '工号',
           key: 'job_number',
+          width: ''
         },
         {
           label: '其它',
           key: 'other',
+          width: ''
         }
       ],
       tableRowBtnFun: [
@@ -242,7 +246,7 @@ export default {
           { min: 1, message: '请输入行业（最多50个字符）', trigger: 'blur' }
         ],
         email: [
-          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { required: false, message: '请输入邮箱', trigger: 'blur' },
           { pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur' },
         ],
         phone: [
@@ -252,7 +256,7 @@ export default {
           { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
         ],
         job_number: [
-          { required: false, message: '请输入姓名', trigger: 'blur' },
+          { required: false, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur' }
         ],
@@ -370,7 +374,8 @@ export default {
       this.$confirm('确定要删除当前分组？', '删除组', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false
       }).then(() => {
         let params = {
           group_ids: item.id
@@ -509,7 +514,8 @@ export default {
         this.$confirm('确定从当前组里删除该观众？', '删除观众', {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -578,11 +584,11 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
-        return;
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2MB!');
-        return;
+        this.$message.error('上传文件大小不能超过 2M!');
+        return false;
       }
       return isType && isLt2M;
     },
@@ -644,8 +650,7 @@ export default {
 }
 .table__container {
   width: calc(100% - 256px);
-  .padding41-40();
-  padding-bottom: 40px;
+  .padding-table-list2();
   background: #FFFFFF;
   min-height: 500px;
 }
@@ -654,7 +659,7 @@ export default {
   margin-bottom: 32px;
 }
 .group__container {
-  width: 176px;
+  width: 200px;
   min-height: 120px;
   background: #FFFFFF;
   border-radius: 4px;

@@ -23,7 +23,7 @@
          </div>
          <div class="ac__home--info">
            <p class="ac__home--title"></p>
-           <p class="ac__home--notice" v-html="content"></p>
+           <p class="ac__home--notice">{{content}}</p>
          </div>
        </div>
      </div>
@@ -53,7 +53,7 @@ export default {
       attentioned_count: 0,
       follow: 0,
       content: `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`,
-      avatarImgUrl: null,
+      avatarImgUrl: ``,
       userInfo: null
     };
   },
@@ -64,7 +64,7 @@ export default {
     },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
-        home_user_id: sessionOrLocal.get('userId')
+        home_user_id: this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
@@ -79,7 +79,11 @@ export default {
             this.attentioned_count = attentioned_count;
             this.follow = follow;
             this.content = homepage_info.content;
-            this.$refs.homeMain.initComp(homepage_info);
+            try {
+              this.$refs.homeMain.initComp(homepage_info);
+            }catch (e) {
+              console.log(e);
+            }
           })
         } else {
           this.userHomeVo = null;
@@ -91,6 +95,7 @@ export default {
     }
   },
   created() {
+    this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },
   mounted() {
@@ -213,6 +218,7 @@ export default {
     font-size: 12px;
     color: #999999;
     line-height: 17px;
+    word-break: break-all;
   }
 }
 .ac__home__panel--left {

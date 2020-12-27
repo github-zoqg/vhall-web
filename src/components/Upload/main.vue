@@ -176,6 +176,7 @@ export default {
     line-height: unset;
     overflow: hidden;
     border: 1px solid #CCCCCC;
+    background-color: #f7f7f7;
     i {
       color: #999999;
     }

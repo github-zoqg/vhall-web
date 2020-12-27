@@ -27,11 +27,11 @@
     </div>
     <div class="v-form">
       <div class="v-item">
-        执行时间：<el-input v-model="runTime" placeholder="1 - 120" :disabled="!addStatus" ></el-input>分钟
+        <span>执行时间：</span> <el-input v-model="runTime" placeholder="1 - 120" :disabled="!addStatus" ></el-input>分钟
         <p class="v-error" v-if="runTimeObj.err">{{ runTimeObj.err }}</p>
       </div>
       <div class="v-item">
-        在线人数：<el-input
+        <span>在线人数：</span><el-input
           v-model="input.onlineNum"
           placeholder="请输入内容"
           :disabled="!addStatus"
@@ -40,7 +40,7 @@
         <p class="v-error" v-if="error.onlineNum">{{ error.onlineNum }}</p>
       </div>
       <div class="v-item">
-        观看次数：<el-input
+        <span>热度：</span><el-input
           v-model="input.pv"
           placeholder="请输入内容"
           :disabled="!addStatus"
@@ -114,7 +114,7 @@ export default {
       let re = /^\d+$/;
       newVal = Number(newVal);
       if (!re.test(newVal) || newVal > 120 || newVal <= 0) {
-        this.runTimeObj.err = '请输入1~120之间的正整数';
+        this.runTimeObj.err = '请输入1~120分的正整数';
       }else{
         this.runTimeObj.err = ''
       }
@@ -123,8 +123,8 @@ export default {
       let re = /^\d+$/;
       newVal = Number(newVal);
       const targetOnlineCount = Math.floor(this.input.pv * 0.8);
-      if (!re.test(newVal) || newVal <= 0) {
-        this.error.onlineNum = `请输入正整数`;
+      if (!re.test(newVal) || newVal <= 0 || newVal > 999999 ) {
+        this.error.onlineNum = `请输入1-999999之间的正整数`;
       } else if (newVal > targetOnlineCount) {
         this.error.onlineNum = '';
         this.error.pv = `在线人数不能大于观看次数的80%`;
@@ -132,7 +132,7 @@ export default {
         this.error.onlineNum = '';
         if (
           re.test(this.input.pv) &&
-          this.input.pv <= 1500 &&
+          this.input.pv <= 999999 &&
           this.input.pv > 0
         ) {
           this.error.pv = '';
@@ -143,8 +143,8 @@ export default {
       let re = /^\d+$/;
       newVal = Number(newVal);
       const targetOnlineCount = Math.floor(newVal * 0.8);
-      if (!re.test(newVal) || newVal > 1500 || newVal <= 0) {
-        this.error.pv = '请输入1~1500之间的正整数';
+      if (!re.test(newVal) || newVal > 999999 || newVal <= 0) {
+        this.error.pv = '请输入1~999999之间的正整数';
       } else if (targetOnlineCount < this.input.onlineNum) {
         this.error.pv = `在线人数不能大于观看次数的80%`;
       } else {
@@ -165,7 +165,8 @@ export default {
       return Number(this.preson.onlineNum + this.preson.baseOnlineNum);
     },
     addPv () {
-      return Number(this.preson.pv + this.preson.basePv);
+      console.warn(this.preson.basePv);
+      return Number(this.preson.basePv + this.preson.pv);
     },
     addStatus () {
       console.log(this.status.pv && this.status.onlineNum);
@@ -272,8 +273,8 @@ export default {
     // 上线
     EventBus.$on('onlineJoin', msg => {
       this.preson.onlineNum = msg.uv;
-      if (msg.context.pv > this.preson.pv) {
-        this.preson.pv = msg.context.pv;
+      if (msg.context.pv > this.preson.basePv) {
+        this.preson.pv = msg.context.pv - this.preson.basePv;
       }
     });
 
@@ -341,6 +342,11 @@ export default {
     font-size: 12px;
     .v-item {
       position: relative;
+      span{
+        display: inline-block;
+        min-width: 60px;
+        text-align: end;
+      }
       .el-input {
         width: 340px;
         height: 28px;

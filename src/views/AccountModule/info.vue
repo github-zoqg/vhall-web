@@ -89,6 +89,7 @@ export default {
   },
   created() {
     let bind_Result = sessionOrLocal.get('bind_result');
+    // 若存在第一步绑定结果提示，表明需要提示具体绑定结果。
     if (bind_Result) {
       let auth_tag = sessionOrLocal.get('tag', 'localStorage');
       let res = JSON.parse(bind_Result);

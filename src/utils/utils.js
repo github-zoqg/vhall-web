@@ -200,6 +200,16 @@ export function checkUploadType(file, that, type = 1) {
     that.$message.error('上传封面图片大小不能超过 2MB!');
     return false;
   }
+  let imgSrc = window.URL.createObjectURL(file);
+  let img = new Image();
+  img.src = imgSrc;
+  img.onload = function () {
+    // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
+    if (img.width !== 1280 && img.height !== 720 ) {
+      that.$message.error(`请上传1280*720尺寸图片!`);
+      return false;
+    }
+  };
   return isType && isLt2M;
 }
 
@@ -210,7 +220,6 @@ export function getQueryString(name) {
 }
 // 判断是否登录成功
 export function checkAuth(to, from, next) {
-  console.warn(to, 9999);
 
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
@@ -220,6 +229,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/live/watch') !== -1 ||
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
+    to.path.indexOf('/user/home') !== -1 ||
     to.path.indexOf('/live/watch') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
@@ -245,16 +255,29 @@ export function checkAuth(to, from, next) {
     };
     fetchData('callbackUserInfo', params).then(res => {
       if (res.data && res.code === 200) {
-        sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-        sessionOrLocal.set('sso_token', res.data.sso_token);
-        sessionOrLocal.set('userId', res.data.user_id);
+        // 登录场景下，存储直接登录
+        if(Number(scene_id) === 1) {
+          sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+          sessionOrLocal.set('sso_token', res.data.sso_token || '');
+          sessionOrLocal.set('userId', res.data.user_id || '');
+        }
+        // 非观看页第三方登录场景，均跳转/home
         if (!sourceTag) {
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          if(auth_tag) {
+            if (auth_tag.indexOf('bind') !== -1) {
+              // 绑定成功
+              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            }
+          } else {
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
+          }
           return;
         }
       } else {
+        // 非200情况下，若是3账户信息-账号绑定，提示当前账号已绑定，请解绑。
         if(auth_tag) {
           if (auth_tag.indexOf('bind') !== -1) {
+            // this.$message.success('绑定成功');
             sessionOrLocal.set('bind_result', JSON.stringify(res));
             sessionOrLocal.set('user_auth_key', user_auth_key);
             // 绑定成功

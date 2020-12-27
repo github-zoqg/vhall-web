@@ -10,6 +10,7 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         style="width: 240px"
+        :picker-options="pickerOptions"
         :clearable=false
         @change="getDateInfo"
       />
@@ -28,12 +29,31 @@ export default {
       lineDataList: [],
       myChart: null,
       timeStr: null,
-      sonVo: null
+      sonVo: null,
+      pickerOptions: {
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
+        }
+      }
     };
+  },
+  created() {
   },
   mounted() {
   },
   methods: {
+    dealDisabledData(time) {
+      // 设置选择的日期小于当前的日期,小于返回true,日期不可选
+      // return time.getTime() < Date.now() - 8.64e7
+      //return time.getTime() < Date.now() - 8.64e7;//设置选择今天以及今天之后的日
+      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+      //return time.getTime() < Date.now();//设置选择今天之后的日期（不能选择当天时间）
+      // return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+      // 设置当天23：59：59可选
+      // let currentTime = this.getNowMonthDay() + ` 23:59:59`
+      // return time.getTime() > new Date(currentTime).getTime()
+    },
     initComp(sonVo) {
       this.sonVo = sonVo;
       console.log(sonVo, 'dateData');
@@ -41,6 +61,7 @@ export default {
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
       this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
       // 按时间查询
       this.getDateInfo();
@@ -100,7 +121,7 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '{b} <br/>{a}: {c}（方）'
+          formatter:  `{b} <br/>{a}: {c}（${this.sonVo.vip_info.type > 0 ? 'GB' : '方'}）`
         },
         yAxis: [
           {
@@ -161,7 +182,7 @@ export default {
         ],
         series: [
           {
-            name: '并发',
+            name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
             type: "line",
             smooth: true,
             data: valData,

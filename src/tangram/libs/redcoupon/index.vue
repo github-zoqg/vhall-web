@@ -134,7 +134,8 @@ export default {
       required: true
     },
     assistantType: {
-      required: true
+      required: false,
+      default: false
     }
   },
   methods: {

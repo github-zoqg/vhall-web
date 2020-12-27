@@ -255,7 +255,7 @@ export default {
       required: false, // 分屏状态
       default: false
     },
-    webinadId: {
+    webinarId: {
       required: true // 活动id
     }
   },
@@ -284,7 +284,7 @@ export default {
     };
   },
   created () {
-    console.log(888888, this.$route.params.id, this.$route.params)
+    console.log(888888,  this.$route.params)
   },
 
   async mounted () {
@@ -392,6 +392,7 @@ export default {
             }
             const layout = this.getLayout(totalStreamCount, info.streaming);
             const layoutAndMainscreenStreamId = { layout };
+            console.error('this.mainScreen', this.mainScreen, 'this.accountId',this.accountId);
             if (info.streaming) { // 如果是插播或者桌面共享则把插播或桌面共享的流设置为主屏
               layoutAndMainscreenStreamId.mainScreenStreamId = info.streamId;
             } else if (this.accountId == this.mainScreen) { // 如果主持人是主讲人把主屏设置为主持人
@@ -658,7 +659,7 @@ export default {
      */
 
     async startLive (status) {
-      console.warn('点击的是开支直播-----------------------------------', this.webinadId, this.$route, status)
+      console.warn('点击的是开支直播-----------------------------------', this.webinarId, this.$route, status)
       return this.$streamPush().then(() => {
         if (status != 1) {
           return this.$fetch('liveStart', {
@@ -706,11 +707,9 @@ export default {
               () => {}
             );
           });
-        })
-
-        .then(() => {
+        }).then(() => {
           return this.$fetch('liveEnd', {
-            webinar_id: this.webinadId,
+            webinar_id: this.webinarId,
             end_type: 1
           }).then((res) => {
             if(res.code == 200){
@@ -732,7 +731,7 @@ export default {
             );
           });
           return this.$fetch('liveEnd', {
-            webinar_id: this.webinadId,
+            webinar_id: this.webinarId,
             end_type: 1
           }).then((res) => {
             if(res.code == 200){

@@ -36,7 +36,19 @@ const router = [
         meta: { auth: true, title: '创建直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit' },
       },
       {
-        path: 'vodEdit/:id?',
+        path: 'edit/:id',
+        component: () => import('@/views/LiveModule/edit'),
+        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit' },
+        hidden: true
+      },
+      {
+        path: 'vodEdit/:id',
+        component: () => import('@/views/LiveModule/edit'),
+        meta: { auth: true, title: '编辑点播', name: 'liveEdit', webniarType: 'vod', activeMenu: '/live/edit' },
+        hidden: true
+      },
+      {
+        path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
         meta: { auth: true, title: '创建点播', name: 'liveEdit', webniarType: 'vod', activeMenu: '/live/edit' },
         hidden: true
@@ -195,6 +207,12 @@ const router = [
         path: 'playback/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/list'),
         meta:{ auth: true, title: '回放管理', name: 'playback', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'recordplayback/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/list'),
+        meta:{ auth: true, title: '点播管理', name: 'recordplayback', activeMenu: '/live/list'},
         hidden: true
       },
       {

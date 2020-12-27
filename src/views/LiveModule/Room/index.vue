@@ -3,7 +3,7 @@
   <tip v-else-if="tipMsg" :text="tipMsg"> </tip>
   <div v-else class="publish-wrap">
     <vhall-saas
-      v-if="roomStatus"
+      v-if="roomStatus.show"
       :roomId="roomId"
       :ilId="il_id"
       :vssToken="vss_token"
@@ -39,7 +39,9 @@ export default {
   data() {
     return {
       rootActive:{}, // 活动信息
-      roomStatus:{}, // 房间信息
+      roomStatus:{
+        show: false
+      }, // 房间信息
       roomId: '',
       il_id: this.$route.params.il_id,
       vss_token: '',
@@ -106,19 +108,15 @@ export default {
           sessionStorage.setItem('defaultMainscreenDefinition', mockResult.push_definition || '');// ???
           sessionStorage.setItem('defaultSmallscreenDefinition', mockResult.hd_definition || '');// ???
           sessionStorage.setItem('interact_token', mockResult.interact.interact_token);
-          await this.getTools(mockResult.interact.room_id);
           this.shareId = mockResult.share_id;
           this.userInfo = mockResult.join_info;
           this.roomId = mockResult.interact.room_id;
           this.vss_token = mockResult.interact.paas_access_token;
           this.third_party_user_id = mockResult.join_info.third_party_user_id;
-          // this.joinId = mockResult.join_info.join_id; // 暂时移除
           this.saas_join_id = mockResult.join_info.join_id;
-          var a = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2NDIxMzg0IiwicGhvbmUiOiIxMzc4MzQ1MTAyMyIsIm5pY2tfbmFtZSI6Ilx1NTQwM1x1NGUwZFx1ODBkNlx1NWMwZlx1OTY0OCIsImpvaW5fdWlkIjoiMTczNjI2NyJ9.SZ2CgHUBoGFRN7v-NscO90ZbOJtprgItBE-HhYoV4vc';
           this.params_verify_token = mockResult.join_info.interact_token;
           this.permission = mockResult.permission;
-          console.log(this.roomStatus, 123);
-          this.qaStatus = mockResult.qa_open || 0;  // ???  互动--
+          this.qaStatus = mockResult.qa_open || 0;  //
           // 单独增加 static、upload、web  为了减少修改，将这个
           this.domains = {
             ...mockResult.urls || {},
@@ -138,6 +136,7 @@ export default {
           this.record_notice = mockResult.record_notice || 3; // 设置默认回放视频提示 ???
           this.docLowPriority = mockResult.doc_low_priority || 0;// ???  互动工具
           this.recordTip = mockResult.record_tip;
+          await this.getTools(mockResult.interact.room_id);
           // 初始化数据上报
           this.initVHallReport(mockResult);
         }).catch(err => {
@@ -148,7 +147,9 @@ export default {
       return new Promise((resolve, reject) => {
         this.$fetch('getToolStatus', {room_id: roomId}).then(res=>{
           if(res.code == 200){
+            res.data.show = true
             this.roomStatus = res.data;
+            console.warn(res.data, '基于整那个');
             resolve();
           }else{
             this.$message.warning(res.msg)
@@ -170,28 +171,18 @@ export default {
       });
     },
     initVHallReport(roominfo) {
-      this.$fetch('getInitiatorReportInfo', {
-        vss_token: roominfo.interact.paas_access_token,
-        webinar_id: roominfo.webinar.id
-      }).then(res => {
-        window.vhallReport = new VhallReport({
-          ...res.data,
-          pf: 7,
-          service_names: 1,
-          env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
-        });
-      }).catch(error=>{
-        console.error('init vhallReport failure', error);
-        window.vhallReport = new VhallReport({
-          code: 216,
-          msg: "暂不支持数据上报",
-          pf: 7,
-          service_names: 1,
-          env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
-        });
-
+      window.vhallReport = new VhallReport({
+        user_id: this.rootActive.join_info.join_id,
+        webinar_id: this.rootActive.webinar.id,
+        t_start: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        os: 10,
+        type: 4,
+        entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        pf: 7,
+        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
       });
-    },
+      window.vhallReport && window.vhallReport.report('ENTER_WATCH');
+    }
   }
 };
 </script>

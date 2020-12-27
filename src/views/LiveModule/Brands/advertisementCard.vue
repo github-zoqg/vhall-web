@@ -4,34 +4,40 @@
       <span>广告推荐</span>
     </div>
     <div class="advertisement-main">
-      <div class="search-data">
-        <el-button type="primary" @click="createAdvise()" round>创建</el-button>
-        <el-button class="head-btn set-upload" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
-        <el-button class="head-btn set-upload" round @click="allDelete(null)">批量删除</el-button>
+      <div class="search-data" v-show="total || isSearch">
+        <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建</el-button>
+        <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
+        <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" v-preventReClick>批量删除</el-button>
         <span class="searchTitle">
-          <el-input v-model="paramsObj.keyword" placeholder="请输入标题"
-          suffix-icon="el-icon-search" @change="initPage()"></el-input>
+          <el-input v-model.trim="paramsObj.keyword" placeholder="请输入标题"
+          suffix-icon="el-icon-search" clearable @change="initPage()"></el-input>
         </span>
       </div>
-      <el-card>
+      <div class="advert-card-list" v-show="total">
          <table-list
           ref="tableList"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
           :tableRowBtnFun="tableRowBtnFun"
-          :totalNum="totalNum"
+          :totalNum="total"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getAdvTableList"
           @changeTableCheckbox="changeTableCheckbox"
           >
         </table-list>
-      </el-card>
+      </div>
+      <div class="no-live" v-show="!total">
+        <noData :nullType="nullText" :text="text">
+          <el-button type="primary" v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
+        </noData>
+      </div>
       <create-advise ref="adviseSonChild" :title="title" :advInfo="advInfo" @reload="initPage"></create-advise>
     </div>
   </div>
 </template>
 <script>
 import createAdvise from './components/createAdvise';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
@@ -43,7 +49,10 @@ export default {
       },
       pos: 0,
       limit: 10,
-      totalNum: 0,
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '您还没有广告，快来创建吧！',
       tableList: [],
       tabelColumn: [
        {
@@ -77,7 +86,8 @@ export default {
     };
   },
   components: {
-    createAdvise
+    createAdvise,
+    noData
   },
   mounted() {
     this.getAdvTableList();
@@ -85,6 +95,9 @@ export default {
   methods: {
     initPage() {
       this.getAdvTableList();
+      // this.$refs.tableList.clearSelection();
+      this.pos = 0;
+      this.limit = 10;
     },
     getAdvTableList() {
        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
@@ -99,9 +112,17 @@ export default {
         limit: pageInfo.limit,
         webinar_id: this.$route.params.str || ''
       };
-
+      if (this.paramsObj.keyword) {
+          this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有广告，快来创建吧！';
+          this.isSearch = false;
+        }
       this.$fetch('getAdvList', this.$params(params)).then(res => {
-        this.totalNum = res.data.total;
+        this.total = res.data.total;
         this.tableList = res.data.adv_list;
       });
     },
@@ -165,6 +186,11 @@ export default {
 };
 </script>
 <style lang="less">
+.advert-card-list {
+  .layout--right--main();
+  .padding-table-list();
+  .min-height();
+}
 .advertisement-card {
   .title-data {
     margin: 10px 0 20px 0;

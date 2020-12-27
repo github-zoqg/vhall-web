@@ -24,7 +24,10 @@
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
             @delete="logoForm.logo = ''">
-            <p slot="tip">最佳头图尺寸：156*56px <br/>小于2MB(支持jpg、gif、png、bmp)</p>
+            <div slot="tip">
+              <p>建议尺寸：156*56px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
           </upload>
         </el-form-item>
         <el-form-item label="标志链接：" prop="logo_jump_url">
@@ -65,7 +68,8 @@ export default {
         ],
         logo_jump_url: [
           { required: false, message: '标志链接不能为空', trigger: 'blur' },
-          { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
         ]
       },
       domain_url: '',

@@ -67,7 +67,7 @@
                     <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top">
-                  <i class="el-icon-s-promotion" @click="$router.push({path: `/live/playback/${item.webinar_id}`})"></i>
+                  <i class="el-icon-s-promotion" @click="$router.push({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`})"></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="详情" placement="top">
                     <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
@@ -176,7 +176,7 @@ export default {
       } else if (command === '/live/edit') {
         this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
       } else {
-        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id }});
+        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
       }
     },
     currentChangeHandler(current) {
@@ -258,7 +258,7 @@ export default {
       color:#FB3A32;
       border-color:#FB3A32;
       &:hover{
-        background: #ffebeb;
+        background: #fc615b;
       }
     }
     .el-button--primary{
@@ -271,6 +271,10 @@ export default {
     }
     /deep/.el-button{
       padding: 4px 24px;
+    }
+    /deep/.el-dropdown-menu__item:not(.is-disabled):hover{
+      background-color: #FB3A32;
+      color: #FB3A32;
     }
     /*.el-button.is-round{
       padding: 10px 23px;

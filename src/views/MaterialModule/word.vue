@@ -55,6 +55,8 @@
           class="head-btn search-tag"
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
+          clearable
+          @clear="initPage"
           @keyup.enter.native="initPage">
           <i
             class="el-icon-search el-input__icon"
@@ -63,7 +65,7 @@
           </i>
         </el-input>
       </div>
-      <el-card class="word-list">
+      <div class="word-list">
         <table-list
           ref="tableListWord"
           v-if="totalNum > 0"
@@ -79,7 +81,7 @@
         >
         </table-list>
         <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
-      </el-card>
+      </div>
     </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
@@ -88,7 +90,7 @@
       </el-dialog>
     </template>
     <!-- 文档列表 -->
-    <select-word ref="dialogWordComp" @reload="getTableWordList"></select-word>
+    <select-word ref="dialogWordComp" @reload="initPage"></select-word>
   </div>
 </template>
 <script>
@@ -99,7 +101,6 @@ import SelectWord from './components/selectWord.vue';
 
 import {sessionOrLocal} from "@/utils/utils";
 import EventBus from "@/utils/Events";
-import {formateDate} from "@/utils/general";
 export default {
   name: 'word.vue',
   components: {
@@ -122,18 +123,22 @@ export default {
         {
           label: '文档名称',
           key: 'file_name',
+          width: 'auto'
         },
         {
           label: '上传时间',
           key: 'created_at',
+          width: 160
         },
         {
           label: '页码',
           key: 'page',
+          width: 80
         },
         {
           label: '进度',
           key: 'transform_schedule_str',
+          width: 200
         }
       ],
       tableRowBtnFun: [
@@ -159,7 +164,12 @@ export default {
       dialogTotal: 0,
       dialogTableList: [],
       dialogMulti: [],
-      channel_id: null
+      channel_id: null,
+      query: {
+        pos: 0,
+        limit: 1000,
+        pageNumber: 1
+      }
     };
   },
   computed: {
@@ -190,7 +200,8 @@ export default {
           this.$confirm('确定同步到资料库？', '提示', {
             confirmButtonText: '同步',
             cancelButtonText: '不同步',
-            customClass: 'zdy-message-box'
+            customClass: 'zdy-message-box',
+            lockScroll: false
           }).then(() => {
             // 同步到资料库
             this.asyncWord(res);
@@ -214,9 +225,7 @@ export default {
         if(res && res.code === 200) {
           this.$message.success('同步成功');
           try {
-            this.$nextTick(() => {
-              this.$refs.tableListWord.clearSelect();
-            })
+            this.$refs.tableListWord.clearSelect();
           } catch(e) {
             console.log(e);
           }
@@ -269,7 +278,8 @@ export default {
         this.$confirm('删除后将会影响文档演示和观看，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -287,10 +297,14 @@ export default {
       }
     },
     // 获取文档列表数据
-    getTableWordList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
+    getTableWordList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
       let params = {
-        pos: pageInfo.pos,
-        limit: pageInfo.limit,
+        pos: this.query.pos,
+        limit: this.query.limit,
         keyword: this.formParams.keyword,
         type: 1,
         webinar_id: this.$route.params.str
@@ -341,7 +355,8 @@ export default {
       that.$confirm(that.$route.params.str ? '删除后将会影响文档演示和观看，确定删除？' : '删除后将会影响文档演示和观看，确定删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false
       }).then(() => {
         that.deleteSend(rows);
       }).catch(() => {
@@ -361,9 +376,7 @@ export default {
         if(res && res.code === 200) {
           this.$message.success('删除成功');
           try {
-            this.$nextTick(() => {
-              this.$refs.tableListWord.clearSelect();
-            })
+            this.$refs.tableListWord.clearSelect();
           } catch(e) {
             console.log(e);
           }
@@ -387,6 +400,16 @@ export default {
       methodsCombin[val.type](this, val);
     },
     initPage() {
+      this.query.pos = 0;
+      this.query.pageNumber = 1;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.tableListWord.pageInfo.pageNum = 1;
+        this.$refs.tableListWord.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
       this.getTableWordList();
     },
     // 初始化
@@ -490,7 +513,7 @@ export default {
           if (status === 200) {
             item.transform_schedule_str ='动画版转换失败，请尝试极速版';
           }else {
-            let _percent = CalculatePercent(res.data.converted_page, res.data.page, 0);
+            let _percent = CalculatePercent(res.converted_page, res.page, 0);
             if (_percent == "100%") {
               item.transform_schedule_str = '转换成功';
             } else {
@@ -622,11 +645,13 @@ export default {
     border: none;
   }
 }
+.word-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+}
 .word-wrap {
   height: 100%;
-   .word-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     padding: 32px 24px;
   }

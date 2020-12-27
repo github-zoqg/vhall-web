@@ -8,7 +8,7 @@
     <div class="contentView">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
-        <player ref="player" v-if="docSDKReady"  v-bind="playerProps"></player>
+        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
       </div>
       <div class="docBox">
         <div class="docInner">
@@ -43,8 +43,20 @@
     <div class="cont">
       <div class="btnGroup">
         <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
-        <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button>
-        <el-button size="medium" round @click="deleteChapter">批量删除</el-button>
+        <!-- <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button> -->
+        <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand == 'true'" @command="addChapter">
+          <el-button size="medium" round>
+            新增章节<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item
+              v-for="item in docs"
+              :key="item.document_id"
+              :command="item"
+            >{{ item.file_name }}</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <el-button :disabled="!selectedData.length" size="medium" round @click="deleteChapter">批量删除</el-button>
         <div class="right">
           <el-button size="medium" round @click="saveChapters">保存</el-button>
           <el-button size="medium" round @click="previewChapters">预览</el-button>
@@ -79,7 +91,7 @@
           label="文档页码"
           width="110">
            <template slot-scope="scope">
-             <el-input v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+             <el-input :disabled="isDemand == 'false'" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
@@ -88,11 +100,12 @@
           width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.createTime" placeholder="请输入章节时间"></el-input>
+            <el-input :disabled="isDemand == 'false'" v-model="scope.row.createTime" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
         <el-table-column
+          v-if="isDemand == 'true'"
           label="操作"
           width="190"
           show-overflow-tooltip>
@@ -129,6 +142,13 @@ export default {
       showDoc: false,
       userId: window.sessionStorage.getItem('userId'),
       playerProps: {},
+      docIds: [],
+      docs: [],
+      playerParams: {
+        subtitleOption: {
+          enable: true
+        }
+      },
       docSDKReady: false,
       docsdk: {},
       pageInfo: {pageIndex: 0, total: 0},
@@ -212,18 +232,23 @@ export default {
 
     // 监听文档加载完毕
     this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
+      const ids = []
       console.log("=============所有文档加载完毕==============", chapters)
-      this.tableData = chapters.map((item, index) => ({
-        ...item,
-        index: index + 1,
-        createTime: this.secondsFormmat(item.createTime),
-        sub: item.sub.map((subItem, subIndex) => ({
-          ...subItem,
-          createTime: this.secondsFormmat(subItem.createTime),
-          index: `${index + 1}-${subIndex + 1}`
-        }))
-      }));
-      console.log(this.tableData)
+      this.tableData = chapters.map((item, index) => {
+        ids.push(item.docId);
+        return {
+          ...item,
+          index: index + 1,
+          createTime: this.secondsFormmat(item.createTime),
+          sub: item.sub.map((subItem, subIndex) => ({
+            ...subItem,
+            createTime: this.secondsFormmat(subItem.createTime),
+            index: `${index + 1}-${subIndex + 1}`
+          }))
+        }
+      });
+      this.docIds = [...new Set(ids)]
+      this.getDocTitles();
     });
   },
   mounted(){
@@ -236,6 +261,29 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    getDocTitles() {
+      if (!this.docIds.length) return fasle;
+      const taskList = []
+      this.docIds.map(item => {
+        taskList.push(
+          new Promise((resolve, reject) => {
+            this.$fetch('getWordDetail', {
+              document_id: item
+            }).then(res => {
+              resolve(res.data)
+            }).catch(err => {
+              console.log(err)
+            })
+          })
+        )
+      })
+      Promise.all(taskList).then((result) => {
+        console.log(result)
+        this.docs = result
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
     checkChapterSave() {
       this.$fetch('checkChapterSave', {
         record_id: this.recordId
@@ -295,6 +343,9 @@ export default {
         } else if (res.code == 12563) {
           // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
           this.$message.warning('上次保存尚未完成,请稍后提交保存');
+        } else if (res.code == 12027) {
+          // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
+          this.$message.warning('保存失败，子章节页码超出章节总步数');
         } else {
           this.$message.warning('保存失败');
         }
@@ -332,7 +383,9 @@ export default {
       this.$fetch('playBackChaptersGet', {
         document_id: tableSelect.join(',')
       }).then(res => {
+        const ids = []
         this.tableData = res.data.doc_titles.map((item, index) => {
+          ids.push(item.document_id);
           return {
             createTime: '00:00:00',
             docId: item.document_id,
@@ -351,6 +404,8 @@ export default {
               })) : []
           }
         })
+        this.docIds = [...new Set(ids)];
+        this.getDocTitles();
       })
     },
     prevPage(){
@@ -362,19 +417,19 @@ export default {
     handleSelectionChange(val){
       this.selectedData = val;
     },
-    addChapter(){
+    addChapter(doc){
       const currentDocInfo = this.docsdk._currentDoc.getDocInfo();
       const currentContainerInfo = this.docsdk._currentDoc._currentContainer;
       this.tableData.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         index: this.tableData.length + 1,
-        stepIndex: currentDocInfo.stepIndex,
-        slideIndex: currentDocInfo.slideIndex,
+        stepIndex: 0,
+        slideIndex: 0,
         sub: [],
-        docId: currentDocInfo.docId,
+        docId: doc.document_id,
         cid: currentContainerInfo._id,
-        hash: currentDocInfo.hash
+        hash: doc.hash
       });
     },
     deleteChapter(){

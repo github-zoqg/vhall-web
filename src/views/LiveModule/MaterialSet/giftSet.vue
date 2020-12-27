@@ -2,19 +2,19 @@
   <div class="live-gift-wrap">
     <pageTitle title="礼物管理">
       <div slot="content">
-        1.支持创建免费礼物
+        1.支持创建免费礼物，观看端最多显示40个礼物
         <br>
-        1.为保证显示效果, 图片尺寸160*160, 文件大小不超过200k,格式jpg、gif、png
+        2.为保证显示效果，建议尺寸：120*120px, 文件大小不超过2MB,格式jpg、gif、png、bmp
         <br>
-        2.礼物名称不支持特殊字符、表情
+        3.礼物名称不支持特殊字符、表情
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="addGift">新建礼物</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="addGift" size="medium">新建礼物</el-button>
       <el-button
         round
         class="head-btn set-upload"
-        @click="handleAddGift">
+        @click="handleAddGift" size="medium">
         资料库
       </el-button>
       <el-button
@@ -22,15 +22,24 @@
         class="head-btn set-upload"
         :class="{'no-data': batchDelete}"
         :disabled="batchDelete"
-        @click="batchDialogTipVisible = true">
+        @click="handleBatchDelete" size="medium">
         批量删除
       </el-button>
       <el-input
         @keyup.enter.native="searchGifts"
+        clearable
+        @clear="searchGifts"
         class="head-btn fr search"
-        v-model="searchName"
+        v-model.trim="searchName"
         placeholder="请输入礼物名称"
-        suffix-icon="el-icon-search"/>
+      >
+        <i
+          style="cursor: pointer;"
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchGifts">
+        </i>
+      </el-input>
     </div>
     <el-card class="gift-list">
       <el-table
@@ -49,7 +58,9 @@
         />
         <el-table-column label="图片">
           <template slot-scope="scope">
-            <img class="gift-cover" :src="scope.row.image_url">
+            <div class="gift-cover">
+              <img :src="scope.row.image_url" alt="" />
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="名称" prop="name" show-overflow-tooltip>
@@ -74,11 +85,12 @@
       </el-table>
       <SPagination
         :total="total"
-        v-show="total > 10"
+        v-show="total > searchParams.page_size"
         :currentPage="searchParams.page"
         :page-size="searchParams.page_size"
         @current-change="currentChangeHandler"
         align="center"></SPagination>
+      <null-page text="未搜索到相关内容" nullType="search" v-if="total === 0"></null-page>
     </el-card>
     <el-dialog
       :title="editParams.gift_id ? '编辑礼物' : '新建礼物'"
@@ -88,6 +100,7 @@
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
           <upload
+            ref="uploadimg"
             class="giftUpload"
             v-model="editParams.img"
             :domain_url="domain_url"
@@ -102,14 +115,17 @@
             :before-upload="beforeUploadHandler"
             @delete="editParams.img = ''"
            >
-            <p slot="tip">推荐尺寸：160*160px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
+            <div slot="tip">
+              <p>建议尺寸：120*120px，小于2MB</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
             <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input v-model.trim="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
+            <el-input @input="handleInput" v-model.trim.number="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
             </el-input>
         </el-form-item>
@@ -151,31 +167,44 @@
       :visible.sync="dialogGiftsVisible"
       :close-on-click-modal="false"
       :before-close="handleCloseChooseGift"
+      custom-class="choose-gift"
     >
-
       <el-input
-        class="head-btn fr search"
-        v-model="materiaSearchName"
-        placeholder="请输入礼物名称"
-        prefix-icon="el-icon-search"
         @keyup.enter.native="searchMaterialGift"
-      />
+        clearable
+        @clear="searchMaterialGift"
+        class="head-btn fr search"
+        v-model.trim="materiaSearchName"
+        placeholder="请输入礼物名称"
+      >
+        <i
+          style="cursor: pointer;"
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchMaterialGift">
+        </i>
+      </el-input>
       <div class="select-matrial-wrap">
-        <div
-          v-for="(item, index) in materiaTableData"
-          :key='index'
-          class="matrial-item"
-          :class="{active: item.isChecked}"
-          @click.stop="handleChooseGift(index, item)">
-          <div class="gift-cover">
-            <img :src="item.img" alt>
-          </div>
-          <div class="gift-info">
-            <span class="gift-name">{{item.name}}</span>
-            <span class="gift-price">￥{{item.price}}</span>
-          </div>
-          <i v-if="item.isChecked" class="el-icon-check"></i>
+        <div v-show="materiaTableData.length" class="material-box">
+          <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
+            <div
+              v-for="(item, index) in materiaTableData"
+              :key='index'
+              class="matrial-item"
+              :class="{active: item.isChecked}"
+              @click.stop="handleChooseGift(index, item)">
+              <div class="gift-cover">
+                <img :src="item.img" alt>
+              </div>
+              <div class="gift-info">
+                <span class="gift-name">{{item.name}}</span>
+                <span class="gift-price">￥{{item.price}}</span>
+              </div>
+              <i v-if="item.isChecked" class="el-icon-check"></i>
+            </div>
+          </el-scrollbar>
         </div>
+        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length === 0"></null-page>
       </div>
       <div class="control">
         <span>当前选中{{addGiftsIds.length}}件商品</span>
@@ -193,12 +222,13 @@ import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
 
 export default {
   name: "giftSize",
   data() {
     return {
-      webinar_id: this.$route.params.webinar_id,
+      webinar_id: this.$route.params.str,
       room_id: this.$route.query.roomId,
       total: 0,
       materialTotal: 100,
@@ -214,9 +244,10 @@ export default {
       },
       materiaSearchParams: {
         gift_name: '',
-        page_size: 20,
+        page_size: 6,
         page: 1
       },
+      maxPage: 0,
       defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
       materiaSearchName: '',
@@ -238,27 +269,63 @@ export default {
       domain_url: '',
       rules: {
         name: [
-          { required: true, message: '请输入礼物名称', trigger: 'blur' },
+          { required: true, validator: this.validTitle, trigger: 'blur' }
         ],
         img: [
-          { required: true, message: '请选择礼物图片', trigger: 'change' }
+          { required: true, message: '请输入礼物图片', trigger: 'change' }
         ],
         price: [
           { required: true,  message: '请输入礼物价格', trigger: 'blur' }
         ],
       },
+      isWebinarLiving: false
     };
   },
   components: {
     PageTitle,
     upload,
-    SPagination
+    SPagination,
+    NullPage
   },
   created() {
     this.getTableList()
   },
   mounted() {},
   methods: {
+    moreLoadData() {
+      if (this.materiaSearchParams.page >= this.maxPage) {
+        return false;
+      }
+      this.materiaSearchParams.page ++ ;
+      this.queryMateriaGifts();
+    },
+    handleInput(value) {
+      if (value != '') {
+        if (value.indexOf('.') > -1) {
+          console.log(value.length, value.indexOf('.'))
+          if (value.length - value.indexOf('.') > 3) {
+            this.$message.warning('价格最多支持两位小数')
+          }
+          this.editParams.price = value.slice(0, value.indexOf('.') + 3)
+        } else {
+          this.editParams.price = value
+        }
+      }
+    },
+    validTitle(rule, value, callback) {
+      const reg = /[^\w\u4e00-\u9fa5]/g;
+      if (!value) {
+        return callback ? callback(new Error('请输入礼物名称')) : false
+      } else if (reg.test(value)) {
+        return callback ? callback(new Error('请输入正确的礼物名称')) : false
+      }else{
+        if (callback) {
+          callback()
+        } else {
+          return true
+        }
+      }
+    },
     freeFilter({row}) {
       if(row.source_status == 0){
         return "mycell"
@@ -365,6 +432,10 @@ export default {
     },
     // 新建
     addGift () {
+      if (this.addGiftsIds.length >= 40) {
+        this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
+        return false;
+      }
       this.editParams = {
         gift_id: '',
         name: '',
@@ -379,10 +450,11 @@ export default {
         if (valid) {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
-            if (price < 0 || price >= 10000) {
-              this.$message.error('价格必须介于0-10000之间')
+            if (price < 0 || price > 9999.99) {
+              this.$message.error('价格必须介于0-9999.99之间')
               return
             }
+            price=Math.floor(price*100)/100;
             this.editParams.price = price.toFixed(2)
           } else {
             this.$message.error('请输入正确礼物价格')
@@ -448,6 +520,7 @@ export default {
       this.editParams.img = ''
       this.editParams.price = ''
       this.dialogVisible = false
+      this.$refs.uploadimg.domainUrl = ''
     },
     // 选择资料库礼品添加
     handleAddGift () {
@@ -456,7 +529,15 @@ export default {
     },
     // 获取资料库礼物数据
     queryMateriaGifts (isSearch) {
-      this.$fetch('shareGiftList').then((res) => {
+      if (isSearch) {
+        this.materiaSearchParams.page = 1
+      }
+      const opts = {
+        limit: this.materiaSearchParams.page_size,
+        pos: this.materiaSearchParams.page_size * (this.materiaSearchParams.page - 1)
+      }
+      this.materiaSearchName && (opts.name = this.materiaSearchName)
+      this.$fetch('shareGiftList', opts).then((res) => {
         if (res.code == 200 && res.data) {
           res.data.list.length > 0 && res.data.list.forEach((item, index) => {
             item.isChecked = false
@@ -468,17 +549,15 @@ export default {
               })
             }
           })
-          this.materiaTableData = res.data.list
-          if (isSearch) {
-            const resultData = []
-            res.data.list.forEach(item => {
-              if(item.name.indexOf(this.materiaSearchName) != -1) {
-                resultData.push(item)
-              }
-            })
-            this.materiaTableData = resultData
+
+          if (this.materiaSearchParams.page_size * (this.materiaSearchParams.page - 1) === 0) {
+            this.materiaTableData = res.data.list;
+          } else {
+            this.materiaTableData.push(...res.data.list)
           }
-          this.materialTotal = this.materiaTableData.length
+
+          this.materialTotal = res.data.total
+          this.maxPage = Math.ceil(res.data.total / this.materiaSearchParams.page_size);
         }
       })
     },
@@ -494,8 +573,25 @@ export default {
         return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
       })
     },
+    materialPageChange (val) {
+      this.materiaSearchParams.page = val;
+      this.queryMateriaGifts()
+    },
+    async handleBatchDelete() {
+      const isWebinarLiving = await this.isCanDelete()
+      if (isWebinarLiving) {
+        this.$message.warning('正在直播中，请直播结束后操作！')
+        return false;
+      }
+      this.batchDialogTipVisible = true
+    },
     // 删除礼品
-    handleDelete (data) {
+    async handleDelete (data) {
+      const isWebinarLiving = await this.isCanDelete()
+      if (isWebinarLiving) {
+        this.$message.warning('正在直播中，请直播结束后操作！')
+        return false;
+      }
       this.dialogTipVisible = true
       this.deleteId = data.id
     },
@@ -512,6 +608,16 @@ export default {
 
       this.deleteId = ''
       this.dialogTipVisible = false
+    },
+    isCanDelete () {
+      return new Promise(resolve => {
+        this.$fetch('getWebinarInfo', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          // 活动直播中不支持删除礼物
+          resolve(res.data.webinar_state == 1)
+        })
+      })
     },
     handleCancelDelete () {
       this.deleteId = ''
@@ -537,21 +643,6 @@ export default {
       this.selectIds = []
       this.batchDialogTipVisible = false
     },
-    // 修改礼品显示状态
-    // changeGiftStatu () {
-    //   if (this.changeStatuTimer) clearTimeout(this.changeStatuTimer)
-    //   this.changeStatuTimer = setTimeout(() => {
-    //     if (arguments[0]) {
-    //       if (this.openGiftIds.length <= 40) {
-    //         this.openGiftIds.push(arguments[1])
-    //       } else {
-    //         this.$message.warn('观看端最多显示40个礼物')
-    //       }
-    //     } else {
-    //       this.openGiftIds.splice(this.openGiftIds.indexOf(arguments[1]), 1)
-    //     }
-    //   }, 300)
-    // },
     // 选择奖品添加
     handleChooseGift (index, gift) {
       // 默认礼物不支持取消关联
@@ -560,6 +651,10 @@ export default {
         return false;
       }
       if (!this.materiaTableData[index].isChecked) {
+        if (this.addGiftsIds.length >= 40) {
+          this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
+          return false;
+        }
         this.addGiftsIds.push(Number(this.materiaTableData[index].gift_id))
       } else {
         let num = this.addGiftsIds.indexOf(Number(this.materiaTableData[index].gift_id))
@@ -577,6 +672,7 @@ export default {
       })
     },
     handleCloseChooseGift () {
+      this.materiaSearchParams.page = 1
       this.dialogGiftsVisible = false
     },
     // 检索奖品库礼物
@@ -592,6 +688,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.gift-cover{
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  border: 1px solid #E6E6E6;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+}
 .live-gift-wrap{
   /deep/ .mycell .el-checkbox {
     display: none
@@ -644,13 +753,6 @@ export default {
   }
   .gift-list{
     width: 100%;
-    /deep/.el-table{
-      .gift-cover{
-        display: inline-block;
-        width: 100px;
-        height: 100px;
-      }
-    }
   }
   /deep/.el-dialog__wrapper {
     .dialog-footer {
@@ -676,9 +778,16 @@ export default {
   .select-matrial-wrap {
     box-sizing: border-box;
     width: 100%;
-    height: 500px;
-    padding: 24px 28px;
-    overflow-y: auto;
+    height: 320px;
+    padding: 10px 0;
+    overflow: hidden;
+    /deep/ .null-page {
+      margin-top: 110px!important;
+    }
+    .material-box {
+      height: 310px;
+      margin-bottom: 10px;
+    }
     .head-btn{
       width: 100%;
       /deep/.el-input__inner{
@@ -691,7 +800,7 @@ export default {
     }
     .matrial-item {
       display: inline-block;
-      width: 232px;
+      width: 261px;
       height: 92px;
       margin: 6px;
       background: #F5F5F5;
@@ -699,14 +808,15 @@ export default {
       padding: 12px;
       border: 1px solid #fff;
       .gift-cover{
-        display:inline-block;
+        display: inline-block;
         width: 70px;
         height: 70px;
+        border-radius: 4px;
+        border: 1px solid #e6e6e6;
         img{
-          display: inline-block;
-          width: 70px;
-          height: 70px;
-          border-radius: 4px;
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
         }
       }
       .gift-info{
@@ -761,20 +871,17 @@ export default {
     }
   }
   .pageBox{
-    /deep/.el-pagination__total, /deep/.el-pagination__jump {
-      display: none;
-    }
     margin-bottom: 20px;
   }
   .control{
-    padding-top: 30px;
+    padding-top: 20px;
     padding-bottom: 32px;
     width: 100%;
     position:relative;
     &>span {
       display: inline-block;
       position: absolute;
-      top: 43px;
+      top: 24px;
       left: 20px;
     }
     /deep/.add-btn, .cancel-btn{
@@ -816,6 +923,16 @@ export default {
     }
     .active{
       background: #FC5659;
+    }
+  }
+}
+/deep/ .choose-gift {
+  .head-btn.el-input {
+    width: 180px;
+    height: 36px;
+    .el-input__inner {
+      border-radius: 18px;
+      border: 1px solid #CCC;
     }
   }
 }

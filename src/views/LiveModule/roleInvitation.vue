@@ -6,17 +6,19 @@
         2、权限控制可调整嘉宾和助理在直播中的功能；<br/>
         3、拥有文档管理权限后，只有拥有演讲权限的人才可进行文档演示、调整观看布局、涂鸦等操作；<br/>
       </div>
-      <el-switch
-        class="el-role-switch"
-        v-model="roleSwitch"
-        :active-value="1"
-        :inactive-value="0"
-        @change="updateSwitch"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        :active-text="roleSwitch > 0 ? `已开启，支持邀请特殊角色加入直播` : `开启后，支持邀请特殊角色加入直播`"
-      >
-      </el-switch>
+      <div class="switch__box">
+        <el-switch
+          class="el-role-switch"
+          v-model="roleSwitch"
+          :active-value="1"
+          :inactive-value="0"
+          @change="updateSwitch"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          :active-text="roleSwitch > 0 ? `已开启，支持邀请特殊角色加入直播` : `开启后，支持邀请特殊角色加入直播`"
+        >
+        </el-switch>
+      </div>
     </pageTitle>
     <!-- 角色邀请卡片 -->
     <div :class="!roleSwitch ? 'role-card-list pre--full-mask' : 'role-card-list'">
@@ -423,6 +425,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.switch__box {
+  display: inline-block;
+}
 /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
   color: #999999;
   pointer-events: none;
@@ -553,6 +558,18 @@ export default {
   align-items: center;
   label {
     margin-right: auto;
+  }
+  /deep/button.el-button.el-button--mini {
+    &:focus,&:hover {
+      border-color: #FB3A32;
+      background-color: #FB3A32;
+      color: #ffffff;
+    }
+    &:active,&:visited {
+      border-color: #E2332C;
+      background-color: #E2332C;
+      color: #ffffff;
+    }
   }
 }
 .role-qx-list {

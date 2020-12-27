@@ -1,9 +1,9 @@
 <template>
   <div class="prize-card">
     <pageTitle title="播放器设置"></pageTitle>
-    <el-card>
+    <el-card style="min-height:741px;">
       <el-row :gutter="20">
-        <el-col :span="12">
+        <el-col :span="14">
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="防录屏跑马灯" name="first">
               <div class="give-item">
@@ -14,13 +14,14 @@
                         v-model="scrolling_open"
                         active-color="#ff4949"
                         inactive-color="#ccc"
+                        @change="closeHorseInfo"
                         :active-text="horseLampText"
                       >
                       </el-switch>
                     </el-form-item>
                     <el-form-item label="类型">
-                      <el-radio v-model="formHorse.text_type" label='1' :disabled="!scrolling_open">固定文本</el-radio>
-                      <el-radio v-model="formHorse.text_type" label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
+                      <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
+                      <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                     </el-form-item>
                     <el-form-item label="固定文本">
                       <el-input
@@ -31,7 +32,7 @@
                         show-word-limit
                       ></el-input>
                     </el-form-item>
-                    <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:350px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
+                    <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:323px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                     <el-form-item label="字体大小">
                       <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
                         <el-option
@@ -43,25 +44,26 @@
                       </el-select>
                     </el-form-item>
                     <el-form-item label="移动速度">
-                      <el-radio v-model="formHorse.speed" label="10000" :disabled="!scrolling_open">慢</el-radio>
-                      <el-radio v-model="formHorse.speed" label="6000" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.speed" label="3000" :disabled="!scrolling_open">快</el-radio>
+                      <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
+                      <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
+                      <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open">快</el-radio>
                     </el-form-item>
                     <el-form-item label="显示位置">
-                      <el-radio v-model="formHorse.position" label="2" :disabled="!scrolling_open">上</el-radio>
-                      <el-radio v-model="formHorse.position" label="3" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.position" label="4" :disabled="!scrolling_open">下</el-radio>
+                      <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open">上</el-radio>
+                      <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
+                      <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
                     </el-form-item>
                     <el-form-item label="间隔时间">
                       <el-input
                         v-model="formHorse.interval"
                         :disabled="!scrolling_open"
-                        placeholder="1~300">
+                        maxlength="300"
+                        placeholder="默认10s，输入范围1-300s">
                         <i slot="suffix">秒</i>
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="preFormHorse">保存</el-button>
+                      <el-button type="primary" class="common-save" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -76,6 +78,7 @@
                         v-model="watermark_open"
                         active-color="#ff4949"
                         inactive-color="#ccc"
+                        @change="openWaterMarkInfo"
                         :active-text="waterMarkText"
                       >
                       </el-switch>
@@ -95,25 +98,26 @@
                         :on-preview="uploadPreview"
                         :before-upload="beforeUploadHnadler"
                         :disabled="!watermark_open"
+                        @delete="deleteImg"
                       >
-                        <p slot="tip">
-                          推荐尺寸：240*240px，小于2MB <br />
-                          支持jpg、gif、png、bmp
-                        </p>
+                        <div slot="tip">
+                          <p>建议尺寸：98*28px，小于2M</p>
+                          <p>支持jpg、gif、png、bmp</p>
+                        </div>
                       </upload>
                     </el-form-item>
                     <el-form-item label="水印位置">
-                      <el-radio v-model="formWatermark.img_position" label="1" :disabled="!watermark_open">左上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" label="2" :disabled="!watermark_open">右上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" label="3" :disabled="!watermark_open">左下角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" label="4" :disabled="!watermark_open">右下角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="1" :disabled="!watermark_open">左上角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="2" :disabled="!watermark_open">右上角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">左下角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">右下角</el-radio>
                     </el-form-item>
                     <el-form-item label="透明度">
-                      <el-slider v-model="formWatermark.img_alpha" style="width: 350px" :disabled="!watermark_open"></el-slider>
+                      <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
                       <span class="isNum">{{formWatermark.img_alpha}}%</span>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" @click="preWatermark">保存</el-button>
+                      <el-button type="primary" class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -123,12 +127,13 @@
             <div class="give-item">
               <div class="give-prize">
                   <el-form :model="formOther" ref="ruleForm" label-width="100px">
-                <el-form-item label="弹幕按钮">
+                <el-form-item label="弹幕">
                   <el-switch
                         v-model="formOther.bulletChat"
                         active-color="#ff4949"
                         inactive-color="#ccc"
                         :active-text="bulletChatText"
+                        @change="otherOtherInfo"
                       >
                       </el-switch>
                 </el-form-item>
@@ -138,6 +143,7 @@
                         active-color="#ff4949"
                         inactive-color="#ccc"
                         :active-text="progressText"
+                        @change="otherOtherInfo"
                       >
                       </el-switch>
                 </el-form-item>
@@ -147,11 +153,9 @@
                         active-color="#ff4949"
                         inactive-color="#ccc"
                         :active-text="doubleSpeedText"
+                        @change="otherOtherInfo"
                       >
                       </el-switch>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" @click="preOthersOptions">保存</el-button>
                 </el-form-item>
               </el-form>
               </div>
@@ -163,6 +167,11 @@
           <div class="show-purple">
             <img :src="audioEnd" alt="" v-show="!showVideo">
             <div id="videoDom" v-show="showVideo"></div>
+            <p class="show-purple-info">
+              <span>提示</span>
+              <span>1、移动端全屏播放时，跑马灯会失效</span>
+              <span>2、安卓手机浏览器劫持可能导致跑马灯失效</span>
+            </p>
             <!-- <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview> -->
           </div>
         </el-col>
@@ -187,16 +196,18 @@ export default {
       watermark_open: false,
       formHorse: {
         color: '#FFFFFF', // 六位
-        text_type: '2',
+        text_type: 2,
         size: 20,
-        speed: '6000',
-        position: '3',
+        speed: 6000,
+        text: '版权所有，盗版必究',
+        position: 3,
         alpha: 50,
-        interval: 0
+        interval: 10
       },
+      accountIds:10000127,
       fontList: [],
       formWatermark: {
-        img_position: '1',
+        img_position: 1,
         img_url: '',
         img_alpha: 80
       },
@@ -239,29 +250,32 @@ export default {
     },
     progressText(){
       if(this.formOther.progress){
-        return '已开启，回放/点播播放器画面进度条显示';
+        return '已开启，观看回放时播放器画面显示进度条';
       }else{
-        return "开启后，回放/点播播放器画面进度条不显示";
+        return "开启后，观看回放时播放器画面显示进度条";
       }
     },
     bulletChatText(){
       if(this.formOther.bulletChat){
-        return '已开启，观看端播放器画面弹幕功能显示';
+        return '已开启，观看页播放器画面显示弹幕功能';
       }else{
-        return "开启后，观看端播放器画面弹幕功能不显示";
+        return "开启后，观看页播放器画面显示弹幕功能";
       }
     },
     doubleSpeedText(){
       if(this.formOther.doubleSpeed){
-        return '已开启，回放/点播播放器画面倍速功能显示';
+        return '已开启，观看回放时播放器画面显示倍速功能';
       }else{
-        return "开启后，回放/点播播放器画面倍速功能不显示";
+        return "开启后，观看回放时播放器画面显示倍速功能";
       }
     }
   },
   created() {
     this.getFontList();
     this.getBasescrollingList();
+  },
+  mounted () {
+    this.initPlayer();
   },
   methods: {
     getFontList() {
@@ -271,15 +285,28 @@ export default {
         num = num + 2;
       }
     },
+    // 关闭跑马灯
+    closeHorseInfo() {
+      if (!this.scrolling_open) {
+        this.preFormHorse();
+      }
+    },
+    // 关闭水印
+    openWaterMarkInfo() {
+      if (!this.watermark_open) {
+        this.preWatermark();
+      }
+    },
+    // 关闭或保存其他信息
+    otherOtherInfo() {
+      this.preOthersOptions();
+      // this.initNodePlay()
+    },
     // 获取跑马灯基本信息
     getBasescrollingList() {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          this.formHorse.text_type = String(res.data.text_type);
-          this.formHorse.position = String(res.data.position);
-          this.formHorse.speed = String(res.data.speed);
-          this.formHorse.alpha = Number(res.data.alpha);
           this.scrolling_open = Boolean(res.data.scrolling_open);
         } else {
           // this.$message.error('获取信息失败');
@@ -313,16 +340,22 @@ export default {
     },
     // 保存跑马灯
     preFormHorse() {
+      // 校验间隔时间的输入
+      let reg = /^[0-9]*$/
+      if(!reg.test(this.formHorse.interval) || this.formHorse.interval == 0){
+        this.$message.error('间隔时间只能输入1-300之间的数字')
+        return false
+      }
       this.formHorse.webinar_id = this.$route.params.str
-      this.formHorse.interval = this.formHorse.interval || 20;
+      this.formHorse.interval = this.formHorse.interval || 10;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
          if (res.code == 200) {
-           this.$message.success("保存跑马灯成功");
-          //  this.initPlayer();
+           this.$message.success(this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功');
+           this.initNodePlay()
          } else {
-           this.$message.error("保存跑马灯失败");
+           this.$message.error(res.msg || "保存跑马灯失败");
          }
       });
     },
@@ -337,29 +370,50 @@ export default {
       this.formWatermark.watermark_open = Number(this.watermark_open);
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
          if (res.code == 200) {
-          //  this.initPlayer();
           this.getBaseWaterList();
-          this.$message.success("保存水印成功");
+          this.initNodePlay()
+          this.$message.success(this.watermark_open ? "水印开启成功" : "水印关闭成功");
          } else {
-          this.$message.error("保存水印灯失败");
+          this.$message.error(res.msg || "保存水印灯失败");
          }
       });
     },
     // 保存播放器其他设置
     preOthersOptions () {
+      
       let params = {
         barrage_button: Number(this.formOther.bulletChat),
         progress_bar: Number(this.formOther.progress),
         speed: Number(this.formOther.doubleSpeed),
         webinar_id: this.$route.params.str
       }
+      console.log('params',params);
       this.$fetch('setOtherOption', {...params}).then(res => {
         if (res.code == 200) {
           this.$message.success('设置成功');
+          let backSettingData = res.data
+          this.$nextTick(()=>{
+            console.log('弹幕',this.$Vhallplayer,vp);
+            Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
+            // Number(backSettingData['progress_bar']) ? vp.setControls(true) : vp.setControls(false)
+            this.changeController(backSettingData)
+            Number(backSettingData['speed']) ? document.querySelector('.vhallPlayer-speed-component').style.display = 'block' : document.querySelector('.vhallPlayer-speed-component').style.display = 'none'
+          })
         } else {
-          this.$message.success('设置失败');
+          this.$message.success(res.msg || '设置失败');
         }
       })
+    },
+    // 开启和隐藏控制台-- 由于sdk文档上这个开关控制条的方法=>openControls不能用，用获取dom去控制
+    changeController (data) {
+      if( Number(data['progress_bar'])) {
+        document.querySelector('.vhallPlayer-container').style.visibility = 'visible'
+        document.querySelector('.vhallPlayer-container').style.opacity = 1
+      }else {
+        document.querySelector('.vhallPlayer-container').style.visibility = 'hidden'
+        document.querySelector('.vhallPlayer-container').style.opacity = 0
+        document.querySelector('.vhallPlayer-container').style.display= 'none'
+      }
     },
     // 初始化播放器
     initPlayer() {
@@ -372,10 +426,15 @@ export default {
         // this.listen();
       });
     },
+    // 删除图片
+    deleteImg() {
+      this.formWatermark.img_url  ='';
+      this.domain_url = '';
+    },
     initSDK() {
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
-        accountId: '10000127', // 第三方用户ID，必填
+        accountId: this.accountIds, // 第三方用户ID，必填
         token: 'access:d317f559:b3acfa862ae09232', // access_token，必填
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
@@ -383,7 +442,7 @@ export default {
         vodOption: { recordId: '922013fa', forceMSE: false },
         marqueeOption:{ // 选填
           enable: Boolean(this.scrolling_open), // 默认 false
-          text: this.formHorse.text_type,    // 跑马灯的文字
+          text: this.formHorse.text,    // 跑马灯的文字
           alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
           size:this.formHorse.size,      // 文字大小
           color:"#ff8d41",   //  文字颜色
@@ -408,6 +467,7 @@ export default {
             window.vp = this.$Vhallplayer;
             this.$Vhallplayer.openControls(false);
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
+              this.$Vhallplayer.play()
               this.loading = false;
               // 加载中
               resolve();
@@ -421,8 +481,16 @@ export default {
         );
       });
     },
+    // 初始化播放器节点，重新加载播放器
+   async initNodePlay() {
+    if(document.querySelector('#videoDom')){
+        await vp.destroy();
+        document.querySelector('#videoDom').innerHTML = ''
+        await this.initPlayer()
+      }
+    },
     destroy() {
-      this.$Vhallplayer.destroy();
+      vp.destroy();
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
@@ -478,6 +546,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
+#videoDom {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /deep/.vhallPlayer-config-btn {
+    display: none;
+  };
+  /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
+    display: none;
+  }
+}
 .prize-card {
   height: 100%;
   /deep/.el-card__body {
@@ -495,6 +574,35 @@ export default {
   }
   .el-form-item__content{
     position: relative;
+  }
+  /deep/.el-switch__label--right {
+    span {
+       white-space: nowrap;
+       color: #999;
+    }
+  }
+  /deep/#vh-video {
+    border-radius: 5px;
+  }
+  /deep/.el-radio__input {
+    width: 16px;
+    height: 16px;
+    /deep/.el-radio__inner {
+      width: 16px;
+      height: 16px;
+    }
+    /deep/.el-radio__inner::after {
+      width: 8px;
+      height: 8px;
+    }
+  }
+  /deep/.el-radio {
+    margin-right: 20px;
+  }
+  .common-save {
+    width: 160px;
+    height: 40px;
+    line-height: 15px;
   }
   .isNum{
     position: absolute;
@@ -528,13 +636,24 @@ export default {
   }
   .show-purple{
     width: 400px;
-    height: 270px;
+    height: 226px;
     border: 1px solid #ccc;
     margin-top: 100px;
     margin-left: 20px;
+    border-radius: 5px;
     img{
       width: 400px;
-      height: 270px;
+      height: 226px;
+    }
+    &-info {
+      width: 300px;
+      margin-top: 15px;
+      span {
+        display: block;
+        color: #999;
+        line-height: 20px;
+        font-size: 14px;
+      }
     }
   }
 }

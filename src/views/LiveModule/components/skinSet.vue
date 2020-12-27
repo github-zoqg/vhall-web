@@ -4,7 +4,7 @@
       <div class="skin--set--left">
         <el-form :model="skinSetForm" ref="skinSetForm" :rules="skinSetFormRules" label-width="94px">
           <el-form-item label="皮肤方案">
-            <el-radio-group v-model="skinType">
+            <el-radio-group v-model="skinType" @change="previewShow">
               <el-radio :label="0">默认皮肤</el-radio>
               <el-radio :label="1">自定义皮肤</el-radio>
             </el-radio-group>
@@ -15,7 +15,7 @@
           <el-form-item label="页面风格" v-if="skinType === 1">
             <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="skinSetForm.pageStyle"></color-set>
           </el-form-item>
-          <el-form-item label="背景图：" prop="bg_url" v-if="skinType === 1">
+          <el-form-item label="背景图" prop="bg_url" v-if="skinType === 1">
             <upload
               class="upload__skin"
               v-model="skinSetForm.bg_url"
@@ -31,14 +31,13 @@
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>最佳尺寸：1920*1080px</p>
-                <p>小于2MB(支持jpg、gif、png、bmp)</p>
+                <p>建议尺寸：1920*1080px，小于2M</p>
+                <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
-            <p class="p-notice">开启时支持更换品牌标志</p>
           </el-form-item>
           <el-form-item label="" v-if="skinType !== 1">
-            <p>无需设置皮肤，默认皮肤效果</p>
+            <p class="p-notice">无需设置皮肤，默认皮肤效果</p>
           </el-form-item>
           <el-form-item label="" v-if="skinVo.status > 0 || skinType === 1">
             <el-button type="primary" round @click.prevent.stop="skinSetSave">保 存</el-button>
@@ -108,10 +107,25 @@ export default {
   methods: {
     bgColorHandle(color) {
       this.skinSetForm.bgColor = color;
+      // 右侧变化
+      this.previewShow();
     },
     // 页面样式色值
     pageStyleHandle(color) {
       this.skinSetForm.pageStyle = color;
+      this.previewShow();
+    },
+    previewShow() {
+      let showRow = Object.assign(this.skinSetForm, {
+        status: this.skinType,
+        bg_url: this.domain_url || this.skinSetForm.bg_url
+      })
+      try {
+        console.log(showRow, '皮肤变化...');
+        this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
+      } catch (e) {
+        console.log(e);
+      }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -124,11 +138,7 @@ export default {
       }
       // 触发验证
       this.$refs.skinSetForm.validateField('bg_url');
-      let showRow = Object.assign(this.skinSetForm, {
-        status: this.skinVo.status,
-        bg_url: this.domain_url
-      })
-      this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
+      this.previewShow();
     },
     beforeUploadHandler(file){
       console.log(file);
@@ -175,18 +185,21 @@ export default {
           this.showBtn = this.skinVo.status !== undefined && this.skinVo.status !== null && this.skinVo.status !== '';
           this.skinType = Number(res.data.status) > 0 ? 1 : 0;
           // 页面赋值
-          let skin_json_pc = JSON.parse(res.data.skin_json_pc);
-          this.skinSetForm.bgColor = skin_json_pc.bgColor;
-          this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
-          this.skinSetForm.bg_url = skin_json_pc.background;
-          this.domain_url = skin_json_pc.background;
+          if (res.data.skin_json_pc) {
+            let skin_json_pc = JSON.parse(res.data.skin_json_pc);
+            this.skinSetForm.bgColor = skin_json_pc.bgColor;
+            this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
+            this.skinSetForm.bg_url = skin_json_pc.background;
+            this.domain_url = skin_json_pc.background;
+          } else {
+            this.skinSetForm.bgColor = '#FFFFFF';
+            this.skinSetForm.pageStyle = '#FB3A32';
+            this.skinSetForm.bg_url = '';
+            this.domain_url = '';
+          }
           this.skinSetForm.skin_id = res.data.skin_id || '';
           console.log(this.skinSetForm, '页面刷新后');
-          let showRow = Object.assign(this.skinSetForm, {
-             status: this.skinVo.status,
-             bg_url: this.domain_url
-          })
-          this.$refs.brandSetPreviewComp.skinSetVoInfo(showRow);
+          this.previewShow();
         } else {
           this.skinVo = {};
         }
@@ -268,11 +281,11 @@ export default {
 /* 背景上传 */
 .upload__skin {
   /deep/.el-upload--picture-card {
-    width: 280px;
+    width: 400px;
     height: 130px;
   }
   /deep/.box > div {
-    width: 280px;
+    width: 400px;
     height: 130px;
   }
 }

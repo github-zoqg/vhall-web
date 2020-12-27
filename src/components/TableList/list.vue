@@ -42,16 +42,14 @@
                 <span>{{ scope.row.transcode_status_text }}</span>
               </p>
             </div>
-            <div v-else-if="item.key === 'img'">
+            <div v-else-if="item.key === 'img'" class="prizeImg">
               <img
-                class="imgs"
                 :src="scope.row.img"
               />
             </div>
-            <div v-else-if="item.key === 'img_url'">
+            <div v-else-if="item.key === 'img_url'" class="advImg">
               <img
                 :src="scope.row.img_url"
-               class="advImg"
               />
             </div>
             <div v-else-if="item.key === 'watch'">
@@ -64,7 +62,7 @@
             </div>
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
-                <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '2' ? 'active-error' : 'active-waiting'"></span>
+                <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
             <div v-else-if="item.key === 'imgOrText'">
@@ -148,7 +146,7 @@ export default {
     },
     maxHeight: {
       type: [Number, String],
-      default: 450,
+      default: '100%',
     },
     scene: {
       type: String,
@@ -229,17 +227,27 @@ export default {
 </script>
 <style lang="less" scoped>
 .data-list {
+  min-height: 650px;
   .word-status {
     margin-right: 12px;
-  }
-  /deep/.cell .imgs {
-    width: 100%;
-    height: 100%;
-    // object-fit: cover;
   }
    /deep/.cell .advImg {
     width: 142px;
     height: 80px;
+    img{
+      width:100%;
+      height:100%;
+      object-fit: scale-down;
+    }
+  }
+  /deep/.cell .prizeImg{
+    width: 80px;
+    height: 80px;
+    img{
+      width:100%;
+      height:100%;
+      object-fit: scale-down;
+    }
   }
   /deep/.el-table {
     margin-bottom: 30px;

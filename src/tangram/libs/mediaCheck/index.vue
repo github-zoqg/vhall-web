@@ -10,8 +10,8 @@
     :close-on-press-escape="false"
     :top="'15vh'"
   >
-    <el-steps v-if="currentStep != 3" :active="currentStep" finish-status="success" :class="{audio: layout == 2}">
-      <el-step v-if="layout != 2" :title="videoStatus == 'process' ? '检测中' : '摄像头'" :status="videoStatus" :class="videoStatus">
+    <el-steps v-if="currentStep != 3" :active="currentStep" finish-status="success" :class="{audio: layout == 1}">
+      <el-step v-if="layout != 1" :title="videoStatus == 'process' ? '检测中' : '摄像头'" :status="videoStatus" :class="videoStatus">
         <span slot="icon" class="iconfont iconicon-video"></span>
       </el-step>
       <el-step :title="audioStatus == 'process' ? '检测中' : '麦克风'" :status="audioStatus" :class="audioStatus">
@@ -95,7 +95,7 @@
         <span>检测项目</span>
         <span>检测结果</span>
       </div>
-      <div class="vh-check-result__item" v-if="layout != 2">
+      <div class="vh-check-result__item" v-if="layout != 1">
         <span>摄像头</span>
         <span :class="videoStatus">
           <span v-if="videoStatus == 'success'"><span class="iconfont iconicon-rightsmall"></span>正常</span>
@@ -179,12 +179,12 @@ export default {
       previewWidth: 0,
       rafID: null,
       analyserNode: null,
-      currentStep: this.layout == 2 ? 1 : 0,
-      videoStatus: this.layout == 2 ? 'success' : 'process',
-      audioStatus: this.layout == 2 ? 'process' : 'wait',
+      currentStep: this.layout == 1 ? 1 : 0,
+      videoStatus: this.layout == 1 ? 'success' : 'process',
+      audioStatus: this.layout == 1 ? 'process' : 'wait',
       audioOutputStatus: 'wait',
       videoError: false,
-      ready: this.layout != 2,
+      ready: this.layout != 1,
       volume: 0.5,
       audioPaused: true,
       audioReady: false, // 麦克风状态
@@ -506,13 +506,13 @@ export default {
     restart () {
       this.ready = false;
       this.videoError = false;
-      this.currentStep = this.layout == 2 ? 1 : 0;
-      this.videoStatus = this.layout == 2 ? 'success' : 'process';
-      this.audioStatus = this.layout == 2 ? 'process' : 'wait';
+      this.currentStep = this.layout == 1 ? 1 : 0;
+      this.videoStatus = this.layout == 1 ? 'success' : 'process';
+      this.audioStatus = this.layout == 1 ? 'process' : 'wait';
       this.audioOutputStatus = 'wait';
       this.videoDevices = [];
       this.audioDevices = [];
-      if (this.layout == 2) {
+      if (this.layout == 1) {
         this.getAudioDeviceInfo().then(() => {
           this.audioReady = true;
         }).catch(() => {

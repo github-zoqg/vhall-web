@@ -138,7 +138,9 @@ export default {
         limit: this.pageInfo.pageSize,
         webinar_id: this.webinar_id,
         type: '1',
-        keyword: 'ppt'
+        keyword: '',
+        ext: 'ppt,pptx',
+        created_at: '2020-09-30'
       };
       this.$fetch('getWordList', data).then(res => {
         if (res.code == 200) {

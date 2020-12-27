@@ -1,5 +1,5 @@
 import { browserSupport } from '@/utils/getBrowserType';
-import EventBus from '@/utils/Events';
+// import EventBus from '@/utils/Events';
 export default {
   data () {
     return {
@@ -55,14 +55,14 @@ export default {
 
         navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream) => {
 
-          EventBus.$emit('deviceSuccess', { audio: true, video: true, type: 'permissionCheck' });
+          this.$EventBus.$emit('deviceSuccess', { audio: true, video: true, type: 'permissionCheck' });
           this.setDeviceStatus(1);
           stream.getTracks().forEach((trackInput) => {
             trackInput.stop();
           });
         }).catch((error) => {
           this.setDeviceStatus(2);
-          EventBus.$emit('deviceSuccess', { audio: false, video: false, type: 'permissionCheck' });
+          this.$EventBus.$emit('deviceSuccess', { audio: false, video: false, type: 'permissionCheck' });
           console.error('error', error.name + ' : ' + error.message);
         });
       }

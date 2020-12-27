@@ -16,11 +16,14 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler">
-            <p slot="tip">推荐尺寸：120*120px，小于2MB<br/> 支持jpg、gif、png、bmp</p>
+            <div slot="tip">
+              <p>建议尺寸：120*120px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit  oninput="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\.\,\?\<\>\。\，\-\——\=\;\！\!\+\$]/g,'')" οnpaste="return false" οncοntextmenu="return false;"></el-input>
+            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -32,12 +35,14 @@
       title="资料库选择"
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
+      :before-close="handleClose"
       width="588px">
      <div class="prizeList">
-       <div class="search">
+       <div class="search" v-show="total || isSearch">
          <el-input v-model.trim="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
        </div>
-       <el-scrollbar v-loadMore="moreLoadData">
+       <div v-show="total">
+        <el-scrollbar v-loadMore="moreLoadData">
          <div class="prize">
            <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
              <img :src="item.img_path" alt="">
@@ -51,10 +56,16 @@
            </div>
          </div>
        </el-scrollbar>
-       <div class="prize-check"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
-       <div class="dialog-footer">
-        <el-button type="primary" @click="sureChoisePrize" v-preventReClick round>确 定</el-button>
-        <el-button @click.prevent.stop="dialogPrizeVisible = false" round>取 消</el-button>
+       </div>
+        <div class="no-live" v-show="!total">
+          <noData :nullType="nullText" :text="text" :height="0">
+            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="dialogVisible == true" v-preventReClick>创建抽奖</el-button>
+          </noData>
+        </div>
+       <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
+       <div class="dialog-footer" v-show="total || isSearch">
+        <el-button size="medium" type="primary" @click="sureChoisePrize" v-preventReClick round :disabled="!checkedList.length">确 定</el-button>
+        <el-button size="medium" @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
        </div>
      </div>
     </VhallDialog>
@@ -62,6 +73,7 @@
 </template>
 <script>
 import upload from '@/components/Upload/main';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
@@ -70,6 +82,10 @@ export default {
       keyword: '',
       checkedList: [],
       maxPage: 0,
+      total: 0,
+      nullText: 'nullData',
+      isSearch: false,
+      text: '您还没有奖品，快来创建吧！',
       prizePageInfo: {
         pos: 0,
         limit: 6,
@@ -104,17 +120,24 @@ export default {
   },
   props: ['prizeInfo'],
   components: {
-    upload
+    upload,
+    noData
   },
   watch: {
     dialogPrizeVisible() {
       if (this.dialogPrizeVisible) {
         this.list = [];
+        this.checkedList = [];
+        this.keyword = '';
         this.getPrizeList();
       }
     }
   },
   methods: {
+    handleClose(done) {
+      this.prizePageInfo.page = 1;
+      done();
+    },
     prizeResetForm() {
       this.prizeForm = {
         source: this.$parent.source,
@@ -129,20 +152,54 @@ export default {
       }
       this.$refs.prizeForm.validate((valid) => {
         if (valid) {
-          this.dialogVisible = false;
-          this.prizeForm.room_id = this.$route.query.roomId || '';
-          this.$fetch('createPrize', this.prizeForm).then(res => {
-            if (res.code == 200) {
-              this.$message.success(`${this.title === '编辑' ? '修改' : '新建'}成功`);
-              this.$emit('getTableList');
-            } else {
-              this.$message.error(res.msg);
-            }
-          })
+          if (this.$parent.source == 1) {
+            this.materiaPrize();
+          } else {
+             this.$confirm('是否同步到资料库？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              customClass: 'zdy-message-box'
+            }).then(() => {
+              // 保存到资料库
+              this.materiaPrize();
+              this.liveSurePrize();
+            }).catch(() => {
+              // 不保存资料库
+              this.liveSurePrize()
+            });
+          }
         } else {
           return false;
         }
       });
+    },
+    // 资料库保存奖品
+    materiaPrize() {
+      this.dialogVisible = false;
+      this.prizeForm.room_id = '';
+      this.prizeForm.source = 1;
+      this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$emit('getTableList');
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
+    },
+    // 直播下的保存奖品
+    liveSurePrize() {
+      this.dialogVisible = false;
+      this.prizeForm.source = 0;
+      this.prizeForm.room_id = this.$route.query.roomId || '';
+      this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
+        if (res.code == 200) {
+          this.$message.success(`直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$emit('getTableList');
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
     },
     sureChoisePrize() {
       let params = {
@@ -193,6 +250,16 @@ export default {
           item.isChecked = false;
         });
         this.list.push(...adList);
+        this.total = res.data.count;
+        if (this.keyword) {
+        this.nullText = 'search';
+        this.text = '';
+        this.isSearch = true;
+      } else {
+        this.nullText = 'nullData';
+        this.text = '您还没有奖品，快来创建吧！';
+        this.isSearch = false;
+      }
         this.maxPage = Math.ceil(res.data.count / this.prizePageInfo.limit);
       })
     },
@@ -244,7 +311,6 @@ export default {
       this.$refs[prizeForm].resetFields();
     },
     choisePrize(item) {
-      console.log(item, '111111111111');
       item.isChecked = !item.isChecked;
       this.checkedList = this.list.filter(items => items.isChecked).map(item => item.prize_id);
     }

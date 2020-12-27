@@ -6,18 +6,18 @@
         <span class="v-fullScreen iconfont iconquanping" :class="isFullscreen ? 'iconquanpingguanbi' : 'iconquanping'" title="全屏" @click="enterFullScreen"></span>
     </div>
     <share-screen
-      :ownerId="roomInfo.account_id"
+      :ownerId="third_party_user_id"
       :mainScreen="mainScreen"
       :splited="false"
-      :accountId="roomInfo.third_party_user_id"
-      :roleName="roomInfo.role_name"
+      :accountId="third_party_user_id"
+      :roleName="roomInfo.join_info && roomInfo.join_info.role_name"
     ></share-screen>
     <streams
       style="height: 100%; margin: 0 auto;"
       :speakerList="speakerList"
-      :accountId="roomInfo.third_party_user_id"
-      :roomId="roomInfo.room_id"
-      :roleName="roomInfo.role_name"
+      :accountId="third_party_user_id"
+      :roomId="roomInfo.interact && roomInfo.interact.room_id"
+      :roleName="roomInfo.join_info && roomInfo.join_info.role_name"
       :isDocShow="isDocShow"
       :mainScreen="doc_permission"
       :miniElement="miniElement"
@@ -25,21 +25,20 @@
       :layout="layout"
     >
       <Interactive
-        v-if="roomInfo.third_party_user_id && roomInfo.app_id && role"
+        v-if="third_party_user_id && roomInfo.interact && roomInfo.interact.paas_app_id && role"
         :miniElement="miniElement"
         :mainScreen="mainScreen || doc_permission"
         :isDocShow="isDocShow"
-        :inavId="roomInfo.inav_id"
-        :roomId="roomInfo.room_id"
-        :appId="roomInfo.app_id"
-        :accountId="roomInfo.third_party_user_id"
-        :ownerId="roomInfo.account_id"
-        :nickName="userInfo.nick_name"
-        :token="roomInfo.paas_access_token"
-        :vssToken="vssToken"
+        :inavId="roomInfo.interact.inav_id"
+        :roomId="roomInfo.interact && roomInfo.interact.room_id"
+        :appId="roomInfo.interact && roomInfo.interact.paas_app_id"
+        :accountId="third_party_user_id"
+        :ownerId="third_party_user_id"
+        :nickName="userInfo.nickname"
+        :token="roomInfo.interact && roomInfo.interact.paas_access_token"
         :speakerList="speakerList"
         :splitStatus="this.splitStatus"
-        :roleName="roomInfo.role_name"
+        :roleName="roomInfo.join_info&&roomInfo.join_info.role_name"
         :role="role"
         :status="status"
         :isInteract="isInteract"
@@ -69,10 +68,6 @@ export default {
     },
 
     ilId: {
-      required: true
-    },
-
-    vssToken: {
       required: true
     },
 
@@ -253,7 +248,6 @@ export default {
   },
 
   methods: {
-
     enterFullScreen () {
       if (this.isFullscreen) {
         document.exitFullscreen();
@@ -278,24 +272,30 @@ export default {
       EventBus.$on('streamPushed', () => {
         window.dispatchEvent(new Event('resize'));
       });
-
-      this.$vhallFetch('getInavInfo', {
-        room_id: this.roomId
+      this.$fetch('initiatorInfo', {
+        webinar_id: this.ilId
       }).then(async res => {
-        console.log('debug info:: vss roomInfo', res);
+        console.log('debug info:: vss roomInfo', res.data);
+        if(res.code != 200) return this.$message.warning(res.msg)
         this.roomInfo = res.data;
+        await this.getRoomStatus();
         this.userInfo = JSON.parse(sessionStorage.getItem('user'));
-        this.webinar_id = res.data.webinar_id;
-        this.status = res.data.status;
+        this.webinar_id = res.data.webinar.id;
+        if(res.data.webinar.type == 1){
+          this.status = 1;
+        }else if(res.data.webinar.type == 2){
+          this.status = 0;
+        } else {
+          this.status = 2;
+        }
         this.isPublishing = this.status == 1;
-        this.roleName = res.data.role_name;
+        this.roleName = res.data.join_info.role_name;
 
         // 设置角色
         this.role = this.roleName == 1 ? VhallRTC.MASTER : VhallRTC.GUEST;
 
-        this.layout = res.data.layout;
+        this.layout = res.data.webinar.mode;
         this.localDuration = this.duration;
-        this.getRoomStatus();
 
         sessionStorage.setItem('room_role', this.roleName);
       }).catch(e => {
@@ -307,20 +307,24 @@ export default {
      * 获取房间状态，是否开启文档/白板/举手/主讲人...
      */
     getRoomStatus () {
-      this.$vhallFetch('getRoomStatus', {
-        room_id: this.roomId
-      })
-        .then(res => {
+      return new Promise((resolve, reject)=>{
+        this.$fetch('getToolStatus', {
+          room_id: this.roomId
+        }).then(res => {
+          resolve()
+          if(res.code != 200) return this.$message.warning(res.msg)
           this.allBanned = res.data.all_banned == 1;
           this.doc_permission = res.data.doc_permission; // 当前主讲人
           this.mainScreen = res.data.main_screen;
           this.speakerList = res.data.speaker_list;
+          console.warn(this.roomInfo.join_info, 44878);
           this.speakerList.forEach(item => {
-            if (item.account_id == this.roomInfo.third_party_user_id) {
+            if (item.account_id == this.third_party_user_id) {
               this.isApplying = true;
             }
           });
         });
+      })
     },
 
     // 以下分屏算法为zhenliang.sun实现，有问题请联系他

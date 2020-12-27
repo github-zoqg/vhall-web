@@ -374,6 +374,7 @@ export default {
     margin-bottom: 10px;
     margin-top: 25px;
     & > .refresh {
+      outline: none;
       width: 100px;
       height: 30px;
       line-height: 30px;

@@ -70,7 +70,7 @@
               v-model="withdrawForm.text">
             </el-input>
           </div>
-          <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+          <p class="errorText" style="color:#fb3a32"  v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
         </el-form-item>
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
@@ -81,7 +81,7 @@
         </el-form-item>
         <el-form-item label="到账账户">
           <div class="live-box">
-            <img :src="userInfo.avatar" alt="" /> {{ nickName }}
+            <img :src="avatar" alt="" /> {{ nickName }}
             <span @click="changeBinding">更改</span>
           </div>
           <div class="xieyi">
@@ -134,6 +134,7 @@ export default {
       showCaptcha: false,
       showCode: false,
       qrcode: '',
+      avatar: '',
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
@@ -147,8 +148,15 @@ export default {
   watch: {
     dialogCashVisible() {
       if (this.dialogCashVisible) {
+        this.time = 60;
+        this.mobileKey = '';
+        this.withdrawForm.money = '';
+        this.errorText = '';
+        this.phone = '';
         this.callCaptcha();
         this.getWeinName();
+      } else {
+        window.clearInterval(this.timer);
       }
     },
     dialogVisible() {
@@ -156,6 +164,9 @@ export default {
         this.qrcode = '';
       }
     }
+  },
+  created() {
+    this.avatar = this.userInfo.avatar || require('../../../common/images/avatar.png');
   },
   methods: {
     // 获取用户微信昵称
@@ -194,9 +205,13 @@ export default {
         type: this.type
       };
       this.$fetch('withdrawal', params).then(res => {
-       this.$message.success('提现成功');
-       this.dialogCashVisible = false;
-       this.$emit('onreload');
+        if (res.code == 200) {
+          this.$message.success('提现成功');
+          this.dialogCashVisible = false;
+          this.$emit('onreload');
+        } else {
+          this.$message.error(res.msg || '提现失败');
+        }
       });
     },
     // 绑定微信短信验证码
@@ -224,7 +239,7 @@ export default {
     countDown() {
       if (this.time) {
         this.time--;
-        setTimeout(() => {
+        this.timer = setTimeout(() => {
           this.countDown();
         }, 1000);
       } else {
@@ -260,7 +275,7 @@ export default {
             that.mobileKey = data.validate;
             that.showCaptcha = true;
             console.log('data>>>', data);
-            this.errorMsgShow = false;
+            that.errorMsgShow = false;
           } else {
             that.mobileKey = '';
             console.log('errr>>>', err);
@@ -287,7 +302,9 @@ export default {
 /deep/.el-input__inner:focus {
   border-color: #ccc;
 }
-
+/deep/.el-input__inner {
+  border-radius: 2px;
+}
 /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
   color: #666;
 }
@@ -365,11 +382,10 @@ export default {
   }
   span{
     display: inline-block;
-    width: 112px;
+    width: 113px;
     height: 36px;
-    // padding-top: 4px;
     text-align: center;
-    line-height: 38px;
+    line-height: 36px;
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;

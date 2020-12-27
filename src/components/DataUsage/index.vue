@@ -5,14 +5,14 @@
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }}</h2>
-          <p>有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
+          <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="6">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
-          <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
+          <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="6">
@@ -28,7 +28,7 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
+          <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
         </div>
       </el-col>
       <el-col :span="6" v-if="userInfo.concurrency.extend_day">
@@ -43,8 +43,8 @@
       <el-col :span="9">
         <div class="top-item">
           <p>当前版本</p>
-          <h2>{{ userInfo.edition }} <span class="level" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
-          <p>有效期: {{ userInfo.edition_valid_time }}</p>
+          <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
+          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="9" v-if="userInfo.edition === '无极版'">
@@ -131,7 +131,7 @@ export default {
     outTime(time) {
       let newDate = new Date().getTime(); //获取本地当前时间
       let diff = newDate - new Date(time).getTime();
-      if (diff > 0) {
+      if (diff > 24*60*60*1000) {
         this.isOutTime = true;
       }
     },
@@ -141,9 +141,17 @@ export default {
           path: '/finance/info'
         });
       } else {
+        if (title === '升级' && this.userInfo.left_months < 1) {
+          this.$alert('当前套餐剩余有效时间不满一个月，不支持升级', '提示', {
+            confirmButtonText: '知道了',
+            customClass: 'zdy-message-box',
+            callback: action => {}
+          });
+          return;
+        }
         this.$refs.levelVersion.dialogVisible = true;
         this.title = title;
-         this.concurrentPrice = this.userInfo.concurrency;
+        this.concurrentPrice = this.userInfo;
       }
     },
     goAccountDetail() {
@@ -163,7 +171,7 @@ export default {
         });
       } else {
         this.title = this.versionType;
-        this.concurrentPrice = this.userInfo.flow;
+        this.concurrentPrice = this.userInfo;
         this.$refs.levelVersion.dialogBuyVisible = true;
       }
     }
@@ -190,13 +198,12 @@ export default {
       text-align: center;
       padding: 1px 7px;
       margin-left: 5px;
-      cursor: pointer;
       border-radius: 10px;
+      cursor: pointer;
     }
     p {
       font-size: 14px;
       color: #999;
-      cursor: pointer;
     }
     i{
       color: #000;
@@ -216,6 +223,7 @@ export default {
       right:0;
       color: #3562FA;
       font-size: 14px;
+      cursor: pointer;
     }
   }
 }

@@ -10,8 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button type="primary" round class="head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
-      <el-button round class="head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
+      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
+      <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="`请输入音视频名称`"
@@ -21,11 +21,11 @@
         >
       </search-area>
     </div>
-    <el-card class="video-list" v-show="total">
+    <div class="video-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="240" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
-    </el-card>
+    </div>
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" round class="head-btn set-upload" v-if="nullText==='nullData'">
@@ -346,12 +346,15 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.video-list{
+  width: 100%;
+  .layout--right--main();
+  .padding-table-list();
+  .min-height();
+}
 .video-wrap{
   height: 100%;
   width: 100%;
-  .video-list{
-    width: 100%;
-  }
   /deep/.el-card__body{
     padding: 0 0 30px 0;
   }
