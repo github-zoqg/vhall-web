@@ -1,7 +1,7 @@
 <template>
   <div class="openlink-wrap">
-    <sign-form v-if="formOpenLinkStatus"></sign-form>
-    <div class="no-open" v-else>
+    <sign-form v-if="formOpenLinkStatus == 1"></sign-form>
+    <div class="no-open"  v-if="formOpenLinkStatus == 2">
       <p>
         该页面已停止提供服务
         <br>
@@ -20,7 +20,7 @@
     data() {
       return {
         webinar_id: this.$route.params.id,
-        formOpenLinkStatus: false,
+        formOpenLinkStatus: 0,
       }
     },
     created() {
@@ -36,9 +36,9 @@
           // 如果当前 visitor_id 已经报名，跳转到直播间
           if (res.data.has_registed) return this.getWebinarStatus()
           // 如果独立链接无效，显示无效页
-          if (res.data.available == 0) return;
+          if (res.data.available == 0) return this.formOpenLinkStatus = 2;
           // 显示报名表单
-          this.formOpenLinkStatus = true;
+          this.formOpenLinkStatus = 1;
         })
       },
       // 获取当前活动状态，如果直播中，跳转到直播间
