@@ -298,7 +298,7 @@ export default {
     blockHandler(item){
       if(item.path){
         if (item.path === '/live/edit') {
-          this.$router.push({path: item.path, query: {id:this.$route.params.str, type: 2 }});
+          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
         } else if (item.path === '/live/question') {
           // 问卷
           this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});

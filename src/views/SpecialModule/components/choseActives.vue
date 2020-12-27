@@ -3,63 +3,64 @@
       title="添加直播"
       :visible="visible"
       :close-on-click-modal="false"
+      :before-close="handleClose"
       @close="cancelSelect"
-      width="592px">
+      width="620px">
       <div class="search" v-show="total || isSearch">
         <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
       </div>
-      <div class="vh-chose-active-box"
-        v-infinite-scroll="getActiveList"
-        :infinite-scroll-disabled="disabled"
-        :infinite-scroll-immediate="true"
-        v-show="total"
-      >
-        <!-- 单个视频 -->
-        <div class="vh-chose-active-item"
-          v-for="(item) in activeList"
-          :key="item.webinar_id"
-          @click="doSelect(item)"
-          :class="{'checkedActive': item.checked}"
+       <el-scrollbar v-loadMore="moreLoadData">
+        <div class="vh-chose-active-box"
+          v-show="total"
         >
-          <div class="vh-chose-active-item__cover">
-            <img :src="item.img_url" alt="">
-            <div class="vh-chose-active-item__cover-status">
-              <span class="liveTag">
-                <label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../../common/images/live.gif" alt="">
-                </label>
-                {{item | liveTag}}
-              </span>
-              <!-- <template v-if="item.webinar_state == 1">
-                <img src="../../../common/images/live/live.gif" alt=""> 直播 | 互动直播
-              </template> -->
-              <!-- <template v-if="item.webinar_state == 2">
-                预告 | 互动直播
-              </template>
-              <template v-if="item.webinar_state == 3">
-                结束 | 互动直播
-              </template>
-              <template v-if="item.webinar_state == 4">
-                点播 | 互动直播
-              </template>
-              <template v-if="item.webinar_state == 5">
-                回放 | 互动直播
-              </template> -->
-            </div>
-            <div class="vh-chose-active-item__cover-hots">
-             <i class="iconfont-v3 saasicon_redu"></i>
-             {{ item.pv }}
-            </div>
 
-          </div>
-          <div class="vh-chose-active-item__title">
-            {{ item.subject }}
-          </div>
-          <div class="vh-chose-active-item__info">
-            {{ item.created_at }}
+        <!-- 单个视频 -->
+          <div class="vh-chose-active-item"
+            v-for="(item) in activeList"
+            :key="item.webinar_id"
+            @click="doSelect(item)"
+            :class="{'checkedActive': item.checked}"
+          >
+            <div class="vh-chose-active-item__cover">
+              <img :src="item.img_url" alt="">
+              <div class="vh-chose-active-item__cover-status">
+                <span class="liveTag">
+                  <label class="live-status" v-if="item.webinar_state == 1">
+                    <img src="../../../common/images/live.gif" alt="">
+                  </label>
+                  {{item | liveTag}}
+                </span>
+                <!-- <template v-if="item.webinar_state == 1">
+                  <img src="../../../common/images/live/live.gif" alt=""> 直播 | 互动直播
+                </template> -->
+                <!-- <template v-if="item.webinar_state == 2">
+                  预告 | 互动直播
+                </template>
+                <template v-if="item.webinar_state == 3">
+                  结束 | 互动直播
+                </template>
+                <template v-if="item.webinar_state == 4">
+                  点播 | 互动直播
+                </template>
+                <template v-if="item.webinar_state == 5">
+                  回放 | 互动直播
+                </template> -->
+              </div>
+              <div class="vh-chose-active-item__cover-hots">
+              <i class="iconfont-v3 saasicon_redu"></i>
+              {{ item.pv }}
+              </div>
+
+            </div>
+            <div class="vh-chose-active-item__title">
+              {{ item.subject }}
+            </div>
+            <div class="vh-chose-active-item__info">
+              {{ item.created_at }}
+            </div>
           </div>
         </div>
-      </div>
+      </el-scrollbar>
       <div class="no-live" v-show="!total">
         <noData :nullType="nullText" :text="text" :height="50">
           <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
@@ -82,12 +83,18 @@ export default {
     return {
       page: 1,
       pageSize: 6,
+      maxPage: 0,
       nullText: 'nullData',
       text: '你还没有创建直播',
       total: 0,
       activeList: [],
       selectedOption: [],
       keyword: '',
+      pageInfo: {
+        page: 1,
+        limit: 6,
+        pos: 0
+      },
       lock: false,
       loading: false,
       visible: true,
@@ -112,24 +119,35 @@ export default {
 
   methods: {
     inputChange() {
-      this.getActiveList();
-      this.activeList.map(item => item.checked = false);
+      this.activeList = [];
+      // this.activeList.map(item => item.checked = false);
       this.selectedOption = [];
-      this.page = 1;
+      this.pageInfo = {
+        pos: 0,
+        page: 1,
+        limit: 6
+      }
+      this.getActiveList();
+    },
+    handleClose(done) {
+      this.pageInfo.page = 1;
+      done();
+    },
+    moreLoadData() {
+      if (this.pageInfo.page >= this.maxPage) {
+        return false;
+      }
+      this.pageInfo.page ++ ;
+      this.pageInfo.pos = parseInt((this.pageInfo.page - 1) * this.pageInfo.limit);
+      this.getActiveList();
     },
     getActiveList() {
-      this.loading = true
-      const pos = (this.page - 1) * this.pageSize
-      console.log(pos, '1111111111111111');
-      const limit = this.pageSize
       const userId = sessionStorage.getItem('userId')
       let params = {
-        pos: pos,
-        user_id: userId,
-        limit: limit,
         title: this.keyword,
         order_type: 1,
-        webinar_state: 0
+        webinar_state: 0,
+        ...this.pageInfo
       }
 
       this.$fetch('liveList', this.$params(params)).then((res) => {
@@ -150,9 +168,9 @@ export default {
             this.loading = false
             this.total = 0
           } else {
-            this.activeList =  this.activeList.concat(res.data.list)
+            this.activeList = this.activeList.concat(res.data.list)
             this.total = res.data.total
-            // this.page = this.page + 1
+            this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
             // this.syncCheckStatus()
             this.loading = false
           }
@@ -224,11 +242,11 @@ export default {
 </script>
 <style lang="less">
   .vh-chose-active-box{
-    width: 560px;
-    height: 320px;
-    overflow: auto;
-    overflow-x: hidden;
-    position: relative;
+    // width: 560px;
+    max-height: 310px;
+    // overflow: auto;
+    // overflow-x: hidden;
+    // position: relative;
   }
   .search{
     margin-bottom: 20px;
