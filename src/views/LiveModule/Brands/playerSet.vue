@@ -32,7 +32,7 @@
                         show-word-limit
                       ></el-input>
                     </el-form-item>
-                    <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:350px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
+                    <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:323px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                     <el-form-item label="字体大小">
                       <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
                         <el-option
@@ -57,12 +57,13 @@
                       <el-input
                         v-model="formHorse.interval"
                         :disabled="!scrolling_open"
-                        placeholder="1~300">
+                        maxlength="300"
+                        placeholder="默认10s，输入范围1-300s">
                         <i slot="suffix">秒</i>
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
+                      <el-button type="primary" class="common-save" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -112,11 +113,11 @@
                       <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">右下角</el-radio>
                     </el-form-item>
                     <el-form-item label="透明度">
-                      <el-slider v-model="formWatermark.img_alpha" style="width: 350px" :disabled="!watermark_open"></el-slider>
+                      <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
                       <span class="isNum">{{formWatermark.img_alpha}}%</span>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                      <el-button type="primary" class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -166,6 +167,11 @@
           <div class="show-purple">
             <img :src="audioEnd" alt="" v-show="!showVideo">
             <div id="videoDom" v-show="showVideo"></div>
+            <p class="show-purple-info">
+              <span>提示</span>
+              <span>1、移动端全屏播放时，跑马灯会失效</span>
+              <span>2、安卓手机浏览器劫持可能导致跑马灯失效</span>
+            </p>
             <!-- <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview> -->
           </div>
         </el-col>
@@ -196,7 +202,7 @@ export default {
         text: '版权所有，盗版必究',
         position: 3,
         alpha: 50,
-        interval: 20
+        interval: 10
       },
       accountIds:10000127,
       fontList: [],
@@ -334,8 +340,14 @@ export default {
     },
     // 保存跑马灯
     preFormHorse() {
+      // 校验间隔时间的输入
+      let reg = /^[0-9]*$/
+      if(!reg.test(this.formHorse.interval) || this.formHorse.interval == 0){
+        this.$message.error('间隔时间只能输入1-300之间的数字')
+        return false
+      }
       this.formHorse.webinar_id = this.$route.params.str
-      this.formHorse.interval = this.formHorse.interval || 20;
+      this.formHorse.interval = this.formHorse.interval || 10;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
@@ -472,8 +484,6 @@ export default {
     // 初始化播放器节点，重新加载播放器
    async initNodePlay() {
     if(document.querySelector('#videoDom')){
-        // this.destroy()
-        // this.accountIds++
         await vp.destroy();
         document.querySelector('#videoDom').innerHTML = ''
         await this.initPlayer()
@@ -565,6 +575,35 @@ export default {
   .el-form-item__content{
     position: relative;
   }
+  /deep/.el-switch__label--right {
+    span {
+       white-space: nowrap;
+       color: #999;
+    }
+  }
+  /deep/#vh-video {
+    border-radius: 5px;
+  }
+  /deep/.el-radio__input {
+    width: 16px;
+    height: 16px;
+    /deep/.el-radio__inner {
+      width: 16px;
+      height: 16px;
+    }
+    /deep/.el-radio__inner::after {
+      width: 8px;
+      height: 8px;
+    }
+  }
+  /deep/.el-radio {
+    margin-right: 20px;
+  }
+  .common-save {
+    width: 160px;
+    height: 40px;
+    line-height: 15px;
+  }
   .isNum{
     position: absolute;
     top: -2px;
@@ -597,13 +636,24 @@ export default {
   }
   .show-purple{
     width: 400px;
-    height: 225px;
+    height: 226px;
     border: 1px solid #ccc;
     margin-top: 100px;
     margin-left: 20px;
+    border-radius: 5px;
     img{
       width: 400px;
-      height: 225px;
+      height: 226px;
+    }
+    &-info {
+      width: 300px;
+      margin-top: 15px;
+      span {
+        display: block;
+        color: #999;
+        line-height: 20px;
+        font-size: 14px;
+      }
     }
   }
 }
