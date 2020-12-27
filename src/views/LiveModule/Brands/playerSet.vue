@@ -20,15 +20,15 @@
                       </el-switch>
                     </el-form-item>
                     <el-form-item label="类型">
-                      <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
-                      <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
+                      <el-radio v-model="formHorse.text_type" :label='1' @change="changeRadio" :disabled="!scrolling_open">固定文本</el-radio>
+                      <el-radio v-model="formHorse.text_type" :label='2' @change="changeRadio" :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                     </el-form-item>
                     <el-form-item label="固定文本">
                       <el-input
                         v-model="formHorse.text"
                         placeholder="版权所有，盗版必究"
                         :disabled="!scrolling_open"
-                        maxlength="20"
+                        :maxlength="20"
                         show-word-limit
                       ></el-input>
                     </el-form-item>
@@ -185,6 +185,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'prizeSet',
   data() {
@@ -378,9 +379,17 @@ export default {
          }
       });
     },
+    changeRadio() {
+      if (this.formHorse.text_type == 2) {
+        let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+        this.formHorse.text = `版权所有，盗版必究${userInfo.user_id}${userInfo.nick_name}`;
+      } else {
+        this.formHorse.text = `版权所有，盗版必究`;
+      }
+    },
     // 保存播放器其他设置
     preOthersOptions () {
-      
+
       let params = {
         barrage_button: Number(this.formOther.bulletChat),
         progress_bar: Number(this.formOther.progress),

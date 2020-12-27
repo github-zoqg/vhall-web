@@ -25,7 +25,7 @@
             </div>
             <div class="abRight" v-if="selectMedia.paas_record_id">
               <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-              <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
+              <el-button type="text" class="operaBtn" @click="deleteVideo">删除</el-button>
             </div>
           </div>
         </el-form-item>
@@ -141,6 +141,10 @@ export default {
     // 预览
     previewVideo() {
       this.showDialog = true;
+    },
+    // 删除
+    deleteVideo() {
+      this.selectMedia = {};
     },
     handleUploadSuccess(res, file) {
       if(res.data) {

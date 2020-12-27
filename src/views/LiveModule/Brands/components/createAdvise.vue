@@ -64,11 +64,11 @@
           </div>
         </el-scrollbar>
       </div>
-       <div class="no-live" v-show="!total">
-          <noData :nullType="nullText" :text="text" :height="0">
-            <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
-          </noData>
-        </div>
+      <div class="no-live" v-show="!total">
+        <noData :nullType="nullText" :text="text" :height="0">
+          <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
+        </noData>
+      </div>
       <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
       <span slot="footer" class="dialog-footer" v-show="total || isSearch">
         <el-button type="primary" @click="advSaveToWebinar(null)" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
