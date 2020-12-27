@@ -6,19 +6,35 @@
       </div>
     </div>
     <div class="qr-editor-box" v-if="mode == 2">
-      <div class="label">
-        <span style="color:#FB3A32">*</span>二维码
+      <div style="margin-bottom: 10px">
+        <div class="label">
+          <span style="color:#FB3A32">*</span>图片地址
+        </div>
+        <div class="editorContent">
+          <el-upload
+            class="upload-qrCode"
+            drag
+            :show-file-list="false"
+            :headers="{token: token, platform: 17}"
+            name="resfile"
+            :data="saveData"
+            :action="actionUrl"
+            :on-success="handleUploadSuccess"
+          >
+          {{ actionUrl }}
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">最佳封面尺寸：300*300px，小于2MB </div>
+            <div class="el-upload__tip" slot="tip">(支持格式jpg、png、bmp)</div>
+          </el-upload>
+        </div>
       </div>
-      <div class="editorContent">
-        <el-upload
-          class="upload-qrCode"
-          drag
-          :action="actionUrl"
-        >
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">最佳封面尺寸：300*300px，小于2MB </div>
-          <div class="el-upload__tip" slot="tip">(支持格式jpg、png、bmp)</div>
-        </el-upload>
+      <div style="marign-bottom: 10px">
+        <div class="label">
+          <span style="color:#FB3A32">*</span>跳转链接
+        </div>
+        <div class="editorContent">
+          <el-input v-model="info.src" @change="changeLink"></el-input>
+        </div>
       </div>
     </div>
   </div>
@@ -43,19 +59,32 @@ export default {
   data() {
     return {
       domain_url: '',
-      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`
+      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
+      saveData: {
+        path: 'interacts/menu-link-imgs',
+        type: 'image'
+      },
+      token: localStorage.getItem('token') || ''
     }
+  },
+
+
+  mounted() {
+    console.log('上传相关地址', this.actionUrl)
   },
 
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
-
       this.info.imageSrc = e.data.domain_url
       this.$emit('updateInfo', {
         ...this.info,
-        hrc: e.data.domain_url,
-        isDefault: false
+      })
+    },
+
+    changeLink() {
+      this.$emit('updateInfo', {
+        ...this.info,
       })
     },
 
@@ -88,6 +117,7 @@ export default {
   }
   .label{
     display: inline-block;
+    vertical-align: top;
   }
   .editorContent{
     margin-left: 10px;

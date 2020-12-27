@@ -24,10 +24,10 @@ const compoentMap = {
   3: 'lives',
   // 专题
   4: 'projects',
-  // 图片链接
-  5: 'imglink',
   // 文字链接
-  6: 'textlink',
+  5: 'textlink',
+  // 图片链接
+  6: 'imglink',
   // 标题
   7: 'title',
   // 分割线

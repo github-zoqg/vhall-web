@@ -9,8 +9,13 @@
   </div>
 </template>
 <script>
-import ComponentDesimg from '../componet-editor/component-desimg'
-import ComponentQrcode from '../componet-editor/component-qrcode'
+import ComponentDesimg from './component-desimg'
+import ComponentQrcode from './component-qrcode'
+import ComponentLives from './component-lives'
+import ComponentTextlink from './component-textlink'
+import ComponentImglink from './component-imglink'
+import ComponentTitle from './component-title'
+import ComponentLine from './component-line'
 import componentMap from '../componetMap'
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
@@ -27,7 +32,12 @@ export default {
 
   components: {
     ComponentDesimg,
-    ComponentQrcode
+    ComponentQrcode,
+    ComponentLives,
+    ComponentTextlink,
+    ComponentImglink,
+    ComponentTitle,
+    ComponentLine
   },
 
   mounted() {

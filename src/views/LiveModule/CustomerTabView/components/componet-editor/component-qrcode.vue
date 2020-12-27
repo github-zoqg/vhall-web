@@ -9,32 +9,26 @@
       <div class="label">
         <span style="color:#FB3A32">*</span>二维码
       </div>
-      <div class="editorContent" v-if="actionUrl != ''">
-        <el-upload
-          class="upload-qrCode"
-          :action="actionUrl"
-          :headers="{token: token, platform: 17}"
-          :show-file-list="false"
-          accept="image/*"
-          name="resfile"
-          :data="saveData"
+      <div class="editorContent">
+        <Upload
+          class="upload__avatar"
+          v-model="info.imageSrc"
+          :saveData="{
+              path: 'interacts/menu-qrcode-imgs',
+              type: 'image',
+          }"
           :on-success="handleUploadSuccess"
           :on-error="uploadError"
-        >
-        <img :src="info.imageSrc" alt="">
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">
-            最佳封面尺寸：300*300px，小于2MB <br>
-            (支持格式jpg、png、bmp)
-          </div>
-        </el-upload>
+        ></Upload>
       </div>
     </div>
   </div>
 </template>
 <script>
+import Upload from '@/components/Upload/main';
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+
 export default {
   name: 'component-qrcode',
   props: {
@@ -48,25 +42,20 @@ export default {
     }
   },
 
+  components: {
+    Upload
+  },
+
   data() {
     return {
       domain_url: '',
-      actionUrl: '',
-      saveData: {
-        path: 'interacts/menu-qrcode-imgs',
-      },
-      token: localStorage.get('token') || ''
     }
-  },
-
-  created() {
-    this.actionUrl = `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`
-    console.log('upload Action',this.actionUrl)
   },
 
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
+
       this.info.imageSrc = e.data.domain_url
       this.$emit('updateInfo', {
         ...this.info,
@@ -104,16 +93,20 @@ export default {
   }
   .label{
     display: inline-block;
-    vertical-align: top;
   }
   .editorContent{
-    margin-left: 10px;
     display: inline-block;
   }
   /* 图片上传 */
-  .upload-qrCode{
-    height: 180px;
-    background: #CCCCCC;
-
+  .upload__avatar {
+    /deep/.el-upload--picture-card {
+      width: 180px;
+      height: 180px;
+      border: 1px solid #CCCCCC;
+    }
+    /deep/.box > div {
+      width: 180px;
+      height: 180px;
+    }
   }
 </style>

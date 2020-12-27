@@ -1,32 +1,35 @@
 <template>
-  <div class="qrcode-wrapbox">
-    <div class="qr-previewbox" v-if="mode == 1">
-      <div class="qrbox">
-        <img :src="info.imageSrc" alt="">
+  <div class="textlink-wrapbox">
+    <div class="textlink-previewbox" v-if="mode == 1">
+      <div class="textlink">
+        <a href="javascript:void(0);">
+          {{ info.text }}
+        </a>
       </div>
     </div>
-    <div class="qr-editor-box" v-if="mode == 2">
-      <div class="label">
-        <span style="color:#FB3A32">*</span>二维码
+    <div class="textlink-editor-box" v-if="mode == 2">
+      <div style="margin-bottom: 10px">
+        <div class="label">
+          <span style="color:#FB3A32">*</span> 文字
+        </div>
+        <div class="editorContent">
+          <el-input v-model="info.text" @change="changeText"></el-input>
+        </div>
       </div>
-      <div class="editorContent">
-        <el-upload
-          class="upload-qrCode"
-          drag
-          :action="actionUrl"
-        >
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">最佳封面尺寸：300*300px，小于2MB </div>
-          <div class="el-upload__tip" slot="tip">(支持格式jpg、png、bmp)</div>
-        </el-upload>
+      <div style="margin-bottom: 10px">
+        <div class="label">
+          <span style="color:#FB3A32">*</span> 跳转地址
+        </div>
+        <div class="editorContent">
+          {{ a }}
+          <el-input v-model="info.src" @change="changeLink"></el-input>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import EventBus from '../../bus'
-import eventsType from '../../EventConts'
-
+import planFunctionVue from '../../../planFunction.vue'
 export default {
   name: 'component-textlink',
   props: {
@@ -40,57 +43,54 @@ export default {
     }
   },
 
-  data() {
+  data: function() {
     return {
-      domain_url: '',
-      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`
+      a: 'test',
     }
   },
 
+  watch: {
+  },
+
   methods: {
-    handleUploadSuccess(e) {
-      console.log('二维码上传成功', e)
+    changeLink() {
+      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.link)
+      // this.$waring('链接地址，必须以http或https 开头')
+      // this.a = 'bbb'
+      // console.log(this.a)
+      if(result) {
+        this.$emit('updateInfo', this.info)
+      } else {
+        this.$message('链接地址，必须以http或https 开头')
+      }
 
-      this.info.imageSrc = e.data.domain_url
-      this.$emit('updateInfo', {
-        ...this.info,
-        hrc: e.data.domain_url,
-        isDefault: false
-      })
     },
 
-    uploadError(e) {
-      console.log('upload error', e)
-    },
+    changeText() {
+      this.$emit('updateInfo', this.info)
+    }
   }
 }
 </script>
 <style lang="less" scoped>
-  .qr-previewbox{
-    .qrbox {
+  .textlink-wrapbox{
+    .textlink {
       position: relative;
-      width: 160px;
-      height: 160px;
+      height: 40px;
+      line-height: 40px;
       overflow: hidden;
       text-align: center;
-      margin: 0 auto;
-      background: #fff;
-
-      img {
-        width: 100%;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        transform: translate3d(0, -50%, 0);
-      }
     }
   }
   .label{
     display: inline-block;
+    font-size: 14px;
+    line-height: 40px;
+    width: 80px;
   }
   .editorContent{
     margin-left: 10px;
+    font-size: 14px;
     display: inline-block;
   }
   /* 图片上传 */

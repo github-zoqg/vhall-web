@@ -3,7 +3,6 @@
     @drop.prevent.stop="addComponet"
     @dragover="dragover"
   >
-
     <template v-if="units.length == 0">
       请拖拽组件 至此！
     </template>
@@ -90,13 +89,39 @@ export default {
           hrc: '//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/546794954',
           cUid: uuidV1()
         })
-      } else {
+      } else if (componentData.component_id == 3) {
+        this.units.push({
+         ...componentData,
+          // To Do 默认 二维码地址。 替换成当前，直播间 观看页地址！！
+          webinars: [],
+          cUid: uuidV1()
+        })
+      } else if (componentData.component_id == 5){
+        this.units.push({
+          ...componentData,
+          text: '',
+          src: 'http://',
+          cUid: uuidV1()
+        })
+      } else if(componentData.component_id == 6) {
+        this.units.push({
+          ...componentData,
+          imageSrc: '',
+          src: 'http://',
+          cUid: uuidV1()
+        })
+      } else if(componentData.component_id == 7) {
+        this.units.push({
+          ...componentData,
+          title: '',
+          cUid: uuidV1()
+        })
+      } else if(componentData.component_id == 8) {
         this.units.push({
           ...componentData,
           cUid: uuidV1()
         })
       }
-
       this.doEditor(this.units.length - 1)
       e.preventDefault()
     },
