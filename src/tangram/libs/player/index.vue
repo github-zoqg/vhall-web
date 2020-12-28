@@ -299,10 +299,8 @@ export default {
     }
   },
   created() {
-    console.log(1001)
   },
   async mounted () {
-    console.log(9991, this.isAudio, this.audioStatus);
     if (this.$route.query.embed == 'video') {
       this.isEmbedVideo = true;
     }

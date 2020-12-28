@@ -629,10 +629,10 @@ export default {
       kickOutSass: false, // 遮罩层
       chatShow: '', // 聊天的status
       goodsPopShow: false,
-      roomUser: {
-        uvOnline: '1',
-        pvCount: '1'
-      }, // 在线观看数和在线人数
+      // roomUser: {
+      //   uvOnline: '1',
+      //   pvCount: '1'
+      // }, // 在线观看数和在线人数
       baseRoomUser: {
         baseOnlineNum: 0,
         basePv: 0
@@ -752,25 +752,21 @@ export default {
     }
     // 加入消息 增加uv
     this.$EventBus.$on('Join', (msg) => {
-      if (this.roomData && this.roomData.online ) {
-        this.roomData.online.num = msg.uv
-        this.roomData.pv.num = msg.context.pv
-      }
+      this.roomData.online.num = msg.context.uv
+      this.roomData.pv.num = msg.context.pv
     })
     // 离开消息
     this.$EventBus.$on('Leave', (msg) => {
-      if (this.roomData && this.roomData.online ) {
-        this.roomData.online.num = msg.uv
-        // this.roomData.pv.num = msg.pv
-      }
+      this.roomData.online.num = msg.context.uv
+      // this.roomData.pv.num = msg.pv
     })
     this.$EventBus.$on('updateBaseNum', (msg) => {
-      if (this.roomData.online) {
-        this.roomData.online.num = Number(this.roomData.online.num) + Number(msg.data.update_online_num)
-      }
-      if (this.roomData.pv) {
-        this.roomData.online.num = Number(this.roomData.pv.num) + Number(msg.data.update_pv)
-      }
+      let num = this.roomData.online.num
+      this.roomData.online.num = Number(num) + Number(msg.data.update_online_num)
+      console.log(999999, Number(num), Number(msg.data.update_online_num), this.roomData.online.num)
+      
+      let pvNum = this.roomData.pv.num
+      this.roomData.pv.num = Number(pvNum) + Number(msg.data.update_pv)
     })
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
@@ -1007,17 +1003,17 @@ export default {
       this.swiperPrevShow = true;
     },
     onlinePeople(msg) {
-      this.$nextTick(() => {
-        this.roomUser.uvOnline = msg.uv;
-        if (msg.context.pv > this.roomUser.pvCount) {
-          this.roomUser.pvCount = msg.context.pv;
-        }
-      });
+      // this.$nextTick(() => {
+      //   this.roomUser.uvOnline = msg.uv;
+      //   if (msg.context.pv > this.roomUser.pvCount) {
+      //     this.roomUser.pvCount = msg.context.pv;
+      //   }
+      // });
     },
     onlineLeavePeople(msg) {
-      this.$nextTick(() => {
-        this.roomUser.uvOnline = msg.uv;
-      });
+      // this.$nextTick(() => {
+      //   this.roomUser.uvOnline = msg.uv;
+      // });
     },
     updateBaseNumFun(msg) {
       this.$nextTick(() => {
@@ -1625,7 +1621,8 @@ export default {
         webinar: Object.assign({}, data.webinar, {
           image_url: data.webinar.img_url,
           is_interact: data.webinar.mode == 3 ? 1 : 0,
-          pv: data.pv.num
+          pv: data.pv.num ,
+          uv: data.online.num
         }),
         advs: this.ads,
         auth: this.isLogin ? {
@@ -1722,7 +1719,7 @@ export default {
       this.webDominUrl = this.roominfo.domains.web
       this.webinarDominUrl = this.roominfo.domains.webinar
       // 获取pv的观看数
-      this.roomUser.pvCount = data.pv.num
+      // this.roomUser.pvCount = data.pv.num
       sessionOrLocal.set(
         'defaultMainscreenDefinition',
         this.roominfo.push_definition || ''
