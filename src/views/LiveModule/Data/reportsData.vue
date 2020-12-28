@@ -29,7 +29,7 @@
         <lint-charts :lineDataList="limitDataList" :type="1"></lint-charts>
       </div>
       <div class="statistical-line statistical-dark">
-        <span>观众访问趋势图</span>
+        <span>观众改为观看人数</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             筛选条件内，观看人数随时间变化的趋势图
@@ -244,15 +244,17 @@ export default {
     },
     getDataList(params) {
       let formParams = this.$refs.searchArea.searchParams;
+      console.log("xixiiiiii12311111111111111131321");
       let paramsObj = {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0
       };
       if (this.liveDetailInfo.webinar_state != 4) {
-        if (parseInt(formParams.searchIsTime) == 2) {
+        if (formParams.searchIsTime == 2) {
           this.searchArea.map(item => {
             item.key === 'switchId' ? item.options = this.switchList : []
           })
+          this.searchAreaLayout = this.searchArea;
         } else {
           this.searchAreaLayout = this.searchLayout;
         }

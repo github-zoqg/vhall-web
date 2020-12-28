@@ -10,6 +10,7 @@
     <div class="search"  v-show="total || isSearch">
       <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @change="searchHandler" clearable>
         <i class="el-icon-search el-input__icon"
+        @click="searchHandler"
           slot="suffix"
         >
         </i>

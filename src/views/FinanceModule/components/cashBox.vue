@@ -376,7 +376,7 @@ export default {
   height: 38px;
   width: 265px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 2px;
   /deep/.el-input__inner {
     border: none;
     height: 38px;

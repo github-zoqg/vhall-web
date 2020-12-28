@@ -145,9 +145,10 @@ export default {
       this.$emit("onSearchFun");
     },
     changeDate(){
-      if (this.$route.path === '/finance/infoDetail') {
+      if (this.$route.path == '/finance/infoDetail') {
         return;
       }
+      console.log("哈哈哈哈11111111111111111111");
       this.$emit("onSearchFun");
     },
     changeInput() {

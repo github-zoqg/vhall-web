@@ -176,6 +176,10 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
+      if (that.total == 100) {
+        that.$message.error('商品最大上架数量为100，请删除后再进行操作');
+        return;
+      }
       that.$fetch('goodsCopy', {
         webinar_id: that.$route.params.str,
         goods_id: rows.goods_id
