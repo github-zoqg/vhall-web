@@ -629,6 +629,7 @@ export default {
 
   data () {
     return {
+      rebroadcastChannelId: '',
       selectGiftId: '',
       showGiftSend: false,
       isHavePacket: false,
@@ -996,7 +997,7 @@ export default {
       if (this.bizInfo.webinar.type == 1) {
         await this.getRoomStatus()
       } else {
-        this.rebroadcastChannelId = this.bizInfo.rebroadcast
+        this.rebroadcastChannelId = this.bizInfo.rebroadcast.channel_id
       }
       let inavInfo = {
         account_id: this.bizInfo.host.id,

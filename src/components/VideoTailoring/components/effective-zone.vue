@@ -98,7 +98,7 @@ export default {
     position: absolute;
     top: 11px;
     height: 4px;
-    background-color: #409eff;
+    background-color: #ccc;
     border-radius: 5px;
     &:hover {
       cursor: pointer;

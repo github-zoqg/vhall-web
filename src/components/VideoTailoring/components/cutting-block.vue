@@ -1,9 +1,7 @@
 <template>
   <div class="vh-video-tailoring__cutting-warp" ref="rulersWarp" @mousedown="rulersMouseDown">
     <div class="vh-video-tailoring__left-border" :style="{ left: pointerLeft + 'px' }" @mousedown.stop="clearMouse">
-      <div attr_id="letf_target" class="vh-video-tailoring__pull-left-warp" @mousedown.stop="targetMousedown">
-        <icon class="icon" icon-class="saasicon_quyubianjiezuo"></icon>
-      </div>
+      <div attr_id="letf_target" class="vh-video-tailoring__pull-left-warp" @mousedown.stop="targetMousedown"></div>
     </div>
     <div
       class="vh-video-tailoring__content"
@@ -15,9 +13,7 @@
       </div>
     </div>
     <div class="vh-video-tailoring__right-border" :style="{ left: pointerRight + 'px' }" @mousedown.stop="clearMouse">
-      <div attr_id="right_target" class="vh-video-tailoring__pull-right-warp" @mousedown.stop="targetMousedown">
-        <icon class="icon" icon-class="saasicon_quyubianjieyou"></icon>
-      </div>
+      <div attr_id="right_target" class="vh-video-tailoring__pull-right-warp" @mousedown.stop="targetMousedown"></div>
     </div>
   </div>
 </template>
@@ -301,15 +297,15 @@ export default {
   .vh-video-tailoring__content {
     position: absolute;
     top: 0;
-    height: 30px;
+    height: 83px;
     background-color: #000000;
-    border: 1px solid #1e89e4;
+    border: 1px solid #FB3A32;
     box-sizing: border-box;
     border-radius: 4px;
     overflow: hidden;
     .vh-video-tailoring__content-center{
       width: 100%;
-      height: 22px;
+      height: 74px;
       background-color: #333;
       margin-top: 3px;
     }
@@ -341,10 +337,12 @@ export default {
       left: 0;
       z-index: 4;
       width: 8px;
-      height: 30px;
+      height: 83px;
       background-repeat: no-repeat;
-      background-size: 8px 30px;
+      background-size: 100% 100%;
+      background-image: url('../image/pull-left-new.png');
       &:hover {
+        background-image: url('../image/pull-left-new.png');
         cursor: pointer;
         display: block;
       }
@@ -362,10 +360,12 @@ export default {
       right: -1px;
       z-index: 4;
       width: 8px;
-      height: 30px;
+      height: 83px;
       background-repeat: no-repeat;
-      background-size: 8px 30px;
+      background-size: 100% 100%;
+      background-image: url('../image/pull-right-new.png');
       &:hover {
+        background-image: url('../image/pull-right-new.png');
         cursor: pointer;
         display: block;
       }
