@@ -436,7 +436,7 @@ export default {
         if (res.data.doc_titles.length) {
           this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         } else {
-          this.$message.warning('当前回放内容未演示PPT格式的文案，不支持使用章节功能')
+          this.$message.warning('当前回放内容未演示PPT格式的文档，不支持使用章节功能')
         }
       })
     },

@@ -5,13 +5,16 @@
         <h3 class="vh-video-tailoring__title">{{ videoName }}</h3>
       </div>
       <div class="vh-video-tailoring__media-wrap clearfix">
-        <div class="vh-video-tailoring__play" :class="{ fl: docReady }">
+        <div class="vh-video-tailoring__play" :class="{ fl: docReady || !vodReady}">
+          <div class="vh-video-tailoring__noplay" v-show="!vodReady">
+            <icon icon-class="saasicon_video"></icon>
+          </div>
           <template v-show="vodReady">
             <div id="vh-player"
               v-if="showVideo"></div>
           </template>
         </div>
-        <div class="vh-video-tailoring__doc-warp fl" v-show="docReady">
+        <div class="vh-video-tailoring__doc-warp fl" v-show="docReady ||  !vodReady">
           <doc
             v-if="showDoc"
             ref="doc"
@@ -28,6 +31,9 @@
             :accountId="roomInfo.third_party_user_id"
             :isVod="true"
           ></doc>
+          <div v-else class="vh-video-tailoring__nodoc-warp">
+            <icon icon-class="saasicon_word"></icon>
+          </div>
         </div>
       </div>
     </div>
@@ -121,9 +127,9 @@
       <div class="vh-video-tailoring__form">
         <span class="vh-video-tailoring__label">{{ t('回放标题') }}</span>
         <div class="vh-video-tailoring__input-form">
-          <el-input v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="30"></el-input>
+          <el-input v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100"></el-input>
           <span class="vh-invitation-card__title-length">
-            <span :class="videoTitle.length != 0 ? 'vh-invitation-card__curLength' : ''">{{ videoTitleLength }}</span>/30
+            <span :class="videoTitle.length != 0 ? 'vh-invitation-card__curLength' : ''">{{ videoTitleLength }}</span>/100
           </span>
         </div>
       </div>
@@ -586,6 +592,12 @@ export default {
 };
 </script>
 <style lang="less">
+  // 页面底部插入了一个一像素高元素，影响一屏页面，不知作用是啥，先隐藏
+  #myVodNode {
+    height: 0px!important;
+  }
+</style>
+<style lang="less">
 .vh-video-tailoring__warp {
   width: 1366px;
   margin: 20px auto;
@@ -601,9 +613,11 @@ export default {
     color: #888;
   }
   .vh-video-tailoring__section {
-    background-color: #000;
+    background-color: #222222;
     border-radius: 4px;
+    height: calc( 100% - 314px );
     .vh-video-tailoring__head {
+      display: none;
       width: 1306px;
       margin: 0 auto;
       height: 50px;
@@ -667,20 +681,22 @@ export default {
     }
 
     .vh-video-tailoring__media-wrap {
-      width: 1306px;
-      height: 290px;
+      width: 100%;
+      height: 100%;
       margin: 0 auto;
+      padding: 25px 24px 11px;
       .vh-video-tailoring__play {
-        width: 489px;
-        height: 276px;
+        width: calc(50% - 5px);
+        height: 100%;
         background-color: #000;
-        background-image: url(./image/video-placeholder.png);
+        // background-image: url(./image/video-placeholder.png);
         background-size: 150px 150px;
         background-position: 50% 50%;
         background-repeat: no-repeat;
         margin: 0 auto;
         display: inline-block;
         vertical-align: middle;
+        overflow: hidden;
         .vhallPlayer-barrage-box,
         .v-c-right {
           display: none;
@@ -691,18 +707,30 @@ export default {
         .overEnd {
           display: none !important;
         }
+        .vh-video-tailoring__noplay {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .iconContainer i {
+            font-size: 126px;
+            color: #667;
+          }
+        }
       }
       .vh-video-tailoring__doc-warp {
-        width: 489px;
-        height: 276px;
-        margin-left: 4px;
+        width: calc(50% - 5px);
+        height: 100%;
+        margin-left: 10px;
         background-color: #000;
-        background-image: url(./image/doc_init@2x.png);
+        // background-image: url(./image/doc_init@2x.png);
         background-size: 150px 150px;
         background-position: 50% 50%;
         background-repeat: no-repeat;
         display: inline-block;
         vertical-align: middle;
+        overflow: hidden;
         .doc-ctrl-bar {
           display: none;
         }
@@ -714,13 +742,26 @@ export default {
             display: none;
           }
         }
+        .vh-video-tailoring__nodoc-warp {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .iconContainer i {
+            font-size: 126px;
+            color: #667;
+          }
+        }
+        // .vhall-watch-doc[data-v-65e8c4ba] {
+        //   background-color: #000;
+        // }
       }
     }
   }
   .vh-video-tailoring__tailoring-wrap {
     width: 100%;
     margin: 0 auto;
-    padding-bottom: 8px;
   }
   .vh-video-tailoring__addvideo {
     .el-dialog__header{
@@ -1002,10 +1043,35 @@ export default {
           line-height: 38px;
         }
         .el-button {
-          width: 80px;
+          width: 76px;
           height: 36px;
+          line-height: 36px;
+          background: #FB3A32;
+          border: none;
+          border-radius: 18px;
           padding: 0;
-          line-height: 34px;
+          text-align: center;
+          color: #FAFAFA;
+          &.el-button--default {
+            border: 1px solid #CCCCCC;
+            padding: 4px 24px;
+            font-size: 14px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #666666;
+            line-height: 26px;
+            &:hover{
+              background: #ffebeb;
+              border: 1px solid #CCCCCC;
+              color: #666666;
+            }
+          }
+          &.el-button--primary {
+            &:hover{
+              color: #fff;
+              background: #FC615B;
+            }
+          }
         }
     }
     .el-dialog__footer {

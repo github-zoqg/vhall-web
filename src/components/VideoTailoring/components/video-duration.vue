@@ -1,12 +1,12 @@
 <template>
   <div
     class="vh-video-tailoring__video-duration-warp"
-    :style="{ width: durationWidth + 15 + 'px' }"
+    :style="{ width: vodReady ? durationWidth + 15 + 'px' : '100%'}"
     ref="videoDurationWarp"
     @mousemove="showTimeMouseMove"
     @mouseleave="showTimeMouseLeave"
   >
-    <div class="vh-video-tailoring__bg-warp" :style="{ width: durationWidth + 'px' }"></div>
+    <div class="vh-video-tailoring__bg-warp" :style="{ width: vodReady ? durationWidth + 'px' : '100%'}"></div>
     <cutting-block
       v-for="(element, index) in cutTimeList"
       :key="index"
@@ -113,6 +113,13 @@ export default {
     eventPointList: {
       type: Array,
       required: true
+    },
+    /**
+     * 视频初始化信息是否完成
+     */
+    vodReady: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
