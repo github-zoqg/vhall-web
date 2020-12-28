@@ -2,11 +2,8 @@
   <div class="question-wrap">
     <pageTitle title="问卷">
       <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
-        <br>
-        2.上蔟韩视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
-        <br>
-        3.上传的视频，不支持剪辑和下载
+        修改已收集数据的问卷，按照修改后的问卷重新统计，为确保问卷统<br>
+        计结果不受影响，建议已推送的问卷需要修改时可以复制一份新的问卷
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
