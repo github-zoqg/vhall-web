@@ -474,7 +474,7 @@ export default {
           }
           this.$nextTick(() => {
             // 新增题目显示在视觉中心
-            document.documentElement.scrollTo(0, this.$refs.fieldSet.$refs[res.data.id][0].offsetTop)
+            document.documentElement.scrollTo(0, this.$refs.fieldSet.$refs[res.data.id][0].offsetTop - 70)
           })
           let question_ids = this.questionArr.reduce((acc, curr) => {
             return acc + curr.question_id + ',';

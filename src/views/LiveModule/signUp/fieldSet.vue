@@ -731,6 +731,7 @@ export default {
       /deep/ .el-input__inner {
         padding-left: 4px;
         color: #1A1A1A;
+        padding-right: 54px;
       }
     }
   }
@@ -748,6 +749,9 @@ export default {
     }
     /deep/ .el-checkbox__label{
       width: calc(100% - 14px);
+      .el-input__inner {
+        padding-right: 74px;
+      }
     }
   }
   .el-radio-group{
@@ -760,6 +764,9 @@ export default {
       /deep/ .el-radio__label {
         .radioInput {
           width: calc(100% - 24px);
+          .el-input__inner {
+            padding-right: 74px;
+          }
         }
         .other-input {
           margin-top: 10px;
