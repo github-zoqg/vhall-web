@@ -186,7 +186,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="webniarType=='live' && limitInfo.type == 1">
+      <p class="switch__box" v-if="webniarType=='live' && !versionType">
          <el-switch
           style="display: block"
           v-model="capacity"
@@ -207,11 +207,11 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="limitInfo.type == 2 ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
+        <el-button type="primary" class="common-button" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button class="common-button" @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 
@@ -284,9 +284,9 @@ export default {
     },
     capacityDesc(){
       if(this.capacity){
-        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
+        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }else{
-        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
+        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
@@ -317,6 +317,7 @@ export default {
   },
   data(){
     return {
+      initFormData:{},//idiff表单
       formData: {
         title: '',
         date1: '',
@@ -383,7 +384,11 @@ export default {
         name: this.$route.query.name
       }
     }
-    this.getHighLimit();
+    this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
+    if (!this.versionType) {
+      this.getHighLimit();
+    }
+
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -421,7 +426,7 @@ export default {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.name = this.liveDetailInfo.record_subject;
         }
-
+        this.initFormData = JSON.stringify(this.formData) // 为了对比表单内的数据是否被修改
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -472,8 +477,8 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (this.versionType == 1) {
-        if (this.limitCapacity > this.limitInfo.balance) {
+      if (!this.versionType) {
+        if (this.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
@@ -537,19 +542,66 @@ export default {
       this.showDialog = true;
     },
     getHighLimit() {
-      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
+      this.$fetch('getHighLimit').then(res => {
         this.limitInfo = res.data;
         // this.versionType = res.data.type;
       })
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      // this.$refs[formName].resetFields();
+      if(this.$route.query.type == 2){
+         this.$router.go(-1)
+      }else {
+        this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-alert-box',
+          type: 'warning'
+        }).then(() => {
+          // next();
+            this.$router.go(-1)
+        }).catch(() => {
+          });
+      }
       // 重置直播模式、直播封面、直播简介。
     },
     mediaSelected(media){
       this.selectMedia = media;
       console.log(this.selectMedia);
+    },
+    diff (obj1, obj2) {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+        return false;
     }
+    else {
+        for (let key in obj1) {
+            if (!obj2.hasOwnProperty(key)) {
+                return false;
+            }
+            //类型相同
+            if (typeof obj1[key] === typeof obj2[key]) {
+                //同为引用类型
+                if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                    const equal = diff(obj1[key], obj2[key]);
+                    if (!equal) {
+                        return false;
+                    }
+                }
+                //同为基础数据类型
+                if (typeof obj1[key] !== 'object' && typeof obj2[key] !== 'object' && obj1[key] !== obj2[key]) {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    return true;
+   }
   },
 };
 </script>
@@ -578,6 +630,12 @@ export default {
   }
   /deep/.el-col-11{
     height: 40px;
+  }
+  /deep/.tox-tinymce{
+    border-radius: 4px;
+  }
+  /deep/.el-upload--picture-card{
+    border-radius: 4px;
   }
   // /deep/ .el-form-item__label{
   //   float: none;
@@ -738,6 +796,11 @@ export default {
     }
     .el-button.is-round{
       padding: 10px 23px;
+    }
+  }
+  .editBox {
+    .common-button {
+      height: 40px;
     }
   }
   /*.editBox {

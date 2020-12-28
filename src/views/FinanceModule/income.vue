@@ -17,7 +17,7 @@
             </div>
             <div class="all-come">
               <p>可用金额（元）
-                <span @click="cash('直播')">提现</span>
+                <span @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span>
                 <el-tooltip effect="dark" placement="right-start">
                   <div slot="content">
                    Q1: 平台提现额度为多少？<br>
@@ -50,7 +50,7 @@
             </div>
             <div class="all-come">
               <p>可用金额（元）
-                <span @click="cash('红包')">提现</span>
+                <span @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
                 <el-tooltip effect="dark" placement="right-start">
                   <div slot="content">
                    Q1: 红包提现额度为多少？<br>
@@ -300,6 +300,14 @@ export default {
       });
     },
     cash(title) {
+      if (this.incomeInfo.in_live_withdraw || this.incomeInfo.in_red_withdraw) {
+        this.$alert('您有进行中的提现，无法再次提现', '提示', {
+          confirmButtonText: '知道了',
+          customClass: 'zdy-message-box',
+          callback: action => {}
+        });
+        return;
+      }
       if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
         this.$message.warning('当前余额不足1元，不支持提现');
         return false;

@@ -63,7 +63,7 @@ export default {
       type: Object
     },
     isEmbed:{
-      type: String
+      type: [String, Boolean]
     },
     webinarId:{
       type: [String,Number]

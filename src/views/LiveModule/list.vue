@@ -258,7 +258,7 @@ export default {
       color:#FB3A32;
       border-color:#FB3A32;
       &:hover{
-        background: #ffebeb;
+        background: #fc615b;
       }
     }
     .el-button--primary{
@@ -271,6 +271,10 @@ export default {
     }
     /deep/.el-button{
       padding: 4px 24px;
+    }
+    /deep/.el-dropdown-menu__item:not(.is-disabled):hover{
+      background-color: #FB3A32;
+      color: #FB3A32;
     }
     /*.el-button.is-round{
       padding: 10px 23px;

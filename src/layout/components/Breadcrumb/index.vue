@@ -93,10 +93,7 @@ export default {
 
 <style lang="less" scoped>
 .sys-date {
-  display: inline-block;
   font-size: 14px;
-  line-height: 32px;
-  margin-left: 8px;
   font-weight: 400;
   color: #000000;
   span {

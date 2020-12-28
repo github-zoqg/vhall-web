@@ -296,6 +296,7 @@
             :title="'分享'"
           >
             <share
+              :watchWebUrl="watchWebUrl"
               :url="shareUrl"
               :domains="domains"
               :shareId="shareId"
@@ -1435,6 +1436,7 @@ export default {
 
   data () {
     return {
+      watchWebUrl: '', // 观看端地址
       reportData: {},
       chatTip: false,
       memberTip: false,
@@ -2478,6 +2480,7 @@ export default {
            this.status = 2;
           }
           console.warn(this.status, 'this.status');
+          this.watchWebUrl = res.data.live_domain_customization
           this.isPublishing = this.status == 1;
           this.isQAEnabled = this.qaStatus == 1; // ??
           this.isQAEnabled = this.roomStatus.question_status == 1; // ??

@@ -1,0 +1,102 @@
+<template>
+  <div class="textlink-wrapbox">
+    <div class="textlink-previewbox" v-if="mode == 1">
+      <div class="textlink">
+        <a href="javascript:void(0);">
+          {{ info.text }}
+        </a>
+      </div>
+    </div>
+    <div class="textlink-editor-box" v-if="mode == 2">
+      <div style="margin-bottom: 10px">
+        <div class="label">
+          <span style="color:#FB3A32">*</span> 文字
+        </div>
+        <div class="editorContent">
+          <el-input v-model="info.text" @change="changeText"></el-input>
+        </div>
+      </div>
+      <div style="margin-bottom: 10px">
+        <div class="label">
+          <span style="color:#FB3A32">*</span> 跳转地址
+        </div>
+        <div class="editorContent">
+          {{ a }}
+          <el-input v-model="info.src" @change="changeLink"></el-input>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import planFunctionVue from '../../../planFunction.vue'
+export default {
+  name: 'component-textlink',
+  props: {
+    // 1. 显示  2. 编辑
+    mode: {
+      required: true,
+      default: 1
+    },
+    info: {
+      required: false
+    }
+  },
+
+  data: function() {
+    return {
+      a: 'test',
+    }
+  },
+
+  watch: {
+  },
+
+  methods: {
+    changeLink() {
+      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.link)
+      // this.$waring('链接地址，必须以http或https 开头')
+      // this.a = 'bbb'
+      // console.log(this.a)
+      if(result) {
+        this.$emit('updateInfo', this.info)
+      } else {
+        this.$message('链接地址，必须以http或https 开头')
+      }
+
+    },
+
+    changeText() {
+      this.$emit('updateInfo', this.info)
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+  .textlink-wrapbox{
+    .textlink {
+      position: relative;
+      height: 40px;
+      line-height: 40px;
+      overflow: hidden;
+      text-align: center;
+    }
+  }
+  .label{
+    display: inline-block;
+    font-size: 14px;
+    line-height: 40px;
+    width: 80px;
+  }
+  .editorContent{
+    margin-left: 10px;
+    font-size: 14px;
+    display: inline-block;
+  }
+  /* 图片上传 */
+  .upload-qrCode{
+    height: 180px;
+    background: #CCCCCC;
+
+  }
+</style>

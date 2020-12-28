@@ -5,14 +5,14 @@
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }}</h2>
-          <p>有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
+          <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="6">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
-          <p>有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
+          <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="6">
@@ -44,7 +44,7 @@
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
-          <p>有效期: {{ userInfo.edition_valid_time }}</p>
+          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
       <el-col :span="9" v-if="userInfo.edition === '无极版'">
@@ -105,6 +105,7 @@ export default {
         arrears: {}
       },
       buttonList: [],
+      orderInfo: {},
       concurrentPrice: {}
     };
   },
@@ -114,6 +115,7 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getVersion();
+    this.getPayListStatus();
   },
   methods: {
     getVersion() {
@@ -131,9 +133,25 @@ export default {
     outTime(time) {
       let newDate = new Date().getTime(); //获取本地当前时间
       let diff = newDate - new Date(time).getTime();
-      if (diff > 0) {
+      if (diff > 24*60*60*1000) {
         this.isOutTime = true;
       }
+    },
+    getPayListStatus() {
+      this.$fetch('orderStatus').then(res => {
+        this.orderInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    goPayList(id) {
+      this.$router.push({
+        path: '/finance/payOrder',
+        query: {
+          userId: this.userId,
+          orderId: id
+        }
+      });
     },
     levelVersion(title) {
       if (this.$route.path !== '/finance/info') {
@@ -141,10 +159,27 @@ export default {
           path: '/finance/info'
         });
       } else {
-        console.log("2222222222222");
+        if (this.orderInfo.unpaid) {
+          this.$alert('您有未处理订单', '提示', {
+            confirmButtonText: '立即支付',
+            customClass: 'zdy-message-box',
+            callback: action => {
+              this.goPayList(this.orderInfo.order_id);
+            }
+          });
+          return;
+        }
+        if (title === '升级' && this.userInfo.left_months < 1) {
+          this.$alert('当前套餐剩余有效时间不满一个月，不支持升级', '提示', {
+            confirmButtonText: '知道了',
+            customClass: 'zdy-message-box',
+            callback: action => {}
+          });
+          return;
+        }
         this.$refs.levelVersion.dialogVisible = true;
         this.title = title;
-         this.concurrentPrice = this.userInfo;
+        this.concurrentPrice = this.userInfo;
       }
     },
     goAccountDetail() {
@@ -163,6 +198,16 @@ export default {
           path: '/finance/info'
         });
       } else {
+        if (this.orderInfo.unpaid) {
+          this.$alert('您有未处理订单', '提示', {
+            confirmButtonText: '立即支付',
+            customClass: 'zdy-message-box',
+            callback: action => {
+              this.goPayList(this.orderInfo.order_id);
+            }
+          });
+          return;
+        }
         this.title = this.versionType;
         this.concurrentPrice = this.userInfo;
         this.$refs.levelVersion.dialogBuyVisible = true;
