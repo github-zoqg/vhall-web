@@ -701,6 +701,9 @@ export default {
           vfid: this.roominfo.vfid,
           guid: this.roominfo.guid,
           biz_id: this.$route.params.il_id
+        },
+        subtitleOption: {
+          enable: true
         }
       };
       if(this.isAudience){
@@ -728,7 +731,7 @@ export default {
           marqueeText = this.marquee.text
         } else {
           if (this.roominfo.userId) {
-            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.userId : this.roominfo.userId 
+            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.userId : this.roominfo.userId
           } else {
             marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.nickName : this.roominfo.nickName
           }
