@@ -1,8 +1,12 @@
 <template>
   <div class="data-detail">
-    <pageTitle :title='title'></pageTitle>
+    <pageTitle :title='title'>
+       <div slot="content" v-if="title=='发群红包'">
+        主办方发送的红包未领取完时，会在直播结束时退回到财务中心-账户收益-<br>红包收益中。
+      </div>
+    </pageTitle>
     <div class="operaBox">
-      <div class="searchBox">
+      <div class="searchBox" v-show="totalNum || isSearch">
         <el-input
           :placeholder="placeholder"
           v-if="title=='邀请排名'"
@@ -26,7 +30,7 @@
         />
         <el-button size="medium" round v-if="title==='聊天' || title==='问答'" @click="deleteAll(null)">批量删除</el-button>
       </div>
-      <span><el-button size="medium" round @click="exportData">导出数据</el-button></span>
+      <span v-if="totalNum"><el-button size="medium" round @click="exportData" >导出数据</el-button></span>
     </div>
     <div class="interact-detail" v-if="false">
       <el-table
@@ -79,7 +83,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="interact-detail">
+    <div class="interact-detail" v-show="totalNum">
       <table-list
         ref="tableList"
         :manageTableData="tableList"
@@ -94,17 +98,26 @@
       >
       </table-list>
     </div>
+   <div class="no-live" v-show="!totalNum">
+      <noData :nullType="nullText" :text="text">
+      </noData>
+    </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   components: {
     PageTitle,
+    noData
   },
   data() {
     return {
+      nullText: 'nullData',
+      isSearch: false, //是否是搜索
+      text: '暂无数据',
       isCheckout: false,
       placeholder: '',
       title: '',
@@ -116,7 +129,7 @@ export default {
       seleteAllOptionList: [],
       seleteAnwerList: [], //答案
       seleteQuestionList: [],//问题
-      totalNum: 100,
+      totalNum: 0,
       tableList: [
       ],
       tabelColumn:[],
@@ -387,6 +400,15 @@ export default {
           item.index = index + 1;
         })
         this.totalNum = res.data.total;
+        if (this.searchText) {
+          this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有邀请排名记录！';
+          this.isSearch = false;
+        }
       });
     },
     // 聊天
@@ -423,6 +445,15 @@ export default {
           item.revice = '主持人';
         })
         this.totalNum = res.data.total;
+        if(this.searchTime) {
+          this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有聊天记录！';
+          this.isSearch = false;
+        }
       });
     },
     chartsImgs(list) {
@@ -537,6 +568,10 @@ export default {
           item.index = index + 1;
         })
         this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '您还没有签到记录！';
+        }
       });
     },
     // 问卷
@@ -549,6 +584,10 @@ export default {
       this.$fetch('getSurveyUsageInfo', obj).then(res => {
         this.tableList = res.data.list;
         this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '您还没有问卷记录！';
+        }
       });
     },
     // 抽奖
@@ -566,6 +605,10 @@ export default {
           item.lottery = this.lotteryType(item.lottery_type);
         })
         this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '您还没有抽奖记录！';
+        }
       });
     },
     lotteryType(type) {
@@ -624,6 +667,15 @@ export default {
           }
         })
         this.totalNum = res.data.total;
+        if(this.searchTime) {
+          this.nullText = 'search';
+          this.text = '';
+          this.isSearch = true;
+        } else {
+          this.nullText = 'nullData';
+          this.text = '您还没有问答记录！';
+          this.isSearch = false;
+        }
       })
     },
     // 问答删除
@@ -660,6 +712,10 @@ export default {
       this.$fetch('getRedpacketList', obj).then(res => {
         this.tableList = res.data.data;
         this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '您还没有发红包记录！';
+        }
         this.tableList.map((item, index) => {
           item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '其它';
           item.type = item.type === 1 ? '均分红包' : '拼手气';
@@ -804,6 +860,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .title-data {
+  height: 100%;
   span{
     font-size: 22px;
     font-family: @fontSemibold;
