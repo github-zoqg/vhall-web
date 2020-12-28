@@ -44,7 +44,7 @@
 
     <!-- 阴影区-->
     <div class="shadow-area"></div>
-    <div class="vhall-subStream-box--pophover" v-show="layout !=2">
+    <div class="vhall-subStream-box--pophover" v-show="layout !=1">
       <!-- 右侧小窗体 区域 -->
       <div class="action-mini-pop" v-if="(mainScreen ==  accountId) && isDocShow">
         <p>

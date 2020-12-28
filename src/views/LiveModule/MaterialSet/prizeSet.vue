@@ -71,7 +71,7 @@
          <el-tab-pane label="领奖页设置" name="second">
           <div class="give-item">
             <div class="give-prize">
-              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px" @keydown.enter.prevent>
+              <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
                     <el-input v-model="givePrizeForm[item.field_key]" type="text" :placeholder="item.placeholder"></el-input>
                     <div class="isDelete">
@@ -209,6 +209,7 @@ export default {
         description: '',
         title: ''
       },
+      lotteryrank: 0, // 领奖页信息---最后一条的rank值
       lotteryPageMessage: {  // 领奖页信息
 
       }
@@ -337,6 +338,7 @@ export default {
       this.$fetch('getDrawPrizeInfo', {webinar_id: this.$route.params.str}).then(res => {
         console.warn(res.data, '获取领奖页信息');
         this.givePrizeList = res.data;
+        this.lotteryrank = res.data[res.data.length - 1].rank
         // 深拷贝一个对象做对比
         this.lotteryPageMessage = JSON.parse(JSON.stringify(res.data))
         this.givePrizeList.forEach(ele=>{

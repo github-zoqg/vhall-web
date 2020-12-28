@@ -25,7 +25,7 @@
             </div>
             <div class="abRight" v-if="selectMedia.paas_record_id">
               <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-              <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
+              <el-button type="text" class="operaBtn" @click="deleteVideo">删除</el-button>
             </div>
           </div>
         </el-form-item>
@@ -102,16 +102,34 @@ export default {
   created() {
     this.getWarmVideoInfo();
   },
+  beforeRouteLeave (to, from, next) {
+    if (this.warmFlag && !this.warmForm.record_id && !this.warmForm.imageUrl) {
+       this.$confirm('是否取消暖场视频的设置？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box'
+      }).then(() => {
+        this.warmFlag = false;
+        this.openCloseWarm(1);
+        next();
+      }).catch(() => {
+      });
+    } else {
+      next();
+    }
+  },
   methods: {
     // 开启或关闭暖场视频
-    openCloseWarm() {
+    openCloseWarm(index) {
       let params = {
         webinar_id: this.$route.params.str,
         is_open_warm_video: Number(this.warmFlag)
       }
       this.$fetch('warmOpen', params).then(res=>{
         if(res.code == 200){
-          this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
+          if (!index) {
+            this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
+          }
         }
       });
     },
@@ -141,6 +159,11 @@ export default {
     // 预览
     previewVideo() {
       this.showDialog = true;
+    },
+    // 删除
+    deleteVideo() {
+      this.selectMedia = {};
+      this.warmForm.record_id = '';
     },
     handleUploadSuccess(res, file) {
       if(res.data) {

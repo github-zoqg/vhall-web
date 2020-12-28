@@ -186,7 +186,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="webniarType=='live' && limitInfo.type == 1">
+      <p class="switch__box" v-if="webniarType=='live' && !versionType">
          <el-switch
           style="display: block"
           v-model="capacity"
@@ -207,7 +207,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="limitInfo.type == 2 ? '7' : ''" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -284,9 +284,9 @@ export default {
     },
     capacityDesc(){
       if(this.capacity){
-        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
+        return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }else{
-        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.balance}人）`;
+        return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
@@ -384,7 +384,11 @@ export default {
         name: this.$route.query.name
       }
     }
-    this.getHighLimit();
+    this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
+    if (!this.versionType) {
+      this.getHighLimit();
+    }
+
   },
   methods: {
     getLiveBaseInfo(id) {
@@ -404,7 +408,7 @@ export default {
         this.domain_url = this.liveDetailInfo.img_url;
         console.log(this.domain_url, this.imageUrl, '封面地址');
         this.tagIndex = this.liveDetailInfo.category - 1;
-        this.home = Boolean(this.liveDetailInfo.is_private);
+        this.home = this.liveDetailInfo.is_private == 1 ? false : true;
         this.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
         this.online = Boolean(this.liveDetailInfo.hide_watch);
         this.reservation = Boolean(this.liveDetailInfo.hide_appointment);
@@ -420,6 +424,7 @@ export default {
         this.capacity = Boolean(this.liveDetailInfo.is_capacity);
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
+          this.selectMedia.id = this.liveDetailInfo.record_id;
           this.selectMedia.name = this.liveDetailInfo.record_subject;
         }
         this.initFormData = JSON.stringify(this.formData) // 为了对比表单内的数据是否被修改
@@ -473,21 +478,21 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (this.versionType == 1) {
-        if (this.limitCapacity > this.limitInfo.balance) {
+      if (!this.versionType) {
+        if (this.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
       }
       let data = {
         webinar_id: this.webinarId || '',
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.paas_record_id : '',
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
-        is_private: Number(this.home), // 是否在个人主页显示
+        is_private: this.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
         hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否
         is_adi_watch_doc: Number(this.docSwtich),// 观众是否可预览文档 1 是 0 否
@@ -538,7 +543,7 @@ export default {
       this.showDialog = true;
     },
     getHighLimit() {
-      this.$fetch('getHighLimit', {user_id: JSON.parse(sessionOrLocal.get('userId'))}).then(res => {
+      this.$fetch('getHighLimit').then(res => {
         this.limitInfo = res.data;
         // this.versionType = res.data.type;
       })

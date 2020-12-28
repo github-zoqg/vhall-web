@@ -70,7 +70,7 @@
             <div class="reBtn">
              <img :src="payCode" alt="">
              <p>请用微信扫描二维码,完成支付</p>
-             <el-button @click="finishPay">完成支付</el-button>
+             <el-button size="medium" type="primary" round @click="finishPay">完成支付</el-button>
             </div>
           </div>
           </el-dialog>
@@ -91,13 +91,18 @@ export default {
       dialogBuyVisible: false,
       dialogweiXinVisible: false,
       payCode: '',
+      diffSetTime: null,
       time:'0:0',
+      method: 'ALIPAY',
       payInfo: {},
       arrearInfo: {} //欠费订单
     };
   },
   created() {
     this.getPayDetail();
+  },
+  destroyed() {
+    // window.clearTimeout(this.diffSetTime);
   },
   methods: {
     getPayDetail() {
@@ -152,15 +157,17 @@ export default {
         order_id:  this.$route.query.orderId,
         type: index
       };
-      if (index == 1) {
-        params.show_url = `${process.env.VUE_APP_WEB_URL}/finance/infoDetail`;
-      }
+      // if (index == 1) {
+      //   params.show_url = `${process.env.VUE_APP_WEB_URL}/finance/infoDetail`;
+      // }
       this.$fetch('payOrder', params).then(res =>{
         if (index == '1') {
           this.dialogBuyVisible = true;
+          this.method = 'ALIPAY';
           window.open(res.data.link);
         } else {
           this.dialogweiXinVisible = true;
+          this.method = 'WEIXIN';
           this.getweiXinCode(res.data.link);
         }
       }).catch(e=>{
@@ -175,10 +182,21 @@ export default {
         path: '/finance/info'
       });
     },
+    // 点击完成支付
     finishPay() {
-      this.$router.push({
-        path: '/finance/infoDetail'
-      });
+      let params = {
+        channel: this.method,
+        biz_order_no: `${this.method.toLowerCase()}_${this.payInfo.order_id}`,
+        total_fee: this.payInfo.amount,
+        pay_time: this.payInfo.create_time,
+        pay_status: 'SUCCESS'
+      }
+      this.$fetch('finishPayList', params).then(res => {
+        this.$router.push({
+            path: '/finance/infoDetail'
+          });
+      })
+
     }
   }
 };

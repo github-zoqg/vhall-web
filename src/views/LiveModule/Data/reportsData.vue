@@ -8,6 +8,7 @@
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <search-area
       ref="searchArea"
+      v-if="searchAreaLayout"
       :searchAreaLayout="searchAreaLayout"
       :active="active"
       @onExportData="exportCenterData()"
@@ -165,6 +166,34 @@ export default {
           key: "switchId",
           options: []
         }
+      ],
+      searchVodOut: [
+        {
+          type: "1",
+          active: 2,
+          options: [
+            {
+              title: '全部',
+              active: 1,
+            },
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
+        },
+        {
+          type: "2",
+          key: "searchTime",
+        }
       ]
     };
   },
@@ -177,14 +206,10 @@ export default {
     PageTitle
   },
   created() {
-    this.getLiveSwitchInfo();
     this.getLiveDetail();
   },
   mounted() {
-    this.searchAreaLayout = this.searchLayout;
-    this.$nextTick(() => {
-      this.getDataList();
-    })
+    // this.getLiveDetail();
   },
   methods: {
     //获取直播详情
@@ -192,10 +217,15 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         if (this.liveDetailInfo.webinar_state != 4) {
+          this.searchAreaLayout = this.searchLayout;
+          this.getLiveSwitchInfo();
           this.titleType = 1;
         } else {
           this.titleType = 4;
+          this.searchAreaLayout = this.searchVodOut;
+          console.log(this.searchAreaLayout, '11111111111111111');
         }
+        this.getDataList();
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -218,14 +248,14 @@ export default {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0
       };
-      if (parseInt(formParams.searchIsTime) === 2) {
-        formParams.searchTime = '';
-        this.searchArea.map(item => {
-          item.key === 'switchId' ? item.options = this.switchList : []
-        })
-        this.searchAreaLayout = this.searchArea;
-      } else {
-        this.searchAreaLayout = this.searchLayout;
+      if (this.liveDetailInfo.webinar_state != 4) {
+        if (parseInt(formParams.searchIsTime) == 2) {
+          this.searchArea.map(item => {
+            item.key === 'switchId' ? item.options = this.switchList : []
+          })
+        } else {
+          this.searchAreaLayout = this.searchLayout;
+        }
       }
       if (formParams.end_time && !formParams.start_time) {
         formParams.end_time = '';
@@ -249,15 +279,17 @@ export default {
       let promiseArr = [] //promise异步数组
       let obj = {};
       let total = {};
+      if (this.liveDetailInfo.webinar_state != 4) {
+        promiseArr.push(
+          this.$fetch('getMaxuv', params).then(res => {
+            total.max_onlines = res.data.max_onlines;
+          })
+        )
+      }
       promiseArr.push(
         this.$fetch('getWebinarSwitchList', params).then(res => {
           total.total_live_time = res.data.total_live_time;
           total.total = res.data.total;
-        })
-      )
-      promiseArr.push(
-        this.$fetch('getMaxuv', params).then(res => {
-          total.max_onlines = res.data.max_onlines;
         })
       )
       promiseArr.push(
@@ -269,7 +301,6 @@ export default {
       )
       Promise.all(promiseArr).then(() => {
         this.mainKeyData = {...obj, ...total};
-        console.log(this.mainKeyData, '???????????????');
       })
       // 获取用户统计
       this.$fetch('getDateUvinfo', params).then(res => {

@@ -10,14 +10,16 @@
                 <div class="give-prize">
                   <el-form :model="formHorse" ref="ruleForm" label-width="100px">
                     <el-form-item label="跑马灯">
-                      <el-switch
-                        v-model="scrolling_open"
-                        active-color="#ff4949"
-                        inactive-color="#ccc"
-                        @change="closeHorseInfo"
-                        :active-text="horseLampText"
-                      >
-                      </el-switch>
+                      <p class="switch__box">
+                        <el-switch
+                          v-model="scrolling_open"
+                          active-color="#ff4949"
+                          inactive-color="#ccc"
+                          @change="closeHorseInfo"
+                          :active-text="horseLampText"
+                        >
+                        </el-switch>
+                      </p>
                     </el-form-item>
                     <el-form-item label="类型">
                       <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
@@ -26,6 +28,7 @@
                     <el-form-item label="固定文本">
                       <el-input
                         v-model="formHorse.text"
+                        class="textType"
                         placeholder="版权所有，盗版必究"
                         :disabled="!scrolling_open"
                         maxlength="20"
@@ -74,14 +77,16 @@
                 <div class="give-prize">
                   <el-form :model="formWatermark" ref="ruleForm" label-width="100px">
                     <el-form-item label="水印">
-                      <el-switch
-                        v-model="watermark_open"
-                        active-color="#ff4949"
-                        inactive-color="#ccc"
-                        @change="openWaterMarkInfo"
-                        :active-text="waterMarkText"
-                      >
-                      </el-switch>
+                      <p class="switch__box">
+                        <el-switch
+                          v-model="watermark_open"
+                          active-color="#ff4949"
+                          inactive-color="#ccc"
+                          @change="openWaterMarkInfo"
+                          :active-text="waterMarkText"
+                        >
+                        </el-switch>
+                      </p>
                     </el-form-item>
                     <el-form-item label="水印图片" required>
                       <upload
@@ -128,34 +133,40 @@
               <div class="give-prize">
                   <el-form :model="formOther" ref="ruleForm" label-width="100px">
                 <el-form-item label="弹幕">
-                  <el-switch
-                        v-model="formOther.bulletChat"
-                        active-color="#ff4949"
-                        inactive-color="#ccc"
-                        :active-text="bulletChatText"
-                        @change="otherOtherInfo"
-                      >
-                      </el-switch>
+                  <p class="switch__box">
+                    <el-switch
+                      v-model="formOther.bulletChat"
+                      active-color="#ff4949"
+                      inactive-color="#ccc"
+                      :active-text="bulletChatText"
+                      @change="otherOtherInfo"
+                    >
+                    </el-switch>
+                  </p>
                 </el-form-item>
                 <el-form-item label="进度条">
-                  <el-switch
-                        v-model="formOther.progress"
-                        active-color="#ff4949"
-                        inactive-color="#ccc"
-                        :active-text="progressText"
-                        @change="otherOtherInfo"
-                      >
-                      </el-switch>
+                  <p class="switch__box">
+                    <el-switch
+                      v-model="formOther.progress"
+                      active-color="#ff4949"
+                      inactive-color="#ccc"
+                      :active-text="progressText"
+                      @change="otherOtherInfo"
+                    >
+                    </el-switch>
+                  </p>
                 </el-form-item>
                 <el-form-item label="倍速">
-                  <el-switch
-                        v-model="formOther.doubleSpeed"
-                        active-color="#ff4949"
-                        inactive-color="#ccc"
-                        :active-text="doubleSpeedText"
-                        @change="otherOtherInfo"
-                      >
-                      </el-switch>
+                  <p class="switch__box">
+                    <el-switch
+                      v-model="formOther.doubleSpeed"
+                      active-color="#ff4949"
+                      inactive-color="#ccc"
+                      :active-text="doubleSpeedText"
+                      @change="otherOtherInfo"
+                    >
+                    </el-switch>
+                  </p>
                 </el-form-item>
               </el-form>
               </div>
@@ -185,6 +196,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'prizeSet',
   data() {
@@ -380,7 +392,6 @@ export default {
     },
     // 保存播放器其他设置
     preOthersOptions () {
-      
       let params = {
         barrage_button: Number(this.formOther.bulletChat),
         progress_bar: Number(this.formOther.progress),
@@ -432,6 +443,7 @@ export default {
       this.domain_url = '';
     },
     initSDK() {
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
@@ -442,7 +454,7 @@ export default {
         vodOption: { recordId: '922013fa', forceMSE: false },
         marqueeOption:{ // 选填
           enable: Boolean(this.scrolling_open), // 默认 false
-          text: this.formHorse.text,    // 跑马灯的文字
+          text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
           alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
           size:this.formHorse.size,      // 文字大小
           color:"#ff8d41",   //  文字颜色
@@ -598,6 +610,15 @@ export default {
   }
   /deep/.el-radio {
     margin-right: 20px;
+  }
+  .textType{
+    width: 400px;
+    // text-overflow: -o-ellipsis-lastline;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // display: -webkit-box;
+    // word-break: break-all;
+    white-space: nowrap;
   }
   .common-save {
     width: 160px;

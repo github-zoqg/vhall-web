@@ -3,6 +3,20 @@ import App from './App.vue';
 import router from './router';
 import tinymce from 'tinymce';
 import VueTinymce from '@packy-tang/vue-tinymce';
+
+import vuescroll from 'vuescroll';
+
+// You can set global config here.
+Vue.use(vuescroll, {
+  ops: {
+    // The global config
+    bar: {
+      background: 'rgba(0,0,0,0.3)'
+    }
+  },
+  name: 'vhscroll' // customize component name, default -> vueScroll
+});
+
 //样式
 import 'tinymce/skins/content/default/content.min.css';
 import 'tinymce/skins/ui/oxide/skin.min.css';

@@ -149,13 +149,14 @@ export default {
     dialogCashVisible() {
       if (this.dialogCashVisible) {
         this.time = 60;
-        this.mobileKey = '';
-        this.withdrawForm.money = '';
-        this.errorText = '';
-        this.phone = '';
         this.callCaptcha();
         this.getWeinName();
       } else {
+        this.mobileKey = '';
+        this.withdrawForm.money = '';
+        this.withdrawForm.code = '';
+        this.errorText = '';
+        this.phone = '';
         window.clearInterval(this.timer);
       }
     },

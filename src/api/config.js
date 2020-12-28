@@ -374,6 +374,10 @@ const apis = {
   buyDetail: ['/v3/fin/order/list', 'GET'], // 账单明细 - 购买明细
   deleteDetail: ['/v3/fin/order/delete', 'GET'], // 删除购买明细
   orderDetail: ['/v3/fin/admin-order/list', 'GET'], // 账单明细 - 开通明细
+  orderStatus: ['/v3/fin/order/unpaid', 'GET'], //查询待支付订单
+
+  // 为了测试用支付完成接口  只测试用
+  finishPayList: ['/v3/fin/pay/notify', 'POST'], //测试是否支付成功
 
   //财务收益
   incomeInfo: ['/v3/fin/income', 'GET'], // 账户收益总览
@@ -415,7 +419,7 @@ const apis = {
   // 活动基础信息
   getWebinarSwitchList: ['/v3/webinars/webinar/get-webinar-switch-list', 'POST'], // 数据统计直播详情包含场次列表
   getUserAllWebinar: ['/v3/webinars/webinar/get-user-all-webinar', 'POST', 'mock'], // 大数据依赖通过用户id获取账户下活动总数 •••
-  batchGetWebinarInfo: ['/v3/webinars/webinar/batch-get-webinar-info', 'POST', 'mock'], // 批量查询活动基础信息接口 •••
+  batchGetWebinarInfo: ['/v3/webinars/webinar/batch-get-webinar-info', 'POST'], // 批量查询活动基础信息接口 •••
   getWebinarListBigdata: ['/v3/webinars/webinar/get-webinar-list-bigdata', 'POST', 'mock'], // 大数据服务依赖活动列表 •••
 
   // 数据支持
@@ -485,7 +489,6 @@ const apis = {
   getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
   attention: ['/v3/users/attentions/create', 'POST'], // 关注
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
-  getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
   goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang

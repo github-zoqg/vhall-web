@@ -150,6 +150,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'menus/:str(\\d+)',
+        component: () => import('@/views/LiveModule/CustomerTabView'),
+        meta:{ auth: true, title: '品牌—自定义菜单',  activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'word/:str(\\d+)',
         component: () => import('@/views/MaterialModule/word'),
         meta:{ auth: true, title: '文档', name: 'word', activeMenu: '/live/list'},

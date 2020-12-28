@@ -199,15 +199,18 @@ export default {
         // user_id: '16421384',
         app: 'vhall'
       };
+      console.warn('准备派发消息---', 'content--',context, 'data----',data, '');
       this.$nextTick(()=>{
         this.$emit('sendMsg', data,context)
         if(!window.sessionStorage.getItem('localJoinList')){
-          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].id))
-          this.$fetch('v3SetUser', {room_id: this.userInfo.interact.room_id, webinar_id: this.webinar_id, to: this.userList[this.acrivePrivate].id})
+          window.sessionStorage.setItem('localJoinList', JSON.stringify(this.userList[this.acrivePrivate].user_id))
+          this.$fetch('v3SetUser', {room_id: this.userInfo.interact.room_id, webinar_id: this.webinar_id, to: this.userList[this.acrivePrivate].user_id}).then(res=>{
+            if(res.code!=200) return this.$message.warning(res.msg)
+          })
         }else{
           let _arr = window.sessionStorage.getItem('localJoinList')
-           if(_arr.indexOf(this.userList[this.acrivePrivate].id) == -1){
-            window.sessionStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].id}`)
+           if(_arr.indexOf(this.userList[this.acrivePrivate].user_id) == -1){
+            window.sessionStorage.setItem('localJoinList', `${_arr},${this.userList[this.acrivePrivate].user_id}`)
           }
         }
         let _data = {
