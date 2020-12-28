@@ -62,18 +62,18 @@ export default {
   top: -35px;
   ul {
     white-space: nowrap;
-    padding: 20px 0 30px;
+    padding-top: 15px;
     position: relative;
     li {
       display: inline-block;
       width: 10px;
       height: 5px;
-      border-top: 1px solid #333;
+      border-bottom: 1px solid #333;
       border-right: 1px solid #333;
       list-style-type: none;
       position: relative;
       box-sizing: border-box;
-      margin-bottom: 21px;
+      margin-top: 21px;
       &:first-child {
         border-right: 1px solid #333;
         border-top: none;
@@ -83,20 +83,21 @@ export default {
       &:nth-child(5n + 1) {
         border-right: 1px solid #333;
         height: 10px;
-        margin-bottom: 16px;
+        margin-top: 16px;
       }
       &:nth-child(10n + 1) {
         border-right: 1px solid #333;
-        height: 26px;
+        height: 12px;
         margin-bottom: 0;
       }
       .vh-video-tailoring__scale-tip {
         background-color: #17171e;
         position: absolute;
-        top: 12px;
-        left: 15px;
+        top: -16px;
+        left: 8px;
         font-size: 12px;
-        color: #80818b;
+        color: #666666;
+        line-height: 14px;
       }
     }
     .vh-current-dom {

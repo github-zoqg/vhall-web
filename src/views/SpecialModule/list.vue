@@ -82,7 +82,7 @@
       title="分享"
       :visible.sync="dialogShareVisible"
       :close-on-click-modal="false"
-      width="28%">
+      width="450px">
       <div class="content">
         <share slot="content" :url="home_link"></share>
       </div>

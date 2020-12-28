@@ -256,8 +256,8 @@
       <div class="record-end-main" v-show='recordEndShow || recordResultShow'>
         <div v-show = 'recordEndShow' class = 'record-end' >
             <p class="end-title">录制已结束，给录制内容添加一个标题吧！</p>
-            <el-input class="end-input" maxlength="30" v-model = 'recordTitleInput'></el-input>
-            <p class="end-describe">*最多可输入30个字符</p>
+            <el-input class="end-input" maxlength="100" v-model = 'recordTitleInput'></el-input>
+            <p class="end-describe">*最多可输入100个字符</p>
             <div class="record-button">
               <el-button @click='endSave' type ='danger' class="end-save" >直接保存</el-button>
               <el-button @click='goCutting' class="end-cutting">前往剪辑</el-button>
@@ -1294,7 +1294,6 @@ export default {
           this.recordResultShow = true;
           this.contentAdminHref = `/mywebinar/recordpart/${this.ilId}`;
           // res.data.id
-          this.createdRecordId = res.data.record_id
         }
       });
     },
@@ -1303,10 +1302,28 @@ export default {
       this.$router.push({
         path: `/videoTailoring/${this.ilId}`,
         query: {
-          recordId: this.createdRecordId,
-          recordName: this.recordTitleInput
+          recordName: this.recordTitleInput,
+          isRecordVideo: 1,
+          switch_id: this.sid
         }
       });
+      // this.$fetch('createRecordinCtrl', {
+      //   webinar_id: this.ilId,
+      //   // user_id: this.third_party_user_id,
+      //   // params_verify_token: this.params_verify_token,
+      //   name: this.recordTitleInput,
+      //   switch_id: this.sid,
+      //   type: 1
+      // }).then(res => {
+      //   if (res.code == 200) {
+      //     this.recordEndShow = false;
+      //     this.recordResultShow = true;
+      //     this.contentAdminHref = `/mywebinar/recordpart/${this.ilId}`;
+      //     // res.data.id
+
+      //   }
+      // });
+
       // window.location.href = `/mywebinar/addrecord/${this.ilId}?name=${this.recordTitleInput}&sid=${this.sid}`;
     },
     goBackList () {
