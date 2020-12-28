@@ -489,7 +489,6 @@ const apis = {
   getMenuDetailById: ['/v3/interacts/menu/menu-get-info', 'POST'], // 观看端自定义菜单详情
   attention: ['/v3/users/attentions/create', 'POST'], // 关注
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
-  getWatchFilterWords: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键字列表
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
   goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 商品推荐 xiaodong.ding
   keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang

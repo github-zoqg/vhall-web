@@ -273,9 +273,7 @@ export default {
     // 上线
     EventBus.$on('onlineJoin', msg => {
       this.preson.onlineNum = msg.uv;
-      if (msg.context.pv > this.preson.basePv) {
-        this.preson.pv = msg.context.pv - this.preson.basePv;
-      }
+      this.preson.pv = msg.context.pv - this.preson.basePv;
     });
 
     // 下线
