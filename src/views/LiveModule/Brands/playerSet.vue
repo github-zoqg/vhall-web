@@ -66,7 +66,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" class="common-save" :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
+                      <el-button type="primary" class="common-save length152" v-preventReClick :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
@@ -122,7 +122,7 @@
                       <span class="isNum">{{formWatermark.img_alpha}}%</span>
                     </el-form-item>
                     <el-form-item>
-                      <el-button type="primary" class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                      <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
                     </el-form-item>
                   </el-form>
                 </div>
