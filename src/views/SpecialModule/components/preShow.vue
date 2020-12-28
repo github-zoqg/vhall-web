@@ -40,7 +40,7 @@
                   </div>
                   <div class="bottom">
                     <div class="">
-                      <p class="liveTitle">{{item.subject}}</p>
+                      <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
                       <p class="liveTime">{{item.start_time}} <span><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
                     </div>
                   </div>

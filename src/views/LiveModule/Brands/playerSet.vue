@@ -360,12 +360,7 @@ export default {
       }
       this.formHorse.webinar_id = this.$route.params.str
       this.formHorse.interval = this.formHorse.interval || 10;
-      if (this.formHorse.text_type == 2) {
-        let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-        this.formHorse.text = `版权所有，盗版必究${userInfo.user_id}${userInfo.nick_name}`;
-      } else {
-        this.formHorse.text = `版权所有，盗版必究`;
-      }
+      this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
          if (res.code == 200) {
@@ -448,6 +443,7 @@ export default {
       this.domain_url = '';
     },
     initSDK() {
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
@@ -458,7 +454,7 @@ export default {
         vodOption: { recordId: '922013fa', forceMSE: false },
         marqueeOption:{ // 选填
           enable: Boolean(this.scrolling_open), // 默认 false
-          text: this.formHorse.text,    // 跑马灯的文字
+          text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
           alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
           size:this.formHorse.size,      // 文字大小
           color:"#ff8d41",   //  文字颜色
