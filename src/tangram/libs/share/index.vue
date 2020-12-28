@@ -3,7 +3,7 @@
     <div class="share-box">
       <h5>直播地址</h5>
       <p class="copyurl">
-        <input type="text" class="shareurl link_text" :value="url" />
+        <input type="text" class="shareurl link_text" :value="this.watchWebUrl + '/v3/watch/' + this.$route.params.il_id" />
         <a class="copy-button" @click="doCopy">复制</a>
       </p>
     </div>
@@ -51,7 +51,7 @@ import Popup from '../saas-popup/index';
 import { isIE } from '../../utils/utils';
 export default {
   name: 'share',
-  props: ['url', 'domains', 'shareId'],
+  props: ['url', 'domains', 'shareId', 'watchWebUrl'],
   components: {
     Popup
   },
@@ -61,10 +61,12 @@ export default {
       isIE: isIE()
     };
   },
+  created() {
+  },
   computed: {
     shareUrl () {
       let shareId = this.shareId + '-3';
-      let url = `${this.url}?shareId=${encodeURIComponent(shareId)}`;
+      let url = `${this.watchWebUrl}/v3/${this.$route.params.il_id}?shareId=${encodeURIComponent(shareId)}`;
       return `https://aliqr.e.vhall.com/qr.png?t=${url}`;
     }
   },
