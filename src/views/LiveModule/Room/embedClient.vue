@@ -283,22 +283,22 @@ export default {
           }
           return
         }
-        if (this.roomData && this.roomData.status == 'live') {
+        // if (this.roomData && this.roomData.status == 'live') {
           await this.queryRoomInterInfo() // 获取房间活动状态
-          await this.getFirstPost() // 开屏
-        }
-        await this.getAdsInfo() // 获取活动广告信息
-        await this.getSkin() // 获取皮肤
-        await this.getPublisAdv() // 获取公众号广告
-        await this.getSignInfo() // 获取标记 logo 主办方信息
+          // await this.getFirstPost() // 开屏
+        // }
+        // await this.getAdsInfo() // 获取活动广告信息
+        // await this.getSkin() // 获取皮肤
+        // await this.getPublisAdv() // 获取公众号广告
+        // await this.getSignInfo() // 获取标记 logo 主办方信息
         // await this.getMenuList()
         // 预约后的活动才显示邀请卡
-        if (this.isLogin) {
-          await this.getAttentionStatus()
-        }
-        if (this.roomData && this.roomData.is_subscribe) {
-          await this.getInviteStatus()
-        }
+        // if (this.isLogin) {
+        //   await this.getAttentionStatus()
+        // }
+        // if (this.roomData && this.roomData.is_subscribe) {
+        //   await this.getInviteStatus()
+        // }
         if (this.roomData) {
           await this.getConfigList() // 获取观看端配置项
           this.handleRoomInfo()
@@ -348,6 +348,9 @@ export default {
           this.$EventBus.$emit('loaded');
           this.tipMsg = res.msg;
           break;
+        default :
+          this.tipMsg = res.msg;
+          this.$loadingStatus.close()
         // case 12534: // 跳转链接
         //   window.location.href = data.url // TODO:
         //   break;
@@ -774,16 +777,16 @@ export default {
       })
     },
     // 获取皮肤
-    getSkin () {
-      return this.$fetch('watchGetWebinarSkin', {
-        webinar_id: this.$route.params.il_id
-      }).then(res => {
-        if (res.code == 200 && res.data) {
-          this.skinInfo = res.data
-          this.theme = (this.skinInfo && this.skinInfo.skin_json_pc) ? JSON.parse(this.skinInfo.skin_json_pc) : ''
-        }
-      })
-    },
+    // getSkin () {
+    //   return this.$fetch('watchGetWebinarSkin', {
+    //     webinar_id: this.$route.params.il_id
+    //   }).then(res => {
+    //     if (res.code == 200 && res.data) {
+    //       this.skinInfo = res.data
+    //       this.theme = (this.skinInfo && this.skinInfo.skin_json_pc) ? JSON.parse(this.skinInfo.skin_json_pc) : ''
+    //     }
+    //   })
+    // },
     // 设置主题
     setCustomTheme (data) {
       let {bgColor, pageStyle, popStyle, background} = data
@@ -931,7 +934,7 @@ export default {
           is_interact: data.webinar.mode == 3 ? 1 : 0,
           pv: data.pv.num
         }),
-        advs: this.ads,
+        // advs: this.ads,
         auth: this.isLogin ? {
           avatar: data.join_info.avatar,
           id: this.userInfo ? this.userInfo.user_id : data.join_info.third_party_user_id,
@@ -949,11 +952,11 @@ export default {
         inav_id: data.interact.inav_id,
         introduction: data.webinar.introduction,
         paas_access_token: data.interact.paas_access_token,
-        inviteInfo: this.inviteInfo ? this.inviteInfo : {status: 0},
-        skin: {
-          skin_json_pc : (this.skinInfo && this.skinInfo.skin_json_pc) ? (this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : '') : {},
-          skin_json_wap: (this.skinInfo && this.skinInfo.skin_json_wap) ? (this.skinInfo.skin_json_wap ? JSON.parse(this.skinInfo.skin_json_wap) : '') : {}
-        },
+        // inviteInfo: this.inviteInfo ? this.inviteInfo : {status: 0},
+        // skin: {
+        //   skin_json_pc : (this.skinInfo && this.skinInfo.skin_json_pc) ? (this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : '') : {},
+        //   skin_json_wap: (this.skinInfo && this.skinInfo.skin_json_wap) ? (this.skinInfo.skin_json_wap ? JSON.parse(this.skinInfo.skin_json_wap) : '') : {}
+        // },
         user: {
           avatar: data.join_info.avatar,
           nick_name: data.join_info.nickname,
@@ -986,20 +989,20 @@ export default {
         share_id: data.share_id,
         player: {},
         modules: {
-          logo: {
-            show: this.signInfo ? this.signInfo.view_status : 0, // 观看标志w
-            href: this.signInfo ? this.signInfo.skip_url : '',
-            image: this.signInfo ? this.signInfo.logo_url : '',
-            reserved_status: this.signInfo ? this.signInfo.reserved_status : 0, // 版权信息
-            organizers_status: this.signInfo ? this.signInfo.organizers_status : 0// 主办方信息
-          },
+        //   logo: {
+        //     show: this.signInfo ? this.signInfo.view_status : 0, // 观看标志w
+        //     href: this.signInfo ? this.signInfo.skip_url : '',
+        //     image: this.signInfo ? this.signInfo.logo_url : '',
+        //     reserved_status: this.signInfo ? this.signInfo.reserved_status : 0, // 版权信息
+        //     organizers_status: this.signInfo ? this.signInfo.organizers_status : 0// 主办方信息
+        //   },
           attention: {show: 1, follow: this.isLogin ? this.attentionStatus : 0},
           // initiator: {show: this.signInfo ? this.signInfo.organizers_status : 0},
           initiator: {show: 1},
-          adv: {
-            public: (this.publicAdv && this.publicAdv['public-account']) ? this.publicAdv['public-account'] : [], // 公众号广告
-            posters: (this.firstPost && this.firstPost['screen-posters']) ? this.firstPost['screen-posters'] : [] // 开屏广告
-          },
+          // adv: {
+          //   public: (this.publicAdv && this.publicAdv['public-account']) ? this.publicAdv['public-account'] : [], // 公众号广告
+          //   posters: (this.firstPost && this.firstPost['screen-posters']) ? this.firstPost['screen-posters'] : [] // 开屏广告
+          // },
           // barrage: {hide: this.configList['ui.hide_barrage']},
           online: {show: data.online.show}, // 在线人数
           reg: {show: data.webinar.reg_form}, // 报名表单
@@ -1103,11 +1106,11 @@ export default {
       // 初始化数据上报
       this.initVHallReport();
       // 初始化邀请卡
-      this.$nextTick(() => {
-        if (this.theme && this.skinInfo.status == 1) {
-          this.setCustomTheme(this.theme)
-        }
-      })
+      // this.$nextTick(() => {
+      //   if (this.theme && this.skinInfo.status == 1) {
+      //     this.setCustomTheme(this.theme)
+      //   }
+      // })
     },
     /**
      * @description 数据上报  init 方法
