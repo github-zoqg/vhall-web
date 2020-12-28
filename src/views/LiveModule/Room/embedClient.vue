@@ -18,6 +18,7 @@
         :shareId="roominfo.share_id"
         :recordHistoryTime="recordHistoryTime"
         :menuData="menuData"
+        :isEmbed='true'
         :bizInfo="roominfo"
         @NoLogin="callLogin"
         @descripe="decripeMenu"
@@ -35,20 +36,14 @@
 import VhallReport from '@/components/VhallReport/main'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { isIE } from '@/utils/utils'
-import invited from './rankList' // 邀请榜
-import reward from './rankList/reward' // 打赏榜
-import goodsPop from './rankList/goodsPop'
 import moment from 'moment'
-import QRcode from 'qrcode'
-import customTab from './custom-tab'
 import tip from './tip'
-import products from '../components/products'
-import 'swiper/dist/css/swiper.css'
 import { sessionOrLocal } from '@/utils/utils'
 
 export default {
   data() {
     return {
+      downloadChrome: false,
       roomData: {},
       myliveRoute: '',
       accountRoute: '',
@@ -164,12 +159,7 @@ export default {
     };
   },
   components: {
-    customTab,
-    swiper,
-    swiperSlide,
-    goodsPop,
-    tip,
-    products
+    tip
   },
   created() {
     sessionOrLocal.set('tag', 'helloworld', 'localStorage'); // 第三方绑定信息 场景
@@ -203,20 +193,6 @@ export default {
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
       // 是否显示公众号
-      let modules = this.roominfo.modules ? this.roominfo.modules : null
-      if (
-        modules &&
-        modules.adv &&
-        modules.adv.public
-      ) {
-        // alert_type:1 自动弹出
-        if (modules.adv.public.alert_type == 0 && modules.adv.public.status == 0) {
-          this.showOfficialAccountQRCode = true
-        }
-        if (modules.adv.public.status == 0) {
-          this.showOfficialAccountMiniQRCode = true
-        }
-      }
     });
     // 自适应处理
     window.addEventListener('resize', () => {
@@ -266,16 +242,6 @@ export default {
      */
     this.heartbeatLink()
     this.startRoomInitProcess()
-  },
-  computed: {
-    // showOnline() {
-    //   return (
-    //     Number(this.roomUser.uvOnline) + Number(this.baseRoomUser.baseOnlineNum)
-    //   )
-    // },
-    // showPv() {
-    //   return Number(this.roomUser.pvCount) + Number(this.baseRoomUser.basePv)
-    // }
   },
   beforeDestroy() {
     window.removeEventListener('resize', () => {})
@@ -460,16 +426,6 @@ export default {
     invitedFriend() {
       this.qrCodeShow = true;
     },
-    // 二维码的生成
-    invitePartner() {
-      QRcode.toDataURL(
-        `https://${window.location.host}/mywebinar/invite-card/${this.roominfo.webinar_id}/${this.roominfo.user.saas_join_id}`,
-        (err, url) => {
-          if (err) { return; }
-          this.qrCodeImg = url;
-        }
-      );
-    },
     // 点击注册
     registerClick() {
       window.location.href = `${this.webDominUrl}/register?source=2`
@@ -539,38 +495,6 @@ export default {
         }
       }).catch(e => {
         console.log(e)
-      });
-    },
-    // 快捷登录
-    telLogin() {
-      if (!this.ruleForm.usernames) {
-        this.smsErrorMessage = '请输入您的手机号';
-        return;
-      } else if (!this.ruleForm.captchas) {
-        this.smsErrorMessage = '请输入动态验证码';
-        return;
-      }
-      this.$fetch('loginInfo', {
-          account: this.ruleForm.usernames,
-          dynamic_code: this.ruleForm.captchas,
-          visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '', // 访客标识
-          sso_token: sessionOrLocal.get('sso') ? sessionOrLocal.get('sso') : '' // sso服务生成的token（实现新、老控制台的同步登录用）
-        }
-      ).then(res => {
-        if (res.code == 200) {
-          this.loginDialogShow = false;
-          this.shadeShow = false;
-          this.phoneKey = ''
-          this.smsErrorMessage = ''
-          sessionOrLocal.set('sso', res.data.sso_token)
-          // sessionOrLocal.set('token', res.data.token, 'localStorage')
-          sessionOrLocal.set('userInfo', res.data)
-          this.fetchData()
-        } else if (res.code == 10000) {
-          this.smsErrorMessage = '当前账号或密码错误'
-        } else {
-          this.smsErrorMessage = res.msg
-        }
       });
     },
     // 校验账号登录
@@ -1111,6 +1035,7 @@ export default {
         'defaultSmallscreenDefinition',
         this.roominfo.hd_definition || ''
       );
+      sessionOrLocal.set('userInfo', this.roominfo.user);
       this.baseRoomUser.baseOnlineNum = Number(this.roominfo.base_online_num);
       sessionOrLocal.set(
         'baseOnlineNumber',
@@ -1178,7 +1103,6 @@ export default {
       // 初始化数据上报
       this.initVHallReport();
       // 初始化邀请卡
-      this.invitePartner();
       this.$nextTick(() => {
         if (this.theme && this.skinInfo.status == 1) {
           this.setCustomTheme(this.theme)
