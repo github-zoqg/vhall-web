@@ -1,7 +1,9 @@
 <template>
   <div class="vh-mobile-preview-wrapbox" v-if="menus.length">
     <div class="vh-mobile-previe">
-      <slot></slot>
+      <div style="height:304px; overflow:hidden;">
+        <slot></slot>
+      </div>
       <div class="vh-mobile-menus">
         <i class="iconfont-v3 saasicon_arrowleft" @click="scrollLeft()"></i>
         <div class="vh-mobile-menus-scroll">
@@ -47,6 +49,7 @@
           </li>
         </ul>
       </div>
+
       <div class="vh-mobile-tab-content">
         <component-preview>
         </component-preview>
@@ -190,11 +193,17 @@ export default {
 </script>
 <style lang="less">
   .vh-mobile-preview-wrapbox{
-    overflow: hidden;
+    height: 100%;
+    background: #fff;
   }
   .vh-mobile-previe{
-    width: 326px;
-    height: 631px;
+    width: 368px;
+    height: 674px;
+    background-image: url(/static/img/h5-show-phone.70ac3450.png);
+    background-size: contain;
+    top: -6px;
+    left: -24px;
+    position: relative;
     float: left;
   }
   .vh-vh-mobile-preview-editor{
@@ -203,6 +212,7 @@ export default {
   .vh-mobile-menus{
     width: 310px;
     height: 40px;
+    margin: 0 auto;
     line-height: 40px;
     position: relative;
     border-bottom: 1px solid #E6E6E6;
@@ -294,7 +304,9 @@ export default {
 
   .vh-mobile-tab-content{
     height: 305px;
-    overflow-y: scroll;
+    width: 310px;
+    margin: 0 auto;
     padding: 15px 0;
+    margin: 0 auto;
   }
 </style>
