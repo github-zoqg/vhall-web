@@ -64,7 +64,8 @@
                 </div>
                 <p class="liveOpera">
                   <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
-                    <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
+                    <i class="el-icon-video-camera" @click.prevent.stop="goLivePlay(item)"></i>
+                    <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top">
                   <i class="el-icon-s-promotion" @click="$router.push({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`})"></i>
@@ -219,6 +220,14 @@ export default {
         this.$message.success('删除成功');
         this.getLiveList();
       });
+    },
+    goLivePlay(item) {
+      if (item.webinar_type != 1) {
+        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1`});
+      } else {
+        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1`});
+      }
+
     },
     // 创建活动
     createLiveAction(index){

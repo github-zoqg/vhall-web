@@ -7,7 +7,7 @@
         <h1 class="choose-method">选择发起方式</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
-            <div class="choose-img">111111</div>
+            <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">网页发起直播</p>
             <p>一键发起直播,无需安装任何直播插件</p>
           </div>
@@ -19,7 +19,7 @@
             <p>需要使用chrome浏览器</p>
           </div> -->
           <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
-            <div class="choose-img">111111</div>
+            <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
           </div>
@@ -189,14 +189,13 @@ export default {
   .choose-img{
     width: 56px;
     height: 46px;
-    border: 1px solid rgb(143, 50, 50);
     margin: auto;
     margin-top: 55px;
     // text-align: center;
     img{
-      // width: 100%;
-      // height: 100%;
-      // object-fit: scale-down;
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
     }
   }
   .choose-p {

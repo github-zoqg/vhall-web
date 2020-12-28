@@ -28,7 +28,7 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
-          <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">账单明细</p>
+          <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p>
         </div>
       </el-col>
       <el-col :span="6" v-if="userInfo.concurrency.extend_day">
@@ -60,7 +60,7 @@
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">账单明细</p>
+          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
       <el-col :span="9">
@@ -76,7 +76,7 @@
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">账单明细</p>
+          <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
     </el-row>
