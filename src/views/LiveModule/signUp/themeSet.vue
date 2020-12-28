@@ -3,7 +3,7 @@
     title="主题设置"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    width="30%">
+    width="510px">
     <div class="themeBox">
       <span>选择主题</span>
       <i :class="{active: colorIndex=='red'}" @click="colorIndex='red'"></i>
@@ -12,14 +12,25 @@
     </div>
     <p class="margin">
       <span>标签页标题</span>
-      <span class="resetTheme" @click="resetTheme">重置</span>
     </p>
     <div :class="['tabs', colorIndex]">
       <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '用户报名'}}</div>
       <div :class="{active: tabs=='valite'}" @click="tabs='valite'">{{title2 || '验证'}}</div>
     </div>
-    <el-input maxlength="8" show-word-limit v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名"></el-input>
-    <el-input maxlength="8" show-word-limit v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证"></el-input>
+    <el-input maxlength="8" v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名">
+      <span
+        class="el-input__icon resetbtn"
+        slot="suffix"
+        @click="title1 = '用户报名'">重置
+      </span>
+    </el-input>
+    <el-input maxlength="8" v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证">
+      <span
+        class="el-input__icon resetbtn"
+        slot="suffix"
+        @click="title2 = '验证'">重置
+      </span>
+    </el-input>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="save" round size="medium">保存</el-button>
     </span>
@@ -68,10 +79,6 @@ export default {
       input.select();
       document.execCommand('copy');
       this.$message.success('复制成功');
-    },
-    resetTheme() {
-      this.title1 = '用户报名'
-      this.title2 = '验证'
     }
   }
 };
@@ -115,6 +122,11 @@ export default {
       }
     }
   }
+  .resetbtn{
+    line-height: 38px;
+    cursor: pointer;
+    color: #3562FA
+  }
   .tabs{
     width: 100%;
     overflow: hidden;
@@ -124,7 +136,6 @@ export default {
       float: left;
       border-radius: 4px;
       border: 1px solid #E6E6E6;
-      border-radius: 4px 0px 0px 4px;
       line-height: 40px;
       height: 40px;
       text-align: center;
@@ -132,9 +143,11 @@ export default {
       cursor: pointer;
       &:nth-child(1){
         border-right: 0px none;
+        border-radius: 4px 0px 0px 4px;
       }
       &:nth-child(2){
         border-left: 0px none;
+        border-radius: 0px 4px 4px 0px;
       }
       &.active{
         border: 1px solid @red;
@@ -167,11 +180,5 @@ export default {
   .margin{
     position: relative;
     margin-top: 24px;
-    .resetTheme {
-      position: absolute;
-      right: 0;
-      color: #3562FA;
-      cursor: pointer;
-    }
   }
 </style>

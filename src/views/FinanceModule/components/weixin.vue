@@ -24,7 +24,7 @@ export default {
         this.bindingText = '绑定成功';
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
-        this.$router.push({path: '/finance/income'})
+        // this.$router.push({path: '/finance/income'})
       });
     }
   }
@@ -33,6 +33,6 @@ export default {
 <style lang="less" scoped>
   .binding{
     font-size: 24px;
-    color: aqua;
+    color: #3B67F9;
   }
 </style>

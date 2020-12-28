@@ -2943,6 +2943,7 @@
             }, {
                 key: "getName",
                 value: function() {
+                  console.log("张晓11111")
                     return {
                         title: "姓名",
                         type: s.types.TEXT,

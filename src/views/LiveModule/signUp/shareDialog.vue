@@ -4,12 +4,13 @@
       title="分享"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      width="570px">
+      customClass="share-dialog"
+      width="510px">
       <div class="content">
         <div v-show="!shareSwtich" class="content-wrap"></div>
-        <p>
+        <p class="independentForm">
           <span class="title">
-            独立表单
+            <span class="content-key">独立表单</span>
             <el-switch
               class="smallSwtich"
               :width='28'
@@ -32,9 +33,9 @@
             </el-tooltip>
           </span>
         </p>
-        <p class="">
-          <span>链接地址</span>
-          <el-input style="width: 433px" placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
+        <p>
+          <span class="content-key">链接地址</span>
+          <el-input placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
             <el-button slot="append" @click="copy">复制</el-button>
           </el-input>
 
@@ -122,8 +123,12 @@ export default {
 
 <style lang="less" scoped>
   @iconpath: '../../../common/images/icon';
+  /deep/ .share-dialog {
+    height: 372px;
+    border-radius: 4px;
+  }
   /deep/ .smallSwtich{
-    margin-left: 20px;
+    margin-left: 12px;
     vertical-align: text-bottom;
     .el-switch__core{
       height: 16px;
@@ -151,28 +156,38 @@ export default {
       background: rgba(255, 255, 255, 0.5)
     }
     .el-input-group{
-      width: 330px;
+      width: 378px;
       float: right;
+      .el-button[data-v-6ce78d46] {
+        padding: 9px 25px;
+      }
+    }
+    .independentForm {
+      margin-top: 0px;
     }
     p{
-      margin-top: 16px;
+      margin-top: 20px;
       overflow: hidden;
       line-height: 34px;
-
+    }
+    .content-key{
+      color: #1a1a1a;
     }
     .sub{
       color: #999;
       font-size: 12px;
       margin-top: 0;
-      text-indent: 86px;
+      text-indent: 70px;
     }
     /deep/ .el-input__inner{
       border-radius: 4px 0 0 4px;
+      padding: 0 6px 0 12px;
     }
     /deep/ .el-input-group__append{
       background: #FB3A32;
       color: #ffffff;
       border-color: transparent;
+      border-right: 0;
     }
   }
   .icons{

@@ -89,7 +89,7 @@
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary"  v-preventReClick  round @click="preSure">保存</el-button>
+              <el-button type="primary" class="length152" v-preventReClick  round @click="preSure">保存</el-button>
             </el-form-item>
           </el-form>
         </div>
