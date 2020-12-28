@@ -41,14 +41,13 @@
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
-              <i class="iconfont-v3 saasicon_redu"></i>
-              {{item.pv | unitCovert}}
+              <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
             </span>
             <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
           </div>
           <div class="bottom">
             <div class="">
-              <p class="liveTitle">{{item.title}}</p>
+              <p class="liveTitle" :title="item.title">{{item.title}}</p>
               <p class="liveTime">{{item.created_at}}</p>
             </div>
             <p class="liveOpera">
@@ -359,11 +358,19 @@ export default {
         }
         .hot{
           position: absolute;
-          bottom: 10px;
-          left: 10px;
+          height: 50px;
+          width: 100%;
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+          bottom: 0px;
+          left: 0px;
           color: #fff;
           font-size: 14px;
           z-index: 2;
+          i{
+            position: absolute;
+            left: 14px;
+            bottom: 10px;
+          }
         }
       }
       .bottom{

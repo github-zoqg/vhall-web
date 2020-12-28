@@ -52,7 +52,7 @@
               </div>
 
             </div>
-            <div class="vh-chose-active-item__title">
+            <div class="vh-chose-active-item__title" :title="item.subject">
               {{ item.subject }}
             </div>
             <div class="vh-chose-active-item__info">
@@ -310,6 +310,13 @@ export default {
       font-weight: 400;
       color: #1A1A1A;
       line-height: 20px;
+      text-overflow: -o-ellipsis-lastline;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
     }
     &__info{
       margin: 8px 8px 4px 8px;
