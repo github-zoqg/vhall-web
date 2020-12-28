@@ -85,6 +85,12 @@ const router = [
         meta: { auth: true, title: '个人主页', name: 'myHome', activeMenu: '/account/myHome'}
       },
       {
+        path: '/homeSet/:str(\\d+)',
+        component: () => import('@/views/UserHome/homeSet'),
+        meta: { auth: true, title: '个人主页', name: 'homeSet', activeMenu: '/account/homeSet'},
+        hidden: true
+      },
+      {
         path: '/allocation',
         component: () => import('@/views/AccountModule/allocation'),
         meta:{ auth: true, title: '用量分配', name: 'allocation', activeMenu: '/account/son'},

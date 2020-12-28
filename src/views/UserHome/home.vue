@@ -5,18 +5,32 @@
    <div class="user__layout--title">
      <ul>
        <li>
-         <img src="../../common/images/avatar.png" alt="" class="user__avatar" />
+         <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
        </li>
-       <li class="layout__center">
-         <h1>微吼直播工作间的标题微吼直播</h1>
-         <div class="user__remark">
-           上微吼，看全球大会直播商务直播：不再错过行业峰会、创业大赛和圈子沙龙等高端直播直播交流：话题讨论，圈子交流，相互关注，拓展您的人脉发起直播：随时随地，通过视频直播与好友。 <span>展开 <i class="iconfont-v3 saasicon_arrowdown1"></i></span></div>
+       <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
+         <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
+         <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
+         <span class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收缩'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
        </li>
-       <li>
-         <el-button size="mini" round>设置</el-button>
-         <el-button size="mini" round>分享</el-button>
+       <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
+         <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
+         <el-popover
+           class="button__share"
+           placement="bottom-end"
+           trigger="click"
+           v-if="userHomeVo && userHomeVo.show_share"
+         >
+           <div>
+             <share slot="content" :url="home_link"></share>
+           </div>
+           <el-button size="medium" round slot="reference">分享</el-button>
+         </el-popover>
        </li>
      </ul>
+   </div>
+   <!-- 功能区 -->
+   <div class="user__layout--main">
+     <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
    </div>
  </div>
 </template>
@@ -25,20 +39,92 @@
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import PageTitle from '@/components/PageTitle';
+import HomeMain from './components/main.vue';
+import Share from '@/components/Share';
 export default {
   name: 'info.vue',
   components: {
-    PageTitle
+    PageTitle,
+    HomeMain,
+    Share
   },
   data() {
     return {
+      isSetShow: false,
+      userHomeVo: {},
+      attentioned_count: 0,
+      follow: 0,
+      avatarImgUrl: ``,
+      userInfo: null,
+      open_hide: true
     };
   },
+  computed: {
+    show_content: function() {
+      if (this.userHomeVo && this.userHomeVo.content && this.userHomeVo.content.length > 80) {
+        return this.userHomeVo.content.substring(0, 80) + '...';
+      } else {
+        return this.userHomeVo.content || `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`;
+      }
+    },
+    home_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false`;
+    }
+  },
   methods: {
+    showSetHandle(type) {
+      this.isSetShow = type;
+      this.getHomePageInfo();
+    },
+    showBtnChange() {
+      this.open_hide = !this.open_hide;
+    },
+    getHomePageInfo() {
+      this.$fetch('homeInfoGet', {
+        home_user_id: sessionOrLocal.get('userId')
+      }).then(res => {
+        console.log(res);
+        if (res && res.code === 200) {
+          // 粉丝数、是否关注、主页信息
+          let { attentioned_count, follow, homepage_info } = res.data;
+          this.userHomeVo = homepage_info;
+          this.attentioned_count = attentioned_count;
+          this.follow = follow;
+          this.content = homepage_info.content;
+          try {
+            this.$refs.homeMain.initComp(homepage_info);
+          }catch (e) {
+            console.log(e);
+          }
+        } else {
+          this.userHomeVo = null;
+        }
+      }).catch(err=>{
+        console.log(err);
+        this.userHomeVo = null;
+      });
+    },
+    toHomeSetPage() {
+      this.$router.push({
+        path: `/homeSet/${sessionOrLocal.get('userId')}`
+      })
+    }
   },
   created() {
+    this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    this.getHomePageInfo();
   },
   mounted() {
+    let userInfo  = sessionOrLocal.get('userInfo');
+    if(userInfo !== null) {
+      this.userInfo = JSON.parse(userInfo);
+      if(this.userInfo) {
+        this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      } else {
+        this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      }
+    }
   }
 };
 </script>
@@ -56,12 +142,22 @@ export default {
     vertical-align: middle;
     &.layout__center {
       width: calc(100% - 328px);
+      &.one--btn {
+        width: calc(100% - 240px);
+      }
     }
     &:last-child {
       width: 164px;
+      &.one--btn {
+        width: 76px;
+      }
+      text-align: right;
       margin-left: 48px;
       vertical-align: top;
       padding-top: 8px;
+    }
+    .button__share {
+      margin-left: 12px;
     }
   }
   h1 {
@@ -70,6 +166,7 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
+    word-break: break-all;
   }
   .user__remark {
     padding: 8px 0 0 0;
@@ -77,14 +174,27 @@ export default {
     font-weight: 400;
     color: #666666;
     line-height: 22px;
-    span {
-      height: 20px;
-      font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: #3562FA;
-      line-height: 20px;
+    position: relative;
+    word-break: break-all;
+    &.open_hide {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
     }
+  }
+  .user__show__btn {
+    height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #3562FA;
+    line-height: 20px;
+    cursor: pointer;
+   /* position: absolute;
+    right: 0;
+    bottom: 0;*/
   }
 }
 .user__avatar {
@@ -94,5 +204,16 @@ export default {
   border: 1px solid #E2E2E2;
   border-radius: 100%;
   margin-right: 16px;
+}
+.user__layout--main {
+  margin-top: 24px;
+  width: 100%;
+  min-height: 710px;
+  height: auto;
+  background: #FFFFFF;
+  position: relative;
+  .el-button {
+    margin-top: 3px;
+  }
 }
 </style>

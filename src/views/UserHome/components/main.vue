@@ -4,21 +4,8 @@
       <template  v-for="(item, ins) in tabList">
         <el-tab-pane :label="item.label" :name="item.value" :key="ins" v-if="vo[item.compare_key]"></el-tab-pane>
       </template>
-      </el-tabs>
-    <el-button :class="['length104', `${Number(vo.show_share) === 0 ? 'panel-btn' : 'panel-btn2'}`]" type="primary" size="medium" round
-               v-if="isSameUser"
-               @click.prevent.stop="toHomeSetInfo">设置</el-button>
-    <el-popover
-      placement="bottom-end"
-      trigger="click"
-      v-if="vo.show_share"
-    >
-      <div>
-        <share slot="content" :url="home_link"></share>
-      </div>
-      <el-button class="panel-btn length104" size="medium" round slot="reference">分享主页</el-button>
-    </el-popover>
-    <div class="search" v-if="vo.show_subject">
+    </el-tabs>
+    <div class="search panel-btn" v-if="vo.show_subject">
       <div class="search-query">
         <el-input
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
@@ -26,7 +13,7 @@
           clearable
           @keyup.enter.native="searchHandle"
           @clear="searchHandle"
-          >
+        >
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"
@@ -52,7 +39,9 @@
                 <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label> {{item | liveTag}}
               </span>
               <span class="hot">
-                 <i class="iconfont-v3 saasicon_redu"></i>{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</span>
+                 <i class="iconfont-v3 saasicon_redu"></i><!--{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}-->
+                {{item.pv | unitCovert}}
+              </span>
               <a :href="item.share_link" target="_blank">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
               </a>
@@ -84,14 +73,12 @@
 </template>
 
 <script>
-import Share from '@/components/Share';
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "list.vue",
   components: {
-    Share,
     NullPage
   },
   data() {
@@ -120,20 +107,6 @@ export default {
      dataList: [],
      vo: {}
    };
-  },
-  computed: {
-    home_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str}&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false`;
-    },
-    isSameUser: function() {
-      let userId = JSON.parse(sessionOrLocal.get("userId"));
-      // 用户ID 是否 跟当前主页ID相等，不相等，有关注。
-      if(Number(userId) === Number(this.$route.params.str)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
   },
   methods: {
     // 切换选项卡
@@ -270,8 +243,8 @@ export default {
 <style lang="less" scoped>
 .panel-btn {
   position: absolute;
-  right: 32px;
-  top: 6px;
+  right: 24px;
+  top: 10px;
 }
 .panel-btn2 {
   position: absolute;
@@ -279,7 +252,6 @@ export default {
   top: 6px;
 }
 .search {
-  margin-top: 20px;
   .flex-display();
   .justify(flex-end);
   /deep/ .el-input__inner{
@@ -293,7 +265,6 @@ export default {
 }
 .search-query {
   width: 220px;
-  margin-right: 24px;
 }
 /deep/.el-tabs__header {
   margin: 0 0;
@@ -336,6 +307,10 @@ export default {
     .inner{
       transition: all .15s ease-in;
       position: relative;
+      border-radius: 4px;
+      background: #F7F7F7;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
     }
     .inner:hover{
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
@@ -348,12 +323,14 @@ export default {
       padding: 10px 10px;
       box-sizing: border-box;
       position: relative;
-      border-radius: 4px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
       img{
         width: 100%;
         height: 100%;
         position: absolute;
-        border-radius: 4px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
         top:0;
         left: 0;
       }
@@ -384,13 +361,14 @@ export default {
       }
     }
     .bottom{
-      background: #fff;
+      background: transparent;
       box-sizing: border-box;
       padding: 14px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      border: 1px solid #e6e6f6;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
       .liveTitle{
         color: #1A1A1A;
         font-size: 16px;

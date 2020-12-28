@@ -191,6 +191,27 @@
   margin-right: 12px;
 }
 
+/*Input 计数器*/
+.input-length {
+  position: relative;
+  /deep/.el-input__inner{
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+  /deep/.el-input-group__append {
+    position: absolute;
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    background: #ffffff;
+    border: 0;
+    padding: 0 0;
+    margin: 0 0;
+    top: 10px;
+    right: 10px;
+    width: auto;
+  }
+}
 /*开关重置*/
 .switch__box {
   /deep/ .el-switch {
@@ -434,7 +455,7 @@
 button.el-button.el-button--medium {
   /* 中等按钮 */
   border: 1px solid #CCCCCC;
-  padding: 4px 24px;
+  padding: 4px 23px;
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
@@ -651,6 +672,9 @@ button.el-button.el-button--white-primary {
 .padding-table-list2(){
   padding: 24px 24px 40px 24px;
   overflow: hidden;
+}
+.padding-form {
+  padding: 41px 56px 0 56px;
 }
 /*-----------------------------------------主界面-布局-右侧100% 结束 ---------------------------------------------*/
 /*-----------------------------------------重置Tab 开始 ---------------------------------------------*/
