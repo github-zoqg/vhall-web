@@ -722,16 +722,13 @@ export default {
       } else {
         throw new Error('参数异常');
       }
+      console.log(99, this.roominfo)
       if (this.marquee && this.marquee.scrolling_open == 1) {
         let marqueeText = ''
         if (this.marquee.text_type == 1 ) {
           marqueeText = this.marquee.text
         } else {
-          if (this.roominfo.userId) {
-            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.userId : this.roominfo.userId 
-          } else {
-            marqueeText = this.marquee.text ? this.marquee.text + '-' + this.roominfo.nickName : this.roominfo.nickName
-          }
+          marqueeText = this.marquee.text + '-' + this.roominfo.join_id + '-' + this.roominfo.nickName
         }
         // 跑马灯
         params.marqueeOption = {

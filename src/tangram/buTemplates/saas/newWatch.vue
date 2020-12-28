@@ -277,6 +277,7 @@
             :isEmbed="isEmbed"
             :selfName='userInfo.nick_name'
             :roleName='false'
+            @login="NoLogin"
             ref="qa"
           ></qa>
         </div>
@@ -373,8 +374,9 @@
     <popup
       :visible="showGiveMoney"
       :onClose="closeGiveMoney"
-      :title="'支付方式'"
+      :title="'打赏'"
       :width="'500px'"
+      class="pay-award"
     >
       <div class="pay-content">
         <div>
@@ -389,11 +391,17 @@
           <el-input placeholder="很精彩 来赞一个" v-model="giveMoneyDes"></el-input>
         </div>
         <div class="pay-method">
-          <el-radio v-model="giveMoneyPayWay" label="1">微信支付</el-radio>
-          <el-radio v-model="giveMoneyPayWay" label="2">支付宝支付</el-radio>
+          <el-radio v-model="giveMoneyPayWay" label="2">
+            <img :src="bizInfo.domains.static + '/static/images/watch/alipay.png'"/>
+            <span class="pay-name">支付宝支付</span>
+          </el-radio>
+          <el-radio v-model="giveMoneyPayWay" label="1">
+            <img :src="bizInfo.domains.static + '/static/images/watch/weixin.png'"/>
+            <span class="pay-name">微信支付</span>
+          </el-radio>
         </div>
+        <el-button @click.stop="handleGiveMoney" type="primary" class="pay-btn">确定</el-button>
       </div>
-      <el-button @click.stop="handleGiveMoney" type="primary">确定</el-button>
     </popup>
     <popup
       :visible="showGiveMoneyQr"
@@ -727,7 +735,7 @@ export default {
       payQrCode: '',
       showGiveMoney: false,
       giveMoney: '',
-      giveMoneyIndex: 1,
+      giveMoneyIndex: 3,
       giveMoneyPayWay: '1',
       giveMoneyDes: '',
       giveMoneyUrl: '',
@@ -788,20 +796,19 @@ export default {
     if (chat) {
       this.chatTitle = chat.name;
     }
-    this.$nextTick(() => {
-      this.getList()
-    })
     this.eventListener()
   },
   methods: {
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
+        console.log(1001, msg)
         if (msg.data.type == "gift_send_success") {
           this.closePayQrCode()
           this.closePayWay()
           this.$message.success('支付成功')
         }
         if (msg.data.type == "reward_pay_ok") {
+        console.log(1002, msg)
           this.closeGiveMoneyQr()
           this.$message.success('支付成功')
         }
@@ -825,7 +832,17 @@ export default {
       this.showGiveMoneyQr = false
       this.giveMoneyUrl = ''
     },
+    checkoutGiveMoney (val) {
+      let isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
+      if (isNum.test(val)) {
+        return true
+      } else {
+        this.$message.error('金额格式错误')
+        return false
+      }
+    },
     handleGiveMoney () {
+      if (!this.checkoutGiveMoney()) return
       this.$fetch('seadAwardMsg', {
         room_id: this.roomInfo.room_id,
         reward_amount: Number(this.giveMoney).toFixed(2),
@@ -854,6 +871,7 @@ export default {
     },
     openGiftPannel () {
       if (this.isLogin) {
+        this.getList()
         this.showGiftSend = true
       } else {
         this.NoLogin()
@@ -1001,7 +1019,8 @@ export default {
         third_party_user_id: this.bizInfo.user.third_party_user_id,
         parentId: this.userInfo ?  this.userInfo.parent_id : '',
         userId: this.userInfo ?  this.userInfo.user_id : '',
-        nickName: this.bizInfo.user.nick_name
+        nickName: this.bizInfo.user.nick_name,
+        join_id: this.bizInfo.user.saas_join_id
       }
       console.log(10101010101, inavInfo)
       this.roomInfo = inavInfo
@@ -1975,41 +1994,115 @@ export default {
     display: inline-block;
   }
 }
+.pay-award {
+  /deep/ .vhall-popup-dialog{
+    .header {
+      background: #f4f4f4!important;
+    }
+  }
+}
 .pay-content{
   width: 100%;
-  height: 300px;
+  height: 360px;
   background: #fff;
   box-sizing: border-box;
-  >div{
-    width: 100%;
-    padding-top: 40px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-  span, .give-money-input{
-    display: inline-block;
+  padding: 30px 70px 20px;
+  text-align: center;
+  .pay-btn{
     width: 200px;
     height: 40px;
-    background: #F5F5F5;
-    border-radius: 6px;
-    border: 1px solid #aaa;
     line-height: 40px;
-    text-align: center;
-    font-size: 16px;
-    color: #555;
-    margin: 0px 10px;
+    margin: 30px auto 0px auto;
+    padding: 0px;
   }
+  >div>span, >div>.give-money-input{
+    display: inline-block;
+    width: 150px;
+    margin: 0px 15px 10px;
+    border-radius: 3px;
+    line-height: 40px;
+    height: 40px;
+    display: inline-block;
+    text-align: center;
+    background: #e9e9e9;
+    color: #a9a9a9;
+    cursor: pointer;
+  }
+  >div>.give-money-input{
+    background: #fff!important;
+  }
+  >div>.active{
+    background: #f33;
+    color: #fff;
+    border-color: #f33;
+    &:before{
+      content: '';
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      background: url('./img/yes.png') no-repeat;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+  }
+  // span, .give-money-input{
+  //   display: inline-block;
+  //   width: 200px;
+  //   height: 40px;
+  //   background: #F5F5F5;
+  //   border-radius: 6px;
+  //   border: 1px solid #aaa;
+  //   line-height: 40px;
+  //   text-align: center;
+  //   font-size: 16px;
+  //   color: #555;
+  //   margin: 0px 10px;
+  // }
   .give-money-input{
     outline: none;
     border:none;
   }
   .describe{
-    width: 300px;
-    margin: 0px auto;
+    width: 150px;
+    margin-top: 20px;
+    padding: 0px 15px;
+    width: 100%;
   }
   .pay-method{
-    padding-top: 20px;
+    margin-top: 25px;
+    padding: 0px 15px;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /deep/ .el-radio{
+      width: 50%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 0px!important;
+      padding: 0px!important;
+      img{
+        margin-right: 10px;
+      }
+      .pay-name{
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        vertical-align: top;
+      }
+    } 
+    // span{
+    //   display: inline-block;
+    //   height: 40px;
+    // }
+    // img{
+    //   display: inline-block;
+    //   width: 40px;
+    //   height: 40px;
+    //   margin-top: 15px;
+    // }
   }
 }
 </style>
