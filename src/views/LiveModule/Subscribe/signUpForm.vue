@@ -1,219 +1,227 @@
 <template>
-  <div :class="['signFormBox', isEntryForm || isPreview ? 'signFormBoxHid' : '']">
-    <div :class="['signWrap', isEntryForm || isPreview ? 'signWrapHid' : '']">
-      <div class="entryFormBox">
-        <header>
-          <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
-        </header>
-        <article>
-          <h1 class="pageTitle">{{ baseInfo.title }}</h1>
-          <p class="pageIntro">{{ baseInfo.intro }}</p>
-          <div :class="['tabs', baseInfo.theme_color]">
-            <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
-            <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
-          </div>
-          <!-- 报名表单 -->
-          <template>
-            <el-form v-show="tabs === 1" :model="form" class="entryForm" ref="form" :rules="rules">
-              <el-form-item
-                v-for="(question, quesIndex) in list"
-                :key="question.id"
-                :prop="question.id + ''"
-                v-show="question.type != 6"
-                :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
-              >
-                <!-- 输入框 -->
-                <template
-                  v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
+  <div :class="['signFormBox']">
+    <div :class="['signWrap']">
+      <vhscroll>
+        <div class="entryFormBox">
+          <header>
+            <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
+          </header>
+          <article>
+            <h1 class="pageTitle">{{ baseInfo.title }}</h1>
+            <p ref="intro" v-if="baseInfo.intro" :class="['pageIntro', overflowStatus == 1 ? 'pageIntroEllipsis' : '']">
+              {{ baseInfo.intro }}
+              <span @click="handleUnfold(2)" class="textTail" v-show="overflowStatus == 1">
+                <span class="isEllipsis">... </span>{{ '展开' }}
+              </span>
+              <span @click="handleUnfold(1)" class="textTail" v-show="overflowStatus == 2">
+                <span class="isEllipsis"></span>{{ '收起' }}
+              </span>
+            </p>
+            <div class="tabsBox">
+              <div :class="['tabs', baseInfo.theme_color]">
+                <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
+                <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
+              </div>
+            </div>
+            <!-- 报名表单 -->
+            <template>
+              <el-form v-show="tabs === 1" :model="form" class="entryForm" ref="form" :rules="rules">
+                <el-form-item
+                  v-for="(question, quesIndex) in list"
+                  :key="question.id"
+                  :prop="question.id + ''"
+                  v-show="question.type != 6"
+                  :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
                 >
-                  <el-input
-                    v-if="question.type == 0 && question.default_type == 2"
-                    :maxlength="question.type == 0 ? '' : 60"
-                    :show-word-limit="question.type != 0"
-                    v-model.number="form[question.id]"
-                    :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
-                  <el-input
-                    v-else
-                    :maxlength="question.type == 0 ? '' : 60"
-                    :show-word-limit="question.type != 0"
-                    v-model="form[question.id]"
-                    :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
-                </template>
-                <!-- 单选 -->
-                <template
-                  v-if="(question.default_type === 4) || question.type === 2"
-                >
-                  <el-radio-group v-model="form[question.id]">
-                    <template v-if="question.default_type === 4">
-                      <el-radio label="男" name="gender"></el-radio>
-                      <el-radio label="女" name="gender"></el-radio>
-                    </template>
-                    <template v-else>
-                      <div v-for="radioItem in question.items" :key="radioItem.id">
-                        <el-radio
-                          :label="radioItem.id"
+                  <!-- 输入框 -->
+                  <template
+                    v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
+                  >
+                    <el-input
+                      v-if="question.type == 0 && question.default_type == 2"
+                      :maxlength="question.type == 0 ? '' : 60"
+                      :show-word-limit="question.type != 0"
+                      v-model.number="form[question.id]"
+                      :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
+                    <el-input
+                      v-else
+                      :maxlength="question.type == 0 ? '' : 60"
+                      :show-word-limit="question.type != 0"
+                      v-model="form[question.id]"
+                      :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
+                  </template>
+                  <!-- 单选 -->
+                  <template
+                    v-if="(question.default_type === 4) || question.type === 2"
+                  >
+                    <el-radio-group v-model="form[question.id]">
+                      <template v-if="question.default_type === 4">
+                        <el-radio label="男" name="gender"></el-radio>
+                        <el-radio label="女" name="gender"></el-radio>
+                      </template>
+                      <template v-else>
+                        <div v-for="radioItem in question.items" :key="radioItem.id">
+                          <el-radio
+                            :label="radioItem.id"
+                            :name="question.id + ''"
+                          >
+                            {{ radioItem.subject }}
+                          </el-radio>
+                          <template v-if="radioItem.type === 1">
+                            <el-input
+                              maxlength="60"
+                              show-word-limit
+                              placeholder="请输入描述内容"
+                              v-show="form[question.id] == radioItem.id"
+                              style="margin-top: 10px;"
+                              v-model="form[`${question.id}${radioItem.id}`]"
+                              class="radioInput"
+                            ></el-input>
+                          </template>
+                        </div>
+                      </template>
+                    </el-radio-group>
+                  </template>
+                  <!-- 多选 -->
+                  <template
+                    v-if="question.type === 3"
+                  >
+                    <el-checkbox-group v-model="form[question.id]">
+                      <div v-for="checkItem in question.items" :key="checkItem.id">
+                        <el-checkbox
+                          :label="checkItem.id"
                           :name="question.id + ''"
                         >
-                          {{ radioItem.subject }}
-                        </el-radio>
-                        <template v-if="radioItem.type === 1">
+                        {{ checkItem.subject }}
+                        </el-checkbox>
+                        <template v-if="checkItem.type === 1">
                           <el-input
                             maxlength="60"
                             show-word-limit
                             placeholder="请输入描述内容"
-                            v-show="form[question.id] == radioItem.id"
+                            v-show="form[question.id].some(id => id == checkItem.id)"
                             style="margin-top: 10px;"
-                            v-model="form[`${question.id}${radioItem.id}`]"
+                            v-model="form[`${question.id}${checkItem.id}`]"
                             class="radioInput"
                           ></el-input>
                         </template>
                       </div>
-                    </template>
-                  </el-radio-group>
-                </template>
-                <!-- 多选 -->
-                <template
-                  v-if="question.type === 3"
-                >
-                  <el-checkbox-group v-model="form[question.id]">
-                    <div v-for="checkItem in question.items" :key="checkItem.id">
-                      <el-checkbox
-                        :label="checkItem.id"
-                        :name="question.id + ''"
-                      >
-                      {{ checkItem.subject }}
-                      </el-checkbox>
-                      <template v-if="checkItem.type === 1">
-                        <el-input
-                          maxlength="60"
-                          show-word-limit
-                          placeholder="请输入描述内容"
-                          v-show="form[question.id].some(id => id == checkItem.id)"
-                          style="margin-top: 10px;"
-                          v-model="form[`${question.id}${checkItem.id}`]"
-                          class="radioInput"
-                        ></el-input>
-                      </template>
-                    </div>
-                  </el-checkbox-group>
-                </template>
-                <!-- 下拉 -->
-                <template
-                  v-if="question.type === 4"
-                >
-                  <el-select v-model="form[question.id]" placeholder="请选择">
-                    <el-option
-                      v-for="option in question.items"
-                      :key="option.id"
-                      :label="option.subject"
-                      :value="option.subject"
-                    ></el-option>
-                  </el-select>
-                </template>
-                <!-- 地域选择 -->
-                <template
-                  v-if="question.type === 5"
-                >
-                  <el-row :gutter="20">
-                    <el-col :span="question.colNum">
-                      <el-input v-show="false" v-model="form[question.id]"></el-input>
-                      <el-select v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
-                        <el-option
-                          v-for="opt in provinces"
-                          :key="opt.value"
-                          :label="opt.label"
-                          :value="opt.value"
-                        ></el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col v-if="question.options.show_city == 1" :span="question.colNum">
-                      <el-select v-model="city" @change="regionalChange('city')" placeholder="请选择市">
-                        <el-option
-                          v-for="opt in cityList"
-                          :key="opt.value"
-                          :label="opt.label"
-                          :value="opt.value"
-                        ></el-option>
-                      </el-select>
-                    </el-col>
-                    <el-col v-if="question.options.show_country == 1" :span="question.colNum">
-                      <el-select v-model="county" @change="regionalChange('county')" placeholder="请选择区/县">
-                        <el-option
-                          v-for="opt in countyList"
-                          :key="opt.value"
-                          :label="opt.label"
-                          :value="opt.value"
-                        ></el-option>
-                      </el-select>
-                    </el-col>
-                  </el-row>
-                </template>
-              </el-form-item>
-              <el-form-item v-if="isPhoneValidate">
-                <div id="setCaptcha">
-                  <el-input  v-model.trim="form.imgCode"> </el-input>
-                </div>
-                <p class="errorText" v-show="errorMsgShow">图形码错误</p>
-              </el-form-item>
-              <el-form-item v-if="isPhoneValidate" :required="false" prop="code">
-                <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码">
-                  <el-button
-                    :disabled="time !== 60 || isPreview"
-                    class="no-border" size="mini" slot="append"
-                    @click="getDyCode(true)"
-                  >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
-                </el-input>
-              </el-form-item>
-              <el-form-item :prop="provicy.id + ''">
-                <!-- 隐私声明 -->
-                <template
-                  v-if="provicy"
-                >
-                  <el-checkbox class="provicy-checkbox" v-model="form[provicy.id]">
-                    <p v-html="provicyText"></p>
-                  </el-checkbox>
-                </template>
-              </el-form-item>
-              <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
-            </el-form>
-          </template>
+                    </el-checkbox-group>
+                  </template>
+                  <!-- 下拉 -->
+                  <template
+                    v-if="question.type === 4"
+                  >
+                    <el-select v-model="form[question.id]" placeholder="请选择">
+                      <el-option
+                        v-for="option in question.items"
+                        :key="option.id"
+                        :label="option.subject"
+                        :value="option.subject"
+                      ></el-option>
+                    </el-select>
+                  </template>
+                  <!-- 地域选择 -->
+                  <template
+                    v-if="question.type === 5"
+                  >
+                    <el-row :gutter="20">
+                      <el-col :span="question.colNum">
+                        <el-input v-show="false" v-model="form[question.id]"></el-input>
+                        <el-select v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
+                          <el-option
+                            v-for="opt in provinces"
+                            :key="opt.value"
+                            :label="opt.label"
+                            :value="opt.value"
+                          ></el-option>
+                        </el-select>
+                      </el-col>
+                      <el-col v-if="question.options.show_city == 1" :span="question.colNum">
+                        <el-select v-model="city" @change="regionalChange('city')" placeholder="请选择市">
+                          <el-option
+                            v-for="opt in cityList"
+                            :key="opt.value"
+                            :label="opt.label"
+                            :value="opt.value"
+                          ></el-option>
+                        </el-select>
+                      </el-col>
+                      <el-col v-if="question.options.show_country == 1" :span="question.colNum">
+                        <el-select v-model="county" @change="regionalChange('county')" placeholder="请选择区/县">
+                          <el-option
+                            v-for="opt in countyList"
+                            :key="opt.value"
+                            :label="opt.label"
+                            :value="opt.value"
+                          ></el-option>
+                        </el-select>
+                      </el-col>
+                    </el-row>
+                  </template>
+                </el-form-item>
+                <el-form-item v-if="isPhoneValidate">
+                  <div id="setCaptcha">
+                    <el-input  v-model.trim="form.imgCode"> </el-input>
+                  </div>
+                  <p class="errorText" v-show="errorMsgShow">图形码错误</p>
+                </el-form-item>
+                <el-form-item v-if="isPhoneValidate" :required="false" prop="code">
+                  <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码">
+                    <el-button
+                      :disabled="time !== 60 || isPreview"
+                      class="no-border" size="mini" slot="append"
+                      @click="getDyCode(true)"
+                    >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+                  </el-input>
+                </el-form-item>
+                <el-form-item class="provicy-item" v-if="provicy" :prop="provicy.id + ''">
+                  <!-- 隐私声明 -->
+                  <template>
+                    <el-checkbox class="provicy-checkbox" v-model="form[provicy.id]">
+                      <p v-html="provicyText"></p>
+                    </el-checkbox>
+                  </template>
+                </el-form-item>
+                <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+              </el-form>
+            </template>
 
-          <!-- 验证 -->
-          <template>
-            <el-form class="entryForm" v-show="tabs === 2" :model="verifyForm" ref="verifyForm" :rules="verifyRules">
-              <el-form-item
-                label="请输入报名时您填写的手机号"
-                prop="phone"
-              >
-                <el-input v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
-              </el-form-item>
-              <el-form-item v-if="isPhoneValidate">
-                <div id="setCaptcha1">
-                  <el-input  v-model.trim="verifyForm.imgCode"> </el-input>
-                </div>
-                <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p>
-              </el-form-item>
-              <el-form-item v-if="isPhoneValidate" prop="code">
-                <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码">
-                  <el-button
-                    :disabled="isPreview"
-                    class="no-border"
-                    size="mini"
-                    slot="append"
-                    @click="getDyCode(false)"
-                  >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
-                </el-input>
-              </el-form-item>
-              <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
-            </el-form>
-          </template>
-        </article>
-        <i
-          v-if="!isEntryForm"
-          class="closeBtn"
-          @click="closePreview"
-        >&times;</i>
-      </div>
+            <!-- 验证 -->
+            <template>
+              <el-form class="entryForm" v-show="tabs === 2" :model="verifyForm" ref="verifyForm" :rules="verifyRules">
+                <el-form-item
+                  label="请输入报名时您填写的手机号"
+                  prop="phone"
+                >
+                  <el-input v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+                </el-form-item>
+                <el-form-item v-if="isPhoneValidate">
+                  <div id="setCaptcha1">
+                    <el-input  v-model.trim="verifyForm.imgCode"> </el-input>
+                  </div>
+                  <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p>
+                </el-form-item>
+                <el-form-item v-if="isPhoneValidate" prop="code">
+                  <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码">
+                    <el-button
+                      :disabled="isPreview"
+                      class="no-border"
+                      size="mini"
+                      slot="append"
+                      @click="getDyCode(false)"
+                    >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
+                  </el-input>
+                </el-form-item>
+                <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
+              </el-form>
+            </template>
+          </article>
+        </div>
+      </vhscroll>
+      <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
+        <icon icon-class="saasicon_close"></icon>
+      </i>
     </div>
   </div>
 </template>
@@ -231,6 +239,7 @@
       isPhoneValidate: {
         immediate: true,
         handler(newVal) {
+          // 根据是否开启短信验证，生成相应的手机号验证规则
           if (newVal) {
             this.verifyRules.phone = {
               required: true,
@@ -245,6 +254,7 @@
               trigger: 'blur'
             }
           }
+          // 云盾实例
           if(newVal) {
             this.$nextTick(() => {
               this.callCaptcha('#setCaptcha');
@@ -358,7 +368,7 @@
           })
           rules.code = {
             required: true,
-            message: '请输入验证码',
+            validator: this.validCode,
             trigger: 'blur'
           }
           this.form = {
@@ -441,20 +451,32 @@
           },
           code: {
             required: true,
-            message: '请输入验证码',
+            validator: this.validCode,
             trigger: 'blur'
           }
         },
         verifyErrorMsgShow: false,
         verifyTime: 60,
         colNum: 8,
-        regionalId: ''
+        regionalId: '',
+        isVerifyCodeErr: false,
+        overflowStatus: 0 // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
       };
     },
     mounted() {
 
     },
     methods: {
+      handleUnfold(val) {
+        this.overflowStatus = val
+      },
+      validCode(rule, value, callback) {
+        if (this.isVerifyCodeErr) {
+          return callback ? callback(new Error('请输入正确的验证码')) : false
+        } else {
+          callback();
+        }
+      },
       validRegional(rule, value, callback) {
         if (!this.province) {
           return callback ? callback(new Error('请选择省份')) : false
@@ -484,11 +506,23 @@
         }).then(res => {
           if (res.code === 200) {
             this.baseInfo = res.data;
+            this.$nextTick(() => {
+              this.calculateText()
+            })
           }
         }).catch(err => {
           this.$message.error(`报名表单基本信息失败！`);
           console.log(err);
         });
+      },
+      calculateText() {
+        // 获取一行文字的height 计算当前文字比较列表文字
+        const twoHeight = 40;
+        const txtDom = this.$refs.intro
+        const curHeight = txtDom.offsetHeight
+        if (curHeight > twoHeight) {
+          this.overflowStatus = 1
+        }
       },
       getDyCode(isForm) {
         let phone = ''
@@ -576,21 +610,6 @@
               }
             }
           }
-          // if(type == 1 || type == 4 || type == 5) {
-          //   // 如果直播，回放，点播，跳转到直播观看页
-          //   this.$router.push({
-          //     path: `/live/watch/${this.webinar_id}`
-          //   })
-          // } else if(type == 2 || type == 3) {
-          //   // 如果预约或结束，跳转到预约页
-          //   if(this.isEntryForm) {
-          //     this.$router.push({
-          //       path: `/subscribe/${this.webinar_id}`
-          //     })
-          //   } else {
-          //     this.$router.go(0)
-          //   }
-          // }
         })
       },
       // 提交表单
@@ -612,6 +631,13 @@
                 this.closePreview()
                 // 判断当前直播状态，进行相应的跳转
                 this.getWebinarStatus()
+              } else if (res.code == 12809 || res.code == 10000) {
+                // 短信验证码验证失败，触发表单验证失败
+                // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
+                this.isVerifyCodeErr = true
+                this.$refs['form'].validateField('code', res => {
+                  this.isVerifyCodeErr = false
+                })
               } else {
                 this.$message.error(res.msg)
               }
@@ -644,6 +670,13 @@
                   this.$message.warning('请先报名！');
                   this.tabs = 1;
                 }
+              } else if (res.code == 12809 || res.code == 10000) {
+                // 短信验证码验证失败，触发表单验证失败
+                // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
+                this.isVerifyCodeErr = true
+                this.$refs['verifyForm'].validateField('code', res => {
+                  this.isVerifyCodeErr = false
+                })
               } else {
                 this.$message.error(res.msg)
               }
@@ -855,7 +888,7 @@
     height: 100%;
     left: 0;
     background-color: rgba(0, 0, 0, 0.8);
-    z-index: 2;
+    z-index: 101;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -868,6 +901,10 @@
     .signWrap {
       overflow-y: auto;
       height: 843px;
+      border-radius: 4px;
+      background: #fff;
+      position: relative;
+      z-index: 101;
       &.signWrapHid{
         height: auto;
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
@@ -875,11 +912,15 @@
       .entryFormBox {
         width: 840px;
         background: #fff;
-        padding-bottom: 90px;
-        position: relative;
+        padding-bottom: 87px;
       }
       header{
         width: 100%;
+        max-height: 450px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         img{
           width: 100%;
         }
@@ -887,16 +928,40 @@
       .pageTitle{
         font-size: 24px;
         color: #1A1A1A;
-        margin: 40px 0;
+        margin: 40px 0 22px;
         text-align: center;
+        font-weight: 500;
+        font-family: PingFangSC-Medium, PingFang SC;
+        line-height: 33px;
       }
       .pageIntro{
-        width: 658px;
-        margin: 20px auto 0;
-        color: #333333;
-        font-size: 16px;
+        // width: 658px;
+        // margin: 20px auto 0;
+        color: #666666;
+        font-size: 14px;
+        line-height: 20px;
         word-break: break-all;
         font-weight: 300;
+        position: relative;
+        &.pageIntroEllipsis{
+          word-break: break-all;
+          text-overflow: ellipsis;
+          display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+          -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+          -webkit-line-clamp: 2; /** 显示的行数 **/
+          overflow: hidden;  /** 隐藏超出的内容 **/
+        }
+        .textTail{
+          position: absolute;
+          bottom: 0px;
+          right: 4px;
+          cursor: pointer;
+          background-color: #fff;
+          color: #3562FA;
+          .isEllipsis{
+            color: #666666;
+          }
+        }
       }
       article{
         padding: 0 75px;
@@ -910,23 +975,26 @@
         position: absolute;
         right: 16px;
         top: 16px;
-        font-size: 32px;
-        text-align: center;
-        line-height: 26px;
         font-style: normal;
         cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .tabsBox{
+        width: 100%;
+        margin: 43px auto 20px;
+        display: flex;
+        justify-content: center;
       }
       .tabs{
-        width: 100%;
+        width: 446px;
         overflow: hidden;
-        margin-bottom: 43px;
-        margin-top: 20px;
         >div{
           width: 50%;
           float: left;
           border-radius: 4px;
           border: 1px solid #E6E6E6;
-          border-radius: 4px 0px 0px 4px;
           line-height: 40px;
           height: 40px;
           text-align: center;
@@ -934,9 +1002,11 @@
           cursor: pointer;
           &:nth-child(1){
             border-right: 0px none;
+            border-radius: 4px 0px 0px 4px;
           }
           &:nth-child(2){
             border-left: 0px none;
+            border-radius: 0px 4px 4px 0px;
           }
           &.active{
             border: 1px solid @red;
@@ -974,13 +1044,9 @@
         padding-left: 20px;
         .el-checkbox{
           display: block;
-          margin-top: 20px;
         }
         /deep/ .el-checkbox__label{
           width: 100%;
-        }
-        .el-checkbox:last-child{
-          margin-right: 30px;
         }
       }
       .el-select{
@@ -991,7 +1057,6 @@
         padding-left: 20px;
         .el-radio{
           display: block;
-          margin-top: 20px;
         }
         .el-radio:last-child{
           margin-right: 30px;
@@ -1005,10 +1070,18 @@
         border: none;
       }
     }
+    .provicy-item {
+      margin-bottom: 24px!important;
+      /deep/ .el-form-item__content {
+        line-height: normal;
+      }
+    }
     /deep/ .provicy-checkbox {
       width: 100%;
       white-space: normal;
       height: 40px;
+      font-size: 14px;
+      color: #666;
       .el-checkbox__input {
         position: absolute;
         top: 3px;
@@ -1017,6 +1090,115 @@
         width: calc(100% - 16px);
         padding-left: 20px;
         position: absolute;
+      }
+      /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
+        color: #666;
+      }
+      p{
+        /deep/ a{
+          color: #3562FA;
+          &:link{
+            color: #3562FA;
+          }
+          &:active{
+            color: #3562FA;
+          }
+        }
+      }
+    }
+    .entryForm {
+      // 云盾滑块背景
+      // /deep/ .yidun.yidun--light .yidun_slider:hover {
+      //   background-color: #FB3A32;
+      // }
+      /deep/ .el-form-item{
+        margin-bottom: 28px;
+      }
+      // 必填form表单 * 颜色
+      /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+        content: '*';
+        color: #FB3A32;
+        margin-right: 4px;
+      }
+      // 错误提示文本颜色
+      /deep/ .el-form-item__error {
+        color: #FB3A32;
+      }
+      // 输入框输入状态边框颜色
+      /deep/ .el-input__inner:focus{
+        border-color: #999;
+      }
+      // 输入框正常状态边框颜色
+      /deep/ .el-input__inner {
+        border-color: #ccc;
+        height: 40px;
+        color: #1a1a1a;
+      }
+      // 输入框hover状态边框颜色
+      /deep/ .el-input__inner:hover {
+        border-color: #999;
+      }
+      // 输入框格式校验失败的边框颜色
+      /deep/ .el-form-item.is-error .el-input__inner {
+        border-color: #FB3A32;
+        &::-webkit-input-placeholder { /* WebKit browsers */
+          color: #FB3A32;
+        }
+
+        &::-moz-placeholder { /* Mozilla Firefox 19+ */
+          color: #FB3A32;
+        }
+
+        &:-ms-input-placeholder { /* Internet Explorer 10+ */
+          color: #FB3A32;
+        }
+      }
+      // form-item label 样式重置
+      /deep/ .el-form-item__label {
+        float: none;
+        height: 40px;
+        display: block;
+        line-height: 40px;
+        text-align: left;
+        font-size: 16px;
+      }
+      // 单选/多选 选项样式重置
+      /deep/ .el-radio-group .el-radio, .el-checkbox-group .el-checkbox {
+        display: flex;
+        align-items: flex-start;
+        line-height: 40px;
+        .el-checkbox__input,.el-radio__input {
+          padding-top: 3px;
+        }
+        /deep/ .el-checkbox__label,.el-radio__label {
+          white-space: normal;
+          padding-left: 10px;
+          line-height: 20px;
+          font-size: 14px;
+        }
+      }
+      .el-radio-group, .el-checkbox-group {
+        padding-left: 0px;
+        >div {
+          padding: 10px 0 10px;
+        }
+      }
+      // 滚动条样式调整
+      /deep/ .el-select {
+        .el-input__inner {
+          &::-webkit-input-placeholder { /* WebKit browsers */
+            color: #1a1a1a;
+          }
+          &::-moz-placeholder { /* Mozilla Firefox 19+ */
+            color: #1a1a1a;
+          }
+          &:-ms-input-placeholder { /* Internet Explorer 10+ */
+            color: #1a1a1a;
+          }
+        }
+        .el-input__suffix .el-icon-arrow-up {
+          color: #1a1a1a;
+        }
       }
     }
     .entryForm .blue {

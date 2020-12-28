@@ -2,22 +2,24 @@
   <div class="signup-main">
     <div class="head">
       <pageTitle title="报名表单">
-        <el-switch
-          class="swtich"
-          v-model="signUpSwtich"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          @change="switchRegForm"
-          :active-text="signUpSwtichDesc">
-        </el-switch>
+        <div class="switchBox">
+          <el-switch
+            class="swtich"
+            v-model="signUpSwtich"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="switchRegForm"
+            :active-text="signUpSwtichDesc">
+          </el-switch>
+        </div>
         <div class="headBtnGroup">
           <el-button round size="medium" @click="openDialog('theme')">设置</el-button>
           <el-button round size="medium" @click="openDialog('share')">分享</el-button>
           <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
         </div>
       </pageTitle>
-      <div class="settingBox">
-        <ul class="options">
+      <div id="settingBox" class="settingBox">
+        <ul :class="['options', menuBarFixed ? 'isFixed' : '']">
           <template v-for="(item, key, index) in setOptions">
             <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
             <li
@@ -116,6 +118,7 @@ export default {
         ]
       },
       questionArr: [],
+      menuBarFixed: false
     };
   },
   computed: {
@@ -154,7 +157,22 @@ export default {
     this.getBaseInfo();
     this.getQuestionList();
   },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
   methods: {
+    handleScroll () {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      let offsetTop = document.querySelector('#settingBox').offsetTop
+      if (scrollTop > offsetTop) {
+        this.menuBarFixed = true
+      } else {
+        this.menuBarFixed = false
+      }
+    },
     // 切换组件
     closePreview() {
       this.rightComponent='fieldSet';
@@ -454,6 +472,10 @@ export default {
               });
             }
           }
+          this.$nextTick(() => {
+            // 新增题目显示在视觉中心
+            document.documentElement.scrollTo(0, this.$refs.fieldSet.$refs[res.data.id][0].offsetTop)
+          })
           let question_ids = this.questionArr.reduce((acc, curr) => {
             return acc + curr.question_id + ',';
           }, '');
@@ -515,6 +537,9 @@ export default {
     margin-left: 12px;
     vertical-align: sub;
   }
+  .switchBox{
+    display: inline-flex;
+  }
   .headBtnGroup{
     float: right;
   }
@@ -522,9 +547,14 @@ export default {
     line-height: 40px;
   }
   .settingBox{
-    display: flex;
+    .isFixed {
+      position:fixed;
+      top:70px;
+      z-index:999;
+    }
     .options{
       width: 170px;
+      float: left;
       .block{
         font-size: 16px;
         color: #666666;
@@ -541,11 +571,17 @@ export default {
         height: 40px;
         line-height: 40px;
         cursor: pointer;
+        &:hover {
+          color: #FB3A32!important;
+          i{
+            color: #FB3A32!important;
+          }
+        }
         &.active{
-          color: #FB3A32;
+          color: #B3B3B3;
           pointer-events: none;
           i{
-            color: #FB3A32;
+            color: #B3B3B3;
           }
         }
         i{
@@ -563,8 +599,9 @@ export default {
     }
     .rightView{
       display: flex;
-      flex: 1;
       justify-content: center;
+      width: calc(100% - 170px);
+      float: right;
     }
   }
 
