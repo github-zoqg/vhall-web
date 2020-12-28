@@ -126,8 +126,8 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
+        <el-button type="primary" class="length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button class="length152"  @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
     <chose-actives
@@ -157,13 +157,13 @@ export default {
   },
   computed: {
     reservationDesc(){
-      return this.reservation ?  '关闭后，专题观看端将隐藏预约人数' : '已关闭，观看端已隐藏预约人数';
+      return this.reservation ?  '已开启，专题页显示预约人数' : '开启后，专题页显示预约人数';
     },
     hotDesc(){
-      return this.hot ? '关闭后，专题目录直播热度将被隐藏' : "已关闭，专题目录直播热度已被隐藏";
+      return this.hot ? '已开启，专题页显示热度' : "开启后，专题页显示热度";
     },
     homeDesc(){
-      return this.home ? '关闭后，该直播将不在个人主页显示' : "已关闭，该直播已不在个人主页显示";
+      return this.home ? '已开启，该专题在个人主页中显示' : "开启后，该专题在个人主页中显示";
     }
   },
   data(){

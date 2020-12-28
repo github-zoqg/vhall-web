@@ -50,6 +50,12 @@ export default {
     }
   },
   mounted() {
+    this.$nextTick(() => {
+      setTimeout(() => {
+        let a = this.$refs.questions.$service
+        console.log(10000000 ,a)
+      }, 5000)
+    })
     // this.$refs.questions.createQuestion(this.$route.query.id);
     // this.$nextTick(() => {
     //   // this.createQuestion(this.$route.query.id);

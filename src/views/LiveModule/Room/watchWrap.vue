@@ -77,7 +77,7 @@
               <h3 class="seeding-title">
                 {{ activeInfo.subject }}&nbsp;&nbsp;
               </h3>
-              <span v-if="iconPlayShow" class="seeding-icon">{{iconPlay}}</span>
+              <span class="seeding-icon">{{iconPlay}}</span>
               <div>
                 <template v-if="roominfo.modules && roominfo.modules.logo.organizers_status == 1">
                   <span
@@ -738,6 +738,14 @@ export default {
         // this.roomData.pv.num = msg.pv
       }
     })
+    this.$EventBus.$on('updateBaseNum', (msg) => {
+      if (this.roomData.online) {
+        this.roomData.online.num = Number(this.roomData.online.num) + Number(msg.data.update_online_num)
+      }
+      if (this.roomData.pv) {
+        this.roomData.online.num = Number(this.roomData.pv.num) + Number(msg.data.update_pv)
+      }
+    })
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
       // 是否显示公众号
@@ -926,16 +934,29 @@ export default {
       }
     },
     // 点击商品获得详细的信息
-    sellGoodsInfo(goodInfo) {
-      this.goodInfo = goodInfo;
+    sellGoodsInfo(id) {
       window.vhallReport && window.vhallReport.report('GOOD_RECOMMEND', {
         event: moment().format('YYYY-MM-DD HH:mm'),
-        market_tools_id: this.goodInfo.good_id,
+        market_tools_id: id,
         // 浏览
         market_tools_status: 0
       });
-      this.shadeShow = !this.shadeShow;
-      this.goodsPopShow = !this.goodsPopShow;
+      this.getGoodInfo(id)
+    },
+    getGoodInfo (id) {
+      this.$fetch('getGoodInfo', {
+        webinar_id: this.$route.params.il_id,
+        goods_id: id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.goodInfo = res.data
+          this.shadeShow = !this.shadeShow;
+          this.goodsPopShow = !this.goodsPopShow;
+        } else if (res.code == 13283) {
+          this.$message.error(res.msg)
+          this.getGoodsInfo()
+        }
+      })
     },
     // 关闭详情弹窗事件
     closeGoodPop() {
@@ -1313,7 +1334,9 @@ export default {
     // 商品推荐
     getGoodsInfo() {
       this.$fetch('goodsList', {
-        webinar_id: this.$route.params.il_id
+        webinar_id: this.$route.params.il_id,
+        pos: 0,
+        limit: 100
       }).then(res => {
         if (res.code == 200) {
           this.goodsList = res.data.goods_list
@@ -1688,9 +1711,9 @@ export default {
         ? (this.regShow = true)
         : (this.regShow = false);
       // 主办方直播图标的显示
-      this.roominfo.modules.webinar_status.show == 1
-        ? (this.iconPlayShow = true)
-        : (this.iconPlayShow = false);
+      // this.roominfo.modules.webinar_status.show == 1
+      //   ? (this.iconPlayShow = true)
+      //   : (this.iconPlayShow = false);
       this.iconPlay = this.roominfo.modules.webinar_status.text;
       if (this.roominfo.modules.webinar_status.text == '回放') {
         this.$nextTick(() => {

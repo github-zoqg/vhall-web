@@ -40,7 +40,7 @@
                   </div>
                   <div class="bottom">
                     <div class="">
-                      <p class="liveTitle">{{item.subject}}</p>
+                      <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
                       <p class="liveTime">{{item.start_time}} <span><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
                     </div>
                   </div>
@@ -236,6 +236,13 @@ export default {
               color: #1A1A1A;
               font-size: 16px;
               margin-bottom: 6px;
+              text-overflow: -o-ellipsis-lastline;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: 2;
+              line-clamp: 2;
+              -webkit-box-orient: vertical;
             }
             .liveTime{
               font-size: 14px;

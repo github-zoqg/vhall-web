@@ -18,7 +18,7 @@
         <p v-if="!qrcode">您还未绑定账号，请先绑定</p>
       </div>
       <div class="nextBtn" v-if="!qrcode">
-        <el-button type="primary" round @click="bangWeixin">立即绑定</el-button>
+        <el-button type="primary" round @click="goBangWeixin">立即绑定</el-button>
       </div>
     </VhallDialog>
     <VhallDialog
@@ -149,13 +149,14 @@ export default {
     dialogCashVisible() {
       if (this.dialogCashVisible) {
         this.time = 60;
-        this.mobileKey = '';
-        this.withdrawForm.money = '';
-        this.errorText = '';
-        this.phone = '';
         this.callCaptcha();
         this.getWeinName();
       } else {
+        this.mobileKey = '';
+        this.withdrawForm.money = '';
+        this.withdrawForm.code = '';
+        this.errorText = '';
+        this.phone = '';
         window.clearInterval(this.timer);
       }
     },
@@ -230,8 +231,8 @@ export default {
       });
     },
     // 绑定微信 ---获取绑定微信二维码
-    bangWeixin() {
-      this.qrcode = `${Env.staticLinkVo.aliQr}https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${encodeURI(process.env.VUE_APP_WEB_URL/bangWeixin)}`;
+    goBangWeixin() {
+      this.qrcode = `${Env.staticLinkVo.aliQr}https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${encodeURI(process.env.VUE_APP_WEB_URL)}/weixin`;
     },
     /**
      * 倒计时函数

@@ -43,11 +43,19 @@ export default {
     };
   },
   created () {
-    this.bigImageUrl = this.goodsAllInfo.img_list[0].img_url
   },
-
-  mounted () {},
-
+  watch: {
+    goodsAllInfo: {
+      handler (val) {
+        if(val) {
+          this.bigImageUrl = this.goodsAllInfo.img_list[0].img_url
+          return val
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   methods: {
     // 关闭弹窗
     closeDialog () {

@@ -51,7 +51,7 @@ const router = [
     ]
   },
   {
-    path: '/bangWeixin',
+    path: '/weixin',
     component: () => import('@/views/FinanceModule/components/weixin'),
     meta: { auth: true, name: 'wx'},
     hidden: true

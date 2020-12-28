@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button round @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
+        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick>创建点播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -52,10 +52,10 @@
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
-                  <i class="iconfont-v3 saasicon_redu"></i>
-                  {{item.pv | unitCovert}}
+                  <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
                 </span>
                 <img :src="`${item.img_url}`" alt="">
+                <!-- <div class=""></div> -->
               </div>
               <div class="bottom">
                 <div class="">
@@ -254,21 +254,21 @@ export default {
   .liveListBox{
     user-select: none;
     // padding: 0px 60px;
-    .el-button{
-      color:#FB3A32;
-      border-color:#FB3A32;
-      &:hover{
-        background: #fc615b;
-      }
-    }
-    .el-button--primary{
-      background:#FB3A32;
-      border-color:#FB3A32;
-      color: #fff;
-      &:hover{
-        background: #fc615b;
-      }
-    }
+    // .el-button{
+    //   color:#FB3A32;
+    //   border-color:#FB3A32;
+    //   &:hover{
+    //     background: #fc615b;
+    //   }
+    // }
+    // .el-button--primary{
+    //   background:#FB3A32;
+    //   border-color:#FB3A32;
+    //   color: #fff;
+    //   &:hover{
+    //     background: #fc615b;
+    //   }
+    // }
     /deep/.el-button{
       padding: 4px 24px;
     }
@@ -376,14 +376,19 @@ export default {
         }
         .hot{
           position: absolute;
-          bottom: 10px;
-          left: 10px;
+          height: 50px;
+          width: 100%;
+          background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+          bottom: 0px;
+          left: 0px;
           color: #fff;
           font-size: 14px;
           z-index: 2;
-          // i{
-          //   color: #FB3A32;
-          // }
+          i{
+            position: absolute;
+            left: 14px;
+            bottom: 10px;
+          }
         }
       }
       .bottom{
@@ -444,15 +449,15 @@ export default {
       background-position: 0% 50%;
     }
   }
-  .mask{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .8) 100%);
-    z-index: 1;
-  }
+  // .mask{
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 100%;
+  //   background: linear-gradient(0deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .8) 100%);
+  //   z-index: 1;
+  // }
   .liveListBox {
     margin: auto;
     width: 1020px;

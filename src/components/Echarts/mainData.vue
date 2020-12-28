@@ -24,9 +24,9 @@
       </el-col>
       <el-col :span="6" v-if="titleType">
         <div class="grid-content">
-          <span>{{ titleType == 1 ? '直播' : '点播'}}总时长</span>
+          <span>{{ titleType == 1 ? '直播' : ''}}总时长</span>
           <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">每场直播活动的时长，筛选条件内数据进行相加</div>
+            <div slot="content">{{ titleType == 1 ? '每场直播活动的时长，筛选条件内数据进行相加' : '点播视频的总时长'}}</div>
             <i class="el-icon-question"></i>
           </el-tooltip>
            <h3>
@@ -78,7 +78,7 @@
           <span>观看人数</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
-              直播创建至今，进入观看页面（直播+回放）的观看人数，以播放器sdk上报为准，<br />用户真实观看了视频。筛选条件内同一个用户多次观看会进行去重
+              {{ titleType==1 ? '直播' : '点播'}}创建至今，进入观看页面（直播+回放）的观看人数，以播放器sdk上报为准，<br />用户真实观看了视频。筛选条件内同一个用户多次观看会进行去重
             </div>
             <i class="el-icon-question"></i>
           </el-tooltip>
@@ -95,8 +95,11 @@
         <div class="grid-content">
           <span>观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">
-              直播创建至今，进入观看页面（直播+回放）的观看次数，<br />播放器sdk上报的数据，数据不去重
+            <div slot="content" v-if="titleType==4">
+              点播创建至今，进入观看页面的观看次数，播放器sdk上报的数据，数据不去重
+            </div>
+            <div slot="content" v-else>
+              统计进入观看页面的观看次数，播放器sdk上报的数据。<br />筛选条件内将活动数据进行相加，数据不去重
             </div>
             <i class="el-icon-question"></i>
           </el-tooltip>

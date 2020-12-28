@@ -58,10 +58,10 @@ export default {
     line-height: 18px;
     text-align: center;
     background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
-    border-radius: 10px;
+    border-radius: 4px;
     img {
       height: 8px;
-      width: 8px;
+      // width: 8px;
       vertical-align: top;
       margin: 5px;
       background: #fff;
@@ -77,6 +77,7 @@ export default {
     }
   }
   .grayColor {
+    width: 40px;
     background: #000000;
     opacity: 0.6;
   }
