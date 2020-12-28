@@ -435,15 +435,34 @@
                 </h3>
                 <hr />
                 <div class="active-content">
-                  <div v-for="(items, index) in menuList" :key="index">
-                    <div
+                  <div
+                    v-show="showIntroduce"
+                    class="active-introduce-content"
+                    v-html="simpleContent"
+                  >
+                    {{ simpleContent }}
+                  </div>
+                  <div v-show="!showIntroduce">
+                    <template v-for="(i, num) in customTabInfo">
+                      <div :key="num">
+                        <custom-tab
+                          :mode="1"
+                          :info="i"
+                        ></custom-tab>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <!-- <div class="active-content"> -->
+                  <!-- <div v-for="(items, index) in menuList" :key="index"> -->
+                    <!-- <div
+                      v-if="items.type == 4 && activeIndex == index"
                       class="active-introduce-content"
                       v-html="simpleContent"
-                      v-if="items.type == 4 && activeIndex == index"
                     >
                       {{ simpleContent }}
-                    </div>
-                    <template v-if="activeIndex + 1 == index + 1">
+                    </div> -->
+                    <!-- <template v-if="activeIndex + 1 == index + 1"> -->
                       <!-- <custom-tab
                         v-if="items.type == 1"
                         :roominfo="roominfo"
@@ -457,9 +476,13 @@
                         @rewardListClick="topShow = false"
                       >
                       </custom-tab> -->
-                    </template>
-                  </div>
-                </div>
+                      <!-- <custom-tab
+                        :mode="1"
+                        :info="item.component"
+                      ></custom-tab> -->
+                    <!-- </template> -->
+                  <!-- </div> -->
+                <!-- </div> -->
               </div>
 
               <div class="active-second" v-show="roominfo.advs && roominfo.advs.length > 0">
@@ -578,15 +601,18 @@ import reward from './rankList/reward' // 打赏榜
 import goodsPop from './rankList/goodsPop'
 import moment from 'moment'
 import QRcode from 'qrcode'
-import customTab from './custom-tab'
+// import customTab from './custom-tab'
 import tip from './tip'
 import products from '../components/products'
+import customTab from './components/custom-menu/preview-box'
 import 'swiper/dist/css/swiper.css'
 import { sessionOrLocal } from '@/utils/utils'
 
 export default {
   data() {
     return {
+      customTabInfo: {},
+      showIntroduce: true,
       roomData: {},
       myliveRoute: '',
       accountRoute: '',
@@ -871,7 +897,7 @@ export default {
         await this.getSkin() // 获取皮肤
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
-        // await this.getMenuList()
+        await this.getMenuList()
         // 预约后的活动才显示邀请卡
         if (this.isLogin) {
           await this.getAttentionStatus()
@@ -1240,17 +1266,24 @@ export default {
     // 点击活动
     activeClick(index) {
       let menu  = this.menuList[index]
-      this.activeIndex = index;
-      if (menu && menu.components) {
-        if (menu.type == 1) {
-          this.fetchMenuContent(index, menu);
-        }
+      if (menu.type == 4) {
+        this.showIntroduce = true
       } else {
-        let fmenu = this.menuList[0];
-        if (index == 0 && fmenu.type == 1) {
-          this.fetchMenuContent(0, fmenu);
-        }
+        this.showIntroduce = false
+        menu.id && this.queryTabContent(menu.id)
       }
+      this.activeIndex = index;
+
+      // if (menu && menu.components) {
+      //   if (menu.type == 1) {
+      //     this.fetchMenuContent(index, menu);
+      //   }
+      // } else {
+      //   let fmenu = this.menuList[0];
+      //   if (index == 0 && fmenu.type == 1) {
+      //     this.fetchMenuContent(0, fmenu);
+      //   }
+      // }
     },
     // 获取菜单内容
     fetchMenuContent(index) {
@@ -1265,6 +1298,7 @@ export default {
         }
       });
     },
+    
     fullScreen() {
       var docElm = document.querySelector('.seeding-content');
       // W3C
@@ -1283,23 +1317,48 @@ export default {
       this.$fetch('newWebinarMenus', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.code == 200) {
-          this.menuData = res.data.list || [];
-          if (this.menuData && this.menuData.length) {
-            const chat = this.menuData.find(d => d.type == 3) || {};
-            this.chatShow = chat.status || '';
-          }
-          this.menuData.map(item => {
-            item.components = [];
-            if (item.type != 2 && item.type != 3) {
-              this.menuList.push(item);
+        if (res.code == 200 && res.data) {
+          let data = res.data.list
+          let menuList = []
+          let hasIntro = false
+          data.length > 0 && data.map((item, index) => {
+            if (item.type == 3) {
+              this.chatShow = item.status || ''
             }
-          });
+            if (item.type != 2 && item.type != 3) {
+              menuList.push(item)
+            }
+            if (item.type == 4) {
+              hasIntro = true
+            }
+          })
+          this.menuData = data // TODO:
+          this.menuList = menuList
+
           this.$nextTick(() => {
-            this.activeClick(0);
+            // console.log('aaaaa')
+            // this.activeClick(0);
+            if (hasIntro) {
+              this.showIntroduce = true
+            }
+            // 如果没有简介 首位显示自定义菜单第一个
+            if (!hasIntro && this.menuList.length > 0 && this.menuList[0].id) { // 没有简介
+              this.queryTabContent(this.menuList[0].id)
+            }
           });
         }
       });
+    },
+    // 获取自定义菜单内容
+    queryTabContent (id) {
+      this.$fetch('getMenuDetailById', {
+        menu_id: id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.customTabInfo = res.data.components
+          this.showIntroduce = false
+        }
+      })
     },
     // 关注
     handleAttention() {
