@@ -834,7 +834,7 @@ export default {
     },
     checkoutGiveMoney (val) {
       let isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
-      if (isNum.test(val)) {
+      if (isNum.test(Number(val))) {
         return true
       } else {
         this.$message.error('金额格式错误')
@@ -842,7 +842,7 @@ export default {
       }
     },
     handleGiveMoney () {
-      if (!this.checkoutGiveMoney()) return
+      if (!this.checkoutGiveMoney(Number(this.giveMoney).toFixed(2))) return
       this.$fetch('seadAwardMsg', {
         room_id: this.roomInfo.room_id,
         reward_amount: Number(this.giveMoney).toFixed(2),
