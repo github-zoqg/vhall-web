@@ -210,8 +210,8 @@
          <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" class="common-button" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button class="common-button" @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
+        <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button class="common-button length152" @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 

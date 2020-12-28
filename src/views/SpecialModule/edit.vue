@@ -126,8 +126,8 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
+        <el-button type="primary" class="length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button class="length152"  @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
     <chose-actives
