@@ -38,7 +38,7 @@
             @updateMenus="updateMenus"
           ></mobile-preview>
         </div>
-        <div class="vh-customer__preview-pc">
+        <div class="vh-customer__preview-pc" style="display: none">
           adaqsd
         </div>
       </div>
@@ -125,8 +125,9 @@ export default {
 </script>
 <style lang="less">
   .vh-customer-menu-wrap{
-    height: calc(100vh - 200px);
     min-height: 530px;
+    height: 100%;
+    overflow: hidden;
   }
   .vh-customer-menu-btns{
     position: absolute;
@@ -135,14 +136,14 @@ export default {
   }
   .vh-customer-menu-contentBox{
     overflow: hidden;
-    height: calc(100% - 100px);
-    background: #fff;
+    background: #F7F7F7;
     .vh-customer-menu-contentBox__components{
       height: 100%;
       float: left;
     }
     &__preview{
       padding:20px 40px;
+      background: #fff;
       overflow: hidden;
     }
     .vh-customer__preview-tabcontrols{

@@ -61,5 +61,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
+.vh-preview-box{
+  user-select: none;
+}
 </style>
