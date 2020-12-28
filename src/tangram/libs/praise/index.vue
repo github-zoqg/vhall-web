@@ -112,27 +112,23 @@ export default {
         : Math.floor(Math.random() * (max + 1));
     },
     support () {
-      if (this.isLogin) {
-        this.startZanAnimation();
-        // startZanAnimation();
+      this.startZanAnimation();
+      // startZanAnimation();
 
-        if (this.clearSet) {
-          window.clearTimeout(this.clearSet);
-        } else {
-          this.clearSet = null;
-        }
-        this.timess++;
-        this.timesPage = this.timesPage + 1;
-        this.timeShowAccount = this.transformWatchNum(this.timesPage);
-        this.getRandom(5);
-        this.imgList.push(require(`./img/zan-${this.getRandom(5)}.png`));
-        this.clearSet = setTimeout(() => {
-          this.praise();
-          this.timess = 0;
-        }, 2000);
+      if (this.clearSet) {
+        window.clearTimeout(this.clearSet);
       } else {
-        this.$emit('login')
+        this.clearSet = null;
       }
+      this.timess++;
+      this.timesPage = this.timesPage + 1;
+      this.timeShowAccount = this.transformWatchNum(this.timesPage);
+      this.getRandom(5);
+      this.imgList.push(require(`./img/zan-${this.getRandom(5)}.png`));
+      this.clearSet = setTimeout(() => {
+        this.praise();
+        this.timess = 0;
+      }, 2000);
     },
     transformWatchNum (num) {
       if (num < 10000) {

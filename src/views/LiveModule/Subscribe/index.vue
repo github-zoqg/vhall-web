@@ -1413,13 +1413,13 @@ export default {
       } else {
         if (verified == 0) {
           if (verify == 0) {
-            ret = `立即预约`
+            ret = type == 1 ? `进入直播` : `立即预约`
             this.limitText = `免费`
           } else if (verify == 1) {
-            ret = `立即预约`
+            ret = type == 1 ? `进入直播` : `立即预约`
             this.limitText = `密码`
           } else if (verify == 2) {
-            ret = `立即预约`
+            ret = type == 1 ? `进入直播` : `立即预约`
             this.limitText = `白名单`
           } else if (verify == 3) {
             ret = `付费预约`
@@ -1433,7 +1433,7 @@ export default {
           }
         } else {
           // 通过观看限制但没有报名
-          ret = `立即预约`
+          ret = type == 1 ? `进入直播` : `立即预约`
           this.limitText = ``
         }
       }

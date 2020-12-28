@@ -725,7 +725,6 @@ export default {
       } else {
         throw new Error('参数异常');
       }
-      console.log(99, this.roominfo)
       if (this.marquee && this.marquee.scrolling_open == 1) {
         let marqueeText = ''
         if (this.marquee.text_type == 1 ) {

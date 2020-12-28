@@ -148,14 +148,14 @@
             >
           </div>
           <div class="player-active" v-show="!isEmbed">
-            <div class="table-praise" v-if="userModules.like.show == 0">
-              <praise :roomId="roomId" :isLogin="isLogin" @login="NoLogin"></praise>
+            <div class="table-praise" v-if="userModules.like.show != 1">
+              <praise :roomId="roomId" :isLogin="isLogin"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show == 0 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
+            <div class="table-reward" v-if="userModules.reward.show != 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <!-- <reward :roomId="roomId"></reward> -->
               <img @click="showGiveMoneyPannel" src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
             </div>
-            <div class="table-gift" v-if="userModules.gift.show == 0 && roomInfo.role_name == 2">
+            <div class="table-gift" v-if="userModules.gift.show != 1 && roomInfo.role_name == 2">
               <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
