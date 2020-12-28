@@ -424,6 +424,7 @@ export default {
         this.capacity = Boolean(this.liveDetailInfo.is_capacity);
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
+          this.selectMedia.id = this.liveDetailInfo.id;
           this.selectMedia.name = this.liveDetailInfo.record_subject;
         }
         this.initFormData = JSON.stringify(this.formData) // 为了对比表单内的数据是否被修改
@@ -485,7 +486,7 @@ export default {
       }
       let data = {
         webinar_id: this.webinarId || '',
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.paas_record_id : '',
+        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
