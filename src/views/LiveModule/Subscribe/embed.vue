@@ -9,7 +9,7 @@
       <img class="cover" src="//cnstatic01.e.vhall.com/static/img/webinar.png" alt="">
       <div class="time-box">
         <h4 class="title">距离直播开始还有</h4>
-        <ul class="time" v-if="showTime">
+        <ul class="time" v-if="showTime || isStart">
           <li>
             <span>{{ time.dd }}</span>
             天
@@ -62,6 +62,7 @@ export default {
         mm: 0,
         ss: 0
       },
+      isStart:false,
       base:{},
       submitText: '进入活动',
       tipTitle: '密码验证',
@@ -107,7 +108,7 @@ export default {
     },
     // 获取基本信息
     getLiveDetail(id) {
-      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+      this.$fetch('getWebinarInfo', {webinar_id: id, getWebinarInfo:1}).then(res=>{
         if(res.code != 200) return this.$message.warning(res.msg)
         this.base = res.data
         let _result = difSeconds(this.$moment(), res.data.start_time)
@@ -125,9 +126,12 @@ export default {
             this.time.mm = difSeconds(this.$moment(), res.data.start_time)[2]
             this.time.ss = difSeconds(this.$moment(), res.data.start_time)[3]
             if(typeof(difSeconds(this.$moment(), res.data.start_time)) == 'string' ){
+              this.isStart = true
               clearInterval(this.timeSet)
             }
           }, 1000);
+        }else{
+          this.isStart = true
         }
       })
     },

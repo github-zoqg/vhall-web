@@ -701,6 +701,9 @@ export default {
           vfid: this.roominfo.vfid,
           guid: this.roominfo.guid,
           biz_id: this.$route.params.il_id
+        },
+        subtitleOption: {
+          enable: true
         }
       };
       if(this.isAudience){

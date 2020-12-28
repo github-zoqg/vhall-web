@@ -1,6 +1,7 @@
 <template>
   <div class="components-container">
-    <el-button round>默认按钮</el-button>
+    <el-button round>最大按钮</el-button>
+    <el-button round>1111</el-button>
     <el-button size="medium" round>中等按钮</el-button>
     <el-button size="small" round>小型按钮</el-button>
     <br />

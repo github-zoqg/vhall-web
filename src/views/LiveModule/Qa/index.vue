@@ -77,6 +77,7 @@
                     <p class="">
                       <span class="answer-time">{{ite.nick_name}}</span> <span  class="answer-time">{{filterTime(ite.updated_at)}}</span>
                       <span  class="answer-open" v-if="ite.is_open == 1">公开</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
+                      <span  class="answer-open privacy" v-if="ite.is_open == 0">私密</span> <span v-if="ite.is_backout==1">已撤销</span> <span v-if="ite.is_backout==0" @click="revoke(ite, ind, index)" class="answer-time answer-revoke">撤销此条回复</span>
                     </p>
                     <p v-html="ite.content"></p>
                   </li>
@@ -119,7 +120,7 @@
         <div id="send-content">
           <el-input
             type="textarea"
-            maxlength="200"
+            maxlength="1000"
             :rows="5"
             placeholder="请输入内容"
             v-model="sendMessage.text"
@@ -304,7 +305,7 @@ export default {
       let data = {
         room_id: this.baseObj.interact.room_id,
         is_open: openType, // 0 私密 1 公开 2 全部
-        pos: pagePos? pagePos : 0 ,
+        pos: typeof(pagePos) == 'number' || typeof(pagePos) == 'string'? pagePos : 0 ,
         limit: 20
       }
       this.$fetch('v3GetTextReply', data).then(res=>{
@@ -452,6 +453,9 @@ export default {
       })
     },
     textReply(){
+      if(this.sendMessage.text.trim() == ''){
+        return this.$message.warning('请输入回复内容!')
+      }
       let data = {
         question_id: this.sendMessage.id,
         content: this.sendMessage.text,
@@ -700,6 +704,9 @@ export default {
             color: #fff;
             font-size: 14px;
             margin-right: 14px;
+          }
+          .privacy{
+            background: #ff9933;
           }
           .answer-revoke{
             text-decoration: none;

@@ -475,7 +475,7 @@ export default {
 .mainColor{
   color: #1A1A1A;
 }
-.subColor{
+.subColor, .subDuration{
   color: #666666;
 }
 .action-look{
