@@ -413,6 +413,7 @@ const apis = {
   downloadedDel: ['/v3/commons/downcenter/delete', 'POST'], // 下载中心-删除 √
   downloadedList: ['/v3/commons/downcenter/list', 'POST'], // 下载中心-列表 √
   downloadedReload: ['/v3/commons/downcenter/regenerate', 'POST'], // 下载中心-重新生成 Jia.li •••需真实流程才可测试
+  downloadNotNum: ['/v3/commons/downcenter/not-dow-num', 'POST'], // 查询未下载数量 √
 
   // 报名表单
   getFormEnableStatus: ['/v3/webinars/registration-form/get-form-enable-status', 'POST', 'mock'], // 获取活动报名表单开启状态
