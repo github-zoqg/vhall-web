@@ -51,7 +51,7 @@
           <el-button round type="primary" size="medium">上传</el-button>
         </el-upload>
         <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
-        <el-button round @click="wordMultiDel" size="medium">批量删除</el-button>
+        <el-button round @click="wordMultiDel" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
         <el-input
           class="head-btn search-tag"
           placeholder="请输入文档名称"
@@ -130,7 +130,7 @@ export default {
         {
           label: '上传时间',
           key: 'created_at',
-          width: 160
+          width: 200
         },
         {
           label: '页码',
@@ -322,16 +322,21 @@ export default {
             const status = item.status * 1;
             if (statusJpeg === 0 && status === 0) {
               transformStr = '待转码';
+              item.transcoded = false;
+              item.codeProcess = 0;
             } else if (statusJpeg === 100 || status === 100) {
               transformStr = '转码中';
+              item.transcoded = false;
+              item.codeProcess = 0;
             } else if (statusJpeg === 200 || status === 200) {
               transformStr = '转码完成';
+              item.transcoded = true;
             } else {
               transformStr = '转码失败';
+              item.transcoded = false;
+              item.codeProcess = 0;
             }
             item.transform_schedule_str = transformStr;
-            item.codeProcess = 0;
-            item.transcoded = false;
           })
           this.tableList = res.data.list;
         } else {

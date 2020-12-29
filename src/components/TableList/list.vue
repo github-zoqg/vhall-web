@@ -91,6 +91,7 @@
           align="left"
           v-if="isHandle"
           :width="width"
+          class="btn-rows"
         >
           <template slot-scope="scope">
             <template  v-for="(item, index) in tableRowBtnFun">
@@ -101,7 +102,6 @@
                 v-preventReClick
                 @click="handleBtnClick(scope, item)"
                 v-if="checkShowHandle(scope.row, item)"
-                style="margin-left:16px;"
               >{{ item.name }}</el-button
               >
             </template>
@@ -368,5 +368,13 @@ export default {
 }
 .el-table /deep/.el-button.el-button--text {
   padding: 0 0;
+}
+.btn-rows {
+  /deep/.el-button {
+    margin-left:16px;
+    &:first-child {
+      margin-left: 0;
+    }
+  }
 }
 </style>
