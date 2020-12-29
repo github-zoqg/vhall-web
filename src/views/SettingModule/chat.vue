@@ -71,7 +71,7 @@
     </VhallDialog>
     <!-- 添加关键词 -->
     <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body>
-      <div class="chat-add-dialog-content">
+      <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
           <el-form-item label="严禁词" prop="name">
             <el-input
@@ -493,6 +493,11 @@ export default {
   padding-bottom: 2px;
 }
 .chat-add-dialog-content {
+  &.add {
+    /deep/.el-form-item__label {
+      line-height: unset;
+    }
+  }
   /deep/.el-form-item__label:before {
     display: none;
   }

@@ -5,6 +5,7 @@
     :headers="{token: token, platform: 17}"
     :data=saveData
     name="resfile"
+    accept="image/x-ms-bmp,image/x-png,image/gif,image/jpeg"
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
@@ -65,6 +66,10 @@ export default {
       domain_url: {
         type: String,
         default: ``
+      },
+      accept: {
+        type: String,
+        default: `image/gif, image/jpeg, image/jpg, image/png, image/bmp`
       },
       "list-type": {
         type: String,
