@@ -80,6 +80,9 @@ const mixins = {
           console.warn('获取符合抽奖的人数',res);
           this.getPrizeCount = res.data.count || 0;
           this.userList = res.data.list
+          if(res.data.list.length == 0){
+            return this.$message.warning('搜索结果为空')
+          }
           if(res.data.list.length !=0){
             this.userList = res.data.list.filter((u) => {
               return !this.chooseList.find((c) => {
