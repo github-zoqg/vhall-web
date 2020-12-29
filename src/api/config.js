@@ -443,6 +443,7 @@ const apis = {
   getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √ 废弃了
   liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 √
   getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态 √
+  record: ['/v3/webinars/record/ticker', 'POST'], // 发起端-打点录制
 
   // 发起端-活动
   getJoinUrl: ['/v3/webinars/live/get-url', 'GET'], // 获取参会地址 •••

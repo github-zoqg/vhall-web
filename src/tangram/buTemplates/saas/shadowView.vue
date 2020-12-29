@@ -1,5 +1,5 @@
 <template>
-  <div class="vhall-split-wrapbox-view">
+  <div class="vhall-split-wrapbox-view cxs">
     <div id="tip" >
         <span class="tip-txt">分屏模式</span>
         <span class="exit-shadow iconfont iconguanbi" @click="exitShadow" title="退出分屏"></span>
@@ -12,6 +12,7 @@
       :accountId="third_party_user_id"
       :roleName="roomInfo.join_info && roomInfo.join_info.role_name"
     ></share-screen>
+     <!-- id="streams-wrap" -->
     <streams
       style="height: 100%; margin: 0 auto;"
       :speakerList="speakerList"
@@ -145,20 +146,18 @@ export default {
   mixins: [
     jiabinMixin
   ],
-
   mounted () {
     $('.vhall-remote-strams-box').css({
       '-webkit-box-align': 'center',
       'align-items': 'center',
       'display': 'flex',
       'flex-wrap': 'wrap',
-      'height': '100%',
+      'height': '100%!important',
       'align-items': 'center',
       'justify-content': 'center',
       'margin': 'auto',
       'overflow': 'hidden'
     });
-
     EventBus.$on('close_live', () => {
       this.$refs.interactive.stopLive().then(() => {
         this.$parents.endSplit();
@@ -334,7 +333,7 @@ export default {
       let height = 0;
       let width = 0;
       let count = 0;
-
+      console.warn(this.speakerList.length, '*********************this.speakerList.length');
       switch (this.speakerList.length) {
         case 1:
           count = 1;
@@ -387,10 +386,12 @@ export default {
           count = 2;
           windowRatio = document.body.clientWidth / document.body.clientHeight;
           videoRatio = 1.777;
+          console.warn(windowRatio, videoRatio);
           if (windowRatio > 1 && windowRatio > videoRatio) {
             height = '50%';
             width = document.body.clientHeight / count / 0.5625 + 'px';
-            document.querySelector('#vhall-remote-strams-box').style.height = '';
+            // document.querySelector('#vhall-remote-strams-box').style.height = '';
+            document.querySelector('#vhall-remote-strams-box').style.height = '100%';
             document.querySelector('#vhall-remote-strams-box').style.width = parseInt(width) * 2 + 3 + 'px';
           } else if (windowRatio > 1 && windowRatio < videoRatio) {
             height = (document.body.clientWidth / count) * 0.5625 + 'px';
@@ -555,6 +556,9 @@ export default {
             }
           }
         }
+        // #streams-wrap{
+        //   height: 100%!important;
+        // }
       }
   }
 </style>

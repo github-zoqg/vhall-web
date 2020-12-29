@@ -14,6 +14,7 @@ const mixins = {
       })
     },
     checkLottery(){
+      this.lotteryLoading = true
       this.$fetch('v3CheckLottery', {}).then(res=>{
         if(res.code == 200){
           if(res.data.lottery_status == 0){
@@ -26,6 +27,7 @@ const mixins = {
               title: res.data.title
             }
             this.processingObj.title = res.data.title
+            console.warn('this.disabledTime---', this.disabledTime);
           }else{
             // 未开始抽奖  开始获取可抽奖人数及其他信息
             this.joinLottery = '1'
@@ -35,6 +37,9 @@ const mixins = {
         }else{
           this.$message.warning(res.msg)
         }
+        this.lotteryLoading = false
+      }).catch(err=>{
+        this.lotteryLoading = false
       })
     },
     // 获取奖品列表
@@ -66,7 +71,7 @@ const mixins = {
       this.prize = val
     },
     // 符合抽奖的人员列表
-    getLotteryCount(){
+    getLotteryCount(val){
       let _data = {
         room_id: this.roomId,
         lottery_type: this.joinLottery,
@@ -80,7 +85,7 @@ const mixins = {
           console.warn('获取符合抽奖的人数',res);
           this.getPrizeCount = res.data.count || 0;
           this.userList = res.data.list
-          if(res.data.list.length == 0){
+          if(val && res.data.list.length == 0){
             return this.$message.warning('搜索结果为空')
           }
           if(res.data.list.length !=0){
@@ -99,10 +104,6 @@ const mixins = {
     },
     // 开始抽奖
     startReward () {
-      if(this.prizeList.length ==0 ){
-        this.$message.warning('中奖商品不能为空，请先去控制台进行添加!!!')
-        return
-      }
       if(this.lotteryResultShow){
         this.getPrizeCount = 0
         this.getLotteryCount()
@@ -146,6 +147,13 @@ const mixins = {
       this.$fetch('v3CreateLottery', _data).then(res=>{
         if(res.code == 200){
           console.warn('创建抽奖成功',res.data);
+          this.disabledTime = 5
+          this.disTimeSet = setInterval(() => {
+            this.disabledTime--;
+            if(this.disabledTime<=0){
+              clearInterval(this.disTimeSet);
+            }
+          }, 1000);
           this.lotteryInfo = res.data
           this.lotteryContentShow = false
           this.prizeShow = true
@@ -169,32 +177,6 @@ const mixins = {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    getPrizeList2(){
-      console.warn('wa');
-    },
-    getPrizeList1(){
-      console.warn('wa');
-      this.$fetch('getPrizeList', {}).then(res=>{
-        if(res.code == 200){
-          console.warn(res);
-        }else{
-          this.$message.warning(res.msg)
-        }
-      })
-    }
   },
 }
 export default mixins
