@@ -1997,7 +1997,7 @@ export default {
         (this.isWhiteBoardEnabled || this.isDocEnabled) &&
         this.docVisibleToAudience
       ) {
-        this.$vhallFetch('setDesktop', {
+        this.$fetch('v3SetDesktop', {
           room_id: this.roomInfo.interact.room_id,
           status: '1'
         });
@@ -2012,7 +2012,7 @@ export default {
         (this.isWhiteBoardEnabled || this.isDocEnabled) &&
         this.docVisibleToAudience
       ) {
-        this.$vhallFetch('setDesktop', {
+        this.$fetch('v3SetDesktop', {
           room_id: this.roomInfo.interact.room_id,
           status: '0'
         });
@@ -2388,7 +2388,9 @@ export default {
         receive_account_id: this.roomInfo.join_info.third_party_user_id,
         room_id: this.roomInfo.interact.room_id
       };
-      this.$vhallFetch('rejectInvite', data).catch(error => {
+      this.$fetch('rejectInvite', data).then(res=>{
+        if(res.code != 200) return this.$message.warning(res.msg)
+      }).catch(error => {
         console.error('拒绝上麦邀请接口错误', error);
       });
     },
@@ -2712,7 +2714,7 @@ export default {
           });
         } else {
           // 转播中停止直播
-          this.$vhallFetch('stopRebroadcast', {
+          this.$fetch('v3RebroadcastStop', {
             room_id: this.roomInfo.interact.room_id,
             vss_token: this.vssToken,
             source_room_id: this.rebroadcast
