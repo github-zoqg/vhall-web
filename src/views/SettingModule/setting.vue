@@ -83,7 +83,7 @@ export default {
   }
   .desc{
     .mainText{
-      margin-bottom: 10px;
+      margin-bottom: 4px;
       font-size: 18px;
       font-family: @fontRegular;
       font-weight: 400;

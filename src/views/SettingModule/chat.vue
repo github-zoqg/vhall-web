@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="聊天严禁词">
+    <pageTitle title="聊天严禁词" iconCssType="gary">
       <div slot="content">
         1.聊天、评论，包含关键词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
         <br/>
@@ -17,9 +17,9 @@
     </div>
     <div class="setting-chat-main">
       <el-form :model="chatForm" ref="chatForm" label-width="120px">
-        <el-form-item label="严禁词列表：">
+        <el-form-item label="严禁词列表">
           <div class="words-white">
-            {{checkNames.join('，')}}
+            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '暴力、政治敏感、严禁词，逗号隔开、固定宽度换行'}}
           </div>
         </el-form-item>
       </el-form>
@@ -57,7 +57,7 @@
           :totalNum="keyWordDao.total"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
-          :max-height="275"
+          :max-height="386"
           @getTableList="getKeywordList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
@@ -69,7 +69,7 @@
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
-    <VhallDialog width="350px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body>
+    <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body>
       <div class="chat-add-dialog-content">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
           <el-form-item label="严禁词" prop="name">
@@ -83,8 +83,8 @@
           </el-form-item>
         </el-form>
         <div class="dialog-right-btn">
-          <el-button type="primary" v-preventReClick @click.prevent.stop="keywordSend" size="mini" round>确 定</el-button>
-          <el-button @click="addShow = false" size="mini" round>取 消</el-button>
+          <el-button type="primary" v-preventReClick @click.prevent.stop="keywordSend" size="medium" round>确 定</el-button>
+          <el-button @click="addShow = false" size="medium" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -107,8 +107,8 @@
           <p slot="tip" v-else>请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" v-preventReClick @click="saveUploadKey" size="mini" round>确 定</el-button>
-          <el-button @click="multiUploadShow = false" size="mini" round>取 消</el-button>
+          <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
+          <el-button @click="multiUploadShow = false" size="medium" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -521,4 +521,7 @@ export default {
   margin-bottom: 24px;
   margin-top: 24px;
 }
+/deep/.data-list {
+   min-height: 448px;
+ }
 </style>
