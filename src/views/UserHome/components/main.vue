@@ -31,7 +31,7 @@
         col-sm-*  一般用于小屏设备（min-width：768px）
         col-xs  -*用于超小型设备（max-width：768px）
         -->
-        <el-col class="liveItem":xs="24" :sm="12" :md="12" :lg="8" :xl="8" v-for="(item, index) in dataList" :key="index">
+        <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
           <div class="inner">
             <div class="top">
               <span class="liveTag" v-if="tabType === 'live'">
@@ -39,8 +39,7 @@
                 <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label> {{item | liveTag}}
               </span>
               <span class="hot">
-                 <i class="iconfont-v3 saasicon_redu"></i><!--{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}-->
-                {{item.pv | unitCovert}}
+                 <i class="iconfont-v3 saasicon_redu"> {{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</i>
               </span>
               <a :href="item.share_link" target="_blank">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
@@ -66,7 +65,7 @@
       @current-change="changeHandle" align="center"
       v-if="tabType === 'live' ? tabList[0].total > query.limit : tabList[1].total > query.limit"
     ></SPagination>
-    <null-page text="主人比较懒，什么都没留下！" nullType="no-show" v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0"></null-page>
+    <null-page text="贫瘠之地，毛都没有" nullType="create" v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0"></null-page>
     <!-- 无消息内容 -->
     <null-page v-if="tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0"></null-page>
   </div>
@@ -299,23 +298,31 @@ export default {
 .live-panel {
   padding: 0 24px;
 }
+.pageBox {
+  padding: 16px 0 40px 0;
+}
 .lives{
-  margin: 24px 0 0 0;
+  margin-top: 24px;
+  // overflow: hidden;
+  // display: flex;
+  // justify-content: space-between;
+  // flex-flow: wrap;
+  // margin-bottom: 20px;
   .liveItem{
-    height: 252px;
+    // width: 312px;
+    height: 244px;
     margin-bottom: 20px;
+    // float: left;
+    // margin-right: 40px;
     .inner{
       transition: all .15s ease-in;
       position: relative;
-      border-radius: 4px;
-      background: #F7F7F7;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
     }
     .inner:hover{
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
     }
     .top{
+      cursor: pointer;
       height: 175px;
       background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%;
@@ -323,14 +330,12 @@ export default {
       padding: 10px 10px;
       box-sizing: border-box;
       position: relative;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
+      border-radius: 4px;
       img{
         width: 100%;
         height: 100%;
         position: absolute;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+        border-radius: 4px;
         top:0;
         left: 0;
       }
@@ -353,17 +358,26 @@ export default {
       }
       .hot{
         position: absolute;
-        bottom: 10px;
-        left: 10px;
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+        bottom: 0px;
+        left: 0px;
         color: #fff;
         font-size: 14px;
         z-index: 2;
+        i{
+          position: absolute;
+          left: 14px;
+          bottom: 10px;
+        }
       }
     }
     .bottom{
-      background: transparent;
+      height: 72px;
+      background: #f7f7f7;
       box-sizing: border-box;
-      padding: 14px 14px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -373,12 +387,50 @@ export default {
         color: #1A1A1A;
         font-size: 16px;
         margin-bottom: 6px;
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       .liveTime{
         font-size: 14px;
         color: #666;
       }
+      .liveOpera{
+        color: #666666;
+        font-size: 18px;
+        a{
+          color: rgb(44, 43, 43);
+        }
+        i{
+          cursor: pointer;
+          &:nth-child(2){
+            margin: 0 20px;
+          }
+        }
+        .el-dropdown{
+          float: right;
+          &.active{
+            z-index: 2;
+            color: #fff;
+          }
+        }
+      }
     }
+  }
+}
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 </style>

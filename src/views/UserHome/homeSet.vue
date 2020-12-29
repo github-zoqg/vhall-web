@@ -251,10 +251,10 @@ export default {
             if (res && res.code === 200) {
               this.$message.success('保存基本设置成功');
               // 回到前一个页面
-              /*this.$router.push({
-                path: `/user/home/${this.$route.params.str}`
-              });*/
-              window.location.reload();
+              this.$router.push({
+                path: `/account/myHome`
+              });
+              // window.location.reload();
             } else {
               this.$message.error(res.msg || '保存基本设置失败');
             }
