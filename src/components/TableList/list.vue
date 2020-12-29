@@ -94,6 +94,7 @@
                 v-preventReClick
                 @click="handleBtnClick(scope, item)"
                 v-if="checkShowHandle(scope.row, item)"
+                style="margin-left:16px;"
               >{{ item.name }}</el-button
               >
             </template>
