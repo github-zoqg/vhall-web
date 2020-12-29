@@ -3,7 +3,7 @@
     <pageTitle title="功能配置"></pageTitle>
     <div class="div__func div__view" v-if="keyList">
       <div class="div__view__title">观看页设置</div>
-      <ul>
+      <ul class="switch__list">
         <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
           <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
@@ -20,7 +20,7 @@
     </div>
     <div class="div__func div__playback" v-if="liveKeyList && liveKeyList">
       <div class="div__view__title">回放设置</div>
-      <ul>
+      <ul class="switch__list">
         <li class="switch__box" v-for="(item, ins) in liveKeyList" :key="`playback_`+ins">
           <label class="leve3_title label__r12">{{ item.key_name }}</label>
           <el-switch
@@ -184,22 +184,26 @@ export default {
   margin: 0 auto 24px auto;
 }
 .div__view__title {
-  padding-top: 32px;
-  margin-left: 32px;
+  padding-top: 24px;
+  margin-left: 24px;
   font-size: @font_size_16;
   font-family: @fontRegular;
   font-weight: 400;
   color: @font_color_h1;
   line-height: 22px;
 }
-ul {
+.switch__list {
+  padding-top: 24px;
+  padding-bottom: 32px;
   li {
     display: block;
     list-style-type: none;
-    margin-top: 32px;
+    margin-bottom: 32px;
     margin-left: 80px;
     line-height: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
-  padding-bottom: 32px;
 }
 </style>
