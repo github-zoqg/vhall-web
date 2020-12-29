@@ -31,7 +31,7 @@
         <div class="operaBox">
           <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round>添加</el-button>
           <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round>批量添加</el-button>
-          <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round>批量删除</el-button>
+          <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="ids && ids.length > 0">批量删除</el-button>
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
@@ -57,7 +57,8 @@
           :totalNum="keyWordDao.total"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
-          :max-height="386"
+          :max-height="380"
+          width=120
           @getTableList="getKeywordList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
@@ -522,6 +523,6 @@ export default {
   margin-top: 24px;
 }
 /deep/.data-list {
-   min-height: 448px;
+   min-height: 418px;
  }
 </style>
