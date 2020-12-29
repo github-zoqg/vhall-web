@@ -226,7 +226,10 @@ export default {
         cursor: pointer;
         border: 2px solid transparent;
         &:hover{
-          border: 2px solid #FB3A32;
+          background: #FFFFFF;
+          box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+          border-radius: 4px;
+          border: 1px solid #FB3A32;
         }
         p{
           width: 30px;
