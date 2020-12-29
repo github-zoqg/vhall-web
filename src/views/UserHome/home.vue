@@ -1,36 +1,45 @@
 <template>
  <div class="home-main console">
-   <pageTitle title="个人主页"></pageTitle>
-   <!-- 内容区域 -->
-   <div class="user__layout--title">
-     <ul>
-       <li>
-         <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
-       </li>
-       <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
-         <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
-         <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
-         <span class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收缩'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
-       </li>
-       <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
-         <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
-         <el-popover
-           class="button__share"
-           placement="bottom-end"
-           trigger="click"
-           v-if="userHomeVo && userHomeVo.show_share"
-         >
-           <div>
-             <share slot="content" :url="home_link"></share>
-           </div>
-           <el-button size="medium" round slot="reference">分享</el-button>
-         </el-popover>
-       </li>
-     </ul>
-   </div>
-   <!-- 功能区 -->
-   <div class="user__layout--main">
-     <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
+   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
+   <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
+   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'"></div>
+   <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
+     <!-- 内容区域 -->
+     <div class="user__layout--title">
+       <ul>
+         <li>
+           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
+         </li>
+         <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
+           <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
+           <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
+           <span class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收缩'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+         </li>
+         <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
+           <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
+           <el-popover
+             class="button__share"
+             placement="bottom-end"
+             trigger="click"
+             v-if="userHomeVo && userHomeVo.show_share"
+           >
+             <div>
+               <share slot="content" :shareVo="{
+               url: home_link,
+               sina_share_link: sina_share_link,
+               qq_share_link: qq_share_link,
+               wechat_share_link: wechat_share_link
+             }"></share>
+             </div>
+             <el-button size="medium" round slot="reference">分享</el-button>
+           </el-popover>
+         </li>
+       </ul>
+     </div>
+     <!-- 功能区 -->
+     <div class="user__layout--main">
+       <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
+     </div>
    </div>
  </div>
 </template>
@@ -41,11 +50,13 @@ import Env from "@/api/env";
 import PageTitle from '@/components/PageTitle';
 import HomeMain from './components/main.vue';
 import Share from '@/components/Share';
+import OldHeader from '@/components/OldHeader';
 export default {
   name: 'info.vue',
   components: {
     PageTitle,
     HomeMain,
+    OldHeader,
     Share
   },
   data() {
@@ -56,7 +67,7 @@ export default {
       follow: 0,
       avatarImgUrl: ``,
       userInfo: null,
-      open_hide: true
+      open_hide: true,
     };
   },
   computed: {
@@ -68,7 +79,16 @@ export default {
       }
     },
     home_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`;
+    },
+    sina_share_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
+    },
+    wechat_share_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
+    },
+    qq_share_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
     }
   },
   methods: {
@@ -81,7 +101,7 @@ export default {
     },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
-        home_user_id: sessionOrLocal.get('userId')
+        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
@@ -130,6 +150,38 @@ export default {
 </script>
 
 <style lang="less" scoped>
+::v-deep.head-wrap{
+  .collapse{
+    height: 100%;
+    .login-reg{
+      height: 100%;
+      .head{
+        margin-top: -8px;
+        border: none;
+        vertical-align: middle;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .caret{
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+.v-home-bg {
+  width: 100%;
+  min-height: 448px;
+  background-image: url('../../common/images/sys/v3_home_phone_bg.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.pc_bg {
+  width: 1100px;
+  margin: -220px auto 0 auto;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
 .user__layout--title {
   width: 100%;
   padding: 35px 24px;

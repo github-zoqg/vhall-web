@@ -82,7 +82,7 @@ const router = [
       {
         path: 'myHome',
         component: () => import('@/views/UserHome/home'),
-        meta: { auth: true, title: '个人主页', name: 'myHome', activeMenu: '/account/myHome'}
+        meta: { auth: true, title: '个人主页', name: 'myHome', activeMenu: '/account/myHome', type: 'owner'}
       },
       {
         path: '/homeSet/:str(\\d+)',
@@ -107,7 +107,7 @@ const router = [
   {
     path: '/user/home/:str(\\d+)',
     component: () => import('@/views/UserHome/home'),
-    meta: { auth: false, title: '个人主页', name: 'userHome' },
+    meta: { auth: false, title: '个人主页', name: 'userHome', type: 'new' },
     hidden: true
   }
 ];
