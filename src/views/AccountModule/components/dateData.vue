@@ -108,30 +108,56 @@ export default {
       if (valData.length > 0) {
         max = Math.max(...valData);
       }
-      //数据
       let options = {
+        visualMap: {
+          show: false,
+          type: 'continuous',
+          min: 0,
+          max: 100,
+        },
         grid: {
           left: '65',
           top: '45',
           bottom: '30',
           right: '32'
         },
-        legend: {
-          show: false
-        },
         tooltip: {
-          trigger: 'item',
+          trigger: 'axis',
+          show: true,
           formatter:  `{b} <br/>{a}: {c}（${this.sonVo.vip_info.type > 0 ? 'GB' : '方'}）`
+        },
+        xAxis: {
+          name: '日期',
+          nameLocation: 'start',
+          nameGap: 30,
+          type: 'category',
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: '#CCCCCC',
+            }
+          },
+          axisLabel: {
+            inside: false,
+            textStyle: {
+              color: '#999999',
+              fontSize: 12,
+              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
+            }
+
+          },
+          data: dateData,
         },
         yAxis: [
           {
             name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
-            min: 0,
-            max: max,
-            interval: 15,
             type: 'value',
             position: 'left',
             splitLine: {
+              show: false,
               lineStyle: {
                 type: 'dashed',
               }
@@ -153,46 +179,15 @@ export default {
             }
           }
         ],
-        xAxis: [
-          {
-            name: '日期',
-            nameLocation: 'start',
-            nameGap: 30,
-            type: 'category',
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: '#CCCCCC',
-              }
-            },
-            axisLabel: {
-              inside: false,
-              textStyle: {
-                color: '#999999',
-                fontSize: 12,
-                fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
-              }
-
-            },
-            data: dateData,
-          }
-        ],
         series: [
           {
             name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
-            type: "line",
+            type: 'line',
+            showSymbol: false,
             smooth: true,
             data: valData,
-            itemStyle: {
-              normal: {
-                borderWidth: 5,
-                color: '#FB3A32',
-              }
-            }
-          }
+            color: '#fb3a32'
+          },
         ],
       };
       // 使用刚指定的配置项和数据显示图表。

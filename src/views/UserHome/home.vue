@@ -1,90 +1,121 @@
 <template>
- <div class="home-main">
-   <OldHeader class="head-wrap"></OldHeader>
-   <div class="v-head-bg"
-        :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' :
-        '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}">
-     <div class="v-head-img"></div>
-   </div>
-   <div class="home-main-container">
-     <pageTitle title="个人主页"></pageTitle>
-     <div class="ac__home__panel">
-       <!-- 左侧 [列表区域] -->
-       <div class="ac__home__panel--left">
-         <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
-         <home-set  @showSet="showSetHandle" v-if="isSetShow"></home-set>
-       </div>
-       <!-- 右侧名片 -->
-       <div class="ac__home__panel--right">
-         <div class="ac__home--user">
-           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" />
-           <p>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</p>
-          <!-- <p>{{userHomeVo && userHomeVo.show_fans > 0 ? '' : `粉丝数： ${attentioned_count}` }}</p>-->
-         </div>
-         <div class="ac__home--info">
-           <p class="ac__home--title"></p>
-           <p class="ac__home--notice">{{content}}</p>
-         </div>
-       </div>
+ <div class="home-main console">
+   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
+   <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
+   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'"></div>
+   <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
+     <!-- 内容区域 -->
+     <div class="user__layout--title">
+       <ul>
+         <li>
+           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
+         </li>
+         <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
+           <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
+           <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
+           <span class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收缩'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+         </li>
+         <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
+           <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
+           <el-popover
+             class="button__share"
+             placement="bottom-end"
+             trigger="click"
+             v-if="userHomeVo && userHomeVo.show_share"
+           >
+             <div>
+               <share slot="content" :shareVo="{
+               url: home_link,
+               sina_share_link: sina_share_link,
+               qq_share_link: qq_share_link,
+               wechat_share_link: wechat_share_link
+             }"></share>
+             </div>
+             <el-button size="medium" round slot="reference">分享</el-button>
+           </el-popover>
+         </li>
+       </ul>
+     </div>
+     <!-- 功能区 -->
+     <div class="user__layout--main">
+       <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
      </div>
    </div>
  </div>
 </template>
 
 <script>
-import PageTitle from '@/components/PageTitle';
-import OldHeader from '@/components/OldHeader';
-import HomeMain from './components/main.vue';
-import HomeSet from './components/homeSet.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import PageTitle from '@/components/PageTitle';
+import HomeMain from './components/main.vue';
+import Share from '@/components/Share';
+import OldHeader from '@/components/OldHeader';
 export default {
   name: 'info.vue',
   components: {
     PageTitle,
-    OldHeader,
     HomeMain,
-    HomeSet
+    OldHeader,
+    Share
   },
   data() {
     return {
       isSetShow: false,
-      userHomeVo: null,
+      userHomeVo: {},
       attentioned_count: 0,
       follow: 0,
-      content: `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`,
       avatarImgUrl: ``,
-      userInfo: null
+      userInfo: null,
+      open_hide: true,
     };
+  },
+  computed: {
+    show_content: function() {
+      if (this.userHomeVo && this.userHomeVo.content && this.userHomeVo.content.length > 80) {
+        return this.userHomeVo.content.substring(0, 80) + '...';
+      } else {
+        return this.userHomeVo.content || `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`;
+      }
+    },
+    home_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`;
+    },
+    sina_share_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
+    },
+    wechat_share_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
+    },
+    qq_share_link: function() {
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
+    }
   },
   methods: {
     showSetHandle(type) {
       this.isSetShow = type;
       this.getHomePageInfo();
     },
+    showBtnChange() {
+      this.open_hide = !this.open_hide;
+    },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
-        home_user_id: this.$route.params.str
+        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
           // 粉丝数、是否关注、主页信息
-          let {attentioned_count, follow, homepage_info } = res.data;
-          // homepage_info.homepage_avatar = homepage_info.homepage_avatar || '';
-          // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
-          // homepage_info.img_url = homepage_info.img_url || '';
-            // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
-          this.$nextTick(() => {
-            this.userHomeVo = homepage_info;
-            this.attentioned_count = attentioned_count;
-            this.follow = follow;
-            this.content = homepage_info.content;
-            try {
-              this.$refs.homeMain.initComp(homepage_info);
-            }catch (e) {
-              console.log(e);
-            }
-          })
+          let { attentioned_count, follow, homepage_info } = res.data;
+          this.userHomeVo = homepage_info;
+          this.attentioned_count = attentioned_count;
+          this.follow = follow;
+          this.content = homepage_info.content;
+          try {
+            this.$refs.homeMain.initComp(homepage_info);
+          }catch (e) {
+            console.log(e);
+          }
         } else {
           this.userHomeVo = null;
         }
@@ -92,6 +123,11 @@ export default {
         console.log(err);
         this.userHomeVo = null;
       });
+    },
+    toHomeSetPage() {
+      this.$router.push({
+        path: `/homeSet/${sessionOrLocal.get('userId')}`
+      })
     }
   },
   created() {
@@ -114,14 +150,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.home-main {
-  width: 100%;
-  background: #f7f7f7;
-  height: auto;
-  overflow: hidden;
-  padding-bottom: 40px;
-}
-
 ::v-deep.head-wrap{
   .collapse{
     height: 100%;
@@ -132,6 +160,7 @@ export default {
         border: none;
         vertical-align: middle;
         display: inline-block;
+        margin-right: 8px;
       }
       .caret{
         margin-bottom: 4px;
@@ -139,91 +168,99 @@ export default {
     }
   }
 }
-
-.v-head-bg {
+.v-home-bg {
   width: 100%;
-  height: 205px;
-  background: #000 no-repeat 0 center;
-  background-size: 100%;
-  border-bottom: 1px solid #e5e5e5;
+  min-height: 448px;
+  background-image: url('../../common/images/sys/v3_home_phone_bg.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
-.titleBox {
-  margin-top: 40px;
+.pc_bg {
+  width: 1100px;
+  margin: -220px auto 0 auto;
+  background: #ffffff;
+  border-radius: 4px;
 }
-.home-main-container {
-  width: 1300px;
-  margin: 0 auto;
-}
-.ac__home__panel {
-  .flex-display();
-  .justify(space-between);
-  .align(flex-start);
-}
-.ac__home__panel--right {
-  width: 248px;
-  min-height: 437px;
+
+.user__layout--title {
+  width: 100%;
+  padding: 35px 24px;
+  min-height: 170px;
   background: #FFFFFF;
   border-radius: 4px;
-  padding: 24px 24px;
-}
-.ac__home--user {
-  text-align: center;
-  img {
-    display: block;
-    margin: 0 auto;
-    width: 120px;
-    height: 120px;
-    border: 1px solid #E2E2E2;
-    border-radius: 100%;
-  }
-  p {
-    font-size: 14px;
-    font-family: @fontRegular;
-    font-weight: 400;
-    color: #666666;
-    line-height: 20px;
-    margin-top: 10px;
-  }
-}
-.ac__btn {
-  text-align: center;
-  margin-top: 24px;
-  .el-button {
-    margin-right: 10px;
+  li {
+    list-style-type: none;
+    display: inline-block;
+    vertical-align: middle;
+    &.layout__center {
+      width: calc(100% - 328px);
+      &.one--btn {
+        width: calc(100% - 240px);
+      }
+    }
     &:last-child {
-      margin-right: 0;
+      width: 164px;
+      &.one--btn {
+        width: 76px;
+      }
+      text-align: right;
+      margin-left: 48px;
+      vertical-align: top;
+      padding-top: 8px;
+    }
+    .button__share {
+      margin-left: 12px;
     }
   }
-}
-.ac__home--info {
-  border-top: 1px solid #E6E6E6;
-  padding-top: 22px;
-  margin-top: 24px;
-  p {
-    font-family: @fontRegular;
-    font-weight: 400;
-    margin-top: 10px;
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-  .ac__home--title {
-    text-align: center;
-    font-size: 16px;
-    color: #1a1a1a;
-    line-height: 17px;
-  }
-  .ac__home--notice {
-    text-align: left;
-    font-size: 12px;
-    color: #999999;
-    line-height: 17px;
+  h1 {
+    padding: 10px 0 0 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: #1A1A1A;
+    line-height: 28px;
     word-break: break-all;
   }
+  .user__remark {
+    padding: 8px 0 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 22px;
+    position: relative;
+    word-break: break-all;
+    &.open_hide {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
+  }
+  .user__show__btn {
+    height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #3562FA;
+    line-height: 20px;
+    cursor: pointer;
+   /* position: absolute;
+    right: 0;
+    bottom: 0;*/
+  }
 }
-.ac__home__panel--left {
-  width: calc(100% - 272px);
-  min-height: 612px;
+.user__avatar {
+  display: block;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #E2E2E2;
+  border-radius: 100%;
+  margin-right: 16px;
+}
+.user__layout--main {
+  margin-top: 24px;
+  width: 100%;
+  min-height: 710px;
   height: auto;
   background: #FFFFFF;
   position: relative;
