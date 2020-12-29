@@ -244,7 +244,6 @@ export default {
     },
     getDataList(params) {
       let formParams = this.$refs.searchArea.searchParams;
-      console.log("xixiiiiii12311111111111111131321");
       let paramsObj = {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0
@@ -257,6 +256,8 @@ export default {
           this.searchAreaLayout = this.searchArea;
         } else {
           this.searchAreaLayout = this.searchLayout;
+          paramsObj.switch_id = 0;
+          // formParams.switchId = 0;
         }
       }
       if (formParams.end_time && !formParams.start_time) {

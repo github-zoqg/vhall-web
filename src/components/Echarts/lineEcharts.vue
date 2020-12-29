@@ -5,16 +5,19 @@
 </template>
 <script>
 import echarts from 'echarts';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   props: ['lineDataList', 'type'],
   data() {
     return {
       isActive: true,
+      versionType: 0,
       visitDateList: [],
       visitValueList: [],
     };
   },
   mounted() {
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.initLintEcharts();
   },
   watch: {
@@ -51,7 +54,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           show: true,
-          formatter: `{b0}<br />${that.type == 1 ? '并发' : '观看人数'}: {c0}${that.type == 1 ? '方' : ''}`,
+          formatter: `{b0}<br />${that.type == 1 ? that.versionType == 1 ? '流量' : '并发' : '观看人数'}: {c0}${that.type == 1 ? that.versionType == 1 ? 'GB' : '方' : ''}`,
         },
         xAxis: {
           name: '日期',

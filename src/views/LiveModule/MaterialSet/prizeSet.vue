@@ -73,7 +73,7 @@
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" :placeholder="item.placeholder"></el-input>
+                    <el-input v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></el-input>
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <el-switch
