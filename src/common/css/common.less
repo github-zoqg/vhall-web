@@ -451,15 +451,33 @@
   border: 1px solid #CCCCCC;
   padding: 9px 48px;
   color: #666666;
+  &:hover {
+    color: #fff;
+    background: #FB3A32;
+    border: 1px solid #FB3A32;
+  }
+  &:active {
+    color: #ffffff;
+    background: #E2332C;
+    border: 1px solid #E2332C;
+  }
+  &.is-disabled {
+    background: transparent;
+    border: 1px solid #CCCCCC;
+    cursor: not-allowed;
+    color: #666666;
+    &:hover, &:active {
+      background: transparent;
+      border: 1px solid #CCCCCC;
+    }
+  }
 }
 button.el-button.el-button--medium {
   /* 中等按钮 */
-  border: 1px solid #CCCCCC;
   padding: 4px 23px;
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #666666;
   line-height: 26px;
 }
 
@@ -470,23 +488,19 @@ button.el-button.el-button--medium {
 
 button.el-button.el-button--small {
   /*小型按钮*/
-  border: 1px solid #CCCCCC;
   padding: 5px 16px;
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #676767;
   line-height: 20px;
 }
 
 button.el-button.el-button--mini {
   /*迷你按钮 26Height*/
-  border: 1px solid #CCCCCC;
   padding: 2px 8px;
   font-size: 12px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #666666;
   line-height: 20px;
 }
 
@@ -667,7 +681,7 @@ button.el-button.el-button--white-primary {
   overflow: hidden;
 }
 .padding-table-list(){
-  padding: 32px 24px 40px 24px;
+  padding: 24px 24px 40px 24px;
   overflow: hidden;
 }
 .padding-table-list2(){

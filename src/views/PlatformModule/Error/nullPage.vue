@@ -27,7 +27,7 @@ export default {
     },
     text: {
       type: String,
-      default: '暂未设置该内容'
+      default: '贫瘠之地，毛都没有'
     },
     height: {
       type: Number,

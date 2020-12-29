@@ -4,8 +4,8 @@
     <!-- 有消息内容 -->
     <div v-if="msgDao.total > 0">
       <div class="message--title">
-        <el-button size="medium" type="primary" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-        <el-button size="medium" round @click.prevent.stop="executeUseRead">标记为已读</el-button>
+        <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="ids && ids.length === 0">批量删除</el-button>
+        <el-button size="medium" round @click.prevent.stop="executeUseRead" :disabled="ids && ids.length === 0">标记为已读</el-button>
       </div>
       <!-- 表格与分页 -->
       <div class="message-list">
@@ -16,7 +16,9 @@
           :tabelColumnLabel="msgTableColumn"
           :totalNum="msgDao.total"
           :tableRowBtnFun="tableRowBtnFun"
+          width=120
           min-height="auto"
+          scene="msg_list"
           @getTableList="getMsgList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
@@ -25,7 +27,7 @@
       </div>
     </div>
     <!-- 无消息内容 -->
-    <null-page v-else></null-page>
+    <null-page text="贫瘠之地，毛都没有" null-type="search" v-else></null-page>
   </div>
 </template>
 
@@ -138,6 +140,8 @@ export default {
           item.msgStatusStr = ['未读', '已读'][item['msg_status']]; // 消息状态0未读1已读
         });
         this.msgDao = dao;
+        // 通知右上角导航，需要更新未度消息
+        this.$EventBus.$emit('saas_vs_msg_count', true);
       }).catch(e=>{
         console.log(e);
         this.msgDao = {
