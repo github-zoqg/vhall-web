@@ -55,12 +55,12 @@
     },
     methods: {
       sellGoodsInfo(good) {
-        this.$emit('sellGoodsInfo', good);
+        this.$emit('sellGoodsInfo', good.goods_id);
       },
       // 即将发售
       comeSelling(good) {
         window.location.href = good.goods_url;
-      },
+      }
     }
   };
 </script>

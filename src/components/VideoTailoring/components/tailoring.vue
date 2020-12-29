@@ -40,6 +40,13 @@
           >{{ currentPointTime }}</span
         >-->
       </div>
+      <div class="vh-video-tailoring__control fl" ref="vhControlWrap" v-else>
+        <el-slider
+          :show-tooltip="false"
+          ref="controllerRef"
+          disabled
+        ></el-slider>
+      </div>
 
       <div class="vh-video-tailoring__volume-box">
         <span @click="jingYin" class="vh-video-tailoring__icon-voice-warp">
@@ -58,15 +65,19 @@
     <div class="vh-video-tailoring__button-operation-warp clearfix" :class="{'vh-video-tailoring__button-operation-warp-active': vodReady}">
       <div>
         <div class="vh-video-tailoring__operate fl">
-          <span @click="seekBack" class="vh-btn vh-video-tailoring__seek-back"></span>
+          <span @click="seekBack" class="vh-btn vh-video-tailoring__seek-back">
+            <icon icon-class="saasicon_shangyimiao"></icon>
+          </span>
           <span
             @click="videoPlayBtn"
             class="vh-btn vh-video-tailoring__play"
             :class="{ 'is-pause': statePaly }"
           >
-            <icon :icon-class="statePaly ? 'saasicon_zanting' : 'saasicon_bofang'"></icon>
+            <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
           </span>
-          <span @click="seekForward" class="vh-btn vh-video-tailoring__seek-forward"></span>
+          <span @click="seekForward" class="vh-btn vh-video-tailoring__seek-forward">
+            <icon icon-class="saasicon_xiayimiao"></icon>
+          </span>
         </div>
         <span class="vh-video-tailoring__time fr">
           <span class="vh-video-tailoring__hover-time">{{ showTime }}</span>
@@ -122,7 +133,7 @@
         :class="{'vh-video-tailoring__btn-disable': !vodReady}"
       >{{ t('导出') }}</el-button>
     </div>
-    <div class="vh-video-tailoring__operation-warp" v-show="vodReady">
+    <div class="vh-video-tailoring__operation-warp">
       <div
         class="vh-video-tailoring__cursor-operation-warp"
         ref="rulersWarp"
@@ -164,6 +175,7 @@
             :rulerLength="rulerLength"
             :eventPointList="eventPointList"
             @previewChange="previewChange"
+            :vodReady="vodReady"
           ></video-duration>
         </div>
       </div>
@@ -191,13 +203,13 @@
         </div>-->
       </div>
     </div>
-    <div
+    <!-- <div
       class="vh-video-tailoring__operation-empty-warp"
       v-show="!vodReady"
     >{{ t('添加媒体资源后，开始创建您的视频！')}}
-    <!-- {{t('立即')}}
-      <el-link type="primary" @click="addVideo">{{t('添加回放')}}</el-link> -->
-    </div>
+    {{t('立即')}}
+      <el-link type="primary" @click="addVideo">{{t('添加回放')}}</el-link>
+    </div> -->
     <el-dialog
       class="vh-video-tailoring__popbody"
       :visible.sync="addEventType"
@@ -912,9 +924,9 @@ export default {
   // padding: 0 20px;
   position: relative;
   .vh-video-tailoring__control-warp {
-    width: 1306px;
-    height: 28px;
-    background-color: #000;
+    width: auto;
+    height: 37px;
+    background-color: #222222;
     padding: 0px 10px 0px 20px;
     .vh-video-tailoring__control {
       width: calc(100% - 60px);
@@ -949,12 +961,12 @@ export default {
       }
 
       .el-slider__button {
-        background: url(../image/slider-button@2x.png);
-        width: 12px;
-        height: 12px;
+        background: url(../image/slider-button-new.png);
+        width: 16px;
+        height: 16px;
         border-radius: 0;
         background-repeat: no-repeat;
-        background-size: 12px 12px;
+        background-size: 16px 16px;
         border: 0;
         cursor: default !important;
       }
@@ -1009,11 +1021,15 @@ export default {
         }
         .el-slider{
           width: 40px;
-          background: rgba(0,0,0,0.8);
+          background: rgba(0,0,0,0.81);
           border-radius: 4px;
           padding: 10px 0;
           .el-slider__runway{
             margin: 0 18px;
+            background: #333;
+            .el-slider__bar {
+              background-color: #E18B2E;
+            }
           }
         }
         .el-slider.is-vertical .el-slider__runway,
@@ -1074,7 +1090,11 @@ export default {
           color: #fff;
         }
         &.is-disabled {
-          cursor: pointer;
+          cursor: default;
+          // opacity: 1;
+          // &:hover {
+            // color: #80818b;
+          // }
         }
         .vh-iconfont {
           font-size: 22px;
@@ -1148,30 +1168,46 @@ export default {
         // }
       }
     }
+    .vh-video-tailoring__time{
+      color: #666;
+      .vh-video-tailoring__hover-time {
+        color: #fff;
+      }
+    }
+    .vh-video-select__button .el-button{
+      color: #999;
+      font-size: 18px;
+      &:hover{
+        color: #fff;
+      }
+    }
     .vh-btn {
       display: inline-block;
       cursor: pointer;
       background-repeat: no-repeat;
       vertical-align: middle;
       &.vh-video-tailoring__seek-back {
-        width: 16px;
-        height: 13px;
+        width: 18px;
+        height: 21px;
+        line-height: 21px;
         background-size: 16px 13px;
         margin-left: 0px;
-        // margin-left: -148px;
-        background-image: url('../image/seek-back@2x.png');
-        &:hover {
-          background-image: url('../image/seek-back-hover@2x.png');
+        i {
+          color: #999;
+          font-size: 18px;
+          &:hover {
+            color: #fff;
+          }
         }
       }
       &.vh-video-tailoring__play {
         width: 20px;
-        height: 22px;
+        height: 21px;
         background-size: 20px 22px;
         margin: 0 26px;
-        line-height: 1;
+        line-height: 22px;
         i {
-          color: #D8D8D8;
+          color: #999;
           font-size: 22px;
           &:hover {
             color: #fff;
@@ -1179,58 +1215,67 @@ export default {
         }
       }
       &.vh-video-tailoring__seek-forward {
-        width: 16px;
-        height: 13px;
+        width: 18px;
+        height: 21px;
+        line-height: 21px;
         background-size: 16px 13px;
-        background-image: url('../image/seek-forward@2x.png');
-        &:hover {
-          background-image: url('../image/seek-forward-hover@2x.png');
+        i {
+          color: #999;
+          font-size: 18px;
+          &:hover {
+            color: #fff;
+          }
         }
       }
     }
-    .vh-video-tailoring__btn-disable{
-      color: #888888 !important;
-      &:hover{
-        color: #888888 !important;
-        background:#444444 !important;
-      }
-    }
     .vh-video-tailoring__save-btn{
-      width: 80px;
-      height: 32px;
-      line-height: 32px;
-      background:#444444;
+      width: 76px;
+      height: 36px;
+      line-height: 36px;
+      background:#FB3A32;
       border: none;
-      border-radius:16px;
+      border-radius:18px;
       padding: 0;
       text-align: center;
       color: #FAFAFA;
       position: absolute;
       right: 114px;
-      &:hover{
-        color: #FAFAFA;
-        background-color: #1890FF;
+      // &:hover{
+      //   color: #FAFAFA;
+      //   background-color: #1890FF;
+      // }
+      &.vh-video-tailoring__btn-disable{
+        color: #ffffff !important;
+        background:#F09D99 !important;
+        cursor: default;
       }
     }
     .vh-video-tailoring__export-btn{
-      width: 80px;
-      height: 32px;
-      line-height: 32px;
-      border: none;
-      background:#444444;
-      border-radius:16px;
+      width: 76px;
+      height: 36px;
+      line-height: 36px;
+      background:#000000;
+      border-radius:18px;
       padding: 0;
       text-align: center;
-      color: #FAFAFA;
+      color: #999999;
       position: absolute;
       right: 24px;
-      &:hover{
-        color: #FAFAFA;
-        background-color: #1890FF;
+      border: 1px solid #666666;
+      // &:hover{
+      //   color: #999999;
+      //   background-color: #1890FF;
+      // }
+      &.vh-video-tailoring__btn-disable{
+        cursor: default;
       }
     }
     .vh-video-tailoring__time {
-      color: #888888
+      color: #666;
+      line-height: 76px;
+      .vh-video-tailoring__hover-time {
+        color: #fff;
+      }
     }
     .vh-video-tailoring__operate {
       height:72px;
@@ -1240,12 +1285,16 @@ export default {
     }
     &.vh-video-tailoring__button-operation-warp-active{
       .vh-video-tailoring__time{
-        color: #ffffff;
+        color: #666;
+        .vh-video-tailoring__hover-time {
+          color: #fff;
+        }
       }
       .vh-video-select__button .el-button{
-        color: #ffffff;
+        color: #999;
+        font-size: 18px;
         &:hover{
-          color: #1E90FF;
+          color: #fff;
         }
       }
     }
@@ -1256,10 +1305,11 @@ export default {
   }
   .vh-video-tailoring__operation-warp {
     width: 100%;
-    padding-top: 15px;
+    padding-top: 20px;
+    margin-top: 15px;
     padding-bottom: 8px;
     overflow: hidden;
-    background: #17171e;
+    background: #000;
     .vh-title {
       text-align: center;
       font-size: 18px;
@@ -1267,10 +1317,16 @@ export default {
     }
     .vh-video-tailoring__cursor-operation-warp {
       position: relative;
-      height: 90px;
+      height: 120px;
       // background-color: #b3b3b3;
       .vh-video-tailoring__rulers-warp {
         height: 100%;
+      }
+    }
+    .el-slider__runway {
+      background: #333;
+      .el-slider__bar {
+        background-color: #666;
       }
     }
   }

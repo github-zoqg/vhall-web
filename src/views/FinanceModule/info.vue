@@ -10,8 +10,11 @@
         <el-card class="serach-line">
           <span>用量统计</span>
         <el-tooltip effect="dark" placement="right-start">
-          <div slot="content">
-            1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
+          <div slot="content" v-if="versionType">
+           数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新
+          </div>
+          <div slot="content" v-else>
+           1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
@@ -29,8 +32,11 @@
       <el-card class="serach-line">
         <span>消费账单</span>
         <el-tooltip effect="dark" placement="right-start">
-          <div slot="content">
-            1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据 <br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
+          <div slot="content" v-if="versionType">
+           数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新
+          </div>
+          <div slot="content" v-else>
+           1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
@@ -58,25 +64,53 @@
       <div class="content-grid" v-else>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计活动（个）</p>
+            <p>累计活动（个）
+            <el-tooltip effect="dark" placement="right-start">
+              <div slot="content">
+                筛选条件内的活动总数，包含直播+点播活动
+              </div>
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+            </p>
             <h1>{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计使用流量（GB）</p>
+            <p>累计使用流量（GB）
+              <el-tooltip effect="dark" placement="right-start">
+              <div slot="content">
+                筛选条件内的直播使用流量+回放使用流量的总和
+              </div>
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+            </p>
             <h1>{{ trendData.total_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>直播使用流量（GB）</p>
+            <p>直播使用流量（GB）
+              <el-tooltip effect="dark" placement="right-start">
+                <div slot="content">
+                  筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </p>
             <h1>{{ trendData.live_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>回放使用流量（GB）</p>
+            <p>回放使用流量（GB）
+              <el-tooltip effect="dark" placement="right-start">
+                <div slot="content">
+                  筛选条件内的回放使用流量汇总，包含回放、点播、下载回放视频到本地消耗的总流量
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
+            </p>
             <h1>{{ trendData.vod_flow || 0 }}</h1>
           </div>
         </div>
@@ -423,6 +457,9 @@ export default {
           font-size: 14px;
           color: #999;
           line-height: 20px;
+          i{
+            color:#1A1A1A;
+          }
         }
       }
     }

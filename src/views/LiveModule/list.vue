@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button round @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
+        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick>创建点播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -64,7 +64,8 @@
                 </div>
                 <p class="liveOpera">
                   <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
-                    <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link>
+                    <i class="el-icon-video-camera" @click.prevent.stop="goLivePlay(item)"></i>
+                    <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top">
                   <i class="el-icon-s-promotion" @click="$router.push({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`})"></i>
@@ -220,6 +221,14 @@ export default {
         this.getLiveList();
       });
     },
+    goLivePlay(item) {
+      if (item.webinar_type != 1) {
+        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1`});
+      } else {
+        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1`});
+      }
+
+    },
     // 创建活动
     createLiveAction(index){
       let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
@@ -254,21 +263,21 @@ export default {
   .liveListBox{
     user-select: none;
     // padding: 0px 60px;
-    .el-button{
-      color:#FB3A32;
-      border-color:#FB3A32;
-      &:hover{
-        background: #fc615b;
-      }
-    }
-    .el-button--primary{
-      background:#FB3A32;
-      border-color:#FB3A32;
-      color: #fff;
-      &:hover{
-        background: #fc615b;
-      }
-    }
+    // .el-button{
+    //   color:#FB3A32;
+    //   border-color:#FB3A32;
+    //   &:hover{
+    //     background: #fc615b;
+    //   }
+    // }
+    // .el-button--primary{
+    //   background:#FB3A32;
+    //   border-color:#FB3A32;
+    //   color: #fff;
+    //   &:hover{
+    //     background: #fc615b;
+    //   }
+    // }
     /deep/.el-button{
       padding: 4px 24px;
     }
@@ -449,15 +458,15 @@ export default {
       background-position: 0% 50%;
     }
   }
-  .mask{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .8) 100%);
-    z-index: 1;
-  }
+  // .mask{
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: 100%;
+  //   height: 100%;
+  //   background: linear-gradient(0deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .8) 100%);
+  //   z-index: 1;
+  // }
   .liveListBox {
     margin: auto;
     width: 1020px;

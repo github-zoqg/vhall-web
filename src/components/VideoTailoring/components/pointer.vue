@@ -224,20 +224,21 @@ export default {
 .vh-video-tailoring__pointer {
   position: absolute;
   width: 12px;
-  height: 65px;
+  height: 109px;
   top: 11px;
   background-size: 12px 109px;
-  background-image: url('../image/point-warp@2x.png');
+  background-image: url('../image/point-warp@2x.e10898e.png');
   z-index: 3;
   &:hover {
     cursor: grabbing;
   }
   .vh-video-tailoring__mouse-time {
+    width: 51px;
+    height: 14px;
     position: absolute;
-    top: -25px;
-    padding: 0px 5px;
-    background: #1e89e4;
-    border-radius: 50px;
+    top: 24px;
+    left: 7px!important;
+    background: #666666;
     font-size: 12px;
     color: #fff;
   }

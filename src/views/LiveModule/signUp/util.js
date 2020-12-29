@@ -292,7 +292,8 @@ export function getfiledJson({name, type}){
             {
               "key": "content",
               "props": {
-                class: ['radioInput']
+                class: ['radioInput'],
+                placeholder: '我们根据《隐私声明》保护您填写的所有信息'
               },
               "value":"我们根据《隐私声明》保护您填写的所有信息"
             },

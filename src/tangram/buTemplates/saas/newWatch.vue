@@ -148,14 +148,14 @@
             >
           </div>
           <div class="player-active" v-show="!isEmbed">
-            <div class="table-praise" v-if="userModules.like.show == 0">
-              <praise :roomId="roomId" :isLogin="isLogin" @login="NoLogin"></praise>
+            <div class="table-praise" v-if="userModules.like.show != 1">
+              <praise :roomId="roomId" :isLogin="isLogin"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show == 0 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
+            <div class="table-reward" v-if="userModules.reward.show != 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <!-- <reward :roomId="roomId"></reward> -->
               <img @click="showGiveMoneyPannel" src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
             </div>
-            <div class="table-gift" v-if="userModules.gift.show == 0 && roomInfo.role_name == 2">
+            <div class="table-gift" v-if="userModules.gift.show != 1 && roomInfo.role_name == 2">
               <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
@@ -277,6 +277,7 @@
             :isEmbed="isEmbed"
             :selfName='userInfo.nick_name'
             :roleName='false'
+            @login="NoLogin"
             ref="qa"
           ></qa>
         </div>
@@ -373,8 +374,9 @@
     <popup
       :visible="showGiveMoney"
       :onClose="closeGiveMoney"
-      :title="'支付方式'"
+      :title="'打赏'"
       :width="'500px'"
+      class="pay-award"
     >
       <div class="pay-content">
         <div>
@@ -389,11 +391,17 @@
           <el-input placeholder="很精彩 来赞一个" v-model="giveMoneyDes"></el-input>
         </div>
         <div class="pay-method">
-          <el-radio v-model="giveMoneyPayWay" label="1">微信支付</el-radio>
-          <el-radio v-model="giveMoneyPayWay" label="2">支付宝支付</el-radio>
+          <el-radio v-model="giveMoneyPayWay" label="2">
+            <img :src="bizInfo.domains.static + '/static/images/watch/alipay.png'"/>
+            <span class="pay-name">支付宝支付</span>
+          </el-radio>
+          <el-radio v-model="giveMoneyPayWay" label="1">
+            <img :src="bizInfo.domains.static + '/static/images/watch/weixin.png'"/>
+            <span class="pay-name">微信支付</span>
+          </el-radio>
         </div>
+        <el-button @click.stop="handleGiveMoney" type="primary" class="pay-btn">确定</el-button>
       </div>
-      <el-button @click.stop="handleGiveMoney" type="primary">确定</el-button>
     </popup>
     <popup
       :visible="showGiveMoneyQr"
@@ -621,6 +629,7 @@ export default {
 
   data () {
     return {
+      rebroadcastChannelId: '',
       selectGiftId: '',
       showGiftSend: false,
       isHavePacket: false,
@@ -727,7 +736,7 @@ export default {
       payQrCode: '',
       showGiveMoney: false,
       giveMoney: '',
-      giveMoneyIndex: 1,
+      giveMoneyIndex: 3,
       giveMoneyPayWay: '1',
       giveMoneyDes: '',
       giveMoneyUrl: '',
@@ -788,9 +797,6 @@ export default {
     if (chat) {
       this.chatTitle = chat.name;
     }
-    this.$nextTick(() => {
-      this.getList()
-    })
     this.eventListener()
   },
   methods: {
@@ -802,6 +808,7 @@ export default {
           this.$message.success('支付成功')
         }
         if (msg.data.type == "reward_pay_ok") {
+        console.log(1002, msg)
           this.closeGiveMoneyQr()
           this.$message.success('支付成功')
         }
@@ -825,7 +832,17 @@ export default {
       this.showGiveMoneyQr = false
       this.giveMoneyUrl = ''
     },
+    checkoutGiveMoney (val) {
+      let isNum=/^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/
+      if (isNum.test(Number(val))) {
+        return true
+      } else {
+        this.$message.error('金额格式错误')
+        return false
+      }
+    },
     handleGiveMoney () {
+      if (!this.checkoutGiveMoney(Number(this.giveMoney).toFixed(2))) return
       this.$fetch('seadAwardMsg', {
         room_id: this.roomInfo.room_id,
         reward_amount: Number(this.giveMoney).toFixed(2),
@@ -854,6 +871,7 @@ export default {
     },
     openGiftPannel () {
       if (this.isLogin) {
+        this.getList()
         this.showGiftSend = true
       } else {
         this.NoLogin()
@@ -878,7 +896,7 @@ export default {
         room_id: this.roomInfo.room_id
       }).then(res => {
         let a = QRcode.toDataURL(
-          res.data.data.pay_data,
+          res.data.data.pay_data.qr_code,
           (err, url) => {
             this.showPayQrCode = true
             this.payQrCode = url
@@ -978,7 +996,7 @@ export default {
       if (this.bizInfo.webinar.type == 1) {
         await this.getRoomStatus()
       } else {
-        this.rebroadcastChannelId = this.bizInfo.rebroadcast
+        this.rebroadcastChannelId = this.bizInfo.rebroadcast.channel_id
       }
       let inavInfo = {
         account_id: this.bizInfo.host.id,
@@ -1001,7 +1019,8 @@ export default {
         third_party_user_id: this.bizInfo.user.third_party_user_id,
         parentId: this.userInfo ?  this.userInfo.parent_id : '',
         userId: this.userInfo ?  this.userInfo.user_id : '',
-        nickName: this.bizInfo.user.nick_name
+        nickName: this.bizInfo.user.nick_name,
+        join_id: this.bizInfo.user.saas_join_id
       }
       console.log(10101010101, inavInfo)
       this.roomInfo = inavInfo
@@ -1069,6 +1088,7 @@ export default {
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
         pv: this.bizInfo.webinar.pv, // pv
+        uv: this.bizInfo.webinar.uv,
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
@@ -1118,13 +1138,13 @@ export default {
                 window.location.href = this.vssInfo.kick_out_url;
               }
             }
-            if (this.isPlayback) {
-              if (msg.context.role_name != 1) {
-                this.$emit('onlineJoin', msg);
-              }
-            } else {
-              this.$emit('onlineJoin', msg);
-            }
+            // if (this.isPlayback) {
+            //   if (msg.context.role_name != 1) {
+            //     this.$emit('onlineJoin', msg);
+            //   }
+            // } else {
+            //   this.$emit('onlineJoin', msg);
+            // }
           });
         },
         err => {
@@ -1975,41 +1995,115 @@ export default {
     display: inline-block;
   }
 }
+.pay-award {
+  /deep/ .vhall-popup-dialog{
+    .header {
+      background: #f4f4f4!important;
+    }
+  }
+}
 .pay-content{
   width: 100%;
-  height: 300px;
+  height: 360px;
   background: #fff;
   box-sizing: border-box;
-  >div{
-    width: 100%;
-    padding-top: 40px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-  span, .give-money-input{
-    display: inline-block;
+  padding: 30px 70px 20px;
+  text-align: center;
+  .pay-btn{
     width: 200px;
     height: 40px;
-    background: #F5F5F5;
-    border-radius: 6px;
-    border: 1px solid #aaa;
     line-height: 40px;
-    text-align: center;
-    font-size: 16px;
-    color: #555;
-    margin: 0px 10px;
+    margin: 30px auto 0px auto;
+    padding: 0px;
   }
+  >div>span, >div>.give-money-input{
+    display: inline-block;
+    width: 150px;
+    margin: 0px 15px 10px;
+    border-radius: 3px;
+    line-height: 40px;
+    height: 40px;
+    display: inline-block;
+    text-align: center;
+    background: #e9e9e9;
+    color: #a9a9a9;
+    cursor: pointer;
+  }
+  >div>.give-money-input{
+    background: #fff!important;
+  }
+  >div>.active{
+    background: #f33;
+    color: #fff;
+    border-color: #f33;
+    &:before{
+      content: '';
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      background: url('./img/yes.png') no-repeat;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+  }
+  // span, .give-money-input{
+  //   display: inline-block;
+  //   width: 200px;
+  //   height: 40px;
+  //   background: #F5F5F5;
+  //   border-radius: 6px;
+  //   border: 1px solid #aaa;
+  //   line-height: 40px;
+  //   text-align: center;
+  //   font-size: 16px;
+  //   color: #555;
+  //   margin: 0px 10px;
+  // }
   .give-money-input{
     outline: none;
     border:none;
   }
   .describe{
-    width: 300px;
-    margin: 0px auto;
+    width: 150px;
+    margin-top: 20px;
+    padding: 0px 15px;
+    width: 100%;
   }
   .pay-method{
-    padding-top: 20px;
+    margin-top: 25px;
+    padding: 0px 15px;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /deep/ .el-radio{
+      width: 50%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 0px!important;
+      padding: 0px!important;
+      img{
+        margin-right: 10px;
+      }
+      .pay-name{
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        vertical-align: top;
+      }
+    } 
+    // span{
+    //   display: inline-block;
+    //   height: 40px;
+    // }
+    // img{
+    //   display: inline-block;
+    //   width: 40px;
+    //   height: 40px;
+    //   margin-top: 15px;
+    // }
   }
 }
 </style>

@@ -191,6 +191,16 @@ export default {
     background: #F7F7F7;
     border-radius: 4px;
     margin: 0 14px 14px 0;
+    position: relative;
+
+    i.saasicon-choose-01{
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: #FB3A32;
+      font-size: 20px;
+      z-index: 1;
+    }
     &.checkedActive{
       border: 1px solid #FB3A32;
     }

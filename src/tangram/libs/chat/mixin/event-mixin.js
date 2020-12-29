@@ -185,13 +185,19 @@ const eventMixin = {
           // 打赏成功
           if (msg.data.type == 'reward_pay_ok') {
             let data = new Msg({
+              avatar: getAvatar(msg.data.rewarder_avatar),
               nickName: msg.data.rewarder_nickname,
+              type: 'text',
               content: {
                 text_content: msg.data.reward_describe ? msg.data.reward_describe : '很精彩，赞一个！'
               },
-              type: msg.data.type
+              sendId: this.userId,
+              roleName: this.roleName,
             });
+            console.log(999, msg)
             this.chatList.push(data);
+            console.log(1000, this.chatList)
+
           }
           // 礼物
           if (msg.data.type == "gift_send_success") {
@@ -210,6 +216,7 @@ const eventMixin = {
           // 开启问答
           if (msg.type == 'question_answer_open') {
             EventBus.$emit('open_qa');
+            console.log(110, msg)
             let data = new Msg({
               nickName: '问答',
               avatar: '//cnstatic01.e.vhall.com/static/images/watch/system.png',

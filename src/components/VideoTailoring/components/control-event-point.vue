@@ -110,14 +110,15 @@ export default {
 <style lang="less">
 .vh-video-tailoring__control-event-point {
   position: absolute;
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  top: 10px;
-  background-color: #fff;
+  top: 11px;
+  background-color: #FB3A32;
   z-index: 3;
   .vh-video-tailoring__event-content {
-    width: 220px;
+    width: 178px;
+    // height: 86px;
     text-align: left;
     word-break: break-all;
     position: absolute;
@@ -127,15 +128,15 @@ export default {
     color: #fff;
     .vh-video-tailoring__content {
       font-size: 14px;
-      background: #171717;
-      border: 1px solid #333333;
-      box-shadow: 0px 0px 8px 0px rgba(#1C1C26, 0.3);
+      background: #fff;
+      // border: 1px solid #333333;
+      // box-shadow: 0px 0px 8px 0px rgba(#1C1C26, 0.3);
       border-radius: 4px;
-      padding: 10px 20px;
+      padding: 12px 12px;
       line-height: 20px;
-      color: #FAFAFA;
+      color: #000;
       .el-button{
-        color: #888888;
+        color: #666;
         &:hover{
           color: #409EFF;
         }
@@ -153,9 +154,9 @@ export default {
     }
   }
   &:hover {
-    width: 12px;
-    height: 12px;
-    top: 8px;
+    width: 8px;
+    height: 8px;
+    top: 10px;
     cursor: point;
     .vh-video-tailoring__event-content {
       display: block;

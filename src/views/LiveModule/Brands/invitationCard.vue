@@ -189,7 +189,7 @@
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary" :disabled="!invitation" @click="onSubmit">保存</el-button>
+        <el-button type="primary" class="length152" :disabled="!invitation" @click="onSubmit">保存</el-button>
       </div>
     </div>
     <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>

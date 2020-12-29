@@ -2,26 +2,26 @@
   <div :class="['chooseWay', {'no-login': Number(arr[1]) !== 1}]">
     <OldHeader :is-show-login=false class="old-header" v-if="Number(arr[1]) !== 1"></OldHeader>
     <div class="choose__way__main">
-      <pageTitle title="选择发起方式"></pageTitle>
+      <!-- <pageTitle title="选择发起方式"></pageTitle> -->
       <div class="choose__way__ctx">
+        <h1 class="choose-method">选择发起方式</h1>
         <div class="select-way">
-          <div :class="chooseType === 'browser' ? 'choose-a-way active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
-            <p class="choose-p"></p>
+          <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
+            <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">网页发起直播</p>
-            <p>一键发起直播</p>
-            <p>无需安装任何直播插件</p>
+            <p>一键发起直播,无需安装任何直播插件</p>
           </div>
           <!-- <div class="interact_select choose-a-way">
+
             <p class="choose-p"></p>
             <p class="f-20">网页发起互动直播</p>
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div :class="chooseType === 'client' ? 'choose-a-way client active' : 'choose-a-way client'" @click.prevent.stop="changeChoose('client')">
-            <p class="choose-p"></p>
-            <p class="f-20"><label class="beta-label" style="font-weight: 400">客户端发起</label></p>
-            <p>功能更为强大，支持多种视频采集卡</p>
-            <p>拥有共享桌面、插入视频等功能</p>
+          <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
+            <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
+            <p class="f-20">客户端发起</p>
+            <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
           </div>
           <!-- <div class="choose-a-way other vip">
             <p class="choose-p"></p>
@@ -31,7 +31,7 @@
           </div> -->
         </div>
         <div class="choose-btn">
-          <el-button type="primary" round @click="goLive">发起直播</el-button>
+          <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>发起直播</el-button>
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
         <div class="v-download" v-if="chooseType === 'client'">
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import PageTitle from '@/components/PageTitle';
+// import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
 import { browserDetect } from '@/utils/utils';
@@ -51,7 +51,7 @@ import Env from '@/api/env';
 export default {
   name: 'chooseWay.vue',
   components: {
-    PageTitle,
+    // PageTitle,
     OldHeader
   },
   data() {
@@ -138,61 +138,78 @@ export default {
 .chooseWay {
   &.no-login {
     .choose__way__main {
-      width: 1300px;
-      margin: 0 auto;
+      width: 900px;
+      margin: 122px auto;
     }
     .choose__way__ctx {
       background: #ffffff;
-      padding: 40px 0;
     }
   }
+}
+.choose__way__main {
+  width: 900px;
+  margin: 122px auto;
 }
 .old-header {
   margin-bottom: 40px;
 }
-.choose__way__ctx {
-}
+.choose-method{
+    text-align: left;
+    font-weight: bold;
+    font-size: 22px;
+    color: #1A1A1A;
+    margin-bottom: 40px;
+  }
 .select-way {
+  display: flex;
   text-align: center;
+
 }
 .choose-a-way {
-  display: inline-block;
-  margin: 0 34px;
+  // display: inline-block;
+  margin: 0 24px 0 0;
+  width: 400px;
+  height: 220px;
+  background: #fff;
+  border: 1px solid transparent;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
   p {
-    margin-bottom: 10px;
     text-align: center;
     color: #999;
     &.f-20 {
-      margin-top: 20px;
-      color: #333;
-      margin-bottom: 20px;
+      padding-top: 13px;
+      color: #1A1A1A;
+      text-align: center;
+      padding-bottom: 10px;
+    }
+  }
+  .choose-img{
+    width: 56px;
+    height: 46px;
+    margin: auto;
+    margin-top: 55px;
+    // text-align: center;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
     }
   }
   .choose-p {
-    width: 260px;
-    height: 177px;
-    border-radius: 2px;
-    background: #fff url(../../common/images/choose-a-way/webpublish_active.png) no-repeat center center;
-    background-size: 200px;
-    position: relative;
+    // border-radius: 2px;
+    // background: #fff;
+    // background-size: 200px;
+    // position: relative;
+  }
+  &:hover{
+    border: 1px solid #FB3A32;
   }
   &.active {
-    .choose-p {
-      border: 2px solid @theme--click;
-      background-position: center;
-      &:before {
-        content: '';
-        display: inline-block;
-        width: 26px;
-        height: 25px;
-        position: absolute;
-        bottom: -1px;
-        right: -2px;
-        background-image: url(../../common/images/choose-a-way/default_active2.png);
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-      }
-    }
+    border: 1px solid #FB3A32;
+    box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
   }
 }
 .choose-btn {

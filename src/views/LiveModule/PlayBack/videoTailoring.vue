@@ -36,7 +36,7 @@
       custom-class="save-title"
       center
       width="480px">
-      <el-input placeholder="请输入标题" maxlength="100" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
+      <el-input placeholder="请输入标题" maxlength="100" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="text"></el-input>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmTitle" :disabled="editLoading" round size="medium">确 定</el-button>
         <el-button @click="titleDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
@@ -69,8 +69,12 @@ export default {
     };
   },
   created() {
-    if (this.$route.query.recordId) {
+    if (this.$route.query.recordId && this.$route.query.isRecordVideo != 1) {
       this.getPlayBackInfo();
+    } else if(this.$route.query.switch_id) {
+      this.dataReady = true;
+      this.getInitMsgInfo();
+      this.getTime();
     } else {
       this.dataReady = true;
       this.getInitMsgInfo();
@@ -78,15 +82,26 @@ export default {
   },
   beforeDestroy() {
     if (this.$PLAYER) {
-      this.$PLAYER.destroy()
-      this.$PLAYER = null
+      this.$PLAYER.destroy();
+      this.$PLAYER = null;
     }
     if (this.chatSDK) {
-      this.chatSDK.destroy()
-      this.chatSDK = null
+      this.chatSDK.destroy();
+      this.chatSDK = null;
     }
   },
   methods:{
+    // 传 sid 的时候，需要查询回放的起止时间，回显
+    getTime() {
+      this.$fetch('getWebinarSwitchList', {
+        webinar_id: this.webinar_id,
+        switch_id: this.$route.query.switch_id
+      }).then(res => {
+        console.log(res.data);
+        this.timeVal = [res.data.switch_list[0].start_time, res.data.switch_list[0].end_time]
+        this.createRecord()
+      })
+    },
     // 初始化消息
     getInitMsgInfo() {
       this.$fetch('msgInitConsole').then(res => {
@@ -195,9 +210,14 @@ export default {
           type: 2
         }).then(res => {
           if (res.code == 200) {
-            this.$message.success('视频生成中,请稍后...')
+            if (res.data.status == 0) {
+              // 点击创建，如果 status===0 视频未生成，等消息
+              this.$message.success('视频生成中,请稍侯...')
+            } else if (res.data.status == 1) {
+              // 点击创建，如果 status===1 视频已生成，直接初始化剪辑台
+              this.getPlayBackInfo(res.data.pass_record_id, true, res.data.pass_record_id)
+            }
             this.editLoading = false;
-            // this.getPlayBackInfo('', true);
           } else {
             this.$message.warning('生成失败');
             this.editLoading = false;
@@ -217,7 +237,6 @@ export default {
         opts.paas_record_id = recordId
       }
       this.$fetch('playBackPreview', opts).then(res => {
-        console.log(res)
         const data = res.data
         this.roomInfo = {
           app_id: data.paasAppId, // 应用 ID
@@ -274,32 +293,27 @@ export default {
 
 <style lang="less" scoped>
   .tailorWrap{
-    /deep/ .vh-video-tailoring__warp .vh-video-tailoring__section .vh-video-tailoring__media-wrap{
-      width: 100%;
-      height: calc( 100% - 50px );
-    }
-    /deep/ .vh-video-tailoring__warp .vh-video-tailoring__section .vh-video-tailoring__media-wrap .vh-video-tailoring__doc-warp, /deep/ .vh-video-tailoring__warp .vh-video-tailoring__section .vh-video-tailoring__media-wrap .vh-video-tailoring__play{
-      width: 49%;
-      height: 100%;
+    height: 100%;
+    overflow: hidden;
+    /deep/ .save-title{
+      margin-top: 18%!important;
+      .el-dialog__title {
+        font-size: 18px;
+      }
+      .el-dialog__body{
+        .el-input__inner{
+          padding-right: 66px;
+        }
+      }
     }
     .vh-video-tailoring__warp{
       width: 100%;
-      height: calc( 100vh - 140px);
+      height: calc( 100vh - 143px);
       margin-top: 0px;
       margin-bottom: 0;
       border-radius: 0px;
       &.vh-video-tailoring__editwarp{
         height: calc( 100vh - 60px);
-      }
-      /deep/ .vh-video-tailoring__section{
-        height: calc( 100% - 260px );
-        background: #17171e;
-      }
-      /deep/ .vh-video-tailoring__effective-zone .vh-video-tailoring__content{
-        background-color: #FB3A32;
-      }
-      /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__content{
-        border: 1px solid #FB3A32;
       }
     }
     header{
@@ -309,7 +323,7 @@ export default {
       text-align: center;
       // width: 1366px;
       margin: 0 auto;
-      padding: 20px 25px;
+      padding: 22px 25px;
       i{
         float: left;
         cursor: pointer;
@@ -320,11 +334,11 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #17171e;
+      background: #222222;
       border-bottom: 1px #000 solid;
       .time-label {
         color: #666666;
-        font-size: 16px;
+        font-size: 14px;
         display: inline-block;
         padding-right: 15px;
       }
@@ -334,30 +348,30 @@ export default {
       .el-button {
         margin-left: 10px;
         padding: 7px 16px;
-        height: 50px;
+        height: 36px;
         border-radius: 25px;
         border-color: #666666;
         border-width: 2px;
         background: #17171e;
-        width: 90px;
-        font-size: 16px;
+        width: 72px;
+        font-size: 14px;
       }
       /deep/ .el-range-editor {
         border-radius: 25px;
-        height: 50px;
+        height: 36px;
         background: #17171e;
         border-color: #666666;
         border-width: 2px;
-        width: 450px;
+        width: 382px;
         .el-range-separator {
           color: #666666;
-          line-height: 40px;
-          font-size: 16px;
+          line-height: 26px;
+          font-size: 14px;
         }
         .el-range-input {
           background: #17171e;
           color: #666666;
-          font-size: 16px;
+          line-height: 26px;
           &::-webkit-input-placeholder {
             /* WebKit browsers */
             color: #666666;
@@ -376,62 +390,30 @@ export default {
           }
         }
         .el-range__icon {
-          font-size: 20px;
-          line-height: 40px;
+          font-size: 14px;
+          line-height: 26px;
           color: #666666;
         }
         .el-range__close-icon {
-          font-size: 20px;
-          line-height: 40px;
+          font-size: 14px;
+          line-height: 26px;
           color: #666666;
         }
       }
     }
-    .save-title{
-      margin-top: 34vh;
-    }
     /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp {
       background-color: #000;
-    }
-    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp.vh-video-tailoring__button-operation-warp-active .vh-video-select__button .el-button:hover{
-      color: #FB3A32;
-    }
-    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__button-operation-warp .fr.el-button--default:hover{
-      background: #FB3A32;
-    }
-    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__control-warp {
-      background-color: #17171e;
-    }
-    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__control-warp {
-      width: auto;
-    }
-    /deep/ .vh-video-tailoring__tailoring-warp .vh-video-tailoring__operation-warp {
-      background: #000;
     }
     /deep/ .vh-video-tailoring__ruler ul li .vh-video-tailoring__scale-tip {
       background-color: #000;
     }
-    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__content {
-      height: 60px;
-    }
-    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__content .vh-video-tailoring__content-center {
-      height: 52px;
-    }
-    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__right-border .vh-video-tailoring__pull-right-warp {
-      height: 60px;
-      background-size: 100% 100%;
-    }
-    /deep/ .vh-video-tailoring__cutting-warp .vh-video-tailoring__left-border .vh-video-tailoring__pull-left-warp {
-      height: 60px;
-      background-size: 100% 100%;
-    }
     /deep/ .vh-video-tailoring__video-duration-warp .vh-video-tailoring__bg-warp {
-      height: 52px;
+      height: 80px;
     }
     /deep/ #vh-player {
       height: 100%;
       #vh-video {
-        background: #17171e;
+        background: #292929;
       }
     }
   }

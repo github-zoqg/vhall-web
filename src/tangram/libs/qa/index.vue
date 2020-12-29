@@ -386,7 +386,7 @@ export default {
       return this.inputValue.replace(`我对${this.hostName}说:`, '');
     },
     login () {
-      this.$parent.loginTest();
+      this.$emit('login')
     }
   }
 };

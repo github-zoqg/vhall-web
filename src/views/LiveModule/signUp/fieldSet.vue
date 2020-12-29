@@ -56,7 +56,12 @@
     >
       <!-- 加上v-model即可排序后实时更新数据 -->
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
-        <li class="viewItem" v-for="(item, index) in renderQuestion" :key="item.question_id">
+        <li
+          :ref="item.question_id"
+          :class="['viewItem', item.privacy ? 'privacyItem' : '']"
+          v-for="(item, index) in renderQuestion"
+          :key="item.question_id"
+        >
           <p class="label">
             {{ index | numFormmat }}.
             <!-- {{item.required ? '（必填）' : ''}} -->
@@ -69,7 +74,7 @@
               show-word-limit
               placeholder="请输入题目"
               v-model="item.label"
-              class="radioInput"
+              class="radioInput titleInput"
               @change="subjectChange(item)"
             ></el-input>
           </p>
@@ -203,7 +208,11 @@
           </div>
           <!-- 底部按钮 -->
           <div class="bottomBtn" v-if="!!item.bottomBtn">
-            <div class="addBtn">
+            <div
+              :class="[
+                'addBtn',
+                (item.nodes[0].children && item.nodes[0].children.length >= 20) || item.nodes.length >= 20 ? 'isoverflow' : ''
+              ]">
               <el-button
                 type="text"
                 v-if="item.bottomBtn.includes('addBtn')"
@@ -218,15 +227,19 @@
                 ><i class="el-icon-plus"></i>添加其他</el-button>
               </template>
             </div>
-            <i
-              class="el-icon-delete"
-              v-if="item.bottomBtn.includes('delete')"
-              @click="deleteQuestion(questionArr, index)"
-            ></i>
-            <i
-              class="el-icon-rank moveBtn"
-              v-if="item.bottomBtn.includes('move')"
-            ></i>
+            <el-tooltip class="item" effect="dark" content="删除" placement="top">
+              <i
+                class="el-icon-delete"
+                v-if="item.bottomBtn.includes('delete')"
+                @click="deleteQuestion(questionArr, index)"
+              ></i>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="移动" placement="top">
+              <i
+                class="el-icon-rank moveBtn"
+                v-if="item.bottomBtn.includes('move')"
+              ></i>
+            </el-tooltip>
             <el-switch
               @change="requiredSwitchChange(item)"
               v-if="item.bottomBtn.includes('requireSwtich')"
@@ -363,7 +376,6 @@ export default {
         this.$alert('最多可添加20个选项')
         return false;
       }
-      console.log(data);
       let itemType = other ? 1: 0;
       let options = data.type != 'input' && data.type != 'select' ? data.nodes[0].children : data.nodes;
       let colneChild = JSON.parse(JSON.stringify(options[options.length - 1]));
@@ -581,16 +593,16 @@ export default {
       let text = JSON.parse(JSON.stringify(item[0].value));
       // let privacy =
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
-      if(matchPrivacy1 && item[2].value){
+      if(matchPrivacy1){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
-        text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`);
+        item[2].value && (text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`));
       }else{
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
-      if(matchPrivacy2 && item[4].value){
+      if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-        text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`);
+        item[4].value && (text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`));
       }else{
         item[3] && (item[3].value = '');
       }
@@ -696,6 +708,11 @@ export default {
 }
 .viewItem{
   margin-bottom: 16px;
+  &.privacyItem {
+    .radioInput {
+      margin-bottom: 10px;
+    }
+  }
   .header-img-tip {
     display: block;
     padding-top: 5px;
@@ -707,8 +724,16 @@ export default {
     align-items: center;
     font-size: 16px;
     color: #1A1A1A;
-    margin-bottom: 9px;
+    margin-bottom: 14px;
     // text-indent: 8px;
+    .titleInput {
+      font-size: 16px;
+      /deep/ .el-input__inner {
+        padding-left: 4px;
+        color: #1A1A1A;
+        padding-right: 54px;
+      }
+    }
   }
   .noFull{
     width: calc(100% - 40px);
@@ -720,10 +745,13 @@ export default {
     padding-left: 20px;
     .el-checkbox{
       display: block;
-      margin-top: 20px;
+      margin-top: 10px;
     }
     /deep/ .el-checkbox__label{
       width: calc(100% - 14px);
+      .el-input__inner {
+        padding-right: 74px;
+      }
     }
   }
   .el-radio-group{
@@ -731,11 +759,14 @@ export default {
     padding-left: 20px;
     .el-radio{
       display: block;
-      margin-top: 20px;
+      margin-top: 10px;
       margin-right: 0px;
       /deep/ .el-radio__label {
         .radioInput {
           width: calc(100% - 24px);
+          .el-input__inner {
+            padding-right: 74px;
+          }
         }
         .other-input {
           margin-top: 10px;
@@ -777,6 +808,7 @@ export default {
       }
       .el-button{
         margin-left: 0;
+        color: #3562FA;
       }
       .line{
         width: 2px;
@@ -786,6 +818,14 @@ export default {
         margin: 0 12px;
         vertical-align: middle;
       }
+      &.isoverflow {
+        i{
+          color: #3c3c3c;
+        }
+        .el-button{
+          color: #3c3c3c;
+        }
+      }
     }
     .moveBtn{
       cursor: move;
@@ -793,12 +833,12 @@ export default {
     i{
       font-size: 18px;
       color: #666666;
-      margin-left: 25px;
+      margin-left: 16px;
       cursor: pointer;
     }
     .swtich{
       vertical-align: text-top;
-      margin-left: 25px;
+      margin-left: 16px;
     }
     /deep/ .el-switch__label{
       font-size: 14px;
@@ -806,7 +846,7 @@ export default {
     }
   }
   .selectInput{
-    margin-bottom: 16px;
+    margin-bottom: 10px;
   }
   .regionalInput{
     width: calc(100% - 38px)
@@ -832,6 +872,12 @@ export default {
     height: 40px;
     padding: 0 10px;
   }
+  /deep/ .el-input.is-disabled .el-input__inner {
+    background-color: #FFFFFF;
+    border-color: #E6E6E6;
+    color: #b3b3b3;
+    cursor: not-allowed;
+  }
   /deep/ .el-upload--picture-card {
     i {
       font-size: 18px;
@@ -853,7 +899,9 @@ export default {
   background: none;
   text-align: left;
   .el-button{
+    width: 160px;
     padding: 12px 50px;
+    border-radius: 23px;
   }
 }
 .flip-list-move {
@@ -908,16 +956,19 @@ export default {
 .previewPrivacy{
   font-size: 14px;
   color: #666;
+  /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
+    color: #666;
+  }
   p{
     margin: 16px 0 8px 0;
-  }
-  a{
-    color: #337ab7;
-    &:link{
-      color: #337ab7;
-    }
-    &:active{
-      color: #337ab7;
+    /deep/ a{
+      color: #3562FA;
+      &:link{
+        color: #3562FA;
+      }
+      &:active{
+        color: #3562FA;
+      }
     }
   }
 }

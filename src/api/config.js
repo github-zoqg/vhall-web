@@ -154,6 +154,7 @@ const apis = {
   goodsBatchDel: ['/v3/interacts/goods/batch-delete-goods', 'POST'], // 批量删除活动商品
   goodsImgDel: ['/v3/interacts/goods/delete-goods-img', 'POST'], // 删除活动商品图片
   goodsSetCover: ['/v3/interacts/goods/set-goods-cover', 'POST'], // 设置商品默认封面
+  getGoodInfo: ['/v3/interacts/goods/watch-get-goods-details', 'GET'], // 商品详情
 
   // 功能配置
   planFunctionGet: ['/v3/users/permission/get-config-list', 'POST'], // 获取可配置项列表 jia.li

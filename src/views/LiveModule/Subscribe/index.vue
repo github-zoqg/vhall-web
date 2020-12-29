@@ -355,7 +355,8 @@
           </div>
           <div class="rightWatch">
             <template>
-              <div class="title">距离直播开始还有</div>
+              <div class="title" v-show="beginStatus">距离直播开始还有</div>
+              <div class="title" v-show="!beginStatus">直播已开始</div>
               <div class="timeBox">
                 <div>
                   <p class="mian">{{days}}</p>
@@ -374,7 +375,8 @@
                   <p class="sub">秒</p>
                 </div>
               </div>
-              <p class="title" v-show="subscribeOptions.show == 1"><span class="red">{{subscribeOptions.num}}</span>人预约</p>
+              <p class="title" v-show="subscribeOptions.show == 1 && beginStatus"><span class="red">{{subscribeOptions.num}}</span>人预约</p>
+              <p class="title" v-show="!beginStatus && pv.show == 1"><span class="red">{{pv.num}}</span>人观看</p>
               <div class="bottom">
                 <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
@@ -383,7 +385,7 @@
             </template>
             <div class="open-screen" v-if="openScreenConfig && openScreenConfig.status == 0">
               <div class="open-count-time" @click="closeOpenScreen">关闭<span v-show="openScreenConfig.shutdown_type == 1">{{'(' + openScreenTime + ')'}}</span></div>
-              <img @click="openScreenJump" :src="openScreenConfig.img" alt="">
+              <img @click="openScreenJump" :src="openScreenConfig.img" class="open-screen-image" alt="">
             </div>
           </div>
         </div>
@@ -391,7 +393,7 @@
     </section>
     <div :class="{area: true, product: productFlag}">
       <div class="left-content">
-        <!-- <custoMenu></custoMenu> -->
+        <custoMenu :desc="roomData.webinar.subject"></custoMenu>
         <div class="active-second" v-if="advs && advs.length > 0">
           <h3>活动推荐</h3>
           <hr />
@@ -547,6 +549,7 @@ export default {
   },
   data(){
     return {
+      beginStatus: true, // 开始展示
       showLive: false,
       location: process.env.VUE_APP_WAP_WATCH,
       btnDisabled: false,
@@ -565,6 +568,10 @@ export default {
       focusCount: 0, // 关注人数
       subscribeOptions: {
         show: 1,
+        num: 0
+      },
+      pv: {
+        show: 0,
         num: 0
       },
       shadeShow: false,
@@ -688,6 +695,11 @@ export default {
     if (this.$route.query.platform) {
       this.bindUserInfo()
     }
+    this.$EventBus.$on('updateBaseNum', (msg) => {
+      if (this.pv) {
+        this.pv.num = Number(this.pv.num) + Number(msg.data.update_pv)
+      }
+    })
   },
   beforeDestroy() {
     if (this.$PLAYER) {
@@ -773,6 +785,9 @@ export default {
       }).then(res => {
         if (res.code == 200 && res.data) {
           this.openScreenConfig = res.data['screen-posters']
+          if (this.openScreenConfig && this.openScreenConfig.status == 0) {
+            this.resizeImg(res.data['screen-posters'].img)
+          }
           if (this.openScreenConfig && this.openScreenConfig.status == 0 && this.openScreenConfig.shutdown_type == 1) {
             if (this.openScreenTimer) clearInterval(this.openScreenTimer)
             this.openScreenTimer = setInterval(() => {
@@ -785,6 +800,55 @@ export default {
           }
         }
       })
+    },
+    resizeImg (data) {
+      console.log(119, data)
+      let img = new Image()
+      img.src = data
+      this.$nextTick(() => {
+        let dom = document.querySelector('.open-screen-image')
+        if (dom) {
+          img.onload = () => {
+            let w = img.width
+            let h = img.height
+            let winWidth = document.querySelector('.rightWatch').offsetWidth
+            console.log(1191, w, h)
+            // console.log(w, h, winWidth)
+            if ((w < h) && (w < winWidth)) {
+              dom.style.width = 'auto'
+              dom.style.height = '100%'
+                console.log(11111222221, (422 / h) * w + 'px')
+
+            } else if ((w < h) && (w >= winWidth)) {
+              dom.style.width = 'auto'
+              dom.style.height = '100%'
+                console.log(11111222222, (422 / h) * w + 'px')
+
+            }
+            if ((w >= h) && (h >= 422)) {
+              let maxHeight = (winWidth / w) * h
+              if (maxHeight > 422) {
+                dom.style.width = (422 / h) * w + 'px'
+                dom.style.height = '422px'
+                console.log(11111222223, (422 / h) * w + 'px')
+              } else {
+                dom.style.width = '100%'
+                dom.style.height = 'auto'
+                console.log(11111222224, (422 / h) * w + 'px')
+
+              }
+            } else if ((w > h) && (h < 422)) {
+              // dom.style.width = '100%'
+              // dom.style.height = 'auto'
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+                console.log(11111222225, (422 / h) * w + 'px')
+
+            }
+          }
+        } 
+      })
+      
     },
     // 获取活动广告信息
     getAdsInfo () {
@@ -916,6 +980,10 @@ export default {
           show: this.roomData.subscribe.show,
           num: this.roomData.subscribe.num,
         }
+        this.pv = {
+          num: this.roomData.pv.num,
+          show: this.roomData.pv.show,
+        }
         if (this.signInfo) {
           this.logo = {
             href: this.signInfo.skip_url, // 跳转连接
@@ -995,7 +1063,18 @@ export default {
             if (msg.data.type == 'pay_success') {
               window.location.reload()
             } else if (msg.data.type == 'live_start') {
+              this.beginStatus = false
+              if (this.timer) {
+                clearInterval(this.timer)
+                this.timer = null
+              }
+              this.days = "00"
+              this.hours = "00"
+              this.minutes = "00"
+              this.seconds = "00"
               this.showLive = true
+            } else if (msg.data.type == 'base_num_update') {
+              this.$EventBus.$emit('updateBaseNum', msg)
             }
           })
         },
@@ -1361,13 +1440,13 @@ export default {
       } else {
         if (verified == 0) {
           if (verify == 0) {
-            ret = `立即预约`
+            ret = type == 1 ? `进入直播` : `立即预约`
             this.limitText = `免费`
           } else if (verify == 1) {
-            ret = `立即预约`
+            ret = type == 1 ? `进入直播` : `立即预约`
             this.limitText = `密码`
           } else if (verify == 2) {
-            ret = `立即预约`
+            ret = type == 1 ? `进入直播` : `立即预约`
             this.limitText = `白名单`
           } else if (verify == 3) {
             ret = `付费预约`
@@ -1381,7 +1460,7 @@ export default {
           }
         } else {
           // 通过观看限制但没有报名
-          ret = `立即预约`
+          ret = type == 1 ? `进入直播` : `立即预约`
           this.limitText = ``
         }
       }
@@ -1395,6 +1474,7 @@ export default {
         verify,
         reg_form
       } = this.roomData.webinar
+      this.showLive = false
       if (this.hasClick) {
         return
       }
@@ -2234,6 +2314,7 @@ export default {
         position:absolute;
         top: 0px;
         left: 0px;
+        background: rgba(51, 51, 51, .8);
         &:hover{
           cursor: pointer;
         }
@@ -2255,6 +2336,10 @@ export default {
           display: inline-block;
           width: 100%;
           height: 100%;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
       }
     }
@@ -2599,6 +2684,24 @@ export default {
       margin: 20px auto 0px auto;
     }
 
+  }
+
+  .area .left-content{
+    text-align: center;
+    .border {
+      /deep/ .el-tabs__header{
+        // background: red;
+        .el-tabs__item{
+          width: 100%!important;
+        }
+      }
+    }
+    // /deep/.el-tabs__nav /deep/.el-tabs__item{
+    //   width: 100%!important;
+    //   margin: 0px;
+    //   padding: 0px;
+    //   text-align: center!important;
+    // }
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{
