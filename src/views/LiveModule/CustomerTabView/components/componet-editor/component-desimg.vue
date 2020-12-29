@@ -41,9 +41,9 @@ export default {
   },
 
   watch: {
-    info: function(val) {
-      this.$emit('updateInfo', this.info)
-    }
+    // info: function(val) {
+    //   this.$emit('updateInfo', this.info)
+    // }
   },
 
   methods: {

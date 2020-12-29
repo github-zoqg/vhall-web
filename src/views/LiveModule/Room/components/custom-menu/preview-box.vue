@@ -1,10 +1,9 @@
 <template>
-  <div class="vh-preview-box">
+  <div class="vh-preview-box 11">
     <component
       :is="componentName"
       :info="info"
       :mode="mode || 1"
-      @updateInfo="updateInfo"
     ></component>
   </div>
 </template>
@@ -16,9 +15,7 @@ import ComponentTextlink from './component-textlink'
 import ComponentImglink from './component-imglink'
 import ComponentTitle from './component-title'
 import ComponentLine from './component-line'
-import componentMap from '../componetMap'
-import EventBus from '../../bus'
-import eventsType from '../../EventConts'
+import componentMap from './componetMap'
 
 export default {
   props: {
@@ -52,16 +49,9 @@ export default {
     componentName: function() {
       return `component-${componentMap[this.info.component_id]}`
     }
-  },
-  methods: {
-    updateInfo(val) {
-      EventBus.$emit(eventsType.UPDATE_COMPONENT_CONTENT, val)
-    }
   }
 }
 </script>
 <style lang="less" scoped>
-.vh-preview-box{
-  user-select: none;
-}
+
 </style>

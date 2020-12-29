@@ -73,6 +73,5 @@ export default {
 <style lang="less" scoped>
 .vh-customer-componets-editor-preview {
   height: 100%;
-  overflow-y: scroll;
 }
 </style>

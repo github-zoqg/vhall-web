@@ -161,6 +161,34 @@ export default {
         {
           key: "searchTitle",
         }
+      ],
+      searchVodOut: [
+        {
+          type: "1",
+          active: 2,
+          options: [
+            {
+              title: '全部',
+              active: 1,
+            },
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
+        },
+        {
+          type: "2",
+          key: "searchTime",
+        }
       ]
     };
   },
@@ -168,17 +196,22 @@ export default {
     titleData
   },
   created() {
-    this.getLiveSwitchInfo();
     this.getLiveDetail();
   },
   mounted() {
-    this.getTableList();
   },
   methods: {
     //获取直播详情
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
+        if (this.liveDetailInfo.webinar_state != 4) {
+          this.searchAreaLayout = this.searchLayout;
+          this.getLiveSwitchInfo();
+        } else {
+          this.searchAreaLayout = this.searchVodOut;
+        }
+        this.getTableList();
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -199,15 +232,17 @@ export default {
       this.params = {};
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (parseInt(formParams.searchIsTime) === 2) {
-        formParams.searchTime = '';
-        this.searchArea.map(item => {
-          item.key === 'switchId' ? item.options = this.switchList : []
-        })
-        this.searchAreaLayout = this.searchArea;
-      } else {
-        this.searchAreaLayout = this.searchLayout;
-      }
+      if (this.liveDetailInfo.webinar_state != 4) {
+        if (formParams.searchIsTime == 2) {
+            formParams.searchTime = '';
+            this.searchArea.map(item => {
+              item.key === 'switchId' ? item.options = this.switchList : []
+            })
+            this.searchAreaLayout = this.searchArea;
+          } else {
+            this.searchAreaLayout = this.searchLayout;
+          }
+        }
       let paramsObj = {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,

@@ -629,6 +629,7 @@ export default {
 
   data () {
     return {
+      rebroadcastChannelId: '',
       selectGiftId: '',
       showGiftSend: false,
       isHavePacket: false,
@@ -801,7 +802,6 @@ export default {
   methods: {
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
-        console.log(1001, msg)
         if (msg.data.type == "gift_send_success") {
           this.closePayQrCode()
           this.closePayWay()
@@ -896,7 +896,7 @@ export default {
         room_id: this.roomInfo.room_id
       }).then(res => {
         let a = QRcode.toDataURL(
-          res.data.data.pay_data,
+          res.data.data.pay_data.qr_code,
           (err, url) => {
             this.showPayQrCode = true
             this.payQrCode = url
@@ -996,7 +996,7 @@ export default {
       if (this.bizInfo.webinar.type == 1) {
         await this.getRoomStatus()
       } else {
-        this.rebroadcastChannelId = this.bizInfo.rebroadcast
+        this.rebroadcastChannelId = this.bizInfo.rebroadcast.channel_id
       }
       let inavInfo = {
         account_id: this.bizInfo.host.id,
@@ -1088,6 +1088,7 @@ export default {
           ? `${this.userInfo.avatar}`
           : 'https://cnstatic01.e.vhall.com/3rdlibs/vhall-static/img/default_avatar.png', // 头像
         pv: this.bizInfo.webinar.pv, // pv
+        uv: this.bizInfo.webinar.uv,
         role_name: this.roomInfo.role_name, // 角色 1主持人2观众3助理4嘉宾
         device_type: '2', // 设备类型 1手机端 2PC 3SDK
         device_status: '0', // 设备状态  0未检测 1可以上麦2不可以上麦
@@ -1137,13 +1138,13 @@ export default {
                 window.location.href = this.vssInfo.kick_out_url;
               }
             }
-            if (this.isPlayback) {
-              if (msg.context.role_name != 1) {
-                this.$emit('onlineJoin', msg);
-              }
-            } else {
-              this.$emit('onlineJoin', msg);
-            }
+            // if (this.isPlayback) {
+            //   if (msg.context.role_name != 1) {
+            //     this.$emit('onlineJoin', msg);
+            //   }
+            // } else {
+            //   this.$emit('onlineJoin', msg);
+            // }
           });
         },
         err => {

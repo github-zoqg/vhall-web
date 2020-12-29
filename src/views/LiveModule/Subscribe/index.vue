@@ -355,7 +355,8 @@
           </div>
           <div class="rightWatch">
             <template>
-              <div class="title">距离直播开始还有</div>
+              <div class="title" v-show="beginStatus">距离直播开始还有</div>
+              <div class="title" v-show="!beginStatus">直播已开始</div>
               <div class="timeBox">
                 <div>
                   <p class="mian">{{days}}</p>
@@ -374,7 +375,8 @@
                   <p class="sub">秒</p>
                 </div>
               </div>
-              <p class="title" v-show="subscribeOptions.show == 1"><span class="red">{{subscribeOptions.num}}</span>人预约</p>
+              <p class="title" v-show="subscribeOptions.show == 1 && beginStatus"><span class="red">{{subscribeOptions.num}}</span>人预约</p>
+              <p class="title" v-show="!beginStatus && pv.show == 1"><span class="red">{{pv.num}}</span>人观看</p>
               <div class="bottom">
                 <el-button :disabled="btnDisabled"  type="primary" @click="btnClick">{{ btnVal }}</el-button>
                 <p class="limit extra-verify" v-if="roomData.webinar && roomData.webinar.verify == 6" @click="btnClick('invite')">{{limitText}}</p>
@@ -391,7 +393,7 @@
     </section>
     <div :class="{area: true, product: productFlag}">
       <div class="left-content">
-        <!-- <custoMenu></custoMenu> -->
+        <custoMenu :desc="roomData.webinar.subject"></custoMenu>
         <div class="active-second" v-if="advs && advs.length > 0">
           <h3>活动推荐</h3>
           <hr />
@@ -547,6 +549,7 @@ export default {
   },
   data(){
     return {
+      beginStatus: true, // 开始展示
       showLive: false,
       location: process.env.VUE_APP_WAP_WATCH,
       btnDisabled: false,
@@ -565,6 +568,10 @@ export default {
       focusCount: 0, // 关注人数
       subscribeOptions: {
         show: 1,
+        num: 0
+      },
+      pv: {
+        show: 0,
         num: 0
       },
       shadeShow: false,
@@ -688,6 +695,11 @@ export default {
     if (this.$route.query.platform) {
       this.bindUserInfo()
     }
+    this.$EventBus.$on('updateBaseNum', (msg) => {
+      if (this.pv) {
+        this.pv.num = Number(this.pv.num) + Number(msg.data.update_pv)
+      }
+    })
   },
   beforeDestroy() {
     if (this.$PLAYER) {
@@ -968,6 +980,10 @@ export default {
           show: this.roomData.subscribe.show,
           num: this.roomData.subscribe.num,
         }
+        this.pv = {
+          num: this.roomData.pv.num,
+          show: this.roomData.pv.show,
+        }
         if (this.signInfo) {
           this.logo = {
             href: this.signInfo.skip_url, // 跳转连接
@@ -1047,7 +1063,18 @@ export default {
             if (msg.data.type == 'pay_success') {
               window.location.reload()
             } else if (msg.data.type == 'live_start') {
+              this.beginStatus = false
+              if (this.timer) {
+                clearInterval(this.timer)
+                this.timer = null
+              }
+              this.days = "00"
+              this.hours = "00"
+              this.minutes = "00"
+              this.seconds = "00"
               this.showLive = true
+            } else if (msg.data.type == 'base_num_update') {
+              this.$EventBus.$emit('updateBaseNum', msg)
             }
           })
         },
@@ -2657,6 +2684,24 @@ export default {
       margin: 20px auto 0px auto;
     }
 
+  }
+
+  .area .left-content{
+    text-align: center;
+    .border {
+      /deep/ .el-tabs__header{
+        // background: red;
+        .el-tabs__item{
+          width: 100%!important;
+        }
+      }
+    }
+    // /deep/.el-tabs__nav /deep/.el-tabs__item{
+    //   width: 100%!important;
+    //   margin: 0px;
+    //   padding: 0px;
+    //   text-align: center!important;
+    // }
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{

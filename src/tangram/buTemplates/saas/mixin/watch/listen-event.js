@@ -235,7 +235,6 @@ export const listenEvent = {
           }
         });
         EventBus.$on('base_num_update', msg => {
-          console.log(88, msg)
           EventBus.$emit('updateBaseNum', msg);
         });
       }

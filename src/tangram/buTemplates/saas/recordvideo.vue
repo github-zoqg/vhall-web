@@ -1473,7 +1473,9 @@ export default {
         receive_account_id: this.roomInfo.third_party_user_id,
         room_id: this.roomInfo.room_id
       };
-      this.$vhallFetch('rejectInvite', data).catch(error => {
+      this.$fetch('rejectInvite', data).then(res=>{
+        if(res.code != 200) return this.$message.warning(res.msg)
+      }).catch(error => {
         console.error('拒绝上麦邀请接口错误', error);
       });
     },

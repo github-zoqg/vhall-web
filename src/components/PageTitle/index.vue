@@ -56,7 +56,7 @@ export default {
   margin-bottom: 32px;
 }
 .el-icon-question {
-  color: #666666;
+  color: #1A1A1A;
   font-size: 14px;
 }
 </style>

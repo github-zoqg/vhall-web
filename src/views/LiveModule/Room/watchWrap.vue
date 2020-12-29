@@ -435,15 +435,34 @@
                 </h3>
                 <hr />
                 <div class="active-content">
-                  <div v-for="(items, index) in menuList" :key="index">
-                    <div
+                  <div
+                    v-show="showIntroduce"
+                    class="active-introduce-content"
+                    v-html="simpleContent"
+                  >
+                    {{ simpleContent }}
+                  </div>
+                  <div v-show="!showIntroduce">
+                    <template v-for="(i, num) in customTabInfo">
+                      <div :key="num">
+                        <custom-tab
+                          :mode="1"
+                          :info="i"
+                        ></custom-tab>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <!-- <div class="active-content"> -->
+                  <!-- <div v-for="(items, index) in menuList" :key="index"> -->
+                    <!-- <div
+                      v-if="items.type == 4 && activeIndex == index"
                       class="active-introduce-content"
                       v-html="simpleContent"
-                      v-if="items.type == 4 && activeIndex == index"
                     >
                       {{ simpleContent }}
-                    </div>
-                    <template v-if="activeIndex + 1 == index + 1">
+                    </div> -->
+                    <!-- <template v-if="activeIndex + 1 == index + 1"> -->
                       <!-- <custom-tab
                         v-if="items.type == 1"
                         :roominfo="roominfo"
@@ -457,9 +476,13 @@
                         @rewardListClick="topShow = false"
                       >
                       </custom-tab> -->
-                    </template>
-                  </div>
-                </div>
+                      <!-- <custom-tab
+                        :mode="1"
+                        :info="item.component"
+                      ></custom-tab> -->
+                    <!-- </template> -->
+                  <!-- </div> -->
+                <!-- </div> -->
               </div>
 
               <div class="active-second" v-show="roominfo.advs && roominfo.advs.length > 0">
@@ -578,15 +601,18 @@ import reward from './rankList/reward' // 打赏榜
 import goodsPop from './rankList/goodsPop'
 import moment from 'moment'
 import QRcode from 'qrcode'
-import customTab from './custom-tab'
+// import customTab from './custom-tab'
 import tip from './tip'
 import products from '../components/products'
+import customTab from './components/custom-menu/preview-box'
 import 'swiper/dist/css/swiper.css'
 import { sessionOrLocal } from '@/utils/utils'
 
 export default {
   data() {
     return {
+      customTabInfo: {},
+      showIntroduce: true,
       roomData: {},
       myliveRoute: '',
       accountRoute: '',
@@ -603,10 +629,10 @@ export default {
       kickOutSass: false, // 遮罩层
       chatShow: '', // 聊天的status
       goodsPopShow: false,
-      roomUser: {
-        uvOnline: '1',
-        pvCount: '1'
-      }, // 在线观看数和在线人数
+      // roomUser: {
+      //   uvOnline: '1',
+      //   pvCount: '1'
+      // }, // 在线观看数和在线人数
       baseRoomUser: {
         baseOnlineNum: 0,
         basePv: 0
@@ -726,25 +752,21 @@ export default {
     }
     // 加入消息 增加uv
     this.$EventBus.$on('Join', (msg) => {
-      if (this.roomData && this.roomData.online ) {
-        this.roomData.online.num = msg.uv
-        this.roomData.pv.num = msg.context.pv
-      }
+      this.roomData.online.num = msg.context.uv
+      this.roomData.pv.num = msg.context.pv
     })
     // 离开消息
     this.$EventBus.$on('Leave', (msg) => {
-      if (this.roomData && this.roomData.online ) {
-        this.roomData.online.num = msg.uv
-        // this.roomData.pv.num = msg.pv
-      }
+      this.roomData.online.num = msg.context.uv
+      // this.roomData.pv.num = msg.pv
     })
     this.$EventBus.$on('updateBaseNum', (msg) => {
-      if (this.roomData.online) {
-        this.roomData.online.num = Number(this.roomData.online.num) + Number(msg.data.update_online_num)
-      }
-      if (this.roomData.pv) {
-        this.roomData.online.num = Number(this.roomData.pv.num) + Number(msg.data.update_pv)
-      }
+      let num = this.roomData.online.num
+      this.roomData.online.num = Number(num) + Number(msg.data.update_online_num)
+      console.log(999999, Number(num), Number(msg.data.update_online_num), this.roomData.online.num)
+      
+      let pvNum = this.roomData.pv.num
+      this.roomData.pv.num = Number(pvNum) + Number(msg.data.update_pv)
     })
     this.$EventBus.$on('loaded', () => {
       this.$loadingStatus.close()
@@ -871,7 +893,7 @@ export default {
         await this.getSkin() // 获取皮肤
         await this.getPublisAdv() // 获取公众号广告
         await this.getSignInfo() // 获取标记 logo 主办方信息
-        // await this.getMenuList()
+        await this.getMenuList()
         // 预约后的活动才显示邀请卡
         if (this.isLogin) {
           await this.getAttentionStatus()
@@ -981,17 +1003,17 @@ export default {
       this.swiperPrevShow = true;
     },
     onlinePeople(msg) {
-      this.$nextTick(() => {
-        this.roomUser.uvOnline = msg.uv;
-        if (msg.context.pv > this.roomUser.pvCount) {
-          this.roomUser.pvCount = msg.context.pv;
-        }
-      });
+      // this.$nextTick(() => {
+      //   this.roomUser.uvOnline = msg.uv;
+      //   if (msg.context.pv > this.roomUser.pvCount) {
+      //     this.roomUser.pvCount = msg.context.pv;
+      //   }
+      // });
     },
     onlineLeavePeople(msg) {
-      this.$nextTick(() => {
-        this.roomUser.uvOnline = msg.uv;
-      });
+      // this.$nextTick(() => {
+      //   this.roomUser.uvOnline = msg.uv;
+      // });
     },
     updateBaseNumFun(msg) {
       this.$nextTick(() => {
@@ -1240,17 +1262,24 @@ export default {
     // 点击活动
     activeClick(index) {
       let menu  = this.menuList[index]
-      this.activeIndex = index;
-      if (menu && menu.components) {
-        if (menu.type == 1) {
-          this.fetchMenuContent(index, menu);
-        }
+      if (menu.type == 4) {
+        this.showIntroduce = true
       } else {
-        let fmenu = this.menuList[0];
-        if (index == 0 && fmenu.type == 1) {
-          this.fetchMenuContent(0, fmenu);
-        }
+        this.showIntroduce = false
+        menu.id && this.queryTabContent(menu.id)
       }
+      this.activeIndex = index;
+
+      // if (menu && menu.components) {
+      //   if (menu.type == 1) {
+      //     this.fetchMenuContent(index, menu);
+      //   }
+      // } else {
+      //   let fmenu = this.menuList[0];
+      //   if (index == 0 && fmenu.type == 1) {
+      //     this.fetchMenuContent(0, fmenu);
+      //   }
+      // }
     },
     // 获取菜单内容
     fetchMenuContent(index) {
@@ -1265,6 +1294,7 @@ export default {
         }
       });
     },
+    
     fullScreen() {
       var docElm = document.querySelector('.seeding-content');
       // W3C
@@ -1283,23 +1313,48 @@ export default {
       this.$fetch('newWebinarMenus', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.code == 200) {
-          this.menuData = res.data.list || [];
-          if (this.menuData && this.menuData.length) {
-            const chat = this.menuData.find(d => d.type == 3) || {};
-            this.chatShow = chat.status || '';
-          }
-          this.menuData.map(item => {
-            item.components = [];
-            if (item.type != 2 && item.type != 3) {
-              this.menuList.push(item);
+        if (res.code == 200 && res.data) {
+          let data = res.data.list
+          let menuList = []
+          let hasIntro = false
+          data.length > 0 && data.map((item, index) => {
+            if (item.type == 3) {
+              this.chatShow = item.status || ''
             }
-          });
+            if (item.type != 2 && item.type != 3) {
+              menuList.push(item)
+            }
+            if (item.type == 4) {
+              hasIntro = true
+            }
+          })
+          this.menuData = data // TODO:
+          this.menuList = menuList
+
           this.$nextTick(() => {
-            this.activeClick(0);
+            // console.log('aaaaa')
+            // this.activeClick(0);
+            if (hasIntro) {
+              this.showIntroduce = true
+            }
+            // 如果没有简介 首位显示自定义菜单第一个
+            if (!hasIntro && this.menuList.length > 0 && this.menuList[0].id) { // 没有简介
+              this.queryTabContent(this.menuList[0].id)
+            }
           });
         }
       });
+    },
+    // 获取自定义菜单内容
+    queryTabContent (id) {
+      this.$fetch('getMenuDetailById', {
+        menu_id: id
+      }).then(res => {
+        if (res.code == 200 && res.data) {
+          this.customTabInfo = res.data.components
+          this.showIntroduce = false
+        }
+      })
     },
     // 关注
     handleAttention() {
@@ -1566,7 +1621,8 @@ export default {
         webinar: Object.assign({}, data.webinar, {
           image_url: data.webinar.img_url,
           is_interact: data.webinar.mode == 3 ? 1 : 0,
-          pv: data.pv.num
+          pv: data.pv.num ,
+          uv: data.online.num
         }),
         advs: this.ads,
         auth: this.isLogin ? {
@@ -1663,7 +1719,7 @@ export default {
       this.webDominUrl = this.roominfo.domains.web
       this.webinarDominUrl = this.roominfo.domains.webinar
       // 获取pv的观看数
-      this.roomUser.pvCount = data.pv.num
+      // this.roomUser.pvCount = data.pv.num
       sessionOrLocal.set(
         'defaultMainscreenDefinition',
         this.roominfo.push_definition || ''

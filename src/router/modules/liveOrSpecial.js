@@ -145,7 +145,8 @@ const router = [
       },
       {
         path: 'customTab/:str(\\d+)',
-        component: () => import('@/views/LiveModule/customTab'),
+        component: () => import('@/views/LiveModule/CustomerTabView'),
+        // component: () => import('@/views/LiveModule/customTab'),
         meta:{ auth: true, title: '自定义菜单', name: 'customTab', activeMenu: '/live/list'},
         hidden: true
       },

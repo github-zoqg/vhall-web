@@ -372,7 +372,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 200px;
+       height: 280px;
       //  overflow: auto;
        .ad-item{
           width: 165px;

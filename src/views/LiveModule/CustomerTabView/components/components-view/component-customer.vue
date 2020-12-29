@@ -18,7 +18,7 @@
           :key="index"
           @click="doEditor(index)"
         >
-          <i class="iconfont-v3 saasicon-trashline-01"></i>
+          <i class="iconfont-v3 saasicon-trashline-01" @click="delComponent(index)"></i>
           <!-- <i class="iconfontV3 saasicon_warning"></i> -->
         <template>
           <preview-box
@@ -124,6 +124,19 @@ export default {
       }
       this.doEditor(this.units.length - 1)
       e.preventDefault()
+    },
+
+    delComponent(index) {
+      // 删除数组制定位置
+      this.units.splice(index, 1)
+      this.$nextTick(() => {
+        this.editorIndex = index + 1
+        this.editorIndex >= this.units.length ? this.units.length : this.editorIndex
+
+        EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, this.editorIndex)
+      })
+
+
     },
 
     dragover(e) {
