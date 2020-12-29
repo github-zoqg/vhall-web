@@ -393,7 +393,7 @@
     </section>
     <div :class="{area: true, product: productFlag}">
       <div class="left-content">
-        <!-- <custoMenu></custoMenu> -->
+        <custoMenu :desc="roomData.webinar.subject"></custoMenu>
         <div class="active-second" v-if="advs && advs.length > 0">
           <h3>活动推荐</h3>
           <hr />
@@ -2684,6 +2684,24 @@ export default {
       margin: 20px auto 0px auto;
     }
 
+  }
+
+  .area .left-content{
+    text-align: center;
+    .border {
+      /deep/ .el-tabs__header{
+        // background: red;
+        .el-tabs__item{
+          width: 100%!important;
+        }
+      }
+    }
+    // /deep/.el-tabs__nav /deep/.el-tabs__item{
+    //   width: 100%!important;
+    //   margin: 0px;
+    //   padding: 0px;
+    //   text-align: center!important;
+    // }
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{

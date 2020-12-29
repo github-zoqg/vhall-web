@@ -151,7 +151,7 @@ export default {
   computed:{
     filterTime(){
       return function(time){
-        return this.$moment(time).format('hh:mm')
+        return this.$moment(time).format('HH:mm')
       }
     }
   },

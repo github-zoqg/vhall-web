@@ -2,7 +2,7 @@
   <el-tabs class="border" v-model="activeName" @tab-click="handleClick">
     <el-tab-pane v-for="(item, index) in menus" :key="item.id" :label="item.name" :name="String(index)" v-loading="fetching">
       <template v-if="item.type ==4">
-        这是直播间简介
+        <span class="desc">{{desc}}</span>
       </template>
       <template v-else-if="item.type ==1 && !!item.details">
         <template v-for="(compontent, compontentindex) in item.details" >
@@ -78,6 +78,7 @@ export default {
       rankRuleShow: false
     };
   },
+  props: ['desc'],
   created(){
     this.getMenuList();
   },
@@ -113,8 +114,6 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
-      console.log();
       let menu = this.menus[Number(this.activeName)];
       if(!menu.details){
         this.fetching = true;
@@ -122,22 +121,18 @@ export default {
       }
     },
     getMenuList(){
-      this.$fetch('newWebinarMenus', {webinar_id: '658143687'}).then(res=>{
-        console.log(res);
-        // let data = unescape(escape(res.data));
-        this.menus = res.data.filter(item=>{
-          console.log(item.components);
+      this.$fetch('newWebinarMenus', {webinar_id: this.$route.params.id}).then(res=>{
+        this.menus = res.data.list.filter(item=>{
           let str = item.components;
           item.components = item.components ? JSON.parse(item.components) : [];
           return item.type != 2 && item.type != 3;
         });
-        console.log('menus', this.menus);
       }).catch(error=>{
         console.log(error);
       });
     },
     getMenuDetail(menu){
-      this.$fetch('getCustomMenuInfo', {menu_id: menu.id}).then(res=>{
+      this.$fetch('webinarCMenuGet', {menu_id: menu.id}).then(res=>{
         this.$set(menu, 'details', res.data.components);
         console.log(res);
       }).catch(error=>{
@@ -325,5 +320,11 @@ export default {
         transform: rotate(-180deg);
       }
     }
+  }
+  .desc{
+    width: 100%;
+    min-height: 30px;
+    text-align: left;
+    display: inline-block;
   }
 </style>
