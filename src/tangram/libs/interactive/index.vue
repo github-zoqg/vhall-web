@@ -1172,6 +1172,7 @@ export default {
       }
       const layout = this.getLayout(totalStreamCount, desktopAndIntercutStreaming);
       this.setBroadCastLayout(layout);
+
     },
 
     /**

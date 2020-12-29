@@ -4,7 +4,7 @@
       <div class="vhall-searchbar">
         <span class="mylive">
           我的直播
-          <i class="saasicon_help_m"></i>
+          <i class="iconfont iconicon-help"></i>
           <div class="tips">暂只支持转播直播</div>
         </span>
         <div class="search-right">
@@ -45,7 +45,7 @@
     </div>
     <div class="vhall-rbrdcst-rightpanel">
       <div class="rbrdcs-title">预览</div>
-      <div class="rbrdcs-videobox" v-if="!docUrl">
+      <div class="rbrdcs-videobox 1" v-if="!docUrl">
         <img  v-if="!current&&!rebroadcastingRoomId" :src="posterUrl" />
         <Player
           v-if="appId && (current||rebroadcastingRoomId)"
@@ -53,6 +53,7 @@
           :accountId="accountId"
           :token="token"
           :type="'live'"
+          :rebroadcast='true'
           :poster="posterUrl"
           :liveOption="{roomId:this.roomId,type:'flv'}"
           :playerInfo="{}"
@@ -61,7 +62,7 @@
           ref="preview"
         ></Player>
       </div>
-      <div class="rbrdcs-videobox" v-else>
+      <div class="rbrdcs-videobox 2" v-else>
         <img class="doc" :src="docUrl" />
         <div class="mini-video-box">
           <Player
@@ -70,6 +71,7 @@
             :accountId="accountId"
             :token="token"
             :type="'live'"
+            :rebroadcast='true'
             :poster="posterUrl"
             :liveOption="{roomId:current,type:'flv'}"
             :controller="'disabled'"
@@ -179,7 +181,7 @@ export default {
         webinar_id: this.webinar_id,
         source_id: id,
       }).then(res => {
-          console.warn('选中转播 id', res);
+          console.warn('选中转播 id', res.data);
           this.webinar = res.data;
           this.token = this.webinar.paas_access_token;
           this.accountId = this.webinar.third_party_user_id;
@@ -303,10 +305,8 @@ export default {
           width: 14px;
           height: 14px;
           position: absolute;
-          top: 10px;
           left: 66px;
           cursor: pointer;
-
         }
         & > .tips {
           background-color: rgba(51, 51, 51, 0.8);

@@ -166,12 +166,15 @@ export default {
     },
     // 打点录制
     recordFun(data) {
+      // status 状态：1-开始|恢复，2-暂停，3-结束
       console.log('打点录制 状态数据-2', data);
       this.$fetch('record', {
         ...data,
         params_verify_token: this.params_verify_token,
         webinar_id: this.il_id
-      });
+      }).then(res=>{
+        if (res.code!=200) return this.$message.warning(res.msg)
+      })
     },
     initVHallReport(roominfo) {
       window.vhallReport = new VhallReport({

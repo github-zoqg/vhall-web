@@ -50,8 +50,8 @@ export default {
     return {
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
       liveContent: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
-      completion: '<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="https://t-webinar.e.vhall.com/webinar/inituser/906078803" width="800" height="600"></iframe>',
-      video: '<iframe border="0" allowfullscreen="true" src="https://t-webinar.e.vhall.com/webinar/inituser/906078803?embed=video" width="800" height="600"></iframe>'
+      completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WEB_URL}/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
+      video: `<iframe border="0" allowfullscreen="true" src="${process.env.VUE_APP_WEB_URL}/embedclient/watch/${this.$route.params.str}?embed=video" width="800" height="600"></iframe>`
     };
   },
   components: {
