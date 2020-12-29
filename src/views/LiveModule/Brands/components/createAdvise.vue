@@ -83,6 +83,17 @@ import Env from "@/api/env";
 import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
+    const linkValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入广告链接'));
+      } else {
+        if (!this.linkCodeMatch(value)) {
+          callback && callback('广告链接必须以http或https开头');
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       dialogVisible: false,
       dialogAdverVisible: false,
@@ -101,7 +112,7 @@ export default {
           { required: true, message: '请选择推广图片', trigger: 'change' }
         ],
         url: [
-          { required: true,  message: '请输入广告链接', trigger: 'blur' }
+          { required: true,  validator: linkValidate, trigger: 'blur' }
         ],
       },
       domain_url: '',
@@ -174,12 +185,16 @@ export default {
       this.$set(this.advertisement, 'url', '');
       this.$set(this.advertisement, 'adv_id', '');
     },
-    saveAdviseHandle() {
-      let reg = /(http|https):\/\/([\w.]+\/?)\S*/g;
-      if (!reg.test(this.advertisement.url)) {
-        this.$message.error('广告链接只能以http://或https://开始');
-        return;
+    // 验证链接
+    linkCodeMatch(value) {
+      let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/g;
+      if (!reg.test(value)) {
+        return false;
+      } else {
+        return true;
       }
+    },
+    saveAdviseHandle() {
       this.$refs.advertisementForm.validate((valid) => {
         if (valid) {
           if (this.$route.params.str) {

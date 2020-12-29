@@ -1189,6 +1189,7 @@ export default {
       const users = streamInfo.remoteUsers.concat(streamInfo.localUser);
       const mainScreenUser = users.find(u => u.accountId == data.room_join_id) || { streams: [] };
       const mainScreenStream = mainScreenUser.streams.find(s => s.streamType == 2) || {};
+      console.warn('mainScreenStream--',mainScreenStream, 'mainScreenUser----',mainScreenUser);
       if (this.roleName == 1 && data.room_join_id != this.accountId) {
         this.$SDKINSTANCE.setBroadCastScreen(
           {
