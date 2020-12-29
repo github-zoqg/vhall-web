@@ -232,17 +232,6 @@ export default {
       this.params = {};
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (this.liveDetailInfo.webinar_state != 4) {
-        if (formParams.searchIsTime == 2) {
-            formParams.searchTime = '';
-            this.searchArea.map(item => {
-              item.key === 'switchId' ? item.options = this.switchList : []
-            })
-            this.searchAreaLayout = this.searchArea;
-          } else {
-            this.searchAreaLayout = this.searchLayout;
-          }
-        }
       let paramsObj = {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,
@@ -253,6 +242,18 @@ export default {
       if (this.active!= 1) {
         paramsObj.start_time = getRangeDays(this.active);
       }
+      if (this.liveDetailInfo.webinar_state != 4) {
+        if (formParams.searchIsTime == 2) {
+            formParams.searchTime = '';
+            this.searchArea.map(item => {
+              item.key === 'switchId' ? item.options = this.switchList : []
+            })
+            this.searchAreaLayout = this.searchArea;
+          } else {
+            this.searchAreaLayout = this.searchLayout;
+            paramsObj.switch_id = 0;
+          }
+        }
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
