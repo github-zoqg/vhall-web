@@ -126,7 +126,7 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" class="length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button type="primary" class="length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
         <el-button class="length152"  @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
@@ -192,7 +192,17 @@ export default {
   created(){
     // console.log(this.$route.query.title, '111111111111111111');
   },
-
+  beforeRouteLeave(to, from, next) {
+    this.$confirm(`是否取消编辑的专题内容？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-alert-box',
+        type: 'warning'
+      }).then(() => {
+        next();
+      }).catch(() => {
+      });
+  },
   mounted() {
     if (this.$route.query.id) {
       this.initInfo()
@@ -264,10 +274,6 @@ export default {
     },
 
     submitForm(formName) {
-      if (!this.formData.title) {
-        this.$message.error('请选择专题标题');
-        return;
-      }
       if (!this.content) {
         this.$message.error('请选择专题简介');
         return;
@@ -327,17 +333,20 @@ export default {
         }
       });
     },
+
     resetForm(formName) {
       if (this.$route.query.id) {
-        this.initInfo()
+        this.$router.go(-1);
       } else {
-        this.$refs[formName].resetFields();
-        this.imageUrl = '';
-        this.content = '';
-        this.home = true;
-        this.reservation = true;
-        this.hot = true;
-        this.selectedActives = [];
+         this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-alert-box',
+            type: 'warning'
+          }).then(() => {
+              this.$router.go(-1)
+          }).catch(() => {
+            });
       }
     },
     deleteImg() {
