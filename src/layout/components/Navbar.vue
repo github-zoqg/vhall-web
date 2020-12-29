@@ -45,6 +45,7 @@
 import Breadcrumb from './Breadcrumb/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
 import Env from "@/api/env";
+import EventBus from "@/utils/Events";
 
 export default {
   components: {
@@ -159,9 +160,21 @@ export default {
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     // 监听控制台是否触发导出
     this.$EventBus.$on('saas_vs_download_change', this.updateDownload);
+    // 消息实例初始化
+   /* EventBus.$on('msg_center_num', res => { // 转码状态
+      console.log(res, '监听到msg_center_num未读消息提示事件');
+      if (Number(item.dow_task_id) === Number(res.dow_task_id)) {
+        item.fileStatusCss = ['wating', 'success', 'failer'][res.status];
+        item.fileStatusStr = ['生成中', '生成成功', '生成失败'][res.status]; // 0:初始(生成中),1:生成成功2:生成失败
+        item.file_status = Number(res.status);
+      }
+    });*/
   },
   created() {
+    // 初始进入，获取未读消息条数
     this.getUnreadNum();
+    // 初始化聊天SDK
+    // this.initChat();
   }
 };
 </script>

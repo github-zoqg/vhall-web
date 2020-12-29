@@ -16,6 +16,7 @@
           :tabelColumnLabel="msgTableColumn"
           :totalNum="msgDao.total"
           :tableRowBtnFun="tableRowBtnFun"
+          min-height="auto"
           @getTableList="getMsgList"
           @changeTableCheckbox="checkMoreRow"
           @onHandleBtnClick="onHandleBtnClick"
@@ -58,12 +59,12 @@ export default {
         {
           label: '消息类型',
           key: 'msgTypeStr',
-          width: 200
+          width: 100
         },
         {
           label: '消息类型',
           key: 'msgStatusStr',
-          width: 200
+          width: 100
         },
       ],
       tableRowBtnFun: [
