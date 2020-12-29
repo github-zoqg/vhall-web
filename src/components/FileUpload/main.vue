@@ -5,6 +5,7 @@
     :headers="{token: token, platform: 17}"
     :data=saveData
     name="resfile"
+    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
     :on-success='uploadSuccess'>
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
