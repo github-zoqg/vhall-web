@@ -9,7 +9,7 @@
     <pageTitle title='控制台标志'></pageTitle>
     <div class="logo-ctx">
       <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="100px">
-        <el-form-item label="标志替换：" prop="logo">
+        <el-form-item label="标志替换" prop="logo">
           <upload
             class="upload__avatar"
             v-model="logoForm.logo"
@@ -30,7 +30,7 @@
             </div>
           </upload>
         </el-form-item>
-        <el-form-item label="标志链接：" prop="logo_jump_url">
+        <el-form-item label="标志链接" prop="logo_jump_url">
           <el-input type="text" placeholder="请输入标志链接" v-model="logoForm.logo_jump_url"/>
         </el-form-item>
         <el-form-item label="">
@@ -199,19 +199,19 @@ export default {
     .layout--right--main();
     .padding48-40();
     .min-height();
-    /deep/.el-form {
-      width: 420px;
+    /deep/.el-input {
+      width: 500px;
     }
   }
   /* 图片上传 */
   .upload__avatar {
     /deep/.el-upload--picture-card {
-      width: 180px;
+      width: 500px;
       height: 180px;
       border: 1px solid #CCCCCC;
     }
     /deep/.box > div {
-      width: 180px;
+      width: 500px;
       height: 180px;
     }
   }
