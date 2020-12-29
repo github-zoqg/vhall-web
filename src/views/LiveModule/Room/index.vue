@@ -67,6 +67,7 @@ export default {
   },
   beforeCreate() {},
   created() {
+    console.warn(!browserSupport(), '!browserSupport()------------------------');
     if (!browserSupport()) return;
     this.getUserinfo()
   },

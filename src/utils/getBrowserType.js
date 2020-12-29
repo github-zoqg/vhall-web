@@ -169,6 +169,7 @@ function _mime (option, value) {
  */
 const browserSupport = function () {
   const { supporter, shell, supporterVs } = getBrowserType();
+  console.warn(supporter, shell, supporterVs, 888);
   const shells = ['qq', 'wechat', 'uc', '2345', 'sougou', 'liebao', 'maxthon', 'baidu', '360'];
   return (((supporter === 'chrome') || (supporter === 'safari' && (parseFloat(supporterVs) >= 12.1))) && !shells.includes(shell)) && !is360();
 };
