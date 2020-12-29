@@ -28,7 +28,7 @@
               {{ time === 60 ? '发送验证码' : `${time}s` }}
             </el-button>
           </el-input>
-          <p v-if="sendText">{{sendText}}</p>
+          <p v-if="sendText" class="no-use">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
@@ -50,7 +50,7 @@
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
-          <p v-if="sendText1">{{sendText1}}</p>
+          <p v-if="sendText1" class="no-use">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
           <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
@@ -645,5 +645,8 @@ export default {
   text-align: right;
   margin-bottom: 0;
   margin-top: -20px;
+}
+.no-use {
+  color: #1384FF;
 }
 </style>
