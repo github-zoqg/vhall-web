@@ -8,7 +8,7 @@
   <div v-else>
     <pageTitle title='控制台标志'></pageTitle>
     <div class="logo-ctx">
-      <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="100px">
+      <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="80px">
         <el-form-item label="标志替换" prop="logo" class="heightNo">
           <upload
             class="upload__avatar"
