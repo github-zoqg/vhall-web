@@ -370,6 +370,26 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.dialog-box {
+  /deep/.el-dialog {
+    border-radius: 4px;
+  }
+  /deep/.saasicon_shangchuan::before {
+    font-size: 44px;
+  }
+  /deep/.img-box ,/deep/.el-upload{
+    width: 324px;
+    height: 130px;
+  }
+  /deep/.noPic {
+    width: 324px !important;
+    height: 130px !important;
+    background: #F7F7F7;
+  }
+  /deep/.el-button.is-round {
+    padding: 9px 32px;
+  }
+} 
    /deep/.el-upload{
      border: 1px solid #ccc;
    }

@@ -31,7 +31,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 185
+      default: 145
     },
     noSearchText: {
       type: String,
