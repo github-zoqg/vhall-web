@@ -5,7 +5,7 @@
       <el-row type="flex" class="row-bg" justify="space-between" :gutter="24">
         <el-col :span="8"  v-for="(item, ins) in operas" :key='ins'>
           <div class="subjectInner"  @click="blockHandler(item)">
-            <icon class="icon" :icon-class="item.icon"></icon>
+            <i :class="`icon png_${item.icon}`"></i>
             <div class="desc">
               <p class="mainText">{{item.title}}</p>
               <p class="subText">{{item.subText}}</p>
@@ -74,6 +74,24 @@ export default {
     margin-right: 15px;
     border-radius: 50%;
     margin-left: 35px;
+    &.png_saasicon_kaifashezhi {
+      background-image: url("../../common/images/sys/saasicon_kaifashezhi.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      border-radius: 0;
+    }
+    &.png_saasicon_kongzhitaibiaoshi {
+      background-image: url("../../common/images/sys/saasicon_kongzhitaibiaoshi.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      border-radius: 0;
+    }
+    &.png_saasicon_xiaoxiyanjinci {
+      background-image: url("../../common/images/sys/saasicon_xiaoxiyanjinci.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      border-radius: 0;
+    }
     // border: 1px solid #ccc;
   }
   /deep/.svg-icon{
