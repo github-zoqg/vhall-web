@@ -19,9 +19,9 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-            <el-button round slot="reference" :disabled="!invitation">扫码查看</el-button>
+            <el-button class="invite-card-button" round slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button  class="invite-card-button" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -94,14 +94,14 @@
               show-word-limit
             ></el-input>
           </el-form-item>
-          <el-form-item label="隐藏水印">
+          <!-- <el-form-item label="隐藏水印">
                 <el-switch
                   v-model="formInvitation.is_show_watermark"
                   active-color="#FB3A32"
                   inactive-color="#ccc"
                 >
                 </el-switch>
-              </el-form-item>
+              </el-form-item> -->
         </el-form>
       </div>
       <div class="invitation-show">
@@ -141,8 +141,8 @@
               <div class="watch-avator">
                 <img :src="avatar" alt="">
               </div>
-              <p>微吼直播</p>
-              <p>邀请你一起看直播</p>
+              <p style="color:#fff;">微吼直播</p>
+              <p style="color:#fff;">邀请你一起看直播</p>
             </div>
           </div>
           <div class="watch-text">
@@ -168,7 +168,7 @@
             </div>
             <div class="look-text">
               <h1>{{ formInvitation.title }}</h1>
-              <p>{{ formInvitation.location }}</p>
+              <p>{{ formInvitation.desciption }}</p>
             </div>
             <div class="look-time">
               <span></span>
@@ -176,7 +176,7 @@
               <p>{{ formInvitation.webinar_date }}</p>
               <span></span>
               <p>地点</p>
-              <p>{{ formInvitation.company }}</p>
+              <p>{{ formInvitation.location }}</p>
             </div>
             <div class="look-footer">
               <div class="look-code"><img :src="qrcode" alt=""></div>
@@ -359,6 +359,17 @@ export default {
   }
   /deep/.el-textarea .el-input__count{
     color:#999;
+  }
+  /deep/.invite-card-button {
+    width: 106px;
+    height: 36px;
+  }
+  /deep/.el-button.is-round {
+    padding: 0 26px;
+  }
+  /deep/.el-input__count {
+    line-height: 20px;
+    bottom:7px;
   }
   .invitation-from {
     display: flex;
@@ -709,13 +720,13 @@ export default {
         margin: 30px 24px;
         background: #000;
         border-radius: 4px;
-        opacity: 0.2;
+        opacity: 1;
         padding: 10px;
+        justify-content: center;
         .look-code{
           width: 60px;
           height: 60px;
           margin-right: 10px;
-          margin-left: 10px;
           img{
             width: 60px;
             height: 60px;
