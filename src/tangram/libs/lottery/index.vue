@@ -23,21 +23,20 @@
                 :value="item.value"
               ></el-option>
             </el-select>
-            <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
+            <el-tooltip placement="right" popper-class='transfer-box' style=" margin-left:4px">
+              <i class="iconfont iconicon-help"></i>
               <div slot="content">
                 1、全体参会者：所有参会的观众拥有参与抽奖的资格<br>
                 2、参与签到的用户：参与签到的观众有参与抽奖的资格<br>
                 3、参与问卷的用户：参与问卷填写的观众有参与抽奖的资格<br>
                 4、口令抽奖：开始抽奖后，观众收到抽奖提示，需要输入主办方指定的口令后才能参抽奖
               </div>
-              <icon icon-class="saaswenhao"></icon>
             </el-tooltip>
           </el-form-item>
           <el-form-item label="参与口令" v-show="joinLottery == 8">
             <el-input  maxlength="15" show-word-limit style="width: 280px;" v-model="participationPass" placeholder="有趣的口令会带来更多互动"></el-input>
           </el-form-item>
           <el-form-item label="选择奖品">
-              <!-- value-key='prize_name' -->
             <el-select
               style="width: 280px;"
               @change="prizeChange"
@@ -53,12 +52,12 @@
                 :value="item"
               ></el-option>
             </el-select>
-            <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
+            <el-tooltip placement="right" popper-class='transfer-box' style=" margin-left:4px">
+              <i class="iconfont iconicon-help" style="margin-left: 4px"></i>
               <div slot="content">
                 1、请在控制台-直播管理-抽奖中进行创建<br>
                 2、选择提前设置好的奖品，抽奖结束后中奖结果将显示设置的奖品图片
               </div>
-              <icon icon-class="saaswenhao"></icon>
             </el-tooltip>
           </el-form-item>
           <el-form-item label="中奖人数" style="margin-bottom:0px">

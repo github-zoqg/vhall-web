@@ -79,6 +79,7 @@ import { liveTag } from '@/utils/filter';
         console.warn(this.$route);
         this.$fetch('getWebinarInfo', {
           webinar_id: this.$route.params.id,
+          is_no_check:1
         }).then(res=>{
           if(res.code == 200){
             this.baseObj = res.data
