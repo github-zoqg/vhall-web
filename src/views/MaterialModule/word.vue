@@ -30,6 +30,7 @@
         >
           <el-button round type="primary" class="length152">上传</el-button>
         </el-upload>
+        <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button>
       </null-page>
     </div>
     <div v-else>
@@ -75,6 +76,7 @@
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
           max-height="auto"
+          width=120
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getTableWordList"
           @changeTableCheckbox="changeTableCheckbox"
