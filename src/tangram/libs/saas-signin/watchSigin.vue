@@ -49,6 +49,12 @@ export default {
         this.duration = Number(e.data.sign_show_time)
         this.countDownTime()
       });
+      this.$EventBus.$on("sign_end", e => {
+        this.showSign = false;
+        if(this.timer){
+          clearInterval(this.timer)
+        }
+      });
     },
     signin () {
       this.$fetch('userSingin', {
