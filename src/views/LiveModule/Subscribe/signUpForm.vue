@@ -516,10 +516,10 @@
         });
       },
       calculateText() {
-        // 获取一行文字的height 计算当前文字比较列表文字
-        const twoHeight = 40;
         const txtDom = this.$refs.intro
-        const curHeight = txtDom.offsetHeight
+        if(!txtDom) return false;
+        const twoHeight = 40;
+        const curHeight = txtDom.offsetHeight;
         if (curHeight > twoHeight) {
           this.overflowStatus = 1
         }
