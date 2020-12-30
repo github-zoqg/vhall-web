@@ -15,7 +15,7 @@
     </div>-->
    <!-- <div :class="!status ? 'pre&#45;&#45;full-mask' : ''">
       <div class="pre&#45;&#45;full-cover" v-show="!status"></div>-->
-      <el-card>
+    <el-card>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
@@ -37,8 +37,8 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：{{title !== '公众号展示' ? '750*1334' : '160*160'}}px，小于2M</p>
-                    <p>支持jpg、gif、png、bmp</p>
+                    <p>建议尺寸：{{title !== '公众号展示' ? '750*1334' : '160*160'}}px</p>
+                    <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
@@ -123,17 +123,15 @@
           <!--PC预览,end-->
           <!--手机预览，begin-->
           <div :class="['official-app', {'null-page' : title !== '公众号展示'}]" v-show="switchType === 'app'" :style="status > 0 ? 'opacity: 0.2;' : ''">
+            <span class="title">{{title === '公众号展示' ? '公众号展示' : '开屏海报展示'}}</span>
             <!-- 公众号 -->
             <div class="gzh_app" v-if="title === '公众号展示'">
-              <div class="img-code" v-if="domain_url && alertType > 0">
+              <div class="img-code v-code-preview app-preview" v-if="domain_url && !(alertType > 0)">
                 <img :src="domain_url" alt="">
-              </div>
-              <div class="img-code-btn">
-                <img src="../../../common/images/official/mobileCode_btn.png" alt="" />
               </div>
             </div>
             <!-- 开屏海报 -->
-            <div class="hb_app" v-if="title !== '公众号展示'">
+            <div class="hb_app" v-if="title !== '开屏海报展示'">
               <div class="poster-img" v-if="domain_url">
                 <img :src="domain_url" alt="">
               </div>
@@ -361,18 +359,33 @@ export default {
     .official-app{
       width: 326px;
       height: 631px;
-      background-image: url('../../../common/images/h5-show-phone.png');
+      background-image: url('../../../common/images/official/phone-model.png');
+      background-size: 100%;
+      background-position: center;
       &.null-page {
-        background-image: url('../../../common/images/h5-show-phone-null2x.png');
+        background-image: url('../../../common/images/official/phone-model.png');
       }
       background-size: cover;
       margin-top: -15px;
       position: relative;
+      .title{
+        display: inline-block;
+        width: 120px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        color: #555;
+        background: #f7f7f7;
+        position: absolute;
+        top: 38px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
       .img-code{
         position: absolute;
         height: 142px;
         width: 142px;
-        left: 50%;
+        left: 53%;
         top: 50%;
         /*border: 1px solid #ccc;*/
         transform: translate(-50%, -50%);
@@ -387,8 +400,9 @@ export default {
         position: absolute;
         height: 80px;
         width: 80px;
-        right: 20px;
+        left: 50%;
         top: 50%;
+        transform: translate(-50%, -50%);
         img {
           width: 100%;
           height: 100%;
@@ -398,14 +412,16 @@ export default {
       .poster-img {
         position: absolute;
         height: 142px;
-        width: 142px;
-        left: 95px;
-        top: 150px;
-        border: 1px solid #ccc;
+        width: 90px;
+        left: 66px;
+        top: 148px;
         transform: translate(-50%, -50%);
         img {
-          width: 291px;
-          height: 490px;
+          display: inline-block;
+          width: 284px;
+          height: 520px;
+          border-bottom-right-radius: 16px;
+          border-bottom-left-radius: 16px;
         }
       }
       .poster-btn {
@@ -414,5 +430,18 @@ export default {
         top: 90px;
       }
     }
+  }
+  .img-box{
+    width: 360px;
+    height: 135px;
+  }
+  /deep/.length152{
+    margin-top: 0px!important;
+  }
+  .el-card{
+    height: 773px;
+  }
+  .el-form{
+    margin-top: 70px;
   }
 </style>

@@ -56,6 +56,8 @@ export default {
   margin-right: 8px;
 }
 .titleBox{
+  display: flex;
+  align-items: center;
   /*margin-top: 20px;*/
   margin-bottom: 32px;
 }
