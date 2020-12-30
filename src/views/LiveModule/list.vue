@@ -223,9 +223,9 @@ export default {
     },
     goLivePlay(item) {
       if (item.webinar_type != 1) {
-        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1`});
+        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
       } else {
-        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1`});
+        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
       }
 
     },

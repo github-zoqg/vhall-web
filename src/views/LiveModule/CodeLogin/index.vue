@@ -114,7 +114,7 @@ import { liveTag } from '@/utils/filter';
                 if(role == 3){
                   this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
                 }else{
-                  this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}`})
+                  this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}?type=code`})
                 }
                 // this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
               }, 300)
