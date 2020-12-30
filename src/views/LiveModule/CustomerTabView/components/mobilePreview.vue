@@ -1,7 +1,7 @@
 <template>
   <div class="vh-mobile-preview-wrapbox" v-if="menus.length">
     <div class="vh-mobile-previe">
-      <div style="height:304px; overflow:hidden;">
+      <div style="height:295px; overflow:hidden;">
         <slot></slot>
       </div>
       <div class="vh-mobile-menus">
@@ -24,29 +24,15 @@
         <i class="iconfont-v3 saasicon_arrowright1" @click="scrollRight()"></i>
       </div>
       <!-- 浮层编辑菜单 -->
-      <div class="vh-mobile-menus-item__popmenu">
+      <div class="vh-mobile-menus-item__popmenu" ref="popMenu">
         <ul>
-          <li>
-            重命名
-          </li>
-          <li>
-            左移
-          </li>
-          <li>
-            右移
-          </li>
-          <li>
-            右侧新增菜单
-          </li>
-          <li>
-            左侧新增菜单
-          </li>
-          <li>
-            预告/结束显示
-          </li>
-          <li>
-            删除
-          </li>
+          <li> 重命名 </li>
+          <li> 左移 </li>
+          <li> 右移 </li>
+          <li> 右侧新增菜单 </li>
+          <li> 左侧新增菜单 </li>
+          <li> 预告/结束显示 </li>
+          <li> 删除 </li>
         </ul>
       </div>
 
@@ -197,9 +183,10 @@ export default {
     background: #fff;
   }
   .vh-mobile-previe{
-    width: 368px;
+    width: 358px;
     height: 674px;
     background-image: url(/static/img/h5-show-phone.70ac3450.png);
+    background-repeat: no-repeat;
     background-size: contain;
     top: -6px;
     left: -24px;

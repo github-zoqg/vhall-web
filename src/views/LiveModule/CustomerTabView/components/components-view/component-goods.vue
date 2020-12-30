@@ -83,7 +83,7 @@ export default {
   margin-top: 16px;
 }
 .tips-box {
-  margin-top: 125px;
+  margin-top: 115px;
   margin-left: 12px;
 }
 span.tips-title {
@@ -100,5 +100,8 @@ span.tips-title {
   color: #1A1A1A;
   line-height: 20px;
   margin-top: 4px;
+  a{
+    color: #FB3A32;
+  }
 }
 </style>

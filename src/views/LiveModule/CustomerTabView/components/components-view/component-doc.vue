@@ -10,7 +10,8 @@ export default {
 </script>
 <style lang="less" scoped>
   .chat-preview {
-    width: 100%;
+    width: 286px;
+    margin: 0 auto;
     img{
       width: 100%;
     }

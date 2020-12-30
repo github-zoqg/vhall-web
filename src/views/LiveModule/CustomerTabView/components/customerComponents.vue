@@ -1,10 +1,11 @@
 <template>
   <div class="vh-customer-componets-editor-preview" >
-    <component
-      :is="componetPreview"
-      :units.sync="currentInfo.components"
-      :uuid="currentInfo.uuid"
-    ></component>
+
+      <component
+        :is="componetPreview"
+        :units.sync="currentInfo.components"
+        :uuid="currentInfo.uuid"
+      ></component>
   </div>
 </template>
 <script>
