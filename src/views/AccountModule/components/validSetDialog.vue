@@ -3,9 +3,9 @@
     :title="title"
     :visible.sync="visible"
     :close-on-click-modal="false"
-    width="480px">
+    width="400px">
     <div class="content">
-      <el-form :model="form" ref="form" :rules="formRules" label-width="120px">
+      <el-form :model="form" ref="form" :rules="formRules" label-width="70px">
         <p class="info" v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
         <el-form-item label="邮箱地址" key="email" prop="email" v-if="showVo.executeType === 'email' && showVo.step === 1">
           <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled/>
@@ -21,14 +21,14 @@
         </el-form-item>
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
           <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
-            <el-button class="no-border" size="mini" slot="append" @click="getDyCode()"
+            <el-button type="text" class="no-border" size="mini" slot="append" @click="getDyCode()"
                        v-preventReClick
                        :class="showCaptcha ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick">
               {{ time === 60 ? '发送验证码' : `${time}s` }}
             </el-button>
           </el-input>
-          <p v-if="sendText">{{sendText}}</p>
+          <p v-if="sendText" class="no-use">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
@@ -44,13 +44,13 @@
         </el-form-item>
         <el-form-item label="验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
-            <el-button class="no-border" size="mini" slot="append"
+            <el-button  type="text" class="no-border" size="mini" slot="append"
                        v-preventReClick
                        @click="getDyCode1()"
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
           </el-input>
-          <p v-if="sendText1">{{sendText1}}</p>
+          <p v-if="sendText1" class="no-use">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
           <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
@@ -441,6 +441,8 @@ export default {
         if (res && res.code === 200) {
           this.$message.success('绑定成功');
           this.visible = false;
+          // 刷新回显数据
+          this.$emit('changeOk');
         } else {
           this.$message.error(res.msg || '绑定失败');
         }
@@ -645,5 +647,13 @@ export default {
   text-align: right;
   margin-bottom: 0;
   margin-top: -20px;
+}
+.no-use {
+  color: #1384FF;
+}
+.el-input-group__append, .el-input-group__prepend {
+ .el-button {
+   /deep/span { color: #666666; }
+ }
 }
 </style>

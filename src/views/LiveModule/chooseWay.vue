@@ -1,15 +1,15 @@
 <template>
-  <div :class="['chooseWay', {'no-login': Number(arr[1]) !== 1}]">
-    <OldHeader :is-show-login=false class="old-header" v-if="Number(arr[1]) !== 1"></OldHeader>
+  <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
+    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'"></OldHeader>
     <div class="choose__way__main">
       <!-- <pageTitle title="选择发起方式"></pageTitle> -->
       <div class="choose__way__ctx">
         <h1 class="choose-method">选择发起方式</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
-            <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
-            <p class="f-20">网页发起直播</p>
-            <p>一键发起直播,无需安装任何直播插件</p>
+            <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
+            <p class="f-20">网页发起</p>
+            <p>一键发起直播，无需安装客户端</p>
           </div>
           <!-- <div class="interact_select choose-a-way">
 
@@ -19,7 +19,7 @@
             <p>需要使用chrome浏览器</p>
           </div> -->
           <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
-            <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
+            <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
           </div>
@@ -35,7 +35,7 @@
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
         <div class="v-download" v-if="chooseType === 'client'">
-          客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服400-888-9970
+          客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服：400-888-9970
         </div>
       </div>
     </div>
@@ -62,13 +62,17 @@ export default {
       watchUrl: '',
       arr: [],
       browserStatus: false,
-      clientOpen: ''
+      clientOpen: '',
+      executeType: 'ctrl', // 是否控制台 ctrl 控制台
     };
   },
   created(){
+    // 清除live_tokend等数据
+    sessionOrLocal.removeItem('live_token', 'localStorage')
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
     let _data = this.$route.params
     this.arr = [_data.str, _data.role]
+    this.executeType = this.$route.query.type;
     this.getRoleUrl();
   },
   methods: {
@@ -136,13 +140,14 @@ export default {
 <style lang="less" scoped>
 @import '../../common/css/common.less';
 .chooseWay {
+  background: #f7f7f7;
+  height: 100%;
   &.no-login {
     .choose__way__main {
       width: 900px;
       margin: 122px auto;
     }
     .choose__way__ctx {
-      background: #ffffff;
     }
   }
 }
@@ -178,12 +183,15 @@ export default {
   cursor: pointer;
   p {
     text-align: center;
-    color: #999;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
     &.f-20 {
       padding-top: 13px;
-      color: #1A1A1A;
       text-align: center;
       padding-bottom: 10px;
+      color: #1A1A1A;
     }
   }
   .choose-img{
@@ -220,14 +228,22 @@ export default {
   }
 }
 .v-download {
-  margin: 30px auto;
   text-align: center;
   display: block;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #666666;
+  line-height: 20px;
+  position: fixed;
+  bottom: 24px;
+  left: calc(50% - 220px);
   a {
     color: @default--normal;
-    &:hover {
+    cursor: pointer;
+    /*&:hover {
       color: @default--hover;
-    }
+    }*/
   }
 }
 

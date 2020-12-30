@@ -191,6 +191,27 @@
   margin-right: 12px;
 }
 
+/*Input 计数器*/
+.input-length {
+  position: relative;
+  /deep/.el-input__inner{
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+  /deep/.el-input-group__append {
+    position: absolute;
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    background: #ffffff;
+    border: 0;
+    padding: 0 0;
+    margin: 0 0;
+    top: 10px;
+    right: 10px;
+    width: auto;
+  }
+}
 /*开关重置*/
 .switch__box {
   /deep/ .el-switch {
@@ -430,15 +451,33 @@
   border: 1px solid #CCCCCC;
   padding: 9px 48px;
   color: #666666;
+  &:hover {
+    color: #fff;
+    background: #FB3A32;
+    border: 1px solid #FB3A32;
+  }
+  &:active {
+    color: #ffffff;
+    background: #E2332C;
+    border: 1px solid #E2332C;
+  }
+  &.is-disabled {
+    background: transparent;
+    border: 1px solid #CCCCCC;
+    cursor: not-allowed;
+    color: #666666;
+    &:hover, &:active {
+      background: transparent;
+      border: 1px solid #CCCCCC;
+    }
+  }
 }
 button.el-button.el-button--medium {
   /* 中等按钮 */
-  border: 1px solid #CCCCCC;
-  padding: 4px 24px;
+  padding: 4px 23px;
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #666666;
   line-height: 26px;
 }
 
@@ -449,23 +488,19 @@ button.el-button.el-button--medium {
 
 button.el-button.el-button--small {
   /*小型按钮*/
-  border: 1px solid #CCCCCC;
   padding: 5px 16px;
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #676767;
   line-height: 20px;
 }
 
 button.el-button.el-button--mini {
   /*迷你按钮 26Height*/
-  border: 1px solid #CCCCCC;
   padding: 2px 8px;
   font-size: 12px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #666666;
   line-height: 20px;
 }
 
@@ -500,7 +535,7 @@ button.el-button.el-button--primary {
 
 button.el-button.el-button--white-primary {
   /*白色-primary 按钮*/
-  background: #FFFFFF;
+  background: transparent;
   color: #FB3A32;
   border: 1px solid #FB3A32;
 
@@ -646,12 +681,15 @@ button.el-button.el-button--white-primary {
   overflow: hidden;
 }
 .padding-table-list(){
-  padding: 32px 24px 40px 24px;
+  padding: 24px 24px 40px 24px;
   overflow: hidden;
 }
 .padding-table-list2(){
   padding: 24px 24px 40px 24px;
   overflow: hidden;
+}
+.padding-form {
+  padding: 41px 56px 0 56px;
 }
 /*-----------------------------------------主界面-布局-右侧100% 结束 ---------------------------------------------*/
 /*-----------------------------------------重置Tab 开始 ---------------------------------------------*/
@@ -697,6 +735,9 @@ button.el-button.el-button--white-primary {
 
 
 /*-----------------------------------------重置dialog弹窗 ---------------------------------------------*/
+/deep/.el-dialog {
+  border-radius: 4px;
+}
 /deep/ .el-dialog__header {
   padding: 24px 32px;
 }

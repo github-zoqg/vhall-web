@@ -177,7 +177,7 @@ export default {
     },
     // 打点录制
     recordFun (data) {
-      console.log('打点录制 状态数据', data)
+      console.log('打点录制 状态数据-4', data)
 
       this.$fetch('record', {
         ...data,

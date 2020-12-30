@@ -177,7 +177,7 @@ export default {
         },
         {
           label: `${this.sonVo.vip_info.type > 0 ? '消耗流量（GB）' : '最高并发（方）'}`,
-          key: 'webinar_max_uv',
+          key: `${this.sonVo.vip_info.type > 0 ? 'webinar_flow' : 'webinar_max_uv'}`,
           width: 200
         }
       ]

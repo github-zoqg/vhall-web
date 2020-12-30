@@ -5,124 +5,128 @@
         <span class="payment-title--text">{{ processingObj.title ? processingObj.title : '抽奖' }}</span>
         <span v-show="closeShow" class="payment-title--close iconfont iconguanbi" @click="close"></span>
       </div>
-      <!-- 发起抽奖 -->
-      <div class="lottery-dialog-content" v-if='lotteryContentShow'>
-        <el-form ref="form" label-width="100px" :style="{width: '450px'}">
-          <el-form-item label="参与条件">
-            <el-select
-              style="width: 280px;"
-              @change="lotteryChange"
-              v-model="joinLottery"
-              placeholder="请选择"
-            >
-              <el-option
+      <template v-if="lotteryLoading">
+          <p style="height: 420px;" v-loading="lotteryLoading"></p>
+      </template>
+      <template v-if="!lotteryLoading">
+        <!-- 发起抽奖 -->
+        <div class="lottery-dialog-content" v-if='lotteryContentShow'>
+          <el-form ref="form" label-width="100px" :style="{width: '450px'}">
+            <el-form-item label="参与条件">
+              <el-select
                 style="width: 280px;"
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-            <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
-              <div slot="content">
-                1、全体参会者：所有参会的观众拥有参与抽奖的资格<br>
-                2、参与签到的用户：参与签到的观众有参与抽奖的资格<br>
-                3、参与问卷的用户：参与问卷填写的观众有参与抽奖的资格<br>
-                4、口令抽奖：开始抽奖后，观众收到抽奖提示，需要输入主办方指定的口令后才能参抽奖
-              </div>
-              <icon icon-class="saaswenhao"></icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="参与口令" v-show="joinLottery == 8">
-            <el-input  maxlength="15" show-word-limit style="width: 280px;" v-model="participationPass" placeholder="有趣的口令会带来更多互动"></el-input>
-          </el-form-item>
-          <el-form-item label="选择奖品">
-              <!-- value-key='prize_name' -->
-            <el-select
-              style="width: 280px;"
-              @change="prizeChange"
-              value-key='prize_name'
-              v-model="prize"
-              placeholder="默认奖品"
-            >
-              <el-option
+                @change="lotteryChange"
+                v-model="joinLottery"
+                placeholder="请选择"
+              >
+                <el-option
+                  style="width: 280px;"
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+              <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
+                <i class="iconfont iconicon-help"></i>
+                <div slot="content">
+                  1、全体参会者：所有参会的观众拥有参与抽奖的资格<br>
+                  2、参与签到的用户：参与签到的观众有参与抽奖的资格<br>
+                  3、参与问卷的用户：参与问卷填写的观众有参与抽奖的资格<br>
+                  4、口令抽奖：开始抽奖后，观众收到抽奖提示，需要输入主办方指定的口令后才能参抽奖
+                </div>
+              </el-tooltip>
+            </el-form-item>
+            <el-form-item label="参与口令" v-show="joinLottery == 8">
+              <el-input  maxlength="15" show-word-limit style="width: 280px;" v-model="participationPass" placeholder="有趣的口令会带来更多互动"></el-input>
+            </el-form-item>
+            <el-form-item label="选择奖品">
+              <el-select
                 style="width: 280px;"
-                v-for="item in prizeList"
-                :key="item.prize_id"
-                :label="item.prize_name"
-                :value="item"
-              ></el-option>
-            </el-select>
-            <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
-              <div slot="content">
-                1、请在控制台-直播管理-抽奖中进行创建<br>
-                2、选择提前设置好的奖品，抽奖结束后中奖结果将显示设置的奖品图片
+                @change="prizeChange"
+                value-key='prize_name'
+                v-model="prize"
+                placeholder="默认奖品"
+              >
+                <el-option
+                  style="width: 280px;"
+                  v-for="item in prizeList"
+                  :key="item.prize_id"
+                  :label="item.prize_name"
+                  :value="item"
+                ></el-option>
+              </el-select>
+              <el-tooltip placement="right" :visible-arrow='false' popper-class='transfer-box' style=" margin-left:4px">
+                <i class="iconfont iconicon-help" style="margin-left: 4px"></i>
+                <div slot="content">
+                  1、请在控制台-直播管理-抽奖中进行创建<br>
+                  2、选择提前设置好的奖品，抽奖结束后中奖结果将显示设置的奖品图片
+                </div>
+              </el-tooltip>
+            </el-form-item>
+            <el-form-item label="中奖人数" style="margin-bottom:0px">
+              <el-input style="width: 280px;" v-model="prizeNum" placeholder="请输入中奖人数"></el-input>
+              <div class="lottery-payment">
+                <span>{{ getPrizeCount }}</span>人可参与抽奖
               </div>
-              <icon icon-class="saaswenhao"></icon>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="中奖人数" style="margin-bottom:0px">
-            <el-input style="width: 280px;" v-model="prizeNum" placeholder="请输入中奖人数"></el-input>
-            <div class="lottery-payment">
-              <span>{{ getPrizeCount }}</span>人可参与抽奖
-            </div>
-          </el-form-item>
-          <!-- 预设中奖 -->
-          <el-form-item label="预设中奖" style="margin-bottom:10px">
-            <el-input v-model="userKeywords" style="width: 280px;" placeholder="请输入用户名">
-              <el-button slot="append"  @click="lotterySearch">搜索</el-button>
-            </el-input>
-            <ul class="user-list" v-if="userListShow">
-              <li v-for="(item,index) in userList" :key="index">
-                {{ item.nickname }}
-                <span @click="selector(item,index)">选择</span>
+            </el-form-item>
+            <!-- 预设中奖 -->
+            <el-form-item label="预设中奖" style="margin-bottom:10px">
+              <el-input v-model="userKeywords" style="width: 280px;" placeholder="请输入用户名">
+                <el-button slot="append"  @click="lotterySearch">搜索</el-button>
+              </el-input>
+              <ul class="user-list" v-if="userListShow">
+                <li v-for="(item,index) in userList" :key="index">
+                  {{ item.nickname }}
+                  <span @click="selector(item,index)">选择</span>
+                </li>
+              </ul>
+            </el-form-item>
+            <ul v-if="userButtonShow" class="user-lists">
+              <li v-for="(item,index) in chooseList" :key="index">
+                <span>{{ item.nickname }}</span>
+                <span class="iconfont iconguanbi" @click="chooseClose(item,index)"></span>
               </li>
             </ul>
-          </el-form-item>
-          <ul v-if="userButtonShow" class="user-lists">
-            <li v-for="(item,index) in chooseList" :key="index">
-              <span>{{ item.nickname }}</span>
-              <span class="iconfont iconguanbi" @click="chooseClose(item,index)"></span>
-            </li>
-          </ul>
-          <el-form-item size="mini" label="重复中奖" class="repeat-winning">
-            <el-switch
-              v-model="repeatWinning"
-              active-color="#FC5659"
-              inactive-color="#CECECE">
-            </el-switch>
-            <span>
-             开启后，已中奖者可再次参与抽奖
-            </span>
-          </el-form-item>
-          <el-form-item label="中奖名单" class="repeat-winning">
-            <el-switch
-              v-model="WinningList"
-              active-color="#FC5659"
-              inactive-color="#CECECE">
-            </el-switch>
-            <span>
-             开启后，抽奖结束后显示中奖名单
-            </span>
-          </el-form-item>
-          <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
-        </el-form>
-      </div>
+            <el-form-item size="mini" label="重复中奖" class="repeat-winning">
+              <el-switch
+                v-model="repeatWinning"
+                active-color="#FC5659"
+                inactive-color="#CECECE">
+              </el-switch>
+              <span>
+              {{repeatWinning ? '已开启，已中奖者可再次参与抽奖' : '开启后，已中奖者可再次参与抽奖'}}
+              </span>
+            </el-form-item>
+            <el-form-item label="中奖名单" class="repeat-winning">
+              <el-switch
+                v-model="WinningList"
+                active-color="#FC5659"
+                inactive-color="#CECECE">
+              </el-switch>
+              <span>
+              {{WinningList ? '已开启，抽奖结束后显示中奖名单': '开启后，抽奖结束后显示中奖名单'}}
+              </span>
+            </el-form-item>
+            <el-button @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
+          </el-form>
+        </div>
 
-      <!-- 抽奖 -->
-      <div class="prize-pending" v-if="prizeShow" >
-        <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
-        <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
-        <el-button @click="endLottery" :disabled='disabledTime!=0' class="common-but lottery-end">
-          结束抽奖 <span v-if="disabledTime!=0">({{disabledTime}}s) </span>
-        </el-button>
-      </div>
-      <!-- 抽奖结果 -->
-      <template  v-if="lotteryResultShow">
-        <Result @startReward='startReward' :domains='domains'
-        :userHost='true' :lotteryResultObj='lotteryResultObj'
-        :prizeObj='prizeObj'
-        :lotteryEndResult='lotteryEndResult'></Result>
+        <!-- 抽奖 -->
+        <div class="prize-pending" v-if="prizeShow" >
+          <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
+          <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
+          <el-button @click="endLottery" :disabled='disabledTime>0 && disabledTime<5' class="common-but lottery-end">
+            结束抽奖 <span v-if="disabledTime>0 && disabledTime<5">({{disabledTime}}s) </span>
+          </el-button>
+        </div>
+        <!-- 抽奖结果 -->
+        <template  v-if="lotteryResultShow">
+          <Result @startReward='startReward' :domains='domains'
+          :userHost='true' :lotteryResultObj='lotteryResultObj'
+          :prizeObj='prizeObj'
+          :lotteryEndResult='lotteryEndResult'></Result>
+        </template>
       </template>
     </div>
   </div>
@@ -145,6 +149,7 @@ export default {
   },
   data () {
     return {
+      lotteryLoading: true, // 当前是否有loading
       processingObj:{}, //正在进行中的抽奖信息
       getReward: '查看中奖名单',
       lotteryChatShow: false, // 已填写过领奖信息的提示
@@ -196,7 +201,7 @@ export default {
       WinningList: false, // 中奖名单
       repeatWinning: false ,// 重复中奖
       participationPass: '', // 口令
-      disabledTime: 5, // 5秒禁止点击
+      disabledTime: 0, // 5秒禁止点击
       lotteryResultObj: {}, // 中奖信息
       prizeObj: {}, // 奖品信息
       defaultImg: require('./img/prize.gif')
@@ -205,12 +210,17 @@ export default {
   mixins: [prize],
   created () {
     this.getPrizeList()
-    this.disTimeSet = setInterval(() => {
-      this.disabledTime--;
-      if(this.disabledTime<=0){
-        clearInterval(this.disTimeSet);
-      }
-    }, 1000);
+
+    this.$EventBus.$on("lottery_result_notice",(msg)=>{
+      console.warn(msg.data);
+      // 抽奖完成   因要和嘉宾等同步   故使用消息
+      this.closeShow = true;
+      this.lotteryResultShow = true;
+      this.lotteryEndResult = msg.data.lottery_winners; // 中奖用户人信息列表
+      this.lotteryResultObj.url = msg.data.award_snapshoot && msg.data.award_snapshoot.image_url ? msg.data.award_snapshoot.image_url:''
+      this.lotteryResultObj.text = msg.data.award_snapshoot && msg.data.award_snapshoot.award_name ? msg.data.award_snapshoot.award_name: ''
+      this.prizeShow = false;
+    })
   },
   watch: {
     chooseList (newValue, oldValue) {
@@ -235,7 +245,7 @@ export default {
           console.warn('抽奖完成', res.data, res.data.award_snapshoot);
           this.closeShow = true;
           this.lotteryResultShow = true;
-          this.lotteryEndResult = res.data.lottery_users; // 中奖用户人信息列表
+          this.lotteryEndResult = res.data.lottery_winners; // 中奖用户人信息列表
           this.lotteryResultObj.url = res.data.award_snapshoot && res.data.award_snapshoot.image_url ? res.data.award_snapshoot.image_url:''
           this.lotteryResultObj.text = res.data.award_snapshoot && res.data.award_snapshoot.award_name ? res.data.award_snapshoot.award_name: ''
           this.prizeShow = false;
@@ -258,7 +268,7 @@ export default {
     // 搜索预设中奖的人员
     lotterySearch () {
       if (!this.userKeywords) return this.$message.customerror('请输入中奖人用户名');
-      this.getLotteryCount()
+      this.getLotteryCount('searchName')
     },
     // 关闭
     close () {
@@ -266,6 +276,7 @@ export default {
       this.lotteryContentShow = false; // 发起抽奖
       this.prizeShow = false; // 趣味抽奖
       this.payoff = false;
+      this.lotteryLoading = true
     },
     // 点击下拉框改变可参与的人数
     lotteryChange (value) {

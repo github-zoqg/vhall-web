@@ -264,7 +264,7 @@
             </div>
         </div>
         <div v-show = 'recordResultShow' class="record-end-result">
-          <p>录制已生成，可前往 <span @click="goBackList"> 内容管理</span>查看</p>
+          <p>录制已生成，可前往 <span @click="goBackList"> 回放管理</span>查看</p>
         </div>
       </div>
       <div class="vhall-main-area--content" v-show = '!recordEndShow && !recordResultShow'>

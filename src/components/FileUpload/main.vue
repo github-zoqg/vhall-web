@@ -5,6 +5,7 @@
     :headers="{token: token, platform: 17}"
     :data=saveData
     name="resfile"
+    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
     :on-success='uploadSuccess'>
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
@@ -16,7 +17,7 @@
           </div>
         </a>
         <div v-else class="noPic">
-          <i class="el-icon-upload"></i>
+          <i class="iconfont-v3 saasicon_shangchuan"></i>
           <div class="tips">
             <slot name="tip"></slot>
           </div>
@@ -166,10 +167,22 @@ export default {
 
 <style lang="less" scoped>
   /deep/ .el-upload--picture-card{
-    width: 100%;
-    height: 140px;
+    width: 404px;
+    height: 154px;
     line-height: unset;
     overflow: hidden;
+    background-color: #F7F7F7;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    &:hover,&:focus {
+      background-color: #F7F7F7;
+      border: 1px solid #999999;
+      border-radius: 4px;
+    }
+    i {
+      font-size: 44px;
+      color: #8c939d;
+    }
     .box{
       width: 100%;
       height: 100%;
@@ -202,7 +215,8 @@ export default {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 2px 2px 4px 4px;
     display: none;
     span{
       &:nth-child(2){
@@ -218,6 +232,7 @@ export default {
     color: #999;
     text-align: center;
     line-height: 16px;
+    margin-top: 6px;
   }
 
   .a-upload {

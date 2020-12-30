@@ -1,5 +1,6 @@
 import Layout from "@/layout/index";
 import {sessionOrLocal} from "@/utils/utils";
+import emptyLayout from "@/layout/emptyLayout";
 
 const router = [
   {
@@ -65,16 +66,29 @@ const router = [
       {
         path: 'info',
         component: () => import('@/views/AccountModule/info'),
-        meta: { auth: true, title: '账户信息', name: 'accountInfo'}
+        meta: { auth: true, title: '账户信息', name: 'accountInfo', activeMenu: '/account/info'}
       },
       {
         path: 'son',
         component: () => import('@/views/AccountModule/son'),
-        meta: { auth: true, title: '子账号管理', name: 'sonMgr'}
+        meta: { auth: true, title: '子账号管理', name: 'sonMgr', activeMenu: '/account/son'}
+      },
+      /*{
+        path: `userHome`,
+        component: emptyLayout,
+        redirect: `/user/home/${sessionOrLocal.get('userId')}`,
+        meta: { auth: true, title: '个人主页', name: 'homeMain' , activeMenu: '/account/son'}
+      },*/
+      {
+        path: 'myHome',
+        component: () => import('@/views/UserHome/home'),
+        meta: { auth: true, title: '个人主页', name: 'myHome', activeMenu: '/account/myHome', type: 'owner'}
       },
       {
-        path: `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/user/home/${sessionOrLocal.get('userId')}`,
-        meta: { auth: true, title: '个人主页', name: 'homeMain' }
+        path: '/homeSet/:str(\\d+)',
+        component: () => import('@/views/UserHome/homeSet'),
+        meta: { auth: true, title: '个人主页', name: 'homeSet', activeMenu: '/account/homeSet'},
+        hidden: true
       },
       {
         path: '/allocation',
@@ -93,7 +107,7 @@ const router = [
   {
     path: '/user/home/:str(\\d+)',
     component: () => import('@/views/UserHome/home'),
-    meta: { auth: false, title: '个人主页', name: 'userHome' },
+    meta: { auth: false, title: '个人主页', name: 'userHome', type: 'new' },
     hidden: true
   }
 ];

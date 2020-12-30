@@ -25,7 +25,7 @@
             @onSearchFun="getLineList()"
           >
           </search-area>
-          <lint-charts :lineDataList="lintData"></lint-charts>
+          <lint-charts :lineDataList="lintData" :type="1"></lint-charts>
         </el-card>
     </div>
     <div class="statistical-line">

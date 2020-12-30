@@ -6,6 +6,7 @@
       @selection-change="handleTableCheckbox"
       :max-height="maxHeight"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+      :row-class-name="tableRowClassName"
     >
       <el-table-column
         type="selection"
@@ -65,6 +66,12 @@
                 <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></span>
                 {{ scope.row.statusText }}</p>
             </div>
+            <!-- 消息中心，消息类型 -->
+            <div v-else-if="scene === 'msg_list' && item.key === 'msgStatusStr'" class="status-show">
+              <p>
+                <span :class="scope.row.msg_status > 0 ? 'active-success' : 'active-error'"></span>
+                {{ scope.row.msgStatusStr }}</p>
+            </div>
             <div v-else-if="item.key === 'imgOrText'">
               <p v-html="scope.row.imgOrText"></p>
             </div>
@@ -81,9 +88,10 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          align="center"
+          align="left"
           v-if="isHandle"
           :width="width"
+          class="btn-rows"
         >
           <template slot-scope="scope">
             <template  v-for="(item, index) in tableRowBtnFun">
@@ -121,6 +129,7 @@ export default {
         limit: 10,
       },
       isUpdate: 0,
+      oldVal: []
     };
   },
   props: {
@@ -141,7 +150,7 @@ export default {
       default: true,
     },
     width: {
-      type: Number,
+      type: [Number, String],
       default: 300,
     },
     maxHeight: {
@@ -151,7 +160,7 @@ export default {
     scene: {
       type: String,
       default: 'normal' // 场景，按场景展示
-    }
+    },
   },
   watch: {
     manageTableData: {
@@ -204,7 +213,24 @@ export default {
     },
     // 复选框操作
     handleTableCheckbox(val) {
+      this.oldVal = val;
       this.$emit('changeTableCheckbox', val);
+    },
+    // 状态栏
+    tableRowClassName({row, rowIndex}) {
+      if (this.scene === 'msg_list') {
+        // 消息状态区分，已读 or 未读
+        let ids = this.oldVal.map(item => item.msg_id);
+        if (ids && ids.includes(row.msg_id)) {
+          return 'ok-check-row'
+        } else if (row.msg_status > 0) {
+          return 'ok-read-row';
+        } else {
+          return 'no-read-row';
+        }
+      } else {
+        return '';
+      }
     },
     // 复选记忆函数
     setRowKeyFun() {
@@ -213,6 +239,7 @@ export default {
     },
     // 清除记忆
     clearSelect() {
+      this.oldVal = [];
       this.$refs.elTable.clearSelection();
     },
     checkSelectable(row) {
@@ -319,6 +346,35 @@ export default {
   }
   .empty{
     text-align: center;
+  }
+}
+/* 表格行样式 */
+/deep/.el-table .no-read-row {
+  font-size: 14px;
+  font-weight: 400;
+  color: #1A1A1A;
+}
+/deep/.el-table .ok-read-row {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+}
+/deep/.el-table .ok-check-row {
+  background: #F7F7F7;
+  border-radius: 2px 0 0 2px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+}
+.el-table /deep/.el-button.el-button--text {
+  padding: 0 0;
+}
+.btn-rows {
+  /deep/.el-button {
+    margin-left:16px;
+    &:first-child {
+      margin-left: 0;
+    }
   }
 }
 </style>

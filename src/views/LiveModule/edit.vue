@@ -118,9 +118,9 @@
           </div>
           <div class="abRight" v-if="selectMedia.id">
             <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-            <el-button type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
+            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
           </div>
-          <el-tooltip>
+          <el-tooltip v-if="!$route.query.record_id">
               <div slot="content">
                 1.上传单个文件最大2G，文件标题不能带有特殊字符和空格<br/>
                 2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>

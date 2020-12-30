@@ -413,6 +413,7 @@ const apis = {
   downloadedDel: ['/v3/commons/downcenter/delete', 'POST'], // 下载中心-删除 √
   downloadedList: ['/v3/commons/downcenter/list', 'POST'], // 下载中心-列表 √
   downloadedReload: ['/v3/commons/downcenter/regenerate', 'POST'], // 下载中心-重新生成 Jia.li •••需真实流程才可测试
+  downloadNotNum: ['/v3/commons/downcenter/not-dow-num', 'POST'], // 查询未下载数量 √
 
   // 报名表单
   getFormEnableStatus: ['/v3/webinars/registration-form/get-form-enable-status', 'POST', 'mock'], // 获取活动报名表单开启状态
@@ -442,6 +443,7 @@ const apis = {
   getInitiatorReportInfo: ['/v3/webinars/live/get-report-info', 'GET'], // 获取上报信息 jian.chang √ 废弃了
   liveHeartBeat: ['/v3/webinars/live/heartbeat', 'GET'], // 心跳检测 √
   getToolStatus: ['/v3/interacts/room/get-inav-tool-status', 'POST'], // 获取房间内各工具的状态 √
+  record: ['/v3/webinars/record/ticker', 'POST'], // 发起端-打点录制
 
   // 发起端-活动
   getJoinUrl: ['/v3/webinars/live/get-url', 'GET'], // 获取参会地址 •••

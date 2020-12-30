@@ -97,8 +97,9 @@
     <div class="advert-banner">
       <div class="web-download">
         <div class="ad-web">
-          <h1>微吼直播客户端</h1>
-          <p>强大文件的直播工具</p>
+          <img src="../../common/images/account/banner1.png" alt="">
+          <!-- <h1>微吼直播客户端</h1>
+          <p>强大文件的直播工具</p> -->
         </div>
         <div class="ad-text">
           <h1>微吼直播客户端</h1>
@@ -108,7 +109,7 @@
       </div>
       <div class="app-download">
         <div class="app-web">
-          <img src="../../common/images/v35-webinar.png" alt="">
+          <img src="../../common/images/account/banner2.png" alt="">
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
@@ -226,7 +227,10 @@ export default {
         cursor: pointer;
         border: 2px solid transparent;
         &:hover{
-          border: 2px solid #FB3A32;
+          background: #FFFFFF;
+          box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+          border-radius: 4px;
+          border: 1px solid #FB3A32;
         }
         p{
           width: 30px;
@@ -320,21 +324,27 @@ export default {
         position: relative;
         .ad-web{
           height: 126px;
-          background: linear-gradient(224deg, #FD2349 0%, #FF6321 100%);
-          border-radius: 4px;
-          color: #fff;
-          padding: 32px 17px;
-          font-family: @fontRegular;
-          h1{
-            font-size: 18px;
-            line-height: 25px;
-            font-weight: 600px;
+          width: 100%;
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
           }
-          p{
-            font-size: 12px;
-            line-height: 15px;
-            font-weight: 400px;
-          }
+          // background: linear-gradient(224deg, #FD2349 0%, #FF6321 100%);
+          // border-radius: 4px;
+          // color: #fff;
+          // padding: 32px 17px;
+          // font-family: @fontRegular;
+          // h1{
+          //   font-size: 18px;
+          //   line-height: 25px;
+          //   font-weight: 600px;
+          // }
+          // p{
+          //   font-size: 12px;
+          //   line-height: 15px;
+          //   font-weight: 400px;
+          // }
         }
       }
       .ad-text{
@@ -362,7 +372,8 @@ export default {
           font-size: 0;
           img{
             width: 100%;
-            height: 126px;
+            height: 100%;
+            object-fit: scale-down;
           }
         }
       }
