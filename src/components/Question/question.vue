@@ -1,28 +1,26 @@
+<template>
+  <div>
+    <div id="settingBox" v-show="isCreate">
+    </div>
+    <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content" v-show="showPreview"></div>
+  </div>
+</template>
+<script>
 import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/utils/questionnaire_service';
-import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
-      questionInfo: {}
+      questionInfo: {},
+      showPreview: false,
+      isCreate: false
     }
   },
-  computed: {
-    title() {
-      if (this.$route.query.questionId) {
-        return '编辑'
-      } else {
-        return '新增'
-      }
-    }
-  },
+  props: ['questionId'],
   created() {
     this.type = this.$route.query.type;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getVideoAppid();
-  },
-  components: {
-    PageTitle
   },
   methods: {
     getVideoAppid() {
@@ -33,6 +31,15 @@ export default {
         }
         console.log(this.questionInfo);
       })
+    },
+    preview (questionId) {
+      this.showPreview = true;
+      this.previewId = questionId;
+      // this.previewDoc = doc;
+
+      // document.getElementById('#qs-preview-box-content').innerHTML = '';
+      this.$service.renderPagePC('#qs-preview-box-content', questionId);
+      document.querySelector('#qs-preview-box-content .q-btns').style.display = 'none';
     },
     initQuestionSDK () {
       this.$service = new VHall_Questionnaire_Service({
@@ -46,14 +53,17 @@ export default {
         },
         // 是否开启消息提示，非必填,默认是true
         notify: true,
+        isPreview: this.questionId ? true : false
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
-        this.createQuestion(this.$route.query.questionId || '');
+        // this.createQuestion(this.$route.query.questionId || this.questionId || '');
         // 预览
-        // if (this.preQuestionId) {
-        //   this.preview(this.preQuestionId);
-        // }
+        if (this.questionId) {
+          this.preview(this.questionId);
+        } else {
+          this.createQuestion(this.$route.query.questionId || '');
+        }
       });
       this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {
           // this.submitQuestion(data);
@@ -62,10 +72,11 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
+        console.log("55555511111111111111")
         if (this.type == 1) {
           // 资料库问卷创建
           this.materialQuestion(data.id, data.title, data.description);
-        } else if (this.type == 2) {
+        } else {
           this.liveMaterialQuestion(data.id, data.title, data.description);
         }
       });
@@ -76,25 +87,7 @@ export default {
           this.materialEditQuestion(data.id, data.title, data.description);
         } else if (this.type == 2) {
           this.liveMaterialEditQuestion(data.id, data.title, data.description);
-        }else {
-          this.$fetch('liveEditQuestion', {
-            survey_id: data.id,
-            webinar_id: this.ilId,
-            room_id: this.roomId,
-            title: data.title,
-            description: data.description,
-            user_id: this.accountId
-          })
-            .then(res => {
-              this.isCreate = false;
-              this.showPreview = false;
-              this.getQuestionList();
-              this.$message.success('编辑成功')
-            })
-            .catch(e => {
-              console.log('编辑问卷失败>>>', e);
-            });
-          }
+        }
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.ERROR, data => {
@@ -102,18 +95,9 @@ export default {
       });
     },
     createQuestion (id) {
-      // this.isCreate = true;
+      this.isCreate = true;
       document.querySelector('#settingBox').innerHTML = '';
       this.$service.renderPageEdit('#settingBox', id || '');
-    },
-    preview (questionId, doc) {
-      // this.showPreview = true;
-      // this.previewId = questionId;
-      // this.previewDoc = doc;
-
-      document.getElementById('#settingBox').innerHTML = '';
-      this.$service['renderPagePC']('#settingBox', questionId);
-      // document.querySelector('#settingBox .q-btns').style.display = 'none';
     },
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
@@ -171,3 +155,4 @@ export default {
     },
   }
 }
+</script>

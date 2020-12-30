@@ -5,22 +5,31 @@
           <el-button round size="medium" @click="returnBack">返回</el-button>
         </div> -->
       </pageTitle>
-      <div id="settingBox">
-        <!-- <question
-          v-if="initQuestion"
-          :userId="questionInfo.third_party_user_id"
-          :accountId="userId"
-          :questionType="'user'"
-          :accessToken="questionInfo.access_token"
-          :appId="questionInfo.app_id"
-          @onCloses="closeQuestion"
+        <question
           ref="questions"
-        ></question> -->
-      </div>
+        ></question>
   </div>
 </template>
+<script>
+import PageTitle from '@/components/PageTitle';
+import question from '@/components/Question/question'
+export default {
+  components: {
+    PageTitle,
+    question
+  },
+  computed: {
+    title() {
+      if (this.$route.query.questionId) {
+        return '编辑'
+      } else {
+        return '新增'
+      }
+    }
+  }
+}
+</script>
 
-<script src="./question.js"></script>
 
 <style lang="less" scoped>
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
