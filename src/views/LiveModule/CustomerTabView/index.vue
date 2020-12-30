@@ -142,7 +142,7 @@ export default {
       float: left;
     }
     &__preview{
-      padding:20px 40px;
+      padding:20px 20px 20px 40px;
       background: #fff;
       overflow: hidden;
     }

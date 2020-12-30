@@ -264,7 +264,7 @@
             </div>
         </div>
         <div v-show = 'recordResultShow' class="record-end-result">
-          <p>录制已生成，可前往 <span @click="goBackList"> 内容管理</span>查看</p>
+          <p>录制已生成，可前往 <span @click="goBackList"> 回放管理</span>查看</p>
         </div>
       </div>
       <div class="vhall-main-area--content" v-show = '!recordEndShow && !recordResultShow'>
@@ -1473,7 +1473,9 @@ export default {
         receive_account_id: this.roomInfo.third_party_user_id,
         room_id: this.roomInfo.room_id
       };
-      this.$vhallFetch('rejectInvite', data).catch(error => {
+      this.$fetch('rejectInvite', data).then(res=>{
+        if(res.code != 200) return this.$message.warning(res.msg)
+      }).catch(error => {
         console.error('拒绝上麦邀请接口错误', error);
       });
     },

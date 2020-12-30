@@ -1,96 +1,93 @@
 <template>
 	<div class="download">
     <pageTitle title="下载中心"></pageTitle>
-    <div class="download-ctx">
-
-      <div v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
-        <!-- 搜索 -->
-        <div class="list--search">
-          <el-button size="medium" plain round @click.prevent.stop="multiDownload">批量下载</el-button>
-          <!-- 日期选择器 -->
-          <el-date-picker
-            v-model="timeStr"
-            value-format="yyyy-MM-dd"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="margin-left: 24px;width: 240px"
-            @change="getTableList(null)"
-          />
-          <el-input placeholder="搜索文件名称" v-model.trim="file_name"  @keyup.enter.native="getTableList(null)">
-            <i class="el-icon-search el-input__icon" slot="suffix" @click="getTableList(null)"></i>
-          </el-input>
-        </div>
-        <el-table
-          ref="downloadTable"
-          :data="docDao.list"
-          tooltip-effect="dark"
-          style="width: 100%"
-          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-          :row-key="setRowKeyFun"
-          @selection-change="handleSelectionChange">
-          <el-table-column
-            :reserve-selection="true"
-            type="selection"
-            width="55"
-            align="left"
-            :selectable="checkSelectable"
-            ></el-table-column>
-          <el-table-column
-            label="文件名"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">
-              <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0"></i>
-              <p class="text">
-               <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
-                {{ scope.row.file_name }}
-              </p>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="webinar_name"
-            label="所属活动"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            prop="created_at"
-            label="生成时间"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            label="生成状态"
-            show-overflow-tooltip>
-            <template slot-scope="scope">
-              <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
-              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="200">
-            <template slot-scope="scope">
-              <a :href="scope.row.dow_url" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">
-                <el-button size="mini" type="text">下载</el-button>
-              </a>
-              <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
-              <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <SPagination
-          :total="docDao.total"
-          v-show="docDao.total > 9"
-          :currentPage="pageNumber"
-          @current-change="currentChangeHandler"
-          align="center"
-        >
-        </SPagination>
-      </div>
-      <!-- 无消息内容 -->
-      <null-page v-show="!file_name && docDao.total === 0"></null-page>
+    <!-- 搜索 -->
+    <div class="list--search">
+      <el-button size="medium" plain round @click.prevent.stop="multiDownload">批量下载</el-button>
+      <!-- 日期选择器 -->
+      <el-date-picker
+        v-model="timeStr"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="margin-left: 24px;width: 240px"
+        @change="getTableList(null)"
+      />
+      <el-input placeholder="搜索文件名称" v-model.trim="file_name"  @keyup.enter.native="getTableList(null)">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="getTableList(null)"></i>
+      </el-input>
     </div>
+    <div class="download-list" v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
+      <el-table
+        ref="downloadTable"
+        :data="docDao.list"
+        tooltip-effect="dark"
+        style="width: 100%"
+        :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+        :row-key="setRowKeyFun"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          :reserve-selection="true"
+          type="selection"
+          width="55"
+          align="left"
+          :selectable="checkSelectable"
+        ></el-table-column>
+        <el-table-column
+          label="文件名"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0"></i>
+            <p class="text">
+              <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
+              {{ scope.row.file_name }}
+            </p>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="webinar_name"
+          label="所属活动"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          prop="created_at"
+          label="生成时间"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column
+          label="生成状态"
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
+            <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="200">
+          <template slot-scope="scope">
+            <a :href="scope.row.dow_url" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">
+              <el-button size="mini" type="text">下载</el-button>
+            </a>
+            <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
+            <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <SPagination
+        :total="docDao.total"
+        v-show="docDao.total > limit"
+        :currentPage="pageNumber"
+        @current-change="currentChangeHandler"
+        align="center"
+      >
+      </SPagination>
+    </div>
+    <!-- 无消息内容 -->
+    <null-page v-show="!file_name && docDao.total === 0"></null-page>
   </div>
 </template>
 
@@ -129,6 +126,11 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.search();
+    },
+    search() {
+      this.pos = 0;
+      this.pageNumber = 1;
       this.getTableList();
     },
     checkSelectable(row) {
@@ -166,7 +168,8 @@ export default {
       };
       this.$fetch('downloadedEdit', this.$params(params)).then(res =>{
         if (res && res.code === 200) {
-          this.getTableList(null);
+          // 重新拉取数据
+          this.search();
         } else {
           console.log('下载状态更新失败');
         }
@@ -184,16 +187,17 @@ export default {
         pageNumber: this.pageNumber
       });
     },
-    getTableList(pageInfo) {
-      if(!pageInfo) {
-        pageInfo = {pos: 0, limit: 10, pageNumber: 1};
+    getTableList(row) {
+      if (row) {
+        this.pos = row.pos;
+        this.pageNumber = row.pageNum;
       }
       let params = {
         start_time: this.timeStr[0] || '',
         end_time: this.timeStr[1] || '',
         file_name: this.file_name || '',
-        limit: pageInfo.limit,
-        pos: pageInfo.pos,
+        limit: this.limit,
+        pos: this.pos,
       };
       this.$fetch('downloadedList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
@@ -262,7 +266,7 @@ export default {
             console.log(e);
           });
           // 重新拉取数据
-          this.getTableList();
+          this.search();
         }
       } catch (e) {
         console.log(e);
@@ -368,6 +372,8 @@ export default {
         }
       })
     });
+  },
+  beforeDestroy() {
   }
 };
 </script>
@@ -406,6 +412,13 @@ export default {
       }
     }
   }
+}
+.download-list {
+  .layout--right--main();
+  .padding-table-list();
+}
+.pageBox {
+  margin-top: 40px;
 }
 @red: #FB3A32;
 @redBg: #FFEBEB;
@@ -488,5 +501,22 @@ export default {
 }
 /deep/.el-button.hide {
   visibility: hidden;
+}
+.list--search {
+  /deep/.el-input__inner{
+    border-radius: 18px;
+    height: 36px;
+    background: transparent;
+  }
+  /deep/.el-range-separator{
+    width: 10%;
+    line-height: 28px;
+  }
+  /deep/.el-form-item__content {
+    line-height: 34px;
+  }
+  /deep/.el-range-editor .el-range-input {
+    background: transparent;
+  }
 }
 </style>

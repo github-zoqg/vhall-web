@@ -845,9 +845,9 @@ export default {
 
             }
           }
-        } 
+        }
       })
-      
+
     },
     // 获取活动广告信息
     getAdsInfo () {
@@ -1059,6 +1059,25 @@ export default {
         chat => {
           this.chatSDK = chat.message;
           console.log('成功了居然')
+          this.chatSDK.join(msg =>{
+             if (typeof msg !== 'object') {
+                msg = JSON.parse(msg);
+              }
+              try {
+                if (msg.context && typeof msg.context !== 'object') {
+                  msg.context = JSON.parse(msg.context);
+                }
+                if (msg.data && typeof msg.data !== 'object') {
+                  msg.data = JSON.parse(msg.data);
+                }
+              } catch (e) {
+                console.log(e);
+              }
+
+              console.log('********加入房间消息*********');
+              console.log(msg);
+            this.viewCount = msg.context.pv
+          })
           this.chatSDK.onRoomMsg(msg => {
             console.log('==========房间消息1===========', msg);
             if (typeof msg !== 'object') {

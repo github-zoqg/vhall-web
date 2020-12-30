@@ -3,7 +3,7 @@
     <pageTitle title='消息详情'></pageTitle>
     <div class="msg__detail">
       <h1>{{msgDao && msgDao.title ? msgDao.title : ''}}</h1>
-      <p><span>接收时间：{{msgDao && msgDao.created_at ? msgDao.created_at : ''}}</span></p>
+      <p class="msg__date"><span>接收时间：{{msgDao && msgDao.created_at ? msgDao.created_at : ''}}</span></p>
       <hr />
       <div class="msg_ctx">
         {{msgDao && msgDao.content ? msgDao.content : ''}}
@@ -48,16 +48,35 @@ export default {
 <style lang="less" scoped>
 .msg__detail {
   .layout--right--main();
-  .padding41-40();
   .min-height();
+  padding: 48px 200px 0 200px;
   text-align: center;
   line-height: 2.5;
 }
 h1 {
-  font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: 400;
+  color: #1A1A1A;
+  line-height: 28px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.msg__date {
+  font-size: 14px;
+  font-weight: 400;
+  color: #555555;
+  line-height: 20px;
+  text-align: center;
+}
+hr {
+  border-width: 1px 0 0 0;
+  border-color: #E6E6E6;
+  border-radius: 2px;
+  margin: 16px 0 0 0;
 }
 .msg_ctx {
+  padding-top: 24px;
   text-align: left;
+  word-break: break-all;
 }
 </style>

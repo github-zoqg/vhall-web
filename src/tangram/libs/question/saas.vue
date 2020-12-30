@@ -82,7 +82,7 @@
     <!-- 预览 -->
     <div id="qs-preview-box" class="vhall-list-dialog-content" v-show="showPreview">
       <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content"></div>
-      <div class="btn-container" v-if="!preQuestionId">
+      <div class="btn-container">
         <button class="btn vhall-question-btn small blue-line" @click="publishPreview()">
           发布
         </button>

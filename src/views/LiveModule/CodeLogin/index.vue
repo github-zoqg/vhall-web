@@ -79,6 +79,7 @@ import { liveTag } from '@/utils/filter';
         console.warn(this.$route);
         this.$fetch('getWebinarInfo', {
           webinar_id: this.$route.params.id,
+          is_no_check:1
         }).then(res=>{
           if(res.code == 200){
             this.baseObj = res.data
@@ -113,7 +114,7 @@ import { liveTag } from '@/utils/filter';
                 if(role == 3){
                   this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
                 }else{
-                  this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}`})
+                  this.$router.push({path: `/chooseWay/${this.$route.params.id}/${role}?type=code`})
                 }
                 // this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
               }, 300)

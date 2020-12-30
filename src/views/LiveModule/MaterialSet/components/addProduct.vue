@@ -49,7 +49,7 @@
         <el-form-item label="商品原价" prop="price">
           <el-input v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
         </el-form-item>
-        <el-form-item label="优惠价">
+        <el-form-item label="优惠价" prop="discount_price">
          <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
@@ -58,7 +58,7 @@
         <el-form-item label="淘口令">
           <el-input v-model.trim="form.tao_password" placeholder="请输入淘口令"></el-input>
         </el-form-item>
-        <el-form-item label="店铺链接">
+        <el-form-item label="店铺链接" prop="shop_url">
           <el-input v-model.trim="form.shop_url" placeholder="请输入店铺链接"></el-input>
         </el-form-item>
         <el-form-item>
@@ -80,6 +80,56 @@ export default {
         callback && callback();
       }
     };
+    // 商品链接
+    const linkValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入商品链接'));
+      } else {
+        if (!this.linkCodeMatch(value)) {
+          callback && callback('商品链接必须已http或https开头');
+        } else {
+          callback();
+        }
+      }
+    };
+    // 店铺链接
+    const shopValidate = (rule, value, callback) => {
+      if (value) {
+        if (!this.linkCodeMatch(value)) {
+          callback && callback('店铺链接必须已http或https开头');
+        } else {
+          callback();
+        }
+      }
+    };
+    // 商品原价
+    const priceValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入商品原价'));
+      } else {
+        if (value <= 0 || value > 99999999.99) {
+          callback && callback('价格必须大于0且小于99999999.99');
+        } else {
+          callback();
+        }
+      }
+    };
+    // 商品优惠价
+    const priceCountValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入商品优惠价'));
+      } else {
+        if (value <= 0 || value > 99999999.99) {
+          callback && callback('价格必须大于0且小于99999999.99');
+        } else {
+          if (value > this.form.price) {
+            callback && callback('商品优惠价必须小于或等于商品原价');
+          } else {
+            callback();
+          }
+        }
+      }
+    }
     return {
       editGoodInfo: {},
       isReset: false,
@@ -90,7 +140,8 @@ export default {
       form: {
         img_id: [],
         imageUrl: '',
-        url: ''
+        url: '',
+        shop_url: ''
       },
       fileList: [],
       rules: {
@@ -104,11 +155,16 @@ export default {
           { required: true, message: '请输入商品描述', trigger: 'blur' }
         ],
         price: [
-          { required: true, message: '请输入商品原价', trigger: 'blur' }
+          { required: true, validator: priceValidate, trigger: 'blur' }
+        ],
+        discount_price: [
+          { required: true, validator: priceCountValidate, trigger: 'blur' }
         ],
         url: [
-          { required: true, message: '请输入商品链接', trigger: 'blur' },
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的商品链接' , trigger: 'blur'}
+          { required: true, validator: linkValidate, trigger: 'blur'},
+        ],
+        shop_url: [
+          { required: false, validator: shopValidate, trigger: 'blur'},
         ]
       },
     };
@@ -122,6 +178,15 @@ export default {
     upload
   },
   methods: {
+    // 验证商品链接和店铺链接
+    linkCodeMatch(value) {
+      let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/g;
+      if (!reg.test(value)) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     getGoodInfo() {
       this.$fetch('goodsInfoGet', {
         webinar_id: this.$route.params.str,
@@ -286,18 +351,6 @@ export default {
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          if (this.form.price < 1 || this.form.price > 99999999.99) {
-            this.$message.error('价格必须介于1-99999999.99之间');
-            return;
-          }
-          if (this.form.discount_price < 1 || this.form.price > 99999999.99) {
-            this.$message.error('价格必须介于1-99999999.99之间');
-            return;
-          }
-          if (parseFloat(this.form.discount_price) > parseFloat(this.form.price)) {
-            this.$message.error('优惠价不能大于等于商品原价');
-            return;
-          }
           this.defaultCover = this.fileList.filter(item => item.cover).map(item => item.img_id).join(',');
           // this.form.imgIdArr = this.fileList.map(item => item.img_id);
           const obj = {

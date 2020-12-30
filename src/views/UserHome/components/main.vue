@@ -4,21 +4,8 @@
       <template  v-for="(item, ins) in tabList">
         <el-tab-pane :label="item.label" :name="item.value" :key="ins" v-if="vo[item.compare_key]"></el-tab-pane>
       </template>
-      </el-tabs>
-    <el-button :class="['length104', `${Number(vo.show_share) === 0 ? 'panel-btn' : 'panel-btn2'}`]" type="primary" size="medium" round
-               v-if="isSameUser"
-               @click.prevent.stop="toHomeSetInfo">设置</el-button>
-    <el-popover
-      placement="bottom-end"
-      trigger="click"
-      v-if="vo.show_share"
-    >
-      <div>
-        <share slot="content" :url="home_link"></share>
-      </div>
-      <el-button class="panel-btn length104" size="medium" round slot="reference">分享主页</el-button>
-    </el-popover>
-    <div class="search" v-if="vo.show_subject">
+    </el-tabs>
+    <div class="search panel-btn" v-if="vo.show_subject">
       <div class="search-query">
         <el-input
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
@@ -26,7 +13,7 @@
           clearable
           @keyup.enter.native="searchHandle"
           @clear="searchHandle"
-          >
+        >
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"
@@ -44,7 +31,7 @@
         col-sm-*  一般用于小屏设备（min-width：768px）
         col-xs  -*用于超小型设备（max-width：768px）
         -->
-        <el-col class="liveItem":xs="24" :sm="12" :md="12" :lg="8" :xl="8" v-for="(item, index) in dataList" :key="index">
+        <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
           <div class="inner">
             <div class="top">
               <span class="liveTag" v-if="tabType === 'live'">
@@ -52,7 +39,8 @@
                 <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label> {{item | liveTag}}
               </span>
               <span class="hot">
-                 <i class="iconfont-v3 saasicon_redu"></i>{{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</span>
+                 <i class="iconfont-v3 saasicon_redu"> {{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</i>
+              </span>
               <a :href="item.share_link" target="_blank">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
               </a>
@@ -77,21 +65,19 @@
       @current-change="changeHandle" align="center"
       v-if="tabType === 'live' ? tabList[0].total > query.limit : tabList[1].total > query.limit"
     ></SPagination>
-    <null-page text="主人比较懒，什么都没留下！" nullType="no-show" v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0"></null-page>
+    <null-page text="贫瘠之地，毛都没有" nullType="create" v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0"></null-page>
     <!-- 无消息内容 -->
     <null-page v-if="tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0"></null-page>
   </div>
 </template>
 
 <script>
-import Share from '@/components/Share';
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "list.vue",
   components: {
-    Share,
     NullPage
   },
   data() {
@@ -120,20 +106,6 @@ export default {
      dataList: [],
      vo: {}
    };
-  },
-  computed: {
-    home_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str}&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false`;
-    },
-    isSameUser: function() {
-      let userId = JSON.parse(sessionOrLocal.get("userId"));
-      // 用户ID 是否 跟当前主页ID相等，不相等，有关注。
-      if(Number(userId) === Number(this.$route.params.str)) {
-        return true;
-      } else {
-        return false;
-      }
-    }
   },
   methods: {
     // 切换选项卡
@@ -172,7 +144,7 @@ export default {
         order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
         webinar_states: this.liveStatus, // 直播状态 默认为0 可以传入多个值 使用逗号分隔  0 全部 2 预告 1 直播 3 结束 5 回放 4 点播
         is_private: 0, // 展示所有公开的
-        need_flash: 0 // 是否需要flash数据 0 否 1 是
+        need_flash: 0 // 是否需要flash数据 0 否 1 是liveStatus
       };
       this.loading = true;
       this.$fetch('liveList', this.$params(params)).then(res=>{
@@ -270,8 +242,8 @@ export default {
 <style lang="less" scoped>
 .panel-btn {
   position: absolute;
-  right: 32px;
-  top: 6px;
+  right: 24px;
+  top: 10px;
 }
 .panel-btn2 {
   position: absolute;
@@ -279,7 +251,6 @@ export default {
   top: 6px;
 }
 .search {
-  margin-top: 20px;
   .flex-display();
   .justify(flex-end);
   /deep/ .el-input__inner{
@@ -293,7 +264,6 @@ export default {
 }
 .search-query {
   width: 220px;
-  margin-right: 24px;
 }
 /deep/.el-tabs__header {
   margin: 0 0;
@@ -328,11 +298,22 @@ export default {
 .live-panel {
   padding: 0 24px;
 }
+.pageBox {
+  padding: 16px 0 40px 0;
+}
 .lives{
-  margin: 24px 0 0 0;
+  margin-top: 24px;
+  // overflow: hidden;
+  // display: flex;
+  // justify-content: space-between;
+  // flex-flow: wrap;
+  // margin-bottom: 20px;
   .liveItem{
-    height: 252px;
+    // width: 312px;
+    height: 244px;
     margin-bottom: 20px;
+    // float: left;
+    // margin-right: 40px;
     .inner{
       transition: all .15s ease-in;
       position: relative;
@@ -341,6 +322,7 @@ export default {
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
     }
     .top{
+      cursor: pointer;
       height: 175px;
       background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%;
@@ -376,31 +358,79 @@ export default {
       }
       .hot{
         position: absolute;
-        bottom: 10px;
-        left: 10px;
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+        bottom: 0px;
+        left: 0px;
         color: #fff;
         font-size: 14px;
         z-index: 2;
+        i{
+          position: absolute;
+          left: 14px;
+          bottom: 10px;
+        }
       }
     }
     .bottom{
-      background: #fff;
+      height: 72px;
+      background: #f7f7f7;
       box-sizing: border-box;
-      padding: 14px 14px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      border: 1px solid #e6e6f6;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
       .liveTitle{
         color: #1A1A1A;
         font-size: 16px;
         margin-bottom: 6px;
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       .liveTime{
         font-size: 14px;
         color: #666;
       }
+      .liveOpera{
+        color: #666666;
+        font-size: 18px;
+        a{
+          color: rgb(44, 43, 43);
+        }
+        i{
+          cursor: pointer;
+          &:nth-child(2){
+            margin: 0 20px;
+          }
+        }
+        .el-dropdown{
+          float: right;
+          &.active{
+            z-index: 2;
+            color: #fff;
+          }
+        }
+      }
     }
+  }
+}
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 </style>

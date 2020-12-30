@@ -7,7 +7,7 @@
       <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl">返回旧版</a></div>
       <!-- 下载中心 -->
       <div class="right-menu-item">
-        <el-badge is-dot class="item" :hidden="!isDownload > 0">
+        <el-badge is-dot class="item" :hidden="!down_num > 0">
           <span @click.prevent.stop="toDownloadPage" class="span--icon"><icon icon-class="saasicon_download"></icon></span>
         </el-badge>
       </div>
@@ -45,6 +45,7 @@
 import Breadcrumb from './Breadcrumb/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
 import Env from "@/api/env";
+import EventBus from "@/utils/Events";
 
 export default {
   components: {
@@ -57,7 +58,7 @@ export default {
         withoutAnimation: false // 左侧导航是否动画
       },
       unread_num: 0,
-      isDownload: 0,
+      down_num: 0,
       avatarImgUrl: '',
       userInfo: null,
       env: Env
@@ -88,7 +89,7 @@ export default {
       this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
-      this.isDownload = 0;
+      this.getDownNum();
       this.$router.push({path: '/other/downloadList'});
     },
     toAccountPage() {
@@ -100,6 +101,14 @@ export default {
       }).catch(e=>{
         console.log(e);
         this.unread_num = 0;
+      });
+    },
+    getDownNum() {
+      this.$fetch('downloadNotNum', {}).then(res =>{
+        this.down_num = res && res.code === 200 && res.data ? res.data.num : 0;
+      }).catch(e=>{
+        console.log(e);
+        this.down_num = 0;
       });
     },
     logout() {
@@ -133,7 +142,52 @@ export default {
       this.avatarImgUrl = account ?  account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     },
     updateDownload() {
-      this.isDownload = 1;
+      // 初始进入，获取未下载条数
+      this.getDownNum();
+    },
+    // 监听
+    monitor(){
+      /**
+       * 接收聊天自定义消息*/
+      this.$Chat.onCustomMsg(async msg => {
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============收到msg_center_num2===============' + JSON.stringify(msg.data))
+        if (msg.data.type === 'msg_center_num') {
+          EventBus.$emit('msg_center_num', msg.data);
+        }
+      })
+    },
+    // 初始化
+    async initChat(){
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        console.log(result, '值');
+        let option = {
+          appId: result.data.paasAppId || '', // appId 必须
+          accountId: result.data.accountId || '', // 第三方用户ID
+          channelId: result.data.channelId || '', // 频道id 必须
+          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+        }
+        window.VhallChat.createInstance(option, (event) => {
+          this.$Chat = event.message; // 聊天实例句柄
+          this.monitor()
+        },err=>{
+          // alert('初始化错误')
+          console.error(err);
+        })
+      }
     }
   },
   mounted() {
@@ -159,9 +213,27 @@ export default {
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     // 监听控制台是否触发导出
     this.$EventBus.$on('saas_vs_download_change', this.updateDownload);
+    // 消息实例初始化
+    EventBus.$on('msg_center_num', res => { // 转码状态
+      console.log(res, '监听到msg_center_num未读消息提示事件');
+      if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
+        this.unread_num = res.num;
+        this.$EventBus.$emit('saas_vs_msg_num');
+      }
+    });
   },
   created() {
+    // 初始进入，获取未读消息条数
     this.getUnreadNum();
+    // 初始进入，获取未下载条数
+    this.getDownNum();
+    // 初始化聊天SDK
+    this.initChat();
+  },
+  beforeDestroy() {
+    console.log('消亡')
+    this.$Chat.destroy();
+    this.$Chat = null;
   }
 };
 </script>

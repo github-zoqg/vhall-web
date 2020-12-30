@@ -13,10 +13,12 @@
         <div class="prize-pending" v-if="currentLotStatus">
           <img :src="processingObj.url ? processingObj.url : defaultImg" alt />
           <p>{{processingObj.text ? processingObj.text : '抽奖进行中....'}}</p>
-          <div class="audience-code" v-if="lotteryInfo.lottery_type == 8">
-            <p>发送口令<span>“{{lotteryInfo.command}}”</span>参与抽奖吧！</p>
-            <el-button class="common-but" @click="participate" :disabled='codeText !="立即参与"'>{{codeText}}</el-button>
-          </div>
+          <template v-if="!isGinseng">
+            <div class="audience-code" v-if="lotteryInfo.lottery_type == 8 ">
+              <p>发送口令<span>“{{lotteryInfo.command}}”</span>参与抽奖吧！</p>
+              <el-button class="common-but" @click="participate" :disabled='codeText !="立即参与"'>{{codeText}}</el-button>
+            </div>
+          </template>
         </div>
         <!-- 抽奖结束 -->
          <!-- v-if="lotteryInfo.lottery_status==1" -->
@@ -91,6 +93,7 @@ export default {
       processingObj:{}, // 抽奖的标题信息
       lotteryInfo: {}, // 抽奖的详细信息
       showMess: false,
+      isGinseng: false, // 是否参与
       prizeShow: false, //抽奖显示页
       chatLoginStatus: false, //是否需要登录
       showLottery:false, //  观看端打赏展示
@@ -137,6 +140,24 @@ export default {
   },
   created() {
     this.checkLottery()
+    this.$EventBus.$on('lottery_push', msg=>{
+      this.showMess = true
+      this.currentLotStatus = true
+      this.showLottery = true
+      console.warn('监听收到发起消息',msg);
+      this.lotteryInfo = {}
+      this.lotteryInfo.award_snapshoot = msg.award_snapshoot
+      this.processingObj.url = msg.icon
+      this.processingObj.text = msg.remark
+      this.processingObj.title = msg.title
+      if(msg.lottery_type == 8) {
+        // 口令抽奖
+        this.codeText = '立即参与'
+        this.lotteryInfo.lottery_type = 8
+        this.lotteryInfo.id = msg.lottery_id
+        this.lotteryInfo.command = msg.command
+      }
+    })
     // 1--是需要登录才能参与互动   0--不登录也能参与互动
     if (sessionStorage.getItem('watch')) {
       if (JSON.parse(sessionStorage.getItem('moduleShow')).modules.chat_login.show == 1) {
@@ -170,7 +191,7 @@ export default {
         try {
           this.stepHtmlList.forEach((ele, index)=>{
             if(ele.is_required == 1 ){
-              if(this.reciveInfo[ele.field_key] == ''){
+              if(this.reciveInfo[ele.field_key].trim() == ''){
                 throw ele.field
               }
               if(ele.field_key == 'phone'){
@@ -245,7 +266,7 @@ export default {
               text: res.data.remark,
               title: res.data.title
           }
-          if(res.data.award_snapshoot&&res.data.award_snapshoot.id){
+          if(res.data&&res.data.id){
             this.showLottery = true
           }
           if(res.data.lottery_status == 0){
@@ -320,21 +341,23 @@ export default {
     },
     // 观看端开启--消息
     startLottery (msg, val) {
-      this.showMess = true
-      this.currentLotStatus = true
-      this.showLottery = true
-      console.warn('监听收到发起消息',msg);
-      this.lotteryInfo = {}
-      this.lotteryInfo.award_snapshoot = msg.award_snapshoot
-      this.processingObj.url = msg.icon
-      this.processingObj.text = msg.remark
-      this.processingObj.title = msg.title
-      if(msg.lottery_type == 8) {
-        // 口令抽奖
-        this.lotteryInfo.lottery_type = 8
-        this.lotteryInfo.id = msg.lottery_id
-        this.lotteryInfo.command = msg.command
-      }
+      // this.showMess = true
+      // this.currentLotStatus = true
+      // this.showLottery = true
+      // console.warn('监听收到发起消息',msg);
+      // this.lotteryInfo = {}
+      // this.lotteryInfo.award_snapshoot = msg.award_snapshoot
+      // this.processingObj.url = msg.icon
+      // this.processingObj.text = msg.remark
+      // this.processingObj.title = msg.title
+      // if(msg.lottery_type == 8) {
+      //   // 口令抽奖
+      //   alert(1)
+      //   this.codeText = '立即参与'
+      //   this.lotteryInfo.lottery_type = 8
+      //   this.lotteryInfo.id = msg.lottery_id
+      //   this.lotteryInfo.command = msg.command
+      // }
     },
     // 结束抽奖--消息
     endRecive(msg, WinningID){
@@ -414,7 +437,8 @@ export default {
                 nickname: userInfo.nick_name, // 昵称
                 avatar: userInfo.avatar, // 头像
               };
-              this.showMess = false
+              this.isGinseng = true
+              // this.showMess = false
               let tempData = new Msg({
                 avatar: getAvatar(_content.avatar),
                 nickName: _content.nickname,
@@ -426,6 +450,7 @@ export default {
                 replyMsg: [],
                 atList: []
               });
+              this.$message.success('发送成功')
               this.$EventBus.$emit('codeText', tempData);
               window.chatSDK.emit(_data, _content)
             } else {

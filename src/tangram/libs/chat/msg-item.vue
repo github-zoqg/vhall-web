@@ -113,7 +113,7 @@
           </template>
           <!-- 抽奖消息 开启问答 关闭问答-->
           <template
-            v-if="msg.type==='lottery_push' || msg.type==='question_answer_open' || msg.type==='question_answer_close' || msg.type==='sign_in_push'"
+            v-if="msg.type==='lottery_push' || msg.type==='question_answer_open' || msg.type==='question_answer_close' || msg.type==='sign_in_push' || msg.type==='sign_end'"
           >
             <p class="msg-content_body system">{{msg.content.text_content}}</p>
           </template>

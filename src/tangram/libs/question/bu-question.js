@@ -31,9 +31,6 @@ export default {
     defaultPhone: {
       required: false // userId
     },
-    preQuestionId: {
-      required: false // 预览用于传值
-    },
     showControl: {
       require: false,
       default: false
@@ -69,7 +66,6 @@ export default {
 
   created () {
     this.webviewType = this.$route.query.webviewType;
-    this.type = this.$route.query.type;
     this.initQuestionSDK();
     if (sessionStorage.getItem('watch')) {
       this.questionShow = false;
@@ -78,7 +74,7 @@ export default {
 
   mounted () {
     let role_value = sessionStorage.getItem('role_val') ? sessionStorage.getItem('role_val') : ''
-    if (!role_value && !this.type  && !this.preQuestionId) {
+    if (!role_value) {
       this.getQuestionList();
     }
   },
@@ -215,14 +211,6 @@ export default {
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
         this.sdkInitReady = true;
-        if (this.type) {
-          // 编辑或新增
-          this.createQuestion(this.$route.query.questionId || '');
-        }
-        // 预览
-        if (this.preQuestionId) {
-          this.preview(this.preQuestionId);
-        }
       });
       this.$service.$on(VHall_Questionnaire_Const.EVENT.SUBMIT, (data) => {
           this.submitQuestion(data);
@@ -231,23 +219,10 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
-        if (this.type == 1) {
-          // 资料库问卷创建
-          this.materialQuestion(data.id, data.title, data.description);
-        } else if (this.type == 2) {
-          this.liveMaterialQuestion(data.id, data.title, data.description);
-        }else {
-          this.createQuestionAction(data.id, data.title, data.description);
-        }
+        this.createQuestionAction(data.id, data.title, data.description);
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
-        if (this.type == 1) {
-          // 资料库问卷编辑
-          this.materialEditQuestion(data.id, data.title, data.description);
-        } else if (this.type == 2) {
-          this.liveMaterialEditQuestion(data.id, data.title, data.description);
-        }else {
           this.$fetch('liveEditQuestion', {
             survey_id: data.id,
             webinar_id: this.ilId,
@@ -265,7 +240,6 @@ export default {
             .catch(e => {
               console.log('编辑问卷失败>>>', e);
             });
-          }
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.ERROR, data => {
@@ -302,60 +276,6 @@ export default {
         this.showPreview = false;
         this.getQuestionList();
       });
-    },
-    materialQuestion(id, title, description) {
-      this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
-        this.$message.success('新建成功');
-        this.$router.push({
-          path: '/material/question',
-        });
-      })
-    },
-    materialEditQuestion(id, title, description) {
-      this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
-        this.$message.success('编辑成功');
-        this.$router.push({
-          path: '/material/question',
-        });
-      })
-    },
-    liveMaterialQuestion(id, title, description) {
-      let params = {
-        survey_id: id,
-        webinar_id: this.$route.query.webinarId,
-        room_id: this.$route.query.roomId,
-        title: title,
-        description: description,
-      }
-      this.$fetch('createLiveQuestion', params).then(res => {
-        this.$message.success('新建成功');
-         this.$router.push({
-            path: '/live/question',
-            query: {
-              id: this.$route.query.webinarId,
-              roomId: this.$route.query.roomId
-            }
-          });
-      })
-    },
-    liveMaterialEditQuestion(id, title, description) {
-      let params = {
-        survey_id: id,
-        webinar_id: this.$route.query.webinarId,
-        room_id: this.$route.query.roomId,
-        title: title,
-        description: description,
-      }
-      this.$fetch('editLiveQuestion', params).then(res => {
-        this.$message.success('编辑成功');
-         this.$router.push({
-            path: '/live/question',
-            query: {
-              id: this.$route.query.webinarId,
-              roomId: this.$route.query.roomId
-            }
-          });
-      })
     },
     // 提交问卷
     submitQuestion (opt) {

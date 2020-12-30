@@ -31,7 +31,7 @@
 <script>
 import VhallReport from '@/components/VhallReport/main';
 import { browserSupport } from '@/utils/getBrowserType';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, getQueryString } from '@/utils/utils';
 import chrome from './chrome';
 import tip from './tip';
 export default {
@@ -67,6 +67,9 @@ export default {
   },
   beforeCreate() {},
   created() {
+    if(window.location.search.indexOf('live_token=') != -1){
+      sessionOrLocal.set('live_token', getQueryString('live_token'), 'localStorage')
+    }
     if (!browserSupport()) return;
     this.getUserinfo()
   },
@@ -101,6 +104,7 @@ export default {
           console.warn('*************this.rootActive*************', this.rootActive);
           sessionStorage.setItem('host_uid', JSON.stringify(mockResult.join_info.third_party_user_id));
           sessionStorage.setItem('user', JSON.stringify(mockResult.join_info));
+          sessionStorage.setItem('userInfo', JSON.stringify(mockResult.join_info));
           sessionStorage.setItem('vss_token', mockResult.join_info.interact_token);
           sessionStorage.setItem('roomId', mockResult.interact.room_id);
           sessionStorage.setItem('report_extra', JSON.stringify(mockResult.report_data))
@@ -162,13 +166,15 @@ export default {
     },
     // 打点录制
     recordFun(data) {
-      console.log('打点录制 状态数据', data);
-
+      // status 状态：1-开始|恢复，2-暂停，3-结束
+      console.log('打点录制 状态数据-2', data);
       this.$fetch('record', {
         ...data,
         params_verify_token: this.params_verify_token,
         webinar_id: this.il_id
-      });
+      }).then(res=>{
+        if (res.code!=200) return this.$message.warning(res.msg)
+      })
     },
     initVHallReport(roominfo) {
       window.vhallReport = new VhallReport({

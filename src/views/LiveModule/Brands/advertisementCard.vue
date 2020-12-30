@@ -29,6 +29,7 @@
       <div class="no-live" v-show="!total">
         <noData :nullType="nullText" :text="text">
           <el-button type="primary" v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
+          <el-button type="primary" round v-if="nullText == 'nullData' && $route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
         </noData>
       </div>
       <create-advise ref="adviseSonChild" :title="title" :advInfo="advInfo" @reload="initPage"></create-advise>

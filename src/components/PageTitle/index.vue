@@ -7,7 +7,7 @@
       <div slot="content">
         <slot name="content"></slot>
       </div>
-      <i class="el-icon-question"></i>
+      <i :class="`iconfont-v3 saasicon_help_m ${iconCssType ? 'gary' : ''}`"></i>
     </el-tooltip>
     <slot name="default"></slot>
   </div>
@@ -20,6 +20,10 @@ export default {
     title: {
       type: String,
       required: true
+    },
+    iconCssType: {
+      type: String,
+      required: false
     },
     ...Object.assign(
       Tooltip.props,
@@ -55,8 +59,13 @@ export default {
   /*margin-top: 20px;*/
   margin-bottom: 32px;
 }
-.el-icon-question {
+.saasicon_help_m {
   color: #1A1A1A;
   font-size: 14px;
+}
+.saasicon_help_m {
+  &.gary {
+    color: #666666;
+  }
 }
 </style>

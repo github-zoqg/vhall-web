@@ -83,6 +83,17 @@ import Env from "@/api/env";
 import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
+    const linkValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入广告链接'));
+      } else {
+        if (!this.linkCodeMatch(value)) {
+          callback && callback('广告链接必须以http或https开头');
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       dialogVisible: false,
       dialogAdverVisible: false,
@@ -101,7 +112,7 @@ export default {
           { required: true, message: '请选择推广图片', trigger: 'change' }
         ],
         url: [
-          { required: true,  message: '请输入广告链接', trigger: 'blur' }
+          { required: true,  validator: linkValidate, trigger: 'blur' }
         ],
       },
       domain_url: '',
@@ -174,12 +185,16 @@ export default {
       this.$set(this.advertisement, 'url', '');
       this.$set(this.advertisement, 'adv_id', '');
     },
-    saveAdviseHandle() {
-      let reg = /(http|https):\/\/([\w.]+\/?)\S*/g;
-      if (!reg.test(this.advertisement.url)) {
-        this.$message.error('广告链接只能以http://或https://开始');
-        return;
+    // 验证链接
+    linkCodeMatch(value) {
+      let reg = /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/g;
+      if (!reg.test(value)) {
+        return false;
+      } else {
+        return true;
       }
+    },
+    saveAdviseHandle() {
       this.$refs.advertisementForm.validate((valid) => {
         if (valid) {
           if (this.$route.params.str) {
@@ -355,6 +370,26 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.dialog-box {
+  /deep/.el-dialog {
+    border-radius: 4px;
+  }
+  /deep/.saasicon_shangchuan::before {
+    font-size: 44px;
+  }
+  /deep/.img-box ,/deep/.el-upload{
+    width: 324px;
+    height: 130px;
+  }
+  /deep/.noPic {
+    width: 324px !important;
+    height: 130px !important;
+    background: #F7F7F7;
+  }
+  /deep/.el-button.is-round {
+    padding: 9px 32px;
+  }
+} 
    /deep/.el-upload{
      border: 1px solid #ccc;
    }

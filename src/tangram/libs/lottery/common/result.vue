@@ -14,7 +14,7 @@
             <span class="nickname ellsips">{{ item.lottery_user_nickname }}</span>
           </li>
         </ul>
-        <el-button v-if="userHost" @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">开始抽奖</el-button>
+        <el-button v-if="userHost" @click="startReward" class="common-but lottery-start" :disabled="startButtonDisabled">继续抽奖</el-button>
     </div>
   </div>
 </template>

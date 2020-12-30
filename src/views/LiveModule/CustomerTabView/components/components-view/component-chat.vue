@@ -18,6 +18,8 @@ export default {
 .phone-chat-template {
   position: relative;
   box-sizing: border-box;
+  width: 286px;
+  margin: 0 auto;
 }
 .phone-chat-img {
   width: 100%;

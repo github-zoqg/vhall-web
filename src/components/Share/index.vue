@@ -12,12 +12,12 @@
       </div>
       <div class="right">
         <p class="title">手机扫码观看</p>
-        <img :src="env.staticLinkVo.aliQr + url" alt="二维码加载失败" class="qrcode">
+        <img :src="env.staticLinkVo.aliQr + (shareVo.url || url)" alt="二维码加载失败" class="qrcode">
       </div>
     </div>
     <div class="bottom">
       <span class="title">分享链接</span>
-      <span class="linkUrl">{{url}}</span>
+      <el-input :value="shareVo.url || url" class="linkUrl" readonly></el-input>
       <el-button type="primary" size="mini" @click="doCopy">复制</el-button>
     </div>
   </div>
@@ -34,7 +34,11 @@ export default {
   props: {
     url:{
       type: String,
-      required: true
+      required: false
+    },
+    shareVo: {
+      type: Object,
+      required: false
     }
   },
   methods: {
@@ -42,15 +46,15 @@ export default {
       let url = '';
       if(type === 'wechat') {
         // ag: url = http://t.e.vhall.com/v3/#/live/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用
-        url = '//aliqr.e.vhall.com/qr.png?t=https://t.e.vhall.com/user/home/16422680'
+          url = `//aliqr.e.vhall.com/qr.png?t=${this.shareVo.wechat_share_link || this.url}`
       }
       else if (type === 'sina') {
         // http://service.weibo.com/share/share.php?url=你的分享网址&sharesource=weibo&title=你的分享标题&pic=你的分享图片&appkey=你的key，需要在新浪微博开放平台中申请
         // https://service.weibo.com/share/share.php?url=https://t.e.vhall.com/user/home/16421384&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false
-        url = `http://service.weibo.com/share/share.php?url=${url}`
+        url = `http://service.weibo.com/share/share.php?url=${this.shareVo.sina_share_link || this.url}`
       }
       else if (type === 'qq') {
-        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${url}`
+        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.shareVo.qq_share_link || this.url}`
       }
       window.open(url, '_blank');
     },

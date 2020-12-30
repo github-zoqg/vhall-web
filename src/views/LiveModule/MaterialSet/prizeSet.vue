@@ -63,7 +63,7 @@
                 <h3>{{ formData.title || '抽奖' }}<i class="el-icon-close"></i></h3>
                 <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
                 </div>
-                <div class="sureBtn">{{ formData.description || '正在进行抽奖...' }}</div>
+                <div class="sureBtn">{{ formData.description || '正在进行抽奖' }}</div>
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" :placeholder="item.placeholder"></el-input>
+                    <el-input v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></el-input>
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <el-switch
@@ -103,9 +103,10 @@
                         <el-input v-model="givePrizeForm[item.field_key]" readonly type="text" :placeholder="item.placeholder"></el-input>
                       </el-form-item>
                     </el-form>
+                    <div class="sureBtn"><el-button type="primary" v-preventReClick round>确定</el-button></div>
                   </div>
                 </el-scrollbar>
-                <div class="sureBtn"><el-button type="primary" v-preventReClick round>确定</el-button></div>
+    
               </div>
             </div>
           </div>
@@ -433,6 +434,15 @@ export default {
   /deep/.el-switch{
     float: right;
     padding-top: 10px;
+    /deep/.el-switch__core {
+      width: 32px!important;
+      height: 20px;
+    }
+    /deep/.el-switch__core::after {
+      top: 2px;
+      width: 14px;
+      height: 14px;
+    }
   }
   /deep/.el-form-item__label{
     color: #1A1A1A;
@@ -442,6 +452,14 @@ export default {
 }
  /deep/.el-tabs__content{
    min-height: 700px;
+ }
+ /deep/.el-input{
+   input {
+     padding: 0 12px;
+   }
+   input::-webkit-input-placeholder{
+    color:#999;
+    }
  }
   .prize-info{
     margin: 18px 24px;
@@ -497,9 +515,12 @@ export default {
         color: #3562FA;
         border: 1px dashed #3562FA;
       }
+      .el-icon-plus:before {
+        font-weight: bolder;
+      }
     }
     .give-show{
-      width: 326px;
+      width: 340px;
       height: 631px;
       background-image: url('../../../common/images/h5-show-phone.png');
       background-size: cover;
@@ -525,10 +546,11 @@ export default {
           line-height: 40px;
           color:#1A1A1A;
           border-bottom: 1px solid #E6E6E6;
+          position: relative;
           i{
-            float: right;
-            margin-top: 13px;
-            margin-right: 15px;
+            position: absolute;
+            top: 12px;
+            right: 12px;
             cursor: pointer;
           }
         }
@@ -538,13 +560,13 @@ export default {
           text-align: center;
           color: #FB3A32;
           /deep/.el-button{
-            margin-top: 25px;
+            // margin-top: 25px;
           }
         }
         .give-msg{
           text-align: center;
           margin: auto;
-          height: 170px;
+          height: 260px;
           padding:20px 20px 0;
           width: 94%;
           p{
@@ -568,6 +590,8 @@ export default {
         height: 200px;
         background-size: 100%;
         background-repeat:no-repeat;
+        margin-top: 24px;
+        background-position: center;
         // img{
         //   width: 200px;
         //   height: 200px;

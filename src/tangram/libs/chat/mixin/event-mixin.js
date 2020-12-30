@@ -266,6 +266,20 @@ const eventMixin = {
             });
             this.chatList.push(data);
           }
+          // 结束签到
+          if (msg.type == 'sign_end') {
+            let text = msg.data.sign_creator_nickname || '主持人';
+            let data = new Msg({
+              nickName: '签到',
+              avatar: '//cnstatic01.e.vhall.com/static/images/watch/system.png',
+              content: {
+                text_content: `${text}结束了签到`
+              },
+              type: msg.type
+            });
+            console.warn(data);
+            this.chatList.push(data);
+          }
           // console.warn('派发的消息，查看数据类型和数据', msg, msg.type);
           EventBus.$emit(msg.type, msg);
         });

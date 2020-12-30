@@ -56,8 +56,12 @@
                   >
                     <el-radio-group v-model="form[question.id]">
                       <template v-if="question.default_type === 4">
-                        <el-radio label="男" name="gender"></el-radio>
-                        <el-radio label="女" name="gender"></el-radio>
+                        <div>
+                          <el-radio label="男" name="gender"></el-radio>
+                        </div>
+                        <div>
+                          <el-radio label="女" name="gender"></el-radio>
+                        </div>
                       </template>
                       <template v-else>
                         <div v-for="radioItem in question.items" :key="radioItem.id">
@@ -166,14 +170,13 @@
                   </div>
                   <p class="errorText" v-show="errorMsgShow">图形码错误</p>
                 </el-form-item>
-                <el-form-item v-if="isPhoneValidate" :required="false" prop="code">
-                  <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码">
-                    <el-button
-                      :disabled="time !== 60 || isPreview"
-                      class="no-border" size="mini" slot="append"
-                      @click="getDyCode(true)"
-                    >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
-                  </el-input>
+                <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" :required="false" prop="code">
+                  <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码"></el-input>
+                  <el-button
+                    :disabled="time !== 60 || isPreview"
+                    class="no-border" size="mini"
+                    @click="getDyCode(true)"
+                  >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
                 </el-form-item>
                 <el-form-item class="provicy-item" v-if="provicy" :prop="provicy.id + ''">
                   <!-- 隐私声明 -->
@@ -183,7 +186,7 @@
                     </el-checkbox>
                   </template>
                 </el-form-item>
-                <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+                <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
               </el-form>
             </template>
 
@@ -202,18 +205,18 @@
                   </div>
                   <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p>
                 </el-form-item>
-                <el-form-item v-if="isPhoneValidate" prop="code">
-                  <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码">
-                    <el-button
-                      :disabled="isPreview"
-                      class="no-border"
-                      size="mini"
-                      slot="append"
-                      @click="getDyCode(false)"
-                    >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
-                  </el-input>
+                <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" prop="code">
+                  <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码"></el-input>
+                  <el-button
+                    :disabled="verifyTime !== 60 || isPreview"
+                    class="no-border"
+                    size="mini"
+                    @click="getDyCode(false)"
+                  >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
                 </el-form-item>
-                <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
+                <div class="btnBox">
+                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
+                </div>
               </el-form>
             </template>
           </article>
@@ -516,10 +519,10 @@
         });
       },
       calculateText() {
-        // 获取一行文字的height 计算当前文字比较列表文字
-        const twoHeight = 40;
         const txtDom = this.$refs.intro
-        const curHeight = txtDom.offsetHeight
+        if(!txtDom) return false;
+        const twoHeight = 40;
+        const curHeight = txtDom.offsetHeight;
         if (curHeight > twoHeight) {
           this.overflowStatus = 1
         }
@@ -1077,20 +1080,21 @@
       }
     }
     /deep/ .provicy-checkbox {
+      display: flex;
+      align-items: flex-start;
+      line-height: 40px;
       width: 100%;
       white-space: normal;
-      height: 40px;
       font-size: 14px;
       color: #666;
       .el-checkbox__input {
-        position: absolute;
-        top: 3px;
+        padding-top: 3px;
       }
-      .el-checkbox__label {
-        width: calc(100% - 16px);
-        padding-left: 20px;
-        position: absolute;
-      }
+      // .el-checkbox__label {
+      //   width: calc(100% - 16px);
+      //   padding-left: 20px;
+      //   position: absolute;
+      // }
       /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
         color: #666;
       }
@@ -1167,7 +1171,7 @@
         display: flex;
         align-items: flex-start;
         line-height: 40px;
-        .el-checkbox__input,.el-radio__input {
+        /deep/ .el-checkbox__input, .el-radio__input {
           padding-top: 3px;
         }
         /deep/ .el-checkbox__label,.el-radio__label {
@@ -1198,6 +1202,34 @@
         }
         .el-input__suffix .el-icon-arrow-up {
           color: #1a1a1a;
+        }
+      }
+      .btnBox {
+        display: flex;
+        justify-content: center;
+        padding-top: 12px;
+      }
+      .el-button {
+        padding: 9px 55px;
+      }
+      /deep/ .verifyCodeBox {
+        .el-input__inner {
+          padding-right: 98px;
+        }
+        .el-button {
+          position: absolute;
+          right: 3px;
+          top: 3px;
+          height: 34px;
+          width: 90px;
+          padding: 0;
+          background: #DEDEDE;
+          border-radius: 2px;
+          color: #666666;
+          font-size: 13px;
+          &:hover{
+            background: #DEDEDE;
+          }
         }
       }
     }

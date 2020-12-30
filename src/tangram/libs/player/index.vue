@@ -213,8 +213,12 @@ export default {
     roominfo: {
       default: () => {}
     },
-    isAudience:{
+    isAudience:{ // 是否是助理
       default: true
+    },
+    rebroadcast: { // 告知是否是插播进入    插播不需要上报
+      required: false,
+      default: false
     }
   },
   data () {
@@ -694,23 +698,26 @@ export default {
         poster: '',
         autoplay: false,
         forceMSE: false,
-        otherOption: {
-          vid: this.roominfo.vid, // hostId
-          vfid: this.roominfo.vfid,
-          guid: this.roominfo.guid,
-          biz_id: this.$route.params.il_id
-        },
         subtitleOption: {
           enable: true
         }
       };
-      if(this.isAudience){
-        // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
-        params.otherOption.report_extra = this.reportExtra
-      }else{
-        // 助理上报     不需要switch_id
-        params.otherOption.report_extra = this.roominfo.report_extra
+      if(!this.rebroadcast){
+        params.otherOption = {
+          vid: this.roominfo.vid, // hostId
+          vfid: this.roominfo.vfid,
+          guid: this.roominfo.guid,
+          biz_id: this.$route.params.il_id
+        }
+        if(this.isAudience){
+          // 勿删    因助理使用该组件，助理不需上报 故传isAudience为false
+          params.otherOption.report_extra = this.reportExtra
+        }else{
+          // 助理上报     不需要switch_id
+          params.otherOption.report_extra = this.roominfo.report_extra
+        }
       }
+        console.warn('params---------',params);
       if (this.isLive && this.liveOption && this.type == 'live') {
         params = Object.assign(params, {
           liveOption: this.liveOption

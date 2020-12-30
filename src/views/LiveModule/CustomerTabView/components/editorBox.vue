@@ -1,11 +1,13 @@
 <template>
   <div class="custormer-menu__editor-box">
-    <component
-      :is="componetEditor"
-      :units.sync="currentInfo.components"
-      :uuid="currentInfo.uuid"
-    >
-    </component>
+    <template v-if="type == 1 || type == 3">
+      <component
+        :is="componetEditor"
+        :units.sync="currentInfo.components"
+        :uuid="currentInfo.uuid"
+      >
+      </component>
+    </template>
   </div>
 </template>
 <script>
