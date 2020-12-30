@@ -201,6 +201,7 @@ export default {
         position: relative;
         display: table-cell;
         vertical-align: middle;
+        text-align: center;
         &:hover{
           .mask{
             display: flex;
@@ -216,6 +217,7 @@ export default {
       height: 100%;
       object-fit: scale-down;
       width: 100%;
+      margin: 0px auto;
     }
   }
   .mask{

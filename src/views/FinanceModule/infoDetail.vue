@@ -5,7 +5,7 @@
         购买明细指用户从后台主动下单购买相关功能的订单；开通明细指通过工作人<br>员给您开通的相关功能订单
       </div>
     </pageTitle>
-    <el-card class="box-card">
+    <div class="box-card">
       <el-tabs v-model="activeIndex" @tab-click="handleClick">
         <el-tab-pane label="购买明细" name="1"></el-tab-pane>
         <el-tab-pane label="开通明细" name="2"></el-tab-pane>
@@ -32,7 +32,7 @@
           >
         </table-list>
       </el-tabs>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -280,6 +280,10 @@ export default {
         {
           name: "删除",
           methodName: 'delete'
+        },
+        {
+          name: "立即支付",
+          methodName: 'pay'
         }
       ]
     };
@@ -357,7 +361,7 @@ export default {
       }
       paramsObj.type = formParams.orderType || '';
       let obj = Object.assign({}, pageInfo, paramsObj);
-      this.params = obj;
+      this.params = paramsObj;
       let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
       this.$fetch(url, this.$params(obj)).then(res =>{
         this.totalNum = res.data.total;
@@ -394,7 +398,7 @@ export default {
       })
       return name;
     },
-    delete(that, val) {
+    delete(that, {rows}) {
       console.log(val, '111111111111');
       that.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
@@ -402,7 +406,7 @@ export default {
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteList(val.rows.order_id);
+          that.deleteList(rows.order_id);
         }).catch(() => {
           that.$message({
             type: 'info',
@@ -425,12 +429,20 @@ export default {
         });
       });
     },
+    pay(that, {rows})  {
+      that.$router.push({
+        path: '/finance/payOrder',
+        query: {
+          userId: that.userId,
+          orderId: rows.order_id
+        }
+      });
+    },
     // 导出账单明细
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
       this.$fetch(url, this.params).then(res => {
         if (res.code == 200) {
-          this.params = {};
           this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
         } else {
@@ -444,8 +456,10 @@ export default {
 
 <style lang="less" scoped>
   .account-income{
-    .el-card__body{
-      padding: 5px 24px 51px 24px;
+    .box-card{
+      padding: 24px 32px;
+      border-radius: 4px;
+      background: #fff;
     }
     .search-box{
       padding-top: 30px;

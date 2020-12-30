@@ -5,7 +5,7 @@
         1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
-    <el-card class="box-card">
+    <div class="box-card">
       <search-area
         ref="searchArea"
         :active="active"
@@ -32,7 +32,7 @@
          <el-button type="primary" round @click="createLive" v-if="nullText==='noData'">创建直播</el-button>
         </noData>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -154,9 +154,8 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
+      this.params = paramsObj;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      console.log(obj);
-      this.params = obj;
       this.getLiveList(obj, params);
     },
      getLiveList(data, params){
@@ -205,6 +204,11 @@ export default {
 .data-live{
   /deep/.el-card__body{
     padding: 24px 32px;
+  }
+  .box-card{
+    background: #fff;
+    padding: 24px 32px;
+    border-radius: 4px;
   }
 }
 </style>

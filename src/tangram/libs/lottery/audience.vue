@@ -117,7 +117,7 @@ export default {
             this.promptImg = require('./img/win.png')
           }
           this.isWinning = true;
-          this.getReward = '点击领奖';
+          this.getReward = '立即领奖';
         });
       }else{
         this.$nextTick(()=>{
@@ -322,7 +322,7 @@ export default {
               this.audienceText = `中奖啦！恭喜您获得 默认奖品`
               this.promptImg = require('./img/win.png')
             }
-            this.getReward = '点击领奖';
+            this.getReward = '立即领奖';
             this.submitWinning = true
           }
         }else{

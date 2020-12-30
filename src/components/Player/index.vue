@@ -106,7 +106,7 @@
               ></i>
             </span>
             <div class="ver-slider">
-              <el-slider vertical height="100px" v-model="voice" :show-tooltip="false"></el-slider>
+              <el-slider class="123" vertical height="100px" v-model="voice" :show-tooltip="false"></el-slider>
             </div>
           </div>
           <i v-if="!(isEmbedVideo && !isLive) && lang != 'en' && this.playerInfo.barrage"
@@ -283,7 +283,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$route, 999, this.$route.query.embed == 'video');
     if (this.$route.query.embed == 'video') {
       this.isEmbedVideo = true;
     }

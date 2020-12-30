@@ -16,16 +16,25 @@
         <el-form-item label="选择视频" required>
           <div class="selet-video">
             <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmFlag && changeVideo()">
-            <i class="el-icon-film"></i>
-              <p>视频仅支持MP4格式，<br>文件大小不超过200M</p>
+              <div>
+                <i class="iconfont-v3 saasicon_shangchuan"></i>
+              </div>
+              视频仅支持MP4格式，文件大小不超过200M<br>
+              上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看
             </div>
             <div class="mediaSlot mediaOther" v-else>
               <icon icon-class="saasshipinwenjian"></icon>
               <p>{{selectMedia.name}}</p>
             </div>
             <div class="abRight" v-if="selectMedia.paas_record_id">
-              <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-              <el-button type="text" class="operaBtn" @click="deleteVideo">删除</el-button>
+              <div class="tool" @click.stop="previewVideo">
+                <icon icon-class="saasicon-eye"></icon>
+                <el-button type="text" class="operaBtn" >预览</el-button>
+              </div>
+              <div class="tool" @click.stop="deleteVideo">
+                <icon icon-class="saasicon-trash"></icon>
+                <el-button type="text" class="operaBtn" >删除</el-button>
+              </div>
             </div>
           </div>
         </el-form-item>
@@ -64,10 +73,12 @@
     <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedias>
     <!-- 预览 -->
     <template v-if="showDialog">
-    <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
-      <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
-    </el-dialog>
-  </template>
+      <div class="preview-wrap">
+        <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center>
+          <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
+        </el-dialog>
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -257,6 +268,8 @@ export default {
 }
 .wramUp-wrap::v-deep{
   .avatar-uploader .el-upload {
+     width: 640px;
+     height: 180px;
      border: 1px dashed #d9d9d9;
      border-radius: 6px;
      cursor: pointer;
@@ -282,17 +295,39 @@ export default {
    .selet-video{
      border: 1px dashed #d9d9d9;
      border-radius: 6px;
-     width: 200px;
-     height: 100px;
+     width: 640px;
+     height: 180px;
      position: relative;
      .abRight{
       position: absolute;
-      top: -5px;
-      right: 10px;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      top: 0px;
+      right: 0px;
+      // line-height: 180px;
+      text-align: center; 
+      display:flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      .tool{
+        width: 40px;
+        height: 60px;
+        // p {
+        //   width: 100%;
+        //   height: 25px;
+        // }
+      }
+      span{
+        color: #fff;
+      }     
     }
     .operaBtn{
       font-size: 14px;
       color: #666;
+      positioN: relative;
       &:hover{
         color: #FB3A32;
       }
@@ -301,13 +336,20 @@ export default {
       border-color: #FB3A32;
     }
     .mediaSlot{
+      width: 100%;
       text-align: center;
       vertical-align: middle;
       line-height: 20px;
       color: #999999;
       font-size: 12px;
       cursor: pointer;
-      padding-top: 15px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      .tip{
+        width: 100%;
+      }
       i{
         font-size: 30px;
       }
@@ -315,9 +357,36 @@ export default {
         font-size: 26px;
       }
     }
-    .mediaOther{
-      padding-top: 30px;
-    }
    }
 }
+.vh-dialog{
+  /deep/ .el-dialog {
+    width: 642px!important;
+    background: transparent!important;
+    border:none;
+    box-shadow: none;
+  }
+  /deep/ .el-dialog__header {
+    width: 642px!important;
+    padding: 0px;
+    height: 55px;
+    background: transparent!important;
+    border:none;
+  }
+  /deep/ .el-dialog__headerbtn{
+    top: 30px;
+    right: 0px;
+  }
+  /deep/ .el-dialog__body{
+    width: 642px;
+    height: 375px;
+    border: 16px solid #333;
+    background: #fff;
+  }
+}
+.box{
+  text-align: center;
+}
+
+
 </style>

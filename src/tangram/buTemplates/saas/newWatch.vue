@@ -418,20 +418,15 @@
       :visible="showGiftSend"
       :onClose="closeGiftsPannel"
       :title="'选择礼物'"
-      :width="'616px'">
+      :width="'488px'">
       <div class="gifts-wrap">
-        <div class="gift-search"></div>
         <div class="gifts-list">
           <div class="gift-item"
             :class="{'active': item.id == selectGiftId}"
             v-for='(item, index) in giftList'
             :key="index"
             @click.stop="chooseGift(index)">
-            <div class="gift-cover">
-              <template v-show="uploadDomain">
-                <img :src="item.image_url">
-              </template>
-            </div>
+            <img class="gift-cover" :src="item.image_url">
             <div class="gift-info">
               <span class="name">{{item.name}}</span>
               <span class="price">￥{{item.price}}</span>
@@ -441,16 +436,10 @@
         <div class="gifts-select">
           <el-button
             class="sure-gift"
-            :disabled="!selectGiftId"
+            :disabled="!selectGiftId || noGive"
             @click="selectGift"
-            >确定</el-button
+            >赠送<span v-show="noGive">{{disableTime}}s</span></el-button
           >
-          <el-button
-              class="cancel-gift"
-              @click="closeGiftsPannel"
-              >取消</el-button
-            >
-          <div class="gift-ids">当前选中<span class="color:#3562FA">{{selectGiftId ? 1 : 0}}</span>件商品</div>
         </div>
       </div>
     </popup>
@@ -461,11 +450,19 @@
       :title="'支付方式'"
       :width="'380px'"
     >
-      <div class="pay-way">
-        <el-radio v-model="payWay" label="1">微信支付</el-radio>
-        <el-radio v-model="payWay" label="2">支付宝支付</el-radio>
+      <div class="pay-way-wrap">
+        <div class="pay-way">
+          <el-radio v-model="payWay" label="2">
+            <img :src="bizInfo.domains.static + '/static/images/watch/alipay.png'"/>
+            <span class="pay-name">支付宝支付</span>
+          </el-radio>
+          <el-radio v-model="payWay" label="1">
+            <img :src="bizInfo.domains.static + '/static/images/watch/weixin.png'"/>
+            <span class="pay-name">微信支付</span>
+          </el-radio>
+        </div>
+        <el-button @click="checkPayWay" type="primary" class="pay-way-sure">确定</el-button>
       </div>
-      <el-button @click="checkPayWay" type="primary">确定</el-button>
     </popup>
     <!--礼物支付二维码-->
     <popup
@@ -730,7 +727,7 @@ export default {
       layout: 0,
       giftList: [],
       uploadDomain: '',
-      payWay: '1',
+      payWay: '2',
       showPayWay: false,
       showPayQrCode: false,
       payQrCode: '',
@@ -743,7 +740,10 @@ export default {
       showGiveMoneyQr: false,
       showLottery: false,
       initChat: false,
-      isLogin: false
+      isLogin: false,
+      noGive: false, // 禁用发送礼物
+      disableTimer: null,
+      disableTime: 5
     };
   },
   created () {
@@ -764,16 +764,12 @@ export default {
     bizInfo: {
       handler (val) {
         if (val) {
-
           this.vssInfo = val
           this.poster = val.webinar && val.webinar.image_url ? val.webinar.image_url : '';
           this.userModules = val.modules;
           this.isInteract = val.webinar && val.webinar.is_interact;
           this.uploadDomain = val.domains.upload
-
         }
-      console.log('a121', this.bizInfo)
-
       },
       deep: true,
       immediate: true
@@ -803,9 +799,17 @@ export default {
     eventListener () {
       EventBus.$on('roomAllInfo', (msg) => {
         if (msg.data.type == "gift_send_success") {
-          this.closePayQrCode()
-          this.closePayWay()
-          this.$message.success('支付成功')
+          if (msg.data.gift_user_id = this.userInfo.user_id) {
+            this.closePayQrCode()
+            this.closePayWay()
+            let gift = this.giftList.find(item => item.id == this.selectGiftId)
+            if (gift && gift.price == 0) { 
+              this.$message.success('赠送成功')
+            } else {
+              this.handleGiveTime()
+              this.$message.success('支付成功')
+            }
+          }
         }
         if (msg.data.type == "reward_pay_ok") {
         console.log(1002, msg)
@@ -971,7 +975,6 @@ export default {
           window.EventBridge.$emit('loaded');
           this.init = true;
           this.isDesktop = res.data.is_desktop;
-          console.log(110, this.interactiveShow)
           setTimeout(() => {
             if (this.isPlayback || this.interactiveShow || !this.watchDocShow) return;
             if (res.data.is_desktop == 1) {
@@ -1022,7 +1025,6 @@ export default {
         nickName: this.bizInfo.user.nick_name,
         join_id: this.bizInfo.user.saas_join_id
       }
-      console.log(10101010101, inavInfo)
       this.roomInfo = inavInfo
       this.isPlayback = inavInfo.status === 2 && inavInfo.record_id !== '';
       this.shareUrl = `https:${this.domains.web}live/watch/${this.ilId}`;
@@ -1468,8 +1470,33 @@ export default {
       this.$refs.vhallPlayer.addBarrage(txt);
     },
     selectGift () {
-
+      let gift = this.giftList.find(item => item.id == this.selectGiftId)
+      if (gift && gift.price == 0) {
+        this.$fetch('sendGift', {
+          gift_id: this.selectGiftId,
+          channel: 'ALIPAY',
+          service_code: 'QR_PAY',
+          room_id: this.roomInfo.room_id
+        }).then(res => {
+          this.handleGiveTime()
+        }).catch(e => {
+          this.$message.error(e.msg)
+        })
+        return
+      }
       this.showPayWay = true
+    },
+    handleGiveTime () {
+      this.noGive = true
+      this.disableTimer = setInterval(() => {
+        if (this.disableTime == 0) {
+          clearInterval(this.disabledTimer)
+          this.disableTime = 0
+          this.noGive = false
+          return
+        }
+        this.disableTime --
+      }, 1000)
     }
   }
 };
@@ -1860,36 +1887,37 @@ export default {
   min-height: 330px;
   box-sizing: border-box;
   background: #fff;
-  padding: 24px 50px 32px 50px;
+  padding: 16px 40px 32px 40px;
 }
 .gifts-list{
   width: 100%;
-  height: 320px;
-  overflow-y: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
-  }
+  height: 284px;
+  // height: 320px;
+  // overflow-y: scroll;
+  // scrollbar-width: none;
+  // -ms-overflow-style: none;
+  // &::-webkit-scrollbar {
+  //   display: none; /* Chrome Safari */
+  // }
 
-  // background: red;
-  &:after{
-    clear: both;
-  }
+  // // background: red;
+  // &:after{
+  //   clear: both;
+  // }
 }
 .gift-item{
   float: left;
-  width: 242px;
-  height: 90px;
-  background: #F5F5F5;
-  border-radius: 4px;
-  margin-right: 12px;
+  width: 102px;
+  height: 142px;
   box-sizing: border-box;
-  padding: 12px;
-  margin-bottom: 12px;
-  border: 2px solid #F5F5F5;
+  padding: 16px 16px 12px 16px;
+  background: #fff;
+  border: 1px solid #F5F5F5;
+  text-align: center;
   &.active {
-    border: 2px solid #FC5659;
+    border: 1px solid #FC5659;
+    background: #FFF8F7;
+    border-radius: 4px;
   }
   &:hover{
     cursor: pointer;
@@ -1898,33 +1926,29 @@ export default {
     width: 66px;
     height: 66px;
     display:inline-block;
-    margin-right: 12px;
-    img{
-      display: inline-block;
-      width: 100%;
-      height: 100%;
-    }
+    border-radius: 4px;
+    margin-bottom: 8px;
   }
   .gift-info{
     display: inline-block;
-    vertical-align: top;
     font-size: 14px;
     color: #222222;
     box-sizing: border-box;
-    padding: 10px 0px 0px 0px;
+    width: 100%;
     .name, .price {
       display: block;
     }
     .name {
       display: inline-block;
-      width: 120px;
+      width: 100%;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
     .price{
-      margin-top: 6px;
-      color: #FC5659;
+      font-size: 12px;
+      margin-top: 2px;
+      color: #555;
     }
   }
 }
@@ -1933,45 +1957,36 @@ export default {
   height: 34px;
   text-align: center;
   position: relative;
-  margin-top: 10px;
-  .sure-gift, .cancel-gift{
+  margin-top: 22px;
+  .sure-gift{
     color: #fff;
     display: inline-block;
-    width: 80px;
-    height: 34px;
+    width: 160px;
+    height: 40px;
     background: #FC5659;
     border-radius: 4px;
     border: 1px solid #F3545B;
     padding: 0px;
-    margin: 0px;
     margin: 0px 6px;
+    text-align: center;
     span{
       display: inline-block;
-      width: 100%;
       height: 100%;
       text-align: center;
-      line-height: 34px;
+      line-height: 40px;
     }
   }
-  .cancel-gift{
-    color: #555555;
-    background: #fff;
-    border: 1px solid #888888;
-  }
-  .gift-ids{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    font-size: 14px;
-    font-weight: 400;
-    color: #222222;
-    line-height: 34px;
-  }
+}
+.pay-way-wrap{
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  text-align: center;
+  padding-bottom: 30px;
 }
 .pay-way{
   width: 100%;
-  height: 200px;
+  height: 150px;
   font-size: 20px;
   color: #555;
   background: #fff;
@@ -1979,10 +1994,36 @@ export default {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  span{
-    margin: 0px 15px;
+  /deep/ .el-radio{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px!important;
+    margin: 0px 20px!important;
+    img{
+      margin-right: 10px;
+    }
+    .pay-name{
+      display: inline-block;
+      height: 30px;
+      line-height: 30px;
+      vertical-align: top;
+    }
   }
 }
+.pay-way-sure{
+  width: 200px;
+  height: 40px;
+  margin: 0px auto;
+  padding: 0px;
+  span{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    line-height: 40px;
+  }
+}
+
 .pay-img{
   width: 100%;
   height: 220px;
@@ -2093,17 +2134,8 @@ export default {
         line-height: 30px;
         vertical-align: top;
       }
-    } 
-    // span{
-    //   display: inline-block;
-    //   height: 40px;
-    // }
-    // img{
-    //   display: inline-block;
-    //   width: 40px;
-    //   height: 40px;
-    //   margin-top: 15px;
-    // }
+    }
   }
 }
+
 </style>

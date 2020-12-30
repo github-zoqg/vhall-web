@@ -20,6 +20,7 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :restPic="true"
+            @delete="daleteImg()"
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">
@@ -67,6 +68,7 @@ export default {
      if (this.dialogVisible) {
         this.domain_url  = this.url || '';
         this.imageUrl = this.url;
+        console.log(this.url, '????????????????????????');
         if (this.imageUrl) {
           this.isType = 0;
         }
@@ -80,6 +82,12 @@ export default {
     changePic() {
       this.$emit('onChangePic', this.isType, this.imageUrl, this.domain_url);
       this.dialogVisible = false;
+    },
+    daleteImg() {
+      this.isType = 1;
+      this.imageUrl = '';
+      this.domain_url = '';
+      this.url = '';
     },
     handleuploadSuccess(res, file) {
       console.log(res, file);

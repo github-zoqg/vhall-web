@@ -138,7 +138,6 @@
         <el-button @click="cancelExportVideoFun">{{ t('取消') }}</el-button>
       </div>
     </el-dialog>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4.js"></remote-script>
   </div>
 </template>
 <script>
@@ -296,7 +295,10 @@ export default {
         accountId: this.roomInfo.third_party_user_id, // 第三方用户ID，必填
         token: this.roomInfo.paas_access_token, // access_token，必填
         videoNode: 'vh-player',
-        type: 'vod' // live 直播  vod 点播  必填
+        type: 'vod', // live 直播  vod 点播  必填
+        subtitleOption: {
+          enable: true
+        }
       };
       Object.assign(params, this.playerParams);
       params.vodOption = { recordId: this.roomInfo.record_id };
