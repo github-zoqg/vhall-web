@@ -625,7 +625,7 @@ export default {
           parseInt(convert) / parseInt(total) * 100;
         return (_percent + "").substr(0, 4);
     }
-    function getDocErrorText(error_status) {
+   /* function getDocErrorText(error_status) {
         var textArr = {
             "500": "转换失败",
             "501": "文档打开失败",
@@ -634,7 +634,7 @@ export default {
             "504": "文档受保护"
         };
         return textArr[error_status + ""];
-    }
+    }*/
     EventBus.$on('doc_convert_jpeg', res => { // 转码状态
       console.log(res, '监听到doc_convert_jpeg转码状态事件');
       this.tableList.forEach((item) => {
@@ -685,7 +685,7 @@ export default {
         status: "200" // 动态转换状态 0待转换 100转换中 200完成 500失败
         status_jpeg: "200" // 静态转换状态 0待转换 100转换中 200完成 500失败
       */
-      this.tableList.forEach((item) => {
+      this.tableList.map((item) => {
         if (res.document_id === item.document_id) {
           const statusJpeg = res.status_jpeg * 1;
           const status = res.status * 1;
