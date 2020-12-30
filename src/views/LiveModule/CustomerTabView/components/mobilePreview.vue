@@ -185,7 +185,7 @@ export default {
   .vh-mobile-previe{
     width: 358px;
     height: 674px;
-    background-image: url(/static/img/h5-show-phone.70ac3450.png);
+    background-image: url(../../../../common/images/h5-show-phone2x.png);
     background-repeat: no-repeat;
     background-size: contain;
     top: -6px;
