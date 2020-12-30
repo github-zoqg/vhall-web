@@ -1,99 +1,34 @@
 <template>
   <div class="add-question">
      <pageTitle :title="`${title}问卷`">
-        <div class="headBtnGroup">
+        <!-- <div class="headBtnGroup">
           <el-button round size="medium" @click="returnBack">返回</el-button>
-        </div>
+        </div> -->
       </pageTitle>
-      <div id="settingBox">
         <question
-          v-if="initQuestion"
-          :userId="questionInfo.third_party_user_id"
-          :accountId="userId"
-          :questionType="'user'"
-          :accessToken="questionInfo.access_token"
-          :appId="questionInfo.app_id"
           ref="questions"
         ></question>
-      </div>
   </div>
 </template>
-
 <script>
 import PageTitle from '@/components/PageTitle';
-import { sessionOrLocal } from '@/utils/utils';
-import question from '@/tangram/libs/question/saas'; // 问卷
+import question from '@/components/Question/question'
 export default {
-  name: 'addQuestion',
-  data() {
-    return {
-      rightComponent: 'fieldSet',
-      initQuestion: false,
-      userId: '',
-      questionInfo: {},
-    };
-  },
   components: {
     PageTitle,
     question
   },
   computed: {
     title() {
-      return this.$route.query.id ? '编辑' : '新建';
+      if (this.$route.query.questionId) {
+        return '编辑'
+      } else {
+        return '新增'
+      }
     }
-  },
-  created() {
-    console.log(99999)
-    this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    // this.questionId = this.$route.query.id || '';
-    this.getVideoAppid();
-  },
-  methods: {
-    getVideoAppid() {
-       this.$fetch('getPassId').then(res => {
-        if (res.code == 200 && res.data) {
-          this.initQuestion = true
-          this.questionInfo = res.data;
-        }
-        console.log(this.questionInfo);
-      })
-    },
-    createQuest(params) {
-      this.$fetch('createLiveQuestion', params).then(res => {
-        this.$message.success('新建成功');
-         this.$router.push({
-            path: '/live/question',
-            query: {
-              id: this.$route.query.webinarId,
-              roomId: this.$route.query.roomId
-            }
-          });
-      })
-    },
-    editQuest(params) {
-      this.$fetch('editLiveQuestion', params).then(res => {
-        this.$message.success('编辑成功');
-         this.$router.push({
-            path: '/live/question',
-            query: {
-              id: this.$route.query.webinarId,
-              roomId: this.$route.query.roomId
-            }
-          });
-      })
-    },
-    submitFinish(data) {
-      console.log(data, '1111111111111');
-    },
-    returnBack() {
-      this.$router.push({
-        path: '/live/question'
-      });
-    }
-  },
-};
+  }
+}
 </script>
-
 <style lang="less" scoped>
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
