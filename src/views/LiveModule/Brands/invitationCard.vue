@@ -29,7 +29,7 @@
         <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation">
           <el-form-item label="背景">
             <div class="data-img">
-              <img :src="img" alt=""/>
+              <div class="advor_img"><img :src="img" alt=""/></div>
               <span class="choseImg" @click="invitation && changeImg()">重新选择</span>
             </div>
           </el-form-item>
@@ -69,8 +69,8 @@
             <el-date-picker
               style="width: 320px"
               v-model="formInvitation.webinar_date"
-              type="datetime"
-              value-format="yyyy-MM-dd HH:mm:ss"
+              type="date"
+              value-format="yyyy-MM-dd"
               placeholder="选择时间"
             >
             </el-date-picker>
@@ -389,12 +389,18 @@ export default {
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-top: 10px;
-    img {
+    .advor_img{
       width: 70px;
       height: 130px;
+      position: absolute;
       margin: 0 125px;
-      z-index: -10;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
     }
+
     .choseImg {
       width: 100%;
       display: inline-block;
@@ -465,7 +471,7 @@ export default {
       border-radius: 4px;
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
-      background-size: cover;
+      background-size: 100% 100%;
       height: 622px;
       .show-container{
         margin: 50px 24px;
@@ -480,7 +486,7 @@ export default {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            border: 1px solid #ccc;
+            // border: 1px solid #ccc;
             margin: auto;
             margin-bottom: 10px;
             img{
@@ -535,8 +541,9 @@ export default {
             margin-right: 10px;
             margin-left: 10px;
             img{
-              width: 60px;
-              height: 60px;
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
             }
           }
           .show-action{
@@ -575,7 +582,7 @@ export default {
               width: 36px;
               height: 36px;
               border-radius: 50%;
-              border: 1px solid #ccc;
+              // border: 1px solid #ccc;
               margin: auto;
               margin-bottom: 4px;
               img{
@@ -651,7 +658,7 @@ export default {
       border-radius: 4px;
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
-      background-size: cover;
+      background-size: 100% 100%;
       .look-header{
         padding: 20px 24px;
         text-align: center;
@@ -659,7 +666,7 @@ export default {
           width: 36px;
           height: 36px;
           border-radius: 50%;
-          border: 1px solid #ccc;
+          // border: 1px solid #ccc;
           margin: auto;
           margin-bottom: 10px;
           img{
@@ -773,8 +780,9 @@ export default {
         height: 190px;
         text-align: center;
         img{
-          width: 190px;
-          height: 190px;
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
         }
       }
     }

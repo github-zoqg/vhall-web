@@ -15,7 +15,7 @@
     >
     </search-area>
     <main-data :mainKeyData="mainKeyData"></main-data>
-    <el-card class="statistical-data">
+    <div class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line">
         <span>观众访问趋势图</span>
@@ -51,7 +51,7 @@
         ><div class="bg-purple"><ter-charts :isTerBar="2" :terDataList="browerDataList"></ter-charts></div
         ></el-col>
       </el-row>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -200,7 +200,9 @@ export default {
 <style lang="less" scoped>
 .data-info {
   .statistical-data {
-    margin-top: 24px;
+    padding: 24px 32px;
+    background: #fff;
+    border-radius: 4px;
     .statistical-title {
       text-align: left;
       font-size: 16px;

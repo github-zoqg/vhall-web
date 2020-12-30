@@ -22,7 +22,6 @@
           :headers="{token: token, platform: 17}"
           :data=saveData
           name="resfile"
-          accept="*"
           :show-file-list=false
           :on-success='uploadSuccess'
           :on-error="uploadError"
@@ -36,12 +35,11 @@
     </div>
     <div v-else>
       <div class="head-operat">
-        <el-upload
+        <!--<el-upload
           class="btn-upload"
           :action=actionUrl
           :headers="{token: token, platform: 17}"
           :data=saveData
-          accept="*"
           name="resfile"
           :show-file-list=false
           :on-success='uploadSuccess'
@@ -51,8 +49,8 @@
           :on-preview="uploadPreview"
         >
           <el-button round type="primary" size="medium">上传</el-button>
-        </el-upload>
-        <!--<el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>-->
+        </el-upload>-->
+        <el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>
         <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
         <el-button round @click="wordMultiDel" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
         <el-input
@@ -95,7 +93,7 @@
           :action=actionUrl
           :headers="{token: token, platform: 17}"
           :saveData=saveData
-          accept="*"
+          accept="*/*"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
@@ -137,7 +135,6 @@ import Env from '@/api/env';
 import {sessionOrLocal} from "@/utils/utils";
 import EventBus from "@/utils/Events";
 import FileUpload from '@/components/FileUpload/main';
-import {v1 as uuidV1} from "uuid";
 
 export default {
   name: 'word.vue',
@@ -211,8 +208,7 @@ export default {
         pos: 0,
         limit: 1000,
         pageNumber: 1
-      },
-      uploadProgress: 0
+      }
     };
   },
   computed: {
@@ -259,12 +255,15 @@ export default {
         let img = new Image();
         img.src = `http:${this.env.wordShowUrl}/${this.docParam.hash}/${this.activeIns}.jpg`;
         if (img.complete) {
+          alert(1)
           this.isLoading = true;
         }
         img.onload = function() {
+          alert(2)
           that.loading = false;
         };
       } else {
+        alert(3)
         that.loading = false;
       }
     },
@@ -289,8 +288,7 @@ export default {
           });
         } else {
           // 判断文件上传情况
-          // this.initPage();
-          window.location.reload();
+          this.initPage();
         }
       }
     },
@@ -334,26 +332,10 @@ export default {
         this.$message.error('上传文件大小不能超过 100MB!');
         return false;
       }
-      if (isType && isLt2M) {
-        this.tableList.unshift({
-          created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-          ext: lastFileKey.toLowerCase(),
-          file_name: file.name,
-          id: file.uid,
-          isUpload: true,
-          codeProcess: 0,
-          transform_schedule_str: ''
-        })
-      }
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
-      this.tableList.map(item => {
-        if (item.id === file.uid) {
-          item.codeProcess = parseInt(event.percent);
-        }
-      })
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
@@ -586,7 +568,7 @@ export default {
         if (res && res.code === 200) {
           this.channel_id = res.data.vss_channel_id;
           this.initPage();
-          // this.initChat();
+          this.initChat();
         }
       }).catch(error=>{
         console.log(error);
@@ -605,7 +587,7 @@ export default {
     } else {
       this.channel_id = sessionOrLocal.get('SAAS_V3_CHANNEL_ID', 'localStorage') || '';
       this.initPage();
-      // this.initChat();
+      this.initChat();
     }
   },
   mounted() {
@@ -625,7 +607,7 @@ export default {
           parseInt(convert) / parseInt(total) * 100;
         return (_percent + "").substr(0, 4);
     }
-   /* function getDocErrorText(error_status) {
+    function getDocErrorText(error_status) {
         var textArr = {
             "500": "转换失败",
             "501": "文档打开失败",
@@ -634,7 +616,7 @@ export default {
             "504": "文档受保护"
         };
         return textArr[error_status + ""];
-    }*/
+    }
     EventBus.$on('doc_convert_jpeg', res => { // 转码状态
       console.log(res, '监听到doc_convert_jpeg转码状态事件');
       this.tableList.forEach((item) => {
@@ -685,42 +667,143 @@ export default {
         status: "200" // 动态转换状态 0待转换 100转换中 200完成 500失败
         status_jpeg: "200" // 静态转换状态 0待转换 100转换中 200完成 500失败
       */
-      this.tableList.map((item) => {
+      this.tableList.forEach((item) => {
         if (res.document_id === item.document_id) {
-          const statusJpeg = res.status_jpeg * 1;
-          const status = res.status * 1;
-          if (statusJpeg === 0) {
-            item.showEventType = 0;
-            item.transform_schedule_str = `等待转码中...`;
-          } else if (statusJpeg === 100) {
-            item.showEventType = 1;
-            item.transform_schedule_str = ``; // 静态转码中
-            let _percent = parseInt(res.converted_page_jpeg) / parseInt(res.page) * 100;
-            item.codeProcess = (_percent + "").substr(0, 4);
-          } else if (statusJpeg === 200) {
-            if (/pptx?/.test(item.ext)) {
-              // 如果是ppt or pptx
-              if (status === 0) {
-                item.showEventType = 2;
-                item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
-              } else if (status === 100) {
-                item.showEventType = 3;
-                item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
-              } else if (status === 200) {
-                item.showEventType = 4;
-                item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+          const statusJpeg = Number(res.status_jpeg);
+          const status = Number(res.status);
+          if (status === 0) {
+            if(statusJpeg === 200) {
+              // 若动态待转换，并且静态转换完成，非pptx的提示转码完成
+              if (!/pptx?/.test(item.ext)) {
+                 item.transform_schedule_str = '转码完成';
+                 item.transcoded = true;
+                 item.codeProcess = 100;
+                 item.isError = false;
               } else {
-                item.showEventType = 5;
-                item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                // 若动态转换中，并且静态转换完成，pptx的提示转换进度，展示 静态转换 + 动态转换总比
+                item.transcoded = false;
+                item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+                item.isError = false;
+              }
+            } else if(statusJpeg >= 500){
+              // 静态转换状态失败，提示具体错误
+              item.transform_schedule_str = '转码失败'; // getDocErrorText(statusJpeg);
+              item.transcoded = false;
+              item.codeProcess = 0;
+              item.isError = true;
+            } else if (statusJpeg === 100) {
+              // 若动态待转换，并且静态转换中，pptx的提示转换进度，展示 静态转换 + 动态转换总比；非ppt 展示 静态转换比
+              if (/pptx?/.test(item.ext)) {
+                item.transcoded = false;
+                item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+                item.isError = false;
+              } else {
+                item.transcoded = false;
+                item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page);
+                item.isError = false;
               }
             } else {
-              // 非PPT静态转码完成
-              item.showEventType = 6;
-              item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+              item.transform_schedule_str = '等待转码';
+              item.codeProcess = 0;
+              item.transcoded = false;
+              item.isError = false;
             }
-          } else if (statusJpeg >= 500) {
-            item.showEventType = 7;
-            item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+          } else if (status === 100) {
+            // 若动态转换中，pptx直接提示转换进度，展示 静态转换 + 动态转换总比
+             if (/pptx?/.test(item.ext)) {
+               item.transcoded = false;
+               item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+               item.isError = false;
+            }
+            if (statusJpeg == 200) {
+                if (!/pptx?/.test(item.ext)) {
+                  // 非pptx，并且静态转换 完成。
+                  item.transform_schedule_str = '转码完成';
+                  item.codeProcess = 0;
+                  item.transcoded = true;
+                  item.isError = false;
+                }
+            } else if (statusJpeg >= 500) {
+              // 若静态转换异常
+              item.transform_schedule_str = '转码失败'; //getDocErrorText(statusJpeg);
+              item.transcoded = false;
+              item.codeProcess = 0;
+              item.isError = true;
+            }
+          } else if (status === 200) {
+            if (statusJpeg == 0) {
+                // 若动态转换完成，静态转换待转换，pptx展示 静态转换 + 动态转换总比
+                if (/pptx?/.test(item.ext)) {
+                  item.transcoded = false;
+                  item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+                  item.isError = false;
+                } else {
+                  item.transform_schedule_str = '等待转码';
+                  item.codeProcess = 0;
+                  item.transcoded = false;
+                  item.isError = false;
+                }
+            } else if (statusJpeg >= 500) {// 若静态转换异常
+              item.transform_schedule_str = '转码失败，请重新上传'; //getDocErrorText(statusJpeg);
+              item.transcoded = false;
+              item.codeProcess = 0;
+              item.isError = true;
+            } else if (statusJpeg === 100) {
+                // 若动态转换完成，静态转换中，pptx展示 静态转换 + 动态转换总比
+                if (/pptx?/.test(item.ext)) {
+                  item.transcoded = false;
+                  item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+                  item.isError = false;
+                } else {
+                  item.transcoded = false;
+                  item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page);
+                  item.isError = false;
+                }
+            } else if (statusJpeg === 200) {
+              // 若动态转换完成，静态转码完成
+              item.transform_schedule_str = `静态转码完成<br />动态转码完成`;
+              item.codeProcess = 0;
+              item.transcoded = true;
+              item.isError = false;
+            }
+          } else if (status >= 500) {
+            if (statusJpeg === 0) {
+              // 若静态转码失败，动态转码待转换
+              item.transform_schedule_str = '等待转码中...';
+              item.codeProcess = 0;
+              item.transcoded = false;
+              item.isError = false;
+            } else if (statusJpeg === 100) {
+                // 若静态转码失败，动态转码异常，PPT展示
+                if (/pptx?/.test(item.ext)) {
+                  item.transcoded = false;
+                  item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+                  item.isError = false;
+                } else {
+                  item.transcoded = false;
+                  item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page);
+                  item.isError = false;
+                }
+            } else if (statusJpeg === 200) {
+                if (/pptx?/.test(item.ext)) {
+                  // 若静态转码失败，动态转码完成，PPT展示
+                  item.transform_schedule_str = '动画版转换失败，请尝试极速版';
+                  item.codeProcess = 0;
+                  item.transcoded = false;
+                  item.isError = true;
+                  item.dataAnimateError = true;
+                } else {
+                  item.transcoded = false;
+                  item.codeProcess = CalculatePercent(res.converted_page_jpeg, res.page, res.converted_page);
+                  item.isError = false;
+                }
+            } else if (statusJpeg >= 500) {
+              // 若静态转码失败，动态转码失败
+              item.transform_schedule_str = '转码失败，请重新上传'; //getDocErrorText(statusJpeg);
+              item.transcoded = false;
+              item.codeProcess = 0;
+              item.isError = true;
+            }
           }
         }
       });

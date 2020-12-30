@@ -16,7 +16,7 @@
       >
     </search-area>
     <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
-    <el-card class="statistical-data">
+    <div class="statistical-data">
       <div class="statistical-title">用量统计</div>
       <div class="statistical-line" v-if="titleType != 4">
         <span>并发趋势图</span>
@@ -60,7 +60,7 @@
           ><div class="bg-purple"><ter-charts :isTerBar="2" :terDataList="browerDataList"></ter-charts></div
         ></el-col>
       </el-row>
-    </el-card>
+    </div>
   </div>
 </template>
 <script>
@@ -357,6 +357,9 @@ export default {
   padding: 0;
 }
 .statistical-data {
+  background: #fff;
+  padding: 24px 32px;
+  border-radius: 4px;
   margin-top: 24px;
   .statistical-title {
     text-align: left;

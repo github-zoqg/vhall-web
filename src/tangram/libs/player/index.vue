@@ -22,7 +22,7 @@
       </div>
     </div>
      <!-- 语言为英语的时候 不显示更改后的倍速和清晰度 -->
-    <div v-if="sonPoster!=''" class="poster_img_box">
+    <div v-if="sonPoster" class="poster_img_box">
       <img :src="sonPoster" alt="">
     </div>
     <div class="Tips" :class="{'TipsOpcity': changeQuality || changeSpeed}">
@@ -1616,7 +1616,8 @@ export default {
         position: absolute;
         bottom: 100%;
         left: -47%;
-        width: 30px;
+        padding-top: 10px;
+        // width: 30px;
         display: none;
         /* margin-bottom: 2px; */
         .layui-slider {
@@ -1690,6 +1691,7 @@ export default {
        /deep/ .el-slider__button-wrapper {
         // top: -12px;
         width: 0px;
+        left: -2px;
       }
     }
     .Painting {

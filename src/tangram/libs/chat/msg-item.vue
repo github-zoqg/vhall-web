@@ -30,9 +30,11 @@
       </template>
       <template v-else-if="msg.type === 'gift_send_success'">
         <div class="msg-reward gift">
-          <p class="ctop">
-            <span style="color:#4da1ff;">{{msg.nickName}}</span>
-            送主播一个{{msg.content.gift_name}}
+          <div class="left-info">
+            <div style="margin-bottom: 4px;">{{msg.nickName | filterName}}</div>
+            <div>送出一个{{msg.content.gift_name}}</div>
+          </div>
+          <div class="right-info">
             <img
               style="vertical-align:text-bottom;"
               width="15"
@@ -40,7 +42,7 @@
               :src="msg.content.gift_url"
               alt
             />
-          </p>
+          </div>
         </div>
       </template>
       <template v-else>
@@ -180,6 +182,13 @@ export default {
     },
     roleClassFilter (value) {
       return value == '1' ? 'host' : value == '3' ? 'assistant' : 'guest';
+    },
+    filterName (val) {
+      if (val && val.length > 8) {
+        return val.substring(0,8) + '...'
+      } else {
+        return val
+      }
     }
   },
   mounted () {
@@ -392,21 +401,26 @@ export default {
       }
     }
     .msg-reward {
-      width: 100%;
-      height: 44px;
-      border-radius: 30px;
-      color: #eee;
+      min-width: 190px;
+      height: 44px!important;
+      border-radius: 26px;
+      color: #fff;
       background: #202020;
-      padding: 7px 10px;
+      padding: 4px 16px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      text-align: center;
+      justify-content: space-between;
+      text-align: left;
       font-size: 12px;
-      &.gift {
-        height: auto;
-      }
-      .ctop {
+      background: linear-gradient(227deg, rgba(255, 137, 96, 0) 0%, #FF6267 100%);
+      position: relative;
+      img{
+        display: inline-block;
+        width: 44px;
+        height: 44px;
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
       }
     }
   }

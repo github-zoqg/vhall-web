@@ -115,17 +115,17 @@
              type: 'exel',
           }"
           :result="importResult"
+          :fileResult=fileResult
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到0条数据</p>
-          <p slot="tip" v-else>请使用模版上传文件</p>
+          <p slot="tip">请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click="reloadViewerList" size="mini" round>确 定</el-button>
-          <el-button @click="importFileShow = false" size="mini" round>取 消</el-button>
+          <el-button type="primary" @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
+          <el-button @click="importFileShow = false" size="medium" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -437,6 +437,7 @@ export default {
     importViewerOpen() {
       this.importFileShow = true;
       this.fileUrl = null;
+      this.fileResult = '';
       this.importResult = {
         fail: 0,
         success: 0
@@ -563,16 +564,22 @@ export default {
         // 文件上传成功，导入观众
         this.$fetch('viewerImport', {
           file_url: res.data.file_url,
-          group_id: this.query.group_id
+          group_id: this.query.group_id,
+          request_type: 0 // 校验
         }).then(resV => {
           if (resV && resV.code === 200) {
+            this.fileResult = 'success';
             this.importResult.success = resV.data.success_count;
             this.importResult.fail = resV.data.fail_count;
           } else {
-            this.$message.error(resV.msg || '导入观众信息失败！');
+            this.fileResult = 'error';
+            // this.$message.error(resV.msg || '检测观众信息失败！');
+            this.importResult = null;
           }
         }).catch(e => {
-          this.$message.error('导入观众信息失败！');
+          this.fileResult = 'error';
+          this.importResult = null;
+          // this.$message.error(e.msg || '检测观众信息失败！');
         });
       }
     },
@@ -597,16 +604,29 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`文件上传失败`);
+      // this.$message.error(`文件上传失败`);
       this.fileResult = 'error';
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
     reloadViewerList() {
-      this.importFileShow = false;
-      // 刷新列表数据
-      this.queryList();
+      // 数据存储
+      this.$fetch('viewerImport', {
+        file_url: this.fileUrl,
+        group_id: this.query.group_id,
+        request_type: 1 // 保存
+      }).then(resV => {
+        if (resV && resV.code === 200) {
+          this.importFileShow = false;
+          // 刷新列表数据
+          this.queryList();
+        } else {
+          this.$message.error(resV.msg || '导入观众信息失败！');
+        }
+      }).catch(e => {
+        this.$message.error(e.msg || '导入观众信息失败！');
+      });
     },
   },
   created() {

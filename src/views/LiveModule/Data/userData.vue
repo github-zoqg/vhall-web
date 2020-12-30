@@ -14,7 +14,7 @@
       </el-tooltip>
     </div>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
-    <el-card>
+    <div class="active-box">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="直播" name="1"></el-tab-pane>
         <el-tab-pane label="回放" name="2"></el-tab-pane>
@@ -41,7 +41,7 @@
           >
         </table-list>
       </el-tabs>
-    </el-card>
+    </div>
 
   </div>
 </template>
@@ -229,7 +229,6 @@ export default {
       })
     },
     getTableList(params) {
-      this.params = {};
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       let paramsObj = {
@@ -269,7 +268,7 @@ export default {
         }
       }
       let obj = Object.assign({}, pageInfo, paramsObj);
-      this.params = obj;
+      this.params = paramsObj;
       this.getBaseUserInfo(obj);
     },
     getBaseUserInfo(params) {
@@ -333,6 +332,11 @@ export default {
     .button-tip {
       vertical-align: top;
     }
+  }
+  .active-box{
+    padding: 24px 32px;
+    border-radius: 4px;
+    background: #fff;
   }
 }
 </style>

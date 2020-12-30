@@ -763,7 +763,6 @@ export default {
     this.$EventBus.$on('updateBaseNum', (msg) => {
       let num = this.roomData.online.num
       this.roomData.online.num = Number(num) + Number(msg.data.update_online_num)
-      console.log(999999, Number(num), Number(msg.data.update_online_num), this.roomData.online.num)
       
       let pvNum = this.roomData.pv.num
       this.roomData.pv.num = Number(pvNum) + Number(msg.data.update_pv)
@@ -885,8 +884,10 @@ export default {
           }
           return
         }
-        if (this.roomData && this.roomData.status == 'live') {
+        if (this.roomData && this.roomData.status == 'live' && this.roomData.webinar.type != 4) {
           await this.queryRoomInterInfo() // 获取房间活动状态
+        }
+        if (this.roomData && this.roomData.status == 'live') {
           await this.getFirstPost() // 开屏
         }
         await this.getAdsInfo() // 获取活动广告信息
@@ -1706,7 +1707,6 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-      console.log('a122', this.roominfo)
 
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
