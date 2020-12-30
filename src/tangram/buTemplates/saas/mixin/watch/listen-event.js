@@ -152,22 +152,22 @@ export const listenEvent = {
       });
 
       // 问卷推送
-      EventBus.$on('questionnaire_push', msg => {
-        this.$fetch('checkSurvey', {
-          survey_id: msg.questionnaire_id,
-          user_id: this.roomInfo.third_party_user_id,
-          webinar_id: this.ilId
-        }).then(res => {
-          const time = 1000;
-          let step = Math.floor(Math.random() * 10);
-          step = step > 5 ? 5 : step;
-          console.log('time step', step);
-          setTimeout(() => {
-            this.showQA = true;
-            this.$refs.questions.contentQuestion(msg.questionnaire_id);
-          }, step * time);
-        });
-      });
+      // EventBus.$on('questionnaire_push', msg => {
+      //   this.$fetch('checkSurvey', {
+      //     survey_id: msg.questionnaire_id,
+      //     user_id: this.roomInfo.third_party_user_id,
+      //     webinar_id: this.ilId
+      //   }).then(res => {
+      //     const time = 1000;
+      //     let step = Math.floor(Math.random() * 10);
+      //     step = step > 5 ? 5 : step;
+      //     console.log('time step', step, res);
+      //     setTimeout(() => {
+      //       this.showQA = true;
+      //       this.$refs.questions.contentQuestion(msg.questionnaire_id);
+      //     }, step * time);
+      //   });
+      // });
       // 上麦成功
       EventBus.$on('vrtc_connect_success', msg => {
         console.log('5>>>', msg.room_join_id);
@@ -260,19 +260,15 @@ export const listenEvent = {
           survey_id: questionnaireId,
           webinar_id: this.ilId
         }).then(res => {
-          if (res.code == 200) {
-            if (res.data) { // 未提交
-              setTimeout(() => {
-                this.showQA = true;
-                console.log(99)
-                this.$refs.questions.chatPreview(questionnaireId, false);
-              }, 200);
-            } else {
-              setTimeout(() => {
-                this.showQA = true;
-                this.$refs.questions.chatPreview(questionnaireId, true);
-              }, 200);
-            }
+          if (res.data) { // 未提交
+            setTimeout(() => {
+              console.log(99)
+              this.$refs.questions.chatPreview(questionnaireId, false);
+            }, 200);
+          } else {
+            setTimeout(() => {
+              this.$refs.questions.chatPreview(questionnaireId, true);
+            }, 200);
           }
         })
       });

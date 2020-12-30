@@ -4,7 +4,7 @@
  * 问卷模块
  *
  */
-import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/utils/questionnaire_service.js';
+import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/common/js/questionarie/questionnaire_service';
 export default {
   props: {
     roleName: {
@@ -343,6 +343,7 @@ export default {
       const questionStyle = document.querySelector('.vhall-list-dialog-content');
       questionStyle.style.width = '600px';
       this.showPreview = true;
+      console.log(9)
       this.answerQuestion(questionId);
     },
     // 校验checkSurvey

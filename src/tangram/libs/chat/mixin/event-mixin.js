@@ -238,6 +238,7 @@ const eventMixin = {
           }
           // 推送问卷
           if (msg.type == 'questionnaire_push') {
+            console.log(5)
             EventBus.$emit('questionnaireCheck', msg.questionnaire_id);
             let text =
               msg.room_role == '3' ? `助理${msg.nick_name}` : msg.room_role == '4' ? `嘉宾${msg.nick_name}` : '主持人';
