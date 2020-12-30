@@ -223,7 +223,9 @@ export default {
   },
   data() {
     let checkNums = (rule, value, callback) => {
-      if (!value) {
+      if (this.viewerDao && this.viewerDao.fcodes > 0) {
+        callback();
+      } else if (!value) {
         return callback(new Error('邀请码数量1-1000'));
       } else if (value > 1000 || value < 1) {
         return callback(new Error('邀请码数量1-1000'));
@@ -504,6 +506,11 @@ export default {
       console.log('当前已经选中分组集合'+this.whiteIds.join('.'));
       */
       this.whiteId = item.id;
+    },
+    formatInput() {
+      this.$nextTick(() => {
+       alert(11)
+      })
     },
     // 验证码生成
     fCodeExecute(formName) {
