@@ -175,6 +175,7 @@ export default {
       },
       subject_id: '',
       reservation: true,
+      isSave: true,
       hot: true,
       home: true,
       loading: false,
@@ -193,7 +194,8 @@ export default {
     // console.log(this.$route.query.title, '111111111111111111');
   },
   beforeRouteLeave(to, from, next) {
-    this.$confirm(`是否取消编辑的专题内容？`, '提示', {
+    if (this.isSave && $route.query.title == '创建') {
+      this.$confirm(`是否取消编辑的专题内容？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-alert-box',
@@ -202,6 +204,10 @@ export default {
         next();
       }).catch(() => {
       });
+    } else {
+      next();
+    }
+
   },
   mounted() {
     if (this.$route.query.id) {
@@ -309,6 +315,7 @@ export default {
 
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
+             this.isSave = false;
               this.subject_id = res.data.subject_id;
               this.$message.success(`创建成功`);
               console.log(res);
