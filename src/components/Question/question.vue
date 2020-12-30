@@ -156,3 +156,8 @@ export default {
   }
 }
 </script>
+<style lang="less">
+  .qs-preview-box-content .cef-q-wrap{
+    z-index: 3000;
+  }
+</style>

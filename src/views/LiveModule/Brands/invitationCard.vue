@@ -51,7 +51,7 @@
           </el-form-item>
           <el-form-item label="标题">
             <el-input
-              v-model="formInvitation.title"
+              v-model.trim="formInvitation.title"
               maxlength="16"
               show-word-limit
               style="width: 320px"
@@ -59,25 +59,21 @@
           </el-form-item>
           <el-form-item label="主办方">
             <el-input
-              v-model="formInvitation.company"
+              v-model.trim="formInvitation.company"
               maxlength="10"
               show-word-limit
               style="width: 320px"
             ></el-input>
           </el-form-item>
           <el-form-item label="时间">
-            <el-date-picker
+            <el-input
+              v-model.trim="formInvitation.webinar_date"
               style="width: 320px"
-              v-model="formInvitation.webinar_date"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="选择时间"
-            >
-            </el-date-picker>
+            ></el-input>
           </el-form-item>
           <el-form-item label="地点">
             <el-input
-              v-model="formInvitation.location"
+              v-model.trim="formInvitation.location"
               maxlength="20"
               show-word-limit
               style="width: 320px"
@@ -86,7 +82,7 @@
           <el-form-item label="简介">
             <el-input
               style="width: 320px"
-              v-model="formInvitation.desciption"
+              v-model.trim="formInvitation.desciption"
               type="textarea"
               maxlength="45"
               :autosize="{ minRows: 5 }"
@@ -112,15 +108,15 @@
               <div class="show-avator">
                 <img :src="avatar" alt="">
               </div>
-              <p>微吼直播</p>
+              <p>{{formInvitation.company || '微吼直播'}}</p>
               <p>邀请你一起看直播</p>
             </div>
             <div class="show-text">
               <h1>{{ formInvitation.title }}</h1>
-              <p>{{ formInvitation.location }}</p>
+              <p>{{ formInvitation.desciption }}</p>
               <div class="show-time">
                 <p>{{ formInvitation.webinar_date }}</p>
-                <p>{{ formInvitation.company }}</p>
+                <p>{{ formInvitation.location }}</p>
               </div>
             </div>
             <div class="show-footer">
@@ -141,19 +137,19 @@
               <div class="watch-avator">
                 <img :src="avatar" alt="">
               </div>
-              <p style="color:#fff;">微吼直播</p>
+              <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
               <p style="color:#fff;">邀请你一起看直播</p>
             </div>
           </div>
           <div class="watch-text">
             <h1>{{ formInvitation.title }}</h1>
-            <p>{{ formInvitation.location }}</p>
+            <p>{{ formInvitation.desciption }}</p>
             <div class="watch-footer">
               <div class="watch-code"><img :src="qrcode" alt=""></div>
               <div class="watch-action">
                 <p>扫码观看视频</p>
                 <h1>{{ formInvitation.webinar_date }}</h1>
-                <h1>{{ formInvitation.company }}</h1>
+                <h1>{{ formInvitation.location }}</h1>
               </div>
             </div>
           </div>
@@ -163,19 +159,19 @@
               <div class="look-avator">
                 <img :src="avatar" alt="">
               </div>
-              <p>微吼直播</p>
+              <p>{{formInvitation.company || '微吼直播'}}</p>
               <p>邀请你一起看直播</p>
             </div>
-            <div class="look-text">
+            <div class="look-text" v-if="formInvitation.title || formInvitation.desciption">
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
             </div>
             <div class="look-time">
-              <span></span>
-              <p>时间</p>
+              <span v-if="formInvitation.webinar_date"></span>
+              <p v-if="formInvitation.webinar_date">时间</p>
               <p>{{ formInvitation.webinar_date }}</p>
-              <span></span>
-              <p>地点</p>
+              <span v-if="formInvitation.location"></span>
+              <p v-if="formInvitation.location">地点</p>
               <p>{{ formInvitation.location }}</p>
             </div>
             <div class="look-footer">
@@ -312,23 +308,24 @@ export default {
     // 本地下载
     loadDownInvition() {
       let image = new Image();
-      let canvas1 = document.createElement('canvas');
-      let _canvas = document.querySelector('#shopInvent');
-      let w = parseInt(window.getComputedStyle(_canvas).width);
-      let h = parseInt(window.getComputedStyle(_canvas).height);
-      canvas1.width = w * 2;
-      canvas1.height = h * 2;
-      canvas1.style.width = w + 'px';
-      canvas1.style.height = h + 'px';
-      let context = canvas1.getContext('2d');
-      context.scale(2,2);
-      context.drawImage(image, 0, 0, canvas1.width, canvas1.height);
-      let url = canvas1.toDataURL("image/png");
-      let a = document.createElement("a"); // 生成一个a元素
-      let event = new MouseEvent("click"); // 创建一个单击事件
-      a.download = `code${new Date().getTime()}`; // 设置图片名称
-      a.href = url; // 将生成的URL设置为a.href属性
-      a.dispatchEvent(event); // 触发a的单击事件
+      // 解决跨域 Canvas 污染问题
+      image.setAttribute("crossOrigin", "anonymous");
+      image.onload = function() {
+        let canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        let context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, image.width, image.height);
+        let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
+        let a = document.createElement("a"); // 生成一个a元素
+        let event = new MouseEvent("click"); // 创建一个单击事件
+        a.download = `code${new Date().getTime()}`; // 设置图片名称
+        a.href = url; // 将生成的URL设置为a.href属性
+        a.dispatchEvent(event); // 触发a的单击事件
+      };
+      // let token = sessionOrLocal.get('token', 'localStorage');
+      // let link = `http://172.16.23.59:8081/invite/${this.$route.params.str}?token=${token}`;
+      // image.src = link;
     }
   }
 };
@@ -357,8 +354,12 @@ export default {
   /deep/.el-input .el-input__count{
     color:#999;
   }
+  /deep/.el-input__count-inner{
+    color: #999;
+  }
   /deep/.el-textarea .el-input__count{
     color:#999;
+    font-size: 14px;
   }
   /deep/.invite-card-button {
     width: 106px;
@@ -426,7 +427,7 @@ export default {
       border-radius: 2px;
       border: 1px solid #E6E6E6;
       position: relative;
-      height: 125px;
+      height: 128px;
       border: 1px solid transparent;
       .img-tangle{
         position: absolute;
@@ -479,6 +480,7 @@ export default {
         height: 520px;
         background: #fff;
         box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+        position: relative;
         .show-header{
           padding: 20px 24px;
           text-align: center;
@@ -486,7 +488,6 @@ export default {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            // border: 1px solid #ccc;
             margin: auto;
             margin-bottom: 10px;
             img{
@@ -504,7 +505,7 @@ export default {
           }
         }
         .show-text{
-          padding: 30px 24px 30px 24px;
+          padding: 24px;
           text-align: center;
           h1{
             padding: 0;
@@ -512,34 +513,40 @@ export default {
             color:#1A1A1A;
             font-weight: 600;
             line-height: 37px;
-            min-height: 80px;
+            // min-height: 80px;
           }
           p{
             font-size: 14px;
             color:#1A1A1A;
             font-weight: 400;
-            line-height: 20px;
+            line-height: 30px;
             padding: 2px 0 5px 0;
-            min-height: 45px;
+            overflow: hidden;
+            text-emphasis: wrap;
+            // min-height: 45px;
           }
           .show-time{
             margin-top: 10px;
             p{
               padding:0;
               color: #666;
-              line-height: 20px;
+              line-height: 30px;
             }
           }
         }
         .show-footer{
+          // width: 180px;
+          position: absolute;
           display: flex;
-          padding: 20px 24px 24px 32px;
+          bottom: 20px;
+          left: 30px;
+          padding: 20px 20px 0 10px;
           border-top: 1px dashed #ccc;
           .show-code{
             width: 60px;
             height: 60px;
             margin-right: 10px;
-            margin-left: 10px;
+            // margin-left: 10px;
             img{
               width: 100%;
               height: 100%;
@@ -569,6 +576,7 @@ export default {
       border-radius: 8px;
       background: #FFFFFF;
       height: 620px;
+      position: relative;
       box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       .watch-bg{
         height: 360px;
@@ -618,6 +626,9 @@ export default {
         min-height: 50px;
       }
       .watch-footer{
+          position: absolute;
+          left: 24px;
+          bottom: 24px;
           display: flex;
           padding-top: 25px;
           // padding: 20px 24px 24px 32px;
@@ -632,12 +643,16 @@ export default {
             }
           }
           .watch-action{
+            width: 200px;
             h1{
               padding:0;
               font-size: 14px;
               color:#1A1A1A;
               font-weight: 500;
               line-height: 25px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
             p{
               padding:0;
@@ -659,6 +674,7 @@ export default {
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
+      position: relative;
       .look-header{
         padding: 20px 24px;
         text-align: center;
@@ -690,8 +706,7 @@ export default {
         border-radius: 4px;
         margin: auto;
         margin-top: 10px;
-        padding: 20px 0;
-        min-height: 150px;
+        // padding: 20px 0;
         h1{
           padding: 0;
           font-size: 26px;
@@ -722,18 +737,20 @@ export default {
         }
       }
       .look-footer{
+        position: absolute;
         display: flex;
+        bottom: 20px;
+        left: 40px;
         width: 250px;
-        margin: 30px 24px;
         background: #000;
         border-radius: 4px;
-        opacity: 1;
+        opacity: 0.2;
         padding: 10px;
-        justify-content: center;
         .look-code{
           width: 60px;
           height: 60px;
-          margin-right: 10px;
+          // float: left;
+          margin: 0 16px;
           img{
             width: 60px;
             height: 60px;

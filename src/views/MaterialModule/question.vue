@@ -25,7 +25,7 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :before-close='closeClose' width="50%" center>
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :modal-append-to-body="false" :before-close='closeClose' width="50%" center>
         <pre-question  :questionId="questionId"></pre-question>
       </el-dialog>
     </template>
@@ -51,7 +51,7 @@ export default {
       tabelColumn: [
         {
           label: '问卷ID',
-          key: 'question_id',
+          key: 'question_no',
         },
         {
           label: '问卷名称',
@@ -149,7 +149,7 @@ export default {
       that.deleteConfirm(rows.question_id);
     },
     deleteConfirm(id) {
-      this.$confirm('此操作将删除该文件, 确认继续？', '提示', {
+      this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'

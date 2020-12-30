@@ -114,7 +114,7 @@ export default {
         return '编辑';
       } else {
         this.prizeResetForm();
-        return '新建';
+        return '创建';
       }
     }
   },

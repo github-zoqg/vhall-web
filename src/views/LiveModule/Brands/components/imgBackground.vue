@@ -68,7 +68,6 @@ export default {
      if (this.dialogVisible) {
         this.domain_url  = this.url || '';
         this.imageUrl = this.url;
-        console.log(this.url, '????????????????????????');
         if (this.imageUrl) {
           this.isType = 0;
         }
