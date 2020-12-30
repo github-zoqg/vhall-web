@@ -10,12 +10,12 @@
       <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="100px" width="360px">
         <el-form-item label="人数增加：" prop="online">
           <el-input  autocomplete="off" v-model.trim="virtualForm.online" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
-            <el-button class="no-border" size="mini" slot="append">人</el-button>
+            <el-button type="text" class="no-border" size="mini" slot="append">人</el-button>
           </el-input>
         </el-form-item>
         <el-form-item label="热度增加：" prop="pv">
           <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two">
-            <el-button class="no-border" size="mini" slot="append">次</el-button>
+            <el-button type="text" class="no-border" size="mini" slot="append">次</el-button>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -151,9 +151,33 @@ export default {
   .layout--right--main;
   .padding41-40;
   .min-height;
+  .btn-relative {
+    position: relative;
+  }
+  /deep/.el-input__inner {
+    border-radius: 4px;
+  }
+  /deep/.el-input-group__append {
+    background: transparent;
+    position: absolute;
+    text-align: center;
+    right: 0;
+    top: -2px;
+    height: 38px;
+    line-height: 40px;
+    border: 0;
+    border-radius: 4px;
+    .el-button {
+      span {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666666;
+      }
+    }
+  }
 }
 /deep/.el-input {
-  width: 600px;
+  width: 400px;
 }
 .notice {
   p {
