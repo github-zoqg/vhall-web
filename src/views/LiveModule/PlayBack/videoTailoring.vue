@@ -226,6 +226,7 @@ export default {
       }
     },
     getPlayBackInfo(recordId, isCreate, paasRecordId) {
+      this.dataReady = false
       const opts = {
         webinar_id: this.webinar_id,
         type: 0
