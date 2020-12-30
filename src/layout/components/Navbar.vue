@@ -213,13 +213,13 @@ export default {
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     // 监听控制台是否触发导出
     this.$EventBus.$on('saas_vs_download_change', this.updateDownload);
-    /*// 消息实例初始化
+    // 消息实例初始化
     EventBus.$on('msg_center_num', res => { // 转码状态
       console.log(res, '监听到msg_center_num未读消息提示事件');
       if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
         this.unread_num = res.num;
       }
-    });*/
+    });
   },
   created() {
     // 初始进入，获取未读消息条数
@@ -227,12 +227,12 @@ export default {
     // 初始进入，获取未下载条数
     this.getDownNum();
     // 初始化聊天SDK
-    // this.initChat();
+    this.initChat();
   },
   beforeDestroy() {
     console.log('消亡')
-    // this.$Chat.destroy();
-    // this.$Chat = null;
+    this.$Chat.destroy();
+    this.$Chat = null;
   }
 };
 </script>
