@@ -812,7 +812,6 @@ export default {
           }
         }
         if (msg.data.type == "reward_pay_ok") {
-        console.log(1002, msg)
           this.closeGiveMoneyQr()
           this.$message.success('支付成功')
         }

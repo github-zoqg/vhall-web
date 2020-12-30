@@ -760,18 +760,19 @@ export default {
           }
           this.getAttentionNum()
           break
-        case 12514: // 您已被踢出，请联系活动组织者
-        case 12002: // 活动不存在
-        case 12522: // 主持人、嘉宾或助理不允许进入观看端
-        case 12536: // 回放不存在
-        case 12542: // 此视频暂时下线了
-        case 12543: // 该视频已下线，有疑问请联系客服
-        case 12544: // 该视频转码失败
-        case 12545: // 该视频正在审核中
-        case 12546: // 该视频正在转码中
-        case 12541: // 活动现场太火爆，已超过人数上限
+        case 512514: // 您已被踢出，请联系活动组织者
+        case 512002: // 活动不存在
+        case 512522: // 主持人、嘉宾或助理不允许进入观看端
+        case 512536: // 回放不存在
+        case 512542: // 此视频暂时下线了
+        case 512543: // 该视频已下线，有疑问请联系客服
+        case 512544: // 该视频转码失败
+        case 512545: // 该视频正在审核中
+        case 512546: // 该视频正在转码中
           this.$EventBus.$emit('loaded');
           this.$message.error(res.msg)
+          break;
+        case 512541: // 活动现场太火爆，已超过人数上限
           break;
         default:
           this.$EventBus.$emit('loaded');
@@ -1308,7 +1309,7 @@ export default {
             sessionOrLocal.set('token', res.data.token, 'localStorage')
             sessionOrLocal.set('userInfo', res.data)
           } else {
-            if (res.code == 12042) {
+            if (res.code == 512042) {
               this.errorMessage = '图片验证码错误'
               this.callCaptcha('#photoCaptcha')
             }
@@ -1408,7 +1409,7 @@ export default {
           sessionOrLocal.set('sso', res.data.sso_token)
           sessionOrLocal.set('token', res.data.token, 'localStorage')
           sessionOrLocal.set('userInfo', res.data)
-        } else if (res.code == 10000) {
+        } else if (res.code == 600) {
           this.smsErrorMessage = '当前账号或密码错误'
         } else {
           this.smsErrorMessage = res.msg
@@ -1600,32 +1601,32 @@ export default {
     handleAuthErrorCode (code, msg) {
       this.showModile = false
       switch (code) {
-        case 10008: // 未登录
+        case 510008: // 未登录
           this.callLogin()
           this.hasClick = false
           break
-        case 12525: // 填写表单
+        case 512525: // 填写表单
           this.showSignForm = true
           break
-        case 12002:
+        case 512002:
           this.$message.warning('活动不存在')
           break
-        case 12522:
+        case 512522:
           this.$message.warning('主持人、嘉宾或助理不允许进入观看端')
           break
-        case 12529:
+        case 512529:
           this.$message.warning('邀请码错误')
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
-        case 12530:
+        case 512530:
           this.$message.warning('邀请码已被使用')
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
-        case 12531:
+        case 512531:
           // this.$message.warning('请输入邀请码')
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
-        case 12527:
+        case 512527:
             this.$message.warning('密码错误')
             !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
@@ -1633,22 +1634,22 @@ export default {
             // this.$message.warning('请输入密码')
             !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
-        case 12532:
+        case 512532:
             // this.$message.warning('请输入白名单手机号')
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
-        case 12017:
+        case 512017:
             this.$message.warning('白名单观众不存在')
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
-        case 12526:
+        case 512526:
             this.$message.warning('检测类型和活动观看限制类型不一致')
             this.chatSDK.destroy()
             this.chatSDK = null
             setTimeout(() => {
               window.location.reload()
             }, 2000)
-        case 12523:
+        case 512523:
             // this.$message.warning('需要支付')
             if (this.getWxImg && this.getZFBlink) {
               this.showPayModel = true
