@@ -68,7 +68,7 @@ export default {
   },
   created(){
     // 清除live_tokend等数据
-    sessionOrLocal.removeItem('live_token')
+    sessionOrLocal.removeItem('live_token', 'localStorage')
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
     let _data = this.$route.params
     this.arr = [_data.str, _data.role]
