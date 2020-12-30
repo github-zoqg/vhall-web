@@ -40,7 +40,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0"></i>
+            <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i>
             <p class="text">
               <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
               {{ scope.row.file_name }}
@@ -358,12 +358,15 @@ export default {
     },
   },
   created() {
-    this.initChat();
+    // this.initChat();
   },
   mounted() {
     this.initPage();
+    this.$EventBus.$on('saas_vs_msg_num', function() {
+      alert(1)
+    });
     EventBus.$on('down_center_msg', res => { // 转码状态
-      console.log(res, '监听到down_center_msg转码状态事件');
+      console.log(res, '监听到down_center_msg123转码状态事件');
       this.docDao.list.map(item => {
         if (Number(item.dow_task_id) === Number(res.dow_task_id)) {
           item.fileStatusCss = ['wating', 'success', 'failer'][res.status];
@@ -441,7 +444,7 @@ export default {
     background:#FB3A32;
   }
 }
-.download-ctx {
+.download-list {
   /deep/.cell img {
     width: 100px;
     height: 100px;

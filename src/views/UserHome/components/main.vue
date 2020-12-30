@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 专题列表 or  专题列表 -->
-    <div class="live-panel" v-if="vo.show_webinar_list">
+    <div class="live-panel" v-if="dataList && dataList.length > 0">
       <el-row :gutter="40" class="lives">
         <!--:xs="24" :sm="12" :md="12" :lg="8" :xl="6"
         col-lg-*  一般用于大屏设备（min-width：1200px）
@@ -39,7 +39,7 @@
                 <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label> {{item | liveTag}}
               </span>
               <span class="hot">
-                 <i class="iconfont-v3 saasicon_redu"> {{ (tabType === 'live' ? item.pv : item.view_num) | unitCovert}}</i>
+                 <i class="iconfont-v3 saasicon_redu"> {{ item.pv | unitCovert}}</i>
               </span>
               <a :href="item.share_link" target="_blank">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
@@ -213,10 +213,15 @@ export default {
       } else if  (item.webinar_state === 5) {
         routerStr = `/live/watch/${item.webinar_id}`;
       }
-      let routeData = this.$router.resolve({
-        path: routerStr
-      });
-      window.open(routeData.href, '_blank');
+      if (this.tabType !== 'live') {
+        let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+        window.open(routeData.href, '_blank');
+      } else {
+        let routeData = this.$router.resolve({
+          path: routerStr
+        });
+        window.open(routeData.href, '_blank');
+      }
     },
     initComp(vo) {
       this.vo = vo;

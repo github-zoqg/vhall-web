@@ -11,9 +11,11 @@
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="img"></i>
           <p class="file-name" style="color: rgb(136, 136, 136);">{{fileName}}</p>
-          <div class="change-txt">
+          <div class="change-txt" v-if="result">
             <p id="right">上传成功，共检测到{{result.success}}条有效数据</p>
-            <p id="error"></p>
+          </div>
+          <div class="change-txt" v-if="!result">
+            <p id="error">上传失败</p>
           </div>
         </a>
         <div v-else class="noPic">
