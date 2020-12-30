@@ -1,10 +1,10 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
     <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'"></OldHeader>
+    <pageTitle title="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
-      <!-- <pageTitle title="选择发起方式"></pageTitle> -->
       <div class="choose__way__ctx">
-        <h1 class="choose-method">选择发起方式</h1>
+        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式12312312</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
             <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-// import PageTitle from '@/components/PageTitle';
+import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
 import { browserDetect } from '@/utils/utils';
@@ -51,7 +51,7 @@ import Env from '@/api/env';
 export default {
   name: 'chooseWay.vue',
   components: {
-    // PageTitle,
+    PageTitle,
     OldHeader
   },
   data() {
