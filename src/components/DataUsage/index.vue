@@ -63,7 +63,7 @@
           <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
-      <el-col :span="9">
+      <el-col :span="9" v-else>
         <div class="top-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
           <el-tooltip effect="dark" placement="right-start" >

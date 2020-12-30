@@ -29,7 +29,7 @@
         <lint-charts :lineDataList="limitDataList" :type="1"></lint-charts>
       </div>
       <div class="statistical-line statistical-dark">
-        <span>观众改为观看人数</span>
+        <span>观看人数趋势</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             筛选条件内，观看人数随时间变化的趋势图

@@ -11,7 +11,7 @@
       <el-button round  @click="dataBase">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model.trim="keyword" placeholder="请输入问卷名称"  @change="getTableList" suffix-icon="el-icon-search" clearable></el-input>
+        <el-input v-model.trim="keyword" placeholder="请输入问卷名称"  @change="getTableList" maxlength="50" suffix-icon="el-icon-search" clearable></el-input>
       </div>
     </div>
     <el-card class="question-list" v-show="total">
@@ -54,7 +54,7 @@ export default {
       tabelColumn: [
         {
           label: '问卷ID',
-          key: 'question_id',
+          key: 'question_no',
         },
         {
           label: '问卷名称',
@@ -155,7 +155,7 @@ export default {
       that.deleteConfirm(rows.question_id);
     },
     deleteConfirm(id) {
-      this.$confirm('此操作将删除该文件, 确认继续？', '提示', {
+      this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         customClass: 'zdy-message-box'

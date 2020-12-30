@@ -68,7 +68,7 @@ export default {
           active: 1,
         },
         {
-          title: '昨日',
+          title: '今日',
           active: 2,
         },
         {
@@ -112,6 +112,12 @@ export default {
       default: ''
     }
   },
+  watch: {
+    active() {
+      console.log(this.active, '???????????????????????????')
+      this.isActive = this.active;
+    }
+  },
   created() {
     this.isActive = this.active;
   },
@@ -148,7 +154,6 @@ export default {
       if (this.$route.path == '/finance/infoDetail') {
         return;
       }
-      console.log("哈哈哈哈11111111111111111111");
       this.$emit("onSearchFun");
     },
     changeInput() {

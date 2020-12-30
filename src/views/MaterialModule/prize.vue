@@ -29,7 +29,7 @@
     </div>
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建抽奖</el-button>
+        <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建奖品</el-button>
         <el-button type="primary" v-if="nullText == 'nullData' && $route.path !='/material/prize'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
       </noData>
     </div>
