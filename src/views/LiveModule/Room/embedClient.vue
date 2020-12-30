@@ -1016,7 +1016,6 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-      console.log('a122', this.roominfo)
 
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'

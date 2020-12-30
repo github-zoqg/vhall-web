@@ -23,6 +23,9 @@ export const listenEvent = {
       }
     },
     addSocketsListener () {
+      EventBus.$on('vod_cuepoint_load_complete', (data) => {
+        // 回放章节
+      })
       EventBus.$on('room_kickout', e => {
         console.log('用户被踢出', e);
         if (e.target_id == this.roomInfo.third_party_user_id) {

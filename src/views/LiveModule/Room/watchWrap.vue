@@ -763,7 +763,6 @@ export default {
     this.$EventBus.$on('updateBaseNum', (msg) => {
       let num = this.roomData.online.num
       this.roomData.online.num = Number(num) + Number(msg.data.update_online_num)
-      console.log(999999, Number(num), Number(msg.data.update_online_num), this.roomData.online.num)
       
       let pvNum = this.roomData.pv.num
       this.roomData.pv.num = Number(pvNum) + Number(msg.data.update_pv)
@@ -1706,7 +1705,6 @@ export default {
         },
         reportOption: data.report_data ? data.report_data : {}
       }
-      console.log('a122', this.roominfo)
 
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'

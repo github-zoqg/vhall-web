@@ -393,7 +393,7 @@
     </section>
     <div :class="{area: true, product: productFlag}">
       <div class="left-content">
-        <custoMenu :desc="roomData.webinar.subject"></custoMenu>
+        <!-- <custoMenu :desc="roomData.webinar.subject"></custoMenu> -->
         <div class="active-second" v-if="advs && advs.length > 0">
           <h3>活动推荐</h3>
           <hr />
@@ -802,7 +802,6 @@ export default {
       })
     },
     resizeImg (data) {
-      console.log(119, data)
       let img = new Image()
       img.src = data
       this.$nextTick(() => {
@@ -1019,6 +1018,18 @@ export default {
             this.initPlayerSDK()
           }
         })
+        if (this.roomData.webinar.type == 1) {
+          this.beginStatus = false
+          if (this.timer) {
+            clearInterval(this.timer)
+            this.timer = null
+          }
+          this.days = "00"
+          this.hours = "00"
+          this.minutes = "00"
+          this.seconds = "00"
+          return
+        }
         if (this.timer) clearInterval(this.timer)
         this.timer = setInterval(() => {
           this.remainTimes(this.roomData.webinar.start_time)
