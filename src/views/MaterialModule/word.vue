@@ -732,6 +732,7 @@ export default {
 .btn-upload {
   display: inline-block;
   margin-right: 12px;
+  vertical-align: middle;
   /deep/.el-upload {
     width: auto;
     height: auto;

@@ -56,9 +56,12 @@
         </el-table-column>
         <el-table-column
           label="进度"
-          prop="progress"
           width="164px"
         >
+          <template slot-scope="scope">
+            <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
+            <span v-else v-html="scope.row.transform_schedule_str"></span>
+          </template>
         </el-table-column>
       </el-table>
       <null-page text="未搜索到相关内容" nullType="search" v-else :height=60></null-page>
@@ -100,7 +103,7 @@ export default {
         },
         {
           label: '进度',
-          key: 'progress',
+          key: 'transform_schedule_str',
         }
       ],
       formParams: {
@@ -139,14 +142,49 @@ export default {
         if(res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
-            // 转换状态 0待转换 100转换中 200完成 500失败
-            let statusStr = {
-              0: '等待转码',
-              100: '转码中',
-              200: '转码完成',
-              500: '转码失败'
+            /*
+              converted_page: "0" // 动态页数
+              converted_page_jpeg: "1" // 静态页数
+              document_id: "01b17b82" // 文档ID
+              page: "1" // 文档总页数
+              status: "200" // 动态转换状态 0待转换 100转换中 200完成 500失败
+              status_jpeg: "200" // 静态转换状态 0待转换 100转换中 200完成 500失败
+            */
+            const statusJpeg = item.status_jpeg * 1;
+            const status = item.status * 1;
+            if (statusJpeg === 0) {
+              item.showEventType = 0;
+              item.transform_schedule_str = `等待转码中...`;
+            } else if (statusJpeg === 100) {
+              item.showEventType = 1;
+              item.transform_schedule_str = ``; // 静态转码中
+              let _percent = parseInt(item.converted_page_jpeg) / parseInt(item.page) * 100;
+              item.codeProcess = (_percent + "").substr(0, 4);
+            } else if (statusJpeg === 200) {
+              if (/pptx?/.test(item.ext)) {
+                // 如果是ppt or pptx
+                if (status === 0) {
+                  item.showEventType = 2;
+                  item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                } else if (status === 100) {
+                  item.showEventType = 3;
+                  item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                } else if (status === 200) {
+                  item.showEventType = 4;
+                  item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                } else {
+                  item.showEventType = 5;
+                  item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                }
+              } else {
+                // 非PPT静态转码完成
+                item.showEventType = 6;
+                item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+              }
+            } else if (statusJpeg >= 500) {
+              item.showEventType = 7;
+              item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
             }
-            item.progress = statusStr[item.status];
           })
           if (this.pageInfo.pos === 0) {
             this.dialogTableList = res.data.list;
