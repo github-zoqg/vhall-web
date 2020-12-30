@@ -4,7 +4,7 @@
     <pageTitle title="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
-        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式12312312</h1>
+        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
             <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
@@ -67,12 +67,14 @@ export default {
     };
   },
   created(){
-    // 清除live_tokend等数据
-    sessionOrLocal.removeItem('live_token', 'localStorage')
+    this.executeType = this.$route.query.type;
+    if (this.executeType === 'ctrl') {
+      // 清除live_tokend等数据
+      sessionOrLocal.removeItem('live_token', 'localStorage')
+    }
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
     let _data = this.$route.params
     this.arr = [_data.str, _data.role]
-    this.executeType = this.$route.query.type;
     this.getRoleUrl();
   },
   methods: {

@@ -2,7 +2,7 @@
   <div>
     <pageTitle title="观众">
       <div slot="content">
-        单个文件不可超过5000条，如有需要请拆分后上传
+        单个文件不可超过5000条数据，数据量较大时请拆分文件上传
       </div>
     </pageTitle>
     <div class="div__main">
@@ -39,6 +39,7 @@
           :isHandle="isHandle"
           :totalNum="viewerDao.total"
           maxHeight="100%"
+          width=120
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
@@ -188,6 +189,10 @@ export default {
           name: '修改',
           methodName: 'viewerDialogShow'
         },
+        {
+          name: '删除',
+          methodName: 'delViewer'
+        }
       ],
       query: {
         keyword: '',
@@ -509,6 +514,39 @@ export default {
         }
       });
     },
+    delViewer(that, { rows }) {
+      that.$confirm('确定从当前组里删除该观众？', '删除观众', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false
+      }).then(() => {
+        that.sendViewerDel([rows.id]);
+      }).catch(() => {
+      });
+    },
+    sendViewerDel(ids) {
+      this.$fetch('viewerDel', {
+        audience_ids: ids.join(',')
+      }).then(res => {
+        if(res && res.code === 200) {
+          this.$message.success(`删除观众-操作成功`);
+          this.$refs.viewerTable.clearSelect();
+          this.queryList();
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.msg || '删除观众-操作失败'
+          });
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message({
+          type: 'error',
+          message: '删除观众-操作失败'
+        });
+      });
+    },
     // 白名单观众-批量删除
     viewerDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
@@ -522,26 +560,7 @@ export default {
             return item.id;
           });
           console.log(`批量删除-观众ID集合为${ids.join(',')}`);
-          this.$fetch('viewerDel', {
-            audience_ids: ids.join(',')
-          }).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success(`删除观众-操作成功`);
-              this.$refs.viewerTable.clearSelect();
-              this.queryList();
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || '删除观众-操作失败'
-              });
-            }
-          }).catch(e => {
-            console.log(e);
-            this.$message({
-              type: 'error',
-              message: '删除观众-操作失败'
-            });
-          });
+          this.sendViewerDel(ids);
         }).catch(() => {
         });
       } else {
