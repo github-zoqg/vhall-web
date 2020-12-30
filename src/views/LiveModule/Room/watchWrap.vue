@@ -884,8 +884,10 @@ export default {
           }
           return
         }
-        if (this.roomData && this.roomData.status == 'live') {
+        if (this.roomData && this.roomData.status == 'live' && this.roomData.webinar.type != 4) {
           await this.queryRoomInterInfo() // 获取房间活动状态
+        }
+        if (this.roomData && this.roomData.status == 'live') {
           await this.getFirstPost() // 开屏
         }
         await this.getAdsInfo() // 获取活动广告信息

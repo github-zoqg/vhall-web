@@ -257,6 +257,8 @@ export default {
 }
 .wramUp-wrap::v-deep{
   .avatar-uploader .el-upload {
+     width: 640px;
+     height: 180px;
      border: 1px dashed #d9d9d9;
      border-radius: 6px;
      cursor: pointer;
