@@ -22,6 +22,7 @@
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
+        <el-button type="primary" round v-if="nullText == 'nullData'" @click="dataBase" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <template v-if="isShowQuestion">
