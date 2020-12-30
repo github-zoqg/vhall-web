@@ -4,7 +4,7 @@
  * 问卷模块
  *
  */
-import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/common/js/questionarie/questionnaire_service';
+import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/utils/questionnaire_service.js';
 export default {
   props: {
     roleName: {

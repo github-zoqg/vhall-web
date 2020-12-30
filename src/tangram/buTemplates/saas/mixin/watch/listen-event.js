@@ -151,24 +151,22 @@ export const listenEvent = {
         this.getWatchUpperMsg(msg);
       });
 
-      // 问卷推送 TODO: 永正
+      // 问卷推送
       EventBus.$on('questionnaire_push', msg => {
-        // this.$vhallFetch('checkSurvey', {
-        //   survey_id: msg.questionnaire_id,
-        //   user_id: this.roomInfo.third_party_user_id,
-        //   webinar_id: this.ilId
-        // }).then(res => {
-        //   if (res.code == 200) {
-        //     const time = 1000;
-        //     let step = Math.floor(Math.random() * 10);
-        //     step = step > 5 ? 5 : step;
-        //     console.log('time step', step);
-        //     setTimeout(() => {
-        //       this.showQA = true;
-        //       this.$refs.questions.contentQuestion(msg.questionnaire_id);
-        //     }, step * time);
-        //   }
-        // });
+        this.$fetch('checkSurvey', {
+          survey_id: msg.questionnaire_id,
+          user_id: this.roomInfo.third_party_user_id,
+          webinar_id: this.ilId
+        }).then(res => {
+          const time = 1000;
+          let step = Math.floor(Math.random() * 10);
+          step = step > 5 ? 5 : step;
+          console.log('time step', step);
+          setTimeout(() => {
+            this.showQA = true;
+            this.$refs.questions.contentQuestion(msg.questionnaire_id);
+          }, step * time);
+        });
       });
       // 上麦成功
       EventBus.$on('vrtc_connect_success', msg => {
