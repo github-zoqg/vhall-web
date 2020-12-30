@@ -135,7 +135,6 @@ export const listenEvent = {
 
       // 直播中sdk控制显示隐藏文档
       EventBus.$on('watchDocShow', flag => {
-        console.log(111111111111111, flag)
         this.watchDocShow = flag; // true false
         if (flag) {
           this.showDocPlaceholderForSharescreen = false;

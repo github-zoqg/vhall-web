@@ -338,7 +338,7 @@
               v-if="showWatch" alt="">
             <div class="subscribe-video" v-else>
               <Watch
-                v-if="initPlayer"
+                v-if="initPlayer && !isFullStarff"
                 :appId="videoParams.appId"
                 :playerInfo="{}"
                 :accountId="videoParams.accountId"
@@ -422,7 +422,9 @@
         :goodsList="goodsList"
       ></products>
     </div>
-
+    <div class="full-statrff" v-if="isFullStarff">
+      <h1>活动现场太火爆，已超过人数上限!</h1>
+    </div>
     <!--观看限制验证-->
     <el-dialog
       :title="tipTitle"
@@ -640,7 +642,8 @@ export default {
       openScreenConfig: {},
       openScreenTimer: null,
       openScreenTime: 5,
-      initCount: 0
+      initCount: 0,
+      isFullStarff: false
     };
   },
   computed: {
@@ -737,7 +740,18 @@ export default {
         record_id: '',
         wx_url: ''
       }).then(res => {
-        this.handleErrorCode(res)
+        if (res.data.status == 'live') {
+          this.$router.push({path: `/live/watch/${this.$route.params.id}`})
+          return
+        }
+        this.roomData = res.data
+        this.webinarType = this.roomData.webinar.type
+        this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
+        this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
+        if ((this.roomData.preview_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 1) {
+          this.initPlayer = true
+        }
+        this.getAttentionNum()
       }).catch(e => {
         console.log('获取房间信息失败:', e)
         this.handleErrorCode(e)
@@ -746,37 +760,12 @@ export default {
     // 初始化错误信息处理
     handleErrorCode (res) {
       switch (res.code) {
-        case 200:
-          if (res.data.status == 'live') {
-            this.$router.push({path: `/live/watch/${this.$route.params.id}`})
-            return
-          }
-          this.roomData = res.data
-          this.webinarType = this.roomData.webinar.type
-          this.roomData.visitor_id && sessionOrLocal.set('visitor_id', this.roomData.visitor_id)
-          this.roomData.interact.interact_token && sessionOrLocal.set('interact_token', this.roomData.interact.interact_token)
-          if ((this.roomData.preview_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 1) {
-            this.initPlayer = true
-          }
-          this.getAttentionNum()
-          break
-        case 512514: // 您已被踢出，请联系活动组织者
-        case 512002: // 活动不存在
-        case 512522: // 主持人、嘉宾或助理不允许进入观看端
-        case 512536: // 回放不存在
-        case 512542: // 此视频暂时下线了
-        case 512543: // 该视频已下线，有疑问请联系客服
-        case 512544: // 该视频转码失败
-        case 512545: // 该视频正在审核中
-        case 512546: // 该视频正在转码中
+        case 512541: // 满员
+          this.isFullStarff= true
           this.$EventBus.$emit('loaded');
-          this.$message.error(res.msg)
-          break;
-        case 512541: // 活动现场太火爆，已超过人数上限
           break;
         default:
           this.$EventBus.$emit('loaded');
-          this.$message.error(res.msg)
           break;
       }
     },
@@ -784,7 +773,7 @@ export default {
       this.$fetch('getPlaybillInfo', {
         webinar_id: this.$route.params.id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.openScreenConfig = res.data['screen-posters']
           if (this.openScreenConfig && this.openScreenConfig.status == 0) {
             this.resizeImg(res.data['screen-posters'].img)
@@ -857,7 +846,7 @@ export default {
         pos: 0,
         limit: 50
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.advs = res.data.adv_list
         }
       })
@@ -867,7 +856,7 @@ export default {
       return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.skinInfo = res.data
           this.theme = this.skinInfo.skin_json_pc ? JSON.parse(this.skinInfo.skin_json_pc) : ''
         }
@@ -939,7 +928,7 @@ export default {
       return this.$fetch('getScreenPublicInfo', {
         webinar_id: this.$route.params.id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.publicAdv = res.data && res.data['public-account']
         }
       })
@@ -949,7 +938,7 @@ export default {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: this.$route.params.id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.signInfo = res.data
         }
       })
@@ -1166,20 +1155,16 @@ export default {
             at_id: this.roomData.webinar.userinfo.user_id,
             type: 1
           }).then(res => {
-            if (res.code == 200) {
-              this.$message.success('取消关注')
-              this.isFollow = !this.isFollow
-            }
+            this.$message.success('取消关注')
+            this.isFollow = !this.isFollow
           })
         } else {
           this.$fetch('attention', {
             at_id: this.roomData.webinar.userinfo.user_id,
             type: 1
           }).then(res => {
-            if (res.code == 200) {
-              this.$message.success('关注成功')
-              this.isFollow = !this.isFollow
-            }
+            this.$message.success('关注成功')
+            this.isFollow = !this.isFollow
           })
         }
       } else {
@@ -1214,10 +1199,8 @@ export default {
       this.$fetch('goodsList', {
         webinar_id: this.$route.params.id
       }).then(res => {
-        if (res.code == 200) {
-          res.data.goods_list.length > 0 && (this.productFlag = true)
-          this.goodsList = res.data.goods_list
-        }
+        res.data.goods_list.length > 0 && (this.productFlag = true)
+        this.goodsList = res.data.goods_list
       });
     },
     // 关闭详情弹窗事件
@@ -1250,27 +1233,19 @@ export default {
     checkLoginAccount() {
       this.$fetch('loginCheck', {
         account: this.ruleForm.username
-      })
-        .then(res => {
-          if (res.code == 200) {
-            if (res.data.check_result == 1) { // 账号被锁定 再次登录需要图片验证
-              this.photoCpathaShow = true;
-              this.callCaptcha('#photoCaptcha');
-              if (this.phoneKey) {
-                this.errorMessage = ''
-                this.loginClick();
-              }
-            } else {
-              this.errorMessage = ''
-              this.loginClick();
-            }
-          } else {
-            this.errorMessage = res.msg
+      }).then(res => {
+        if (res.data.check_result == 1) { // 账号被锁定 再次登录需要图片验证
+          this.photoCpathaShow = true;
+          this.callCaptcha('#photoCaptcha');
+          if (this.phoneKey) {
+            this.errorMessage = ''
+            this.loginClick();
           }
-        })
-        .catch(e => {
-          console.log('登录检查失败:', e);
-        });
+        } else {
+          this.errorMessage = ''
+          this.loginClick();
+        }
+      })
     },
     // 校验账号登录
     checkLoginClick () {
@@ -1296,28 +1271,19 @@ export default {
           remember: this.accountChecked ? 1 : 0,
           visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '', // 访客标识
           sso_token: sessionOrLocal.get('sso') ? sessionOrLocal.get('sso') : '' // sso服务生成的token（实现新、老控制台的同步登录用）
-        }
+        }, {}, {512042: '图片验证码错误'}
       ).then(res => {
-          if (res.code == 200) {
-            this.errorMessage = ''
-            this.loginDialogShow = false
-            this.shadeShow = false
-            this.phoneKey = ''
-            this.photoCpathaShow = true
-            this.$router.go(0) // 重新进入
-            sessionOrLocal.set('sso', res.data.sso_token)
-            sessionOrLocal.set('token', res.data.token, 'localStorage')
-            sessionOrLocal.set('userInfo', res.data)
-          } else {
-            if (res.code == 512042) {
-              this.errorMessage = '图片验证码错误'
-              this.callCaptcha('#photoCaptcha')
-            }
-            this.errorMessage = res.msg
-          }
+          this.errorMessage = ''
+          this.loginDialogShow = false
+          this.shadeShow = false
+          this.phoneKey = ''
+          this.photoCpathaShow = true
+          this.$router.go(0) // 重新进入
+          sessionOrLocal.set('sso', res.data.sso_token)
+          sessionOrLocal.set('token', res.data.token, 'localStorage')
+          sessionOrLocal.set('userInfo', res.data)
         })
         .catch(e => {
-          console.log(112, e)
           if (e.captcha[0] == '图形码未验证通过') {
             this.errorMessage = '图形码未验证通过'
           }
@@ -1364,25 +1330,21 @@ export default {
           scene_id: 7
         }
       ).then(res => {
-        if (res.code == 200) {
-          this.buttonControl = true;
-          this.sendMsgDisabled = true;
-          if (this.timeinterval) clearInterval(this.timeinterval)
-          this.timeinterval = setInterval(() => {
-            console.log('aaa', that.countTime)
-            if (that.countTime > 0) {
-              that.countTime--;
-            } else {
-              clearInterval(that.timeinterval)
-              that.sendMsgDisabled = false;
-              that.countTime = 60;
-              that.buttonControl = false;
-            }
-          }, 1000);
-        }
-      }).catch(e => {
-        console.log(e)
-      });
+        this.buttonControl = true;
+        this.sendMsgDisabled = true;
+        if (this.timeinterval) clearInterval(this.timeinterval)
+        this.timeinterval = setInterval(() => {
+          console.log('aaa', that.countTime)
+          if (that.countTime > 0) {
+            that.countTime--;
+          } else {
+            clearInterval(that.timeinterval)
+            that.sendMsgDisabled = false;
+            that.countTime = 60;
+            that.buttonControl = false;
+          }
+        }, 1000);
+      })
     },
     // 快捷登录
     telLogin() {
@@ -1398,22 +1360,16 @@ export default {
           dynamic_code: this.ruleForm.captchas,
           visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : '', // 访客标识
           sso_token: sessionOrLocal.get('sso') ? sessionOrLocal.get('sso') : '' // sso服务生成的token（实现新、老控制台的同步登录用）
-        }
+        }, {}, {600: '当前账号或密码错误'}
       ).then(res => {
-        if (res.code == 200) {
-          this.loginDialogShow = false;
-          this.shadeShow = false;
-          this.$router.go(0);
-          this.phoneKey = ''
-          this.smsErrorMessage = ''
-          sessionOrLocal.set('sso', res.data.sso_token)
-          sessionOrLocal.set('token', res.data.token, 'localStorage')
-          sessionOrLocal.set('userInfo', res.data)
-        } else if (res.code == 600) {
-          this.smsErrorMessage = '当前账号或密码错误'
-        } else {
-          this.smsErrorMessage = res.msg
-        }
+        this.loginDialogShow = false;
+        this.shadeShow = false;
+        this.$router.go(0);
+        this.phoneKey = ''
+        this.smsErrorMessage = ''
+        sessionOrLocal.set('sso', res.data.sso_token)
+        sessionOrLocal.set('token', res.data.token, 'localStorage')
+        sessionOrLocal.set('userInfo', res.data)
       });
     },
     // other登录方式的修改
@@ -1439,13 +1395,11 @@ export default {
     // 退出
     handleQuit () {
       this.$fetch('loginOut').then(res => {
-        if (res.code == 200) {
-          sessionOrLocal.removeItem('sso')
-          sessionOrLocal.removeItem('token', 'localStorage')
-          sessionOrLocal.removeItem('userInfo')
-          sessionOrLocal.removeItem('visitor_id')
-          window.location.reload()
-        }
+        sessionOrLocal.removeItem('sso')
+        sessionOrLocal.removeItem('token', 'localStorage')
+        sessionOrLocal.removeItem('userInfo')
+        sessionOrLocal.removeItem('visitor_id')
+        window.location.reload()
       })
     },
     getBtnText () {
@@ -1577,23 +1531,18 @@ export default {
         ...this.joinCommonParam,
         ...params
       }).then(res => {
-        if (res.code == 200) {
-          if (res.data.status == 'live') {
-            this.$router.push({path: `/live/watch/${this.$route.params.id}`})
-          } else {
-            // window.location.reload()
-            this.handleCancelDelete()
-            this.$message.success('您已预约成功，直播当天访问直播间参与直播')
-            this.getWatchInfo().then(res => {
-              this.handleInitRoom()
-            })
-          }
+        if (res.data.status == 'live') {
+          this.$router.push({path: `/live/watch/${this.$route.params.id}`})
         } else {
-          this.handleAuthErrorCode(res.code, res.msg)
-          this.hasClick = false
+          // window.location.reload()
+          this.handleCancelDelete()
+          this.$message.success('您已预约成功，直播当天访问直播间参与直播')
+          this.getWatchInfo().then(res => {
+            this.handleInitRoom()
+          })
         }
       }).catch(e => {
-        console.log(e)
+        this.handleAuthErrorCode(e.code, e.msg)
         this.hasClick = false
       })
     },
@@ -1623,7 +1572,6 @@ export default {
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 512531:
-          // this.$message.warning('请输入邀请码')
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 512527:
@@ -1631,11 +1579,9 @@ export default {
             !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
         case 12528:
-            // this.$message.warning('请输入密码')
             !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
         case 512532:
-            // this.$message.warning('请输入白名单手机号')
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
         case 512017:
@@ -1650,7 +1596,6 @@ export default {
               window.location.reload()
             }, 2000)
         case 512523:
-            // this.$message.warning('需要支付')
             if (this.getWxImg && this.getZFBlink) {
               this.showPayModel = true
             } else {
@@ -1685,27 +1630,24 @@ export default {
       this.$fetch('pay', {
         ...params
       }).then(res => {
-        if (res.code == 200) {
-          if (type == 'wx') {
-            let wxImg = QRcode.toDataURL(
-              res.data.link,
-              (err, url) => {
-                console.log(err, url);
-                this.wxPayImg = url;
-              }
-            )
-            this.getWxImg = true
-          } else {
-            this.zfbLink = res.data.link
-            this.getZFBlink = true
-          }
+        if (type == 'wx') {
+          let wxImg = QRcode.toDataURL(
+            res.data.link,
+            (err, url) => {
+              console.log(err, url);
+              this.wxPayImg = url;
+            }
+          )
+          this.getWxImg = true
+        } else {
+          this.zfbLink = res.data.link
+          this.getZFBlink = true
         }
         if (this.getWxImg && this.getZFBlink) {
           this.showPayModel = true
         }
       }).catch(e => {
         console.log('获取支付信息失败', e)
-        this.$message.warning('获取支付信息失败')
       })
     },
     closePayModel () {
@@ -2733,6 +2675,33 @@ export default {
     //   padding: 0px;
     //   text-align: center!important;
     // }
+  }
+  .full-statrff {
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99;
+    background: rgba(0, 0, 0, 0.68);
+    background: url('//cnstatic01.e.vhall.com/static/img/webinar.png')
+      no-repeat;
+    background-size: cover;
+    h1 {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      text-align: center;
+      margin: auto;
+      font-size: 24px;
+      line-height: 80px;
+      height: 80px;
+      color: #fff;
+      text-align: center;
+    }
   }
   @media screen and (max-width: 1280px) {
     .wh-title, .area{
