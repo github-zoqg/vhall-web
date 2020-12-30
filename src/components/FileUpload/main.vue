@@ -11,11 +11,14 @@
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="img"></i>
           <p class="file-name" style="color: rgb(136, 136, 136);">{{fileName}}</p>
-          <div class="change-txt" v-if="result">
+          <div class="change-txt" v-if="result && (progress.percent === 0 || progress.percent === 100)">
             <p id="right">上传成功，共检测到{{result.success}}条有效数据</p>
           </div>
-          <div class="change-txt" v-if="!result">
-            <p id="error">上传失败</p>
+          <div class="change-txt" v-if="!result && (progress.percent === 0 || progress.percent === 100)">
+            <p id="error">检测失败，请重新上传</p>
+          </div>
+          <div class="change-txt" v-if="!progress.isUploadEnd && progress.percent > 0 && progress.percent < 100">
+            上传中，请稍后<el-progress :percentage="progress.percent" status="success"></el-progress>
           </div>
         </a>
         <div v-else class="noPic">
@@ -89,13 +92,19 @@ export default {
       type: Boolean,
       default: false
     },
-    result: {
+    progress: {
       type: Object,
       default: function() {
         return {
-          success: 0,
-          fail: 0
+          isUploadEnd: false,
+          percent: 0
         };
+      }
+    },
+    result: {
+      type: Object,
+      default: function() {
+        return null;
       }
     },
     'on-success': {
@@ -181,7 +190,7 @@ export default {
       border: 1px solid #999999;
       border-radius: 4px;
     }
-    i {
+    i.img {
       font-size: 44px;
       color: #8c939d;
     }
@@ -271,5 +280,14 @@ export default {
     margin-top: -5px;
     color: #888;
     font-size: 14px;
+  }
+  .a-upload #error {
+    font-weight: 400;
+    margin-top: -5px;
+    color: #FB3A32;
+    font-size: 14px;
+  }
+  /deep/.el-progress__text /deep/i {
+    font-size: 18px;
   }
 </style>

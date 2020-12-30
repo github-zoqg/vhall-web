@@ -99,17 +99,21 @@
              type: 'exel'
           }"
           :result="importResult"
+          :progress="{
+            isUploadEnd: isUploadEnd,
+            percent: percent
+          }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="fileResult === 'success'">上传成功，共检测到4条数据</p>
-          <p slot="tip" v-else>请使用模版上传文件</p>
+          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
+          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
         </file-upload>
         <div class="dialog-right-btn">
           <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
-          <el-button @click="multiUploadShow = false" size="medium" round>取 消</el-button>
+          <el-button @click="closeImportChat" size="medium" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -131,6 +135,8 @@ export default {
   },
   data() {
     return {
+      isUploadEnd: false,
+      percent: 0,
       chatForm: {},
       checkNames: [],
       keyWordDao: {
@@ -366,6 +372,8 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
+      this.percent = 0;
+      this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
         // 文件上传成功，保存信息
@@ -374,13 +382,25 @@ export default {
         }).then(resV => {
           if (resV && resV.code === 200) {
             this.importResult = resV.data;
+            this.fileResult = 'success';
           } else {
-            this.$message.error(resV.msg || '');
+            this.fileResult = 'error';
+            // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
+            this.isUploadEnd = false;
+            this.importResult = null;
           }
         }).catch(e => {
-          this.$message.error(e.msg || '导入聊天严禁词校验失败！');
+          this.fileResult = 'error';
+          this.importResult = null;
+          // this.$message.error(e.msg || '导入聊天严禁词校验失败！');
         });
       }
+    },
+    closeImportChat() {
+      this.multiUploadShow = false;
+      this.percent = 0;
+      this.isUploadEnd = false;
+      this.fileUrl = '';
     },
     saveUploadKey() {
       if(!this.fileUrl) {
@@ -393,11 +413,16 @@ export default {
         if (resV && resV.code === 200) {
           this.importResult = resV.data;
           this.multiUploadShow = false;
+          this.percent = 0;
+          this.isUploadEnd = false;
+          this.fileUrl = '';
           // 重新刷新列表数据
           this.getKeywordList();
+        } else {
+          this.$message.error(resV.msg || '导入聊天严禁词信息失败！');
         }
       }).catch(e => {
-        this.$message.error('导入聊天严禁词信息失败！');
+        this.$message.error(e.msg || '导入聊天严禁词信息失败！');
       });
     },
     beforeUploadHandler(file){
@@ -418,10 +443,12 @@ export default {
     },
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
+      this.isUploadEnd = false;
+      this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`文件上传失败`);
+      // this.$message.error(`文件上传失败`);
       this.fileResult = 'error';
     },
     uploadPreview(file){
