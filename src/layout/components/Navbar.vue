@@ -167,6 +167,12 @@ export default {
         if (msg.data.type === 'msg_center_num') {
           EventBus.$emit('msg_center_num', msg.data);
         }
+        if (msg.data.type === 'host_msg_webinar') {
+          EventBus.$emit('host_msg_webinar', msg.data.data)
+        }
+        if (msg.data.type === 'doc_convert_jpeg') {
+          EventBus.$emit('doc_convert_jpeg', msg.data.data)
+        }
       })
     },
     // 初始化
