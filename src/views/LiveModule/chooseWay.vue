@@ -123,11 +123,11 @@ export default {
           // this.watchUrl = res.data.page_url;
           this.scheme = res.data.client_protocol;
         } else {
-          this.$message.error('当前未获取到启动数据');
+          this.$message.error(res.msg || '当前未获取到启动数据');
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error('当前未获取到启动数据');
+        this.$message.error(e.msg || '当前未获取到启动数据');
       });
     }
   },

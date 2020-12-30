@@ -2,7 +2,8 @@
  <div class="home-main console">
    <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
-   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'"></div>
+   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' :
+        '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}"></div>
    <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
      <!-- 内容区域 -->
      <div class="user__layout--title">
