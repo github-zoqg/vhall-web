@@ -218,6 +218,7 @@ export default {
       console.log(res, '监听到msg_center_num未读消息提示事件');
       if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
         this.unread_num = res.num;
+        this.$EventBus.$emit('saas_vs_msg_num');
       }
     });
   },

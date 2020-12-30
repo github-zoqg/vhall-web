@@ -211,6 +211,11 @@ export default {
   },
   created() {
     this.getMsgList();
+  },
+  mounted() {
+    this.$EventBus.$on('saas_vs_msg_num', function() {
+      this.getMsgList();
+    });
   }
 };
 </script>
