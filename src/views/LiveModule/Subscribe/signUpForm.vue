@@ -165,18 +165,24 @@
                   </template>
                 </el-form-item>
                 <el-form-item v-if="isPhoneValidate">
-                  <div id="setCaptcha">
-                    <el-input  v-model.trim="form.imgCode"> </el-input>
-                  </div>
-                  <p class="errorText" v-show="errorMsgShow">图形码错误</p>
                 </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" :required="false" prop="code">
-                  <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码"></el-input>
-                  <el-button
-                    :disabled="time !== 60 || isPreview"
-                    class="no-border" size="mini"
-                    @click="getDyCode(true)"
-                  >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+                  <el-row :gutter="20">
+                    <el-col :span="12">
+                      <div id="setCaptcha" class="captcha">
+                        <el-input  v-model.trim="form.imgCode"> </el-input>
+                        <!-- <p class="errorText" v-show="errorMsgShow">图形码错误</p> -->
+                      </div>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码"></el-input>
+                      <el-button
+                        :disabled="time !== 60 || isPreview"
+                        class="no-border" size="mini"
+                        @click="getDyCode(true)"
+                      >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+                    </el-col>
+                  </el-row>
                 </el-form-item>
                 <el-form-item class="provicy-item" v-if="provicy" :prop="provicy.id + ''">
                   <!-- 隐私声明 -->
@@ -199,20 +205,24 @@
                 >
                   <el-input v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
                 </el-form-item>
-                <el-form-item v-if="isPhoneValidate">
-                  <div id="setCaptcha1">
-                    <el-input  v-model.trim="verifyForm.imgCode"> </el-input>
-                  </div>
-                  <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p>
-                </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" prop="code">
-                  <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码"></el-input>
-                  <el-button
-                    :disabled="verifyTime !== 60 || isPreview"
-                    class="no-border"
-                    size="mini"
-                    @click="getDyCode(false)"
-                  >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
+                  <el-row :gutter="20">
+                    <el-col :span="12">
+                      <div id="setCaptcha1" class="captcha">
+                        <el-input  v-model.trim="verifyForm.imgCode"> </el-input>
+                      </div>
+                      <!-- <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p> -->
+                    </el-col>
+                    <el-col :span="12">
+                      <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码"></el-input>
+                      <el-button
+                        :disabled="verifyTime !== 60 || isPreview"
+                        class="no-border"
+                        size="mini"
+                        @click="getDyCode(false)"
+                      >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
+                    </el-col>
+                  </el-row>
                 </el-form-item>
                 <div class="btnBox">
                   <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
@@ -1218,7 +1228,7 @@
         }
         .el-button {
           position: absolute;
-          right: 3px;
+          right: 13px;
           top: 3px;
           height: 34px;
           width: 90px;
@@ -1229,6 +1239,38 @@
           font-size: 13px;
           &:hover{
             background: #DEDEDE;
+          }
+        }
+        .captcha{
+          /deep/ .yidun .yidun_control {
+            border-radius: 4px!important;
+            border-color: #ccc;
+            background: #fff;
+            .yidun_tips {
+              color: #888888;
+              line-height: 38px;
+            }
+            .yidun_slider {
+              .yidun_slider__icon {
+                // background-image: none;
+              }
+              &:hover {
+                background-color: #FB3A32;
+              }
+            }
+            &.yidun_control--moving .yidun_slide_indicator {
+              border-color: #FB3A32;
+              background-color: #E2E2E2;
+            }
+          }
+        }
+        .yidun.yidun--light.yidun--success.yidun--jigsaw {
+          .yidun_control .yidun_slider {
+            background-color: #3562FA;
+          }
+          .yidun_slide_indicator {
+            border-color: #3562FA;
+            background-color: #E2E2E2;
           }
         }
       }
