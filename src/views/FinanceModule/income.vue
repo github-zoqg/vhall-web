@@ -8,7 +8,7 @@
     <div class="detail" @click="accountDetail">提现明细</div>
     <el-row :gutter="10">
       <el-col :span="12">
-        <el-card class="live-come">
+        <div class="live-come">
           <h3>直播收益</h3>
           <div class="live-all">
             <div class="all-come">
@@ -38,10 +38,10 @@
               <h1>{{ incomeInfo.live_balance }}</h1>
             </div>
           </div>
-        </el-card>
+        </div>
       </el-col>
       <el-col :span="12" >
-        <el-card class="money-come">
+        <div class="money-come">
           <h3>红包收益</h3>
           <div class="live-all">
             <div class="all-come">
@@ -71,11 +71,11 @@
               <h1>{{ incomeInfo.red_packet_balance }}</h1>
             </div>
           </div>
-        </el-card>
+        </div>
       </el-col>
     </el-row>
 
-    <el-card class="listTab">
+    <div class="listTab box-card">
       <el-tabs v-model="activeIndex" @tab-click="handleClick">
         <el-tab-pane label="直播收益明细" name="1"></el-tab-pane>
         <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
@@ -101,7 +101,7 @@
           >
         </table-list>
       </el-tabs>
-    </el-card>
+    </div>
     <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
   </div>
 </template>
@@ -281,7 +281,7 @@ export default {
       }
       paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      this.params = obj;
+      this.params = paramsObj;
       let url = this.activeIndex == '1' ? "liveIncomeList" : "packetIncomeList";
       this.$fetch(url, obj).then(res =>{
         this.totalNum = res.data.total;
@@ -355,7 +355,6 @@ export default {
       let url = this.activeIndex == '1' ? 'exportLiveIncome' : 'exportRedPacket';
       this.$fetch(url, this.params).then(res => {
         if (res.code == 200) {
-          this.params = {};
           this.$message.success(`${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出申请成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
         } else {
@@ -370,9 +369,10 @@ export default {
 <style lang="less" scoped>
   .account-income{
     position: relative;
-    .el-card__body{
+    .box-card{
+      background: #fff;
       padding: 24px 32px;
-
+      border-radius: 4px;
     }
     .detail{
       position: absolute;
@@ -383,6 +383,9 @@ export default {
       cursor: pointer;
     }
   .live-come{
+    padding: 24px 32px;
+    border-radius: 4px;
+    background: #fff;
     margin-right: 10px;
     height: 170px;
     h3{
@@ -427,6 +430,9 @@ export default {
   .money-come{
     margin-left: 10px;
     height: 170px;
+    padding: 24px 32px;
+    border-radius: 4px;
+    background: #fff;
     h3{
       font-size: 16px;
       color: #1A1A1A;

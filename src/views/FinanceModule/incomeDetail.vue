@@ -130,8 +130,8 @@ export default {
       }
       paramsObj.user_id = this.userId;
       paramsObj.webinar_id = this.$route.params.str;
+      this.params = paramsObj;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      this.params = obj;
       console.log(obj);
       this.$fetch('liveIncomeDetailList', obj).then(res =>{
         this.totalNum = res.data.total;
@@ -153,7 +153,6 @@ export default {
     exportAccount() {
       this.$fetch('exportIncomeDetail', this.params).then(res => {
         if (res.code == 200) {
-          this.params = {};
           this.$message.success(`收益详情导出申请成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
         } else {

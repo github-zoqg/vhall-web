@@ -11,7 +11,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
-      <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)">批量删除</el-button>
+      <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!this.checkedList.length">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="`请输入音视频名称`"
@@ -120,11 +120,16 @@ export default {
     tirggerFile(event){
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
+      console.log(file, '111111111111');
       let beforeName = event.target.files[0].name.toLowerCase();
       let videoArr = beforeName.toLowerCase().split('.');
       const videoType = typeList.includes(videoArr[videoArr.length - 1]);
       if (!videoType) {
         this.$message.error(`您上传的文件格式不正确`);
+        return false;
+      }
+      if (file.size > 2147483648) {
+        this.$message.error(`您上传的文件不能大于2G`);
         return false;
       }
       // if(beforeName.indexOf('.mp')==-1){

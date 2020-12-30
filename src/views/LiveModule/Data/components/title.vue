@@ -1,5 +1,5 @@
 <template>
-  <el-card class="container-box">
+  <div class="container-box">
     <div class="flex-item">
       <div class="box-item">
        <img :src="liveDetailInfo.img_url" alt="">
@@ -20,7 +20,7 @@
         <div class="box-time">直播时间：{{ liveDetailInfo.start_time }}</div>
       </div>
     </div>
-  </el-card>
+  </div>
 </template>
 <script>
 export default {
@@ -29,10 +29,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .container-box {
-  /deep/.el-card__body {
-    padding: 0;
-  }
   height: 114px;
+  background: #fff;
   border-radius: 4px;
   margin-bottom: 30px;
 }

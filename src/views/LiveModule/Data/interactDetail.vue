@@ -640,7 +640,7 @@ export default {
       }
       this.tableList = [];
       let obj = Object.assign({}, pageInfo, params);
-      this.params = obj;
+      this.params = params;
       this.$fetch('getRecodrderList', obj).then(res => {
         this.params.start_time = res.data.start_time;
         this.params.end_time = res.data.end_time;

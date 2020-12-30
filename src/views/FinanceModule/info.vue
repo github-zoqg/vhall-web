@@ -7,7 +7,7 @@
       <version-info></version-info>
     </div>
     <div class="statistical-line">
-        <el-card class="serach-line">
+        <div class="serach-line">
           <span>用量统计</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content" v-if="versionType">
@@ -26,10 +26,10 @@
           >
           </search-area>
           <lint-charts :lineDataList="lintData" :type="1"></lint-charts>
-        </el-card>
+        </div>
     </div>
     <div class="statistical-line">
-      <el-card class="serach-line">
+      <div class="serach-line">
         <span>消费账单</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content" v-if="versionType">
@@ -125,7 +125,7 @@
         @getTableList="getAccountList"
         >
       </table-list>
-      </el-card>
+      </div>
     </div>
   </div>
 </template>
@@ -312,8 +312,9 @@ export default {
           paramsObj[i] = formParams[i];
         }
       }
+      this.dataParams = paramsObj;
       let obj = Object.assign({}, pageInfo, paramsObj);
-      this.dataParams = obj;
+
       this.getOnlinePay(obj);
       this.getDataList(obj);
     },
@@ -398,8 +399,10 @@ export default {
 
 <style lang="less" scoped>
 .finance-info{
-  /deep/.el-card__body{
-    padding: 24px;
+  .serach-line{
+    padding: 24px 32px;
+    border-radius: 4px;
+    background: #fff;
   }
   .title-data {
       margin: 10px 0 20px 0;
