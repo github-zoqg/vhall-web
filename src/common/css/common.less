@@ -792,7 +792,8 @@ button.el-button.el-button--white-primary {
 }
 
 /*-----------------------------------------重置$confirm-确认提示弹出框 开始 ---------------------------------------------*/
-.zdy-message-box {
+.el-message-box.zdy-message-box {
+  padding-bottom: 0;
   .el-message-box__header {
     padding: 24px 32px;
   }
@@ -818,11 +819,15 @@ button.el-button.el-button--white-primary {
     padding: 0 32px;
   }
 
-  .el-message-box__btns {
+  .el-message-box__message p {
+    color: #1a1a1a;
+  }
+  /deep/.el-message-box__btns {
     padding: 24px 32px;
-
     .el-button {
       border-radius: 20px;
+      min-width: 76px;
+      min-height: 36px;
     }
   }
 }
