@@ -62,7 +62,7 @@
           <el-input v-model.trim="form.shop_url" placeholder="请输入店铺链接"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round class="length152" @click="onSubmit" v-preventReClick>保存</el-button>
+          <el-button type="primary" round class="length152" @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -86,7 +86,7 @@ export default {
         callback(new Error('请输入商品链接'));
       } else {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('商品链接必须已http或https开头');
+          callback && callback('请输入正确得商品链接地址');
         } else {
           callback();
         }
@@ -96,10 +96,12 @@ export default {
     const shopValidate = (rule, value, callback) => {
       if (value) {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('店铺链接必须已http或https开头');
+          callback && callback('请输入正确得店铺链接地址');
         } else {
           callback();
         }
+      } else {
+        callback();
       }
     };
     // 商品原价
@@ -122,7 +124,7 @@ export default {
         if (value <= 0 || value > 99999999.99) {
           callback && callback('价格必须大于0且小于99999999.99');
         } else {
-          if (value > this.form.price) {
+          if (value - this.form.price > 0) {
             callback && callback('商品优惠价必须小于或等于商品原价');
           } else {
             callback();

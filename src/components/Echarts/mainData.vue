@@ -1,5 +1,5 @@
 <template>
-  <el-card class="main_data">
+  <div class="main_data">
     <div class="main_header">
       <p>关键数据</p>
     </div>
@@ -175,7 +175,7 @@
         </div>
       </el-col>
     </el-row>
-  </el-card>
+  </div>
 </template>
 <script>
 import CountTo from 'vue-count-to';
@@ -203,7 +203,9 @@ export default {
 </script>
 <style lang="less" scoped>
 .main_data {
-  padding-bottom: 4px;
+  padding: 24px 32px;
+  background: #fff;
+  border-radius: 4px;
   /deep/.el-button {
     border: none;
     background: transparent;

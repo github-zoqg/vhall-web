@@ -2,7 +2,7 @@
   <div class="account-detail">
     <pageTitle title="提现明细">
     </pageTitle>
-    <el-card>
+    <div class="box-card">
       <search-area
           ref="searchAccount"
           :searchAreaLayout="searchDetail"
@@ -20,7 +20,7 @@
         @getTableList="getDetailList"
         >
       </table-list>
-    </el-card>
+    </div>
   </div>
 </template>
 <script>
@@ -160,7 +160,7 @@ export default {
       paramsObj.user_id = this.userId;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
-      this.params = obj;
+      this.params = paramsObj;
       this.$fetch('accountList', obj).then(res =>{
         console.log(res);
         this.totalNum = res.data.total;
@@ -181,7 +181,6 @@ export default {
     exportAccount() {
        this.$fetch('exportWithdraw', this.params).then(res => {
         if (res.code == 200) {
-          this.params = {};
           this.$message.success(`账单明细导出申请成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
         } else {
@@ -192,3 +191,10 @@ export default {
   }
 };
 </script>
+<style lang="less" scoped>
+  .box-card{
+    background: #fff;
+    padding: 24px 32px;
+    border-radius: 4px;
+  }
+</style>
