@@ -8,12 +8,12 @@
     <!-- 模式选择 -->
     <div class="virtual-ctx">
       <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="100px" width="360px">
-        <el-form-item label="人数增加：" prop="online">
+        <el-form-item label="人数增加" prop="online">
           <el-input  autocomplete="off" v-model.trim="virtualForm.online" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
             <el-button type="text" class="no-border" size="mini" slot="append">人</el-button>
           </el-input>
         </el-form-item>
-        <el-form-item label="热度增加：" prop="pv">
+        <el-form-item label="热度增加" prop="pv">
           <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two">
             <el-button type="text" class="no-border" size="mini" slot="append">次</el-button>
           </el-input>

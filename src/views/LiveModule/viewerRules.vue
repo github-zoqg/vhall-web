@@ -63,7 +63,7 @@
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
                 <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
-                  <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
+                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
                 <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
@@ -104,7 +104,7 @@
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
                 <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
-                  <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
+                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
                 <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
