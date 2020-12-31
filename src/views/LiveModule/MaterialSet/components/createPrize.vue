@@ -15,6 +15,7 @@
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
+            @delete="deleteImg"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
               <p>建议尺寸：120*120px，小于2M</p>
@@ -291,6 +292,9 @@ export default {
       }
         this.maxPage = Math.ceil(res.data.count / this.prizePageInfo.limit);
       })
+    },
+    deleteImg() {
+      this.prizeForm.img_path = '';
     },
     prizeLoadSuccess(res, file){
       console.log(res, file);

@@ -46,9 +46,9 @@ export default {
   data() {
     return {
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
-      liveContent: `${process.env.VUE_APP_WAP_WATCH}/live/watch/${this.$route.params.str}`,
-      completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WAP_WATCH}/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
-      video: `<iframe border="0" allowfullscreen="true" src="${process.env.VUE_APP_WAP_WATCH}/embedclient/watch/${this.$route.params.str}?embed=video" width="800" height="600"></iframe>`
+      liveContent: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+      completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WAP_WATCH}/lives/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
+      video: `<iframe border="0" allowfullscreen="true" src="${process.env.VUE_APP_WAP_WATCH}/lives/embedclient/watch/${this.$route.params.str}?embed=video" width="800" height="600"></iframe>`
     };
   },
   components: {
