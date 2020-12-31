@@ -344,6 +344,7 @@ export default {
           this.$router.push({path: '/'});
         } else {
           if (this.isActive == 1) {
+            console.log(res.msg, '1111111111111111');
             this.errorText = res.msg || '登录失败！';
           } else {
             this.errorMsgShow = res.msg || '登录失败！';

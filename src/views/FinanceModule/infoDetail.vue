@@ -70,7 +70,7 @@
                 >
                 <el-button
                   type="text"
-                  @click="deleteOrder(scope.row)"
+                  @click="pay(scope.row)"
                   v-if="!scope.row.status"
                   >立即支付</el-button
                 >

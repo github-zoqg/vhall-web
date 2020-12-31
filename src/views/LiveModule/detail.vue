@@ -1,5 +1,5 @@
 <template>
-  <div class="detailBox">
+  <div class="detailBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
     <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
@@ -95,6 +95,7 @@ export default {
   data(){
     return {
       msg: '',
+      loading: true,
       isAnginOpen: false,
       outLiveTime: false,
       liveDetailInfo: {
@@ -205,6 +206,7 @@ export default {
   methods: {
     // 获取基本信息
     getLiveDetail(id) {
+      this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         if (res.data.webinar_state == 1) {

@@ -26,7 +26,7 @@
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
-        <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
+        <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
         <p class="switch__box">
@@ -59,7 +59,7 @@
         </p>
       </el-form-item>
       <el-form-item label="专题目录:" required>
-        <el-button size="small" type="primary" round @click="showActiveSelect = true">添加</el-button>
+        <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
@@ -175,7 +175,6 @@ export default {
       },
       subject_id: '',
       reservation: true,
-      isSave: true,
       hot: true,
       home: true,
       loading: false,
@@ -192,22 +191,6 @@ export default {
   },
   created(){
     // console.log(this.$route.query.title, '111111111111111111');
-  },
-  beforeRouteLeave(to, from, next) {
-    if (this.isSave && $route.query.title == '创建') {
-      this.$confirm(`是否取消编辑的专题内容？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        customClass: 'zdy-alert-box',
-        type: 'warning'
-      }).then(() => {
-        next();
-      }).catch(() => {
-      });
-    } else {
-      next();
-    }
-
   },
   mounted() {
     if (this.$route.query.id) {
@@ -315,7 +298,6 @@ export default {
 
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
-             this.isSave = false;
               this.subject_id = res.data.subject_id;
               this.$message.success(`创建成功`);
               console.log(res);
@@ -340,20 +322,27 @@ export default {
         }
       });
     },
-
+    // 判断是否填写数据
+    isContent() {
+      if (this.formData.title || this.content || this.imageUrl || !this.home || !this.reservation || !this.hot || this.selectedActives.length > 0) {
+        this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-alert-box',
+          type: 'warning'
+        }).then(() => {
+            this.$router.push({path:'/special/list'});
+        }).catch(() => {
+          });
+      } else {
+         this.$router.push({path:'/special/list'});
+      }
+    },
     resetForm(formName) {
       if (this.$route.query.id) {
-        this.$router.go(-1);
+        this.$router.push({path:'/special/list'});
       } else {
-         this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            customClass: 'zdy-alert-box',
-            type: 'warning'
-          }).then(() => {
-              this.$router.go(-1)
-          }).catch(() => {
-            });
+        this.isContent();
       }
     },
     deleteImg() {
@@ -413,6 +402,9 @@ export default {
       color: #999999;
       pointer-events: none;
       user-select: none;
+    }
+    .tox-tinymce{
+      border-radius: 4px;
     }
   }
   .el-form-item{

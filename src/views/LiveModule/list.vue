@@ -1,5 +1,5 @@
 <template>
-  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中">
+  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
     <pageTitle title="直播列表">
       <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
