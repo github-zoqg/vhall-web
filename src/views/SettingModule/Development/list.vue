@@ -9,7 +9,7 @@
     <pageTitle title="开发设置"></pageTitle>
     <p class="top">
       <el-button type="primary" size="medium" round @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
-      <el-button type="primary" size="medium" round @click="toCallbackPage">回调设置</el-button>
+      <el-button size="medium" round @click="toCallbackPage">回调设置</el-button>
     </p>
     <div class="dev-show-list">
       <table-list
@@ -291,16 +291,27 @@ export default {
   }
   .dev-show-layout{
     /deep/.el-button[readonly] {
-      background: transparent;
-      border: 1px solid #CCCCCC;
+      background: #F09D99;
+      border: 1px solid #F09D99;
       cursor: not-allowed;
-      color: #666666;
+      color: #FFFFFF;
       &:hover, &:active {
-        background: transparent;
-        border: 1px solid #CCCCCC;
+        background: #F09D99;
+        border: 1px solid #F09D99;
         cursor: not-allowed;
-        color: #666666;
+        color: #FFFFFF;
       }
+      /* 白色禁用
+       background: transparent;
+       border: 1px solid #CCCCCC;
+       cursor: not-allowed;
+       color: #666666;
+       &:hover, &:active {
+         background: transparent;
+         border: 1px solid #CCCCCC;
+         cursor: not-allowed;
+         color: #666666;
+       }*/
     }
   }
   .dev-show-list {

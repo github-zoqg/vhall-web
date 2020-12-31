@@ -1,36 +1,44 @@
 <template>
   <div  v-loading="fetching" element-loading-text="努力加载中">
     <PageTitle :title="pageTitle"></PageTitle>
-    <div class="app--info-ctx">
-      <el-form :model="appForm" ref="appForm" label-width="200px">
-        <template v-for="(node, index) in nodesData">
-          <p class="subject" v-if="node.subject" :key="index">{{node.label}}</p>
-          <el-form-item
-            v-else
-            :key="index"
-            :prop="node.modelKey"
-            :label="node.label"
-            :rules="node.validateRules || []"
-          >
-            <template v-if="action!='detail' && node.nodeType != 'text'">
-              <el-input v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></el-input>
-              <el-radio-group v-else-if="node.nodeType == 'radio'" v-model="appForm[node.modelKey]">
-                <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
-              </el-radio-group>
-            </template>
-            <span v-else-if="node.modelKey === 'sign_type'">{{['MD5', 'RSA'][appForm[node.modelKey]]}}</span>
-            <span v-else>{{appForm[node.modelKey]}}</span>
-          </el-form-item>
-        </template>
+    <!-- 按钮 -->
+    <div class="app-btns">
+      <el-button size="medium" @click="modify" round>修改</el-button>
+    </div>
+    <!-- 面板 -->
+    <div class="app-layout">
+      <div class="app--info-ctx">
+        <el-form :model="appForm" ref="appForm" label-width="200px">
+          <template v-for="(node, index) in nodesData">
+            <div :class="node.subject ? 'app-node-item padding' : 'app-node-item'">
+              <p class="subject" v-if="node.subject" :key="index">{{node.label}}</p>
+              <el-form-item
+                v-else
+                :key="index"
+                :prop="node.modelKey"
+                :label="node.label"
+                :rules="node.validateRules || []"
+              >
+                <template v-if="action!='detail' && node.nodeType != 'text'">
+                  <el-input v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></el-input>
+                  <el-radio-group v-else-if="node.nodeType == 'radio'" v-model="appForm[node.modelKey]">
+                    <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
+                  </el-radio-group>
+                </template>
+                <span v-else-if="node.modelKey === 'sign_type'">{{['MD5', 'RSA'][appForm[node.modelKey]]}}</span>
+                <span v-else>{{appForm[node.modelKey]}}</span>
+              </el-form-item>
+            </div>
+          </template>
+        </el-form>
         <el-form-item v-if="action!='detail'">
           <el-button type="primary" @click="submitForm('appForm')" round>保存</el-button>
           <el-button @click="cancel('appForm')" round>取消</el-button>
         </el-form-item>
-        <div class="right" v-if="action=='detail'">
-          <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="">
-          <el-button type="primary" @click="modify" round>修改</el-button>
-        </div>
-      </el-form>
+      </div>
+      <div class="right" v-if="action=='detail'">
+        <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="">
+      </div>
     </div>
   </div>
 </template>
@@ -261,7 +269,25 @@ export default {
 <style lang="less" scoped>
 .app--info-ctx {
   .layout--right--main();
-  .padding41-40();
+  background: #F7F7F7;
+  margin-top: 24px;
+}
+.app-node-item {
+  background: #ffffff;
+  /deep/.el-form-item {
+    margin-bottom: 0;
+  }
+  &.padding {
+    margin-top: 30px;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+.app-btns {
+  /deep/.el-button {
+    background: transparent;
+  }
 }
 .el-form{
   position: relative;
@@ -275,8 +301,6 @@ export default {
   border-left: 4px solid #FB3A32;
   line-height: 16px;
   height: 18px;
-  margin-top: 32px;
-  margin-bottom: 12px;
   padding-left: 5px;
 }
 .right{
