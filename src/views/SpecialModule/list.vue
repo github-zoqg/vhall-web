@@ -52,7 +52,8 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                <icon icon-class="saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></icon>
+                <i class="iconfont-v3 saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
+                <!-- <i class="saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i> -->
                 <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
@@ -209,7 +210,8 @@ export default {
     },
     // 预览页面
     specialDetail(item) {
-      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+      console.log("1321432144")
+      let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     }
   },
@@ -406,6 +408,7 @@ export default {
         .liveOpera{
           color: #666666;
           span{
+            cursor: pointer;
             &:nth-child(2){
               padding: 0 20px;
             }
