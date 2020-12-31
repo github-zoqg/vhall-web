@@ -100,7 +100,7 @@
           width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input :disabled="isDemand == 'false'" v-model="scope.row.createTime" placeholder="请输入章节时间"></el-input>
+            <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
@@ -188,8 +188,10 @@ export default {
     }
   },
   created(){
-    this.checkChapterSave()
-    this.getPlayBackInfo()
+    setTimeout(() => {
+      this.checkChapterSave()
+      this.getPlayBackInfo()
+    }, 300)
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -239,11 +241,13 @@ export default {
         return {
           ...item,
           index: index + 1,
-          createTime: this.secondsFormmat(item.createTime),
+          userCreateTime: this.secondsFormmat(item.createTime),
+          isChange: false,
           sub: item.sub.map((subItem, subIndex) => ({
             ...subItem,
-            createTime: this.secondsFormmat(subItem.createTime),
-            index: `${index + 1}-${subIndex + 1}`
+            userCreateTime: this.secondsFormmat(subItem.createTime),
+            index: `${index + 1}-${subIndex + 1}`,
+            isChange: false
           }))
         }
       });
@@ -261,8 +265,34 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    /**
+     * 后退一秒
+     */
+    seekBack () {
+      if (this.vodReady) {
+        this.currentTime = parseInt(
+          window.vhallPlayer.getCurrentTime(() => {
+            console.log('获取当前视频播放时间失败----------');
+          })
+        );
+        window.vhallPlayer.setCurrentTime(this.currentTime - 1);
+      }
+    },
+    /**
+     * 前进一秒
+     */
+    seekForward () {
+      if (this.vodReady) {
+        this.currentTime = parseInt(
+          window.vhallPlayer.getCurrentTime(() => {
+            console.log('获取当前视频播放时间失败----------');
+          })
+        );
+        window.vhallPlayer.setCurrentTime(this.currentTime + 1);
+      }
+    },
     getDocTitles() {
-      if (!this.docIds.length) return fasle;
+      if (!this.docIds.length) return false;
       const taskList = []
       this.docIds.map(item => {
         taskList.push(
@@ -305,20 +335,20 @@ export default {
       const createTimeArr = [];
       console.log('tableData', this.tableData)
       const doc_titles = this.tableData.map(item => {
-        createTimeArr.push(this.secondsReverse(item.createTime))
+        createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
         return {
           document_id: item.docId,
-          created_at: this.secondsReverse(item.createTime),
+          created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
           page: item.slideIndex,
           step: item.stepIndex,
           title: item.title,
           remark: '',
           step_total: item.sub.length,
           subsection: item.sub.map(subItem => {
-            createTimeArr.push(this.secondsReverse(subItem.createTime))
+            createTimeArr.push(subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime)
             return {
               document_id: subItem.docId,
-              created_at: this.secondsReverse(subItem.createTime),
+              created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
               page: subItem.slideIndex,
               step: subItem.stepIndex,
               title: subItem.title,
@@ -387,20 +417,24 @@ export default {
         this.tableData = res.data.doc_titles.map((item, index) => {
           ids.push(item.document_id);
           return {
-            createTime: '00:00:00',
+            createTime: 0,
             docId: item.document_id,
             slideIndex: item.page,
             stepIndex: item.step,
             title: item.title,
             index: index + 1,
+            userCreateTime: '00:00:00',
+            isChange: true,
             sub: item.subsection.length ?
               item.subsection.map((subItem, subIndex) => ({
-                createTime: '00:00:00',
+                createTime: 0,
                 docId: subItem.document_id,
                 slideIndex: subItem.page,
                 stepIndex: subItem.step,
                 title: subItem.title,
-                index: `${index + 1}-${subIndex + 1}`
+                index: `${index + 1}-${subIndex + 1}`,
+                userCreateTime: '00:00:00',
+                isChange: true,
               })) : []
           }
         })
@@ -423,6 +457,8 @@ export default {
       this.tableData.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
+        userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
+        isChange: true,
         index: this.tableData.length + 1,
         stepIndex: 0,
         slideIndex: 0,
@@ -455,6 +491,7 @@ export default {
           }
         });
         this.handleSerialize()
+        this.saveChapters()
       }).catch(()=>{});
 
     },
@@ -470,7 +507,8 @@ export default {
     },
     getTime(row){
       // 时间为秒数，四舍五入取整数
-      row.createTime = this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime());
+      row.userCreateTime = this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime());
+      row.isChange = true
       // row.createTime = this.$refs.player.$PLAYER.getCurrentTime();
     },
     // 添加子章节
@@ -481,12 +519,14 @@ export default {
       row.sub.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
+        userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         index: `${row.index}-${row.sub.length + 1}`,
         stepIndex: currentDocInfo.stepIndex,
         slideIndex: currentDocInfo.slideIndex,
         docId: currentDocInfo.docId,
         cid: currentContainerInfo._id,
-        hash: currentDocInfo.hash
+        hash: currentDocInfo.hash,
+        isChange: true
       })
     },
     associateHandler(){
@@ -603,6 +643,9 @@ export default {
     .playerBox{
       width: 480px;
       margin-right: 10px;
+      // /deep/ .vhallPlayer-controller-box{
+      //   display: none;
+      // }
     }
     /deep/ .v-c-right{
       >*:not(.vhallPlayer-volume-component){
