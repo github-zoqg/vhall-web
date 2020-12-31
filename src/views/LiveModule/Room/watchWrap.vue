@@ -1629,7 +1629,7 @@ export default {
         Number(this.roominfo.base_online_num)
       );
       this.baseRoomUser.basePv = Number(this.roominfo.base_pv)
-      if (this.roominfo.advs.length > 0) {
+      if (this.roominfo.advs && this.roominfo.advs.length > 0) {
         this.menuButton(this.roominfo.advs)
       }
 

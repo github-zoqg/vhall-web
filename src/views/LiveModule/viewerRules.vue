@@ -63,7 +63,7 @@
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
                 <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
-                  <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
+                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
                 <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
@@ -104,7 +104,7 @@
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
                 <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
-                  <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
+                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
                 <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
@@ -223,7 +223,9 @@ export default {
   },
   data() {
     let checkNums = (rule, value, callback) => {
-      if (!value) {
+      if (this.viewerDao && this.viewerDao.fcodes > 0) {
+        callback();
+      } else if (!value) {
         return callback(new Error('邀请码数量1-1000'));
       } else if (value > 1000 || value < 1) {
         return callback(new Error('邀请码数量1-1000'));
@@ -504,6 +506,11 @@ export default {
       console.log('当前已经选中分组集合'+this.whiteIds.join('.'));
       */
       this.whiteId = item.id;
+    },
+    formatInput() {
+      this.$nextTick(() => {
+       alert(11)
+      })
     },
     // 验证码生成
     fCodeExecute(formName) {
