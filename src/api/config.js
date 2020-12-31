@@ -397,6 +397,9 @@ const apis = {
   getAppInfo: ['/v3/users/appkeys/get-info', 'POST'], // 获取应用详情 jian.chang •••
   modifyApp: ['/v3/users/appkeys/edit', 'POST'], // 修改应用 jian.chang •••
   appEditStatus: ['/v3/users/appkeys/set-status', 'POST'], // 修改应用状态（0停用 1启用 2删除） jian.chang •••
+  getCallbackInfo: ['/v3/users/callback-lists/get-info', 'POST'], // 回调事件查询接口
+  editCallbackInfo: ['/v3/users/callback-lists/edit', 'POST'], // 回调事件修改接口
+  addCallbackInfo: ['/v3/users/callback-lists/create', 'POST'], // 回调事件创建接口
 
   // 账户管理
   homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li √字段未同步

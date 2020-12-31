@@ -5,44 +5,44 @@
       <el-button type="white-primary" round @click="openDoc">查看文档</el-button>
     </null-page>
   </div>
-  <div v-else  class="developmentWrap" v-loading="fetching" element-loading-text="获取数据中">
+  <div v-else  class="dev-show-layout" v-loading="fetching" element-loading-text="获取数据中">
     <pageTitle title="开发设置"></pageTitle>
     <p class="top">
-      <el-button type="primary" round @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
-      <span class="tips">
-        使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
-      </span>
+      <el-button type="primary" size="medium" round @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
+      <el-button type="primary" size="medium" round @click="toCallbackPage">回调设置</el-button>
     </p>
-    <dev-table
-      ref="tableList"
-      :isCheckout=false
-      :manageTableData="tableList"
-      :tabelColumnLabel="tableColumn"
-      :tableRowBtnFun="tableRowBtnFun"
-      :isHandle="isHandle"
-      :totalNum="totalNum"
-      :checkPattern="{
-        check_key: 'status',
-        check_show_type: 'hidden',
-        stopApp: 1,
-        restartApp: 0
-      }"
-      v-if="totalNum > 0"
-      @onHandleBtnClick="onHandleBtnClick"
-      @getTableList="getTableList"
-    >
-    </dev-table>
-    <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
+    <div class="dev-show-list">
+      <table-list
+        ref="tableList"
+        v-if="totalNum > 0"
+        :isCheckout=false
+        :manageTableData="tableList"
+        :tabelColumnLabel="tableColumn"
+        :tableRowBtnFun="tableRowBtnFun"
+        :isHandle="isHandle"
+        :totalNum="totalNum"
+        max-height="auto"
+        width=150
+        scene="development"
+        @onHandleBtnClick="onHandleBtnClick"
+        @getTableList="getTableList"
+      >
+      </table-list>
+      <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
+    </div>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import DevTable from '@/components/TableList/devTable';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import env from "@/api/env";
 export default {
+  components: {
+    NullPage,
+    PageTitle
+  },
   data(){
     return{
       auth_show: false,
@@ -50,10 +50,14 @@ export default {
       totalNum: 1000,
       isHandle: true,
       tableList: [],
+      msg: null,
+      limit: 10,
+      pageNumber: 1,
+      pos: 0,
       tableColumn: [
         {
           label: '应用名称',
-          key: 'app_name'
+          key: 'app_name',
         },
         {
           label: 'AppKey',
@@ -62,17 +66,17 @@ export default {
         {
           label: '创建时间',
           key: 'created_at',
-          width: 120
+          width: 200
         },
         {
           label: '更新时间',
           key: 'updated_at',
-          width: 120
+          width: 200
         },
         {
           label: '状态',
           key: 'statusStr',
-          width: 150
+          width: 100
         }
       ],
       tableRowBtnFun: [
@@ -100,11 +104,6 @@ export default {
   created(){
     this.initPage();
   },
-  components: {
-    NullPage,
-    PageTitle,
-    DevTable
-  },
   mounted(){
 
   },
@@ -117,7 +116,16 @@ export default {
         if (perVo.is_developer > 0) {
           // 开启
           this.auth_show = true;
-          this.getTableList();
+          this.msg = this.$message({
+            type: 'info',
+            duration: 0,
+            dangerouslyUseHTMLString: true,
+            message: `<span class="dev-show-tips">
+        使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
+      </span>`,
+            customClass: 'zdy-info-box top-81'
+          });
+          this.search();
         } else {
           this.auth_show = false;
         }
@@ -134,12 +142,18 @@ export default {
       // 取得当前系统配置项
       this.getSysConfig();
     },
+    toCallbackPage() {
+      this.$router.push({
+        path: `/dev/callback`
+      })
+    },
     createApp(){
       if(!(this.available_num > 0)) {
         this.$alert('如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970', '提示', {
           confirmButtonText: '我知道了',
           customClass: 'zdy-alert-box',
-          center: true
+          center: true,
+          lockScroll: false
         }).then(()=>{
         }).catch(()=>{});
         return;
@@ -154,10 +168,11 @@ export default {
           this.$alert('添加成功，请手动添加包名签名信息', '提示', {
             confirmButtonText: '我知道了',
             customClass: 'zdy-alert-box',
-            center: true
+            center: true,
+            lockScroll: false
           }).then(()=>{
             // 添加成功，刷新列表
-            this.getTableList();
+            this.search();
           }).catch(()=>{});
           // this.$router.push({path: `/dev/${res.data.result}`});
         } else {
@@ -172,9 +187,21 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    getTableList(pageInfo = {pos: 0, limit: 10, pageNumber: 1}) {
+    search() {
+      this.pos = 0;
+      this.pageNumber = 1;
+      this.getTableList();
+    },
+    getTableList(row) {
+      if (row) {
+        this.pos = row.pos;
+        this.pageNumber = row.pageNum;
+      }
       this.fetching = true;
-      this.$fetch('getAppList', pageInfo).then(res => {
+      this.$fetch('getAppList', {
+        pos: this.pos,
+        limit: this.limit
+      }).then(res => {
         console.log('getAppList', res);
         if(res && res.code === 200) {
           let list = res.data.list || [];
@@ -234,12 +261,17 @@ export default {
         if (res && res.code === 200) {
           this.$message.success(['停用','启用','删除'][status]);
           // 刷新数据
-          this.initPage();
+          this.search();
         } else {
           this.$message.success(res.msg);
         }
       }).catch( e =>{
       });
+    }
+  },
+  beforeDestroy() {
+    if (this.msg) {
+      this.msg.close();
     }
   }
 };
@@ -257,18 +289,35 @@ export default {
       text-decoration: underline;
     }
   }
-  .developmentWrap{
-    padding: 32px 24px;
-    background: #fff;
+  .dev-show-layout{
     /deep/.el-button[readonly] {
-      background: @999;
-      color: #FFFFFF;
-      border: 1px solid @999;
-      &:hover {
-        background: @999;
-        color: #FFFFFF;
-        border: 1px solid @999;
+      background: transparent;
+      border: 1px solid #CCCCCC;
+      cursor: not-allowed;
+      color: #666666;
+      &:hover, &:active {
+        background: transparent;
+        border: 1px solid #CCCCCC;
+        cursor: not-allowed;
+        color: #666666;
       }
+    }
+  }
+  .dev-show-list {
+    .layout--right--main();
+    .padding-table-list();
+    .min-height();
+  }
+  .dev-show-tips {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
+    a {
+      color: #3562FA;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
     }
   }
 </style>
