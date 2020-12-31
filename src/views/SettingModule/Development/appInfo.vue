@@ -2,13 +2,13 @@
   <div  v-loading="fetching" element-loading-text="努力加载中">
     <PageTitle :title="pageTitle"></PageTitle>
     <!-- 按钮 -->
-    <div class="app-btns">
+    <div class="app-btns" v-if="action==='detail'">
       <el-button size="medium" @click="modify" round>修改</el-button>
     </div>
     <!-- 面板 -->
     <div class="app-layout">
-      <div class="app--info-ctx">
-        <el-form :model="appForm" ref="appForm" label-width="200px">
+      <div :class="`app--info-ctx ${action=='detail' ? 'detail-show' : 'edit-show'}`">
+        <el-form :model="appForm" ref="appForm" label-width="220px">
           <template v-for="(node, index) in nodesData">
             <div :class="node.subject ? 'app-node-item padding' : 'app-node-item'">
               <p class="subject" v-if="node.subject" :key="index">{{node.label}}</p>
@@ -36,8 +36,9 @@
           <el-button @click="cancel('appForm')" round>取消</el-button>
         </el-form-item>
       </div>
-      <div class="right" v-if="action=='detail'">
-        <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="">
+      <div class="app-code-right" v-if="action=='detail'">
+        <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="" />
+        <p>请用微吼小直播扫码</p>
       </div>
     </div>
   </div>
@@ -270,18 +271,36 @@ export default {
 .app--info-ctx {
   .layout--right--main();
   background: #F7F7F7;
-  margin-top: 24px;
+  &.detail-show {
+    width: calc(100% - 272px);
+    display: inline-block;
+    vertical-align: top;
+    /deep/.el-form-item__content {
+      line-height: 40px;
+      position: relative;
+      width: 500px;
+      height: 40px;
+      border-radius: 4px;
+      border: 1px solid #CCCCCC;
+      padding: 0 10px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #1A1A1A;
+    }
+  }
 }
 .app-node-item {
   background: #ffffff;
   /deep/.el-form-item {
+    background: #ffffff;
+    padding-bottom: 32px;
     margin-bottom: 0;
   }
   &.padding {
-    margin-top: 30px;
-    &:first-child {
-      margin-top: 0;
-    }
+    margin-top: 24px;
+    padding-top: 24px;
+    padding-left: 24px;
+    padding-bottom: 24px;
   }
 }
 .app-btns {
@@ -296,22 +315,34 @@ export default {
   width: 600px;
 }
 .subject{
-  font-size: 20px;
-  color: #333333;
   border-left: 4px solid #FB3A32;
-  line-height: 16px;
-  height: 18px;
-  padding-left: 5px;
+  padding-left: 8px;
+  font-size: 20px;
+  font-weight: 400;
+  color: #333333;
+  line-height: 28px;
 }
-.right{
-  position: absolute;
-  right: 0;
-  top: 0;
-  img{
-    width: 170px;
-    height: 170px;
-    vertical-align: top;
-    margin-right: 60px;
+.app-code-right{
+  display: inline-block;
+  vertical-align: top;
+  width: 248px;
+  height: 276px;
+  background: #FFFFFF;
+  border-radius: 4px;
+  margin-left: 24px;
+  margin-top: 24px;
+  img {
+    display: block;
+    width: 160px;
+    height: 160px;
+    margin: 44px 44px 8px 44px;
+  }
+  p {
+    font-size: 14px;
+    font-weight: 400;
+    color: #1A1A1A;
+    line-height: 20px;
+    text-align: center;
   }
 }
 </style>
