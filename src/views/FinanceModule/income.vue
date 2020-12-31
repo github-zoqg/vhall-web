@@ -169,20 +169,20 @@ export default {
           key: 'name'
         },
         {
-          label: '总收益',
+          label: '总收益（元）',
           key: 'total_income',
         },
         {
-          label: '门票收益',
+          label: '门票收益（元）',
           key: 'ticket_income',
           width: 120,
         },
         {
-          label: '打赏收益',
+          label: '打赏收益（元）',
           key: 'reward_income',
         },
         {
-          label: '礼物收益',
+          label: '礼物收益（元）',
           key: 'gifts_income',
         }
       ],
@@ -208,7 +208,7 @@ export default {
           key: 'created_at',
         },
         {
-          label: '领取金额',
+          label: '领取金额（元）',
           key: 'money',
         }
       ],

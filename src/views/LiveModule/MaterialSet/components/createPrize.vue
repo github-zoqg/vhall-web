@@ -58,7 +58,7 @@
        </el-scrollbar>
        </div>
         <div class="no-live" v-show="!total">
-          <noData :nullType="nullText" :text="text" :height="0">
+          <noData :nullType="nullText" :text="text" :height="50">
             <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="dialogVisible == true" v-preventReClick>创建抽奖</el-button>
           </noData>
         </div>
@@ -68,6 +68,24 @@
         <el-button size="medium" @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
        </div>
      </div>
+    </VhallDialog>
+    <VhallDialog
+      title="提示"
+      :visible.sync="dialogTongVisible"
+      :close-on-click-modal="false"
+      :before-close="handleClose"
+      width="400px"
+    >
+      <div class="surePrize">
+        <div class="textPrize">
+          <p>确定保存当前奖品？</p>
+          <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
+        </div>
+        <div class="dialog-footer">
+          <el-button size="medium" type="primary" @click="sureMaterialPrize" round>确 定</el-button>
+          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+       </div>
+      </div>
     </VhallDialog>
   </div>
 </template>
@@ -79,7 +97,9 @@ export default {
     return {
       dialogVisible: false,
       dialogPrizeVisible: false,
+      dialogTongVisible: false,
       keyword: '',
+      sureChecked: true,
       checkedList: [],
       maxPage: 0,
       total: 0,
@@ -135,6 +155,7 @@ export default {
   },
   methods: {
     handleClose(done) {
+      this.checkedList = [];
       this.prizePageInfo.page = 1;
       done();
     },
@@ -155,49 +176,56 @@ export default {
           if (this.$parent.source == 1) {
             this.materiaPrize();
           } else {
-             this.$confirm('是否同步到资料库？', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              customClass: 'zdy-message-box'
-            }).then(() => {
-              // 保存到资料库
-              this.materiaPrize();
+            if (this.title == '创建') {
+              this.dialogTongVisible = true;
+            } else {
               this.liveSurePrize();
-            }).catch(() => {
-              // 不保存资料库
-              this.liveSurePrize()
-            });
+            }
           }
         } else {
           return false;
         }
       });
     },
+    // 同步资料库的保存
+    sureMaterialPrize() {
+      if (this.sureChecked) {
+        this.materiaPrize();
+        this.liveSurePrize();
+        this.dialogTongVisible = false;
+      } else {
+        // 不保存资料库
+        this.liveSurePrize();
+        this.dialogTongVisible = false;
+      }
+    },
     // 资料库保存奖品
     materiaPrize() {
-      this.dialogVisible = false;
       this.prizeForm.room_id = '';
       this.prizeForm.source = 1;
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
+          this.dialogVisible = false;
           this.$message.success(`资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
           this.$emit('getTableList');
         } else {
+          this.dialogVisible = true;
           this.$message.error(res.msg);
         }
       })
     },
     // 直播下的保存奖品
     liveSurePrize() {
-      this.dialogVisible = false;
       this.prizeForm.source = 0;
       this.prizeForm.room_id = this.$route.query.roomId || '';
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
+          this.dialogVisible = false;
           this.$message.success(`直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
           this.$emit('getTableList');
         } else {
           this.$message.error(res.msg);
+          this.dialogVisible = true;
         }
       })
     },
@@ -227,6 +255,7 @@ export default {
         page: 1,
         limit: 6
       }
+      this.checkedList = [];
       this.list = [];
       this.getPrizeList();
     },
@@ -395,6 +424,24 @@ export default {
        }
      }
       margin: 12px 0 24px 0;
+    }
+  }
+  .surePrize{
+    padding-bottom: 16px;
+    .textPrize{
+      padding-left: 50px;
+      p{
+        font-size: 16px;
+        color: #1A1A1A;
+        padding-bottom: 15px;
+      }
+      /deep/.el-checkbox__label{
+        color: #666;
+      }
+    }
+    .dialog-footer{
+      text-align: center;
+      margin-top: 20px;
     }
   }
 }

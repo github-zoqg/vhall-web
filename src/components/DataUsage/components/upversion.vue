@@ -16,8 +16,9 @@
         </el-form-item>
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
           <el-input v-model="number" style="width: 398px"
-            oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><template slot="append">人</template></el-input
+            oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><i slot="suffix" style="font-style: normal;">人</i></el-input
           >
+          <!-- <template slot="append">人</template> -->
           <p class="inputNums">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
         </el-form-item>
         <el-form-item label="订单信息">
@@ -266,9 +267,6 @@ export default {
 }
 /deep/.el-dialog__body {
   padding: 20px;
-}
-/deep/.el-input__inner{
-  border-right-color: transparent;
 }
 /deep/.el-input-group__append{
   background: #fff;

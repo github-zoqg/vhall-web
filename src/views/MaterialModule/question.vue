@@ -9,14 +9,14 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload" v-preventReClick @click="addQuestion">新建</el-button>
-      <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" v-preventReClick>批量删除</el-button>
+      <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
         <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入问卷名称" clearable @change="getTableList"></el-input>
       </div>
     </div>
     <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-       :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
+       :totalNum="total" @onHandleBtnClick='onHandleBtnClick' :width="180" @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </div>
     <div class="no-live" v-show="!total">

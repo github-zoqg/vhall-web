@@ -132,8 +132,9 @@ export default {
     },
     outTime(time) {
       let newDate = new Date().getTime(); //获取本地当前时间
-      let diff = newDate - new Date(time).getTime();
-      if (diff > 24*60*60*1000) {
+      time = `${time} 23:59:59`
+      let diff = newDate - (new Date(time).getTime());
+      if (diff > 0) {
         this.isOutTime = true;
       }
     },

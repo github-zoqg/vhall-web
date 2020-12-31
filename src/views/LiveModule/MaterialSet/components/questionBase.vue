@@ -35,6 +35,12 @@
               </el-table-column>
               <el-table-column
                 fixed
+                prop="topic_num"
+                label="题目数量">
+              </el-table-column>
+              <el-table-column
+                width="100"
+                fixed
                 label="操作">
                 <template slot-scope="scope">
                   <span style="cursor: pointer;" @click="preview(scope.row)">预览</span>
