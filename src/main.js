@@ -91,11 +91,13 @@ import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
 import VhallDialog from '@/components/Dialog';
+import VhallInput from '@/components/Input';
 import '@/components/RemoteScript';
 Vue.component('SPagination',SPagination);
 Vue.component('VhallDialog',VhallDialog); // 弹框
 Vue.component('tableList',tableList);  // 表格区域
 Vue.component('searchArea',searchArea); // 搜索区域
+Vue.component('VhallInput',VhallInput); // input 重写
 Vue.directive('preventReClick', {    // 限制按钮重复点击
   inserted: function (el, binding) {
     el.addEventListener('click', () => {
