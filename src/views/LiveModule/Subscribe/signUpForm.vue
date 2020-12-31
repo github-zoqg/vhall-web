@@ -644,7 +644,7 @@
                 this.closePreview()
                 // 判断当前直播状态，进行相应的跳转
                 this.getWebinarStatus()
-              } else if (res.code == 12809 || res.code == 10000) {
+              } else if (res.code == 512809 || (res.code == 600 && res.msg == '验证码格式错误')) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -683,7 +683,7 @@
                   this.$message.warning('请先报名！');
                   this.tabs = 1;
                 }
-              } else if (res.code == 12809 || res.code == 10000) {
+              } else if (res.code == 512809 || res.code == 600 && res.msg == '验证码格式错误') {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
