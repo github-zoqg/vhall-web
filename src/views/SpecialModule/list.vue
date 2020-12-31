@@ -9,7 +9,7 @@
     </pageTitle>
 
     <!-- 操作栏 -->
-    <div class="operaBox" v-show="totalElement || isSearch">
+    <div class="operaBox" v-if="totalElement || isSearch">
       <el-button size="medium" type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
       <div class="searchBox">
         <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">

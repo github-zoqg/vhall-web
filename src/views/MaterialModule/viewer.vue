@@ -2,7 +2,7 @@
   <div>
     <pageTitle title="观众">
       <div slot="content">
-        单个文件不可超过5000条，如有需要请拆分后上传
+        单个文件不可超过5000条数据，数据量较大时请拆分文件上传
       </div>
     </pageTitle>
     <div class="div__main">
@@ -39,6 +39,7 @@
           :isHandle="isHandle"
           :totalNum="viewerDao.total"
           maxHeight="100%"
+          width=120
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
@@ -116,16 +117,21 @@
           }"
           :result="importResult"
           :fileResult=fileResult
+          :progress="{
+            isUploadEnd: isUploadEnd,
+            percent: percent
+          }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip">请使用模版上传文件</p>
+          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
+          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
         </file-upload>
         <div class="dialog-right-btn">
           <el-button type="primary" @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
-          <el-button @click="importFileShow = false" size="medium" round>取 消</el-button>
+          <el-button @click="closeImportViewer" size="medium" round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -149,6 +155,8 @@ export default {
   },
   data() {
     return {
+      isUploadEnd: false,
+      percent: 0,
       isCheckout: true,
       isHandle: true,
       tableColumn: [
@@ -188,6 +196,10 @@ export default {
           name: '修改',
           methodName: 'viewerDialogShow'
         },
+        {
+          name: '删除',
+          methodName: 'delViewer'
+        }
       ],
       query: {
         keyword: '',
@@ -213,9 +225,9 @@ export default {
       },
       groupFormRules: {
         subject: [
-          { required: true, message: '请输入分组名！', trigger: 'blur' },
-          { max: 15, message: '请输入分组名（1-15个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入分组名（1-15个字符）', trigger: 'blur' }
+          {required: true, message: '请输入分组名！', trigger: 'blur'},
+          {max: 15, message: '请输入分组名（1-15个字符）', trigger: 'blur'},
+          {min: 1, message: '请输入分组名（1-15个字符）', trigger: 'blur'}
         ]
       },
       /*----添加观众设置----*/
@@ -236,44 +248,41 @@ export default {
       },
       viewerFormRules: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' },
-          { max: 50, message: '请输入姓名（最多50个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入姓名（最多50个字符）', trigger: 'blur' }
+          {required: true, message: '请输入姓名', trigger: 'blur'},
+          {max: 50, message: '请输入姓名（最多50个字符）', trigger: 'blur'},
+          {min: 1, message: '请输入姓名（最多50个字符）', trigger: 'blur'}
         ],
         industry: [
-          { required: false, message: '请输入行业', trigger: 'blur' },
-          { max: 50, message: '请输入行业（最多50个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入行业（最多50个字符）', trigger: 'blur' }
+          {required: false, message: '请输入行业', trigger: 'blur'},
+          {max: 50, message: '请输入行业（最多50个字符）', trigger: 'blur'},
+          {min: 1, message: '请输入行业（最多50个字符）', trigger: 'blur'}
         ],
         email: [
-          { required: false, message: '请输入邮箱', trigger: 'blur' },
-          { pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur' },
+          {required: false, message: '请输入邮箱', trigger: 'blur'},
+          {pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur'},
         ],
         phone: [
-          { required: true, message: '请输入手机号码', trigger: 'blur' },
-          { pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码' , trigger: 'blur'},
-          { max: 11, message: '请输入正确的手机号码', trigger: 'blur' },
-          { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
+          {required: true, message: '请输入手机号码', trigger: 'blur'},
+          {pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码', trigger: 'blur'},
+          {max: 11, message: '请输入正确的手机号码', trigger: 'blur'},
+          {min: 1, message: '请输入正确的手机号码', trigger: 'blur'}
         ],
         job_number: [
-          { required: false, message: '请输入工号（最多50个字符）', trigger: 'blur' },
-          { max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur' }
+          {required: false, message: '请输入工号（最多50个字符）', trigger: 'blur'},
+          {max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur'},
+          {min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur'}
         ],
         other: [
-          { max: 50, message: '请输入其他内容（最多50个字符）', trigger: 'blur' },
-          { min: 1, message: '请输入其他内容（最多50个字符）', trigger: 'blur' }
+          {max: 50, message: '请输入其他内容（最多50个字符）', trigger: 'blur'},
+          {min: 1, message: '请输入其他内容（最多50个字符）', trigger: 'blur'}
         ]
       },
       multipleSelection: [],
-      downloadUrl: `${ env.staticLinkVo.tmplDownloadUrl }/download/audience.xlsx`,
+      downloadUrl: `${env.staticLinkVo.tmplDownloadUrl}/download/audience.xlsx`,
       importFileShow: false,
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
-      importResult: {
-        fail: 0,
-        success: 0
-      }
+      importResult: null
     };
   },
   computed: {
@@ -438,10 +447,7 @@ export default {
       this.importFileShow = true;
       this.fileUrl = null;
       this.fileResult = '';
-      this.importResult = {
-        fail: 0,
-        success: 0
-      };
+      this.importResult = null;
     },
     // 创建观众
     viewerDialogAdd() {
@@ -509,6 +515,39 @@ export default {
         }
       });
     },
+    delViewer(that, { rows }) {
+      that.$confirm('确定从当前组里删除该观众？', '删除观众', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false
+      }).then(() => {
+        that.sendViewerDel([rows.id]);
+      }).catch(() => {
+      });
+    },
+    sendViewerDel(ids) {
+      this.$fetch('viewerDel', {
+        audience_ids: ids.join(',')
+      }).then(res => {
+        if(res && res.code === 200) {
+          this.$message.success(`删除观众-操作成功`);
+          this.$refs.viewerTable.clearSelect();
+          this.queryList();
+        } else {
+          this.$message({
+            type: 'error',
+            message: res.msg || '删除观众-操作失败'
+          });
+        }
+      }).catch(e => {
+        console.log(e);
+        this.$message({
+          type: 'error',
+          message: '删除观众-操作失败'
+        });
+      });
+    },
     // 白名单观众-批量删除
     viewerDel() {
       if (this.multipleSelection && this.multipleSelection.length > 0) {
@@ -522,26 +561,7 @@ export default {
             return item.id;
           });
           console.log(`批量删除-观众ID集合为${ids.join(',')}`);
-          this.$fetch('viewerDel', {
-            audience_ids: ids.join(',')
-          }).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success(`删除观众-操作成功`);
-              this.$refs.viewerTable.clearSelect();
-              this.queryList();
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || '删除观众-操作失败'
-              });
-            }
-          }).catch(e => {
-            console.log(e);
-            this.$message({
-              type: 'error',
-              message: '删除观众-操作失败'
-            });
-          });
+          this.sendViewerDel(ids);
         }).catch(() => {
         });
       } else {
@@ -559,9 +579,11 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
+      this.percent = 0;
+      this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
-        // 文件上传成功，导入观众
+        // 文件上传成功，检测观众
         this.$fetch('viewerImport', {
           file_url: res.data.file_url,
           group_id: this.query.group_id,
@@ -569,8 +591,10 @@ export default {
         }).then(resV => {
           if (resV && resV.code === 200) {
             this.fileResult = 'success';
-            this.importResult.success = resV.data.success_count;
-            this.importResult.fail = resV.data.fail_count;
+            this.importResult = {
+              success: resV.data.success_count,
+              fail: resV.data.fail_count
+            };
           } else {
             this.fileResult = 'error';
             // this.$message.error(resV.msg || '检测观众信息失败！');
@@ -601,6 +625,8 @@ export default {
     },
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
+      this.isUploadEnd = false;
+      this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
@@ -610,7 +636,17 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
+    closeImportViewer() {
+      this.importFileShow = false;
+      this.percent = 0;
+      this.isUploadEnd = false;
+      this.fileUrl = '';
+    },
     reloadViewerList() {
+      if(!this.fileUrl) {
+        this.$message.error('请先选择模板');
+        return;
+      }
       // 数据存储
       this.$fetch('viewerImport', {
         file_url: this.fileUrl,
@@ -619,6 +655,9 @@ export default {
       }).then(resV => {
         if (resV && resV.code === 200) {
           this.importFileShow = false;
+          this.percent = 0;
+          this.isUploadEnd = false;
+          this.fileUrl = '';
           // 刷新列表数据
           this.queryList();
         } else {

@@ -731,7 +731,8 @@ export default {
 <style lang="less" scoped>
 .btn-upload {
   display: inline-block;
-  margin-right: 16px;
+  margin-right: 12px;
+  vertical-align: middle;
   /deep/.el-upload {
     width: auto;
     height: auto;

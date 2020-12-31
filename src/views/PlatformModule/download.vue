@@ -358,12 +358,15 @@ export default {
     },
   },
   created() {
-    this.initChat();
+    // this.initChat();
   },
   mounted() {
     this.initPage();
+    this.$EventBus.$on('saas_vs_msg_num', function() {
+      alert(1)
+    });
     EventBus.$on('down_center_msg', res => { // 转码状态
-      console.log(res, '监听到down_center_msg转码状态事件');
+      console.log(res, '监听到down_center_msg123转码状态事件');
       this.docDao.list.map(item => {
         if (Number(item.dow_task_id) === Number(res.dow_task_id)) {
           item.fileStatusCss = ['wating', 'success', 'failer'][res.status];

@@ -1,10 +1,10 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
     <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'"></OldHeader>
+    <pageTitle title="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
-      <!-- <pageTitle title="选择发起方式"></pageTitle> -->
       <div class="choose__way__ctx">
-        <h1 class="choose-method">选择发起方式</h1>
+        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
             <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-// import PageTitle from '@/components/PageTitle';
+import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
 import { browserDetect } from '@/utils/utils';
@@ -51,7 +51,7 @@ import Env from '@/api/env';
 export default {
   name: 'chooseWay.vue',
   components: {
-    // PageTitle,
+    PageTitle,
     OldHeader
   },
   data() {
@@ -67,12 +67,14 @@ export default {
     };
   },
   created(){
-    // 清除live_tokend等数据
-    sessionOrLocal.removeItem('live_token', 'localStorage')
+    this.executeType = this.$route.query.type;
+    if (this.executeType === 'ctrl') {
+      // 清除live_tokend等数据
+      sessionOrLocal.removeItem('live_token', 'localStorage')
+    }
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
     let _data = this.$route.params
     this.arr = [_data.str, _data.role]
-    this.executeType = this.$route.query.type;
     this.getRoleUrl();
   },
   methods: {
@@ -123,11 +125,11 @@ export default {
           // this.watchUrl = res.data.page_url;
           this.scheme = res.data.client_protocol;
         } else {
-          this.$message.error('当前未获取到启动数据');
+          this.$message.error(res.msg || '当前未获取到启动数据');
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error('当前未获取到启动数据');
+        this.$message.error(e.msg || '当前未获取到启动数据');
       });
     }
   },

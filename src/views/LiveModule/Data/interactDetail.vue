@@ -32,57 +32,6 @@
       </div>
       <span v-if="totalNum"><el-button size="medium" round @click="exportData" >导出数据</el-button></span>
     </div>
-    <div class="interact-detail" v-if="false">
-      <el-table
-        :data="tableList"
-        :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-        row-key="id"
-        @selection-change="qeTableCheckbox"
-        :default-expand-all="false"
-        :tree-props="{children: 'answer'}">
-        <el-table-column
-        :reserve-selection="true"
-        type="selection"
-        width="55"
-        align="left"
-      />
-        <el-table-column
-          prop="name"
-          width="120"
-          label="问答"
-          >
-        </el-table-column>
-        <el-table-column
-          prop="content"
-          label="问答内容"
-          >
-        </el-table-column>
-        <el-table-column
-          prop="created_at"
-          label="发送时间">
-        </el-table-column>
-        <el-table-column
-          prop="is_open"
-          width="120"
-          label="私密">
-        </el-table-column>
-        <el-table-column
-          prop="statusText"
-          label="状态">
-        </el-table-column>
-        <el-table-column
-          width="120"
-          label="操作">
-          <template slot-scope="scope">
-            <el-button
-              type="text"
-              @click="handleDelete(scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
     <div class="interact-detail" v-show="totalNum">
       <table-list
         ref="tableList"

@@ -3,8 +3,17 @@ import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
 import { sessionOrLocal } from '../utils/utils';
+import { Message } from 'element-ui';
+import errorMap from './errorMap'
 
-export default function fetchData(url, data1 = {}, header = {}) {
+/**
+ * 错误码提示 统一在次处理
+ * extendsMsg：增加扩展字段处理自定义错误信息 格式如：{510000: '错误信息'}，空位此处错误不需提示
+ * 200 
+ * 600 对应 10000 参数错误
+ * 其余错误信息 510000 - 516999，通过errorMap引入
+*/
+export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {}) {
   const config = getApi(url);
   let [api, method, mock, paas, staticdata] = config;
   if (!api) throw TypeError('api 未定义');
@@ -80,18 +89,24 @@ export default function fetchData(url, data1 = {}, header = {}) {
   } else {
     api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
-
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
+    let msg = ''
+    let errMap = errorMap
     if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
       this.$router.push({
         path: '/error'
       });
-    } else if (res.code >= 510000 && res.code < 517000 || res.code === 200) {
+    } else if (res.code === 200) {
       return res;
     } else {
+      errMap = Object.assign(errMap, extendsMsg)
+      msg = errMap[res.code]
+      if (msg) {
+        Message.error(res.msg)
+      }
       return Promise.reject(res);
     }
   });

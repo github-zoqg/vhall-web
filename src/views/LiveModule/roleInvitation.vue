@@ -38,7 +38,7 @@
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.host_password" readonly>
-                <el-button class="no-border" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
+                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </el-input>
             </el-form-item>
           </el-form>
@@ -78,7 +78,7 @@
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.guest_password" readonly>
-                <el-button class="no-border" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
+                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
               </el-input>
             </el-form-item>
           </el-form>
@@ -124,7 +124,7 @@
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.assistant_password" readonly>
-                <el-button class="no-border" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
+                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
               </el-input>
             </el-form-item>
           </el-form>
@@ -162,8 +162,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick  @click="privilegeEditHandle" round size="mini">确 定</el-button>
-        <el-button @click="visible = false" round size="mini">取 消</el-button>
+        <el-button type="primary" v-preventReClick  @click="privilegeEditHandle" round size="medium">确 定</el-button>
+        <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
   </div>
@@ -269,28 +269,58 @@ export default {
       this.roleSwitch = Number(!roleSwitch);
       if(this.webinarVo.webinar_state === 1) {
         // 如果為~直播中
-        this.$message.error('直播中不能设置该功能');
+        this.$message({
+          showClose: true,
+          message: '直播中不能设置该功能',
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         this.$fetch('privilegeOpen', {
           webinar_id: this.$route.params.str,
           is_privilege: roleSwitch
         }).then(res => {
           if (res && res.code === 200 && Number(res.data.is_privilege) === 1) {
-            this.$message.success('开启成功');
+            this.$message({
+              showClose: true,
+              message: '开启成功',
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
           }else if (res && res.code === 200 && Number(res.data.is_privilege) === 0) {
-            this.$message.success('关闭成功');
+            this.$message({
+              showClose: true,
+              message: '关闭成功',
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
           } else {
-            this.$message.error(res.msg || roleSwitch ? `开启失败` : `开启失败`);
+            this.$message({
+              showClose: true,
+              message: res.msg || roleSwitch ? `开启失败` : `开启失败`,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           }
         }).catch(er => {
           console.log(er);
-          this.$message.error(roleSwitch ? `开启失败，` : `开启失败`);
+          this.$message({
+            showClose: true,
+            message: er.msg || roleSwitch ? `开启失败，` : `开启失败`,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }
     },

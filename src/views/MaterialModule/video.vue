@@ -214,7 +214,6 @@ export default {
       };
       window.VhallUpload.createInstance(option, (res) => {
         this.UploadSDK = res.interface; // 创建成功
-        console.log(this.UploadSDK, '111111111111111')
       },err=>{
         console.warn(err, '上传demo初始化失败');
       });

@@ -343,6 +343,7 @@ export default {
       const questionStyle = document.querySelector('.vhall-list-dialog-content');
       questionStyle.style.width = '600px';
       this.showPreview = true;
+      console.log(9)
       this.answerQuestion(questionId);
     },
     // 校验checkSurvey

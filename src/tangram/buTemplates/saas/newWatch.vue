@@ -268,7 +268,7 @@
             ref="ChatRef"
           ></chat>
           <qa
-            v-show="qaVisible && tabIndex == 2"
+            v-if="qaVisible && tabIndex == 2"
             :webinarId="ilId"
             :masterEnd="false"
             :roomId="roomInfo.room_id"
@@ -781,7 +781,7 @@ export default {
       this.isLogin = true
     }
     this.getInavInfo();
-    this.redPacketInit();
+    // this.redPacketInit();
     this.FIRST = true;
     this.repeatStatus = false; // 防止重复点击上麦
     if (!browserSupport()) {
@@ -812,7 +812,6 @@ export default {
           }
         }
         if (msg.data.type == "reward_pay_ok") {
-        console.log(1002, msg)
           this.closeGiveMoneyQr()
           this.$message.success('支付成功')
         }
@@ -820,7 +819,7 @@ export default {
     },
     checkLottery(){
       this.$fetch('v3CheckLottery', {}).then(res=>{
-        if(res.code == 200 && res.data.award_snapshoot.id){
+        if(res.data.award_snapshoot.id){
           this.showLottery = true
         }
       })
@@ -854,7 +853,7 @@ export default {
         service_code: 'QR_PAY',
         describe: this.giveMoneyDes ? this.giveMoneyDes : '很精彩 来赞一个'
       }).then(res => {
-        if (res.code == 200 && res.data.pay_data) {
+        if (res.data.pay_data) {
           let a = QRcode.toDataURL(
             res.data.pay_data,
             (err, url) => {
@@ -928,19 +927,14 @@ export default {
       this.$fetch('giftList', {
         room_id: this.roomInfo.room_id
       }).then((res) => {
-        if (res.code === 200) {
-          // this.giftContentControl = !this.giftContentControl
-          // this.imageInfo = res.data ? res.data.list : []
-          // console.log('礼物列表',this.giftContentControl);
-          this.giftList = res.data.list
-        }
+        this.giftList = res.data.list
       })
     },
     getSpeakList () {
       this.$fetch('speakList', {
         room_id: this.bizInfo.room_id
       }).then(res => {
-        if (res.code == 200 && res.data.list) {
+        if (res.data.list) {
           return res.data.list
         }
       })
@@ -949,7 +943,7 @@ export default {
       return this.$fetch('getToolStatus', {
         room_id: this.bizInfo.room_id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.layout = res.data.layout
           this.mainScreen = res.data.main_screen
           this.allBanned = res.data.all_banned == 1
@@ -990,8 +984,6 @@ export default {
           }, 4000);
           sessionOrLocal.set('speakerDefinition', res.data.definition || '');
         }
-      }).catch (e => {
-        console.log(e, 3);
       })
 
     },
@@ -1140,13 +1132,6 @@ export default {
                 window.location.href = this.vssInfo.kick_out_url;
               }
             }
-            // if (this.isPlayback) {
-            //   if (msg.context.role_name != 1) {
-            //     this.$emit('onlineJoin', msg);
-            //   }
-            // } else {
-            //   this.$emit('onlineJoin', msg);
-            // }
           });
         },
         err => {
@@ -1269,7 +1254,6 @@ export default {
     },
     // 关闭问卷
     closeQuestion (msg) {
-      console.log(12)
       this.showQA = false;
     },
     changeTab (idx) {
@@ -1308,7 +1292,6 @@ export default {
         }
       });
     },
-
     embedBarrage () {
       window.chatSDK.on(msg => {
         if (typeof msg !== 'object') {
@@ -1403,8 +1386,6 @@ export default {
                 this.cancelApply(false);
               }
             }, 1000);
-          } else {
-            this.$message.error(res.msg);
           }
         });
       } else {
@@ -1412,12 +1393,10 @@ export default {
           room_id: this.bizInfo.room_id
         }).then(res => {
           this.repeatStatus = false;
-          if (res.code == 200) {
-            this.lowerWheat = true; // 上麦的状态
-            window.clearInterval(this.timerFun);
-            this.handSend = '举手上麦';
-            this.$message.success('您已取消申请上麦！');
-          }
+          this.lowerWheat = true; // 上麦的状态
+          window.clearInterval(this.timerFun);
+          this.handSend = '举手上麦';
+          this.$message.success('您已取消申请上麦！');
         });
       }
     },
@@ -1426,14 +1405,12 @@ export default {
       this.$fetch('cancelApplySpeakOn', {
         room_id: this.bizInfo.room_id
       }).then(res => {
-        if (res.code == 200) {
-          this.lowerWheat = true; // 上麦的状态
-          window.clearInterval(this.timerFun);
-          this.handSend = '举手上麦';
-          this.handShow = false;
-          this.handDownShow = false;
-          this.statusHand ? (this.handShow = true) : (this.handShow = false);
-        }
+        this.lowerWheat = true; // 上麦的状态
+        window.clearInterval(this.timerFun);
+        this.handSend = '举手上麦';
+        this.handShow = false;
+        this.handDownShow = false;
+        this.statusHand ? (this.handShow = true) : (this.handShow = false);
       });
     },
     // 用户下麦
@@ -1441,14 +1418,12 @@ export default {
       this.$fetch('speakOff', {
         room_id: this.bizInfo.room_id
       }).then(res => {
-        if (res.code == 200) {
-          // this.lowerWheat = true
-          this.$message.success('下麦成功！');
-          this.handSend = '举手上麦';
-          this.handShow = false;
-          this.handDownShow = false;
-          this.statusHand ? (this.handShow = true) : (this.handShow = false);
-        }
+        // this.lowerWheat = true
+        this.$message.success('下麦成功！');
+        this.handSend = '举手上麦';
+        this.handShow = false;
+        this.handDownShow = false;
+        this.statusHand ? (this.handShow = true) : (this.handShow = false);
       });
     },
     videoPaly () {
@@ -1479,8 +1454,6 @@ export default {
           room_id: this.roomInfo.room_id
         }).then(res => {
           this.handleGiveTime()
-        }).catch(e => {
-          this.$message.error(e.msg)
         })
         return
       }

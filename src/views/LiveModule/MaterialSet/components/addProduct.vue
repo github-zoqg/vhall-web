@@ -259,7 +259,6 @@ export default {
     // 删除
     formDelete(opt) {
       // 从 id 数组中删除
-      console.log(opt, '111111111111111');
       // const id = this.imgIdMap.get(opt.url);
       // // this.delImg(id);
       // this.form.imgIdArr.map((item, index) => {

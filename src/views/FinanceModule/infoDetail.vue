@@ -18,16 +18,82 @@
           >
           </search-area>
         </div>
+        <div class="interact-detail" v-show="activeIndex==1">
+          <el-table
+            :data="tableList"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+           >
+            <el-table-column
+              prop="order_id"
+              label="订单编号"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="create_time"
+              label="交易时间"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="type"
+              label="订单类型">
+            </el-table-column>
+            <el-table-column
+              prop="amount"
+              label="交易金额">
+            </el-table-column>
+            <el-table-column
+              prop="content"
+              label="购买内容">
+            </el-table-column>
+            <el-table-column
+              label="订单状态">
+              <template slot-scope="scope">
+              <span class="buyStatus"><i :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="start_time"
+              label="启用日期">
+            </el-table-column>
+            <el-table-column
+              prop="end_time"
+              label="失效日期">
+            </el-table-column>
+            <el-table-column
+              width="150"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  @click="deleteOrder(scope.row)"
+                  >删除</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="deleteOrder(scope.row)"
+                  v-if="!scope.row.status"
+                  >立即支付</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+          <SPagination
+            :total="totalNum"
+            v-if="totalNum > 10"
+            :currentPage="pageInfo.pageNum"
+            @current-change="currentChangeHandler"
+            align="center"
+          >
+          </SPagination>
+        </div>
         <table-list
+          v-show="activeIndex==2"
           ref="tableDetail"
           :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
+          :tabelColumnLabel="tabelColumnes"
           :isCheckout="false"
-          :isHandle="isHandle"
-          :width="120"
-          :tableRowBtnFun="tableRowBtnFun"
+          :isHandle="false"
           :totalNum="totalNum"
-          @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getDetailList"
           >
         </table-list>
@@ -47,6 +113,11 @@ export default {
       totalNum: 1000,
       isHandle: true,
       params: {},
+      pageInfo: {
+        pageNum: 1,
+        limit: 10,
+        pos: 0
+      },
       options: [
         {
           label: '流量包',
@@ -207,41 +278,6 @@ export default {
       ],
       searchDetail: [],
       tableList: [],
-      tabelColumn: [],
-      tabelColumns: [
-        {
-          label: '订单编号',
-          key: 'order_id',
-        },
-        {
-          label: '交易时间',
-          key: 'create_time',
-        },
-        {
-          label: '订单类型',
-          key: 'type',
-        },
-        {
-          label: '交易金额',
-          key: 'amount',
-        },
-        {
-          label: '购买内容',
-          key: 'content',
-        },
-        {
-          label: '订单状态',
-          key: 'status',
-        },
-        {
-          label: '启用日期',
-          key: 'start_time',
-        },
-        {
-          label: '失效日期',
-          key: 'end_time',
-        }
-      ],
       tabelColumnes: [
         {
           label: '订单编号',
@@ -275,16 +311,6 @@ export default {
           label: '失效日期',
           key: 'end_time',
         }
-      ],
-      tableRowBtnFun: [
-        {
-          name: "删除",
-          methodName: 'delete'
-        },
-        {
-          name: "立即支付",
-          methodName: 'pay'
-        }
       ]
     };
   },
@@ -301,14 +327,10 @@ export default {
     activeIndex(value) {
       if (parseInt(value) === 2) {
         // 开通明细
-        this.isHandle = false;
-        this.tabelColumn = this.tabelColumnes;
         this.getRoleList();
       } else {
         // 购买明细
-        this.isHandle = true;
         this.searchDetail = this.searchList;
-        this.tabelColumn = this.tabelColumns;
       }
     }
   },
@@ -342,7 +364,12 @@ export default {
       this.getDetailList();
     },
     getDetailList(params) {
-      let pageInfo = this.$refs.tableDetail.pageInfo; //获取分页信息
+      let pageInfo = {};
+      if (this.activeIndex == 1) {
+        pageInfo = this.pageInfo;
+      } else {
+        pageInfo = this.$refs.tableDetail.pageInfo;
+      }
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
       let paramsObj = {
         user_id: this.userId,
@@ -380,6 +407,12 @@ export default {
         console.log(e);
       });
     },
+    // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
+      this.getDetailList();
+    },
     buyMethods(source) {
       let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试'];
       return arrType[source - 5];
@@ -398,17 +431,16 @@ export default {
       })
       return name;
     },
-    delete(that, {rows}) {
-      console.log(val, '111111111111');
-      that.$confirm('确定要删除吗?', '提示', {
+    deleteOrder(rows) {
+      this.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteList(rows.order_id);
+          this.deleteList(rows.order_id);
         }).catch(() => {
-          that.$message({
+          this.$message({
             type: 'info',
             message: '已取消删除'
           });
@@ -416,11 +448,12 @@ export default {
     },
     deleteList(id) {
        this.$fetch('deleteDetail', {id: id}).then(res =>{
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
-        this.getDetailList();
+         if (res.code == 200) {
+           this.getDetailList();
+           this.$message.success('删除成功')
+         } else {
+           this.$message.success(res.msg || '删除失败')
+         }
       }).catch(e=>{
         console.log(e);
         this.$message({
@@ -429,11 +462,11 @@ export default {
         });
       });
     },
-    pay(that, {rows})  {
-      that.$router.push({
+    pay(rows)  {
+      this.$router.push({
         path: '/finance/payOrder',
         query: {
-          userId: that.userId,
+          userId: this.userId,
           orderId: rows.order_id
         }
       });
@@ -463,6 +496,35 @@ export default {
     }
     .search-box{
       padding-top: 30px;
+    }
+    .pageBox{
+      margin-top: 20px;
+    }
+    /deep/.el-table .cell{
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .buyStatus{
+      i{
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-right: 5px;
+        margin-top: -3px;
+        &.active-success {
+          background: #14BA6A;
+        }
+        &.active-error {
+          background: #FB3A32;
+        }
+        &.active-waiting {
+          background: #FA9A32;
+        }
+      }
     }
   }
 </style>

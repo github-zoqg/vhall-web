@@ -176,7 +176,7 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
-      if (that.total == 100) {
+      if (that.total == 99) {
         that.$message.error('商品最大上架数量为100，请删除后再进行操作');
         return;
       }

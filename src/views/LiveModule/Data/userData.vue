@@ -15,10 +15,11 @@
     </div>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <div class="active-box">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick" v-if="liveDetailInfo.webinar_state != 4">
         <el-tab-pane label="直播" name="1"></el-tab-pane>
         <el-tab-pane label="回放" name="2"></el-tab-pane>
-        <div class="search">
+      </el-tabs>
+      <div class="search">
           <search-area
             ref="searchArea"
             :placeholder="placeholder"
@@ -40,7 +41,6 @@
           @getTableList="getTableList"
           >
         </table-list>
-      </el-tabs>
     </div>
 
   </div>
@@ -51,7 +51,6 @@ import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
-      status: 2,
       active: 2,
       totalNum: 100,
       isHandle: false,
@@ -115,6 +114,14 @@ export default {
           type: "3",
           key: "switchId",
           options: []
+        },
+        {
+          type: "7",
+          key: "merge_type",
+          name: '合并同一用户'
+        },
+        {
+          key: "searchTitle",
         }
       ],
       searchLayout: [
@@ -188,6 +195,45 @@ export default {
         {
           type: "2",
           key: "searchTime",
+        },
+        {
+          type: "7",
+          key: "merge_type",
+          name: '合并同一用户'
+        },
+        {
+          key: "searchTitle",
+        }
+      ],
+      searchAreaVideoOut: [
+        {
+          type: "1",
+          options: [
+            {
+              title: '今日',
+              active: 2,
+            },
+            {
+              title: '近7日',
+              active: 3,
+            },
+            {
+              title: '近30日',
+              active: 4,
+            }
+          ]
+        },
+        {
+          type: "2",
+          key: "searchTime",
+        },
+        {
+          type: "7",
+          key: "merge_type",
+          name: '合并同一用户'
+        },
+        {
+          key: "searchTitle",
         }
       ]
     };
@@ -197,6 +243,11 @@ export default {
   },
   created() {
     this.getLiveDetail();
+  },
+  watch: {
+    active(value) {
+      this.active = value;
+    }
   },
   mounted() {
   },
@@ -242,15 +293,21 @@ export default {
         paramsObj.start_time = getRangeDays(this.active);
       }
       if (this.liveDetailInfo.webinar_state != 4) {
-        if (formParams.searchIsTime == 2) {
+        if (this.activeName == 2) {
+          this.searchAreaLayout = this.searchAreaVideoOut;
+          paramsObj.switch_id = 0;
+          formParams.searchIsTime = 1;
+        } else {
+          if (formParams.searchIsTime == 2) {
             formParams.searchTime = '';
-            this.searchArea.map(item => {
-              item.key === 'switchId' ? item.options = this.switchList : []
-            })
-            this.searchAreaLayout = this.searchArea;
-          } else {
-            this.searchAreaLayout = this.searchLayout;
-            paramsObj.switch_id = 0;
+              this.searchArea.map(item => {
+                item.key === 'switchId' ? item.options = this.switchList : []
+              })
+              this.searchAreaLayout = this.searchArea;
+            } else {
+              this.searchAreaLayout = this.searchLayout;
+              paramsObj.switch_id = 0;
+            }
           }
         }
       if (params === 'search') {
@@ -301,6 +358,7 @@ export default {
       this.$refs.searchArea.searchParams.searchIsTime = '1',
       this.$refs.tableList.pageInfo.pageNum = 1;
       this.$refs.tableList.pageInfo.pos = 0;
+      // this.active = 2;
       this.getTableList();
     }
   }

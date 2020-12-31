@@ -1,10 +1,10 @@
 <template>
   <div class="home--set--info">
     <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
-      <el-form-item label="主页标题：" prop="title">
+      <el-form-item label="主页标题" prop="title">
         <el-input type="text" placeholder="请输入账号昵称" v-model.trim="homeSetInfoForm.title" maxlength="30" show-word-limit />
       </el-form-item>
-      <el-form-item label="主页头像：" prop="homepage_avatar">
+      <el-form-item label="主页头像" prop="homepage_avatar">
         <upload
           class="upload__avatar"
           v-model="homeSetInfoForm.homepage_avatar"
@@ -25,7 +25,7 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="主页简介：" prop="content">
+      <el-form-item label="主页简介" prop="content">
         <!--<v-editor  :isReturn=true @returnChange="sendRewardData" ref="contentEditor"
                    v-model="homeSetInfoForm.content"
                    toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen">
@@ -37,7 +37,7 @@
         maxlength="150"
         show-word-limit></el-input>
       </el-form-item>
-      <el-form-item label="背景图片：" prop="img_url">
+      <el-form-item label="背景图片" prop="img_url">
         <upload
           class="upload__bg__avatar"
           v-model="homeSetInfoForm.img_url"

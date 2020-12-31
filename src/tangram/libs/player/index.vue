@@ -541,7 +541,7 @@ export default {
       return this.$fetch('getScrolling', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.marquee = res.data
         }
       })
@@ -551,7 +551,7 @@ export default {
       return this.$fetch('getWatermark', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.water = res.data
         }
       })
@@ -563,7 +563,7 @@ export default {
         is_h5: 1,
         type: 0
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.definitionConfig = res.data.default_definition
         }
       })
@@ -573,7 +573,7 @@ export default {
       return this.$fetch('getOtherOptions', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.data) {
           this.playerOtherOptions = res.data
         }
       })
