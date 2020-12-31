@@ -18,6 +18,7 @@
                 :prop="node.modelKey"
                 :label="node.label"
                 :rules="node.validateRules || []"
+                :class="`${action !== 'detail' && node.nodeType == 'text' ? 'page-read-only' : ''}`"
               >
                 <template v-if="action!='detail' && node.nodeType != 'text'">
                   <VhallInput v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></VhallInput>
@@ -292,20 +293,54 @@ export default {
 .app--info-ctx {
   .layout--right--main();
   background: #F7F7F7;
-  &.edit--show {
+  &.edit-show {
+    .el-form-item{
+      width: 820px;
+    }
     .app-node-item {
       &:first-child {
         margin-top: 0;
       }
     }
     /deep/.el-radio-group {
-      margin-left: -155px;
+    margin-left: -120px;
+    /deep/.el-radio__input {
+      .el-radio__inner {
+        width: 16px;
+        height: 16px;
+        background: #ffffff;
+        border-color: #999999;
+        &::after{
+          background-color: #ffffff;
+        }
+      }
+      &.is-checked {
+        .el-radio__inner {
+          width: 16px;
+          height: 16px;
+          background: #FB3A32;
+          border-color: #FB3A32;
+          &::after{
+            background-color: #ffffff;
+          }
+        }
+      }
+    }
+    /deep/.el-radio__label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #222222;
+      line-height: 20px;
+    }
     }
   }
   &.detail-show {
     width: calc(100% - 272px);
     display: inline-block;
     vertical-align: top;
+    .el-form-item{
+      width: 720px;
+    }
     .copy {
       position: absolute;
       right: 10px;
@@ -338,6 +373,34 @@ export default {
     }
     /deep/.el-radio-group {
       margin-left: -120px;
+      /deep/.el-radio__input {
+        .el-radio__inner {
+          width: 16px;
+          height: 16px;
+          background: #ffffff;
+          border-color: #999999;
+          &::after{
+            background-color: #ffffff;
+          }
+        }
+        &.is-checked {
+          .el-radio__inner {
+            width: 16px;
+            height: 16px;
+            background: #FB3A32;
+            border-color: #FB3A32;
+            &::after{
+              background-color: #ffffff;
+            }
+          }
+        }
+      }
+      /deep/.el-radio__label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #222222;
+        line-height: 20px;
+      }
     }
   }
 }
@@ -347,6 +410,13 @@ export default {
     background: #ffffff;
     padding-bottom: 32px;
     margin-bottom: 0;
+    &.page-read-only {
+      .el-form-item__content {
+        background: #F7F7F7;
+        padding: 0 10px;
+        border-radius: 4px;
+      }
+    }
   }
   &.padding {
     margin-top: 24px;
@@ -376,9 +446,6 @@ export default {
 }
 .el-form{
   position: relative;
-}
-.el-form-item{
-  width: 720px;
 }
 .subject{
   border-left: 4px solid #FB3A32;
