@@ -301,6 +301,8 @@ export default {
   /deep/.cell .prizeImg{
     width: 80px;
     height: 80px;
+    background: #FFF5F6;
+    border: 1px solid #E6E6E6;
     img{
       width:100%;
       height:100%;

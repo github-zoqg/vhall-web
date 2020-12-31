@@ -79,7 +79,7 @@
                       <el-dropdown-item command='/live/reportsData'>数据报告</el-dropdown-item>
                       <el-dropdown-item command='/live/interactionData'>互动统计</el-dropdown-item>
                       <el-dropdown-item command='/live/userData'>用户统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/edit'>复制</el-dropdown-item>
+                      <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
                       <el-dropdown-item command='删除'>删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>

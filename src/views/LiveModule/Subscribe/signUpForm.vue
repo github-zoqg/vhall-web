@@ -37,18 +37,18 @@
                   <template
                     v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
                   >
-                    <el-input
+                    <VhallInput
                       v-if="question.type == 0 && question.default_type == 2"
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model.number="form[question.id]"
-                      :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
-                    <el-input
+                      :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
+                    <VhallInput
                       v-else
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model="form[question.id]"
-                      :placeholder="placeholderList[question.default_type] || '请输入'"></el-input>
+                      :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                   </template>
                   <!-- 单选 -->
                   <template
@@ -72,7 +72,7 @@
                             {{ radioItem.subject }}
                           </el-radio>
                           <template v-if="radioItem.type === 1">
-                            <el-input
+                            <VhallInput
                               maxlength="60"
                               show-word-limit
                               placeholder="请输入描述内容"
@@ -80,7 +80,7 @@
                               style="margin-top: 10px;"
                               v-model="form[`${question.id}${radioItem.id}`]"
                               class="radioInput"
-                            ></el-input>
+                            ></VhallInput>
                           </template>
                         </div>
                       </template>
@@ -99,7 +99,7 @@
                         {{ checkItem.subject }}
                         </el-checkbox>
                         <template v-if="checkItem.type === 1">
-                          <el-input
+                          <VhallInput
                             maxlength="60"
                             show-word-limit
                             placeholder="请输入描述内容"
@@ -107,7 +107,7 @@
                             style="margin-top: 10px;"
                             v-model="form[`${question.id}${checkItem.id}`]"
                             class="radioInput"
-                          ></el-input>
+                          ></VhallInput>
                         </template>
                       </div>
                     </el-checkbox-group>
@@ -131,7 +131,7 @@
                   >
                     <el-row :gutter="20">
                       <el-col :span="question.colNum">
-                        <el-input v-show="false" v-model="form[question.id]"></el-input>
+                        <VhallInput v-show="false" v-model="form[question.id]"></VhallInput>
                         <el-select v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
                           <el-option
                             v-for="opt in provinces"
@@ -170,12 +170,12 @@
                   <el-row :gutter="20">
                     <el-col :span="12">
                       <div id="setCaptcha" class="captcha">
-                        <el-input  v-model.trim="form.imgCode"> </el-input>
+                        <VhallInput  v-model.trim="form.imgCode"> </VhallInput>
                         <!-- <p class="errorText" v-show="errorMsgShow">图形码错误</p> -->
                       </div>
                     </el-col>
                     <el-col :span="12">
-                      <el-input v-model="form.code" auto-complete="off" placeholder="请输入验证码"></el-input>
+                      <VhallInput v-model="form.code" auto-complete="off" placeholder="请输入验证码"></VhallInput>
                       <el-button
                         :disabled="time !== 60 || isPreview"
                         class="no-border" size="mini"
@@ -203,18 +203,18 @@
                   label="请输入报名时您填写的手机号"
                   prop="phone"
                 >
-                  <el-input v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></el-input>
+                  <VhallInput v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
                 </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" prop="code">
                   <el-row :gutter="20">
                     <el-col :span="12">
                       <div id="setCaptcha1" class="captcha">
-                        <el-input  v-model.trim="verifyForm.imgCode"> </el-input>
+                        <VhallInput  v-model.trim="verifyForm.imgCode"> </VhallInput>
                       </div>
                       <!-- <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p> -->
                     </el-col>
                     <el-col :span="12">
-                      <el-input v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码"></el-input>
+                      <VhallInput v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码"></VhallInput>
                       <el-button
                         :disabled="verifyTime !== 60 || isPreview"
                         class="no-border"
@@ -1147,6 +1147,9 @@
         border-color: #ccc;
         height: 40px;
         color: #1a1a1a;
+        &[maxlength='60'] {
+          padding-right: 60px;
+        }
       }
       // 输入框hover状态边框颜色
       /deep/ .el-input__inner:hover {

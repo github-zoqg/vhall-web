@@ -10,7 +10,7 @@
       </div>
     </pageTitle>
     <div class="head-operat">
-      <el-button type="primary" round class="head-btn set-upload" @click="addGift" size="medium">新建礼物</el-button>
+      <el-button type="primary" round class="head-btn set-upload" @click="addGift" size="medium">创建礼物</el-button>
       <el-button
         round
         class="head-btn set-upload"
@@ -25,7 +25,7 @@
         @click="handleBatchDelete" size="medium">
         批量删除
       </el-button>
-      <el-input
+      <VhallInput
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
@@ -39,10 +39,11 @@
           slot="suffix"
           @click="searchGifts">
         </i>
-      </el-input>
+      </VhallInput>
     </div>
     <el-card class="gift-list">
       <el-table
+        @select-all="onSelectAll"
         :cell-class-name="freeFilter"
         :data="currentTableData"
         tooltip-effect="dark"
@@ -67,7 +68,9 @@
         </el-table-column>
         <el-table-column label="价格" show-overflow-tooltip>
           <template slot-scope="scope">
-            {{ `￥${scope.row.price}` }}
+            <span class="gift-price">
+              {{ `￥${scope.row.price}` }}
+            </span>
           </template>
         </el-table-column>
         <!-- 暂时不支持,隐藏 -->
@@ -93,7 +96,7 @@
       <null-page text="未搜索到相关内容" nullType="search" v-if="total === 0"></null-page>
     </el-card>
     <el-dialog
-      :title="editParams.gift_id ? '编辑礼物' : '新建礼物'"
+      :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
@@ -122,12 +125,12 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <el-input v-model.trim="editParams.name" maxlength="10" show-word-limit placeholder="请输入礼物名称"></el-input>
+            <VhallInput v-model.trim="editParams.name" show-word-limit maxlength="10" placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <el-input @input="handleInput" v-model.trim.number="editParams.price" maxlength="10" show-word-limit placeholder="请输入0-9999.99">
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" show-word-limit maxlength="10" placeholder="请输入0-9999.99">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
-            </el-input>
+            </VhallInput>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -169,7 +172,7 @@
       :before-close="handleCloseChooseGift"
       custom-class="choose-gift"
     >
-      <el-input
+      <VhallInput
         @keyup.enter.native="searchMaterialGift"
         clearable
         @clear="searchMaterialGift"
@@ -183,7 +186,7 @@
           slot="suffix"
           @click="searchMaterialGift">
         </i>
-      </el-input>
+      </VhallInput>
       <div class="select-matrial-wrap">
         <div v-show="materiaTableData.length" class="material-box">
           <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
@@ -362,6 +365,13 @@ export default {
     },
     selectHandle(row) {
       return !(row.source_status == 0);
+    },
+    // 全选方法
+    onSelectAll() {
+      if(this.total == 4) {
+        this.$message.warning('没有可以删除的自定义礼物')
+        this.$refs.multipleTable.clearSelection()
+      }
     },
     // 处理批量操作
     handleSelectionChange (val) {
@@ -692,6 +702,7 @@ export default {
   display: inline-block;
   width: 80px;
   height: 80px;
+  margin: 3px 0;
   background: #FFFFFF;
   border-radius: 4px;
   border: 1px solid #E6E6E6;
@@ -702,6 +713,11 @@ export default {
   }
 }
 .live-gift-wrap{
+  /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+    content: '*';
+    color: #FB3A32;
+    margin-right: 4px;
+  }
   /deep/ .mycell .el-checkbox {
     display: none
   }
@@ -753,6 +769,9 @@ export default {
   }
   .gift-list{
     width: 100%;
+    .gift-price{
+      color: #FB3A32;
+    }
   }
   /deep/.el-dialog__wrapper {
     .dialog-footer {

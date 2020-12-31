@@ -6,7 +6,7 @@
       <el-button size="medium" plain round @click="toRecord">录制</el-button>
       <el-button size="medium" round @click="settingHandler">回放设置</el-button>
       <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
-      <el-input
+      <VhallInput
         @keyup.enter.native="getList"
         placeholder="请输入内容标题"
         v-model="keyWords">
@@ -15,7 +15,7 @@
           slot="suffix"
           @click="getList">
         </i>
-      </el-input>
+      </VhallInput>
     </div>
     <div class="tableBox" v-loading="loading">
       <el-table
@@ -107,7 +107,17 @@
       :visible.sync="editDialogVisible"
       :close-on-click-modal="false"
       width="480px">
-      <el-input placeholder="请输入标题" maxlength="100" :autosize="{ minRows: 3 }" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="textarea"></el-input>
+      <VhallInput
+        placeholder="请输入标题"
+        maxlength="100"
+        :autosize="{ minRows: 3 }"
+        resize=none
+        show-word-limit
+        v-model="titleEdit"
+        class="input-with-select"
+        type="textarea"
+      >
+      </VhallInput>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
         <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
