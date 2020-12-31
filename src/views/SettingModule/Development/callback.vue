@@ -5,7 +5,7 @@
       <a href="https://www.vhall.com/saas/doc/20.html" target="_blank">回调设置说明</a>
     </div>
     <div class="layout-callback">
-      <el-form :model="form" ref="form" :rules="formRules" label-width="120px">
+      <el-form :model="form" ref="form" :rules="formRules" label-width="91px">
         <el-form-item label="签名Key" prop="secret_key">
           <el-input v-model.trim="form.secret_key" auto-complete="off" placeholder="请输入签名规则"/>
         </el-form-item>
@@ -14,7 +14,6 @@
         </el-form-item>
       </el-form>
       <div class="div__func div__view" v-if="keyList.length > 0">
-        <div class="div__view__title">回调功能</div>
         <ul class="switch__list">
           <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
             <label class="leve3_title label__r12">{{ item.key_name }}</label>
@@ -29,7 +28,7 @@
           </li>
         </ul>
       </div>
-      <el-form label-width="120px">
+      <el-form label-width="91px">
         <el-form-item label="" class="callback-btn">
           <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveCallbackInfo">保 存</el-button>
         </el-form-item>
@@ -180,18 +179,27 @@ export default {
   }
   a {
     float: right;
+    font-size: 14px;
+    font-weight: 400;
+    color: #3562FA;
+    line-height: 20px;
   }
 }
 .layout-callback {
   clear: both;
-  margin-top: 24px;
   .el-form {
     /deep/.el-input {
       width: 640px;
     }
+    /deep/.el-form-item {
+      margin-bottom: 32px;
+      &.callback-btn {
+        margin-bottom: 0;
+      }
+    }
   }
   .layout--right--main();
-  .padding41-40();
+  .padding48-40();
 }
 
 .page-padding {
@@ -215,12 +223,11 @@ export default {
   line-height: 22px;
 }
 .switch__list {
-  padding-top: 24px;
   li {
     display: block;
     list-style-type: none;
-    margin-bottom: 32px;
-    line-height: 20px;
+    margin-bottom: 12px;
+    line-height: 40px;
     &:last-child {
       margin-bottom: 0;
     }
@@ -229,9 +236,6 @@ export default {
 .leve3_title {
   display: inline-block;
   text-align: right;
-  min-width: 110px;
-}
-/deep/.callback-btn {
-  margin-bottom: 40px;
+  min-width: 91px;
 }
 </style>
