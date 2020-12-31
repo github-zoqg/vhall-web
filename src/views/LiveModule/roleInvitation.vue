@@ -252,15 +252,15 @@ export default {
     },
     // 主持人
     host_join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin-host/${this.privilegeVo.webinar_id}/1`;
     },
     // 嘉宾
     join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/4`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/4`;
     },
     // 助理
     assistant_join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/3`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/3`;
     }
   },
   methods: {

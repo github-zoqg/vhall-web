@@ -11,7 +11,7 @@
         <el-form :model="appForm" ref="appForm" label-width="220px">
           <template v-for="(node, index) in nodesData">
             <div :class="node.subject ? 'app-node-item padding' : 'app-node-item'">
-              <p class="subject" v-if="node.subject" :key="index">{{node.label}}</p>
+              <p class="subject" v-if="node.subject" :key="index" v-html="node.label"></p>
               <el-form-item
                 v-else
                 :key="index"
@@ -20,21 +20,26 @@
                 :rules="node.validateRules || []"
               >
                 <template v-if="action!='detail' && node.nodeType != 'text'">
-                  <el-input v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></el-input>
+                  <VhallInput v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></VhallInput>
                   <el-radio-group v-else-if="node.nodeType == 'radio'" v-model="appForm[node.modelKey]">
                     <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
                   </el-radio-group>
                 </template>
-                <span v-else-if="node.modelKey === 'sign_type'">{{['MD5', 'RSA'][appForm[node.modelKey]]}}</span>
-                <span v-else>{{appForm[node.modelKey]}}</span>
+                <template v-else-if="node.modelKey === 'sign_type'">
+                  <el-radio-group v-model="appForm[node.modelKey]" disabled>
+                    <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
+                  </el-radio-group>
+                </template>
+                <span class="show-span" v-else>{{appForm[node.modelKey]}}</span>
+                <span class="copy" v-if="action === 'detail' && node.nodeType == 'text'" @click="copy(appForm[node.modelKey])"><i class="iconfont-v3 saasicon_copy"></i></span>
               </el-form-item>
             </div>
           </template>
         </el-form>
-        <el-form-item v-if="action!='detail'">
-          <el-button type="primary" @click="submitForm('appForm')" round>保存</el-button>
-          <el-button @click="cancel('appForm')" round>取消</el-button>
-        </el-form-item>
+        <div v-if="action !== 'detail'" class="app-info-btn">
+          <el-button class="length152" type="primary" @click="submitForm('appForm')" round>保存</el-button>
+          <el-button class="length152" @click="cancel('appForm')" round>取消</el-button>
+        </div>
       </div>
       <div class="app-code-right" v-if="action=='detail'">
         <img :src="env.staticLinkVo.aliQr + appForm.qr_code_string " alt="" />
@@ -47,6 +52,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import Env from '@/api/env.js';
+import Clipboard from "clipboard";
 export default {
   components: {
     PageTitle,
@@ -104,7 +110,7 @@ export default {
         },
         {
           subject: true,
-          label: 'Android-SDK 签名值 *请不要在未更新的情况下修改，否则将导致SDK服务无法使用'
+          label: `Android-SDK 签名值 <span style="font-size: 14px;font-weight: 400;color: #999999;line-height: 20px;">*请不要在未更新的情况下修改，否则将导致SDK服务无法使用</span>`
         },
         {
           nodeType: 'input',
@@ -147,7 +153,7 @@ export default {
           ],
           modelKey: 'sign_type',
         },
-        {
+        /*{
           subject: true,
           label: '回调设置'
         },
@@ -174,7 +180,7 @@ export default {
             placeholder: '请输入完整URL',
           },
           modelKey: 'callback_sdk_upload',
-        },
+        },*/
       ],
       fetching: false
     };
@@ -192,6 +198,21 @@ export default {
     }
   },
   methods: {
+    copy(text) {
+      let clipboard = new Clipboard('.copy', {
+        text: () => text
+      });
+      clipboard.on('success', () => {
+        this.$message.success('复制成功');
+        // 释放内存
+        clipboard.destroy();
+      });
+      clipboard.on('error', () => {
+        this.$message.error('复制失败，暂不支持自动复制');
+        // 释放内存
+        clipboard.destroy();
+      });
+    },
     submitForm(formName){
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -271,13 +292,36 @@ export default {
 .app--info-ctx {
   .layout--right--main();
   background: #F7F7F7;
+  &.edit--show {
+    .app-node-item {
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+    /deep/.el-radio-group {
+      margin-left: -155px;
+    }
+  }
   &.detail-show {
     width: calc(100% - 272px);
     display: inline-block;
     vertical-align: top;
+    .copy {
+      position: absolute;
+      right: 10px;
+      top: 0;
+      color: #666666;
+      font-size: 15px;
+    }
     /deep/.el-form-item__content {
       line-height: 40px;
       position: relative;
+    }
+    /deep/.el-form-item__label {
+      color: #666666;
+    }
+    .show-span {
+      display: block;
       width: 500px;
       height: 40px;
       border-radius: 4px;
@@ -286,6 +330,14 @@ export default {
       font-size: 14px;
       font-weight: 400;
       color: #1A1A1A;
+    }
+    /deep/.el-form-item__label {
+      &::before {
+        display: none;
+      }
+    }
+    /deep/.el-radio-group {
+      margin-left: -120px;
     }
   }
 }
@@ -306,13 +358,16 @@ export default {
 .app-btns {
   /deep/.el-button {
     background: transparent;
+    &:hover {
+
+    }
   }
 }
 .el-form{
   position: relative;
 }
 .el-form-item{
-  width: 600px;
+  width: 720px;
 }
 .subject{
   border-left: 4px solid #FB3A32;
@@ -321,6 +376,9 @@ export default {
   font-weight: 400;
   color: #333333;
   line-height: 28px;
+}
+.app-info-btn {
+  margin-top: 40px;
 }
 .app-code-right{
   display: inline-block;
