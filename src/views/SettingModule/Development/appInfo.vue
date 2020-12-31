@@ -38,7 +38,7 @@
         </el-form>
         <div v-if="action !== 'detail'" class="app-info-btn">
           <el-button class="length152" type="primary" @click="submitForm('appForm')" round>保存</el-button>
-          <el-button class="length152" @click="cancel('appForm')" round>取消</el-button>
+          <el-button class="length152 no-background" @click="cancel('appForm')" round>取消</el-button>
         </div>
       </div>
       <div class="app-code-right" v-if="action=='detail'">
@@ -357,9 +357,20 @@ export default {
 }
 .app-btns {
   /deep/.el-button {
+    border-radius: 20px;
+    border: 1px solid #CCCCCC;
+    font-weight: 400;
+    color: #666666;
     background: transparent;
     &:hover {
-
+      background: #FB3A32;
+      border: 1px solid #FB3A32;
+      color: #FFFFFF;
+    }
+    &:active {
+      background: #E2332C;
+      border: 1px solid #E2332C;
+      color: #FFFFFF;
     }
   }
 }
@@ -379,6 +390,23 @@ export default {
 }
 .app-info-btn {
   margin-top: 40px;
+  .no-background {
+    border-radius: 20px;
+    border: 1px solid #CCCCCC;
+    font-weight: 400;
+    color: #666666;
+    background: transparent;
+    &:hover {
+      background: #FB3A32;
+      border: 1px solid #FB3A32;
+      color: #FFFFFF;
+    }
+    &:active {
+      background: #E2332C;
+      border: 1px solid #E2332C;
+      color: #FFFFFF;
+    }
+  }
 }
 .app-code-right{
   display: inline-block;
