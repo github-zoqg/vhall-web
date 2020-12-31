@@ -174,6 +174,8 @@ export default {
         title: '',
       },
       subject_id: '',
+      subjectInfo: {
+      },
       reservation: true,
       hot: true,
       home: true,
@@ -205,6 +207,8 @@ export default {
         subject_id: this.$route.query.id
       }).then(res => {
         if (res.code == 200) {
+          this.subjectInfo = {...res.data.webinar_subject};
+          console.log(this.subjectInfo, '111111111111111')
           this.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
