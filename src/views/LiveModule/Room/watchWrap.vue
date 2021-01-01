@@ -194,6 +194,7 @@
                 :recordHistoryTime="recordHistoryTime"
                 :menuData="menuData"
                 :bizInfo="roominfo"
+                :configList="configList"
                 @NoLogin="callLogin"
                 @descripe="decripeMenu"
               ></vhall-enjoy-watch-Saas>
