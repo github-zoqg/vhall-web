@@ -272,15 +272,15 @@ export default {
             keyword: this.addForm.name
           }).then(res =>{
              if(res && res.code === 200) {
-               this.$message.success('保存成功！');
+               this.$message.success(this.addForm.executeType === 'add' ? `成功添加了${res.data.success}个关键词` : `修改成功`);
                this.addShow = false;
                this.getKeywordList(); // 刷新列表数据
              } else {
-               this.$message.error(res.msg || '保存失败！');
+               this.$message.error(res.msg || (this.addForm.executeType === 'add' ? '添加失败' : '修改失败'));
              }
           }).catch(e => {
             console.log(e);
-            this.$message.error('保存失败！');
+            this.$message.error(this.addForm.executeType === 'add' ? '添加失败' : '修改失败');
           });
         }
       });

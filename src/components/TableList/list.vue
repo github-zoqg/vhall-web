@@ -61,6 +61,12 @@
                 inactive-color="#ccc">
               </el-switch>
             </div>
+            <!-- 开发设置，状态 -->
+            <div v-else-if="scene === 'development' && item.key === 'statusStr'" class="status-show">
+              <p>
+                <span :class="scope.row.status > 0 ? 'active-success' : 'active-gray'"></span>
+                {{ scope.row.statusStr }}</p>
+            </div>
             <div v-else-if="item.key === 'status'" class="status-show">
               <p>
                 <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></span>
@@ -88,7 +94,33 @@
         <el-table-column
           label="操作"
           align="left"
-          v-if="isHandle"
+          v-if="isHandle && scene === 'development'"
+          :width="width"
+          class="btn-rows"
+        >
+          <template slot-scope="scope">
+            <el-button v-if="Number(scope.row.status) === 0" @click="handleBtnClick(scope, {
+              name: '启用',
+              methodName: 'restartApp'
+            })" size="mini" type="text">启用</el-button>
+            <el-button v-if="Number(scope.row.status) === 1" @click="handleBtnClick(scope, {
+              name: '停用',
+              methodName: 'stopApp'
+            })" size="mini" type="text">停用</el-button>
+            <el-button @click="handleBtnClick(scope, {
+              name: '删除',
+              methodName: 'deleteApp'
+            })" size="mini" type="text">删除</el-button>
+            <el-button @click="handleBtnClick(scope, {
+               name: '查看',
+               methodName: 'viewApp'
+            })" size="mini" type="text">查看</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          align="left"
+          v-if="isHandle && scene !== 'development'"
           :width="width"
           class="btn-rows"
         >
@@ -269,6 +301,8 @@ export default {
   /deep/.cell .prizeImg{
     width: 80px;
     height: 80px;
+    background: #FFF5F6;
+    border: 1px solid #E6E6E6;
     img{
       width:100%;
       height:100%;
@@ -341,6 +375,9 @@ export default {
     }
     .active-waiting {
       background: #FA9A32;
+    }
+    .active-gray {
+      background: #999999;
     }
   }
   .empty{

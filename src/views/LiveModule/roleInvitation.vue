@@ -38,7 +38,7 @@
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.host_password" readonly>
-                <el-button class="no-border" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
+                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </el-input>
             </el-form-item>
           </el-form>
@@ -78,7 +78,7 @@
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.guest_password" readonly>
-                <el-button class="no-border" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
+                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
               </el-input>
             </el-form-item>
           </el-form>
@@ -124,7 +124,7 @@
             </el-form-item>
             <el-form-item label="口令">
               <el-input v-model.trim="privilegeVo.assistant_password" readonly>
-                <el-button class="no-border" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
+                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
               </el-input>
             </el-form-item>
           </el-form>
@@ -162,8 +162,8 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick  @click="privilegeEditHandle" round size="mini">确 定</el-button>
-        <el-button @click="visible = false" round size="mini">取 消</el-button>
+        <el-button type="primary" v-preventReClick  @click="privilegeEditHandle" round size="medium">确 定</el-button>
+        <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
   </div>
@@ -252,15 +252,15 @@ export default {
     },
     // 主持人
     host_join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin-host/${this.privilegeVo.webinar_id}/1`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin-host/${this.privilegeVo.webinar_id}/1`;
     },
     // 嘉宾
     join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/4`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/4`;
     },
     // 助理
     assistant_join_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/keylogin/${this.privilegeVo.webinar_id}/3`;
+      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/3`;
     }
   },
   methods: {
@@ -272,7 +272,7 @@ export default {
         this.$message({
           showClose: true,
           message: '直播中不能设置该功能',
-          duration: 0,
+          // duration: 0,
           type: 'error',
           customClass: 'zdy-info-box'
         });
@@ -285,7 +285,7 @@ export default {
             this.$message({
               showClose: true,
               message: '开启成功',
-              duration: 0,
+              // duration: 0,
               type: 'success',
               customClass: 'zdy-info-box'
             });
@@ -296,7 +296,7 @@ export default {
             this.$message({
               showClose: true,
               message: '关闭成功',
-              duration: 0,
+              // duration: 0,
               type: 'success',
               customClass: 'zdy-info-box'
             });
@@ -307,7 +307,7 @@ export default {
             this.$message({
               showClose: true,
               message: res.msg || roleSwitch ? `开启失败` : `开启失败`,
-              duration: 0,
+              // duration: 0,
               type: 'error',
               customClass: 'zdy-info-box'
             });
@@ -317,7 +317,7 @@ export default {
           this.$message({
             showClose: true,
             message: er.msg || roleSwitch ? `开启失败，` : `开启失败`,
-            duration: 0,
+            // duration: 0,
             type: 'error',
             customClass: 'zdy-info-box'
           });

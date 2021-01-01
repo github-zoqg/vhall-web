@@ -51,8 +51,8 @@ export const orderTypeText = (val) => {
 };
 
 export const limitTag = (val) => {
-  // verify  0 免费 1 密码，2 白名单，3 付费活动, 4 F码
-  const limitStr = ['免费', '密码',  '白名单', '付费活动', 'F码'];
+  // verify  0 免费 1 密码，2 白名单，3 付费活动, 4 邀请码 6.付费+邀请码
+  const limitStr = ['免费', '密码',  '白名单', '付费活动', '邀请码', '', '付费+邀请码'];
   let str = limitStr[val];
   return str;
 };

@@ -3272,7 +3272,7 @@ export default {
         .then(res => {
           if(res.code != 200) return this.$message.warning(res.msg)
           // this.$route.push({name: 'KeyLogin', params:{id: } })
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/keylogin/${this.ilId}/${this.roomInfo.join_info.role_name}`;
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/keylogin/${this.ilId}/${this.roomInfo.join_info.role_name}`;
         })
         .catch(res => {});
     },

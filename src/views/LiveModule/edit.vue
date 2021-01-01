@@ -108,7 +108,7 @@
       </el-form-item>
       <el-form-item label="选择视频："  v-if="webniarType=='vod'">
         <div class="mediaBox">
-          <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
+          <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="$refs.selecteMedia.dialogVisible=true">
             <i class="el-icon-film"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
@@ -116,9 +116,9 @@
             <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
-          <div class="abRight" v-if="selectMedia.id">
+          <div class="abRight" v-if="selectMedia.paas_record_id">
             <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="selectMedia=null">删除</el-button>
+            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button>
           </div>
           <el-tooltip v-if="!$route.query.record_id">
               <div slot="content">
@@ -207,7 +207,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/[^\d]/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -478,11 +478,19 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
+      if (this.limitCapacity < 1) {
+        this.$message.error('最高并发请输入大于1的数值');
+        return;
+      }
       if (!this.versionType) {
         if (this.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
+      }
+      if (this.webniarTypeToZH == '点播' && !this.selectMedia.id) {
+        this.$message.error(`请先上传视频`);
+        return;
       }
       let data = {
         webinar_id: this.webinarId || '',
@@ -510,7 +518,7 @@ export default {
           this.loading = true;
           let url;
           if (this.webniarTypeToZH === '点播') {
-            url = 'demandCreate';
+            url = this.title === '编辑' ? 'liveEdit' : 'demandCreate';
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
@@ -541,6 +549,10 @@ export default {
      // 预览
     previewVideo() {
       this.showDialog = true;
+    },
+    // 删除
+    deleteSelectMedia() {
+      this.selectMedia = {};
     },
     getHighLimit() {
       this.$fetch('getHighLimit').then(res => {

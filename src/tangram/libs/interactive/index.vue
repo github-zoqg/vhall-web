@@ -285,7 +285,18 @@ export default {
   },
   created () {
   },
+  watch:{
+    streamLength (newValue) {
+      console.warn(newValue, '计算其个数')
 
+        if(newValue == 1 ){
+          console.warn('改变到的远端流个数----', this.streamLength);
+          // 手动触发window resize 事件
+          const resizeEvent = new Event('resize');
+          window.dispatchEvent(resizeEvent);
+        }
+    }
+  },
   async mounted () {
     this.broadCastLayout = sessionStorage.getItem('layout') || 'CANVAS_LAYOUT_PATTERN_TILED_6_1T5D';
     await this.initSDK();

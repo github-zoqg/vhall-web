@@ -539,11 +539,13 @@ export default {
   }
   .switchBox{
     display: inline-flex;
+    height: 100%;
   }
   .headBtnGroup{
     float: right;
   }
   .titleBox{
+    display: block;
     line-height: 40px;
   }
   .settingBox{

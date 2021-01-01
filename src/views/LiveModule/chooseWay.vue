@@ -154,7 +154,7 @@ export default {
   }
 }
 .choose__way__main {
-  width: 900px;
+  width: 850px;
   margin: 122px auto;
 }
 .old-header {
@@ -169,12 +169,14 @@ export default {
   }
 .select-way {
   display: flex;
-  text-align: center;
+  align-items: center;
+  justify-content: space-around;
+  // text-align: center;
 
 }
 .choose-a-way {
   // display: inline-block;
-  margin: 0 24px 0 0;
+  // margin: 0 24px 0 0;
   width: 400px;
   height: 220px;
   background: #fff;

@@ -192,7 +192,7 @@ export default {
   li {
     list-style-type: none;
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: top;
     &.layout__center {
       width: calc(100% - 328px);
       &.one--btn {

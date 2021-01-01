@@ -65,10 +65,12 @@
               <template slot-scope="scope">
                 <el-button
                   type="text"
+                  @click="deleteOrder(scope.row)"
                   >删除</el-button
                 >
                 <el-button
                   type="text"
+                  @click="pay(scope.row)"
                   v-if="!scope.row.status"
                   >立即支付</el-button
                 >
@@ -429,17 +431,16 @@ export default {
       })
       return name;
     },
-    delete(that, {rows}) {
-      console.log(val, '111111111111');
-      that.$confirm('确定要删除吗?', '提示', {
+    deleteOrder(rows) {
+      this.$confirm('确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           type: 'warning'
         }).then(() => {
-          that.deleteList(rows.order_id);
+          this.deleteList(rows.order_id);
         }).catch(() => {
-          that.$message({
+          this.$message({
             type: 'info',
             message: '已取消删除'
           });
@@ -447,11 +448,12 @@ export default {
     },
     deleteList(id) {
        this.$fetch('deleteDetail', {id: id}).then(res =>{
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
-        this.getDetailList();
+         if (res.code == 200) {
+           this.getDetailList();
+           this.$message.success('删除成功')
+         } else {
+           this.$message.success(res.msg || '删除失败')
+         }
       }).catch(e=>{
         console.log(e);
         this.$message({
@@ -460,11 +462,11 @@ export default {
         });
       });
     },
-    pay(that, {rows})  {
-      that.$router.push({
+    pay(rows)  {
+      this.$router.push({
         path: '/finance/payOrder',
         query: {
-          userId: that.userId,
+          userId: this.userId,
           orderId: rows.order_id
         }
       });

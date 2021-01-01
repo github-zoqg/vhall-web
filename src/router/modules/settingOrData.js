@@ -59,7 +59,13 @@ const router = [
       {
         path: '/dev/list',
         component: () => import('@/views/SettingModule/Development/list'),
-        meta:{ auth: true, title: '开发设置', name: 'devlIST', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '开发设置', name: 'devList', activeMenu: '/setting/info'},
+        hidden: true
+      },
+      {
+        path: '/dev/callback',
+        component: () => import('@/views/SettingModule/Development/callback'),
+        meta:{ auth: true, title: '开发设置', name: 'devCallback', activeMenu: '/setting/info'},
         hidden: true
       },
       {
