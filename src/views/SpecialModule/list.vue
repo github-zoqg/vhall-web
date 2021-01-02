@@ -53,17 +53,15 @@
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
                 <i class="iconfont-v3 saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
-                <!-- <i class="saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i> -->
-                <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
-                <icon icon-class="saasicon-eye" @click="specialDetail(item)"></icon>
+                <i class="iconfont-v3 saasicon-eye" @click="specialDetail(item)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
-                <icon icon-class="saasicon-share" @click.prevent.stop="toShare(item.id)"></icon>
+                <i class="iconfont-v3 saasicon-share" @click="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
-                <icon icon-class="saasicon-trash" @click="deleteHandle(item.id)"></icon>
+                <i class="iconfont-v3 saasicon-trash" @click="deleteHandle(item.id)"></i>
               </el-tooltip>
             </p>
           </div>
@@ -205,12 +203,11 @@ export default {
       });
     },
     toShare(id) {
-      this.home_link = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
       this.dialogShareVisible = true;
+      this.home_link = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
-      console.log("1321432144")
       let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     }
@@ -407,13 +404,11 @@ export default {
         }
         .liveOpera{
           color: #666666;
-          span{
-            cursor: pointer;
-            &:nth-child(2){
+          i{
+           cursor: pointer;
+           font-size: 18px;
+           &:nth-child(2){
               padding: 0 20px;
-            }
-            /deep/.iconfont-v3 {
-              font-size: 18px;
             }
           }
           .el-dropdown{
