@@ -134,7 +134,7 @@ export default {
     }
   },
   mounted() {
-    this.watchUrl = `/live/room/${this.arr[0]}`
+    this.watchUrl = `/lives/room/${this.arr[0]}`
   }
 };
 </script>
