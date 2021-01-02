@@ -21,7 +21,7 @@
         placeholder="请输入礼物名称"
       >
         <i
-          style="cursor: pointer;"
+          style="cursor: pointer; line-height: 36px;"
           class="el-icon-search el-input__icon"
           slot="suffix"
           @click="searchGifts">
@@ -462,6 +462,9 @@ export default {
   }
   .head-operat{
     margin-bottom: 20px;
+    /deep/ .el-input__suffix-inner .el-input__icon {
+      line-height: 36px;
+    }
     .head-btn{
       display: inline-block;
       border-radius: 20px;
