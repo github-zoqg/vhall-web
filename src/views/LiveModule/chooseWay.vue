@@ -91,9 +91,10 @@ export default {
               webinar_id: this.arr[0]
             })).then((res) => {
               if(res && res.code === 200) {
-                this.$router.push({
+               /*  this.$router.push({
                   path: this.watchUrl
-                })
+                }) */
+                window.location.href = this.watchUrl;
               } else {
                 this.$message.error(res.msg || '检测异常');
               }
@@ -102,7 +103,8 @@ export default {
               this.$message.error(e.msg || '检测异常');
             });
           }else{
-            this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
+            // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
           }
         } else {
           this.$router.push({path: '/browser'})

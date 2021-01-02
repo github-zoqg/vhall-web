@@ -152,6 +152,16 @@ export default {
         callback();
       }
     };
+    let validateEmail = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入邮箱'));
+      } else {
+        if (!(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(value))) {
+          callback(new Error('请输入正确的邮箱'));
+        }
+        callback();
+      }
+    };
     let validateCheckPass = (rule, value, callback) => {
      if (value === '') {
         callback(new Error('请再次输入密码'));
@@ -173,6 +183,9 @@ export default {
       loginRules: {
         phone: [
           { validator: validatePhone, trigger: 'blur' }
+        ],
+        email: [
+          { validator: validateEmail, trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
@@ -201,11 +214,20 @@ export default {
     },
     // 第二步获取短信验证码
     getDyCode() {
-      if (this.checkMobile()) {
+      if (this.isType === 'phone' && this.checkMobile()) {
         if (!this.mobileKey) {
           this.$message.error('请先校验图形验证码');
           return;
         }
+        this.$fetch('sendCode', {
+          type: this.isType === 'phone' ? 1 : 2,
+          data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
+          validate: this.mobileKey,
+          scene_id: this.isType === 'phone' ? 5 : 4
+        }).then(() => {
+          this.countDown();
+        });
+      } else if (this.isType === 'email' && this.checkEmail()) {
         this.$fetch('sendCode', {
           type: this.isType === 'phone' ? 1 : 2,
           data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
