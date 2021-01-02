@@ -217,10 +217,12 @@ export default {
         let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
         window.open(routeData.href, '_blank');
       } else {
-        let routeData = this.$router.resolve({
+       /*  let routeData = this.$router.resolve({
           path: routerStr
         });
-        window.open(routeData.href, '_blank');
+         window.open(routeData.href, '_blank');*/
+        let url = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}${routerStr}`;
+        window.open(url, '_blank');
       }
     },
     initComp(vo) {

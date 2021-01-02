@@ -134,7 +134,7 @@ export default {
     }
   },
   mounted() {
-    this.watchUrl = `/lives/room/${this.arr[0]}`
+    this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`
   }
 };
 </script>
