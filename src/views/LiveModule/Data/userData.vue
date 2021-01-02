@@ -30,8 +30,11 @@
             >
           </search-area>
         </div>
+        <noData v-show="tableList.length == 0" :height="50">
+        </noData>
         <table-list
           ref="tableList"
+          v-show="tableList.length > 0"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
           :isHandle="false"
@@ -47,6 +50,7 @@
 </template>
 <script>
 import titleData from './components/title';
+import noData from '@/views/PlatformModule/Error/nullPage';
 import { getRangeDays } from '@/utils/general';
 export default {
   data() {
@@ -239,7 +243,8 @@ export default {
     };
   },
   components: {
-    titleData
+    titleData,
+    noData
   },
   created() {
     this.getLiveDetail();
@@ -371,11 +376,32 @@ export default {
     border: none;
     background: transparent;
   }
+  .container-box {
+    margin-bottom: 24px;
+  }
   /deep/.el-button.is-circle {
     padding: 3px;
   }
   .search{
-    margin-top: 30px;
+    margin-top: 24px;
+  }
+  /deep/.el-select {
+    width:130px!important;
+  }
+
+  @media screen and (max-width:1920px) {
+    /deep/.el-input {
+      width: 135px!important;
+    }
+  }
+  // /deep/.time-kuai {
+  //   width: 189px;
+  // }
+  /deep/.el-date-editor {
+    width: 200px!important;
+    /deep/ input {
+     width: 72px;
+    }
   }
   .title-data {
     margin: 20px 0;
@@ -395,6 +421,7 @@ export default {
     padding: 24px 32px;
     border-radius: 4px;
     background: #fff;
+    padding-top: 1px;
   }
 }
 </style>

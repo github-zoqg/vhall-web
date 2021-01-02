@@ -7,7 +7,7 @@
     </pageTitle>
     <div class="detail" @click="accountDetail">提现明细</div>
     <el-row :gutter="10">
-      <el-col :span="12">
+      <el-col :span="12" style="padding-right:0;">
         <div class="live-come">
           <h3>直播收益</h3>
           <div class="live-all">
@@ -40,7 +40,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="12" >
+      <el-col :span="12" style="padding-left:0;">
         <div class="money-come">
           <h3>红包收益</h3>
           <div class="live-all">
@@ -96,6 +96,7 @@
           :isHandle="isHandle"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
+          :width = '150'
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getIncomeList"
           >
@@ -166,24 +167,28 @@ export default {
         },
         {
           label: '标题',
-          key: 'name'
+          key: 'name',
+          width: 150,
         },
         {
           label: '总收益（元）',
           key: 'total_income',
+          width: 120,
         },
         {
           label: '门票收益（元）',
           key: 'ticket_income',
-          width: 120,
+          width: 135,
         },
         {
           label: '打赏收益（元）',
           key: 'reward_income',
+          width: 135,
         },
         {
           label: '礼物收益（元）',
           key: 'gifts_income',
+          width: 135,
         }
       ],
       meneyColumns: [
@@ -386,7 +391,7 @@ export default {
     padding: 24px 32px;
     border-radius: 4px;
     background: #fff;
-    margin-right: 10px;
+    // margin-right: 10px;
     height: 170px;
     h3{
       font-size: 16px;
@@ -444,6 +449,9 @@ export default {
     margin-top: 24px;
     .search-income{
       margin-top: 24px;
+    }
+    .data-list {
+      padding: 0 24px;
     }
   }
   }
