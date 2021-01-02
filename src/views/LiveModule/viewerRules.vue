@@ -509,7 +509,6 @@ export default {
     },
     formatInput() {
       this.$nextTick(() => {
-       alert(11)
       })
     },
     // 验证码生成
