@@ -2,8 +2,8 @@
   <div class="question-wrap">
     <pageTitle title="商品"></pageTitle>
       <div class="head-operat" v-show="total || isSearch">
-        <el-button type="primary" round  @click="addProduct" v-preventReClick>创建</el-button>
-        <el-button round @click="batchDel(null)" v-preventReClick>批量删除</el-button>
+        <el-button type="primary" size="medium" round  @click="addProduct" v-preventReClick>创建商品</el-button>
+        <el-button round @click="batchDel(null)" size="medium" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
         <search-area class="head-btn fr search"
           ref="searchArea"
           :placeholder="'请输入商品名称'"
@@ -13,13 +13,13 @@
           >
         </search-area>
       </div>
-      <el-card class="question-list" v-show="total">
+      <div class="question-list" v-show="total">
         <table-list
           ref="tableProductList"
           :manageTableData="tableData"
           :tabelColumnLabel="tabelColumn"
           :tableRowBtnFun="tableRowBtnFun"
-          :width="btnsWidth"
+          :width="150"
           :totalNum="total"
           @onHandleBtnClick='onHandleBtnClick'
           @getTableList="getTableList"
@@ -27,7 +27,7 @@
           @switchChange="onSwitchChange"
         >
         </table-list>
-      </el-card>
+      </div>
        <div class="empty" v-show="!total">
         <noData :nullType="nullText" :text="text">
           <el-button type="primary" round v-if="nullText == 'nullData'" @click="addProduct" v-preventReClick>创建</el-button>
@@ -50,7 +50,6 @@ export default {
       text: '您还没有商品，快来创建吧！',
       checkedGoodsId: [],
       total: 1,
-      btnsWidth: 230,
       searchAreaLayout: [
         {
           key: 'questionName'
@@ -256,7 +255,10 @@ export default {
   height: 100%;
   width: 100%;
   .question-list{
+    background: #fff;
     width: 100%;
+    padding: 24px 32px;
+    border-radius: 4px;
   }
   /deep/.el-card__body{
     width: 100%;

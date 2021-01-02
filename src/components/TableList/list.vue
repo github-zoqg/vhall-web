@@ -54,12 +54,15 @@
               />
             </div>
             <div v-else-if="item.key === 'watch'">
-              <el-switch
-                @change="switchChange(scope.row)"
-                v-model="scope.row.watch"
-                active-color="#ff4949"
-                inactive-color="#ccc">
-              </el-switch>
+              <p class="switch__box">
+                <el-switch
+                  @change="switchChange(scope.row)"
+                  v-model="scope.row.watch"
+                  active-color="#ff4949"
+                  inactive-color="#ccc">
+                </el-switch>
+              </p>
+
             </div>
             <!-- 开发设置，状态 -->
             <div v-else-if="scene === 'development' && item.key === 'statusStr'" class="status-show">
@@ -303,6 +306,7 @@ export default {
     height: 80px;
     background: #FFF5F6;
     border: 1px solid #E6E6E6;
+    border-radius: 4px;
     img{
       width:100%;
       height:100%;

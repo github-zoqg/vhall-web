@@ -24,7 +24,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <el-input v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></el-input>
+            <VhallInput v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
