@@ -23,7 +23,7 @@
     </div>
     <div class="video-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-       @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="240" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
+       @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="150" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
     </div>
     <div class="no-live" v-show="!total">

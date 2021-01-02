@@ -88,27 +88,6 @@
         <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
       </div>
     </div>
-    <!-- 导入观众excel -->
-    <VhallDialog title="上传文档" :lock-scroll='false' :visible.sync="importWordShow" width="468px">
-      <div class="upload-dialog-content">
-        <file-upload
-          :action=actionUrl
-          :headers="{token: token, platform: 17}"
-          :saveData=saveData
-          accept="*"
-          :on-success="uploadSuccess"
-          :on-progress="uploadProcess"
-          :on-error="uploadError"
-          :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
-          <p slot="tip">请上传文档</p>
-        </file-upload>
-        <div class="dialog-right-btn">
-          <el-button type="primary" size="medium" round @click="importWordShow = false">确 定</el-button>
-          <el-button @click="importWordShow = false" size="medium" round>取 消</el-button>
-        </div>
-      </div>
-    </VhallDialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
@@ -454,7 +433,7 @@ export default {
               item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
             }
           })
-          this.tableList = res.data.list;
+          this.tableList = list;
         } else {
           this.totalNum = 0;
           this.tableList = [];

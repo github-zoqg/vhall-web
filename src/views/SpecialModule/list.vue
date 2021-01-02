@@ -1,5 +1,5 @@
 <template>
-  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中">
+  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中" v-show="!loading">
     <pageTitle title="专题管理">
       <!-- <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
@@ -52,17 +52,18 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                <i class="el-icon-edit-outline" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
+                <i class="iconfont-v3 saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
+                <!-- <i class="saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i> -->
                 <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
-                <i class="el-icon-reading" @click="specialDetail(item)"></i>
+                <icon icon-class="saasicon-eye" @click="specialDetail(item)"></icon>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
-                <i class="el-icon-share" @click.prevent.stop="toShare(item.id)"></i>
+                <icon icon-class="saasicon-share" @click.prevent.stop="toShare(item.id)"></icon>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
-                <i class="el-icon-delete" @click="deleteHandle(item.id)"></i>
+                <icon icon-class="saasicon-trash" @click="deleteHandle(item.id)"></icon>
               </el-tooltip>
             </p>
           </div>
@@ -209,7 +210,8 @@ export default {
     },
     // 预览页面
     specialDetail(item) {
-      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+      console.log("1321432144")
+      let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     }
   },
@@ -311,6 +313,9 @@ export default {
         height: 36px;
         line-height: 36px;
       }
+       /deep/.el-input__icon{
+         line-height: 35px;
+      }
     }
   }
   .lives{
@@ -340,12 +345,14 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
+        border-radius: 4px;
         img{
           width: 100%;
           height: 100%;
           position: absolute;
           top:0;
           left: 0;
+          border-radius: 4px;
         }
         .liveTag{
           background: rgba(0,0,0, .7);
@@ -381,6 +388,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        border-radius: 4px;
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;
@@ -399,11 +407,13 @@ export default {
         }
         .liveOpera{
           color: #666666;
-          font-size: 18px;
-          i{
+          span{
             cursor: pointer;
             &:nth-child(2){
-              margin: 0 20px;
+              padding: 0 20px;
+            }
+            /deep/.iconfont-v3 {
+              font-size: 18px;
             }
           }
           .el-dropdown{

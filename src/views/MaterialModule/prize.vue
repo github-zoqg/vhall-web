@@ -10,7 +10,7 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">新建</el-button>
+      <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
       <search-area class="head-btn fr search"
@@ -174,6 +174,7 @@ export default {
         }
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
+            this.$refs.searchArea.searchParams = {};
             this.getTableList();
             this.$message.success('删除成功');
           } else {

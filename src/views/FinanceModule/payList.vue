@@ -157,9 +157,9 @@ export default {
         order_id:  this.$route.query.orderId,
         type: index
       };
-      // if (index == 1) {
-      //   params.show_url = `${process.env.VUE_APP_WEB_URL}/finance/infoDetail`;
-      // }
+      if (index == 1) {
+        params.show_url = `${process.env.VUE_APP_WEB_URL}/finance/infoDetail`;
+      }
       this.$fetch('payOrder', params).then(res =>{
         if (index == '1') {
           this.dialogBuyVisible = true;

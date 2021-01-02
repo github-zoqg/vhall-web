@@ -1,5 +1,5 @@
 <template>
-  <div class="detailBox">
+  <div class="detailBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
     <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
@@ -19,11 +19,11 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2  ? liveDetailInfo.start_time : liveDetailInfo.webinar_state == 4 ? liveDetailInfo.created_at : liveDetailInfo.actual_start_time}}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.webinar_state }}</p>
             <p class="subDuration" v-if="liveDetailInfo.webinar_state == 4">点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
-              <!-- <span class="tag">报名表单</span> -->
+              <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
               <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
@@ -95,6 +95,8 @@ export default {
   data(){
     return {
       msg: '',
+      loading: true,
+      isForm: false,
       isAnginOpen: false,
       outLiveTime: false,
       liveDetailInfo: {
@@ -205,6 +207,7 @@ export default {
   methods: {
     // 获取基本信息
     getLiveDetail(id) {
+      this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
         if (res.data.webinar_state == 1) {
@@ -221,6 +224,17 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 获取是否有报名表单
+    getFormInfo(id) {
+      this.$fetch('regFromGet', {webinar_id: id}).then(res => {
+        if (res.code == 200 && res.data.enable_status == 1) {
+          this.isForm = true;
+        } else {
+          this.isForm = true;
+          this.$message.error(res.msg || '获取失败');
+        }
+      })
     },
     // 下载二维码
     downErCode() {
@@ -483,6 +497,11 @@ export default {
 }
 .font-20{
   font-size: @20;
+  max-width: 500px;
+  // height: 56px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 .liveTime{
   font-size: 14px;
