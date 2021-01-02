@@ -1,174 +1,176 @@
 <template>
-  <div class="loginPage">
-    <div class="login">
-      <div class="login-main">
-      <div class="login-header"></div>
-      <div class="login-form" v-if="$route.path==='/login'">
-        <div class="login-navs">
-          <span @click="changeLogin('1')" :style="isActive == 1 ? 'color: #f33' : 'color: #333'">账号登录</span>
-          <span @click="changeLogin('2')" :style="isActive == 2 ? 'color: #f33' : 'color: #333'">快捷登录</span>
-          <em class="login-float-bar" :style="isActive == 1 ? 'left: 0' : 'left: 50%'"></em>
+  <div class="wapper wapperClass">
+   <div class="left fl">
+    <div>
+     <img src="../../common/images/login/login-logo.png" alt="" class="logo" />
+     <div class="content">
+      <p>针对不同类型、不同行业企业业务和使用场景，<br/>专注于为企业提供通用型场景化直播解决方案和服务</p>
+      <img src="../../common/images/login/login-advert.png" alt="" class="bg" />
+     </div>
+    </div>
+   </div>
+   <div class="right fr">
+    <!-- 登录 -->
+    <div class="login-box" v-if="$route.path==='/login'">
+     <h3>欢迎登录微吼直播</h3>
+     <p class="tab"><span @click="changeLogin('1')" :class="isActive == 1 ? 'active' : ''">账号登录</span><em>|</em><span @click="changeLogin('2')" :class="isActive == 2 ? 'active' : ''">手机登录</span></p>
+     <!-- 账号登录 -->
+     <div class="user-wapper"  v-if="isActive===1">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
+        <el-form-item prop="account">
+          <el-input
+            placeholder="请输入账号"
+            clearable
+            v-model="loginForm.account">
+          </el-input>
+        </el-form-item>
+        <el-form-item v-show="isLogin">
+          <div id="loginCaptcha">
+            <el-input
+              v-model="loginForm.text">
+            </el-input>
+          </div>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input
+            placeholder="请输入密码"
+            maxlength="30"
+            :type="isPassWordType ? 'password' : 'text'"
+            v-model="loginForm.password">
+            <span slot="suffix" @click="passWordType" class="closePwd">
+              <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
+              <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
+            </span>
+          </el-input>
+          <p class="errorText" v-show="errorText"><i class="el-icon-error"></i>{{ errorText }}</p>
+        </el-form-item>
+         <el-form-item class="auto-login">
+          <el-checkbox v-model="remember">自动登录</el-checkbox>
+          <span class="forget" @click="forgetPassword">忘记密码</span>
+        </el-form-item>
+        <div class="login-btn">
+          <el-button class="submit" type="primary" @click="loginAccount" round>登&nbsp;&nbsp;&nbsp;录</el-button>
         </div>
-        <div class="login-line"></div>
-        <div class="form-items" v-if="isActive===1" >
-          <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
-            <el-form-item prop="account">
+        <div class="login-just">
+          现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
+        </div>
+        <div class="login-other">
+          其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+          <div class="other-img" v-show="!isOpenOther">
+            <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=')">
+            <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')">
+            <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
+          </div>
+        </div>
+      </el-form>
+     </div>
+     <!-- 手机号登录 -->
+     <div class="phone-wapper" v-if="isActive===2">
+        <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
+          <el-form-item prop="phoneNumber">
+            <el-input
+              placeholder="请输入手机号"
+              maxlength="11"
+              clearable
+              v-model="dynamicForm.phoneNumber">
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <div id="loginCaptcha">
               <el-input
-                placeholder="请输入账号"
+                v-model="dynamicForm.text">
+              </el-input>
+            </div>
+          </el-form-item>
+          <el-form-item prop="dynamic_code">
+            <div class="code">
+              <el-input
+                placeholder="动态密码"
                 clearable
-                v-model="loginForm.account">
-                <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
+                v-model="dynamicForm.dynamic_code">
+                <template slot="append">
+                  <span @click="getDyCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                </template>
+              </el-input>
+            </div>
+            <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>{{ errorMsgShow }}</p>
+          </el-form-item>
+          <div class="login-btn">
+            <el-button class="submit top" type="primary" @click="loginDynamic" round>登&nbsp;&nbsp;&nbsp;录</el-button>
+          </div>
+       </el-form>
+     </div>
+    </div>
+    <!-- 注册 -->
+    <div class="login-box" v-else>
+      <h3>欢迎注册微吼直播</h3>
+      <div class="login-line"></div>
+      <div class="form-items">
+        <el-form ref="registerForm" :model="registerForm" :rules="registerRules">
+            <el-form-item prop="phone">
+              <el-input
+                placeholder="请输入手机号"
+                maxlength="11"
+                clearable
+                @input="checkPhone"
+                v-model="registerForm.phone">
               </el-input>
             </el-form-item>
-            <el-form-item v-show="isLogin">
-              <div id="loginCaptcha">
+            <el-form-item>
+              <div id="registerCaptcha">
                 <el-input
-                  v-model="loginForm.text">
+                  v-model="registerForm.text">
+                </el-input>
+              </div>
+              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+            </el-form-item>
+            <el-form-item prop="code">
+              <div class="code">
+                <el-input
+                  placeholder="动态密码"
+                  clearable
+                  v-model="registerForm.code">
+                  <template slot="append">
+                    <span @click="getRegisterCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  </template>
                 </el-input>
               </div>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                placeholder="请输入密码"
+                placeholder="设置密码(6-30个字符)"
                 maxlength="30"
                 :type="isPassWordType ? 'password' : 'text'"
-                v-model="loginForm.password">
-                <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+                v-model="registerForm.password">
                 <span slot="suffix" @click="passWordType" class="closePwd">
                   <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
                   <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
                 </span>
               </el-input>
-             <p class="errorText" v-show="errorText"><i class="el-icon-error"></i>{{ errorText }}</p>
+              <p class="errorText" v-show="registerText">{{registerText}}</p>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click="loginAccount">登&nbsp;&nbsp;&nbsp;录</el-button>
+              <el-button class="submit" type="primary" @click="registerAccount" :disabled="!checked" round>立 即 注 册</el-button>
             </div>
-            <el-form-item class="login-checked">
-              <el-checkbox v-model="remember">自动登录</el-checkbox>
-              <span @click="forgetPassword">忘记密码</span>
+            <el-form-item class="auto-login register-checked">
+              <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
+              <span class="forget" @click="$router.push({path: '/login'})">去登录</span>
             </el-form-item>
-            <div class="login-just">
-              现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
-            </div>
-            <div class="login-other">
-              其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
-              <div class="other-img" v-show="!isOpenOther">
-                <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=')">
-                <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')">
-                <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
-              </div>
-            </div>
-          </el-form>
-        </div>
-        <div class="form-items" v-if="isActive===2">
-          <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
-            <el-form-item prop="phoneNumber">
-              <el-input
-                placeholder="请输入手机号"
-                maxlength="11"
-                clearable
-                v-model="dynamicForm.phoneNumber">
-                <i slot="prefix" class="el-input__icon el-icon-mobile-phone"></i>
-              </el-input>
-            </el-form-item>
-            <el-form-item>
-              <div id="loginCaptcha">
-                <el-input
-                  v-model="dynamicForm.text">
-                </el-input>
-              </div>
-            </el-form-item>
-            <el-form-item prop="dynamic_code">
-              <div class="code">
-                <el-input
-                style="width:200px"
-                  placeholder="动态密码"
-                  clearable
-                  v-model="dynamicForm.dynamic_code">
-                  <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-                </el-input>
-                <span @click="getDyCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
-              </div>
-             <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>{{ errorMsgShow }}</p>
-            </el-form-item>
-            <div class="login-btn">
-              <el-button type="primary" @click="loginDynamic">登&nbsp;&nbsp;&nbsp;录</el-button>
-            </div>
-          </el-form>
-        </div>
-      </div>
-      <div class="login-form" v-else>
-        <div class="login-navs">
-          <span>欢迎注册</span>
-        </div>
-        <div class="login-line"></div>
-        <div class="form-items">
-          <el-form ref="registerForm" :model="registerForm" :rules="registerRules">
-              <el-form-item prop="phone">
-                <el-input
-                  placeholder="请输入手机号"
-                  maxlength="11"
-                  clearable
-                  @input="checkPhone"
-                  v-model="registerForm.phone">
-                  <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
-                </el-input>
-              </el-form-item>
-              <el-form-item>
-                <div id="registerCaptcha">
-                  <el-input
-                    v-model="registerForm.text">
-                  </el-input>
-                </div>
-                <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
-              </el-form-item>
-              <el-form-item prop="code">
-                <div class="code">
-                  <el-input
-                  style="width:200px"
-                    placeholder="动态密码"
-                    v-model="registerForm.code">
-                  </el-input>
-                  <span @click="getRegisterCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
-                </div>
-              </el-form-item>
-              <el-form-item prop="password">
-                <el-input
-                  placeholder="设置密码(6-30个字符)"
-                  maxlength="30"
-                  :type="isPassWordType ? 'password' : 'text'"
-                  v-model="registerForm.password">
-                  <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-                  <span slot="suffix" @click="passWordType" class="closePwd">
-                    <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
-                    <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
-                  </span>
-                </el-input>
-                <p class="errorText" v-show="registerText"><i class="el-icon-error"></i>{{registerText}}</p>
-              </el-form-item>
-              <div class="login-btn">
-                <el-button type="primary" @click="registerAccount" :disabled="!checked">立 即 注 册</el-button>
-              </div>
-              <el-form-item class="login-checked register-checked">
-                <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
-                <span @click="$router.push({path: '/login'})">去登录</span>
-              </el-form-item>
-          </el-form>
-        </div>
+        </el-form>
       </div>
     </div>
-    </div>
-    <div class="login-footer">
-      <footer-section></footer-section>
-    </div>
+    <footer-section></footer-section>
+   </div>
   </div>
 </template>
 <script>
-import footerSection from '../../components/Footer/index';
 import {sessionOrLocal} from "@/utils/utils";
+import footerSection from '../../components/Footer/index';
 import Env from "@/api/env";
 export default {
+  components: {
+    footerSection
+  },
   data() {
     var validatePhone = (rule, value, callback) => {
       if (value === '') {
@@ -226,9 +228,6 @@ export default {
       isActive: 1,
       isOpenOther: true
     };
-  },
-  components: {
-    footerSection
   },
   watch: {
     '$route.path': function() {
@@ -462,193 +461,350 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.loginPage{
+.wapper {
+    width: 100%;
+    height: 100%;
+    min-height: 640px;
+    background-color: #fff;
+    position: relative;
+    font-family: PingFangSC,helvetica neue,hiragino sans gb,arial,microsoft yahei ui,microsoft yahei,simsun,"sans-serif"!important
+}
+
+.left {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+   /*  background: linear-gradient(180deg,#22d28f,#00ab92); */
+    background: url('../../common/images/login/login-bg.png') no-repeat 100% 100%;
+    position: relative;
+}
+
+.left .logo {
+  display: block;
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 120px;
+  z-index: 1;
+}
+
+.left .content {
+  position: absolute;
+  top: 28%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+.left p {
+  font-size: 16px;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 32px;
+  letter-spacing: 2px;
+}
+.left .bg {
+  display: block;
+  width: 56%;
+  margin: 65px auto 0;
+}
+
+.right {
+  width: 50%;
   height: 100%;
-  .login-footer{
-      position: relative;
-      z-index: 1;
+  background-color: #fff;
+  position: relative
+}
+
+.login-box {
+  width: 340px;
+  position: absolute;
+  left: 50%;
+  top: 51%;
+  margin-left: -170px;
+  transform: translateY(-50%);
+}
+
+.login-box h3 {
+  font-size: 32px;
+  font-weight: 400;
+  color: #333333;
+  line-height: 45px;
+}
+
+.login-box .phone-wapper,.login-box .user-wapper {
+    height: 299px
+}
+
+.login-box .tab {
+    margin-top: 40px;
+    font-weight: 400
+}
+
+.login-box .tab:before {
+    content: "";
+    height: 100%;
+    vertical-align: middle;
+    display: inline-block
+}
+
+.login-box .tab span {
+    cursor: pointer;
+    vertical-align: middle;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 30px;
+}
+
+.login-box .tab span.active {
+    color: #FB3A32;
+}
+
+.login-box .tab em {
+    margin: 0 10px;
+    font-size: 16px;
+    color: #333333;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.login-box #captcha {
+    margin-top: 30px
+}
+
+/deep/.el-form-item {
+  width: 320px;
+  position: relative;
+  margin-top: 24px;
+  margin-bottom: 0;
+  .el-form-item__content {
+    line-height: 1;
+  }
+  .closePwd {
+    cursor: pointer;
+  }
+  input {
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    border: none;
+    outline-style: none;
+    font-size: 14px;
+    font-weight: 400;
+     color: #1A1A1A;
+    background-color: transparent;
+    border-bottom: 1px solid #cccccc;
+    border-radius: unset;
+    padding: 0 0;
+    &:hover {
+      color: #999999;
+    }
+    &:active {
+      color: #1A1A1A;
+    }
+  }
+  input::-webkit-input-placeholder {
+      color: #999999;
+  }
+  input:-ms-input-placeholder, input::-ms-input-placeholder {
+      color:#999999;
+  }
+  input::placeholder {
+      color: #999999;
+  }
+  &.auto-login {
+    font-size: 13px;
+    color: #999;
+    margin-top: 24px;
+    /deep/.el-checkbox__label {
+      display: inline-block;
+      padding-left: 5px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #999999;
+      line-height: 17px;
+      vertical-align: top;
+      a {
+        color: #4DA1FF;
+      }
+    }
+    span.forget {
+      float: right;
+      font-size: 12px;
+      font-weight: 400;
+      color: #999999;
+      line-height: 17px;
+      cursor: pointer;
+      &:hover {
+        color: #1A1A1A;
+      }
+    }
+  }
+}
+.submit {
+  margin-top: 16px;
+  width: 320px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  &.top {
+     margin-top: 24px;
+  }
+}
+
+.login-just {
+  font-size: 12px;
+  font-weight: 400;
+  color: #333333;
+  line-height: 17px;
+  text-align: center;
+  margin-top: 20px;
+  span {
+    color: #4DA1FF;
+    margin-left: 8px;
+    cursor: pointer;
+  }
+}
+
+.login-other {
+  font-size: 12px;
+  font-weight: 400;
+  color: #999999;
+  line-height: 17px;
+  text-align: center;
+  margin-top: 20px;
+  span {
+    cursor: pointer;
+  }
+}
+
+.other-img {
+  margin-top: 16px;
+  img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    &:first-child {
+      margin-right: 8px;
+    }
+  }
+}
+
+
+.login-box .ipt-box .pwd-btn {
+    width: 90px;
+    height: 34px;
+    border-radius: 2px;
+    background-color: #dedede;
+    text-align: center;
+    line-height: 34px;
+    font-size: 13px;
+    color: #fff;
+    position: absolute;
+    right: 0;
+    bottom: 3px
+}
+
+.login-box .ipt-box .pwd-btn.active {
+    background-color: #52cc90;
+    cursor: pointer
+}
+
+.login-box .ipt-box .mu-text-field-focus-line {
+    margin: 0;
+    height: 2px;
+    border: none;
+    background-color: #52cc90;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-top: -1px;
+    transform: scaleX(0);
+    transition: .45s cubic-bezier(.23,1,.32,1)
+}
+
+.login-box .ipt-box .mu-text-field-focus-line.focus {
+    transform: scaleX(1)
+}
+
+.login-box .ipt-box .iconfont {
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    color: #d1d1d1;
+    font-size: 18px;
+    cursor: pointer
+}
+
+.login-box .goregister {
+    margin-top: 10px
+}
+
+.login-box .goregister a {
+    float: left;
+    font-size: 14px;
+    color: #52cc90
+}
+@media screen and (max-width: 1200px) {
+    .left {
+        display:none
+    }
+
+    .right {
+        width: 100%
     }
 }
-  .login{
-    height: 100%;
-    width: 100%;
-    min-height: 800px;
-    margin-bottom: -139px;
-    text-align: center;
-    font-size: 0;
-    background-image: url(//t-alistatic01.e.vhall.com/static/images/account/loginbg.jpg);
-    background-size: cover;
-    position: relative;
-    .login-main{
-      text-align: left;
+
+.phone-wapper  {
+  #loginCaptcha {
+    margin-bottom: 8px;
+  }
+}
+
+/deep/.el-input-group__append {
+    border: 0;
+    position: absolute;
+    bottom: 4px;
+    right: 0;
+    cursor: pointer;
+    span {
+      border: 0;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      margin-top: -350px;
-      margin-left: -204px;
-      width: 400px;
-      .login-header{
-        font-size: 0;
-        margin: 0 auto;
-        width: 162px;
-        height: 92px;
-        background: url(../../common/images/login_logo.png) no-repeat;
-        margin-bottom: 20px;
-        background-size: contain;
-        background-position: center;
-        margin-top: 40px;
-      }
-      .login-form{
-        background-color: #fff;
-        border-radius: 4px;
-        min-height: 400px;
-        .el-form-item{
-          margin-bottom: 18px;
-        }
-        .login-navs{
-          position: relative;
-          line-height: 54px;
-          height: 54px;
-          span{
-            width: 50%;
-            font-size: 16px;
-            display: inline-block;
-            text-align: center;
-            color: #333;
-            cursor: pointer;
-            &.active{
-            color: #f33;
-            }
-          }
-          .login-float-bar{
-            width: 200px;
-            position: absolute;
-            height: 1px;
-            background: #fc5659;
-            top: 100%;
-            &::before{
-              content: "";
-              width: 8px;
-              height: 8px;
-              position: absolute;
-              top: 50%;
-              margin-top: -5px;
-              left: 50%;
-              margin-left: -6px;
-              border: 1px solid #fc5659;
-              -webkit-transform: rotate(45deg);
-              -ms-transform: rotate(45deg);
-              transform: rotate(45deg);
-              background: #fff;
-              border-bottom-color: transparent;
-              border-right-color: transparent;
-            }
-          }
-        }
-        .login-line{
-          margin: 0;
-          height: 1px;
-          background: #dcdcdc;
-        }
-        .form-items{
-          padding: 0 50px;
-          padding-top: 37px;
-          /deep/.el-input__inner{
-            border-radius: 2px 0 0 2px;
-            height: 40px;
-          }
-          .el-input--prefix .el-input__inner {
-            padding-left: 40px;
-          }
-          .login-btn{
-            width: 100%;
-            margin-top: 50px;
-            .el-button{
-              display: inline-block;
-              width: 100%;
-              font-size: 16px;
-            }
-          }
-          .login-checked{
-            width: 100%;
-            span{
-              float: right;
-              cursor: pointer;
-              color: #666;
-            }
-          }
-          .register-checked{
-            padding-bottom: 20px;
-            a{
-              color: #4da1ff;
-            }
-          }
-          .login-just{
-            text-align: center;
-            font-size: 13px;
-            color: #333;
-            height: 30px;
-            span{
-              color: #fc5659;
-              cursor: pointer;
-            }
-          }
-          .login-other{
-            text-align: center;
-            font-size: 13px;
-            color: #999;
-            padding-bottom: 20px;
-            span{
-              padding-left: 5px;
-              cursor: pointer;
-            }
-            .other-img{
-              text-align: center;
-              padding: 10px 0;
-              img{
-                margin-right: 10px;
-                width: 20px;
-                height: 20px;
-                cursor: pointer;
-              }
-            }
-          }
-          .errorText{
-            line-height: 20px;
-            color:#fc5659;
-            font-size: 12px;
-            i{
-              color: #fc5659;
-              padding-right: 5px;
-            }
-          }
-        }
-      }
-    }
-    .code{
-      border-radius: 4px;
-      border: 1px solid #CCC;
-      // height: 36px;
-      /deep/.el-input__inner{
-        width: 210px;
-        border: 0;
-        // line-height: 36px;
-      }
-      span{
-        // float: right;
-        background: #dedede;
-        padding: 6px 12px;
-        border-radius: 2px;
-        color: #fff;
-        height: 36px;
-        cursor: pointer;
-        &.isLoginActive{
-          background: #fc5659;
-        }
-      }
-    }
-    .closePwd{
+      bottom: 4px;
+      right: 0;
+      width: 90px;
+      background: #E8E8E8;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 400;
+      color: #222222;
       cursor: pointer;
+      padding: 8px;
+      cursor: pointer;
+      line-height: 18px;
+      text-align: center;
+      &.isLoginActive{
+        background: #FB3A32;
+        border-radius: 2px;
+        color: #FFFFFF;
+      }
+      &.isSend {
+        background: #E8E8E8;
+        color: #222222;
+      }
+    }
+ }
+  .errorText{
+    line-height: 20px;
+    color:#fc5659;
+    font-size: 12px;
+    i{
+      color: #fc5659;
+      padding-right: 5px;
     }
   }
 </style>

@@ -45,7 +45,7 @@ export default {
     toShare(type) {
       let url = '';
       if(type === 'wechat') {
-        // ag: url = http://t.e.vhall.com/v3/#/live/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用
+        // ag: url = http://t.e.vhall.com/v3/#/lives/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用
           url = `//aliqr.e.vhall.com/qr.png?t=${this.shareVo.wechat_share_link || this.url}`
       }
       else if (type === 'sina') {
