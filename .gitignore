@@ -16,6 +16,7 @@ pnpm-debug.log*
 # Editor directories and files
 .idea
 .vscode
+.history
 package-lock.json
 *.suo
 *.ntvs*
