@@ -126,15 +126,15 @@
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
-      <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center>
+      <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
     </template>
   </div>
 </template>
 
 <script>
-import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
+import VideoPreview from './components/previewVideo';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
@@ -142,7 +142,7 @@ export default {
     return {
       // 预览
       showDialog: false,
-      videoParam: {},
+      videoParamId: '',
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
       keyWords: '',
@@ -203,13 +203,13 @@ export default {
       //  this.videoParam 进本信息
       if (data.transcode_status == 1) {
         this.showDialog = true;
-        this.videoParam = data;
+        this.videoParamId = data.id;
       } else {
         this.$message.warning('只有转码成功才能查看');
       }
     },
     closeBefore(done){
-      this.$refs.videoPreview.destroy();
+      // this.$refs.videoPreview.destroy();
       done();
     },
     // 获取当前活动基本信息 判断是点播还是直播回放
@@ -424,16 +424,14 @@ export default {
       this.$fetch('recordCheck', {
         webinar_id: this.webinar_id
       }).then(res => {
-        if (res.code == 512550) {
-          this.$message.warning('该活动正在直播或录制中，无法重复发起')
-        } else if (res.code == 200) {
+        if (res.code == 200) {
           this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
-        } else {
-          this.$message.warning(res.msg)
         }
       }).catch(err => {
-        if (res.code == 512550) {
+        if (err.code == 12550) {
           this.$message.warning('该活动正在直播或录制中，无法重复发起')
+        } else {
+          this.$message.warning(err.msg)
         }
       })
     },
