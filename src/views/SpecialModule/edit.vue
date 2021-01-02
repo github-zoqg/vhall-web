@@ -7,8 +7,8 @@
       </el-form-item>
       <el-form-item label="专题封面:">
         <upload
-          v-model="imageUrl"
-          :domain_url="domain_url"
+          v-model="formData.imageUrl"
+          :domain_url="formData.domain_url"
           :saveData="{
              path: 'webinars/subject-imgs',
              type: 'image',
@@ -26,12 +26,12 @@
         </upload>
       </el-form-item>
       <el-form-item label="专题简介:" required>
-        <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
+        <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
         <p class="switch__box">
           <el-switch
-            v-model="reservation"
+            v-model="formData.reservation"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             :active-text="reservationDesc">
@@ -41,7 +41,7 @@
       <el-form-item label="热度:">
         <p class="switch__box">
           <el-switch
-            v-model="hot"
+            v-model="formData.hot"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             :active-text="hotDesc">
@@ -51,7 +51,7 @@
       <el-form-item label="关联主页:">
         <p class="switch__box">
           <el-switch
-            v-model="home"
+            v-model="formData.home"
             active-color="#FB3A32"
             inactive-color="#CECECE"
             :active-text="homeDesc">
@@ -60,7 +60,7 @@
       </el-form-item>
       <el-form-item label="专题目录:" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
-        <div class="vh-sort-tables" v-show="selectedActives.length">
+        <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
               序号
@@ -80,14 +80,14 @@
           </div>
           <div class="vh-sort-tables__tbody">
             <draggable
-              :list="selectedActives"
+              :list="formData.selectedActives"
               chosenClass="vh-sort-tables__tbody-selected"
               @dragstart="dragStart"
               @dragend="dragEnd"
             >
               <div
                 class="vh-sort-tables__tbody-tr"
-                v-for="(item, index) in selectedActives"
+                v-for="(item, index) in formData.selectedActives"
                 :key="item.webinar_id"
                 >
                 <div class="vh-sort-tables__tbody-id">
@@ -132,7 +132,7 @@
     </el-form>
     <chose-actives
       v-if="showActiveSelect"
-      :checkedList="selectedActives"
+      :checkedList="formData.selectedActives"
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
@@ -169,26 +169,27 @@ export default {
   data(){
     return {
       showActiveSelect: false,
-      selectedActives: [],
       formData: {
+        selectedActives: [],
         title: '',
+        reservation: true,
+        imageUrl: '',
+        domain_url:'',
+        content: '',
+        hot: true,
+        home: true,
       },
       subject_id: '',
       subjectInfo: {
       },
-      reservation: true,
-      hot: true,
-      home: true,
       loading: false,
-      imageUrl: '',
-      domain_url:'',
-      content: '',
       webinarIds: [],
       rules: {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
         ],
-      }
+      },
+      isChange: false
     };
   },
   created(){
@@ -199,7 +200,30 @@ export default {
       this.initInfo()
     }
   },
-
+  watch: {
+    formData: {
+      deep: true,
+      handler() {
+        this.isChange = true;
+      }
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    // 离开页面前判断信息是否修改
+    if (!this.isChange) {
+      next()
+      return false;
+    }
+    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      customClass: 'zdy-alert-box',
+      type: 'warning'
+    }).then(() => {
+        next()
+    }).catch(() => {
+    });
+  },
   methods: {
     // 获取专题 - 详情
     initInfo() {
@@ -209,32 +233,36 @@ export default {
         if (res.code == 200) {
           this.subjectInfo = {...res.data.webinar_subject};
           console.log(this.subjectInfo, '111111111111111')
-          this.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
+          this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
-          res.data.webinar_subject.cover && (this.imageUrl = res.data.webinar_subject.cover)
-          this.domain_url = res.data.webinar_subject.cover;
-          this.content = res.data.webinar_subject.intro
+          res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)
+          this.formData.domain_url = res.data.webinar_subject.cover;
+          this.formData.content = res.data.webinar_subject.intro
 
           // 配置项
-          this.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
-          this.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
-          this.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
+          this.formData.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
+          this.formData.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
+          this.formData.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
 
+          // 重置修改状态
+          setTimeout(() => {
+            this.isChange = false
+          }, 300)
         }
       })
     },
 
     sendData(content) {
-      this.content = content;
+      this.formData.content = content;
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
-        this.imageUrl = file_url;
-        this.domain_url = domain_url;
+        this.formData.imageUrl = file_url;
+        this.formData.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -267,26 +295,26 @@ export default {
     },
 
     submitForm(formName) {
-      if (!this.content) {
+      if (!this.formData.content) {
         this.$message.error('请选择专题简介');
         return;
       }
-      if (!this.selectedActives.length) {
+      if (!this.formData.selectedActives.length) {
         this.$message.error('请选择专题目录');
         return;
       }
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const webinar_ids = this.selectedActives.map((item) => {
+          const webinar_ids = this.formData.selectedActives.map((item) => {
             return item.webinar_id || item.id
           });
           let data = {
             subject: this.formData.title,
-            introduction: this.content,
-            img_url: this.imageUrl,
-            is_private: this.home ? 0 : 1,
-            hide_appointment: Number(this.reservation),
-            hide_pv: Number(this.hot),
+            introduction: this.formData.content,
+            img_url: this.formData.imageUrl,
+            is_private: this.formData.home ? 0 : 1,
+            hide_appointment: Number(this.formData.reservation),
+            hide_pv: Number(this.formData.hot),
           };
 
           if (webinar_ids.length) {
@@ -304,6 +332,8 @@ export default {
             if(res.code == 200) {
               this.subject_id = res.data.subject_id;
               this.$message.success(`创建成功`);
+              // 保存或创建成功重置更改状态
+              this.isChange = false
               console.log(res);
               setTimeout(()=>{
                 this.$router.push({path: '/special'});
@@ -328,7 +358,13 @@ export default {
     },
     // 判断是否填写数据
     isContent() {
-      if (this.formData.title || this.content || this.imageUrl || !this.home || !this.reservation || !this.hot || this.selectedActives.length > 0) {
+      if (this.formData.title||
+          this.formData.content ||
+          this.formData.imageUrl ||
+          !this.formData.home ||
+          !this.formData.reservation ||
+          !this.formData.hot ||
+          this.formData.selectedActives.length > 0) {
         this.$confirm(`取消将不保存此页面的内容？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -350,15 +386,15 @@ export default {
       }
     },
     deleteImg() {
-      this.imageUrl = '';
-      this.domain_url = '';
+      this.formData.imageUrl = '';
+      this.formData.domain_url = '';
     },
     doSelectedActives (selectedActives) {
       selectedActives.map(item => {
-        this.selectedActives.push(item);
+        this.formData.selectedActives.push(item);
       })
       let id = 'webinar_id';
-      this.selectedActives = this.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
+      this.formData.selectedActives = this.formData.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
       this.showActiveSelect = false
     },
     // 删除事件
@@ -368,9 +404,9 @@ export default {
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
         }).then(() => {
-          this.selectedActives.map((opt, index) => {
+          this.formData.selectedActives.map((opt, index) => {
             if (opt.webinar_id == id) {
-              this.selectedActives.splice(index, 1);
+              this.formData.selectedActives.splice(index, 1);
             }
           })
         }).catch(() => {

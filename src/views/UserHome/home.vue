@@ -107,11 +107,14 @@ export default {
         console.log(res);
         if (res && res.code === 200) {
           // 粉丝数、是否关注、主页信息
-          let { attentioned_count, follow, homepage_info } = res.data;
+          let {avatar, attentioned_count, follow, homepage_info } = res.data;
           this.userHomeVo = homepage_info;
           this.attentioned_count = attentioned_count;
           this.follow = follow;
           this.content = homepage_info.content;
+          if (this.$route.meta.type !== 'owner') {
+            this.avatarImgUrl = avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+          }
           try {
             this.$refs.homeMain.initComp(homepage_info);
           }catch (e) {
@@ -143,7 +146,7 @@ export default {
         this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
         // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
       } else {
-        this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+         this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
       }
     }
   }

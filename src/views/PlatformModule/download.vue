@@ -363,7 +363,6 @@ export default {
   mounted() {
     this.initPage();
     this.$EventBus.$on('saas_vs_msg_num', function() {
-      alert(1)
     });
     EventBus.$on('down_center_msg', res => { // 转码状态
       console.log(res, '监听到down_center_msg123转码状态事件');

@@ -255,15 +255,12 @@ export default {
         let img = new Image();
         img.src = `http:${this.env.wordShowUrl}/${this.docParam.hash}/${this.activeIns}.jpg`;
         if (img.complete) {
-          alert(1)
           this.isLoading = true;
         }
         img.onload = function() {
-          alert(2)
           that.loading = false;
         };
       } else {
-        alert(3)
         that.loading = false;
       }
     },
