@@ -214,28 +214,38 @@ export default {
     },
     // 第二步获取短信验证码
     getDyCode() {
-      if (this.isType === 'phone' && this.checkMobile()) {
-        if (!this.mobileKey) {
-          this.$message.error('请先校验图形验证码');
+      if (this.isType === 'phone') {
+        if (this.checkMobile()) {
+          if (!this.mobileKey) {
+            this.$message.error('请先校验图形验证码');
+            return;
+          }
+          this.$fetch('sendCode', {
+            type: this.isType === 'phone' ? 1 : 2,
+            data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
+            validate: this.mobileKey,
+            scene_id: this.isType === 'phone' ? 5 : 4
+          }).then(() => {
+            this.countDown();
+          });
+        } else {
+          this.$message.error('请检查手机号是否输入正确');
           return;
         }
-        this.$fetch('sendCode', {
+      } else if (this.isType === 'email') {
+        if(this.checkEmail()) {
+          this.$fetch('sendCode', {
           type: this.isType === 'phone' ? 1 : 2,
           data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
           validate: this.mobileKey,
           scene_id: this.isType === 'phone' ? 5 : 4
         }).then(() => {
-          this.countDown();
-        });
-      } else if (this.isType === 'email' && this.checkEmail()) {
-        this.$fetch('sendCode', {
-          type: this.isType === 'phone' ? 1 : 2,
-          data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
-          validate: this.mobileKey,
-          scene_id: this.isType === 'phone' ? 5 : 4
-        }).then(() => {
-          this.countDown();
-        });
+            this.countDown();
+          });
+        } else {
+          this.$message.error('请检查邮箱是否输入正确');
+          return;
+        }
       }
     },
     // 第二步确定 检测短信验证码
