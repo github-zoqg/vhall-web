@@ -478,15 +478,15 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (this.limitCapacity < 1) {
-        this.$message.error('最高并发请输入大于1的数值');
-        return;
-      }
       if (!this.versionType) {
         if (this.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
+      }
+      if (this.limitCapacitySwtich && this.limitCapacity < 1) {
+        this.$message.error('最高并发请输入大于1的数值');
+        return;
       }
       if (this.webniarTypeToZH == '点播' && !this.selectMedia.id) {
         this.$message.error(`请先上传视频`);

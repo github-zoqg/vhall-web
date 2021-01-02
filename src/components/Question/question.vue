@@ -2,7 +2,25 @@
   <div>
     <div id="settingBox" v-show="isCreate">
     </div>
-    <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content" v-show="showPreview"></div>
+    <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content" v-show="showPreview">
+    </div>
+    <VhallDialog
+      title="提示"
+      :visible.sync="dialogTongVisible"
+      :close-on-click-modal="false"
+      width="400px"
+    >
+      <div class="surePrize">
+        <div class="textPrize">
+          <p>确定保存当前问卷？</p>
+          <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
+        </div>
+        <div class="dialog-footer">
+          <el-button size="medium" type="primary" @click="sureMaterialPrize" round>确 定</el-button>
+          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+       </div>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 <script>
@@ -12,8 +30,12 @@ export default {
   data() {
     return {
       questionInfo: {},
+      questionDataInfo: {},
       showPreview: false,
-      isCreate: false
+      isCreate: false,
+      dialogTongVisible: false,
+      sureChecked: true,
+      isPrevent: true,
     }
   },
   props: ['questionId'],
@@ -35,9 +57,6 @@ export default {
     preview (questionId) {
       this.showPreview = true;
       this.previewId = questionId;
-      // this.previewDoc = doc;
-
-      // document.getElementById('#qs-preview-box-content').innerHTML = '';
       this.$service.renderPagePC('#qs-preview-box-content', questionId);
       document.querySelector('#qs-preview-box-content .q-btns').style.display = 'none';
     },
@@ -72,12 +91,16 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
-        console.log("55555511111111111111")
         if (this.type == 1) {
           // 资料库问卷创建
           this.materialQuestion(data.id, data.title, data.description);
         } else {
-          this.liveMaterialQuestion(data.id, data.title, data.description);
+          if (!this.isPrevent) {
+            return;
+          }
+          this.dialogTongVisible = true;
+          this.questionDataInfo = data;
+          // this.sureMaterialPrize(data.id, data.title, data.description);
         }
       });
 
@@ -93,6 +116,14 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.ERROR, data => {
         console.log('问卷错误', data);
       });
+    },
+    sureMaterialPrize() {
+      if (this.sureChecked) {
+        this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
+        this.materialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
+      } else {
+        this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
+      }
     },
     createQuestion (id) {
       this.isCreate = true;
@@ -125,6 +156,7 @@ export default {
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$message.success('新建成功');
+        this.dialogTongVisible = false;
          this.$router.push({
             path: '/live/question',
             query: {
@@ -159,5 +191,23 @@ export default {
 <style lang="less">
   .qs-preview-box-content .cef-q-wrap{
     z-index: 3000;
+  }
+  .surePrize{
+    padding-bottom: 16px;
+    .textPrize{
+      padding-left: 50px;
+      p{
+        font-size: 16px;
+        color: #1A1A1A;
+        padding-bottom: 15px;
+      }
+      /deep/.el-checkbox__label{
+        color: #666;
+      }
+    }
+    .dialog-footer{
+      text-align: center;
+      margin-top: 20px;
+    }
   }
 </style>
