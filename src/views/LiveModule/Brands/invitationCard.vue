@@ -50,37 +50,37 @@
             </div>
           </el-form-item>
           <el-form-item label="标题">
-            <el-input
+            <VhallInput
               v-model.trim="formInvitation.title"
               maxlength="16"
               show-word-limit
               style="width: 320px"
-            ></el-input>
+            ></VhallInput>
           </el-form-item>
           <el-form-item label="主办方">
-            <el-input
+            <VhallInput
               v-model.trim="formInvitation.company"
               maxlength="10"
               show-word-limit
               style="width: 320px"
-            ></el-input>
+            ></VhallInput>
           </el-form-item>
           <el-form-item label="时间">
-            <el-input
+            <VhallInput
               v-model.trim="formInvitation.webinar_date"
               style="width: 320px"
-            ></el-input>
+            ></VhallInput>
           </el-form-item>
           <el-form-item label="地点">
-            <el-input
+            <VhallInput
               v-model.trim="formInvitation.location"
               maxlength="20"
               show-word-limit
               style="width: 320px"
-            ></el-input>
+            ></VhallInput>
           </el-form-item>
           <el-form-item label="简介">
-            <el-input
+            <VhallInput
               style="width: 320px"
               v-model.trim="formInvitation.desciption"
               type="textarea"
@@ -88,7 +88,7 @@
               :autosize="{ minRows: 5 }"
               resize="none"
               show-word-limit
-            ></el-input>
+            ></VhallInput>
           </el-form-item>
           <!-- <el-form-item label="隐藏水印">
                 <el-switch

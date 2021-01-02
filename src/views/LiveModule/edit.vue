@@ -6,7 +6,7 @@
       :rules="[
         { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
-        <el-input v-model.trim="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></el-input>
+        <VhallInput v-model.trim="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
           <el-col :span="11">
