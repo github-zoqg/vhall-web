@@ -29,28 +29,24 @@
           width="55">
         </el-table-column>
         <el-table-column
+          width="430"
           label="内容标题">
           <template slot-scope="scope">
             {{ scope.row.date }}
             <div class="content">
               <div class="imageBox">
-                <el-image :src='scope.row.img_url'>
-                  <div slot="error" class="image-slot">
-                    <img @click="preview(scope.row)" :src="defaultImg" alt="">
-                  </div>
-                </el-image>
+                <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                 <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
               </div>
               <div class="info">
                 <p class="name">{{ scope.row.name }}</p>
                 <p class="create-time">{{ scope.row.created_at }}</p>
-                <!-- <span class="tag">章节</span> -->
+                <span v-if="scope.row.doc_status" class="tag">章节</span>
               </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          width="180">
+        <el-table-column>
           <template slot-scope="{ column, $index }" slot="header">
             <el-select v-model="recordType" @change="typeChange(column, $index)">
               <el-option
@@ -66,7 +62,6 @@
 
         <el-table-column
           label="时长"
-          width="180"
           show-overflow-tooltip>
           <template slot-scope="scope">{{scope.row.duration}}</template>
         </el-table-column>
@@ -74,13 +69,12 @@
         <el-table-column
           prop="save_time"
           label="暂存至"
-          width="180"
           show-overflow-tooltip>
         </el-table-column>
 
         <el-table-column
-          label="操作"
           width="200"
+          label="操作"
           show-overflow-tooltip>
           <template slot-scope="scope">
             {{ scope.row.date }}
@@ -98,7 +92,14 @@
           </template>
         </el-table-column>
       </el-table>
-      <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center"></SPagination>
+      <SPagination
+        v-show="totalElement > pageSize"
+        :total="totalElement"
+        :page-size='pageSize'
+        :current-page='pageNum'
+        @current-change="currentChangeHandler"
+        align="center"
+      ></SPagination>
     </div>
     <!-- 编辑弹窗 -->
     <el-dialog
@@ -416,23 +417,29 @@ export default {
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toCreate() {
-      this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
+      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
+      window.open(routeData.href, '_blank');
     },
     toRecord() {
       this.$fetch('recordCheck', {
         webinar_id: this.webinar_id
       }).then(res => {
-        if (res.code == 12550) {
+        if (res.code == 512550) {
           this.$message.warning('该活动正在直播或录制中，无法重复发起')
         } else if (res.code == 200) {
           this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
         } else {
           this.$message.warning(res.msg)
         }
+      }).catch(err => {
+        if (res.code == 512550) {
+          this.$message.warning('该活动正在直播或录制中，无法重复发起')
+        }
       })
     },
     toTailoring(recordId, recordName){
-      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      window.open(routeData.href, '_blank');
     },
     toChapter(recordId){
       if (this.isDemand) {
@@ -549,6 +556,7 @@ export default {
         border-radius: 12px 0px 4px 0px;
         color: #fff;
         font-size: 12px;
+        padding-left: 8px;
         i{
           display: inline-block;
           width: 12px;
