@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="audienceBox">
     <pageTitle title="观众">
       <div slot="content">
         单个文件不可超过5000条数据，数据量较大时请拆分文件上传
@@ -11,11 +11,11 @@
         <div class="operaBox">
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
           <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
-          <el-button round @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
+          <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
           <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
           <el-link :href="downloadUrl" v-else>下载模板</el-link>
           <div class="searchBox">
-            <el-input
+            <VhallInput
               placeholder="搜索内容"
               v-model="query.keyword"
               clearable
@@ -26,7 +26,7 @@
                 slot="suffix"
                 @click="queryList">
               </i>
-            </el-input>
+            </VhallInput>
           </div>
         </div>
         <!-- 操作栏 -->
@@ -70,7 +70,7 @@
     <VhallDialog :title="groupDialog.title" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
       <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" :label-width="groupDialog.formLabelWidth">
         <el-form-item label="分组名：" prop="subject">
-          <el-input v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
+          <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
                     :minlength="1"/>
         </el-form-item>
       </el-form>
@@ -80,30 +80,30 @@
       </div>
     </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
-    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="680px">
+    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="544px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名：" prop="name">
-          <el-input v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="行业：" prop="industry">
-          <el-input v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="邮箱：" prop="email">
-          <el-input v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
+          <VhallInput v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
         <el-form-item label="手机号码：" prop="phone">
-          <el-input v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
+          <VhallInput v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
         </el-form-item>
         <el-form-item label="工号：" prop="job_number">
-          <el-input v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="其他：" prop="other">
-          <el-input v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
         <el-button type="primary" @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
+        <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
@@ -675,6 +675,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.audienceBox{
+  /deep/ .el-dialog__footer{
+    padding-top: 0;
+  }
+  /deep/ .el-table .el-button.el-button--text {
+    font-size: 14px;
+  }
+}
 .operaBox{
   overflow: hidden;
   margin-bottom: 20px;

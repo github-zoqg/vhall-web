@@ -149,6 +149,9 @@
     &:hover {
       border-color: #999;
     }
+    &:focus {
+      border-color: #999;
+    }
     &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
       color:    #999999;
     }

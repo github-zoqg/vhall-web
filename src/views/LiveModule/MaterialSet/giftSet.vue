@@ -79,7 +79,7 @@
              <el-switch v-model="scope.row.status" active-color="#FC5659" inactive-color="#CECECE" @change="changeGiftStatu(scope.row.status, scope.row.gift_id)"></el-switch>
            </template>
         </el-table-column> -->
-        <el-table-column label="操作">
+        <el-table-column label="操作" align="left">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
             <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
             <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
@@ -160,8 +160,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelBatchDelete">取 消</el-button>
         <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
+        <el-button @click="handleCancelBatchDelete">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
