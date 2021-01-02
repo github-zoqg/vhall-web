@@ -1,5 +1,5 @@
 <template>
-  <el-card class="data-usage">
+  <div class="data-usage">
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
       <el-col :span="6">
         <div class="top-item">
@@ -81,7 +81,7 @@
       </el-col>
     </el-row>
     <up-version ref="levelVersion" :title="title" :concurrentPrice="concurrentPrice"></up-version>
-  </el-card>
+  </div>
 </template>
 <script>
 import upVersion from './components/upversion';
@@ -219,6 +219,9 @@ export default {
 </script>
 <style lang="less" scoped>
 .data-usage {
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 4px;
   .row-top {
     background: #fff;
   }

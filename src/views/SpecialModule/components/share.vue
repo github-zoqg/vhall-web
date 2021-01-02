@@ -79,7 +79,7 @@ export default {
   },
   methods: {
     toShare() {
-      window.location.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://t.e.vhall.com/v3/#/live/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用', '_blank');
+      window.location.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://t.e.vhall.com/v3/#/lives/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用', '_blank');
     },
     copy(){
       const input = document.getElementById(this.linkId);

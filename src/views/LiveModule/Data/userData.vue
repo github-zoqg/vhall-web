@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       active: 2,
-      totalNum: 100,
+      totalNum: 0,
       isHandle: false,
       params: {}, //导出的时候用来记录参数
       activeName: '1',
@@ -285,7 +285,7 @@ export default {
       let paramsObj = {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,
-        service_names: this.activeName,
+        service_names: this.liveDetailInfo.webinar_state == 4 ? '2' : this.activeName,
         merge_type: formParams.merge_type ? 1 : 2,
         end_time: getRangeDays(1)
       };

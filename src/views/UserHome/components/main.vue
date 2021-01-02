@@ -201,7 +201,7 @@ export default {
     },
     toPageHandle(item) {
       let routerStr = `/lives/subscribe/${item.webinar_id}`;
-      // webinar_state =》 1 直播  2 预告  3 结束 4 点播 5 回放 [live/watch 观看页；live/room 发起页；subscribe 预告/结束页]
+      // webinar_state =》 1 直播  2 预告  3 结束 4 点播 5 回放 [lives/watch 观看页；lives/room 发起页；lives/subscribe 预告/结束页]
       if (item.webinar_state === 1) {
         routerStr = `/lives/watch/${item.webinar_id}`;
       } else if  (item.webinar_state === 2) {
@@ -217,10 +217,12 @@ export default {
         let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
         window.open(routeData.href, '_blank');
       } else {
-        let routeData = this.$router.resolve({
+       /*  let routeData = this.$router.resolve({
           path: routerStr
         });
-        window.open(routeData.href, '_blank');
+         window.open(routeData.href, '_blank');*/
+        let url = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}${routerStr}`;
+        window.open(url, '_blank');
       }
     },
     initComp(vo) {

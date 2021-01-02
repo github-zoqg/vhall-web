@@ -41,7 +41,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
-      <el-button v-preventReClick @click="dialogVisible = false" round>取 消</el-button>
+      <el-button @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
     <VhallDialog
@@ -389,7 +389,7 @@ export default {
   /deep/.el-button.is-round {
     padding: 9px 32px;
   }
-} 
+}
    /deep/.el-upload{
      border: 1px solid #ccc;
    }

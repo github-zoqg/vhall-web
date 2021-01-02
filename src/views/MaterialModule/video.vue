@@ -11,7 +11,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
-      <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!this.checkedList.length">批量删除</el-button>
+      <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <search-area class="head-btn fr search"
         ref="searchArea"
         :placeholder="`请输入音视频名称`"
@@ -40,6 +40,18 @@
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
       </el-dialog>
     </template>
+    <!-- 编辑功能 -->
+    <!-- <template v-if="editShowDialog">
+      <el-dialog class="vh-dialog" title="编辑" :visible.sync="editShowDialog" :before-close='closeBefore' width="200px" center>
+        <div class="main-edit">
+          <el-input v-model.trim="videoName" type="text" placeholder="请输入名称" @keyup.enter.native="changeValue"></el-input>
+        </div>
+        <div class="dialog-footer">
+          <el-button size="medium" type="primary" @click="sureMaterialVideo" v-preventReClick round>确 定</el-button>
+          <el-button size="medium"  @click="editShowDialog=false"  round>取 消</el-button>
+       </div>
+      </el-dialog>
+    </template> -->
   </div>
 </template>
 <script>
@@ -55,6 +67,9 @@ export default {
       // 预览
       showDialog: false,
       isSearch: false,
+      videoName: '',
+      videoId: '',
+      editShowDialog: false,
       nullText: 'nullData',
       text: '暂未上传音视频',
       videoParam: {},
@@ -278,20 +293,26 @@ export default {
       that.$prompt('', '编辑',{
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          inputPlaceholder: '请输入名称',
-          inputErrorMessage: '名字格式不正确'
+          showInput: true,
+          inputPlaceholder: '请输入名称'
         }).then(({ value }) => {
-          let flag = Boolean(value.match(/[ ]*$/));
-          if(!flag && value!=null){
-            that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: this.userId, filename: value}).then(res=>{
-              that.$message.success('修改成功');
-              that.getTableList();
+          let regStr = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi;
+          value = value.replace(regStr, "");
+          if(value){
+            that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: that.userId, filename: value}).then(res=>{
+              if (res.code == 200) {
+                that.$message.success('修改成功');
+                that.getTableList();
+              }
             });
+          } else {
+            that.$message.error('名称格式不正确');
+            return
           }
         }).catch(() => {});
     },
     confirmDelete(id) {
-      this.$confirm('确定要删除此视频或音频吗?', '提示', {
+      this.$confirm('是否删除该视频？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',

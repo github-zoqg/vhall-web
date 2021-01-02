@@ -28,6 +28,9 @@
     <template v-if="isShowQuestion">
       <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
         <pre-question  :questionId="questionId"></pre-question>
+        <div class="submit-footer">
+          <el-button class="length152" type="primary" size="medium" @click="isShowQuestion=false" round>提交</el-button>
+        </div>
       </el-dialog>
     </template>
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
@@ -49,6 +52,7 @@ export default {
       text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
+      loading: true,
       isShowQuestion: false,
       questionId: '',
       tabelColumn: [
@@ -138,17 +142,40 @@ export default {
     },
     // 编辑
     edit(that, {rows}) {
-      console.log('编辑', rows);
-      that.$router.push({
-        path: '/live/addQuestion',
-        query: {
-          questionId: rows.question_id,
-          webinarId: that.$route.query.id,
-          roomId: that.$route.query.roomId,
-          type: 2
-        }
-        }
-      );
+      if (rows.publish) {
+        that.$confirm('当前问卷已被推送，修改将影响之前收集的数据，确认修改?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
+        }).then(() => {
+          that.$router.push({
+            path: '/live/addQuestion',
+            query: {
+                questionId: rows.question_id,
+                webinarId: that.$route.query.id,
+                roomId: that.$route.query.roomId,
+                type: 2
+              }
+            }
+          );
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消修改'
+          });
+        });
+      } else {
+        that.$router.push({
+          path: '/live/addQuestion',
+          query: {
+              questionId: rows.question_id,
+              webinarId: that.$route.query.id,
+              roomId: that.$route.query.roomId,
+              type: 2
+            }
+          }
+        );
+      }
     },
     // 删除
     del(that, {rows}) {
@@ -224,6 +251,9 @@ export default {
         border-radius: 18px;
       }
     }
+  }
+  .submit-footer{
+    text-align: center;
   }
 }
 </style>

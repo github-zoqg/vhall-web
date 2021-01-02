@@ -16,15 +16,15 @@
               <br/>
               封面
             </span>
-            <span>
-              <i class="el-icon-delete" @click.stop="deletes"></i>
-              <br/>
-              删除
-            </span>
             <span v-if="!!$props.restPic">
               <i class="el-icon-refresh-left" @click.self="refresh($event)"></i>
               <br/>
               重置
+            </span>
+             <span>
+              <i class="el-icon-delete" @click.stop="deletes"></i>
+              <br/>
+              删除
             </span>
           </div>
         </div>
