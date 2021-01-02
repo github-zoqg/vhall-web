@@ -10,7 +10,7 @@
       :close-on-click-modal="false"
       width="400px"
     >
-      <div class="surePrize">
+      <div class="sureQuestion">
         <div class="textPrize">
           <p>确定保存当前问卷？</p>
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
@@ -108,7 +108,7 @@ export default {
         if (this.type == 1) {
           // 资料库问卷编辑
           this.materialEditQuestion(data.id, data.title, data.description);
-        } else if (this.type == 2) {
+        } {
           this.liveMaterialEditQuestion(data.id, data.title, data.description);
         }
       });
@@ -119,8 +119,8 @@ export default {
     },
     sureMaterialPrize() {
       if (this.sureChecked) {
-        this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
         this.materialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
+        this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       } else {
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       }
@@ -157,13 +157,16 @@ export default {
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$message.success('新建成功');
         this.dialogTongVisible = false;
-         this.$router.push({
+        if (this.type == 1) {
+          this.$router.push({
             path: '/live/question',
             query: {
               id: this.$route.query.webinarId,
               roomId: this.$route.query.roomId
             }
           });
+        }
+
       })
     },
     liveMaterialEditQuestion(id, title, description) {
@@ -192,7 +195,7 @@ export default {
   .qs-preview-box-content .cef-q-wrap{
     z-index: 3000;
   }
-  .surePrize{
+  .sureQuestion{
     padding-bottom: 16px;
     .textPrize{
       padding-left: 50px;
@@ -203,6 +206,13 @@ export default {
       }
       /deep/.el-checkbox__label{
         color: #666;
+      }
+      /deep/.el-checkbox__input.is-checked+.el-checkbox__label{
+        color: #666;
+      }
+      /deep/.el-checkbox__input.is-checked .el-checkbox__inner,{
+        background-color: #FB3A32;
+        border-color: #FB3A32;
       }
     }
     .dialog-footer{
