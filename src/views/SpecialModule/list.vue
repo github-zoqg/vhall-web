@@ -38,7 +38,7 @@
     <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
-          <div class="top">
+          <div class="top" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
@@ -211,9 +211,8 @@ export default {
     },
     // 预览页面
     specialDetail(item) {
-      this.$router.push({ path: '/special/detail', query: {id: item.id } });
-      // let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
-      // window.open(routeData.href, '_blank');
+      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+      window.open(routeData.href, '_blank');
     }
   },
   filters: {
@@ -347,6 +346,7 @@ export default {
         box-sizing: border-box;
         position: relative;
         border-radius: 4px;
+        cursor: pointer;
         img{
           width: 100%;
           height: 100%;

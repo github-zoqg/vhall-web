@@ -26,14 +26,14 @@
                       <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                     </el-form-item>
                     <el-form-item label="固定文本">
-                      <el-input
+                      <VhallInput
                         v-model="formHorse.text"
                         class="textType"
                         placeholder="版权所有，盗版必究"
                         :disabled="!scrolling_open"
                         maxlength="20"
                         show-word-limit
-                      ></el-input>
+                      ></VhallInput>
                     </el-form-item>
                     <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:323px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                     <el-form-item label="字体大小">

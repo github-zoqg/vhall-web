@@ -210,7 +210,7 @@ export default {
       /deep/.el-checkbox__input.is-checked+.el-checkbox__label{
         color: #666;
       }
-      /deep/.el-checkbox__input.is-checked .el-checkbox__inner,{
+      /deep/.el-checkbox__input.is-checked .el-checkbox__inner{
         background-color: #FB3A32;
         border-color: #FB3A32;
       }
