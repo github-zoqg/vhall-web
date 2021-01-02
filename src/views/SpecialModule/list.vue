@@ -81,9 +81,9 @@
       title="分享"
       :visible.sync="dialogShareVisible"
       :close-on-click-modal="false"
-      width="450px">
+      width="500px">
       <div class="content">
-        <share slot="content" :url="home_link"></share>
+        <share slot="content" :shareVo="shareVo"></share>
       </div>
    </VhallDialog>
   </div>
@@ -107,7 +107,9 @@ export default {
       pageSize: 12,
       pageNum: 1,
       pos: 0,
-      home_link: '',
+      shareVo: {
+        url: ''
+      },
       totalElement: 0,
       liveDropDownVisible: false,
       orderOptions: [
@@ -204,12 +206,14 @@ export default {
     },
     toShare(id) {
       this.dialogShareVisible = true;
-      this.home_link = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
+      this.shareVo.url = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
+      // console.log(this.home_link, '?????????????????')
     },
     // 预览页面
     specialDetail(item) {
-      let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
-      window.open(routeData.href, '_blank');
+      this.$router.push({ path: '/special/detail', query: {id: item.id } });
+      // let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
+      // window.open(routeData.href, '_blank');
     }
   },
   filters: {
