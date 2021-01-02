@@ -28,6 +28,9 @@
     <template v-if="isShowQuestion">
       <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
         <pre-question  :questionId="questionId"></pre-question>
+        <div class="submit-footer">
+          <el-button class="length152" type="primary" size="medium" @click="isShowQuestion=false" round>提交</el-button>
+        </div>
       </el-dialog>
     </template>
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
@@ -49,6 +52,7 @@ export default {
       text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
+      loading: true,
       isShowQuestion: false,
       questionId: '',
       tabelColumn: [
@@ -224,6 +228,9 @@ export default {
         border-radius: 18px;
       }
     }
+  }
+  .submit-footer{
+    text-align: center;
   }
 }
 </style>
