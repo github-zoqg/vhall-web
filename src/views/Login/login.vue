@@ -102,7 +102,7 @@
      </div>
     </div>
     <!-- 注册 -->
-    <div class="login-box" v-else>
+    <div class="login-box register" v-else>
       <h3>欢迎注册微吼直播</h3>
       <div class="login-line"></div>
       <div class="form-items">
@@ -523,6 +523,9 @@ export default {
   top: 51%;
   margin-left: -170px;
   transform: translateY(-50%);
+  &.register {
+    top: 48%;
+  }
 }
 
 .login-box h3 {
