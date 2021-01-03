@@ -18,7 +18,7 @@
               @mouseout="hidePop(index)"
             >
               <span class="vh-mobile-menus-item_name" :class="{'blur': item.status == 2}">
-                {{ item.name }} {{ index }}
+                {{ item.name }}
               </span>
               <!-- 浮层编辑菜单 -->
               <div class="vh-mobile-menus-item__popmenu" v-show="item.show">
