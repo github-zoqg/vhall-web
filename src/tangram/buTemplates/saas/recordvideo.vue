@@ -208,7 +208,7 @@
             :editorAble="mediaSettingVisible"
             :roleName="roleName"
             :isInteract="false"
-            :layout="roomStatus.layout"
+            :layout="roomInfo.webinar.mode"
             :vssToken="vssToken"
             :roomId="roomInfo.interact.room_id"
             :visible="mediaSettingVisible"
@@ -281,7 +281,7 @@
           :mainScreen="mainScreen"
           :miniElement="miniElement"
           :isInteract="isInteract"
-          :layout="roomStatus.layout"
+          :layout="roomInfo.webinar.mode"
         >
           <!-- 互动区域 -->
           <Interactive
@@ -300,7 +300,7 @@
             :speakerList="speakerList"
             :role="role"
             :roleName="roomInfo.join_info.role_name"
-            :layout="roomStatus.layout"
+            :layout="roomInfo.webinar.mode"
             :status="status"
             :isInteract="isInteract"
             :webinarId="ilId"

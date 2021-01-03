@@ -62,7 +62,7 @@ const router = [
       {
         path: 'chooseWay/:str/:role?',
         component: () => import('@/views/LiveModule/chooseWay'),
-        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', activeMenu: '/live/list' },
+        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list' },
         hidden: true
       },
       {

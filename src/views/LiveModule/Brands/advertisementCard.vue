@@ -5,11 +5,11 @@
     </div>
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
-        <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建</el-button>
+        <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建广告</el-button>
         <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
-        <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" v-preventReClick>批量删除</el-button>
+        <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
         <span class="searchTitle">
-          <el-input v-model.trim="paramsObj.keyword" placeholder="请输入标题"
+          <el-input v-model.trim="paramsObj.keyword" placeholder="请输入广告标题"
           suffix-icon="el-icon-search" clearable @change="initPage()"></el-input>
         </span>
       </div>
@@ -20,6 +20,7 @@
           :tabelColumnLabel="tabelColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="total"
+          :width="120"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getAdvTableList"
           @changeTableCheckbox="changeTableCheckbox"
@@ -28,11 +29,11 @@
       </div>
       <div class="no-live" v-show="!total">
         <noData :nullType="nullText" :text="text">
-          <el-button type="primary" v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
-          <el-button type="primary" round v-if="nullText == 'nullData' && $route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
+          <el-button type="primary"  v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
+          <el-button size="white-primary" round v-if="nullText == 'nullData' && $route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
         </noData>
       </div>
-      <create-advise ref="adviseSonChild" :title="title" :advInfo="advInfo" @reload="initPage"></create-advise>
+      <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList"></create-advise>
     </div>
   </div>
 </template>
@@ -42,7 +43,6 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   data() {
     return {
-      title: '创建',
       advInfo: {},
       adv_ids: [],
       paramsObj: {
@@ -94,12 +94,6 @@ export default {
     this.getAdvTableList();
   },
   methods: {
-    initPage() {
-      this.getAdvTableList();
-      // this.$refs.tableList.clearSelection();
-      this.pos = 0;
-      this.limit = 10;
-    },
     getAdvTableList() {
        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       if (this.paramsObj.keyword) {
@@ -132,8 +126,8 @@ export default {
       methodsCombin[val.type](this, val);
     },
     edit(that, { rows }) {
-      that.title = '编辑';
       that.advInfo = rows;
+      console.log(that.advInfo, '?????????????')
       that.$refs.adviseSonChild.dialogVisible = true;
     },
     delete(that, { rows }) {
@@ -154,7 +148,7 @@ export default {
               // 刷新页面
             this.adv_ids = [];
             this.$refs.tableList.clearSelect();
-            this.initPage();
+            this.getAdvTableList();
           } else {
             this.$message.error(res.msg || '删除失败');
           }
@@ -175,7 +169,10 @@ export default {
       this.adv_ids = val.map(item => item.adv_id);
     },
     createAdvise(title) {
-      this.title = '创建';
+      if (this.$route.path !='/material/advertCard' && this.tableList.length == 50) {
+         this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        return;
+      }
       this.advInfo = {};
       this.$refs.adviseSonChild.dialogVisible = true;
     },
@@ -216,7 +213,7 @@ export default {
     }
     .searchTitle{
       float: right;
-      width: 200px;
+      width: 220px;
       /deep/.el-button{
         border-radius: 20px;
       }

@@ -25,6 +25,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          :picker-options="pickerOptions"
           style="width: 240px;margin-right: 20px;"
           v-if="title==='聊天' || title==='问答'"
         />
@@ -79,6 +80,12 @@ export default {
       seleteAnwerList: [], //答案
       seleteQuestionList: [],//问题
       totalNum: 0,
+      pickerOptions: {
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
+        }
+      },
       tableList: [
       ],
       tabelColumn:[],
@@ -118,7 +125,7 @@ export default {
         },
         {
           label: '接收方',
-          key: 'revice',
+          key: 'accept_name',
           width:100
         },
       ],
@@ -266,6 +273,9 @@ export default {
     this.changeColumn(this.title);
   },
   methods: {
+     dealDisabledData(time) {
+      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+    },
     emojiToText (content) {
       return textToEmoji(content).map(c => {
         return c.msgType == 'text'
@@ -370,8 +380,8 @@ export default {
         pageInfo.pos = 0;
         pageInfo.pageNum= 1;
         this.$refs.tableList.clearSelect();
-        params.start_time = this.searchTime[0];
-        params.end_time = this.searchTime[1];
+        params.start_time = this.searchTime[0] + '00:00:00';
+        params.end_time = this.searchTime[1] + '23:59:59';
       }
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getChatListInfo', obj).then(res => {
@@ -391,7 +401,7 @@ export default {
             item.chatImg = '';
           }
           item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
-          item.revice = '主持人';
+          // item.revice = '主持人';
         })
         this.totalNum = res.data.total;
         if(this.searchTime) {
@@ -416,7 +426,7 @@ export default {
     },
     //删除聊天（二次确认）
     chatConfirmSure(id) {
-      this.$confirm('确定要删除该文件吗?', '提示', {
+      this.$confirm('确定要删除该聊天记录吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
@@ -459,7 +469,7 @@ export default {
     },
     // 问答批量删除
     recordAllDelete() {
-      this.$confirm('确定要删除该文件吗?', '提示', {
+      this.$confirm('是否要删除此条问答？?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'
@@ -604,13 +614,15 @@ export default {
         // })
         let tableList = res.data.list;
         tableList.map((item, index) => {
-          item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '转给主持人 即语音回复' : item.status == 3 ? '文字回复' : '未处理';
+          item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '语音回复' : item.status == 3 ? '文字回复' : '未处理';
           item.name = '问';
+          item.content = `${item.content} | 观众`;
           this.tableList.push(item);
           if (item.answer.length) {
             item.answer.map(opt => {
               opt.is_open = opt.is_open == 1 ? '公开' : '私密';
               opt.name = '答';
+              opt.content = `${opt.content} | ${opt.role_name}`;
               this.tableList.push(opt);
             })
           }

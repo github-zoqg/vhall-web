@@ -644,7 +644,7 @@
                 this.getWebinarStatus()
               }
             }).catch(err => {
-              if (err.code == 512809 || (err.code == 600 && (err.msg.indexOf("验证码格式错误") > 0))) {
+              if (err.code == 12809 || (err.code == 600 && (err.msg.indexOf("验证码格式错误") > 0))) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -683,7 +683,7 @@
                 }
               }
             }).catch(err => {
-              if (res.code == 512809 || (res.code == 600 && (res.msg.indexOf("验证码格式错误") > 0))) {
+              if (res.code == 12809 || (res.code == 600 && (res.msg.indexOf("验证码格式错误") > 0))) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true

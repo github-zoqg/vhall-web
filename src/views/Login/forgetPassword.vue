@@ -1,145 +1,145 @@
 <template>
   <div class="forget-password">
-    <OldHeader></OldHeader>
-    <div class="container">
-      <div class="find-my-pwd">
-        <h3>找回密码</h3>
-        <ul class="find-pwd-steps">
-          <li :class="findStep > 0 ? 'isActive' : ''">
-            <span class="step-num">1</span>
-            选择找回方式
-            <span class="step-arrow"><icon icon-class="saasicon-test"></icon></span>
-          </li>
-          <li :class="findStep > 1 ? 'isActive' : ''">
-            <span class="step-num">2</span>
-            验证用户身份
-            <span class="step-arrow"><icon icon-class="saasicon-test"></icon></span>
-          </li>
-          <li :class="findStep > 2 ? 'isActive' : ''">
-            <span class="step-num">3</span>
-            设置新密码
-            <span class="step-arrow"><icon icon-class="saasicon-test"></icon></span>
-          </li>
-          <li :class="findStep > 3 ? 'isActive' : ''">
-            <span class="step-num">4</span>
-            完成
-            <span class="step-arrow"></span>
-          </li>
-        </ul>
-        <div class="find-use-ways">
-        <div class="step-1" v-if="findStep===1">
+    <OldHeader :isShowLogin=false></OldHeader>
+    <div class="section__main">
+      <pageTitle title="找回密码"></pageTitle>
+      <div class="forget__layout">
+        <el-steps :active="findStep" class="forget__step" align-center>
+          <el-step title="选择找回方式">
+            <img src="../../common/images/login/step_doing.png" class="step__default active" slot="icon" alt="" v-if="findStep === 1"/>
+            <img src="../../common/images/login/step_done.png" class="step__default active" slot="icon" alt="" v-else-if="findStep <= 4 && findStep > 1"/>
+            <img src="../../common/images/login/step_default.png" class="step__default" slot="icon" alt="" v-else/>
+          </el-step>
+          <el-step title="验证身份">
+            <img src="../../common/images/login/step_doing.png" class="step__default active" slot="icon" alt="" v-if="findStep === 2"/>
+            <img src="../../common/images/login/step_done.png" class="step__default active" slot="icon" alt="" v-else-if="findStep <= 4 && findStep > 2"/>
+            <img src="../../common/images/login/step_default.png" class="step__default" slot="icon" alt="" v-else/>
+          </el-step>
+          <el-step title="设置新密码">
+            <img src="../../common/images/login/step_doing.png" class="step__default active" slot="icon" alt="" v-if="findStep === 3"/>
+            <img src="../../common/images/login/step_done.png" class="step__default active" slot="icon" alt="" v-else-if="findStep <= 4 && findStep > 3"/>
+            <img src="../../common/images/login/step_default.png" class="step__default" slot="icon" alt="" v-else/>
+          </el-step>
+          <el-step title="设置成功">
+            <img src="../../common/images/login/step_doing.png" class="step__default active" slot="icon" alt="" v-if="findStep === 4"/>
+            <img src="../../common/images/login/step_default.png" class="step__default" slot="icon" alt="" v-else/>
+          </el-step>
+        </el-steps>
+        <!-- 第一步 -->
+         <div class="step-1" v-if="findStep===1">
           <div class="step-ways">
             <div class="step-phone" @click="findPassword('phone')">
-              <div class="phone"><i class="el-icon-mobile-phone"></i> 通过手机找回</div>
+              <div class="phone"><i class="icon-step-phone"></i> 通过手机找回</div>
               <p class="text">通过注册时填写的手机号找回</p>
             </div>
             <div class="step-email" @click="findPassword('email')">
-              <div class="phone"><i class="el-icon-message"></i> 通过邮箱找回</div>
+              <div class="phone"><i class="icon-step-email"></i> 通过邮箱找回</div>
               <p class="text">通过注册时填写的邮箱找回</p>
             </div>
           </div>
           <div class="care_div">
-            <icon icon-class="saasweibiaoti1"></icon>
-            注意：子账号找回密码请直接联系父账号所有者
+            <span class="step__warning"></span><span>注意：子账号找回密码请直接联系父账号所有者</span>
           </div>
         </div>
+        <!-- 第二步 -->
         <div class="step-2" v-if="findStep===2">
           <div class="find-phone" v-if="isType==='phone'">
             <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email')">邮箱找回密码</span></p>
-            <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules" label-width="120px">
-            <el-form-item label="手机号码："  prop="phone">
+            <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
+            <el-form-item prop="phone">
               <el-input
                 placeholder="请输入手机号"
                 maxlength="11"
-                style="width:270px"
                 v-model="dynamicForm.phone">
               </el-input>
-              <span class="freeCode" @click="getDyCode">{{ time == 60 ? '免费获取验证码' : `${time}秒后发送` }}</span>
             </el-form-item>
-            <el-form-item label="图形验证码：">
+            <el-form-item>
               <div id="loginCaptcha" class="findCaptcha">
                 <el-input
-                style="width:270px"
                   v-model="dynamicForm.text">
                 </el-input>
               </div>
             </el-form-item>
-            <el-form-item prop="code" label="手机验证码：">
-              <el-input
-                placeholder="输入验证码"
-                style="width:270px"
-                v-model="dynamicForm.code">
-              </el-input>
+            <el-form-item prop="code">
+              <div class="code">
+                <el-input
+                  placeholder="输入验证码"
+                  clearable
+                  v-model="dynamicForm.code">
+                  <template slot="append">
+                    <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  </template>
+                </el-input>
+              </div>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click.stop="sureFindPassword()">确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" class="length152" @click.stop="sureFindPassword()" round>确&nbsp;&nbsp;&nbsp;认</el-button>
             </div>
           </el-form>
           </div>
           <div class="find-phone" v-if="isType==='email'">
             <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone')">手机找回密码</span></p>
-            <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules" label-width="120px">
-            <el-form-item label="邮箱：" prop="email">
+            <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
+            <el-form-item prop="email">
               <el-input
                 placeholder="请输入邮箱"
-                style="width:270px"
                 v-model="dynamicForm.email">
+                <template slot="append">
+                    <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  </template>
               </el-input>
-              <span class="freeCode" @click="getDyCode">{{ time == 60 ? '免费获取验证码' : `${time}秒后发送` }}</span>
             </el-form-item>
-            <el-form-item prop="code" label="邮箱验证码：">
+            <el-form-item prop="code">
               <el-input
                 placeholder="输入邮箱验证码"
-                style="width:270px"
                 v-model="dynamicForm.code">
               </el-input>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click="sureFindPassword">确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" class="length152" @click="sureFindPassword" round>确&nbsp;&nbsp;&nbsp;认</el-button>
             </div>
           </el-form>
           </div>
         </div>
+        <!-- 第三步 -->
         <div class="step-3" v-if="findStep===3">
-          <el-form ref="resetPassword" :model="dynamicForm" :rules="loginRules" label-width="100px">
-            <el-form-item label="新密码：" prop="password">
+          <el-form ref="resetPassword" :model="dynamicForm" :rules="loginRules">
+            <el-form-item prop="password">
               <el-input
                 placeholder="请输入新密码"
-                style="width:270px"
                 type="password"
                 v-model="dynamicForm.password">
               </el-input>
             </el-form-item>
-            <el-form-item prop="checkPossword" label="确认密码：">
+            <el-form-item prop="checkPassword">
               <el-input
                 placeholder="请再次输入密码"
-                style="width:270px"
                 type="password"
                 v-model="dynamicForm.checkPassword">
               </el-input>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" @click="resetPassword()">确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" class="length152" @click="resetPassword()" round>提&nbsp;&nbsp;&nbsp;交</el-button>
             </div>
           </el-form>
         </div>
+        <!-- 第四步 -->
         <div class="step-4" v-if="findStep===4">
-          <div class="possword-success">
-            <i class="el-icon-success"></i>
-            密码重置成功
-          </div>
+          <i class="icon-set-success"></i>
+          <h3>新密码设置成功</h3>
+          <p><strong>5秒</strong>后跳转登录页面</p>
         </div>
       </div>
-      </div>
-
     </div>
   </div>
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
+import PageTitle from '@/components/PageTitle';
 export default {
   components: {
-    OldHeader
+    OldHeader,
+    PageTitle
   },
   data() {
     let validatePhone = (rule, value, callback) => {
@@ -148,6 +148,16 @@ export default {
       } else {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
+        }
+        callback();
+      }
+    };
+    let validateEmail = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入邮箱'));
+      } else {
+        if (!(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(value))) {
+          callback(new Error('请输入正确的邮箱'));
         }
         callback();
       }
@@ -173,6 +183,9 @@ export default {
       loginRules: {
         phone: [
           { validator: validatePhone, trigger: 'blur' }
+        ],
+        email: [
+          { validator: validateEmail, trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
@@ -201,19 +214,38 @@ export default {
     },
     // 第二步获取短信验证码
     getDyCode() {
-      if (this.checkMobile()) {
-        if (!this.mobileKey) {
-          this.$message.error('请先校验图形验证码');
+      if (this.isType === 'phone') {
+        if (this.checkMobile()) {
+          if (!this.mobileKey) {
+            this.$message.error('请先校验图形验证码');
+            return;
+          }
+          this.$fetch('sendCode', {
+            type: this.isType === 'phone' ? 1 : 2,
+            data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
+            validate: this.mobileKey,
+            scene_id: this.isType === 'phone' ? 5 : 4
+          }).then(() => {
+            this.countDown();
+          });
+        } else {
+          this.$message.error('请检查手机号是否输入正确');
           return;
         }
-        this.$fetch('sendCode', {
+      } else if (this.isType === 'email') {
+        if(this.checkEmail()) {
+          this.$fetch('sendCode', {
           type: this.isType === 'phone' ? 1 : 2,
           data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
           validate: this.mobileKey,
           scene_id: this.isType === 'phone' ? 5 : 4
         }).then(() => {
-          this.countDown();
-        });
+            this.countDown();
+          });
+        } else {
+          this.$message.error('请检查邮箱是否输入正确');
+          return;
+        }
       }
     },
     // 第二步确定 检测短信验证码
@@ -287,6 +319,9 @@ export default {
     checkMobile() {
       return /^1[0-9]{10}$/.test(this.dynamicForm.phone);
     },
+    checkEmail() {
+      return /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(this.dynamicForm.email);
+    },
     // checkPassWord() {
     //   return /^(\w){6,20}$/.test(this.loginForm.password);
     // },
@@ -325,162 +360,225 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.forget-password {
-  background: #f8f8f8;
-  .container{
-    width: 960px;
-    padding: 0 15px;
-    margin: 0 auto;
-    .find-my-pwd{
-      width: 796px;
-      border: 1px solid #d4d3d3;
-      margin: 0 auto;
-      padding: 30px;
-      overflow: hidden;
-      background-color: #fff;
-      height: 420px;
-      h3{
-        font-size: 16px;
-      }
-      .find-pwd-steps{
+.section__main {
+  padding-top: 40px;
+  width: 1020px;
+  height: auto;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+@media (min-width: 1920px) {
+  .section__main {
+    width: 1374px;
+  }
+}
+.forget__layout {
+  .layout--right--main();
+  min-height: 601px;
+  padding: 130px 255px 175px 255px;
+}
+.forget__step {
+  .step__default {
+    display: block;
+    width: 14px;
+    height: 14px;
+    &.active {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  /deep/.el-step__icon.is-text {
+    border : 0;
+  }
+}
+/deep/.el-step__line {
+  background-color: #E2E2E2;
+}
+/deep/.el-step__title {
+  &.is-process, &.is-finish, &.is-wait, &.is-error, &.is-success {
+    font-size: 14px;
+    font-weight: 400;
+    color: #222222;
+    line-height: 26px;
+  }
+}
+
+.step-1{
+  overflow: hidden;
+  margin: 64px auto 0;
+  .step-ways{
+    display: flex;
+    justify-content: space-around;
+    .step-phone, .step-email{
+      text-align: center;
+      .phone {
         overflow: hidden;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 10px;
-        width: 700px;
-        margin: 5px auto;
-        display: flex;
-        justify-content: space-between;
-        li{
-          list-style: none;
-          font-size: 18px;
-          color: #808080;
-          line-height: 26px;
-          &.isActive{
-            color: #7abd54;
-            .step-num{
-              background: #7abd54;
-              color: #fff;
-            }
-          }
-        }
-        .step-num{
-          // color: #fff;
-          font-size: 22px;
-          font-family: Arial;
-          width: 25px;
-          height: 26px;
+        cursor: pointer;
+        width: 203px;
+        height: 63px;
+        background: #FFFFFF;
+        box-shadow: 0px 6px 12px 0px rgba(132, 132, 132, 0.16);
+        border-radius: 4px;
+        border: 1px solid #F5F5F5;
+        line-height: 63px;
+        font-size: 16px;
+        font-weight: 400;
+        color: #222222;
+        i {
           display: inline-block;
-          margin-right: 6px;
-          text-align: center;
-          line-height: 28px;
-          background: #ccc;
-          border-radius: 50%;
         }
-        .step-arrow{
-          color: #ccc;
-          /deep/.svg-icon{
-            width: 2em;
-            font-size: 30px;
-            color: #ccc;
-            vertical-align: middle;
-          }
+        .icon-step-phone {
+          width: 19px;
+          height: 28px;
+          vertical-align: middle;
+          margin-right: 21px;
+          background: url('../../common/images/login/step_phone.png') no-repeat;
+          background-size: cover;
         }
-      }
-      .find-use-ways{
-        .el-form-item{
-            margin-bottom: 18px;
-          }
-        .step-1{
-          overflow: hidden;
-          margin: 88px auto 0;
-          width: 540px;
-          .step-ways{
-            display: flex;
-            justify-content: space-around;
-            .step-phone, .step-email{
-              text-align: center;
-              .phone {
-                width: 210px;
-                height: 70px;
-                line-height: 70px;
-                border: 1px solid #d4d3d3;
-                background-color: #f5f5f5;
-                overflow: hidden;
-                cursor: pointer;
-                i{
-                  color: #7abd54;
-                }
-              }
-              .text{
-                color: #969696;
-                font-size: 13px;
-                line-height: 30px;
-              }
-            }
-          }
-          .care_div{
-            text-align: center;
-            padding-top: 40px;
-            /deep/.svg-icon{
-              width: 2em;
-              font-size: 24px;
-              color: #e33836;
-              vertical-align: middle;
-            }
-            color: #e33836;
-            font-size: 16px;
-          }
-        }
-        .step-2{
-          padding-top: 25px;
-          .find-phone{
-            .find-text{
-              text-align: center;
-              font-size: 13px;
-              color: #969696;
-              line-height: 30px;
-              padding-bottom: 5px;
-              span{
-                color: #d10714;
-                cursor: pointer;
-              }
-            }
-            .freeCode{
-              padding: 8px 10px;
-              margin-left: 10px;
-              border: 1px solid #d4d3d3;
-              background: #f5f5f5;
-              color: #383838;
-              font-size: 12px;
-              cursor: pointer;
-            }
-            .findCaptcha{
-              width: 270px;
-              height: 36px;
-            }
-            .login-btn{
-              margin-left: 100px;
-            }
-          }
-        }
-        .step-3{
-          padding-top: 30px;
-          .login-btn{
-            padding-left: 100px;
-          }
-        }
-        .step-4{
-          padding-top: 50px;
-          .possword-success{
-            text-align: center;
-            font-size: 20px;
-            i{
-              color: #7abd54;
-              font-size: 24px;
-            }
-          }
+        .icon-step-email {
+          width: 28px;
+          height: 22px;
+          vertical-align: middle;
+          margin-right: 11px;
+          background: url('../../common/images/login/step_mail.png') no-repeat;
+          background-size: cover;
         }
       }
+      .text{
+        font-size: 12px;
+        font-weight: 400;
+        color: #999999;
+        line-height: 17px;
+        margin-top: 15px;
+      }
+    }
+  }
+  .care_div{
+    font-size: 12px;
+    font-weight: 400;
+    color: #FB3A32;
+    line-height: 17px;
+    text-align: center;
+    margin-top: 64px;
+    .step__warning {
+      display: inline-block;
+      vertical-align: text-bottom;
+      width: 19px;
+      height: 17px;
+      margin-right: 5px;
+      background: url('../../common/images/login/step_warning.png') no-repeat;
+      background-size: cover;
+    }
+  }
+}
+
+.step-2 {
+  text-align: center;
+  width: 450px;
+  margin: 50px auto;
+  .find-text {
+    font-size: 12px;
+    font-weight: 400;
+    color: #999999;
+    line-height: 17px;
+    margin-bottom: 10px;
+    text-align: left;
+    span {
+      color: #4DA1FF;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+  }
+  /deep/.el-form-item {
+    margin-bottom: 32px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    /deep/.el-input__inner {
+      height: 40px;
+      line-height: 40px;
+    }
+  }
+  /deep/.el-input-group__append {
+    border: 0;
+    position: absolute;
+    bottom: 4px;
+    right: 0;
+    cursor: pointer;
+    span {
+      border: 0;
+      position: absolute;
+      bottom: -1px;
+      right: 3px;
+      width: 90px;
+      background: #E8E8E8;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 400;
+      color: #222222;
+      cursor: pointer;
+      padding: 8px;
+      cursor: pointer;
+      line-height: 18px;
+      text-align: center;
+      &.isLoginActive{
+        background: #FB3A32;
+        border-radius: 2px;
+        color: #FFFFFF;
+      }
+      &.isSend {
+        background: #E8E8E8;
+        color: #222222;
+      }
+    }
+  }
+  .login-btn{
+    text-align: center;
+    margin-top: 50px;
+  }
+}
+
+.step-3{
+  text-align: center;
+  width: 450px;
+  margin: 50px auto;
+  /deep/.el-form-item {
+    margin-bottom: 32px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .login-btn{
+    text-align: center;
+    margin-top: 50px;
+  }
+}
+
+.step-4 {
+  .icon-set-success {
+    display: block;
+    width: 40px;
+    height: 40px;
+    background: url('../../common/images/login/step_result_success.png') no-repeat;
+    background-size: cover;
+    margin: 88px auto 23px auto;
+  }
+  h3 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 400;
+    color: #222222;
+    line-height: 26px;
+    margin-bottom: 10px;
+  }
+  p {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 400;
+    color: #222222;
+    line-height: 20px;
+    strong {
+      color: #FC5659;
     }
   }
 }

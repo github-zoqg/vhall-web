@@ -177,6 +177,7 @@ import PageTitle from '@/components/PageTitle';
 import player from '@/components/Player_1';
 import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
+import { debounce } from "@/utils/utils"
 export default {
   name: 'Chapters',
   data(){
@@ -497,54 +498,56 @@ export default {
       this.$refs.player.$PLAYER.pause();
     },
     saveChapters() {
-      const createTimeArr = [];
-      console.log('tableData', this.tableData)
-      const doc_titles = this.tableData.map(item => {
-        createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
-        return {
-          document_id: item.docId,
-          created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
-          page: item.slideIndex,
-          step: item.stepIndex,
-          title: item.title,
-          remark: '',
-          step_total: item.sub.length,
-          subsection: item.sub.map(subItem => {
-            createTimeArr.push(subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime)
-            return {
-              document_id: subItem.docId,
-              created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
-              page: subItem.slideIndex,
-              step: subItem.stepIndex,
-              title: subItem.title,
-              remark: '',
-              step_total: 0
-            }
-          })
-        }
-      })
-      const createTimeArrSet = new Set(createTimeArr);
-      if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
-      console.log(doc_titles)
-      console.log('isDemand', this.isDemand ? 2 : 1)
-      this.$fetch('saveChapters', {
-        record_id: this.recordId,
-        type: this.isDemand == 'true' ? 2 : 1,
-        doc_titles: JSON.stringify(doc_titles)
-      }).then(res => {
-        if (res.code == 200) {
-          this.$message.success('保存成功');
-          this.$router.go(-1);
-        } else if (res.code == 12563) {
-          // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-          this.$message.warning('上次保存尚未完成,请稍后提交保存');
-        } else if (res.code == 12027) {
-          // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-          this.$message.warning('保存失败，子章节页码超出章节总步数');
-        } else {
-          this.$message.warning('保存失败');
-        }
-      })
+      debounce(() => {
+        const createTimeArr = [];
+        console.log('tableData', this.tableData)
+        const doc_titles = this.tableData.map(item => {
+          createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
+          return {
+            document_id: item.docId,
+            created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
+            page: item.slideIndex,
+            step: item.stepIndex,
+            title: item.title,
+            remark: '',
+            step_total: item.sub.length,
+            subsection: item.sub.map(subItem => {
+              createTimeArr.push(subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime)
+              return {
+                document_id: subItem.docId,
+                created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
+                page: subItem.slideIndex,
+                step: subItem.stepIndex,
+                title: subItem.title,
+                remark: '',
+                step_total: 0
+              }
+            })
+          }
+        })
+        const createTimeArrSet = new Set(createTimeArr);
+        if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
+        console.log(doc_titles)
+        console.log('isDemand', this.isDemand ? 2 : 1)
+        this.$fetch('saveChapters', {
+          record_id: this.recordId,
+          type: this.isDemand == 'true' ? 2 : 1,
+          doc_titles: JSON.stringify(doc_titles)
+        }).then(res => {
+          if (res.code == 200) {
+            this.$message.success('保存成功');
+            this.$router.go(-1);
+          } else if (res.code == 12563) {
+            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
+            this.$message.warning('上次保存尚未完成,请稍后提交保存');
+          } else if (res.code == 12027) {
+            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
+            this.$message.warning('保存失败，子章节页码超出章节总步数');
+          } else {
+            this.$message.warning('保存失败');
+          }
+        })
+      }, 500)
     },
     getPlayBackInfo() {
       this.$fetch('playBackPreview', {

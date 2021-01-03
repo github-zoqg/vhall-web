@@ -1,11 +1,9 @@
 <template>
   <div>
     <header class="commen-header home-header">
-      <nav class="navbar nav-top" role="navigation">
+      <nav :class="['navbar nav-top', {'all': !isShowLogin}]" role="navigation">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">
-            <img src="//t-alistatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012"
-                 onerror="this.src='//t-alistatic01.e.vhall.com/static/img/logo/saas_logo.png?v=20171012'"></a>
+          <a class="navbar-brand" href="/"><img src="../../common/images/sys/logo@2x.png" alt=""></a>
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
@@ -22,8 +20,8 @@
               </el-dropdown>
             </div>
             <div class=""  v-if="!isLogin">
-              <el-button size="mini" round @click="toLoginPageHandle">登录</el-button>
-              <el-button type="primary" size="mini" round @click="toRegisterHandle">注册</el-button>
+              <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
+              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button>
             </div>
           </div>
         </div>
@@ -94,35 +92,39 @@ export default {
 <style lang="less" scoped>
 header.commen-header {
   margin-bottom: 0;
-  height: 60px;
+  height: 64px;
   background-color: #ffffff;
   .nav-top {
-    height: 60px;
+    height: 64px;
     margin: 0 auto;
     width: 1300px;
     border: none;
+    &.all {
+      width: 100%;
+    }
   }
   .navbar {
     position: relative;
-    min-height: 50px;
+    min-height: 64px;
     margin-bottom: 20px;
   }
   .navbar-header {
+    width: 224px;
+    height: 64px;
+    background: #FB3A32;
     float: left;
   }
   .navbar-brand {
-    text-decoration: none;
     float: left;
-    height: 50px;
-    padding: 7px 15px 0 0;
-    font-size: 18px;
-    line-height: 20px;
+    padding: 4px 0;
+    text-align: left;
+    width: 156px!important;
+    height: 100%;
     img {
-      border: 0;
-      margin-right: 67px;
-      margin-top: 5px;
-      width: 80px;
-      height: 36px;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
     }
   }
   .navbar-collapse {

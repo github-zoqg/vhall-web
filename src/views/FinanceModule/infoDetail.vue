@@ -432,7 +432,7 @@ export default {
       return name;
     },
     deleteOrder(rows) {
-      this.$confirm('确定要删除吗?', '提示', {
+      this.$confirm('订单删除后将无法找回，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',

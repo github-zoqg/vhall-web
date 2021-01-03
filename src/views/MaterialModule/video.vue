@@ -10,16 +10,11 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)"> </el-button>
+      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
       <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
-      <search-area class="head-btn fr search"
-        ref="searchArea"
-        :placeholder="`请输入音视频名称`"
-        :isExports='false'
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
-        >
-      </search-area>
+      <div class="inputKey">
+        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入音视频名称" clearable @change="getTableList"></el-input>
+      </div>
     </div>
     <div class="video-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
@@ -69,6 +64,7 @@ export default {
       isSearch: false,
       videoName: '',
       videoId: '',
+      keyword: '',
       editShowDialog: false,
       nullText: 'nullData',
       text: '暂未上传音视频',
@@ -117,20 +113,20 @@ export default {
     this.getVideoAppid();
   },
   methods: {
-    getTableList(params){
+    getTableList(){
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
+      if (this.keyword) {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
       }
-      let obj = Object.assign({}, pageInfo, formParams);
-      this.getList(obj);
-    },
-    getVideoList() {
-      // this.getTableList('search')
+      let formParams = {
+        title: this.keyword,
+        user_id: this.userId,
+        ...pageInfo
+      }
+      this.getList(formParams);
     },
     tirggerFile(event){
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
@@ -240,7 +236,6 @@ export default {
       })
     },
     getList(obj){
-      obj.user_id = this.userId;
       this.$fetch('dataVideoList', this.$params(obj)).then(res=>{
         if(res.code == 200){
           this.total = res.data.total;
@@ -272,7 +267,7 @@ export default {
             this.$refs.tableList.clearSelect();
           }
           this.tableData = res.data.list;
-          if (obj.title) {
+          if (this.keyword) {
             this.isSearch = true;
             this.nullText = 'search';
             this.text = '';
@@ -332,7 +327,24 @@ export default {
     },
     del(that, { rows }) {
       that.checkedList = [];
-      that.confirmDelete(rows.id);
+      if (!rows.transcode_status) {
+        this.$message.error('正在转码的文件不能删除');
+        return;
+      }
+      if (that.audit_status) {
+          this.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          customClass: 'zdy-message-box',
+          center: true
+        }).then(() => {
+          that.confirmDelete(rows.id);
+        }).catch(() => {});
+      } else {
+        that.confirmDelete(rows.id);
+      }
+
     },
     // 批量删除
     allDelete() {
@@ -377,6 +389,14 @@ export default {
   .padding-table-list();
   .min-height();
 }
+.inputKey{
+      float: right;
+      height: 35px;
+      width: 220px;
+      /deep/.el-input__inner{
+        border-radius: 18px;
+      }
+    }
 .video-wrap{
   height: 100%;
   width: 100%;
