@@ -12,17 +12,17 @@
         </el-badge>
         <span class="remak--text">下载</span>
       </div>
-      <!-- 帮助中心 -->
-      <div class="right-menu-item" @click.prevent.stop="toHelpPage">
-        <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
-        <span class="remak--text">帮助</span>
-      </div>
       <!-- 消息中心 -->
       <div class="right-menu-item"  @click.prevent.stop="toMsgPage">
         <el-badge :value="unread_num" :max="99" :class="unread_num > 9 ? 'more' : 'item'" :hidden="!unread_num>0">
           <span class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
         </el-badge>
         <span class="remak--text">消息</span>
+      </div>
+      <!-- 帮助中心 -->
+      <div class="right-menu-item" @click.prevent.stop="toHelpPage">
+        <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
+        <span class="remak--text">帮助</span>
       </div>
       <div class="right-menu-item">
         <el-dropdown class="avatar-container" trigger="click">
