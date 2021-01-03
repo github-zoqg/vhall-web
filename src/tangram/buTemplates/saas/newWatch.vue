@@ -781,7 +781,6 @@ export default {
     },
     configList: {
       handler (val) {
-        console.log(123, val)
       },
       deep: true,
       immediate: true
