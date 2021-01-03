@@ -32,7 +32,7 @@
                     Q4: 提现还有什么其他注意事项？<br>
                     A4: 在提现周期内不能再次提现，到账后方可重新进行提现操作
                   </div>
-                  <i class="el-icon-question"></i>
+                  <i class="iconfont-v3 saasicon_help_m"></i>
                 </el-tooltip>
               </p>
               <h1>{{ incomeInfo.live_balance }}</h1>
@@ -65,7 +65,7 @@
                     Q4: 提现还有什么其他注意事项？<br>
                     A4: 在提现周期内不能再次提现，到账后方可重新进行提现操作
                   </div>
-                   <i class="el-icon-question"></i>
+                   <i class="iconfont-v3 saasicon_help_m"></i>
                 </el-tooltip>
               </p>
               <h1>{{ incomeInfo.red_packet_balance }}</h1>
@@ -421,9 +421,9 @@ export default {
         cursor: pointer;
       }
       i{
-        color: #000;
-        display: inline-block;
-        margin-left: 2px;
+        font-size: 14px;
+        padding: 0 2px;
+        color: #1A1A1A;
       }
     }
   }
