@@ -6,7 +6,7 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
+      <el-input placeholder="子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
                 clearable
                 @clear="initQuerySonList"
                 @keyup.enter.native="initQuerySonList">
@@ -33,6 +33,7 @@
         :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
+        width="120px"
         max-height="auto"
         scene="accountList"
         @getTableList="getSonList"
