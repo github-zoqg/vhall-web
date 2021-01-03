@@ -2,7 +2,7 @@
   <div class="base--set">
     <el-form :model="baseSetForm" ref="baseSetForm" :rules="baseSetFormRules" label-width="94px">
       <el-form-item label="账号昵称：" prop="nick_name">
-        <el-input type="text" placeholder="请输入账号昵称" v-model="baseSetForm.nick_name" maxlength="30" show-word-limit />
+        <VhallInput type="text" placeholder="请输入账号昵称" v-model="baseSetForm.nick_name" maxlength="30" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="账号头像：" prop="avatar">
         <upload
@@ -27,10 +27,10 @@
         </upload>
       </el-form-item>
       <el-form-item label="公司名称：" prop="company">
-        <el-input type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" />
+        <VhallInput type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" maxlength="100" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="您的职业：" prop="position">
-        <el-input type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" />
+        <VhallInput type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" maxlength="150" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="baseSetSave">保 存</el-button>
@@ -63,12 +63,12 @@ export default {
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入账号昵称', trigger: 'blur' }
         ]
-        /*,company: [
-          { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
+        ,company: [
+          { max: 100, message: '最多可输入100个字符', trigger: 'blur' },
         ],
         position: [
-          { max: 15, message: '最多可输入15个字符', trigger: 'blur' },
-        ],*/
+          { max: 150, message: '最多可输入150个字符', trigger: 'blur' },
+        ],
       },
       accountInfo: null
     };
@@ -141,7 +141,7 @@ export default {
             }
           }).catch(err=>{
             console.log(err);
-            this.$message.error('保存基本设置失败');
+            this.$message.error(err.msg || '保存基本设置失败');
           });
         }
       });

@@ -1,7 +1,7 @@
 <template>
   <div class="valid--set">
     <div class="comp-card-one">
-      <span class="pwd--circle blue"></span>
+      <span class="pwd--circle blue"><i class="iconfont-v3 saasicon-lock"></i></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">账号密码</label></li>
         <!--<li><label class="card&#45;&#45;txt">当前密码强度：</label>-->
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="comp-card-one">
-      <span class="pwd--circle orange"></span>
+      <span class="pwd--circle orange"><i class="iconfont-v3 saasicon-mobile"></i></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">密保手机</label></li>
         <!--<li><label class="card&#45;&#45;txt">已绑定手机：{{accountInfo && accountInfo.phone ? `${accountInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '&#45;&#45;'}}</label></li>-->
@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="comp-card-one">
-      <span class="pwd--circle green"></span>
+      <span class="pwd--circle green"><i class="iconfont-v3 saasicon_email"></i></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">关联邮箱</label></li>
         <li><label class="card--txt">已绑定邮箱：{{accountInfo && accountInfo.email ? accountInfo.email : '--'}}</label></li>
