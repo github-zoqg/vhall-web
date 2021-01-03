@@ -134,8 +134,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" round>取 消</el-button>
+        <el-button type="primary" size="medium" @click="handleUpdateGift" round>确 定</el-button>
+        <el-button size="medium" @click="handleCancelEdit" round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -778,17 +778,6 @@ export default {
     .dialog-footer {
       display: inline-block;
       width: 100%;
-      .el-button:first-child{
-        float: left;
-        margin-left: 20px;
-      }
-      .el-button:last-child{
-        float: right;
-        margin-right: 20px;
-      }
-      &:after{
-        clear:both;
-      }
     }
   }
   /deep/.el-dialog{
