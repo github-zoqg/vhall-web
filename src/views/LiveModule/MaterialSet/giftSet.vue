@@ -167,6 +167,7 @@
     <el-dialog
       title="选择礼物"
       width="620px"
+      v-if="dialogGiftsVisible"
       :visible.sync="dialogGiftsVisible"
       :close-on-click-modal="false"
       :before-close="handleCloseChooseGift"
@@ -193,6 +194,7 @@
             <div
               v-for="(item, index) in materiaTableData"
               :key='index'
+              v-show="item.source_status == 1"
               class="matrial-item"
               :class="{active: item.isChecked}"
               @click.stop="handleChooseGift(index, item)">
@@ -211,9 +213,9 @@
       </div>
       <div class="control">
         <span>当前选中{{addGiftsIds.length}}件商品</span>
-        <div class="control-btn">
-          <el-button @click="chooseGift" class="add-btn" :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
-          <el-button @click="handleCloseChooseGift" class="cancel-btn">取消</el-button>
+        <div class="control-btn" style="text-align: right;">
+          <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
+          <el-button @click="handleCloseChooseGift" round>取消</el-button>
         </div>
       </div>
     </el-dialog>
@@ -269,6 +271,8 @@ export default {
       // openGiftIds: [], // 显示礼物列表
       selectIds:[], // 批量操作
       addGiftsIds: [], // 添加礼物
+      addedGiftsIds: [], // 已选择礼物id
+      resultAddGifts: [], // 保存的礼物
       domain_url: '',
       rules: {
         name: [
@@ -356,7 +360,7 @@ export default {
           this.currentTableData = this.tableData.filter((item, index) => {
             return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
           })
-          this.addGiftsIds = this.tableData.map((item) => item.id)
+          this.addedGiftsIds = this.tableData.map((item) => item.id)
         }
       })
     },
@@ -442,7 +446,7 @@ export default {
     },
     // 新建
     addGift () {
-      if (this.addGiftsIds.length >= 40) {
+      if (this.addedGiftsIds.length >= 40) {
         this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
         return false;
       }
@@ -551,13 +555,13 @@ export default {
         if (res.code == 200 && res.data) {
           res.data.list.length > 0 && res.data.list.forEach((item, index) => {
             item.isChecked = false
-            if (this.addGiftsIds.length > 0) {
-              this.addGiftsIds.map(addItem => {
-                if(addItem == item.gift_id) {
-                  item.isChecked = true
-                }
-              })
-            }
+            // if (this.addGiftsIds.length > 0) {
+            //   this.addGiftsIds.map(addItem => {
+            //     if(addItem == item.gift_id) {
+            //       item.isChecked = true
+            //     }
+            //   })
+            // }
           })
 
           if (this.materiaSearchParams.page_size * (this.materiaSearchParams.page - 1) === 0) {
@@ -608,7 +612,7 @@ export default {
     handleDeleteGift () {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
       this.tableData = resData
-      this.addGiftsIds = this.tableData.map(item => item.id)
+      this.addedGiftsIds = this.tableData.map(item => item.id)
       this.materiaTableData.forEach(meterialItem => {
         if (meterialItem.gift_id == this.deleteId) {
           meterialItem.isChecked = false
@@ -648,33 +652,26 @@ export default {
           }
         })
       })
-      this.addGiftsIds = this.tableData.map(item => item.id)
+      this.addedGiftsIds = this.tableData.map(item => item.id)
       this.chooseGift()
       this.selectIds = []
       this.batchDialogTipVisible = false
     },
     // 选择奖品添加
     handleChooseGift (index, gift) {
-      // 默认礼物不支持取消关联
-      if(gift.source_status == 0) {
-        this.$message.warning('默认礼物不支持取消关联')
-        return false;
-      }
       if (!this.materiaTableData[index].isChecked) {
-        if (this.addGiftsIds.length >= 40) {
+        this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
+        if (this.resultAddGifts.length >= 40) {
           this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
           return false;
         }
         this.addGiftsIds.push(Number(this.materiaTableData[index].gift_id))
-      } else {
-        let num = this.addGiftsIds.indexOf(Number(this.materiaTableData[index].gift_id))
-        this.addGiftsIds.splice(num, 1)
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
     chooseGift() {
       this.$fetch('setRelevance', {
-        gift_ids: this.addGiftsIds.join(','),
+        gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
       }).then(res => {
         this.handleCloseChooseGift()
@@ -682,6 +679,7 @@ export default {
       })
     },
     handleCloseChooseGift () {
+      this.addGiftsIds = []
       this.materiaSearchParams.page = 1
       this.dialogGiftsVisible = false
     },
@@ -906,27 +904,8 @@ export default {
       top: 24px;
       left: 20px;
     }
-    /deep/.add-btn, .cancel-btn{
-      width: 80px;
-      height: 34px;
-      background: #FC5659;
-      border-radius: 4px;
-      border: 1px solid #F3545B;
-      text-align: center;
-      padding: 0px;
-      margin: 0p;
-      line-height: 34px;
-    }
-    .add-btn{
-      margin-left: 191px ;
-      color: #fff;
-    }
     /deep/ .disabled{
       opacity: 0.5;
-    }
-    .cancel-btn{
-      border: 1px solid #888888;
-      background: #fff;
     }
   }
   .share-material{
