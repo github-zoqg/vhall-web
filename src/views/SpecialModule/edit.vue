@@ -214,15 +214,15 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      customClass: 'zdy-alert-box',
-      type: 'warning'
-    }).then(() => {
-        next()
-    }).catch(() => {
-    });
+    // this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+    //   confirmButtonText: '确定',
+    //   cancelButtonText: '取消',
+    //   customClass: 'zdy-alert-box',
+    //   type: 'warning'
+    // }).then(() => {
+    //     next()
+    // }).catch(() => {
+    // });
   },
   methods: {
     // 获取专题 - 详情
@@ -232,7 +232,6 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           this.subjectInfo = {...res.data.webinar_subject};
-          console.log(this.subjectInfo, '111111111111111')
           this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title

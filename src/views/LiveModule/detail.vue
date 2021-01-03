@@ -103,7 +103,7 @@ export default {
         webinar_state: 0,
         webinar_type: 0
       },
-      link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${this.$route.params.str}`,
+      link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       time: {
         day: 0,
