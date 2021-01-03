@@ -36,7 +36,7 @@
           </div>
           <i class="el-icon-question"></i>
         </el-tooltip>
-        <div class="changeOption">
+        <div class="changeOption" v-if="titleType != 4">
           <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
           <span :class="isActive ? '' : 'span-active'" @click="changeTime('回放')">回放</span>
         </div>
@@ -44,7 +44,7 @@
       </div>
       <div class="statistical-map">
         <div class="map-title">
-          <span>观看地域TOP10分布情况</span>
+          <span>观看地域TOP10占比</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
             <i class="el-icon-question"></i>

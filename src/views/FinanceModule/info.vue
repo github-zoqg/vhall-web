@@ -221,7 +221,7 @@ export default {
         key: 'webinar_flow'
       })
     }
-    if (this.parentId && this.childNum) {
+    if (this.parentId == 0 && this.childNum >= 0) {
       let mainParams = {
         type: '3',
         key: 'type',

@@ -140,4 +140,47 @@
   .el-input__count-inner__denominator {
     color: #999999;
   }
+  // 输入框样式重置
+  .el-form-item.is-error .el-input__inner {
+    border-color: #FB3A32;
+  }
+  .el-input__inner {
+    border-color: #ccc;
+    &:hover {
+      border-color: #999;
+    }
+    &:focus {
+      border-color: #999;
+    }
+    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      color:    #999999;
+    }
+    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:    #999999;
+    }
+    &::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:    #999999;
+    }
+    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color:    #999999;
+    }
+  }
+  .el-input.is-disabled .el-input__inner {
+    background-color: #FFFFFF;
+    border-color: #E6E6E6;
+    color: #999999;
+    cursor: not-allowed;
+    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      color:    #B3B3B3;
+    }
+    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color:    #B3B3B3;
+    }
+    &::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color:    #B3B3B3;
+    }
+    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color:    #B3B3B3;
+    }
+  }
 </style>

@@ -87,21 +87,27 @@
       </div>
       <div class="vh-video-select__button">
         <el-button @click="addEvent" class="fl vh-video-tailoring__add-event" :disabled="!vodReady">
-          <icon icon-class="saasicon_shijiandian"></icon>
+          <el-tooltip class="item" effect="dark" content="事件点" placement="top">
+            <icon icon-class="saasicon_shijiandian"></icon>
+          </el-tooltip>
         </el-button>
         <el-button
           @click="addCutVideoEvent"
           class="fl vh-video-tailoring__cut-video-event"
           :disabled="!vodReady"
         >
-          <icon icon-class="saasicon_caijian"></icon>
+          <el-tooltip class="item" effect="dark" content="裁剪" placement="top">
+            <icon icon-class="saasicon_caijian"></icon>
+          </el-tooltip>
         </el-button>
         <el-button
           @click="delCuttingPointFun"
           class="fl vh-video-tailoring__del-video-event"
           :disabled="!vodReady"
         >
-          <icon class="icon" icon-class="saasicon_shanchu"></icon>
+          <el-tooltip class="item" effect="dark" content="删除" placement="top">
+            <icon class="icon" icon-class="saasicon_shanchu"></icon>
+          </el-tooltip>
         </el-button>
 
         <el-button
@@ -109,7 +115,9 @@
           class="fl vh-video-tailoring__enlarge"
           :disabled="this.currentUnit <= 1 && !vodReady"
         >
-          <icon class="icon" icon-class="saasicon_fangda"></icon>
+          <el-tooltip class="item" effect="dark" content="放大刻度尺" placement="top">
+            <icon class="icon" icon-class="saasicon_fangda"></icon>
+          </el-tooltip>
         </el-button>
 
         <el-button
@@ -117,13 +125,21 @@
           class="fl vh-video-tailoring__narrow"
           :disabled="this.currentUnit >= this.maxValue && !vodReady"
         >
-          <icon class="icon" icon-class="saasicon_suoxiao"></icon>
+          <el-tooltip class="item" effect="dark" content="缩小刻度尺" placement="top">
+            <icon class="icon" icon-class="saasicon_suoxiao"></icon>
+          </el-tooltip>
         </el-button>
         <el-button @click="qp" class="fl vh-btn vh-video-tailoring__qp-btn" v-if="!isFullScreen">
-          <span class="vh-iconfont vh-icon-full-screen"></span>
+          <el-tooltip class="item" effect="dark" content="全屏" placement="top" v-if="!isFullScreen">
+            <icon class="icon" icon-class="saasicon_quanping"></icon>
+          </el-tooltip>
+          <!-- <span class="vh-iconfont vh-icon-full-screen"></span> -->
         </el-button>
         <el-button @click="tcqp" class="fl vh-btn vh-video-tailoring__qxqp-btn" v-if="isFullScreen">
-          <span class="vh-iconfont vh-icon-exit-full-screen"></span>
+          <el-tooltip class="item" effect="dark" content="退出全屏" placement="top" v-if="isFullScreen">
+            <icon class="icon" icon-class="saasicon_quanping"></icon>
+          </el-tooltip>
+          <!-- <span class="vh-iconfont vh-icon-exit-full-screen"></span> -->
         </el-button>
       </div>
       <el-button @click="saveVideo" class="fr vh-video-tailoring__save-btn" :class="{'vh-video-tailoring__btn-disable': !vodReady}">{{ t('保存') }}</el-button>

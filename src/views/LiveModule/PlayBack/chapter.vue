@@ -9,6 +9,51 @@
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
         <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
+        <div v-show="docSDKReady" class="vhallPlayer-container">
+          <div class="vhallPlayer-progress-box">
+            <el-slider
+              v-model="sliderVal"
+              :show-tooltip="false"
+              ref="controllerRef"
+              @change="setVideo"
+            ></el-slider>
+          </div>
+          <div class="vhallPlayer-controller-box">
+            <div class="v-c-left">
+              <div class="vh-video-chapter__operate">
+                <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
+                  <icon icon-class="saasicon_shangyimiao"></icon>
+                </span>
+                <span
+                  @click="videoPlayBtn"
+                  class="vh-btn vh-video-chapter__play"
+                  :class="{ 'is-pause': statePaly }"
+                >
+                  <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
+                </span>
+                <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
+                  <icon icon-class="saasicon_xiayimiao"></icon>
+                </span>
+              </div>
+
+            </div>
+            <div class="vhallPlayer-time-component">
+              <span class="vh-video-chapter__time">
+                <span class="vh-video-chapter__hover-time">{{ showTime }}</span>
+                /
+                {{ showVideoTime }}
+              </span>
+            </div>
+            <div class="vh-video-chapter__volume-box">
+              <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
+                <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+              </span>
+              <div class="vh-video-chapter__slider">
+                <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="docBox">
         <div class="docInner">
@@ -37,6 +82,7 @@
           <span class="pages">
             <em>{{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
           </span>
+          <!-- <span class="thumbnail"></span> -->
         </div>
       </div>
     </div>
@@ -100,7 +146,7 @@
           width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input :disabled="isDemand == 'false'" v-model="scope.row.createTime" placeholder="请输入章节时间"></el-input>
+            <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
@@ -131,6 +177,7 @@ import PageTitle from '@/components/PageTitle';
 import player from '@/components/Player_1';
 import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
+import { debounce } from "@/utils/utils"
 export default {
   name: 'Chapters',
   data(){
@@ -174,6 +221,12 @@ export default {
           color: '#FD2C0A'
         }
       },
+      sliderVal: 0, // 视频时间
+      statePaly: true, // 默认播放状态
+      currentTime: 0, // 当前视频播放时间
+      voice: 60, // 音量
+      catchVoice: 0,
+      videoTime: 0 // 视频实际时长
     };
   },
   provide () {
@@ -185,11 +238,36 @@ export default {
     docInfo(){
       console.log('docInfo', this.docsdk._currentDoc ? this.docsdk._currentDoc.getDocInfo() : {toal: 0, current:0});
       return 1234;
-    }
+    },
+    /**
+     * 视频当前播放时长初始化
+     */
+    showTime () {
+      return this.formatTime(Math.round(this.currentTime) * 1);
+    },
+    /**
+     * 视频总时长格式化
+     */
+    showVideoTime () {
+      return this.formatTime(this.videoTime * 1);
+    },
+  },
+  watch: {
+    /**
+     * 设置视频声音
+     */
+    // eslint-disable-next-line no-unused-vars
+    voice (newVal, oldVal) {
+      window.vhallPlayer.setVolume(newVal, () => {
+        console.log('设置音量失败');
+      });
+    },
   },
   created(){
-    this.checkChapterSave()
-    this.getPlayBackInfo()
+    setTimeout(() => {
+      this.checkChapterSave()
+      this.getPlayBackInfo()
+    }, 300)
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -220,9 +298,29 @@ export default {
     //   this.docsdk = docsdk;
     //   console.log('component_docSDK_ready', docsdk, this.$refs.doc);
     // });
-
+    // 监听视频初始化成功
     this.$EventBus.$on('component_playerSDK_ready', ()=>{
       console.log('component_playerSDK_ready');
+      setTimeout(() => {
+        // 动态获取当前视频的总时长及当前播放的时间 当做刻度尺值，弱播放时间小于1200秒，则刻度尺最小赋值为1200秒
+        this.videoTime = Math.round(window.vhallPlayer.getDuration());
+        this.$EventBus.$emit('blockInit', 0, this.videoTime);
+        window.vhallPlayer.on(window.VhallPlayer.TIMEUPDATE, () => {
+          this.currentTime = window.vhallPlayer.getCurrentTime(() => {
+            console.log('获取当前视频播放时间失败----------');
+          });
+          this.sliderVal = this.currentTime / this.videoTime * 100;
+        });
+      }, 100);
+      window.vhallPlayer.on(window.VhallPlayer.PLAY, () => {
+        // 监听播放状态
+        this.statePaly = true;
+      });
+      window.vhallPlayer.on(window.VhallPlayer.PAUSE, () => {
+        // 监听暂停状态
+        this.statePaly = false;
+      });
+      this.vodReady = true;
     });
 
     this.$EventBus.$on('component_page_info', ()=>{
@@ -239,11 +337,13 @@ export default {
         return {
           ...item,
           index: index + 1,
-          createTime: this.secondsFormmat(item.createTime),
+          userCreateTime: this.secondsFormmat(item.createTime),
+          isChange: false,
           sub: item.sub.map((subItem, subIndex) => ({
             ...subItem,
-            createTime: this.secondsFormmat(subItem.createTime),
-            index: `${index + 1}-${subIndex + 1}`
+            userCreateTime: this.secondsFormmat(subItem.createTime),
+            index: `${index + 1}-${subIndex + 1}`,
+            isChange: false
           }))
         }
       });
@@ -261,8 +361,104 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    /**
+     * 时间格式化
+     * 将秒转化为hh:mm:ss显示
+     * value 刻度尺格数
+     * currentUnit当前时间转换比例
+     */
+    formatTime(value) {
+      // value = parseInt(value) * currentUnit
+      var hh = Math.floor(value / 3600);
+      if (hh < 10) hh = '0' + hh;
+      var mm = Math.floor((value - hh * 3600) / 60);
+      if (mm < 10) mm = '0' + mm;
+      var ss = Math.floor((value - hh * 3600) % 60);
+      if (ss < 10) ss = '0' + ss;
+      var length = hh + ':' + mm + ':' + ss;
+      if (value >= 0) {
+        return length;
+      } else {
+        return '';
+      }
+    },
+    /**
+     * 后退一秒
+     */
+    seekBack () {
+      if (this.vodReady) {
+        this.currentTime = parseInt(
+          window.vhallPlayer.getCurrentTime(() => {
+            console.log('获取当前视频播放时间失败----------');
+          })
+        );
+        window.vhallPlayer.setCurrentTime(this.currentTime - 1);
+      }
+    },
+    /**
+     * 前进一秒
+     */
+    seekForward () {
+      if (this.vodReady) {
+        this.currentTime = parseInt(
+          window.vhallPlayer.getCurrentTime(() => {
+            console.log('获取当前视频播放时间失败----------');
+          })
+        );
+        window.vhallPlayer.setCurrentTime(this.currentTime + 1);
+      }
+    },
+    /**
+     * 快进功能
+     */
+    setVideo () {
+      const time = this.sliderVal / 100 * this.videoTime;
+      this.setVideoCurrentTime(time);
+      this.play();
+    },
+    /**
+     * 设置播放时间
+     */
+    setVideoCurrentTime (val) {
+      window.vhallPlayer && window.vhallPlayer.setCurrentTime(val);
+    },
+    /**
+     * 静音/取消静音
+     */
+    jingYin () {
+      if (this.voice == 0) {
+        this.voice = this.catchVoice;
+      } else {
+        this.catchVoice = this.voice;
+        this.voice = 0;
+      }
+    },
+    /**
+     * 播放||暂停
+     */
+    videoPlayBtn () {
+      if (this.vodReady) {
+        if (window.vhallPlayer.getIsPause()) {
+          this.play();
+        } else {
+          this.pause();
+        }
+      }
+    },
+    /**
+     *  开始播放旁路
+     */
+    play () {
+      window.vhallPlayer && window.vhallPlayer.play();
+    },
+    /**
+     * 暂停
+     */
+    pause () {
+      window.vhallPlayer && window.vhallPlayer.pause();
+    },
     getDocTitles() {
-      if (!this.docIds.length) return fasle;
+      if (!this.docIds.length) return false;
       const taskList = []
       this.docIds.map(item => {
         taskList.push(
@@ -302,54 +498,56 @@ export default {
       this.$refs.player.$PLAYER.pause();
     },
     saveChapters() {
-      const createTimeArr = [];
-      console.log('tableData', this.tableData)
-      const doc_titles = this.tableData.map(item => {
-        createTimeArr.push(this.secondsReverse(item.createTime))
-        return {
-          document_id: item.docId,
-          created_at: this.secondsReverse(item.createTime),
-          page: item.slideIndex,
-          step: item.stepIndex,
-          title: item.title,
-          remark: '',
-          step_total: item.sub.length,
-          subsection: item.sub.map(subItem => {
-            createTimeArr.push(this.secondsReverse(subItem.createTime))
-            return {
-              document_id: subItem.docId,
-              created_at: this.secondsReverse(subItem.createTime),
-              page: subItem.slideIndex,
-              step: subItem.stepIndex,
-              title: subItem.title,
-              remark: '',
-              step_total: 0
-            }
-          })
-        }
-      })
-      const createTimeArrSet = new Set(createTimeArr);
-      if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
-      console.log(doc_titles)
-      console.log('isDemand', this.isDemand ? 2 : 1)
-      this.$fetch('saveChapters', {
-        record_id: this.recordId,
-        type: this.isDemand == 'true' ? 2 : 1,
-        doc_titles: JSON.stringify(doc_titles)
-      }).then(res => {
-        if (res.code == 200) {
-          this.$message.success('保存成功');
-          this.$router.go(-1);
-        } else if (res.code == 12563) {
-          // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-          this.$message.warning('上次保存尚未完成,请稍后提交保存');
-        } else if (res.code == 12027) {
-          // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-          this.$message.warning('保存失败，子章节页码超出章节总步数');
-        } else {
-          this.$message.warning('保存失败');
-        }
-      })
+      debounce(() => {
+        const createTimeArr = [];
+        console.log('tableData', this.tableData)
+        const doc_titles = this.tableData.map(item => {
+          createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
+          return {
+            document_id: item.docId,
+            created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
+            page: item.slideIndex,
+            step: item.stepIndex,
+            title: item.title,
+            remark: '',
+            step_total: item.sub.length,
+            subsection: item.sub.map(subItem => {
+              createTimeArr.push(subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime)
+              return {
+                document_id: subItem.docId,
+                created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
+                page: subItem.slideIndex,
+                step: subItem.stepIndex,
+                title: subItem.title,
+                remark: '',
+                step_total: 0
+              }
+            })
+          }
+        })
+        const createTimeArrSet = new Set(createTimeArr);
+        if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
+        console.log(doc_titles)
+        console.log('isDemand', this.isDemand ? 2 : 1)
+        this.$fetch('saveChapters', {
+          record_id: this.recordId,
+          type: this.isDemand == 'true' ? 2 : 1,
+          doc_titles: JSON.stringify(doc_titles)
+        }).then(res => {
+          if (res.code == 200) {
+            this.$message.success('保存成功');
+            this.$router.go(-1);
+          } else if (res.code == 12563) {
+            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
+            this.$message.warning('上次保存尚未完成,请稍后提交保存');
+          } else if (res.code == 12027) {
+            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
+            this.$message.warning('保存失败，子章节页码超出章节总步数');
+          } else {
+            this.$message.warning('保存失败');
+          }
+        })
+      }, 500)
     },
     getPlayBackInfo() {
       this.$fetch('playBackPreview', {
@@ -387,20 +585,24 @@ export default {
         this.tableData = res.data.doc_titles.map((item, index) => {
           ids.push(item.document_id);
           return {
-            createTime: '00:00:00',
+            createTime: 0,
             docId: item.document_id,
             slideIndex: item.page,
             stepIndex: item.step,
             title: item.title,
             index: index + 1,
+            userCreateTime: '00:00:00',
+            isChange: true,
             sub: item.subsection.length ?
               item.subsection.map((subItem, subIndex) => ({
-                createTime: '00:00:00',
+                createTime: 0,
                 docId: subItem.document_id,
                 slideIndex: subItem.page,
                 stepIndex: subItem.step,
                 title: subItem.title,
-                index: `${index + 1}-${subIndex + 1}`
+                index: `${index + 1}-${subIndex + 1}`,
+                userCreateTime: '00:00:00',
+                isChange: true,
               })) : []
           }
         })
@@ -423,6 +625,8 @@ export default {
       this.tableData.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
+        userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
+        isChange: true,
         index: this.tableData.length + 1,
         stepIndex: 0,
         slideIndex: 0,
@@ -455,6 +659,7 @@ export default {
           }
         });
         this.handleSerialize()
+        this.saveChapters()
       }).catch(()=>{});
 
     },
@@ -470,7 +675,8 @@ export default {
     },
     getTime(row){
       // 时间为秒数，四舍五入取整数
-      row.createTime = this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime());
+      row.userCreateTime = this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime());
+      row.isChange = true
       // row.createTime = this.$refs.player.$PLAYER.getCurrentTime();
     },
     // 添加子章节
@@ -481,12 +687,14 @@ export default {
       row.sub.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
+        userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         index: `${row.index}-${row.sub.length + 1}`,
         stepIndex: currentDocInfo.stepIndex,
         slideIndex: currentDocInfo.slideIndex,
         docId: currentDocInfo.docId,
         cid: currentContainerInfo._id,
-        hash: currentDocInfo.hash
+        hash: currentDocInfo.hash,
+        isChange: true
       })
     },
     associateHandler(){
@@ -592,23 +800,174 @@ export default {
       visibility: visible;
       opacity: 1;
       z-index: 2;
-      display: block !important;
+      // display: block !important;
       .vhallPlayer-progress-container .vhallPlayer-progress-play{
         background: #FB3A32;
       }
       .vhallPlayer-verticalSlider-popup .vhallPlayer-verticalSlider-box .verticalSlider-range .verticalSlider-value{
         background: #FB3A32;
       }
+      .vhallPlayer-progress-box{
+        .el-slider__runway {
+          margin: 0;
+        }
+      }
     }
     .playerBox{
       width: 480px;
       margin-right: 10px;
-    }
-    /deep/ .v-c-right{
-      >*:not(.vhallPlayer-volume-component){
-        display: none;
+      /deep/ .vh-player .vhallPlayer-controller-box{
+        display: flex;
+        justify-content: space-between;
+      }
+      .vhallPlayer-controller-box{
+        background: #000;
+      }
+      .vh-video-chapter__operate {
+        height:72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .vh-video-chapter__time {
+        line-height: 21px;
+        color: #666666;
+        font-size: 14px;
+        .vh-video-chapter__hover-time {
+          color: #ffffff;
+        }
+      }
+      .vh-video-chapter__volume-box {
+        position: relative;
+        width: 60px;
+        height: 28px;
+        line-height: 40px;
+        float: right;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .vh-iconfont {
+          display: inline-block;
+          font-size: 22px;
+          color: #FAFAFA;
+          cursor: pointer;
+          &:hover {
+            color: #1890FF;
+          }
+        }
+        .vh-video-chapter__icon-voice-warp {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 28px;
+          &:hover {
+            & + .vh-video-chapter__slider {
+              display: block;
+            }
+          }
+        }
+        .vh-video-chapter__slider {
+          display: none;
+          width: 70px;
+          position: absolute;
+          z-index: 3;
+          right: -8px;
+          top: -110px;
+          padding: 0 10px;
+          &:hover {
+            display: inline-block;
+          }
+          .el-slider{
+            width: 40px;
+            background: rgba(0,0,0,0.81);
+            border-radius: 4px;
+            padding: 10px 0;
+            /deep/ .el-slider__runway{
+              margin: 0 18px;
+              width: 4px;
+              background: #333;
+              .el-slider__bar {
+                background-color: #E18B2E;
+                width: 4px;
+              }
+            }
+          }
+          .el-slider.is-vertical .el-slider__button-wrapper {
+            left: -16px;
+            .el-slider__button {
+              width: 8px;
+              height: 8px;
+              border: none;
+              box-shadow: 0px 0px 6px 0px rgba(30, 137, 228, 0.8);
+              background: #ececec;
+            }
+          }
+        }
+        /deep/ .el-slider__button-wrapper{
+          left: -16px;
+        }
+      }
+      /deep/ .el-slider__button {
+        width: 8px;
+        height: 8px;
+        border: none;
+        box-shadow: 0px 0px 6px 0px rgba(30, 137, 228, 0.8);
+        background: #ececec;
+      }
+      .vh-btn {
+        display: inline-block;
+        cursor: pointer;
+        background-repeat: no-repeat;
+        vertical-align: middle;
+        &.vh-video-chapter__seek-back {
+          width: 18px;
+          height: 14px;
+          line-height: 14px;
+          background-size: 16px 13px;
+          margin-left: 0px;
+          /deep/ i {
+            color: #999;
+            font-size: 14px;
+            &:hover {
+              color: #fff;
+            }
+          }
+        }
+        &.vh-video-chapter__play {
+          width: 20px;
+          height: 21px;
+          background-size: 20px 22px;
+          margin: 0 16px;
+          line-height: 21px;
+          /deep/ i {
+            color: #999;
+            font-size: 18px;
+            &:hover {
+              color: #fff;
+            }
+          }
+        }
+        &.vh-video-chapter__seek-forward {
+          width: 18px;
+          height: 14px;
+          line-height: 14px;
+          background-size: 16px 13px;
+          /deep/ i {
+            color: #999;
+            font-size: 14px;
+            &:hover {
+              color: #fff;
+            }
+          }
+        }
       }
     }
+    // /deep/ .v-c-right{
+    //   >*:not(.vhallPlayer-volume-component){
+    //     display: none;
+    //   }
+    // }
     /deep/ .vh-doc__wrap{
       background-color: #666;
     }
@@ -634,5 +993,8 @@ export default {
   }
   .right{
     float: right;
+  }
+  /deep/ .saasicon_yangshengqion {
+    font-size: 18px;
   }
 </style>

@@ -48,10 +48,10 @@
                     </div>
                 </el-form-item>
                 <el-form-item label="抽奖标题">
-                    <el-input v-model.trim="formData.title" maxlength="10" placeholder="请输入抽奖标题" show-word-limit></el-input>
+                    <VhallInput v-model.trim="formData.title" maxlength="10" placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item label="文字说明">
-                    <el-input v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></el-input>
+                    <VhallInput v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary"  round @click="lotterySave" v-preventReClick>保存</el-button>
@@ -88,7 +88,7 @@
                   添加字段
                 </div>
                 <el-form-item>
-                  <el-button type="primary" round @click="sureGivePrize" :disabled='lotteryPage' v-preventReClick>保存</el-button>
+                  <el-button type="primary" round @click="sureGivePrize" v-preventReClick>保存</el-button>
                 </el-form-item>
               </el-form>
             </div>

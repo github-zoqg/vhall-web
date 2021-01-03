@@ -12,7 +12,7 @@
       class="doc-box"
       :style="cid.split('-')[0] == 'document' ? docBoxStyle : boardBoxStyle"
     ></div>
-    <div class="vhall-doc-pager" id="doc-pager" v-if="!isMini && currentCid">
+    <div class="vhall-doc-pager" id="doc-pager" v-if="!isMini && currentCid && !notControlVisible">
       <div
         class="iconfont iconfangda"
         title="放大"
@@ -91,6 +91,10 @@ export default {
     playMode: {
       required: false,
       default: 0
+    },
+    notControlVisible: {
+      required: false,
+      default: false
     }
   },
   data () {
@@ -135,6 +139,11 @@ export default {
         wrapWidth = parseFloat(style.width);
         wrapHeight = parseFloat(style.height);
       } else {
+        try {
+          const elem = this.$refs.watchDocWrapper.parentNode
+        } catch(err){
+          return false
+        }
         let style = window.getComputedStyle(
           this.$refs.watchDocWrapper.parentNode
         );
@@ -173,6 +182,11 @@ export default {
           }
           let type = this.currentCid.split('-')[0];
           this.initWidth(type);
+          try {
+            const setSize = this.docSDK.setSize
+          } catch (err) {
+            return
+          }
           if (type === 'document') {
             this.docSDK.setSize(
               parseFloat(this.docBoxStyle.width),
@@ -194,10 +208,7 @@ export default {
       }
     },
     _listenEvents () {
-      window.addEventListener('resize', () => {
-        console.log('========触发resize事件===========');
-        this.resize();
-      });
+      window.addEventListener('resize', this.resize());
       // 全屏兼容360浏览器等
       const setFullscreen = () => {
         const fullscreenElement =
@@ -582,6 +593,7 @@ export default {
     console.log('测试文档销毁================');
     this.docSDK.destroy();
     this.docSDK = null;
+    window.removeEventListener('resize', this.resize());
   }
 };
 </script>

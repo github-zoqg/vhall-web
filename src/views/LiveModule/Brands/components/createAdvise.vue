@@ -1,14 +1,13 @@
 <template>
   <div class="dialog-box">
     <VhallDialog
-      :title="`${title}广告推荐`"
+      :title="advInfo.adv_id ? '编辑广告' : '创建广告'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
       <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
       <el-form-item label="推广图片" prop="img_url">
         <div class="img-box">
-          <!-- <img :src="advertisement.img_url" alt="" v-if=""> -->
            <upload
               class="giftUpload"
               v-model="advertisement.img_url"
@@ -21,7 +20,6 @@
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
-              @handleFileChange="handleFileChange"
               :before-upload="beforeUploadHnadler"
               @delete="deleteImg"
               >
@@ -33,15 +31,15 @@
         </div>
       </el-form-item>
       <el-form-item label="标题" prop="subject">
-        <el-input v-model.trim="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></el-input>
+        <VhallInput v-model.trim="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></VhallInput>
       </el-form-item>
       <el-form-item label="链接" prop="url">
         <el-input v-model.trim="advertisement.url" placeholder="请输入广告链接"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
-      <el-button v-preventReClick @click="dialogVisible = false" round>取 消</el-button>
+      <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+      <el-button  size="medium" @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
     <VhallDialog
@@ -75,6 +73,23 @@
         <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
       </span>
     </VhallDialog>
+    <VhallDialog
+      title="提示"
+      :visible.sync="dialogTongVisible"
+      :close-on-click-modal="false"
+      width="400px"
+    >
+      <div class="sureQuestion">
+        <div class="textPrize">
+          <p>确定保存当前广告？</p>
+          <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
+        </div>
+        <div class="dialog-footer">
+          <el-button type="primary" size="medium" @click="sureMaterialAdver" round>确 定</el-button>
+          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+       </div>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 <script>
@@ -88,7 +103,7 @@ export default {
         callback(new Error('请输入广告链接'));
       } else {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('广告链接必须以http或https开头');
+          callback && callback('请输入正确的广告链接');
         } else {
           callback();
         }
@@ -97,10 +112,12 @@ export default {
     return {
       dialogVisible: false,
       dialogAdverVisible: false,
+      dialogTongVisible: false,
       advertisementTitle: '',
       baseImgUrl: Env.staticLinkVo.uploadBaseUrl,
       selectChecked: [],
       total: 0,
+      sureChecked: true,
       nullText: 'nullData',
       isSearch: false, //是否是搜索
       text: '您还没有广告，快来创建吧！',
@@ -132,10 +149,6 @@ export default {
     };
   },
   props: {
-    title:{
-      type: String,
-      default: '创建'
-    },
     advInfo:{
       type: Object
     }
@@ -150,6 +163,7 @@ export default {
         this.editShow();
       } else {
         this.advertisement = {};
+        this.domain_url = '';
         this.clearForm();
       }
     },
@@ -161,6 +175,11 @@ export default {
         this.selectChecked = [];
         this.advertisementTitle = '';
       }
+    },
+    dialogTongVisible() {
+      if (this.dialogTongVisible) {
+        this.sureChecked = true;
+      }
     }
   },
   methods: {
@@ -169,12 +188,14 @@ export default {
       done();
     },
     editShow() {
-      if (this.title === '编辑') {
-        this.$set(this.advertisement, 'img_url', this.advInfo.img_url);
+      if (this.advInfo.adv_id) {
         this.domain_url = this.advInfo.img_url;
-        this.$set(this.advertisement, 'subject', this.advInfo.subject);
-        this.$set(this.advertisement, 'url', this.advInfo.url);
-        this.$set(this.advertisement, 'adv_id', this.advInfo.adv_id);
+        this.$nextTick(()=>{
+          this.$set(this.advertisement, 'img_url', this.advInfo.img_url);
+          this.$set(this.advertisement, 'subject', this.advInfo.subject);
+          this.$set(this.advertisement, 'url', this.advInfo.url);
+          this.$set(this.advertisement, 'adv_id', this.advInfo.adv_id);
+        })
       } else {
         this.clearForm();
       }
@@ -199,14 +220,29 @@ export default {
         if (valid) {
           if (this.$route.params.str) {
             // 直播-新建广告
-            this.createAdv();
+            if (this.title == '编辑') {
+              this.createAdvAndsync(0);
+            } else {
+              this.dialogTongVisible = true;
+            }
           } else {
             // 资料库中广告推荐，默认不同步到资料库
-            this.advertisement.is_sync = 0;
+            // this.advertisement.is_sync = 0;
             this.createAdvAndsync(0);
           }
         }
       });
+    },
+    sureMaterialAdver() {
+      if (this.sureChecked) {
+        // 同步资料库
+          // this.advertisement.is_sync = 1;
+          this.createAdvAndsync(1);
+      } else {
+        // 不同步资料库
+        // this.advertisement.is_sync = 0;
+        this.createAdvAndsync(0);
+      }
     },
     createAdv() {
       this.$confirm('是否同步到资料库?', '提示', {
@@ -217,12 +253,12 @@ export default {
           this.advertisement.is_sync = 1;
           this.createAdvAndsync(1);
         }).catch(() => {
-         this.advertisement.is_sync = 0;
-         this.createAdvAndsync(0);
+
         });
     },
     createAdvAndsync(type) {
-      let url = this.title === '编辑' ? 'updateAdv' : 'createAdv';
+      let url = this.advertisement.adv_id ? 'updateAdv' : 'createAdv';
+      this.advertisement.is_sync = type;
       if(this.$route.params.str) {
         this.advertisement.webinar_id = this.$route.params.str;
       }
@@ -231,6 +267,7 @@ export default {
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           this.dialogVisible = false;
+          this.dialogTongVisible = false;
           this.advertisement = {};
           this.clearForm();
           this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
@@ -386,10 +423,7 @@ export default {
     height: 130px !important;
     background: #F7F7F7;
   }
-  /deep/.el-button.is-round {
-    padding: 9px 32px;
-  }
-} 
+}
    /deep/.el-upload{
      border: 1px solid #ccc;
    }
@@ -472,4 +506,29 @@ export default {
        }
      }
    }
+   .sureQuestion{
+    padding-bottom: 16px;
+    .textPrize{
+      padding-left: 50px;
+      p{
+        font-size: 16px;
+        color: #1A1A1A;
+        padding-bottom: 15px;
+      }
+      /deep/.el-checkbox__label{
+        color: #666;
+      }
+      /deep/.el-checkbox__input.is-checked+.el-checkbox__label{
+        color: #666;
+      }
+      /deep/.el-checkbox__input.is-checked .el-checkbox__inner{
+        background-color: #FB3A32;
+        border-color: #FB3A32;
+      }
+    }
+    .dialog-footer{
+      text-align: center;
+      margin-top: 20px;
+    }
+  }
 </style>

@@ -33,7 +33,7 @@
       </div>
       <div class="statistical-map">
         <div class="map-title">
-          <span>观看地域TOP10分布情况</span>
+          <span>观看地域TOP1占比</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
             <i class="el-icon-question"></i>
@@ -112,7 +112,7 @@ export default {
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.childNum = JSON.parse(sessionOrLocal.get('userInfo')).child_num;
-    if (this.parentId && this.childNum) {
+    if (this.parentId == 0 && this.childNum >= 0) {
       this.searchAreaLayout.push({
         type: '3',
         key: 'type',

@@ -7,27 +7,30 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button type="primary" round class="head-btn set-upload" @click="addQuestion">新建</el-button>
-      <el-button round  @click="dataBase">资料库</el-button>
-      <el-button round class="head-btn batch-del" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</el-button>
+      <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addQuestion">创建问卷</el-button>
+      <el-button round  @click="dataBase" size="medium">资料库</el-button>
+      <el-button round class="head-btn batch-del" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
         <el-input v-model.trim="keyword" placeholder="请输入问卷名称"  @change="getTableList" maxlength="50" suffix-icon="el-icon-search" clearable></el-input>
       </div>
     </div>
-    <el-card class="question-list" v-show="total">
+    <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" :width="180" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-    </el-card>
+    </div>
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
-        <el-button type="primary" round v-if="nullText == 'nullData'" @click="dataBase" v-preventReClick>资料库</el-button>
+        <el-button size="white-primary" round v-if="nullText == 'nullData'" @click="dataBase" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <template v-if="isShowQuestion">
       <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
-        <pre-question  :questionId="questionId"></pre-question>
+        <pre-question   :questionId="questionId"></pre-question>
+        <div class="submit-footer">
+          <el-button class="length152" type="primary" size="medium" @click="isShowQuestion=false" round>提交</el-button>
+        </div>
       </el-dialog>
     </template>
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
@@ -49,6 +52,7 @@ export default {
       text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
+      loading: true,
       isShowQuestion: false,
       questionId: '',
       tabelColumn: [
@@ -138,17 +142,40 @@ export default {
     },
     // 编辑
     edit(that, {rows}) {
-      console.log('编辑', rows);
-      that.$router.push({
-        path: '/live/addQuestion',
-        query: {
-          questionId: rows.question_id,
-          webinarId: that.$route.query.id,
-          roomId: that.$route.query.roomId,
-          type: 2
-        }
-        }
-      );
+      if (rows.publish) {
+        that.$confirm('当前问卷已被推送，修改将影响之前收集的数据，确认修改?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box'
+        }).then(() => {
+          that.$router.push({
+            path: '/live/addQuestion',
+            query: {
+                questionId: rows.question_id,
+                webinarId: that.$route.query.id,
+                roomId: that.$route.query.roomId,
+                type: 2
+              }
+            }
+          );
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消修改'
+          });
+        });
+      } else {
+        that.$router.push({
+          path: '/live/addQuestion',
+          query: {
+              questionId: rows.question_id,
+              webinarId: that.$route.query.id,
+              roomId: that.$route.query.roomId,
+              type: 2
+            }
+          }
+        );
+      }
     },
     // 删除
     del(that, {rows}) {
@@ -206,6 +233,9 @@ export default {
   width: 100%;
   .question-list{
     width: 100%;
+    background: #fff;
+    padding: 24px 32px;
+    border-radius: 4px;
   }
   /deep/.el-card__body{
     width: 100%;
@@ -224,6 +254,9 @@ export default {
         border-radius: 18px;
       }
     }
+  }
+  .submit-footer{
+    text-align: center;
   }
 }
 </style>

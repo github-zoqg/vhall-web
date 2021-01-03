@@ -29,7 +29,7 @@
                 <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
                 <span class="ctx-span">元</span>
               </div>-->
-              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border">
+              <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" ref="payForm_fee" @input="formatInputs($event, 'payForm', 'fee')">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
@@ -62,11 +62,11 @@
           <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="100px">
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
-                <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
+                <el-input v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two"   @input="formatInputs($event, 'fCodeForm', 'nums')">
                   <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
-                <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
+                <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
@@ -97,17 +97,17 @@
         <div v-show="Number(form.verify) === 6" class="viewer-rules-ctx--6">
           <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="100px">
             <el-form-item label="付费金额" prop="fee">
-              <el-input v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border">
+              <el-input v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" @input="formatInputs($event, 'fCodePayForm', 'fee')">
                 <template slot="append">元</template>
               </el-input>
             </el-form-item>
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
-                <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two">
+                <el-input v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodePayForm', 'nums')">
                   <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
                 </el-input>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
-                <el-button class="down-btn" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
+                <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
@@ -138,7 +138,7 @@
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
           <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="100px">
             <el-form-item label="观看密码" prop="password">
-              <el-input v-model="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></el-input>
+              <VhallInput v-model="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
               <div class="switch__box">
@@ -216,6 +216,7 @@
 import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
 import {formateDate} from "@/utils/general";
+import { parse } from 'qs';
 export default {
   name: 'viewerRules.vue',
   components: {
@@ -284,8 +285,8 @@ export default {
       payFormRules: {
         fee: [
           { required: true, message: '请按正确格式填写，0.01-99999.99', trigger: 'blur' },
-          { pattern: !/^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'},
-          { validator: checkFee, trigger: 'blur' }
+          { pattern: /^\d{0,5}(\.\d{0,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'},
+          /* { validator: checkFee, trigger: 'blur' } */
         ]
       },
       fCodeForm: {
@@ -294,7 +295,8 @@ export default {
       fCodeFormRules: {
         nums: [
           { required: true, message: '邀请码数量1-1000', trigger: 'blur' },
-          { validator: checkNums, trigger: 'blur' }
+          { pattern: /^(1000|[1-9][0-9]{0,2})$/, message: '邀请码数量1-1000' , trigger: 'blur'},
+         /*  { validator: checkNums, trigger: 'blur' } */
         ]
       },
       fCodePayForm: {
@@ -303,11 +305,13 @@ export default {
       },
       fCodePayFormRules: {
         nums: [
-          { validator: checkNums, trigger: 'blur' }
+          { required: true, message: '邀请码数量1-1000', trigger: 'blur' },
+          { pattern: /^(1000|[1-9][0-9]{0,2})$/, message: '邀请码数量1-1000' , trigger: 'blur'},
+          /* { validator: checkNums, trigger: 'blur' } */
         ],
         fee: [
           { required: true, message: '请按正确格式填写，0.01-99999.99', trigger: 'blur' },
-          { pattern: /^\d{0,6}.?(\d{1,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
+          { pattern: /^\d{0,5}(\.\d{0,2})?$/, message: '请按正确格式填写，0.01-99999.99' , trigger: 'blur'} // /^\d{1,6}\.{0,1}(\d{1,2})?$/
         ]
       },
       pwdForm: {
@@ -322,6 +326,25 @@ export default {
     };
   },
   methods: {
+    formatInputs(value, formName, key) {
+      if (key === 'nums') {
+        if (!/^(1000|[1-9][0-9]{0,2})$/.test(value)) {
+          if(!value.match(/^(1000|[1-9][0-9]{0,2})$/g)) {
+            this[formName][key] = '';
+          } else {
+            this[formName][key] = parseFloat(value).toFixed(2);
+          }
+        }
+      } else {
+        if (!/^\d{0,5}(\.\d{0,2})?$/.test(value)) {
+          if(!value.match(/^\d{0,5}(\.\d{0,2})?$/g)) {
+            this[formName][key] = '';
+          } else {
+            this[formName][key] = parseFloat(value).toFixed(2);
+          }
+        }
+      }
+    },
     handleClick(tab, event) {
       console.log(tab, event);
       // 每次选项卡切换，之前选择项清空。
@@ -509,7 +532,6 @@ export default {
     },
     formatInput() {
       this.$nextTick(() => {
-       alert(11)
       })
     },
     // 验证码生成
@@ -726,7 +748,7 @@ export default {
     }
   }
   .down-btn {
-    width: 118px;
+    /* width: 118px;
     height: 40px;
     border-radius: 20px;
     border: 1px solid #FB3A32;
@@ -736,7 +758,7 @@ export default {
     color: #FB3A32;
     line-height: 20px;
     text-align: center;
-    padding: 0 0;
+    padding: 0 0; */
   }
 }
 .viewer-rules-ctx--2 {

@@ -45,16 +45,16 @@ export default {
     toShare(type) {
       let url = '';
       if(type === 'wechat') {
-        // ag: url = http://t.e.vhall.com/v3/#/live/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用
-          url = `//aliqr.e.vhall.com/qr.png?t=${this.shareVo.wechat_share_link || this.url}`
+        // ag: url = http://t.e.vhall.com/v3/#/lives/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用
+          url = `//aliqr.e.vhall.com/qr.png?t=${this.shareVo.url || this.url}`
       }
       else if (type === 'sina') {
         // http://service.weibo.com/share/share.php?url=你的分享网址&sharesource=weibo&title=你的分享标题&pic=你的分享图片&appkey=你的key，需要在新浪微博开放平台中申请
         // https://service.weibo.com/share/share.php?url=https://t.e.vhall.com/user/home/16421384&title=我在微吼直播，这是我的主页 主页标题，欢迎围观。主页简介&pic=主页头像地址&appkey=&searchPic=false
-        url = `http://service.weibo.com/share/share.php?url=${this.shareVo.sina_share_link || this.url}`
+        url = `http://service.weibo.com/share/share.php?url=${this.shareVo.url || this.url}`
       }
       else if (type === 'qq') {
-        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.shareVo.qq_share_link || this.url}`
+        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.shareVo.url || this.url}`
       }
       window.open(url, '_blank');
     },
@@ -113,14 +113,15 @@ export default {
       height: 40px;
       border-radius: 100%;
       margin-right: 12px;
+      cursor: pointer;
     }
   }
   .linkUrl{
-    background-color: #e5e5e5;
+    // background-color: #e5e5e5;
     border-radius: 4px;
-    padding: 2px 8px;
+    // padding: 2px 8px;
     font-size: 12px;
-    margin: 0 6px;
+    margin: 8px 0px;
   }
   .el-button--mini{
     padding: 4px 10px;

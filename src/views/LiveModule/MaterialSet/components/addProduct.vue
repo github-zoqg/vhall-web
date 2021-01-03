@@ -1,9 +1,10 @@
 <template>
   <div class="form-product">
-    <el-card>
+    <pageTitle title="创建商品"></pageTitle>
+    <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">
-          <el-input v-model.trim="form.name" maxlength="30" show-word-limit placeholder="请输入商品名称"></el-input>
+          <VhallInput v-model.trim="form.name" maxlength="30" show-word-limit placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
         <el-form-item label="商品图片" prop="img_id">
           <div class="imgList">
@@ -44,7 +45,7 @@
           <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，建议尺寸：600*600px</p>
         </el-form-item>
         <el-form-item label="商品描述" prop="description">
-          <el-input type="textarea" v-model.trim="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></el-input>
+          <VhallInput type="textarea" v-model.trim="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
           <el-input v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
@@ -65,11 +66,12 @@
           <el-button type="primary" round class="length152" @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>
-    </el-card>
+    </div>
   </div>
 </template>
 <script>
 import upload from '@/components/Upload/main';
+import PageTitle from '@/components/PageTitle';
 export default {
   data() {
     // 商品图片验证
@@ -177,7 +179,8 @@ export default {
     }
   },
   components: {
-    upload
+    upload,
+    PageTitle
   },
   methods: {
     // 验证商品链接和店铺链接
@@ -396,6 +399,11 @@ export default {
     /deep/.el-form{
       width: 50%;
     }
+    .add-product{
+      background: #fff;
+      padding: 24px 32px;
+      border-radius: 4px;
+    }
     .el-form-item {
       margin-bottom: 32px;
       i{
@@ -403,9 +411,16 @@ export default {
         padding: 0 10px;
         color: #666;
       }
+      &:last-child{
+        margin: 40px 0;
+      }
     }
     /deep/.el-upload--picture-card{
       height: 148px;
+    }
+    /deep/.el-textarea .el-input__count{
+      font-size: 14px;
+      color: #666;
     }
     .imgList{
       display: flex;

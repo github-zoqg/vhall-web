@@ -164,8 +164,6 @@
                     </el-row>
                   </template>
                 </el-form-item>
-                <el-form-item v-if="isPhoneValidate">
-                </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" :required="false" prop="code">
                   <el-row :gutter="20">
                     <el-col :span="12">
@@ -644,15 +642,15 @@
                 this.closePreview()
                 // 判断当前直播状态，进行相应的跳转
                 this.getWebinarStatus()
-              } else if (res.code == 12809 || res.code == 10000) {
+              }
+            }).catch(err => {
+              if (err.code == 12809 || (err.code == 600 && (err.msg.indexOf("验证码格式错误") > 0))) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
-                this.$refs['form'].validateField('code', res => {
+                this.$refs['form'].validateField('code', err => {
                   this.isVerifyCodeErr = false
                 })
-              } else {
-                this.$message.error(res.msg)
               }
             })
           } else {
@@ -683,7 +681,9 @@
                   this.$message.warning('请先报名！');
                   this.tabs = 1;
                 }
-              } else if (res.code == 12809 || res.code == 10000) {
+              }
+            }).catch(err => {
+              if (res.code == 12809 || (res.code == 600 && (res.msg.indexOf("验证码格式错误") > 0))) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true

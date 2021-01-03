@@ -38,7 +38,7 @@
     <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
-          <div class="top">
+          <div class="top" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
@@ -53,17 +53,15 @@
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
                 <i class="iconfont-v3 saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
-                <!-- <i class="saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i> -->
-                <!-- <router-link :to="'/special/edit' + item.webinar_id"><i class="el-icon-edit-outline"></i></router-link> -->
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
-                <icon icon-class="saasicon-eye" @click="specialDetail(item)"></icon>
+                <i class="iconfont-v3 saasicon-eye" @click="specialDetail(item)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
-                <icon icon-class="saasicon-share" @click.prevent.stop="toShare(item.id)"></icon>
+                <i class="iconfont-v3 saasicon-share" @click="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
-                <icon icon-class="saasicon-trash" @click="deleteHandle(item.id)"></icon>
+                <i class="iconfont-v3 saasicon-trash" @click="deleteHandle(item.id)"></i>
               </el-tooltip>
             </p>
           </div>
@@ -83,9 +81,9 @@
       title="分享"
       :visible.sync="dialogShareVisible"
       :close-on-click-modal="false"
-      width="450px">
+      width="500px">
       <div class="content">
-        <share slot="content" :url="home_link"></share>
+        <share slot="content" :shareVo="shareVo"></share>
       </div>
    </VhallDialog>
   </div>
@@ -109,7 +107,9 @@ export default {
       pageSize: 12,
       pageNum: 1,
       pos: 0,
-      home_link: '',
+      shareVo: {
+        url: ''
+      },
       totalElement: 0,
       liveDropDownVisible: false,
       orderOptions: [
@@ -205,13 +205,13 @@ export default {
       });
     },
     toShare(id) {
-      this.home_link = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
       this.dialogShareVisible = true;
+      this.shareVo.url = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
+      // console.log(this.home_link, '?????????????????')
     },
     // 预览页面
     specialDetail(item) {
-      console.log("1321432144")
-      let routeData = this.$router.push({ path: '/special/detail', query: {id: item.id } });
+      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     }
   },
@@ -346,6 +346,7 @@ export default {
         box-sizing: border-box;
         position: relative;
         border-radius: 4px;
+        cursor: pointer;
         img{
           width: 100%;
           height: 100%;
@@ -407,13 +408,11 @@ export default {
         }
         .liveOpera{
           color: #666666;
-          span{
-            cursor: pointer;
-            &:nth-child(2){
+          i{
+           cursor: pointer;
+           font-size: 18px;
+           &:nth-child(2){
               padding: 0 20px;
-            }
-            /deep/.iconfont-v3 {
-              font-size: 18px;
             }
           }
           .el-dropdown{

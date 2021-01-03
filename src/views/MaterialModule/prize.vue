@@ -13,14 +13,17 @@
       <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
-      <search-area class="head-btn fr search"
+      <div class="inputKey">
+        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入奖品名称" clearable @change="getTableList"></el-input>
+      </div>
+      <!-- <search-area class="head-btn fr search"
         ref="searchArea"
         :isExports='false'
         :placeholder="'请输入奖品名称'"
         :searchAreaLayout="searchAreaLayout"
         @onSearchFun="getTableList('search')"
         >
-      </search-area>
+      </search-area> -->
     </div>
     <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
@@ -60,6 +63,7 @@ export default {
       total: 0,
       nullText: 'nullData',
       isSearch: false,
+      keyword: '',
       text: '您还未添加奖品，快去添加吧~',
       prizeInfo: {},
       isDelete: false,
@@ -109,13 +113,13 @@ export default {
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo;
        //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
+      let formParams = {
+        keyword: this.keyword
+      }; //获取搜索参数
+      if (this.keyword) {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
-        if (this.tableData.length) {
-          this.$refs.tableList.clearSelect();
-        }
+        this.$refs.tableList.clearSelect();
       }
       if (this.source == '0') {
         formParams.room_id = this.roomId;
@@ -126,7 +130,7 @@ export default {
       this.$fetch('getPrizeList', obj).then(res => {
         this.tableData = res.data.list;
         this.total = res.data.count;
-        if (params === 'search') {
+        if (this.keyword) {
           this.nullText = 'search';
           this.text = '';
           this.isSearch = true;
@@ -241,6 +245,14 @@ export default {
           width: 100%;
           height: 100%;
         }
+      }
+    }
+    .inputKey{
+      float: right;
+      height: 35px;
+      width: 220px;
+      /deep/.el-input__inner{
+        border-radius: 18px;
       }
     }
   }

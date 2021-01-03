@@ -21,7 +21,7 @@
         placeholder="请输入礼物名称"
       >
         <i
-          style="cursor: pointer;"
+          style="cursor: pointer; line-height: 36px;"
           class="el-icon-search el-input__icon"
           slot="suffix"
           @click="searchGifts">
@@ -45,7 +45,7 @@
           width="55"
           align="left"
         />
-        <el-table-column label="图片" width="120px">
+        <el-table-column label="图片">
           <template slot-scope="scope">
             <div class="gift-cover">
               <img :src="scope.row.img" alt="" />
@@ -61,7 +61,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" align="left">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
             <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
             <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
@@ -102,8 +102,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model.trim="editParams.name" show-word-limit maxlength="10" placeholder="请输入礼物名称">
-            </VhallInput>
+            <VhallInput v-model.trim="editParams.name" show-word-limit maxlength="10" placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
             <VhallInput @input="handleInput" v-model.trim.number="editParams.price" show-word-limit maxlength="10" placeholder="请输入0-9999.99">
@@ -112,8 +111,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
         <el-button type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
+        <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -462,6 +461,9 @@ export default {
   }
   .head-operat{
     margin-bottom: 20px;
+    /deep/ .el-input__suffix-inner .el-input__icon {
+      line-height: 36px;
+    }
     .head-btn{
       display: inline-block;
       border-radius: 20px;
