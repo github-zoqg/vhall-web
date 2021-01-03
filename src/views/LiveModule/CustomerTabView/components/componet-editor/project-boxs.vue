@@ -3,7 +3,7 @@
   <div class="search" >
     <el-input
       v-model.trim="keyword"
-      placeholder="请输入直播标题"
+      placeholder="请输入专题标题"
       @change="inputChange"
       suffix-icon="el-icon-search"
       style="width:220px; border-radius:24px"
@@ -19,29 +19,29 @@
     <!-- 单个视频 -->
     <div class="vh-chose-active-item"
       v-for="(item) in activeList"
-      :key="item.webinar_id"
+      :key="item.id"
       @click="doSelect(item)"
       :class="{'checkedActive': item.checked}"
     >
       <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
       <div class="vh-chose-active-item__cover">
-        <img :src="item.img_url" alt="">
+        <img :src="item.cover" alt="">
         <div class="vh-chose-active-item__cover-status">
-          <span class="liveTag">
+          <!-- <span class="liveTag"> -->
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
             </label> -->
-            {{item | liveTag}}
-          </span>
+            <!-- {{item | liveTag}} -->
+          <!-- </span> -->
         </div>
         <div class="vh-chose-active-item__cover-hots">
           <i class="iconfont-v3 saasicon_redu"></i>
-          {{ item.pv }}
+          {{ item.view_num }}
         </div>
 
       </div>
       <div class="vh-chose-active-item__title">
-        {{ item.subject }}
+        {{ item.title }}
       </div>
       <div class="vh-chose-active-item__info">
         {{ item.created_at }}
@@ -99,7 +99,6 @@ export default {
         pos: pos,
         user_id: userId,
         limit: limit,
-
         order_type: 1,
       }
 
@@ -108,7 +107,7 @@ export default {
         params.title = this.keyword
       }
 
-      this.$fetch('liveList', this.$params(params)).then((res) => {
+      this.$fetch('subjectList', this.$params(params)).then((res) => {
         if(res.code == 200) {
           this.page = this.page + 1
           if(res.data.total == 0) {
@@ -140,7 +139,7 @@ export default {
         return item
       })
       this.activeList = this.activeList.map((item) => {
-          if(checked.includes(item.webinar_id)) {
+          if(checked.includes(item.id)) {
             return {
               ...item,
               checked: true
@@ -157,11 +156,9 @@ export default {
     doSelect(item) {
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
-
       let webinars = this.selectedOption.map((item) => {
-        return item.webinar_id
+        return item.id
       })
-
       this.$emit('seleclted', webinars)
     },
   },

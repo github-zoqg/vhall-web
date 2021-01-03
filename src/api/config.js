@@ -100,6 +100,7 @@ const apis = {
   subjectEdit: ['/v3/webinars/subject/edit', 'POST'], // 专题修改
   subjectInfo: ['/v3/webinars/subject/info', 'POST'], // 获取专题详情接口(专题预览)
   subjectDel: ['/v3/webinars/subject/delete', 'POST'], // 专题删除接口 •••
+  btachSubject: ['/v3/webinars/subject/get-batch-info', 'POST'],
   // 角色邀请
   privilegeInfo:  ['/v3/webinars/privilege/info', 'POST'], // 获取活动角色配置接口  √
   privilegeOpen:  ['/v3/webinars/privilege/open-privilege', 'POST'], // 开启关闭角色开关  √

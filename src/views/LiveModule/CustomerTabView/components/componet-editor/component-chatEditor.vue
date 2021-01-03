@@ -10,6 +10,10 @@
         ></el-input>
       </div>
     </div>
+
+    <div class="chat-tips">
+      <img src="./chat-tips@2x.png" alt="">
+    </div>
   </div>
 </template>
 <script>
@@ -51,6 +55,12 @@ export default {
         padding:0 12px;
         border-radius: 4px;
         border: 1px solid #CCCCCC;
+      }
+    }
+    .chat-tips{
+      margin-top: 24px;
+      img{
+        max-width:442px ;
       }
     }
   }
