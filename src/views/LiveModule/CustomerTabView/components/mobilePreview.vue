@@ -28,7 +28,13 @@
                   <li @click="swapRight(index)" v-if="(index < menus.length - 1)"> 右移 </li>
                   <li @click="addRight(index)"> 右侧新增菜单 </li>
                   <li @click="addLeft(index)"> 左侧新增菜单 </li>
-                  <li @click="showOrHide" v-if="item.type == 1"> 预告/结束显示 </li>
+                  <li v-if="item.type == 1">
+                    <input type="checkbox" :checked="item.status == 3" @click="showOrHide(index)" /> 预告/结束显示
+                    <el-tooltip class="item" effect="dark" placement="right">
+                      <div slot="content" style="line-height:24px">勾选后，该直播为预告和结束状态时也会显示此菜单；<br />不勾选则只在直播和回放状态显示。</div>
+                      <i class="iconfont-v3 saasicon_help_m"></i>
+                    </el-tooltip>
+                  </li>
                   <li @click.stop="delThis(index)" v-if="item.type == 1"> 删除 </li>
                   <li @click.stop="hideThis(index, item.status)" v-if="item.type == 3 || item.type == 4"> {{ item.status == 1 ?  '隐藏' : '显示'}} </li>
                 </ul>
@@ -283,7 +289,12 @@ export default {
       this.menus[index2] = cache
     },
 
-    showOrHide() {
+    showOrHide(index) {
+      if(this.menus[index].status == 3) {
+        this.menus[index].status == 4
+      } else {
+        this.menus[index].status == 3
+      }
     },
 
     delThis(index) {
@@ -380,7 +391,7 @@ export default {
         vertical-align: top;
         user-select: none;
         cursor: pointer;
-        span{
+        & > span{
           display: inline-block;
           vertical-align: top;
           padding: 0 10px;
@@ -420,9 +431,22 @@ export default {
         &.disabled{
           color: #B3B3B3;
         }
+
         &:hover{
           background: #FFEBEB;
           color: #FB3A32;
+        }
+        input{
+          width: 16px;
+          height: 16px;
+          border-radius: 2px;
+          border: 1px solid #999999;
+          vertical-align: middle;
+          line-height: 40px;
+        }
+        i{
+          vertical-align: middle;
+          line-height: 40px;
         }
       }
   }

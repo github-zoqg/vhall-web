@@ -21,7 +21,6 @@
           <span style="color:#FB3A32">*</span> 跳转地址
         </div>
         <div class="editorContent">
-          {{ a }}
           <el-input v-model="info.src" @change="changeLink"></el-input>
         </div>
       </div>

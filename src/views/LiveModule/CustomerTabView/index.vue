@@ -114,7 +114,7 @@ export default {
        this.$fetch('customMenuSave', {
         request_data: JSON.stringify(params)
       }).then(res =>{
-        if(res && res.code === 200 && res.data) {
+        if(res.code === 200 && res.data) {
           this.$message.success('保存成功');
           this.addCustomVisbile = false;
           this.customMenuList();
