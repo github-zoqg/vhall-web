@@ -78,13 +78,14 @@
         </el-table-column>
       </el-table>
       <SPagination
-        :total="docDao.total"
-        v-show="docDao.total > limit"
-        :currentPage="pageNumber"
-        @current-change="currentChangeHandler"
-        align="center"
-      >
-      </SPagination>
+      :total="docDao.total"
+      v-if="docDao.total > limit"
+      :currentPage="pageNumber"
+      @current-change="currentChangeHandler"
+      align="center"
+    >
+    </SPagination>
+
     </div>
     <!-- 无消息内容 -->
     <null-page v-show="!file_name && docDao.total === 0"></null-page>
@@ -131,6 +132,7 @@ export default {
     search() {
       this.pos = 0;
       this.pageNumber = 1;
+       // 表格切换到第一页
       this.getTableList();
     },
     checkSelectable(row) {
@@ -388,6 +390,15 @@ export default {
 }
 .list--search{
   margin-bottom: 20px;
+  .el-button {
+    vertical-align: middle;
+  }
+  .el-input {
+    vertical-align: middle;
+  }
+  .el-date-editor {
+    vertical-align: middle;
+  }
   .el-select{
     float: right;
     margin-right: 20px;
