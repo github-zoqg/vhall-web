@@ -11,7 +11,8 @@
             <div slot="content">
               直播开始到活动结束后计作1个场次，筛选条件内数据进行相加
             </div>
-           <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m"></i>
+           <!-- <i class="el-icon-question"></i> -->
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -27,7 +28,7 @@
           <span>{{ titleType == 1 ? '直播' : ''}}总时长</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">{{ titleType == 1 ? '每场直播活动的时长，筛选条件内数据进行相加' : '点播视频的总时长'}}</div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
            <h3>
              {{ mainKeyData.total_live_time }}
@@ -44,7 +45,7 @@
           <span>活动总数</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">筛选条件内的活动总数，包含直播、点播</div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -62,7 +63,7 @@
             <div slot="content">
               观看直播的连接数，即1个人同时打开3个观看页计作3个并发。<br />筛选条件内显示当前活动的最高并发
             </div>
-           <i class="el-icon-question"></i>
+           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -80,7 +81,7 @@
             <div slot="content">
               {{ titleType==1 ? '直播' : '点播'}}创建至今，进入观看页面（直播+回放）的观看人数，以播放器sdk上报为准，<br />用户真实观看了视频。筛选条件内同一个用户多次观看会进行去重
             </div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -101,7 +102,7 @@
             <div slot="content" v-else>
               统计进入观看页面的观看次数，播放器sdk上报的数据。<br />筛选条件内将活动数据进行相加，数据不去重
             </div>
-            <i class="el-icon-question"></i>
+           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
              <count-to :startVal="0"
@@ -121,7 +122,7 @@
             <div slot="content">
               直播创建至今，进入观看页面（直播+回放）的观看次数，<br />播放器sdk上报的数据，数据不去重
             </div>
-           <i class="el-icon-question"></i>
+           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -137,7 +138,7 @@
           <span>人均观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">人均观看次数=观看次数/观看人数</div>
-           <i class="el-icon-question"></i>
+           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -153,7 +154,7 @@
           <span>观看时长</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">筛选条件内的观看总时长</div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             {{ mainKeyData.watch_duration }}
@@ -167,7 +168,7 @@
             <div slot="content">
               筛选条件内的观看平均时长。人均观看时长=观看时长/观看人数
             </div>
-          <i class="el-icon-question"></i>
+          <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
             {{ mainKeyData.watch_duration_avg }}
@@ -239,6 +240,10 @@ export default {
       font-family: @fontRegular;
       color: #999;
       margin: 0;
+    }
+    i{
+      font-size: 14px;
+      padding: 0 2px;
     }
     h3{
       padding-top: 6px;

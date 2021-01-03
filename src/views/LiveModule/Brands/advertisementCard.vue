@@ -169,6 +169,10 @@ export default {
       this.adv_ids = val.map(item => item.adv_id);
     },
     createAdvise(title) {
+      if (this.$route.path !='/material/advertCard' && this.tableList.length == 50) {
+         this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        return;
+      }
       this.advInfo = {};
       this.$refs.adviseSonChild.dialogVisible = true;
     },

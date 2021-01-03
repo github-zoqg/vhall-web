@@ -9,7 +9,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="domainUrl || domain_url" class="avatar" alt="" @click.stop="false"/>
+          <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop="false"/>
           <div class="mask">
             <span v-if="!!$props.coverPic">
               <i class="el-icon-collection" @click.stop="coverPage"></i>
