@@ -180,8 +180,6 @@ export default {
     },
 
     computedScrollLock() {
-
-
     },
 
     // 向右滚动
@@ -231,7 +229,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           } else if (this.$insertIndex == 0) {
@@ -240,7 +238,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           } else if(this.$insertIndex == this.menus.length) {
@@ -249,7 +247,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           }
