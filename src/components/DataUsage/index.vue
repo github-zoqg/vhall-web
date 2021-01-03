@@ -24,7 +24,7 @@
               若无扩展包，则不可发直播且直播回放不可播放<br>
               2.扩展包欠费则不可发直播，回放不受影响
             </div>
-            <i class="el-icon-question"></i>
+           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
@@ -56,7 +56,7 @@
                 2.自启用之日起，赠送的流量包有效期为7天<br>
                 3.流量包到期后自动失效
               </div>
-              <i class="el-icon-question"></i>
+             <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
@@ -72,7 +72,7 @@
                 2.自启用之日起，赠送的流量包有效期为7天<br>
                 3.流量包到期后自动失效
               </div>
-              <i class="el-icon-question"></i>
+              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
@@ -248,9 +248,8 @@ export default {
       color: #999;
     }
     i{
-      color: #000;
-      display: inline-block;
-      margin-left: 2px;
+      font-size: 14px;
+      padding: 0 2px;
     }
     h2 {
       font-size: 28px;
