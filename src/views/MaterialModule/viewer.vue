@@ -340,6 +340,13 @@ export default {
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
           this.queryList();
+        } else {
+          // 若无分组，默认清空列表
+          this.query.group_id = null;
+          this.viewerDao = {
+            total: 0,
+            data: []
+          };
         }
       }).catch(e => {
         console.log(e);
@@ -444,14 +451,24 @@ export default {
     },
     // 打开导入观众弹出框
     importViewerOpen() {
-      this.importFileShow = true;
-      this.fileUrl = null;
-      this.fileResult = '';
-      this.importResult = null;
+      // 判断是否有分组
+      if(this.query.group_id) {
+        this.importFileShow = true;
+        this.fileUrl = null;
+        this.fileResult = '';
+        this.importResult = null;
+      } else {
+        this.$message.error('请选择分组');
+      }
     },
     // 创建观众
     viewerDialogAdd() {
-      this.viewerDialogShow(this, {rows: null});
+      // 判断是否有分组
+      if(this.query.group_id) {
+        this.viewerDialogShow(this, {rows: null});
+      } else {
+        this.$message.error('请选择分组');
+      }
     },
     // 展示观众修改
     viewerDialogShow(that, { rows }) {

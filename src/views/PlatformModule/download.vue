@@ -377,9 +377,7 @@ export default {
   },
   mounted() {
     this.initPage();
-    this.$EventBus.$on('saas_vs_down_num', function() {
-      this.search();
-    });
+    this.$EventBus.$on('saas_vs_down_num', this.search);
     EventBus.$on('down_center_msg', res => { // 转码状态
       console.log(res, '监听到down_center_msg123转码状态事件');
       this.docDao.list.map(item => {

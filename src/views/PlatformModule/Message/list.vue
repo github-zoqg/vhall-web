@@ -213,9 +213,7 @@ export default {
     this.getMsgList();
   },
   mounted() {
-    this.$EventBus.$on('saas_vs_msg_num', function() {
-      this.getMsgList();
-    });
+    this.$EventBus.$on('saas_vs_msg_num', this.getMsgList);
   }
 };
 </script>
