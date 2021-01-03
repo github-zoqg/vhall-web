@@ -41,7 +41,6 @@
     >
       <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
     </div>
-
     <!-- <div class="vh-menus-dragComponents__item vh-menus-dragComponents__item-disabled">
       <i class="iconfont-v3 saasicon_list"></i> 敬请期待
     </div> -->

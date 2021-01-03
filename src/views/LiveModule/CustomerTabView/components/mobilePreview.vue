@@ -1,12 +1,13 @@
 <template>
   <div class="vh-mobile-preview-wrapbox" v-if="menus.length">
     <div class="vh-mobile-previe">
-      <div class="vh-moblie-content-box" style="width:302px; overflow:hidden; position:relative; left: 24px">
+      <div class="vh-moblie-content-box" style="width:310px; overflow:hidden; position:relative; left: 20px">
       <div style="height:295px; overflow:hidden;">
         <slot></slot>
       </div>
       <div class="vh-mobile-menus">
-        <i class="iconfont-v3 saasicon_arrowleft" @click="scrollLeft()" style="background:#fff; top: 2px; left:2px; z-index:5"></i>
+        <div style="width: 6px;left: -6px;position: absolute;height: 100px;background: #f3f3f3; z-index: 6;"></div>
+        <i class="iconfont-v3 saasicon_arrowleft" @click="scrollLeft()" style="background:#fff;  z-index:5"></i>
         <div class="vh-mobile-menus-scroll">
           <div class="vh-mobile-menus-scroll__content" :style="{'left': scrollLeftPx}">
             <div class="vh-mobile-menus-item"
@@ -42,8 +43,8 @@
             </div>
           </div>
         </div>
-        <i class="iconfont-v3 saasicon_plus vh-mobile-menus-add" @click.stop="addMenuAction" style="background:#fff; top: 2px; z-index:5"></i>
-        <i class="iconfont-v3 saasicon_arrowright1" @click.stop="scrollRight()" style="background:#fff; top: 2px; z-index:5"></i>
+        <i class="iconfont-v3 saasicon_plus vh-mobile-menus-add" @click.stop="addMenuAction" style="background:#fff; z-index:5"></i>
+        <i class="iconfont-v3 saasicon_arrowright1" @click.stop="scrollRight()" style="background:#fff; z-index:5; padding-right:2px"></i>
       </div>
       <div class="vh-mobile-tab-content">
         <component-preview>
@@ -57,21 +58,7 @@
       <!-- <editor-box>
       </editor-box> -->
     </div>
-
     <!-- 新增菜单（弹出框）-->
-
-    <!-- <el-dialog
-      :title="addCustomForm.name || '新增菜单'"
-      visible.sync="addCustomVisbile"
-      class="add-menu-dialog"
-    >
-      <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="0">
-        <el-form-item prop="name">
-          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="8" show-word-limit/>
-        </el-form-item>
-      </el-form>
-    </el-dialog> -->
-
     <VhallDialog
       :title="addCustomForm.name || '新增菜单'"
       :visible.sync="addCustomVisbile"
@@ -79,7 +66,11 @@
       width="280px"
       class="add-menu-dialog"
     >
-      <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="0">
+      <el-form
+        :model="addCustomForm"
+        ref="addCustomForm"
+        :rules="addCustomFormRules"
+        label-width="0">
         <el-form-item prop="name">
           <el-input
             v-model.trim="addCustomForm.name"
@@ -252,27 +243,22 @@ export default {
             })
           }
           setTimeout(() => {
-            console.log(this.$insertIndex)
-            console.log(this.menus[this.$insertIndex])
             this.choseMenu(this.$insertIndex, this.menus[this.$insertIndex])
           }, 500)
-
         } else {
           this.menus[this.$insertIndex].name = this.addCustomForm.name
         }
         this.addCustomVisbile = false
       })
     },
-
-
-
+    // 菜单重命名
     rename(index) {
       this.$insertIndex = index
       this.$type = 'rename' // 编辑类型！
       this.addCustomForm.name = this.menus[index].name
       this.addCustomVisbile = true
     },
-
+    //  左移
     swapLeft(index) {
       if(index == 0) {
         return
@@ -282,7 +268,7 @@ export default {
         this.menus[(index -1)] = cache
       }
     },
-
+    //  右移
     swapRight(index) {
       if(index == this.menus.length) {
         return
@@ -292,14 +278,14 @@ export default {
         this.menus[(index + 1)] = cache
       }
     },
-
+    // 右侧增加菜单
     addRight(index) {
       this.$insertIndex = (index + 1)
       this.$type = 'add' // 编辑类型！
       this.addCustomForm.name = ''
       this.addCustomVisbile = true
     },
-
+    // 左侧增加菜单
     addLeft(index) {
       this.$insertIndex = (index - 1 < 0 ? 0 : index - 1)
       console.log(this.$insertIndex)
@@ -307,13 +293,7 @@ export default {
       this.addCustomForm.name = ''
       this.addCustomVisbile = true
     },
-
-    swapArray(index, index2) {
-      const cache = this.menus[index]
-      this.menus.splice(index,1,this.menus[index2])
-      this.menus[index2] = cache
-    },
-
+    // 预告显示 隐藏菜单
     showOrHide(index) {
       if(this.menus[index].status == 3) {
         this.menus[index].status == 4
@@ -321,7 +301,7 @@ export default {
         this.menus[index].status == 3
       }
     },
-
+    // 删除
     delThis(index) {
       let activeTab = (index - 1)
       this.choseMenu(activeTab)
@@ -329,6 +309,7 @@ export default {
         this.menus.splice(index, 1)
       }, 100);
     },
+    // 隐藏
     hideThis(index) {
       const item = this.menus[index]
       if(item.status == 1) {
@@ -336,7 +317,6 @@ export default {
       } else {
         this.menus[index].status = 1
       }
-
     }
   }
 }
@@ -364,6 +344,8 @@ export default {
     width: 310px;
     height: 41px;
     margin: 0 auto;
+    left: 6px;
+    background: #fff;
     line-height: 40px;
     position: relative;
     border-bottom: 1px solid #E6E6E6;
@@ -371,7 +353,7 @@ export default {
     z-index: 10;
     .saasicon_arrowleft{
       position: absolute;
-      left: 5px;
+      left: 0px;
       top: 0px;
       cursor: pointer;
     }
@@ -383,7 +365,8 @@ export default {
     }
     .vh-mobile-menus-add{
       position: absolute;
-      right: 25px;
+      right: 23px;
+      padding-right: 3px;
       font-size: 20px;
       color: #FB3A32;
       cursor: pointer;
