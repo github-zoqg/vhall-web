@@ -11,7 +11,7 @@
                 :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.organizers_status ? '已开启，观看端主办方信息、个人主页入口和关注按钮显示' : '开启后，观看端主办方信息、个人主页入口和关注按钮显示'"
+                :active-text="signSetForm.organizers_status ? '已开启，观看页显示主办方信息、个人主页按钮和关注按钮' : '开启后，观看页显示主办方信息、个人主页按钮和关注按钮'"
               >
               </el-switch>
             </div>
@@ -24,7 +24,7 @@
                 :inactive-value="0"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.reserved_status ? '已开启，观看端底部版权信息显示' : '开启后，观看端显示底部版权信息'"
+                :active-text="signSetForm.reserved_status ? '已开启，观看页显示底部版权信息' : '开启后，观看页显示底部版权信息'"
               >
               </el-switch>
             </div>
@@ -37,7 +37,7 @@
                 :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.view_status ? '已开启，观看端显示品牌标志' : '开启后，观看端显示品牌标志'"
+                :active-text="signSetForm.view_status ? '已开启，观看页显示品牌标志' : '开启后，观看页显示品牌标志'"
               >
               </el-switch>
             </div>

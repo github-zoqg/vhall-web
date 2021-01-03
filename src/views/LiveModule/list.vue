@@ -223,10 +223,15 @@ export default {
     },
     goLivePlay(item) {
       if (item.webinar_type != 1) {
-        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+        // this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+        const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+        window.open(href, '_target');
       } else {
-         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+         window.open(href, '_target');
       }
+      // 需新标签打开
+
 
     },
     // 创建活动
@@ -347,6 +352,7 @@ export default {
       }
       .inner:hover{
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
       }
       .top{
         cursor: pointer;

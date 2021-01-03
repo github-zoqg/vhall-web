@@ -14,10 +14,10 @@
          <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
            <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
            <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
-           <span class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收缩'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+           <span v-show="userHomeVo && userHomeVo.content" class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收起'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
          </li>
          <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
-           <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
+           <el-button size="medium" round v-if="setHomeCheck" @click.prevent.stop="toHomeSetPage">设置</el-button>
            <el-button size="medium" round @click="openDialog('share')">分享</el-button>
          </li>
        </ul>
@@ -66,24 +66,14 @@ export default {
     };
   },
   computed: {
-    show_content: function() {
-      if (this.userHomeVo && this.userHomeVo.content && this.userHomeVo.content.length > 80) {
-        return this.userHomeVo.content.substring(0, 80) + '...';
+    setHomeCheck: function() {
+      if (this.$route.params.str) {
+        // 包含路径，表示观看页 or 主办方页
+        return Number(this.$route.params.str) === Number(sessionOrLocal.get('userId'));
       } else {
-        return this.userHomeVo.content || `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`;
+        // 不包含路径，表示控制台。
+        return this.userHomeVo;
       }
-    },
-    home_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`;
-    },
-    sina_share_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
-    },
-    wechat_share_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
-    },
-    qq_share_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
     }
   },
   methods: {

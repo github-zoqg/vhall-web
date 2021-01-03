@@ -18,17 +18,17 @@
         <div class="account--user">
           <!--<icon icon-class="saaszizhanghao_tubiao" style="font-size: 56px;"></icon>-->
           <img :src="avatarImgUrl" class="image-avatar" alt=""/>
-          <p class="account--title">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</p>
-          <p class="account--notice">{{userInfo && userInfo.position ? userInfo.position : '--'}}</p>
+          <p class="account--title" :title="userInfo && userInfo.nick_name ? userInfo.nick_name : ''">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</p>
+          <p class="account--notice" :title="userInfo && userInfo.position ? userInfo.position : ''">{{userInfo && userInfo.position ? userInfo.position : '--'}}</p>
         </div>
         <ul class="account--show">
           <li>
             <label>账号</label>
-            <p>{{userInfo && userInfo.name ? userInfo.name : '--'}}</p>
+            <p :title="userInfo && userInfo.name ? userInfo.name : ''">{{userInfo && userInfo.name ? userInfo.name : '--'}}</p>
           </li>
           <li>
             <label>公司</label>
-            <p>{{userInfo && userInfo.company ? userInfo.company : '--'}}</p>
+            <p :title="userInfo && userInfo.company ? userInfo.company : ''">{{userInfo && userInfo.company ? userInfo.company : '--'}}</p>
           </li>
           <li>
             <label>电话</label>
@@ -168,6 +168,12 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
+     overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
   .account--notice {
     font-size: 14px;
@@ -176,6 +182,12 @@ export default {
     color: #666666;
     line-height: 20px;
     margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
 }
 .account--show {
@@ -202,6 +214,12 @@ export default {
     font-weight: 400;
     color: #1A1A1A;
     line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
 }
 .account__panel--left {
