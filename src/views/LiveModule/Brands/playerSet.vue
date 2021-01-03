@@ -3,7 +3,7 @@
     <pageTitle title="播放器设置"></pageTitle>
     <el-card style="min-height:741px;">
       <el-row :gutter="20">
-        <el-col :span="14">
+        <el-col :span="13">
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="防录屏跑马灯" name="first">
               <div class="give-item">
@@ -574,9 +574,15 @@ export default {
   /deep/.el-card__body {
     padding: 0;
   }
+  /deep/.el-card {
+    box-shadow: none;
+  }
+  /deep/.el-tabs__active-bar {
+    border-radius: 2px;
+  }
   /deep/.el-form-item__label {
     color: #1a1a1a;
-    padding: 0 20px 0 0;
+    padding: 0 12px 0 0;
   }
   /deep/.el-switch__label.is-active{
     color: #1A1A1A;
@@ -612,7 +618,7 @@ export default {
     margin-right: 20px;
   }
   .textType{
-    width: 400px;
+    width: 360px;
     // text-overflow: -o-ellipsis-lastline;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -640,8 +646,8 @@ export default {
       }
     }
     .give-prize {
-      width: 500px;
-      margin-right: 120px;
+      width: 460px;
+      // margin-right: 30px;
       /deep/.el-button {
         padding: 12px 61px;
         border-radius: 20px;

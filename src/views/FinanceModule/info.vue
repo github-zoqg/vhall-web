@@ -412,6 +412,9 @@ export default {
     border-radius: 4px;
     background: #fff;
   }
+  /deep/.el-input__icon {
+    margin-bottom: 5px;
+  }
   .title-data {
       margin: 10px 0 20px 0;
       text-align: left;

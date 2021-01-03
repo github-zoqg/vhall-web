@@ -357,7 +357,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .contain-data {
-  margin: 0 41px;
+  // margin: 0 41px;
   padding: 0;
 }
 .statistical-data {
@@ -381,6 +381,11 @@ export default {
     text-align: left;
     padding-bottom: 10px;
     position: relative;
+    // padding-left: 32px;
+    // padding-right: 32px;
+    // /deep/.line-charts {
+    //   padding: 0 32px;
+    // }
     span {
       font-size: 16px;
       color: #666666;
@@ -395,6 +400,8 @@ export default {
     padding-top: 30px;
   }
 .changeOption {
+  width: 120px;
+  height: 32px;
   border-radius: 100px;
   border: 1px solid #ccc;
   position: absolute;
@@ -403,10 +410,14 @@ export default {
   cursor: pointer;
   span {
     display: inline-block;
+    text-align: center;
+    width: 59px;
+    height: 32px;
+    line-height: 26px;
     font-size: 14px;
     color: #666;
     padding: 3px 10px;
-    border-radius: 14px;
+    border-radius: 16px;
   }
   .span-active {
     border: none;
