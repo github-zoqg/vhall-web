@@ -3,6 +3,7 @@
     <template v-if="type == 1 || type == 3">
       <component
         :is="componetEditor"
+        :menuInfo.sync="currentInfo"
         :units.sync="currentInfo.components"
         :uuid="currentInfo.uuid"
       >
@@ -14,6 +15,7 @@
 import eventsType from '../EventConts'
 import EventBus from '../bus'
 import componentCustomer from './componet-editor/component-customerEditor'
+import componentChat from './componet-editor/component-chatEditor'
 export default {
   data() {
     return {
@@ -22,7 +24,8 @@ export default {
   },
 
   components: {
-    componentCustomer
+    componentCustomer,
+    componentChat
   },
 
   computed: {

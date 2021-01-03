@@ -4,6 +4,7 @@
       <component
         :is="componetPreview"
         :units.sync="currentInfo.components"
+        :menuInfo="currentInfo"
         :uuid="currentInfo.uuid"
       ></component>
   </div>

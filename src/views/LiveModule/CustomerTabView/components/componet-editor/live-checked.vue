@@ -11,9 +11,9 @@
         <img :src="item.img_url" alt="">
         <div class="vh-chose-active-item__cover-status">
           <span class="liveTag">
-            <label class="live-status" v-if="item.webinar_state == 1">
+            <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
-            </label>
+            </label> -->
             {{item | liveTag}}
           </span>
         </div>

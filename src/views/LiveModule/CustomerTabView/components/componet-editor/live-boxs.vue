@@ -1,7 +1,14 @@
 <template>
 <div style="height: 100%; min-height: 320px">
-  <div class="search" v-show="total">
-    <el-input v-model.trim="keyword" placeholder="请输入直播标题" @change="inputChange" suffix-icon="el-icon-search" style="width:220px" clearable></el-input>
+  <div class="search" >
+    <el-input
+      v-model.trim="keyword"
+      placeholder="请输入直播标题"
+      @change="inputChange"
+      suffix-icon="el-icon-search"
+      style="width:220px; border-radius:24px"
+      class="input-box"
+    ></el-input>
   </div>
   <div class="vh-chose-active-box"
     v-infinite-scroll="getActiveList"
@@ -21,26 +28,11 @@
         <img :src="item.img_url" alt="">
         <div class="vh-chose-active-item__cover-status">
           <span class="liveTag">
-            <label class="live-status" v-if="item.webinar_state == 1">
+            <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
-            </label>
+            </label> -->
             {{item | liveTag}}
           </span>
-          <!-- <template v-if="item.webinar_state == 1">
-            <img src="../../../common/images/live/live.gif" alt=""> 直播 | 互动直播
-          </template> -->
-          <!-- <template v-if="item.webinar_state == 2">
-            预告 | 互动直播
-          </template>
-          <template v-if="item.webinar_state == 3">
-            结束 | 互动直播
-          </template>
-          <template v-if="item.webinar_state == 4">
-            点播 | 互动直播
-          </template>
-          <template v-if="item.webinar_state == 5">
-            回放 | 互动直播
-          </template> -->
         </div>
         <div class="vh-chose-active-item__cover-hots">
           <i class="iconfont-v3 saasicon_redu"></i>
@@ -181,7 +173,13 @@ export default {
   }
   .search{
     margin-bottom: 20px;
+    .input-box{
+      /deep/ input{
+        border-radius: 24px !important;
+      }
+    }
   }
+
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
