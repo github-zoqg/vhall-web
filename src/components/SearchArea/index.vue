@@ -98,6 +98,10 @@ export default {
       type: Number,
       default: 1
     },
+    isDate: {
+      type: Boolean,
+      default: false
+    },
     isExports: {
       type: Boolean,
       default: true
@@ -120,8 +124,20 @@ export default {
   },
   created() {
     this.isActive = this.active;
+    if (this.isDate) {
+      this.initPage()
+    }
   },
   methods: {
+    initPage() {
+      // 初始化设置日期为最近一周
+      const end = new Date();
+      const start = new Date();
+      end.setTime(end.getTime() - 3600 * 1000 * 24);
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      this.searchParams.searchTime = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      // this.search();
+    },
     dealDisabledData(time) {
       // 设置选择的日期小于当前的日期,小于返回true,日期不可选
       // return time.getTime() < Date.now() - 8.64e7
