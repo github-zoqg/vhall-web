@@ -854,6 +854,7 @@ export default {
       vertical-align: middle;
       line-height: 20px;
       color: #999999;
+      background: #f7f7f7;
       font-size: 12px;
       cursor: pointer;
       i{
