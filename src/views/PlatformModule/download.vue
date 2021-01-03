@@ -132,7 +132,6 @@ export default {
     search() {
       this.pos = 0;
       this.pageNumber = 1;
-      debugger;
        // 表格切换到第一页
       this.getTableList();
     },
