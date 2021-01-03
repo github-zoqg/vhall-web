@@ -2,8 +2,8 @@
  <div class="home-main console">
    <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
-   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' :
-        '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}"></div>
+   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || 'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png' :
+        'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'}) 0px center / 100% no-repeat`}"></div>
    <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
      <!-- 内容区域 -->
      <div class="user__layout--title">
@@ -18,22 +18,7 @@
          </li>
          <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
            <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
-           <el-popover
-             class="button__share"
-             placement="bottom-end"
-             trigger="click"
-             v-if="userHomeVo && userHomeVo.show_share"
-           >
-             <div>
-               <share slot="content" :shareVo="{
-               url: home_link,
-               sina_share_link: sina_share_link,
-               qq_share_link: qq_share_link,
-               wechat_share_link: wechat_share_link
-             }"></share>
-             </div>
-             <el-button size="medium" round slot="reference">分享</el-button>
-           </el-popover>
+           <el-button size="medium" round @click="openDialog('share')">分享</el-button>
          </li>
        </ul>
      </div>
@@ -41,6 +26,15 @@
      <div class="user__layout--main">
        <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
      </div>
+
+     <shareDialog
+      :baseInfo="{
+        title: this.userHomeVo.title,
+        intro: this.userHomeVo.content,
+        pic: this.userHomeVo.homepage_avatar || this.avatarImgUrl
+      }"
+      ref="share"
+    ></shareDialog>
    </div>
  </div>
 </template>
@@ -50,7 +44,7 @@ import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import PageTitle from '@/components/PageTitle';
 import HomeMain from './components/main.vue';
-import Share from '@/components/Share';
+import ShareDialog from './components/shareDialog';
 import OldHeader from '@/components/OldHeader';
 export default {
   name: 'info.vue',
@@ -58,7 +52,7 @@ export default {
     PageTitle,
     HomeMain,
     OldHeader,
-    Share
+    ShareDialog
   },
   data() {
     return {
@@ -93,6 +87,10 @@ export default {
     }
   },
   methods: {
+    // 打开 dialog 方法（通用）
+    openDialog(ref){
+      this.$refs[ref].dialogVisible = true;
+    },
     showSetHandle(type) {
       this.isSetShow = type;
       this.getHomePageInfo();

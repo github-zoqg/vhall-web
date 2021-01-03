@@ -129,7 +129,7 @@ export default {
             key_name: '文档转码',
             openShow: '开启后，文档上传并转码成功进行通知',
             closeShow: '已开启，文档上传并转码成功进行通知',
-            value: 0
+            value: Number(eventsList.includes('7') ? 1 : 0) || 0
           }
         ];
         this.keyList = keyList;
