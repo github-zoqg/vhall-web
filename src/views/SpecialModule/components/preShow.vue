@@ -34,7 +34,7 @@
             <el-row :gutter="40" class="lives">
               <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                 <div class="inner">
-                  <div class="top">
+                  <div class="top" @click="goWatchData(item)">
                     <span class="liveTag">{{item.type | actionText }}</span>
                     <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
                   </div>
@@ -100,6 +100,10 @@ export default {
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
+    },
+    goWatchData(item) {
+      let url =  `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/watch/${item.webinar_id}`;
+      window.open(url, '_blank');
     },
     handleClick(tab) {
       this.activeName = tab.name;

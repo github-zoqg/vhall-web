@@ -57,7 +57,7 @@ export default {
           formatter: `{b0}<br />${that.type == 1 ? that.versionType == 1 ? '流量' : '并发' : '观看人数'}: {c0}${that.type == 1 ? that.versionType == 1 ? 'GB' : '方' : ''}`,
         },
         xAxis: {
-          name: '日期',
+          // name: '日期',
           nameLocation: 'start',
           nameGap: 30,
           type: 'category',

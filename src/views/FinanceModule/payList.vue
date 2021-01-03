@@ -207,6 +207,9 @@ export default {
     .el-table td, .el-table th{
       height: 56px;
     }
+    /deep/.el-card {
+      box-shadow: none;
+    }
     .down-time{
       position: fixed;
       width: 100%;

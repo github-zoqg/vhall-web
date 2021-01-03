@@ -225,7 +225,7 @@ export default {
       if (item.webinar_type != 1) {
         this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
       } else {
-         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}/1`;
+         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
       }
 
     },
