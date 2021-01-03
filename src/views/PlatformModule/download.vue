@@ -118,12 +118,15 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    initPage() {
+    initPage(type) {
       // 初始化设置日期为最近一周
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      // 若type不为空，不做重置
+      if (type !== 1) {
+        this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      }
       this.search();
     },
     search() {
@@ -304,7 +307,7 @@ export default {
             } catch (e) {
               console.log(e);
             }
-            that.initPage();
+            that.initPage(1);
           }else {
             that.$message({
               type: 'error',
@@ -468,6 +471,9 @@ export default {
     background:#FB3A32;
   }
 }
+/deep/.el-date-editor .el-range__icon{
+  line-height: 28px;
+}
 .download-list {
   /deep/.cell img {
     width: 100px;
@@ -479,9 +485,9 @@ export default {
   /deep/.el-table__header{
     background-color: #FB3A32;
   }
-  /deep/.el-table td, .el-table th{
+  /* /deep/.el-table td, .el-table th{
     padding: 10px 0 9px 0;
-  }
+  } */
   .text{
     width: 100%;
     overflow: hidden;
