@@ -225,7 +225,9 @@ export default {
       if (item.webinar_type != 1) {
         this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
       } else {
-         window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+        let url = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+        window.open(url, '_blank');
+        //  window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
       }
 
     },
@@ -351,7 +353,7 @@ export default {
       .top{
         cursor: pointer;
         height: 175px;
-        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
         padding: 10px 10px;
@@ -361,6 +363,7 @@ export default {
         img{
           width: 100%;
           height: 100%;
+          object-fit: scale-down;
           position: absolute;
           border-radius: 4px;
           top:0;

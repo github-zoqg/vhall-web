@@ -19,7 +19,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.webinar_state }}</p>
+            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-if="liveDetailInfo.webinar_state == 4">点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
@@ -103,7 +103,7 @@ export default {
         webinar_state: 0,
         webinar_type: 0
       },
-      link: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/watch/${this.$route.params.str}`,
+      link: `${window.location.origin + (process.env.VUE_APP_WAP_WATCH || '')}/lives/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       time: {
         day: 0,
@@ -188,8 +188,10 @@ export default {
     }
   },
   created(){
-    // console.log(this.link, '1111111111111111');
     this.getLiveDetail(this.$route.params.str);
+  },
+  mounted() {
+    console.log(this.$route.meta.title, '1111111111111111');
   },
   // filters: {
   //   unitCovert(val) {
@@ -210,6 +212,12 @@ export default {
       this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
+        if (res.data.webinar_state == 4) {
+          this.$route.meta.title = '点播详情';
+        } else {
+          this.$route.meta.title = '直播详情';
+        }
+        this.getFormInfo(id);
         if (res.data.webinar_state == 1) {
           this.getOpenLive();
         }
@@ -231,8 +239,7 @@ export default {
         if (res.code == 200 && res.data.enable_status == 1) {
           this.isForm = true;
         } else {
-          this.isForm = true;
-          this.$message.error(res.msg || '获取失败');
+          this.isForm = false;
         }
       })
     },

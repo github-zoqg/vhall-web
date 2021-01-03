@@ -34,7 +34,7 @@
               <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
               <p>3.音频直播：音频直播，需要保证麦克风正常</p>
             </div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m tip"></i>
           </el-tooltip>
           <slot name="default"></slot>
         </div>
@@ -126,7 +126,7 @@
                 2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
                 3.上传的视频，不支持剪辑和下载
               </div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m tip"></i>
           </el-tooltip>
         </div>
       </el-form-item>
@@ -219,7 +219,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
@@ -867,9 +867,17 @@ export default {
     .el-tooltip{
       position: absolute;
       right: -24px;
-      top: 0px;
-      font-size: 16px;
+      top: -10px;
+      i{
+        font-size: 14px;
+      }
     }
+  }
+  .vh-dialog{
+    /deep/.el-dialog__body {
+      padding-bottom: 20px;
+    }
+
   }
 </style>
 <style lang="less">
