@@ -5,7 +5,7 @@
         <h1>
           {{ $route.query.subject }}
         </h1>
-        <p>填写人数: <span>{{ $route.query.number }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
+        <p>填写人数: <span>{{ total }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
       </div>
     <div class="question-item">
       <div v-for="item in questionList" :key="item.ques_id">
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       title: '问卷标题',
+      total: 0,
       questionList: [],
       genderList: [
         {
@@ -171,11 +172,12 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         survey_id: this.$route.query.surveyId,
-        filled_number: this.$route.query.number,
+        filled_number: this.$route.query.number || 0,
         subject: this.$route.query.subject || ''
       }
       this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
         if (res.code == 200 && res.data) {
+          this.total = res.data.total || 0;
           this.questionList = res.data.list;
         } else {
           this.$message.error(res.msg || '获取房间下问卷列表错误')

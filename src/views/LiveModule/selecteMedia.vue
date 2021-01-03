@@ -107,7 +107,7 @@ export default {
       text: '您还上传过音视频，快来创建吧！',
       pageInfo: {
         pos: 0,
-        limit: 5,
+        limit: 6,
         pageNum: 1
       },
       totalPages: 0,
@@ -127,6 +127,7 @@ export default {
         this.docList = [];
         this.getMediaList();
       } else {
+        this.keyWords = '';
         this.pageInfo.pageNum = 1;
       }
     }

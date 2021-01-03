@@ -446,7 +446,7 @@ export default {
           font-size: 12px;
           display: inline-block;
           text-align: center;
-          width: 32px;
+          width: 40px;
           line-height: 22px;
           height: 22px;
         }
