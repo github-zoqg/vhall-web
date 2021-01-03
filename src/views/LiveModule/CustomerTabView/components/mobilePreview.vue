@@ -42,8 +42,8 @@
             </div>
           </div>
         </div>
-        <i class="iconfont-v3 saasicon_plus vh-mobile-menus-add" @click="addMenuAction" style="background:#fff; top: 2px; z-index:5"></i>
-        <i class="iconfont-v3 saasicon_arrowright1" @click="scrollRight()" style="background:#fff; top: 2px; z-index:5"></i>
+        <i class="iconfont-v3 saasicon_plus vh-mobile-menus-add" @click.stop="addMenuAction" style="background:#fff; top: 2px; z-index:5"></i>
+        <i class="iconfont-v3 saasicon_arrowright1" @click.stop="scrollRight()" style="background:#fff; top: 2px; z-index:5"></i>
       </div>
       <div class="vh-mobile-tab-content">
         <component-preview>
@@ -58,7 +58,20 @@
       </editor-box> -->
     </div>
 
-     <!-- 新增菜单（弹出框）-->
+    <!-- 新增菜单（弹出框）-->
+
+    <!-- <el-dialog
+      :title="addCustomForm.name || '新增菜单'"
+      visible.sync="addCustomVisbile"
+      class="add-menu-dialog"
+    >
+      <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="0">
+        <el-form-item prop="name">
+          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="8" show-word-limit/>
+        </el-form-item>
+      </el-form>
+    </el-dialog> -->
+
     <VhallDialog
       :title="addCustomForm.name || '新增菜单'"
       :visible.sync="addCustomVisbile"
@@ -68,12 +81,17 @@
     >
       <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="0">
         <el-form-item prop="name">
-          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="4" show-word-limit/>
+          <el-input
+            v-model.trim="addCustomForm.name"
+            auto-complete="off"
+            placeholder="请输入菜单名称"
+            :maxlength="8"
+            show-word-limit="8" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.stop="addCustomerMenu" size="mini" round>确 定</el-button>
-        <el-button @click.stop="addCustomVisbile = false" size="mini" round>取 消</el-button>
+        <el-button type="primary" @click.stop="addCustomerMenu" size="small" round>确 定</el-button>
+        <el-button @click.stop="addCustomVisbile = false" size="small" round>取 消</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -160,9 +178,20 @@ export default {
       let left = this.scrollIndex * 84
       this.scrollLeftPx = `-${left}px`
     },
+
+    computedScrollLock() {
+
+
+    },
+
     // 向右滚动
     scrollRight() {
-      // if(this.scrollIndex == 0) { return }
+      const scrollElement = document.querySelector('.vh-mobile-menus-scroll__content')
+      const currentLeft = parseInt(scrollElement.style.left)
+      console.log('width', scrollElement.offsetWidth, currentLeft, scrollElement.offsetWidth + currentLeft)
+      if((scrollElement.offsetWidth + currentLeft) < 310) {
+        return
+      }
       this.scrollIndex = this.scrollIndex + 1
       let left = this.scrollIndex * 84
       this.scrollLeftPx = `-${left}px`
@@ -182,8 +211,6 @@ export default {
         this.menus[index].show = false
       }
     },
-
-    //
 
     addMenuAction() {
       this.$insertIndex = this.menus.length
@@ -382,7 +409,7 @@ export default {
         // min-width: 70px;
         // max-width: 140px;
         position: relative;
-        width: 84px;
+        min-width: 84px;
         text-overflow: ellipsis;
         display: inline-block;
         text-align: center;
@@ -457,5 +484,26 @@ export default {
     margin: 0 auto;
     padding: 15px 0;
     margin: 0 auto;
+  }
+
+  .add-menu-dialog{
+    .el-dialog__footer{
+      padding-top: 0;
+
+      .el-button--small{
+        padding:0;
+        width: 60px;
+        text-align: center;
+        height: 32px;
+        margin-left: 12px;
+      }
+    }
+    .el-input__inner{
+      padding: 12px;
+      height: 40px !important;
+      line-height: 40px !important;;
+      border-radius: 4px;
+      border: 1px solid #CCCCCC;
+    }
   }
 </style>
