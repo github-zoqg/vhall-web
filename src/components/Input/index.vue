@@ -76,7 +76,7 @@
                   `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
                   `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
                 ]"
-              >{{ textLength }}</span>/<span class="el-input__count-inner__denominator">{{ upperLimit }}</span>
+              >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
             </span>
           </span>
         </span>
@@ -117,7 +117,7 @@
           `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
           `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
         ]"
-      >{{ textLength }}</span>/<span class="el-input__count-inner__denominator">{{ upperLimit }}</span>
+      >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
     </span>
   </div>
 </template>
