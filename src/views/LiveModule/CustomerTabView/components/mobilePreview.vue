@@ -1,11 +1,12 @@
 <template>
   <div class="vh-mobile-preview-wrapbox" v-if="menus.length">
     <div class="vh-mobile-previe">
+      <div class="vh-moblie-content-box" style="width:302px; overflow:hidden; position:relative; left: 24px">
       <div style="height:295px; overflow:hidden;">
         <slot></slot>
       </div>
       <div class="vh-mobile-menus">
-        <i class="iconfont-v3 saasicon_arrowleft" @click="scrollLeft()"></i>
+        <i class="iconfont-v3 saasicon_arrowleft" @click="scrollLeft()" style="background:#fff; top: 2px; left:2px; z-index:5"></i>
         <div class="vh-mobile-menus-scroll">
           <div class="vh-mobile-menus-scroll__content" :style="{'left': scrollLeftPx}">
             <div class="vh-mobile-menus-item"
@@ -13,32 +14,35 @@
               v-for="(item, index) in menus"
               :key="item.uuid"
               @click="choseMenu(index)"
+              @mousemove="showPop(index)"
+              @mouseout="hidePop(index)"
             >
-              <span class="vh-mobile-menus-item_name">
-                {{ item.name }}
+              <span class="vh-mobile-menus-item_name" :class="{'blur': item.status == 2}">
+                {{ item.name }} {{ index }}
               </span>
+              <!-- 浮层编辑菜单 -->
+              <div class="vh-mobile-menus-item__popmenu" v-show="item.show">
+                <ul>
+                  <li @click="rename(index)"> 重命名 </li>
+                  <li @click="swapLeft(index)" v-if="index != 0"> 左移 </li>
+                  <li @click="swapRight(index)" v-if="(index < menus.length - 1)"> 右移 </li>
+                  <li @click="addRight(index)"> 右侧新增菜单 </li>
+                  <li @click="addLeft(index)"> 左侧新增菜单 </li>
+                  <li @click="showOrHide" v-if="item.type == 1"> 预告/结束显示 </li>
+                  <li @click.stop="delThis(index)" v-if="item.type == 1"> 删除 </li>
+                  <li @click.stop="hideThis(index, item.status)" v-if="item.type == 3 || item.type == 4"> {{ item.status == 1 ?  '隐藏' : '显示'}} </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-        <i class="iconfont-v3 saasicon_plus vh-mobile-menus-add" @click="addMenuAction"></i>
-        <i class="iconfont-v3 saasicon_arrowright1" @click="scrollRight()"></i>
+        <i class="iconfont-v3 saasicon_plus vh-mobile-menus-add" @click="addMenuAction" style="background:#fff; top: 2px; z-index:5"></i>
+        <i class="iconfont-v3 saasicon_arrowright1" @click="scrollRight()" style="background:#fff; top: 2px; z-index:5"></i>
       </div>
-      <!-- 浮层编辑菜单 -->
-      <div class="vh-mobile-menus-item__popmenu" ref="popMenu">
-        <ul>
-          <li> 重命名 </li>
-          <li> 左移 </li>
-          <li> 右移 </li>
-          <li> 右侧新增菜单 </li>
-          <li> 左侧新增菜单 </li>
-          <li> 预告/结束显示 </li>
-          <li> 删除 </li>
-        </ul>
-      </div>
-
       <div class="vh-mobile-tab-content">
         <component-preview>
         </component-preview>
+      </div>
       </div>
     </div>
     <!-- 编辑区域 -->
@@ -58,12 +62,12 @@
     >
       <el-form :model="addCustomForm" ref="addCustomForm" :rules="addCustomFormRules" label-width="0">
         <el-form-item prop="name">
-          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="8" show-word-limit/>
+          <el-input v-model.trim="addCustomForm.name" auto-complete="off" placeholder="请输入菜单名称" :maxlength="4" show-word-limit/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.prevent.stop="addCustomerMenu" size="mini" round>确 定</el-button>
-        <el-button @click.prevent.stop="addCustomVisbile = false" size="mini" round>取 消</el-button>
+        <el-button type="primary" @click.stop="addCustomerMenu" size="mini" round>确 定</el-button>
+        <el-button @click.stop="addCustomVisbile = false" size="mini" round>取 消</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -74,6 +78,7 @@ import eventsType from '../EventConts'
 import componentPreview from './customerComponents'
 import Editor from './editorBox'
 import { v1 as uuidV1 } from 'uuid';
+
 export default {
   props: {
     menus: {
@@ -88,6 +93,7 @@ export default {
       scrollIndex: 0,
       scrollLeftPx: 0,
       $insetIndex: null,
+      $type: 'add', // add , rename
       // 自定义菜单 - 增删
       addCustomVisbile: false,
       addCustomForm: {
@@ -98,6 +104,8 @@ export default {
           { required: true, maxlength: 8, message: '请输入菜单名称', trigger: 'blur' }
         ]
       },
+
+
     }
   },
 
@@ -127,14 +135,15 @@ export default {
       e.preventDefault()
     },
 
-    choseMenu(index) {
+    choseMenu(index, info) {
       // deal UI  显示
       this.activeIndex = index
       this.scrollIndex = index
       this.scrollLeft()
-
       // 信息向各模块同步
-      let choseInfo = this.menus[index]
+      let choseInfo = this.menus[index] || info
+      console.log( '菜单进行切换', choseInfo )
+
       EventBus.$emit(eventsType.INIT_MENU_INFO, choseInfo)
     },
 
@@ -153,26 +162,145 @@ export default {
       this.scrollLeftPx = `-${left}px`
     },
 
+    showPop(index) {
+      if(this.activeIndex == index) {
+        console.log('show info')
+        this.menus[index].show = true
+      }
+
+
+    },
+
+    hidePop(index) {
+      if(this.activeIndex == index) {
+        this.menus[index].show = false
+      }
+    },
 
     //
 
     addMenuAction() {
-      this.$insertIndex = null
+      this.$insertIndex = this.menus.length
+      this.$type = 'add'
+      this.addCustomForm.name = null
       this.addCustomVisbile = true
     },
 
     addCustomerMenu() {
       this.$refs.addCustomForm.validate((valid) => {
-        this.menus.push({
-          name: this.addCustomForm.name,
-          type: 1,
-          uuid: uuidV1(),
-          status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
-          components: []
-        })
+        if(this.$type == 'add') {
 
+          this.activeIndex = null
+
+          if(this.$insertIndex > 0 && this.$insertIndex < this.menus.length) {
+            this.menus.splice(this.$insertIndex, 0, {
+              name: this.addCustomForm.name,
+              type: 1,
+              uuid: uuidV1(),
+              show: false,
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              components: []
+            })
+          } else if (this.$insertIndex == 0) {
+            this.menus.unshift({
+              name: this.addCustomForm.name,
+              type: 1,
+              uuid: uuidV1(),
+              show: false,
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              components: []
+            })
+          } else if(this.$insertIndex == this.menus.length) {
+            this.menus.push({
+              name: this.addCustomForm.name,
+              type: 1,
+              uuid: uuidV1(),
+              show: false,
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              components: []
+            })
+          }
+          setTimeout(() => {
+            console.log(this.$insertIndex)
+            console.log(this.menus[this.$insertIndex])
+            this.choseMenu(this.$insertIndex, this.menus[this.$insertIndex])
+          }, 500)
+
+        } else {
+          this.menus[this.$insertIndex].name = this.addCustomForm.name
+        }
         this.addCustomVisbile = false
       })
+    },
+
+
+
+    rename(index) {
+      this.$insertIndex = index
+      this.$type = 'rename' // 编辑类型！
+      this.addCustomForm.name = this.menus[index].name
+      this.addCustomVisbile = true
+    },
+
+    swapLeft(index) {
+      if(index == 0) {
+        return
+      } else {
+        let cache = Object.assign({}, this.menus[index])
+        this.menus.splice(index,1,this.menus[(index - 1)])
+        this.menus[(index -1)] = cache
+      }
+    },
+
+    swapRight(index) {
+      if(index == this.menus.length) {
+        return
+      } else {
+        let cache = Object.assign({}, this.menus[index])
+        this.menus.splice(index,1,this.menus[(index + 1)])
+        this.menus[(index + 1)] = cache
+      }
+    },
+
+    addRight(index) {
+      this.$insertIndex = (index + 1)
+      this.$type = 'add' // 编辑类型！
+      this.addCustomForm.name = ''
+      this.addCustomVisbile = true
+    },
+
+    addLeft(index) {
+      this.$insertIndex = (index - 1 < 0 ? 0 : index - 1)
+      console.log(this.$insertIndex)
+      this.$type = 'add' // 编辑类型！
+      this.addCustomForm.name = ''
+      this.addCustomVisbile = true
+    },
+
+    swapArray(index, index2) {
+      const cache = this.menus[index]
+      this.menus.splice(index,1,this.menus[index2])
+      this.menus[index2] = cache
+    },
+
+    showOrHide() {
+    },
+
+    delThis(index) {
+      let activeTab = (index - 1)
+      this.choseMenu(activeTab)
+      setTimeout(() => {
+        this.menus.splice(index, 1)
+      }, 100);
+    },
+    hideThis(index) {
+      const item = this.menus[index]
+      if(item.status == 1) {
+        this.menus[index].status = 2
+      } else {
+        this.menus[index].status = 1
+      }
+
     }
   }
 }
@@ -198,12 +326,13 @@ export default {
   }
   .vh-mobile-menus{
     width: 310px;
-    height: 40px;
+    height: 41px;
     margin: 0 auto;
     line-height: 40px;
     position: relative;
     border-bottom: 1px solid #E6E6E6;
     color: #666666;
+    z-index: 10;
     .saasicon_arrowleft{
       position: absolute;
       left: 5px;
@@ -229,22 +358,21 @@ export default {
       right: 5px;
       height: 100%;
       margin: 0 22px;
+      z-index: 2;
       white-space: nowrap;
-      overflow: hidden;
       &__content{
         position: absolute;
         left: 0;
         top: 0;
-        overflow: hidden;
         transition: 0.5s ease;
       }
     }
     &-item{
         // min-width: 70px;
         // max-width: 140px;
+        position: relative;
         width: 84px;
         text-overflow: ellipsis;
-        overflow-x: hidden;
         display: inline-block;
         text-align: center;
         height: 100%;
@@ -258,6 +386,9 @@ export default {
           padding: 0 10px;
           margin-top: -2px;
         }
+        .blur{
+          filter: blur(0.8px);
+        }
         &__active{
           color: #FB3A32;
           span{
@@ -267,21 +398,28 @@ export default {
       }
   }
   .vh-mobile-menus-item__popmenu{
+      position: absolute;
       background: #fff;
       width: 180px;
-      padding: 4px;
-      display: none;
-      &>li{
+      padding: 4px 0;
+      background: #FFFFFF;
+      box-shadow: 0px 8px 32px 0px rgba(51, 51, 51, 0.16);
+      border-radius: 4px;
+      text-align: center;
+      left: -40px;
+      top: 40px;
+      z-index: 100;
+      & li{
         height: 40px;
         line-height: 40px;
         cursor: pointer;
         text-align: center;
         font-size: 14px;
-
+        text-align: center;
+        color: #666666;
         &.disabled{
           color: #B3B3B3;
         }
-
         &:hover{
           background: #FFEBEB;
           color: #FB3A32;

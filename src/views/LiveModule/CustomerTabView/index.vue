@@ -78,6 +78,7 @@ export default {
             if (!item.uuid) {
               return {
                 ...item,
+                show: false,
                 uuid: uuidV1()
               }
             }
@@ -94,6 +95,11 @@ export default {
       });
     },
 
+    del(idx) {
+      this.customMenus= this.customMenus.filter((item, index) => {
+        return idx != index
+      })
+    },
     updateMenus(info) {
       this.customMenus = info
     },
