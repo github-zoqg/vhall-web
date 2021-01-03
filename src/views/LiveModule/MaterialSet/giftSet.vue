@@ -98,6 +98,7 @@
     <el-dialog
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
+      v-if="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
@@ -134,7 +135,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="medium" @click="handleUpdateGift" round>确 定</el-button>
+        <el-button :disabled="!editParams.name || !editParams.price || !editParams.img" type="primary" size="medium" @click="handleUpdateGift" round>确 定</el-button>
         <el-button size="medium" @click="handleCancelEdit" round>取 消</el-button>
       </span>
     </el-dialog>
@@ -147,8 +148,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete">取 消</el-button>
         <el-button type="primary" @click="handleDeleteGift">确 定</el-button>
+        <el-button @click="handleCancelDelete">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -160,8 +161,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
         <el-button @click="handleCancelBatchDelete">取 消</el-button>
+        <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -711,6 +712,9 @@ export default {
   }
 }
 .live-gift-wrap{
+  /deep/ .el-dialog__footer {
+    padding-top: 0;
+  }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
     content: '*';
     color: #FB3A32;
