@@ -23,7 +23,7 @@
         </div>
         <!-- 付费 3 -->
         <div v-show="Number(form.verify) === 3" class="viewer-rules-ctx--3">
-          <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="82px">
+          <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="70px">
             <el-form-item label="付费金额" prop="fee">
               <!--<div class="rules-ctx-inline">
                 <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
@@ -136,7 +136,7 @@
         </div>
         <!-- 密码 1 -->
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
-          <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="82px">
+          <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
             <el-form-item label="观看密码" prop="password">
               <VhallInput v-model="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
@@ -172,8 +172,8 @@
                 <li :class="['tab__btn--solid', {'active': whiteId === item.id }]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
                   <span>{{item.subject}}</span>
                 </li>
-                <li class="tab__btn--dashed">
-                  <router-link :to="{path:'/material/viewer'}"><i class="el-icon-plus"></i>添加观众组</router-link>
+                <li class="">
+                  <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
                 </li>
               </ul>
             </el-form-item>
@@ -808,11 +808,19 @@ export default {
   }
   .tab__btn--solid {
     border: 1px solid #F7F7F7;
+    cursor: pointer;
     &.active{
-      border-color: #FB3A32;
+      background: #FFEBEB;
+      border-color: #FFEBEB;
+      span {
+        color: #FB3A32;
+      }
     }
   }
-  .tab__btn--dashed {
+  i.el-icon-plus {
+    margin-right: 3px;
+  }
+  /* .tab__btn--dashed {
     border-radius: 16px;
     border: 1px solid #FB3A32;
     a {
@@ -825,7 +833,7 @@ export default {
         margin-right: 3px;
       }
     }
-  }
+  } */
 }
 /deep/.btn-relative {
   position: relative;
