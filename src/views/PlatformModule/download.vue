@@ -292,7 +292,9 @@ export default {
       that.$confirm('是否要删除当前下载文件？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('downloadedDel', {
           dow_task_id: rows.dow_task_id

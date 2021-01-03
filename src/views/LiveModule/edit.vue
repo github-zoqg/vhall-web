@@ -351,11 +351,12 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if (!this.isSaveInfo && this.title === '编辑') {
-    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
+      this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-alert-box',
-        type: 'warning'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         next();
       }).catch(() => {
@@ -568,8 +569,9 @@ export default {
         this.$confirm(`取消将不保存此页面的内容？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-alert-box',
-          type: 'warning'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           // next();
             this.$router.go(-1)

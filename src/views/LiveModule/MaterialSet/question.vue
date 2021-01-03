@@ -146,7 +146,9 @@ export default {
         that.$confirm('当前问卷已被推送，修改将影响之前收集的数据，确认修改?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           that.$router.push({
             path: '/live/addQuestion',
@@ -185,7 +187,9 @@ export default {
       this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.$route.query.id}).then(res => {
             if (res.code == 200) {

@@ -118,7 +118,9 @@ export default {
        this.$confirm('是否取消暖场视频的设置？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.warmFlag = false;
         this.openCloseWarm(1);
@@ -217,7 +219,9 @@ export default {
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.saveWarmInfo();
         }).catch(() => {});
@@ -306,7 +310,7 @@ export default {
       top: 0px;
       right: 0px;
       // line-height: 180px;
-      text-align: center; 
+      text-align: center;
       display:flex;
       flex-direction: row;
       align-items: center;
@@ -322,7 +326,7 @@ export default {
       }
       span{
         color: #fff;
-      }     
+      }
     }
     .operaBtn{
       font-size: 14px;

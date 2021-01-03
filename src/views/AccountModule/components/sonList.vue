@@ -299,9 +299,11 @@ export default {
     // 删除单条消息数据
     sonDel(that, {rows}) {
       that.$confirm('正在直播或有未提现收益的账号不会被删除，确定删除？', '提示', {
+        cancelButtonText: '取消',
         confirmButtonText: '确定',
         customClass: 'zdy-message-box',
-        cancelButtonText: '取消'
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('sonDel', {
           child_ids: rows.child_id

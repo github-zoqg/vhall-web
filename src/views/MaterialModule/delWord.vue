@@ -275,7 +275,8 @@ export default {
             confirmButtonText: '同步',
             cancelButtonText: '不同步',
             customClass: 'zdy-message-box',
-            lockScroll: false
+            lockScroll: false,
+            cancelButtonClass: 'zdy-confirm-cancel'
           }).then(() => {
             // 同步到资料库
             this.asyncWord(res);
@@ -353,7 +354,8 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          lockScroll: false
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
@@ -460,7 +462,8 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
-        lockScroll: false
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.deleteSend(rows);
       }).catch(() => {

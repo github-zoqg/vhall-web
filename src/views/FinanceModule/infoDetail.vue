@@ -436,7 +436,8 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          type: 'warning'
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.deleteList(rows.order_id);
         }).catch(() => {

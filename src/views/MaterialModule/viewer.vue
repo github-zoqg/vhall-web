@@ -391,7 +391,8 @@ export default {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
-        lockScroll: false
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         let params = {
           group_ids: item.id
@@ -537,7 +538,8 @@ export default {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
-        lockScroll: false
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.sendViewerDel([rows.id]);
       }).catch(() => {
@@ -572,7 +574,8 @@ export default {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          lockScroll: false
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;

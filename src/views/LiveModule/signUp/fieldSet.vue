@@ -482,7 +482,10 @@ export default {
     deleteQuestion(arr, index) {
       this.$confirm('删除后已收集信息会被清空，确认删除？', '提示', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('regQDelete', {
           question_id: arr[index].question_id
@@ -672,7 +675,10 @@ export default {
         await this.$confirm('关闭短信验证将会导致无法验证用户手机号码，同时用户将无法接收预约短信，确认是否关闭？', '提示', {
           confirmButtonText: '仍然关闭',
           cancelButtonText: '暂不关闭',
-          center: true
+          /* center: true, */
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {}).catch(() => {
           isConfirm = false;
           question.phoneValide = true;

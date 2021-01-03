@@ -23,7 +23,7 @@
       </div>
     </div>
     <!-- 专题列表 or  专题列表 -->
-    <div class="live-panel" v-if="dataList && dataList.length > 0">
+    <div class="live-panel" v-if="dataList && dataList.length > 0" v-loading="loading">
       <el-row :gutter="40" class="lives">
         <!--:xs="24" :sm="12" :md="12" :lg="8" :xl="6"
         col-lg-*  一般用于大屏设备（min-width：1200px）
@@ -34,14 +34,15 @@
         <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
           <div class="inner">
             <div class="top">
-              <span class="liveTag" v-if="tabType === 'live'">
+              <span class="liveTag" v-if="tabType === 'live' && item.webinar_type">
                 <label class="live-status" v-if="item.webinar_state == 1">
-                <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/></label> {{item | liveTag}}
+                  <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/>
+                </label>{{item | liveTag}}
               </span>
               <span class="hot">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | unitCovert}}</i>
               </span>
-              <a :href="item.share_link" target="_blank">
+              <a :href="item.share_link" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
               </a>
             </div>
@@ -88,6 +89,7 @@ export default {
        pageNumber: 1,
        keyword: ''
      },
+     loading: true,
      tabList: [
        {
          label: '直播',
@@ -148,6 +150,7 @@ export default {
       };
       this.loading = true;
       this.$fetch('liveList', this.$params(params)).then(res=>{
+        this.loading = false;
         if (res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
@@ -160,6 +163,7 @@ export default {
           this.tabList[0].total = 0;
         }
       }).catch(error=>{
+        this.loading = false;
         console.log(error);
         this.dataList = [];
         this.tabList[0].total = 0;
@@ -179,15 +183,19 @@ export default {
       };
       this.loading = true;
       this.$fetch('subjectList', this.$params(params)).then(res=>{
-        console.log(res);
-        let list = res.data.list;
-        list.map(item => {
-          item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/special/detail?id=${item.id}`;
-          // item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
-        });
-        this.dataList = list;
-        this.tabList[1].total = res.data.total;
+        this.loading = false;
+        if (res && res.code === 200) {
+          console.log(res);
+          let list = res.data.list;
+          list.map(item => {
+            item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/special/detail?id=${item.id}`;
+            // item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
+          });
+          this.dataList = list;
+          this.tabList[1].total = res.data.total;
+        }
       }).catch(error=>{
+        this.loading = false;
         console.log(error);
         this.dataList = [];
         this.tabList[1].total = 0;

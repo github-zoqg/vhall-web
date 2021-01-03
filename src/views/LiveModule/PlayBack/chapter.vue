@@ -641,7 +641,9 @@ export default {
       this.$confirm('删除后章节不可恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         this.tableData = this.tableData.filter(item => {
           if (this.selectedData.some(selectItem => selectItem.index == item.index)) {

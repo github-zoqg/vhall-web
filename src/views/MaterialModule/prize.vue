@@ -169,7 +169,9 @@ export default {
       this.$confirm('删除后，此奖品将无法使用，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         let params = {
           prize_id: id,

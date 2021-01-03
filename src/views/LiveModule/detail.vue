@@ -274,7 +274,9 @@ export default {
         this.$confirm('恢复为预告后，回放将不能观看', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.reSumeNotice();
         }).catch(() => {
