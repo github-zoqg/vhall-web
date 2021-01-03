@@ -12,17 +12,17 @@
         </el-badge>
         <span class="remak--text">下载</span>
       </div>
-      <!-- 帮助中心 -->
-      <div class="right-menu-item" @click.prevent.stop="toHelpPage">
-        <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
-        <span class="remak--text">帮助</span>
-      </div>
       <!-- 消息中心 -->
       <div class="right-menu-item"  @click.prevent.stop="toMsgPage">
         <el-badge :value="unread_num" :max="99" :class="unread_num > 9 ? 'more' : 'item'" :hidden="!unread_num>0">
           <span class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
         </el-badge>
         <span class="remak--text">消息</span>
+      </div>
+      <!-- 帮助中心 -->
+      <div class="right-menu-item" @click.prevent.stop="toHelpPage">
+        <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
+        <span class="remak--text">帮助</span>
       </div>
       <div class="right-menu-item">
         <el-dropdown class="avatar-container" trigger="click">
@@ -146,7 +146,8 @@ export default {
     },
     updateDownload() {
       // 初始进入，获取未下载条数
-      this.getDownNum();
+      // this.getDownNum();
+      this.down_num = 1;
     },
     // 监听
     monitor(){
@@ -218,6 +219,8 @@ export default {
     }
     // 监听消息变化
     this.$EventBus.$on('saas_vs_msg_count', this.getUnreadNum);
+    // 监听下载中心变化
+    this.$EventBus.$on('saas_vs_download_count', this.getDownNum);
     // 监听用户信息变化
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     // 监听控制台是否触发导出
@@ -228,6 +231,13 @@ export default {
       if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
         this.unread_num = res.num;
         this.$EventBus.$emit('saas_vs_msg_num');
+      }
+    });
+    EventBus.$on('down_center_msg', res => { // 转码状态
+      console.log(res, '监听到down_center_msg未下载提示事件');
+      if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
+        this.down_num = res.down_num;
+        this.$EventBus.$emit('saas_vs_down_num');
       }
     });
   },
