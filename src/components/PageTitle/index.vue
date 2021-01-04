@@ -61,7 +61,7 @@ export default {
   /*margin-top: 20px;*/
   margin-bottom: 32px;
 }
-.saasicon_help_m {
+/deep/.saasicon_help_m {
   /* color: #1A1A1A; */
   color: #999999;
   font-size: 14px;
