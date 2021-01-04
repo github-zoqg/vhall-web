@@ -64,6 +64,7 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
+  margin-top: 8px;
 }
 .createActive{
   padding-bottom: 30px;

@@ -91,7 +91,7 @@
         <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
         <!-- <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button> -->
         <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand == 'true'" @command="addChapter">
-          <el-button size="medium" round>
+          <el-button :disabled="tableData.length == 0" size="medium" round>
             新增章节<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -104,7 +104,7 @@
         </el-dropdown>
         <el-button :disabled="!selectedData.length" size="medium" round @click="deleteChapter">批量删除</el-button>
         <div class="right">
-          <el-button size="medium" round @click="saveChapters">保存</el-button>
+          <el-button :disabled="tableData.length == 0" size="medium" round @click="saveChapters">保存</el-button>
           <el-button size="medium" round @click="previewChapters">预览</el-button>
         </div>
       </div>
@@ -506,8 +506,8 @@ export default {
           return {
             document_id: item.docId,
             created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
-            page: item.slideIndex,
-            step: item.stepIndex,
+            page: item.slideIndex - 1,
+            step: item.stepIndex - 1,
             title: item.title,
             remark: '',
             step_total: item.sub.length,
@@ -516,8 +516,8 @@ export default {
               return {
                 document_id: subItem.docId,
                 created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
-                page: subItem.slideIndex,
-                step: subItem.stepIndex,
+                page: subItem.slideIndex - 1,
+                step: subItem.stepIndex - 1,
                 title: subItem.title,
                 remark: '',
                 step_total: 0
@@ -587,8 +587,8 @@ export default {
           return {
             createTime: 0,
             docId: item.document_id,
-            slideIndex: item.page,
-            stepIndex: item.step,
+            slideIndex: item.page + 1,
+            stepIndex: item.step + 1,
             title: item.title,
             index: index + 1,
             userCreateTime: '00:00:00',
@@ -597,8 +597,8 @@ export default {
               item.subsection.map((subItem, subIndex) => ({
                 createTime: 0,
                 docId: subItem.document_id,
-                slideIndex: subItem.page,
-                stepIndex: subItem.step,
+                slideIndex: subItem.page + 1,
+                stepIndex: subItem.step + 1,
                 title: subItem.title,
                 index: `${index + 1}-${subIndex + 1}`,
                 userCreateTime: '00:00:00',
@@ -620,19 +620,19 @@ export default {
       this.selectedData = val;
     },
     addChapter(doc){
-      const currentDocInfo = this.docsdk._currentDoc.getDocInfo();
-      const currentContainerInfo = this.docsdk._currentDoc._currentContainer;
+      // const currentContainerInfo = this.docsdk._currentDoc._currentContainer;
       this.tableData.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         isChange: true,
         index: this.tableData.length + 1,
-        stepIndex: 0,
-        slideIndex: 0,
+        stepIndex: 1,
+        slideIndex: 1,
         sub: [],
         docId: doc.document_id,
-        cid: currentContainerInfo._id,
+        cid: '',
+        // cid: currentContainerInfo._id,
         hash: doc.hash
       });
     },
@@ -641,8 +641,15 @@ export default {
       this.$confirm('删除后章节不可恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
+        let isAll = false;
+        if (this.tableData.length == this.selectedData.length) {
+          isAll = true
+          this.selectedData.shift()
+        }
         this.tableData = this.tableData.filter(item => {
           if (this.selectedData.some(selectItem => selectItem.index == item.index)) {
             return false;
@@ -659,7 +666,9 @@ export default {
           }
         });
         this.handleSerialize()
-        this.saveChapters()
+        if(isAll) {
+          this.$message.warning('至少保留一个章节')
+        }
       }).catch(()=>{});
 
     },
@@ -681,19 +690,16 @@ export default {
     },
     // 添加子章节
     addSonNode(row) {
-      const currentDocInfo = this.docsdk._currentDoc.getDocInfo();
-      console.log(currentDocInfo)
-      const currentContainerInfo = this.docsdk._currentDoc._currentContainer;
       row.sub.push({
         title: '',
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         index: `${row.index}-${row.sub.length + 1}`,
-        stepIndex: currentDocInfo.stepIndex,
-        slideIndex: currentDocInfo.slideIndex,
-        docId: currentDocInfo.docId,
-        cid: currentContainerInfo._id,
-        hash: currentDocInfo.hash,
+        stepIndex: 1,
+        slideIndex: row.slideIndex,
+        docId: row.docId,
+        cid: '',
+        hash: '',
         isChange: true
       })
     },

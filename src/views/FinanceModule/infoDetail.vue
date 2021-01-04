@@ -163,7 +163,7 @@ export default {
         {
           type: '3',
           key: "orderType",
-          placeholder: '请选择订单类型',
+          placeholder: '订单类型',
           options: [
             {
               label: '结清并发欠费',
@@ -190,7 +190,7 @@ export default {
         {
           type: '3',
           key: "status",
-          placeholder: '请选择订单状态',
+          placeholder: '订单状态',
           options: [
             {
               label: '失败',
@@ -219,13 +219,13 @@ export default {
         {
           type: '3',
           key: "orderType",
-          placeholder: '请选择订单类型',
+          placeholder: '订单类型',
           options: []
         },
         {
           type: '3',
           key: "status",
-          placeholder: '请选择订单状态',
+          placeholder: '订单状态',
           options: [
             {
               label: '待生效 ',
@@ -244,7 +244,7 @@ export default {
         {
           type: '3',
           key: "source",
-          placeholder: '请选择订单来源',
+          placeholder: '订单来源',
           options: [
             {
               label: '线下购买',
@@ -403,6 +403,13 @@ export default {
           item.source = this.buyMethods(item.source);
         });
         this.tableList = tableList;
+        if (this.tableList.length == 0) {
+          //兼容有无数据来修改element样式
+          document.querySelector('.el-table').style.position = 'inherit'
+        }else {
+          document.querySelector('.el-table').style.position = 'relative'
+        }
+
       }).catch(e=>{
         console.log(e);
       });
@@ -432,11 +439,12 @@ export default {
       return name;
     },
     deleteOrder(rows) {
-      this.$confirm('确定要删除吗?', '提示', {
+      this.$confirm('订单删除后将无法找回，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          type: 'warning'
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.deleteList(rows.order_id);
         }).catch(() => {
@@ -489,6 +497,10 @@ export default {
 
 <style lang="less" scoped>
   .account-income{
+    .interact-detail {
+      padding: 0 24px;
+      min-height: 550px;
+    }
     .box-card{
       padding: 24px 32px;
       border-radius: 4px;
@@ -505,6 +517,9 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    /deep/.el-select{
+      width: 110px!important;
     }
     .buyStatus{
       i{

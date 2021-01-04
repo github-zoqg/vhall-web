@@ -6,7 +6,7 @@
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
+      <el-input placeholder="子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
                 clearable
                 @clear="initQuerySonList"
                 @keyup.enter.native="initQuerySonList">
@@ -33,6 +33,7 @@
         :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
+        width="150px"
         max-height="auto"
         scene="accountList"
         @getTableList="getSonList"
@@ -299,9 +300,11 @@ export default {
     // 删除单条消息数据
     sonDel(that, {rows}) {
       that.$confirm('正在直播或有未提现收益的账号不会被删除，确定删除？', '提示', {
+        cancelButtonText: '取消',
         confirmButtonText: '确定',
         customClass: 'zdy-message-box',
-        cancelButtonText: '取消'
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('sonDel', {
           child_ids: rows.child_id

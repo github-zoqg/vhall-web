@@ -115,7 +115,7 @@
            <span slot="label">
            奖品设置
             <el-tooltip class="prize--set" effect="dark" placement="right" style="margin-left:5px">
-              <i class="el-icon-question ques" style="color: #1A1A1A"></i>
+              <i class="iconfont-v3 saasicon_help_m" style="color: #1A1A1A"></i>
               <div slot="content">
                 每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除
               </div>
@@ -244,7 +244,17 @@ export default {
       return true
     }
   },
+  watch: {
+    activeName() {
+      if (this.activeName == 'first') {
+        this.lotteryGet();
+      } else if(this.activeName == 'second') {
+        this.getGivePrize();
+      }
+    }
+  },
   async mounted() {
+    this.activeName = this.$route.query.index || 'first';
     await this.getActice()
     this.lotteryGet();
   },
@@ -366,12 +376,16 @@ export default {
       })
     },
     handleClick(tab) {
-      this.activeName = tab.name;
-      if (tab.name === 'first') {
-        this.lotteryGet();
-      } else if (tab.name === 'second') {
-        this.getGivePrize();
-      }
+      // this.activeName = tab.name;
+      this.$router.push({path: `/live/prizeSet/${this.$route.params.str}`, query: {
+        roomId: this.$route.query.roomId,
+        index: tab.name
+      }})
+      // if (tab.name === 'first') {
+      //   this.lotteryGet();
+      // } else if (tab.name === 'second') {
+      //   this.getGivePrize();
+      // }
     },
     deleteImg() {
       this.previewSrc = '';

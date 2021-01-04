@@ -2,8 +2,8 @@
  <div class="home-main console">
    <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
-   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png' :
-        '//t-alistatic01.e.vhall.com/static/images/vhall3.0/home_bg.png'}) 0px center / 100% no-repeat`}"></div>
+   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || 'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png' :
+        'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'}) 0px center / 100% no-repeat`}"></div>
    <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
      <!-- 内容区域 -->
      <div class="user__layout--title">
@@ -14,26 +14,11 @@
          <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
            <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
            <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
-           <span class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收缩'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+           <span v-show="userHomeVo && userHomeVo.content" class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收起'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
          </li>
          <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
-           <el-button size="medium" round v-if="userHomeVo" @click.prevent.stop="toHomeSetPage">设置</el-button>
-           <el-popover
-             class="button__share"
-             placement="bottom-end"
-             trigger="click"
-             v-if="userHomeVo && userHomeVo.show_share"
-           >
-             <div>
-               <share slot="content" :shareVo="{
-               url: home_link,
-               sina_share_link: sina_share_link,
-               qq_share_link: qq_share_link,
-               wechat_share_link: wechat_share_link
-             }"></share>
-             </div>
-             <el-button size="medium" round slot="reference">分享</el-button>
-           </el-popover>
+           <el-button size="medium" round v-if="setHomeCheck" @click.prevent.stop="toHomeSetPage">设置</el-button>
+           <el-button size="medium" round @click="openDialog('share')">分享</el-button>
          </li>
        </ul>
      </div>
@@ -41,6 +26,15 @@
      <div class="user__layout--main">
        <home-main @showSet="showSetHandle" v-if="!isSetShow" ref="homeMain"></home-main>
      </div>
+
+     <shareDialog
+      :baseInfo="{
+        title: this.userHomeVo.title,
+        intro: this.userHomeVo.content,
+        pic: this.userHomeVo.homepage_avatar || this.avatarImgUrl
+      }"
+      ref="share"
+    ></shareDialog>
    </div>
  </div>
 </template>
@@ -50,7 +44,7 @@ import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import PageTitle from '@/components/PageTitle';
 import HomeMain from './components/main.vue';
-import Share from '@/components/Share';
+import ShareDialog from './components/shareDialog';
 import OldHeader from '@/components/OldHeader';
 export default {
   name: 'info.vue',
@@ -58,7 +52,7 @@ export default {
     PageTitle,
     HomeMain,
     OldHeader,
-    Share
+    ShareDialog
   },
   data() {
     return {
@@ -72,27 +66,21 @@ export default {
     };
   },
   computed: {
-    show_content: function() {
-      if (this.userHomeVo && this.userHomeVo.content && this.userHomeVo.content.length > 80) {
-        return this.userHomeVo.content.substring(0, 80) + '...';
+    setHomeCheck: function() {
+      if (this.$route.params.str) {
+        // 包含路径，表示观看页 or 主办方页
+        return Number(this.$route.params.str) === Number(sessionOrLocal.get('userId'));
       } else {
-        return this.userHomeVo.content || `小微提醒：<br/>主人，请不要害羞！填写个人主页简介，可以认识更多的小伙伴呢！`;
+        // 不包含路径，表示控制台。
+        return this.userHomeVo;
       }
-    },
-    home_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`;
-    },
-    sina_share_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
-    },
-    wechat_share_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
-    },
-    qq_share_link: function() {
-      return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}&title=${this.userHomeVo.title}&pic=${this.avatarImgUrl}&appkey=&searchPic=false`;
     }
   },
   methods: {
+    // 打开 dialog 方法（通用）
+    openDialog(ref){
+      this.$refs[ref].dialogVisible = true;
+    },
     showSetHandle(type) {
       this.isSetShow = type;
       this.getHomePageInfo();

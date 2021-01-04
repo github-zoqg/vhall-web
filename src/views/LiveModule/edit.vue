@@ -9,19 +9,19 @@
         <VhallInput v-model.trim="formData.title" maxlength="100" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="直播时间：" required v-if="webniarType=='live'">
-          <el-col :span="11">
-            <el-form-item prop="date1" :rules="[
+          <el-col :span="11.5">
+            <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
               <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
-          <el-col :span="11">
-            <el-form-item prop="date2" :rules="[
+          <el-col :span="11.5">
+            <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
+              <el-time-picker placeholder="选择时间" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
       </el-form-item>
@@ -34,7 +34,7 @@
               <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
               <p>3.音频直播：音频直播，需要保证麦克风正常</p>
             </div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m tip"></i>
           </el-tooltip>
           <slot name="default"></slot>
         </div>
@@ -126,7 +126,7 @@
                 2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
                 3.上传的视频，不支持剪辑和下载
               </div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m tip"></i>
           </el-tooltip>
         </div>
       </el-form-item>
@@ -219,7 +219,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
@@ -279,7 +279,7 @@ export default {
       if(this.home){
         return '已开启，该活动在个人主页中显示';
       }else{
-        return "开启后，该活动在个人主页显示";
+        return "开启后，该活动在个人主页中显示";
       }
     },
     capacityDesc(){
@@ -349,21 +349,22 @@ export default {
       selectMedia: {}
     };
   },
-  beforeRouteLeave(to, from, next) {
-    if (!this.isSaveInfo && this.title === '编辑') {
-    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        customClass: 'zdy-alert-box',
-        type: 'warning'
-      }).then(() => {
-        next();
-      }).catch(() => {
-      });
-    } else {
-      next();
-    }
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   if (!this.isSaveInfo) {
+  //     this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
+  //       confirmButtonText: '确定',
+  //       cancelButtonText: '取消',
+  //       customClass: 'zdy-message-box',
+  //       lockScroll: false,
+  //       cancelButtonClass: 'zdy-confirm-cancel'
+  //     }).then(() => {
+  //       next();
+  //     }).catch(() => {
+  //     });
+  //   } else {
+  //     next();
+  //   }
+  // },
   created(){
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
@@ -561,21 +562,23 @@ export default {
       })
     },
     resetForm(formName) {
+      this.$router.push({path: '/live/list'});
       // this.$refs[formName].resetFields();
-      if(this.$route.query.type == 2){
-         this.$router.go(-1)
-      }else {
-        this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-alert-box',
-          type: 'warning'
-        }).then(() => {
-          // next();
-            this.$router.go(-1)
-        }).catch(() => {
-          });
-      }
+      // if(this.$route.query.type == 2){
+      //    this.$router.go(-1)
+      // }else {
+      //   this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     customClass: 'zdy-message-box',
+      //     lockScroll: false,
+      //     cancelButtonClass: 'zdy-confirm-cancel'
+      //   }).then(() => {
+      //     // next();
+      //       this.$router.go(-1)
+      //   }).catch(() => {
+      //     });
+      // }
       // 重置直播模式、直播封面、直播简介。
     },
     mediaSelected(media){
@@ -635,6 +638,11 @@ export default {
       pointer-events: none;
       user-select: none;
     }
+    // /deep/.el-date-editor {
+    //   /deep/input {
+    //     width: 270px;
+    //   }
+    // }
   }
   /deep/ .el-form-item{
     // width: 100%;
@@ -854,6 +862,7 @@ export default {
       vertical-align: middle;
       line-height: 20px;
       color: #999999;
+      background: #f7f7f7;
       font-size: 12px;
       cursor: pointer;
       i{
@@ -866,9 +875,17 @@ export default {
     .el-tooltip{
       position: absolute;
       right: -24px;
-      top: 0px;
-      font-size: 16px;
+      top: -10px;
+      i{
+        font-size: 14px;
+      }
     }
+  }
+  .vh-dialog{
+    /deep/.el-dialog__body {
+      padding-bottom: 20px;
+    }
+
   }
 </style>
 <style lang="less">

@@ -3,13 +3,18 @@
     <img src="//cnstatic01.e.vhall.com/static/images/menu/chat-temp-new-h5.png" alt="" class="phone-chat-img"/>
     <span class="phone-welcome">
        <span>游客***</span>
-        欢迎你的到来观看
+        {{  menuInfo.welcome_content || '欢迎你的到来观看'}}
     </span>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    menuInfo: {
+      requred: false
+    }
+  },
   name: "component-chat"
 };
 </script>

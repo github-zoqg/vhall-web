@@ -30,8 +30,11 @@
             >
           </search-area>
         </div>
+        <noData v-show="tableList.length == 0" :height="50">
+        </noData>
         <table-list
           ref="tableList"
+          v-show="tableList.length > 0"
           :manageTableData="tableList"
           :tabelColumnLabel="tabelColumn"
           :isHandle="false"
@@ -47,6 +50,7 @@
 </template>
 <script>
 import titleData from './components/title';
+import noData from '@/views/PlatformModule/Error/nullPage';
 import { getRangeDays } from '@/utils/general';
 export default {
   data() {
@@ -239,7 +243,8 @@ export default {
     };
   },
   components: {
-    titleData
+    titleData,
+    noData
   },
   created() {
     this.getLiveDetail();
@@ -289,7 +294,7 @@ export default {
         merge_type: formParams.merge_type ? 1 : 2,
         end_time: getRangeDays(1)
       };
-      if (this.active!= 1) {
+      if (this.active!= 1 && formParams.searchIsTime == 1) {
         paramsObj.start_time = getRangeDays(this.active);
       }
       if (this.liveDetailInfo.webinar_state != 4) {
@@ -297,9 +302,14 @@ export default {
           this.searchAreaLayout = this.searchAreaVideoOut;
           paramsObj.switch_id = 0;
           formParams.searchIsTime = 1;
+          formParams.searchTime = ''
         } else {
           if (formParams.searchIsTime == 2) {
             formParams.searchTime = '';
+            paramsObj.start_time = '';
+            this.active = 2;
+            paramsObj.end_time = '';
+            console.log(formParams, paramsObj, "11111111111场次")
               this.searchArea.map(item => {
                 item.key === 'switchId' ? item.options = this.switchList : []
               })
@@ -307,6 +317,7 @@ export default {
             } else {
               this.searchAreaLayout = this.searchLayout;
               paramsObj.switch_id = 0;
+              this.active = 2;
             }
           }
         }
@@ -371,11 +382,32 @@ export default {
     border: none;
     background: transparent;
   }
+  .container-box {
+    margin-bottom: 24px;
+  }
   /deep/.el-button.is-circle {
     padding: 3px;
   }
   .search{
-    margin-top: 30px;
+    margin-top: 24px;
+  }
+  /deep/.el-select {
+    width:130px!important;
+  }
+
+  @media screen and (max-width:1920px) {
+    /deep/.el-input {
+      width: 135px!important;
+    }
+  }
+  // /deep/.time-kuai {
+  //   width: 189px;
+  // }
+  /deep/.el-date-editor {
+    width: 200px!important;
+    /deep/ input {
+     width: 72px;
+    }
   }
   .title-data {
     margin: 20px 0;
@@ -395,6 +427,7 @@ export default {
     padding: 24px 32px;
     border-radius: 4px;
     background: #fff;
+    padding-top: 1px;
   }
 }
 </style>

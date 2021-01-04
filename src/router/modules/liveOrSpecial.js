@@ -62,7 +62,7 @@ const router = [
       {
         path: 'chooseWay/:str/:role?',
         component: () => import('@/views/LiveModule/chooseWay'),
-        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', activeMenu: '/live/list' },
+        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list' },
         hidden: true
       },
       {
@@ -177,7 +177,7 @@ const router = [
       {
         path: 'addQuestion',
         component: () => import('@/views/LiveModule/MaterialSet/components/addQuestion'),
-        meta:{ auth: true, title: '新建问卷', name: 'addQuestion', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '创建问卷', name: 'addQuestion', activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -189,7 +189,7 @@ const router = [
       {
         path: 'addProduct/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/components/addProduct'),
-        meta:{ auth: true, title: '新建商品', name: 'addProduct', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '创建商品', name: 'addProduct', activeMenu: '/live/list'},
         hidden: true
       },
       {

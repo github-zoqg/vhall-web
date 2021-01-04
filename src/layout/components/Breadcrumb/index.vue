@@ -95,7 +95,7 @@ export default {
 .sys-date {
   font-size: 14px;
   font-weight: 400;
-  color: #000000;
+  color: #1a1a1a;
   span {
     font-weight: bold;
     font-size: 18px;

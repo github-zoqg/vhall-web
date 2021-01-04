@@ -29,6 +29,7 @@ export default {
   display: flex;
   -webkit-box-pack: center;
   justify-content: center;
+  user-select: none;
 }
 .recommend-item {
   width: 137px;

@@ -7,13 +7,12 @@
       @close="cancelSelect"
       width="620px">
       <div class="search" v-show="total || isSearch">
-        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input>
       </div>
        <el-scrollbar v-loadMore="moreLoadData">
         <div class="vh-chose-active-box"
           v-show="total"
         >
-
         <!-- 单个视频 -->
           <div class="vh-chose-active-item"
             v-for="(item) in activeList"
@@ -21,6 +20,9 @@
             @click="doSelect(item)"
             :class="{'checkedActive': item.checked}"
           >
+            <label class="img-tangle" v-show="item.checked">
+              <i class="el-icon-check"></i>
+            </label>
             <div class="vh-chose-active-item__cover">
               <img :src="item.img_url" alt="">
               <div class="vh-chose-active-item__cover-status">
@@ -246,6 +248,12 @@ export default {
     // overflow-x: hidden;
     // position: relative;
   }
+  .add-living-input {
+    width: 220px;
+    /deep/ input {
+      border-radius: 20px;
+    }
+  }
   .search{
     margin-bottom: 20px;
   }
@@ -258,9 +266,29 @@ export default {
     background: #F7F7F7;
     border-radius: 4px;
     margin: 0 12px 12px 0;
-
+    border: 1px solid #ffffff;
+    position: relative;
+    .img-tangle{
+      position: absolute;
+      z-index: 1;
+      right: 0;
+      top:0;
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+      border-right-color: #FB3A32;
+      border-top-color: #FB3A32;
+      i{
+        color:#fff;
+        position: absolute;
+        top: -8px;
+        right:-11px;
+        font-size: 10px;
+      }
+    }
     &.checkedActive{
       border: 1px solid #FB3A32;
+      box-shadow: 0 4px 24px rgba(0,0,0,.15);
     }
     &__cover{
       position: relative;

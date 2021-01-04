@@ -4,17 +4,17 @@
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <section class="viewItem">
       <p class="label">表单名称</p>
-      <el-input
+      <VhallInput
         maxlength="50"
         show-word-limit
         placeholder="请输入表单标题"
         v-model="title"
         @change="baseInfoChange('title')"
-      ></el-input>
+      ></VhallInput>
     </section>
     <section class="viewItem">
       <p class="label">表单简介</p>
-      <el-input
+      <VhallInput
         maxlength="500"
         v-model="intro"
         show-word-limit
@@ -23,7 +23,7 @@
         :autosize="{ minRows: 5 }"
         resize=none
         @change="baseInfoChange('intro')"
-      ></el-input>
+      ></VhallInput>
     </section>
     <section class="viewItem">
       <p class="label">表单头图</p>
@@ -68,7 +68,7 @@
             <template v-if="!item.labelEditable">
               {{item.label}}
             </template>
-            <el-input
+            <VhallInput
               v-else
               maxlength="60"
               show-word-limit
@@ -76,7 +76,7 @@
               v-model="item.label"
               class="radioInput titleInput"
               @change="subjectChange(item)"
-            ></el-input>
+            ></VhallInput>
           </p>
           <template v-for="(node, nodeIndex) in item.nodes">
 
@@ -85,7 +85,7 @@
             <template
               v-if="item.type=='input' || item.type=='select'"
             >
-              <el-input
+              <VhallInput
                 :disabled="item.disabledEdit"
                 v-model="node.value"
                 v-bind="node.props"
@@ -108,7 +108,7 @@
                   v-if="!!node.privacyAdd && item.nodes.length < 4"
                   @click="privacyAdd(item.nodes, item)"
                 ></i>
-              </el-input>
+              </VhallInput>
               <!-- 区域级别下拉开启状态控制 -->
               <el-switch
                 v-model="regionalLevel[node.index]"
@@ -132,7 +132,7 @@
                 :key="`${index}-${nodeIndex}-${raionIndex}`"
                 :label="radioItem.item_id"
               >
-                <el-input
+                <VhallInput
                   @change="(chooseOptChange(item, radioItem))"
                   maxlength="60"
                   show-word-limit
@@ -145,9 +145,9 @@
                     slot="suffix"
                     @click="deleteOptions(item, raionIndex, 'option')"
                   ></i>
-                </el-input>
+                </VhallInput>
                 <br/>
-                <el-input
+                <VhallInput
                   class="other-input"
                   placeholder="观众输入区"
                   disabled
@@ -155,7 +155,7 @@
                   :maxlength="60"
                   show-word-limit
                   :key='`${index}-${nodeIndex}disabled`'
-                ></el-input>
+                ></VhallInput>
               </el-radio>
             </el-radio-group>
             <!-- 复选框类型 -->
@@ -173,7 +173,7 @@
                 :name="item.id"
                 :class="{'other-checkbox': radioItem.other}"
               >
-                <el-input
+                <VhallInput
                   maxlength="60"
                   show-word-limit
                   placeholder="选项"
@@ -186,9 +186,9 @@
                     slot="suffix"
                     @click="deleteOptions(item, raionIndex, 'option')"
                   ></i>
-                </el-input>
+                </VhallInput>
                 <br/>
-                <el-input
+                <VhallInput
                   class="other-input"
                   placeholder="观众输入区"
                   disabled
@@ -196,7 +196,7 @@
                   :maxlength="60"
                   show-word-limit
                   :key='`${index}-${nodeIndex}disabled`'
-                ></el-input>
+                ></VhallInput>
               </el-checkbox>
             </el-checkbox-group>
           </template>
@@ -482,7 +482,10 @@ export default {
     deleteQuestion(arr, index) {
       this.$confirm('删除后已收集信息会被清空，确认删除？', '提示', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('regQDelete', {
           question_id: arr[index].question_id
@@ -672,7 +675,10 @@ export default {
         await this.$confirm('关闭短信验证将会导致无法验证用户手机号码，同时用户将无法接收预约短信，确认是否关闭？', '提示', {
           confirmButtonText: '仍然关闭',
           cancelButtonText: '暂不关闭',
-          center: true
+          /* center: true, */
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {}).catch(() => {
           isConfirm = false;
           question.phoneValide = true;

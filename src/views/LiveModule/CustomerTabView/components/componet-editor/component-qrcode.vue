@@ -10,16 +10,29 @@
         <span style="color:#FB3A32">*</span>二维码
       </div>
       <div class="editorContent">
-        <Upload
-          class="upload__avatar"
-          v-model="info.imageSrc"
-          :saveData="{
-              path: 'interacts/menu-qrcode-imgs',
-              type: 'image',
-          }"
-          :on-success="handleUploadSuccess"
-          :on-error="uploadError"
-        ></Upload>
+        <el-upload
+            class="upload-imglink"
+            drag
+            :show-file-list="false"
+            :headers="{token: token, platform: 17}"
+            name="resfile"
+            :data="saveData"
+            :action="actionUrl"
+            :on-success="handleUploadSuccess"
+          >
+          <div class="preview" v-show="info.imageSrc">
+            <img :src="info.imageSrc" alt="">
+          </div>
+           <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc">
+              <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
+              <div data-v-4d7778f2="" class="tips">
+                <div data-v-62244b0e="">
+                  <p data-v-62244b0e="">建议尺寸：600*600px，小于2M</p>
+                  <p data-v-62244b0e="">支持jpg、gif、png、bmp</p>
+                </div>
+              </div>
+            </div>
+          </el-upload>
       </div>
     </div>
   </div>
@@ -42,13 +55,18 @@ export default {
     }
   },
 
-  components: {
-    Upload
-  },
+  // components: {
+  //   Upload
+  // },
 
   data() {
     return {
       domain_url: '',
+      saveData: {
+        path: 'interacts/menu-qrcode-imgs',
+        type: 'image',
+      },
+      token: localStorage.getItem('token') || ''
     }
   },
 
@@ -71,6 +89,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .qr-editor-box{
+    padding-top: 16px;
+  }
   .qr-previewbox{
     .qrbox {
       position: relative;
@@ -93,20 +114,50 @@ export default {
   }
   .label{
     display: inline-block;
+    vertical-align: top;
+    margin-right: 12px;
+    color: #1A1A1A;
+    font-size: 14px;
   }
   .editorContent{
     display: inline-block;
-  }
-  /* 图片上传 */
-  .upload__avatar {
-    /deep/.el-upload--picture-card {
-      width: 180px;
-      height: 180px;
-      border: 1px solid #CCCCCC;
+    width: 376px;
+    height: 180px;
+    border: 1px solid #CCCCCC;
+    overflow: hidden;
+    position: relative;
+    background: #F7F7F7;
+    border-radius: 4px;
+    .tips{
+      position: absolute;
+      top: 100px;
+      width: 100%;
+      text-align: center;
     }
-    /deep/.box > div {
-      width: 180px;
-      height: 180px;
+    /deep/ .preview{
+      border: 0;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      img{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        max-height: 100%;
+        margin: auto;
+      }
+    }
+    .upload-imglink{
+      width: 100%;
+      height: 100%;
+    }
+    /deep/ .el-upload--picture-card, /deep/ .el-upload-dragger{
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #F7F7F7;
     }
   }
 </style>

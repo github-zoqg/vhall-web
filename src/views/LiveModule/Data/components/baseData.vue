@@ -7,7 +7,7 @@
           1.预约人数：统计预告状态下有多少人预约了当前活动，数据统计不去重<br />2.报名表单：应用在直播整个环节（预告+直播+回放），统计当前活动多少人进行报名，数据去重
           <br>3.试看：回放或点播观看限制设置试看后，统计多少人进行了试看，数据去重<br>4.邀请排名：所有生成过邀请卡的观众都参与此排名；邀请人数相同的，按邀请人首次观看时间排名<br>5.分享用户分享的链接被他人访问1次有效分享数记为1，同设备当天重复访问只统计1次，统计范围：微信、微博、QQ
         </div>
-        <el-button circle icon="el-icon-question" class="button-tip"></el-button>
+        <i class="iconfont-v3 saasicon_help_m"></i>
       </el-tooltip>
     </div>
     <el-row :gutter="40">
@@ -102,11 +102,7 @@
           <br>3.点赞：当前活动总计收到多少次点赞，数据统计不去重<br>4.签到：推送签到后，统计多少人进行了签到，支持查看明细<br>5.问卷：推送问卷后，统计多少人填写了问卷，支持查看明细
           <br>6.抽奖：推送抽奖后，统计多少人中奖，支持查看明细<br>7.发群红包：发送红包后，统计发送红包的金额，支持查看明细<br>8.打赏：观众对当前活动打赏的金额统计<br>9.礼物：观众对当前活动赠送礼物的金额统计<br>10.连麦：互动活动支持，统计多少条连麦数据
         </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
+        <i class="iconfont-v3 saasicon_help_m"></i>
       </el-tooltip>
     </div>
     <el-row :gutter="40">
@@ -458,6 +454,10 @@ export default {
           margin-top: 2px;
         }
       }
+      i{
+          font-size: 14px;
+          padding: 0 2px;
+        }
     }
     .liveItem{
       width: 100%;
@@ -484,7 +484,7 @@ export default {
         p{
           position: absolute;
           font-size: 12px;
-          top: 10px;
+          top: 14px;
           right:16px;
           color: #666;
         }

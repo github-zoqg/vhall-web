@@ -231,6 +231,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/user/home') !== -1 ||
     to.path.indexOf('/live/room') !== -1 ||
+    to.path.indexOf('/special/detail') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
     // 不验证直接进入

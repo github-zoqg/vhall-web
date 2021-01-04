@@ -48,10 +48,10 @@
           <VhallInput type="textarea" v-model.trim="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <el-input v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
+          <el-input v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left:6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="优惠价" prop="discount_price">
-         <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
+         <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <el-input v-model.trim="form.url" placeholder="请输入商品链接"></el-input>
@@ -397,7 +397,20 @@ export default {
       padding: 48px;
     }
     /deep/.el-form{
-      width: 50%;
+      width: 60%;
+    }
+    /deep/.el-input, .el-textarea{
+      width: 640px;
+    }
+    /deep/.el-input__count{
+      bottom: 8px;
+      line-height: 20px;
+    }
+    /deep/.el-input__inner, /deep/.el-textarea__inner{
+      padding: 5px 12px;
+    }
+    /deep/.el-input--prefix .el-input__inner {
+      padding-left: 24px;
     }
     .add-product{
       background: #fff;
@@ -446,7 +459,7 @@ export default {
           font-size: 12px;
           display: inline-block;
           text-align: center;
-          width: 32px;
+          width: 40px;
           line-height: 22px;
           height: 22px;
         }

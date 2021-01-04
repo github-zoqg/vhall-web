@@ -199,7 +199,7 @@ export default {
     display: block;
     list-style-type: none;
     margin-bottom: 32px;
-    margin-left: 80px;
+    margin-left: 56px;
     line-height: 20px;
     &:last-child {
       margin-bottom: 0;

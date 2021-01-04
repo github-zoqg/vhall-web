@@ -78,6 +78,7 @@ export default {
             if (!item.uuid) {
               return {
                 ...item,
+                show: false,
                 uuid: uuidV1()
               }
             }
@@ -94,6 +95,11 @@ export default {
       });
     },
 
+    del(idx) {
+      this.customMenus= this.customMenus.filter((item, index) => {
+        return idx != index
+      })
+    },
     updateMenus(info) {
       this.customMenus = info
     },
@@ -108,7 +114,7 @@ export default {
        this.$fetch('customMenuSave', {
         request_data: JSON.stringify(params)
       }).then(res =>{
-        if(res && res.code === 200 && res.data) {
+        if(res.code === 200) {
           this.$message.success('保存成功');
           this.addCustomVisbile = false;
           this.customMenuList();
@@ -117,7 +123,7 @@ export default {
         }
       }).catch(e=>{
         console.log(e);
-        this.$message.error('保存失败');
+        // this.$message.error('保存失败');
       });
     }
   }

@@ -34,7 +34,7 @@
           <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>发起直播</el-button>
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
-        <div class="v-download" v-if="chooseType === 'client'">
+        <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client'">
           客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服：400-888-9970
         </div>
       </div>
@@ -251,9 +251,9 @@ export default {
       color: @default--hover;
     }*/
   }
-}
-
-.browser-version {
-  display: ;
+  &.css {
+    left: unset;
+    width: 850px
+  }
 }
 </style>

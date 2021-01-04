@@ -5,28 +5,28 @@
     <!-- 单个视频 -->
     <div class="vh-chose-active-item"
       v-for="(item) in activeList"
-      :key="item.webinar_id"
+      :key="item.id"
     >
       <div class="vh-chose-active-item__cover">
-        <img :src="item.img_url" alt="">
+        <img :src="item.cover" alt="">
         <div class="vh-chose-active-item__cover-status">
-          <span class="liveTag">
+          <!-- <span class="liveTag"> -->
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
             </label> -->
-            {{item | liveTag}}
-          </span>
+            <!-- {{item | liveTag}} -->
+          <!-- </span> -->
         </div>
         <div class="vh-chose-active-item__cover-hots">
           <i class="iconfont-v3 saasicon_redu"></i>
-          {{ item.pv }}
+          {{ item.view_num }}
         </div>
       </div>
       <div class="vh-chose-active-item__title">
-        {{ item.subject }}
+        {{ item.title }}
       </div>
       <div class="vh-chose-active-item__info">
-        {{ item.created_at || item.start_time }}
+        {{ item.created_at }}
       </div>
     </div>
   </div>
@@ -58,8 +58,8 @@ export default {
       }
       this.loading = true
       const userId = sessionStorage.getItem('userId')
-      this.$fetch('batchGetWebinarInfo', {
-        webinar_ids:this.checkedList.join(','),
+      this.$fetch('btachSubject', {
+        subject_ids:this.checkedList.join(','),
         user_id: userId,
       }).then((res) => {
         if(res.code == 200) {

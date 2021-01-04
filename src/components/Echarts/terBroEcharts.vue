@@ -4,7 +4,7 @@
       <span>{{ isTerBar === 1 ? '终端设备占比' : '浏览器占比'}}</span>
       <el-tooltip effect="dark" placement="right-start">
         <div slot="content">{{ isTerBar === 1 ?  '统计观看终端占比情况' : '统计观看浏览器占比情况' }}</div>
-         <i class="el-icon-question"></i>
+        <i class="iconfont-v3 saasicon_help_m"></i>
         <!-- <el-button
           circle
           icon="el-icon-question"
@@ -119,6 +119,10 @@ export default {
     }
     .el-button.is-circle{
       padding:3px;
+    }
+    i{
+      font-size: 14px;
+      padding: 0 2px;
     }
   }
 }

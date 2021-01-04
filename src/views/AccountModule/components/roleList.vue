@@ -202,7 +202,9 @@ export default {
         that.$confirm('确定删除当前角色？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           that.$fetch('sonRoleDel', {
             ids: rows.id

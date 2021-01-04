@@ -17,14 +17,14 @@
     </search-area>
     <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
     <div class="statistical-data">
-      <div class="statistical-title">用量统计</div>
+      <div class="statistical-title">统计图表</div>
       <div class="statistical-line" v-if="titleType != 4">
         <span>并发趋势图</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             筛选条件内，并发随时间变化的趋势图
           </div>
-          <i class="el-icon-question"></i>
+          <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
         <lint-charts :lineDataList="limitDataList" :type="1"></lint-charts>
       </div>
@@ -34,7 +34,7 @@
           <div slot="content">
             筛选条件内，观看人数随时间变化的趋势图
           </div>
-          <i class="el-icon-question"></i>
+          <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
         <div class="changeOption" v-if="titleType != 4">
           <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
@@ -47,7 +47,7 @@
           <span>观看地域TOP10占比</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
-            <i class="el-icon-question"></i>
+           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
         </div>
         <map-charts :areaDataList="areaDataList"></map-charts>
@@ -308,7 +308,11 @@ export default {
       // 获取用户统计
       this.$fetch('getDateUvinfo', params).then(res => {
         this.allDataList = res.data;
-        this.lineDataList = this.allDataList.live;
+        if (this.liveDetailInfo.webinar_state == 4) {
+          this.lineDataList = this.allDataList.record;
+        } else {
+          this.lineDataList = this.allDataList.live;
+        }
       });
       // 获取并发趋势图
       this.$fetch('getWebinarinfo', params).then(res => {
@@ -353,7 +357,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .contain-data {
-  margin: 0 41px;
+  // margin: 0 41px;
   padding: 0;
 }
 .statistical-data {
@@ -368,22 +372,36 @@ export default {
     line-height: 22px;
     padding: 12px 0 50px 12px;
   }
+  i{
+      font-size: 14px;
+      padding: 0 2px;
+    }
 }
 .statistical-line {
     text-align: left;
     padding-bottom: 10px;
     position: relative;
+    // padding-left: 32px;
+    // padding-right: 32px;
+    // /deep/.line-charts {
+    //   padding: 0 32px;
+    // }
     span {
       font-size: 16px;
       color: #666666;
       margin: 0;
       padding-left: 34px;
     }
+    i{
+      font-size: 14px;
+    }
   }
   .statistical-dark{
     padding-top: 30px;
   }
 .changeOption {
+  width: 120px;
+  height: 32px;
   border-radius: 100px;
   border: 1px solid #ccc;
   position: absolute;
@@ -392,10 +410,14 @@ export default {
   cursor: pointer;
   span {
     display: inline-block;
+    text-align: center;
+    width: 59px;
+    height: 32px;
+    line-height: 26px;
     font-size: 14px;
     color: #666;
     padding: 3px 10px;
-    border-radius: 14px;
+    border-radius: 16px;
   }
   .span-active {
     border: none;

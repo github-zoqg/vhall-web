@@ -137,7 +137,9 @@ export default {
       this.$confirm('是否删除当前广告？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('deleteAdv',this.$params({
           adv_ids: id,
@@ -169,6 +171,10 @@ export default {
       this.adv_ids = val.map(item => item.adv_id);
     },
     createAdvise(title) {
+      if (this.$route.path !='/material/advertCard' && this.tableList.length == 50) {
+         this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        return;
+      }
       this.advInfo = {};
       this.$refs.adviseSonChild.dialogVisible = true;
     },

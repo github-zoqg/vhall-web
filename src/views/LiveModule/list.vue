@@ -165,7 +165,9 @@ export default {
         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-           customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
          this.deleteLive();
         }).catch(() => {
@@ -223,10 +225,16 @@ export default {
     },
     goLivePlay(item) {
       if (item.webinar_type != 1) {
-        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+        // this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+        const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+        window.open(href, '_target');
       } else {
-        this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
+         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+         window.open(href, '_target');
+        //  window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
       }
+      // 需新标签打开
+
 
     },
     // 创建活动
@@ -347,11 +355,13 @@ export default {
       }
       .inner:hover{
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
       }
       .top{
         cursor: pointer;
         height: 175px;
-        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        // background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
+        background: #1A1A1A;
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
         padding: 10px 10px;
@@ -361,6 +371,7 @@ export default {
         img{
           width: 100%;
           height: 100%;
+          object-fit: scale-down;
           position: absolute;
           border-radius: 4px;
           top:0;

@@ -98,6 +98,7 @@
     <el-dialog
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
+      v-if="dialogVisible"
       :close-on-click-modal="false"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
@@ -134,8 +135,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleUpdateGift" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" round>取 消</el-button>
+        <el-button :disabled="!editParams.name || !editParams.price || !editParams.img" type="primary" size="medium" @click="handleUpdateGift" round>确 定</el-button>
+        <el-button size="medium" @click="handleCancelEdit" round>取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -147,8 +148,8 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete">取 消</el-button>
         <el-button type="primary" @click="handleDeleteGift">确 定</el-button>
+        <el-button @click="handleCancelDelete">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -160,13 +161,14 @@
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
         <el-button @click="handleCancelBatchDelete">取 消</el-button>
+        <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
       </span>
     </el-dialog>
     <el-dialog
       title="选择礼物"
       width="620px"
+      v-if="dialogGiftsVisible"
       :visible.sync="dialogGiftsVisible"
       :close-on-click-modal="false"
       :before-close="handleCloseChooseGift"
@@ -193,6 +195,7 @@
             <div
               v-for="(item, index) in materiaTableData"
               :key='index'
+              v-show="item.source_status == 1"
               class="matrial-item"
               :class="{active: item.isChecked}"
               @click.stop="handleChooseGift(index, item)">
@@ -211,9 +214,9 @@
       </div>
       <div class="control">
         <span>当前选中{{addGiftsIds.length}}件商品</span>
-        <div class="control-btn">
-          <el-button @click="chooseGift" class="add-btn" :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
-          <el-button @click="handleCloseChooseGift" class="cancel-btn">取消</el-button>
+        <div class="control-btn" style="text-align: right;">
+          <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
+          <el-button @click="handleCloseChooseGift" round>取消</el-button>
         </div>
       </div>
     </el-dialog>
@@ -269,6 +272,8 @@ export default {
       // openGiftIds: [], // 显示礼物列表
       selectIds:[], // 批量操作
       addGiftsIds: [], // 添加礼物
+      addedGiftsIds: [], // 已选择礼物id
+      resultAddGifts: [], // 保存的礼物
       domain_url: '',
       rules: {
         name: [
@@ -356,7 +361,7 @@ export default {
           this.currentTableData = this.tableData.filter((item, index) => {
             return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
           })
-          this.addGiftsIds = this.tableData.map((item) => item.id)
+          this.addedGiftsIds = this.tableData.map((item) => item.id)
         }
       })
     },
@@ -442,7 +447,7 @@ export default {
     },
     // 新建
     addGift () {
-      if (this.addGiftsIds.length >= 40) {
+      if (this.addedGiftsIds.length >= 40) {
         this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
         return false;
       }
@@ -485,7 +490,9 @@ export default {
       this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('updateGiftInfo', {
           ...this.editParams
@@ -507,7 +514,9 @@ export default {
       this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('createWebinarGift', {
           ...this.editParams,
@@ -551,13 +560,13 @@ export default {
         if (res.code == 200 && res.data) {
           res.data.list.length > 0 && res.data.list.forEach((item, index) => {
             item.isChecked = false
-            if (this.addGiftsIds.length > 0) {
-              this.addGiftsIds.map(addItem => {
-                if(addItem == item.gift_id) {
-                  item.isChecked = true
-                }
-              })
-            }
+            // if (this.addGiftsIds.length > 0) {
+            //   this.addGiftsIds.map(addItem => {
+            //     if(addItem == item.gift_id) {
+            //       item.isChecked = true
+            //     }
+            //   })
+            // }
           })
 
           if (this.materiaSearchParams.page_size * (this.materiaSearchParams.page - 1) === 0) {
@@ -608,7 +617,7 @@ export default {
     handleDeleteGift () {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
       this.tableData = resData
-      this.addGiftsIds = this.tableData.map(item => item.id)
+      this.addedGiftsIds = this.tableData.map(item => item.id)
       this.materiaTableData.forEach(meterialItem => {
         if (meterialItem.gift_id == this.deleteId) {
           meterialItem.isChecked = false
@@ -648,33 +657,26 @@ export default {
           }
         })
       })
-      this.addGiftsIds = this.tableData.map(item => item.id)
+      this.addedGiftsIds = this.tableData.map(item => item.id)
       this.chooseGift()
       this.selectIds = []
       this.batchDialogTipVisible = false
     },
     // 选择奖品添加
     handleChooseGift (index, gift) {
-      // 默认礼物不支持取消关联
-      if(gift.source_status == 0) {
-        this.$message.warning('默认礼物不支持取消关联')
-        return false;
-      }
       if (!this.materiaTableData[index].isChecked) {
-        if (this.addGiftsIds.length >= 40) {
+        this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
+        if (this.resultAddGifts.length >= 40) {
           this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
           return false;
         }
         this.addGiftsIds.push(Number(this.materiaTableData[index].gift_id))
-      } else {
-        let num = this.addGiftsIds.indexOf(Number(this.materiaTableData[index].gift_id))
-        this.addGiftsIds.splice(num, 1)
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
     chooseGift() {
       this.$fetch('setRelevance', {
-        gift_ids: this.addGiftsIds.join(','),
+        gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
       }).then(res => {
         this.handleCloseChooseGift()
@@ -682,6 +684,7 @@ export default {
       })
     },
     handleCloseChooseGift () {
+      this.addGiftsIds = []
       this.materiaSearchParams.page = 1
       this.dialogGiftsVisible = false
     },
@@ -713,6 +716,9 @@ export default {
   }
 }
 .live-gift-wrap{
+  /deep/ .el-dialog__footer {
+    padding-top: 0;
+  }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
     content: '*';
     color: #FB3A32;
@@ -780,17 +786,6 @@ export default {
     .dialog-footer {
       display: inline-block;
       width: 100%;
-      .el-button:first-child{
-        float: left;
-        margin-left: 20px;
-      }
-      .el-button:last-child{
-        float: right;
-        margin-right: 20px;
-      }
-      &:after{
-        clear:both;
-      }
     }
   }
   /deep/.el-dialog{
@@ -906,27 +901,8 @@ export default {
       top: 24px;
       left: 20px;
     }
-    /deep/.add-btn, .cancel-btn{
-      width: 80px;
-      height: 34px;
-      background: #FC5659;
-      border-radius: 4px;
-      border: 1px solid #F3545B;
-      text-align: center;
-      padding: 0px;
-      margin: 0p;
-      line-height: 34px;
-    }
-    .add-btn{
-      margin-left: 191px ;
-      color: #fff;
-    }
     /deep/ .disabled{
       opacity: 0.5;
-    }
-    .cancel-btn{
-      border: 1px solid #888888;
-      background: #fff;
     }
   }
   .share-material{

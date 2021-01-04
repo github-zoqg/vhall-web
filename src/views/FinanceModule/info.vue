@@ -16,10 +16,11 @@
           <div slot="content" v-else>
            1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
           </div>
-          <i class="el-icon-question"></i>
+          <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
           <search-area
             ref="searchLineLayout"
+            :isDate="true"
             :searchAreaLayout="searchLineLayout"
             @onExportData="exportCenterData()"
             @onSearchFun="getLineList()"
@@ -38,10 +39,11 @@
           <div slot="content" v-else>
            1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发
           </div>
-          <i class="el-icon-question"></i>
+          <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
         <search-area
             ref="searchDataAccount"
+            :isDate="true"
             :searchAreaLayout="searchDataAccount"
             @onExportData="exportAccount()"
             @onSearchFun="getAccountList('search')"
@@ -69,7 +71,7 @@
               <div slot="content">
                 筛选条件内的活动总数，包含直播+点播活动
               </div>
-              <i class="el-icon-question"></i>
+             <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
             </p>
             <h1>{{ trendData.webinar_num || 0 }}</h1>
@@ -82,7 +84,7 @@
               <div slot="content">
                 筛选条件内的直播使用流量+回放使用流量的总和
               </div>
-              <i class="el-icon-question"></i>
+              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
             </p>
             <h1>{{ trendData.total_flow || 0 }}</h1>
@@ -95,7 +97,7 @@
                 <div slot="content">
                   筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量
                 </div>
-                <i class="el-icon-question"></i>
+                <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </p>
             <h1>{{ trendData.live_flow || 0 }}</h1>
@@ -108,7 +110,7 @@
                 <div slot="content">
                   筛选条件内的回放使用流量汇总，包含回放、点播、下载回放视频到本地消耗的总流量
                 </div>
-                <i class="el-icon-question"></i>
+                <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </p>
             <h1>{{ trendData.vod_flow || 0 }}</h1>
@@ -324,7 +326,7 @@ export default {
         let costList = res.data.list;
         this.totalNum = res.data.total;
         costList.map(item => {
-          item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
+          item.typeText = item.type == 1 ? '主账号' : '子账号';
           item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
         });
         this.tableList = costList;
@@ -404,6 +406,9 @@ export default {
     border-radius: 4px;
     background: #fff;
   }
+  /deep/.el-input__icon {
+    margin-bottom: 5px;
+  }
   .title-data {
       margin: 10px 0 20px 0;
       text-align: left;
@@ -425,6 +430,10 @@ export default {
         color: #1a1a1a;
         margin-bottom: 10px;
         padding-bottom: 5px;
+      }
+      i{
+        font-size: 14px;
+        padding: 0 2px;
       }
     }
     .content-grid{

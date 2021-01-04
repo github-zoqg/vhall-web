@@ -16,14 +16,14 @@
     </search-area>
     <main-data :mainKeyData="mainKeyData"></main-data>
     <div class="statistical-data">
-      <div class="statistical-title">用量统计</div>
+      <div class="statistical-title">统计图表</div>
       <div class="statistical-line">
         <span>观众访问趋势图</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
             当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
           </div>
-          <i class="el-icon-question"></i>
+          <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
         <div class="changeOption">
           <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
@@ -33,10 +33,10 @@
       </div>
       <div class="statistical-map">
         <div class="map-title">
-          <span>观看地域TOP1占比</span>
+          <span>观看地域TOP10占比</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
-            <i class="el-icon-question"></i>
+            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
         </div>
         <template>
@@ -209,6 +209,10 @@ export default {
       color: #1a1a1a;
       line-height: 22px;
       padding: 12px 0 37px 12px;
+    }
+    i{
+      padding: 0 2px;
+      font-size: 14px;
     }
   }
   .statistical-line {

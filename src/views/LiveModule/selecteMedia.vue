@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="select-video">
   <el-dialog
     title="选择音视频"
     @closed="closeHandler"
@@ -31,11 +31,12 @@
         width="55">
       </el-table-column>
       <el-table-column
+       width="210"
         label="音视频名称">
           <template slot-scope="scope">
             <span class="mediaName">
               <!-- <i></i> -->
-              {{scope.row.name}}
+              {{fontNumber(scope.row.name)}}
             </span>
           </template>
         </el-table-column>
@@ -48,13 +49,13 @@
       <el-table-column
         label="时长"
         prop="duration"
-        width="150"
+        width="120"
         show-overflow-tooltip>
       </el-table-column>
 
       <el-table-column
         label="进度"
-        width="180"
+        width="150"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{ scope.row.transcode_status_text }}</span>
@@ -107,7 +108,7 @@ export default {
       text: '您还上传过音视频，快来创建吧！',
       pageInfo: {
         pos: 0,
-        limit: 5,
+        limit: 6,
         pageNum: 1
       },
       totalPages: 0,
@@ -127,11 +128,24 @@ export default {
         this.docList = [];
         this.getMediaList();
       } else {
+        this.keyWords = '';
         this.pageInfo.pageNum = 1;
       }
     }
   },
   methods: {
+    //字数截断显示省略号
+    fontNumber (date) {
+      const length = date.length
+      const format = date.substring(date.length-4, date.length)
+      if (length > 13) {
+        var str = ''
+        str = date.substring(0, 13) + '...'+format
+        return str
+      } else {
+        return date
+      }
+    },
     handleClose(done) {
       this.pageInfo.pageNum = 1;
       done();
@@ -228,7 +242,9 @@ export default {
       this.$confirm('上传资源会离开当前页面，将丢失已编辑信息，是否离开？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         this.$router.push({path: "/material/video"});
       }).catch(()=>{});
@@ -263,6 +279,12 @@ export default {
 <style lang="less" scoped>
   @red: #FB3A32;
   @redBg: #FFEBEB;
+  .select-video {
+    max-width: 800px;
+    .el-dialog {
+      max-width: 800px;
+    }
+  }
   .statusTag{
     &::before{
       content: '';

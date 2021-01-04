@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="commen-header home-header">
-      <nav :class="['navbar nav-top', {'all': !isShowLogin}]" role="navigation">
+      <nav :class="['navbar nav-top all']" role="navigation">
         <div class="navbar-header">
           <a class="navbar-brand" href="/"><img src="../../common/images/sys/logo@2x.png" alt=""></a>
         </div>

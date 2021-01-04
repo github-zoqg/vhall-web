@@ -1,80 +1,42 @@
 <template>
   <div class="single-question">
     <pageTitle title="问卷详情"></pageTitle>
-    <el-card>
       <div class="question-title">
         <h1>
           {{ $route.query.subject }}
         </h1>
-        <p>填写人数:<span> {{ $route.query.number }}</span></p>
-        <div class="export">
-          <el-button type="primary" round @click="exportSingleQuerstion">导出数据</el-button>
-        </div>
+        <p>填写人数: <span>{{ total }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
       </div>
-    </el-card>
-    <el-card class="question-item">
-      <div v-for="(item, index) in questionList" :key="index">
-        <div class="question-gender" v-show="item.item_type == 1">
+    <div class="question-item">
+      <div v-for="item in questionList" :key="item.ques_id">
+        <div class="question-gender" v-if="item.title == '性别'">
           <p>{{ item.title }}(单选题)</p>
-          <div class="terEchart">
-            <div
-              :style="{ height: '300px', width: '50%' }"
-              ref="terBroEchart"
-            ></div>
-            <!-- <div class="terList">
-              <table border="0">
-                <tr>
-                  <th>性别</th>
-                  <th>填写人数</th>
-                  <th>占比</th>
-                </tr>
-                <tr v-for="(opt, index) in item" :key="index">
-                  <td>{{ item.name }}</td>
-                  <td>100</td>
-                  <td>{{ (item.value / 100) * 100 }}%</td>
-                </tr>
-              </table>
-            </div> -->
-          </div>
+          <gender-echarts :genderList="item.list"></gender-echarts>
         </div>
-        <div class="question-city" v-show="item.item_type == 0">
+        <div class="question-city" v-else-if="item.title == '地域'">
           <p>{{item.title}}统计(城市题目)</p>
           <div class="map-charts">
-            <map-echarts :areaDataList="areaDataList"></map-echarts>
+            <map-echarts :areaDataList="item.list"></map-echarts>
           </div>
         </div>
-        <div class="question-subject" v-show="item.item_type == 2">
-          <p>{{ item.title }}（多选题）</p>
-          <div class="barEchart">
-            <div :style="{ height: '300px', width: '50%' }" ref="barEchart"></div>
-            <div class="terList">
-              <table border="0">
-                <tr>
-                  <th>性别</th>
-                  <th>填写人数</th>
-                  <th>占比</th>
-                </tr>
-                <tr v-for="(item, index) in barDataList" :key="index">
-                  <td>{{ item.name }}</td>
-                  <td>100</td>
-                  <td>{{ (item.value / 100) * 100 }}%</td>
-                </tr>
-              </table>
-            </div>
-          </div>
+        <div class="question-subject" v-else>
+          <p>{{ item.title }}（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
+          <line-echarts :otherList="item.list"></line-echarts>
         </div>
       </div>
-    </el-card>
+    </div>
   </div>
 </template>
 <script>
 import pageTitle from '@/components/PageTitle';
-import mapEcharts from '@/components/Echarts/mapEcharts';
-import echarts from 'echarts';
+import mapEcharts from './components/area';
+import genderEcharts from './components/gender';
+import lineEcharts from './components/lineEcharts';
 export default {
   data() {
     return {
       title: '问卷标题',
+      total: 0,
       questionList: [],
       genderList: [
         {
@@ -113,11 +75,94 @@ export default {
         ],
       },
       barDataList: [],
+      data: {
+        total: 3,
+        list: [
+          {
+            itemTypeChinese: "单选",
+            ques_id: 557831,
+            title: "性别",
+            item_type: 1,
+            list: [
+              {
+                ques_id: 557831,
+                item_id: 821385,
+                item_subject: "男",
+                num: 1
+              },{
+                ques_id: 557831,
+                item_id: 821386,
+                item_subject: "女",
+                num: 1
+              }
+            ]
+          },
+          {
+            itemTypeChinese: "城市",
+            ques_id: 557832,
+            title: "地域",
+            item_type: 0,
+            list: [
+              {
+                ques_id: 557831,
+                item_id: 821385,
+                item_subject: "北京",
+                num: 1
+              },{
+                ques_id: 557831,
+                item_id: 821386,
+                item_subject: "石家庄",
+                num: 1
+              }
+            ]
+          },
+          {
+            itemTypeChinese: "单选",
+            ques_id: 557833,
+            title: "什么最大",
+            item_type: 1,
+            list: [
+              {
+                ques_id: 557831,
+                item_id: 821385,
+                item_subject: "其他",
+                num: 1
+              },{
+                ques_id: 557831,
+                item_id: 821386,
+                item_subject: "吃饭",
+                num: 1
+              }
+            ]
+          },
+          {
+            itemTypeChinese: "多选",
+            ques_id: 557834,
+            title: "我的爱好",
+            item_type: 2,
+            list: [
+              {
+                ques_id: 557831,
+                item_id: 821385,
+                item_subject: "睡觉",
+                num: 2
+              },{
+                ques_id: 557831,
+                item_id: 821386,
+                item_subject: "吃饭",
+                num: 5
+              }
+            ]
+          }
+        ]
+      }
     };
   },
   components: {
     pageTitle,
     mapEcharts,
+    genderEcharts,
+    lineEcharts
   },
   mounted() {
     this.getQuerstionList();
@@ -127,139 +172,17 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         survey_id: this.$route.query.surveyId,
-        filled_number: this.$route.query.number,
+        filled_number: this.$route.query.number || 0,
         subject: this.$route.query.subject || ''
       }
       this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
         if (res.code == 200 && res.data) {
-          console.log(res.data.list);
+          this.total = res.data.total || 0;
           this.questionList = res.data.list;
-          this.initEchart();
-          this.initBarEcharts();
-          let list = [
-            {
-              itemTypeChinese: "单选" ,
-              item_id: 82110,
-              item_type: 1,
-              ques_id: 557831,
-              title: "性别",
-              total: 11111,
-              list: [
-                {
-                  name: '女',
-                  value: '40',
-                },
-                {
-                  name: '男',
-                  value: '30',
-                }
-              ]
-            },
-            {
-              itemTypeChinese: "null" ,
-              item_id: 82111,
-              item_type: 0,
-              ques_id: 557831,
-              title: "地域",
-              total: 1000,
-              list: [
-                {
-                  name: '北京',
-                  value: '10',
-                },
-                {
-                  name: '天津',
-                  value: '30',
-                },
-                {
-                  name: '上海',
-                  value: '20',
-                }
-              ]
-            },
-            {
-              itemTypeChinese: "多选" ,
-              item_id: 82112,
-              item_type: 2,
-              ques_id: 557831,
-              title: "爱好",
-              total: 100,
-              name: ['写代码', '睡觉', '看书', '唱歌'],
-              value: [20, 30, 40, 50]
-            }
-          ]
+        } else {
+          this.$message.error(res.msg || '获取房间下问卷列表错误')
         }
       })
-    },
-    initEchart() {
-      let that = this;
-      let terBarCharts = echarts.init(this.$refs.terBroEchart);
-      let option = {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}</br> 填写比例 ({d}%)',
-        },
-        color: ['#4383E4', '#FA9A32', '#7D43E4', '#FB3A32', '#ccc'],
-        series: {
-          // name: this.legend,
-          type: 'pie',
-          radius: '50%',
-          center: ['35%', '40%'],
-          avoidLabelOverlap: false,
-          // emphasis: {
-          //     label: {
-          //         show: true,
-          //         fontSize: '30',
-          //         fontWeight: 'bold'
-          //     }
-          // },
-          // roseType: 'radius',
-          label: {
-            show: false,
-            position: 'center',
-          },
-          labelLine: {
-            show: false,
-          },
-          itemStyle: {
-            show: false,
-            emphasis: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
-          data: that.genderList,
-        },
-      };
-      terBarCharts.setOption(option);
-    },
-    initBarEcharts() {
-      let that = this;
-      let barEcharts = echarts.init(this.$refs.barEchart);
-      let option = {
-        xAxis: {
-          type: 'category',
-          data: ['母婴用品', '牛奶用品', '选项3', '选项4', '选项5', '选项6', '选项7'],
-        },
-        yAxis: {
-          type: 'value',
-        },
-        series: [
-          {
-            data: [120, 200, 150, 80, 70, 110, 130],
-            type: 'bar',
-            showBackground: true,
-            backgroundStyle: {
-              color: 'rgba(220, 220, 220, 0.8)',
-            },
-            emphasis: {
-              barWidth: '20%'
-            }
-          },
-        ],
-      };
-      barEcharts.setOption(option);
     },
     // 导出数据
     exportSingleQuerstion() {
@@ -275,13 +198,15 @@ export default {
 .question-title {
   // text-align: center;
   position: relative;
+  padding:  24px 32px 10px 32px;
   h1 {
-    font-size: 20px;
+    font-size: 24px;
     color: #1a1a1a;
     font-weight: bold;
     line-height: 40px;
     width: 80%;
     padding-left: 20px;
+    text-align: center;
     // overflow: hidden;
     // text-overflow: ellipsis;
     // white-space: nowrap;
@@ -289,18 +214,37 @@ export default {
   p {
     width: 80%;
     text-align: center;
+    color: #1a1a1a;
+    font-size: 14px;
+    padding-top: 10px;
+    span{
+      font-size: 14px;
+    }
   }
   .export {
-    position: absolute;
-    right: 0;
-    top: 5px;
+    color: #3562FA;
+    cursor: pointer;
   }
+  b{
+    padding: 0 10px;
+    font-weight: normal;
+  }
+}
+.question-gender, .question-city, .question-subject{
+  background: #fff;
+  padding:  24px 32px;
+  border-radius: 4px;
+  margin-bottom: 24px;
 }
 .question-item {
   margin: 24px 0;
   p {
     height: 40px;
     line-height: 40px;
+    color: #1A1A1A;
+    padding-left: 100px;
+    font-size: 16px;
+    font-weight: 500;
   }
   .terEchart,
   .barEchart {

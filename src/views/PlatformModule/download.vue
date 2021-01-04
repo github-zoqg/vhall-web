@@ -3,7 +3,7 @@
     <pageTitle title="下载中心"></pageTitle>
     <!-- 搜索 -->
     <div class="list--search">
-      <el-button size="medium" plain round @click.prevent.stop="multiDownload">批量下载</el-button>
+      <el-button size="medium" plain round @click.prevent.stop="multiDownload" v-preventReClick :disabled="!(selectRows && selectRows.length > 0)">批量下载</el-button>
       <!-- 日期选择器 -->
       <el-date-picker
         v-model="timeStr"
@@ -12,82 +12,36 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        style="margin-left: 24px;width: 240px"
-        @change="getTableList(null)"
+        style="margin-left: 12px;width: 240px"
+        @change="search"
       />
-      <el-input placeholder="搜索文件名称" v-model.trim="file_name"  @keyup.enter.native="getTableList(null)">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="getTableList(null)"></i>
+      <el-input placeholder="搜索文件名称" v-model.trim="file_name"
+       clearable
+       @keyup.enter.native="search"
+       @clear="search">
+        <i class="el-icon-search el-input__icon" slot="suffix" @click="search"></i>
       </el-input>
     </div>
-    <div class="download-list" v-show="file_name !== null && file_name !== undefined && file_name !== '' || docDao.total >0">
-      <el-table
+    <div class="download-list" v-if="docDao.total >0">
+      <table-list
         ref="downloadTable"
-        :data="docDao.list"
-        tooltip-effect="dark"
-        style="width: 100%"
-        :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-        :row-key="setRowKeyFun"
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          :reserve-selection="true"
-          type="selection"
-          width="55"
-          align="left"
-          :selectable="checkSelectable"
-        ></el-table-column>
-        <el-table-column
-          label="文件名"
-          show-overflow-tooltip
-        >
-          <template slot-scope="scope">
-            <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i>
-            <p class="text">
-              <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
-              {{ scope.row.file_name }}
-            </p>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="webinar_name"
-          label="所属活动"
-          show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column
-          prop="created_at"
-          label="生成时间"
-          show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column
-          label="生成状态"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
-            <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          width="200">
-          <template slot-scope="scope">
-            <a :href="scope.row.dow_url" v-if="Number(scope.row.file_status) === 1" @click="download(scope.row)">
-              <el-button size="mini" type="text">下载</el-button>
-            </a>
-            <el-button size="mini" type="text" v-if="Number(scope.row.file_status) === 2" @click="resetDownload(scope.row)">重新生成</el-button>
-            <el-button size="mini" type="text" @click="delDownload(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <SPagination
-        :total="docDao.total"
-        v-show="docDao.total > limit"
-        :currentPage="pageNumber"
-        @current-change="currentChangeHandler"
-        align="center"
+        :isHandle=true
+        :manageTableData="docDao.list"
+        :tabelColumnLabel="tableColumn"
+        :totalNum="docDao && docDao.total ? docDao.total : 0"
+        :tableRowBtnFun="tableRowBtnFun"
+        :needPagination=true
+        max-height="auto"
+        width="120px"
+        scene="downloadList"
+        @getTableList="getTableList"
+        @changeTableCheckbox="handleSelectionChange"
+        @onHandleBtnClick="onHandleBtnClick"
       >
-      </SPagination>
+      </table-list>
     </div>
     <!-- 无消息内容 -->
-    <null-page v-show="!file_name && docDao.total === 0"></null-page>
+    <null-page v-else text="暂无可下载内容" nullType="noAuth"></null-page>
   </div>
 </template>
 
@@ -109,28 +63,84 @@ export default {
     return {
       timeStr: '',
       file_name: '',
-      limit: 10,
-      pageNumber: 1,
-      pos: 0,
+      query: {
+        pos: 0,
+        limit: 10,
+        pageNumber: 1
+      },
       docDao: {
         total: 0,
         list: []
       },
-      selectRows: []
+      selectRows: [],
+      isHandle: false, // 是否有操作项
+      tableColumn: [
+        {
+          label: '文件名',
+          key: 'file_name',
+          width: 'auto'
+        },
+        {
+          label: '所属活动',
+          key: 'webinar_name',
+          width: 200
+        },
+        {
+          label: '生成时间',
+          key: 'created_at',
+          width: 200
+        },
+        {
+          label: '生成状态',
+          key: 'fileStatusStr',
+          width: 200
+        }
+      ],
+      tableRowBtnFun: [
+        {
+          name: "下载",
+          methodName: 'download'
+        },
+        {
+          name: "重新生成",
+          methodName: 'resetDownload'
+        },
+        {
+          name: "删除",
+          methodName: 'delDownload'
+        }
+      ]
     };
   },
   methods: {
-    initPage() {
+    // 表格操作列回调函数， val表示每行
+    onHandleBtnClick(val) {
+      let methodsCombin = this.$options.methods;
+      methodsCombin[val.type](this, val);
+    },
+    initPage(type) {
       // 初始化设置日期为最近一周
       const end = new Date();
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      // 若type不为空，不做重置
+      if (type !== 1) {
+        this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      }
       this.search();
     },
     search() {
-      this.pos = 0;
-      this.pageNumber = 1;
+      this.query.pos = 0;
+      this.query.pageNumber = 1;
+      this.query.limit = 10;
+      // 表格切换到第一页
+      try {
+        this.$refs.downloadTable.pageInfo.pageNum = 1;
+        this.$refs.downloadTable.pageInfo.pos = 0;
+      } catch (e) {
+        console.log(e);
+      }
+       // 表格切换到第一页
       this.getTableList();
     },
     checkSelectable(row) {
@@ -168,6 +178,8 @@ export default {
       };
       this.$fetch('downloadedEdit', this.$params(params)).then(res =>{
         if (res && res.code === 200) {
+          // 通知右上角导航，需要更新下载消息
+          this.$EventBus.$emit('saas_vs_download_count', true);
           // 重新拉取数据
           this.search();
         } else {
@@ -177,7 +189,7 @@ export default {
         console.log(e, '下载状态更新失败');
       });
     },
-    // 页码改变按钮事件
+  /*   // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageNumber = current;
       this.pos = (Number(current) - 1) * this.limit;
@@ -186,18 +198,18 @@ export default {
         limit: this.limit,
         pageNumber: this.pageNumber
       });
-    },
+    }, */
     getTableList(row) {
       if (row) {
-        this.pos = row.pos;
-        this.pageNumber = row.pageNum;
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
       }
       let params = {
         start_time: this.timeStr[0] || '',
         end_time: this.timeStr[1] || '',
         file_name: this.file_name || '',
-        limit: this.limit,
-        pos: this.pos,
+        limit: this.query.limit,
+        pos: this.query.pos,
       };
       this.$fetch('downloadedList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
@@ -222,19 +234,21 @@ export default {
       });
     },
     // 下载
-    download(rows) {
+    download(that, {rows}) {
       // window.open(rows.dow_url, "_blank");
       // 如果当前已经是下载状态，不触发状态修改
       if (Number(rows.dow_status) !== 1) {
-        this.downloadedEdit(rows.dow_task_id);
+        that.downloadedEdit(rows.dow_task_id);
       }
     },
     // 重新生成
-    async resetDownload(rows) {
+    async resetDownload(that, {rows}) {
       try {
         // 第一步，拿取其余服务接口请求地址
-        let result = await this.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
+        let result = await that.$fetch('downloadedReload', {dow_task_id: rows.dow_task_id});
         if(result.code === 200 && result.data) {
+          // 通知右上角导航，需要更新下载消息
+          that.$EventBus.$emit('saas_vs_download_count', true);
           let header = {
             platform: sessionOrLocal.get('platform', 'localStorage') || 17,
             token: sessionOrLocal.get('token', 'localStorage') || '',
@@ -270,21 +284,24 @@ export default {
         }
       } catch (e) {
         console.log(e);
-        this.$message.error('重新生成失败');
+        this.$message.error(e.msg || '重新生成失败');
       }
     },
     // 删除某条下载任务
-    delDownload(rows) {
-      let that = this;
+    delDownload(that, {rows}) {
       that.$confirm('是否要删除当前下载文件？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('downloadedDel', {
           dow_task_id: rows.dow_task_id
         }).then(res => {
           if(res && res.code === 200) {
+            // 通知右上角导航，需要更新下载消息
+            that.$EventBus.$emit('saas_vs_download_count', true);
             that.$message.success(`删除成功`);
             that.ids = [];
             try {
@@ -292,18 +309,18 @@ export default {
             } catch (e) {
               console.log(e);
             }
-            that.initPage();
+            that.initPage(1);
           }else {
             that.$message({
               type: 'error',
-              message: res.msg || '删除失败1'
+              message: res.msg || '删除失败'
             });
           }
         }).catch(e => {
           console.log(e);
           that.$message({
             type: 'error',
-            message: '删除失败'
+            message: e.msg || '删除失败'
           });
         });
       }).catch(() => {
@@ -362,8 +379,7 @@ export default {
   },
   mounted() {
     this.initPage();
-    this.$EventBus.$on('saas_vs_msg_num', function() {
-    });
+    this.$EventBus.$on('saas_vs_down_num', this.search);
     EventBus.$on('down_center_msg', res => { // 转码状态
       console.log(res, '监听到down_center_msg123转码状态事件');
       this.docDao.list.map(item => {
@@ -388,6 +404,15 @@ export default {
 }
 .list--search{
   margin-bottom: 20px;
+  .el-button {
+    vertical-align: middle;
+  }
+  .el-input {
+    vertical-align: middle;
+  }
+  .el-date-editor {
+    vertical-align: middle;
+  }
   .el-select{
     float: right;
     margin-right: 20px;
@@ -418,6 +443,9 @@ export default {
 .download-list {
   .layout--right--main();
   .padding-table-list();
+  /deep/.data-list {
+    min-height: 500px;
+  }
 }
 .pageBox {
   margin-top: 40px;
@@ -443,6 +471,9 @@ export default {
     background:#FB3A32;
   }
 }
+/deep/.el-date-editor .el-range__icon{
+  line-height: 28px;
+}
 .download-list {
   /deep/.cell img {
     width: 100px;
@@ -454,9 +485,9 @@ export default {
   /deep/.el-table__header{
     background-color: #FB3A32;
   }
-  /deep/.el-table td, .el-table th{
+  /* /deep/.el-table td, .el-table th{
     padding: 10px 0 9px 0;
-  }
+  } */
   .text{
     width: 100%;
     overflow: hidden;
