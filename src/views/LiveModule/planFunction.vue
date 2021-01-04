@@ -68,23 +68,21 @@ export default {
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
         }
-        if(res && res.code === 200) {
-          this.$message({
-            message:  `${str} ${item.key_name} 成功`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          item.value = Number(callback);
-        } else {
-          this.$message.error(res.msg || `${str} ${item.key_name} 失败`);
-        }
-      }).catch(e => {
-        console.log(e);
         this.$message({
-          message: `操作失败`,
-          type: 'failure'
+          message: `${str} ${item.key_name} 成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        item.value = Number(callback);
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `${str} ${item.key_name} 失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
         });
       });
     },
@@ -102,28 +100,28 @@ export default {
           key_name: '打赏功能',
           openShow: '开启后，观看页显示打赏功能',
           closeShow: '已开启，观看页显示打赏功能',
-          value: Number(dataVo['ui.hide_reward'])
+          value: Number(dataVo['ui.hide_reward']) || 0
         },
         {
           type: 'ui.watch_hide_like',
           key_name: '点赞功能',
           openShow: '开启后，观看页显示点赞功能',
           closeShow: '已开启，观看页显示点赞功能',
-          value: Number(dataVo['ui.watch_hide_like'])
+          value: Number(dataVo['ui.watch_hide_like']) || 0
         },
         {
           type: 'ui.hide_gifts',
           key_name: '礼物功能',
           openShow: '开启后，观看页显示礼物功能',
           closeShow: '已开启，观看页显示礼物功能',
-          value: Number(dataVo['ui.hide_gifts'])
+          value: Number(dataVo['ui.hide_gifts']) || 0
         },
         {
           type: 'ui.watch_hide_share',
           key_name: '分享功能',
           openShow: '开启后，观看页显示分享功能（PC端分享按钮和手机端的微信分享）',
           closeShow: '已开启，观看页显示分享功能（PC端分享按钮和手机端的微信分享）',
-          value: Number(dataVo['ui.watch_hide_share'])
+          value: Number(dataVo['ui.watch_hide_share']) || 0
         }
       ];
       this.liveKeyList = [
@@ -132,21 +130,24 @@ export default {
           key_name: '回放禁言',
           openShow: '已开启，回放/点播不支持聊天',
           closeShow: '开启后，回放/点播不支持聊天',
-          value: Number(dataVo['ui.watch_record_no_chatting'])
+          value: Number(dataVo['ui.watch_record_no_chatting']) || 0
         },
         {
           type: 'ui.watch_record_chapter',
           key_name: '回放章节',
           openShow: '已开启，回放/点播观看端显示文档章节',
           closeShow: '开启后，回放/点播观看端显示文档章节',
-          value: Number(dataVo['ui.watch_record_chapter'])
+          value: Number(dataVo['ui.watch_record_chapter']) || 0
         }
       ]
     },
     planErrorRender(err) {
       this.$message({
-        message: `获取数据异常${err}`,
-        type: 'failure'
+        message: err.msg,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
       });
       this.keyList = null;
     },
@@ -158,10 +159,12 @@ export default {
       }).then(res=>{
         console.log(res);
         // 数据渲染
-        res && res.code == 200 && res.data ?  this.planSuccessRender(res.data.permissions) : this.planErrorRender(null);
-      }).catch(err =>{
-        console.log(err);
-        this.planErrorRender(err);
+        if (res.data) {
+          this.planSuccessRender(res.data.permissions);
+        }
+      }).catch(res =>{
+        console.log(res);
+        this.planErrorRender(res);
       });
     },
   },

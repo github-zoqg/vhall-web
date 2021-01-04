@@ -131,8 +131,7 @@ export default {
 
     .rank-band{
       background: #fff;
-      width: 260px;
-      margin: 0 auto;
+      margin: 0 10px;
       text-align: center;
       padding-bottom: 10px;
       img{

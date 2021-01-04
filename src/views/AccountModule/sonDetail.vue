@@ -1,47 +1,58 @@
 <template>
   <div>
     <pageTitle title="子账号信息"></pageTitle>
-    <!-- 子账号管理头部 -->
+    <!-- 子账号管理头部
     <div class="title--flex--top">
       <div class="top-item">
         <el-button size="mini" round  v-preventReClick @click.prevent="copy(sonText)" class="copy-text">复制信息</el-button>
       </div>
-      <ul>
-        <li>
-          <p>账号：</p>
-          <h3>{{ sonVo && sonVo.name ? sonVo.name : '' }}</h3>
-        </li>
-        <li>
-          <p>账号昵称：</p>
-          <h3>{{ sonVo && sonVo.nick_name ? sonVo.nick_name : ''}}</h3>
-        </li>
-        <li>
-          <p>账号角色：</p>
-          <h3>{{sonVo && sonVo.role_name  ? sonVo.role_name : ''}}</h3>
-        </li>
-        <li>
-          <p>用量分配：</p>
-          <h3>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定'}}）</h3>
-        </li>
-        <li>
-          <p>手机号码：</p>
-          <h3>{{sonVo &&  sonVo.phone ? sonVo.phone : ''  }}</h3>
-        </li>
-        <li>
-          <p>邮箱地址：</p>
-          <h3>{{sonVo &&  sonVo.email ? sonVo.email : '' }}</h3>
-        </li>
-      </ul>
     </div>
-    <div class="page--son">
-      <!-- 子账号Tab区域 -->
-      <el-tabs v-model="tabType" @tab-click="handleClick">
-        <el-tab-pane label="日期统计" name="dateData"></el-tab-pane>
-        <el-tab-pane label="直播统计" name="liveData"></el-tab-pane>
-      </el-tabs>
-      <!-- 列表区域 -->
-      <date-data ref="dateDataComp" v-if="tabType === 'dateData'"></date-data>
-      <live-data ref="liveDataComp" v-if="tabType === 'liveData'"></live-data>
+    -->
+    <div class="page--panel">
+      <div class="page--son">
+        <!-- 子账号Tab区域 -->
+        <el-tabs v-model="tabType" @tab-click="handleClick">
+          <el-tab-pane label="日期统计" name="dateData"></el-tab-pane>
+          <el-tab-pane label="直播统计" name="liveData"></el-tab-pane>
+        </el-tabs>
+        <!-- 列表区域 -->
+        <date-data ref="dateDataComp" v-if="tabType === 'dateData'"></date-data>
+        <live-data ref="liveDataComp" v-if="tabType === 'liveData'"></live-data>
+      </div>
+      <div class="page--son-tab">
+         <div class="son__detail--user">
+          <h1 class="title">子账号信息<span class="copy" @click="copy(sonText)"><i class="iconfont-v3 saasicon_copy"></i></span></h1>
+          <div class="son__detail_icon">
+            <img src="../../common/images/account/saaszizhanghao_tubiao.png" alt=""/>
+          </div>
+        </div>
+        <ul class="son__detail--show">
+          <li>
+            <label>账号</label>
+            <p :title="sonVo && sonVo.name ? sonVo.name : ''">{{ sonVo && sonVo.name ? sonVo.name : '--' }}</p>
+          </li>
+          <li>
+            <label>账号昵称</label>
+            <p :title="sonVo && sonVo.nick_name ? sonVo.nick_name : ''">{{ sonVo && sonVo.nick_name ? sonVo.nick_name : ''}}</p>
+          </li>
+          <li>
+            <label>账号角色</label>
+            <p :title="sonVo && sonVo.role_name ? sonVo.role_name : ''">{{sonVo && sonVo.role_name  ? sonVo.role_name : ''}}</p>
+          </li>
+          <li>
+            <label>用量分配</label>
+            <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定'}}）</p>
+          </li>
+          <li>
+            <label>手机号码</label>
+            <p :title="sonVo && sonVo.phone ? sonVo.phone : ''">{{sonVo &&  sonVo.phone ? sonVo.phone : '--'  }}</p>
+          </li>
+          <li>
+            <label>邮箱地址</label>
+            <p :title="sonVo && sonVo.email ? sonVo.email : ''">{{sonVo &&  sonVo.email ? sonVo.email : '--' }}</p>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -83,31 +94,39 @@ export default {
       this.$fetch('sonDetailGet', {
         child_id: this.$route.params.str
       }).then(res=>{
-        if (res && res.code === 200) {
-          this.sonVo = res.data;
-          this.tabType = 'dateData';
-          this.$nextTick(() => {
-            this.$refs[`${this.tabType}Comp`].initComp(this.sonVo);
-          });
-        } else {
-          this.sonVo = null;
-        }
-      }).catch(e=>{
-        console.log(e);
+        this.sonVo = res.data;
+        this.tabType = 'dateData';
+        this.$nextTick(() => {
+          this.$refs[`${this.tabType}Comp`].initComp(this.sonVo);
+        });
+      }).catch(res =>{
+        console.log(res);
         this.sonVo = null;
       });
     },
     copy(text) {
-      let clipboard = new Clipboard('.copy-text', {
+      let clipboard = new Clipboard('.copy', {
         text: () => text
       });
       clipboard.on('success', () => {
-        this.$message.success('复制成功');
+        this.$message({
+          message:  '复制成功',
+          showClose: true, // 是否展示关闭按钮
+          // duration: 0, // 自动关闭时间，为0永不关闭
+          type: 'success', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
         // 释放内存
         clipboard.destroy();
       });
       clipboard.on('error', () => {
-        this.$message.error('复制失败，暂不支持自动复制');
+        this.$message({
+          message:  '复制失败，暂不支持自动复制',
+          showClose: true, // 是否展示关闭按钮
+          // duration: 0, // 自动关闭时间，为0永不关闭
+          type: 'error', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
         // 释放内存
         clipboard.destroy();
       });
@@ -121,7 +140,7 @@ export default {
 
 <style lang="less" scoped>
 @import '../../common/css/common.less';
-.page--son {
+/* .page--son {
   .layout--right--main();
   .min-height();
 }
@@ -161,5 +180,94 @@ export default {
       line-height: 35px;
     }
   }
+} */
+
+ .page--panel {
+    display: -moz-flex;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    .page--son {
+      width: calc(100% - 272px);
+      min-height: 612px;
+      height: auto;
+      background: #FFFFFF;
+      position: relative;
+      .el-button {
+        margin-top: 3px;
+      }
+    }
+    .page--son-tab {
+      width: 248px;
+      min-height: 437px;
+      background: #FFFFFF;
+      border-radius: 4px;
+      padding: 24px 24px;
+    }
+ }
+ .son__detail--user {
+   text-align: left;
+    .copy {
+      float: right;
+      cursor: pointer;
+    }
+    .title {
+      font-size: 16px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 22px;
+    }
+    p {
+      text-align: center;
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #999999;
+      line-height: 20px;
+    }
+    .son__detail_icon {
+      text-align: center;
+      margin-top: 32px;
+      img {
+        width: 62px;
+        height: 62px;
+      }
+    }
+}
+
+.son__detail--show {
+  clear: both;
+  padding-top: 32px;
+  li {
+    margin-bottom: 24px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  label {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
+    margin-bottom: 4px;
+  }
+  p {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #1A1A1A;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+}
+/deep/.el-date-editor .el-range__icon {
+  line-height: 28px;
 }
 </style>

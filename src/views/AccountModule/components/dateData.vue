@@ -199,7 +199,8 @@ export default {
 
 <style lang="less" scoped>
 .date--data {
-  .padding41-40();
+  /* .padding41-40(); */
+  padding: 24px 24px 0 24px;
 }
 .echarts--line {
   display: block;
