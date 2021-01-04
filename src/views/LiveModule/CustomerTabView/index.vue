@@ -32,14 +32,16 @@
             PC预览
           </span>
         </div>
-        <div class="vh-customer__preview-mobile">
+        <div class="vh-customer__preview-mobile" v-show="activeIndex == 1">
           <mobile-preview
             :menus.sync="customMenus"
             @updateMenus="updateMenus"
           ></mobile-preview>
         </div>
-        <div class="vh-customer__preview-pc" style="display: none">
-          adaqsd
+        <div class="vh-customer__preview-pc" v-show="activeIndex == 2">
+          <pc-preview
+            :menus="customMenus"
+          ></pc-preview>
         </div>
       </div>
     </div>
@@ -49,7 +51,9 @@
 import PageTitle from '@/components/PageTitle';
 import DragComponents from './components/dragComponents';
 import MobilePreview from './components/mobilePreview'
+import PcPreview from './components/pcPreview'
 import { v1 as uuidV1 } from 'uuid';
+
 export default {
   data() {
     return {
@@ -61,7 +65,8 @@ export default {
   components: {
     PageTitle,
     DragComponents,
-    MobilePreview
+    MobilePreview,
+    PcPreview
   },
 
   created() {
