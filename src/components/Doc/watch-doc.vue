@@ -44,7 +44,7 @@
       ></div>
     </div>
      <!-- v-if="!VhallMsgSdk" -->
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.4-1.js" @load="sdkLoad"></remote-script>
+    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.5.js?time=111" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
@@ -95,6 +95,10 @@ export default {
     notControlVisible: {
       required: false,
       default: false
+    },
+    preloadDocs: {
+      required: false,
+      default: false
     }
   },
   data () {
@@ -107,6 +111,7 @@ export default {
       activeTool: '', // 激活状态的工具
       isFullscreen: false,
       VhallMsgSdk: !!window.VhallMsg, // 是否加载了msgsdk
+      addDoc: false,
       // vodCids: [],
       // currentId: ''
     };
@@ -267,6 +272,77 @@ export default {
         this.$EventBus.$emit('watchDocShow', this.watchDocShow);
         this.loadRemote(msg.channel_id);
       });
+      // 文档列表组件触发演示文档事件
+      this.$EventBus.$on('demonstration', async data => {
+        console.log(data)
+        this.addDoc = true;
+        this.docLoadComplete = false;
+        this.cids.forEach(item => {
+          let type = item.split('-')[0];
+          if (type == 'document') {
+            this.docSDK.destroyContainer({ id: item });
+          }
+        });
+        // 删除多余的容器
+        if (this.boardID) {
+          this.cids = [this.boardID];
+        } else {
+          this.cids = [];
+        }
+
+        const temp=[];
+        data.documentIds.forEach(item => {
+          let cid = this.docSDK.createUUID('document');
+          // this.currentCid = cid;
+          this.cids.push(cid);
+          temp.push({cid,docId:item})
+          this.watchDocShow = true;
+        })
+        await this.$nextTick();
+        for await (let {cid,docId} of temp){
+          this.initWidth();
+          this.initContainer({
+            type: 'document',
+            docId: docId,
+            id: cid
+          });
+          this.activeContainer(cid); // 创建后的选择不能延迟，否则不会派发文档加载完成事件
+          console.warn(docId,cid)
+          await this.docSDK.loadDoc({ docId, id:cid})
+        }
+      });
+      // 下一个文档
+      this.$EventBus.$on('nextDoc', () => {
+        try {
+          this.nextDoc()
+        } catch(err) {
+          console.log(err)
+        }
+      })
+      // 上一个文档
+      this.$EventBus.$on('prevDoc', () => {
+        try {
+          this.prevDoc()
+        } catch(err) {
+          console.log(err)
+        }
+      })
+      // 上一步
+      this.$EventBus.$on('nextStep', () => {
+        try {
+          this.docSDK.nextStep({id: this.currentCid});
+        } catch(err) {
+          console.log(err)
+        }
+      })
+      // 下一步
+      this.$EventBus.$on('prevStep', () => {
+        try {
+          this.docSDK.prevStep({id: this.currentCid});
+        } catch(err) {
+          console.log(err)
+        }
+      })
       // eslint-disable-next-line no-unused-vars
       this.$EventBus.$on('live_broadcast_stop', msg => {
         if (this.roleName) return;
@@ -298,6 +374,16 @@ export default {
           }
         }
       });
+    },
+    // 激活容器，设置默认画笔颜色
+    activeContainer (cid = '', isEvent = true) {
+      this.docSDK.selectContainer({id: cid});
+      this.currentCid = cid;
+      isEvent && this.$EventBus.$emit('remote_doc_select', { id: cid });
+      let type = cid.split('-')[0];
+      if (type == 'document') {
+        this.docID = cid;
+      }
     },
     /**
      * 初始化文档SDK,观看端观看文档时调用
@@ -336,11 +422,17 @@ export default {
           data.forEach(({cid, type}) => {
             this.initContainer({ type: type.toLowerCase(), id: cid });
           });
+          this.preloadDocs && this.docSDK.loadVodIframe()
           this.$EventBus.$emit('vod_cuepoint_load_complete', chapters);
         });
+        this.docSDK.on(window.VHDocSDK.Event.ALL_COMPLETE, () => {
+          console.warn('所有文档加载完成')
+          this.$EventBus.$emit('all_complete');
+        })
         // 监听回放事件
         this.FIRST = true;
         this.docSDK.on(window.VHDocSDK.Event.VOD_TIME_UPDATE, data => {
+          if (this.addDoc) return false;
           if (this.FIRST) {
             this.$EventBus.$emit('watchDocShow', data.watchOpen);
             this.FIRST = false;
@@ -504,6 +596,46 @@ export default {
     selectContainer (id) {
       this.docSDK.selectContainer({ id });
       this.currentCid = id;
+    },
+    nextDoc () {
+      const curIndex = this.cids.indexOf(this.currentCid)
+      let nextIndex
+      if (curIndex == this.cids.length - 1) {
+        nextIndex = 0
+      } else {
+        nextIndex = curIndex + 1
+      }
+      console.log(this.docSDK)
+      this.docSDK.selectContainer({
+        id: this.cids[nextIndex]
+      });
+      this.currentCid = this.cids[nextIndex];
+      let opts = {
+        id: this.currentCid, // 容器id， 必填
+        pageId: 0, // 页码 数字 必填
+        stepId: 0, // 步数 数字 必填
+      }
+      this.docSDK.gotoStep(opts)
+    },
+    prevDoc () {
+      const curIndex = this.cids.indexOf(this.currentCid)
+      let nextIndex
+      if (curIndex == 0) {
+        nextIndex = this.cids.length - 1
+      } else {
+        nextIndex = curIndex - 1
+      }
+      console.log(this.docSDK)
+      this.docSDK.selectContainer({
+        id: this.cids[nextIndex]
+      });
+      this.currentCid = this.cids[nextIndex];
+      let opts = {
+        id: this.currentCid, // 容器id， 必填
+        pageId: 0, // 页码 数字 必填
+        stepId: 0, // 步数 数字 必填
+      }
+      this.docSDK.gotoStep(opts)
     },
     docControl (type) {
       if (
