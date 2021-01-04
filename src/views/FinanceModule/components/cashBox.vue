@@ -58,7 +58,7 @@
       <el-form label-width="70px" :model="withdrawForm" :rules="rules" ref="withdrawForm">
         <el-form-item label="提现金额" prop="money">
           <el-input
-            v-model="withdrawForm.money"
+            v-model.trim="withdrawForm.money"
             style="width: 265px"
             oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')"
             placeholder="请输入提现金额"
@@ -74,8 +74,8 @@
         </el-form-item>
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
-            <el-input v-model="withdrawForm.code" style="width: 150px"></el-input>
-            <span @click="getCode" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <el-input v-model.trim="withdrawForm.code" style="width: 150px"></el-input>
+            <span @click="getCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone }}发送验证码</p>
         </el-form-item>
@@ -104,17 +104,17 @@ export default {
   props: ['money', 'type', 'userInfo'],
   data() {
     let validateMoney = (rule, value, callback) => {
-      setTimeout(() => {
-          if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value > parseInt(this.money)) {
-              callback(new Error('提现值必须小于可用金额'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
+      if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
+        callback(new Error('请输入数字值'));
+      } else {
+        if (value < 1 || value > 800) {
+          callback(new Error('请输入大于等于1且小于等于800的数字'));
+        } else if (value > parseInt(this.money)) {
+          callback(new Error('提现值必须小于可用金额'));
+        } else {
+          callback();
+        }
+      }
     };
     return {
       dialogVisible: false,
@@ -140,7 +140,7 @@ export default {
       captcha: null, // 云盾本身
       rules: {
         money: [
-          { validator: validateMoney, trigger: 'blur'  }
+          { validator: validateMoney, trigger: 'blur'}
         ]
       }
     };
@@ -153,6 +153,7 @@ export default {
         this.getWeinName();
       } else {
         this.mobileKey = '';
+        this.showCaptcha = false;
         this.withdrawForm.money = '';
         this.withdrawForm.code = '';
         this.errorText = '';
@@ -180,12 +181,19 @@ export default {
     },
     // 提现短信验证码
     getCode() {
-      if (this.mobileKey && this.withdrawForm.money) {
-        this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
-          this.phone = res.data.phone;
-          this.countDown();
-        });
-      }
+      this.$refs['withdrawForm'].validate((valid) => {
+        if (valid) {
+          this.showCaptcha = true;
+          if (this.mobileKey && this.withdrawForm.money) {
+            this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
+              this.phone = res.data.phone;
+              this.countDown();
+            });
+          }
+        } else {
+          return false;
+        }
+      });
     },
     // 提现
     withdraw() {
@@ -274,7 +282,6 @@ export default {
         onVerify(err, data) {
           if (data) {
             that.mobileKey = data.validate;
-            that.showCaptcha = true;
             console.log('data>>>', data);
             that.errorMsgShow = false;
           } else {

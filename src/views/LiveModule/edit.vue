@@ -21,7 +21,7 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
+              <el-time-picker placeholder="选择时间" :disabled="!formData.date1" :picker-options="expireTimeOption" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
       </el-form-item>
@@ -348,7 +348,16 @@ export default {
       loading: false,
       imageUrl: '',
       domain_url: '',
-      selectMedia: {}
+      selectMedia: {},
+      expireTimeOption: {
+        disabledDate() {
+          console.log(this.formData.date1, '?????????????')
+          // formData.date1
+          return this.formData.date1.getTime() < Date.now() - 8.64e7;
+          // return this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000
+          // return time.getTime() < Date.now()
+        }
+      }
     };
   },
   // beforeRouteLeave(to, from, next) {

@@ -63,7 +63,7 @@
           <el-input v-model.trim="form.shop_url" placeholder="请输入店铺链接"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round class="length152" @click="onSubmit">保存</el-button>
+          <el-button type="primary" round class="length152" v-preventReClick @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>
     </div>
