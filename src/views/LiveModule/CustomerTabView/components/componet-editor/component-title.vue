@@ -8,7 +8,12 @@
         <span style="color:#FB3A32">*</span>标题
       </div>
       <div class="editorContent">
-        <el-input v-model="info.title" @change="changeHandler"></el-input>
+        <VhallInput
+          v-model="info.title"
+          @change="changeHandler"
+          maxlength="10"
+          show-word-limit
+        ></VhallInput>
       </div>
     </div>
   </div>
@@ -45,9 +50,19 @@ export default {
 <style lang="less" scoped>
   .label{
     display: inline-block;
+    color: #1A1A1A;
+    span{
+      margin-right: 5px;
+    }
   }
   .editorContent{
     margin-left: 10px;
     display: inline-block;
+    /deep/ input{
+      width: 392px;
+      line-height: 40px;
+      padding: 0 12px;
+      border-radius: 4px;
+    }
   }
 </style>

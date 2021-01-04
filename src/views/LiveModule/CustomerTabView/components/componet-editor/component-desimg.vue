@@ -51,6 +51,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .editor-preview{
+    /deep/ img{
+      max-width: 100%;
+    }
+  }
   .component-wrap-box{
     width: 100%;
   }
