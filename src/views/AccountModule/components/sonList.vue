@@ -62,9 +62,9 @@
             <span class="leve3_title title--999" v-if="sonForm.is_batch">批量创建时，所生成子账号的昵称、密码、角色一致</span>
           </div>
         </el-form-item>
-        <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
+        <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums" class="account--nums">
           <VhallInput v-model.trim="sonForm.nums" autocomplete="off"></VhallInput>
-          <span>当前可创建子账号数量{{ sonCountVo.available_num }}个</span>
+          <span>当前可创建子账号<strong>{{ sonCountVo.available_num }}</strong>个</span>
         </el-form-item>
         <el-form-item label="账号昵称" prop="nick_name">
           <VhallInput v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入账号昵称，不输入默认使用账号ID" :maxlength="30"
@@ -84,13 +84,13 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="手机号码">
+        <el-form-item label="手机号码" class="no-execute">
           <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
             <el-button class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
           </VhallInput>
         </el-form-item>
-        <el-form-item label="邮箱地址">
+        <el-form-item label="邮箱地址" class="no-execute">
           <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
             <el-button class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
@@ -161,7 +161,7 @@ export default {
         {
           label: '账号',
           key: 'name',
-          width: 200
+          width: 'auto'
         },
         {
           label: '昵称',
@@ -171,17 +171,17 @@ export default {
         {
           label: '手机号码',
           key: 'phone',
-          width: 200
+          width: 'auto'
         },
         {
           label: '角色',
           key: 'role_name',
-          width: 200
+          width: 'auto'
         },
         {
           label: '用量分配',
           key: 'round',
-          width: 200
+          width: 'auto'
         }
       ],
       tableRowBtnFun: [
@@ -564,11 +564,54 @@ export default {
   }
 }
 /deep/.el-form-item.switch--item {
-  margin-bottom: 1px;
+  margin-bottom: 14px;
+}
+/deep/.el-form-item.account--nums {
+  /deep/.el-input {
+    width: 210px;
+    margin-right: 12px;
+  }
+  /deep/span {
+    font-size: 14px;
+    font-weight: 400;
+    color: #1A1A1A;
+    line-height: 20px;
+  }
+  /deep/strong {
+    color: #FB3A32;
+  }
+}
+/deep/.no-execute {
+  /deep/.el-input.is-disabled .el-input__inner {
+    background-color: #F7F7F7;
+    border-color: #cccccc;
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    border-right: 0;
+    cursor: not-allowed;
+  }
+  /deep/.el-input-group__append {
+    background-color: #F7F7F7;
+    border-color: #cccccc;
+    font-size: 14px;
+    font-weight: 400;
+    color: #999999;
+    border-left: 0;
+    cursor: not-allowed;
+  }
+  /deep/span {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+  }
 }
 /deep/.el-dialog__wrapper {
   .el-select {
     width: 376px;
   }
+}
+/deep/.el-dialog__footer {
+  padding: 0 32px 24px 32px;
 }
 </style>

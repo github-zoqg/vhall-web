@@ -165,6 +165,7 @@ export default {
         this.advertisement = {};
         this.domain_url = '';
         this.clearForm();
+        this.$refs['advertisementForm'].resetFields();
       }
     },
     dialogAdverVisible() {

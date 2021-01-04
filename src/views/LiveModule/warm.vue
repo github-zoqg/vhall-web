@@ -76,7 +76,9 @@
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
-        <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center>
+        <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
+        :close-on-click-modal=false
+        :close-on-press-escape=false>
           <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
         </el-dialog>
       </div>
@@ -227,6 +229,7 @@ export default {
       if(this.warmForm.record_id == ''){
         this.$message.error('请上传暖场视频');
       }else{
+
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

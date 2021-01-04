@@ -66,53 +66,50 @@
       <div class="content-grid" v-else>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计活动（个）
+            <p>累计活动（个）</p>
             <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
                 筛选条件内的活动总数，包含直播+点播活动
               </div>
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-            </p>
             <h1>{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计使用流量（GB）
+            <p>累计使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
                 筛选条件内的直播使用流量+回放使用流量的总和
               </div>
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-            </p>
+
             <h1>{{ trendData.total_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>直播使用流量（GB）
+            <p>直播使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start">
                 <div slot="content">
                   筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            </p>
             <h1>{{ trendData.live_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>回放使用流量（GB）
+            <p>回放使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start">
                 <div slot="content">
                   筛选条件内的回放使用流量汇总，包含回放、点播、下载回放视频到本地消耗的总流量
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            </p>
             <h1>{{ trendData.vod_flow || 0 }}</h1>
           </div>
         </div>
@@ -469,6 +466,7 @@ export default {
           font-size: 14px;
           color: #999;
           line-height: 20px;
+          display: inline-block;
           i{
             color:#1A1A1A;
           }

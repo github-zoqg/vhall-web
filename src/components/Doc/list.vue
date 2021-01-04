@@ -20,6 +20,8 @@
                     :visible.sync="showSelectDoc"
                     :show-close="false"
                     custom-class="vhall-select-doc-dialog"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
                 >
 
                     <div slot="title" class="vhall-select-doc-dialog--title">

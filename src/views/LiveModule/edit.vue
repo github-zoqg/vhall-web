@@ -34,7 +34,7 @@
               <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
               <p>3.音频直播：音频直播，需要保证麦克风正常</p>
             </div>
-            <i class="iconfont-v3 saasicon_help_m tip"></i>
+            <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
           </el-tooltip>
           <slot name="default"></slot>
         </div>
@@ -219,7 +219,9 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>

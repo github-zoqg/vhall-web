@@ -56,6 +56,8 @@
       :visible.sync="dialogVisible"
       width="776px"
       :before-close="closeAddVideoDialog"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
     >
       <div class="vh-video-tailoring__select">
         <el-input :placeholder="placeholderText" v-model="room_id" class="input-with-select" prefix-icon="el-icon-search" @change="onSubmit">
@@ -117,6 +119,8 @@
       width="480px"
       :title="t('导出回放')"
       :before-close="closeExportVideoDialog"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
     >
       <div class="vh-video-tailoring__form">
         <span class="vh-video-tailoring__label">{{ t('回放时长') }}</span>

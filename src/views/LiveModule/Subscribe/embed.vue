@@ -38,7 +38,8 @@
         :title="tipTitle"
         width="400px"
         :visible.sync="showModile"
-        :close-on-click-modal="true"
+        :close-on-click-modal=false
+        :close-on-press-escape=false
         :before-close="handleCancelDelete"
       >
         <span style="margin-bottom: 40px;display: block;">{{tipContent}}</span>

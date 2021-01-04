@@ -31,15 +31,19 @@
     </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
       </el-dialog>
     </template>
     <!-- 编辑功能 -->
     <template v-if="editShowDialog">
-      <el-dialog title="编辑" :visible.sync="editShowDialog" width="300px" center>
+      <el-dialog title="编辑" :visible.sync="editShowDialog" width="300px" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <div class="main-edit">
-          <VhallInput v-model.trim="videoName" maxlength="30" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
+          <VhallInput v-model.trim="videoName" maxlength="100" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">
