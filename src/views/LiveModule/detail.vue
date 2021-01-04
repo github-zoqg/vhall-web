@@ -19,8 +19,8 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor">活动时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.start_time }}</p>
-            <p class="subDuration" v-if="liveDetailInfo.webinar_state == 4">点播时长：{{ liveDetailInfo.duration }}</p>
+            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.start_time }}</p>
+            <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <span class="tag" v-if="isForm">报名表单</span>
@@ -425,9 +425,11 @@ export default {
       height: 175px;
       position: relative;
       margin-right: 25px;
+      background: #1A1A1A;
       img{
         width: 100%;
         height: 100%;
+        object-fit: scale-down;
         border-radius: 6px;
       }
       .liveTag{
