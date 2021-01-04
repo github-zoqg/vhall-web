@@ -537,11 +537,11 @@ export default {
       margin-bottom: 40px;
     }
   }
-  /deep/ .el-table__header{
+  /* /deep/ .el-table__header{
     th{
       background: #F7F7F7;
     }
-  }
+  } */
   .el-dropdown{
     margin-left: 10px;
   }

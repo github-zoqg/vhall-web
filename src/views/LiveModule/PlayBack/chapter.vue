@@ -985,11 +985,11 @@ export default {
     .el-table{
       margin-top: 24px;
     }
-    /deep/ .el-table__header{
+    /* /deep/ .el-table__header{
       th{
         background: #F7F7F7;
       }
-    }
+    } */
     .el-input {
       width: 95%;
     }

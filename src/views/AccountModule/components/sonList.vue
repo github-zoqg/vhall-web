@@ -161,7 +161,7 @@ export default {
         {
           label: '账号',
           key: 'name',
-          width: 200
+          width: 'auto'
         },
         {
           label: '昵称',
@@ -171,17 +171,17 @@ export default {
         {
           label: '手机号码',
           key: 'phone',
-          width: 200
+          width: 'auto'
         },
         {
           label: '角色',
           key: 'role_name',
-          width: 200
+          width: 'auto'
         },
         {
           label: '用量分配',
           key: 'round',
-          width: 200
+          width: 'auto'
         }
       ],
       tableRowBtnFun: [
@@ -610,5 +610,8 @@ export default {
   .el-select {
     width: 376px;
   }
+}
+/deep/.el-dialog__footer {
+  padding: 0 32px 24px 32px;
 }
 </style>

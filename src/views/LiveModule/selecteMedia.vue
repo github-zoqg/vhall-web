@@ -343,9 +343,9 @@ export default {
       float: right;
     }
   }
-  /deep/ .el-table__header{
+ /*  /deep/ .el-table__header{
     th{
       background: #F7F7F7;
     }
-  }
+  } */
 </style>
