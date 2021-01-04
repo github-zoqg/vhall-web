@@ -453,6 +453,10 @@
     text-align: center;
     p {
       margin-bottom: 32px;
+      font-size: 16px;
+      font-weight: 400;
+      color: #666666;
+      line-height: 24px;
     }
     &.trends-list {
       padding: 24px 32px;
