@@ -203,7 +203,11 @@ export default {
   .layout--right--main();
   .padding-table-list();
   .min-height();
+  /deep/.el-button .el-button--default .el-button--small .el-button--primary {
+    margin-right: 20px;
+  }
 }
+
 .question-wrap{
   height: 100%;
   width: 100%;

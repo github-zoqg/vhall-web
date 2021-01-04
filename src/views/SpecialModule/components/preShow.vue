@@ -35,7 +35,7 @@
               <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                 <div class="inner">
                   <div class="top" @click="goWatchData(item)">
-                    <span class="liveTag">{{item.type | actionText }}</span>
+                    <span class="liveTag">{{item | liveTag }}</span>
                     <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
                   </div>
                   <div class="bottom">

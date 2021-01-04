@@ -340,9 +340,15 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
+      if (this.liveDetailInfo.webinar_type == 1) {
+        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.liveDetailInfo.webinar_id}`;
+        window.open(href, '_target');
+      } else {
+         const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
+        window.open(href);
+      }
       // const { href } = this.$router.resolve({path: `/lives/room/${this.$route.params.str}`});
-      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
-      window.open(href);
+
     },
     downTime(targetStartDate, targetEndDate) {
       let targetStart = new Date(targetStartDate);

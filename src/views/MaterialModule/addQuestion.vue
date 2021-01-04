@@ -18,12 +18,13 @@ export default {
     PageTitle,
     question
   },
+  name: 'addQuestion.vue',
   computed: {
     title() {
       if (this.$route.query.questionId) {
         return '编辑'
       } else {
-        return '新增'
+        return '创建'
       }
     }
   }

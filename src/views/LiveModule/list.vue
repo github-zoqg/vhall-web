@@ -120,6 +120,7 @@ export default {
       pageSize: 12,
       pageNum: 1,
       pagePos: 0,
+      isAnginOpen: false,
       webinarInfo: {},
       totalElement: 0,
       liveDropDownVisible: false,
@@ -224,18 +225,38 @@ export default {
       });
     },
     goLivePlay(item) {
+      //判断是否可以开播
+      if (item.webinar_state == 1) {
+        this.getOpenLive(item);
+      } else {
+        this.goIsLive(item)
+      }
+    },
+    goIsLive(item) {
       if (item.webinar_type != 1) {
-        // this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
         window.open(href, '_target');
       } else {
-         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
-         window.open(href, '_target');
-        //  window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+        window.open(href, '_target');
       }
-      // 需新标签打开
-
-
+    },
+    // 判断是否有起直播的权限
+    getOpenLive(item) {
+      this.$fetch('checkLive', this.$params({
+        webinar_id: item.webinar_id
+      })).then((res) => {
+        if(res.code == 200) {
+          this.goIsLive(item);
+        } else {
+          // 不能发起
+          this.$message.error('该活动正在直播或录播中，无法重复发起');
+          return;
+        }
+      }).catch(e => {
+        this.$message.error('该活动正在直播或录播中，无法重复发起');
+        return;
+      });
     },
     // 创建活动
     createLiveAction(index){
