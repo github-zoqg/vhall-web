@@ -5,10 +5,10 @@
         章节功能支持文档格式：PPT、PPTX，其他格式不支持
       </div>
     </pageTitle>
-    <div class="contentView">
+    <div class="contentView" v-loading="loading">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
-        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
+        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :autoPlay="false" :playerParams="playerParams"></player>
         <div v-show="docSDKReady" class="vhallPlayer-container">
           <div class="vhallPlayer-progress-box">
             <el-slider
@@ -61,7 +61,6 @@
             v-if="showDoc"
             ref="doc"
             :webinarId='webinar_id'
-            docPermissionId="no"
             :isInteract="true"
             :roleType="2"
             :roomId="playerProps.roomId"
@@ -72,15 +71,22 @@
             :joinId="playerProps.accountId"
             :accountId="playerProps.accountId"
             :isVod="true"
+            :preloadDocs="true"
           ></doc>
         </div>
         <div class="actionBar">
-          <span class="translatePage">
-            <i class="el-icon-arrow-left" @click="prevPage"></i>
-            <i class="el-icon-arrow-right" @click="nextPage"></i>
-          </span>
           <span class="pages">
-            <em>{{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
+            <span class="translatePage">
+              <i class="el-icon-arrow-left" @click="prevPage"></i>
+            </span>
+            <em> {{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
+            <span class="translatePage">
+              <i class="el-icon-arrow-right" @click="nextPage"></i>
+            </span>
+          </span>
+          <span class="docs">
+            <i class="el-icon-arrow-left" @click="prevDoc"></i>
+            <i class="el-icon-arrow-right" @click="nextDoc"></i>
           </span>
           <!-- <span class="thumbnail"></span> -->
         </div>
@@ -182,6 +188,7 @@ export default {
   name: 'Chapters',
   data(){
     return {
+      loading: false,
       VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
@@ -222,7 +229,7 @@ export default {
         }
       },
       sliderVal: 0, // 视频时间
-      statePaly: true, // 默认播放状态
+      statePaly: false, // 默认播放状态
       currentTime: 0, // 当前视频播放时间
       voice: 60, // 音量
       catchVoice: 0,
@@ -264,10 +271,14 @@ export default {
     },
   },
   created(){
+    this.loading = true;
     setTimeout(() => {
       this.checkChapterSave()
       this.getPlayBackInfo()
     }, 300)
+    this.$EventBus.$on('all_complete', () => {
+      this.loading = false;
+    });
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -611,10 +622,16 @@ export default {
       })
     },
     prevPage(){
-      this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
+      this.$EventBus.$emit('prevStep');
     },
     nextPage(){
-      this.docsdk.nextPage({id: document.querySelector('.docInner .doc-box').id});
+      this.$EventBus.$emit('nextStep');
+    },
+    prevDoc(){
+      this.$EventBus.$emit('prevDoc');
+    },
+    nextDoc(){
+      this.$EventBus.$emit('nextDoc');
     },
     handleSelectionChange(val){
       this.selectedData = val;
@@ -785,19 +802,29 @@ export default {
       text-align: center;
       line-height: 48px;
       padding: 0 16px;
+      position: relative;
       .translatePage{
-        float: left;
         i{
           color: #999999;
           cursor: pointer;
         }
       }
       .pages{
+        display: block;
         color: #666;
         font-size: 14px;
         em{
           color: #fff;
           font-style: normal;
+        }
+      }
+      .docs{
+        position: absolute;
+        right: 10px;
+        top: 0px;
+        i{
+          color: #999999;
+          cursor: pointer;
         }
       }
     }

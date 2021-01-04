@@ -105,12 +105,18 @@ export default {
             cancelButtonClass: 'zdy-confirm-cancel'
           }).then(() => {
             // this.tabs = 2
+            this.$EventBus.$emit('demonstration', {
+              documentIds: this.tableSelect
+            });
             this.$emit('getChapters', this.tableSelect);
             this.$refs.docList.clearSelection()
             this.tableSelect = []
             this.dialogVisible = false;
           })
         } else {
+          this.$EventBus.$emit('demonstration', {
+            documentIds: this.tableSelect
+          });
           this.$emit('getChapters', this.tableSelect);
           this.$refs.docList.clearSelection()
           this.tableSelect = []
@@ -141,8 +147,7 @@ export default {
         webinar_id: this.webinar_id,
         type: '1',
         keyword: '',
-        ext: 'ppt,pptx',
-        created_at: '2020-09-30'
+        ext: 'ppt,pptx'
       };
       this.$fetch('getWordList', data).then(res => {
         if (res.code == 200) {
