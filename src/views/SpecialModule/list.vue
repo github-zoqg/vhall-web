@@ -370,7 +370,7 @@ export default {
           position: absolute;
           height: 50px;
           width: 100%;
-          background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+          /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
           bottom: 0px;
           left: 0px;
           color: #fff;

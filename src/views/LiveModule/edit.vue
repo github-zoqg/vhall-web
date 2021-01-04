@@ -896,4 +896,7 @@ export default {
       display: none;
     }
   }
+/deep/.saasicon_help_m {
+  color: #999999;
+}
 </style>

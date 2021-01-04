@@ -487,4 +487,7 @@ export default {
       border: 1px solid #CCCCCC;
     }
   }
+/deep/.saasicon_help_m {
+  color: #999999;
+}
 </style>

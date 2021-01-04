@@ -185,13 +185,13 @@ export default {
     display: inline-block;
     vertical-align: top;
     &.layout__center {
-      width: calc(100% - 328px);
+      width: calc(100% - 330px);
       &.one--btn {
         width: calc(100% - 240px);
       }
     }
     &:last-child {
-      width: 164px;
+      width: 166px;
       &.one--btn {
         width: 76px;
       }

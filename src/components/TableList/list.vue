@@ -315,9 +315,11 @@ export default {
     checkSelectable(row) {
       if (this.scene === 'accountList') {
         return row.parent_id > 0;
-      }else if (this.scene === 'downloadList') {
+      } else if (this.scene === 'downloadList') {
         return Number(row.file_status) === 1;
-      } else {
+      } else if(this.scene === 'roleList') {
+        return !(row.child_count > 0);
+      }else {
         return true;
       }
     }
