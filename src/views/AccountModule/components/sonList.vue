@@ -33,7 +33,7 @@
         :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
-        width="120px"
+        width="150px"
         max-height="auto"
         scene="accountList"
         @getTableList="getSonList"

@@ -33,7 +33,7 @@
       </div>
       <div class="statistical-map">
         <div class="map-title">
-          <span>观看地域TOP1占比</span>
+          <span>观看地域TOP10占比</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">统计观看地域TOP10占比情况</div>
             <i class="iconfont-v3 saasicon_help_m"></i>

@@ -1,18 +1,18 @@
 <template>
   <div class="qrcode-wrapbox">
     <div class="qr-previewbox" v-if="mode == 1">
-      <div class="qrbox">
-        <img :src="info.imageSrc" alt="">
+      <div>
+        <img :src="info.imageSrc" style="width: 100%" alt="">
       </div>
     </div>
     <div class="qr-editor-box" v-if="mode == 2">
-      <div style="margin-bottom: 10px">
+      <div style="margin-top: 16px">
         <div class="label">
           <span style="color:#FB3A32">*</span>图片地址
         </div>
         <div class="editorContent">
           <el-upload
-            class="upload-qrCode"
+            class="upload-imglink"
             drag
             :show-file-list="false"
             :headers="{token: token, platform: 17}"
@@ -21,14 +21,23 @@
             :action="actionUrl"
             :on-success="handleUploadSuccess"
           >
-          {{ actionUrl }}
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">最佳封面尺寸：300*300px，小于2MB </div>
-            <div class="el-upload__tip" slot="tip">(支持格式jpg、png、bmp)</div>
+          <div class="preview" v-show="info.imageSrc">
+            <img :src="info.imageSrc" alt="">
+          </div>
+           <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc">
+              <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
+              <div data-v-4d7778f2="" class="tips">
+                <div data-v-62244b0e="">
+                  <p data-v-62244b0e="">建议尺寸：1280*720px，小于2M</p>
+                  <p data-v-62244b0e="">支持jpg、gif、png、bmp</p>
+                </div>
+              </div>
+            </div>
           </el-upload>
         </div>
       </div>
-      <div style="marign-bottom: 10px">
+      <div></div>
+      <div style="margin-top: 30px">
         <div class="label">
           <span style="color:#FB3A32">*</span>跳转链接
         </div>
@@ -96,23 +105,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .qr-previewbox{
-    .qrbox {
-      position: relative;
-      width: 160px;
-      height: 160px;
-      overflow: hidden;
-      text-align: center;
-      margin: 0 auto;
-      background: #fff;
-
-      img {
-        width: 100%;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        transform: translate3d(0, -50%, 0);
-      }
+    .upload-imglink{
     }
   }
   .label{
@@ -121,7 +114,59 @@ export default {
   }
   .editorContent{
     margin-left: 10px;
+    width: 362px;
+    height: 180px;
     display: inline-block;
+    position: relative;
+    /deep/ .el-upload--picture-card{
+      width: 100%;
+      height: 100%;
+      border: none;
+
+    }
+    /deep/ .el-upload-dragger{
+      border: none;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    /deep/ .el-input__inner{
+      line-height: 40px;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .tips{
+      position: absolute;
+      top: 100px;
+      width: 100%;
+      text-align: center;
+    }
+  }
+  .preview{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    img{
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      max-width: 100%;
+    }
+  }
+  .label{
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1A1A1A;
+    span{
+      margin-right: 5px;
+    }
   }
   /* 图片上传 */
   .upload-qrCode{

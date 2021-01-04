@@ -30,6 +30,13 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.add-question {
+  // /deep/.com-input {
+  //   /deep/.limit {
+  //     top: 55%;
+  //   }
+  // }
+}
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
     pointer-events: none;

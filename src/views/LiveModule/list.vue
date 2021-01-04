@@ -360,7 +360,8 @@ export default {
       .top{
         cursor: pointer;
         height: 175px;
-        background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
+        // background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
+        background: #1A1A1A;
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
         padding: 10px 10px;

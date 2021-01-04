@@ -412,6 +412,25 @@ export default {
     margin-top: 0;
     margin-left: -4px;
   }
+  .statusTag{
+    &::before{
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    &.wating::before{
+      background:#FA9A32;
+    }
+    &.success::before{
+      background:#14BA6A;
+    }
+    &.failer::before{
+      background:#FB3A32;
+    }
+  }
   .status-show{
     span{
       display: inline-block;

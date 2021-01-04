@@ -33,7 +33,8 @@ export default {
       let visitDataValue = [];
       data.map(item => {
         visitDataDate.push(item.time);
-        visitDataValue.push(item.value.replace(/,/g, ""));
+        visitDataValue.push(item.value);
+        // visitDataValue.push(item.value.replace(/,/g, ""));
       });
       // console.log(visitDataDate, visitDataValue);
       let that = this;
@@ -58,11 +59,18 @@ export default {
         },
         xAxis: {
           // name: '日期',
+          name: '',
           nameLocation: 'start',
           nameGap: 30,
           type: 'category',
           axisTick: {
             show: false
+          },
+          splitLine: {
+            show: false,
+            lineStyle: {
+              type: 'solid',
+            }
           },
           axisLine: {
             show: true,
