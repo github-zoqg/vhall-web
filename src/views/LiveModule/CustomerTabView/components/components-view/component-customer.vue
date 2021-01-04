@@ -129,8 +129,19 @@ export default {
           ...componentData,
           cUid: uuidV1()
         })
+      } else if(componentData.component_id == 9) {
+        this.units.push({
+          ...componentData,
+          inSwitch: 1,  // 1， 开启 。 0 关闭
+          rewardSwitch: 1, // 1， 开启 。 0 关闭
+          inContent: '',
+          rewardContent: '',
+          cUid: uuidV1()
+        })
       }
+
       this.doEditor(this.units.length - 1)
+
       e.preventDefault()
     },
 

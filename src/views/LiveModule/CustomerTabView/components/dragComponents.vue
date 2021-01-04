@@ -38,6 +38,7 @@
       :draggable="!disableAll"
       v-for="item in highComponents"
       :key="item.component_id"
+      @dragstart="dragStartHandler($event, item)"
     >
       <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
     </div>
