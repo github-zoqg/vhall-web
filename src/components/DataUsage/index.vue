@@ -31,7 +31,7 @@
           <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p>
         </div>
       </el-col>
-      <el-col :span="6" v-if="userInfo.concurrency.extend_day">
+      <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.extend_day">
         <div class="top-item">
           <p>并发扩展包（天）</p>
           <h2>{{ userInfo.concurrency.extend_day }}</h2>
@@ -40,14 +40,14 @@
       </el-col>
     </el-row>
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.flow">
-      <el-col :span="15">
+      <el-col :span="typeChange ? 15 : 9">
         <div class="top-item usage-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
           <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
-      <el-col :span="15" v-if="userInfo.edition === '无极版'">
+      <el-col :span="typeChange ? 15 : 9" v-if="userInfo.edition === '无极版'">
         <div class="top-item usage-item">
           <p>总流量/回放流量（GB）
             <el-tooltip effect="dark" placement="right-start">
@@ -63,7 +63,7 @@
           <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
-      <el-col :span="15" v-else>
+      <el-col :span="typeChange ? 15 : 9" v-else>
         <div class="top-item usage-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
           <el-tooltip effect="dark" placement="right-start" >
@@ -239,7 +239,7 @@ export default {
     text-align: left;
 
     height: 140px;
-    padding: 32px 0;
+    padding: 32px 24px;
     position: relative;
     margin-right: 16px;
     .level {
@@ -292,13 +292,14 @@ export default {
   }
   /deep/.el-col {
     margin-right: 20px;
+    background: #fff;
   }
   /deep/.el-row--flex.is-justify-space-around {
     justify-content: space-between;
   }
   .top-item {
     text-align: left;
-    width: 445px;
+    max-width: 445px;
     height: 140px;
     padding: 32px 40px;
     position: relative;
@@ -337,9 +338,17 @@ export default {
       cursor: pointer;
     }
   }
+  .usage-item{
+    max-width: 670px;
+  }
   /deep/.el-col .el-col-9{
     background: #fff;
     width: 51%;
+    position: relative;
+  }
+  /deep/.el-col .el-col-15{
+    background: #fff;
+    width: 62.5%;
     position: relative;
   }
   .el-col{
@@ -347,11 +356,11 @@ export default {
       margin-right: 0;
     }
   }
-  .usage-item{
-    width: 100%;
-  }
   // .account{
   //   pos
   // }
+}
+/deep/.saasicon_help_m {
+  color: #999999;
 }
 </style>

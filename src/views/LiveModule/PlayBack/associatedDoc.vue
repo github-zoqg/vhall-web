@@ -2,7 +2,8 @@
   <el-dialog
     title="关联文档"
     :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
     width="810px"
   >
     <!-- <div class="tabs">

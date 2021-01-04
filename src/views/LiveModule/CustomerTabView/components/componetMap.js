@@ -31,7 +31,9 @@ const compoentMap = {
   // 标题
   7: 'title',
   // 分割线
-  8: 'line'
+  8: 'line',
+  // 排行榜
+  9: 'rank'
 }
 
 export default compoentMap

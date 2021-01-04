@@ -61,13 +61,14 @@ export default {
   /*margin-top: 20px;*/
   margin-bottom: 32px;
 }
-.saasicon_help_m {
-  color: #1A1A1A;
+/deep/.saasicon_help_m {
+  /* color: #1A1A1A; */
+  color: #999999;
   font-size: 14px;
 }
-.saasicon_help_m {
-  &.gary {
+/*.saasicon_help_m {
+   &.gary {
     color: #666666;
   }
-}
+}*/
 </style>

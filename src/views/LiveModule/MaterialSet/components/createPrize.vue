@@ -139,7 +139,7 @@ export default {
       }
     }
   },
-  props: ['prizeInfo'],
+  props: ['prizeInfo', 'liveTotal'],
   components: {
     upload,
     noData
@@ -239,6 +239,10 @@ export default {
       })
     },
     sureChoisePrize() {
+      if (this.liveTotal + this.checkedList.length > 20) {
+        this.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        return;
+      }
       let params = {
         room_id: this.$route.query.roomId,
         prize_id: this.checkedList.join(',')
@@ -288,7 +292,6 @@ export default {
           item.isChecked = false;
         });
         this.list.push(...adList);
-        console.log(this.list, '?????????????????????')
         this.total = res.data.count;
         if (this.keyword) {
         this.nullText = 'search';

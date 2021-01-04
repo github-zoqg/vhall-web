@@ -14,7 +14,23 @@
     <!-- 有消息内容 -->
     <div v-if="roleDao.total > 0">
       <!-- 表格与分页 -->
-      <son-role-table
+       <table-list
+        ref="roleTab"
+        :isHandle=true
+        :manageTableData="roleDao.list"
+        :tabelColumnLabel="roleTableColumn"
+        :totalNum="roleDao.total"
+        :tableRowBtnFun="tableRowBtnFun"
+        :needPagination=true
+        width="150px"
+        max-height="auto"
+        scene="roleList"
+        @getTableList="getRoleList"
+        @changeTableCheckbox="checkMoreRow"
+        @onHandleBtnClick="onHandleBtnClick"
+      >
+      </table-list>
+      <!-- <son-role-table
         class="son-role-table"
         ref="roleTab"
         :isHandle=true
@@ -24,29 +40,32 @@
         :tabelColumnLabel="roleTableColumn"
         :totalNum="roleDao.total"
         :tableRowBtnFun="tableRowBtnFun"
+        width="120px"
+        max-height="auto"
         @getTableList="getRoleList"
         @changeTableCheckbox="checkMoreRow"
         @onHandleBtnClick="onHandleBtnClick"
       >
-      </son-role-table>
+      </son-role-table> -->
     </div>
     <!-- 无消息内容 -->
     <null-page v-else></null-page>
     <VhallDialog
-      width="680px"
+      width="520px"
       :visible.sync="roleDialogVisible"
       :title="roleForm.executeType === 'edit' ? '编辑角色' : '创建角色'"
+      :lock-scroll=false
+      class="role-dialog"
       append-to-body>
-      <el-form :model="roleForm" ref="roleForm" :rules="roleFormRules" label-width="120px">
-        <el-form-item label="角色名称：" prop="role_name">
-          <el-input type="text" placeholder="请输入角色名称" v-model="roleForm.role_name" maxlength="15" show-word-limit />
+      <el-form :model="roleForm" ref="roleForm" :rules="roleFormRules" label-width="80px">
+        <el-form-item label="角色名称" prop="role_name">
+          <VhallInput type="text" placeholder="请输入角色名称" v-model="roleForm.role_name" maxlength="15" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="备注信息：" prop="remark">
-          <el-input type="text" placeholder="请输入备注信息" v-model="roleForm.remark" maxlength="30" show-word-limit />
+        <el-form-item label="备注信息" prop="remark"  class="remark--item">
+          <VhallInput type="text" placeholder="请输入备注信息" v-model="roleForm.remark" maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="权限分配：">
+        <el-form-item label="直播管理" prop="permission_webinar" class="switch--item">
           <div class="switch__box">
-            <label class="leve3_title label__r12">直播管理：</label>
             <el-switch
               v-model="roleForm.permission_webinar"
               disabled
@@ -58,8 +77,9 @@
             </el-switch>
             <span class="leve3_title title--999">允许创建、设置以及发起直播，默认权限不可取消</span>
           </div>
+        </el-form-item>
+        <el-form-item label="内容管理" prop="permission_content" class="switch--item">
           <div class="switch__box">
-            <label class="leve3_title label__r12">内容管理：</label>
             <el-switch
               v-model="roleForm.permission_content"
               :active-value="1"
@@ -70,8 +90,9 @@
             </el-switch>
             <span class="leve3_title title--999">控制子账号是否可生成回放及管理内容</span>
           </div>
+        </el-form-item>
+        <el-form-item label="数据管理" prop="permission_data" class="switch--item">
           <div class="switch__box">
-            <label class="leve3_title label__r12">数据管理：</label>
             <el-switch
               v-model="roleForm.permission_data"
               :active-value="1"
@@ -95,12 +116,10 @@
 
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
-import SonRoleTable from '@/components/TableList/sonRoleTable.vue';
 export default {
   name: "roleList.vue",
   components: {
-    NullPage,
-    SonRoleTable
+    NullPage
   },
   data() {
     return {
@@ -323,8 +342,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .role--list {
-  .padding41-40();
-  padding-bottom: 40px;
+  padding: 24px 24px 40px 24px;
 }
 .role--list--search{
   margin-bottom: 20px;
@@ -341,7 +359,7 @@ export default {
     }
   }
   .el-input{
-    width: 270px;
+    width: 220px;
     float: right;
     /deep/ .el-input__inner{
       border-radius: 20px;
@@ -353,6 +371,23 @@ export default {
         line-height: 36px;
       }
     }
+  }
+}
+.role-dialog {
+  /deep/.el-form-item {
+    margin-bottom: 24px;
+  }
+  /deep/.remark--item {
+    margin-bottom: 14px;
+  }
+  /deep/.switch--item {
+    margin-bottom: 4px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  /deep/.el-dialog__footer {
+    padding: 14px 32px 24px 32px;
   }
 }
 </style>

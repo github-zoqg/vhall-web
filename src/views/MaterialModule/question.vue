@@ -25,7 +25,9 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :modal-append-to-body="false" :before-close='closeClose' width="50%" center>
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :modal-append-to-body="false" :before-close='closeClose' width="50%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <pre-question  :questionId="questionId"></pre-question>
       </el-dialog>
     </template>
@@ -203,7 +205,11 @@ export default {
   .layout--right--main();
   .padding-table-list();
   .min-height();
+  /deep/.el-button .el-button--default .el-button--small .el-button--primary {
+    margin-right: 20px;
+  }
 }
+
 .question-wrap{
   height: 100%;
   width: 100%;

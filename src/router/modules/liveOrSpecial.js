@@ -277,6 +277,12 @@ const router = [
     component: () => import('@/views/LiveModule/chooseWay'),
     meta: { auth: true, title: '选择发起方式', name: 'chooseWay'},
     hidden: true
+  },
+  {
+    path: '/special/detail',
+    name: 'detail',
+    component: () => import('@/views/SpecialModule/components/preShow'),
+    hidden: true
   }
 ];
 export default router;

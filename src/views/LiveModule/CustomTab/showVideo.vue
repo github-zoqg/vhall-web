@@ -80,7 +80,8 @@ export default {
     .live-bg {
       width: 100%;
       height: auto;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+      /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
+      background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
     }
     a {
       cursor: pointer;

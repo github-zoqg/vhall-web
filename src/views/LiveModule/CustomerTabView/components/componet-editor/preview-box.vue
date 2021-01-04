@@ -17,6 +17,7 @@ import ComponentImglink from './component-imglink'
 import ComponentProjects from './component-projects'
 import ComponentTitle from './component-title'
 import ComponentLine from './component-line'
+import ComponentRank from './component-rank'
 import componentMap from '../componetMap'
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
@@ -39,7 +40,8 @@ export default {
     ComponentTextlink,
     ComponentImglink,
     ComponentTitle,
-    ComponentLine
+    ComponentLine,
+    'component-rank' : ComponentRank
   },
 
   mounted() {
@@ -52,6 +54,7 @@ export default {
 
   computed: {
     componentName: function() {
+      console.log('component-name:: =>', componentMap[this.info.component_id])
       return `component-${componentMap[this.info.component_id]}`
     }
   },

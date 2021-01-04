@@ -24,6 +24,7 @@
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
             v-if="!(is_dynamic > 0) && dataList.length > 0">
             <el-table-column
               type="selection"
@@ -38,10 +39,12 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="phone"
               label="手机号"
               width="160"
               show-overflow-tooltip>
+              <template slot-scope="scope">
+                {{scope.row.phone || '----'}}
+              </template>
             </el-table-column>
             <el-table-column
               label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)"

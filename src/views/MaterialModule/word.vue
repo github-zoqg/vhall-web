@@ -115,7 +115,7 @@ import SelectWord from './components/selectWord.vue';
 import Env from '@/api/env';
 import {sessionOrLocal} from "@/utils/utils";
 import EventBus from "@/utils/Events";
-import FileUpload from '@/components/FileUpload/main';
+/* import FileUpload from '@/components/FileUpload/main'; */
 import {v1 as uuidV1} from "uuid";
 
 export default {
@@ -123,8 +123,7 @@ export default {
   components: {
     PageTitle,
     NullPage,
-    SelectWord,
-    FileUpload
+    SelectWord
   },
   data() {
     return {
@@ -653,6 +652,7 @@ export default {
             item.codeProcess = 0;
             item.isError = true;
           }
+          item.page = res.page || '';
         }
       });
     });
@@ -704,6 +704,7 @@ export default {
             item.showEventType = 7;
             item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
           }
+          item.page = res.page || '';
         }
       });
     });

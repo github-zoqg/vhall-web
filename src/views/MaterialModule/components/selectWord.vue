@@ -327,9 +327,9 @@ export default {
   /deep/.el-table {
     margin-bottom: 30px;
   }
-  /deep/.el-table__header{
+  /* /deep/.el-table__header{
     background-color: #FB3A32;
-  }
+  } */
   /deep/.el-table td, .el-table th{
     padding: 15px 0;
   }

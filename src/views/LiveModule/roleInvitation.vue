@@ -67,7 +67,7 @@
                   3、每个直播间最多可以登录10位嘉宾；<br/>
                   4、直播中无法修改嘉宾权限。
                 </div>
-                <i class="el-icon-question"></i>
+                <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
             <p class="role-remark">嘉宾可进行推流，嘉宾切换、文档演示等操作</p>
@@ -113,7 +113,7 @@
                   2、每个直播间最多可以登录10位助理；<br />
                   3、直播中无法修改助理权限。
                 </div>
-                <i class="el-icon-question"></i>
+                <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
             <p class="role-remark">助理不可推流，可进行聊天过滤、观众管理等操作</p>
@@ -655,5 +655,8 @@ export default {
   /deep/.el-form-item:last-child {
     margin-bottom: 0;
   }
+}
+/deep/.saasicon_help_m {
+  color: #999999;
 }
 </style>

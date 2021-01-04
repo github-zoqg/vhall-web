@@ -4,7 +4,10 @@
     @opened="openedHandler"
     @close="closeHandler"
     @closed="closedHandler"
-    :visible.sync="dialogVisable">
+    :visible.sync="dialogVisable"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
+    >
     <div>
       <slot></slot>
     </div>

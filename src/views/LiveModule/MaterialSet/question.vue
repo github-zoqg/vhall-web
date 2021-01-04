@@ -26,7 +26,9 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <pre-question   :questionId="questionId"></pre-question>
         <div class="submit-footer">
           <el-button class="length152" type="primary" size="medium" @click="isShowQuestion=false" round>提交</el-button>
