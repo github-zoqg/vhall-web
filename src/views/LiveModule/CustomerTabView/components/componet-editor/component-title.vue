@@ -11,7 +11,7 @@
         <VhallInput
           v-model="info.title"
           @change="changeHandler"
-          maxlength="10"
+          maxlength="30"
           show-word-limit
         ></VhallInput>
       </div>
@@ -61,8 +61,10 @@ export default {
     /deep/ input{
       width: 392px;
       line-height: 40px;
+      height: 40px;
       padding: 0 12px;
       border-radius: 4px;
+      border: 1px solid #ccc;
     }
   }
 </style>

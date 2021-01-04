@@ -7,6 +7,7 @@
     <div class="editor-box" v-if="mode == 2">
       <v-editor
         v-model="info.content"
+        height="620"
       ></v-editor>
     </div>
   </div>
@@ -51,6 +52,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .editor-box{
+    padding-top: 16px;
+  }
   .editor-preview{
     /deep/ img{
       max-width: 100%;

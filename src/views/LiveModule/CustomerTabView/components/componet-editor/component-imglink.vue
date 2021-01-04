@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class="qr-editor-box" v-if="mode == 2">
-      <div style="margin-bottom: 10px">
+      <div style="margin-top: 16px">
         <div class="label">
           <span style="color:#FB3A32">*</span>图片地址
         </div>
@@ -36,7 +36,8 @@
           </el-upload>
         </div>
       </div>
-      <div style="marign-top: 30px">
+      <div></div>
+      <div style="margin-top: 30px">
         <div class="label">
           <span style="color:#FB3A32">*</span>跳转链接
         </div>
@@ -105,7 +106,6 @@ export default {
 <style lang="less" scoped>
   .qr-previewbox{
     .upload-imglink{
-
     }
   }
   .label{
@@ -122,11 +122,19 @@ export default {
       width: 100%;
       height: 100%;
       border: none;
+
+    }
+    /deep/ .el-upload-dragger{
+      border: none;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     /deep/ .el-input__inner{
       line-height: 40px;
+      height: 40px;
       padding: 0 12px;
       border-radius: 4px;
+      border: 1px solid #ccc;
     }
     .tips{
       position: absolute;

@@ -21,7 +21,7 @@
           ></VhallInput>
         </div>
       </div>
-      <div style="margin-bottom: 10px">
+      <div style="margin-top: 30px">
         <div class="label">
           <span style="color:#FB3A32">*</span> 跳转地址
         </div>
@@ -82,6 +82,7 @@ export default {
       position: relative;
       height: 40px;
       line-height: 40px;
+      word-break: break-all;
       overflow: hidden;
       text-align: center;
     }
@@ -103,6 +104,7 @@ export default {
       line-height: 40px;
       border-radius: 4px;
       padding: 0 12px;
+      border: 1px solid #ccc;
     }
   }
   /* 图片上传 */
