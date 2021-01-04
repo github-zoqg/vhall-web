@@ -48,10 +48,10 @@
                     </div>
                 </el-form-item>
                 <el-form-item label="抽奖标题">
-                    <VhallInput v-model.trim="formData.title" maxlength="10" placeholder="请输入抽奖标题" show-word-limit></VhallInput>
+                    <VhallInput v-model.trim="formData.title" maxlength="10" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')" placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item label="文字说明">
-                    <VhallInput v-model.trim="formData.description" maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
+                    <VhallInput v-model.trim="formData.description" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')" maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary"  round @click="lotterySave" v-preventReClick>保存</el-button>
@@ -73,7 +73,7 @@
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></el-input>
+                    <el-input v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></el-input>
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <el-switch
@@ -373,6 +373,8 @@ export default {
         } else {
           this.$message.error(res.msg ||'保存失败');
         }
+      }).catch((err)=>{
+        this.$message.error(err.msg)
       })
     },
     handleClick(tab) {

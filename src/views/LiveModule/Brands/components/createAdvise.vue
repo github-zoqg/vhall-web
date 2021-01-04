@@ -85,7 +85,7 @@
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
         <div class="dialog-footer">
-          <el-button type="primary" size="medium" @click="sureMaterialAdver" round>确 定</el-button>
+          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialAdver" round>确 定</el-button>
           <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
        </div>
       </div>

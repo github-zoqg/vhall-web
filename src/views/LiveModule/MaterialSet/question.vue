@@ -31,7 +31,7 @@
       :close-on-press-escape=false>
         <pre-question   :questionId="questionId"></pre-question>
         <div class="submit-footer">
-          <el-button class="length152" type="primary" size="medium" @click="isShowQuestion=false" round>提交</el-button>
+          <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
         </div>
       </el-dialog>
     </template>
