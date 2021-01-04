@@ -641,7 +641,7 @@ export default {
     },
     // 问答删除
     handleDelete(item) {
-      this.$confirm('确定要删除该文件吗?', '提示', {
+      this.$confirm('确认要删除该问答记录吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box'

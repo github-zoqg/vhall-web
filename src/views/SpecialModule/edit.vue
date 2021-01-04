@@ -157,13 +157,13 @@ export default {
   },
   computed: {
     reservationDesc(){
-      return this.reservation ?  '已开启，专题页显示预约人数' : '开启后，专题页显示预约人数';
+      return this.formData.reservation ?  '已开启，专题页显示预约人数' : '开启后，专题页显示预约人数';
     },
     hotDesc(){
-      return this.hot ? '已开启，专题页显示热度' : "开启后，专题页显示热度";
+      return this.formData.hot ? '已开启，专题页显示热度' : "开启后，专题页显示热度";
     },
     homeDesc(){
-      return this.home ? '已开启，该专题在个人主页中显示' : "开启后，该专题在个人主页中显示";
+      return this.formData.home ? '已开启，该专题在个人主页中显示' : "开启后，该专题在个人主页中显示";
     }
   },
   data(){
