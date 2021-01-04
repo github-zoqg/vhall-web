@@ -71,7 +71,10 @@ export default {
         if(res && res.code === 200) {
           this.$message({
             message:  `${str} ${item.key_name} 成功`,
-            type: 'success'
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
           });
           item.value = Number(callback);
         } else {
