@@ -17,7 +17,7 @@
                 placement="bottom-end"
                 trigger="click">
                 <div>
-                  <share slot="content" :url="home_link"></share>
+                  <share slot="content" :url="home_link" :shareVo="shareVo"></share>
                 </div>
                 <h3 slot="reference"><i class="el-icon-share"></i>分享</h3>
               </el-popover>
@@ -69,6 +69,9 @@ export default {
       pageNum: 1,
       pagePos: 0,
       totalElement: 0,
+      shareVo: {
+        url: `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
+      },
       home_link: `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`,
       liveList: []
     };
@@ -102,7 +105,7 @@ export default {
       this.$router.push({path: `/live/detail/${id}`});
     },
     goWatchData(item) {
-      let url =  `${window.location.origin + (process.env.VUE_APP_WAP_WATCH || '')}/lives/watch/${item.webinar_id}`;
+      let url =  `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`;
       window.open(url, '_blank');
     },
     handleClick(tab) {

@@ -40,15 +40,15 @@
       </el-col>
     </el-row>
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.flow">
-      <el-col :span="9">
-        <div class="top-item">
+      <el-col :span="15">
+        <div class="top-item usage-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
           <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
-      <el-col :span="9" v-if="userInfo.edition === '无极版'">
-        <div class="top-item">
+      <el-col :span="15" v-if="userInfo.edition === '无极版'">
+        <div class="top-item usage-item">
           <p>总流量/回放流量（GB）
             <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
@@ -63,8 +63,8 @@
           <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
-      <el-col :span="9" v-else>
-        <div class="top-item">
+      <el-col :span="15" v-else>
+        <div class="top-item usage-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
           <el-tooltip effect="dark" placement="right-start" >
               <div slot="content">
@@ -276,6 +276,9 @@ export default {
       cursor: pointer;
     }
   }
+  .usage-item{
+    padding: 32px 24px;
+  }
 }
 .data-finance {
   background: #f7f7f7;
@@ -295,7 +298,7 @@ export default {
   }
   .top-item {
     text-align: left;
-    width: 324px;
+    width: 445px;
     height: 140px;
     padding: 32px 40px;
     position: relative;
@@ -334,6 +337,22 @@ export default {
       cursor: pointer;
     }
   }
+  /deep/.el-col .el-col-9{
+    background: #fff;
+    width: 51%;
+    position: relative;
+  }
+  .el-col{
+     &:last-child{
+      margin-right: 0;
+    }
+  }
+  .usage-item{
+    width: 100%;
+  }
+  // .account{
+  //   pos
+  // }
 }
 /deep/.saasicon_help_m {
   color: #999999;

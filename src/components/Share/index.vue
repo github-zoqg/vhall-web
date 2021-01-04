@@ -17,7 +17,7 @@
     </div>
     <div class="bottom">
       <span class="title">分享链接</span>
-      <el-input :value="shareVo.url || url" class="linkUrl" readonly></el-input>
+      <el-input :value="shareVo.url || url" class="linkUrl" readonly style="width:300px;padding: 0 5px"></el-input>
       <el-button type="primary" size="mini" @click="doCopy">复制</el-button>
     </div>
   </div>
@@ -74,6 +74,7 @@ export default {
     display: inline-block;
     // padding: 20px;
     background: #fff;
+    width: 400px;
   }
   .title{
     font-size: 14px;
