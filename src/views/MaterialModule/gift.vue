@@ -82,6 +82,7 @@
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      custom-class="create-gift"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
@@ -438,7 +439,7 @@ export default {
   }
 }
 .gift-wrap{
-  /deep/ .el-dialog__footer {
+  /deep/ .create-gift .el-dialog__footer {
     padding-top: 0;
   }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
