@@ -1,7 +1,7 @@
 <template>
   <div class="vh-pc-preview">
     <img class="cover" src="./images/pc-cover.png" alt="">
-    <div class="pc-menus">
+    <div class="pc-menus" v-show="activeIndex != null">
       <ul>
         <vhscroll>
           <template
@@ -19,15 +19,6 @@
           </li>
           </template>
         </vhscroll>
-        <!-- <li class="menus-item">
-          简介
-        </li>
-        <li class="menus-item">
-          简介
-        </li>
-        <li class="menus-item">
-          简介
-        </li> -->
       </ul>
     </div>
     <div class="tab-content">
@@ -54,26 +45,35 @@ export default {
 
   data() {
     return {
-      activeIndex: 0,
+      activeIndex: null,
       checkedInfo: null
     }
   },
 
   mounted() {
-    let activeIndex = null
-    this.menus.forEach((item, index) => {
-      if(![2,3,5,6].includes(item.type) && !activeIndex) {
-        activeIndex = index
-      }
-    });
-
-    console.log(activeIndex)
-
-    this.activeIndex = activeIndex
-    this.checkedInfo = this.menus[activeIndex]
-
-
+    setTimeout(() => {
+      this.menus.forEach((item, index) => {
+        if(item.type == 4) {
+          this.activeIndex = index
+        }
+      });
+      this.checkedInfo = this.menus[this.activeIndex]
+    }, 500)
   },
+
+  // watch: {
+  //   menus: function(newVal) {
+  //     if(newVal.length) {
+  //        this.menus.forEach((item, index) => {
+  //         if(item.type == 4) {
+  //           this.activeIndex = activeIndex = index
+  //         }
+  //       });
+  //       this.activeIndex = activeIndex
+  //       this.checkedInfo = this.menus[activeIndex]
+  //     }
+  //   },
+
 
   methods: {
     choseMenu(index) {
