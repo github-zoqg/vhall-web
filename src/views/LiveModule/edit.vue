@@ -21,7 +21,7 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
+              <el-time-picker placeholder="选择时间" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
       </el-form-item>
@@ -349,22 +349,22 @@ export default {
       selectMedia: {}
     };
   },
-  beforeRouteLeave(to, from, next) {
-    if (!this.isSaveInfo && this.title === '编辑') {
-      this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        lockScroll: false,
-        cancelButtonClass: 'zdy-confirm-cancel'
-      }).then(() => {
-        next();
-      }).catch(() => {
-      });
-    } else {
-      next();
-    }
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   if (!this.isSaveInfo) {
+  //     this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
+  //       confirmButtonText: '确定',
+  //       cancelButtonText: '取消',
+  //       customClass: 'zdy-message-box',
+  //       lockScroll: false,
+  //       cancelButtonClass: 'zdy-confirm-cancel'
+  //     }).then(() => {
+  //       next();
+  //     }).catch(() => {
+  //     });
+  //   } else {
+  //     next();
+  //   }
+  // },
   created(){
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
@@ -562,22 +562,23 @@ export default {
       })
     },
     resetForm(formName) {
+      this.$router.push({path: '/live/list'});
       // this.$refs[formName].resetFields();
-      if(this.$route.query.type == 2){
-         this.$router.go(-1)
-      }else {
-        this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
-          // next();
-            this.$router.go(-1)
-        }).catch(() => {
-          });
-      }
+      // if(this.$route.query.type == 2){
+      //    this.$router.go(-1)
+      // }else {
+      //   this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     customClass: 'zdy-message-box',
+      //     lockScroll: false,
+      //     cancelButtonClass: 'zdy-confirm-cancel'
+      //   }).then(() => {
+      //     // next();
+      //       this.$router.go(-1)
+      //   }).catch(() => {
+      //     });
+      // }
       // 重置直播模式、直播封面、直播简介。
     },
     mediaSelected(media){

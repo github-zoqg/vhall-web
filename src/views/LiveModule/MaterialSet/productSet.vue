@@ -220,9 +220,7 @@ export default {
           } else {
             this.$message.error('删除失败, 请下架后删除');
           }
-
         }).catch(err => {
-          this.$message.error("删除失败！");
         })
       }).catch(() => {
         this.$message({
@@ -249,7 +247,7 @@ export default {
         this.delConfirm(id);
       }
     },
-    // 新建礼物
+    // 新建商品
     addProduct() {
       this.$router.push({path: `/live/addProduct/${this.$route.params.str}`});
     }
