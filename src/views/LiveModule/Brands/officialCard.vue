@@ -44,7 +44,7 @@
               </div>
             </el-form-item>
             <el-form-item label="链接" v-if="title !== '公众号展示'" prop="url">
-              <el-input v-model="form.url" placeholder="请输入跳转链接"></el-input>
+              <VhallInput v-model="form.url" placeholder="请输入跳转链接" maxlength="200" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item :label="title">
               <!--{{status  - 0开启，1关闭}}-->
@@ -165,7 +165,8 @@ export default {
         url: [
           { required: false, message: '请输入跳转链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入跳转链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入跳转链接' , trigger: 'blur'},
+          { maxlength: 200, message: '跳转链接最多可输入200个字符', trigger: 'blur' }
         ]
       }
     };
@@ -363,6 +364,9 @@ export default {
       /deep/.el-button{
         margin-top: 100px;
         // padding: 10px 45px;
+      }
+      /deep/.el-input {
+        width: 360px;
       }
     }
     .v-preview-content {
