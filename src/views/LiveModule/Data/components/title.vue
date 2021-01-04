@@ -41,9 +41,11 @@ export default {
   width: 146px;
   height: 81px;
   margin: 16px 21px 17px 16px;
+  border-radius: 4px;
   img {
     width: 100%;
     height: 81px;
+    border-radius: 4px;
   }
 }
 .box-title {
@@ -56,7 +58,8 @@ export default {
     line-height: 18px;
     text-align: center;
     background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
-    border-radius: 4px;
+    border-radius: 25px;
+    padding: 0 8px;
     img {
       height: 8px;
       // width: 8px;
@@ -75,9 +78,12 @@ export default {
     }
   }
   .grayColor {
-    width: 40px;
+    width: 46px;
+    padding: 0 8px;
     background: #000000;
     opacity: 0.6;
+    text-align: center;
+    padding-left: 10px;
   }
   .title-text {
     padding-right: 50px;

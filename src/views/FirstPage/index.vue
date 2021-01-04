@@ -215,6 +215,9 @@ export default {
     .main-center{
       flex: 1;
       height: 100%;
+      .data-usage {
+        padding: 0;
+      }
       .row-center{
         margin: 24px 0;
       }
@@ -370,9 +373,11 @@ export default {
         position: relative;
         .app-web{
           font-size: 0;
+          border-radius: 4px;
           img{
             width: 100%;
             height: 100%;
+            border-radius: 4px;
             object-fit: scale-down;
           }
         }

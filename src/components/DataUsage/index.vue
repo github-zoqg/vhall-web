@@ -1,21 +1,21 @@
 <template>
-  <div class="data-usage">
+  <div :class=" typeChange ? 'data-finance' : 'data-usage'">
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
-      <el-col :span="6">
+      <el-col :span="typeChange ? 8 : 6">
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="typeChange ? 8 : 6">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="typeChange ? 8 : 6">
         <div class="top-item">
           <p>并发扩展包（人次）<span class="level" @click="levelVersion('购买')" v-if="buttonList.includes('extend')">购买</span>
           <el-tooltip effect="dark" placement="right-start">
@@ -96,6 +96,7 @@ export default {
   },
   data() {
     return {
+      typeChange:false, // 区分是首页还是财务的样式
       title: '流量包',
       isOutTime: false, //是否过期
       versionType: '',
@@ -116,6 +117,12 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getVersion();
     this.getPayListStatus();
+    console.log('route',this.$route);
+    if (this.$route.path == '/finance/info') {
+      this.typeChange = true
+    }else {
+       this.typeChange = false
+    }
   },
   methods: {
     getVersion() {
@@ -223,16 +230,18 @@ export default {
   padding: 32px 24px;
   border-radius: 4px;
   .row-top {
-    background: #fff;
+    background: #ffffff;
   }
   .row-center {
     margin: 24px 0;
   }
   .top-item {
     text-align: left;
+
     height: 140px;
     padding: 32px 0;
     position: relative;
+    margin-right: 16px;
     .level {
       border: 1px solid #FB3A32;
       font-size: 12px;
@@ -262,6 +271,64 @@ export default {
       position: absolute;
       top: 30px;
       right:0;
+      color: #3562FA;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+}
+.data-finance {
+  background: #f7f7f7;
+  // padding: 32px 24px;
+  border-radius: 4px;
+  .row-top {
+    background: #f7f7f7;
+  }
+  .row-center {
+    margin: 24px 0;
+  }
+  /deep/.el-col {
+    margin-right: 20px;
+  }
+  /deep/.el-row--flex.is-justify-space-around {
+    justify-content: space-between;
+  }
+  .top-item {
+    text-align: left;
+    width: 324px;
+    height: 140px;
+    padding: 32px 40px;
+    position: relative;
+    background: #fff;
+    .level {
+      border: 1px solid #FB3A32;
+      font-size: 12px;
+      color: #FB3A32;
+      text-align: center;
+      padding: 1px 7px;
+      margin-left: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    p {
+      font-size: 14px;
+      color: #999;
+    }
+    i{
+      font-size: 14px;
+      padding: 0 2px;
+    }
+    h2 {
+      font-size: 28px;
+      color: #1a1a1a;
+      line-height: 30px;
+      font-weight: bold;
+      padding: 6px 0 8px 0;
+    }
+    .account{
+      position: absolute;
+      top: 8px;
+      right:8px;
       color: #3562FA;
       font-size: 14px;
       cursor: pointer;

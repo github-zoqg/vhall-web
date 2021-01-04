@@ -58,11 +58,18 @@ export default {
         },
         xAxis: {
           // name: '日期',
+          name: '',
           nameLocation: 'start',
           nameGap: 30,
           type: 'category',
           axisTick: {
             show: false
+          },
+          splitLine: {
+            show: false,
+            lineStyle: {
+              type: 'solid',
+            }
           },
           axisLine: {
             show: true,

@@ -413,6 +413,11 @@ export default {
   /deep/.el-dialog {
     border-radius: 4px;
   }
+  /deep/.el-dialog__title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1A1A1A;
+  }
   /deep/.saasicon_shangchuan::before {
     font-size: 44px;
   }
@@ -420,17 +425,27 @@ export default {
     width: 324px;
     height: 130px;
   }
+  /deep/.el-input__count-inner {
+    color: #999;
+  }
+
   /deep/.noPic {
     width: 324px !important;
     height: 130px !important;
     background: #F7F7F7;
+    /deep/.saasicon_shangchuan::before {
+      color: #999;
+      }
+  }
+  /deep/.el-dialog__footer {
+    padding-top: 0!important;
   }
 }
    /deep/.el-upload{
      border: 1px solid #ccc;
    }
    .content{
-     padding-bottom: 20px;
+     padding-bottom: 15px;
      .search{
        height: 40px;
        margin-bottom: 18px;
@@ -443,11 +458,11 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 280px;
+       height: 312px;
       //  overflow: auto;
        .ad-item{
           width: 165px;
-          margin-bottom: 20px;
+          margin-bottom: 12px;
           background: #F7F7F7;
           position: relative;
           margin-right: 15px;
@@ -488,7 +503,7 @@ export default {
           img{
            width:100%;
            height:100%;
-           object-fit: scale-down;
+           object-fit: cover;
          }
         }
          p{
@@ -501,7 +516,9 @@ export default {
        }
      }
      .text{
-       margin-top: 20px;
+      //  margin-top: 20px;
+      position: absolute;
+      bottom: 40px;
        span{
          color: #FB3A32;
          padding: 0 5px;
