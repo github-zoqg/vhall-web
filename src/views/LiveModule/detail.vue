@@ -19,7 +19,7 @@
             <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.start_time }}</p>
+            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.first_broad || liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
@@ -103,7 +103,7 @@ export default {
         webinar_state: 0,
         webinar_type: 0
       },
-      link: `${window.location.origin + (process.env.VUE_APP_WAP_WATCH || '')}/lives/watch/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       time: {
         day: 0,
@@ -340,9 +340,15 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
+      if (this.liveDetailInfo.webinar_type == 1) {
+        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.liveDetailInfo.webinar_id}`;
+        window.open(href, '_target');
+      } else {
+         const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
+        window.open(href);
+      }
       // const { href } = this.$router.resolve({path: `/lives/room/${this.$route.params.str}`});
-      const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
-      window.open(href);
+
     },
     downTime(targetStartDate, targetEndDate) {
       let targetStart = new Date(targetStartDate);

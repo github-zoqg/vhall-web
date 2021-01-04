@@ -439,5 +439,7 @@ export default {
     margin: 0 12px;
   }
 }
-
+/deep/.saasicon_help_m {
+  color: #999999;
+}
 </style>

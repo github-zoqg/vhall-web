@@ -2,11 +2,11 @@
   <div class="son--list">
     <!-- 搜索 -->
     <div class="list--search">
-      <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建子账号</el-button>
+      <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
       <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
       <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
       <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="子账号信息（账号/昵称/手机号码）" v-model.trim="query.keyword"
+      <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
                 clearable
                 @clear="initQuerySonList"
                 @keyup.enter.native="initQuerySonList">
@@ -30,7 +30,7 @@
         :isHandle=true
         :manageTableData="sonDao.list"
         :tabelColumnLabel="sonTableColumn"
-        :totalNum="sonDao && sonDao.total ? sonDao.total : 0"
+        :totalNum="sonDao.total"
         :tableRowBtnFun="tableRowBtnFun"
         :needPagination=true
         width="150px"
@@ -46,9 +46,9 @@
     <null-page v-else></null-page>
     <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
-                 width="680px">
+                 width="520px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
-        <el-form-item label="批量创建：" prop="is_batch" v-if="sonDialog.type === 'add'">
+        <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
           <div class="switch__box">
             <el-switch
               v-model="sonForm.is_batch"
@@ -59,22 +59,22 @@
               @change="sonCountGetHandle"
             >
             </el-switch>
-            <span class="leve3_title title--999" v-if="sonForm.is_batch">批量创建时，所生成子账号的昵称，密码，角色一致</span>
+            <span class="leve3_title title--999" v-if="sonForm.is_batch">批量创建时，所生成子账号的昵称、密码、角色一致</span>
           </div>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums">
-          <el-input v-model.trim="sonForm.nums" autocomplete="off"></el-input>
+          <VhallInput v-model.trim="sonForm.nums" autocomplete="off"></VhallInput>
           <span>当前可创建子账号数量{{ sonCountVo.available_num }}个</span>
         </el-form-item>
-        <el-form-item label="账号昵称：" prop="nick_name">
-          <el-input v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入账号昵称，不输入默认使用账号ID" :maxlength="30"
-                    :minlength="1" show-word-limit/>
+        <el-form-item label="账号昵称" prop="nick_name">
+          <VhallInput v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入账号昵称，不输入默认使用账号ID" :maxlength="30"
+                    :minlength="1" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="预设密码：" prop="password">
-          <el-input v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" :minlength="6"/>
+        <el-form-item label="预设密码" prop="password">
+          <VhallInput type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" :minlength="6" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="账号角色：" prop="role_id">
+        <el-form-item label="账号角色" prop="role_id">
           <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
             <el-option
               v-for="item in roleList"
@@ -84,17 +84,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="手机号码：">
-          <el-input v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
+        <el-form-item label="手机号码">
+          <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
-            <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
-          </el-input>
+            <el-button class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
+          </VhallInput>
         </el-form-item>
-        <el-form-item label="邮箱地址：">
-          <el-input v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
+        <el-form-item label="邮箱地址">
+          <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
-            <el-button class="no-border" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
-          </el-input>
+            <el-button class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
+          </VhallInput>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -205,7 +205,7 @@ export default {
         title: '添加观众',
         type: 'add',
         row: null,
-        formLabelWidth: '100px'
+        formLabelWidth: '80px'
       },
       sonForm: {
         is_batch: 0,
@@ -516,10 +516,10 @@ export default {
   },
   computed: {
     phonePlaceholder() {
-      return this.sonForm.phone ? '' : '无需填写，由子账号自行绑定，父账号可进行重置';
+      return this.sonForm.phone ? '' : '子账号登录后自行操作绑定，父账号允许重置';
     },
     emailPlaceholder() {
-      return this.sonForm.email ? '' : '无需填写，由子账号自行绑定，父账号可进行重置';
+      return this.sonForm.email ? '' : '子账号登录后自行操作绑定，父账号允许重置';
     }
   }
 };
@@ -527,17 +527,14 @@ export default {
 <style lang="less" scoped>
 // 初始化查询子账号列表信息
 .son--list {
-  .padding41-40();
-  padding-bottom: 40px;
+  padding: 24px 24px 40px 24px;
 }
-
 .list--search {
   margin-bottom: 20px;
-
   .el-select {
+    width: 100px;
     float: right;
     margin-right: 20px;
-
     /deep/ .el-input__inner {
       user-select: none;
       border-radius: 50px;
@@ -549,7 +546,7 @@ export default {
   }
 
   .el-input {
-    width: 270px;
+    width: 220px;
     float: right;
 
     /deep/ .el-input__inner {
@@ -564,6 +561,14 @@ export default {
         line-height: 36px;
       }
     }
+  }
+}
+/deep/.el-form-item.switch--item {
+  margin-bottom: 1px;
+}
+/deep/.el-dialog__wrapper {
+  .el-select {
+    width: 376px;
   }
 }
 </style>

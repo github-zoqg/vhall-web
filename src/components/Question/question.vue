@@ -33,6 +33,7 @@ export default {
       questionDataInfo: {},
       showPreview: false,
       isCreate: false,
+      $service: null,
       dialogTongVisible: false,
       sureChecked: true,
       isPrevent: true,
@@ -61,6 +62,7 @@ export default {
       document.querySelector('#qs-preview-box-content .q-btns').style.display = 'none';
     },
     initQuestionSDK () {
+      console.log(this.questionInfo, '?????????????')
       this.$service = new VHall_Questionnaire_Service({
         auth: {
           // paas的应用id,必填
@@ -132,10 +134,12 @@ export default {
     },
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
-        this.$message.success('新建成功');
-        this.$router.push({
-          path: '/material/question',
-        });
+        if (this.type == 1) {
+          this.$message.success('新建成功');
+          this.$router.push({
+            path: '/material/question',
+          });
+        }
       })
     },
     materialEditQuestion(id, title, description) {
@@ -157,7 +161,6 @@ export default {
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$message.success('新建成功');
         this.dialogTongVisible = false;
-        if (this.type == 1) {
           this.$router.push({
             path: '/live/question',
             query: {
@@ -165,8 +168,6 @@ export default {
               roomId: this.$route.query.roomId
             }
           });
-        }
-
       })
     },
     liveMaterialEditQuestion(id, title, description) {

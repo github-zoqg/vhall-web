@@ -100,6 +100,7 @@
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
       :close-on-click-modal="false"
+      custom-class="create-gift"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
@@ -618,11 +619,7 @@ export default {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
       this.tableData = resData
       this.addedGiftsIds = this.tableData.map(item => item.id)
-      this.materiaTableData.forEach(meterialItem => {
-        if (meterialItem.gift_id == this.deleteId) {
-          meterialItem.isChecked = false
-        }
-      })
+
       this.chooseGift()
 
       this.deleteId = ''
@@ -675,6 +672,7 @@ export default {
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
     chooseGift() {
+      this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
       this.$fetch('setRelevance', {
         gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
@@ -716,7 +714,7 @@ export default {
   }
 }
 .live-gift-wrap{
-  /deep/ .el-dialog__footer {
+  /deep/ .create-gift .el-dialog__footer {
     padding-top: 0;
   }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {

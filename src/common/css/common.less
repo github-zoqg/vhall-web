@@ -63,6 +63,7 @@
 
 /*文字-大小*/
 @font_size_30: 30px;
+@font_size_28: 28px;
 @font_size_20: 20px;
 @font_size_22: 22px;
 @font_size_18: 18px;
@@ -415,9 +416,12 @@
 /*Input计数重置*/
 .el-input__count-inner {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #666666;
+  line-height: 20px;
+}
+.el-textarea .el-input__count {
+  font-size: 14px;
   line-height: 20px;
 }
 
@@ -776,6 +780,10 @@ button.el-button.el-button--white-primary {
 /deep/ .el-tabs__nav-wrap::after {
   height: 1px;
   color: #E6E6E6;
+}
+
+/deep/.el-tabs__active-bar {
+  background-color: #FB3A32;
 }
 
 /*-----------------------------------------重置Tab 结束 ---------------------------------------------*/

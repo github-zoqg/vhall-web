@@ -352,11 +352,11 @@ export default {
         .ad-web{
           height: 126px;
           width: 100%;
-          img{
+         /*  img{
             width: 100%;
             height: 100%;
             object-fit: scale-down;
-          }
+          } */
           // background: linear-gradient(224deg, #FD2349 0%, #FF6321 100%);
           // border-radius: 4px;
           // color: #fff;
@@ -398,12 +398,12 @@ export default {
         .app-web{
           font-size: 0;
           border-radius: 4px;
-          img{
+          /* img{
             width: 100%;
             height: 100%;
             border-radius: 4px;
             object-fit: scale-down;
-          }
+          } */
         }
       }
       .data-document{

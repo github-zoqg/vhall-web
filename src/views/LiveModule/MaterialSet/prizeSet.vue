@@ -115,7 +115,7 @@
            <span slot="label">
            奖品设置
             <el-tooltip class="prize--set" effect="dark" placement="right" style="margin-left:5px">
-              <i class="iconfont-v3 saasicon_help_m" style="color: #1A1A1A"></i>
+              <i class="iconfont-v3 saasicon_help_m"></i>
               <div slot="content">
                 每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除
               </div>
@@ -660,5 +660,8 @@ export default {
 }
 .prize--set{
   // position: absolute;
+}
+/deep/.saasicon_help_m {
+  color: #999999;
 }
 </style>
