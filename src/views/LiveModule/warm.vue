@@ -14,7 +14,7 @@
     <div class="content">
       <el-form :model="warmForm" ref="warmForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="选择视频" required>
-          <div class="selet-video">
+          <div class="selet-video" @mouseenter="showMenu" @mouseleave="hiddenMenu">
             <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmFlag && changeVideo()">
               <div>
                 <i class="iconfont-v3 saasicon_shangchuan"></i>
@@ -26,7 +26,7 @@
               <icon icon-class="saasshipinwenjian"></icon>
               <p>{{selectMedia.name}}</p>
             </div>
-            <div class="abRight" v-if="selectMedia.paas_record_id">
+            <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
               <div class="tool" @click.stop="previewVideo">
                 <icon icon-class="saasicon-eye"></icon>
                 <el-button type="text" class="operaBtn" >预览</el-button>
@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      showChecked: false, // 是否滑中选择视频
       warmFlag: false,
       loading: false,
       videoSize: '200',
@@ -132,6 +133,14 @@ export default {
     }
   },
   methods: {
+    // 鼠标离开
+    hiddenMenu () {
+      this.showChecked = false
+    },
+    //鼠标滑上去
+    showMenu () {
+      this.showChecked = true
+    },
     // 开启或关闭暖场视频
     openCloseWarm(index) {
       let params = {
@@ -282,7 +291,7 @@ export default {
   .avatar-uploader .el-upload {
      width: 640px;
      height: 180px;
-     border: 1px dashed #d9d9d9;
+     border: 1px solid #cccccc;
      border-radius: 6px;
      cursor: pointer;
      position: relative;
@@ -304,12 +313,16 @@ export default {
      height: 178px;
      display: block;
    }
+   .el-upload:hover {
+     border: 1px solid #999!important;
+   }
    .selet-video{
-     border: 1px dashed #d9d9d9;
+     border: 1px solid #cccccc;
      border-radius: 6px;
      width: 640px;
      height: 180px;
      position: relative;
+     background: #f7f7f7;
      .abRight{
       position: absolute;
       width: 100%;
@@ -345,7 +358,7 @@ export default {
       }
     }
     &:hover{
-      border-color: #FB3A32;
+      border: 1px solid #999;
     }
     .mediaSlot{
       width: 100%;

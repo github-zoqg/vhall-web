@@ -484,7 +484,7 @@ export default {
         p{
           position: absolute;
           font-size: 12px;
-          top: 10px;
+          top: 14px;
           right:16px;
           color: #666;
         }

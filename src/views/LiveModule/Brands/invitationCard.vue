@@ -101,7 +101,7 @@
         </el-form>
       </div>
       <div class="invitation-show">
-        <p>移动端预览</p>
+        <!-- <p>移动端预览</p> -->
         <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
           <div class="show-container">
             <div class="show-header">
@@ -506,9 +506,11 @@ export default {
           }
         }
         .show-text{
+          
           padding: 24px;
           text-align: center;
           h1{
+            width: 218px;
             padding: 0;
             font-size: 26px;
             color:#1A1A1A;
@@ -531,7 +533,7 @@ export default {
             p{
               padding:0;
               color: #666;
-              line-height: 30px;
+              line-height: 20px;
             }
           }
         }
@@ -541,8 +543,10 @@ export default {
           display: flex;
           bottom: 20px;
           left: 30px;
-          padding: 20px 20px 0 10px;
+          padding: 20px 20px 0 20px;
           border-top: 1px dashed #ccc;
+          justify-content: center;
+          align-items: center;
           .show-code{
             width: 60px;
             height: 60px;
