@@ -121,15 +121,18 @@ export default {
 }
 .title--flex--top {
   .layout--right--main();
-  .min-height--header();
+  /* .min-height--header(); */
+  background: transparent;
   .flex-display();
   .justify(space-between);
   .align(center);
   text-align: left;
   margin-bottom: 24px;
   .top-item {
-    width: 33%;
-    padding-left: 40px;
+    width: calc((100% - 32px) / 3);
+    background: #ffffff;
+    padding: 32px 40px;
+    border-radius: 4px;
   }
   p {
     font-size: @font_size_14;
