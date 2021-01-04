@@ -279,7 +279,7 @@ export default {
       if(this.home){
         return '已开启，该活动在个人主页中显示';
       }else{
-        return "开启后，该活动在个人主页显示";
+        return "开启后，该活动在个人主页中显示";
       }
     },
     capacityDesc(){

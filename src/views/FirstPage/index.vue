@@ -36,6 +36,12 @@
       </el-row>
       <div class="row-list">
         <p class="list-title">数据统计</p>
+         <el-tooltip effect="dark" placement="right-start">
+            <div slot="content">
+            统计近7日数据
+            </div>
+            <i class="iconfont-v3 saasicon_help_m"></i>
+          </el-tooltip>
         <el-row type="flex" class="row-buttom" justify="space-around">
           <el-col :span="6">
             <div class="buttom-item">
@@ -90,6 +96,12 @@
       <div class="line-updata">
         <div class="line-tip">
           <p>用量统计</p>
+          <el-tooltip effect="dark" placement="right-start">
+            <div slot="content">
+            统计近7日数据
+            </div>
+            <i class="iconfont-v3 saasicon_help_m"></i>
+          </el-tooltip>
         </div>
         <line-echarts :lineDataList="lineDataList" :type="1"></line-echarts>
       </div>
@@ -261,7 +273,12 @@ export default {
           font-weight: 400;
           color: #1A1A1A;
           padding: 24px 0 0 32px;
+          display: inline-block;
         }
+        i{
+            font-size: 14px;
+            padding: 0 2px;
+          }
         .row-buttom{
           margin-bottom: 24px;
           .buttom-item{
@@ -293,6 +310,13 @@ export default {
           padding: 24px 0 0 32px;
           font-size: 16px;
           color: #1A1A1A;
+          p{
+            display: inline-block;
+          }
+          i{
+            font-size: 14px;
+            padding: 0 2px;
+          }
         }
       }
     }
