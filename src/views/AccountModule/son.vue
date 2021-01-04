@@ -141,12 +141,12 @@ export default {
     color: @font_color_h3;
     line-height: 20px;
     &:last-child {
-      margin-top: 6px;
-      font-size: @font_size_30;
+      margin-top: 4px;
+      font-size: @font_size_28;
       font-family: @fontDINAL;
       font-weight: bold;
       color: @font_color_h1;
-      line-height: 35px;
+      line-height: 32px;
     }
   }
 }
