@@ -4,7 +4,7 @@
       <p>收益详情</p>
     </div>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
-    <el-card class="box-income">
+    <div class="box-income">
       <p>收益明细</p>
       <search-area
         ref="incomeDetils"
@@ -23,7 +23,7 @@
         @getTableList="getIncomeDetailList"
         >
       </table-list>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -97,6 +97,7 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getLiveDetail();
+    window.scrollTo(0,0)
   },
   mounted() {
     this.getIncomeDetailList();
@@ -181,14 +182,16 @@ export default {
     .box-card .el-card__body{
       padding: 0;
     }
-    .box-income .el-card__body{
+    .box-income{
       padding: 24px;
+      background: #fff;
+      border-radius: 4px;
     }
     .box-income{
       // height: calc(100% - 194px);
       margin-top: 24px;
       p{
-        padding-bottom: 7px;
+        padding-bottom: 20px;
         font-size: 16px;
         color:#1A1A1A;
         font-weight: 400px;
