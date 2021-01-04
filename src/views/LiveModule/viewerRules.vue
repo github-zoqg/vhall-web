@@ -486,7 +486,9 @@ export default {
             this.$confirm('已开启报名表单的独立链接功能，修改观看限制将会导致链接失效?', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
-              customClass: 'zdy-message-box'
+              customClass: 'zdy-message-box',
+              lockScroll: false,
+              cancelButtonClass: 'zdy-confirm-cancel'
             }).then(() => {
               // 设置了报名表单，开启了报名表单独立链接。
               this.sendViewerSetSave(params);

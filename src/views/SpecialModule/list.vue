@@ -178,7 +178,9 @@ export default {
       this.$confirm('您确定要删除选中的专题吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.trueDelete(id);
         }).catch(() => {

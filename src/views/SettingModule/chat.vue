@@ -290,7 +290,9 @@ export default {
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id

@@ -101,7 +101,7 @@
         </el-form>
       </div>
       <div class="invitation-show">
-        <p>移动端预览</p>
+        <!-- <p>移动端预览</p> -->
         <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
           <div class="show-container">
             <div class="show-header">
@@ -187,6 +187,7 @@
       <div class="sureBtn">
         <el-button type="primary" class="length152" :disabled="!invitation" @click="onSubmit">保存</el-button>
       </div>
+      <div class="white-show" v-show="!invitation"></div>
     </div>
     <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
   </div>
@@ -199,7 +200,7 @@ export default {
   data() {
     return {
       invitation: true,
-      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       showCode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       showType: 1,
       avatar: '',
@@ -505,9 +506,11 @@ export default {
           }
         }
         .show-text{
+          
           padding: 24px;
           text-align: center;
           h1{
+            width: 218px;
             padding: 0;
             font-size: 26px;
             color:#1A1A1A;
@@ -530,7 +533,7 @@ export default {
             p{
               padding:0;
               color: #666;
-              line-height: 30px;
+              line-height: 20px;
             }
           }
         }
@@ -540,8 +543,10 @@ export default {
           display: flex;
           bottom: 20px;
           left: 30px;
-          padding: 20px 20px 0 10px;
+          padding: 20px 20px 0 20px;
           border-top: 1px dashed #ccc;
+          justify-content: center;
+          align-items: center;
           .show-code{
             width: 60px;
             height: 60px;
@@ -813,6 +818,15 @@ export default {
       border-radius: 20px;
       margin: auto;
     }
+  }
+  .white-show{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 9;
   }
 }
 </style>

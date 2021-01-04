@@ -4,14 +4,19 @@
       <div class="head-operat" v-show="total || isSearch">
         <el-button type="primary" size="medium" round  @click="addProduct" v-preventReClick>创建商品</el-button>
         <el-button round @click="batchDel(null)" size="medium" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
-        <search-area class="head-btn fr search"
+         <div class="inputKey">
+          <el-input v-model.trim="keyword" placeholder="请输入商品名称"  @change="getTableList" maxlength="50" clearable>
+            <i slot="suffix" class="iconfont-v3 saasicon_search"></i>
+          </el-input>
+        </div>
+        <!-- <search-area class="head-btn fr search"
           ref="searchArea"
           :placeholder="'请输入商品名称'"
           :isExports='false'
           :searchAreaLayout="searchAreaLayout"
           @onSearchFun="getTableList('search')"
           >
-        </search-area>
+        </search-area> -->
       </div>
       <div class="question-list" v-show="total">
         <table-list
@@ -45,6 +50,7 @@ export default {
     return {
       formData: {},
       imageUrl: '',
+      keyword:'',
       nullText: 'nullData',
       isSearch: false, //是否是搜索
       text: '您还没有商品，快来创建吧！',
@@ -130,8 +136,7 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableProductList.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      if (params === 'search') {
+      if (this.keyword) {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -139,7 +144,7 @@ export default {
       }
       let obj = {
         ...pageInfo,
-        keyword: formParams.questionName,
+        keyword: this.keyword,
         webinar_id: this.$route.params.str
       };
       this.$fetch('goodsGet', this.$params(obj)).then(res => {
@@ -150,7 +155,7 @@ export default {
         });
         this.total = res.data.total;
         this.tableData = tableData;
-        if (formParams.questionName) {
+        if (this.keyword) {
             this.nullText = 'search';
             this.text = '';
             this.isSearch = true;
@@ -203,7 +208,9 @@ export default {
       this.$confirm('确定要删除该文件吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
           if (res.code == 200) {
@@ -272,6 +279,19 @@ export default {
     .head-btn{
       display: inline-block;
       border-radius: 20px;
+    }
+    .inputKey{
+      float: right;
+      height: 35px;
+      width: 220px;
+      /deep/.el-input__inner{
+        border-radius: 18px;
+      }
+      i{
+        padding-right:5px;
+        line-height: 37px;
+        cursor: pointer;
+      }
     }
   }
 }

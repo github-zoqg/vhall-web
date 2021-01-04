@@ -429,7 +429,9 @@ export default {
       this.$confirm('确定要删除该聊天记录吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let obj = {
             msg_id: id,
@@ -472,7 +474,9 @@ export default {
       this.$confirm('是否要删除此条问答？?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let obj = {
             ques_ids: this.seleteQuestionList.join(','),
@@ -496,7 +500,8 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          type: 'warning'
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let obj = {
             id: rows.id,
@@ -641,10 +646,12 @@ export default {
     },
     // 问答删除
     handleDelete(item) {
-      this.$confirm('确定要删除该文件吗?', '提示', {
+      this.$confirm('确认要删除该问答记录吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let obj = {
             id: item.id,

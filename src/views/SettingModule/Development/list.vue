@@ -229,8 +229,10 @@ export default {
     stopApp(that, { rows }) {
       that.$confirm('是否确认停用APP？', '提示', {
         confirmButtonText: '确定',
-        showClose: true,
-        customClass: 'zdy-message-box'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         that.appEditStatus(rows, 0);
       });
@@ -238,8 +240,10 @@ export default {
     restartApp(that, { rows }) {
       that.$confirm('是否确认启用APP？', '提示', {
         confirmButtonText: '确定',
-        showClose: true,
-        customClass: 'zdy-message-box'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         that.appEditStatus(rows, 1);
       });
@@ -247,8 +251,10 @@ export default {
     deleteApp(that, { rows }) {
       that.$confirm('是否确认删除APP？', '提示', {
         confirmButtonText: '确定',
-        showClose: true,
-        customClass: 'zdy-message-box'
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         that.appEditStatus(rows, 2);
       });

@@ -101,7 +101,7 @@
               <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
               <span v-else v-html="scope.row.transform_schedule_str"></span>
             </div>
-            <p v-else class="text" :title="scope.row[item.key]">
+            <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
               {{ scope.row[item.key] || '----' }}
             </p>
@@ -168,7 +168,6 @@
             <template  v-for="(item, index) in tableRowBtnFun">
               <el-button
                 :key="index"
-                size="mini"
                 type="text"
                 v-preventReClick
                 @click="handleBtnClick(scope, item)"
@@ -367,6 +366,9 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .grayText{
+      color: #666;
+    }
   /deep/.el-button.el-button--text {
     color: #1A1A1A;
     border: 0;
@@ -409,6 +411,25 @@ export default {
     z-index: 20;
     margin-top: 0;
     margin-left: -4px;
+  }
+  .statusTag{
+    &::before{
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    &.wating::before{
+      background:#FA9A32;
+    }
+    &.success::before{
+      background:#14BA6A;
+    }
+    &.failer::before{
+      background:#FB3A32;
+    }
   }
   .status-show{
     span{
@@ -458,9 +479,13 @@ export default {
 .el-table /deep/.el-button.el-button--text {
   padding: 0 0;
 }
+/deep/.button.el-button.el-button--mini{
+  font-size: 14px;
+}
 .btn-rows {
   /deep/.el-button {
     margin-left:16px;
+    font-size: 14px;
     &:first-child {
       margin-left: 0;
     }

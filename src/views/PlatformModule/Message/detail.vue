@@ -76,6 +76,7 @@ hr {
 }
 .msg_ctx {
   padding-top: 24px;
+  font-size: 14px;
   text-align: left;
   word-break: break-all;
 }

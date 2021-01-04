@@ -14,7 +14,7 @@
     <div class="content">
       <el-form :model="warmForm" ref="warmForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="选择视频" required>
-          <div class="selet-video">
+          <div class="selet-video" @mouseenter="showMenu" @mouseleave="hiddenMenu">
             <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmFlag && changeVideo()">
               <div>
                 <i class="iconfont-v3 saasicon_shangchuan"></i>
@@ -26,7 +26,7 @@
               <icon icon-class="saasshipinwenjian"></icon>
               <p>{{selectMedia.name}}</p>
             </div>
-            <div class="abRight" v-if="selectMedia.paas_record_id">
+            <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
               <div class="tool" @click.stop="previewVideo">
                 <icon icon-class="saasicon-eye"></icon>
                 <el-button type="text" class="operaBtn" >预览</el-button>
@@ -69,6 +69,8 @@
           <el-button round class="length152" :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
       </el-form>
+      <div class="white-box" v-show="!warmFlag">
+      </div>
     </div>
     <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedias>
     <!-- 预览 -->
@@ -96,9 +98,10 @@ export default {
   },
   data() {
     return {
+      showChecked: false, // 是否滑中选择视频
       warmFlag: false,
       loading: false,
-      videoSize: '200MB',
+      videoSize: '200',
       videoType: 'MP4',
       warmId: '',
       selectMedia: {},
@@ -118,7 +121,9 @@ export default {
        this.$confirm('是否取消暖场视频的设置？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.warmFlag = false;
         this.openCloseWarm(1);
@@ -130,6 +135,14 @@ export default {
     }
   },
   methods: {
+    // 鼠标离开
+    hiddenMenu () {
+      this.showChecked = false
+    },
+    //鼠标滑上去
+    showMenu () {
+      this.showChecked = true
+    },
     // 开启或关闭暖场视频
     openCloseWarm(index) {
       let params = {
@@ -217,7 +230,9 @@ export default {
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.saveWarmInfo();
         }).catch(() => {});
@@ -250,6 +265,16 @@ export default {
 .content {
   .layout--right--main();
   .padding48-40();
+  position: relative;
+  .white-box{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 9;
+  }
 }
 .demo-ruleForm {
   width: 600px;
@@ -270,7 +295,7 @@ export default {
   .avatar-uploader .el-upload {
      width: 640px;
      height: 180px;
-     border: 1px dashed #d9d9d9;
+     border: 1px solid #cccccc;
      border-radius: 6px;
      cursor: pointer;
      position: relative;
@@ -292,12 +317,16 @@ export default {
      height: 178px;
      display: block;
    }
+   .el-upload:hover {
+     border: 1px solid #999!important;
+   }
    .selet-video{
-     border: 1px dashed #d9d9d9;
+     border: 1px solid #cccccc;
      border-radius: 6px;
      width: 640px;
      height: 180px;
      position: relative;
+     background: #f7f7f7;
      .abRight{
       position: absolute;
       width: 100%;
@@ -306,7 +335,7 @@ export default {
       top: 0px;
       right: 0px;
       // line-height: 180px;
-      text-align: center; 
+      text-align: center;
       display:flex;
       flex-direction: row;
       align-items: center;
@@ -322,7 +351,7 @@ export default {
       }
       span{
         color: #fff;
-      }     
+      }
     }
     .operaBtn{
       font-size: 14px;
@@ -333,7 +362,7 @@ export default {
       }
     }
     &:hover{
-      border-color: #FB3A32;
+      border: 1px solid #999;
     }
     .mediaSlot{
       width: 100%;

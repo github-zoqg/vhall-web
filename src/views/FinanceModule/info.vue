@@ -20,6 +20,7 @@
         </el-tooltip>
           <search-area
             ref="searchLineLayout"
+            :isDate="true"
             :searchAreaLayout="searchLineLayout"
             @onExportData="exportCenterData()"
             @onSearchFun="getLineList()"
@@ -42,6 +43,7 @@
         </el-tooltip>
         <search-area
             ref="searchDataAccount"
+            :isDate="true"
             :searchAreaLayout="searchDataAccount"
             @onExportData="exportAccount()"
             @onSearchFun="getAccountList('search')"
@@ -255,14 +257,6 @@ export default {
     next();
   },
   methods: {
-    initPage() {
-      // 初始化设置日期为最近一周
-      const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      // this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
-      // this.search();
-    },
     // 用量统计数据
     getLineList(params) {
       console.log()
@@ -332,7 +326,7 @@ export default {
         let costList = res.data.list;
         this.totalNum = res.data.total;
         costList.map(item => {
-          item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
+          item.typeText = item.type == 1 ? '主账号' : '子账号';
           item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
         });
         this.tableList = costList;
@@ -411,6 +405,9 @@ export default {
     padding: 24px 32px;
     border-radius: 4px;
     background: #fff;
+  }
+  /deep/.el-input__icon {
+    margin-bottom: 5px;
   }
   .title-data {
       margin: 10px 0 20px 0;

@@ -232,7 +232,9 @@ export default {
         this.$confirm('确定同步到活动？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           // 同步到资料库
           this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{

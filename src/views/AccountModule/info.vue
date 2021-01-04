@@ -98,7 +98,9 @@ export default {
         this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
           confirmButtonText: '绑定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let user_auth_key = sessionOrLocal.get('user_auth_key');
           fetchData('callbackUserInfo', {

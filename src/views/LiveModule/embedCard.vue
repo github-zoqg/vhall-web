@@ -33,7 +33,7 @@
     <div class="thirdMethod">
       <h3>第三方渠道推广嵌入</h3>
       <div class="third-list"></div>
-      <p class="third-text">提示:目前微吼已支持在各大平台进行同步直播<a @click="goForm('https://t.e.vhall.com/webinar/marketing/index')"> 填写推广需求表</a></p>
+      <p class="third-text">提示:目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm"> 填写推广需求表</a></p>
     </div>
   </div>
 </template>
@@ -41,10 +41,12 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   name: 'embedCard',
   data() {
     return {
+      env: Env,
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
       liveContent: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WAP_WATCH}/lives/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
@@ -56,6 +58,10 @@ export default {
   },
   methods: {
     goForm(url) {
+      window.open(url, "_blank");
+    },
+    goEmbedForm() {
+      let url = `${this.env.staticLinkVo.downOldUrl}/webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
       window.open(url, "_blank");
     },
     cope(url) {

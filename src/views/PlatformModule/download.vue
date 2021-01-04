@@ -292,7 +292,9 @@ export default {
       that.$confirm('是否要删除当前下载文件？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('downloadedDel', {
           dow_task_id: rows.dow_task_id
@@ -377,9 +379,7 @@ export default {
   },
   mounted() {
     this.initPage();
-    this.$EventBus.$on('saas_vs_down_num', function() {
-      this.search();
-    });
+    this.$EventBus.$on('saas_vs_down_num', this.search);
     EventBus.$on('down_center_msg', res => { // 转码状态
       console.log(res, '监听到down_center_msg123转码状态事件');
       this.docDao.list.map(item => {

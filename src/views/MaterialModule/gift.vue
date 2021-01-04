@@ -78,6 +78,7 @@
       <null-page text="未搜索到相关内容" nullType="search" v-if="total === 0"></null-page>
     </div>
     <el-dialog
+      v-if="dialogVisible"
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
@@ -111,13 +112,14 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
+        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
         <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
       </div>
     </el-dialog>
     <el-dialog
       title="提示"
       width="400px"
+      v-if="dialogTipVisible"
       :visible.sync="dialogTipVisible"
       :close-on-click-modal="false"
       :before-close="handleCancelDelete"
@@ -436,6 +438,9 @@ export default {
   }
 }
 .gift-wrap{
+  /deep/ .el-dialog__footer {
+    padding-top: 0;
+  }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
     content: '*';
     color: #FB3A32;
