@@ -59,7 +59,8 @@ export default {
       window.open(url, '_blank');
     },
     doCopy () {
-      this.$copyText(this.url).then(e => {
+      let url = this.shareVo.url || this.url;
+      this.$copyText(url).then(e => {
         this.$message.success('复制成功！');
       }).catch(error=>{
         this.$message.error('复制失败！');
