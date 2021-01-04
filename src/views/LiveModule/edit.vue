@@ -34,7 +34,7 @@
               <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
               <p>3.音频直播：音频直播，需要保证麦克风正常</p>
             </div>
-            <i class="iconfont-v3 saasicon_help_m tip"></i>
+            <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
           </el-tooltip>
           <slot name="default"></slot>
         </div>
