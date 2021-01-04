@@ -321,7 +321,13 @@ export default {
           }
         }
       }).catch(res => {
-        this.$message.error(res.msg || '登录验证失败');
+        this.$message({
+          message:  `登录验证失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     login(params) {
@@ -378,7 +384,13 @@ export default {
       this.registerForm.captcha = this.mobileKey;
       this.registerForm.source = this.$route.query.source || 1;
       this.$fetch('register', this.registerForm).then(res => {
-        this.$message.success('注册成功');
+        this.$message({
+          message:  `注册成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.mobileKey = '';
         setTimeout(() => {
           this.$router.push({path:'/login'})
