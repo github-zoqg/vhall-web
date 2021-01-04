@@ -294,7 +294,7 @@ export default {
         merge_type: formParams.merge_type ? 1 : 2,
         end_time: getRangeDays(1)
       };
-      if (this.active!= 1) {
+      if (this.active!= 1 && formParams.searchIsTime == 1) {
         paramsObj.start_time = getRangeDays(this.active);
       }
       if (this.liveDetailInfo.webinar_state != 4) {
@@ -302,9 +302,14 @@ export default {
           this.searchAreaLayout = this.searchAreaVideoOut;
           paramsObj.switch_id = 0;
           formParams.searchIsTime = 1;
+          formParams.searchTime = ''
         } else {
           if (formParams.searchIsTime == 2) {
             formParams.searchTime = '';
+            paramsObj.start_time = '';
+            this.active = 2;
+            paramsObj.end_time = '';
+            console.log(formParams, paramsObj, "11111111111场次")
               this.searchArea.map(item => {
                 item.key === 'switchId' ? item.options = this.switchList : []
               })
@@ -312,6 +317,7 @@ export default {
             } else {
               this.searchAreaLayout = this.searchLayout;
               paramsObj.switch_id = 0;
+              this.active = 2;
             }
           }
         }

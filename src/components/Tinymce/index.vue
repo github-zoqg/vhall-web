@@ -49,6 +49,7 @@ export default {
       setting: {
         selector: `#${this.tinymceId}`,
         plugins: 'fullscreen image',
+        image_dimensions: false,
         toolbar: this.toolbar,
         quickbars_selection_toolbar: "removeformat | bold italic underline strikethrough | fontsizeselect forecolor backcolor",
         // 引入汉化组件
@@ -59,8 +60,19 @@ export default {
         convert_urls: false, // 关闭url自动识别转换
         content_style: 'p {color:#555; margin: 0px; border:0px ; padding: 0px; word-break: break-all;}', // 关闭默认p标签间距
         fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
-        paste_data_images: true, // 允许粘贴图像
+        // paste_data_images: false, // 允许粘贴图像
+        images_file_types: 'jpeg,jpg,png,gif,bmp',
+        urlconverter_callback: (url, node, onSave, name) => {
+          if (node === 'img' && url.startsWith('blob:')) {
+            // Do some custom URL conversion
+            console.log('urlConverter:', url, node, onSave, name)
+            tinymce.activeEditor && tinymce.activeEditor.uploadImages()
+          }
+          // Return new URL
+          return url
+        },
         images_upload_handler: (blobInfo, success, failure) => {
+          console.log('========== upload info ============')
           let files = new window.File([blobInfo.blob()], blobInfo.filename(), {
             type: blobInfo.type
           })

@@ -245,7 +245,9 @@ export default {
       this.$confirm(confirmTitle, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('defaultRecord', {
           webinar_id: this.webinar_id,
@@ -378,7 +380,9 @@ export default {
       this.$confirm('删除回放会导致目前已生成回放的数据丢失，请谨慎操作，确定要删除这段回放么？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.loading = true;
         this.$fetch('playBackDelete', { record_ids: ids}).then(res=>{

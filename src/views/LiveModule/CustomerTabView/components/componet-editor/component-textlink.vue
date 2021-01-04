@@ -13,7 +13,12 @@
           <span style="color:#FB3A32">*</span> 文字
         </div>
         <div class="editorContent">
-          <el-input v-model="info.text" @change="changeText"></el-input>
+          <VhallInput
+            v-model="info.text"
+            @change="changeText"
+            maxlength="30"
+            show-word-limit
+          ></VhallInput>
         </div>
       </div>
       <div style="margin-bottom: 10px">
@@ -86,11 +91,19 @@ export default {
     font-size: 14px;
     line-height: 40px;
     width: 80px;
+    text-align: right;
   }
   .editorContent{
     margin-left: 10px;
     font-size: 14px;
     display: inline-block;
+    /deep/ input{
+      width: 364px;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 4px;
+      padding: 0 12px;
+    }
   }
   /* 图片上传 */
   .upload-qrCode{

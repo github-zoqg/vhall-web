@@ -27,13 +27,13 @@
     </div>
     <div class="question-list" v-show="total">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-       :totalNum="total" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
+       :totalNum="total" :width="150" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
     </div>
     <div class="no-live" v-show="!total">
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建奖品</el-button>
-        <el-button type="primary" v-if="nullText == 'nullData' && $route.path !='/material/prize'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
+        <el-button type="white-primary" v-if="nullText == 'nullData' && $route.path !='/material/prize'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo"></create-prize>
@@ -169,7 +169,9 @@ export default {
       this.$confirm('删除后，此奖品将无法使用，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         let params = {
           prize_id: id,

@@ -490,7 +490,9 @@ export default {
       this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('updateGiftInfo', {
           ...this.editParams
@@ -512,7 +514,9 @@ export default {
       this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('createWebinarGift', {
           ...this.editParams,

@@ -93,7 +93,9 @@ export default {
       that.$confirm('是否要删除选中的消息？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.$fetch('msgDel', {
           msg_id: rows.msg_id
@@ -166,7 +168,9 @@ export default {
         this.$confirm('确定要标记选中内容为已读？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('executeUseRead', {
             msg_id: this.ids.join(',')
@@ -213,9 +217,7 @@ export default {
     this.getMsgList();
   },
   mounted() {
-    this.$EventBus.$on('saas_vs_msg_num', function() {
-      this.getMsgList();
-    });
+    this.$EventBus.$on('saas_vs_msg_num', this.getMsgList);
   }
 };
 </script>

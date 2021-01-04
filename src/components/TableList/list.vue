@@ -81,6 +81,19 @@
                 <span :class="scope.row.msg_status > 0 ? 'active-success' : 'active-error'"></span>
                 {{ scope.row.msgStatusStr }}</p>
             </div>
+            <!-- 下载中心，文件名 -->
+            <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
+              <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i>
+              <p class="text">
+                <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
+                {{ scope.row.file_name }}
+              </p>
+            </div>
+            <!-- 下载中心，生成状态 -->
+            <div v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
+              <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
+              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
+            </div>
             <div v-else-if="item.key === 'imgOrText'">
               <p v-html="scope.row.imgOrText"></p>
             </div>
@@ -88,7 +101,7 @@
               <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
               <span v-else v-html="scope.row.transform_schedule_str"></span>
             </div>
-            <p v-else class="text" :title="scope.row[item.key]">
+            <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
               {{ scope.row[item.key] || '----' }}
             </p>
@@ -102,19 +115,19 @@
           class="btn-rows"
         >
           <template slot-scope="scope">
-            <el-button v-if="Number(scope.row.status) === 0" @click="handleBtnClick(scope, {
+            <el-button v-preventReClick v-if="Number(scope.row.status) === 0" @click="handleBtnClick(scope, {
               name: '启用',
               methodName: 'restartApp'
             })" size="mini" type="text">启用</el-button>
-            <el-button v-if="Number(scope.row.status) === 1" @click="handleBtnClick(scope, {
+            <el-button v-preventReClick v-if="Number(scope.row.status) === 1" @click="handleBtnClick(scope, {
               name: '停用',
               methodName: 'stopApp'
             })" size="mini" type="text">停用</el-button>
-            <el-button @click="handleBtnClick(scope, {
+            <el-button v-preventReClick @click="handleBtnClick(scope, {
               name: '删除',
               methodName: 'deleteApp'
             })" size="mini" type="text">删除</el-button>
-            <el-button @click="handleBtnClick(scope, {
+            <el-button v-preventReClick @click="handleBtnClick(scope, {
                name: '查看',
                methodName: 'viewApp'
             })" size="mini" type="text">查看</el-button>
@@ -123,7 +136,31 @@
         <el-table-column
           label="操作"
           align="left"
-          v-if="isHandle && scene !== 'development'"
+          v-else-if="isHandle && scene === 'downloadList'"
+          :width="width"
+          class="btn-rows"
+        >
+           <template slot-scope="scope">
+            <a :href="scope.row.dow_url" v-preventReClick v-if="Number(scope.row.file_status) === 1" @click="handleBtnClick(scope, {
+              name: '下载',
+              methodName: 'download'
+            })" style="margin-right: 8px;">
+              <el-button size="mini" type="text">下载</el-button>
+            </a>
+            <el-button size="mini" type="text" v-preventReClick v-if="Number(scope.row.file_status) === 2" @click="handleBtnClick(scope, {
+              name: '重新生成',
+              methodName: 'resetDownload'
+            })">重新生成</el-button>
+            <el-button size="mini" type="text" v-preventReClick @click="handleBtnClick(scope, {
+              name: '删除',
+              methodName: 'delDownload'
+            })">删除</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          align="left"
+          v-if="isHandle && scene !== 'development' && scene !== 'downloadList'"
           :width="width"
           class="btn-rows"
         >
@@ -131,7 +168,6 @@
             <template  v-for="(item, index) in tableRowBtnFun">
               <el-button
                 :key="index"
-                size="mini"
                 type="text"
                 v-preventReClick
                 @click="handleBtnClick(scope, item)"
@@ -279,6 +315,8 @@ export default {
     checkSelectable(row) {
       if (this.scene === 'accountList') {
         return row.parent_id > 0;
+      }else if (this.scene === 'downloadList') {
+        return Number(row.file_status) === 1;
       } else {
         return true;
       }
@@ -328,6 +366,9 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .grayText{
+      color: #666;
+    }
   /deep/.el-button.el-button--text {
     color: #1A1A1A;
     border: 0;
@@ -360,6 +401,16 @@ export default {
     //     }
     //   }
     // }
+  }
+   .icon_tag {
+    width: 8px;
+    height: 8px;
+    background: #FB3A32;
+    position: absolute;
+    border-radius: 100%;
+    z-index: 20;
+    margin-top: 0;
+    margin-left: -4px;
   }
   .status-show{
     span{
@@ -409,9 +460,13 @@ export default {
 .el-table /deep/.el-button.el-button--text {
   padding: 0 0;
 }
+/deep/.button.el-button.el-button--mini{
+  font-size: 14px;
+}
 .btn-rows {
   /deep/.el-button {
     margin-left:16px;
+    font-size: 14px;
     &:first-child {
       margin-left: 0;
     }

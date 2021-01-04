@@ -70,6 +70,7 @@
                     </el-form-item>
                   </el-form>
                 </div>
+                <div class="give-white" v-show="!scrolling_open"></div>
               </div>
             </el-tab-pane>
             <el-tab-pane label="水印设置" name="second">
@@ -126,6 +127,7 @@
                     </el-form-item>
                   </el-form>
                 </div>
+                <div class="give-white" v-show="!watermark_open"></div>
               </div>
             </el-tab-pane>
             <el-tab-pane label="其他" name="third">
@@ -633,6 +635,7 @@ export default {
   .give-item {
     padding: 40px 24px;
     display: flex;
+    position: relative;
     /deep/.el-form {
       position: relative;
       i{
@@ -653,6 +656,15 @@ export default {
       height: 500px;
       flex: 1;
       border: 1px solid #ccc;
+    }
+    .give-white{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top:80px;
+      left:0;
+      background: rgba(255, 255, 255, 0.5);
+      z-index: 9;
     }
   }
   .show-purple{

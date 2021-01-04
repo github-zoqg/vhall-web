@@ -367,8 +367,9 @@ export default {
         this.$confirm(`取消将不保存此页面的内容？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-alert-box',
-          type: 'warning'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
             this.$router.push({path:'/special/list'});
         }).catch(() => {
@@ -401,7 +402,9 @@ export default {
       this.$confirm('您确定要删除选中的专题吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.formData.selectedActives.map((opt, index) => {
             if (opt.webinar_id == id) {

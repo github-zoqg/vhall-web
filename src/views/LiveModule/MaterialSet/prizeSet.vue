@@ -244,7 +244,17 @@ export default {
       return true
     }
   },
+  watch: {
+    activeName() {
+      if (this.activeName == 'first') {
+        this.lotteryGet();
+      } else if(this.activeName == 'second') {
+        this.getGivePrize();
+      }
+    }
+  },
   async mounted() {
+    this.activeName = this.$route.query.index || 'first';
     await this.getActice()
     this.lotteryGet();
   },
@@ -366,12 +376,16 @@ export default {
       })
     },
     handleClick(tab) {
-      this.activeName = tab.name;
-      if (tab.name === 'first') {
-        this.lotteryGet();
-      } else if (tab.name === 'second') {
-        this.getGivePrize();
-      }
+      // this.activeName = tab.name;
+      this.$router.push({path: `/live/prizeSet/${this.$route.params.str}`, query: {
+        roomId: this.$route.query.roomId,
+        index: tab.name
+      }})
+      // if (tab.name === 'first') {
+      //   this.lotteryGet();
+      // } else if (tab.name === 'second') {
+      //   this.getGivePrize();
+      // }
     },
     deleteImg() {
       this.previewSrc = '';

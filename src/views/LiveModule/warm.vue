@@ -69,6 +69,8 @@
           <el-button round class="length152" :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
       </el-form>
+      <div class="white-box" v-show="!warmFlag">
+      </div>
     </div>
     <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedias>
     <!-- 预览 -->
@@ -98,7 +100,7 @@ export default {
     return {
       warmFlag: false,
       loading: false,
-      videoSize: '200MB',
+      videoSize: '200',
       videoType: 'MP4',
       warmId: '',
       selectMedia: {},
@@ -118,7 +120,9 @@ export default {
        this.$confirm('是否取消暖场视频的设置？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.warmFlag = false;
         this.openCloseWarm(1);
@@ -217,7 +221,9 @@ export default {
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.saveWarmInfo();
         }).catch(() => {});
@@ -250,6 +256,16 @@ export default {
 .content {
   .layout--right--main();
   .padding48-40();
+  position: relative;
+  .white-box{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 9;
+  }
 }
 .demo-ruleForm {
   width: 600px;
@@ -306,7 +322,7 @@ export default {
       top: 0px;
       right: 0px;
       // line-height: 180px;
-      text-align: center; 
+      text-align: center;
       display:flex;
       flex-direction: row;
       align-items: center;
@@ -322,7 +338,7 @@ export default {
       }
       span{
         color: #fff;
-      }     
+      }
     }
     .operaBtn{
       font-size: 14px;

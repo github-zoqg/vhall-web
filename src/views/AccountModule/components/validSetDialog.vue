@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     width="400px">
     <div class="content">
-      <el-form :model="form" ref="form" :rules="formRules" label-width="70px">
+      <el-form :model="form" ref="form" :rules="formRules" label-width="80px">
         <p class="info" v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
         <el-form-item label="邮箱地址" key="email" prop="email" v-if="showVo.executeType === 'email' && showVo.step === 1">
           <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled/>

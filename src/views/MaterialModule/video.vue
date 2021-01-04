@@ -36,17 +36,18 @@
       </el-dialog>
     </template>
     <!-- 编辑功能 -->
-    <!-- <template v-if="editShowDialog">
-      <el-dialog class="vh-dialog" title="编辑" :visible.sync="editShowDialog" :before-close='closeBefore' width="200px" center>
+    <template v-if="editShowDialog">
+      <el-dialog title="编辑" :visible.sync="editShowDialog" width="300px" center>
         <div class="main-edit">
-          <el-input v-model.trim="videoName" type="text" placeholder="请输入名称" @keyup.enter.native="changeValue"></el-input>
+          <VhallInput v-model.trim="videoName" maxlength="30" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
+          <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">
           <el-button size="medium" type="primary" @click="sureMaterialVideo" v-preventReClick round>确 定</el-button>
           <el-button size="medium"  @click="editShowDialog=false"  round>取 消</el-button>
        </div>
       </el-dialog>
-    </template> -->
+    </template>
   </div>
 </template>
 <script>
@@ -62,7 +63,9 @@ export default {
       // 预览
       showDialog: false,
       isSearch: false,
+      errorText: false,
       videoName: '',
+      lowName: '',
       videoId: '',
       keyword: '',
       editShowDialog: false,
@@ -172,6 +175,7 @@ export default {
       console.log(param, '33333333333333333');
       this.uploadList.unshift(param);
       this.tableData.unshift(param);
+      console.log(this.tableData, '??????????????????')
       this.UploadSDK.upload([file],(pro)=>{
         this.tableData.forEach((ele)=>{
           if(ele.id == file.id){
@@ -206,7 +210,7 @@ export default {
         // });
         // console.warn(res);
         this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
-          this.tableData.splice(0, 1);
+          this.tableData.splice(0, 1, this.uploadList);
           console.log(this.tableData, this.uploadList, '000000000000000000')
           this.$message.success('上传视频成功');
           this.getTableList();
@@ -231,7 +235,6 @@ export default {
     },
     getVideoAppid() {
       this.$fetch('getAppid').then(res => {
-        // this.appId = res.data.app_id;
         this.initUpload(res.data.app_id, res.data.access_token);
       })
     },
@@ -285,34 +288,54 @@ export default {
     },
     // 编辑
     update(that, { rows }) {
-      that.$prompt('', '编辑',{
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          showInput: true,
-          inputPlaceholder: '请输入名称'
-        }).then(({ value }) => {
-          let regStr = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi;
-          value = value.replace(regStr, "");
-          if(value){
-            that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: that.userId, filename: value}).then(res=>{
-              if (res.code == 200) {
-                that.$message.success('修改成功');
-                that.getTableList();
-              }
-            });
-          } else {
-            that.$message.error('名称格式不正确');
-            return
-          }
-        }).catch(() => {});
+      that.editShowDialog = true;
+      that.errorText = false;
+      that.videoName = rows.name
+      that.videoId = rows.id;
+      // that.$prompt('', '编辑',{
+      //     confirmButtonText: '确定',
+      //     cancelButtonText: '取消',
+      //     showInput: true,
+      //     value: rows.name,
+      //     inputPlaceholder: '请输入名称'
+      //   }).then(({ value }) => {
+      //     let regStr = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi;
+      //     value = value.replace(regStr, "");
+      //     if(value){
+      //       that.$fetch('dataVideoupdate', {video_id: rows.id, user_id: that.userId, filename: value}).then(res=>{
+      //         if (res.code == 200) {
+      //           that.$message.success('修改成功');
+      //           that.getTableList();
+      //         }
+      //       });
+      //     } else {
+      //       that.$message.error('名称格式不正确');
+      //       return
+      //     }
+      //   }).catch(() => {});
+    },
+    sureMaterialVideo() {
+     if (!this.videoName) {
+       this.errorText = true;
+       return;
+     } else {
+       let name = `${this.videoName}${this.lowName}`
+      this.$fetch('dataVideoupdate', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
+        if (res.code == 200) {
+          this.editShowDialog = false;
+          this.$message.success('修改成功');
+          this.getTableList();
+        }
+      });
+     }
     },
     confirmDelete(id) {
       this.$confirm('是否删除该视频？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
         customClass: 'zdy-message-box',
-        center: true
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
@@ -327,17 +350,19 @@ export default {
     },
     del(that, { rows }) {
       that.checkedList = [];
+      console.log(rows, '????????')
       if (!rows.transcode_status) {
-        this.$message.error('正在转码的文件不能删除');
+        that.getList();
+        // this.$message.error('正在转码的文件不能删除');
         return;
       }
       if (that.audit_status) {
           this.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning',
           customClass: 'zdy-message-box',
-          center: true
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           that.confirmDelete(rows.id);
         }).catch(() => {});
@@ -416,6 +441,7 @@ export default {
     .el-dialog{
       width: 960px!important;
       height: 623px;
+      padding-bottom: 30px;
       .el-dialog__body{
         height: calc(100% - 44px);
       }
@@ -440,5 +466,17 @@ export default {
       }
     }
   }
+}
+.main-edit{
+  margin-bottom: 20px;
+  padding-left: 20px;
+  p{
+    font-size: 12px;
+    padding-top: 5px;
+    color: #FB3A32;
+  }
+}
+.dialog-footer{
+  text-align: center;
 }
 </style>

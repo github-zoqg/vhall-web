@@ -107,7 +107,7 @@ export default {
       text: '您还上传过音视频，快来创建吧！',
       pageInfo: {
         pos: 0,
-        limit: 5,
+        limit: 6,
         pageNum: 1
       },
       totalPages: 0,
@@ -127,6 +127,7 @@ export default {
         this.docList = [];
         this.getMediaList();
       } else {
+        this.keyWords = '';
         this.pageInfo.pageNum = 1;
       }
     }
@@ -228,7 +229,9 @@ export default {
       this.$confirm('上传资源会离开当前页面，将丢失已编辑信息，是否离开？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         this.$router.push({path: "/material/video"});
       }).catch(()=>{});

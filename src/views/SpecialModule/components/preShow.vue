@@ -102,7 +102,7 @@ export default {
       this.$router.push({path: `/live/detail/${id}`});
     },
     goWatchData(item) {
-      let url =  `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/watch/${item.webinar_id}`;
+      let url =  `${window.location.origin + (process.env.VUE_APP_WAP_WATCH || '')}/lives/watch/${item.webinar_id}`;
       window.open(url, '_blank');
     },
     handleClick(tab) {

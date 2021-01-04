@@ -73,7 +73,9 @@ export default {
       this.$confirm('解绑 QQ 后你将无法使用 QQ 登录，你确定要解绑吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         // 1微博 2QQ 3微信 4 阿里 5 SDK打赏生的用户6小程序观看端
         this.unBindSend(2);
@@ -83,7 +85,9 @@ export default {
       this.$confirm('解绑 微信 后你将无法使用 微信 登录，你确定要解绑吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-message-box'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.unBindSend(3);
       }).catch(() => {})

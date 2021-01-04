@@ -150,7 +150,15 @@ export default {
         this.list = [];
         this.checkedList = [];
         this.keyword = '';
+        this.prizePageInfo = {
+          pos: 0,
+          limit: 6,
+          page: 1,
+        };
         this.getPrizeList();
+      } else {
+        this.list = [];
+        // this.list.map(item => item.isChecked = false)
       }
     }
   },
@@ -280,6 +288,7 @@ export default {
           item.isChecked = false;
         });
         this.list.push(...adList);
+        console.log(this.list, '?????????????????????')
         this.total = res.data.count;
         if (this.keyword) {
         this.nullText = 'search';

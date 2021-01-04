@@ -96,6 +96,14 @@ export default {
           webinars: [],
           cUid: uuidV1()
         })
+      }else if(componentData.component_id == 4) {
+        this.units.push({
+         ...componentData,
+          // To Do 默认 二维码地址。 替换成当前，直播间 观看页地址！！
+          subjects: [],
+          cUid: uuidV1()
+        })
+
       } else if (componentData.component_id == 5){
         this.units.push({
           ...componentData,

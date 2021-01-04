@@ -14,6 +14,7 @@ import ComponentQrcode from './component-qrcode'
 import ComponentLives from './component-lives'
 import ComponentTextlink from './component-textlink'
 import ComponentImglink from './component-imglink'
+import ComponentProjects from './component-projects'
 import ComponentTitle from './component-title'
 import ComponentLine from './component-line'
 import componentMap from '../componetMap'
@@ -34,6 +35,7 @@ export default {
     ComponentDesimg,
     ComponentQrcode,
     ComponentLives,
+    ComponentProjects,
     ComponentTextlink,
     ComponentImglink,
     ComponentTitle,

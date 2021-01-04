@@ -187,6 +187,7 @@
       <div class="sureBtn">
         <el-button type="primary" class="length152" :disabled="!invitation" @click="onSubmit">保存</el-button>
       </div>
+      <div class="white-show" v-show="!invitation"></div>
     </div>
     <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
   </div>
@@ -199,7 +200,7 @@ export default {
   data() {
     return {
       invitation: true,
-      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       showCode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       showType: 1,
       avatar: '',
@@ -813,6 +814,15 @@ export default {
       border-radius: 20px;
       margin: auto;
     }
+  }
+  .white-show{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 9;
   }
 }
 </style>

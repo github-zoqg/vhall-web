@@ -340,6 +340,13 @@ export default {
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
           this.queryList();
+        } else {
+          // 若无分组，默认清空列表
+          this.query.group_id = null;
+          this.viewerDao = {
+            total: 0,
+            data: []
+          };
         }
       }).catch(e => {
         console.log(e);
@@ -384,7 +391,8 @@ export default {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
-        lockScroll: false
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         let params = {
           group_ids: item.id
@@ -444,14 +452,24 @@ export default {
     },
     // 打开导入观众弹出框
     importViewerOpen() {
-      this.importFileShow = true;
-      this.fileUrl = null;
-      this.fileResult = '';
-      this.importResult = null;
+      // 判断是否有分组
+      if(this.query.group_id) {
+        this.importFileShow = true;
+        this.fileUrl = null;
+        this.fileResult = '';
+        this.importResult = null;
+      } else {
+        this.$message.error('请选择分组');
+      }
     },
     // 创建观众
     viewerDialogAdd() {
-      this.viewerDialogShow(this, {rows: null});
+      // 判断是否有分组
+      if(this.query.group_id) {
+        this.viewerDialogShow(this, {rows: null});
+      } else {
+        this.$message.error('请选择分组');
+      }
     },
     // 展示观众修改
     viewerDialogShow(that, { rows }) {
@@ -520,7 +538,8 @@ export default {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
-        lockScroll: false
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         that.sendViewerDel([rows.id]);
       }).catch(() => {
@@ -555,7 +574,8 @@ export default {
           confirmButtonText: '删除',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          lockScroll: false
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           let ids = this.multipleSelection.map(item => {
             return item.id;
