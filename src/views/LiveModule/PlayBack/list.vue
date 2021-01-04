@@ -106,7 +106,8 @@
       title="编辑内容标题"
       v-loading="editLoading"
       :visible.sync="editDialogVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       width="480px">
       <VhallInput
         placeholder="请输入标题"
@@ -126,7 +127,9 @@
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center>
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
     </template>

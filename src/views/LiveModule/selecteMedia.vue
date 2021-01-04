@@ -4,7 +4,8 @@
     title="选择音视频"
     @closed="closeHandler"
     :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
     :before-close="handleClose"
     width="880px">
     <div class="search"  v-show="total || isSearch">
@@ -84,7 +85,9 @@
     </span>
   </el-dialog>
   <template v-if="showDialog">
-    <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+    <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center
+    :close-on-click-modal=false
+    :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
     </el-dialog>
   </template>

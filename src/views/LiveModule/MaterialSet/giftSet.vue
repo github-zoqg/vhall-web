@@ -99,7 +99,8 @@
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       custom-class="create-gift"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
@@ -144,7 +145,8 @@
       title="提示"
       width="400px"
       :visible.sync="dialogTipVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleCancelDelete"
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
@@ -157,7 +159,8 @@
       title="提示"
       width="400px"
       :visible.sync="batchDialogTipVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleCancelBatchDelete"
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
@@ -171,7 +174,8 @@
       width="620px"
       v-if="dialogGiftsVisible"
       :visible.sync="dialogGiftsVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleCloseChooseGift"
       custom-class="choose-gift"
     >

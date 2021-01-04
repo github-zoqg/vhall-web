@@ -32,7 +32,8 @@
       title="请输入视频名称"
       v-loading="editLoading"
       :visible.sync="titleDialogVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       custom-class="save-title"
       center
       width="480px">

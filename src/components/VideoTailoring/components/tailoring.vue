@@ -231,6 +231,8 @@
       :visible.sync="addEventType"
       width="480px"
       :title="t('设置事件点')"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
     >
       <div class="vh-video-tailoring__form">
         <span>{{ t('选择时间') }}</span>
@@ -259,6 +261,8 @@
       :visible.sync="delCutPoint"
       title
       width="440px"
+    :close-on-click-modal=false
+    :close-on-press-escape=false
     >
       <div class="vh-video-tailoring__form">
         <img src="../image/del@2x.png" alt />

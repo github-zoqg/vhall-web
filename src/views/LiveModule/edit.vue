@@ -219,7 +219,9 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>

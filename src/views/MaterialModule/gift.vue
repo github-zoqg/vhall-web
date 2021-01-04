@@ -81,7 +81,8 @@
       v-if="dialogVisible"
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       custom-class="create-gift"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">

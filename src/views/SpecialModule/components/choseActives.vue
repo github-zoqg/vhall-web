@@ -2,7 +2,8 @@
   <el-dialog
       title="添加直播"
       :visible="visible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleClose"
       @close="cancelSelect"
       width="620px">
