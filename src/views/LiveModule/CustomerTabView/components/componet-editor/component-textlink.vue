@@ -80,11 +80,9 @@ export default {
   .textlink-wrapbox{
     .textlink {
       position: relative;
-      height: 40px;
+      min-height: 40px;
       line-height: 40px;
       word-break: break-all;
-      overflow: hidden;
-      text-align: center;
     }
   }
   .label{
