@@ -42,6 +42,11 @@ export default {
   },
   updated() {
   },
+  watch: {
+    value() {
+
+    }
+  },
   data() {
     return {
       // content: this.value || '',

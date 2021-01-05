@@ -364,22 +364,24 @@ export default {
             params.group_id = this.groupDialog.row.id;
           }
           this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success(`${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`);
-              // 刷新数据
-              this.audienceGet();
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`
-              });
-            }
-            this.groupDialog.visible = false;
-          }).catch(e => {
-            console.log(e);
             this.$message({
+              message:  `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 刷新数据
+            this.audienceGet();
+            this.groupDialog.visible = false;
+          }).catch(res => {
+             console.log(res);
+             this.$message({
+              message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`,
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message:`${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`
+              customClass: 'zdy-info-box'
             });
           });
         }
@@ -398,21 +400,23 @@ export default {
           group_ids: item.id
         };
         this.$fetch('postGroupDel', this.$params(params)).then(res => {
-          if(res && res.code === 200) {
-            this.$message.success(`删除分组-操作成功`);
-            // 重查分组列表
-            this.audienceGet();
-          } else {
-            this.$message({
-              type: 'error',
-              message: res.msg || '删除分组-操作失败'
-            });
-          }
-        }).catch(e => {
-          console.log(e);
           this.$message({
+            message:  `删除分组-操作成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // 重查分组列表
+          this.audienceGet();
+        }).catch(res => {
+          console.log(res);
+          this.$message({
+            message: res.msg || '删除分组-操作失败',
+            showClose: true,
+            // duration: 0,
             type: 'error',
-            message:  '删除分组-操作失败'
+            customClass: 'zdy-info-box'
           });
         });
       }).catch(() => {
@@ -459,7 +463,13 @@ export default {
         this.fileResult = '';
         this.importResult = null;
       } else {
-        this.$message.error('请选择分组');
+        this.$message({
+          message:  `请选择分组`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
     // 创建观众
@@ -468,7 +478,13 @@ export default {
       if(this.query.group_id) {
         this.viewerDialogShow(this, {rows: null});
       } else {
-        this.$message.error('请选择分组');
+        this.$message({
+          message:  `请选择分组`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
     // 展示观众修改
@@ -512,22 +528,24 @@ export default {
           console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
           let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
           this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success(`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`);
-              this.viewerDialog.visible = false;
-              // 重查当前分组下观众信息
-              this.queryList();
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`
-              });
-            }
-          }).catch(e => {
-            console.log(e);
             this.$message({
+              message:  `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.viewerDialog.visible = false;
+            // 重查当前分组下观众信息
+            this.queryList();
+          }).catch(res => {
+           console.log(res);
+           this.$message({
+              message:  res.msg || `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`,
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message:`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`
+              customClass: 'zdy-info-box'
             });
           });
         }
@@ -550,20 +568,32 @@ export default {
         audience_ids: ids.join(',')
       }).then(res => {
         if(res && res.code === 200) {
-          this.$message.success(`删除观众-操作成功`);
+          this.$message({
+            message:  `删除观众-操作成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.$refs.viewerTable.clearSelect();
           this.queryList();
         } else {
           this.$message({
+            message:  res.msg || `删除观众-操作失败`,
+            showClose: true,
+            // duration: 0,
             type: 'error',
-            message: res.msg || '删除观众-操作失败'
+            customClass: 'zdy-info-box'
           });
         }
-      }).catch(e => {
+      }).catch(res => {
         console.log(e);
         this.$message({
+          message:  res.msg || `删除观众-操作失败`,
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '删除观众-操作失败'
+          customClass: 'zdy-info-box'
         });
       });
     },
@@ -586,8 +616,11 @@ export default {
         });
       } else {
         this.$message({
+          message:  '请至少选择一个观众进行删除',
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '请至少选择一个观众进行删除'
+          customClass: 'zdy-info-box'
         });
       }
     },
@@ -634,11 +667,23 @@ export default {
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传格式只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2M!');
+        this.$message({
+          message: `上传文件大小不能超过 2M!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -664,7 +709,13 @@ export default {
     },
     reloadViewerList() {
       if(!this.fileUrl) {
-        this.$message.error('请先选择模板');
+        this.$message({
+          message: `请先选择模板`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       // 数据存储
@@ -673,18 +724,20 @@ export default {
         group_id: this.query.group_id,
         request_type: 1 // 保存
       }).then(resV => {
-        if (resV && resV.code === 200) {
-          this.importFileShow = false;
-          this.percent = 0;
-          this.isUploadEnd = false;
-          this.fileUrl = '';
-          // 刷新列表数据
-          this.queryList();
-        } else {
-          this.$message.error(resV.msg || '导入观众信息失败！');
-        }
-      }).catch(e => {
-        this.$message.error(e.msg || '导入观众信息失败！');
+        this.importFileShow = false;
+        this.percent = 0;
+        this.isUploadEnd = false;
+        this.fileUrl = '';
+        // 刷新列表数据
+        this.queryList();
+      }).catch(res => {
+        this.$message({
+          message:res.msg || '导入观众信息失败！',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
   },

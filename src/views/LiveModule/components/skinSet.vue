@@ -148,11 +148,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`背景图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `背景图片只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('背景图片大小不能超过 2MB!');
+        this.$message({
+          message: `背景图片大小不能超过 2MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -162,7 +174,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`背景图片上传失败`);
+      this.$message({
+        message:  `背景图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -180,29 +198,25 @@ export default {
       this.$fetch('getInterWebinarSkin', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        if (res && res.code === 200) {
-          this.skinVo = res.data || {};
-          this.showBtn = this.skinVo.status !== undefined && this.skinVo.status !== null && this.skinVo.status !== '';
-          this.skinType = Number(res.data.status) > 0 ? 1 : 0;
-          // 页面赋值
-          if (res.data.skin_json_pc) {
-            let skin_json_pc = JSON.parse(res.data.skin_json_pc);
-            this.skinSetForm.bgColor = skin_json_pc.bgColor;
-            this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
-            this.skinSetForm.bg_url = skin_json_pc.background;
-            this.domain_url = skin_json_pc.background;
-          } else {
-            this.skinSetForm.bgColor = '#FFFFFF';
-            this.skinSetForm.pageStyle = '#FB3A32';
-            this.skinSetForm.bg_url = '';
-            this.domain_url = '';
-          }
-          this.skinSetForm.skin_id = res.data.skin_id || '';
-          console.log(this.skinSetForm, '页面刷新后');
-          this.previewShow();
+        this.skinVo = res.data || {};
+        this.showBtn = this.skinVo.status !== undefined && this.skinVo.status !== null && this.skinVo.status !== '';
+        this.skinType = Number(res.data.status) > 0 ? 1 : 0;
+        // 页面赋值
+        if (res.data.skin_json_pc) {
+          let skin_json_pc = JSON.parse(res.data.skin_json_pc);
+          this.skinSetForm.bgColor = skin_json_pc.bgColor;
+          this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
+          this.skinSetForm.bg_url = skin_json_pc.background;
+          this.domain_url = skin_json_pc.background;
         } else {
-          this.skinVo = {};
+          this.skinSetForm.bgColor = '#FFFFFF';
+          this.skinSetForm.pageStyle = '#FB3A32';
+          this.skinSetForm.bg_url = '';
+          this.domain_url = '';
         }
+        this.skinSetForm.skin_id = res.data.skin_id || '';
+        console.log(this.skinSetForm, '页面刷新后');
+        this.previewShow();
       }).catch(err=>{
         console.log(err);
         this.skinVo = {};
@@ -216,15 +230,23 @@ export default {
               webinar_id: this.$route.params.str,
               status: 0
             }).then(res => {
-              if (res && res.code === 200) {
-                this.$message.success('默认皮肤使用设置成功');
-                this.getInterWebinarSkin();
-              } else {
-                this.$message.error(res.msg || '默认皮肤使用设置失败');
-              }
-            }).catch(err=>{
-              console.log(err);
-              this.$message.error('保存基本设置失败');
+              this.$message({
+                message:  `默认皮肤使用设置成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.getInterWebinarSkin();
+            }).catch(res=>{
+              console.log(res);
+              this.$message({
+                message: res.msg || '默认皮肤使用设置失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             });
           } else {
             let params = Object.assign({
@@ -235,15 +257,23 @@ export default {
             });
             this.$fetch(this.skinSetForm.skin_id ? 'skinUpdate' : 'skinCreate', this.$params(params)).then(res => {
               console.log(res);
-              if (res && res.code === 200) {
-                this.$message.success('保存基本设置成功');
-                this.getInterWebinarSkin();
-              } else {
-                this.$message.error(res.msg || '保存基本设置失败');
-              }
-            }).catch(err=>{
-              console.log(err);
-              this.$message.error('保存基本设置失败');
+               this.$message({
+                message:  `保存基本设置成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.getInterWebinarSkin();
+            }).catch(res=>{
+              console.log(res);
+              this.$message({
+                message: res.msg || '保存基本设置失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             });
           }
         }

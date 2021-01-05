@@ -380,8 +380,8 @@ export default {
         pageInfo.pos = 0;
         pageInfo.pageNum= 1;
         this.$refs.tableList.clearSelect();
-        params.start_time = this.searchTime[0] + '00:00:00';
-        params.end_time = this.searchTime[1] + '23:59:59';
+        params.start_time = this.searchTime[0] + ' 00:00:00';
+        params.end_time = this.searchTime[1] + ' 23:59:59';
       }
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getChatListInfo', obj).then(res => {

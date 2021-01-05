@@ -134,11 +134,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`标志图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `标志图片只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('标志图片大小不能超过 2MB!');
+        this.$message({
+          message: `标志图片大小不能超过 2MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -148,7 +160,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`标志图片上传失败`);
+      this.$message({
+        message:  `标志图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     resetLogoUrl() {
       this.$nextTick(()=> {
@@ -206,16 +224,24 @@ export default {
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
           this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
             console.log(res);
-            if (res && res.code === 200) {
-              this.$message.success('保存基本设置成功');
-              // 重新获取数据
-              this.getSignInfo();
-            } else {
-              this.$message.error(res.msg || '保存基本设置失败');
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$message.error('保存基本设置失败');
+            this.$message({
+              message:  `保存基本设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 重新获取数据
+            this.getSignInfo();
+          }).catch(res=>{
+            console.log(res);
+            this.$message({
+              message: res.msg || `保存基本设置失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });

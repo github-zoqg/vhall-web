@@ -237,9 +237,9 @@ export default {
   }
   .top-item {
     text-align: left;
-
+    width: 100%;
     height: 140px;
-    padding: 32px 24px;
+    padding: 32px 0;
     position: relative;
     margin-right: 16px;
     .level {
@@ -274,6 +274,9 @@ export default {
       color: #3562FA;
       font-size: 14px;
       cursor: pointer;
+    }
+    &:first-child{
+      padding-left: 24px;
     }
   }
   .usage-item{
