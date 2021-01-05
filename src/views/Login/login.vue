@@ -469,7 +469,7 @@ export default {
     min-height: 640px;
     background-color: #fff;
     position: relative;
-    font-family: PingFangSC,helvetica neue,hiragino sans gb,arial,microsoft yahei ui,microsoft yahei,simsun,"sans-serif"!important
+    font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important
 }
 
 .left {

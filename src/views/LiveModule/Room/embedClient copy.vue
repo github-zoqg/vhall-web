@@ -898,7 +898,7 @@ export default {
         font-size: 19px;
         margin-top: 20px;
         margin-bottom: 10px;
-        font-family: PingFangSC-Semibold;
+        font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
         font-weight: 600;
         color: rgba(51, 51, 51, 1);
         line-height: 26px;
