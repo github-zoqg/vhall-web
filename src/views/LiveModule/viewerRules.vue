@@ -361,7 +361,6 @@ export default {
       // 每次选项卡切换，之前选择项清空。
       this.form.password = '';
       this.form.white_id = '';
-      this.whiteId = null;
       this.form.fee = '';
       this.form.is_preview = 0;
       this.form.preview_time = 5;
