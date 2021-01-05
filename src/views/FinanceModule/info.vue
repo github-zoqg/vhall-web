@@ -87,7 +87,7 @@
             />
           </el-select>
           <div class="export-data">
-            <el-button round type="white-primary" size="medium" @click="exportCenterData">导出数据</el-button>
+            <el-button round type="white-primary" size="medium" @click="exportAccount">导出数据</el-button>
           </div>
         </div>
         <!-- <search-area
@@ -415,7 +415,6 @@ export default {
         that.getOrderArrear();
       });
     },
-    //导出数据
     // 导出用量统计
     exportCenterData() {
       let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
