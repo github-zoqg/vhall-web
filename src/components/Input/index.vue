@@ -127,6 +127,7 @@
 </template>
 <script>
   import { Input } from 'element-ui'
+  import merge from 'element-ui/src/utils/merge';
   export default {
     extends: Input,
     mounted() {
