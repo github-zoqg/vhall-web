@@ -31,10 +31,10 @@
         </div>
       </el-form-item>
       <el-form-item label="标题" prop="subject">
-        <VhallInput v-model.trim="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></VhallInput>
+        <VhallInput v-model.trim="advertisement.subject" :maxlength="15" show-word-limit placeholder="请输入广告标题" autocomplete="off"></VhallInput>
       </el-form-item>
       <el-form-item label="链接" prop="url">
-        <VhallInput v-model.trim="advertisement.url" placeholder="请输入广告链接"></VhallInput>
+        <VhallInput v-model.trim="advertisement.url" placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">

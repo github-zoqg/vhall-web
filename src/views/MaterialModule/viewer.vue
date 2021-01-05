@@ -19,6 +19,7 @@
               placeholder="搜索内容"
               v-model="query.keyword"
               clearable
+              autocomplete="off"
               @keyup.enter.native="queryList"
               @clear="queryList">
               <i

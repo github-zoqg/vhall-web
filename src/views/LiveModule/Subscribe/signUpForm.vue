@@ -42,12 +42,14 @@
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model.number="form[question.id]"
+                      autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                     <VhallInput
                       v-else
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model="form[question.id]"
+                      autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                   </template>
                   <!-- 单选 -->
@@ -73,7 +75,8 @@
                           </el-radio>
                           <template v-if="radioItem.type === 1">
                             <VhallInput
-                              maxlength="60"
+                              :maxlength="60"
+                              autocomplete="off"
                               show-word-limit
                               placeholder="请输入描述内容"
                               v-show="form[question.id] == radioItem.id"
@@ -100,9 +103,10 @@
                         </el-checkbox>
                         <template v-if="checkItem.type === 1">
                           <VhallInput
-                            maxlength="60"
+                            :maxlength="60"
                             show-word-limit
                             placeholder="请输入描述内容"
+                            autocomplete="off"
                             v-show="form[question.id].some(id => id == checkItem.id)"
                             style="margin-top: 10px;"
                             v-model="form[`${question.id}${checkItem.id}`]"
@@ -131,7 +135,7 @@
                   >
                     <el-row :gutter="20">
                       <el-col :span="question.colNum">
-                        <VhallInput v-show="false" v-model="form[question.id]"></VhallInput>
+                        <VhallInput v-show="false" v-model="form[question.id]" autocomplete="off" ></VhallInput>
                         <el-select v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
                           <el-option
                             v-for="opt in provinces"
@@ -168,12 +172,12 @@
                   <el-row :gutter="20">
                     <el-col :span="12">
                       <div id="setCaptcha" class="captcha">
-                        <VhallInput  v-model.trim="form.imgCode"> </VhallInput>
+                        <VhallInput  v-model.trim="form.imgCode" autocomplete="off" > </VhallInput>
                         <!-- <p class="errorText" v-show="errorMsgShow">图形码错误</p> -->
                       </div>
                     </el-col>
                     <el-col :span="12">
-                      <VhallInput v-model="form.code" auto-complete="off" placeholder="请输入验证码"></VhallInput>
+                      <VhallInput v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码" autocomplete="off" ></VhallInput>
                       <el-button
                         :disabled="time !== 60 || isPreview"
                         class="no-border" size="mini"
@@ -207,12 +211,12 @@
                   <el-row :gutter="20">
                     <el-col :span="12">
                       <div id="setCaptcha1" class="captcha">
-                        <VhallInput  v-model.trim="verifyForm.imgCode"> </VhallInput>
+                        <VhallInput  v-model.trim="verifyForm.imgCode" autocomplete="off" > </VhallInput>
                       </div>
                       <!-- <p class="errorText" v-show="verifyErrorMsgShow">验证失败，请重试</p> -->
                     </el-col>
                     <el-col :span="12">
-                      <VhallInput v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码"></VhallInput>
+                      <VhallInput v-model.trim="verifyForm.code" auto-complete="off" placeholder="验证码" autocomplete="off" ></VhallInput>
                       <el-button
                         :disabled="verifyTime !== 60 || isPreview"
                         class="no-border"

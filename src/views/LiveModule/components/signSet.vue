@@ -2,7 +2,7 @@
   <div class="sign--set">
     <div class="sign--set--main">
       <div class="sign--set--left">
-        <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="94px">
+        <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="80px">
           <el-form-item label="主办方信息" prop="organizers_status">
             <div class="switch__box">
               <el-switch
@@ -260,7 +260,7 @@ export default {
   .align(flex-start);
 }
 .sign--set--left {
-  width: 50%;
+  width: 490px;
   /deep/.el-form-item__label {
     line-height: 40px;
   }

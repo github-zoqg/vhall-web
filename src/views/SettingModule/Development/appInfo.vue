@@ -21,7 +21,7 @@
                 :class="`${action !== 'detail' && node.nodeType == 'text' ? 'page-read-only' : ''}`"
               >
                 <template v-if="action!='detail' && node.nodeType != 'text'">
-                  <VhallInput v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs"></VhallInput>
+                  <VhallInput v-if="node.nodeType == 'input'" v-model="appForm[node.modelKey]" v-bind="node.attrs" autocomplete="off"></VhallInput>
                   <el-radio-group v-else-if="node.nodeType == 'radio'" v-model="appForm[node.modelKey]">
                     <el-radio v-for="radio in node.items" :label="radio.value" :key="radio.label">{{radio.label}}</el-radio>
                   </el-radio-group>

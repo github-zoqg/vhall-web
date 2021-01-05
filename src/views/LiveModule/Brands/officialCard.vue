@@ -44,7 +44,7 @@
               </div>
             </el-form-item>
             <el-form-item label="链接" v-if="title !== '公众号展示'" prop="url">
-              <VhallInput v-model="form.url" placeholder="请输入跳转链接" maxlength="200" show-word-limit></VhallInput>
+              <VhallInput v-model="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item :label="title">
               <!--{{status  - 0开启，1关闭}}-->

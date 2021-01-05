@@ -63,7 +63,7 @@
           </div>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums" class="account--nums">
-          <VhallInput v-model.trim="sonForm.nums" autocomplete="off"></VhallInput>
+          <VhallInput v-model.trim="sonForm.nums" autocomplete="off" ></VhallInput>
           <span>当前可创建子账号<strong>{{ sonCountVo.available_num }}</strong>个</span>
         </el-form-item>
         <el-form-item label="账号昵称" prop="nick_name">

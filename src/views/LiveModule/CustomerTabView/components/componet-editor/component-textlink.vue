@@ -16,7 +16,8 @@
           <VhallInput
             v-model="info.text"
             @change="changeText"
-            maxlength="30"
+            :maxlength="30"
+            autocomplete="off"
             show-word-limit
           ></VhallInput>
         </div>
