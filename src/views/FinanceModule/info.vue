@@ -347,15 +347,19 @@ export default {
         subject: this.subject,
         type: this.accountType || 1
       };
-      if (params === 'search') {
+      if (params == 'search') {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
       }
+      console.log(this.accountSearchDate, '?????????????')
       if (this.accountSearchDate) {
         paramsObj['start_time'] = this.accountSearchDate[0];
         paramsObj['end_time'] = this.accountSearchDate[1];
+      } else {
+        paramsObj['start_time'] = '';
+        paramsObj['end_time'] = '';
       }
-      this.dataParams = paramsObj;
+      this.dataParams = this.$params(paramsObj);
       let obj = Object.assign({}, pageInfo, paramsObj);
 
       this.getOnlinePay(this.$params(obj));
