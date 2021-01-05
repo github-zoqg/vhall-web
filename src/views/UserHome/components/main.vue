@@ -154,7 +154,7 @@ export default {
         if (res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
-            item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${item.webinar_id}`
+            item.share_link = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/watch/${item.webinar_id}`
           });
           this.dataList = list;
           this.tabList[0].total = res.data.total;
