@@ -93,6 +93,7 @@
     <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body>
       <div class="upload-dialog-content">
         <file-upload
+          ref="chatUpload"
           v-model="fileUrl"
           :saveData="{
              path: pathUrl,
@@ -382,19 +383,19 @@ export default {
         this.$fetch('checkUploadKeyword', {
           file: res.data.file_url
         }).then(resV => {
-          if (resV && resV.code === 200) {
-            this.importResult = resV.data;
-            this.fileResult = 'success';
-          } else {
-            this.fileResult = 'error';
-            // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
-            this.isUploadEnd = false;
-            this.importResult = null;
+          this.importResult = resV.data;
+          this.fileResult = 'success';
+          if (this.$refs.chatUpload) {
+             this.$refs.chatUpload.setError('');
           }
         }).catch(e => {
           this.fileResult = 'error';
+          // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
+          this.isUploadEnd = false;
           this.importResult = null;
-          // this.$message.error(e.msg || '导入聊天严禁词校验失败！');
+          if (this.$refs.chatUpload) {
+             this.$refs.chatUpload.setError('导入严禁词信息校验失败');
+          }
         });
       }
     },
