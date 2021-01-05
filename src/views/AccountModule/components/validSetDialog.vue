@@ -195,19 +195,24 @@ export default {
       // （1）弱：密码长度6位，纯数字或者纯字母，如123456、111111、aaaaaa  纯6个
       // （2）一般：密码长度6位及以上的，数字+字母组合；
       // （3）一般：密码长度7位及以上的，纯数字或者纯字母组合，如1111111
-      // （4）强：密码长度7位及以上的，数字+字母+特殊符号+大小写字母
-      if(!this.form.password) {
+      // （4）强：密码长度7位及以上的，数字+特殊符号+（大/小写字母）
+      // /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/; 可输入密码情况
+      let Regex = [/\d/g,/[a-z]/g,/[A-Z]/g,/[^a-zA-Z0-9]/g] //字符正则数字正则其它正则
+      let pwd = this.form.password;
+      if (pwd.length < 6) {
         return '';
-      } else if(this.form.password.length < 6) {
-        return '';
-      } else if(/^[a-z]{6}$/.test(this.form.password) || /^\d{6}$/.test(this.form.password) || /^A-Z{6}$/.test(this.form.password)) {
-        return '弱';
-      } else if(/^[a-z]{7,}$/.test(this.form.password) || /^\d{7,}$/.test(this.form.password) || /^A-Z{7,}$/.test(this.form.password)) {
-        return '一般';
-      } else if(this.form.password.length >= 6 && (/(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,}$/.test(this.form.password))) {
-        return '一般';
+      }
+      // 获取字符类别数量
+      let num = pwd.match(Regex[0]) != null ? 1 : 0, minCount = pwd.match(Regex[1]) != null ? 1 : 0, maxCount = pwd.match(Regex[2]) != null ? 1 : 0, oCount = pwd.match(Regex[3]) != null ? 1 : 0;
+      if (num + minCount + maxCount === 1) {
+        // 纯数字 or 纯字母数据
+        return pwd.length === 6 ? '弱' : '一般';
+      }
+      if (num === 1 && (minCount === 1 || maxCount === 1) && oCount === 1) {
+        // 数字 + （大/小）字母 + 特殊字符
+        return pwd.length >= 7 ? '强' : '弱';
       } else {
-        return '强';
+        return '一般';
       }
     }
   },
@@ -651,9 +656,9 @@ export default {
         }
         if(this.showVo.executeType !== 'email') {
           this.callCaptcha();
-          if ( this.showVo.step === 2) {
-            this.callCaptcha(1);
-          }
+        }
+        if (this.showVo.executeType === 'phone' && (this.showVo.step === 2 || this.showVo.is_null)) {
+          this.callCaptcha(1);
         }
       });
     },
@@ -661,32 +666,36 @@ export default {
      * 初始化网易易盾图片验证码
      */
     callCaptcha(val = '') {
-      const that = this;
-      // eslint-disable-next-line
-      initNECaptcha({
-        captchaId: this.captchakey,
-        element: `#setCaptcha${val}`,
-        mode: 'float',
-        onReady(instance) {
-          console.log('instance', instance);
-        },
-        onVerify(err, data) {
-          if (data) {
-            that[`mobileKey${val}`] = data.validate;
-            that[`showCaptcha${val}`] = true;
-            console.log('data>>>', data);
-            that[`errorMsgShow${val}`] = '';
-          } else {
-            that.form[`captcha${val}`] = '';
-            console.log('errr>>>', err);
-            that.form[`errorMsgShow${val}`] = true;
+      try {
+        const that = this;
+        // eslint-disable-next-line
+        initNECaptcha({
+          captchaId: this.captchakey,
+          element: `#setCaptcha${val}`,
+          mode: 'float',
+          onReady(instance) {
+            console.log('instance', instance);
+          },
+          onVerify(err, data) {
+            if (data) {
+              that[`mobileKey${val}`] = data.validate;
+              that[`showCaptcha${val}`] = true;
+              console.log('data>>>', data);
+              that[`errorMsgShow${val}`] = '';
+            } else {
+              that.form[`captcha${val}`] = '';
+              console.log('errr>>>', err);
+              that.form[`errorMsgShow${val}`] = true;
+            }
+          },
+          onload(instance) {
+            console.log('onload', instance);
+            that[`captcha${val}`] = instance;
           }
-        },
-        onload(instance) {
-          console.log('onload', instance);
-          that[`captcha${val}`] = instance;
-        }
-      });
+        });
+      } catch(e) {
+         console.log(e);
+      }
     },
   }
 };
