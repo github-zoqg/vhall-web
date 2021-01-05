@@ -6,10 +6,10 @@
   </div>
   <!-- 有权限内容 -->
   <div v-else>
-    <pageTitle title='控制台标志'></pageTitle>
+    <pageTitle title='控制台标识'></pageTitle>
     <div class="logo-ctx">
-      <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="80px">
-        <el-form-item label="标志替换" prop="logo" class="heightNo">
+      <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="56px">
+        <el-form-item label="图片" prop="logo" class="heightNo">
           <upload
             class="upload__avatar"
             v-model="logoForm.logo"
@@ -30,8 +30,8 @@
             </div>
           </upload>
         </el-form-item>
-        <el-form-item label="标志链接" prop="logo_jump_url" class="magBottom">
-          <el-input type="text" placeholder="请输入标志链接" v-model="logoForm.logo_jump_url" />
+        <el-form-item label="链接" prop="logo_jump_url" class="magBottom">
+          <el-input type="text" placeholder="请输入链接" v-model="logoForm.logo_jump_url" />
         </el-form-item>
         <el-form-item label="">
           <el-button type="primary" v-preventReClick round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
@@ -67,9 +67,9 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' },
         ],
         logo_jump_url: [
-          { required: false, message: '标志链接不能为空', trigger: 'blur' },
+          { required: false, message: '链接不能为空', trigger: 'blur' },
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的链接' , trigger: 'blur'}
         ]
       },
       domain_url: '',
@@ -118,7 +118,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message({
-          message: `上传封面图片只能是 ${typeList.join('、')} 格式!`,
+          message: `上传图片只能是 ${typeList.join('、')} 格式!`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -128,7 +128,7 @@ export default {
       }
       if (!isLt2M) {
         this.$message({
-          message: `上传封面图片大小不能超过 2MB!`,
+          message: `上传图片大小不能超过 2MB!`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -144,7 +144,7 @@ export default {
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       this.$message({
-        message: `封面上传失败`,
+        message: `图片上传失败`,
         showClose: true,
         // duration: 0,
         type: 'error',
