@@ -48,7 +48,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column>
+        <el-table-column width="138">
           <template slot-scope="{ column, $index }" slot="header">
             <el-select v-model="recordType" @change="typeChange(column, $index)">
               <el-option

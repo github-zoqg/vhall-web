@@ -17,7 +17,7 @@
 
           <div class="info">
             <p class="mainColor font-20">
-              {{ liveDetailInfo.subject }}
+              {{ fontNumber(liveDetailInfo.subject) }}
             </p>
             <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.first_broad || liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
@@ -207,6 +207,17 @@ export default {
   //   },
   // },
   methods: {
+    // 字符截取显示...兼容ie，用js
+    fontNumber (date) { 
+      const length = date.length 
+      if (length > 35) { 
+          var str = '' 
+          str = date.substring(0, 35) + '...' 
+          return str 
+        } else {
+          return date 
+        }
+    },
     // 获取基本信息
     getLiveDetail(id) {
       this.loading = true;
@@ -516,9 +527,9 @@ export default {
   font-size: @20;
   max-width: 500px;
   // height: 56px;
-  overflow: hidden;
-  text-overflow:ellipsis;
-  white-space: nowrap;
+  // overflow: hidden;
+  // text-overflow:ellipsis;
+  // white-space: nowrap;
 }
 .liveTime{
   font-size: 14px;

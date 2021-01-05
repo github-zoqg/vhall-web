@@ -237,7 +237,7 @@ export default {
   }
   .top-item {
     text-align: left;
-
+    width: 100%;
     height: 140px;
     padding: 32px 0;
     position: relative;
