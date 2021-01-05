@@ -35,6 +35,7 @@
         </div>
         <div class="vh-customer__preview-mobile" v-show="activeIndex == 1">
           <mobile-preview
+            ref="menusControl"
             :menus.sync="customMenus"
             @updateMenus="updateMenus"
           ></mobile-preview>
@@ -111,6 +112,13 @@ export default {
     },
 
     saveCustomTab() {
+
+      const checkResult = this.validationMenus()
+
+      if(!checkResult) {
+        return false
+      }
+
       const saveMenus = Array.from(this.customMenus)
       let params = {
         webinar_id: this.$route.params.str,
@@ -131,6 +139,88 @@ export default {
         console.log(e);
         // this.$message.error('保存失败');
       });
+    },
+
+    validationMenus () {
+
+      console.log(this.customMenus)
+      let checkResult = true
+      try {
+        this.customMenus.forEach((item, idx) => {
+          if(item.type == 1) {
+            item.components.forEach((compoent, sort) => {
+              if (compoent.component_id == 3) {
+                if(compoent.webinars.length == 0) {
+                  throw new Error(JSON.stringify({
+                    msg: `菜单 【${item.name}】 直播组件配置错误，请修正后在保存！`,
+                    index:  idx
+                  }))
+                }
+              } else if(compoent.component_id == 4) {
+                if (compoent.subjects.length == 0) {
+                  throw new Error(JSON.stringify({
+                    msg: `菜单 【${item.name}】 专题组件配置错误，请修正后在保存！`,
+                    index:  idx
+                  }))
+                }
+              } else if(compoent.component_id == 5) {
+                if (!compoent.text) {
+                  throw  new Error(JSON.stringify({
+                    msg: `菜单 【${item.name}】 文字链接组件配置错误，链接文字不能为空，请修正后在保存！`,
+                    index:  idx
+                  }))
+                } else {
+                   const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(compoent.src)
+                  if(!result) {
+                    throw new Error(JSON.stringify({
+                      msg: `菜单 【${item.name}】 文字链接组件配置错误，链接地址必须为合法的http或https网址URL，请修正后在保存！`,
+                      index:  idx
+                    }))
+                  }
+                }
+              } else if(compoent.component_id == 6) {
+
+                if (!compoent.imageSrc) {
+                  throw new Error(JSON.stringify({
+                    msg: `菜单 【${item.name}】 图文链接组件配置错误，图片不能为空，请修正后在保存！`,
+                    index:  idx
+                  }))
+                } else {
+                   const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(compoent.src)
+                  if(!result) {
+                    throw new Error(JSON.stringify({
+                      msg: `菜单 【${item.name}】 图文链接组件配置错误，链接地址必须为合法的http或https网址URL，请修正后在保存！`,
+                      index:  idx
+                    }))
+                  }
+                }
+
+              } else if(compoent.component_id == 7) {
+                if (!compoent.title) {
+                  throw new Error(JSON.stringify({
+                      msg: `菜单 【${item.name}】 标题组件配置错误，标题不能为空，请修正后在保存！`,
+                      index:  idx
+                  }))
+                }
+              }
+            })
+          }
+        })
+      } catch(e) {
+        let err
+        try {
+          err = JSON.parse(e.message)
+          this.$message.error(err.msg)
+          this.$refs.menusControl.choseMenu(err.index)
+          // this.activeIndex = err.index
+          checkResult = false
+        } catch(e) {
+          this.$message.error('未知错误')
+          checkResult = false
+        }
+      }
+
+      return checkResult
     }
   }
 }
