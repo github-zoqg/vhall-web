@@ -33,6 +33,7 @@
         </el-form-item>
         <el-form-item prop="password">
           <el-input
+            style="ime-mode:disabled;"
             placeholder="请输入密码"
             maxlength="30"
             :type="isPassWordType ? 'password' : 'text'"
