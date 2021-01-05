@@ -192,8 +192,12 @@ export default {
       this.ids = val.map(item => {
         if (item.child_count > 0) {
           that.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
-            confirmButtonText: '我知道了'
-          });
+            confirmButtonText: '我知道了',
+            customClass: 'zdy-alert-box',
+            center: true,
+            lockScroll: false
+          }).then(()=>{
+          }).catch(()=>{});
         } else {
           return item.id;
         }
@@ -202,7 +206,13 @@ export default {
     // 批量删除
     multiMsgDel() {
       if (!(this.ids && this.ids.length > 0)) {
-        this.$message.error('请至少选择一种角色删除');
+        this.$message({
+          message:  `请至少选择一种角色删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         this.roleDel(this, {
           rows: {
@@ -215,8 +225,12 @@ export default {
     roleDel(that, { rows }) {
       if (rows.child_count > 0) {
         that.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
-          confirmButtonText: '我知道了'
-        });
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-alert-box',
+          center: true,
+          lockScroll: false
+        }).then(()=>{
+        }).catch(()=>{});
       } else {
         that.$confirm('确定删除当前角色？', '提示', {
           confirmButtonText: '确定',
@@ -228,22 +242,28 @@ export default {
           that.$fetch('sonRoleDel', {
             ids: rows.id
           }).then(res => {
-            if(res && res.code === 200) {
-              that.$message.success(`删除成功`);
-              that.ids = [];
-              that.$refs.roleTab.clearSelect();
-              that.initComp();
-            }else {
-              that.$message({
-                type: 'error',
-                message: res.msg || '删除失败'
-              });
-            }
-          }).catch(e => {
-            console.log(e);
             that.$message({
+              message:  `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            that.ids = [];
+            try {
+              that.$refs.roleTab.clearSelect();
+            } catch(e) {
+              console.log(e);
+            }
+            that.initComp();
+          }).catch(res => {
+            console.log(res);
+            that.$message({
+              message: res.msg || '删除失败',
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message:  '删除失败'
+              customClass: 'zdy-info-box'
             });
           });
         }).catch(() => {
@@ -257,14 +277,18 @@ export default {
       that.$fetch('sonRoleGet', {
         id: rows.id
       }).then(res =>{
-        if (res && res.code === 200 && res.data) {
+        if (res.data) {
           that.roleForm = Object.assign(that.roleForm, res.data);
-        } else {
-          that.$message.error(res.msg || '获取角色信息失败');
         }
-      }).catch( e =>{
-        console.log(e);
-        that.$message.error('获取角色信息失败');
+      }).catch( res =>{
+        console.log(res);
+        that.$message({
+          message:  res.msg || '获取角色信息失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 创建子账号
@@ -284,16 +308,24 @@ export default {
       this.$refs.roleForm.validate((valid) => {
         if (valid) {
           this.$fetch(this.roleForm.executeType === 'add' ? 'sonRoleAdd' : 'sonRoleEdit', this.roleForm).then(res =>{
-            if (res && res.code === 200) {
-              this.$message.success('操作成功');
-              this.roleDialogVisible = false;
-              this.initComp();
-            } else {
-              this.$message.error(res.msg || '操作失败');
-            }
-          }).catch( e =>{
-            console.log(e);
-            this.$message.error('操作失败');
+            this.$message({
+              message:  `操作成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.roleDialogVisible = false;
+            this.initComp();
+          }).catch( res =>{
+            console.log(res);
+            this.$message({
+              message: res.msg || '操作失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });

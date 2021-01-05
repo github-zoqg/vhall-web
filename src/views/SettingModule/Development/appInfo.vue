@@ -204,12 +204,24 @@ export default {
         text: () => text
       });
       clipboard.on('success', () => {
-        this.$message.success('复制成功');
+        this.$message({
+          message:  `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         // 释放内存
         clipboard.destroy();
       });
       clipboard.on('error', () => {
-        this.$message.error('复制失败，暂不支持自动复制');
+        this.$message({
+          message:  `复制失败，暂不支持自动复制`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         // 释放内存
         clipboard.destroy();
       });
@@ -238,12 +250,24 @@ export default {
         msgText = '修改';
       }
       this.$fetch(api, param).then(res => {
-        this.$message.success(`${msgText}成功`);
+        this.$message({
+          message:  `${msgText}成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         setTimeout(()=>{
           this.$router.push({path: "/dev/list"});
         }, 500);
-      }).catch(error=>{
-        this.$message.error(`应用${msgText}失败，${error.$message}`);
+      }).catch(res =>{
+        this.$message({
+          message:  res.msg || `应用${msgText}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.fetching = false;
       });
@@ -263,9 +287,14 @@ export default {
         this.appForm.package_name = resVo.package_name;
         this.appForm.bundle_id = resVo.bundle_id;
         this.appForm.qr_code_string = resVo.qr_code_string;*/
-      }).catch(error=>{
-        console.log(error);
-        this.$message.error(`获取应用信息失败，${error.$message}`);
+      }).catch(res =>{
+        this.$message({
+          message:  res.msg || `应用信息获取失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.fetching = false;
       });

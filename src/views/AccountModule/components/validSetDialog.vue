@@ -2,7 +2,7 @@
   <VhallDialog
     :title="title"
     :visible.sync="visible"
-    :close-on-click-modal="false"
+    :lock-scroll=false
     width="400px">
     <div class="content">
       <el-form :model="form" ref="form" :rules="formRules" label-width="80px">

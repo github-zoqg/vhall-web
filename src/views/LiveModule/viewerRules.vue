@@ -371,26 +371,24 @@ export default {
       this.$fetch('viewerSetGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        if(res && res.code === 200) {
-          this.viewerDao = res.data;
-          // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
-          let { webinar_id, verify, password, white_id, fee, is_preview, preview_time} = res.data;
-          this.$nextTick(() => {
-            this.form = {
-              webinar_id: webinar_id,
-              verify: verify,
-              password: password, // 观看密码
-              white_id: white_id, // 白名单-观众组字符拼接串
-              fee: fee, // 付费金额,
-              is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
-              preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
-            };
-            console.log(this.form, '当前');
-            // 表单选项初始化
-            this.initViewerSet();
-          })
-        }
-      }).catch(err=>{
+         this.viewerDao = res.data;
+        // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
+        let { webinar_id, verify, password, white_id, fee, is_preview, preview_time} = res.data;
+        this.$nextTick(() => {
+          this.form = {
+            webinar_id: webinar_id,
+            verify: verify,
+            password: password, // 观看密码
+            white_id: white_id, // 白名单-观众组字符拼接串
+            fee: fee, // 付费金额,
+            is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
+            preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
+          };
+          console.log(this.form, '当前');
+          // 表单选项初始化
+          this.initViewerSet();
+        })
+      }).catch(err => {
         console.log(err);
         this.viewerDao = {};
       });
@@ -451,7 +449,13 @@ export default {
         /*flag = this.whiteIds.length > 0;*/
         flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
         if (!flag) {
-          this.$message.error('请选择观众组');
+          this.$message({
+            message:  `请选择观众组`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
         // params = Object.assign(this.form, {white_id: this.whiteIds.join(',')});
@@ -466,13 +470,25 @@ export default {
       // 若是邀请码 和 付费/邀请码里面
       if(formName === 'fCodeForm' || formName === 'fCodePayForm') {
         if (!(this.viewerDao.fcodes > 0)) {
-          this.$message.error('您暂无邀请码，请生成后保存');
+          this.$message({
+            message:  `您暂无邀请码，请生成后保存`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
       }
       // 若是当前白名单，开启了报名表单，直接提示不可和白名单直接使用。
       if (formName === 'whiteForm' && Number(this.liveDetailInfo.reg_form) === 1) {
-        this.$message.error('您已选择报名表单不可和白名单叠加使用');
+        this.$message({
+          message:  `您已选择报名表单不可和白名单叠加使用`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (flag) {
@@ -506,15 +522,22 @@ export default {
     sendViewerSetSave(params) {
       this.$fetch('viewerSetSave', this.$params(params)).then(res => {
         console.log(res);
-        if (res && res.code === 200) {
-          this.$message.success('设置成功');
-          this.initPage();
-        } else {
-          this.$message.error(res.msg || '设置失败');
-        }
-      }).catch(err=>{
-        console.log(err);
-        this.$message.error('设置失败');
+        this.$message({
+          message:  `设置成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.initPage();
+      }).catch(res =>{
+         this.$message({
+          message:  res.msg || '设置失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 获取观众分组列表
@@ -524,7 +547,11 @@ export default {
         limit: 1000, // TODO 默认分组查询1000条
       };
       this.$fetch('audienceGet', params).then(res => {
-        res && res.code === 200 && res.data && res.data.list ? this.groupList = res.data.list : this.groupList = [];
+        if (res.data && res.data.list) {
+          this.groupList = res.data.list;
+        } else {
+          this.groupList = [];
+        }
       }).catch(e => {
         console.log(e);
         this.groupList = [];
@@ -558,17 +585,25 @@ export default {
           webinar_id: this.$route.params.str,
           nums: this[formName].nums
         }).then(res => {
-          if(res && res.code === 200) {
-            this.$message.success('生成成功');
-            // this.viewerSetGet();
-            // 更新已生成邀请码数量
-            this.viewerDao.fcodes = res.data.code_count;
-          } else {
-            this.$message.error(res.msg || '生成失败');
-          }
-        }).catch(e => {
+          this.$message({
+            message:  `生成成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // this.viewerSetGet();
+          // 更新已生成邀请码数量
+          this.viewerDao.fcodes = res.data.code_count;
+        }).catch(res => {
           console.log(e);
-          this.$message.error('生成失败');
+          this.$message({
+            message:  res.msg || '生成失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }
     },
@@ -577,15 +612,23 @@ export default {
       this.$fetch('getFCodeExcel', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('邀请码下载申请成功，请去下载中心查看');
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(res.msg || '邀请码下载申请失败');
-        }
-      }).catch(e => {
-        console.log(e);
-        this.$message.error('邀请码下载申请失败');
+        this.$message({
+          message:  `邀请码下载申请成功，请去下载中心查看`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message:  res.msg || '邀请码下载申请失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     initPage() {
@@ -595,16 +638,17 @@ export default {
     // 获取基本信息
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
-        if (res && res.code === 200) {
-          this.liveDetailInfo = res.data;
-        } else {
-          this.liveDetailInfo = {};
-          this.$message.error(res.msg);
-        }
-      }).catch(e=>{
-        console.log(e);
-        this.$message.error('获取活动信息失败');
+        this.liveDetailInfo = res.data;
+      }).catch(res=>{
+        console.log(res);
         this.liveDetailInfo = {};
+        this.$message({
+          message: res.msg,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
       });
     },
@@ -811,7 +855,7 @@ export default {
   .tab__btn--solid {
     border: 1px solid #F7F7F7;
     cursor: pointer;
-    &.active{
+    &.active,&:hover{
       background: #FFEBEB;
       border-color: #FFEBEB;
       span {

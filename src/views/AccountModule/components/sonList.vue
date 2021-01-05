@@ -261,7 +261,13 @@ export default {
     // 批量删除
     multiMsgDel() {
       if (!(this.ids && this.ids.length > 0)) {
-        this.$message.error('请至少选择一条子账号信息删除');
+        this.$message({
+          message:  `请至少选择一条子账号信息删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         this.sonDel(this, {
           rows: {
@@ -278,22 +284,38 @@ export default {
         limit: 999999, // TODO 跟大龙确定，传值大于0，后台下载依然是所有符合条件的全部数据
       };
       this.$fetch('sonChildExport', params).then(res => {
-        if (res && res.code === 200) {
-          this.$message.success('下载申请成功，请去下载中心下载该项！');
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(res.msg);
-        }
-      }).catch(e => {
-        console.log(e);
+         this.$message({
+          message: '下载申请成功，请去下载中心下载该项！',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || '下载申请失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 获取子账号个数
     sonCountGetHandle() {
       this.$fetch('sonCountGet', {}).then(res => {
-        this.sonCountVo = res && res.code === 200 ? res.data || {} : (this.$message.error(res.msg || '获取子账号个数失败'));
-      }).catch(e => {
-        console.log(e);
+        this.sonCountVo = res.data || {};
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || '获取子账号个数失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         this.sonCountVo = {};
       });
     },
@@ -309,28 +331,30 @@ export default {
         that.$fetch('sonDel', {
           child_ids: rows.child_id
         }).then(res => {
-          if (res && res.code === 200) {
-            that.$message.success(`删除成功`);
-            that.ids = [];
-            try{
-              that.$refs.sonTab.clearSelection();
-            } catch (e) {
-              console.log(e);
-            }
-            that.initQuerySonList();
-            // 通知父级头部更新
-            that.$emit('load');
-          } else {
-            that.$message({
-              type: 'error',
-              message: res.msg || '删除失败'
-            });
-          }
-        }).catch(e => {
-          console.log(e);
           that.$message({
-            type: 'error',
-            message: '删除失败'
+            message: '删除成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          that.ids = [];
+          try{
+            that.$refs.sonTab.clearSelection();
+          } catch (e) {
+            console.log(e);
+          }
+          that.initQuerySonList();
+          // 通知父级头部更新
+          that.$emit('load');
+        }).catch(res => {
+          console.log(res);
+          that.$message({
+            message: res.msg || '删除失败',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
           });
         });
       }).catch(() => {
@@ -385,7 +409,13 @@ export default {
           console.log('新增 or 修改子账号：' + JSON.stringify(this.sonForm));
           // 判断子账号个数, 批量验证输入个数。
           if(this.sonForm.is_batch && Number(this.sonForm.nums) >  Number(this.sonCountVo.available_num)) {
-            this.$message.error('超过当前可创建的子账号数量');
+            this.$message({
+              message: '超过当前可创建的子账号数量',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             return;
           }
           let params = Object.assign(
@@ -395,24 +425,26 @@ export default {
             }, this.sonForm);
           this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit',
             this.sonDialog.type === 'add' ? this.$params(params) : params).then(res => {
-            if (res && res.code === 200) {
-              this.$message.success(`${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`);
-              this.sonDialog.visible = false;
-              // 新增成功后，重查列表
-              this.initQuerySonList();
-              // 通知父级头部更新
-              this.$emit('load');
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
-              });
-            }
-          }).catch(e => {
-            console.log(e);
             this.$message({
+              message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.sonDialog.visible = false;
+            // 新增成功后，重查列表
+            this.initQuerySonList();
+            // 通知父级头部更新
+            this.$emit('load');
+          }).catch(res => {
+            console.log(res);
+            this.$message({
+              message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`,
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`
+              customClass: 'zdy-info-box'
             });
           });
         }

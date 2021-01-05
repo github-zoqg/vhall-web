@@ -9,14 +9,14 @@
     <div class="virtual-ctx">
       <el-form :model="virtualForm" ref="virtualForm" :rules="virtualFormRules" label-width="100px" width="360px">
         <el-form-item label="人数增加" prop="online">
-          <el-input  autocomplete="off" v-model.trim="virtualForm.online" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two">
+          <VhallInput  autocomplete="off" v-model.trim="virtualForm.online" placeholder="请输入1-999999之间正整数" class="btn-relative btn-two"  @input="formatInputs($event, 'virtualForm', 'online')">
             <el-button type="text" class="no-border" size="mini" slot="append">人</el-button>
-          </el-input>
+          </VhallInput>
         </el-form-item>
         <el-form-item label="热度增加" prop="pv">
-          <el-input  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two">
+          <VhallInput  autocomplete="off" v-model.trim="virtualForm.pv" placeholder="热度不小于观看人数，且不超过999999" class="btn-relative btn-two" @input="formatInputs($event, 'virtualForm', 'pv')">
             <el-button type="text" class="no-border" size="mini" slot="append">次</el-button>
-          </el-input>
+          </VhallInput>
         </el-form-item>
         <el-form-item>
           <div class="notice">
@@ -92,13 +92,22 @@ export default {
     };
   },
   methods: {
+    formatInputs(value, formName, key) {
+      if (!/^([1-9][0-9]{0,5})$/.test(value)) {
+        if(!value.match(/^([1-9][0-9]{0,5})$/g)) {
+          this[formName][key] = '';
+        } else {
+          this[formName][key] = parseInt(value);
+        }
+      }
+    },
     // 获取虚拟人数信息状态
     getVirtualInfo() {
       this.$fetch('virtualGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
         console.log(res);
-        if (res && res.code === 200) {
+        if (res.data) {
           res.data.pv = res.data.pv === 0 ? null : res.data.pv;
           res.data.online = res.data.online === 0 ? null : res.data.online;
           this.virtualForm = res.data;
@@ -126,15 +135,23 @@ export default {
             online: this.virtualForm.online
           };
           this.$fetch('virtualSetSave', params).then(res => {
-            if (res && res.code === 200) {
-              this.$message.success('设置成功');
-              this.getVirtualInfo();
-            } else {
-              this.$message.error(res.msg || '设置失败');
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$message.error('设置失败');
+            this.$message({
+              message:  `设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.getVirtualInfo();
+          }).catch(res=>{
+            console.log(res);
+             this.$message({
+              message:  res.msg || `设置失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });

@@ -70,17 +70,48 @@ export default {
     };
   },
   created() {
+    // 回放列表剪辑
     if (this.$route.query.recordId && this.$route.query.isRecordVideo != 1) {
       this.getPlayBackInfo();
     } else if(this.$route.query.switch_id) {
+      // 回放录制剪辑
       this.dataReady = true;
       this.getInitMsgInfo();
       this.getTime();
     } else {
+      // 创建回放剪辑
       this.dataReady = true;
       this.getInitMsgInfo();
     }
+    // 监听事件点的变化
+    this.$EventBus.$on('eventPointListChange', eventPointList => {
+      this.isChange = true
+    });
+    // 监听剪辑事件
+    this.$EventBus.$on('cutTimeListChange', eventPointList => {
+      this.isChange = true
+    });
+    // window.onbeforeunload = function(){
+    //   return '关闭提示';
+    // }
   },
+  // beforeRouteLeave(to, from, next) {
+  //   // 离开页面前判断信息是否修改
+  //   if (!this.isChange) {
+  //     next()
+  //     return false;
+  //   } else {
+  //     this.$alert(`是否放弃当前编辑？`, '提示', {
+  //       confirmButtonText: '确定',
+  //       cancelButtonText: '取消',
+  //       customClass: 'zdy-alert-box',
+  //       type: 'warning'
+  //     }).then(() => {
+  //       next()
+  //     }).catch(() => {
+  //     });
+  //   }
+  // },
   beforeDestroy() {
     if (this.$PLAYER) {
       this.$PLAYER.destroy();
@@ -171,7 +202,7 @@ export default {
       const opts = {
         record_id: this.recordId,
         webinar_id: param.il_id,
-        scene_type: param.cut_type,
+        scene_type: 0,
         name: this.titleEdit,
         cut_sections: JSON.stringify(cut_sections),
         point_sections: JSON.stringify(point_sections)
@@ -182,11 +213,16 @@ export default {
       }else {
         opts.record_id = this.recordId
       }
+      // 如果 isNew 并且是录制裁剪，来源类型应该是 录制
+      if (this.$route.query.switch_id && this.isNew) {
+        opts.source = 1
+      }
       this.$fetch('tailorSave', opts).then(res => {
         console.log(res);
         if (res.code == 200) {
           this.$message.success('保存成功');
           this.recordId = res.data.record_id;
+          // 保存需要重置 isNew 的状态，导出不需要
           this.isNew = false;
           this.recordName = this.titleEdit;
           this.getPlayBackInfo(res.data.record_id);
@@ -262,18 +298,29 @@ export default {
     exportVideoHandler (param) {
       const cut_sections = param.cut_sections && JSON.parse(param.cut_sections)
       const point_sections = param.point_sections && JSON.parse(param.point_sections)
-      this.$fetch('tailorSave', {
+
+      const opts = {
         record_id: this.recordId,
         webinar_id: param.il_id,
-        scene_type: param.cut_type,
+        scene_type: 0,
         name: param.name,
         cut_sections: JSON.stringify(cut_sections),
         point_sections: JSON.stringify(point_sections)
-      }).then(res => {
+      }
+      if (this.isNew) {
+        opts.scene_type = 1
+      }else {
+        opts.record_id = this.recordId
+      }
+      // 如果 isNew 并且是录制裁剪，来源类型应该是 录制
+      if (this.$route.query.switch_id && this.isNew) {
+        opts.source = 1
+      }
+
+      this.$fetch('tailorSave', opts).then(res => {
         console.log(res)
         if (res.code == 200) {
           this.$message.success('导出成功')
-          this.isNew = false;
         } else {
           this.$message.success('导出失败')
         }
@@ -339,7 +386,7 @@ export default {
       background: #222222;
       border-bottom: 1px #000 solid;
       .time-label {
-        color: #666666;
+        color: #999999;
         font-size: 14px;
         display: inline-block;
         padding-right: 15px;
@@ -353,20 +400,21 @@ export default {
         height: 36px;
         border-radius: 25px;
         border-color: #666666;
-        border-width: 2px;
+        border-width: 1px;
         background: #17171e;
         width: 72px;
         font-size: 14px;
+        color: #999999;
       }
       /deep/ .el-range-editor {
         border-radius: 25px;
         height: 36px;
         background: #17171e;
         border-color: #666666;
-        border-width: 2px;
+        border-width: 1px;
         width: 382px;
         .el-range-separator {
-          color: #666666;
+          color: #999999;
           line-height: 26px;
           font-size: 14px;
         }
