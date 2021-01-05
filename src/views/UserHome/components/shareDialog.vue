@@ -6,30 +6,23 @@
       :close-on-click-modal="false"
       customClass="share-dialog"
       :lock-scroll='false'
-      width="510px">
+      width="592px">
       <div class="content">
-        <p>
-          <span class="content-key">链接地址</span>
+        <div class="share-div">
           <el-input placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
-            <el-button slot="append" @click="copy">复制</el-button>
+            <el-button type="primary" size="medium" slot="append" @click="copy" class="zdy-copy-btn">复制</el-button>
           </el-input>
-        </p>
-        <div class="content-left">
-          <div class="icons">
-            <i @click="shareQQ"></i>
-            <i @click="shareSina"></i>
-            <i @click="shareWX"></i>
-          </div>
-          <div class="code-div">
-            <img :src="wxUrl + link" alt=""><br>
-            <p class="img-code">手机扫码观看</p>
-          </div>
+          <ul class="icons">
+            <li><i @click="shareQQ"></i><p>QQ</p></li>
+            <li><i @click="shareSina"></i><p>微博</p></li>
+            <li><i @click="shareWX"></i><p>微信</p></li>
+          </ul>
+        </div>
+        <div class="code-div">
+          <img :src="wxUrl + link" alt=""><br>
+          <p class="img-code">手机扫码观看</p>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
-        <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
-      </span>
     </VhallDialog>
     <VhallDialog
       title="分享"
@@ -91,7 +84,7 @@ export default {
 <style lang="less" scoped>
   @iconpath: '../../../common/images/icon';
   /deep/ .share-dialog {
-    height: 372px;
+    height: 322px;
     border-radius: 4px;
   }
   /deep/ .smallSwtich{
@@ -113,7 +106,6 @@ export default {
     }
   }
   .content{
-    position: relative;
     .content-wrap{
       position: absolute;
       z-index: 2;
@@ -121,13 +113,6 @@ export default {
       bottom: 0;
       height: calc(100% - 50px);
       background: rgba(255, 255, 255, 0.5)
-    }
-    .el-input-group{
-      width: 378px;
-      float: right;
-      .el-button[data-v-6ce78d46] {
-        padding: 9px 25px;
-      }
     }
     .independentForm {
       margin-top: 0px;
@@ -157,40 +142,76 @@ export default {
       border-right: 0;
     }
   }
+  .share-div {
+     display: inline-block;
+     vertical-align: top;
+     width: 322px;
+     margin-right: 32px;
+     .input-with-select {
+       background: #F7F7F7;
+       position: relative;
+     }
+     .zdy-copy-btn {
+
+     }
+  }
   .icons{
-    text-align: center;
-    width: 200px;
+    text-align: left;
+    width: 322px;
     display: inline-block;
-    i{
+    margin-top: 32px;
+    li {
+      list-style-type: none;
       display: inline-block;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
+      vertical-align: middle;
+      text-align: center;
+      i{
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
       &:nth-child(1){
-        background: url("@{iconpath}/qq.png") center center no-repeat;
-        background-size: 100% 100%;
+        i {
+          background: url("@{iconpath}/qq.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
       }
       &:nth-child(2){
-        background: url("@{iconpath}/weibo.png") center center no-repeat;
-        background-size: 100% 100%;
-        margin: 0 16px;
+        i {
+          background: url("@{iconpath}/weibo.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
+        margin: 0 48px;
       }
       &:nth-child(3){
-        background: url("@{iconpath}/wechat.png") center center no-repeat;
-        background-size: 100% 100%;
+        i {
+          background: url("@{iconpath}/wechat.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
       }
-
+    }
+    p {
+      font-size: 14px;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 20px;
+      margin-top: 6px;
     }
   }
   .code-div {
-    width: calc(100% - 200px);
     display: inline-block;
-    vertical-align: middle;
-    padding-top: 24px;
-    text-align: right;
+    vertical-align: top;
+    text-align: center;
+    width: 174px;
+    border: 1px solid #CCCCCC;
+    padding: 21px 21px;
     img {
-      width: 100px;
-      height: 100px;
+      width: 132px;
+      height: 125px;
     }
     .img-code {
       margin-top: 10px;
