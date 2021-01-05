@@ -11,7 +11,7 @@
       <el-button type="primary" size="medium" round @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
       <el-button size="medium" round @click="toCallbackPage" class="bg--trans">回调设置</el-button>
     </p>
-    <div class="dev-show-list">
+    <div class="dev-show-list" v-if="totalNum > 0">
       <table-list
         ref="tableList"
         v-if="totalNum > 0"
@@ -28,8 +28,8 @@
         @getTableList="getTableList"
       >
       </table-list>
-      <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
     </div>
+    <null-page text="您还未创建应用，请先创建" nullType="no-create" v-if="totalNum === 0"></null-page>
   </div>
 </template>
 
@@ -47,7 +47,7 @@ export default {
     return{
       auth_show: false,
       sCheckout: false,
-      totalNum: 1000,
+      totalNum: 0,
       isHandle: true,
       tableList: [],
       msg: null,
