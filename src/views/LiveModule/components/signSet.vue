@@ -2,8 +2,8 @@
   <div class="sign--set">
     <div class="sign--set--main">
       <div class="sign--set--left">
-        <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="94px">
-          <el-form-item label="主办方信息" prop="organizers_status">
+        <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="66px">
+          <el-form-item label="主办方" prop="organizers_status">
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.organizers_status"
@@ -16,7 +16,7 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="版权信息" prop="reserved_status">
+          <el-form-item label="版权" prop="reserved_status">
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.reserved_status"
@@ -29,7 +29,7 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="观看端标志" prop="view_status">
+          <el-form-item label="标识" prop="view_status">
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.view_status"
@@ -37,12 +37,12 @@
                 :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.view_status ? '已开启，观看页显示品牌标志' : '开启后，观看页显示品牌标志'"
+                :active-text="signSetForm.view_status ? '已开启，观看页显示品牌标识' : '开启后，观看页显示品牌标识'"
               >
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="标志替换" prop="logo_url">
+          <el-form-item label="图片" prop="logo_url">
             <upload
               class="upload__sign"
               v-model="signSetForm.logo_url"
@@ -63,7 +63,7 @@
               </div>
             </upload>
           </el-form-item>
-          <el-form-item label="标志链接" prop="skip_url" class="item--skip__url">
+          <el-form-item label="链接" prop="skip_url" class="item--skip__url">
             <el-input v-model.trim="signSetForm.skip_url" />
           </el-form-item>
           <el-form-item label="">
@@ -260,14 +260,14 @@ export default {
   .align(flex-start);
 }
 .sign--set--left {
-  width: 50%;
+  width: 480px;
   /deep/.el-form-item__label {
     line-height: 40px;
   }
 }
 .brand--preview {
-  width: calc(50% - 48px);
-  padding-left: 48px;
+  width: calc(100% - 480px);
+  padding-left: 60px;
 }
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;

@@ -31,10 +31,10 @@
         </div>
       </el-form-item>
       <el-form-item label="标题" prop="subject">
-        <VhallInput v-model.trim="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></VhallInput>
+        <VhallInput v-model.trim="advertisement.subject" :maxlength="15" show-word-limit placeholder="请输入广告标题" autocomplete="off"></VhallInput>
       </el-form-item>
       <el-form-item label="链接" prop="url">
-        <el-input v-model.trim="advertisement.url" placeholder="请输入广告链接"></el-input>
+        <VhallInput v-model.trim="advertisement.url" placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -69,8 +69,8 @@
       </div>
       <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
       <span slot="footer" class="dialog-footer" v-show="total || isSearch">
-        <el-button type="primary" @click="advSaveToWebinar(null)" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
-        <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
+        <el-button type="primary" size="medium" @click="advSaveToWebinar()" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
+        <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
     <VhallDialog
@@ -109,6 +109,17 @@ export default {
         }
       }
     };
+    const nameValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入广告标题'));
+      } else {
+        if (value.length > 15) {
+          callback && callback('广告标题在15个字符以内');
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       dialogVisible: false,
       dialogAdverVisible: false,
@@ -123,7 +134,7 @@ export default {
       text: '您还没有广告，快来创建吧！',
       rules: {
         subject: [
-          { required: true, message: '请输入广告标题', trigger: 'blur' },
+          { required: true, validator: nameValidate, trigger: 'blur' },
         ],
         img_url: [
           { required: true, message: '请选择推广图片', trigger: 'change' }
@@ -151,6 +162,9 @@ export default {
   props: {
     advInfo:{
       type: Object
+    },
+    maxTotal:{
+      type: Number
     }
   },
   components: {
@@ -170,7 +184,13 @@ export default {
     },
     dialogAdverVisible() {
       if (this.dialogAdverVisible) {
+        this.advertPageInfo = {
+          pos: 0,
+          limit: 6,
+          page: 1
+        };
         this.selectChecked = [];
+        this.activityData();
       } else {
         this.adList = [];
         this.selectChecked = [];
@@ -280,6 +300,9 @@ export default {
           this.dialogVisible = true;
           this.$message.error('链接格式不正确');
         }
+      }).catch(() => {
+        this.dialogVisible = true;
+        this.$message.error(res.msg || `${this.title === '编辑' ? '修改' : '创建'}失败`);
       });
     },
     moreLoadData() {
@@ -333,17 +356,13 @@ export default {
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
-      if (!id) {
-        if (this.selectChecked.length < 1) {
-          this.dialogAdverVisible = false;
-          return;
-        } else {
-          id = this.selectChecked.join(',');
-        }
+      if (this.maxTotal + this.selectChecked.length >= 50) {
+        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        return;
       }
       let params = {
         webinar_id: this.$route.params.str,
-        adv_ids: id
+        adv_ids: this.selectChecked.join(',')
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
@@ -459,7 +478,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 312px;
+       height: 300px;
       //  overflow: auto;
        .ad-item{
           width: 165px;

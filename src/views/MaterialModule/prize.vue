@@ -116,7 +116,7 @@ export default {
       let formParams = {
         keyword: this.keyword
       }; //获取搜索参数
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
         this.$refs.tableList.clearSelect();
@@ -184,22 +184,18 @@ export default {
         }
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
-            this.getTableList();
+            this.getTableList('delete');
             this.$message.success('删除成功');
-          } else {
-            this.$message.success('删除失败');
           }
+        }).catch(res => {
+          this.$message.success(res.msg || '删除失败');
         });
       }).catch(() => {
       });
     },
     allDelete(id) {
-       if (this.prizeChecked.length < 1) {
-          this.$message.warning('请选择要删除的选项');
-        } else {
-          id = this.prizeChecked.join(',')
-          this.deleteConfirm(id);
-        }
+      id = this.prizeChecked.join(',')
+      this.deleteConfirm(id);
     },
     // 选中
     changeTableCheckbox(val) {

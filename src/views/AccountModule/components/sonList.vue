@@ -63,12 +63,11 @@
           </div>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums" class="account--nums">
-          <VhallInput v-model.trim="sonForm.nums" autocomplete="off"></VhallInput>
+          <VhallInput v-model.trim="sonForm.nums" autocomplete="off" ></VhallInput>
           <span>当前可创建子账号<strong>{{ sonCountVo.available_num }}</strong>个</span>
         </el-form-item>
         <el-form-item label="账号昵称" prop="nick_name">
-          <VhallInput v-model.trim="sonForm.nick_name" auto-complete="off" placeholder="请输入账号昵称，不输入默认使用账号ID" :maxlength="30"
-                    :minlength="1" show-word-limit></VhallInput>
+          <VhallInput type="text" placeholder="请输入账号昵称，不输入默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="预设密码" prop="password">
           <VhallInput type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"

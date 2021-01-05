@@ -138,7 +138,7 @@
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
           <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
             <el-form-item label="观看密码" prop="password">
-              <VhallInput v-model="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
               <div class="switch__box">
@@ -458,8 +458,13 @@ export default {
           });
           return;
         }
-        // params = Object.assign(this.form, {white_id: this.whiteIds.join(',')});
-        params = Object.assign(this.form, {white_id: this.whiteId});
+        params = {
+          webinar_id: this.form.webinar_id,
+          verify: this.form.verify,
+          white_id: this.whiteId,
+          is_preview: this.form.is_preview,
+          preview_time: this.form.preview_time
+        }
       } else if (formName === '') {
         flag = true; // 免费不验证
         params = {

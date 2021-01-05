@@ -59,10 +59,10 @@
       append-to-body>
       <el-form :model="roleForm" ref="roleForm" :rules="roleFormRules" label-width="80px">
         <el-form-item label="角色名称" prop="role_name">
-          <VhallInput type="text" placeholder="请输入角色名称" v-model="roleForm.role_name" maxlength="15" show-word-limit></VhallInput>
+          <VhallInput type="text" placeholder="请输入角色名称" autocomplete="off"  v-model="roleForm.role_name" :maxlength="15" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="备注信息" prop="remark"  class="remark--item">
-          <VhallInput type="text" placeholder="请输入备注信息" v-model="roleForm.remark" maxlength="30" show-word-limit></VhallInput>
+          <VhallInput type="text" placeholder="请输入备注信息" autocomplete="off" v-model="roleForm.remark" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="直播管理" prop="permission_webinar" class="switch--item">
           <div class="switch__box">

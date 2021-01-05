@@ -34,13 +34,13 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <VhallInput :value="privilegeVo && host_join_link ? host_join_link : ''" readonly></VhallInput>
+              <VhallInput :value="privilegeVo && host_join_link ? host_join_link : ''" readonly autocomplete="off"></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
               <!-- <VhallInput v-model.trim="privilegeVo.host_password" readonly class="input-no-right-border">
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </VhallInput> -->
-              <VhallInput v-model.trim="privilegeVo.host_password" readonly class="btn-relative btn-two">
+              <VhallInput v-model.trim="privilegeVo.host_password" readonly class="btn-relative btn-two" autocomplete="off">
                   <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
@@ -77,10 +77,10 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <VhallInput :value="privilegeVo && join_link ? join_link : ''" readonly></VhallInput>
+              <VhallInput :value="privilegeVo && join_link ? join_link : ''" readonly autocomplete="off" ></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <VhallInput v-model.trim="privilegeVo.guest_password" readonly class="input-no-right-border">
+              <VhallInput v-model.trim="privilegeVo.guest_password" readonly class="input-no-right-border" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
@@ -123,10 +123,10 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <VhallInput  :value="privilegeVo && assistant_join_link ? assistant_join_link : ''"  readonly></VhallInput>
+              <VhallInput  :value="privilegeVo && assistant_join_link ? assistant_join_link : ''"  readonly autocomplete="off" ></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <VhallInput v-model.trim="privilegeVo.assistant_password" readonly  class="input-no-right-border">
+              <VhallInput v-model.trim="privilegeVo.assistant_password" readonly  class="input-no-right-border" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
@@ -267,9 +267,15 @@ export default {
     }
   },
   methods: {
-    updateSwitch() {
+    async updateSwitch() {
       let roleSwitch = this.roleSwitch; // 目标
       this.roleSwitch = Number(!roleSwitch);
+      let result = await this.$fetch('getWebinarInfo', {
+        webinar_id: this.$route.params.str,
+      })
+      if (result.data) {
+        this.webinarVo = result.data;
+      }
       if(this.webinarVo.webinar_state === 1) {
         // 如果為~直播中
         this.$message({

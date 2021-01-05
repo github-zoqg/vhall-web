@@ -4,7 +4,7 @@
       <div class="ranking-title">
         <div class="rank-menu">
             <span :class="{'active': activeIndex == 1}" v-if="info.inSwitch == 1" @click="activeIndex = 1">邀请榜</span>
-            <span :class="{'active': activeIndex == 2}" v-if="info.rewardSwitch == 1" @click="activeIndex = 2">打赏榜</span>
+            <span :class="{'active': activeIndex == 2}" v-if="info.rewardSwitch == 1" @click="activeIndex = 2">排行榜</span>
         </div>
         <span class="bang-rule">排行榜规则</span>
       </div>
@@ -101,6 +101,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .rank-editor-box{
+    padding-top: 16px;
+  }
   .rank-previewbox{
     background: url(./rank-bg.png) repeat;
     padding-bottom: 10px;

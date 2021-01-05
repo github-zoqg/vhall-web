@@ -79,6 +79,7 @@
               :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
               v-model.trim="addForm.name"
               :maxlength="addForm.executeType === 'add' ? 1000 : 20"
+              autocomplete="off"
               show-word-limit
             ></VhallInput>
           </el-form-item>
@@ -93,6 +94,7 @@
     <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false>
       <div class="upload-dialog-content">
         <file-upload
+          ref="chatUpload"
           v-model="fileUrl"
           :saveData="{
              path: pathUrl,
@@ -414,19 +416,19 @@ export default {
         this.$fetch('checkUploadKeyword', {
           file: res.data.file_url
         }).then(resV => {
-          if (resV && resV.code === 200) {
-            this.importResult = resV.data;
-            this.fileResult = 'success';
-          } else {
-            this.fileResult = 'error';
-            // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
-            this.isUploadEnd = false;
-            this.importResult = null;
+          this.importResult = resV.data;
+          this.fileResult = 'success';
+          if (this.$refs.chatUpload) {
+             this.$refs.chatUpload.setError('');
           }
         }).catch(e => {
           this.fileResult = 'error';
+          // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
+          this.isUploadEnd = false;
           this.importResult = null;
-          // this.$message.error(e.msg || '导入聊天严禁词校验失败！');
+          if (this.$refs.chatUpload) {
+             this.$refs.chatUpload.setError(res.msg || '导入严禁词信息校验失败');
+          }
         });
       }
     },
@@ -455,6 +457,19 @@ export default {
         this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
+        /* resV.data.success > 0 ? this.$message({
+          message: `成功添加了${resV.data.success}个关键词`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        }) : this.$message({
+          message: '添加失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        }); */
         // 重新刷新列表数据
         this.getKeywordList();
       }).catch(res => {

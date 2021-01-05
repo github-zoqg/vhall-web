@@ -133,6 +133,9 @@ export default {
       top: 100px;
       width: 100%;
       text-align: center;
+      font-size: 12px;
+      line-height: 24px;
+      color: #999;
     }
     /deep/ .preview{
       border: 0;

@@ -37,7 +37,7 @@
       custom-class="save-title"
       center
       width="480px">
-      <VhallInput placeholder="请输入标题" maxlength="100" resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="text"></VhallInput>
+      <VhallInput placeholder="请输入标题" :maxlength="100" autocomplete="off"  resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="text"></VhallInput>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmTitle" :disabled="editLoading" round size="medium">确 定</el-button>
         <el-button @click="titleDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>

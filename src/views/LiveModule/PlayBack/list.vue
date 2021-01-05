@@ -9,6 +9,7 @@
       <VhallInput
         @keyup.enter.native="getList"
         placeholder="请输入内容标题"
+        autocomplete="off"
         v-model="keyWords">
         <i
           class="el-icon-search el-input__icon"
@@ -114,7 +115,8 @@
       width="480px">
       <VhallInput
         placeholder="请输入标题"
-        maxlength="100"
+        :maxlength="100"
+        autocomplete="off"
         :autosize="{ minRows: 3 }"
         resize=none
         show-word-limit

@@ -18,30 +18,35 @@
      <div class="user-wapper"  v-if="isActive===1">
       <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
         <el-form-item prop="account">
-          <el-input
+          <VhallInput
             placeholder="请输入账号"
             clearable
-            v-model="loginForm.account">
-          </el-input>
+            auto-complete="off"
+            v-model.trim="loginForm.account">
+          </VhallInput>
         </el-form-item>
         <el-form-item v-show="isLogin">
           <div id="loginCaptcha">
-            <el-input
-              v-model="loginForm.text">
-            </el-input>
+            <VhallInput
+              auto-complete="off"
+              v-model.trim="loginForm.text">
+            </VhallInput>
           </div>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
+          <VhallInput
             placeholder="请输入密码"
-            maxlength="30"
+            :maxlength="30"
+            style="ime-mode:disabled"
             :type="isPassWordType ? 'password' : 'text'"
-            v-model="loginForm.password">
+            auto-complete="off"
+            onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
+            v-model.trim="loginForm.password">
             <span slot="suffix" @click="passWordType" class="closePwd">
               <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
               <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
             </span>
-          </el-input>
+          </VhallInput>
           <p class="errorText" v-show="errorText"><i class="el-icon-error"></i>{{ errorText }}</p>
         </el-form-item>
          <el-form-item class="auto-login">
@@ -68,18 +73,20 @@
      <div class="phone-wapper" v-if="isActive===2">
         <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
           <el-form-item prop="phoneNumber">
-            <el-input
+            <VhallInput
               placeholder="请输入手机号"
-              maxlength="11"
+              :maxlength="11"
+              auto-complete="off"
               clearable
-              v-model="dynamicForm.phoneNumber">
-            </el-input>
+              v-model.trim="dynamicForm.phoneNumber">
+            </VhallInput>
           </el-form-item>
           <el-form-item>
             <div id="loginCaptcha">
-              <el-input
-                v-model="dynamicForm.text">
-              </el-input>
+              <VhallInput
+               auto-complete="off"
+               v-model.trim="dynamicForm.text">
+              </VhallInput>
             </div>
           </el-form-item>
           <el-form-item prop="dynamic_code">
@@ -87,7 +94,8 @@
               <el-input
                 placeholder="动态密码"
                 clearable
-                v-model="dynamicForm.dynamic_code">
+                auto-complete="off"
+                v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
                   <span @click="getDyCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                 </template>
@@ -110,36 +118,42 @@
             <el-form-item prop="phone">
               <el-input
                 placeholder="请输入手机号"
-                maxlength="11"
+                :maxlength="11"
                 clearable
+                auto-complete="off"
                 @input="checkPhone"
-                v-model="registerForm.phone">
+                v-model.trim="registerForm.phone">
               </el-input>
             </el-form-item>
             <el-form-item>
               <div id="registerCaptcha">
                 <el-input
-                  v-model="registerForm.text">
+                 auto-complete="off"
+                 v-model.trim="registerForm.text">
                 </el-input>
               </div>
-              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+              <!-- <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p> -->
             </el-form-item>
             <el-form-item prop="code">
               <div class="code">
-                <el-input
+                <VhallInput
                   placeholder="动态密码"
                   clearable
+                  auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
                     <span @click="getRegisterCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                   </template>
-                </el-input>
+                </VhallInput>
               </div>
             </el-form-item>
             <el-form-item prop="password">
               <el-input
                 placeholder="设置密码(6-30个字符)"
-                maxlength="30"
+                :maxlength="30"
+                auto-complete="off"
+                onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
+                style="ime-mode:disabled"
                 :type="isPassWordType ? 'password' : 'text'"
                 v-model="registerForm.password">
                 <span slot="suffix" @click="passWordType" class="closePwd">
@@ -322,7 +336,7 @@ export default {
         }
       }).catch(res => {
         this.$message({
-          message:  `登录验证失败`,
+          message: res.msg || `登录验证失败`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -352,7 +366,7 @@ export default {
           }
           sessionOrLocal.set('token', '', 'localStorage');
           this.callCaptcha();
-      });
+      })
     },
     // 注册判断手机号是否已经注册
     checkPhone() {
@@ -395,8 +409,8 @@ export default {
         setTimeout(() => {
           this.$router.push({path:'/login'})
         }, 1000)
-      }).catch(e => {
-        console.log(e);
+      }).catch(res => {
+        console.log(res);
         this.registerText = res.msg || '注册失败';
       });
     },
@@ -468,7 +482,7 @@ export default {
     min-height: 640px;
     background-color: #fff;
     position: relative;
-    font-family: PingFangSC,helvetica neue,hiragino sans gb,arial,microsoft yahei ui,microsoft yahei,simsun,"sans-serif"!important
+    font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important
 }
 
 .left {

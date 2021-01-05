@@ -49,14 +49,16 @@
             <el-form-item prop="phone">
               <el-input
                 placeholder="请输入手机号"
-                maxlength="11"
-                v-model="dynamicForm.phone">
+                :maxlength="11"
+                auto-complete="off"
+                v-model.trim="dynamicForm.phone">
               </el-input>
             </el-form-item>
             <el-form-item>
               <div id="loginCaptcha" class="findCaptcha">
                 <el-input
-                  v-model="dynamicForm.text">
+                  auto-complete="off"
+                  v-model.trim="dynamicForm.text">
                 </el-input>
               </div>
             </el-form-item>
@@ -65,7 +67,8 @@
                 <el-input
                   placeholder="输入验证码"
                   clearable
-                  v-model="dynamicForm.code">
+                  auto-complete="off"
+                  v-model.trim="dynamicForm.code">
                   <template slot="append">
                     <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                   </template>
@@ -83,7 +86,8 @@
             <el-form-item prop="email">
               <el-input
                 placeholder="请输入邮箱"
-                v-model="dynamicForm.email">
+                auto-complete="off"
+                v-model.trim="dynamicForm.email">
                 <template slot="append">
                     <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                   </template>
@@ -92,7 +96,8 @@
             <el-form-item prop="code">
               <el-input
                 placeholder="输入邮箱验证码"
-                v-model="dynamicForm.code">
+                auto-complete="off"
+                v-model.trim="dynamicForm.code">
               </el-input>
             </el-form-item>
             <div class="login-btn">
@@ -108,14 +113,16 @@
               <el-input
                 placeholder="请输入新密码"
                 type="password"
-                v-model="dynamicForm.password">
+                auto-complete="off"
+                v-model.trim="dynamicForm.password">
               </el-input>
             </el-form-item>
             <el-form-item prop="checkPassword">
               <el-input
                 placeholder="请再次输入密码"
                 type="password"
-                v-model="dynamicForm.checkPassword">
+                auto-complete="off"
+                v-model.trim="dynamicForm.checkPassword">
               </el-input>
             </el-form-item>
             <div class="login-btn">
@@ -127,7 +134,7 @@
         <div class="step-4" v-if="findStep===4">
           <i class="icon-set-success"></i>
           <h3>新密码设置成功</h3>
-          <p><strong>5秒</strong>后跳转登录页面</p>
+          <p><strong>{{linkTime}}秒</strong>后跳转登录页面</p>
         </div>
       </div>
     </div>
@@ -172,6 +179,7 @@ export default {
       }
     };
     return {
+      linkTime: 5,
       findStep: 1,
       time: 60,
       isType: 'phone',
@@ -217,7 +225,13 @@ export default {
       if (this.isType === 'phone') {
         if (this.checkMobile()) {
           if (!this.mobileKey) {
-            this.$message.error('请先校验图形验证码');
+            this.$message({
+              message: '请先校验图形验证码',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             return;
           }
           this.$fetch('sendCode', {
@@ -227,9 +241,17 @@ export default {
             scene_id: this.isType === 'phone' ? 5 : 4
           }).then(() => {
             this.countDown();
-          });
+          }).catch(res => {
+          this.$message.error(res.msg);
+        });
         } else {
-          this.$message.error('请检查手机号是否输入正确');
+          this.$message({
+            message: '请检查手机号是否输入正确',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
       } else if (this.isType === 'email') {
@@ -241,9 +263,17 @@ export default {
           scene_id: this.isType === 'phone' ? 5 : 4
         }).then(() => {
             this.countDown();
-          });
+        }).catch(res => {
+          this.$message.error(res.msg);
+        });
         } else {
-          this.$message.error('请检查邮箱是否输入正确');
+          this.$message({
+            message: '请检查邮箱是否输入正确',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
       }
@@ -286,11 +316,22 @@ export default {
             };
             this.$fetch('resetPassword', params).then(res => {
               this.findStep = 4;
-              setTimeout(() => {
-                this.$router.push({path: '/'});
+              let linkTimer = setInterval(function() {
+                this.linkTime--;
+                if (this.linkTime === 1) {
+                  window.clearInterval(linkTimer);
+                  this.$router.push({path: '/'});
+                  this.linkTime = 5;
+                }
               }, 1000);
             }).catch(res => {
-               this.$message.error(res.msg);
+               this.$message({
+                message: res.msg,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             });
           } else {
             console.log('error submit!!');
@@ -343,7 +384,13 @@ export default {
           } else {
             that.mobileKey = '';
             console.log('errr>>>', err);
-            that.$message.error('图形验证码错误');
+            that.$message({
+              message: '图形验证码错误',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             that.callCaptcha();
             // that.errorMsgShow = true;
           }

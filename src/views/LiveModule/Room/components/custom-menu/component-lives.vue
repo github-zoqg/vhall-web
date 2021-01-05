@@ -48,7 +48,7 @@ export default {
       }
       .vh-chose-active-item__title{
         font-size: 16px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #000000;
         line-height: 24px;
@@ -56,7 +56,7 @@ export default {
       .vh-chose-active-item__info{
         height: 18px;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
+        font-family: @fontRegular;
         font-weight: 400;
         color: #666666;
         line-height: 18px;

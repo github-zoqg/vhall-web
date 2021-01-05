@@ -18,6 +18,7 @@
         @clear="searchGifts"
         class="head-btn fr search"
         v-model.trim="searchName"
+        autocomplete="off"
         placeholder="请输入礼物名称"
       >
         <i
@@ -105,10 +106,10 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model.trim="editParams.name" show-word-limit maxlength="10" placeholder="请输入礼物名称"></VhallInput>
+            <VhallInput v-model.trim="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" show-word-limit maxlength="10" placeholder="请输入0-9999.99">
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  show-word-limit :maxlength="10" placeholder="请输入0-9999.99">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
             </VhallInput>
         </el-form-item>

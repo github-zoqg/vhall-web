@@ -128,7 +128,7 @@ const router = [
       {
         path: 'advertCard/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
-        meta:{ auth: true, title: '广告推荐', name: 'advertCard', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '广告', name: 'advertCard', activeMenu: '/live/list'},
         hidden: true
       },
       {

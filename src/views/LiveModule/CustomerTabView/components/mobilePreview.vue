@@ -6,7 +6,7 @@
         <slot></slot>
       </div>
       <div class="vh-mobile-menus">
-        <div style="width: 6px;left: -6px;position: absolute;height: 100px;background: #f3f3f3; z-index: 6;"></div>
+        <div style="width: 6px;left: -6px;position: absolute;height: 300px;background: #f3f3f3; z-index: 6;"></div>
         <i class="iconfont-v3 saasicon_arrowleft" @click="scrollLeft()" style="background:#fff;  z-index:5"></i>
         <div class="vh-mobile-menus-scroll">
           <div class="vh-mobile-menus-scroll__content" :style="{'left': scrollLeftPx}">

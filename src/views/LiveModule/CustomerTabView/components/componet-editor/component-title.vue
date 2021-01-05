@@ -11,7 +11,8 @@
         <VhallInput
           v-model="info.title"
           @change="changeHandler"
-          maxlength="30"
+          :maxlength="30"
+          autocomplete="off"
           show-word-limit
         ></VhallInput>
       </div>
@@ -48,6 +49,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .qr-editor-box{
+    padding-top: 16px;
+  }
   .label{
     display: inline-block;
     color: #1A1A1A;
