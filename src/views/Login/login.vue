@@ -123,7 +123,7 @@
                   v-model="registerForm.text">
                 </el-input>
               </div>
-              <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+              <!-- <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p> -->
             </el-form-item>
             <el-form-item prop="code">
               <div class="code">

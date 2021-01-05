@@ -108,7 +108,7 @@
       </el-form-item>
       <el-form-item label="选择视频："  v-if="webniarType=='vod'">
         <div class="mediaBox">
-          <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="$refs.selecteMedia.dialogVisible=true">
+          <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <i class="el-icon-film"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
@@ -116,7 +116,7 @@
             <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
-          <div class="abRight" v-if="selectMedia.paas_record_id">
+          <div class="abRight" v-if="selectMedia.id">
             <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
             <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button>
           </div>

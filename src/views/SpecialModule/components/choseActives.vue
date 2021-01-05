@@ -50,8 +50,7 @@
                 </template> -->
               </div>
               <div class="vh-chose-active-item__cover-hots">
-              <i class="iconfont-v3 saasicon_redu"></i>
-              {{ item.pv }}
+              <i class="iconfont-v3 saasicon_redu"> {{ item.pv }}</i>
               </div>
 
             </div>
@@ -324,12 +323,22 @@ export default {
       }
       &-hots{
         position: absolute;
-        left: 10px;
-        bottom: 4px;
+        left: 0;
+        bottom: 0;
+        height: 30px;
+        width: 100%;
+        background: rgba(0,0,0, .6);
+        // left: 10px;
+        // bottom: 4px;
         font-size: 14px;
         font-weight: 400;
         color: #FFFFFF;
-        line-height: 20px;
+        i{
+          position: absolute;
+          padding-left: 10px;
+          padding-top: 5px;
+        }
+        // line-height: 20px;
       }
     }
     &__title{
