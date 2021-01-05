@@ -651,6 +651,9 @@ export default {
         }
         if(this.showVo.executeType !== 'email') {
           this.callCaptcha();
+          if ( this.showVo.step === 2) {
+            this.callCaptcha(1);
+          }
         }
       });
     },
