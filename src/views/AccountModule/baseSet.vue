@@ -1,10 +1,10 @@
 <template>
   <div class="base--set">
     <el-form :model="baseSetForm" ref="baseSetForm" :rules="baseSetFormRules" label-width="94px">
-      <el-form-item label="账号昵称：" prop="nick_name">
+      <el-form-item label="账号昵称" prop="nick_name">
         <VhallInput type="text" placeholder="请输入账号昵称" v-model="baseSetForm.nick_name" maxlength="30" show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="账号头像：" prop="avatar">
+      <el-form-item label="账号头像" prop="avatar">
         <upload
           class="upload__avatar"
           v-model="baseSetForm.avatar"
@@ -26,10 +26,10 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="公司名称：" prop="company">
+      <el-form-item label="公司名称" prop="company">
         <VhallInput type="text" placeholder="请输入公司名称" v-model="baseSetForm.company" maxlength="100" show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="您的职业：" prop="position">
+      <el-form-item label="您的职业" prop="position">
         <VhallInput type="text" placeholder="请输入您的职业" v-model="baseSetForm.position" maxlength="150" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item>
@@ -91,11 +91,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传封面图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2M!');
+        this.$message({
+          message: '上传封面图片大小不能超过 2MB',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -105,7 +117,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message({
+        message: '封面上传失败',
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -132,16 +150,24 @@ export default {
           // 昵称、头像、公司、职位 可修改
           this.$fetch('userEdit', params).then(res => {
             console.log(res);
-            if (res && res.code === 200) {
-              this.$message.success('保存基本设置成功');
-              // 更新账户信息
-              this.getAccountInfo();
-            } else {
-              this.$message.error(res.msg || '保存基本设置失败');
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$message.error(err.msg || '保存基本设置失败');
+            this.$message({
+              message: '保存基本设置成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 更新账户信息
+            this.getAccountInfo();
+          }).catch(res=>{
+            console.log(res);
+            this.$message({
+              message: res.msg || '保存基本设置失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
@@ -150,13 +176,19 @@ export default {
       this.$fetch('getInfo', {
         scene_id: 2
       }).then(res =>{
-        if(res.code === 200 && res.data) {
+        if(res.data) {
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
           sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
           this.$EventBus.$emit('saas_vs_account_change', res.data);
-        } else {
-          this.$message.error(res.msg);
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '获取账户信息失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
   }

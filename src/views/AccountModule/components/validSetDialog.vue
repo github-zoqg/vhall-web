@@ -2,7 +2,7 @@
   <VhallDialog
     :title="title"
     :visible.sync="visible"
-    :close-on-click-modal="false"
+    :lock-scroll=false
     width="400px">
     <div class="content">
       <el-form :model="form" ref="form" :rules="formRules" label-width="80px">
@@ -249,7 +249,13 @@ export default {
           this.$message.error('手机号校验失败');
           flag = false;
         } else */if(!this.mobileKey) {
-          this.$message.error('图形验证码校验失败');
+          this.$message({
+            message:  `图形验证码校验失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           flag = false;
         } else {
           flag = true;
@@ -268,20 +274,21 @@ export default {
           scene_id: this.getScenedTitle().scene_id
         }
         this.$fetch('sendCode', this.$params(params)).then((res) => {
-          if(res && res.code === 200) {
-            this.isDisabledClick = true;
-            if(this.downTimer) {
-              window.clearTimeout(this.downTimer);
-            }
-            this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
-            this.countDown();
-          } else {
-            this.$message.error(res.msg || '验证码发送失败');
-            this.sendText = ``;
+          this.isDisabledClick = true;
+          if(this.downTimer) {
+            window.clearTimeout(this.downTimer);
           }
-        }).catch(e => {
-          console.log(e);
-          this.$message.error(e.msg || '验证码发送失败');
+          this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+          this.countDown();
+        }).catch(res => {
+          console.log(res);
+          this.$message({
+            message:  res.msg || '验证码发送失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           this.sendText = ``;
         });
       }
@@ -294,10 +301,22 @@ export default {
       let flag = false;
       if (this.showVo.executeType !== 'email') {
         if(!(/^1[0-9]{10}$/.test(this.form.new_phone))) {
-          this.$message.error('手机号校验失败');
+          this.$message({
+            message: '手机号校验失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           flag = false;
         } else if(!this.mobileKey1) {
-          this.$message.error('图形验证码校验失败');
+          this.$message({
+            message: '图形验证码校验失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           flag = false;
         } else {
           flag = true;
@@ -316,21 +335,22 @@ export default {
           scene_id: this.getScenedTitle().scene_id
         }
         this.$fetch('sendCode', this.$params(params)).then((res) => {
-          if(res && res.code === 200) {
-            this.isDisabledClick1 = true;
-            if(this.downTimer1) {
-              window.clearTimeout(this.downTimer1);
-            }
-            this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
-            this.countDown1();
-          } else {
-            this.sendText1 = ``;
-            this.$message.error(res.msg || '验证码发送失败');
+          this.isDisabledClick1 = true;
+          if(this.downTimer1) {
+            window.clearTimeout(this.downTimer1);
           }
-        }).catch(e => {
-          console.log(e);
+          this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+          this.countDown1();
+        }).catch(res => {
+          console.log(res);
           this.sendText1 = ``;
-          this.$message.error(e.msg || '验证码发送失败');
+          this.$message({
+            message: res.msg || '验证码发送失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }
     },
@@ -377,23 +397,31 @@ export default {
             scene_id: this.getScenedTitle().scene_id
           };
           this.$fetch('codeCheck', params).then(res => {
-            if (res && res.code === 200) {
-              if (res.data.check_result > 0) {
-                this.codeKey = res.data.key || '';
-                // 验证码第一步，继续下一步
-                this.showVo.step = 2;
-                this.$nextTick(() => {
-                  this.callCaptcha('1');
-                });
-              } else {
-                this.$message.error(res.msg || '验证失败，无法操作');
-              }
+            if (res.data.check_result > 0) {
+              this.codeKey = res.data.key || '';
+              // 验证码第一步，继续下一步
+              this.showVo.step = 2;
+              this.$nextTick(() => {
+                this.callCaptcha('1');
+              });
             } else {
-              this.$message.error(res.msg || '验证失败，无法操作');
+              this.$message({
+                message: res.msg || '验证失败，无法操作',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
-          }).catch(e => {
-            console.log(e);
-            this.$message.error(e.msg || '验证失败，无法操作');
+          }).catch(res => {
+            console.log(res);
+            this.$message({
+              message:  res.msg || '验证失败，无法操作',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
@@ -410,19 +438,27 @@ export default {
             scene_id: this.getScenedTitle().scene_id
           };
           this.$fetch('codeCheck', params).then(res => {
-            if (res && res.code === 200) {
-              if (res.data.check_result > 0) {
-                this.codeKey1 = res.data.key || '';
-                this.bindSave();
-              } else {
-                this.$message.error('验证结果不成功，无法操作');
-              }
+            if (res.data.check_result > 0) {
+              this.codeKey1 = res.data.key || '';
+              this.bindSave();
             } else {
-              this.$message.error(res.msg || '验证失败，无法操作');
+              this.$message({
+                message: '验证结果不成功，无法操作',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
-          }).catch(e => {
-            console.log(e);
-            this.$message.error(e.msg || '验证失败，无法操作');
+          }).catch(res => {
+            console.log(res);
+            this.$message({
+              message:  res.msg || '验证失败，无法操作',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
@@ -438,17 +474,25 @@ export default {
       };
       // 确认绑定新功能
       this.$fetch('bindInfo', params).then(res => {
-        if (res && res.code === 200) {
-          this.$message.success('绑定成功');
-          this.visible = false;
-          // 刷新回显数据
-          this.$emit('changeOk');
-        } else {
-          this.$message.error(res.msg || '绑定失败');
-        }
-      }).catch(e => {
-        console.log(e);
-        this.$message.error(e.msg || '绑定失败');
+        this.$message({
+          message: '绑定成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.visible = false;
+        // 刷新回显数据
+        this.$emit('changeOk');
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || '绑定失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 确定按钮（场景使用： 设置密码第一、二步，修改密码第一、二步）
@@ -466,20 +510,28 @@ export default {
               scene_id: this.getScenedTitle().scene_id
             };
             this.$fetch('codeCheck', params).then(res => {
-              if (res && res.code === 200) {
-                if (res.data.check_result > 0) {
-                  this.codeKey = res.data.key || '';
-                  // 验证码第一步，继续下一步
-                  this.showVo.step = 2;
-                } else {
-                  this.$message.error(res.msg || '验证失败，无法操作');
-                }
+              if (res.data.check_result > 0) {
+                this.codeKey = res.data.key || '';
+                // 验证码第一步，继续下一步
+                this.showVo.step = 2;
               } else {
-                this.$message.error(res.msg || '验证失败，无法操作');
+                this.$message({
+                  message: res.msg || '验证失败，无法操作',
+                  showClose: true,
+                  // duration: 0,
+                  type: 'error',
+                  customClass: 'zdy-info-box'
+                });
               }
-            }).catch(e => {
-              console.log(e);
-              this.$message.error(e.msg || '验证失败，无法操作');
+            }).catch(res => {
+              console.log(res);
+              this.$message({
+                message: res.msg || '验证失败，无法操作',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             });
           } else {
             // 第二步密码保存 => 存储密码  scene_id场景ID：1账户信息-修改密码  4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 9设置密码（密码不存在情况）
@@ -492,15 +544,23 @@ export default {
               key: this.codeKey
             };
             this.$fetch('resetPassword', this.$params(params)).then(res => {
-              if (res && res.code === 200) {
-                this.$message.success('操作成功');
-                this.visible = false;
-              } else {
-                this.$message.error(res.msg || '操作失败');
-              }
-            }).catch(e => {
-              console.log(e);
-              this.$message.error(e.msg || '操作失败');
+              this.$message({
+                message: '操作成功',
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.visible = false;
+            }).catch(res => {
+              console.log(res);
+              this.$message({
+                message: res.msg || '操作失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             });
           }
         }
@@ -530,20 +590,22 @@ export default {
       this.showVo.executeType = btnType;
       if(!vo) {
         this.$alert('信息获取失败，请您检查网络或重新登录', '提示', {
-          dangerouslyUseHTMLString: true,
+          confirmButtonText: '我知道了',
           customClass: 'zdy-alert-box',
-          type: 'warning',
-          center: true
-        });
+          center: true,
+          lockScroll: false
+        }).then(()=>{
+        }).catch(()=>{});
         return;
       } else if (btnType === 'pwd' && vo && !vo.phone) {
         // 无密码
         this.$alert('为了保证您的账号安全，请您先绑定手机号', '提示', {
-          dangerouslyUseHTMLString: true,
+          confirmButtonText: '我知道了',
           customClass: 'zdy-alert-box',
-          type: 'warning',
-          center: true
-        });
+          center: true,
+          lockScroll: false
+        }).then(()=>{
+        }).catch(()=>{});
         return;
       } else if (btnType === 'pwd' && vo && vo.phone) {// 密码，并且手机号不为空
         this.showVo.step = 1;

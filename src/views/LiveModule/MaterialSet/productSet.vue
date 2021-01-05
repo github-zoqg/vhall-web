@@ -180,7 +180,7 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
-      if (that.total == 99) {
+      if (that.total >= 100) {
         that.$message.error('商品最大上架数量为100，请删除后再进行操作');
         return;
       }
@@ -217,10 +217,9 @@ export default {
             this.$message.success("删除成功！");
             this.checkedGoodsId = [];
             this.getTableList();
-          } else {
-            this.$message.error('删除失败, 请下架后删除');
           }
         }).catch(err => {
+          this.$message.error('删除失败, 请下架后删除');
         })
       }).catch(() => {
         this.$message({

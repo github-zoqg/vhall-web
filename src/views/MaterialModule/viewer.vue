@@ -12,8 +12,8 @@
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
           <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
-          <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
-          <el-link :href="downloadUrl" v-else>下载模板</el-link>
+          <el-link :href="downloadUrl"  v-if="downloadUrl" class="unHover">下载模版</el-link>
+          <el-link :href="downloadUrl" v-else  class="unHover">下载模板</el-link>
           <div class="searchBox">
             <VhallInput
               placeholder="搜索内容"
@@ -102,7 +102,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
         <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
@@ -110,6 +110,7 @@
     <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="468px">
       <div class="upload-dialog-content">
         <file-upload
+          ref="viewerUpload"
           v-model="fileUrl"
           :saveData="{
              path: pathUrl,
@@ -130,7 +131,7 @@
           <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
+          <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
           <el-button @click="closeImportViewer" size="medium" round>取 消</el-button>
         </div>
       </div>
@@ -364,22 +365,24 @@ export default {
             params.group_id = this.groupDialog.row.id;
           }
           this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success(`${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`);
-              // 刷新数据
-              this.audienceGet();
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`
-              });
-            }
-            this.groupDialog.visible = false;
-          }).catch(e => {
-            console.log(e);
             this.$message({
+              message:  `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 刷新数据
+            this.audienceGet();
+            this.groupDialog.visible = false;
+          }).catch(res => {
+             console.log(res);
+             this.$message({
+              message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`,
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message:`${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`
+              customClass: 'zdy-info-box'
             });
           });
         }
@@ -398,21 +401,23 @@ export default {
           group_ids: item.id
         };
         this.$fetch('postGroupDel', this.$params(params)).then(res => {
-          if(res && res.code === 200) {
-            this.$message.success(`删除分组-操作成功`);
-            // 重查分组列表
-            this.audienceGet();
-          } else {
-            this.$message({
-              type: 'error',
-              message: res.msg || '删除分组-操作失败'
-            });
-          }
-        }).catch(e => {
-          console.log(e);
           this.$message({
+            message:  `删除分组-操作成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // 重查分组列表
+          this.audienceGet();
+        }).catch(res => {
+          console.log(res);
+          this.$message({
+            message: res.msg || '删除分组-操作失败',
+            showClose: true,
+            // duration: 0,
             type: 'error',
-            message:  '删除分组-操作失败'
+            customClass: 'zdy-info-box'
           });
         });
       }).catch(() => {
@@ -459,7 +464,13 @@ export default {
         this.fileResult = '';
         this.importResult = null;
       } else {
-        this.$message.error('请选择分组');
+        this.$message({
+          message:  `请选择分组`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
     // 创建观众
@@ -468,7 +479,13 @@ export default {
       if(this.query.group_id) {
         this.viewerDialogShow(this, {rows: null});
       } else {
-        this.$message.error('请选择分组');
+        this.$message({
+          message:  `请选择分组`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
     // 展示观众修改
@@ -512,22 +529,24 @@ export default {
           console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
           let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
           this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success(`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`);
-              this.viewerDialog.visible = false;
-              // 重查当前分组下观众信息
-              this.queryList();
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.msg || `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`
-              });
-            }
-          }).catch(e => {
-            console.log(e);
             this.$message({
+              message:  `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.viewerDialog.visible = false;
+            // 重查当前分组下观众信息
+            this.queryList();
+          }).catch(res => {
+           console.log(res);
+           this.$message({
+              message:  res.msg || `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`,
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message:`${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作失败`
+              customClass: 'zdy-info-box'
             });
           });
         }
@@ -550,20 +569,32 @@ export default {
         audience_ids: ids.join(',')
       }).then(res => {
         if(res && res.code === 200) {
-          this.$message.success(`删除观众-操作成功`);
+          this.$message({
+            message:  `删除观众-操作成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.$refs.viewerTable.clearSelect();
           this.queryList();
         } else {
           this.$message({
+            message:  res.msg || `删除观众-操作失败`,
+            showClose: true,
+            // duration: 0,
             type: 'error',
-            message: res.msg || '删除观众-操作失败'
+            customClass: 'zdy-info-box'
           });
         }
-      }).catch(e => {
+      }).catch(res => {
         console.log(e);
         this.$message({
+          message:  res.msg || `删除观众-操作失败`,
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '删除观众-操作失败'
+          customClass: 'zdy-info-box'
         });
       });
     },
@@ -586,8 +617,11 @@ export default {
         });
       } else {
         this.$message({
+          message:  '请至少选择一个观众进行删除',
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '请至少选择一个观众进行删除'
+          customClass: 'zdy-info-box'
         });
       }
     },
@@ -609,21 +643,21 @@ export default {
           group_id: this.query.group_id,
           request_type: 0 // 校验
         }).then(resV => {
-          if (resV && resV.code === 200) {
-            this.fileResult = 'success';
-            this.importResult = {
-              success: resV.data.success_count,
-              fail: resV.data.fail_count
-            };
-          } else {
-            this.fileResult = 'error';
-            // this.$message.error(resV.msg || '检测观众信息失败！');
-            this.importResult = null;
+          this.fileResult = 'success';
+          this.importResult = {
+            success: resV.data.success_count,
+            fail: resV.data.fail_count
+          };
+          if (this.$refs.viewerUpload) {
+             this.$refs.viewerUpload.setError('');
           }
-        }).catch(e => {
+        }).catch(res => {
           this.fileResult = 'error';
+          // this.$message.error(resV.msg || '检测观众信息失败！');
           this.importResult = null;
-          // this.$message.error(e.msg || '检测观众信息失败！');
+          if (this.$refs.viewerUpload) {
+             this.$refs.viewerUpload.setError(res.msg || '检测失败，请重新上传');
+          }
         });
       }
     },
@@ -634,11 +668,23 @@ export default {
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传格式只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2M!');
+        this.$message({
+          message: `上传文件大小不能超过 2M!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -664,7 +710,13 @@ export default {
     },
     reloadViewerList() {
       if(!this.fileUrl) {
-        this.$message.error('请先选择模板');
+        this.$message({
+          message: `请先选择模板`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       // 数据存储
@@ -673,18 +725,27 @@ export default {
         group_id: this.query.group_id,
         request_type: 1 // 保存
       }).then(resV => {
-        if (resV && resV.code === 200) {
-          this.importFileShow = false;
-          this.percent = 0;
-          this.isUploadEnd = false;
-          this.fileUrl = '';
-          // 刷新列表数据
-          this.queryList();
-        } else {
-          this.$message.error(resV.msg || '导入观众信息失败！');
-        }
-      }).catch(e => {
-        this.$message.error(e.msg || '导入观众信息失败！');
+        /* this.$message({
+          message:resV.msg || '导入观众信息成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        }); */
+        this.importFileShow = false;
+        this.percent = 0;
+        this.isUploadEnd = false;
+        this.fileUrl = '';
+        // 刷新列表数据
+        this.queryList();
+      }).catch(res => {
+        this.$message({
+          message:res.msg || '导入观众信息失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
   },
@@ -708,6 +769,12 @@ export default {
   margin-bottom: 20px;
   .el-link {
     margin-left: 20px;
+    margin-left: 20px;
+    text-decoration: none;
+    color: #666666;
+    &:hover {
+      color: #666666;
+    }
   }
   .searchBox{
     float: right;

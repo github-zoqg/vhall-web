@@ -33,6 +33,7 @@
         </el-form-item>
         <el-form-item prop="password">
           <el-input
+            style="ime-mode:disabled;"
             placeholder="请输入密码"
             maxlength="30"
             :type="isPassWordType ? 'password' : 'text'"
@@ -304,45 +305,47 @@ export default {
     checkedAccount() {
       let account = this.isActive == 1 ? this.loginForm.account : this.dynamicForm.phoneNumber;
       this.$fetch('loginCheck', {account: account}).then(res => {
-        if (res && res.code === 200) {
-          //检测结果check_result  : 1 锁定    0未锁定
-          if (this.isActive == 1) {
-            if (res.data.check_result && !this.mobileKey) {
-              this.isLogin = true;
-            } else {
-              this.login(this.loginForm);
-            }
+        //检测结果check_result  : 1 锁定    0未锁定
+        if (this.isActive == 1) {
+          if (res.data.check_result && !this.mobileKey) {
+            this.isLogin = true;
           } else {
-            // 账号是否存在：1存在 0不存在
-            if (res.data.account_exist) {
-              this.dynamicForm.account = account;
-              this.login(this.dynamicForm);
-            } else {
-              this.errorText = '账号不存在';
-            }
+            this.login(this.loginForm);
           }
         } else {
-          this.errorText = res.msg;
-          // this.$message.error(res.msg || '登录验证失败');
+          // 账号是否存在：1存在 0不存在
+          if (res.data.account_exist) {
+            this.dynamicForm.account = account;
+            this.login(this.dynamicForm);
+          } else {
+            this.errorText = '账号不存在';
+          }
         }
+      }).catch(res => {
+        this.$message({
+          message:  `登录验证失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     login(params) {
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
       this.$fetch('loginInfo', params).then(res => {
-        if(res && res.code === 200) {
-          this.mobileKey = '';
-          this.errorText = '';
-          this.errorMsgShow = '';
-          sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-          // 存储控制台-channel_id频道
-          sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
-          // 存储控制台-channel_id频道
-          sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
-          this.$router.push({path: '/'});
-        } else {
-          if (this.isActive == 1) {
+        this.mobileKey = '';
+        this.errorText = '';
+        this.errorMsgShow = '';
+        sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+        // 存储控制台-channel_id频道
+        sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
+        // 存储控制台-channel_id频道
+        sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
+        this.$router.push({path: '/'});
+      }).catch(res => {
+        if (this.isActive == 1) {
             console.log(res.msg, '1111111111111111');
             this.errorText = res.msg || '登录失败！';
           } else {
@@ -350,23 +353,20 @@ export default {
           }
           sessionOrLocal.set('token', '', 'localStorage');
           this.callCaptcha();
-        }
       });
     },
     // 注册判断手机号是否已经注册
     checkPhone() {
       if (this.checkMobile(this.registerForm.phone)) {
          this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
-          if (res && res.code === 200) {
-            if (res.data.account_exist) {
-              this.registerText = '该手机号已注册';
-            } else {
-              this.registerText = '';
-            }
+          if (res.data.account_exist) {
+            this.registerText = '该手机号已注册';
           } else {
-            this.registerText = res.msg || '注册失败';
+            this.registerText = '';
           }
-        });
+        }).catch(res => {
+          this.registerText = res.msg || '注册失败';
+      });
       }
     },
     getRegisterCode() {
@@ -385,15 +385,17 @@ export default {
       this.registerForm.captcha = this.mobileKey;
       this.registerForm.source = this.$route.query.source || 1;
       this.$fetch('register', this.registerForm).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('注册成功');
-          this.mobileKey = '';
-          setTimeout(() => {
-            this.$router.push({path:'/login'})
-          }, 1000)
-        } else {
-          this.registerText = res.msg || '注册失败';
-        }
+        this.$message({
+          message:  `注册成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.mobileKey = '';
+        setTimeout(() => {
+          this.$router.push({path:'/login'})
+        }, 1000)
       }).catch(e => {
         console.log(e);
         this.registerText = res.msg || '注册失败';
@@ -467,7 +469,7 @@ export default {
     min-height: 640px;
     background-color: #fff;
     position: relative;
-    font-family: PingFangSC,helvetica neue,hiragino sans gb,arial,microsoft yahei ui,microsoft yahei,simsun,"sans-serif"!important
+    font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important
 }
 
 .left {

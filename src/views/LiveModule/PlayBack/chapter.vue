@@ -350,8 +350,12 @@ export default {
           index: index + 1,
           userCreateTime: this.secondsFormmat(item.createTime),
           isChange: false,
+          slideIndex: item.slideIndex + 1,
+          stepIndex: item.stepIndex + 1,
           sub: item.sub.map((subItem, subIndex) => ({
             ...subItem,
+            slideIndex: subItem.slideIndex + 1,
+            stepIndex: subItem.stepIndex + 1,
             userCreateTime: this.secondsFormmat(subItem.createTime),
             index: `${index + 1}-${subIndex + 1}`,
             isChange: false

@@ -96,13 +96,23 @@ export default {
       this.$fetch('unBindInfo', {
         platform: type
       }).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('解绑成功');
-          // 解绑成功后，刷新页面
-          window.location.reload();
-        } else{
-          this.$message.error(res.msg || '解绑失败');
-        }
+        this.$message({
+          message:  `解绑成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        // 解绑成功后，刷新页面
+        window.location.reload();
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '解绑失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     created() {

@@ -408,7 +408,7 @@ export default {
       }
       .data-document{
         background: #fff;
-        height: 236px;
+        height: 190px;
         h2{
           font-size: 16px;
           color: #1A1A1A;

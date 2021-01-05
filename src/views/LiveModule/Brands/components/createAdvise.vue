@@ -34,7 +34,7 @@
         <VhallInput v-model.trim="advertisement.subject" maxlength="15" show-word-limit placeholder="请输入广告标题"></VhallInput>
       </el-form-item>
       <el-form-item label="链接" prop="url">
-        <el-input v-model.trim="advertisement.url" placeholder="请输入广告链接"></el-input>
+        <VhallInput v-model.trim="advertisement.url" placeholder="请输入广告链接"></VhallInput>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -85,7 +85,7 @@
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
         <div class="dialog-footer">
-          <el-button type="primary" size="medium" @click="sureMaterialAdver" round>确 定</el-button>
+          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialAdver" round>确 定</el-button>
           <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
        </div>
       </div>
@@ -109,6 +109,17 @@ export default {
         }
       }
     };
+    const nameValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入广告标题'));
+      } else {
+        if (value.length > 15) {
+          callback && callback('广告标题在15个字符以内');
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       dialogVisible: false,
       dialogAdverVisible: false,
@@ -123,7 +134,7 @@ export default {
       text: '您还没有广告，快来创建吧！',
       rules: {
         subject: [
-          { required: true, message: '请输入广告标题', trigger: 'blur' },
+          { required: true, validator: nameValidate, trigger: 'blur' },
         ],
         img_url: [
           { required: true, message: '请选择推广图片', trigger: 'change' }
@@ -280,6 +291,9 @@ export default {
           this.dialogVisible = true;
           this.$message.error('链接格式不正确');
         }
+      }).catch(() => {
+        this.dialogVisible = true;
+        this.$message.error(res.msg || `${this.title === '编辑' ? '修改' : '创建'}失败`);
       });
     },
     moreLoadData() {

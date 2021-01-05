@@ -168,12 +168,24 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`主页头像只能是 ${typeList.join('、')} 格式!`);
-        return;
+        this.$message({
+          message:  `主页头像只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传主页头像图片大小不能超过 2M!');
-        return;
+        this.$message({
+          message:  `上传主页头像图片大小不能超过 2MB`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
       }
       return isType && isLt2M;
     },
@@ -182,7 +194,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`主页头像上传失败`);
+      this.$message({
+        message:  `主页头像上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -206,12 +224,24 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传背景图片只能是 ${typeList.join('、')} 格式!`);
-        return;
+        this.$message({
+          message: `上传背景图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传背景图片大小不能超过 2MB!');
-        return;
+        this.$message({
+          message: `上传背景图片大小不能超过 2MB`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
       }
       return isType && isLt2M;
     },
@@ -220,7 +250,13 @@ export default {
     },
     uploadErrorBg(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`主页背景上传失败`);
+      this.$message({
+        message: `主页背景上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreviewBg(file){
       console.log('uploadPreview', file);
@@ -248,19 +284,27 @@ export default {
           }
           this.$fetch(this.homeSetInfoForm.id ? 'homeInfoEdit' : 'homeInfoCreate', params).then(res => {
             console.log(res);
-            if (res && res.code === 200) {
-              this.$message.success('保存基本设置成功');
-              // 回到前一个页面
-              this.$router.push({
-                path: `/account/myHome`
-              });
-              // window.location.reload();
-            } else {
-              this.$message.error(res.msg || '保存基本设置失败');
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$message.error(err.msg || '保存基本设置失败');
+            this.$message({
+              message:  `保存基本设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 回到前一个页面
+            this.$router.push({
+              path: `/account/myHome`
+            });
+            // window.location.reload();
+          }).catch(res =>{
+            console.log(res);
+            this.$message({
+              message:  res.msg || '保存基本设置失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });

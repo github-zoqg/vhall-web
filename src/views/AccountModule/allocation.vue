@@ -106,7 +106,9 @@
         <div class="ac__allocation--user">
           <h1 class="title">可用资源</h1>
           <div class="allocation_icon">
-            <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i>
+            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-if="resourcesVo && resourcesVo.type > 0"/>
+            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-else/>
+            <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
             <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}}：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
@@ -212,7 +214,13 @@
           }
           this.multiAllocShow = true;
         } else {
-          this.$message.error('请至少选择一条子账号');
+          this.$message({
+            message:  '请至少选择一条子账号',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
       },
       // 分配方式切换-保存分配方式
@@ -221,17 +229,25 @@
         this.$fetch('userEdit', {
           is_dynamic: type === 'regular' ? 0 : 1
         }).then(res=>{
-          if (res && res.code === 200) {
-            this.$message.success('保存分配方式成功！');
-            // 若当前为固定分配，获取子账户列表数据
-            this.is_dynamic = type === 'regular' ? 0 : 1;
-            this.getSonList();
-          } else {
-            this.$message.success(res.msg ||'保存分配方式失败！');
-          }
-        }).catch(e=>{
-          console.log(e);
-          this.$message.error('保存分配方式失败！');
+          this.$message({
+            message:  '保存分配方式成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // 若当前为固定分配，获取子账户列表数据
+          this.is_dynamic = type === 'regular' ? 0 : 1;
+          this.getSonList();
+        }).catch(res =>{
+          console.log(res);
+          this.$message({
+            message:  '保存分配方式失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       },
       // 获取用量分配方式
@@ -397,21 +413,29 @@
         this.$fetch('allocSetVal', params, {
           'Content-Type': 'application/json'
         }).then(res=>{
-          if (res && res.code === 200) {
-            this.$message.success('保存成功！');
-            if (row) {
-              row.isHide = true;
-            }
-            this.multiAllocShow = false;
-            this.allocMoreGet();
-            // 保存完成后，更新数据
-            this.getSonList();
-          } else {
-            this.$message.error(res.msg ||'保存失败！');
+          this.$message({
+            message: '保存成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          if (row) {
+            row.isHide = true;
           }
-        }).catch(e=>{
-          console.log(e);
-          this.$message.error('保存失败！');
+          this.multiAllocShow = false;
+          this.allocMoreGet();
+          // 保存完成后，更新数据
+          this.getSonList();
+        }).catch(res =>{
+          console.log(res);
+          this.$message({
+            message: res.msg ||'保存失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       },
       // 取消按钮 => 编辑展示
@@ -453,6 +477,10 @@
     text-align: center;
     p {
       margin-bottom: 32px;
+      font-size: 16px;
+      font-weight: 400;
+      color: #666666;
+      line-height: 24px;
     }
     &.trends-list {
       padding: 24px 32px;
@@ -486,6 +514,10 @@
       margin-top: 24px;
       i.iconfont-v3 {
         font-size: 62px;
+      }
+      img {
+        width: 62px;
+        height: 62px;
       }
     }
     .allocation_one {

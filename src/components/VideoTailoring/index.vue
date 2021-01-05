@@ -1062,7 +1062,7 @@ export default {
             border: 1px solid #CCCCCC;
             padding: 4px 24px;
             font-size: 14px;
-            font-family: PingFangSC-Regular, PingFang SC;
+            font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
             font-weight: 400;
             color: #666666;
             line-height: 26px;

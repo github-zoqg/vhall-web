@@ -944,7 +944,7 @@
         margin: 40px 0 22px;
         text-align: center;
         font-weight: 500;
-        font-family: PingFangSC-Medium, PingFang SC;
+        font-family: @fontMedium;
         line-height: 33px;
       }
       .pageIntro{
