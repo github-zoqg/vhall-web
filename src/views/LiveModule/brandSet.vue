@@ -3,7 +3,7 @@
     <pageTitle title="品牌设置"></pageTitle>
     <div class="brand--set">
       <el-tabs v-model="tabType" @tab-click="handleClick">
-        <el-tab-pane label="标志设置" name="signSet"></el-tab-pane>
+        <el-tab-pane label="标识设置" name="signSet"></el-tab-pane>
         <el-tab-pane label="皮肤设置" name="skinSet"></el-tab-pane>
       </el-tabs>
       <!-- 设置区域 -->

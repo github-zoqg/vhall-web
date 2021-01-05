@@ -145,6 +145,9 @@ export default {
         new_password: [
           {required: true, trigger: 'blur', validator: verifyAgainEnterPwd, min: 6, max: 30,}
         ],
+        old_pwd: [
+          {required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30,}
+        ],
         /*phone: [
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
         ],*/
@@ -648,6 +651,9 @@ export default {
         }
         if(this.showVo.executeType !== 'email') {
           this.callCaptcha();
+          if ( this.showVo.step === 2) {
+            this.callCaptcha(1);
+          }
         }
       });
     },

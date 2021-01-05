@@ -297,6 +297,14 @@ export default {
       if (this.active!= 1 && formParams.searchIsTime == 1) {
         paramsObj.start_time = getRangeDays(this.active);
       }
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime && formParams.searchIsTime == 1) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
+      }
       if (this.liveDetailInfo.webinar_state != 4) {
         if (this.activeName == 2) {
           this.searchAreaLayout = this.searchAreaVideoOut;
@@ -327,14 +335,7 @@ export default {
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
       }
-      for (let i in formParams) {
-        if (i === 'searchTime' && formParams.searchTime) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
-      }
+      console.log(formParams.searchIsTime,  '???????????????')
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = paramsObj;
       this.getBaseUserInfo(obj);
@@ -369,7 +370,7 @@ export default {
       this.$refs.searchArea.searchParams.searchIsTime = '1',
       this.$refs.tableList.pageInfo.pageNum = 1;
       this.$refs.tableList.pageInfo.pos = 0;
-      // this.active = 2;
+      this.active = 2;
       this.getTableList();
     }
   }

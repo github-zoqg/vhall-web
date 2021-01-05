@@ -59,6 +59,7 @@ import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import EventBus from "@/utils/Events";
 export default {
   name: 'video.vue',
   data() {
@@ -107,6 +108,7 @@ export default {
           key: "title",
         }
       ],
+      $Chat: null
     };
   },
   components: {
@@ -114,12 +116,65 @@ export default {
     VideoPreview,
     noData
   },
+  created() {
+    // 初始化聊天SDK
+    this.initChat();
+  },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getTableList();
     this.getVideoAppid();
   },
   methods: {
+    // 初始化
+    async initChat(){
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        let option = {
+          appId: result.data.paasAppId || '', // appId 必须
+          accountId: result.data.accountId || '', // 第三方用户ID
+          channelId: result.data.channelId || '', // 频道id 必须
+          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+        }
+        window.VhallChat.createInstance(option, (event) => {
+          this.$Chat = event.message; // 聊天实例句柄
+          this.monitor()
+        },err=>{
+          // alert('初始化错误')
+          console.error(err);
+        })
+      }
+    },
+    // 监听
+    monitor(){
+      /**
+       * 接收聊天自定义消息*/
+      this.$Chat.onCustomMsg(async msg => {
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============收到msg_center_seenet===============' + JSON.stringify(msg.data))
+        // if (msg.data.type === 'msg_center_num') {
+        //   EventBus.$emit('msg_center_num', msg.data);
+        // }
+        // if (msg.data.type === 'host_msg_webinar') {
+        //   EventBus.$emit('host_msg_webinar', msg.data.data)
+        // }
+        // if (msg.data.type === 'doc_convert_jpeg') {
+        //   EventBus.$emit('doc_convert_jpeg', msg.data.data)
+        // }
+      })
+    },
     getTableList(params){
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       if (this.keyword || params == 'delete') {
@@ -138,7 +193,6 @@ export default {
     tirggerFile(event){
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
-      console.log(file, '111111111111');
       let beforeName = event.target.files[0].name.toLowerCase();
       let videoArr = beforeName.toLowerCase().split('.');
       const videoType = typeList.includes(videoArr[videoArr.length - 1]);
@@ -179,6 +233,7 @@ export default {
       console.log(param, '33333333333333333');
       this.uploadList.unshift(param);
       this.tableData.unshift(param);
+      this.total = 1;
       console.log(this.tableData, '??????????????????')
       this.UploadSDK.upload([file],(pro)=>{
         this.tableData.forEach((ele)=>{
@@ -402,6 +457,13 @@ export default {
       this.$refs.videoPreview.destroy();
       done();
     },
+    beforeDestroy() {
+    console.log('消亡')
+    if (this.$Chat) {
+        this.$Chat.destroy();
+        this.$Chat = null;
+      }
+    }
   },
 };
 </script>
