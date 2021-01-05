@@ -267,9 +267,15 @@ export default {
     }
   },
   methods: {
-    updateSwitch() {
+    async updateSwitch() {
       let roleSwitch = this.roleSwitch; // 目标
       this.roleSwitch = Number(!roleSwitch);
+      let result = await this.$fetch('getWebinarInfo', {
+        webinar_id: this.$route.params.str,
+      })
+      if (result.data) {
+        this.webinarVo = result.data;
+      }
       if(this.webinarVo.webinar_state === 1) {
         // 如果為~直播中
         this.$message({
