@@ -61,7 +61,13 @@ export default {
       const input = document.getElementById('linkBox');
       input.select();
       document.execCommand('copy');
-      this.$message.success('复制成功');
+      this.$message({
+        message:  `复制成功`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     },
     shareQQ() {
        /* https://connect.qq.com/widget/shareqq/index.html?title=我在微吼直播，这是我的主页 这是我的标题标题标题这是我的标题标题标题这是我的标题标题标题，欢迎围观。&url=https://e.vhall.com/user/home/58205605&summary=
@@ -84,7 +90,9 @@ export default {
 <style lang="less" scoped>
   @iconpath: '../../../common/images/icon';
   /deep/ .share-dialog {
-    height: 322px;
+    max-height: 314px;
+    height: auto;
+    padding-bottom: 32px;
     border-radius: 4px;
   }
   /deep/ .smallSwtich{
