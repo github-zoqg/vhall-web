@@ -38,6 +38,7 @@
         @blur="handleBlur"
         @change="handleChange"
         :aria-label="label"
+        :style="textStyle"
       >
       <!-- 前置内容 -->
       <span class="el-input__prefix" v-if="$slots.prefix || prefixIcon">
@@ -68,7 +69,7 @@
             class="el-input__icon el-icon-view el-input__clear"
             @click="handlePasswordVisible"
           ></i>
-          <span v-if="isWordLimitVisible" class="el-input__count">
+          <span ref="limit_count" v-if="isWordLimitVisible" class="el-input__count">
             <span class="el-input__count-inner">
               <span
                 :class="[
@@ -110,7 +111,7 @@
       :aria-label="label"
     >
     </textarea>
-    <span v-if="isWordLimitVisible && type === 'textarea'" class="el-input__count">
+    <span ref="limit_count" v-if="isWordLimitVisible && type === 'textarea'" class="el-input__count">
       <span
         :class="[
           'el-input__count-inner__numerator',
@@ -124,7 +125,27 @@
 <script>
   import { Input } from 'element-ui'
   export default {
-    extends: Input
+    extends: Input,
+    mounted() {
+      this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 12 + 'px' : '12px'
+    },
+    data() {
+      return {
+        calcWidth: ''
+      }
+    },
+    computed: {
+      textStyle () {
+        return {
+          paddingRight: this.calcWidth
+        }
+      },
+      textareaStyle() {
+        return merge({
+          paddingRight: this.calcWidth
+        }, this.textareaCalcStyle, { resize: this.resize });
+      },
+    }
   }
 </script>
 <style lang="less">
