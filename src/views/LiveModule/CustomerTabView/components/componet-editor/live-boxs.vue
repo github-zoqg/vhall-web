@@ -16,37 +16,39 @@
     :infinite-scroll-immediate="true"
     v-show="total"
   >
-    <!-- 单个视频 -->
-    <div class="vh-chose-active-item"
-      v-for="(item) in activeList"
-      :key="item.webinar_id"
-      @click="doSelect(item)"
-      :class="{'checkedActive': item.checked}"
-    >
-      <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
-      <div class="vh-chose-active-item__cover">
-        <img :src="item.img_url" alt="">
-        <div class="vh-chose-active-item__cover-status">
-          <span class="liveTag">
-            <!-- <label class="live-status" v-if="item.webinar_state == 1">
-              <img src="../../../../../common/images/live.gif" alt="">
-            </label> -->
-            {{item | liveTag}}
-          </span>
-        </div>
-        <div class="vh-chose-active-item__cover-hots">
-          <i class="iconfont-v3 saasicon_redu"></i>
-          {{ item.pv }}
-        </div>
+    <vhscroll>
+      <!-- 单个视频 -->
+      <div class="vh-chose-active-item"
+        v-for="(item) in activeList"
+        :key="item.webinar_id"
+        @click="doSelect(item)"
+        :class="{'checkedActive': item.checked}"
+      >
+        <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
+        <div class="vh-chose-active-item__cover">
+          <img :src="item.img_url" alt="">
+          <div class="vh-chose-active-item__cover-status">
+            <span class="liveTag">
+              <!-- <label class="live-status" v-if="item.webinar_state == 1">
+                <img src="../../../../../common/images/live.gif" alt="">
+              </label> -->
+              {{item | liveTag}}
+            </span>
+          </div>
+          <div class="vh-chose-active-item__cover-hots">
+            <i class="iconfont-v3 saasicon_redu"></i>
+            {{ item.pv }}
+          </div>
 
+        </div>
+        <div class="vh-chose-active-item__title">
+          {{ item.subject }}
+        </div>
+        <div class="vh-chose-active-item__info">
+          {{ item.created_at }}
+        </div>
       </div>
-      <div class="vh-chose-active-item__title">
-        {{ item.subject }}
-      </div>
-      <div class="vh-chose-active-item__info">
-        {{ item.created_at }}
-      </div>
-    </div>
+    </vhscroll>
   </div>
 </div>
 </template>
@@ -170,8 +172,8 @@ export default {
 </script>
 <style lang="less" scoped>
   .vh-chose-active-box{
-    width: 560px;
-    height: 320px;
+    width: 100%;
+    height: 580px;
     overflow: auto;
     overflow-x: hidden;
     position: relative;
