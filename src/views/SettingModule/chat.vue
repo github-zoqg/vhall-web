@@ -426,7 +426,7 @@ export default {
           this.isUploadEnd = false;
           this.importResult = null;
           if (this.$refs.chatUpload) {
-             this.$refs.chatUpload.setError('导入严禁词信息校验失败');
+             this.$refs.chatUpload.setError(res.msg || '导入严禁词信息校验失败');
           }
         });
       }
@@ -456,6 +456,19 @@ export default {
         this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
+        /* resV.data.success > 0 ? this.$message({
+          message: `成功添加了${resV.data.success}个关键词`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        }) : this.$message({
+          message: '添加失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        }); */
         // 重新刷新列表数据
         this.getKeywordList();
       }).catch(res => {
