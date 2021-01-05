@@ -35,11 +35,12 @@
         </el-form-item>
         <el-form-item prop="password">
           <VhallInput
-            style="ime-mode:disabled;"
             placeholder="请输入密码"
             :maxlength="30"
+            style="ime-mode:disabled"
             :type="isPassWordType ? 'password' : 'text'"
             auto-complete="off"
+            onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
             v-model.trim="loginForm.password">
             <span slot="suffix" @click="passWordType" class="closePwd">
               <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
@@ -151,6 +152,8 @@
                 placeholder="设置密码(6-30个字符)"
                 :maxlength="30"
                 auto-complete="off"
+                onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
+                style="ime-mode:disabled"
                 :type="isPassWordType ? 'password' : 'text'"
                 v-model="registerForm.password">
                 <span slot="suffix" @click="passWordType" class="closePwd">

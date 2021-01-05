@@ -119,6 +119,7 @@ export default {
   watch: {
     active() {
       this.isActive = this.active;
+      this.changeTime(this.isActive)
     }
   },
   created() {
