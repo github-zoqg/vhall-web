@@ -251,8 +251,10 @@ export default {
   },
   beforeDestroy() {
     console.log('消亡')
-    this.$Chat.destroy();
-    this.$Chat = null;
+    if (this.$Chat) {
+      this.$Chat.destroy();
+      this.$Chat = null;
+    }
   }
 };
 </script>
