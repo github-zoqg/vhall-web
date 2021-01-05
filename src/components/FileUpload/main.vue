@@ -10,12 +10,12 @@
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="img"></i>
-          <p class="file-name" style="color: rgb(136, 136, 136);">{{fileName}}</p>
+          <p class="file-name" style="color: rgb(136, 136, 136);" :title="fileName">{{fileName}}</p>
           <div class="change-txt" v-if="result && (progress.percent === 0 || progress.percent === 100)">
             <p id="right">上传成功，共检测到{{result.success}}条有效数据</p>
           </div>
           <div class="change-txt" v-if="!result && (progress.percent === 0 || progress.percent === 100)">
-            <p id="error">检测失败，请重新上传</p>
+            <p id="error">{{errText}}</p>
           </div>
           <div class="change-txt" v-if="!progress.isUploadEnd && progress.percent > 0 && progress.percent < 100">
             上传中，请稍后<el-progress :percentage="progress.percent" status="success"></el-progress>
@@ -39,7 +39,8 @@ export default {
   data(){
     return {
       token: sessionOrLocal.get('token', 'localStorage') || '',
-      fileName: null
+      fileName: null,
+      errText: ''
     };
   },
   props: {
@@ -120,8 +121,9 @@ export default {
       console.log('heqhwhqhwhd ', response, file, fileList, this.onSuccess);
       this.fileName = file.name;
       if(response.code !== 200) {
-        this.$message.error(response.msg || '上传失败');
+        this.errText = '上传失败，请重新上传';
       } else {
+        this.errText = '';
         console.log(this.$props);
         // this.$emit('input', URL.createObjectURL(file.raw));
         // this.imageUrl = URL.createObjectURL(file.raw);
@@ -162,6 +164,9 @@ export default {
         this.restPic();
         event.stopPropagation();
       }
+    },
+    setError(text) {
+      this.errText = text;
     }
   },
   filters: {
@@ -274,6 +279,13 @@ export default {
     font-size: 14px;
     font-weight: 400;
     margin-top: -5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    margin: 0 20px;
   }
   .a-upload #right {
     font-weight: 400;

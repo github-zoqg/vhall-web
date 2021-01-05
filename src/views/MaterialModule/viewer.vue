@@ -12,8 +12,8 @@
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
           <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
-          <el-link :href="downloadUrl"  v-if="downloadUrl">下载模版</el-link>
-          <el-link :href="downloadUrl" v-else>下载模板</el-link>
+          <el-link :href="downloadUrl"  v-if="downloadUrl" class="unHover">下载模版</el-link>
+          <el-link :href="downloadUrl" v-else  class="unHover">下载模板</el-link>
           <div class="searchBox">
             <VhallInput
               placeholder="搜索内容"
@@ -102,7 +102,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
         <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
@@ -110,6 +110,7 @@
     <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="468px">
       <div class="upload-dialog-content">
         <file-upload
+          ref="viewerUpload"
           v-model="fileUrl"
           :saveData="{
              path: pathUrl,
@@ -130,7 +131,7 @@
           <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
         </file-upload>
         <div class="dialog-right-btn">
-          <el-button type="primary" @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
+          <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
           <el-button @click="closeImportViewer" size="medium" round>取 消</el-button>
         </div>
       </div>
@@ -642,21 +643,21 @@ export default {
           group_id: this.query.group_id,
           request_type: 0 // 校验
         }).then(resV => {
-          if (resV && resV.code === 200) {
-            this.fileResult = 'success';
-            this.importResult = {
-              success: resV.data.success_count,
-              fail: resV.data.fail_count
-            };
-          } else {
-            this.fileResult = 'error';
-            // this.$message.error(resV.msg || '检测观众信息失败！');
-            this.importResult = null;
+          this.fileResult = 'success';
+          this.importResult = {
+            success: resV.data.success_count,
+            fail: resV.data.fail_count
+          };
+          if (this.$refs.viewerUpload) {
+             this.$refs.viewerUpload.setError('');
           }
-        }).catch(e => {
+        }).catch(res => {
           this.fileResult = 'error';
+          // this.$message.error(resV.msg || '检测观众信息失败！');
           this.importResult = null;
-          // this.$message.error(e.msg || '检测观众信息失败！');
+          if (this.$refs.viewerUpload) {
+             this.$refs.viewerUpload.setError(res.msg || '检测失败，请重新上传');
+          }
         });
       }
     },
@@ -724,6 +725,13 @@ export default {
         group_id: this.query.group_id,
         request_type: 1 // 保存
       }).then(resV => {
+        /* this.$message({
+          message:resV.msg || '导入观众信息成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        }); */
         this.importFileShow = false;
         this.percent = 0;
         this.isUploadEnd = false;
@@ -732,7 +740,7 @@ export default {
         this.queryList();
       }).catch(res => {
         this.$message({
-          message:res.msg || '导入观众信息失败！',
+          message:res.msg || '导入观众信息失败',
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -761,6 +769,12 @@ export default {
   margin-bottom: 20px;
   .el-link {
     margin-left: 20px;
+    margin-left: 20px;
+    text-decoration: none;
+    color: #666666;
+    &:hover {
+      color: #666666;
+    }
   }
   .searchBox{
     float: right;
