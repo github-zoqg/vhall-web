@@ -132,6 +132,7 @@ export default {
         this.outTime(res.data.edition_valid_time);
         this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
+        sessionOrLocal.set('versionText', JSON.stringify(res.data.edition));
         sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
       }).catch(e=>{
         console.log(e);
