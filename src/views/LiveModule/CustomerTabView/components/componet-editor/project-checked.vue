@@ -119,6 +119,10 @@ export default {
     background: #F7F7F7;
     border-radius: 4px;
     margin: 0 14px 14px 0;
+    &:hover{
+      box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+    }
     &.checkedActive{
       border: 1px solid #FB3A32;
     }

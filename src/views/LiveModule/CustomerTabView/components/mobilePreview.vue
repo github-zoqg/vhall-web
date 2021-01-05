@@ -60,7 +60,7 @@
     </div>
     <!-- 新增菜单（弹出框）-->
     <VhallDialog
-      :title="addCustomForm.name || '新增菜单'"
+      :title="type == 'add' ? '新增菜单' : '重命名菜单'"
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
       width="280px"
@@ -77,7 +77,7 @@
             auto-complete="off"
             placeholder="请输入菜单名称"
             :maxlength="8"
-            show-word-limit="8" />
+            show-word-limit />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -108,7 +108,7 @@ export default {
       scrollIndex: 0,
       scrollLeftPx: 0,
       $insetIndex: null,
-      $type: 'add', // add , rename
+      type: 'add', // add , rename
       // 自定义菜单 - 增删
       addCustomVisbile: false,
       addCustomForm: {
@@ -133,10 +133,10 @@ export default {
     console.log("当前默认菜单", this.menus)
   },
   mounted() {
-    console.log("当前默认菜单", this.menus)
+    // console.log("当前默认菜单", this.menus)
     setTimeout(() => {
       this.choseMenu(0)
-    },200)
+    }, 400)
 
   },
 
@@ -170,9 +170,6 @@ export default {
       this.scrollLeftPx = `-${left}px`
     },
 
-    computedScrollLock() {
-    },
-
     // 向右滚动
     scrollRight() {
       const scrollElement = document.querySelector('.vh-mobile-menus-scroll__content')
@@ -203,17 +200,18 @@ export default {
 
     addMenuAction() {
       this.$insertIndex = this.menus.length
-      this.$type = 'add'
+      this.type = 'add'
       this.addCustomForm.name = null
       this.addCustomVisbile = true
     },
 
     addCustomerMenu() {
       this.$refs.addCustomForm.validate((valid) => {
-        if(this.$type == 'add') {
-
+        if(!valid) {
+          return
+        }
+        if(this.type == 'add') {
           this.activeIndex = null
-
           if(this.$insertIndex > 0 && this.$insertIndex < this.menus.length) {
             this.menus.splice(this.$insertIndex, 0, {
               name: this.addCustomForm.name,
@@ -254,7 +252,7 @@ export default {
     // 菜单重命名
     rename(index) {
       this.$insertIndex = index
-      this.$type = 'rename' // 编辑类型！
+      this.type = 'rename' // 编辑类型！
       this.addCustomForm.name = this.menus[index].name
       this.addCustomVisbile = true
     },
@@ -281,7 +279,7 @@ export default {
     // 右侧增加菜单
     addRight(index) {
       this.$insertIndex = (index + 1)
-      this.$type = 'add' // 编辑类型！
+      this.type = 'add' // 编辑类型！
       this.addCustomForm.name = ''
       this.addCustomVisbile = true
     },
@@ -289,7 +287,7 @@ export default {
     addLeft(index) {
       this.$insertIndex = (index - 1 < 0 ? 0 : index - 1)
       console.log(this.$insertIndex)
-      this.$type = 'add' // 编辑类型！
+      this.type = 'add' // 编辑类型！
       this.addCustomForm.name = ''
       this.addCustomVisbile = true
     },

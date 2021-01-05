@@ -52,9 +52,9 @@
         <table-list
           ref="chatTable"
           :isHandle=true
-          :manageTableData="keyWordDao.list"
+          :manageTableData="showChatList"
           :tabelColumnLabel="tableColumn"
-          :totalNum="keyWordDao.total"
+          :totalNum="showChatList.length"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
           :max-height="380"
@@ -155,6 +155,7 @@ export default {
       // 列表展示开始
       listPanelShow: false,
       isHandle: false, // 是否有操作项
+      showChatList: [],
       tableColumn: [
         {
           label: '严禁词',
@@ -233,6 +234,7 @@ export default {
     // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
+      this.showChatList = this.keyWordDao.list;
     },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
@@ -301,7 +303,7 @@ export default {
           }).catch(res => {
             console.log(res);
             this.$message({
-              message:  this.addForm.executeType === 'add' ? `添加失败` : `修改失败`,
+              message:  this.addForm.executeType === 'add' ? res.msg || `添加失败` : res.msg || `修改失败`,
               showClose: true,
               // duration: 0,
               type: 'error',

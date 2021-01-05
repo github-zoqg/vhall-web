@@ -373,11 +373,11 @@ export default {
             this.$refs.pwdForm.resetFields();
           }
         } catch (e) {console.log(e);}
+        this.visible = true;
+        this.pwdForm.password = this.privilegeVo[keyName];
+        this.pwdForm.keyName = keyName;
+        this.pwdForm.type = type;
       });
-      this.visible = true;
-      this.pwdForm.password = this.privilegeVo[keyName];
-      this.pwdForm.keyName = keyName;
-      this.pwdForm.type = type;
     },
     // 保存權限
     savePremHandle(keyName) {

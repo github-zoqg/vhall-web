@@ -130,6 +130,16 @@ export default {
           cUid: uuidV1()
         })
       } else if(componentData.component_id == 9) {
+
+        const isAdded = this.units.filter((item) => {
+          return item.component_id == 9
+        })
+
+        if (isAdded.length > 0) {
+          this.$message.error('功能组件只能添加一个！')
+          return
+        }
+
         this.units.push({
           ...componentData,
           inSwitch: 1,  // 1， 开启 。 0 关闭

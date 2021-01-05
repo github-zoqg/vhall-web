@@ -58,17 +58,14 @@ export default {
   },
 
   methods: {
-    changeLink() {
-      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.link)
-      // this.$waring('链接地址，必须以http或https 开头')
-      // this.a = 'bbb'
-      // console.log(this.a)
+    changeLink(e) {
+      console.log(this.info.src)
+      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
       if(result) {
         this.$emit('updateInfo', this.info)
       } else {
-        this.$message('链接地址，必须以http或https 开头')
+        this.$message.warning('跳转地址，必须以http或https 开头')
       }
-
     },
 
     changeText() {
