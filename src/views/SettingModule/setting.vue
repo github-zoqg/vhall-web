@@ -29,7 +29,7 @@ export default {
       operas: [
         { icon: 'saasicon_xiaoxiyanjinci', title: '聊天严禁词', subText: '设置聊天过滤严禁词', path: `/setting/chat/1`},
         { icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'},
-        { icon: 'saasicon_kongzhitaibiaoshi', title: '控制台标志', subText: '设置控制台的品牌标识' , path: '/setting/logo/1'}
+        { icon: 'saasicon_kongzhitaibiaoshi', title: '控制台标识', subText: '设置控制台的品牌标识' , path: '/setting/logo/1'}
       ]
     };
   },
