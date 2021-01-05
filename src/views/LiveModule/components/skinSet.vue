@@ -2,7 +2,7 @@
   <div class="skin--set">
     <div class="sign--set--main">
       <div class="skin--set--left">
-        <el-form :model="skinSetForm" ref="skinSetForm" :rules="skinSetFormRules" label-width="94px">
+        <el-form :model="skinSetForm" ref="skinSetForm" :rules="skinSetFormRules" label-width="66px">
           <el-form-item label="皮肤方案">
             <el-radio-group v-model="skinType" @change="previewShow">
               <el-radio :label="0">默认皮肤</el-radio>
@@ -293,14 +293,14 @@ export default {
   .align(flex-start);
 }
 .skin--set--left{
-  width: 50%;
+  width: 480px;
 }
 /deep/.el-form-item__label {
   line-height: 40px;
 }
 .brand--preview {
-  width: calc(50% - 48px);
-  padding-left: 48px;
+  width: calc(100% - 480px);
+  padding-left: 60px;
 }
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;

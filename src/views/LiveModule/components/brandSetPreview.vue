@@ -22,12 +22,12 @@
             <div class="area">
               <div class="topInfo">
                 <p class="">
-                  <b>活动标题发布会{{skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'}}</b>
+                  <b>活动标题</b>
                   <span class="tag">直播</span>
-                  <span class="right gray font-14">131237次观看</span>
+                  <span class="right gray font-14">131次观看</span>
                 </p>
                 <p class="top-bottom" >
-                  <span class="mrR" v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">紫禁之巅</a></span>
+                  <span class="mrR" v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">微吼</a></span>
                   <span>时间：2020-12-18 00:00:00</span>
                   <span class="right iconBtn" v-if="signSetVo && signSetVo.organizers_status == 1">
                     <icon icon-class="saasyijianfankui">反馈</icon>
@@ -41,7 +41,7 @@
               <div class="player">
                 <div class="player-content">
                   <div class="player-video">
-                    <img width="401" height="186" src="../../../common/images/skin/white/player.png"/>
+                    <img width="350" src="../../../common/images/skin/white/player.png"/>
                   </div>
                 </div>
               </div>
@@ -58,9 +58,9 @@
                 </div>
               </div>
               <div class="rcm-li">
-                <img width="369" height="69" src="../../../common/images/skin/white/recommend-list.png"
+                <img width="350" height="69" src="../../../common/images/skin/white/recommend-list.png"
                      v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
-                <img width="369" height="69" src="../../../common/images/skin/black/recommend-list.png"
+                <img width="350" height="69" src="../../../common/images/skin/black/recommend-list.png"
                      v-else/>
               </div>
             </div>
@@ -76,9 +76,9 @@
                 </div>
               </div>
               <div class="dct-cont">
-                <img width="371" height="68" src="../../../common/images/skin/white/discription-content.png"
+                <img width="350" height="68" src="../../../common/images/skin/white/discription-content.png"
                      v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'"/>
-                <img width="371" height="68" src="../../../common/images/skin/black/discription-content.png"
+                <img width="350" height="68" src="../../../common/images/skin/black/discription-content.png"
                      v-else/>
               </div>
             </div>
@@ -237,9 +237,13 @@ export default {
 <style lang="less" scoped>
 /*预览区域样式开始*/
 .skin-preview.preview-pc{
-  width: 445px;
+  width: 400px;
   border: 1px solid #d2d2d2;
   padding-bottom: 40px;
+  border-radius: 4px;
+}
+.zdy--switch {
+  margin-bottom: 16px;
 }
 .pc-header {
   padding: 0 24px;
@@ -295,6 +299,12 @@ export default {
       color: #7c8287;
       font-size: 10px;
     }
+    .mrR {
+      a {
+        color: #7c8287;
+        margin-right: 8px;
+      }
+    }
   }
   .right{
     float: right;
@@ -315,6 +325,7 @@ export default {
     font-size: 10px;
     line-height: 1;
     padding: 2px 5px;
+    font-style: normal;
   }
   .focusCount {
     background-color: #fbdcdc;
@@ -326,6 +337,7 @@ export default {
     line-height: 1;
     padding: 2px 5px;
     color: #ff3333;
+    font-style: normal;
   }
 }
 .recommend {
