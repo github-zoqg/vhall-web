@@ -2,6 +2,27 @@
 <div>
   <div class="vh-chose-active-box menus-checkedBox"
   >
+
+    <div class="vh-chose-active-item"
+      v-if="activeList.length == 0"
+    >
+      <div class="vh-chose-active-item__cover">
+        <!-- <img :src="item.cover" alt=""> -->
+        <div class="vh-chose-active-item__cover-status">
+        </div>
+        <div class="vh-chose-active-item__cover-hots">
+          <i class="iconfont-v3 saasicon_redu"></i>
+          0
+        </div>
+      </div>
+      <div class="vh-chose-active-item__title">
+        专题示例
+      </div>
+      <div class="vh-chose-active-item__info">
+        2020-12-30 12:00:00
+      </div>
+    </div>
+
     <!-- 单个视频 -->
     <div class="vh-chose-active-item"
       v-for="(item) in activeList"
@@ -19,7 +40,7 @@
         </div>
         <div class="vh-chose-active-item__cover-hots">
           <i class="iconfont-v3 saasicon_redu"></i>
-          {{ item.view_num }}
+          {{ item.pv }}
         </div>
       </div>
       <div class="vh-chose-active-item__title">
@@ -105,9 +126,10 @@ export default {
       position: relative;
       width: 100%;
       height: 94px;
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      // background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      // background-size: 400% 400%;
+      // animation: gradientBG 15s ease infinite;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
       img{
         width: 100%;
         height: 100%;

@@ -6,8 +6,9 @@
     >
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
-        <el-button type="primary" round @click.prevent.stop="saveCustomTab">保存</el-button>
+
         <el-link type="info" :underline=false href="http://www.vhall.com/saas/doc/1457.html" target="_blank" class="link__left">使用帮助</el-link>
+        <el-button type="primary" style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
       </div>
     </page-title>
     <div class="vh-customer-menu-contentBox">
@@ -153,9 +154,10 @@ export default {
       float: left;
     }
     &__preview{
-      padding:20px 20px 20px 40px;
+      padding:24px 20px 20px 40px;
       background: #fff;
       overflow: hidden;
+      border-radius: 4px;
     }
     .vh-customer__preview-tabcontrols{
       width: 160px;

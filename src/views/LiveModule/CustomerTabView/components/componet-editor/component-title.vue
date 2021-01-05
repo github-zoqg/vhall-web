@@ -48,6 +48,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .qr-editor-box{
+    padding-top: 16px;
+  }
   .label{
     display: inline-block;
     color: #1A1A1A;

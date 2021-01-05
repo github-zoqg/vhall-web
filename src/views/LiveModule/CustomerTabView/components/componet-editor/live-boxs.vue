@@ -195,7 +195,10 @@ export default {
     border-radius: 4px;
     margin: 0 14px 14px 0;
     position: relative;
-
+    &:hover{
+      box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+    }
     i.saasicon-choose-01{
       position: absolute;
       right: 0;

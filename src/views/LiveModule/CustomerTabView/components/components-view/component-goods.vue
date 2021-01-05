@@ -13,18 +13,28 @@
     </div>
     <div class="tips-box">
       <span class="tips-title">温馨提示：</span>
-      <div class="tips-content">请在左侧导航栏中的<span><a href="http://www.baidu.com/">【商品展示】</a></span>中添加内容</div>
+      <div class="tips-content">请在左侧导航栏中的<span><a href="javascript:;" @click.stop="goLink">【商品】</a></span>中添加内容</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "component-goods"
+  name: "component-goods",
+  methods: {
+    goLink() {
+      this.$router.push({
+        path: `/live/productSet/${this.$route.params.str}`
+      })
+    }
+  }
 };
 </script>
 
 <style lang="less" scoped>
+.menu-cont{
+  user-select: none;
+}
 .goods-list {
   margin-top: 0;
   margin-left: 12px;
