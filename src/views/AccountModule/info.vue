@@ -108,17 +108,26 @@ export default {
             scene_id: 3,
             force: 1
           }).then(res => {
-            if (res && res.code === 200) {
-              // 绑定成功
-              this.$message.success('绑定成功');
-              // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
-              sessionOrLocal.removeItem('tag', 'localStorage');
-              sessionOrLocal.removeItem('bind_result');
-              window.location.reload();
-            } else {
-              this.$message.error(res.msg || '绑定失败');
-            }
-          }).catch(e => {
+            // 绑定成功
+            this.$message({
+              message:  `绑定成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            sessionOrLocal.removeItem('tag', 'localStorage');
+            sessionOrLocal.removeItem('bind_result');
+            window.location.reload();
+          }).catch(resError  => {
+            this.$message({
+              message:  resError.msg || '绑定失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             // 清除缓存
             sessionOrLocal.removeItem.set('tag', 'localStorage');
             sessionOrLocal.removeItem('bind_result');
@@ -132,7 +141,13 @@ export default {
         });
       } else {
         // 绑定失败，不做任何处理
-        this.$message.error(res.msg || '绑定失败');
+        this.$message({
+          message:  res.msg || '绑定失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     }
   }

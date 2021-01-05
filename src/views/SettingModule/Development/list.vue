@@ -9,7 +9,7 @@
     <pageTitle title="开发设置"></pageTitle>
     <p class="top">
       <el-button type="primary" size="medium" round @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
-      <el-button size="medium" round @click="toCallbackPage">回调设置</el-button>
+      <el-button size="medium" round @click="toCallbackPage" class="bg--trans">回调设置</el-button>
     </p>
     <div class="dev-show-list">
       <table-list
@@ -164,22 +164,24 @@ export default {
        */
       this.$fetch('createApp', {}).then(res => {
         console.log('getAppList', res);
-        if(res && res.code === 200) {
-          this.$alert('添加成功，请手动添加包名签名信息', '提示', {
-            confirmButtonText: '我知道了',
-            customClass: 'zdy-alert-box',
-            center: true,
-            lockScroll: false
-          }).then(()=>{
-            // 添加成功，刷新列表
-            this.search();
-          }).catch(()=>{});
-          // this.$router.push({path: `/dev/${res.data.result}`});
-        } else {
-          this.$message.error(res.msg || '创建失败');
-        }
-      }).catch(error=>{
-        console.log(error);
+        this.$alert('添加成功，请手动添加包名签名信息', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-alert-box',
+          center: true,
+          lockScroll: false
+        }).then(()=>{
+          // 添加成功，刷新列表
+          this.search();
+        }).catch(()=>{});
+        // this.$router.push({path: `/dev/${res.data.result}`});
+      }).catch(res =>{
+        this.$message({
+          message:  res.msg || '创建失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 表格操作列回调函数， val表示每行
@@ -203,21 +205,17 @@ export default {
         limit: this.limit
       }).then(res => {
         console.log('getAppList', res);
-        if(res && res.code === 200) {
-          let list = res.data.list || [];
-          list.map(item => {
-            item.statusStr = ['已停用', '已启用'][item.status];
-          });
-          this.tableList = list || [];
-          this.totalNum = res.data.total || 0;
-          this.available_num = res.data.available_num;
-        } else {
-          this.tableList = [];
-          this.totalNum = 0;
-          this.available_num = 0;
-        }
-      }).catch(error=>{
-        console.log(error);
+        let list = res.data.list || [];
+        list.map(item => {
+          item.statusStr = ['已停用', '已启用'][item.status];
+        });
+        this.tableList = list || [];
+        this.totalNum = res.data.total || 0;
+        this.available_num = res.data.available_num;
+      }).catch(res =>{
+        console.log(res);
+        this.tableList = [];
+        this.totalNum = 0;
         this.available_num = 0;
       }).finally(()=>{
         this.fetching = false;
@@ -264,14 +262,23 @@ export default {
         id: rows.id,
         status: status
       }).then(res =>{
-        if (res && res.code === 200) {
-          this.$message.success(['停用','启用','删除'][status]);
-          // 刷新数据
-          this.search();
-        } else {
-          this.$message.success(res.msg);
-        }
-      }).catch( e =>{
+        this.$message({
+          message:  `${['停用','启用','删除'][status]}成功` ,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        // 刷新数据
+        this.search();
+      }).catch( res =>{
+        this.$message({
+          message:  res.msg ||  `${['停用','启用','删除'][status]}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
   },
@@ -286,6 +293,19 @@ export default {
 <style lang="less" scoped>
   .top{
     margin-bottom: 20px;
+    /deep/.bg--trans {
+      background: transparent;
+      &:hover {
+        color: #fff;
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        color: #ffffff;
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
+    }
   }
   .tips{
     font-size: 14px;
