@@ -61,7 +61,8 @@ export default {
       window.open(url, "_blank");
     },
     goEmbedForm() {
-      let url = `${this.env.staticLinkVo.downOldUrl}/webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
+      // https://t.e.vhall.com/auth/check-token?after_login=webinar/marketing/index&token=aca55f6b78b2e246a1a38ff143531099
+      let url = `${this.env.staticLinkVo.downOldUrl}/auth/check-token?after_login=webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
       window.open(url, "_blank");
     },
     cope(url) {

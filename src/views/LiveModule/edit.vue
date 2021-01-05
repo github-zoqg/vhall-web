@@ -27,7 +27,7 @@
       </el-form-item>
       <el-form-item label="直播模式：" required v-if="webniarType=='live'">
         <div class="titleBox">
-          <span class="pageTitle">直播创建成功后，不允许修改直播模式</span>
+          <span class="pageTitle">直播创建成功后，直播模式将不可修改</span>
           <el-tooltip>
             <div slot="content">
               <p>1.视频直播：音频+视频直播，需要保证摄像头和麦克风正常</p>
