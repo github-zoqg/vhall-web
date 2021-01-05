@@ -10,7 +10,7 @@
         <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
         <span class="searchTitle">
           <el-input v-model.trim="paramsObj.keyword" placeholder="请输入广告标题"
-          suffix-icon="el-icon-search" clearable @change="initPage()"></el-input>
+          suffix-icon="el-icon-search" clearable @change="getAdvTableList()"></el-input>
         </span>
       </div>
       <div class="advert-card-list" v-show="total">
@@ -33,7 +33,7 @@
           <el-button size="white-primary" round v-if="nullText == 'nullData' && $route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
         </noData>
       </div>
-      <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList"></create-advise>
+      <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList" :maxTotal="total"></create-advise>
     </div>
   </div>
 </template>
@@ -94,12 +94,12 @@ export default {
     this.getAdvTableList();
   },
   methods: {
-    getAdvTableList() {
+    getAdvTableList(param) {
        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      if (this.paramsObj.keyword) {
+      if (this.paramsObj.keyword || param == 'delete') {
         this.$refs.tableList.clearSelect();
         pageInfo.pos = 0;
-        pageInfo.pageSize = 1;
+        pageInfo.pageNum = 1;
       }
       let params = {
         keyword: this.paramsObj.keyword,
@@ -148,33 +148,28 @@ export default {
           if (res && res.code === 200) {
               this.$message.success('删除成功');
               // 刷新页面
-            this.adv_ids = [];
             this.$refs.tableList.clearSelect();
-            this.getAdvTableList();
+            this.getAdvTableList('delete');
+            this.adv_ids = [];
           } else {
             this.$message.error(res.msg || '删除失败');
           }
+        }).catch((res) => {
+          this.$message.error(res.msg || '删除失败');
         });
-      }).catch(() => {
-        this.$message.error(res.msg || '删除失败');
-      });
+      })
     },
     allDelete(id) {
-      if(this.adv_ids.length <= 0) {
-          this.$message.error('请至少选择一条记录删除');
-          return;
-        } else {
-          id = this.adv_ids.join(',');
-          this.deleteConfirm(id);
-        }
+      id = this.adv_ids.join(',');
+      this.deleteConfirm(id);
     },
     changeTableCheckbox(val) {
       console.log(val);
       this.adv_ids = val.map(item => item.adv_id);
     },
     createAdvise(title) {
-      if (this.$route.path !='/material/advertCard' && this.tableList.length == 50) {
-         this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+      if (this.$route.path !='/material/advertCard' && this.total >= 50) {
+        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
         return;
       }
       this.advInfo = {};
@@ -182,7 +177,7 @@ export default {
     },
     createCenter() {
       this.$refs.adviseSonChild.dialogAdverVisible = true;
-      this.$refs.adviseSonChild.activityData();
+      // this.$refs.adviseSonChild.activityData();
     }
   }
 };

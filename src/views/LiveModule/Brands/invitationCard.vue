@@ -52,7 +52,8 @@
           <el-form-item label="标题" prop="title">
             <VhallInput
               v-model.trim="formInvitation.title"
-              maxlength="16"
+              :maxlength="16"
+              autocomplete="off"
               show-word-limit
               style="width: 320px"
             ></VhallInput>
@@ -60,7 +61,8 @@
           <el-form-item label="主办方" prop="company">
             <VhallInput
               v-model.trim="formInvitation.company"
-              maxlength="10"
+              :maxlength="10"
+              autocomplete="off"
               show-word-limit
               style="width: 320px"
             ></VhallInput>
@@ -68,13 +70,15 @@
           <el-form-item label="时间">
             <VhallInput
               v-model.trim="formInvitation.webinar_date"
+              autocomplete="off"
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
           <el-form-item label="地点" prop="location">
             <VhallInput
               v-model.trim="formInvitation.location"
-              maxlength="20"
+              :maxlength="20"
+              autocomplete="off"
               show-word-limit
               style="width: 320px"
             ></VhallInput>
@@ -84,7 +88,8 @@
               style="width: 320px"
               v-model.trim="formInvitation.desciption"
               type="textarea"
-              maxlength="45"
+              :maxlength="45"
+              autocomplete="off"
               :autosize="{ minRows: 5 }"
               resize="none"
               show-word-limit

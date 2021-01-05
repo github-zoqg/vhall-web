@@ -95,14 +95,14 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    getTableList() {
+    getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = {
         webinar_id: this.$route.query.id,
         room_id: this.$route.query.roomId,
         keyword: this.keyword
       }
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -195,12 +195,11 @@ export default {
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.$route.query.id}).then(res => {
             if (res.code == 200) {
-              this.getTableList();
-              this.$refs.tableList.clearSelect();
+              this.getTableList('delete');
               this.$message.success('删除成功');
-            } else {
-              this.$message.error('删除失败');
             }
+          }).catch(res => {
+            this.$message.error(res.msg || '删除失败');
           })
         }).catch(() => {
           this.$message({

@@ -31,7 +31,8 @@
                         class="textType"
                         placeholder="版权所有，盗版必究"
                         :disabled="!scrolling_open"
-                        maxlength="20"
+                        autocomplete="off"
+                        :maxlength="20"
                         show-word-limit
                       ></VhallInput>
                     </el-form-item>

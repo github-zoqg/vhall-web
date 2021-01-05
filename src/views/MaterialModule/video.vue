@@ -43,7 +43,7 @@
       :close-on-click-modal=false
       :close-on-press-escape=false>
         <div class="main-edit">
-          <VhallInput v-model.trim="videoName" maxlength="100" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
+          <VhallInput v-model.trim="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">
@@ -120,9 +120,9 @@ export default {
     this.getVideoAppid();
   },
   methods: {
-    getTableList(){
+    getTableList(params){
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -343,12 +343,11 @@ export default {
       }).then(() => {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
-            this.getTableList();
+            this.getTableList('delete');
             this.$message.success('删除成功');
-          } else {
-            this.$message.error(res.msg);
           }
-
+        }).catch(res => {
+          this.$message.error(res.msg || '删除失败');
         });
       }).catch(() => {});
     },
@@ -377,13 +376,8 @@ export default {
     },
     // 批量删除
     allDelete() {
-      if(this.checkedList.length <= 0) {
-          this.$message.error('请至少选择一条视频删除');
-          return;
-        } else {
-          let id = this.checkedList.join(',');
-          this.confirmDelete(id);
-        }
+      let id = this.checkedList.join(',');
+      this.confirmDelete(id);
     },
     preview(that, { rows }) {
       //  this.videoParam 进本信息
