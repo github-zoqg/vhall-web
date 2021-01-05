@@ -333,7 +333,7 @@ export default {
         }
       }).catch(res => {
         this.$message({
-          message:  `登录验证失败`,
+          message: res.msg || `登录验证失败`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -363,7 +363,7 @@ export default {
           }
           sessionOrLocal.set('token', '', 'localStorage');
           this.callCaptcha();
-      });
+      })
     },
     // 注册判断手机号是否已经注册
     checkPhone() {
@@ -406,8 +406,8 @@ export default {
         setTimeout(() => {
           this.$router.push({path:'/login'})
         }, 1000)
-      }).catch(e => {
-        console.log(e);
+      }).catch(res => {
+        console.log(res);
         this.registerText = res.msg || '注册失败';
       });
     },
