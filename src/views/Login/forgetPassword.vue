@@ -241,7 +241,9 @@ export default {
             scene_id: this.isType === 'phone' ? 5 : 4
           }).then(() => {
             this.countDown();
-          });
+          }).catch(res => {
+          this.$message.error(res.msg);
+        });
         } else {
           this.$message({
             message: '请检查手机号是否输入正确',
@@ -261,7 +263,9 @@ export default {
           scene_id: this.isType === 'phone' ? 5 : 4
         }).then(() => {
             this.countDown();
-          });
+        }).catch(res => {
+          this.$message.error(res.msg);
+        });
         } else {
           this.$message({
             message: '请检查邮箱是否输入正确',

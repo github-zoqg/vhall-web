@@ -4,6 +4,7 @@ let cdn = {
     "//static.vhallyun.com/jssdk/vhall-jssdk-player/2.2.7-3/vhall-jssdk-player-2.2.7-3.js",
     "//static.vhallyun.com/jssdk/vhall-jssdk-vodupload/latest/vhall-jssdk-upload-2.0.2.js",
     "//static01-open.e.vhall.com/jssdk/vhall-jssdk-form/vhall-jssdk-form-1.0.3.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.9.js",
     "//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js",
     "//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202",
     // "//static01-open.e.vhall.com/jssdk/question-component/1.0.3/questionnaire_service.js",
