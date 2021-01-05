@@ -92,9 +92,12 @@ export default {
     },
 
     changeLink() {
-      this.$emit('updateInfo', {
-        ...this.info,
-      })
+      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
+      if(result) {
+        this.$emit('updateInfo', this.info)
+      } else {
+        this.$message.warning('跳转地址，必须以http或https 开头')
+      }
     },
 
     uploadError(e) {
