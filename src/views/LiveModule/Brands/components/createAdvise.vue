@@ -69,8 +69,8 @@
       </div>
       <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
       <span slot="footer" class="dialog-footer" v-show="total || isSearch">
-        <el-button type="primary" @click="advSaveToWebinar(null)" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
-        <el-button @click="dialogAdverVisible = false" v-preventReClick round>取 消</el-button>
+        <el-button type="primary" size="medium" @click="advSaveToWebinar()" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
+        <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
     <VhallDialog
@@ -162,6 +162,9 @@ export default {
   props: {
     advInfo:{
       type: Object
+    },
+    maxTotal:{
+      type: Number
     }
   },
   components: {
@@ -181,7 +184,13 @@ export default {
     },
     dialogAdverVisible() {
       if (this.dialogAdverVisible) {
+        this.advertPageInfo = {
+          pos: 0,
+          limit: 6,
+          page: 1
+        };
         this.selectChecked = [];
+        this.activityData();
       } else {
         this.adList = [];
         this.selectChecked = [];
@@ -347,17 +356,13 @@ export default {
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
-      if (!id) {
-        if (this.selectChecked.length < 1) {
-          this.dialogAdverVisible = false;
-          return;
-        } else {
-          id = this.selectChecked.join(',');
-        }
+      if (this.maxTotal + this.selectChecked.length >= 50) {
+        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        return;
       }
       let params = {
         webinar_id: this.$route.params.str,
-        adv_ids: id
+        adv_ids: this.selectChecked.join(',')
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
@@ -473,7 +478,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 312px;
+       height: 300px;
       //  overflow: auto;
        .ad-item{
           width: 165px;
