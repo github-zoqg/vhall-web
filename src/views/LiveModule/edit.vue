@@ -408,6 +408,9 @@ export default {
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
+        if (this.$route.query.type == 3) {
+          this.$route.meta.title = '复制直播';
+        }
         this.liveDetailInfo = res.data;
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
@@ -520,7 +523,8 @@ export default {
         hide_pv: Number(this.hot),// 是否显示活动热度 1 是 0 否
         webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.capacity),// 是否扩容 1 是 0 否
-        img_url: this.$parseURL(this.imageUrl).path // 封面图
+        img_url: this.$parseURL(this.imageUrl).path, // 封面图
+        copy_webinar_id: this.title == '复制' ? this.webinarId : ''
       };
       if(this.$route.query.type != 2 ) {
          data = this.$params(data)

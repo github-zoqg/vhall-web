@@ -1,7 +1,7 @@
 <template>
   <div class="advertisement-card">
     <div class="title-data">
-      <span>广告推荐</span>
+      <span>{{ $route.path =='/material/advertCard' ? '广告推荐' : '广告'}}</span>
     </div>
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
@@ -155,7 +155,9 @@ export default {
             this.$message.error(res.msg || '删除失败');
           }
         });
-      }).catch(() => {});
+      }).catch(() => {
+        this.$message.error(res.msg || '删除失败');
+      });
     },
     allDelete(id) {
       if(this.adv_ids.length <= 0) {

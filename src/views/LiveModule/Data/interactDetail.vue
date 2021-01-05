@@ -31,7 +31,7 @@
         />
         <el-button size="medium" round v-if="title==='聊天' || title==='问答'" @click="deleteAll(null)">批量删除</el-button>
       </div>
-      <span v-if="totalNum"><el-button size="medium" round @click="exportData" >导出数据</el-button></span>
+      <span v-if="totalNum"><el-button size="medium" type="white-primary" round @click="exportData" >导出数据</el-button></span>
     </div>
     <div class="interact-detail" v-show="totalNum">
       <table-list
@@ -137,7 +137,7 @@ export default {
         },
         {
           label: '问答内容',
-          key: 'content',
+          key: 'imgOrText',
         },
         {
           label: '发送时间',
@@ -542,7 +542,8 @@ export default {
     getQuestionInfo() {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
-        room_id: this.roomId
+        room_id: this.roomId,
+        webinar_id: this.webinarId
       }
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getSurveyUsageInfo', obj).then(res => {
@@ -621,13 +622,13 @@ export default {
         tableList.map((item, index) => {
           item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '语音回复' : item.status == 3 ? '文字回复' : '未处理';
           item.name = '问';
-          item.content = `${item.content} | 观众`;
+          item.imgOrText = `${item.nick_name} | 观众 <br /> ${item.content}`;
           this.tableList.push(item);
           if (item.answer.length) {
             item.answer.map(opt => {
               opt.is_open = opt.is_open == 1 ? '公开' : '私密';
               opt.name = '答';
-              opt.content = `${opt.content} | ${opt.role_name}`;
+              opt.imgOrText = `${opt.nick_name} | ${opt.role_name} </br> ${opt.content}`;
               this.tableList.push(opt);
             })
           }
@@ -785,7 +786,7 @@ export default {
     },
     // 问卷
     exportQuestionInfo() {
-      this.$fetch('exportSurvey',{room_id: this.roomId}).then(res => {
+      this.$fetch('exportSurvey',{webinar_id: this.webinarId, room_id: this.roomId}).then(res => {
         this.$message.success('导出申请成功，请去下载中心下载');
         this.$EventBus.$emit('saas_vs_download_change');
       })
