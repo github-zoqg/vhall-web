@@ -70,13 +70,16 @@ export default {
     };
   },
   created() {
+    // 回放列表剪辑
     if (this.$route.query.recordId && this.$route.query.isRecordVideo != 1) {
       this.getPlayBackInfo();
     } else if(this.$route.query.switch_id) {
+      // 回放录制剪辑
       this.dataReady = true;
       this.getInitMsgInfo();
       this.getTime();
     } else {
+      // 创建回放剪辑
       this.dataReady = true;
       this.getInitMsgInfo();
     }
@@ -199,7 +202,7 @@ export default {
       const opts = {
         record_id: this.recordId,
         webinar_id: param.il_id,
-        scene_type: param.cut_type,
+        scene_type: 0,
         name: this.titleEdit,
         cut_sections: JSON.stringify(cut_sections),
         point_sections: JSON.stringify(point_sections)
@@ -210,11 +213,16 @@ export default {
       }else {
         opts.record_id = this.recordId
       }
+      // 如果 isNew 并且是录制裁剪，来源类型应该是 录制
+      if (this.$route.query.switch_id && this.isNew) {
+        opts.source = 1
+      }
       this.$fetch('tailorSave', opts).then(res => {
         console.log(res);
         if (res.code == 200) {
           this.$message.success('保存成功');
           this.recordId = res.data.record_id;
+          // 保存需要重置 isNew 的状态，导出不需要
           this.isNew = false;
           this.recordName = this.titleEdit;
           this.getPlayBackInfo(res.data.record_id);
@@ -290,18 +298,29 @@ export default {
     exportVideoHandler (param) {
       const cut_sections = param.cut_sections && JSON.parse(param.cut_sections)
       const point_sections = param.point_sections && JSON.parse(param.point_sections)
-      this.$fetch('tailorSave', {
+
+      const opts = {
         record_id: this.recordId,
         webinar_id: param.il_id,
-        scene_type: param.cut_type,
+        scene_type: 0,
         name: param.name,
         cut_sections: JSON.stringify(cut_sections),
         point_sections: JSON.stringify(point_sections)
-      }).then(res => {
+      }
+      if (this.isNew) {
+        opts.scene_type = 1
+      }else {
+        opts.record_id = this.recordId
+      }
+      // 如果 isNew 并且是录制裁剪，来源类型应该是 录制
+      if (this.$route.query.switch_id && this.isNew) {
+        opts.source = 1
+      }
+
+      this.$fetch('tailorSave', opts).then(res => {
         console.log(res)
         if (res.code == 200) {
           this.$message.success('导出成功')
-          this.isNew = false;
         } else {
           this.$message.success('导出失败')
         }

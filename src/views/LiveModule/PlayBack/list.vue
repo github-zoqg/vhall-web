@@ -445,7 +445,7 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           // this.$router.push({path: `/live/recordvideo/${this.webinar_id}`});
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/recordvideo/${this.webinar_id}`;
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/recordvideo/${this.webinar_id}`;
         }
       }).catch(err => {
         if (err.code == 12550) {
