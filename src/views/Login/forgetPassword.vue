@@ -258,13 +258,13 @@ export default {
             code: this.dynamicForm.code,
             scene_id: this.isType === 'phone' ? 5 : 4
           }
-          this.$fetch('codeCheck', params).then(res => {
-          if (res.code == 200 && res.data) {
+        this.$fetch('codeCheck', params).then(res => {
+          if (res.data) {
             this.codeKey = res.data.key;
             this.findStep = 3;
-          } else {
-             this.$message.error(res.msg);
           }
+        }).catch(res => {
+          this.$message.error(res.msg);
         });
         } else {
           console.log('error submit!!');
@@ -285,14 +285,12 @@ export default {
               key: this.codeKey
             };
             this.$fetch('resetPassword', params).then(res => {
-              if (res.code == 200) {
-                this.findStep = 4;
-                setTimeout(() => {
-                  this.$router.push({path: '/'});
-                }, 1000);
-              } else {
-                this.$message.error(res.msg);
-              }
+              this.findStep = 4;
+              setTimeout(() => {
+                this.$router.push({path: '/'});
+              }, 1000);
+            }).catch(res => {
+               this.$message.error(res.msg);
             });
           } else {
             console.log('error submit!!');

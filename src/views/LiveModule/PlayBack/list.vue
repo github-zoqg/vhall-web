@@ -1,6 +1,6 @@
 <template>
   <div class="listBox">
-    <pageTitle :title="isDemand? '点播管理' : '回放管理'"></pageTitle>
+    <pageTitle :title="title"></pageTitle>
     <div v-if="!isDemand" class="operaBlock">
       <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
       <el-button size="medium" plain round @click="toRecord">录制</el-button>
@@ -19,12 +19,14 @@
     </div>
     <div class="tableBox" v-loading="loading">
       <el-table
+        v-if="isDemand !== ''"
         ref="playBackTable"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange">
         <el-table-column
+          v-if="!isDemand"
           type="selection"
           width="55">
         </el-table-column>
@@ -46,7 +48,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column>
+        <el-table-column width="138">
           <template slot-scope="{ column, $index }" slot="header">
             <el-select v-model="recordType" @change="typeChange(column, $index)">
               <el-option
@@ -57,19 +59,20 @@
               </el-option>
             </el-select>
           </template>
-          <template slot-scope="scope">{{scope.row.source | soruceTotext}}</template>
+          <span class="playpackSource" slot-scope="scope">{{scope.row.source | soruceTotext}}</span>
         </el-table-column>
 
         <el-table-column
           label="时长"
           show-overflow-tooltip>
-          <template slot-scope="scope">{{scope.row.duration}}</template>
+          <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
         </el-table-column>
 
         <el-table-column
-          prop="save_time"
+          v-if="!isDemand"
           label="暂存至"
           show-overflow-tooltip>
+          <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
         </el-table-column>
 
         <el-table-column
@@ -161,7 +164,7 @@ export default {
       transcodingArr: [],
       recordType: '-1',
       liveDetailInfo: {},
-      isDemand: false,
+      isDemand: '',
       chatSDK: '',
       handleMsgTimer: '',
       typeOptions: [
@@ -179,6 +182,15 @@ export default {
     },
     webinar_id(){
       return this.$route.params.str;
+    },
+    title(){
+      if (this.isDemand == '') {
+        return ''
+      } else if (this.isDemand) {
+        return '点播管理'
+      } else {
+        return '回放管理'
+      }
     }
   },
   created(){
@@ -496,11 +508,11 @@ export default {
           str = "录制";
           break;
 
-        case 2:
+        case 3:
           str = "打点";
           break;
 
-        case 3:
+        case 2:
           str = "上传";
           break;
 
@@ -535,6 +547,9 @@ export default {
     }
     .el-table{
       margin-bottom: 40px;
+    }
+    .playpackSource{
+      color: #1a1a1a;
     }
   }
   /* /deep/ .el-table__header{

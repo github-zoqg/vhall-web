@@ -9,7 +9,7 @@ import errorMap from './errorMap'
 /**
  * 错误码提示 统一在次处理
  * extendsMsg：增加扩展字段处理自定义错误信息 格式如：{510000: '错误信息'}，空位此处错误不需提示
- * 200 
+ * 200
  * 600 对应 10000 参数错误
  * 其余错误信息 510000 - 516999，通过errorMap引入
 */
@@ -105,7 +105,8 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       errMap = Object.assign(errMap, extendsMsg)
       msg = errMap[res.code]
       if (msg) {
-        Message.error(res.msg)
+        // Message.error(res.msg)
+        res.msg = msg;
       }
       return Promise.reject(res);
     }

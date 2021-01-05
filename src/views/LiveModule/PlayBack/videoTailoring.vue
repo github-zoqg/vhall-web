@@ -80,7 +80,35 @@ export default {
       this.dataReady = true;
       this.getInitMsgInfo();
     }
+    // 监听事件点的变化
+    this.$EventBus.$on('eventPointListChange', eventPointList => {
+      this.isChange = true
+    });
+    // 监听剪辑事件
+    this.$EventBus.$on('cutTimeListChange', eventPointList => {
+      this.isChange = true
+    });
+    // window.onbeforeunload = function(){
+    //   return '关闭提示';
+    // }
   },
+  // beforeRouteLeave(to, from, next) {
+  //   // 离开页面前判断信息是否修改
+  //   if (!this.isChange) {
+  //     next()
+  //     return false;
+  //   } else {
+  //     this.$alert(`是否放弃当前编辑？`, '提示', {
+  //       confirmButtonText: '确定',
+  //       cancelButtonText: '取消',
+  //       customClass: 'zdy-alert-box',
+  //       type: 'warning'
+  //     }).then(() => {
+  //       next()
+  //     }).catch(() => {
+  //     });
+  //   }
+  // },
   beforeDestroy() {
     if (this.$PLAYER) {
       this.$PLAYER.destroy();
@@ -339,7 +367,7 @@ export default {
       background: #222222;
       border-bottom: 1px #000 solid;
       .time-label {
-        color: #666666;
+        color: #999999;
         font-size: 14px;
         display: inline-block;
         padding-right: 15px;
@@ -353,20 +381,21 @@ export default {
         height: 36px;
         border-radius: 25px;
         border-color: #666666;
-        border-width: 2px;
+        border-width: 1px;
         background: #17171e;
         width: 72px;
         font-size: 14px;
+        color: #999999;
       }
       /deep/ .el-range-editor {
         border-radius: 25px;
         height: 36px;
         background: #17171e;
         border-color: #666666;
-        border-width: 2px;
+        border-width: 1px;
         width: 382px;
         .el-range-separator {
-          color: #666666;
+          color: #999999;
           line-height: 26px;
           font-size: 14px;
         }
