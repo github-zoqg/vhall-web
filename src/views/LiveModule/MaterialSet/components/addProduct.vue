@@ -4,7 +4,7 @@
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">
-          <VhallInput v-model.trim="form.name" maxlength="30" show-word-limit placeholder="请输入商品名称"></VhallInput>
+          <VhallInput v-model.trim="form.name" :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
         <el-form-item label="商品图片" prop="img_id">
           <div class="imgList">
@@ -45,25 +45,25 @@
           <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，建议尺寸：600*600px</p>
         </el-form-item>
         <el-form-item label="商品描述" prop="description">
-          <VhallInput type="textarea" v-model.trim="form.description" maxlength="140" show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
+          <VhallInput type="textarea" v-model.trim="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <el-input v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left:6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
+          <VhallInput v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left:6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="优惠价" prop="discount_price">
-         <el-input v-model.trim="form.discount_price" placeholder="请输入商品优惠价0-99999999.99元" maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></el-input>
+         <VhallInput v-model.trim="form.discount_price" placeholder="请输入商品优惠价0-99999999.99元" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
-          <el-input v-model.trim="form.url" placeholder="请输入商品链接"></el-input>
+          <VhallInput v-model.trim="form.url" placeholder="请输入商品链接" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item label="淘口令">
-          <el-input v-model.trim="form.tao_password" placeholder="请输入淘口令"></el-input>
+          <VhallInput v-model.trim="form.tao_password" placeholder="请输入淘口令" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item label="店铺链接" prop="shop_url">
-          <el-input v-model.trim="form.shop_url" placeholder="请输入店铺链接"></el-input>
+          <VhallInput v-model.trim="form.shop_url" placeholder="请输入店铺链接" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round class="length152" @click="onSubmit">保存</el-button>
+          <el-button type="primary" round class="length152" v-preventReClick @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -82,13 +82,25 @@ export default {
         callback && callback();
       }
     };
+    // 商品名称长度
+    const nameValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入商品名称'));
+      } else {
+        if (value.length > 30) {
+          callback && callback('商品名称不能大于 30 个字符');
+        } else {
+          callback && callback();
+        }
+      }
+    };
     // 商品链接
     const linkValidate = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入商品链接'));
       } else {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('请输入正确得商品链接地址');
+          callback && callback('请输入正确的商品链接地址');
         } else {
           callback();
         }
@@ -98,7 +110,7 @@ export default {
     const shopValidate = (rule, value, callback) => {
       if (value) {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('请输入正确得店铺链接地址');
+          callback && callback('请输入正确的店铺链接地址');
         } else {
           callback();
         }
@@ -150,7 +162,7 @@ export default {
       fileList: [],
       rules: {
         name: [
-          { required: true, message: '请输入商品名称', trigger: 'blur' },
+          { required: true, validator: nameValidate, trigger: 'blur' },
         ],
         img_id: [
           { required: true, validator: imgValidate, trigger: 'change' }

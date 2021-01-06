@@ -2,6 +2,30 @@
 <div>
   <div class="vh-chose-active-box menus-checkedBox"
   >
+  <div class="vh-chose-active-item" v-if="activeList.length == 0">
+      <div class="vh-chose-active-item__cover">
+        <!-- <img :src="" alt=""> -->
+        <div class="vh-chose-active-item__cover-status">
+          <span class="liveTag">
+            <!-- <label class="live-status" v-if="item.webinar_state == 1">
+              <img src="../../../../../common/images/live.gif" alt="">
+            </label> -->
+            示例 | 直播活动
+          </span>
+        </div>
+        <div class="vh-chose-active-item__cover-hots">
+          <i class="iconfont-v3 saasicon_redu"></i>
+          0
+        </div>
+      </div>
+      <div class="vh-chose-active-item__title">
+        示例活动
+      </div>
+      <div class="vh-chose-active-item__info">
+        2020-12-30 12:00:00
+      </div>
+    </div>
+
     <!-- 单个视频 -->
     <div class="vh-chose-active-item"
       v-for="(item) in activeList"

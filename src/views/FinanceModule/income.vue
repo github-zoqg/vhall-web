@@ -316,15 +316,9 @@ export default {
       if (title === '直播' && parseInt(this.incomeInfo.live_balance) < 1) {
         this.$message.warning('当前余额不足1元，不支持提现');
         return false;
-      } else if (title === '直播' && parseInt(this.incomeInfo.live_balance) > 800) {
-        this.$message.warning('需要线下审核提现');
-        return false;
       }
       if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) < 1) {
         this.$message.warning('当前余额不足1元，不支持提现');
-        return false;
-      } else if (title === '红包' && parseInt(this.incomeInfo.red_packet_balance) > 800) {
-        this.$message.warning('需要线下审核提现');
         return false;
       }
       let flag = this.isBangWeixin();
@@ -455,4 +449,7 @@ export default {
     }
   }
   }
+/deep/.saasicon_help_m {
+  color: #999999;
+}
 </style>

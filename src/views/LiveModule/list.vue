@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick>创建点播</el-button>
+        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick v-if="vodPerssion == 1">创建点播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -120,6 +120,7 @@ export default {
       pageSize: 12,
       pageNum: 1,
       pagePos: 0,
+      isAnginOpen: false,
       webinarInfo: {},
       totalElement: 0,
       liveDropDownVisible: false,
@@ -144,6 +145,8 @@ export default {
     noData
   },
   created() {
+    this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
+    console.log(this.vodPerssion, '??????????????????')
     this.getLiveList();
   },
   methods: {
@@ -224,18 +227,38 @@ export default {
       });
     },
     goLivePlay(item) {
+      //判断是否可以开播
+      if (item.webinar_state == 1) {
+        this.getOpenLive(item);
+      } else {
+        this.goIsLive(item)
+      }
+    },
+    goIsLive(item) {
       if (item.webinar_type != 1) {
-        // this.$router.push({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
         window.open(href, '_target');
       } else {
-         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
-         window.open(href, '_target');
-        //  window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
+        window.open(href, '_target');
       }
-      // 需新标签打开
-
-
+    },
+    // 判断是否有起直播的权限
+    getOpenLive(item) {
+      this.$fetch('checkLive', this.$params({
+        webinar_id: item.webinar_id
+      })).then((res) => {
+        if(res.code == 200) {
+          this.goIsLive(item);
+        } else {
+          // 不能发起
+          this.$message.error('该活动正在直播或录播中，无法重复发起');
+          return;
+        }
+      }).catch(e => {
+        this.$message.error('该活动正在直播或录播中，无法重复发起');
+        return;
+      });
     },
     // 创建活动
     createLiveAction(index){
@@ -398,7 +421,8 @@ export default {
           position: absolute;
           height: 50px;
           width: 100%;
-          background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+          /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
           bottom: 0px;
           left: 0px;
           color: #fff;

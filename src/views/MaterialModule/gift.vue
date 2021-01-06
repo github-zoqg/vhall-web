@@ -18,6 +18,7 @@
         @clear="searchGifts"
         class="head-btn fr search"
         v-model.trim="searchName"
+        autocomplete="off"
         placeholder="请输入礼物名称"
       >
         <i
@@ -81,7 +82,9 @@
       v-if="dialogVisible"
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+      custom-class="create-gift"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
@@ -103,10 +106,10 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model.trim="editParams.name" show-word-limit maxlength="10" placeholder="请输入礼物名称"></VhallInput>
+            <VhallInput v-model.trim="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" show-word-limit maxlength="10" placeholder="请输入0-9999.99">
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  show-word-limit :maxlength="10" placeholder="请输入0-9999.99">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
             </VhallInput>
         </el-form-item>
@@ -438,7 +441,7 @@ export default {
   }
 }
 .gift-wrap{
-  /deep/ .el-dialog__footer {
+  /deep/ .create-gift .el-dialog__footer {
     padding-top: 0;
   }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {

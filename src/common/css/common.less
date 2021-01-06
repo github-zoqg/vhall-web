@@ -63,6 +63,7 @@
 
 /*文字-大小*/
 @font_size_30: 30px;
+@font_size_28: 28px;
 @font_size_20: 20px;
 @font_size_22: 22px;
 @font_size_18: 18px;
@@ -71,10 +72,10 @@
 @font_size_12: 12px;
 
 /*文字-字体*/
-@fontSemibold: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-@fontMedium: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-@fontRegular: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-@fontDINAL: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+@fontSemibold: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+@fontMedium: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+@fontRegular: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+@fontDINAL: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 
 /*边框颜色*/
 @border--normal: #cccccc;
@@ -415,9 +416,12 @@
 /*Input计数重置*/
 .el-input__count-inner {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #666666;
+  line-height: 20px;
+}
+.el-textarea .el-input__count {
+  font-size: 14px;
   line-height: 20px;
 }
 
@@ -469,7 +473,7 @@
 .el-button {
   /* 默认按钮 */
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   line-height: 20px;
   border: 1px solid #CCCCCC;
@@ -517,7 +521,7 @@ button.el-button.el-button--medium {
   /* 中等按钮 */
   padding: 4px 24px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   line-height: 26px;
 }
@@ -531,7 +535,7 @@ button.el-button.el-button--small {
   /*小型按钮*/
   padding: 5px 16px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   line-height: 20px;
 }
@@ -540,7 +544,7 @@ button.el-button.el-button--mini {
   /*迷你按钮 26Height*/
   padding: 2px 8px;
   font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   line-height: 20px;
 }
@@ -751,7 +755,7 @@ button.el-button.el-button--white-primary {
   list-style: none;
   position: relative;
   font-size: 16px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #666666;
   line-height: 55px;
@@ -776,6 +780,10 @@ button.el-button.el-button--white-primary {
 /deep/ .el-tabs__nav-wrap::after {
   height: 1px;
   color: #E6E6E6;
+}
+
+/deep/.el-tabs__active-bar {
+  background-color: #FB3A32;
 }
 
 /*-----------------------------------------重置Tab 结束 ---------------------------------------------*/
@@ -808,7 +816,7 @@ button.el-button.el-button--white-primary {
 
 /deep/ .el-dialog__title {
   font-size: 20px;
-  font-family: PingFangSC-Medium, PingFang SC;
+  font-family: @fontMedium;
   font-weight: 500;
   color: #1A1A1A;
   line-height: 28px;
@@ -848,7 +856,7 @@ button.el-button.el-button--white-primary {
 
   .el-message-box__title {
     font-size: 20px;
-    font-family: PingFangSC-Medium, PingFang SC;
+    font-family: @fontMedium;
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
@@ -897,7 +905,7 @@ button.el-button.el-button--white-primary {
 
   .el-message-box__title {
     font-size: 20px;
-    font-family: PingFangSC-Medium, PingFang SC;
+    font-family: @fontMedium;
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
@@ -988,6 +996,7 @@ button.el-button.el-button--white-primary {
     }
   }
 }
+
 // 互动工具的提交button
 .common-but {
   width: 160px;
@@ -995,7 +1004,7 @@ button.el-button.el-button--white-primary {
   background: #FC5659;
   border-radius: 4px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FFFFFF;
 }
@@ -1005,7 +1014,7 @@ button.el-button.el-button--white-primary {
   background: rgba(51, 51, 51, 0.8) !important;
   box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.2);
   font-size: 12px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FFFFFF;
   line-height: 18px;
@@ -1042,7 +1051,7 @@ button.el-button.el-button--white-primary {
     height: 30px;
     line-height: 30px;
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     cursor: pointer;

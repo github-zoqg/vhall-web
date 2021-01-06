@@ -25,8 +25,13 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :modal-append-to-body="false" :before-close='closeClose' width="50%" center>
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion" :modal-append-to-body="false" :before-close='closeClose' width="50%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <pre-question  :questionId="questionId"></pre-question>
+        <div class="submit-footer">
+          <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+        </div>
       </el-dialog>
     </template>
   </div>
@@ -92,7 +97,7 @@ export default {
         user_id: this.userId,
         keyword: this.keyword
       }
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -157,11 +162,13 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
-            this.getTableList();
+            this.getTableList('delete');
             this.$message({
               type: 'success',
               message: '删除成功!'
             });
+          }).catch(res => {
+            this.$message.error(res.msg || '删除失败')
           })
         }).catch(() => {
           this.$message({
@@ -171,12 +178,8 @@ export default {
         });
     },
     deleteAll(id) {
-       if (this.selectChecked.length < 1) {
-          this.$message.warning('请选择要操作的选项');
-        } else {
-          id = this.selectChecked.join(',');
-          this.deleteConfirm(id);
-        }
+      id = this.selectChecked.join(',');
+      this.deleteConfirm(id);
     },
     // 选中
     changeTableCheckbox(val) {
@@ -203,7 +206,11 @@ export default {
   .layout--right--main();
   .padding-table-list();
   .min-height();
+  /deep/.el-button .el-button--default .el-button--small .el-button--primary {
+    margin-right: 20px;
+  }
 }
+
 .question-wrap{
   height: 100%;
   width: 100%;
@@ -224,6 +231,9 @@ export default {
         border-radius: 18px;
       }
     }
+  }
+  .submit-footer{
+    text-align: center;
   }
 }
 </style>

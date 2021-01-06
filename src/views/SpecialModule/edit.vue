@@ -1,11 +1,11 @@
 <template>
   <div class="editBox">
     <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="100px">
-      <el-form-item label="专题标题:" prop="title">
-        <VhallInput v-model.trim="formData.title" maxlength="100" placeholder="请输入专题标题" show-word-limit></VhallInput>
+    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
+      <el-form-item label="专题标题" prop="title">
+        <VhallInput v-model.trim="formData.title" :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="专题封面:">
+      <el-form-item label="专题封面">
         <upload
           v-model="formData.imageUrl"
           :domain_url="formData.domain_url"
@@ -25,7 +25,7 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="专题简介:" required>
+      <el-form-item label="专题简介" required>
         <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
@@ -38,7 +38,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="热度:">
+      <el-form-item label="热度">
         <p class="switch__box">
           <el-switch
             v-model="formData.hot"
@@ -48,7 +48,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="关联主页:">
+      <el-form-item label="关联主页">
         <p class="switch__box">
           <el-switch
             v-model="formData.home"
@@ -58,7 +58,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="专题目录:" required>
+      <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
@@ -214,15 +214,16 @@ export default {
       next()
       return false;
     }
-    // this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-    //   confirmButtonText: '确定',
-    //   cancelButtonText: '取消',
-    //   customClass: 'zdy-alert-box',
-    //   type: 'warning'
-    // }).then(() => {
-    //     next()
-    // }).catch(() => {
-    // });
+    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      customClass: 'zdy-message-box',
+      lockScroll: false,
+      cancelButtonClass: 'zdy-confirm-cancel'
+    }).then(() => {
+        next()
+    }).catch(() => {
+    });
   },
   methods: {
     // 获取专题 - 详情
@@ -379,11 +380,7 @@ export default {
       }
     },
     resetForm(formName) {
-      if (this.$route.query.id) {
-        this.$router.push({path:'/special/list'});
-      } else {
-        this.isContent();
-      }
+      this.$router.push({path:'/special/list'});
     },
     deleteImg() {
       this.formData.imageUrl = '';

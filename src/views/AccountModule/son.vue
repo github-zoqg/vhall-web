@@ -121,15 +121,18 @@ export default {
 }
 .title--flex--top {
   .layout--right--main();
-  .min-height--header();
+  /* .min-height--header(); */
+  background: transparent;
   .flex-display();
   .justify(space-between);
   .align(center);
   text-align: left;
   margin-bottom: 24px;
   .top-item {
-    width: 33%;
-    padding-left: 40px;
+    width: calc((100% - 32px) / 3);
+    background: #ffffff;
+    padding: 32px 40px;
+    border-radius: 4px;
   }
   p {
     font-size: @font_size_14;
@@ -138,12 +141,12 @@ export default {
     color: @font_color_h3;
     line-height: 20px;
     &:last-child {
-      margin-top: 6px;
-      font-size: @font_size_30;
+      margin-top: 4px;
+      font-size: @font_size_28;
       font-family: @fontDINAL;
       font-weight: bold;
       color: @font_color_h1;
-      line-height: 35px;
+      line-height: 32px;
     }
   }
 }

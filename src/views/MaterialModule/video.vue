@@ -31,15 +31,19 @@
     </div>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center>
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
       </el-dialog>
     </template>
     <!-- 编辑功能 -->
     <template v-if="editShowDialog">
-      <el-dialog title="编辑" :visible.sync="editShowDialog" width="300px" center>
+      <el-dialog title="编辑" :visible.sync="editShowDialog" width="300px" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <div class="main-edit">
-          <VhallInput v-model.trim="videoName" maxlength="30" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
+          <VhallInput v-model.trim="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">
@@ -55,6 +59,7 @@ import PageTitle from '@/components/PageTitle';
 import VideoPreview from './VideoPreview/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import EventBus from "@/utils/Events";
 export default {
   name: 'video.vue',
   data() {
@@ -110,15 +115,74 @@ export default {
     VideoPreview,
     noData
   },
+  created() {
+    // 初始化聊天SDK
+    this.initChat();
+  },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getTableList();
     this.getVideoAppid();
+    EventBus.$on('sign_trans_code', res => { // 转码状态
+      console.log(res, '监听到sign_trans_code未读消息提示事件');
+      // if(Number(res.user_id) === Number(this.userId)) {
+
+      // }
+    });
   },
   methods: {
-    getTableList(){
+    // 初始化
+    async initChat(){
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        let option = {
+          appId: result.data.paasAppId || '', // appId 必须
+          accountId: result.data.accountId || '', // 第三方用户ID
+          channelId: result.data.channelId || '', // 频道id 必须
+          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+        }
+        window.VhallChat.createInstance(option, (event) => {
+          this.$Chat = event.message; // 聊天实例句柄
+          this.monitor()
+        },err=>{
+          // alert('初始化错误')
+          console.error(err);
+        })
+      }
+    },
+    // 监听
+    monitor(){
+      /**
+       * 接收聊天自定义消息*/
+      this.$Chat.on(async msg => {
+        try {
+          if (typeof msg !== 'object') {
+            msg = JSON.parse(msg)
+          }
+          if (typeof msg.context !== 'object') {
+            msg.context = JSON.parse(msg.context)
+          }
+          if (typeof msg.data !== 'object') {
+            msg.data = JSON.parse(msg.data)
+          }
+        } catch (e) {
+          console.log(e)
+        }
+        console.log('============收到msg===============' + JSON.stringify(msg.data))
+        if (msg.data.type === 'sign_trans_code') {
+          EventBus.$emit('sign_trans_code', msg.data);
+        }
+        if (msg.data.type === 'host_msg_webinar') {
+          console.log('EFASDFD', msg.data);
+        }
+        // if (msg.data.type === 'doc_convert_jpeg') {
+        //   EventBus.$emit('doc_convert_jpeg', msg.data.data)
+        // }
+      })
+    },
+    getTableList(params){
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -134,7 +198,6 @@ export default {
     tirggerFile(event){
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
-      console.log(file, '111111111111');
       let beforeName = event.target.files[0].name.toLowerCase();
       let videoArr = beforeName.toLowerCase().split('.');
       const videoType = typeList.includes(videoArr[videoArr.length - 1]);
@@ -175,6 +238,7 @@ export default {
       console.log(param, '33333333333333333');
       this.uploadList.unshift(param);
       this.tableData.unshift(param);
+      this.total = 1;
       console.log(this.tableData, '??????????????????')
       this.UploadSDK.upload([file],(pro)=>{
         this.tableData.forEach((ele)=>{
@@ -339,12 +403,11 @@ export default {
       }).then(() => {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
-            this.getTableList();
+            this.getTableList('delete');
             this.$message.success('删除成功');
-          } else {
-            this.$message.error(res.msg);
           }
-
+        }).catch(res => {
+          this.$message.error(res.msg || '删除失败');
         });
       }).catch(() => {});
     },
@@ -373,13 +436,8 @@ export default {
     },
     // 批量删除
     allDelete() {
-      if(this.checkedList.length <= 0) {
-          this.$message.error('请至少选择一条视频删除');
-          return;
-        } else {
-          let id = this.checkedList.join(',');
-          this.confirmDelete(id);
-        }
+      let id = this.checkedList.join(',');
+      this.confirmDelete(id);
     },
     preview(that, { rows }) {
       //  this.videoParam 进本信息
@@ -404,6 +462,13 @@ export default {
       this.$refs.videoPreview.destroy();
       done();
     },
+    beforeDestroy() {
+    console.log('消亡')
+    if (this.$Chat) {
+        this.$Chat.destroy();
+        this.$Chat = null;
+      }
+    }
   },
 };
 </script>

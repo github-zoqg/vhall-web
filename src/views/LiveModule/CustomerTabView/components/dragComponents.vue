@@ -38,6 +38,7 @@
       :draggable="!disableAll"
       v-for="item in highComponents"
       :key="item.component_id"
+      @dragstart="dragStartHandler($event, item)"
     >
       <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
     </div>
@@ -140,7 +141,7 @@ export default {
     &__item{
       line-height: 40px;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
       font-weight: 400;
       color: #1A1A1A;
       padding-left: 3px;

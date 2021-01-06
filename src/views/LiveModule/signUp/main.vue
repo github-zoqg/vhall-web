@@ -545,7 +545,7 @@ export default {
     float: right;
   }
   .titleBox{
-    display: block;
+    display: block!important;
     line-height: 40px;
   }
   .settingBox{

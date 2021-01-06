@@ -24,7 +24,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <VhallInput v-model.trim="prizeForm.prize_name" maxlength="10" show-word-limit></VhallInput>
+            <VhallInput v-model.trim="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -60,7 +60,7 @@
        </div>
         <div class="no-live" v-show="!total">
           <noData :nullType="nullText" :text="text" :height="50">
-            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="dialogVisible == true" v-preventReClick>创建抽奖</el-button>
+            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="createPrize" v-preventReClick>创建奖品</el-button>
           </noData>
         </div>
        <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
@@ -139,7 +139,7 @@ export default {
       }
     }
   },
-  props: ['prizeInfo'],
+  props: ['prizeInfo', 'liveTotal'],
   components: {
     upload,
     noData
@@ -239,6 +239,10 @@ export default {
       })
     },
     sureChoisePrize() {
+      if (this.liveTotal + this.checkedList.length > 20) {
+        this.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        return;
+      }
       let params = {
         room_id: this.$route.query.roomId,
         prize_id: this.checkedList.join(',')
@@ -257,6 +261,10 @@ export default {
           this.$message.error(res.msg);
         }
       })
+    },
+    createPrize() {
+      this.dialogVisible = true;
+      this.dialogPrizeVisible = false;
     },
     inputChange() {
       this.prizePageInfo = {
@@ -288,7 +296,6 @@ export default {
           item.isChecked = false;
         });
         this.list.push(...adList);
-        console.log(this.list, '?????????????????????')
         this.total = res.data.count;
         if (this.keyword) {
         this.nullText = 'search';

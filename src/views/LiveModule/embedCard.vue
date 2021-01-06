@@ -12,7 +12,7 @@
           <span>观看直播</span>
           <el-input v-model="liveContent" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" @click="cope(liveContent)"></i></el-input>
         </div>
-        <p>帮助：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://www.vhall.com/saas/doc/1692.html')"> 微信嵌入</a></p>
+        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://www.vhall.com/saas/doc/1692.html')"> 微信嵌入</a></p>
       </div>
     </div>
     <div class="network">
@@ -27,13 +27,13 @@
           <span>视频嵌入</span>
           <el-input v-model="video" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" @click="cope(video)"></i></el-input>
         </div>
-        <p>注意：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://www.vhall.com/saas/doc/163.html')"> 网页嵌入指南</a></p>
+        <p>提示：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://www.vhall.com/saas/doc/163.html')"> 网页嵌入指南</a></p>
       </div>
     </div>
     <div class="thirdMethod">
       <h3>第三方渠道推广嵌入</h3>
       <div class="third-list"></div>
-      <p class="third-text">提示:目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm"> 填写推广需求表</a></p>
+      <p class="third-text">提示：目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm"> 填写推广需求表</a></p>
     </div>
   </div>
 </template>
@@ -61,7 +61,8 @@ export default {
       window.open(url, "_blank");
     },
     goEmbedForm() {
-      let url = `${this.env.staticLinkVo.downOldUrl}/webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
+      // https://t.e.vhall.com/auth/check-token?after_login=webinar/marketing/index&token=aca55f6b78b2e246a1a38ff143531099
+      let url = `${this.env.staticLinkVo.downOldUrl}/auth/check-token?after_login=webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
       window.open(url, "_blank");
     },
     cope(url) {

@@ -18,14 +18,38 @@
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
-          <search-area
+        <div class="search-data">
+          <el-date-picker
+          v-model="lineSearchDate"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          @change="getLineList"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"
+          style="width: 240px"
+        />
+          <el-select filterable clearable v-model="lineType" style="width: 160px;marginLeft:15px" @change="getLineList" v-if="type">
+            <el-option
+              v-for="(opt, optIndex) in versionList"
+              :key="optIndex"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+          <div class="export-data">
+            <el-button round type="white-primary" size="medium" @click="exportCenterData">导出数据</el-button>
+          </div>
+        </div>
+          <!-- <search-area
             ref="searchLineLayout"
-            :isDate="true"
+            :isDate="isLineDate"
             :searchAreaLayout="searchLineLayout"
             @onExportData="exportCenterData()"
             @onSearchFun="getLineList()"
           >
-          </search-area>
+          </search-area> -->
           <lint-charts :lineDataList="lintData" :type="1"></lint-charts>
         </div>
     </div>
@@ -41,14 +65,39 @@
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
-        <search-area
+         <div class="search-data">
+          <el-date-picker
+          v-model="accountSearchDate"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          @change="getSearchList"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"
+          style="width: 240px"
+        />
+        <el-input v-model.trim="subject" suffix-icon="el-icon-search" placeholder="请输入活动名称" style="width: 180px;marginLeft:15px"  @change="getSearchList"  clearable></el-input>
+          <el-select filterable clearable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
+            <el-option
+              v-for="(opt, optIndex) in versionList"
+              :key="optIndex"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+          <div class="export-data">
+            <el-button round type="white-primary" size="medium" @click="exportAccount">导出数据</el-button>
+          </div>
+        </div>
+        <!-- <search-area
             ref="searchDataAccount"
-            :isDate="true"
+            :isDate="isDate"
             :searchAreaLayout="searchDataAccount"
             @onExportData="exportAccount()"
             @onSearchFun="getAccountList('search')"
         >
-        </search-area>
+        </search-area> -->
       <div class="content-grid" v-if="!versionType">
          <div class="grid-item">
           <div class="grid-content">
@@ -66,53 +115,50 @@
       <div class="content-grid" v-else>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计活动（个）
+            <p>累计活动（个）</p>
             <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
                 筛选条件内的活动总数，包含直播+点播活动
               </div>
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-            </p>
             <h1>{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计使用流量（GB）
+            <p>累计使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start">
               <div slot="content">
                 筛选条件内的直播使用流量+回放使用流量的总和
               </div>
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-            </p>
+
             <h1>{{ trendData.total_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>直播使用流量（GB）
+            <p>直播使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start">
                 <div slot="content">
                   筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            </p>
             <h1>{{ trendData.live_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>回放使用流量（GB）
+            <p>回放使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start">
                 <div slot="content">
                   筛选条件内的回放使用流量汇总，包含回放、点播、下载回放视频到本地消耗的总流量
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            </p>
             <h1>{{ trendData.vod_flow || 0 }}</h1>
           </div>
         </div>
@@ -121,8 +167,8 @@
         ref="accountTableList"
         :manageTableData="tableList"
         :tabelColumnLabel="tabelColumn"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
+        :isCheckout="false"
+        :isHandle="false"
         :totalNum="totalNum"
         @getTableList="getAccountList"
         >
@@ -147,6 +193,22 @@ export default {
   data() {
     return {
       lintData: [],
+      type: false,
+      lineType: 1,
+      accountType: 1,
+      versionList: [
+        {
+          label: '主账号',
+          value: 1,
+        },
+        {
+          label: '主账号+子账号',
+          value: 2,
+        }
+      ],
+      subject: '',
+      lineSearchDate: '',
+      accountSearchDate: '',
       trendData: {
         webinar_num: 12345678,
         total_flow: 901234567,
@@ -157,27 +219,9 @@ export default {
       versionType: '',
       lineParams: {},
       dataParams: {},
-      dataValue: '',
       totalNum: 1000,
       vm: {},
       status: 0,
-      searchLineLayout: [
-        {
-          type: "2",
-          key: "searchTime",
-        }
-      ],
-      searchDataAccount:[
-        {
-          type: "2",
-          key: "searchTime",
-        },
-        {
-          key: "subject"
-        }
-      ],
-      isCheckout: false,
-      isHandle: false,
       tableList: [],
       tabelColumn: [],
       tabelColumns: [
@@ -201,7 +245,13 @@ export default {
           label: '账号类型',
           key: 'typeText',
         },
-      ]
+      ],
+      pickerOptions: {
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
+        }
+      }
     };
   },
   filters:{
@@ -224,22 +274,7 @@ export default {
       })
     }
     if (this.parentId == 0 && this.childNum >= 0) {
-      let mainParams = {
-        type: '3',
-        key: 'type',
-        options: [
-          {
-            label: '主账号',
-            value: 1,
-          },
-          {
-            label: '主账号+子账号',
-            value: 2,
-          }
-        ]
-      }
-      this.searchLineLayout.push(mainParams);
-      this.searchDataAccount.push(mainParams);
+      this.type = true;
     }
   },
   mounted() {
@@ -247,6 +282,7 @@ export default {
     if (this.status) {
       this.initPayMessage();
     }
+    this.initPage();
     this.getLineList();
     this.getAccountList();
   },
@@ -257,21 +293,27 @@ export default {
     next();
   },
   methods: {
+    dealDisabledData(time) {
+      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+    },
+    initPage() {
+      // 初始化设置日期为最近一周
+      const end = new Date();
+      const start = new Date();
+      end.setTime(end.getTime() - 3600 * 1000 * 24);
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      this.lineSearchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.accountSearchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')]
+    },
     // 用量统计数据
-    getLineList(params) {
-      console.log()
-      let formParams = this.$refs.searchLineLayout.searchParams; //获取搜索参数
+    getLineList() {
       let paramsObj = {
         account_id: this.userId,
-        type: formParams.type || 1
+        type: this.lineType || 1
       };
-      for (let i in formParams) {
-        if (i === 'searchTime' && formParams.searchTime) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
+      if (this.lineSearchDate) {
+        paramsObj['start_time'] = this.lineSearchDate[0];
+        paramsObj['end_time'] = this.lineSearchDate[1];
       }
       let obj = Object.assign({}, paramsObj);
       this.lineParams = obj;
@@ -294,31 +336,34 @@ export default {
         console.log(e);
       });
     },
+    getSearchList() {
+      this.getAccountList('search')
+    },
     // 获取消费账单列表
     getAccountList(params) {
       let pageInfo = this.$refs.accountTableList.pageInfo;
-      let formParams = this.$refs.searchDataAccount.searchParams; //获取搜索参数
       let paramsObj = {
         account_id: this.userId,
-        type: formParams.type || 1
+        subject: this.subject,
+        type: this.accountType || 1
       };
-      if (params === 'search') {
+      if (params == 'search') {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
       }
-      for (let i in formParams) {
-        if (i === 'searchTime' && formParams.searchTime) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
+      console.log(this.accountSearchDate, '?????????????')
+      if (this.accountSearchDate) {
+        paramsObj['start_time'] = this.accountSearchDate[0];
+        paramsObj['end_time'] = this.accountSearchDate[1];
+      } else {
+        paramsObj['start_time'] = '';
+        paramsObj['end_time'] = '';
       }
-      this.dataParams = paramsObj;
+      this.dataParams = this.$params(paramsObj);
       let obj = Object.assign({}, pageInfo, paramsObj);
 
-      this.getOnlinePay(obj);
-      this.getDataList(obj);
+      this.getOnlinePay(this.$params(obj));
+      this.getDataList(this.$params(obj));
     },
     getDataList(obj) {
       let url = this.versionType == '1' ? 'getBusinessList' : 'getAccountList';
@@ -370,7 +415,6 @@ export default {
         that.getOrderArrear();
       });
     },
-    //导出数据
     // 导出用量统计
     exportCenterData() {
       let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
@@ -406,8 +450,17 @@ export default {
     border-radius: 4px;
     background: #fff;
   }
+  /deep/.el-input__inner{
+    border-radius: 18px;
+    height: 36px;
+    background: transparent;
+  }
   /deep/.el-input__icon {
     margin-bottom: 5px;
+    // line-height: 36px;
+  }
+  /deep/.el-input__suffix{
+    top: 0px;
   }
   .title-data {
       margin: 10px 0 20px 0;
@@ -420,60 +473,75 @@ export default {
         color: #1a1a1a;
       }
     }
-    .statistical-line {
-      text-align: left;
-      position: relative;
-      margin-top: 20px;
-      span {
-        display: inline-block;
-        font-size: 16px;
-        color: #1a1a1a;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-      }
-      i{
-        font-size: 14px;
-        padding: 0 2px;
-      }
+  .statistical-line {
+    text-align: left;
+    position: relative;
+    margin-top: 20px;
+    span {
+      display: inline-block;
+      font-size: 16px;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
     }
-    .content-grid{
-      width: 100%;
+    i{
+      font-size: 14px;
+      padding: 0 2px;
+    }
+  }
+  .content-grid{
+    width: 100%;
+    height:100px;
+    margin-bottom: 20px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .content-item{
+      width: 24%;
+      background: #F7F7F7;
       height:100px;
-      margin-bottom: 20px;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      .content-item{
-        width: 24%;
-        background: #F7F7F7;
-        height:100px;
-        border-radius: 4px;
+      border-radius: 4px;
+    }
+    .grid-item{
+      width: 49%;
+      background: #F7F7F7;
+      height:100px;
+      border-radius: 4px;
+    }
+    .grid-content{
+      margin: 22px 60px;
+      text-align: left;
+      h1{
+        font-size: 28px;
+        color: #1A1A1A;
+        line-height: 32px;
+        font-weight: bold;
       }
-      .grid-item{
-        width: 49%;
-        background: #F7F7F7;
-        height:100px;
-        border-radius: 4px;
-      }
-      .grid-content{
-        margin: 22px 60px;
-        text-align: left;
-        h1{
-          font-size: 28px;
-          color: #1A1A1A;
-          line-height: 32px;
-          font-weight: bold;
-        }
-        p{
-          font-size: 14px;
-          color: #999;
-          line-height: 20px;
-          i{
-            color:#1A1A1A;
-          }
+      p{
+        font-size: 14px;
+        color: #999;
+        line-height: 20px;
+        display: inline-block;
+        i{
+          color:#1A1A1A;
         }
       }
     }
+  }
+  .search-data{
+    position: relative;
+    padding: 5px 0 20px 0;
+    // margin-bottom: 15px;
+    .export-data {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
+
+}
+/deep/.saasicon_help_m {
+  color: #999999;
 }
 </style>

@@ -13,18 +13,28 @@
     </div>
     <div class="tips-box">
       <span class="tips-title">温馨提示：</span>
-      <div class="tips-content">请在左侧导航栏中的<span><a href="http://www.baidu.com/">【商品展示】</a></span>中添加内容</div>
+      <div class="tips-content">请在左侧导航栏中的<span><a href="javascript:;" @click.stop="goLink">【商品】</a></span>中添加内容</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "component-goods"
+  name: "component-goods",
+  methods: {
+    goLink() {
+      this.$router.push({
+        path: `/live/productSet/${this.$route.params.str}`
+      })
+    }
+  }
 };
 </script>
 
 <style lang="less" scoped>
+.menu-cont{
+  user-select: none;
+}
 .goods-list {
   margin-top: 0;
   margin-left: 12px;
@@ -44,7 +54,7 @@ export default {
 .goods-info .goods-title {
   display: block;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 20px;
@@ -53,7 +63,7 @@ export default {
   margin-top: 9px;
   span {
     font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
+    font-family: @fontRegular;
     font-weight: 400;
     color: #666666;
     line-height: 20px;
@@ -77,7 +87,7 @@ export default {
   border-radius: 20px;
   line-height: 32px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FFFFFF;
   margin-top: 16px;
@@ -88,14 +98,14 @@ export default {
 }
 span.tips-title {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #FB3A32;
   line-height: 20px;
 }
 .tips-content {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
+  font-family: @fontRegular;
   font-weight: 400;
   color: #1A1A1A;
   line-height: 20px;

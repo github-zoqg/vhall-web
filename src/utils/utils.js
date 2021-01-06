@@ -297,6 +297,28 @@ export function checkAuth(to, from, next) {
           sessionOrLocal.clear();
         }
       }
+    }).catch(e => {
+      // 非200情况下，若是3账户信息-账号绑定，提示当前账号已绑定，请解绑。
+      if(auth_tag) {
+        if (auth_tag.indexOf('bind') !== -1) {
+          // this.$message.success('绑定成功');
+          sessionOrLocal.set('bind_result', JSON.stringify(e));
+          sessionOrLocal.set('user_auth_key', user_auth_key);
+          // 绑定成功
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+        } else {
+          // 获取回调token失败
+          this.$message.error('登录信息获取失败，请重新登录');
+          sessionOrLocal.clear('localStorage');
+          sessionOrLocal.clear();
+        }
+      } else{
+        this.$message.error(e.msg || '异常请求，无法操作');
+        // 获取回调token失败
+        this.$message.error('登录信息获取失败，请重新登录');
+        sessionOrLocal.clear('localStorage');
+        sessionOrLocal.clear();
+      }
     });
     return;
   }

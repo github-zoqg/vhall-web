@@ -35,7 +35,7 @@
               <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                 <div class="inner">
                   <div class="top" @click="goWatchData(item)">
-                    <span class="liveTag">{{item.type | actionText }}</span>
+                    <span class="liveTag">{{item | liveTag }}</span>
                     <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
                   </div>
                   <div class="bottom">
@@ -132,18 +132,32 @@ export default {
       display: flex;
     }
     .special-img{
+      width: 722px;
+      height: 406px;
       img{
         width: 722px;
-        height: 406px;
+        height: 100%;
+        // object-fit: scale-down;
       }
     }
     .special-detail{
       margin-left: 23px;
+      padding-right: 30px;
+      width: calc(100% - 722px);
       h1{
         font-size: 20px;
         color: #333333;
         padding-top: 10px;
         margin-bottom: 20px;
+        width: 100%;
+        // max-width: 300px;
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       p{
         font-size: 16px;

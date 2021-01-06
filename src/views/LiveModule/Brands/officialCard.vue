@@ -44,7 +44,7 @@
               </div>
             </el-form-item>
             <el-form-item label="链接" v-if="title !== '公众号展示'" prop="url">
-              <el-input v-model="form.url" placeholder="请输入跳转链接"></el-input>
+              <VhallInput v-model="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item :label="title">
               <!--{{status  - 0开启，1关闭}}-->
@@ -165,7 +165,8 @@ export default {
         url: [
           { required: false, message: '请输入跳转链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入跳转链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入跳转链接' , trigger: 'blur'},
+          { maxlength: 200, message: '跳转链接最多可输入200个字符', trigger: 'blur' }
         ]
       }
     };
@@ -218,14 +219,27 @@ export default {
             this.alertType = res.data.shutdown_type === null || res.data.shutdown_type === undefined || res.data.shutdown_type === '' ? 1 : res.data.shutdown_type;
           }
         }
-      }).catch(e => {
-        console.log(e);
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message:  res.msg || '获取基本信息失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     preSure() {
       let url = '';
       if (Number(this.status === 0) && !this.img) {
-        this.$message.error(`${this.title === '公众号展示' ? ' 请上传二维码图片' : '请上传图片'}`);
+        this.$message({
+          message: `${this.title === '公众号展示' ? ' 请上传二维码图片' : '请上传图片'}`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let params = {
@@ -245,12 +259,22 @@ export default {
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
           this.$fetch(url, this.$params(params)).then(res => {
-            if(res && res.code === 200) {
-              this.$message.success('保存成功');
-              this.getData();
-            } else {
-              this.$message.error(res.msg || '保存失败');
-            }
+            this.$message({
+              message: '保存成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.getData();
+          }).catch(res => {
+            this.$message({
+              message: res.msg || '保存失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
@@ -273,11 +297,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`${this.title!=='公众号展示' ? '图片' : '二维码图片'}只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message:  `${this.title!=='公众号展示' ? '图片' : '二维码图片'}只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error(`${this.title!=='公众号展示' ? '图片' : '二维码图片'}大小不能超过 2MB!`);
+        this.$message({
+          message: `${this.title!=='公众号展示' ? '图片' : '二维码图片'}大小不能超过 2MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -287,7 +323,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`${this.title!=='公众号展示' ? '图片' : '二维码图片'}上传失败`);
+      this.$message({
+        message: `${this.title!=='公众号展示' ? '图片' : '二维码图片'}上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -322,6 +364,9 @@ export default {
       /deep/.el-button{
         margin-top: 100px;
         // padding: 10px 45px;
+      }
+      /deep/.el-input {
+        width: 360px;
       }
     }
     .v-preview-content {

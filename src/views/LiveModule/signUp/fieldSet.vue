@@ -15,7 +15,8 @@
     <section class="viewItem">
       <p class="label">表单简介</p>
       <VhallInput
-        maxlength="500"
+        :maxlength="500"
+        autocomplete="off"
         v-model="intro"
         show-word-limit
         placeholder="请输入表单简介"
@@ -70,7 +71,8 @@
             </template>
             <VhallInput
               v-else
-              maxlength="60"
+              :maxlength="60"
+              autocomplete="off"
               show-word-limit
               placeholder="请输入题目"
               v-model="item.label"
@@ -90,6 +92,7 @@
                 v-model="node.value"
                 v-bind="node.props"
                 show-word-limit
+                autocomplete="off"
                 :type="node.key == 'url'? 'textarea' : 'text'"
                 :autosize="node.key == 'url' ? { minRows: 2 } : ''"
                 :maxlength="node.key == 'url'? '200' : '60'"
@@ -134,7 +137,8 @@
               >
                 <VhallInput
                   @change="(chooseOptChange(item, radioItem))"
-                  maxlength="60"
+                  :maxlength="60"
+                  autocomplete="off"
                   show-word-limit
                   placeholder="选项"
                   v-model="radioItem.value"
@@ -153,6 +157,7 @@
                   disabled
                   v-if="radioItem.other"
                   :maxlength="60"
+                  autocomplete="off"
                   show-word-limit
                   :key='`${index}-${nodeIndex}disabled`'
                 ></VhallInput>
@@ -174,7 +179,8 @@
                 :class="{'other-checkbox': radioItem.other}"
               >
                 <VhallInput
-                  maxlength="60"
+                  :maxlength="60"
+                  autocomplete="off"
                   show-word-limit
                   placeholder="选项"
                   v-model="radioItem.value"

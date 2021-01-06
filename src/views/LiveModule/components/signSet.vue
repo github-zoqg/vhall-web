@@ -2,8 +2,8 @@
   <div class="sign--set">
     <div class="sign--set--main">
       <div class="sign--set--left">
-        <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="94px">
-          <el-form-item label="主办方信息" prop="organizers_status">
+        <el-form :model="signSetForm" ref="signSetForm" :rules="signSetFormRules" label-width="66px">
+          <el-form-item label="主办方" prop="organizers_status">
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.organizers_status"
@@ -16,7 +16,7 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="版权信息" prop="reserved_status">
+          <el-form-item label="版权" prop="reserved_status">
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.reserved_status"
@@ -29,7 +29,7 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="观看端标志" prop="view_status">
+          <el-form-item label="标识" prop="view_status">
             <div class="switch__box">
               <el-switch
                 v-model="signSetForm.view_status"
@@ -37,12 +37,12 @@
                 :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                :active-text="signSetForm.view_status ? '已开启，观看页显示品牌标志' : '开启后，观看页显示品牌标志'"
+                :active-text="signSetForm.view_status ? '已开启，观看页显示品牌标识' : '开启后，观看页显示品牌标识'"
               >
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item label="标志替换" prop="logo_url">
+          <el-form-item label="图片" prop="logo_url">
             <upload
               class="upload__sign"
               v-model="signSetForm.logo_url"
@@ -63,7 +63,7 @@
               </div>
             </upload>
           </el-form-item>
-          <el-form-item label="标志链接" prop="skip_url" class="item--skip__url">
+          <el-form-item label="链接" prop="skip_url" class="item--skip__url">
             <el-input v-model.trim="signSetForm.skip_url" />
           </el-form-item>
           <el-form-item label="">
@@ -134,11 +134,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`标志图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `标志图片只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('标志图片大小不能超过 2MB!');
+        this.$message({
+          message: `标志图片大小不能超过 2MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -148,7 +160,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`标志图片上传失败`);
+      this.$message({
+        message:  `标志图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     resetLogoUrl() {
       this.$nextTick(()=> {
@@ -206,16 +224,24 @@ export default {
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
           this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
             console.log(res);
-            if (res && res.code === 200) {
-              this.$message.success('保存基本设置成功');
-              // 重新获取数据
-              this.getSignInfo();
-            } else {
-              this.$message.error(res.msg || '保存基本设置失败');
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$message.error('保存基本设置失败');
+            this.$message({
+              message:  `保存基本设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 重新获取数据
+            this.getSignInfo();
+          }).catch(res=>{
+            console.log(res);
+            this.$message({
+              message: res.msg || `保存基本设置失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
@@ -234,14 +260,14 @@ export default {
   .align(flex-start);
 }
 .sign--set--left {
-  width: 50%;
+  width: 480px;
   /deep/.el-form-item__label {
     line-height: 40px;
   }
 }
 .brand--preview {
-  width: calc(50% - 48px);
-  padding-left: 48px;
+  width: calc(100% - 480px);
+  padding-left: 60px;
 }
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;

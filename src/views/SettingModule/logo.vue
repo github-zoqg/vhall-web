@@ -6,10 +6,10 @@
   </div>
   <!-- 有权限内容 -->
   <div v-else>
-    <pageTitle title='控制台标志'></pageTitle>
+    <pageTitle title='控制台标识'></pageTitle>
     <div class="logo-ctx">
-      <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="80px">
-        <el-form-item label="标志替换" prop="logo" class="heightNo">
+      <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="56px">
+        <el-form-item label="图片" prop="logo" class="heightNo">
           <upload
             class="upload__avatar"
             v-model="logoForm.logo"
@@ -30,8 +30,8 @@
             </div>
           </upload>
         </el-form-item>
-        <el-form-item label="标志链接" prop="logo_jump_url" class="magBottom">
-          <el-input type="text" placeholder="请输入标志链接" v-model="logoForm.logo_jump_url"/>
+        <el-form-item label="链接" prop="logo_jump_url" class="magBottom">
+          <el-input type="text" placeholder="请输入链接" v-model="logoForm.logo_jump_url" />
         </el-form-item>
         <el-form-item label="">
           <el-button type="primary" v-preventReClick round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
@@ -67,9 +67,9 @@ export default {
           { required: true, message: '请上传图片', trigger: 'blur' },
         ],
         logo_jump_url: [
-          { required: false, message: '标志链接不能为空', trigger: 'blur' },
+          { required: false, message: '链接不能为空', trigger: 'blur' },
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的链接' , trigger: 'blur'}
         ]
       },
       domain_url: '',
@@ -117,11 +117,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传图片只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message({
+          message: `上传图片大小不能超过 2MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -131,7 +143,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message({
+        message: `图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -155,36 +173,51 @@ export default {
     },
     saveSend(params, type) {
       this.$fetch('userEdit', params).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('保存设置成功');
-          if (type === 'default') {
-            this.logoForm.logo_jump_url = '';
-            this.logoForm.logo = '';
-            try {
-              this.$ref.logoForm.resetFields();
-            } catch (e) {
-              console.log(e);
-            }
+        this.$message({
+          message: `保存设置成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        if (type === 'default') {
+          this.logoForm.logo_jump_url = '';
+          this.logoForm.logo = '';
+          try {
+            this.$ref.logoForm.resetFields();
+          } catch (e) {
+            console.log(e);
           }
-          this.getAccountInfo();
-        } else {
-          this.$message.error(res.msg || '保存设置失败');
         }
-      }).catch(e => {
-        this.$message.error('保存设置失败');
+        this.getAccountInfo();
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || '保存设置失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     getAccountInfo() {
       this.$fetch('getInfo', {
         scene_id: 2
       }).then(res =>{
-        if(res.code === 200 && res.data) {
+        if(res.data) {
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
           sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
           this.$EventBus.$emit('saas_vs_account_change', res.data);
-        } else {
-          this.$message.error(res.msg);
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '获取信息',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
   },

@@ -26,10 +26,12 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center>
+      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center
+      :close-on-click-modal=false
+      :close-on-press-escape=false>
         <pre-question   :questionId="questionId"></pre-question>
         <div class="submit-footer">
-          <el-button class="length152" type="primary" size="medium" @click="isShowQuestion=false" round>提交</el-button>
+          <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
         </div>
       </el-dialog>
     </template>
@@ -85,6 +87,9 @@ export default {
     baseQuestion,
     noData
   },
+  created() {
+    this.webinarId = this.$route.params.str;
+  },
   mounted() {
     this.getTableList();
   },
@@ -93,14 +98,14 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    getTableList() {
+    getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = {
-        webinar_id: this.$route.query.id,
+        webinar_id: this.webinarId,
         room_id: this.$route.query.roomId,
         keyword: this.keyword
       }
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -154,7 +159,7 @@ export default {
             path: '/live/addQuestion',
             query: {
                 questionId: rows.question_id,
-                webinarId: that.$route.query.id,
+                webinarId: that.webinarId,
                 roomId: that.$route.query.roomId,
                 type: 2
               }
@@ -171,7 +176,7 @@ export default {
           path: '/live/addQuestion',
           query: {
               questionId: rows.question_id,
-              webinarId: that.$route.query.id,
+              webinarId: that.webinarId,
               roomId: that.$route.query.roomId,
               type: 2
             }
@@ -191,14 +196,13 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.$route.query.id}).then(res => {
+          this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
             if (res.code == 200) {
-              this.getTableList();
-              this.$refs.tableList.clearSelect();
+              this.getTableList('delete');
               this.$message.success('删除成功');
-            } else {
-              this.$message.error('删除失败');
             }
+          }).catch(res => {
+            this.$message.error(res.msg || '删除失败');
           })
         }).catch(() => {
           this.$message({
@@ -222,7 +226,7 @@ export default {
     },
     addQuestion() {
       this.$router.push({
-        path: '/live/addQuestion', query: {webinarId: this.$route.query.id, roomId: this.$route.query.roomId, type: 2}});
+        path: '/live/addQuestion', query: {webinarId: this.webinarId, roomId: this.$route.query.roomId, type: 2}});
     },
     dataBase() {
       this.$refs.dataBase.dataBaseVisible = true;
@@ -245,6 +249,15 @@ export default {
     width: 100%;
     padding: 32px 24px;
   }
+  // /deep/.el-dialog__wrapper {
+  //   z-index: 2001 !important;
+  // }
+  // /deep/.v-modal{
+  //   z-index: 2000 !important;
+  // }
+  // .el-select-dropdown .el-popper{
+  //   z-index: 2003 !important;
+  // }
   .head-operat{
     margin-bottom: 20px;
     .head-btn{

@@ -50,7 +50,8 @@
           <el-dialog
             title="订单支付中..."
             :visible.sync="dialogBuyVisible"
-            :close-on-click-modal="false"
+            :close-on-click-modal=false
+            :close-on-press-escape=false
             width="340px"
           >
           <div class="isPay">
@@ -62,9 +63,10 @@
           </el-dialog>
            <el-dialog
             :visible.sync="dialogweiXinVisible"
-            :close-on-click-modal="false"
             width="340px"
             title="支付"
+            :close-on-click-modal=false
+            :close-on-press-escape=false
           >
           <div class="isPay">
             <div class="reBtn">

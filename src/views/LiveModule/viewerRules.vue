@@ -10,10 +10,10 @@
       <el-radio-group v-model="form.verify" @change="handleClick">
         <el-radio :label="0">免费</el-radio>
         <el-radio :label="3">付费</el-radio>
-        <el-radio :label="4">邀请码（原F码）</el-radio>
-        <el-radio :label="6">付费/邀请码</el-radio>
+        <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
+        <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
         <el-radio :label="1">密码</el-radio>
-        <el-radio :label="2">白名单</el-radio>
+        <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
       </el-radio-group>
       <!-- 选值区域 -->
       <div class="viewer-rules-content">
@@ -138,7 +138,7 @@
         <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
           <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
             <el-form-item label="观看密码" prop="password">
-              <VhallInput v-model="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="试看" class="switch__height">
               <div class="switch__box">
@@ -217,11 +217,13 @@ import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
 import {formateDate} from "@/utils/general";
 import { parse } from 'qs';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'viewerRules.vue',
   components: {
     PageTitle
   },
+  // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限
   data() {
     let checkNums = (rule, value, callback) => {
       if (this.viewerDao && this.viewerDao.fcodes > 0) {
@@ -276,6 +278,7 @@ export default {
         }
       ],
       viewerDao: {},
+      perssionInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,
@@ -371,26 +374,24 @@ export default {
       this.$fetch('viewerSetGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        if(res && res.code === 200) {
-          this.viewerDao = res.data;
-          // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
-          let { webinar_id, verify, password, white_id, fee, is_preview, preview_time} = res.data;
-          this.$nextTick(() => {
-            this.form = {
-              webinar_id: webinar_id,
-              verify: verify,
-              password: password, // 观看密码
-              white_id: white_id, // 白名单-观众组字符拼接串
-              fee: fee, // 付费金额,
-              is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
-              preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
-            };
-            console.log(this.form, '当前');
-            // 表单选项初始化
-            this.initViewerSet();
-          })
-        }
-      }).catch(err=>{
+         this.viewerDao = res.data;
+        // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
+        let { webinar_id, verify, password, white_id, fee, is_preview, preview_time} = res.data;
+        this.$nextTick(() => {
+          this.form = {
+            webinar_id: webinar_id,
+            verify: verify,
+            password: password, // 观看密码
+            white_id: white_id, // 白名单-观众组字符拼接串
+            fee: fee, // 付费金额,
+            is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
+            preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
+          };
+          console.log(this.form, '当前');
+          // 表单选项初始化
+          this.initViewerSet();
+        })
+      }).catch(err => {
         console.log(err);
         this.viewerDao = {};
       });
@@ -451,11 +452,22 @@ export default {
         /*flag = this.whiteIds.length > 0;*/
         flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
         if (!flag) {
-          this.$message.error('请选择观众组');
+          this.$message({
+            message:  `请选择观众组`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
-        // params = Object.assign(this.form, {white_id: this.whiteIds.join(',')});
-        params = Object.assign(this.form, {white_id: this.whiteId});
+        params = {
+          webinar_id: this.form.webinar_id,
+          verify: this.form.verify,
+          white_id: this.whiteId,
+          is_preview: this.form.is_preview,
+          preview_time: this.form.preview_time
+        }
       } else if (formName === '') {
         flag = true; // 免费不验证
         params = {
@@ -466,13 +478,25 @@ export default {
       // 若是邀请码 和 付费/邀请码里面
       if(formName === 'fCodeForm' || formName === 'fCodePayForm') {
         if (!(this.viewerDao.fcodes > 0)) {
-          this.$message.error('您暂无邀请码，请生成后保存');
+          this.$message({
+            message:  `您暂无邀请码，请生成后保存`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
       }
       // 若是当前白名单，开启了报名表单，直接提示不可和白名单直接使用。
       if (formName === 'whiteForm' && Number(this.liveDetailInfo.reg_form) === 1) {
-        this.$message.error('您已选择报名表单不可和白名单叠加使用');
+        this.$message({
+          message:  `您已选择报名表单不可和白名单叠加使用`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (flag) {
@@ -506,15 +530,22 @@ export default {
     sendViewerSetSave(params) {
       this.$fetch('viewerSetSave', this.$params(params)).then(res => {
         console.log(res);
-        if (res && res.code === 200) {
-          this.$message.success('设置成功');
-          this.initPage();
-        } else {
-          this.$message.error(res.msg || '设置失败');
-        }
-      }).catch(err=>{
-        console.log(err);
-        this.$message.error('设置失败');
+        this.$message({
+          message:  `设置成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.initPage();
+      }).catch(res =>{
+         this.$message({
+          message:  res.msg || '设置失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 获取观众分组列表
@@ -524,7 +555,11 @@ export default {
         limit: 1000, // TODO 默认分组查询1000条
       };
       this.$fetch('audienceGet', params).then(res => {
-        res && res.code === 200 && res.data && res.data.list ? this.groupList = res.data.list : this.groupList = [];
+        if (res.data && res.data.list) {
+          this.groupList = res.data.list;
+        } else {
+          this.groupList = [];
+        }
       }).catch(e => {
         console.log(e);
         this.groupList = [];
@@ -558,17 +593,25 @@ export default {
           webinar_id: this.$route.params.str,
           nums: this[formName].nums
         }).then(res => {
-          if(res && res.code === 200) {
-            this.$message.success('生成成功');
-            // this.viewerSetGet();
-            // 更新已生成邀请码数量
-            this.viewerDao.fcodes = res.data.code_count;
-          } else {
-            this.$message.error(res.msg || '生成失败');
-          }
-        }).catch(e => {
+          this.$message({
+            message:  `生成成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // this.viewerSetGet();
+          // 更新已生成邀请码数量
+          this.viewerDao.fcodes = res.data.code_count;
+        }).catch(res => {
           console.log(e);
-          this.$message.error('生成失败');
+          this.$message({
+            message:  res.msg || '生成失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }
     },
@@ -577,15 +620,23 @@ export default {
       this.$fetch('getFCodeExcel', {
         webinar_id: this.$route.params.str
       }).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('邀请码下载申请成功，请去下载中心查看');
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(res.msg || '邀请码下载申请失败');
-        }
-      }).catch(e => {
-        console.log(e);
-        this.$message.error('邀请码下载申请失败');
+        this.$message({
+          message:  `邀请码下载申请成功，请去下载中心查看`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message:  res.msg || '邀请码下载申请失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     initPage() {
@@ -595,16 +646,17 @@ export default {
     // 获取基本信息
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
-        if (res && res.code === 200) {
-          this.liveDetailInfo = res.data;
-        } else {
-          this.liveDetailInfo = {};
-          this.$message.error(res.msg);
-        }
-      }).catch(e=>{
-        console.log(e);
-        this.$message.error('获取活动信息失败');
+        this.liveDetailInfo = res.data;
+      }).catch(res=>{
+        console.log(res);
         this.liveDetailInfo = {};
+        this.$message({
+          message: res.msg,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
       });
     },
@@ -811,7 +863,7 @@ export default {
   .tab__btn--solid {
     border: 1px solid #F7F7F7;
     cursor: pointer;
-    &.active{
+    &.active,&:hover{
       background: #FFEBEB;
       border-color: #FFEBEB;
       span {
@@ -874,5 +926,8 @@ export default {
       border: 0;
     }
   }
+}
+/deep/.saasicon_help_m {
+  color: #999999;
 }
 </style>

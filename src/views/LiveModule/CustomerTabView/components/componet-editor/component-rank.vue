@@ -1,0 +1,156 @@
+<template>
+  <div class="rank-wrapbox">
+    <div class="rank-previewbox" v-if="mode == 1">
+      <div class="ranking-title">
+        <div class="rank-menu">
+            <span :class="{'active': activeIndex == 1}" v-if="info.inSwitch == 1" @click="activeIndex = 1">邀请榜</span>
+            <span :class="{'active': activeIndex == 2}" v-if="info.rewardSwitch == 1" @click="activeIndex = 2">打赏榜</span>
+        </div>
+        <span class="bang-rule">排行榜规则</span>
+      </div>
+      <div class="ranking-box">
+          <vhscroll>
+            <div class="rank-con" v-show="activeIndex == 1" v-html="info.inContent">
+            </div>
+            <div class="rank-con" v-show="activeIndex == 2" v-html="info.rewardContent">
+            </div>
+          </vhscroll>
+      </div>
+      <div class="rank-band">
+          <img v-show="activeIndex == 1" src="//cnstatic01.e.vhall.com/static/images/menu/bang01.png">
+          <img v-show="activeIndex == 2" src="//cnstatic01.e.vhall.com/static/images/menu/bang02.png">
+      </div>
+    </div>
+    <div class="rank-editor-box" v-if="mode == 2">
+      <div class="switch-box">
+        邀请榜
+        <el-switch
+          style="marign-left: 5px"
+          :active-value="1"
+          :inactive-value="0"
+          size="mini"
+          v-model="info.inSwitch"
+        >
+        </el-switch>
+      </div>
+      <div class="editor-box" style="margin-bottom: 24px">
+        <vEditor
+          v-model="info.inContent"
+          height="270"
+        ></vEditor>
+      </div>
+      <div class="switch-box">
+        打赏榜
+        <el-switch
+          style="marign-left: 5px"
+          :active-value="1"
+          :inactive-value="0"
+          size="mini"
+          v-model="info.rewardSwitch"
+        >
+        </el-switch>
+      </div>
+      <div class="editor-box">
+        <vEditor
+          v-model="info.rewardContent"
+          height="270"
+        ></vEditor>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import vEditor from '../../../../../components/Tinymce'
+export default {
+  props: {
+    // 1. 显示  2. 编辑
+    mode: {
+      required: true,
+      default: 1
+    },
+    info: {
+      required: false
+    }
+  },
+
+  components: {
+    vEditor,
+  },
+
+  data() {
+    return {
+      activeIndex: '1'
+    }
+  },
+
+  watch: {
+    info: function(newVal) {
+      if (newVal.inSwitch == 0 && this.activeIndex == 1) {
+        this.activeIndex = 2
+      } else if (newVal.rewardSwitch == 1 && this.activeIndex == 2) {
+        this.activeIndex = 1
+      }
+    }
+  },
+
+  methods: {
+    changeTab(index) {
+      this.activeIndex = index
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+  .rank-editor-box{
+    padding-top: 16px;
+  }
+  .rank-previewbox{
+    background: url(./rank-bg.png) repeat;
+    padding-bottom: 10px;
+    .ranking-title {
+      font-size: 14px;
+      color: #fff;
+      line-height: 40px;
+      height: 40px;
+      margin: 0 10px;
+      position: relative;
+      span{
+        margin-right: 10px;
+        opacity: 0.8;
+        &:hover {
+          opacity: 1;
+        }
+        &.active{
+          opacity: 1;
+        }
+      }
+      .bang-rule{
+        position: absolute;
+        right: -10px;
+
+        top: 0;
+      }
+    }
+
+    .rank-band{
+      background: #fff;
+      margin: 0 10px;
+      text-align: center;
+      padding-bottom: 10px;
+      img{
+        width: 90%;
+      }
+    }
+    .ranking-box{
+      border-radius: 2px;
+      margin: 10px;
+      background: #fff;
+      padding: 8px;
+      line-height: 24px;
+      height: 120px;
+    }
+  }
+  .switch-box{
+    margin-bottom: 13px;
+  }
+</style>

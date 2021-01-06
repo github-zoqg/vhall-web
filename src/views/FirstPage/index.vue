@@ -163,6 +163,7 @@ export default {
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
   },
@@ -206,7 +207,16 @@ export default {
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
         this.mainKeyData = {...res.data.key_data};
-        this.lineDataList = res.data.trend.live;
+        // this.lineDataList = res.data.trend.live;
+      }).catch(e=>{
+        console.log(e);
+      });
+      this.getLineData(params);
+    },
+    getLineData(obj) {
+      let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
+      this.$fetch(url, obj).then(res =>{
+        this.lineDataList = res.data.list;
       }).catch(e=>{
         console.log(e);
       });
@@ -352,11 +362,11 @@ export default {
         .ad-web{
           height: 126px;
           width: 100%;
-          img{
+         /*  img{
             width: 100%;
             height: 100%;
             object-fit: scale-down;
-          }
+          } */
           // background: linear-gradient(224deg, #FD2349 0%, #FF6321 100%);
           // border-radius: 4px;
           // color: #fff;
@@ -398,17 +408,17 @@ export default {
         .app-web{
           font-size: 0;
           border-radius: 4px;
-          img{
+          /* img{
             width: 100%;
             height: 100%;
             border-radius: 4px;
             object-fit: scale-down;
-          }
+          } */
         }
       }
       .data-document{
         background: #fff;
-        height: 236px;
+        height: 190px;
         h2{
           font-size: 16px;
           color: #1A1A1A;

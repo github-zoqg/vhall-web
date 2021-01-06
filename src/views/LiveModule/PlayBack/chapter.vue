@@ -5,10 +5,10 @@
         章节功能支持文档格式：PPT、PPTX，其他格式不支持
       </div>
     </pageTitle>
-    <div class="contentView">
+    <div class="contentView" v-loading="loading">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
-        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
+        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :autoPlay="false" :playerParams="playerParams"></player>
         <div v-show="docSDKReady" class="vhallPlayer-container">
           <div class="vhallPlayer-progress-box">
             <el-slider
@@ -61,7 +61,6 @@
             v-if="showDoc"
             ref="doc"
             :webinarId='webinar_id'
-            docPermissionId="no"
             :isInteract="true"
             :roleType="2"
             :roomId="playerProps.roomId"
@@ -72,15 +71,22 @@
             :joinId="playerProps.accountId"
             :accountId="playerProps.accountId"
             :isVod="true"
+            :preloadDocs="true"
           ></doc>
         </div>
         <div class="actionBar">
-          <span class="translatePage">
-            <i class="el-icon-arrow-left" @click="prevPage"></i>
-            <i class="el-icon-arrow-right" @click="nextPage"></i>
-          </span>
           <span class="pages">
-            <em>{{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
+            <span class="translatePage">
+              <i class="el-icon-arrow-left" @click="prevPage"></i>
+            </span>
+            <em> {{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
+            <span class="translatePage">
+              <i class="el-icon-arrow-right" @click="nextPage"></i>
+            </span>
+          </span>
+          <span class="docs">
+            <i class="el-icon-arrow-left" @click="prevDoc"></i>
+            <i class="el-icon-arrow-right" @click="nextDoc"></i>
           </span>
           <!-- <span class="thumbnail"></span> -->
         </div>
@@ -137,7 +143,7 @@
           label="文档页码"
           width="110">
            <template slot-scope="scope">
-             <el-input :disabled="isDemand == 'false'" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+             <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
@@ -182,6 +188,7 @@ export default {
   name: 'Chapters',
   data(){
     return {
+      loading: false,
       VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
@@ -222,7 +229,7 @@ export default {
         }
       },
       sliderVal: 0, // 视频时间
-      statePaly: true, // 默认播放状态
+      statePaly: false, // 默认播放状态
       currentTime: 0, // 当前视频播放时间
       voice: 60, // 音量
       catchVoice: 0,
@@ -264,10 +271,14 @@ export default {
     },
   },
   created(){
+    this.loading = true;
     setTimeout(() => {
       this.checkChapterSave()
       this.getPlayBackInfo()
     }, 300)
+    this.$EventBus.$on('all_complete', () => {
+      this.loading = false;
+    });
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
         this.docSDKReady = true;
@@ -323,9 +334,9 @@ export default {
       this.vodReady = true;
     });
 
-    this.$EventBus.$on('component_page_info', ()=>{
-      console.log('component_page_info', this.$refs.doc.pageInfo);
-      this.pageInfo = this.$refs.doc.pageInfo;
+    this.$EventBus.$on('documenet_load_complete', (data)=>{
+      console.log('documenet_load_complete', data);
+      this.pageInfo = data;
     });
 
     // 监听文档加载完毕
@@ -339,8 +350,12 @@ export default {
           index: index + 1,
           userCreateTime: this.secondsFormmat(item.createTime),
           isChange: false,
+          slideIndex: item.slideIndex + 1,
+          stepIndex: item.stepIndex,
           sub: item.sub.map((subItem, subIndex) => ({
             ...subItem,
+            slideIndex: subItem.stepIndex, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
+            stepIndex: subItem.slideIndex + 1, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。
             userCreateTime: this.secondsFormmat(subItem.createTime),
             index: `${index + 1}-${subIndex + 1}`,
             isChange: false
@@ -361,6 +376,14 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    handleInput(value) {
+      if (value.slideIndex.length == 0) return;
+      const pattern = /^[1-9][0-9]*$/ // 正整数的正则表达式
+      if (!pattern.test(value.slideIndex)) {
+        value.slideIndex = value.slideIndex.slice(0, value.slideIndex.length - 1)
+        this.$message.warning(`页码只能是整数`)
+      }
+    },
     /**
      * 时间格式化
      * 将秒转化为hh:mm:ss显示
@@ -507,7 +530,7 @@ export default {
             document_id: item.docId,
             created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
             page: item.slideIndex - 1,
-            step: item.stepIndex - 1,
+            step: item.stepIndex,
             title: item.title,
             remark: '',
             step_total: item.sub.length,
@@ -516,8 +539,8 @@ export default {
               return {
                 document_id: subItem.docId,
                 created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
-                page: subItem.slideIndex - 1,
-                step: subItem.stepIndex - 1,
+                page: subItem.stepIndex - 1, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
+                step: subItem.slideIndex, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。
                 title: subItem.title,
                 remark: '',
                 step_total: 0
@@ -588,7 +611,7 @@ export default {
             createTime: 0,
             docId: item.document_id,
             slideIndex: item.page + 1,
-            stepIndex: item.step + 1,
+            stepIndex: item.step,
             title: item.title,
             index: index + 1,
             userCreateTime: '00:00:00',
@@ -597,8 +620,8 @@ export default {
               item.subsection.map((subItem, subIndex) => ({
                 createTime: 0,
                 docId: subItem.document_id,
-                slideIndex: subItem.page + 1,
-                stepIndex: subItem.step + 1,
+                stepIndex: subItem.page + 1, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
+                slideIndex: subItem.step, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。
                 title: subItem.title,
                 index: `${index + 1}-${subIndex + 1}`,
                 userCreateTime: '00:00:00',
@@ -611,10 +634,16 @@ export default {
       })
     },
     prevPage(){
-      this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
+      this.$EventBus.$emit('prevStep');
     },
     nextPage(){
-      this.docsdk.nextPage({id: document.querySelector('.docInner .doc-box').id});
+      this.$EventBus.$emit('nextStep');
+    },
+    prevDoc(){
+      this.$EventBus.$emit('prevDoc');
+    },
+    nextDoc(){
+      this.$EventBus.$emit('nextDoc');
     },
     handleSelectionChange(val){
       this.selectedData = val;
@@ -645,12 +674,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
-        let isAll = false;
-        if (this.tableData.length == this.selectedData.length) {
-          isAll = true
-          this.selectedData.shift()
-        }
-        this.tableData = this.tableData.filter(item => {
+        const temp = this.tableData.filter(item => {
           if (this.selectedData.some(selectItem => selectItem.index == item.index)) {
             return false;
           } else {
@@ -665,12 +689,15 @@ export default {
             return true;
           }
         });
-        this.handleSerialize()
-        if(isAll) {
+        if (temp.length === 0) {
+          this.tableData[0].sub = []
+          this.tableData = [this.tableData[0]]
           this.$message.warning('至少保留一个章节')
+        } else {
+          this.tableData = temp
         }
+        this.handleSerialize()
       }).catch(()=>{});
-
     },
     handleSerialize() {
       this.tableData.forEach((item, index) => {
@@ -695,8 +722,8 @@ export default {
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         index: `${row.index}-${row.sub.length + 1}`,
-        stepIndex: 1,
-        slideIndex: row.slideIndex,
+        stepIndex: row.slideIndex,
+        slideIndex: 1,
         docId: row.docId,
         cid: '',
         hash: '',
@@ -785,19 +812,29 @@ export default {
       text-align: center;
       line-height: 48px;
       padding: 0 16px;
+      position: relative;
       .translatePage{
-        float: left;
         i{
           color: #999999;
           cursor: pointer;
         }
       }
       .pages{
+        display: block;
         color: #666;
         font-size: 14px;
         em{
           color: #fff;
           font-style: normal;
+        }
+      }
+      .docs{
+        position: absolute;
+        right: 10px;
+        top: 0px;
+        i{
+          color: #999999;
+          cursor: pointer;
         }
       }
     }
@@ -985,11 +1022,11 @@ export default {
     .el-table{
       margin-top: 24px;
     }
-    /deep/ .el-table__header{
+    /* /deep/ .el-table__header{
       th{
         background: #F7F7F7;
       }
-    }
+    } */
     .el-input {
       width: 95%;
     }

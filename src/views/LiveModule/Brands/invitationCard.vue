@@ -26,7 +26,7 @@
     </div>
     <div class="invitation-from">
       <div class="form-data">
-        <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation">
+        <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation" :rules="rules">
           <el-form-item label="背景">
             <div class="data-img">
               <div class="advor_img"><img :src="img" alt=""/></div>
@@ -49,18 +49,20 @@
               </p>
             </div>
           </el-form-item>
-          <el-form-item label="标题">
+          <el-form-item label="标题" prop="title">
             <VhallInput
               v-model.trim="formInvitation.title"
-              maxlength="16"
+              :maxlength="16"
+              autocomplete="off"
               show-word-limit
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
-          <el-form-item label="主办方">
+          <el-form-item label="主办方" prop="company">
             <VhallInput
               v-model.trim="formInvitation.company"
-              maxlength="10"
+              :maxlength="10"
+              autocomplete="off"
               show-word-limit
               style="width: 320px"
             ></VhallInput>
@@ -68,23 +70,26 @@
           <el-form-item label="时间">
             <VhallInput
               v-model.trim="formInvitation.webinar_date"
+              autocomplete="off"
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
-          <el-form-item label="地点">
+          <el-form-item label="地点" prop="location">
             <VhallInput
               v-model.trim="formInvitation.location"
-              maxlength="20"
+              :maxlength="20"
+              autocomplete="off"
               show-word-limit
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
-          <el-form-item label="简介">
+          <el-form-item label="简介" prop="desciption">
             <VhallInput
               style="width: 320px"
               v-model.trim="formInvitation.desciption"
               type="textarea"
-              maxlength="45"
+              :maxlength="45"
+              autocomplete="off"
               :autosize="{ minRows: 5 }"
               resize="none"
               show-word-limit
@@ -198,6 +203,34 @@ import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 export default {
   data() {
+    const locationValidate = (rule, value, callback) => {
+      if (value && value.length > 20) {
+        callback && callback('地点在20个字符以内');
+      } else {
+        callback();
+      }
+    };
+    const desciptionValidate = (rule, value, callback) => {
+      if (value && value.length > 45) {
+        callback && callback('简介在45个字符以内');
+      } else {
+        callback();
+      }
+    };
+    const companyValidate = (rule, value, callback) => {
+      if (value && value.length > 10) {
+        callback && callback('主办方在10个字符以内');
+      } else {
+        callback();
+      }
+    };
+    const titleValidate = (rule, value, callback) => {
+      if (value && value.length > 16) {
+        callback && callback('标题在16个字符以内');
+      } else {
+        callback();
+      }
+    };
     return {
       invitation: true,
       qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
@@ -234,7 +267,21 @@ export default {
           show_type: 3,
           show: 'third'
         }
-      ]
+      ],
+      rules: {
+        title: [
+          { required: false, validator: titleValidate, trigger: 'blur' },
+        ],
+        desciption: [
+          { required: false, validator: desciptionValidate, trigger: 'blur' },
+        ],
+        location: [
+          { required: false, validator: locationValidate, trigger: 'blur' },
+        ],
+        company: [
+          { required: false, validator: companyValidate, trigger: 'blur' },
+        ],
+      },
     };
   },
   created(){
@@ -506,7 +553,7 @@ export default {
           }
         }
         .show-text{
-          
+
           padding: 24px;
           text-align: center;
           h1{

@@ -30,7 +30,7 @@ export default {
   .textlink-wrapbox{
     .textlink {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
+      font-family: @fontRegular;
       font-weight: 400;
       color: #3562FA;
       line-height: 22px;

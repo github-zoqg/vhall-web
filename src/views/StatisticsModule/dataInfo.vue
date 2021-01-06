@@ -2,7 +2,7 @@
   <div class="data-info" v-loading="loading" element-loading-text="数据获取中">
     <pageTitle :title="$route.meta.title">
       <div slot="content">
-        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+        1.数据更新频率：天，不支持查看当日数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
     <search-area
@@ -18,10 +18,10 @@
     <div class="statistical-data">
       <div class="statistical-title">统计图表</div>
       <div class="statistical-line">
-        <span>观众访问趋势图</span>
+        <span>观看人数访问趋势</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
-            当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
+            筛选条件内，观看人数随时间变化的趋势图
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>

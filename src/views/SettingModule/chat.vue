@@ -25,7 +25,7 @@
       </el-form>
     </div>
     <!-- 聊天严禁词弹出框 -->
-    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow">
+    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false>
       <div class="chat-dialog-content">
         <!-- 操作栏 -->
         <div class="operaBox">
@@ -35,26 +35,26 @@
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
-              v-model="query.keyword"
+              v-model="pageInfo.keyword"
               clearable
-              @clear="getKeywordList"
-              @keyup.enter.native="getKeywordList"
+              @clear="searchKeyWord"
+              @keyup.enter.native="searchKeyWord"
               >
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
-                @click="getKeywordList">
+                @click="searchKeyWord">
               </i>
             </el-input>
           </div>
         </div>
-        <!-- 操作栏 -->
+        <!-- 操作栏
         <table-list
           ref="chatTable"
           :isHandle=true
           :manageTableData="keyWordDao.list"
           :tabelColumnLabel="tableColumn"
-          :totalNum="keyWordDao.total"
+          :totalNum="keyWordDao.list.length"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
           :max-height="380"
@@ -64,23 +64,59 @@
           @onHandleBtnClick="onHandleBtnClick"
           v-if="keyWordDao.total > 0"
         >
-        </table-list>
-        <!-- 无消息内容 -->
-        <null-page v-else></null-page>
+        </table-list> -->
+        <el-table
+          ref="chatTable"
+          :data="showChatList"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="380px"
+          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+          @selection-change="checkMoreRow"
+          v-show="total"
+          v-loadMore="moreLoadData">
+           <el-table-column
+            type="selection"
+            width="55"
+            align="left"
+          />
+          <el-table-column
+            label="严禁词"
+            prop="name"
+            width="auto"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="100"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-button
+                :key="index"
+                type="text"
+                v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
+              <el-button
+              :key="index"
+              type="text"
+              v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
-    <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body>
+    <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
       <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
           <el-form-item label="严禁词" prop="name">
-            <el-input
+            <VhallInput
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
               :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
               v-model.trim="addForm.name"
               :maxlength="addForm.executeType === 'add' ? 1000 : 20"
+              autocomplete="off"
               show-word-limit
-            />
+            ></VhallInput>
           </el-form-item>
         </el-form>
         <div class="dialog-right-btn">
@@ -90,9 +126,10 @@
       </div>
     </VhallDialog>
     <!-- 批量上传 -->
-    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body>
+    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false>
       <div class="upload-dialog-content">
         <file-upload
+          ref="chatUpload"
           v-model="fileUrl"
           :saveData="{
              path: pathUrl,
@@ -143,16 +180,19 @@ export default {
         total: 0,
         list: []
       },
-      query: {
+      pageInfo: {
         keyword: '',
         pos: 0,
-        limit: 1000,
-        pageNumber: 1
+        limit: 10,
+        pageNum: 1
       },
       downloadHref: null,
       // 列表展示开始
       listPanelShow: false,
       isHandle: false, // 是否有操作项
+      showChatList: [],
+      total: 0,
+      totalPages: 0,
       tableColumn: [
         {
           label: '严禁词',
@@ -210,27 +250,64 @@ export default {
     }
   },
   methods: {
-    // 获取关键字
-    getKeywordList() {
-      this.$fetch('getKeywordList', this.query).then(res =>{
-        this.keyWordDao = res && res.code === 200 && res.data && res.data.list ? res.data : {
-          total: 0,
-          list: []
-        };
-        this.checkNames = this.keyWordDao.list.map(item => {
+    getAllKeyWordList() {
+      this.$fetch('getKeywordList', {
+        keyword: '',
+        pos: 0,
+        limit: 1000,
+        pageNumber: 1
+      }).then(res =>{
+        this.checkNames = res.data.list.map(item => {
           return item.name;
         });
       }).catch(e=>{
         console.log(e);
-        this.keyWordDao = {
-          total: 0,
-          list: []
-        };
+        this.checkNames = [];
       });
+    },
+    handleClose(done) {
+      this.pageInfo.pageNum = 1;
+      this.getAllKeyWordList();
+      done();
+    },
+    // 获取关键字
+    getKeywordList() {
+      this.$fetch('getKeywordList', this.pageInfo).then(res =>{
+        if (this.pageInfo.pos === 0) {
+          this.showChatList = res.data.list;
+        } else {
+          this.showChatList.push(...res.data.list);
+        }
+        this.total = res.data.total;
+        this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    moreLoadData() {
+      if (this.pageInfo.pageNum >= this.totalPages) {
+        return false;
+      }
+      this.pageInfo.pageNum ++ ;
+      this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit);
+      this.getKeywordList();
     },
     // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
+      this.pageInfo.keyWord = '';
+      this.searchKeyWord();
+    },
+    searchKeyWord() {
+      this.pageInfo.pos = 0;
+      this.pageInfo.pageNum = 1;
+      this.showChatList = [];
+      try {
+        this.$refs.chatTable.clearSelection();
+      } catch (e) {
+        console.log(e);
+      }
+      this.getKeywordList();
     },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
@@ -245,7 +322,8 @@ export default {
       });
     },
     // 编辑
-    keywordEdit(that, { rows }) {
+    keywordEdit(rows) {
+      let that = this;
       that.addShow = true;
       that.$nextTick(() => {
         try{
@@ -271,22 +349,47 @@ export default {
             keyword_id: this.addForm.id ,
             keyword: this.addForm.name
           }).then(res =>{
-             if(res && res.code === 200) {
-               this.$message.success(this.addForm.executeType === 'add' ? `成功添加了${res.data.success}个关键词` : `修改成功`);
-               this.addShow = false;
-               this.getKeywordList(); // 刷新列表数据
-             } else {
-               this.$message.error(res.msg || (this.addForm.executeType === 'add' ? '添加失败' : '修改失败'));
-             }
-          }).catch(e => {
-            console.log(e);
-            this.$message.error(this.addForm.executeType === 'add' ? '添加失败' : '修改失败');
+            if (this.addForm.executeType === 'add') {
+              res.data.success > 0 ? this.$message({
+                message: `成功添加了${res.data.success}个关键词`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              }) : this.$message({
+                message: '添加失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+            } else {
+              this.$message({
+                message: `修改成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'errror',
+                customClass: 'zdy-info-box'
+              });
+            }
+            this.addShow = false;
+            this.searchKeyWord(); // 刷新列表数据
+          }).catch(res => {
+            console.log(res);
+            this.$message({
+              message:  this.addForm.executeType === 'add' ? res.msg || `添加失败` : res.msg || `修改失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
     },
     // 删除
-    keywordDel(that, { rows }) {
+    keywordDel(rows) {
+      let that = this;
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
@@ -297,22 +400,26 @@ export default {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id
         }).then(res => {
-          if(res && res.code === 200) {
-            that.$message.success(`删除成功`);
-            that.ids = [];
-            that.$refs.chatTable.clearSelect();
-            that.getKeywordList();
-          }else {
-            that.$message({
-              type: 'error',
-              message: res.msg || '删除失败'
-            });
-          }
-        }).catch(e => {
-          console.log(e);
           that.$message({
+            message:  `删除成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          that.ids = [];
+          if(that.$refs.chatTable) {
+            that.$refs.chatTable.clearSelect();
+          }
+          that.searchKeyWord();
+        }).catch(res => {
+          console.log(res);
+          that.$message({
+            message: res.msg || '删除失败',
+            showClose: true,
+            // duration: 0,
             type: 'error',
-            message:  '删除失败'
+            customClass: 'zdy-info-box'
           });
         });
       }).catch(() => {
@@ -321,12 +428,21 @@ export default {
     // 批量删除
     multiKeywordDel() {
       if (!(this.ids && this.ids.length > 0)) {
-        this.$message.error('请至少选择一条严禁词删除');
+        this.$message({
+          message: '请至少选择一条严禁词删除',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
-        this.keywordDel(this, {
+        /* this.keywordDel(this, {
           rows: {
             id: this.ids.join(',')
           }
+        }); */
+        this.keywordDel({
+          id: this.ids.join(',')
         });
       }
     },
@@ -382,19 +498,19 @@ export default {
         this.$fetch('checkUploadKeyword', {
           file: res.data.file_url
         }).then(resV => {
-          if (resV && resV.code === 200) {
-            this.importResult = resV.data;
-            this.fileResult = 'success';
-          } else {
-            this.fileResult = 'error';
-            // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
-            this.isUploadEnd = false;
-            this.importResult = null;
+          this.importResult = resV.data;
+          this.fileResult = 'success';
+          if (this.$refs.chatUpload) {
+             this.$refs.chatUpload.setError('');
           }
         }).catch(e => {
           this.fileResult = 'error';
+          // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
+          this.isUploadEnd = false;
           this.importResult = null;
-          // this.$message.error(e.msg || '导入聊天严禁词校验失败！');
+          if (this.$refs.chatUpload) {
+             this.$refs.chatUpload.setError(res.msg || '导入严禁词信息校验失败');
+          }
         });
       }
     },
@@ -406,25 +522,47 @@ export default {
     },
     saveUploadKey() {
       if(!this.fileUrl) {
-        this.$message.error('请先选择文档');
+        this.$message({
+          message: '请先选择文档',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.$fetch('uploadKeywordAdd', {
         file: this.fileUrl
       }).then(resV => {
-        if (resV && resV.code === 200) {
-          this.importResult = resV.data;
-          this.multiUploadShow = false;
-          this.percent = 0;
-          this.isUploadEnd = false;
-          this.fileUrl = '';
-          // 重新刷新列表数据
-          this.getKeywordList();
-        } else {
-          this.$message.error(resV.msg || '导入聊天严禁词信息失败！');
-        }
-      }).catch(e => {
-        this.$message.error(e.msg || '导入聊天严禁词信息失败！');
+        this.importResult = resV.data;
+        this.multiUploadShow = false;
+        this.percent = 0;
+        this.isUploadEnd = false;
+        this.fileUrl = '';
+        /* resV.data.success > 0 ? this.$message({
+          message: `成功添加了${resV.data.success}个关键词`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        }) : this.$message({
+          message: '添加失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        }); */
+        // 重新刷新列表数据
+        this.getKeywordList();
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || '导入聊天严禁词信息失败！',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     beforeUploadHandler(file){
@@ -434,11 +572,23 @@ export default {
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传格式只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传格式只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 2M!');
+        this.$message({
+          message: `上传文件大小不能超过 2MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -459,7 +609,7 @@ export default {
   },
   created() {
     this.getKeywordTemplate();
-    this.getKeywordList();
+    this.getAllKeyWordList();
   }
 };
 </script>
@@ -467,6 +617,9 @@ export default {
 <style lang="less" scoped>
 .btn-a {
   margin-left: 12px;
+  /deep/button {
+    background: transparent;
+  }
 }
 .setting-chat-main {
   .layout--right--main();

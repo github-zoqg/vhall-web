@@ -4,7 +4,7 @@
     @dragover="dragover"
   >
     <template v-if="units.length == 0">
-      请拖拽组件 至此！
+      <div class="drag-here"> 请拖拽组件至此处</div>
     </template>
     <vhscroll>
     <template v-if="units.length">
@@ -129,8 +129,29 @@ export default {
           ...componentData,
           cUid: uuidV1()
         })
+      } else if(componentData.component_id == 9) {
+
+        const isAdded = this.units.filter((item) => {
+          return item.component_id == 9
+        })
+
+        if (isAdded.length > 0) {
+          this.$message.error('功能组件只能添加一个！')
+          return
+        }
+
+        this.units.push({
+          ...componentData,
+          inSwitch: 1,  // 1， 开启 。 0 关闭
+          rewardSwitch: 1, // 1， 开启 。 0 关闭
+          inContent: '',
+          rewardContent: '',
+          cUid: uuidV1()
+        })
       }
+
       this.doEditor(this.units.length - 1)
+
       e.preventDefault()
     },
 
@@ -154,6 +175,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .drag-here{
+    line-height:  80px;
+    text-align: center;
+    color: #999;
+    user-select: none;
+  }
   .customer-preview {
     width: 100%;
     height: 100%;

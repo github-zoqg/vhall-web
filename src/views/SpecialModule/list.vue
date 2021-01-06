@@ -341,7 +341,8 @@ export default {
       }
       .top{
         height: 175px;
-        background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background: #1A1A1A;
+        // background: linear- (-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
         padding: 10px 10px;
@@ -353,6 +354,7 @@ export default {
           width: 100%;
           height: 100%;
           position: absolute;
+          object-fit: scale-down;
           top:0;
           left: 0;
           border-radius: 4px;
@@ -368,9 +370,10 @@ export default {
         }
         .hot{
           position: absolute;
-          height: 50px;
+          height: 40px;
           width: 100%;
-          background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+          background: rgba(0, 0, 0, .4);
+          /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
           bottom: 0px;
           left: 0px;
           color: #fff;

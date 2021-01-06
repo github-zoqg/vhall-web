@@ -74,17 +74,22 @@ export default {
       this.$fetch('getInfo', {
         scene_id: 2
       }).then(res =>{
-        if(res.code === 200 && res.data) {
-          sessionOrLocal.set('userInfo', JSON.stringify(res.data));
-          sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
-          let account_info = sessionOrLocal.get('userInfo');
-          if(account_info !== null) {
-            let accountInfo = JSON.parse(account_info);
-            this.accountInfo = accountInfo;
-          }
-        } else {
-          this.$message.error(res.msg);
+        sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+        sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        let account_info = sessionOrLocal.get('userInfo');
+        if(account_info !== null) {
+          let accountInfo = JSON.parse(account_info);
+          this.accountInfo = accountInfo;
         }
+        this.$EventBus.$emit('saas_vs_account_change', res.data);
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `获取账户信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
   }

@@ -31,6 +31,7 @@
         @clear="searchGifts"
         class="head-btn fr search"
         v-model.trim="searchName"
+        autocomplete="off"
         placeholder="请输入礼物名称"
       >
         <i
@@ -99,7 +100,9 @@
       :title="editParams.gift_id ? '编辑礼物' : '创建礼物'"
       :visible.sync="dialogVisible"
       v-if="dialogVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+      custom-class="create-gift"
       width="468px">
       <el-form label-width="80px" :model="editParams" ref="editParamsForm" :rules="rules">
         <el-form-item label="图片上传" prop="img">
@@ -126,10 +129,10 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model.trim="editParams.name" show-word-limit maxlength="10" placeholder="请输入礼物名称"></VhallInput>
+            <VhallInput v-model.trim="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" show-word-limit maxlength="10" placeholder="请输入0-9999.99">
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  show-word-limit :maxlength="10" placeholder="请输入0-9999.99">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
             </VhallInput>
         </el-form-item>
@@ -143,7 +146,8 @@
       title="提示"
       width="400px"
       :visible.sync="dialogTipVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleCancelDelete"
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
@@ -156,7 +160,8 @@
       title="提示"
       width="400px"
       :visible.sync="batchDialogTipVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleCancelBatchDelete"
     >
       <span>观众端礼物显示将受到影响, 确认删除?</span>
@@ -170,7 +175,8 @@
       width="620px"
       v-if="dialogGiftsVisible"
       :visible.sync="dialogGiftsVisible"
-      :close-on-click-modal="false"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :before-close="handleCloseChooseGift"
       custom-class="choose-gift"
     >
@@ -180,6 +186,7 @@
         @clear="searchMaterialGift"
         class="head-btn fr search"
         v-model.trim="materiaSearchName"
+        autocomplete="off"
         placeholder="请输入礼物名称"
       >
         <i
@@ -618,11 +625,7 @@ export default {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
       this.tableData = resData
       this.addedGiftsIds = this.tableData.map(item => item.id)
-      this.materiaTableData.forEach(meterialItem => {
-        if (meterialItem.gift_id == this.deleteId) {
-          meterialItem.isChecked = false
-        }
-      })
+
       this.chooseGift()
 
       this.deleteId = ''
@@ -675,6 +678,7 @@ export default {
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
     chooseGift() {
+      this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
       this.$fetch('setRelevance', {
         gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
@@ -716,7 +720,7 @@ export default {
   }
 }
 .live-gift-wrap{
-  /deep/ .el-dialog__footer {
+  /deep/ .create-gift .el-dialog__footer {
     padding-top: 0;
   }
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {

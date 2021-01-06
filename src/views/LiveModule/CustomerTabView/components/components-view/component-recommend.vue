@@ -12,14 +12,21 @@
     </div>
     <div class="tips-box">
       <span class="tips-title">温馨提示：</span>
-      <div class="tips-content">请在左侧导航栏中的<span><a href="javascript:;">【推荐】</a></span>中添加内容</div>
+      <div class="tips-content">请在左侧导航栏中的<span><a href="javascript:;" @click="goLink">【广告推荐】</a></span>中添加内容</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'component-recommend'
+  name: 'component-recommend',
+  methods: {
+    goLink() {
+      this.$router.push({
+        path: `/live/advertCard/${this.$route.params.str}`
+      })
+    }
+  },
 };
 </script>
 

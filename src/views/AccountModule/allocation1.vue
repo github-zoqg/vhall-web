@@ -65,7 +65,7 @@
         </el-table>
       </div>
       <!-- 批量分配-弹出框 -->
-      <el-dialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group">
+      <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group">
         <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="120px">
           <el-form-item label="分配数量：" prop="count">
             <el-input v-model.trim="multiAllocForm.count" auto-complete="off" placeholder="请输入分配数量"/>
@@ -75,7 +75,7 @@
           <el-button @click.prevent.stop="multiAllocShow = false">取 消</el-button>
           <el-button type="primary">确 定</el-button>
         </div>
-      </el-dialog>
+      </VhallDialog>
 
     </div>
   </div>

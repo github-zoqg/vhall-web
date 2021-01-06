@@ -36,7 +36,7 @@
         <el-button type="white-primary" v-if="nullText == 'nullData' && $route.path !='/material/prize'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
       </noData>
     </div>
-    <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo"></create-prize>
+    <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo" :liveTotal="total"></create-prize>
   </div>
 </template>
 
@@ -116,7 +116,7 @@ export default {
       let formParams = {
         keyword: this.keyword
       }; //获取搜索参数
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
         this.$refs.tableList.clearSelect();
@@ -146,6 +146,10 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
+      if (that.source == 0 && Number(that.total) >= 20) {
+        that.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        return;
+      }
       let params = {
         prize_id: rows.prize_id,
         source: that.source,
@@ -180,23 +184,18 @@ export default {
         }
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
-            this.$refs.searchArea.searchParams = {};
-            this.getTableList();
+            this.getTableList('delete');
             this.$message.success('删除成功');
-          } else {
-            this.$message.success('删除失败');
           }
+        }).catch(res => {
+          this.$message.success(res.msg || '删除失败');
         });
       }).catch(() => {
       });
     },
     allDelete(id) {
-       if (this.prizeChecked.length < 1) {
-          this.$message.warning('请选择要删除的选项');
-        } else {
-          id = this.prizeChecked.join(',')
-          this.deleteConfirm(id);
-        }
+      id = this.prizeChecked.join(',')
+      this.deleteConfirm(id);
     },
     // 选中
     changeTableCheckbox(val) {
@@ -204,6 +203,10 @@ export default {
     },
     // 创建奖品
     createPrize() {
+      if (this.source == 0 && Number(this.total) >= 20) {
+        this.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        return;
+      }
       if (this.tableData.length) {
          this.$refs.tableList.clearSelect();
       }

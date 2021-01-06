@@ -154,7 +154,7 @@ export default {
         if (res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
-            item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/live/watch/${item.webinar_id}`
+            item.share_link = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/watch/${item.webinar_id}`
           });
           this.dataList = list;
           this.tabList[0].total = res.data.total;
@@ -375,7 +375,8 @@ export default {
         position: absolute;
         height: 50px;
         width: 100%;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%);
+        /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
+        background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
         bottom: 0px;
         left: 0px;
         color: #fff;

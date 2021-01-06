@@ -113,6 +113,14 @@ export default {
     nodeId: {
       type: String,
       default: 'vh-player'
+    },
+    /**
+     * 是否自动播放
+     */
+    autoPlay: {
+      type: Boolean,
+      default: true,
+      required: false
     }
   },
 
@@ -180,6 +188,7 @@ export default {
           event => {
             console.log('初始化播放器成功');
             window.vhallPlayer = this.$PLAYER = event.vhallplayer;
+            !this.autoPlay && this.$PLAYER.pause()
             this.$PLAYER.openControls(false);
             this.$PLAYER.openUI(this.openPlayerUI);
             if (this.type == 'live') {

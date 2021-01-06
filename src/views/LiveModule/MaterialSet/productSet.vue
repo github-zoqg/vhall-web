@@ -51,6 +51,7 @@ export default {
       formData: {},
       imageUrl: '',
       keyword:'',
+      saleTotal: 0,
       nullText: 'nullData',
       isSearch: false, //是否是搜索
       text: '您还没有商品，快来创建吧！',
@@ -103,6 +104,10 @@ export default {
   methods: {
     onSwitchChange(option) {
       if(option.watch) {
+        if (this.saleTotal >= 100) {
+          this.$message.error('商品最大上架数量为100，请下架后再进行操作');
+          return;
+        }
         // 上架处理
         this.$fetch('goodsEnable', {
           webinar_id: this.$route.params.str,
@@ -113,6 +118,7 @@ export default {
           console.log(res);
         }).catch(err => {
           this.$message.error("上架设置失败！");
+          this.getTableList();
           console.log(err);
         });
       } else {
@@ -136,7 +142,7 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableProductList.pageInfo; //获取分页信息
-      if (this.keyword) {
+      if (this.keyword || params == 'delete') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
@@ -165,6 +171,7 @@ export default {
             this.isSearch = false;
           }
         this.addCover();
+        this.getSaleGoodsList();
       }).catch(e => {
         console.log(e);
       });
@@ -180,7 +187,7 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
-      if (that.total == 99) {
+      if (that.saleTotal >= 100) {
         that.$message.error('商品最大上架数量为100，请删除后再进行操作');
         return;
       }
@@ -205,7 +212,7 @@ export default {
       });
     },
     delConfirm(id) {
-      this.$confirm('确定要删除该文件吗？', '提示', {
+      this.$confirm('确定要删除该商品吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
@@ -216,11 +223,10 @@ export default {
           if (res.code == 200) {
             this.$message.success("删除成功！");
             this.checkedGoodsId = [];
-            this.getTableList();
-          } else {
-            this.$message.error('删除失败, 请下架后删除');
+            this.getTableList('delete');
           }
-        }).catch(err => {
+        }).catch(res => {
+          this.$message.error( res.msg || '删除失败, 请下架后删除');
         })
       }).catch(() => {
         this.$message({
@@ -247,8 +253,22 @@ export default {
         this.delConfirm(id);
       }
     },
+    // 获取在线商品列表
+    getSaleGoodsList() {
+      this.$fetch('goodsList', {webinar_id: this.$route.params.str, pos:0, limit: 1}).then(res => {
+        if (res.code == 200) {
+          this.saleTotal = res.data.total;
+        }
+      }).catch(res => {
+        // this.$message.error(res.msg);
+      })
+    },
     // 新建商品
     addProduct() {
+      if (this.saleTotal >= 100) {
+        this.$message.error('商品最大上架数量为100，请删除后再进行操作');
+        return;
+      }
       this.$router.push({path: `/live/addProduct/${this.$route.params.str}`});
     }
   },

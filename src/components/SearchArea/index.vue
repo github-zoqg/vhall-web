@@ -52,7 +52,7 @@
       </el-form-item>
     </el-form>
     <div class="export-data" v-if="isExports">
-        <span @click="exportData">导出数据</span>
+      <el-button round type="white-primary" size="medium" @click="exportData">导出数据</el-button>
     </div>
   </div>
 </template>
@@ -118,8 +118,8 @@ export default {
   },
   watch: {
     active() {
-      console.log(this.active, '???????????????????????????')
       this.isActive = this.active;
+      this.changeTime(this.isActive)
     }
   },
   created() {
@@ -247,27 +247,6 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
-      width: 104px;
-      height: 35px;
-      border-radius: 20px;
-      border: 1px solid #dcdfe6;
-      text-align: center;
-      line-height: 35px;
-      background: transparent;
-      cursor: pointer;
-      span {
-        font-size: 14px;
-        font-family: @fontRegular;
-        font-weight: 400;
-        color: #666;
-      }
-    }
-    .export-data:hover {
-      background: #fb3a32;
-      border: none;
-      span {
-        color: #fff;
-      }
     }
   }
 </style>

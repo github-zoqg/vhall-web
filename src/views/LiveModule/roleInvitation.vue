@@ -34,12 +34,15 @@
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input :value="privilegeVo && host_join_link ? host_join_link : ''" readonly></el-input>
+              <VhallInput :value="privilegeVo && host_join_link ? host_join_link : ''" readonly autocomplete="off"></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <el-input v-model.trim="privilegeVo.host_password" readonly>
+              <!-- <VhallInput v-model.trim="privilegeVo.host_password" readonly class="input-no-right-border">
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
-              </el-input>
+              </VhallInput> -->
+              <VhallInput v-model.trim="privilegeVo.host_password" readonly class="btn-relative btn-two" autocomplete="off">
+                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
+              </VhallInput>
             </el-form-item>
           </el-form>
           <div class="role-card-qx-content">
@@ -67,19 +70,19 @@
                   3、每个直播间最多可以登录10位嘉宾；<br/>
                   4、直播中无法修改嘉宾权限。
                 </div>
-                <i class="el-icon-question"></i>
+                <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
             <p class="role-remark">嘉宾可进行推流，嘉宾切换、文档演示等操作</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input :value="privilegeVo && join_link ? join_link : ''" readonly></el-input>
+              <VhallInput :value="privilegeVo && join_link ? join_link : ''" readonly autocomplete="off" ></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <el-input v-model.trim="privilegeVo.guest_password" readonly>
+              <VhallInput v-model.trim="privilegeVo.guest_password" readonly class="input-no-right-border" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
-              </el-input>
+              </VhallInput>
             </el-form-item>
           </el-form>
           <div class="role-card-qx-content">
@@ -113,19 +116,19 @@
                   2、每个直播间最多可以登录10位助理；<br />
                   3、直播中无法修改助理权限。
                 </div>
-                <i class="el-icon-question"></i>
+                <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
             <p class="role-remark">助理不可推流，可进行聊天过滤、观众管理等操作</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
-              <el-input  :value="privilegeVo && assistant_join_link ? assistant_join_link : ''"  readonly></el-input>
+              <VhallInput  :value="privilegeVo && assistant_join_link ? assistant_join_link : ''"  readonly autocomplete="off" ></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <el-input v-model.trim="privilegeVo.assistant_password" readonly>
+              <VhallInput v-model.trim="privilegeVo.assistant_password" readonly  class="input-no-right-border" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
-              </el-input>
+              </VhallInput>
             </el-form-item>
           </el-form>
           <div class="role-card-qx-content">
@@ -152,12 +155,12 @@
     </div>
     <!-- 编辑口令弹出框 -->
     <VhallDialog title="编辑" :visible.sync="visible"
-                 :close-on-click-modal="false"
+                 :lock-scroll=false
                  width="280px">
       <div class="content">
         <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules" label-width="0">
           <el-form-item label="" prop="password">
-            <el-input v-model.trim="pwdForm.password" auto-complete="off" placeholder="请输入口令" :maxlength="6" show-word-limit/>
+            <VhallInput v-model.trim="pwdForm.password" auto-complete="off" placeholder="请输入口令" :maxlength="6" show-word-limit></VhallInput>
           </el-form-item>
         </el-form>
       </div>
@@ -264,9 +267,15 @@ export default {
     }
   },
   methods: {
-    updateSwitch() {
+    async updateSwitch() {
       let roleSwitch = this.roleSwitch; // 目标
       this.roleSwitch = Number(!roleSwitch);
+      let result = await this.$fetch('getWebinarInfo', {
+        webinar_id: this.$route.params.str,
+      })
+      if (result.data) {
+        this.webinarVo = result.data;
+      }
       if(this.webinarVo.webinar_state === 1) {
         // 如果為~直播中
         this.$message({
@@ -281,7 +290,7 @@ export default {
           webinar_id: this.$route.params.str,
           is_privilege: roleSwitch
         }).then(res => {
-          if (res && res.code === 200 && Number(res.data.is_privilege) === 1) {
+          if (Number(res.data.is_privilege) === 1) {
             this.$message({
               showClose: true,
               message: '开启成功',
@@ -292,7 +301,7 @@ export default {
             this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
-          }else if (res && res.code === 200 && Number(res.data.is_privilege) === 0) {
+          }else if (Number(res.data.is_privilege) === 0) {
             this.$message({
               showClose: true,
               message: '关闭成功',
@@ -303,14 +312,6 @@ export default {
             this.roleSwitch = roleSwitch;
             // 获取 getPrivilegeInfo 活动角色配置接口
             this.getPrivilegeInfo();
-          } else {
-            this.$message({
-              showClose: true,
-              message: res.msg || roleSwitch ? `开启失败` : `开启失败`,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            });
           }
         }).catch(er => {
           console.log(er);
@@ -333,16 +334,34 @@ export default {
             type: this.pwdForm.type,
             password: this.pwdForm.password
           }).then(res => {
-            if(res && res.code === 200 && res.data) {
-              this.$message.success('修改成功');
+            if(res.data) {
+              this.$message({
+                message:  '修改成功',
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.visible = false;
               this.getPrivilegeInfo();
             } else {
-              this.$message.error(res.msg || '修改失败');
+              this.$message({
+                message:  res.msg || '修改失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
-          }).catch(e => {
-            console.log(e);
-            this.$message.error('修改失败');
+          }).catch(res => {
+            console.log(res);
+            this.$message({
+              message:  res.msg || '修改失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
       });
@@ -354,11 +373,11 @@ export default {
             this.$refs.pwdForm.resetFields();
           }
         } catch (e) {console.log(e);}
+        this.visible = true;
+        this.pwdForm.password = this.privilegeVo[keyName];
+        this.pwdForm.keyName = keyName;
+        this.pwdForm.type = type;
       });
-      this.visible = true;
-      this.pwdForm.password = this.privilegeVo[keyName];
-      this.pwdForm.keyName = keyName;
-      this.pwdForm.type = type;
     },
     // 保存權限
     savePremHandle(keyName) {
@@ -374,22 +393,30 @@ export default {
       obj.webinar_type = this.privilegeVo.webinar_type; // 活动类型 1:音频 2:视频 3:互动
       // console.log(obj);
       this.$fetch('privilegePrem', obj).then(res => {
-        if(res && res.code === 200) {
-          this.$message.success('保存成功');
-          this.getPrivilegeInfo();
-        } else {
-          this.$message.error(res.msg || '保存失败');
-        }
-      }).catch(e => {
-        console.log(e);
-        this.$message.error('保存失败');
+        this.$message({
+          message:  `保存成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.getPrivilegeInfo();
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || '保存失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     getPrivilegeInfo() {
       this.$fetch('privilegeInfo', {
         webinar_id: this.$route.params.str,
       }).then(res => {
-          if(res && res.code === 200 && res.data) {
+          if(res.data) {
             // 若是未开启，口令展示为空
             if (Number(res.data.is_privilege) === 0) {
               res.data.host_password = '';
@@ -421,12 +448,24 @@ export default {
         text: () => text
       });
       clipboard.on('success', () => {
-        this.$message.success('复制成功');
+        this.$message({
+          message:  `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         // 释放内存
         clipboard.destroy();
       });
       clipboard.on('error', () => {
-        this.$message.error('复制失败，暂不支持自动复制');
+        this.$message({
+          message:  `复制失败，暂不支持自动复制`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         // 释放内存
         clipboard.destroy();
       });
@@ -435,7 +474,7 @@ export default {
       this.$fetch('getWebinarInfo', {
         webinar_id: this.$route.params.str,
       }).then(res => {
-        if(res && res.code === 200 && res.data) {
+        if(res.data) {
           this.webinarVo = res.data || {};
         } else {
           this.webinarVo = {};
@@ -476,7 +515,7 @@ export default {
   margin-left: 0;
   display: inline-block;
   margin-bottom: 24px;
-  border: 1px dashed #EEEEEE;
+  /* border: 1px dashed #EEEEEE; */
   padding: 32px 32px;
   background: #FFFFFF;
   vertical-align: middle;
@@ -521,11 +560,17 @@ export default {
   /deep/.el-input__inner {
     height: 40px;
   }
+  /deep/.input-no-right-border {
+    .el-input__inner {
+      border-right: 0;
+    }
+  }
   /deep/.btn-relative {
     position: relative;
     cursor: pointer;
     .el-input__inner {
       padding: 0 36px 0 12px;
+      border-radius: 4px;
     }
     /deep/.el-input-group__append {
       position: absolute;
@@ -536,12 +581,12 @@ export default {
     &.btn-two {
       /deep/.el-input-group__append {
         width: 52px!important;
-        height: 40px;
+        height: 38px;
         background: #F7F7F7;
         border-radius: 0 4px 4px 0;
         position: absolute;
-        right: -1px;
-        top: 0;
+        right: 1px;
+        top: 1px;
         line-height: 38px;
         text-align: center;
         padding: 0 0;
@@ -550,6 +595,7 @@ export default {
         font-family: @fontRegular;
         font-weight: 400;
         color: #666666;
+        border: 0;
       }
     }
   }
@@ -655,5 +701,16 @@ export default {
   /deep/.el-form-item:last-child {
     margin-bottom: 0;
   }
+}
+/deep/.saasicon_help_m {
+  color: #999999;
+}
+/deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+  background: #E6E6E6;
+  border: 1px solid #CCCCCC;
+  color: #666666;
+}
+/deep/.no-hover {
+  padding: 0 12px;
 }
 </style>

@@ -92,9 +92,12 @@ export default {
     },
 
     changeLink() {
-      this.$emit('updateInfo', {
-        ...this.info,
-      })
+      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
+      if(result) {
+        this.$emit('updateInfo', this.info)
+      } else {
+        this.$message.warning('跳转地址，必须以http或https 开头')
+      }
     },
 
     uploadError(e) {
@@ -118,6 +121,7 @@ export default {
     height: 180px;
     display: inline-block;
     position: relative;
+
     /deep/ .el-upload--picture-card{
       width: 100%;
       height: 100%;
@@ -135,12 +139,41 @@ export default {
       padding: 0 12px;
       border-radius: 4px;
       border: 1px solid #ccc;
-    }
-    .tips{
+    }.tips{
       position: absolute;
       top: 100px;
       width: 100%;
       text-align: center;
+      font-size: 12px;
+      line-height: 24px;
+      color: #999;
+    }
+    /deep/ .preview{
+      border: 0;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      img{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        max-height: 100%;
+        margin: auto;
+      }
+    }
+    .upload-imglink{
+      width: 100%;
+      height: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    /deep/ .el-upload--picture-card, /deep/ .el-upload-dragger{
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #F7F7F7;
     }
   }
   .preview{
@@ -174,4 +207,11 @@ export default {
     background: #CCCCCC;
 
   }
+
+  .editorContent .el-upload--picture-card, .editorContent .el-upload-dragger {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #F7F7F7;
+}
 </style>

@@ -68,7 +68,7 @@ export default {
       tabelColumn:[
         {
           label: '用户信息',
-          key: 'userName',
+          key: 'nick_name',
         },
         {
           label: '手机号',
@@ -291,11 +291,18 @@ export default {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,
         service_names: this.liveDetailInfo.webinar_state == 4 ? '2' : this.activeName,
-        merge_type: formParams.merge_type ? 1 : 2,
         end_time: getRangeDays(1)
       };
       if (this.active!= 1 && formParams.searchIsTime == 1) {
         paramsObj.start_time = getRangeDays(this.active);
+      }
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime && formParams.searchIsTime == 1) {
+          paramsObj['start_time'] = formParams[i][0];
+          paramsObj['end_time'] = formParams[i][1];
+        } else {
+          paramsObj[i] = formParams[i];
+        }
       }
       if (this.liveDetailInfo.webinar_state != 4) {
         if (this.activeName == 2) {
@@ -327,14 +334,7 @@ export default {
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
       }
-      for (let i in formParams) {
-        if (i === 'searchTime' && formParams.searchTime) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
-      }
+      paramsObj.merge_type = formParams.merge_type ? 1 : 2;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = paramsObj;
       this.getBaseUserInfo(obj);
@@ -342,9 +342,9 @@ export default {
     getBaseUserInfo(params) {
       this.$fetch('getUserBaseinfo', params).then(res => {
         this.tableList = res.data.list;
-        this.tableList.map(item => {
-          item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
-        })
+        // this.tableList.map(item => {
+        //   item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
+        // })
         this.totalNum = res.data.total;
       });
     },
@@ -369,7 +369,7 @@ export default {
       this.$refs.searchArea.searchParams.searchIsTime = '1',
       this.$refs.tableList.pageInfo.pageNum = 1;
       this.$refs.tableList.pageInfo.pos = 0;
-      // this.active = 2;
+      this.active = 2;
       this.getTableList();
     }
   }
