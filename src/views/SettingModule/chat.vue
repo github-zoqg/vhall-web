@@ -1,11 +1,11 @@
 <template>
   <div>
     <pageTitle title="聊天严禁词" iconCssType="gary">
-      <div slot="content">
+      <!-- <div slot="content">
         1.聊天、评论，包含关键词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
         <br/>
         2.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃
-      </div>
+      </div> -->
     </pageTitle>
     <div>
       <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
@@ -20,6 +20,12 @@
         <el-form-item label="严禁词列表">
           <div class="words-white">
             {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '暴力、政治敏感、严禁词，逗号隔开、固定宽度换行'}}
+          </div>
+          <div class="notice">
+            <p>提示：</p>
+            <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
+            <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
+            <p>3.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃</p>
           </div>
         </el-form-item>
       </el-form>
@@ -634,7 +640,8 @@ export default {
   font-weight: 400;
   color: #999999;
   line-height: 20px;
-  min-height: 200px;
+  height: 216px;
+  overflow-y: auto;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
 }

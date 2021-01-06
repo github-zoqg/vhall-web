@@ -1,6 +1,6 @@
 <template>
   <div class="gift-wrap">
-    <pageTitle title="礼物管理">
+    <pageTitle title="礼物">
       <div slot="content">
         1.支持创建免费礼物。观看端最多显示40个礼物<br/>
         2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp<br/>

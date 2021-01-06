@@ -22,13 +22,13 @@ const router = [
       {
         path: 'incomeDetail/:str(\\d+)',
         component: () => import('@/views/FinanceModule/incomeDetail'),
-        meta:{ auth: true,  title: '收益详情', name: 'incomeDetail', activeMenu: '/finance/info'},
+        meta:{ auth: true,  title: '收益详情', name: 'incomeDetail', activeMenu: '/finance/income'},
         hidden: true
       },
       {
         path: 'payOrder',
         component: () => import('@/views/FinanceModule/payList'),
-        meta:{ auth: true,  title: '购买列表', name: 'payOrder', activeMenu: '/finance/info'},
+        meta:{ auth: true,  title: '订单支付', name: 'payOrder', activeMenu: '/finance/info'},
         hidden: true
       },
       {
@@ -46,7 +46,7 @@ const router = [
       {
         path: 'orderDetail',
         component: () => import('@/views/FinanceModule/orderDetail'),
-        meta:{ auth: true,  title: '订单支付', name: 'orderDetail', activeMenu: '/finance/income'},
+        meta:{ auth: true,  title: '升级版本', name: 'orderDetail', activeMenu: '/finance/income'},
         hidden: true
       }
     ]
@@ -87,7 +87,7 @@ const router = [
       {
         path: '/homeSet/:str(\\d+)',
         component: () => import('@/views/UserHome/homeSet'),
-        meta: { auth: true, title: '个人主页', name: 'homeSet', activeMenu: '/account/homeSet'},
+        meta: { auth: true, title: '设置', name: 'homeSet', activeMenu: '/account/homeSet'},
         hidden: true
       },
       {
@@ -99,7 +99,7 @@ const router = [
       {
         path: '/sonDetail/:str(\\d+)',
         component: () => import('@/views/AccountModule/sonDetail'),
-        meta:{ auth: true, title: '子账号详情', name: 'sonDetail', activeMenu: '/account/son'},
+        meta:{ auth: true, title: '子账号信息', name: 'sonDetail', activeMenu: '/account/son'},
         hidden: true
       }
     ]
