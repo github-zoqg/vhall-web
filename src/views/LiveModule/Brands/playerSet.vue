@@ -53,6 +53,7 @@
                       <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open">快</el-radio>
                     </el-form-item>
                     <el-form-item label="显示位置">
+                      <el-radio v-model="formHorse.position" :label="1" :disabled="!scrolling_open">随机</el-radio>
                       <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open">上</el-radio>
                       <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
                       <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
@@ -116,8 +117,8 @@
                     <el-form-item label="水印位置">
                       <el-radio v-model="formWatermark.img_position" :label="1" :disabled="!watermark_open">左上角</el-radio>
                       <el-radio v-model="formWatermark.img_position" :label="2" :disabled="!watermark_open">右上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">左下角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">右下角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">左下角</el-radio>
+                      <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">右下角</el-radio>
                     </el-form-item>
                     <el-form-item label="透明度">
                       <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
@@ -142,7 +143,7 @@
                       active-color="#ff4949"
                       inactive-color="#ccc"
                       :active-text="bulletChatText"
-                      @change="otherOtherInfo"
+                      @change="otherOtherInfo(1)"
                     >
                     </el-switch>
                   </p>
@@ -154,7 +155,7 @@
                       active-color="#ff4949"
                       inactive-color="#ccc"
                       :active-text="progressText"
-                      @change="otherOtherInfo"
+                      @change="otherOtherInfo(2)"
                     >
                     </el-switch>
                   </p>
@@ -166,7 +167,7 @@
                       active-color="#ff4949"
                       inactive-color="#ccc"
                       :active-text="doubleSpeedText"
-                      @change="otherOtherInfo"
+                      @change="otherOtherInfo(3)"
                     >
                     </el-switch>
                   </p>
@@ -179,6 +180,7 @@
        </el-col>
         <el-col :span="6">
           <div class="show-purple">
+            <el-button type="primary" class="preview-video" @click="previewVideo">预览</el-button>
             <img :src="audioEnd" alt="" v-show="!showVideo">
             <div id="videoDom" v-show="showVideo"></div>
             <p class="show-purple-info">
@@ -215,7 +217,7 @@ export default {
         size: 20,
         speed: 6000,
         text: '版权所有，盗版必究',
-        position: 3,
+        position: 1,
         alpha: 50,
         interval: 10
       },
@@ -229,8 +231,8 @@ export default {
       domain_url: '',
       formOther: {
         progress: true,
-        bulletChat: true,
-        doubleSpeed: true,
+        bulletChat: false,
+        doubleSpeed: false,
       },
       prizeForm: {
         name: '',
@@ -293,6 +295,12 @@ export default {
     this.initPlayer();
   },
   methods: {
+    // 预览视频
+    previewVideo () {
+      this.initNodePlay()
+      // 设置水印的透明度
+      
+    },
     getFontList() {
       let num = 10;
       while (num <= 36) {
@@ -313,8 +321,51 @@ export default {
       }
     },
     // 关闭或保存其他信息
-    otherOtherInfo() {
+    otherOtherInfo(value) {
       this.preOthersOptions();
+      // 1--弹幕  2--进度条  3--倍速
+      switch (value) {
+        case 1 :
+          if (this.formOther.bulletChat) {
+            let content = "弹幕已开启";
+            var opt = {
+                  position: 0,     // 位置   int  0上    1中  2下  3全屏
+                  alpha: 1,      // 透明度 int  0~1
+                  fontsize: 15,    // 字体大小 int
+                  color: "#000000"  // 颜色   string
+                }
+            vp.setBarrageInfo(opt ,failure=>{
+              console.log('failure',failure);
+            } )
+            vp.openBarrage()
+            setTimeout (()=>{
+              vp.addBarrage(content , failure=>{
+                console.log('failure',failure);
+              })
+            },2000)
+
+          } else {
+            vp.closeBarrage()
+          }
+          break;
+        case 2 :
+           this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          break;
+        case 3 :
+          let list = this.$Vhallplayer.getUsableSpeed()
+          if (this.formOther.doubleSpeed) {
+            // this.$Vhallplayer.openControls(false)
+            this.$Vhallplayer.setPlaySpeed(list[0])
+            // this.$Vhallplayer.openControls(true)
+            // document.querySelector('.vhallPlayer-container').style.display = 'block'
+            // document.querySelector('.vhallPlayer-container').classList.remove('hide')
+             document.querySelector('.vhallPlayer-speed-component').style.display = "block"
+          }else {
+            // this.$Vhallplayer.openControls(true)
+            document.querySelector('.vhallPlayer-speed-component').style.display = "none"
+          }
+          break;
+      }
       // this.initNodePlay()
     },
     // 获取跑马灯基本信息
@@ -346,8 +397,11 @@ export default {
        this.$fetch('getOtherOptions', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
+          this.otherOtherInfo(1)
           this.formOther.progress = Boolean(res.data.progress_bar);
+          // this.otherOtherInfo(2)
           this.formOther.doubleSpeed = Boolean(res.data.speed);
+          // this.otherOtherInfo(3)
         } else {
           this.$message.success('获取信息失败');
         }
@@ -368,7 +422,7 @@ export default {
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
          if (res.code == 200) {
            this.$message.success(this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功');
-           this.initNodePlay()
+           
          } else {
            this.$message.error(res.msg || "保存跑马灯失败");
          }
@@ -386,7 +440,6 @@ export default {
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
          if (res.code == 200) {
           this.getBaseWaterList();
-          this.initNodePlay()
           this.$message.success(this.watermark_open ? "水印开启成功" : "水印关闭成功");
          } else {
           this.$message.error(res.msg || "保存水印灯失败");
@@ -410,8 +463,8 @@ export default {
             console.log('弹幕',this.$Vhallplayer,vp);
             Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
             // Number(backSettingData['progress_bar']) ? vp.setControls(true) : vp.setControls(false)
-            this.changeController(backSettingData)
-            Number(backSettingData['speed']) ? document.querySelector('.vhallPlayer-speed-component').style.display = 'block' : document.querySelector('.vhallPlayer-speed-component').style.display = 'none'
+            // this.changeController(backSettingData)
+            // Number(backSettingData['speed']) ? document.querySelector('.vhallPlayer-speed-component').style.display = 'block' : document.querySelector('.vhallPlayer-speed-component').style.display = 'none'
           })
         } else {
           this.$message.success(res.msg || '设置失败');
@@ -419,25 +472,26 @@ export default {
       })
     },
     // 开启和隐藏控制台-- 由于sdk文档上这个开关控制条的方法=>openControls不能用，用获取dom去控制
-    changeController (data) {
-      if( Number(data['progress_bar'])) {
-        document.querySelector('.vhallPlayer-container').style.visibility = 'visible'
-        document.querySelector('.vhallPlayer-container').style.opacity = 1
-      }else {
-        document.querySelector('.vhallPlayer-container').style.visibility = 'hidden'
-        document.querySelector('.vhallPlayer-container').style.opacity = 0
-        document.querySelector('.vhallPlayer-container').style.display= 'none'
-      }
-    },
+    // changeController (data) {
+    //   if( Number(data['progress_bar'])) {
+    //     document.querySelector('.vhallPlayer-container').style.visibility = 'visible'
+    //     document.querySelector('.vhallPlayer-container').style.opacity = 1
+    //   }else {
+    //     document.querySelector('.vhallPlayer-container').style.visibility = 'hidden'
+    //     document.querySelector('.vhallPlayer-container').style.opacity = 0
+    //     document.querySelector('.vhallPlayer-container').style.display= 'none'
+    //   }
+    // },
     // 初始化播放器
     initPlayer() {
       this.showVideo = true;
       this.initSDK().then(() => {
         // this.initSlider();
-        this.totalTime = this.$Vhallplayer.getDuration(() => {
-          console.log('获取总时间失败');
-        });
+        // this.totalTime = this.$Vhallplayer.getDuration(() => {
+        //   console.log('获取总时间失败');
+        // });
         // this.listen();
+      
       });
     },
     // 删除图片
@@ -447,6 +501,22 @@ export default {
     },
     initSDK() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      // 判断水印的位置
+      let watermarkOptionPosition = ['10%','10%']
+      switch (this.formWatermark.img_position) {
+        case 1:
+          watermarkOptionPosition = ['75%','5%']
+          break;
+        case 2:
+          watermarkOptionPosition = ['5%','5%']
+          break;
+        case 3:
+          watermarkOptionPosition = ['75%','70%']
+          break;
+        case 4:
+          watermarkOptionPosition = ['5%','70%']
+          break;
+      }
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
@@ -469,20 +539,30 @@ export default {
           enable: Boolean(this.watermark_open), // 默认 false
           url: this.domain_url || this.audioImg, // 水印图片的路径
           align: 'tr', // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
-          position: this.formWatermark.img_position, // 对应的横纵位置，支持px,vh,vw,%
+          position: watermarkOptionPosition, // 对应的横纵位置，支持px,vh,vw,%
           size: ['80px', '35px'], // 水印大小，支持px,vh,vw,%
+          alpha:this.formWatermark.img_alpha
         },
+        subtitleOption: {
+              enable: true
+            }
+
       };
       return new Promise((resolve) => {
         console.log('======实例化播放器参数======', incomingData);
         window.VhallPlayer.createInstance(
           incomingData,
           (event) => {
+            // setTimeout(()=>{
+               console.log('初始化实例成功',event);
+            // },2000)
+           
             this.$Vhallplayer = event.vhallplayer;
             window.vp = this.$Vhallplayer;
-            this.$Vhallplayer.openControls(false);
+            
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
-              this.$Vhallplayer.play()
+              this.$Vhallplayer.pause()
+              this.$Vhallplayer.openControls(true);
               this.loading = false;
               // 加载中
               resolve();
@@ -681,6 +761,7 @@ export default {
     margin-top: 100px;
     margin-left: 20px;
     border-radius: 5px;
+    position: relative;
     img{
       width: 400px;
       height: 226px;
@@ -695,6 +776,11 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .preview-video {
+    position: absolute;
+    top: -41px;
+    left: 0;
   }
 }
 </style>
