@@ -52,14 +52,18 @@ export default {
         that.sysDateStr = that.$moment(new Date().getTime()).format('llll');
       }, 60000); // 一分钟更新一下
     },
-    getBreadcrumb() {
+    getBreadcrumb(list) {
+      // this.$router 所有路由。this.$route 当前路由
+      console.log('导航面包屑', this.$router)
+      console.log('saas_vs_crumb_event', list);
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title);
       const first = matched[0];
-      /*if (!this.isDashboard(first)) {
-        matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched);
-      }*/
+      // if (!this.isDashboard(first)) {
+      //   matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched);
+      // }
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false);
+
     },
     isDashboard(route) {
       const name = route && route.name;
@@ -87,6 +91,9 @@ export default {
     if(this.dateUpdateTimer) {
       window.clearInterval(this.dateUpdateTimer);
     }
+  },
+  mounted() {
+    this.$EventBus.$on('saas_vs_crumb_event', this.getBreadcrumb);
   }
 };
 </script>

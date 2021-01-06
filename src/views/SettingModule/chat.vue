@@ -52,9 +52,9 @@
         <table-list
           ref="chatTable"
           :isHandle=true
-          :manageTableData="showChatList"
+          :manageTableData="keyWordDao.list"
           :tabelColumnLabel="tableColumn"
-          :totalNum="showChatList.length"
+          :totalNum="keyWordDao.list.length"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
           :max-height="380"
