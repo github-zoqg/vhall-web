@@ -1,7 +1,7 @@
 <template>
   <div class="interaction-data">
     <div class="title-data">
-      <span>数据报告</span>
+      <span>互动统计</span>
     </div>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <base-data :isStatus="liveDetailInfo.webinar_state" :webinarType="liveDetailInfo.webinar_type"></base-data>

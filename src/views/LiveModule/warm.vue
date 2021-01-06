@@ -229,7 +229,6 @@ export default {
       if(this.warmForm.record_id == ''){
         this.$message.error('请上传暖场视频');
       }else{
-
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

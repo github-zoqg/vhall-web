@@ -219,7 +219,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
@@ -542,7 +542,10 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, this.$params(data)).then(res=>{
+          if (this.webniarTypeToZH !== '点播'|| this.title !== '编辑') {
+            data = this.$params(data);
+          }
+          this.$fetch(url, data).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
               this.isSaveInfo = true;
@@ -901,11 +904,30 @@ export default {
     }
   }
   .vh-dialog{
-    /deep/.el-dialog__body {
-      padding-bottom: 20px;
-    }
-
+  /deep/ .el-dialog {
+    width: 642px!important;
+    background: transparent!important;
+    border:none;
+    box-shadow: none;
   }
+  /deep/ .el-dialog__header {
+    width: 642px!important;
+    padding: 0px;
+    height: 55px;
+    background: transparent!important;
+    border:none;
+  }
+  /deep/ .el-dialog__headerbtn{
+    top: 30px;
+    right: 0px;
+  }
+  /deep/ .el-dialog__body{
+    width: 642px;
+    height: 375px;
+    border: 16px solid #333;
+    background: #fff;
+  }
+}
 </style>
 <style lang="less">
   html{
