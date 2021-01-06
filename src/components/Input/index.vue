@@ -78,7 +78,7 @@
                   `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
                   `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
                 ]"
-              >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
+              >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
             </span>
           </span>
         </span>
@@ -119,7 +119,7 @@
           `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
           `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
         ]"
-      >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
+      >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
     </span>
   </div>
 </template>
@@ -129,18 +129,11 @@
   export default {
     extends: Input,
     mounted() {
-      this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 5 + 'px' : '12px'
+      this.calcWidth = this.$refs.limit_total.offsetWidth ? this.$refs.limit_total.offsetWidth * 2 + this.$refs.separator.offsetWidth + 15 + 'px' : '12px'
     },
     data() {
       return {
         calcWidth: ''
-      }
-    },
-    watch: {
-      textLength() {
-        this.$nextTick(() => {
-          this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 5 + 'px' : '12px'
-        })
       }
     },
     computed: {
