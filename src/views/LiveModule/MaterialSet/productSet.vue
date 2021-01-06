@@ -104,6 +104,10 @@ export default {
   methods: {
     onSwitchChange(option) {
       if(option.watch) {
+        if (this.saleTotal >= 100) {
+          this.$message.error('商品最大上架数量为100，请下架后再进行操作');
+          return;
+        }
         // 上架处理
         this.$fetch('goodsEnable', {
           webinar_id: this.$route.params.str,
@@ -114,6 +118,7 @@ export default {
           console.log(res);
         }).catch(err => {
           this.$message.error("上架设置失败！");
+          this.getTableList();
           console.log(err);
         });
       } else {

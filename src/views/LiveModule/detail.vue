@@ -87,6 +87,7 @@ import PageTitle from '@/components/PageTitle';
 import ItemCard from '@/components/ItemCard/index.vue';
 import Env from "@/api/env";
 import { formateDates } from "@/utils/general.js"
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   components: {
     PageTitle,
@@ -189,6 +190,10 @@ export default {
   },
   created(){
     this.getLiveDetail(this.$route.params.str);
+    let versionText = JSON.parse(sessionOrLocal.get('versionText'));
+    if (versionText == '标准版') {
+      console.log(keys(this.operasOld).includes('直播'), '?????????????????????')
+    }
   },
   mounted() {
     console.log(this.$route.meta.title, '1111111111111111');
@@ -208,14 +213,14 @@ export default {
   // },
   methods: {
     // 字符截取显示...兼容ie，用js
-    fontNumber (date) { 
-      const length = date.length 
-      if (length > 35) { 
-          var str = '' 
-          str = date.substring(0, 35) + '...' 
-          return str 
+    fontNumber (date) {
+      const length = date.length
+      if (length > 35) {
+          var str = ''
+          str = date.substring(0, 35) + '...'
+          return str
         } else {
-          return date 
+          return date
         }
     },
     // 获取基本信息
