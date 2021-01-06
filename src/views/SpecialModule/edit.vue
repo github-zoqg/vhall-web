@@ -396,7 +396,7 @@ export default {
     },
     // 删除事件
     deleteSpecial(id) {
-      this.$confirm('您确定要删除选中的专题吗？', '提示', {
+      this.$confirm('您确定要删除选中的直播吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
@@ -545,9 +545,11 @@ export default {
         box-sizing: border-box;
       }
       &-title{
-        overflow: hidden;
-        text-overflow: ellipsis;
         width: 288px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
       }
       &-status{
         width: 88px;

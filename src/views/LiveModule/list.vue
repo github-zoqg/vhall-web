@@ -237,10 +237,10 @@ export default {
     goIsLive(item) {
       if (item.webinar_type != 1) {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
-        window.open(href, '_target');
+        window.open(href, '_blank');
       } else {
         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
-        window.open(href, '_target');
+        window.open(href, '_blank');
       }
     },
     // 判断是否有起直播的权限

@@ -343,6 +343,31 @@ export default {
       float: right;
     }
   }
+  .vh-dialog{
+  /deep/ .el-dialog {
+    width: 642px!important;
+    background: transparent!important;
+    border:none;
+    box-shadow: none;
+  }
+  /deep/ .el-dialog__header {
+    width: 642px!important;
+    padding: 0px;
+    height: 55px;
+    background: transparent!important;
+    border:none;
+  }
+  /deep/ .el-dialog__headerbtn{
+    top: 30px;
+    right: 0px;
+  }
+  /deep/ .el-dialog__body{
+    width: 642px;
+    height: 375px;
+    border: 16px solid #333;
+    background: #fff;
+  }
+}
  /*  /deep/ .el-table__header{
     th{
       background: #F7F7F7;
