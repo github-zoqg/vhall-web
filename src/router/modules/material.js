@@ -41,7 +41,7 @@ const router = [
       {
         path: 'advertCard',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
-        meta: { auth: true, title: '广告推荐', name: 'advertCard'}
+        meta: { auth: true, title: '广告', name: 'advertCard'}
       },
       {
         path: 'gift',

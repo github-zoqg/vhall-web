@@ -43,7 +43,7 @@
     </span>
     </VhallDialog>
     <VhallDialog
-      title="选择广告推荐"
+      title="选择广告"
       :visible.sync="dialogAdverVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
