@@ -44,7 +44,7 @@ module.exports = {
         changeOrigin: true
       },
       '/account': {
-        target: 'http://t.e.vhall.com/account',
+        target: 'http://saas-api.vhall.com',
         changeOrigin: true
       },
       '/api/upload':{
