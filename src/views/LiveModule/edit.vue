@@ -21,7 +21,7 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" :disabled="!formData.date1" :picker-options="expireTimeOption" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
+              <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{selectableRange: startVal - '23:59:59' }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
       </el-form-item>
@@ -325,6 +325,7 @@ export default {
         date1: '',
         date2: ''
       },
+      startVal: '',
       limitInfo: {},
       pickerOptions: {
         disabledDate(time) {
@@ -350,10 +351,11 @@ export default {
       domain_url: '',
       selectMedia: {},
       expireTimeOption: {
-        disabledDate() {
-          console.log(this.formData.date1, '?????????????')
+        disabledDate(time) {
+          console.log(time, '?????????????')
           // formData.date1
-          return this.formData.date1.getTime() < Date.now() - 8.64e7;
+          this.startVal = this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000;
+          return startVal;
           // return this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000
           // return time.getTime() < Date.now()
         }
@@ -410,9 +412,9 @@ export default {
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
-        if (this.$route.query.type == 3) {
-          this.$route.meta.title = '复制直播';
-        }
+        // if (this.$route.query.type == 3) {
+        //   this.$route.meta.title = '复制直播';
+        // }
         this.liveDetailInfo = res.data;
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);

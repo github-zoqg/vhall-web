@@ -60,7 +60,7 @@
        </div>
         <div class="no-live" v-show="!total">
           <noData :nullType="nullText" :text="text" :height="50">
-            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="createPrize" v-preventReClick>创建抽奖</el-button>
+            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="createPrize" v-preventReClick>创建奖品</el-button>
           </noData>
         </div>
        <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>

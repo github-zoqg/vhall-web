@@ -128,7 +128,7 @@ export default {
           { icon: 'saasicon_zidingyicaidan', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
           { icon: 'saasicon_bofangqishezhi', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
           { icon: 'saasicon_yaoqingkashezhi', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
-          { icon: 'saasicon_guanggaotuijian', title: '广告推荐', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
+          { icon: 'saasicon_guanggaotuijian', title: '广告', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
           { icon: 'saasicon_gongzhonghaozhanshi', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
           { icon: 'saasicon_kaipinghaibao', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
         ],
@@ -190,10 +190,10 @@ export default {
   },
   created(){
     this.getLiveDetail(this.$route.params.str);
-    let versionText = JSON.parse(sessionOrLocal.get('versionText'));
-    if (versionText == '标准版') {
-      console.log(keys(this.operasOld).includes('直播'), '?????????????????????')
-    }
+    // let versionText = JSON.parse(sessionOrLocal.get('versionText'));
+    // if (versionText == '标准版') {
+    //   console.log(keys(this.operasOld).includes('直播'), '?????????????????????')
+    // }
   },
   mounted() {
     console.log(this.$route.meta.title, '1111111111111111');
