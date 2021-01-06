@@ -1,14 +1,14 @@
 <template>
   <div class="editBox">
     <pageTitle :title="`${title}${webniarTypeToZH}`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
-      <el-form-item :label="`${webniarTypeToZH}标题：`" prop="title"
+    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
+      <el-form-item :label="`${webniarTypeToZH}标题`" prop="title"
       :rules="[
         { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
         <VhallInput v-model.trim="formData.title" :maxlength="100" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="直播时间：" required v-if="webniarType=='live'">
+      <el-form-item label="直播时间" required v-if="webniarType=='live'">
           <el-col :span="11.5">
             <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
@@ -25,7 +25,7 @@
             </el-form-item>
           </el-col>
       </el-form-item>
-      <el-form-item label="直播模式：" required v-if="webniarType=='live'">
+      <el-form-item label="直播模式" required v-if="webniarType=='live'">
         <div class="titleBox">
           <span class="pageTitle">直播创建成功后，直播模式将不可修改</span>
           <el-tooltip>
@@ -86,7 +86,7 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <el-form-item :label="`${webniarTypeToZH}封面：`">
+      <el-form-item :label="`${webniarTypeToZH}封面`">
         <upload
           v-model="imageUrl"
           :domain_url="domain_url"
@@ -106,7 +106,7 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="选择视频："  v-if="webniarType=='vod'" required>
+      <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
         <div class="mediaBox">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <i class="el-icon-film"></i>
@@ -130,10 +130,10 @@
           </el-tooltip>
         </div>
       </el-form-item>
-      <el-form-item :label="`${webniarTypeToZH}简介：`">
+      <el-form-item :label="`${webniarTypeToZH}简介`">
         <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
       </el-form-item>
-      <!-- <el-form-item :label="`${webniarTypeToZH}类别：`" >
+      <!-- <el-form-item :label="`${webniarTypeToZH}类别`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
       </el-form-item> -->
       <p class="switch__box" v-if="webniarType=='live'">
