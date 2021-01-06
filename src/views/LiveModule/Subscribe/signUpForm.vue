@@ -19,8 +19,8 @@
             </p>
             <div class="tabsBox">
               <div :class="['tabs', baseInfo.theme_color]">
-                <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
-                <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
+                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_verify_title }}</div>
+                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_form_title }}</div>
               </div>
             </div>
             <!-- 报名表单 -->
