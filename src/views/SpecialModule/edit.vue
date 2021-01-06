@@ -214,7 +214,7 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`取消将不保存此页面的内容222222222？`, '提示', {
+    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
@@ -365,7 +365,7 @@ export default {
           !this.formData.reservation ||
           !this.formData.hot ||
           this.formData.selectedActives.length > 0) {
-        this.$confirm(`取消将不保存此页面的内容1111111？`, '提示', {
+        this.$confirm(`取消将不保存此页面的内容？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',

@@ -291,7 +291,6 @@ export default {
         webinar_id: this.$route.params.str,
         switch_id: formParams.switchId || 0,
         service_names: this.liveDetailInfo.webinar_state == 4 ? '2' : this.activeName,
-        merge_type: formParams.merge_type ? 1 : 2,
         end_time: getRangeDays(1)
       };
       if (this.active!= 1 && formParams.searchIsTime == 1) {
@@ -335,7 +334,7 @@ export default {
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
       }
-      console.log(formParams.searchIsTime,  '???????????????')
+      paramsObj.merge_type = formParams.merge_type ? 1 : 2;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = paramsObj;
       this.getBaseUserInfo(obj);

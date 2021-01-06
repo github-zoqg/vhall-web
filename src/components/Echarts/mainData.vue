@@ -12,7 +12,6 @@
               直播开始到活动结束后计作1个场次，筛选条件内数据进行相加
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
-           <!-- <i class="el-icon-question"></i> -->
           </el-tooltip>
           <h3>
             <count-to :startVal="0"
@@ -78,8 +77,11 @@
         <div class="grid-content">
           <span>观看人数</span>
           <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">
-              {{ titleType==1 ? '直播' : '点播'}}创建至今，进入观看页面（直播+回放）的观看人数，以播放器sdk上报为准，<br />用户真实观看了视频。筛选条件内同一个用户多次观看会进行去重
+            <div slot="content" v-if="!titleType">
+              统计进入观看页面的观看人数，以播放器sdk上报为准，用户真实观看了视频。<br />筛选条件内将活动数据进行相加，数据不去重
+            </div>
+            <div slot="content" v-else>
+              {{ titleType==4 ? '点播' : '直播'}}创建至今，进入观看页面{{ titleType == 4 ? '' : '（直播+回放）'}}的观看人数，以播放器sdk上报为准，<br />用户真实观看了视频。筛选条件内同一个用户多次观看会进行去重
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
@@ -137,7 +139,8 @@
         <div class="grid-content">
           <span>人均观看次数</span>
           <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">人均观看次数=观看次数/观看人数</div>
+            <div slot="content" v-if="!titleType">人均观看次数=观看次数/观看人数，筛选条件内将活动数据进行相加，数据不去重</div>
+            <div slot="content" v-else>人均观看次数=观看次数/观看人数</div>
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
@@ -153,7 +156,8 @@
         <div class="grid-content">
           <span>观看时长</span>
           <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">筛选条件内的观看总时长</div>
+            <div slot="content" v-if="!titleType">筛选条件内的观看总时长，将活动数据进行相加，数据不去重</div>
+            <div slot="content" v-else>筛选条件内的观看总时长</div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3>
@@ -165,7 +169,10 @@
         <div class="grid-content">
           <span>人均观看时长</span>
           <el-tooltip effect="dark" placement="right-start">
-            <div slot="content">
+            <div slot="content" v-if="!titleType">
+              筛选条件内的观看平均时长，将活动数据进行相加，数据不去重。人均观看时长=观看时长/观看人数
+            </div>
+            <div slot="content" v-else>
               筛选条件内的观看平均时长。人均观看时长=观看时长/观看人数
             </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
