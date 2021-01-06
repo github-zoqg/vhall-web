@@ -402,12 +402,12 @@
                       <div class="third-way-choose" v-if="otherWayShow && roominfo.webinar.id">
                         <div class="third-auth">
                           <a
-                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
+                            :href="qqLink"
                             class="qq"
                             title="QQ登录"
                           ></a>
                           <a
-                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
+                            :href="wxLink"
                             class="weixin"
                             title="微信登录"
                           ></a>
@@ -764,7 +764,7 @@ export default {
     this.$EventBus.$on('updateBaseNum', (msg) => {
       let num = this.roomData.online.num
       this.roomData.online.num = Number(num) + Number(msg.data.update_online_num)
-      
+
       let pvNum = this.roomData.pv.num
       this.roomData.pv.num = Number(pvNum) + Number(msg.data.update_pv)
     })
@@ -846,6 +846,14 @@ export default {
     if (this.timeinterval) clearInterval(this.timeinterval)
     this.timeinterval = null
     window.vhallReport && window.vhallReport.report('LEAVE_WATCH')
+  },
+  computed: {
+    qqLink() {
+      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+    },
+    wxLink() {
+      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+    }
   },
   methods: {
     closeWXCode () {
@@ -1209,7 +1217,7 @@ export default {
         this.$set(this.menuList, index, menu);
       });
     },
-    
+
     fullScreen() {
       var docElm = document.querySelector('.seeding-content');
       // W3C
