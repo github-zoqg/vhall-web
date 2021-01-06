@@ -79,12 +79,12 @@ export default {
       return toPath(params);
     },
     handleLink(item) {
-      const { redirect, path } = item;
+      const { redirect, path, query } = item;
       if (redirect) {
         this.$router.push(redirect);
         return;
       }
-      this.$router.push(this.pathCompile(path));
+      this.$router.push({path: this.pathCompile(path), query: query});
     }
   },
   beforeDestroy() {

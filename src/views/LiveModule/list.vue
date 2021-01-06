@@ -279,7 +279,7 @@ export default {
         index === '1' ? this.$router.push({path:'/live/edit'}) : this.$router.push({path:'/live/vodEdit'});
       }
     },
-    toDetail(id) {
+    toDetail(id, state) {
       this.$router.push({path: `/live/detail/${id}`});
     },
     toRoom(id){
