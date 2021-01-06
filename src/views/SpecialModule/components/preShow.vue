@@ -132,18 +132,32 @@ export default {
       display: flex;
     }
     .special-img{
+      width: 722px;
+      height: 406px;
       img{
         width: 722px;
-        height: 406px;
+        height: 100%;
+        // object-fit: scale-down;
       }
     }
     .special-detail{
       margin-left: 23px;
+      padding-right: 30px;
+      width: calc(100% - 722px);
       h1{
         font-size: 20px;
         color: #333333;
         padding-top: 10px;
         margin-bottom: 20px;
+        width: 100%;
+        // max-width: 300px;
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
       p{
         font-size: 16px;

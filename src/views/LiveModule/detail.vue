@@ -331,7 +331,11 @@ export default {
     blockHandler(item){
       if(item.path){
         if (item.path === '/live/edit') {
-          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+          if (this.liveDetailInfo.webinar_state == 4) {
+            this.$router.push({path: `/live/vodEdit/${this.$route.params.str}`, query: {type: 2 }});
+          } else {
+            this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+          }
         } else if (item.path === '/live/question') {
           // 问卷
           this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {roomId: this.liveDetailInfo.vss_room_id }});
