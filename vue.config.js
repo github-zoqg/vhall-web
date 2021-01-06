@@ -20,6 +20,9 @@ switch (process.env.VUE_APP_NODE_ENV)  {
   case 'test':
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
     break;
+  case 'production':
+    publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
+    break;
   default :
     publicPath = './'
     break;
