@@ -70,7 +70,7 @@
     <!-- 添加分组/ 重命名分组 -->
     <VhallDialog :title="groupDialog.title" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
       <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" :label-width="groupDialog.formLabelWidth">
-        <el-form-item label="分组名：" prop="subject">
+        <el-form-item label="分组名" prop="subject">
           <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
                     :minlength="1"/>
         </el-form-item>
@@ -83,22 +83,22 @@
     <!-- 添加观众/ 观众修改 -->
     <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="544px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
-        <el-form-item label="姓名：" prop="name">
+        <el-form-item label="姓名" prop="name">
           <VhallInput v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
         </el-form-item>
-        <el-form-item label="行业：" prop="industry">
+        <el-form-item label="行业" prop="industry">
           <VhallInput v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
         </el-form-item>
-        <el-form-item label="邮箱：" prop="email">
+        <el-form-item label="邮箱" prop="email">
           <VhallInput v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
-        <el-form-item label="手机号码：" prop="phone">
+        <el-form-item label="手机号码" prop="phone">
           <VhallInput v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
         </el-form-item>
-        <el-form-item label="工号：" prop="job_number">
+        <el-form-item label="工号" prop="job_number">
           <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
-        <el-form-item label="其他：" prop="other">
+        <el-form-item label="其他" prop="other">
           <VhallInput v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
@@ -220,7 +220,7 @@ export default {
         title: '添加分组',
         type: 'add',
         row: null,
-        formLabelWidth: '100px'
+        formLabelWidth: '80px'
       },
       groupForm: {
         subject: ''
