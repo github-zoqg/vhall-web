@@ -23,91 +23,46 @@ const router = [
     path: '/live',
     component: Layout,
     redirect: '/live/list',
-    meta: { auth: true, title: '直播管理', icon: 'saasicon_lives', level: 1 , name: 'liveMgr', crumb: []},
+    meta: { auth: true, title: '直播管理', icon: 'saasicon_lives', level: 1 , name: 'liveMgr'},
     children: [
       {
         path: 'list',
         component: () => import('@/views/LiveModule/list'),
-        meta: { auth: true, title: '直播列表', level: 2 , name: 'liveList', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }]}
+        meta: { auth: true, title: '直播列表', level: 2 , name: 'liveList'}
       },
       {
         path: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }]},
+        meta: { auth: true, title: '创建直播', level: 2 , name: 'liveCreate', webniarType: 'live', activeMenu: '/live/edit'},
       },
       {
         path: 'edit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }, {
-          key: 'liveDetail',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit'},
         hidden: true
       },
       {
         path: 'vodEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑点播', name: 'liveEdit', webniarType: 'vod', activeMenu: '/live/edit', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }, {
-          key: 'liveDetail',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/edit'},
         hidden: true
       },
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'liveEdit', webniarType: 'vod', activeMenu: '/live/edit', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/edit'},
         hidden: true
       },
       {
         path: 'detail/:str(\\d+)',
         component: () => import('@/views/LiveModule/detail'),
-        meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'chooseWay/:str/:role?',
         component: () => import('@/views/LiveModule/chooseWay'),
-        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }, {
-          key: 'liveDetail',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -214,7 +169,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'question',
+        path: 'question/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/question'),
         meta:{ auth: true, title: '问卷', name: 'question', activeMenu: '/live/list'},
         hidden: true
@@ -313,7 +268,7 @@ const router = [
       {
         path: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
-        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/list' }
+        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit' }
       }
     ]
   },

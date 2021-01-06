@@ -65,13 +65,13 @@ const router = [
       {
         path: '/dev/callback',
         component: () => import('@/views/SettingModule/Development/callback'),
-        meta:{ auth: true, title: '开发设置', name: 'devCallback', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '回调设置', name: 'devCallback', activeMenu: '/setting/info'},
         hidden: true
       },
       {
         path: 'logo/:str(\\d+)',
         component: () => import('@/views/SettingModule/logo'),
-        meta:{ auth: true, title: '控制台标志', name: 'logoSetting',activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '控制台标识', name: 'logoSetting',activeMenu: '/setting/info'},
         hidden: true
       }
     ]

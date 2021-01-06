@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle :title="`${title}${webniarTypeToZH}`"></pageTitle>
+    <pageTitle :title="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webniarTypeToZH}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
       <el-form-item :label="`${webniarTypeToZH}标题`" prop="title"
       :rules="[
