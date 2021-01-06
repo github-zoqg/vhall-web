@@ -159,6 +159,9 @@ export default {
   },
   created() {
     this.getVirtualInfo();
+  },
+  beforeCreate() {
+
   }
 };
 </script>

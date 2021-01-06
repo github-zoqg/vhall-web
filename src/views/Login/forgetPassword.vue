@@ -316,12 +316,13 @@ export default {
             };
             this.$fetch('resetPassword', params).then(res => {
               this.findStep = 4;
+              let that = this;
               let linkTimer = setInterval(function() {
-                this.linkTime--;
-                if (this.linkTime === 1) {
+                that.linkTime--;
+                if (that.linkTime === 1) {
                   window.clearInterval(linkTimer);
-                  this.$router.push({path: '/'});
-                  this.linkTime = 5;
+                  that.$router.push({path: '/'});
+                  that.linkTime = 5;
                 }
               }, 1000);
             }).catch(res => {
