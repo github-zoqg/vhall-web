@@ -29,7 +29,6 @@
         :disabled="inputDisabled"
         :readonly="readonly"
         :autocomplete="autoComplete || autocomplete"
-        auto-complete="false"
         ref="input"
         oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"
         @compositionstart="handleCompositionStart"
@@ -79,7 +78,7 @@
                   `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
                   `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
                 ]"
-              >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
+              >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
             </span>
           </span>
         </span>
@@ -106,7 +105,6 @@
       :disabled="inputDisabled"
       :readonly="readonly"
       :autocomplete="autoComplete || autocomplete"
-      auto-complete="false"
       :style="textareaStyle"
       @focus="handleFocus"
       @blur="handleBlur"
@@ -121,7 +119,7 @@
           `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
           `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
         ]"
-      >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
+      >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
     </span>
   </div>
 </template>
@@ -131,7 +129,7 @@
   export default {
     extends: Input,
     mounted() {
-      this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 12 + 'px' : '12px'
+      this.calcWidth = this.$refs.limit_total.offsetWidth ? this.$refs.limit_total.offsetWidth * 2 + this.$refs.separator.offsetWidth + 15 + 'px' : '12px'
     },
     data() {
       return {

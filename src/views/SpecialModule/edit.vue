@@ -1,11 +1,11 @@
 <template>
   <div class="editBox">
     <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="100px">
-      <el-form-item label="专题标题:" prop="title">
+    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
+      <el-form-item label="专题标题" prop="title">
         <VhallInput v-model.trim="formData.title" :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="专题封面:">
+      <el-form-item label="专题封面">
         <upload
           v-model="formData.imageUrl"
           :domain_url="formData.domain_url"
@@ -25,7 +25,7 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="专题简介:" required>
+      <el-form-item label="专题简介" required>
         <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
       <el-form-item label="预约人数:">
@@ -38,7 +38,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="热度:">
+      <el-form-item label="热度">
         <p class="switch__box">
           <el-switch
             v-model="formData.hot"
@@ -48,7 +48,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="关联主页:">
+      <el-form-item label="关联主页">
         <p class="switch__box">
           <el-switch
             v-model="formData.home"
@@ -58,7 +58,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="专题目录:" required>
+      <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
