@@ -131,11 +131,18 @@
   export default {
     extends: Input,
     mounted() {
-      this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 12 + 'px' : '12px'
+      this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 5 + 'px' : '12px'
     },
     data() {
       return {
         calcWidth: ''
+      }
+    },
+    watch: {
+      textLength() {
+        this.$nextTick(() => {
+          this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 5 + 'px' : '12px'
+        })
       }
     },
     computed: {
