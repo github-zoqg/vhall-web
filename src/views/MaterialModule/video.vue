@@ -108,7 +108,6 @@ export default {
           key: "title",
         }
       ],
-      $Chat: null
     };
   },
   components: {
@@ -124,6 +123,12 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getTableList();
     this.getVideoAppid();
+    EventBus.$on('sign_trans_code', res => { // 转码状态
+      console.log(res, '监听到sign_trans_code未读消息提示事件');
+      // if(Number(res.user_id) === Number(this.userId)) {
+
+      // }
+    });
   },
   methods: {
     // 初始化
@@ -149,7 +154,7 @@ export default {
     monitor(){
       /**
        * 接收聊天自定义消息*/
-      this.$Chat.onCustomMsg(async msg => {
+      this.$Chat.on(async msg => {
         try {
           if (typeof msg !== 'object') {
             msg = JSON.parse(msg)
@@ -163,13 +168,13 @@ export default {
         } catch (e) {
           console.log(e)
         }
-        console.log('============收到msg_center_seenet===============' + JSON.stringify(msg.data))
-        // if (msg.data.type === 'msg_center_num') {
-        //   EventBus.$emit('msg_center_num', msg.data);
-        // }
-        // if (msg.data.type === 'host_msg_webinar') {
-        //   EventBus.$emit('host_msg_webinar', msg.data.data)
-        // }
+        console.log('============收到msg===============' + JSON.stringify(msg.data))
+        if (msg.data.type === 'sign_trans_code') {
+          EventBus.$emit('sign_trans_code', msg.data);
+        }
+        if (msg.data.type === 'host_msg_webinar') {
+          console.log('EFASDFD', msg.data);
+        }
         // if (msg.data.type === 'doc_convert_jpeg') {
         //   EventBus.$emit('doc_convert_jpeg', msg.data.data)
         // }

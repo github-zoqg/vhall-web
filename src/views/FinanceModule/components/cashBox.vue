@@ -434,6 +434,7 @@ export default {
     font-size: 14px;
     color: #3562fa;
     padding-left: 5px;
+    cursor: pointer;
   }
 }
 .xieyi {

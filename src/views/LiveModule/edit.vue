@@ -106,7 +106,7 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="选择视频："  v-if="webniarType=='vod'">
+      <el-form-item label="选择视频："  v-if="webniarType=='vod'" required>
         <div class="mediaBox">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <i class="el-icon-film"></i>
