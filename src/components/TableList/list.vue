@@ -84,7 +84,7 @@
             </div>
             <!-- 下载中心，文件名 -->
             <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
-              <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i>
+              <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
               <p class="text">
                 <icon icon-class="saasexcelwendang" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
                 <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
@@ -92,7 +92,7 @@
               </p>
             </div>
             <!-- 下载中心，生成状态 -->
-            <div v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
+            <div class="progressBox" v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
               <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
               <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}<span @click="handleBtnClick(scope, { name: '重新生成', methodName: 'resetDownload' })"><icon v-if="Number(scope.row.file_status) === 2" icon-class="saasicon-reset"></icon></span></span>
             </div>
@@ -430,6 +430,11 @@ export default {
   }
   .iconContainer {
     padding-right: 5px;
+  }
+  .progressBox {
+    /deep/ .el-progress-bar__inner {
+      background-color: #14BA6A;
+    }
   }
   .statusTag{
     font-size: 14px;
