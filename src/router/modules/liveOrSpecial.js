@@ -214,7 +214,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'question',
+        path: 'question/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/question'),
         meta:{ auth: true, title: '问卷', name: 'question', activeMenu: '/live/list'},
         hidden: true
