@@ -7,6 +7,7 @@
       :max-height="maxHeight"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
       :row-class-name="tableRowClassName"
+      :row-style="tableRowStyle"
     >
       <el-table-column
         type="selection"
@@ -85,6 +86,7 @@
             <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
               <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i>
               <p class="text">
+                <icon icon-class="saasexcelwendang" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
                 <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
                 {{ scope.row.file_name }}
               </p>
@@ -92,7 +94,7 @@
             <!-- 下载中心，生成状态 -->
             <div v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
               <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
-              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
+              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}<span @click="handleBtnClick(scope, { name: '重新生成', methodName: 'resetDownload' })"><icon v-if="Number(scope.row.file_status) === 2" icon-class="saasicon-reset"></icon></span></span>
             </div>
             <div v-else-if="item.key === 'imgOrText'">
               <p v-html="scope.row.imgOrText"></p>
@@ -145,13 +147,9 @@
               name: '下载',
               methodName: 'download'
             })" style="margin-right: 8px;">
-              <el-button size="mini" type="text">下载</el-button>
+              <el-button style="font-size: 14px" size="mini" type="text">下载</el-button>
             </a>
-            <el-button size="mini" type="text" v-preventReClick v-if="Number(scope.row.file_status) === 2" @click="handleBtnClick(scope, {
-              name: '重新生成',
-              methodName: 'resetDownload'
-            })">重新生成</el-button>
-            <el-button size="mini" type="text" v-preventReClick @click="handleBtnClick(scope, {
+            <el-button style="font-size: 14px" size="mini" type="text" v-preventReClick @click="handleBtnClick(scope, {
               name: '删除',
               methodName: 'delDownload'
             })">删除</el-button>
@@ -302,6 +300,14 @@ export default {
         return '';
       }
     },
+    // 给下载中心列表用，给已成功下载的行置灰
+    tableRowStyle({row, rowIndex}) {
+      if (row.file_status == 1 && row.dow_status == 1) {
+        return {
+          color: '#BEBEBE'
+        }
+      }
+    },
     // 复选记忆函数
     setRowKeyFun() {
       // console.log(row);
@@ -329,6 +335,10 @@ export default {
 <style lang="less" scoped>
 .data-list {
   min-height: 650px;
+  .downloadStatus {
+    display: inline-block;
+    width: 146px;
+  }
   .word-status {
     margin-right: 12px;
   }
@@ -414,7 +424,15 @@ export default {
     margin-top: 0;
     margin-left: -4px;
   }
+  /deep/ .saasexcelwendang{
+    font-size: 20px;
+    color: #14BA6A;
+  }
+  .iconContainer {
+    padding-right: 5px;
+  }
   .statusTag{
+    font-size: 14px;
     &::before{
       content: '';
       width: 8px;
@@ -431,6 +449,13 @@ export default {
     }
     &.failer::before{
       background:#FB3A32;
+    }
+    .iconContainer {
+      padding-left: 10px;
+      cursor: pointer;
+    }
+    /deep/ .saasicon-reset {
+      color: #FB3A32;
     }
   }
   .status-show{

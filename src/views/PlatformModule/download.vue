@@ -3,7 +3,7 @@
     <pageTitle title="下载中心"></pageTitle>
     <!-- 搜索 -->
     <div class="list--search">
-      <el-button size="medium" plain round @click.prevent.stop="multiDownload" v-preventReClick :disabled="!(selectRows && selectRows.length > 0)">批量下载</el-button>
+      <el-button class="downloadBtn" size="medium" plain round @click.prevent.stop="multiDownload" v-preventReClick :disabled="!(selectRows && selectRows.length > 0)">批量下载</el-button>
       <!-- 日期选择器 -->
       <el-date-picker
         v-model="timeStr"
@@ -404,6 +404,25 @@ export default {
 }
 .list--search{
   margin-bottom: 20px;
+  .downloadBtn {
+    background: transparent;
+    &:hover {
+      background: #FB3A32;
+      border: 1px solid #FB3A32;
+    }
+    &:active {
+      background: #E2332C;
+      border: 1px solid #E2332C;
+    }
+    &.is-disabled {
+      border: 1px solid #E6E6E6;
+      background: transparent;
+      color: #B3B3B3;
+      &:hover,&:active {
+        background: transparent;
+      }
+    }
+  }
   .el-button {
     vertical-align: middle;
   }
