@@ -109,7 +109,7 @@
     <div class="advert-banner">
       <div class="web-download">
         <div class="ad-web">
-          <img src="../../common/images/account/banner1.png" alt="">
+          <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/27/f8/27f8fcd59013845ef0c3774e9af93b4f.png?x-oss-process=image/resize,w_225,m_lfit" alt="">
           <!-- <h1>微吼直播客户端</h1>
           <p>强大文件的直播工具</p> -->
         </div>
@@ -121,7 +121,7 @@
       </div>
       <div class="app-download">
         <div class="app-web">
-          <img src="../../common/images/account/banner2.png" alt="">
+          <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/b4/57/b457d400f378d2c3411d13b525e4e40c.png?x-oss-process=image/resize,w_225,m_lfit" alt="">
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>

@@ -1095,6 +1095,11 @@ export function CrumbSet(metaName, that) {
     return [
       {
         title: '消息中心',
+        path: `/other/msgList`,
+        isClick: true
+      },
+      {
+        title: '消息详情',
         path: `/other/msgDetail/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
