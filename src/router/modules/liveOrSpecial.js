@@ -44,55 +44,25 @@ const router = [
       {
         path: 'vodEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/edit', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }, {
-          key: 'liveDetail',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/edit'},
         hidden: true
       },
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/edit', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/edit'},
         hidden: true
       },
       {
         path: 'detail/:str(\\d+)',
         component: () => import('@/views/LiveModule/detail'),
-        meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'chooseWay/:str/:role?',
         component: () => import('@/views/LiveModule/chooseWay'),
-        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list', crumb: [{
-          key: 'liveMgr',
-          isClick: false
-        }, {
-          key: 'liveList',
-          isClick: true
-        }, {
-          key: 'liveDetail',
-          isClick: true
-        }]},
+        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list'},
         hidden: true
       },
       {
