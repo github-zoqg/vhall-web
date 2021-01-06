@@ -388,9 +388,22 @@ export default {
     },
     // 删除礼品
     handleDelete (data) {
-      this.dialogTipVisible = true
-      this.selectIds = []
-      this.selectIds.push(data.gift_id)
+      // this.dialogTipVisible = true
+      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.selectIds = []
+        this.selectIds.push(data.gift_id)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleDeleteGift () {
       debounce(() => {

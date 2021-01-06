@@ -645,6 +645,17 @@ export default {
   border-radius: 4px;
   border: 1px solid #CCCCCC;
 }
+.notice {
+  margin-top: 12px;
+  p {
+    margin: 0 0;
+    padding: 0 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999999;
+    line-height: 20px;
+  }
+}
 .operaBox{
   overflow: hidden;
   margin-bottom: 20px;

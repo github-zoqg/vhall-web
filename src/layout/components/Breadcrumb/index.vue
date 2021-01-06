@@ -3,10 +3,10 @@
     <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
       今日，{{sysDateStr}}，欢迎您回到微吼控制台。
     </div>
-    <el-breadcrumb class="app-breadcrumb" separator="/" v-else>
+    <el-breadcrumb class="app-breadcrumb" separator=">" v-else>
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
-          <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.title }}</span>
+          <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" :class="`no-redirect level_${index}`">{{ item.title }}</span>
           <a v-else @click.prevent="handleLink(item)">{{ item.title }}</a>
         </el-breadcrumb-item>
       </transition-group>
@@ -107,6 +107,11 @@ export default {
     font-size: 18px;
   }
 }
+/deep/.el-breadcrumb__separator {
+    color: #666666;
+    margin: 0 10px 0 5px;
+    font-weight: 400;
+}
 .app-breadcrumb.el-breadcrumb {
   display: inline-block;
   font-size: 14px;
@@ -118,12 +123,17 @@ export default {
     font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
+    cursor: default;
+    &.level_0 {
+      color: #666666;
+      cursor: not-allowed;
+    }
   }
 }
 /deep/.el-breadcrumb__inner a, /deep/.el-breadcrumb__inner.is-link {
   font-size: 14px;
   font-family: @fontRegular;
   font-weight: 400;
-  color: #999999;
+  color: #1A1A1A;
 }
 </style>
