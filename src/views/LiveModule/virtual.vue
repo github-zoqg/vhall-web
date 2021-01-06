@@ -91,6 +91,32 @@ export default {
       }
     };
   },
+  watch: {
+    $route: {
+      handler: function(route) {
+        let levelList = [
+        {
+          title: '直播管理',
+          path: '/live/list',
+          isClick: false
+        },{
+          title: '直播列表',
+          path: '/live/list',
+          isClick: true
+        },{
+          title: '直播列表',
+          path: `/live/detail/${this.$params.str}`,
+          isClick: true
+        },{
+          title: '观看限制',
+          path: `/live/viewerRules/${this.$params.str}`,
+          isClick: false
+        }]
+        this.$EventBus.$emit('saas_vs_crumb_event', this.levelList);
+      },
+      immediate: true
+    }
+  },
   methods: {
     formatInputs(value, formName, key) {
       if (!/^([1-9][0-9]{0,5})$/.test(value)) {
@@ -159,9 +185,6 @@ export default {
   },
   created() {
     this.getVirtualInfo();
-  },
-  beforeCreate() {
-
   }
 };
 </script>
