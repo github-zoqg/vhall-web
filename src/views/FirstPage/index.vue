@@ -163,6 +163,7 @@ export default {
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
   },
@@ -206,7 +207,16 @@ export default {
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
         this.mainKeyData = {...res.data.key_data};
-        this.lineDataList = res.data.trend.live;
+        // this.lineDataList = res.data.trend.live;
+      }).catch(e=>{
+        console.log(e);
+      });
+      this.getLineData(params);
+    },
+    getLineData(obj) {
+      let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
+      this.$fetch(url, obj).then(res =>{
+        this.lineDataList = res.data.list;
       }).catch(e=>{
         console.log(e);
       });

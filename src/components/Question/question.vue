@@ -162,9 +162,8 @@ export default {
         this.$message.success('新建成功');
         this.dialogTongVisible = false;
           this.$router.push({
-            path: '/live/question',
+            path: `/live/question/${this.$route.query.webinarId}`,
             query: {
-              id: this.$route.query.webinarId,
               roomId: this.$route.query.roomId
             }
           });
@@ -181,9 +180,8 @@ export default {
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$message.success('编辑成功');
          this.$router.push({
-            path: '/live/question',
+            path: `/live/question/${this.$route.query.webinarId}`,
             query: {
-              id: this.$route.query.webinarId,
               roomId: this.$route.query.roomId
             }
           });

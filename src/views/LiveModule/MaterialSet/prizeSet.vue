@@ -62,10 +62,10 @@
                     <p style="color:#666">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
                 <el-form-item label="抽奖标题">
-                    <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')" placeholder="请输入抽奖标题" show-word-limit></VhallInput>
+                    <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item label="文字说明">
-                    <VhallInput v-model.trim="formData.description" autocomplete="off" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
+                    <VhallInput v-model.trim="formData.description" autocomplete="off" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary"  round @click="lotterySave" v-preventReClick>保存</el-button>
@@ -87,7 +87,7 @@
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></el-input>
+                    <VhallInput v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></VhallInput>
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <el-switch
@@ -165,6 +165,9 @@ export default {
         name: '',
         phone: '',
         address: '',
+        user_define_100: '',
+        user_define_101: '',
+        user_define_102: '',
         placeholder: ''
       },
       action: `${process.env.VUE_APP_BASE_URL}/v3/vss/lottery/save-prize-image`,
@@ -669,6 +672,9 @@ export default {
       .prizeNoBorder{
         border: 0;
         /deep/.el-upload--picture-card {
+          height: 120px;
+        }
+        /deep/.el-upload--picture-card .box > div{
           height: 120px;
         }
       }

@@ -78,7 +78,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :operas="operas" :type='liveDetailInfo.webinar_state' @blockHandler="blockHandler"></item-card>
+    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" @blockHandler="blockHandler"></item-card>
   </div>
 </template>
 
@@ -96,6 +96,7 @@ export default {
   data(){
     return {
       msg: '',
+      perssionInfo:JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       loading: true,
       isForm: false,
       isAnginOpen: false,
@@ -190,27 +191,16 @@ export default {
   },
   created(){
     this.getLiveDetail(this.$route.params.str);
-    // let versionText = JSON.parse(sessionOrLocal.get('versionText'));
-    // if (versionText == '标准版') {
-    //   console.log(keys(this.operasOld).includes('直播'), '?????????????????????')
-    // }
+    this.getPermission()
+    let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
+    this.isTrue = arr.some(item => {
+      // eslint-disable-next-line no-prototype-builtins
+      return this.perssionInfo.hasOwnProperty(item)
+    })
   },
   mounted() {
     console.log(this.$route.meta.title, '1111111111111111');
   },
-  // filters: {
-  //   unitCovert(val) {
-  //     val = Number(val);
-  //     if (isNaN(val)) return 0;
-  //     if (val > 1e5 && val < 1e8) {
-  //       return `${(val / 1e4).toFixed(2)}万`;
-  //     } else if (val > 1e8) {
-  //       return `${(val / 1e8).toFixed(2)}亿`;
-  //     } else {
-  //       return val;
-  //     }
-  //   },
-  // },
   methods: {
     // 字符截取显示...兼容ie，用js
     fontNumber (date) {
@@ -222,6 +212,10 @@ export default {
         } else {
           return date
         }
+    },
+    getPermission() {
+      let perssionInfo = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      console
     },
     // 获取基本信息
     getLiveDetail(id) {
@@ -337,10 +331,14 @@ export default {
     blockHandler(item){
       if(item.path){
         if (item.path === '/live/edit') {
-          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+          if (this.liveDetailInfo.webinar_state == 4) {
+            this.$router.push({path: `/live/vodEdit/${this.$route.params.str}`, query: {type: 2 }});
+          } else {
+            this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+          }
         } else if (item.path === '/live/question') {
           // 问卷
-          this.$router.push({path: item.path, query: {id:this.$route.params.str, roomId: this.liveDetailInfo.vss_room_id }});
+          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {roomId: this.liveDetailInfo.vss_room_id }});
         } else if(item.path === `/live/prizeSet/${this.$route.params.str}` || item.path === `/live/gift/${this.$route.params.str}`) {
           // 奖品
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
