@@ -10,10 +10,10 @@
       <el-radio-group v-model="form.verify" @change="handleClick">
         <el-radio :label="0">免费</el-radio>
         <el-radio :label="3">付费</el-radio>
-        <el-radio :label="4">邀请码（原F码）</el-radio>
-        <el-radio :label="6">付费/邀请码</el-radio>
+        <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
+        <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
         <el-radio :label="1">密码</el-radio>
-        <el-radio :label="2">白名单</el-radio>
+        <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
       </el-radio-group>
       <!-- 选值区域 -->
       <div class="viewer-rules-content">
@@ -217,11 +217,13 @@ import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
 import {formateDate} from "@/utils/general";
 import { parse } from 'qs';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'viewerRules.vue',
   components: {
     PageTitle
   },
+  // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限
   data() {
     let checkNums = (rule, value, callback) => {
       if (this.viewerDao && this.viewerDao.fcodes > 0) {
@@ -276,6 +278,7 @@ export default {
         }
       ],
       viewerDao: {},
+      perssionInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,

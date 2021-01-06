@@ -68,7 +68,7 @@ export default {
       tabelColumn:[
         {
           label: '用户信息',
-          key: 'userName',
+          key: 'nick_name',
         },
         {
           label: '手机号',
@@ -342,9 +342,9 @@ export default {
     getBaseUserInfo(params) {
       this.$fetch('getUserBaseinfo', params).then(res => {
         this.tableList = res.data.list;
-        this.tableList.map(item => {
-          item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
-        })
+        // this.tableList.map(item => {
+        //   item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
+        // })
         this.totalNum = res.data.total;
       });
     },
