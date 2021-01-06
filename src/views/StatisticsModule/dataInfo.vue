@@ -18,10 +18,10 @@
     <div class="statistical-data">
       <div class="statistical-title">统计图表</div>
       <div class="statistical-line">
-        <span>观众访问趋势图</span>
+        <span>观看人数访问趋势</span>
         <el-tooltip effect="dark" placement="right-start">
           <div slot="content">
-            当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
+            筛选条件内，观看人数随时间变化的趋势图
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
