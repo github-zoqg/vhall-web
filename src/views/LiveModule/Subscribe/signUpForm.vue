@@ -1292,9 +1292,9 @@
               line-height: 38px;
             }
             .yidun_slider {
-              .yidun_slider__icon {
+              // .yidun_slider__icon {
                 // background-image: none;
-              }
+              // }
               &:hover {
                 background-color: #FB3A32;
               }
