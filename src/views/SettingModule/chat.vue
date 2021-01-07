@@ -31,12 +31,12 @@
       </el-form>
     </div>
     <!-- 聊天严禁词弹出框 -->
-    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false>
+    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
       <div class="chat-dialog-content">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round>添加</el-button>
-          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round>批量添加</el-button>
+          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total > 1000">添加</el-button>
+          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total > 1000">批量添加</el-button>
           <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
           <div class="searchBox">
             <el-input
@@ -106,6 +106,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <null-page nullType="search" v-if="total === 0"></null-page>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -269,10 +270,9 @@ export default {
         this.checkNames = [];
       });
     },
-    handleClose(done) {
+    handleClose() {
       this.pageInfo.pageNum = 1;
       this.getAllKeyWordList();
-      done();
     },
     // 获取关键字
     getKeywordList() {
