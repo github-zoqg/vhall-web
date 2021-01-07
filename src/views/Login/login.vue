@@ -54,7 +54,7 @@
           <span class="forget" @click="forgetPassword">忘记密码</span>
         </el-form-item>
         <div class="login-btn">
-          <el-button class="submit" type="primary" @click="loginAccount" round>登 录</el-button>
+          <el-button class="submit" type="primary" @click="loginAccount" round>登&nbsp;&nbsp;&nbsp;录</el-button>
         </div>
         <div class="login-just">
           现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
@@ -618,9 +618,9 @@ export default {
     border-bottom: 1px solid #cccccc;
     border-radius: unset;
     padding: 0 0;
-    /* &:hover {
-      color: #999999;
-    } */
+    &:hover {
+      border-bottom-color: #FB3A32;
+    }
     &:active {
       color: #1A1A1A;
       border-bottom: 1px solid #cccccc;

@@ -134,8 +134,10 @@ export default {
           this.$message.error(res.msg || '保存失败');
         }
       }).catch(e=>{
-        console.log(e);
-        this.$message.error(e.msg || `保存失败`);
+        // console.log(e);
+        if(e.code != 200) {
+          this.$message.error(e.msg || `保存失败`);
+        }
       });
     },
 

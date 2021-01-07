@@ -73,7 +73,7 @@
         @submit.native.prevent
         label-width="0">
         <el-form-item prop="name">
-          <el-input
+          <VhallInput
             v-model.trim="addCustomForm.name"
             auto-complete="off"
             placeholder="请输入菜单名称"

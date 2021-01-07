@@ -152,9 +152,11 @@ export default {
     .special-img{
       width: 722px;
       height: 406px;
+      border-radius: 4px;
       img{
         width: 722px;
         height: 100%;
+         border-radius: 4px;
         // object-fit: scale-down;
       }
     }

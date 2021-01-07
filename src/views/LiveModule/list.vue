@@ -396,7 +396,7 @@ export default {
           height: 100%;
           object-fit: scale-down;
           position: absolute;
-          border-radius: 4px;
+          border-radius: 4px 4px 0 0;
           top:0;
           left: 0;
         }

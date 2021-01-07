@@ -3,9 +3,9 @@
     <div>
       <a href="https://www.vhall.com/about" target="_blank" rel="noopener noreferrer">关于我们<em>｜</em></a>
       <a href="https://www.vhall.com/page-664.html" target="_blank" rel="noopener noreferrer" v-if="$route.path=='/login'">直播案例<em>｜</em></a>
-      <a href="https://www.vhall.com/blog/" target="_blank" rel="noopener noreferrer" v-if="$route.path=='/register'">客户案例<em>｜</em></a>
+      <a href="https://www.vhall.com/blog/" target="_blank" rel="noopener noreferrer" v-if="$route.path=='/register' || $route.path=='/forgetPassword'">客户案例<em>｜</em></a>
       <a href="https://www.vhall.com/" target="_blank" rel="noopener noreferrer" v-if="$route.path=='/login'">加入微吼<em>｜</em></a>
-      <a href="https://www.vhall.com/" target="_blank" rel="noopener noreferrer" v-if="$route.path=='/register'">区域代理<em>｜</em></a>
+      <a href="https://www.vhall.com/" target="_blank" rel="noopener noreferrer" v-if="$route.path=='/register' || $route.path=='/forgetPassword'">区域代理<em>｜</em></a>
       <a href="https://www.vhall.com/" target="_blank" rel="noopener noreferrer">平台介绍<em>｜</em></a>
       <a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">服务条款及隐私协议<em>｜</em></a>
       <a href="https://test.vhall.com/index.php?r=doc/detail/index&project_id=14&doc_id=173" target="_blank" rel="noopener noreferrer">常见问题</a>

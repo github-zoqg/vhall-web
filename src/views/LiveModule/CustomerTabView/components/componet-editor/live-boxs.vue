@@ -157,6 +157,12 @@ export default {
     },
 
     doSelect(item) {
+
+      if (this.selectedOption.length == 10 && !item.checked) {
+        this.$message.error('直播最多只能选择10个！')
+        return
+      }
+
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
 
