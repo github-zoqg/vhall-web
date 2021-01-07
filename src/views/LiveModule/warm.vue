@@ -153,9 +153,7 @@ export default {
       }
       this.$fetch('warmOpen', params).then(res=>{
         if(res.code == 200){
-          if (!index) {
-            this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
-          }
+          this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
         }
       });
     },
