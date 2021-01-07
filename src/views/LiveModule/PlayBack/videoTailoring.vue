@@ -66,8 +66,19 @@ export default {
       timeVal: [],
       chatSDK: null,
       msgInfo: {},
-      handleMsgTimer: ''
+      handleMsgTimer: '',
+      isChange: false
     };
+  },
+  watch: {
+    timeVal: {
+      deep: true,
+      handler(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.isChange = true
+        }
+      }
+    }
   },
   created() {
     // 回放列表剪辑
@@ -95,23 +106,23 @@ export default {
     //   return '关闭提示';
     // }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   // 离开页面前判断信息是否修改
-  //   if (!this.isChange) {
-  //     next()
-  //     return false;
-  //   } else {
-  //     this.$alert(`是否放弃当前编辑？`, '提示', {
-  //       confirmButtonText: '确定',
-  //       cancelButtonText: '取消',
-  //       customClass: 'zdy-alert-box',
-  //       type: 'warning'
-  //     }).then(() => {
-  //       next()
-  //     }).catch(() => {
-  //     });
-  //   }
-  // },
+  beforeRouteLeave(to, from, next) {
+    // 离开页面前判断信息是否修改
+    if (!this.isChange) {
+      next()
+      return false;
+    } else {
+      this.$alert(`是否放弃当前编辑？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-alert-box',
+        type: 'warning'
+      }).then(() => {
+        next()
+      }).catch(() => {
+      });
+    }
+  },
   beforeDestroy() {
     if (this.$PLAYER) {
       this.$PLAYER.destroy();
