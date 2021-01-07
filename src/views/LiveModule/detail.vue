@@ -1,6 +1,7 @@
 <template>
   <div class="detailBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
-    <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle>
+    <pageTitle title="活动详情"></pageTitle>
+    <!--  <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle> -->
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">
         <div class="inner">
@@ -356,10 +357,10 @@ export default {
       // 跳转至发起页面
       if (this.liveDetailInfo.webinar_type == 1) {
         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
-        window.open(href, '_target');
+        window.open(href, '_blank');
       } else {
          const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
-        window.open(href);
+        window.open(href, '_blank');
       }
       // const { href } = this.$router.resolve({path: `/lives/room/${this.$route.params.str}`});
 

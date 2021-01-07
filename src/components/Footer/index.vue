@@ -11,7 +11,7 @@
       <a href="https://test.vhall.com/index.php?r=doc/detail/index&project_id=14&doc_id=173" target="_blank" rel="noopener noreferrer">常见问题</a>
     </div>
     <div class="copy-right">
-      京ICP备10024636号-4京公网安备11010502008915 © Vhall 2020.All Rights Reserved.
+      京ICP备10024636号-4京公网安备11010502008915 © Vhall 2021.All Rights Reserved.
     </div>
   </div>
 

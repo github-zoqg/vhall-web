@@ -66,6 +66,7 @@ export default {
         path: 'interacts/menu-qrcode-imgs',
         type: 'image',
       },
+      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
       token: localStorage.getItem('token') || ''
     }
   },
@@ -73,17 +74,21 @@ export default {
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
-
-      this.info.imageSrc = e.data.domain_url
-      this.$emit('updateInfo', {
-        ...this.info,
-        hrc: e.data.domain_url,
-        isDefault: false
-      })
+      if(e.code == 200) {
+        this.info.imageSrc = e.data.domain_url
+        this.$emit('updateInfo', {
+          ...this.info,
+          hrc: e.data.domain_url,
+          isDefault: false
+        })
+      } else {
+        this.$message.error(e.msg)
+      }
     },
 
     uploadError(e) {
       console.log('upload error', e)
+      this.$message.error(e.msg)
     },
   }
 }

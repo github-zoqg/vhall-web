@@ -55,7 +55,7 @@
     <section>
       <p class="subject">{{ type == 4 ? '点播' : '回放'}}</p>
       <div class="subjectOuter">
-        <div class="sunjectInner" @click="goHandler(`/live/playback/${$route.params.str}`)">
+        <div class="sunjectInner" @click="goHandler(type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`)">
           <icon class="icon" icon-class="saasicon_huifangguanli"></icon>
           <div class="desc">
             <p class="mainText">{{ type == 4 ? '点播管理' : '回放管理'}}</p>

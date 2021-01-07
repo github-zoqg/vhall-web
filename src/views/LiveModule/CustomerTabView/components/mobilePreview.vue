@@ -70,9 +70,10 @@
         :model="addCustomForm"
         ref="addCustomForm"
         :rules="addCustomFormRules"
+        @submit.native.prevent
         label-width="0">
         <el-form-item prop="name">
-          <el-input
+          <VhallInput
             v-model.trim="addCustomForm.name"
             auto-complete="off"
             placeholder="请输入菜单名称"
@@ -141,6 +142,21 @@ export default {
   },
 
   methods: {
+    validateCanAdd() {
+      let check = 0
+      this.menus.forEach((item) => {
+        if(item.type == 1) {
+          item.components.forEach((component) => {
+            if (component.component_id == 9) {
+              check = check + 1
+            }
+          })
+        }
+      })
+
+      return check != 0
+    },
+
     onDrop(e) {
       console.log('放置了， 数据', e)
       e.preventDefault()
@@ -199,6 +215,14 @@ export default {
     },
 
     addMenuAction() {
+      const addedMenu = this.menus.filter((item) => {
+        return item.type == 1
+      })
+      if (addedMenu.length == 6) {
+        this.$message.error('自定义菜单最多增加六个。您已到达上限！')
+        return false
+      }
+
       this.$insertIndex = this.menus.length
       this.type = 'add'
       this.addCustomForm.name = null

@@ -57,7 +57,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column>
+          <el-table-column width="110">
             <template slot-scope="{ column, $index }" slot="header">
               <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
                 <el-option
@@ -92,7 +92,7 @@
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-              <el-button :disabled="!!scope.row.transcoding" v-if="!isDemand" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
+              <el-button :disabled="!!scope.row.transcoding" v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
               <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
@@ -453,8 +453,9 @@ export default {
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toCreate() {
-      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
-      window.open(routeData.href, '_blank');
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
+      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
+      // window.open(routeData.href, '_blank');
     },
     toRecord() {
       this.$fetch('recordCheck', {
@@ -473,8 +474,9 @@ export default {
       })
     },
     toTailoring(recordId, recordName){
-      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      // window.open(routeData.href, '_blank');
     },
     toChapter(recordId){
       if (this.isDemand) {

@@ -6,6 +6,104 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "19228434",
+      "name": "icon_ 详情",
+      "font_class": "icon_xiangqing",
+      "unicode": "e78c",
+      "unicode_decimal": 59276
+    },
+    {
+      "icon_id": "19228341",
+      "name": "icon_ 开播",
+      "font_class": "icon_kaibo",
+      "unicode": "e78a",
+      "unicode_decimal": 59274
+    },
+    {
+      "icon_id": "19228342",
+      "name": "icon_ 回放",
+      "font_class": "icon_huifang",
+      "unicode": "e78b",
+      "unicode_decimal": 59275
+    },
+    {
+      "icon_id": "19228344",
+      "name": "icon_ more",
+      "font_class": "icon_more2",
+      "unicode": "e78d",
+      "unicode_decimal": 59277
+    },
+    {
+      "icon_id": "19208961",
+      "name": "icon_word left",
+      "font_class": "icon_wordleft",
+      "unicode": "e788",
+      "unicode_decimal": 59272
+    },
+    {
+      "icon_id": "19208962",
+      "name": "icon_word right",
+      "font_class": "icon_wordright",
+      "unicode": "e789",
+      "unicode_decimal": 59273
+    },
+    {
+      "icon_id": "19204197",
+      "name": "icon_取消全屏",
+      "font_class": "icon_quxiaoquanping",
+      "unicode": "e787",
+      "unicode_decimal": 59271
+    },
+    {
+      "icon_id": "19151033",
+      "name": "icon_手机",
+      "font_class": "icon_shouji",
+      "unicode": "e782",
+      "unicode_decimal": 59266
+    },
+    {
+      "icon_id": "19151034",
+      "name": "icon_小节",
+      "font_class": "icon_xiaojie",
+      "unicode": "e783",
+      "unicode_decimal": 59267
+    },
+    {
+      "icon_id": "19151035",
+      "name": "icon_生日",
+      "font_class": "icon_shengri",
+      "unicode": "e784",
+      "unicode_decimal": 59268
+    },
+    {
+      "icon_id": "19151036",
+      "name": "icon_行业",
+      "font_class": "icon_hangye",
+      "unicode": "e785",
+      "unicode_decimal": 59269
+    },
+    {
+      "icon_id": "19151037",
+      "name": "icon_教育",
+      "font_class": "icon_jiaoyu",
+      "unicode": "e786",
+      "unicode_decimal": 59270
+    },
+    {
+      "icon_id": "19086153",
+      "name": "icon_网页发起",
+      "font_class": "icon_wangyefaqi",
+      "unicode": "e780",
+      "unicode_decimal": 59264
+    },
+    {
+      "icon_id": "19086154",
+      "name": "icon_客户端发起",
+      "font_class": "icon_kehuduanfaqi",
+      "unicode": "e781",
+      "unicode_decimal": 59265
+    },
+    {
       "icon_id": "18962553",
       "name": "icon_播放",
       "font_class": "icon_bofang1",
@@ -914,6 +1012,13 @@
       "font_class": "icon-trashline-01",
       "unicode": "e73d",
       "unicode_decimal": 59197
+    },
+    {
+      "icon_id": "19077549",
+      "name": "icon_arrow down",
+      "font_class": "icon_arrowdown1-copy",
+      "unicode": "e77f",
+      "unicode_decimal": 59263
     },
     {
       "icon_id": "4350020",

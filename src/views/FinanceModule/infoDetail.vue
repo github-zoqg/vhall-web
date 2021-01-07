@@ -1,6 +1,6 @@
 <template>
   <div class="account-income">
-    <pageTitle title="账单明细">
+    <pageTitle title="订单明细">
       <div slot="content">
         购买明细指用户从后台主动下单购买相关功能的订单；开通明细指通过工作人<br>员给您开通的相关功能订单
       </div>

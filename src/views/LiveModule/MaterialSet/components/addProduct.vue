@@ -1,6 +1,6 @@
 <template>
   <div class="form-product">
-    <pageTitle title="创建商品"></pageTitle>
+    <pageTitle :title="$route.meta.title"></pageTitle>
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">

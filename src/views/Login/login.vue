@@ -19,7 +19,7 @@
       <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
         <el-form-item prop="account">
           <VhallInput
-            placeholder="请输入账号"
+            placeholder="用户名/邮箱/手机号"
             clearable
             auto-complete="off"
             v-model.trim="loginForm.account">
@@ -35,7 +35,7 @@
         </el-form-item>
         <el-form-item prop="password">
           <VhallInput
-            placeholder="请输入密码"
+            placeholder="密码"
             :maxlength="30"
             style="ime-mode:disabled"
             :type="isPassWordType ? 'password' : 'text'"
@@ -54,7 +54,7 @@
           <span class="forget" @click="forgetPassword">忘记密码</span>
         </el-form-item>
         <div class="login-btn">
-          <el-button class="submit" type="primary" @click="loginAccount" round>登&nbsp;&nbsp;&nbsp;录</el-button>
+          <el-button class="submit" type="primary" @click="loginAccount" round>登 录</el-button>
         </div>
         <div class="login-just">
           现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
@@ -64,7 +64,7 @@
           <div class="other-img" v-show="!isOpenOther">
             <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=')">
             <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')">
-            <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
+            <!-- <img src="../../common/images/icon/weibo.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')"> -->
           </div>
         </div>
       </el-form>
@@ -104,7 +104,7 @@
             <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>{{ errorMsgShow }}</p>
           </el-form-item>
           <div class="login-btn">
-            <el-button class="submit top" type="primary" @click="loginDynamic" round>登&nbsp;&nbsp;&nbsp;录</el-button>
+            <el-button class="submit top" type="primary" @click="loginDynamic" round>登 录</el-button>
           </div>
        </el-form>
      </div>
@@ -164,7 +164,7 @@
               <p class="errorText" v-show="registerText">{{registerText}}</p>
             </el-form-item>
             <div class="login-btn">
-              <el-button class="submit" type="primary" @click="registerAccount" :disabled="!checked" round>立 即 注 册</el-button>
+              <el-button class="submit" type="primary" @click="registerAccount" :disabled="!checked" round>立即注册</el-button>
             </div>
             <el-form-item class="auto-login register-checked">
               <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
@@ -491,6 +491,7 @@ export default {
     overflow: hidden;
    /*  background: linear-gradient(180deg,#22d28f,#00ab92); */
     background: url('../../common/images/login/login-bg.png') no-repeat 100% 100%;
+    background-image: -webkit-linear-gradient(-45deg, #FF6B3B ,#E8302F);
     position: relative;
 }
 
@@ -512,7 +513,7 @@ export default {
   text-align: center;
 }
 .left p {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: #FFFFFF;
   line-height: 32px;
@@ -570,7 +571,7 @@ export default {
     cursor: pointer;
     vertical-align: middle;
     display: inline-block;
-    font-size: 16px;
+    font-size: 22px;
     font-weight: 400;
     color: #666666;
     line-height: 30px;
@@ -602,6 +603,7 @@ export default {
   }
   .closePwd {
     cursor: pointer;
+    line-height: 32px;
   }
   input {
     width: 100%;
@@ -611,16 +613,17 @@ export default {
     outline-style: none;
     font-size: 14px;
     font-weight: 400;
-     color: #1A1A1A;
+    color: #1A1A1A;
     background-color: transparent;
     border-bottom: 1px solid #cccccc;
     border-radius: unset;
     padding: 0 0;
-    &:hover {
+    /* &:hover {
       color: #999999;
-    }
+    } */
     &:active {
       color: #1A1A1A;
+      border-bottom: 1px solid #cccccc;
     }
   }
   input::-webkit-input-placeholder {

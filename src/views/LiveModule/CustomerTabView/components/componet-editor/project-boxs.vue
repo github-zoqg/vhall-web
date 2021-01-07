@@ -156,6 +156,12 @@ export default {
     },
 
     doSelect(item) {
+
+      if (this.selectedOption.length == 10 && !item.checked) {
+        this.$message.error('专题最多只能选择10个！')
+        return
+      }
+
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
       let webinars = this.selectedOption.map((item) => {

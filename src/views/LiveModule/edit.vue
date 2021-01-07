@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle :title="`${title}${webniarTypeToZH}`"></pageTitle>
+    <pageTitle :title="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webniarTypeToZH}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
       <el-form-item :label="`${webniarTypeToZH}标题`" prop="title"
       :rules="[
@@ -21,7 +21,9 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{selectableRange: startVal - '23:59:59' }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
+            <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{
+              selectableRange: rangHourMins
+            }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
       </el-form-item>
@@ -246,6 +248,18 @@ export default {
     VideoPreview
   },
   computed: {
+    rangHourMins() {
+      let sysDate = new Date().getTime();
+      let str = this.$moment().format('HH:mm');
+      console.log(this.formData.date1, str);
+      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      let targetDate = new Date(`${selectDate} 00:00:00`).getTime();
+      if (targetDate > sysDate) {
+        return `00:00:00 - 23:59:00`;
+      } else {
+        return `${str}:00 - 23:59:00`;
+      }
+    },
     pathUrl: function() {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
@@ -315,6 +329,20 @@ export default {
       } else {
         return true;
       }
+    },
+    start_line: function() {
+      // 获取当前时分
+      let sysDate = new Date();
+      let hours = sysDate.getHours();
+      let minutes = sysDate.getMinutes();
+      if (hours <= 9) {
+        hours = `0${hours}`
+      }
+      if (minutes <= 9) {
+        minutes = `0${minutes}`
+      }
+      debugger
+      return `${hours}:${minutes}`;
     }
   },
   data(){

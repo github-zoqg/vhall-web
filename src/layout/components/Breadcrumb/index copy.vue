@@ -3,11 +3,11 @@
     <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
       今日，{{sysDateStr}}，欢迎您回到微吼控制台。
     </div>
-    <el-breadcrumb class="app-breadcrumb" separator=">" v-else>
+    <el-breadcrumb class="app-breadcrumb" separator="/" v-else>
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
-          <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" :class="`no-redirect level_${index}`">{{ item.title }}</span>
-          <a v-else @click.prevent="handleLink(item)">{{ item.title }}</a>
+          <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.meta.title }}</span>
+          <a v-else @click.prevent="handleLink(item)">{{ item.meta.title }}</a>
         </el-breadcrumb-item>
       </transition-group>
     </el-breadcrumb>
@@ -17,7 +17,7 @@
 
 <script>
 import * as pathToRegexp from 'path-to-regexp';
-import { CrumbSet } from "@/router/crumb"; // progress bar style
+
 export default {
   data() {
     return {
@@ -42,6 +42,7 @@ export default {
     // this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
     this.sysDateStr = this.$moment(new Date().getTime()).format('YYYY年MM月DD日');
     this.updateData();
+    // 获取导航面包屑
     this.getBreadcrumb();
   },
   methods: {
@@ -51,19 +52,18 @@ export default {
         that.sysDateStr = that.$moment(new Date().getTime()).format('llll');
       }, 60000); // 一分钟更新一下
     },
-    getBreadcrumb() {
+    getBreadcrumb(list) {
       // this.$router 所有路由。this.$route 当前路由
-      console.log('导航面包屑')
-      console.log(this.$route);
+      console.log('导航面包屑', this.$router)
+      console.log('saas_vs_crumb_event', list);
       // only show routes with meta.title
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title);
       const first = matched[0];
       // if (!this.isDashboard(first)) {
       //   matched = [{ path: '/home', meta: { title: '首页' }}].concat(matched);
       // }
-      // this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false);
+      this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false);
 
-      this.levelList = CrumbSet(this.$route.meta.name, this);
     },
     isDashboard(route) {
       const name = route && route.name;
@@ -79,12 +79,12 @@ export default {
       return toPath(params);
     },
     handleLink(item) {
-      const { redirect, path, query } = item;
+      const { redirect, path } = item;
       if (redirect) {
         this.$router.push(redirect);
         return;
       }
-      this.$router.push({path: this.pathCompile(path), query: query});
+      this.$router.push(this.pathCompile(path));
     }
   },
   beforeDestroy() {
@@ -93,6 +93,7 @@ export default {
     }
   },
   mounted() {
+    this.$EventBus.$on('saas_vs_crumb_event', this.getBreadcrumb);
   }
 };
 </script>
@@ -107,11 +108,6 @@ export default {
     font-size: 18px;
   }
 }
-/deep/.el-breadcrumb__separator {
-    color: #666666;
-    margin: 0 10px 0 5px;
-    font-weight: 400;
-}
 .app-breadcrumb.el-breadcrumb {
   display: inline-block;
   font-size: 14px;
@@ -123,17 +119,12 @@ export default {
     font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
-    cursor: default;
-    &.level_0 {
-      color: #666666;
-      cursor: not-allowed;
-    }
   }
 }
 /deep/.el-breadcrumb__inner a, /deep/.el-breadcrumb__inner.is-link {
   font-size: 14px;
   font-family: @fontRegular;
   font-weight: 400;
-  color: #1A1A1A;
+  color: #999999;
 }
 </style>

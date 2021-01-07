@@ -169,6 +169,7 @@
   }
   .el-input__inner {
     border-color: #ccc;
+    color: #1a1a1a;
     &:hover {
       border-color: #999;
     }

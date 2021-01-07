@@ -1,6 +1,6 @@
 <template>
   <div class="gift-wrap">
-    <pageTitle title="礼物管理">
+    <pageTitle title="礼物">
       <div slot="content">
         1.支持创建免费礼物。观看端最多显示40个礼物<br/>
         2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp<br/>
@@ -388,9 +388,22 @@ export default {
     },
     // 删除礼品
     handleDelete (data) {
-      this.dialogTipVisible = true
-      this.selectIds = []
-      this.selectIds.push(data.gift_id)
+      // this.dialogTipVisible = true
+      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.selectIds = []
+        this.selectIds.push(data.gift_id)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleDeleteGift () {
       debounce(() => {

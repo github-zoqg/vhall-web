@@ -537,7 +537,7 @@ export default {
             subsection: item.sub.map(subItem => {
               createTimeArr.push(subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime)
               return {
-                document_id: subItem.docId,
+                document_id: item.docId,
                 created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
                 page: subItem.stepIndex - 1, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
                 step: subItem.slideIndex, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。

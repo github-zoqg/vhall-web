@@ -133,7 +133,25 @@ export default {
         console.log(e);
         this.$message.error(e.msg || '当前未获取到启动数据');
       });
-    }
+    },
+    userLogoGet() {
+      this.$fetch('userLogoGet', {
+        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }).then(res => {
+        console.log(res);
+      }).catch(err=>{
+      });
+    },
+    // 获取标记 logo 主办方信息
+    getSignInfo () {
+      return this.$fetch('watchInterGetWebinarTag', {
+        webinar_id: this.$route.params.id
+      }).then(res => {
+        if (res.data) {
+          this.signInfo = res.data
+        }
+      })
+    },
   },
   mounted() {
     this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`

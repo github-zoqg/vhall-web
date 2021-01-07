@@ -237,10 +237,10 @@ export default {
     goIsLive(item) {
       if (item.webinar_type != 1) {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
-        window.open(href, '_target');
+        window.open(href, '_blank');
       } else {
         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
-        window.open(href, '_target');
+        window.open(href, '_blank');
       }
     },
     // 判断是否有起直播的权限
@@ -279,7 +279,7 @@ export default {
         index === '1' ? this.$router.push({path:'/live/edit'}) : this.$router.push({path:'/live/vodEdit'});
       }
     },
-    toDetail(id) {
+    toDetail(id, state) {
       this.$router.push({path: `/live/detail/${id}`});
     },
     toRoom(id){
@@ -390,7 +390,7 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
-        border-radius: 4px;
+        border-radius: 4px 4px 0 0;
         img{
           width: 100%;
           height: 100%;
@@ -443,6 +443,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        border-radius: 0 0 4px 4px;
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;

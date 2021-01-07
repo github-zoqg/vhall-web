@@ -285,7 +285,8 @@ export default {
 
 <style lang="less" scoped>
 .skin--set {
-  .padding41-40();
+  /* .padding41-40(); */
+   padding: 41px 40px 40px 40px;
 }
 .sign--set--main {
   .flex-display();
