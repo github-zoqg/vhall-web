@@ -80,6 +80,7 @@
               clearable
               v-model.trim="dynamicForm.phoneNumber">
             </VhallInput>
+            <p class="errorText" v-if="isRegister"><i class="el-icon-error"></i>该手机号未注册，请先注册</p>
           </el-form-item>
           <el-form-item>
             <div id="loginCaptcha">
@@ -97,7 +98,7 @@
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="getDyCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                 </template>
               </el-input>
             </div>
@@ -120,8 +121,8 @@
                 placeholder="请输入手机号"
                 :maxlength="11"
                 clearable
-                auto-complete="off"
                 @input="checkPhone"
+                auto-complete="off"
                 v-model.trim="registerForm.phone">
               </el-input>
             </el-form-item>
@@ -142,7 +143,7 @@
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="getRegisterCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                   </template>
                 </VhallInput>
               </div>
@@ -192,8 +193,37 @@ export default {
       } else {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
+        } else {
+          this.$fetch('loginCheck', {account: value}).then(res => {
+            if (res.data.account_exist) {
+              callback(new Error('该手机号已注册，请重新输入'));
+            } else {
+              callback();
+            }
+          }).catch(res => {
+            this.errorMsgShow = res.msg || '注册失败';
+          });
         }
-        callback();
+        // callback();
+      }
+    };
+    var validateLoginPhone = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入手机号'));
+      } else {
+        if (!(/^1[0-9]{10}$/.test(value))) {
+          callback(new Error('请输入正确的手机号'));
+        } else {
+          this.$fetch('loginCheck', {account: value}).then(res => {
+            if (!res.data.account_exist) {
+              callback(new Error('该手机号未注册，请先注册'));
+            } else {
+              callback();
+            }
+          }).catch(res => {
+            this.errorMsgShow = res.msg || '登录失败';
+          });
+        }
       }
     };
     return {
@@ -201,6 +231,7 @@ export default {
       isPassWordType: true,
       errorText: '',
       registerText: '',
+      isRegister: false,
       isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
         account: '',
@@ -226,7 +257,7 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' }
         ],
         phoneNumber: [
-          { validator: validatePhone, trigger: 'blur' }
+          { validator: validateLoginPhone, trigger: 'blur' }
         ],
         dynamic_code: [
           { required: true, message: '请输入短信验证码', trigger: 'blur' }

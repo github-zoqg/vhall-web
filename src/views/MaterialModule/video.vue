@@ -1,12 +1,14 @@
 <template>
   <div class="video-wrap">
     <pageTitle title="音视频">
+      <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span>
       <div slot="content">
         1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
         <br>
         2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
         <br>
         3.上传的视频，不支持剪辑和下载
+        <br>
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
@@ -490,6 +492,10 @@ export default {
 .video-wrap{
   height: 100%;
   width: 100%;
+  .video-text{
+    padding-left: 20px;
+    color: #666;
+  }
   /deep/.el-card__body{
     padding: 0 0 30px 0;
   }
