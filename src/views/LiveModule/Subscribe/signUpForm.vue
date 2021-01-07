@@ -251,6 +251,17 @@
       this.getQuestionList();
     },
     watch: {
+      province(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.city = ''
+          this.county = ''
+        }
+      },
+      city(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.county = ''
+        }
+      },
       isPhoneValidate: {
         immediate: true,
         handler(newVal) {
