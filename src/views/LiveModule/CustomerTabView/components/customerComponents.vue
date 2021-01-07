@@ -68,6 +68,10 @@ export default {
           }
         })
       }
+    },
+
+    validateALL () {
+      return this.$parent.validateCanAdd()
     }
   }
 }

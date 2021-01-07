@@ -101,10 +101,10 @@ export default {
             if (res && res.code === 200) {
               success(res.data.domain_url);
             } else {
-              failure('上传失败');
+              failure(res.msg || '上传失败');
             }
           }).catch(() => {
-            failure('上传失败');
+            failure(res.msg || '上传失败');
           })
         }
       }

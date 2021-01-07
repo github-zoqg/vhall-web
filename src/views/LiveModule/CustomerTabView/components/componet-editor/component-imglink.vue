@@ -85,10 +85,14 @@ export default {
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
-      this.info.imageSrc = e.data.domain_url
-      this.$emit('updateInfo', {
-        ...this.info,
-      })
+      if(e.code == 200) {
+        this.info.imageSrc = e.data.domain_url
+        this.$emit('updateInfo', {
+          ...this.info,
+        })
+      } else {
+        this.$message.error(e.msg)
+      }
     },
 
     changeLink() {
@@ -102,6 +106,7 @@ export default {
 
     uploadError(e) {
       console.log('upload error', e)
+      this.$message.error(e.msg)
     },
   }
 }
