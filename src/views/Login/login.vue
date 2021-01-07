@@ -64,7 +64,7 @@
           <div class="other-img" v-show="!isOpenOther">
             <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=')">
             <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')">
-            <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
+            <!-- <img src="../../common/images/icon/weibo.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')"> -->
           </div>
         </div>
       </el-form>
@@ -571,7 +571,7 @@ export default {
     cursor: pointer;
     vertical-align: middle;
     display: inline-block;
-    font-size: 16px;
+    font-size: 22px;
     font-weight: 400;
     color: #666666;
     line-height: 30px;
@@ -617,9 +617,9 @@ export default {
     border-bottom: 1px solid #cccccc;
     border-radius: unset;
     padding: 0 0;
-    &:hover {
+    /* &:hover {
       color: #999999;
-    }
+    } */
     &:active {
       color: #1A1A1A;
     }
