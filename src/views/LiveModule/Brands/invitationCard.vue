@@ -106,6 +106,8 @@
         </el-form>
       </div>
       <div class="invitation-show">
+        <!-- <img :src="img" alt="" class="img_invite" v-show="false">
+        <img :src="avatar" alt="" class="img_invite" v-show="false"> -->
         <!-- <p>移动端预览</p> -->
         <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
           <div class="show-container">
@@ -201,6 +203,7 @@
 import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import html2canvas from 'html2canvas';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
@@ -234,7 +237,7 @@ export default {
     return {
       invitation: true,
       qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
-      showCode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      showCode: '',
       showType: 1,
       avatar: '',
       img: '',
@@ -287,6 +290,9 @@ export default {
   created(){
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
+    let token = sessionOrLocal.get('token', 'localStorage');
+    this.link = `${process.env.VUE_APP_WAP_WATCH}/invite/${this.$route.params.str}?token=${token}`;
+    this.showCode = `${Env.staticLinkVo.aliQr}${this.link}`;
     this.getInviteCardInfo();
   },
   components: {
@@ -328,7 +334,6 @@ export default {
       this.$router.push({path: '/code'});
     },
     onSubmitImg(type, url, trueImg) {
-      console.log(type, url, trueImg, '??????????????');
       if (!type) {
         this.formInvitation.img = url;
         this.img = trueImg;
@@ -353,27 +358,46 @@ export default {
        }
       });
     },
+    fileDownLoad(downloadUrl, name) {
+      let aLink = document.createElement("a");
+      aLink.style.display = "none";
+      aLink.href = downloadUrl;
+      aLink.download = name;
+      // 触发点击-然后移除
+      document.body.appendChild(aLink);
+      aLink.click();
+      document.body.removeChild(aLink);
+    },
     // 本地下载
     loadDownInvition() {
+      // event.preventDefault();
       let image = new Image();
-      // 解决跨域 Canvas 污染问题
-      image.setAttribute("crossOrigin", "anonymous");
-      image.onload = function() {
-        let canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        let context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0, image.width, image.height);
-        let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
-        let a = document.createElement("a"); // 生成一个a元素
-        let event = new MouseEvent("click"); // 创建一个单击事件
-        a.download = `code${new Date().getTime()}`; // 设置图片名称
-        a.href = url; // 将生成的URL设置为a.href属性
-        a.dispatchEvent(event); // 触发a的单击事件
-      };
-      // let token = sessionOrLocal.get('token', 'localStorage');
-      // let link = `http://172.16.23.59:8081/invite/${this.$route.params.str}?token=${token}`;
-      // image.src = link;
+      let canvas1 = document.createElement('canvas');
+      let _canvas = document.getElementById('shopInvent');
+      let w = parseInt(window.getComputedStyle(_canvas).width);
+      let h = parseInt(window.getComputedStyle(_canvas).height);
+      canvas1.width = w * 2;
+      canvas1.height = h * 2;
+      canvas1.style.width = w + 'px';
+      canvas1.style.height = h + 'px';
+      let context = canvas1.getContext('2d');
+      context.scale(2,2);
+      html2canvas(_canvas, {
+        useCORS: true,
+      }).then(canvas => {
+        let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
+        console.log(dataUrl, '???????????????>>>>>>>>>>>>>>>')
+        image.src = this.dataUrl;
+        // const aElem = document.createElement('a')
+        // document.body.appendChild(aElem)
+        // aElem.href = dataSrc;
+        // aElem.download = 'invite.jpg';
+        // let imgName = 'invite.jpg';
+        // aElem.click()
+        // document.body.removeChild(aElem)
+        // this.fileDownLoad(dataUrl, imgName)
+        // this.dataURIToBlob(imgName, dataUrl);
+      })
     }
   }
 };
@@ -849,8 +873,8 @@ export default {
         height: 190px;
         text-align: center;
         img{
-          width: 100%;
-          height: 100%;
+          width: 200px;
+          height: 190px;
           object-fit: scale-down;
         }
       }

@@ -17,7 +17,7 @@
                 placement="bottom-end"
                 trigger="click">
                 <div>
-                  <share slot="content" :url="home_link" :shareVo="shareVo"></share>
+                  <share slot="content" :shareVo="shareVo"></share>
                 </div>
                 <h3 slot="reference"><i class="el-icon-share"></i>分享</h3>
               </el-popover>
@@ -70,9 +70,8 @@ export default {
       pagePos: 0,
       totalElement: 0,
       shareVo: {
-        url: `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
+        url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`
       },
-      home_link: `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`,
       liveList: []
     };
   },

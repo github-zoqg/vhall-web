@@ -22,6 +22,7 @@ export default {
   },
   created() {
     this.getLiveDetail();
+    window.scrollTo(0,0)
   },
   methods: {
     //获取直播详情

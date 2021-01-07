@@ -208,8 +208,7 @@ export default {
     },
     toShare(id) {
       this.dialogShareVisible = true;
-      this.shareVo.url = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
-      // console.log(this.home_link, '?????????????????')
+      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
@@ -372,7 +371,7 @@ export default {
           position: absolute;
           height: 40px;
           width: 100%;
-          background: rgba(0, 0, 0, .4);
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
           /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
           bottom: 0px;
           left: 0px;

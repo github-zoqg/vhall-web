@@ -240,7 +240,7 @@ export default {
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-      this.qrcode = `${Env.staticLinkVo.aliQr}https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`;
+      this.qrcode = `${Env.staticLinkVo.aliQr}${encodeURI(`https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`)}`;
     },
     /**
      * 倒计时函数

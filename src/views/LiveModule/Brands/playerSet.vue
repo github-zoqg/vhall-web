@@ -180,7 +180,7 @@
        </el-col>
         <el-col :span="6">
           <div class="show-purple">
-            <el-button type="primary" class="preview-video" @click="previewVideo">预览</el-button>
+            <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
             <img :src="audioEnd" alt="" v-show="!showVideo">
             <div id="videoDom" v-show="showVideo"></div>
             <p class="show-purple-info">
@@ -241,7 +241,7 @@ export default {
       videoParam: {
         paas_record_id: '922013fa'
       },
-      audioImg: require('@/common/images/v35-webinar.png'),
+      audioImg: require('@/common/images/logo4.png'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
     };
   },
@@ -299,7 +299,7 @@ export default {
     previewVideo () {
       this.initNodePlay()
       // 设置水印的透明度
-      
+
     },
     getFontList() {
       let num = 10;
@@ -422,7 +422,7 @@ export default {
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
          if (res.code == 200) {
            this.$message.success(this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功');
-           
+
          } else {
            this.$message.error(res.msg || "保存跑马灯失败");
          }
@@ -491,7 +491,7 @@ export default {
         //   console.log('获取总时间失败');
         // });
         // this.listen();
-      
+
       });
     },
     // 删除图片
@@ -556,10 +556,10 @@ export default {
             // setTimeout(()=>{
                console.log('初始化实例成功',event);
             // },2000)
-           
+
             this.$Vhallplayer = event.vhallplayer;
             window.vp = this.$Vhallplayer;
-            
+
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.$Vhallplayer.pause()
               this.$Vhallplayer.openControls(true);
