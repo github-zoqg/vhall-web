@@ -4,6 +4,7 @@
       :title="advInfo.adv_id ? '编辑广告' : '创建广告'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      :lock-scroll=false
       width="468px">
       <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
       <el-form-item label="推广图片" prop="img_url">
@@ -43,7 +44,7 @@
     </span>
     </VhallDialog>
     <VhallDialog
-      title="选择广告推荐"
+      title="选择广告"
       :visible.sync="dialogAdverVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"

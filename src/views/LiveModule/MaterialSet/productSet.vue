@@ -205,7 +205,7 @@ export default {
     // 编辑
     edit(that, {rows}) {
       that.$router.push({
-        path: `/live/addProduct/${that.$route.params.str}`,
+        path: `/live/editProduct/${that.$route.params.str}`,
         query: {
           goodId: rows.goods_id
         }

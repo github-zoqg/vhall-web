@@ -252,7 +252,7 @@ export default {
 
 <style lang="less" scoped>
 .sign--set {
-  .padding41-40;
+  padding: 41px 40px 40px 40px;
 }
 .sign--set--main {
   .flex-display;

@@ -502,16 +502,31 @@ export default {
   ::v-deep .el-dialog--center .el-dialog__body{
     padding: 0px 10px 10px;
   }
-  ::v-deep .vh-dialog{
-    .el-dialog{
-      width: 960px!important;
-      height: 623px;
-      padding-bottom: 30px;
-      .el-dialog__body{
-        height: calc(100% - 44px);
-      }
-    }
+  .vh-dialog{
+  /deep/ .el-dialog {
+    width: 642px!important;
+    background: transparent!important;
+    border:none;
+    box-shadow: none;
   }
+  /deep/ .el-dialog__header {
+    width: 642px!important;
+    padding: 0px;
+    height: 55px;
+    background: transparent!important;
+    border:none;
+  }
+  /deep/ .el-dialog__headerbtn{
+    top: 30px;
+    right: 0px;
+  }
+  /deep/ .el-dialog__body{
+    width: 642px;
+    height: 375px;
+    border: 16px solid #333;
+    background: #fff;
+  }
+}
   .head-operat, .no-live{
     margin-bottom: 20px;
     .head-btn{

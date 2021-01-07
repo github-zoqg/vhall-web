@@ -347,7 +347,7 @@ export default {
     login(params) {
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
-      this.$fetch('loginInfo', params).then(res => {
+      this.$fetch('loginInfo', this.$params(params)).then(res => {
         this.mobileKey = '';
         this.errorText = '';
         this.errorMsgShow = '';

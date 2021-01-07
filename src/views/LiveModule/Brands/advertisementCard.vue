@@ -1,7 +1,7 @@
 <template>
   <div class="advertisement-card">
     <div class="title-data">
-      <span>{{ $route.path =='/material/advertCard' ? '广告推荐' : '广告'}}</span>
+      <span>广告</span>
     </div>
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">

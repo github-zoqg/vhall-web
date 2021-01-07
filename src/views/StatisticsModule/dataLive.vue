@@ -189,12 +189,13 @@ export default {
     },
     dataReport(that, val) {
       let id = val.rows.webinar_id;
-      that.$router.push({
+      const routeData = that.$router.resolve({
         path: `/live${val.path}/${id}`,
         query: {
           roomId: val.rows.room_id
         }
       });
+      window.open(routeData.href, '_blank');
     }
   }
 };

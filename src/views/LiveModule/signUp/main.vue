@@ -18,7 +18,7 @@
           <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
         </div>
       </pageTitle>
-      <div id="settingBox" class="settingBox">
+      <div id="settingBox" class="settingBox clearFix">
         <ul :class="['options', menuBarFixed ? 'isFixed' : '']">
           <template v-for="(item, key, index) in setOptions">
             <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
@@ -54,6 +54,7 @@
             @closeSignUp="closePreview"
           ></signUpForm>
         </div>
+        <div class="disable_wrap" v-if="!signUpSwtich"></div>
       </div>
     </div>
     <shareDialog
@@ -545,10 +546,11 @@ export default {
     float: right;
   }
   .titleBox{
-    display: block;
+    display: block!important;
     line-height: 40px;
   }
   .settingBox{
+    position: relative;
     .isFixed {
       position:fixed;
       top:70px;
@@ -604,6 +606,15 @@ export default {
       justify-content: center;
       width: calc(100% - 170px);
       float: right;
+    }
+    .disable_wrap{
+      position: absolute;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.5)
     }
   }
 

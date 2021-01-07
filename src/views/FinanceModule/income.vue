@@ -423,6 +423,9 @@ export default {
         font-size: 14px;
         padding: 0 2px;
         color: #1A1A1A;
+        &.saasicon_help_m {
+          color: #999;
+        }
       }
     }
   }

@@ -137,7 +137,7 @@
         </el-button>
         <el-button @click="tcqp" class="fl vh-btn vh-video-tailoring__qxqp-btn" v-if="isFullScreen">
           <el-tooltip class="item" effect="dark" content="退出全屏" placement="top" v-if="isFullScreen">
-            <icon class="icon" icon-class="saasicon_quanping"></icon>
+            <icon class="icon" icon-class="saasicon_quxiaoquanping"></icon>
           </el-tooltip>
           <!-- <span class="vh-iconfont vh-icon-exit-full-screen"></span> -->
         </el-button>

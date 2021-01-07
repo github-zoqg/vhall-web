@@ -4,6 +4,7 @@
       :title="`${title}奖品`"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      :lock-scroll=false
       width="468px">
       <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px">
         <el-form-item label="图片上传" required>
@@ -28,8 +29,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name" v-preventReClick>确 定</el-button>
-        <el-button @click.prevent.stop="dialogVisible = false" round>取 消</el-button>
+        <el-button size="medium" type="primary" @click="surePrize" round  :disabled="!prizeForm.prize_name" v-preventReClick>确 定</el-button>
+        <el-button size="medium" @click.prevent.stop="dialogVisible = false" round>取 消</el-button>
       </span>
     </VhallDialog>
     <VhallDialog
@@ -37,6 +38,7 @@
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
+      :lock-scroll=false
       width="588px">
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
@@ -60,7 +62,7 @@
        </div>
         <div class="no-live" v-show="!total">
           <noData :nullType="nullText" :text="text" :height="50">
-            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="createPrize" v-preventReClick>创建抽奖</el-button>
+            <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="createPrize" v-preventReClick>创建奖品</el-button>
           </noData>
         </div>
        <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
@@ -369,7 +371,7 @@ export default {
 <style lang="less" scoped>
 .prize-create{
   /deep/.el-input__inner{
-    border-radius: 18px;
+    border-radius: 4px;
     height: 36px;
     background: transparent;
   }

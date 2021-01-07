@@ -53,16 +53,24 @@
       <div  class="group__container">
         <p class="group__title">全部分组</p>
         <ul v-if="groupList && groupList.length > 0">
-          <li class="group__item--active"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="changeViewerList(item)">
-            <span class="group__button__title" @mouseover="item.showHover = true" @mouseout="item.showHover = false">{{ item.subject }}</span>
-            <div class="group__tap" v-show="item.showHover"  @mouseover="item.showHover = true" @mouseout="item.showHover = false">
-              <div class="group_button__rename" @click.prevent.stop="addGroupDialogShow(item)">重命名</div>
-              <div class="group_button__delete" @click.prevent.stop="postGroupDel(item)">删除</div>
-            </div>
-          </li>
+          <el-dropdown
+            split-button
+            size="medium"
+            round
+            @command="handleCommand($event, item)"
+            trigger="click"
+            v-for="(item, ins) in groupList"
+            :key="`group${ins}`"
+            @click.prevent.stop="changeViewerList(item)"
+          >{{ item.subject }}
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="rename">重命名</el-dropdown-item>
+              <el-dropdown-item command="delete">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </ul>
         <div class="group_button__add" @click.prevent.stop="addGroupDialogShow(null)">
-          <span class="add-icon">+</span><span>点击添加分组</span>
+          <el-button size="medium" type="primary" round>点击添加分组</el-button>
         </div>
         <div class="clear"></div>
       </div>
@@ -294,6 +302,10 @@ export default {
     }
   },
   methods: {
+    handleCommand(type, data) {
+      type == 'rename' && this.addGroupDialogShow(data)
+      type == 'delete' && this.postGroupDel(data)
+    },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -825,11 +837,34 @@ export default {
     text-align: center;
     margin-bottom: 32px;
   }
+  /deep/ .el-dropdown {
+    margin-bottom: 12px;
+    .el-button {
+      padding: 4px 28px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .el-dropdown__caret-button {
+      padding: 4px 5px;
+    }
+    .el-button-group>.el-button {
+      border-radius: 23px;
+    }
+    .el-button-group>.el-button:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      width: 122px;
+    }
+    .el-button-group>.el-button:last-child {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
 }
 .group__title {
   color: @font_color_h1;
-  margin-bottom: 32px;
-  text-align: center;
+  margin-bottom: 20px;
 }
 .group__item--active {
   padding: 8px 0;
@@ -856,6 +891,9 @@ export default {
   text-align: center;
   color: @font_color_h1;
   cursor: pointer;
+  /deep/ .el-button {
+    width: 150px;
+  }
 }
 .download {
   display: block;

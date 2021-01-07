@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick>创建点播</el-button>
+        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick v-if="vodPerssion == 1">创建点播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -145,6 +145,8 @@ export default {
     noData
   },
   created() {
+    this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
+    console.log(this.vodPerssion, '??????????????????')
     this.getLiveList();
   },
   methods: {
@@ -235,10 +237,10 @@ export default {
     goIsLive(item) {
       if (item.webinar_type != 1) {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
-        window.open(href, '_target');
+        window.open(href, '_blank');
       } else {
         let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${item.webinar_id}`;
-        window.open(href, '_target');
+        window.open(href, '_blank');
       }
     },
     // 判断是否有起直播的权限
@@ -277,7 +279,7 @@ export default {
         index === '1' ? this.$router.push({path:'/live/edit'}) : this.$router.push({path:'/live/vodEdit'});
       }
     },
-    toDetail(id) {
+    toDetail(id, state) {
       this.$router.push({path: `/live/detail/${id}`});
     },
     toRoom(id){

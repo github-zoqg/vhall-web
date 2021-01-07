@@ -1,11 +1,11 @@
 <template>
   <div>
     <pageTitle title="聊天严禁词" iconCssType="gary">
-      <div slot="content">
+      <!-- <div slot="content">
         1.聊天、评论，包含关键词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
         <br/>
         2.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃
-      </div>
+      </div> -->
     </pageTitle>
     <div>
       <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
@@ -21,6 +21,12 @@
           <div class="words-white">
             {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '暴力、政治敏感、严禁词，逗号隔开、固定宽度换行'}}
           </div>
+          <div class="notice">
+            <p>提示：</p>
+            <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
+            <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
+            <p>3.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃</p>
+          </div>
         </el-form-item>
       </el-form>
     </div>
@@ -35,20 +41,20 @@
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
-              v-model="query.keyword"
+              v-model="pageInfo.keyword"
               clearable
-              @clear="getKeywordList"
-              @keyup.enter.native="getKeywordList"
+              @clear="searchKeyWord"
+              @keyup.enter.native="searchKeyWord"
               >
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
-                @click="getKeywordList">
+                @click="searchKeyWord">
               </i>
             </el-input>
           </div>
         </div>
-        <!-- 操作栏 -->
+        <!-- 操作栏
         <table-list
           ref="chatTable"
           :isHandle=true
@@ -64,9 +70,44 @@
           @onHandleBtnClick="onHandleBtnClick"
           v-if="keyWordDao.total > 0"
         >
-        </table-list>
-        <!-- 无消息内容 -->
-        <null-page v-else></null-page>
+        </table-list> -->
+        <el-table
+          ref="chatTable"
+          :data="showChatList"
+          tooltip-effect="dark"
+          style="width: 100%"
+          height="380px"
+          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+          @selection-change="checkMoreRow"
+          v-show="total"
+          v-loadMore="moreLoadData">
+           <el-table-column
+            type="selection"
+            width="55"
+            align="left"
+          />
+          <el-table-column
+            label="严禁词"
+            prop="name"
+            width="auto"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="100"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-button
+                :key="index"
+                type="text"
+                v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
+              <el-button
+              :key="index"
+              type="text"
+              v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -145,17 +186,19 @@ export default {
         total: 0,
         list: []
       },
-      query: {
+      pageInfo: {
         keyword: '',
         pos: 0,
-        limit: 1000,
-        pageNumber: 1
+        limit: 10,
+        pageNum: 1
       },
       downloadHref: null,
       // 列表展示开始
       listPanelShow: false,
       isHandle: false, // 是否有操作项
       showChatList: [],
+      total: 0,
+      totalPages: 0,
       tableColumn: [
         {
           label: '严禁词',
@@ -213,28 +256,64 @@ export default {
     }
   },
   methods: {
-    // 获取关键字
-    getKeywordList() {
-      this.$fetch('getKeywordList', this.query).then(res =>{
-        this.keyWordDao = res && res.code === 200 && res.data && res.data.list ? res.data : {
-          total: 0,
-          list: []
-        };
-        this.checkNames = this.keyWordDao.list.map(item => {
+    getAllKeyWordList() {
+      this.$fetch('getKeywordList', {
+        keyword: '',
+        pos: 0,
+        limit: 1000,
+        pageNumber: 1
+      }).then(res =>{
+        this.checkNames = res.data.list.map(item => {
           return item.name;
         });
       }).catch(e=>{
         console.log(e);
-        this.keyWordDao = {
-          total: 0,
-          list: []
-        };
+        this.checkNames = [];
       });
+    },
+    handleClose(done) {
+      this.pageInfo.pageNum = 1;
+      this.getAllKeyWordList();
+      done();
+    },
+    // 获取关键字
+    getKeywordList() {
+      this.$fetch('getKeywordList', this.pageInfo).then(res =>{
+        if (this.pageInfo.pos === 0) {
+          this.showChatList = res.data.list;
+        } else {
+          this.showChatList.push(...res.data.list);
+        }
+        this.total = res.data.total;
+        this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    moreLoadData() {
+      if (this.pageInfo.pageNum >= this.totalPages) {
+        return false;
+      }
+      this.pageInfo.pageNum ++ ;
+      this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit);
+      this.getKeywordList();
     },
     // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
-      this.showChatList = this.keyWordDao.list;
+      this.pageInfo.keyWord = '';
+      this.searchKeyWord();
+    },
+    searchKeyWord() {
+      this.pageInfo.pos = 0;
+      this.pageInfo.pageNum = 1;
+      this.showChatList = [];
+      try {
+        this.$refs.chatTable.clearSelection();
+      } catch (e) {
+        console.log(e);
+      }
+      this.getKeywordList();
     },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
@@ -249,7 +328,8 @@ export default {
       });
     },
     // 编辑
-    keywordEdit(that, { rows }) {
+    keywordEdit(rows) {
+      let that = this;
       that.addShow = true;
       that.$nextTick(() => {
         try{
@@ -299,7 +379,7 @@ export default {
               });
             }
             this.addShow = false;
-            this.getKeywordList(); // 刷新列表数据
+            this.searchKeyWord(); // 刷新列表数据
           }).catch(res => {
             console.log(res);
             this.$message({
@@ -314,7 +394,8 @@ export default {
       });
     },
     // 删除
-    keywordDel(that, { rows }) {
+    keywordDel(rows) {
+      let that = this;
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
@@ -333,8 +414,10 @@ export default {
             customClass: 'zdy-info-box'
           });
           that.ids = [];
-          that.$refs.chatTable.clearSelect();
-          that.getKeywordList();
+          if(that.$refs.chatTable) {
+            that.$refs.chatTable.clearSelect();
+          }
+          that.searchKeyWord();
         }).catch(res => {
           console.log(res);
           that.$message({
@@ -359,10 +442,13 @@ export default {
           customClass: 'zdy-info-box'
         });
       } else {
-        this.keywordDel(this, {
+        /* this.keywordDel(this, {
           rows: {
             id: this.ids.join(',')
           }
+        }); */
+        this.keywordDel({
+          id: this.ids.join(',')
         });
       }
     },
@@ -529,7 +615,7 @@ export default {
   },
   created() {
     this.getKeywordTemplate();
-    this.getKeywordList();
+    this.getAllKeyWordList();
   }
 };
 </script>
@@ -554,9 +640,21 @@ export default {
   font-weight: 400;
   color: #999999;
   line-height: 20px;
-  min-height: 200px;
+  height: 216px;
+  overflow-y: auto;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
+}
+.notice {
+  margin-top: 12px;
+  p {
+    margin: 0 0;
+    padding: 0 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999999;
+    line-height: 20px;
+  }
 }
 .operaBox{
   overflow: hidden;

@@ -230,5 +230,24 @@ export default {
 }
 .message--title {
   margin-bottom: 24px;
+  /deep/.el-button {
+    background: transparent;
+    &:hover {
+      background: #FB3A32;
+      border: 1px solid #FB3A32;
+    }
+    &:active {
+      background: #E2332C;
+      border: 1px solid #E2332C;
+    }
+    &.is-disabled {
+      border: 1px solid #E6E6E6;
+      background: transparent;
+      color: #B3B3B3;
+      &:hover,&:active {
+        background: transparent;
+      }
+    }
+  }
 }
 </style>
