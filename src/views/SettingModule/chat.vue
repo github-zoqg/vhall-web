@@ -98,11 +98,9 @@
             show-overflow-tooltip>
             <template slot-scope="scope">
               <el-button
-                :key="index"
                 type="text"
                 v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
               <el-button
-              :key="index"
               type="text"
               v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
             </template>
@@ -414,8 +412,10 @@ export default {
             customClass: 'zdy-info-box'
           });
           that.ids = [];
-          if(that.$refs.chatTable) {
+          try {
             that.$refs.chatTable.clearSelect();
+          } catch(e){
+            console.log(e);
           }
           that.searchKeyWord();
         }).catch(res => {
@@ -690,7 +690,7 @@ export default {
 }
 .chat-dialog-content {
   /*dataList 里面已经包含30间距*/
-  padding-bottom: 2px;
+  padding-bottom: 32px;
 }
 .chat-add-dialog-content {
   &.add {
