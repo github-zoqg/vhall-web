@@ -79,6 +79,7 @@ export default {
       if (componentData.component_id == 1) {
         this.units.push({
           ...componentData,
+          content: '默认图文',
           cUid: uuidV1()
         })
       } else if (componentData.component_id == 2) {
