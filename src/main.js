@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-import tinymce from 'tinymce';
-import VueTinymce from '@packy-tang/vue-tinymce';
+
+// import VueTinymce from '@packy-tang/vue-tinymce/src/main';
 
 import vuescroll from 'vuescroll';
 
@@ -17,17 +17,7 @@ Vue.use(vuescroll, {
   name: 'vhscroll' // customize component name, default -> vueScroll
 });
 
-//样式
-import 'tinymce/skins/content/default/content.min.css';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-//主题
-import 'tinymce/themes/silver';
-import 'tinymce/icons/default/icons.min.js';
-//插件
-import 'tinymce/plugins/image'; //图片插件
-import 'tinymce/plugins/quickbars';//快速栏插件
-import 'tinymce/plugins/fullscreen';//全屏插件
+
 
 import EventBus from './utils/Events';
 import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
@@ -92,7 +82,7 @@ import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
 import VhallDialog from '@/components/Dialog';
 import VhallInput from '@/components/Input';
-import '@/components/RemoteScript';
+
 Vue.component('SPagination',SPagination);
 Vue.component('VhallDialog',VhallDialog); // 弹框
 Vue.component('tableList',tableList);  // 表格区域
@@ -123,8 +113,8 @@ const i18n = new VueI18n({
 });
 window.i18n = i18n;
 
-Vue.prototype.$tinymce = tinymce;
-Vue.use(VueTinymce);
+// Vue.prototype.$tinymce = tinymce;
+// Vue.use(VueTinymce);
 
 
 
