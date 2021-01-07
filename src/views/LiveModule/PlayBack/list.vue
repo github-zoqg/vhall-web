@@ -453,8 +453,9 @@ export default {
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toCreate() {
-      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
-      window.open(routeData.href, '_blank');
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
+      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
+      // window.open(routeData.href, '_blank');
     },
     toRecord() {
       this.$fetch('recordCheck', {
@@ -473,8 +474,9 @@ export default {
       })
     },
     toTailoring(recordId, recordName){
-      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      // window.open(routeData.href, '_blank');
     },
     toChapter(recordId){
       if (this.isDemand) {
