@@ -540,15 +540,35 @@
         }
       },
       getDyCode(isForm) {
+        let isPhoneValid = true
         let phone = ''
         if (isForm) {
           const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
           phone = this.form[phoneItem.id];
+          // 点击获取短信验证码之前验证手机号
+          this.$refs['form'].validateField(''+phoneItem.id, err => {
+            if (!err) {
+              isPhoneValid = true
+            } else {
+              isPhoneValid = false
+            }
+          })
         } else {
           phone = this.verifyForm.phone
+          this.$refs['verifyForm'].validateField('phone', err => {
+            if (!err) {
+              isPhoneValid = true
+            } else {
+              isPhoneValid = false
+            }
+          })
         }
+        if (!isPhoneValid) {
+          return false
+        }
+
         // 获取短信验证码
-        if (validPhone('', phone) && this.mobileKey) {
+        if (this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
             webinar_id: this.webinar_id,
             phone: phone,
@@ -568,6 +588,7 @@
           }, 1000);
         } else {
           this[key] = 60;
+          isForm ? this.callCaptcha('#setCaptcha') : this.callCaptcha('#setCaptcha1');
         }
       },
       /**
@@ -653,6 +674,7 @@
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
                 this.$refs['form'].validateField('code', err => {
+                  // 还原状态
                   this.isVerifyCodeErr = false
                 })
               }
@@ -692,6 +714,7 @@
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
                 this.$refs['verifyForm'].validateField('code', res => {
+                  // 还原状态
                   this.isVerifyCodeErr = false
                 })
               } else {
