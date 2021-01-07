@@ -24,7 +24,7 @@
        <span slot='title' v-if="item.meta.title">{{item.meta.title}}</span>
      </template>
      <sidebar-item
-       v-for="child in item.children"
+       v-for="child in newChild"
        :key="child.path"
        :is-nest="true"
        :item="child"
@@ -38,6 +38,7 @@
 <script>
 import path from 'path';
 import AppLink from './Link';
+import { sessionOrLocal } from '../../../utils/utils';
 
 export default {
  name: 'SidebarItem',
@@ -55,6 +56,23 @@ export default {
    basePath: {
      type: String,
      default: ''
+   }
+ },
+ computed: {
+   newChild: function() {
+    let children = this.item.children;
+    console.log(children);
+    let userInfo = sessionOrLocal.get('userInfo');
+    if (userInfo) {
+      let vo = JSON.parse(userInfo);
+      if(vo.parent_id > 0) {
+        return children.filter(item => item.meta.name !== 'sonMgr');
+      } else {
+        return children;
+      }
+    } else {
+      return children;
+    }
    }
  },
  data() {
