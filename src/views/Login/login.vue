@@ -491,6 +491,7 @@ export default {
     overflow: hidden;
    /*  background: linear-gradient(180deg,#22d28f,#00ab92); */
     background: url('../../common/images/login/login-bg.png') no-repeat 100% 100%;
+    background-image: -webkit-linear-gradient(-45deg, #FF6B3B ,#E8302F);
     position: relative;
 }
 
@@ -512,7 +513,7 @@ export default {
   text-align: center;
 }
 .left p {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   color: #FFFFFF;
   line-height: 32px;
