@@ -53,8 +53,6 @@
     <slot name="mainplaceholder" :docContainerShow="docInfo.docContainerShow">
       <div v-show="!docInfo.docContainerShow" style="color:white;"></div>
     </slot>
-    <remote-script v-if="!VhallMsgSdk" src="//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.9.js"></remote-script>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.4-1.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
@@ -232,8 +230,14 @@ export default {
     }
   },
   mounted () {
+    window.roleTypeMap = {
+      1: window.VHDocSDK.RoleType.HOST, // 1     主持人[1]
+      2: window.VHDocSDK.RoleType.SPECTATOR, // 3 观众[2]
+      3: window.VHDocSDK.RoleType.ASSISTANT, // 4 助理[3]
+      4: window.VHDocSDK.RoleType.GUEST // 2 嘉宾[4]
+    };
     this._listenEvents();
-    // this._initDocSDK();
+    this._initDocSDK();
 
     window.onbeforeunload = () => {
       if (this.liveStatus != 1) {
@@ -997,17 +1001,6 @@ export default {
         }
       });
     },
-    sdkLoad(){
-      window.roleTypeMap = {
-        1: window.VHDocSDK.RoleType.HOST, // 1     主持人[1]
-        2: window.VHDocSDK.RoleType.SPECTATOR, // 3 观众[2]
-        3: window.VHDocSDK.RoleType.ASSISTANT, // 4 助理[3]
-        4: window.VHDocSDK.RoleType.GUEST // 2 嘉宾[4]
-      };
-      this._initDocSDK();
-      // if(window.VhallMsg)
-
-    }
   },
   destroyed () {
     console.log('destroyed');

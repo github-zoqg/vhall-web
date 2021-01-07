@@ -126,7 +126,6 @@
         </div>
       </div>
     </div>
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4.js" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
@@ -341,6 +340,7 @@ export default {
     this.hoverVideoTimer = setTimeout(() => {
       this.hoveVideo = false;
     }, 3000);
+    this.initPaly();
   },
   filters: {
     secondToDate (val) {
@@ -1024,9 +1024,6 @@ export default {
     controllerMouseEnter () {
       clearTimeout(this.hoverVideoTimer);
       this.hoveVideo = true;
-    },
-    sdkLoad(){
-      this.initPaly();
     }
   },
 
