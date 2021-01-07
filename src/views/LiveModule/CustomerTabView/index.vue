@@ -114,11 +114,9 @@ export default {
     saveCustomTab() {
 
       const checkResult = this.validationMenus()
-
       if(!checkResult) {
         return false
       }
-
       const saveMenus = Array.from(this.customMenus)
       let params = {
         webinar_id: this.$route.params.str,
@@ -137,7 +135,7 @@ export default {
         }
       }).catch(e=>{
         console.log(e);
-        // this.$message.error('保存失败');
+        this.$message.error(e.msg || `保存失败`);
       });
     },
 

@@ -21,7 +21,9 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-              <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{selectableRange: startVal - '23:59:59' }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
+            <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{
+              selectableRange: rangHourMins
+            }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
           </el-col>
       </el-form-item>
@@ -219,7 +221,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center
+      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
@@ -246,6 +248,18 @@ export default {
     VideoPreview
   },
   computed: {
+    rangHourMins() {
+      let sysDate = new Date().getTime();
+      let str = this.$moment().format('HH:mm');
+      console.log(this.formData.date1, str);
+      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      let targetDate = new Date(`${selectDate} 00:00:00`).getTime();
+      if (targetDate > sysDate) {
+        return `00:00:00 - 23:59:00`;
+      } else {
+        return `${str}:00 - 23:59:00`;
+      }
+    },
     pathUrl: function() {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
@@ -315,6 +329,20 @@ export default {
       } else {
         return true;
       }
+    },
+    start_line: function() {
+      // 获取当前时分
+      let sysDate = new Date();
+      let hours = sysDate.getHours();
+      let minutes = sysDate.getMinutes();
+      if (hours <= 9) {
+        hours = `0${hours}`
+      }
+      if (minutes <= 9) {
+        minutes = `0${minutes}`
+      }
+      debugger
+      return `${hours}:${minutes}`;
     }
   },
   data(){
@@ -542,10 +570,7 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          if (this.webniarTypeToZH !== '点播'|| this.title !== '编辑') {
-            data = this.$params(data);
-          }
-          this.$fetch(url, data).then(res=>{
+          this.$fetch(url, this.$params(data)).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
               this.isSaveInfo = true;
@@ -904,30 +929,11 @@ export default {
     }
   }
   .vh-dialog{
-  /deep/ .el-dialog {
-    width: 642px!important;
-    background: transparent!important;
-    border:none;
-    box-shadow: none;
+    /deep/.el-dialog__body {
+      padding-bottom: 20px;
+    }
+
   }
-  /deep/ .el-dialog__header {
-    width: 642px!important;
-    padding: 0px;
-    height: 55px;
-    background: transparent!important;
-    border:none;
-  }
-  /deep/ .el-dialog__headerbtn{
-    top: 30px;
-    right: 0px;
-  }
-  /deep/ .el-dialog__body{
-    width: 642px;
-    height: 375px;
-    border: 16px solid #333;
-    background: #fff;
-  }
-}
 </style>
 <style lang="less">
   html{

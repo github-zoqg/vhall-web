@@ -47,6 +47,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
+    origin: window.location.origin,
     'request-id': uuidV1()
   };
 
@@ -73,6 +74,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
+    // credentials: 'include',
     // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };
