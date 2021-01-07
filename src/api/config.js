@@ -405,6 +405,7 @@ const apis = {
   // 账户管理
   homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li √字段未同步
   homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li √
+  userLogoGet: ['/v3/users/user-extends/get-logo-info', 'POST'], // 获取控制台标志信息 Jia.li √
   homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li √字段未同步
   checkAccount: ['/v3/users/user/check-account', 'POST'], // 账号检测接口 Jia.li
   resetPassword: ['/v3/users/user/reset-password', 'POST'], // 修改密码/密码找回/设置密码接口 Jia.li

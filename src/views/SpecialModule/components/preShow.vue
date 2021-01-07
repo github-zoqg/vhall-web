@@ -110,7 +110,25 @@ export default {
     },
     handleClick(tab) {
       this.activeName = tab.name;
-    }
+    },
+    userLogoGet() {
+      this.$fetch('userLogoGet', {
+        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }).then(res => {
+        console.log(res);
+      }).catch(err=>{
+      });
+    },
+    // 获取标记 logo 主办方信息
+    getSignInfo () {
+      return this.$fetch('watchInterGetWebinarTag', {
+        webinar_id: this.$route.params.id
+      }).then(res => {
+        if (res.data) {
+          this.signInfo = res.data
+        }
+      })
+    },
   }
 
 };

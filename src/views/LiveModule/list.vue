@@ -390,7 +390,7 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
-        border-radius: 4px;
+        border-radius: 4px 4px 0 0;
         img{
           width: 100%;
           height: 100%;
@@ -443,6 +443,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        border-radius: 0 0 4px 4px;
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;

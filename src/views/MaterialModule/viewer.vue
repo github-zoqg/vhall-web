@@ -76,11 +76,11 @@
       </div>
     </div>
     <!-- 添加分组/ 重命名分组 -->
-    <VhallDialog :title="groupDialog.title" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
+    <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
       <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" :label-width="groupDialog.formLabelWidth">
         <el-form-item label="分组名" prop="subject">
           <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
-                    :minlength="1"/>
+                    :minlength="1" show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
