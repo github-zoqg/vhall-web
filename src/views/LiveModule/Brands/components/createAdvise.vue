@@ -357,7 +357,7 @@ export default {
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
-      if (this.maxTotal + this.selectChecked.length >= 50) {
+      if (this.maxTotal + this.selectChecked.length > 50) {
         this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
         return;
       }

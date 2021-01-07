@@ -105,6 +105,7 @@ export default {
     onSwitchChange(option) {
       if(option.watch) {
         if (this.saleTotal >= 100) {
+          option.watch = false;
           this.$message.error('商品最大上架数量为100，请下架后再进行操作');
           return;
         }
