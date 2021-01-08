@@ -201,7 +201,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, debounce } from '@/utils/utils';
 export default {
   name: 'prizeSet',
   data() {
@@ -241,6 +241,7 @@ export default {
       videoParam: {
         paas_record_id: '922013fa'
       },
+      vm: null,
       audioImg: require('@/common/images/logo4.png'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
     };
@@ -455,21 +456,33 @@ export default {
         webinar_id: this.$route.params.str
       }
       console.log('params',params);
-      this.$fetch('setOtherOption', {...params}).then(res => {
-        if (res.code == 200) {
-          this.$message.success('设置成功');
-          let backSettingData = res.data
-          this.$nextTick(()=>{
-            console.log('弹幕',this.$Vhallplayer,vp);
-            Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
+       this.$fetch('setOtherOption', {...params}).then((res) => {
+          if (res.code == 200) {
+            if (this.vm) {
+              this.vm.close();
+            }
+            this.messageInfo();
+            let backSettingData = res.data;
+            this.$nextTick(()=>{
+              console.log('弹幕',this.$Vhallplayer,vp);
+              Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
             // Number(backSettingData['progress_bar']) ? vp.setControls(true) : vp.setControls(false)
             // this.changeController(backSettingData)
             // Number(backSettingData['speed']) ? document.querySelector('.vhallPlayer-speed-component').style.display = 'block' : document.querySelector('.vhallPlayer-speed-component').style.display = 'none'
-          })
-        } else {
-          this.$message.success(res.msg || '设置失败');
-        }
-      })
+           })
+          }
+        }).catch((res) => {
+            this.$message.error(res.msg || '设置失败')
+        })
+    },
+    //文案提示问题
+    messageInfo() {
+      this.vm = this.$message({
+        showClose: false,
+        duration: 2000,
+        message: '设置成功',
+        type: 'success'
+      });
     },
     // 开启和隐藏控制台-- 由于sdk文档上这个开关控制条的方法=>openControls不能用，用获取dom去控制
     // changeController (data) {

@@ -11,7 +11,7 @@
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
             <p>{{ specialInfo.created_at }}</p>
-            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv">热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
+            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i>热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <el-popover
                 placement="bottom-end"
@@ -32,7 +32,7 @@
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
             <el-row :gutter="40" class="lives">
-              <el-scrollbar v-loadMore="moreLoadData">
+              <!-- <el-scrollbar v-loadMore="moreLoadData"> -->
                 <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                   <div class="inner">
                     <div class="top" @click="goWatchData(item)">
@@ -47,7 +47,7 @@
                     </div>
                   </div>
                 </el-col>
-              </el-scrollbar>
+              <!-- </el-scrollbar> -->
             </el-row>
           </el-tab-pane>
         </el-tabs>
@@ -101,8 +101,9 @@ export default {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
         if (res.code == 200) {
           this.specialInfo = res.data.webinar_subject;
-          this.totalList = res.data.webinar_subject.webinar_list;
-          this.liveList = this.totalList.splice(0, this.pageSize);
+          this.liveList = res.data.webinar_subject.webinar_list;
+          // this.totalList = res.data.webinar_subject.webinar_list;
+          // this.liveList = this.totalList.splice(0, this.pageSize);
           let totalElement = res.data.webinar_subject.webinar_num;
           this.maxPage = Math.ceil(totalElement / this.pageSize);
         } else {
@@ -226,16 +227,19 @@ export default {
     }
     /deep/.el-tabs__content{
       min-height: 300px;
-      max-height: 500px;
       padding: 20px;
+      overflow: auto;
+      // max-height: 500px;
     }
     .special-list{
       margin-top: 20px;
+      // max-height: 500px;
       .text{
         color: #383838;
         height: calc(100% - 592px);
       }
       .lives{
+        // max-height: 500px;
         .liveItem{
           height: 255px;
           margin-bottom: 20px;
