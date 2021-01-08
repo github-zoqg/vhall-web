@@ -259,7 +259,7 @@ export default {
   },
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    this.childNum = JSON.parse(sessionOrLocal.get('userInfo')).child_num;
+    this.childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     if (!this.versionType) {
@@ -273,7 +273,7 @@ export default {
         key: 'webinar_flow'
       })
     }
-    if (this.parentId == 0 && this.childNum >= 0) {
+    if (this.parentId == 0 && this.childNum == 1) {
       this.type = true;
     }
   },

@@ -192,7 +192,7 @@
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary" class="length152" :disabled="!invitation" @click="onSubmit">保存</el-button>
+        <el-button type="primary" class="length152" :disabled="!invitation" v-preventReClick @click="onSubmit">保存</el-button>
       </div>
       <div class="white-show" v-show="!invitation"></div>
     </div>
@@ -359,14 +359,6 @@ export default {
       });
     },
     fileDownLoad(imgUrl, name) {
-      // let aLink = document.createElement("a");
-      // aLink.style.display = "none";
-      // aLink.href = downloadUrl;
-      // aLink.download = name;
-      // // 触发点击-然后移除
-      // document.body.appendChild(aLink);
-      // aLink.click();
-      // document.body.removeChild(aLink);
       // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
       if (window.navigator.msSaveOrOpenBlob) {
         var bstr = atob(imgUrl.split(',')[1])
@@ -387,7 +379,6 @@ export default {
     },
     // 本地下载
     loadDownInvition() {
-      // event.preventDefault();
       let image = new Image();
       let canvas1 = document.createElement('canvas');
       let _canvas = document.getElementById('shopInvent');
@@ -401,17 +392,10 @@ export default {
       context.scale(2,2);
       html2canvas(_canvas, {
         useCORS: true,
+        background: '#fff'
       }).then(canvas => {
         let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
-        console.log(dataUrl, '???????????????>>>>>>>>>>>>>>>')
         image.src = this.dataUrl;
-        // const aElem = document.createElement('a')
-        // document.body.appendChild(aElem)
-        // aElem.href = dataSrc;
-        // aElem.download = 'invite.jpg';
-        // let imgName = 'invite.jpg';
-        // aElem.click()
-        // document.body.removeChild(aElem)
         this.fileDownLoad(dataUrl)
         // this.dataURIToBlob(imgName, dataUrl);
       })

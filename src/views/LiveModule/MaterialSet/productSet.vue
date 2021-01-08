@@ -205,6 +205,13 @@ export default {
     },
     // 编辑
     edit(that, {rows}) {
+      if (rows.watch) {
+        that.$alert('商品已上架，如需编辑请先做下架处理？', '提示', {
+          confirmButtonText: '知道了',
+          customClass: 'zdy-message-box'
+        });
+        return;
+      }
       that.$router.push({
         path: `/live/editProduct/${that.$route.params.str}`,
         query: {

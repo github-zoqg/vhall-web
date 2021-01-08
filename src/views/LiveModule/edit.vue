@@ -213,7 +213,7 @@
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button class="common-button length152" @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
+        <el-button class="common-button length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 

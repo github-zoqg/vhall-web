@@ -18,8 +18,8 @@
         </div>
         <div class="wrap">
           <div class="left-box fl">
-            <i v-if="statePaly" class="local-icon el-icon-eleme" @click="videoPlayBtn"></i>
-            <i v-else class="local-icon el-icon-eleme" @click="videoPlayBtn" ></i>
+            <i v-if="!statePaly" class="iconfont-v3 saasicon_zanting" @click="videoPlayBtn"></i>
+            <i v-else class="iconfont-v3 saasicon_bofang" @click="videoPlayBtn" ></i>
             <div class="center-box">
               <span class="current-time">
                 {{ currentTime | secondToDate }}
@@ -31,15 +31,15 @@
           <div class="right-box fr">
             <div class="volume-box">
               <span class="icon-box">
-                <i style="color: #ececec" class="local-icon el-icon-eleme"
-                  @click="jingYin" :class="voice > 0 ? 'el-icon-eleme' : 'el-icon-eleme'" ></i>
+                <i style="color: #ececec" class="iconfont-v3"
+                  @click="jingYin" :class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'" ></i>
               </span>
               <div class="ver-slider">
-                <el-slider vertical height="100px" :min='1' @change="setVoice" v-model="voice"></el-slider>
+                <el-slider vertical height="100px" :min='0' @change="setVoice" v-model="voice"></el-slider>
               </div>
             </div>
-            <i v-if="isFullscreen" class="local-icon el-icon-eleme" @click="exitFullscreen"></i>
-            <i v-else class="local-icon el-icon-eleme" @click="enterFullscreen"></i>
+            <i v-if="isFullscreen" class="iconfont-v3 saasicon_quxiaoquanping" @click="exitFullscreen"></i>
+            <i v-else class="iconfont-v3 saasicon_quanping" @click="enterFullscreen"></i>
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@ export default {
     return {
       totalTime: 0,
       currentTime: 0,
-      statePaly: false, // 播放状态
+      statePaly: true, // 播放状态
       voice: 20, // 音量
       isMute: false, // 是否为静音
       sliderVal: 0, // seek
@@ -312,6 +312,10 @@ export default {
     .wrap{
       width: 100%;
       .left-box{
+        i:first-child{
+          padding: 0 8px;
+          cursor: pointer;
+        }
         .local-icon{
           margin: 0 4px;
         }
@@ -321,6 +325,10 @@ export default {
         }
       }
       .right-box{
+        i:last-child{
+          padding: 0 12px;
+          cursor: pointer;
+        }
         .volume-box{
           display: inline-block;
           line-height: 34px;
@@ -330,6 +338,12 @@ export default {
           &:hover{
             .ver-slider{
               display: block;
+            }
+          }
+          .icon-box{
+            i{
+              padding-right: 5px;
+              cursor: pointer;
             }
           }
           .ver-slider{
