@@ -68,7 +68,7 @@
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
-                  <i class="el-icon-s-promotion" @click="$router.push({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`})"></i>
+                  <i class="el-icon-s-promotion" @click="goPlayback(item)"></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="详情" placement="top">
                     <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
@@ -188,7 +188,10 @@ export default {
       } else if (command === '/live/edit') {
         this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
       } else {
-        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        // 新标签页打开
+        // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        const { href } = this.$router.resolve({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        window.open(href, '_blank');
       }
     },
     currentChangeHandler(current) {
@@ -240,6 +243,10 @@ export default {
         this.goIsLive(item)
       }
     },
+    goPlayback(item) {
+      const { href } = this.$router.resolve({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`});
+      window.open(href, '_blank');
+    },
     goIsLive(item) {
       if (item.webinar_type != 1) {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
@@ -286,7 +293,8 @@ export default {
       }
     },
     toDetail(id, state) {
-      this.$router.push({path: `/live/detail/${id}`});
+      const { href } = this.$router.resolve({path: `/live/detail/${id}`});
+      window.open(href, 'blank');
     },
     toRoom(id){
       const { href } = this.$router.resolve({path: `/lives/room/${id}`});
