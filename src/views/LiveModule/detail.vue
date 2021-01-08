@@ -79,7 +79,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" @blockHandler="blockHandler"></item-card>
+    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler"></item-card>
   </div>
 </template>
 
@@ -160,6 +160,9 @@ export default {
         val == 5 ? _text = '回放' : val == 4 ? _text = '点播' : _text = '直播'
         return _text
       }
+    },
+    childPremission: function(){
+      return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
     },
     operas() {
       if (this.liveDetailInfo && this.liveDetailInfo.webinar_state === 4) {

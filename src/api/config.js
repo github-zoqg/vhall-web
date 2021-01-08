@@ -337,8 +337,7 @@ const apis = {
   sonRoleGet: ['/v3/users/child-role/get-info', 'POST'], // 子账号-角色-详情查询 Jia.li
   sonRoleList: ['/v3/users/child-role/get-list', 'POST'], // 子账号-角色-列表查询 Jia.li
   sonRolePermission: ['/v3/users/child-role/get-list', 'POST'], // 子账号权限查询接口 Jia.li
-  sonResourcesGet: ['/104/v3/user-vip/get-dist-resources', 'POST', 'mock'], // 获取账号可分配资源 Jia.li
-  sonResourcesSave: ['/104/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
+  getChildPermission: ['/v3/users/child-role/get-permission', 'POST'], // 获取当前账户子账号权限
 
   //财务中心
   getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息 √

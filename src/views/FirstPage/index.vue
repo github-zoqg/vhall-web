@@ -2,39 +2,39 @@
   <div class="data-center">
     <div class="main-center">
       <data-usage></data-usage>
-      <el-row type="flex" class="row-center" justify="space-between">
-        <el-col :span="5">
+      <el-row type="flex" class="row-center" justify="space-between" :gutter="20" >
+        <el-col :span="colVal">
           <div class="center-item" @click="toCreateLive">
             <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal">
           <div class="center-item" @click="toUploadWord">
             <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal">
           <div class="center-item" @click="toBrandSet">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>设置中心</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务中心</h3>
           </div>
         </el-col>
       </el-row>
-      <div class="row-list">
+      <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
         <p class="list-title">数据统计</p>
          <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
@@ -160,6 +160,14 @@ export default {
     LineEcharts,
     DataUsage,
     CountTo
+  },
+  computed: {
+    childPremission: function(){
+      return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
+    },
+    colVal: function() {
+      return !(this.childPremission && Number(this.childPremission.permission_data) === 0) ? 5 : 6;
+    }
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));

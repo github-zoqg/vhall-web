@@ -35,8 +35,8 @@
       <div class="chat-dialog-content">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total > 1000">添加</el-button>
-          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total > 1000">批量添加</el-button>
+          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
           <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
           <div class="searchBox">
             <el-input

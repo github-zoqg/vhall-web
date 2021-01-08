@@ -67,7 +67,7 @@
                     <i class="el-icon-video-camera" @click.prevent.stop="goLivePlay(item)"></i>
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="回放" placement="top">
+                  <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
                   <i class="el-icon-s-promotion" @click="$router.push({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`})"></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="详情" placement="top">
@@ -76,9 +76,9 @@
                   <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
                     <i class="el-icon-more"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='/live/reportsData'>数据报告</el-dropdown-item>
-                      <el-dropdown-item command='/live/interactionData'>互动统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/userData'>用户统计</el-dropdown-item>
+                      <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
+                      <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
+                      <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
                       <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
                       <el-dropdown-item command='删除'>删除</el-dropdown-item>
                     </el-dropdown-menu>
@@ -140,12 +140,18 @@ export default {
       liveList: [],
     };
   },
+  computed: {
+    childPremission: function(){
+      return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
+    }
+  },
   components: {
     PageTitle,
     noData
   },
   created() {
     this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
+    console.log(sessionOrLocal.get('SAAS_V3_SON_PS'), '??????????????????')
     console.log(this.vodPerssion, '??????????????????')
     this.getLiveList();
   },
