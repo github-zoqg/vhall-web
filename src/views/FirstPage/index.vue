@@ -153,7 +153,8 @@ export default {
     return {
       userInfo: {},
       mainKeyData: {},
-      lineDataList: []
+      lineDataList: [],
+      childPremission: {}
     };
   },
   components: {
@@ -162,11 +163,18 @@ export default {
     CountTo
   },
   computed: {
-    childPremission: function(){
-      return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
-    },
     colVal: function() {
+      console.log(this.childPremission && Number(this.childPremission.permission_data) === 0);
       return !(this.childPremission && Number(this.childPremission.permission_data) === 0) ? 5 : 6;
+    }
+  },
+  created() {
+    let userInfo = sessionOrLocal.get('userInfo');
+    if (userInfo) {
+      this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+      if (this.parentId > 0) {
+        this.getChildPermission();
+      }
     }
   },
   mounted() {
@@ -176,6 +184,14 @@ export default {
     this.getLiveList();
   },
   methods: {
+    getChildPermission() {
+      this.$fetch('getChildPermission').then(res => {
+        console.log('getChildPermission', res)
+        this.childPremission = res.data;
+      }).catch(res => {
+        this.childPremission = {};
+      })
+    },
     // 页面跳转
      toCreateLive(){
       this.$router.push({path: `/live/edit`});
