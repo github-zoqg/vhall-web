@@ -409,6 +409,14 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+/deep/.footer {
+  text-align: center;
+  font-weight: 100;
+  font-size: 12px;
+  line-height: 18px;
+  position: unset;
+  padding-bottom: 30px;
+}
 /deep/.pageTitle {
   font-size: 24px;
   font-weight: normal;

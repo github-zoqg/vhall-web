@@ -23,8 +23,9 @@
     font-size: 12px;
     line-height: 18px;
     position: absolute;
-    bottom: 30px;
-    width: 100%
+    bottom: 0;
+    width: 100%;
+    padding-bottom: 30px;
   }
   .footer a {
     color: #cccccc;
