@@ -16,10 +16,10 @@
       </a>
     </div>
     <div class="setting-chat-main">
-      <el-form :model="chatForm" ref="chatForm" label-width="120px">
+      <el-form :model="chatForm" ref="chatForm" label-width="86px">
         <el-form-item label="严禁词列表">
           <div class="words-white">
-            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '暴力、政治敏感、严禁词，逗号隔开、固定宽度换行'}}
+            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '请设置聊天严禁词'}}
           </div>
           <div class="notice">
             <p>提示：</p>
@@ -117,7 +117,16 @@
       <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
           <el-form-item label="严禁词" prop="name">
-            <VhallInput
+           <!--  <el-input
+              v-if="addForm.executeType === 'add'"
+              type="textarea"
+              placeholder="可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃"
+              v-model.trim="addForm.name"
+              :maxlength="1000"
+              autocomplete="off"
+              show-word-limit
+            ></el-input> -->
+             <VhallInput
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
               :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
               v-model.trim="addForm.name"
@@ -654,6 +663,9 @@ export default {
   margin-top: 24px;
   padding: 48px 60px 48px 56px;
   min-height: 510px;
+  /deep/.el-form-item__label {
+    line-height: normal;
+  }
 }
 .words-white {
   padding: 10px 12px;
@@ -662,20 +674,20 @@ export default {
   font-weight: 400;
   color: #999999;
   line-height: 20px;
-  height: 216px;
+  height: 215px;
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
 }
 .notice {
-  margin-top: 12px;
+  margin-top: 8px;
   p {
     margin: 0 0;
     padding: 0 0;
     font-size: 12px;
     font-weight: 400;
     color: #999999;
-    line-height: 20px;
+    line-height: 17px;
   }
 }
 .operaBox{
