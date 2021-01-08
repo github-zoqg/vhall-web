@@ -245,6 +245,7 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
+  // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
       this.getBaseInfo();
@@ -490,7 +491,7 @@
       };
     },
     mounted() {
-
+      // new DevicePixelRatio('#signFormBox');
     },
     methods: {
       handleUnfold(val) {
@@ -688,6 +689,12 @@
                   // 还原状态
                   this.isVerifyCodeErr = false
                 })
+              } else if (err.code == 12814) {
+                // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
+                // 报名成功的操作，跳转到直播间
+                this.closePreview()
+                // 判断当前直播状态，进行相应的跳转
+                this.getWebinarStatus()
               }
             })
           } else {
@@ -951,11 +958,12 @@
     }
     .signWrap {
       overflow-y: auto;
-      height: 843px;
+      height: 90%;
       border-radius: 4px;
       background: #fff;
       position: relative;
       z-index: 101;
+      margin-left: 13%;
       &.signWrapHid{
         height: auto;
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);

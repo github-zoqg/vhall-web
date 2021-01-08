@@ -732,6 +732,9 @@ export default {
     .radioInput {
       margin-bottom: 10px;
     }
+    /deep/ .el-textarea__inner {
+      padding-left: 12px;
+    }
   }
   .header-img-tip {
     display: block;
@@ -814,7 +817,7 @@ export default {
     }
   }
   .bottomBtn{
-    margin-top: 23px;
+    margin-top: 9px;
     text-align: right;
     overflow: hidden;
     .addBtn{

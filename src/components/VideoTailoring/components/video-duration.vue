@@ -354,7 +354,7 @@ export default {
   .vh-video-tailoring__current-time {
     position: absolute;
     top: 32px;
-    color: #1e89e4;
+    color: #3562FA;
     font-size: 12px;
   }
 }
