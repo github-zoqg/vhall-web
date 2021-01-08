@@ -76,9 +76,11 @@
           :data="showChatList"
           tooltip-effect="dark"
           style="width: 100%"
-          height="380px"
+          class="table-td56"
+          height="378px"
           :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
           @selection-change="checkMoreRow"
+          @select-all="checkAllRow"
           v-show="total"
           v-loadMore="moreLoadData">
            <el-table-column
@@ -106,6 +108,7 @@
             </template>
           </el-table-column>
         </el-table>
+        <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
         <null-page nullType="search" v-if="total === 0"></null-page>
       </div>
     </VhallDialog>
@@ -188,7 +191,7 @@ export default {
       pageInfo: {
         keyword: '',
         pos: 0,
-        limit: 10,
+        limit: 6,
         pageNum: 1
       },
       downloadHref: null,
@@ -241,7 +244,8 @@ export default {
       importResult: {
         fail: 0,
         success: 0
-      }
+      },
+      isCheckAll: false
     };
   },
   computed: {
@@ -281,6 +285,9 @@ export default {
           this.showChatList = res.data.list;
         } else {
           this.showChatList.push(...res.data.list);
+        }
+        if(this.isCheckAll) {
+          this.$refs.chatTable.toggleAllSelection();
         }
         this.total = res.data.total;
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
@@ -324,6 +331,11 @@ export default {
       this.ids = val.map(item => {
         return item.id;
       });
+    },
+    checkAllRow(selection) {
+      console.log('全选与非全选', selection);
+      // 只要数量大于0，即是够了全选
+      this.isCheckAll = selection && selection.length > 0;
     },
     // 编辑
     keywordEdit(rows) {
@@ -412,9 +424,10 @@ export default {
             customClass: 'zdy-info-box'
           });
           that.ids = [];
+          that.isCheckAll = false;
           try {
-            that.$refs.chatTable.clearSelect();
-          } catch(e){
+            that.$refs.chatTable.clearSelection();
+          } catch (e) {
             console.log(e);
           }
           that.searchKeyWord();
@@ -621,6 +634,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.select-option{
+  line-height: 20px;
+  margin-top: 8px;
+  /deep/span {
+    color: #FB3A32;
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
 .btn-a {
   margin-left: 12px;
   /deep/button {
