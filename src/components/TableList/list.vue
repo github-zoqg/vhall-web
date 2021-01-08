@@ -41,7 +41,7 @@
               <!-- {{scope.row}} -->
               <p v-if="scope.row.transcode_status_text">
                 <!-- 列表 -->
-                <span>{{ scope.row.transcode_status_text }}</span>
+                <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
               </p>
             </div>
             <div v-else-if="item.key === 'img'" class="prizeImg">

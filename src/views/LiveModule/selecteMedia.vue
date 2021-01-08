@@ -1,5 +1,5 @@
 <template>
-<div class="select-video">
+<div class="select-video" v-if="dialogVisible">
   <el-dialog
     title="选择音视频"
     @closed="closeHandler"
@@ -133,6 +133,7 @@ export default {
       } else {
         this.keyWords = '';
         this.pageInfo.pageNum = 1;
+        this.pageInfo.pos = 0;
       }
     }
   },

@@ -107,7 +107,7 @@ export default {
         webinar_type: 0
       },
       link: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
-      h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       time: {
         day: 0,
         hours: 0,

@@ -32,22 +32,23 @@
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
             <el-row :gutter="40" class="lives">
-              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-                <div class="inner">
-                  <div class="top" @click="goWatchData(item)">
-                    <span class="liveTag">{{item | liveTag }}</span>
-                    <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
-                  </div>
-                  <div class="bottom">
-                    <div class="">
-                      <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
-                      <p class="liveTime">{{item.start_time}} <span><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
+              <el-scrollbar v-loadMore="moreLoadData">
+                <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
+                  <div class="inner">
+                    <div class="top" @click="goWatchData(item)">
+                      <span class="liveTag">{{item | liveTag }}</span>
+                      <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
+                    </div>
+                    <div class="bottom">
+                      <div class="">
+                        <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
+                        <p class="liveTime">{{item.start_time}} <span><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </el-col>
+                </el-col>
+              </el-scrollbar>
             </el-row>
-            <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -67,11 +68,13 @@ export default {
       env: Env,
       pageSize: 12,
       pageNum: 1,
+      maxPage: 0,
       pagePos: 0,
       totalElement: 0,
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`
       },
+      totalList: [], //总数
       liveList: []
     };
   },
@@ -84,12 +87,24 @@ export default {
     this.getSpecialList();
   },
   methods: {
+    moreLoadData() {
+      let page = 0;
+      if (page >= this.maxPage) {
+        return false;
+      }
+      page ++ ;
+      this.liveList = this.totalList.splice(this.pageSize * page + 1, this.pageSize);
+      console.log(this.liveList)
+      // this.pageInfo.pos = parseInt((this.pageInfo.page - 1) * this.pageInfo.limit);
+    },
     getSpecialList() {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
         if (res.code == 200) {
           this.specialInfo = res.data.webinar_subject;
-          this.liveList = res.data.webinar_subject.webinar_list;
-          this.totalElement = res.data.webinar_subject.webinar_num;
+          this.totalList = res.data.webinar_subject.webinar_list;
+          this.liveList = this.totalList.splice(0, this.pageSize);
+          let totalElement = res.data.webinar_subject.webinar_num;
+          this.maxPage = Math.ceil(totalElement / this.pageSize);
         } else {
           this.$message.error('获取失败');
         }
@@ -211,6 +226,7 @@ export default {
     }
     /deep/.el-tabs__content{
       min-height: 300px;
+      max-height: 500px;
       padding: 20px;
     }
     .special-list{
