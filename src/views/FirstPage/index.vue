@@ -2,39 +2,39 @@
   <div class="data-center">
     <div class="main-center">
       <data-usage></data-usage>
-      <el-row type="flex" class="row-center" justify="space-between">
-        <el-col :span="5">
+      <el-row type="flex" class="row-center" justify="space-between" :gutter="20" >
+        <el-col :span="colVal">
           <div class="center-item" @click="toCreateLive">
             <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal">
           <div class="center-item" @click="toUploadWord">
             <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal">
           <div class="center-item" @click="toBrandSet">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>设置中心</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="colVal">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务中心</h3>
           </div>
         </el-col>
       </el-row>
-      <div class="row-list">
+      <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
         <p class="list-title">数据统计</p>
          <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
@@ -153,13 +153,29 @@ export default {
     return {
       userInfo: {},
       mainKeyData: {},
-      lineDataList: []
+      lineDataList: [],
+      childPremission: {}
     };
   },
   components: {
     LineEcharts,
     DataUsage,
     CountTo
+  },
+  computed: {
+    colVal: function() {
+      console.log(this.childPremission && Number(this.childPremission.permission_data) === 0);
+      return !(this.childPremission && Number(this.childPremission.permission_data) === 0) ? 5 : 6;
+    }
+  },
+  created() {
+    let userInfo = sessionOrLocal.get('userInfo');
+    if (userInfo) {
+      this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+      if (this.parentId > 0) {
+        this.getChildPermission();
+      }
+    }
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -168,6 +184,14 @@ export default {
     this.getLiveList();
   },
   methods: {
+    getChildPermission() {
+      this.$fetch('getChildPermission').then(res => {
+        console.log('getChildPermission', res)
+        this.childPremission = res.data;
+      }).catch(res => {
+        this.childPremission = {};
+      })
+    },
     // 页面跳转
      toCreateLive(){
       this.$router.push({path: `/live/edit`});

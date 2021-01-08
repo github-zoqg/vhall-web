@@ -111,8 +111,8 @@ export default {
   },
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    this.childNum = JSON.parse(sessionOrLocal.get('userInfo')).child_num;
-    if (this.parentId == 0 && this.childNum >= 0) {
+    this.childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
+    if (this.parentId == 0 && this.childNum == 1) {
       this.searchAreaLayout.push({
         type: '3',
         key: 'type',

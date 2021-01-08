@@ -39,6 +39,7 @@
 import path from 'path';
 import AppLink from './Link';
 import { sessionOrLocal } from '../../../utils/utils';
+import { session } from '../../../components/Player/js/utils';
 
 export default {
  name: 'SidebarItem',

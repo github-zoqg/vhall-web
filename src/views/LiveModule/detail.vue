@@ -79,7 +79,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" @blockHandler="blockHandler"></item-card>
+    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler"></item-card>
   </div>
 </template>
 
@@ -107,7 +107,7 @@ export default {
         webinar_type: 0
       },
       link: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
-      h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       time: {
         day: 0,
         hours: 0,
@@ -160,6 +160,9 @@ export default {
         val == 5 ? _text = '回放' : val == 4 ? _text = '点播' : _text = '直播'
         return _text
       }
+    },
+    childPremission: function(){
+      return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
     },
     operas() {
       if (this.liveDetailInfo && this.liveDetailInfo.webinar_state === 4) {

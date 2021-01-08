@@ -23,7 +23,7 @@
           <el-input v-model="completion" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" @click="cope(completion)"></i></el-input>
           <!-- <el-button @click="cope(completion)">复制</el-button> -->
         </div>
-        <div class="input-item">
+        <div class="input-item" v-if="isInteract == 1">
           <span>视频嵌入</span>
           <el-input v-model="video" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" @click="cope(video)"></i></el-input>
         </div>
@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       env: Env,
+      isInteract: 1,
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
       liveContent: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WAP_WATCH}/lives/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
@@ -55,6 +56,9 @@ export default {
   },
   components: {
     PageTitle
+  },
+  created() {
+    this.isInteract = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact;
   },
   methods: {
     goForm(url) {
