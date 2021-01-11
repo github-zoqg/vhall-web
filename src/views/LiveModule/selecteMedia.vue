@@ -129,6 +129,8 @@ export default {
       if (this.dialogVisible) {
         this.tableSelect = [];
         this.docList = [];
+        this.pageInfo.pageNum = 1;
+        this.pageInfo.pos = 0;
         this.getMediaList();
       } else {
         this.keyWords = '';
@@ -239,6 +241,7 @@ export default {
     },
     searchHandler(){
       this.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 1;
       this.docList = [];
       this.getMediaList();
     },
@@ -333,6 +336,7 @@ export default {
       width: 220px;
       /deep/ .el-input__inner{
         height: 36px;
+        border-radius: 20px;
       }
       .el-input__suffix{
         i{

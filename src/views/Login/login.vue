@@ -193,18 +193,8 @@ export default {
       } else {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
-        } else {
-          this.$fetch('loginCheck', {account: value}).then(res => {
-            if (res.data.account_exist) {
-              callback(new Error('该手机号已注册，请重新输入'));
-            } else {
-              callback();
-            }
-          }).catch(res => {
-            this.errorMsgShow = res.msg || '注册失败';
-          });
         }
-        // callback();
+        callback();
       }
     };
     var validateLoginPhone = (rule, value, callback) => {
