@@ -77,16 +77,16 @@
         <div class="actionBar">
           <span class="pages">
             <span class="translatePage">
-              <i class="el-icon-arrow-left" @click="prevPage"></i>
+              <icon icon-class="saasicon_arrowleft" @click="prevPage"></icon>
             </span>
-            <em> {{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
+            <em> {{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
             <span class="translatePage">
-              <i class="el-icon-arrow-right" @click="nextPage"></i>
+              <icon icon-class="saasicon_arrowright1" @click="nextPage"></icon>
             </span>
           </span>
           <span class="docs">
-            <i class="el-icon-arrow-left" @click="prevDoc"></i>
-            <i class="el-icon-arrow-right" @click="nextDoc"></i>
+            <icon icon-class="saasicon_wordleft" @click="prevDoc"></icon>
+            <icon icon-class="saasicon_wordright" @click="nextDoc"></icon>
           </span>
           <!-- <span class="thumbnail"></span> -->
         </div>
@@ -140,7 +140,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="文档页码"
+          label="页码/步数"
           width="110">
            <template slot-scope="scope">
              <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
@@ -250,7 +250,7 @@ export default {
      * 视频当前播放时长初始化
      */
     showTime () {
-      return this.formatTime(Math.round(this.currentTime) * 1);
+      return this.formatTime(Math.floor(this.currentTime) * 1);
     },
     /**
      * 视频总时长格式化
@@ -314,7 +314,7 @@ export default {
       console.log('component_playerSDK_ready');
       setTimeout(() => {
         // 动态获取当前视频的总时长及当前播放的时间 当做刻度尺值，弱播放时间小于1200秒，则刻度尺最小赋值为1200秒
-        this.videoTime = Math.round(window.vhallPlayer.getDuration());
+        this.videoTime = Math.floor(window.vhallPlayer.getDuration());
         this.$EventBus.$emit('blockInit', 0, this.videoTime);
         window.vhallPlayer.on(window.VhallPlayer.TIMEUPDATE, () => {
           this.currentTime = window.vhallPlayer.getCurrentTime(() => {
@@ -381,7 +381,12 @@ export default {
       const pattern = /^[1-9][0-9]*$/ // 正整数的正则表达式
       if (!pattern.test(value.slideIndex)) {
         value.slideIndex = value.slideIndex.slice(0, value.slideIndex.length - 1)
-        this.$message.warning(`页码只能是整数`)
+        this.$message({
+          message:  '页码只能是整数',
+          showClose: true, // 是否展示关闭按钮
+          type: 'warning', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
       }
     },
     /**
@@ -508,7 +513,12 @@ export default {
         record_id: this.recordId
       }).then(res => {
         if (res.data && res.data.chatper_callbanck_status == 0) {
-          this.$message.warning('上次章节保存任务尚未完成，当前章节信息为为保存章节')
+          this.$message({
+            message:  '上次章节保存任务尚未完成，当前章节信息为为保存章节',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
         }
       })
     },
@@ -549,7 +559,14 @@ export default {
           }
         })
         const createTimeArrSet = new Set(createTimeArr);
-        if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
+        if (createTimeArrSet.size < createTimeArr.length) {
+          return this.$message({
+            message:  '章节时间点不能重复',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        }
         console.log(doc_titles)
         console.log('isDemand', this.isDemand ? 2 : 1)
         this.$fetch('saveChapters', {
@@ -558,16 +575,43 @@ export default {
           doc_titles: JSON.stringify(doc_titles)
         }).then(res => {
           if (res.code == 200) {
-            this.$message.success('保存成功');
+            this.$message({
+              message:  '保存成功',
+              showClose: true, // 是否展示关闭按钮
+              type: 'success', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
             this.$router.go(-1);
-          } else if (res.code == 12563) {
-            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-            this.$message.warning('上次保存尚未完成,请稍后提交保存');
-          } else if (res.code == 12027) {
-            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-            this.$message.warning('保存失败，子章节页码超出章节总步数');
+          }
+        }).catch(err => {
+          if (err.code == 12563) {
+            this.$message({
+              message:  '上次保存尚未完成,请稍后提交保存',
+              showClose: true, // 是否展示关闭按钮
+              type: 'warning', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12027) {
+            this.$message({
+              message:  '保存失败，章节页码或步数超出最大值',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12029) {
+            this.$message({
+              message:  '保存失败，章节时间大于视频时长',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
           } else {
-            this.$message.warning('保存失败');
+            this.$message({
+              message:  '保存失败',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
           }
         })
       }, 500)
@@ -666,7 +710,14 @@ export default {
       });
     },
     deleteChapter(){
-      if(!this.selectedData.length > 0) return this.$message.warning('请选择要删除的章节');
+      if(!this.selectedData.length > 0) {
+        return this.$message({
+          message:  '请选择要删除的章节',
+          showClose: true, // 是否展示关闭按钮
+          type: 'warning', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
+      }
       this.$confirm('删除后章节不可恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -692,7 +743,12 @@ export default {
         if (temp.length === 0) {
           this.tableData[0].sub = []
           this.tableData = [this.tableData[0]]
-          this.$message.warning('至少保留一个章节')
+          this.$message({
+            message:  '至少保留一个章节',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
         } else {
           this.tableData = temp
         }
@@ -821,20 +877,35 @@ export default {
       }
       .pages{
         display: block;
-        color: #666;
+        color: #999999;
         font-size: 14px;
         em{
           color: #fff;
           font-style: normal;
+        }
+        /deep/ span{
+          cursor: pointer;
+          &:hover {
+            color: #FFFFFF;
+          }
+          /deep/ i {
+            vertical-align: -0.05em;
+          }
         }
       }
       .docs{
         position: absolute;
         right: 10px;
         top: 0px;
-        i{
-          color: #999999;
+        color: #999999;
+        /deep/ span{
           cursor: pointer;
+          &:hover {
+            color: #FFFFFF;
+          }
+          /deep/ i {
+            vertical-align: -0.05em;
+          }
         }
       }
     }

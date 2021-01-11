@@ -106,6 +106,8 @@
         </el-form>
       </div>
       <div class="invitation-show">
+        <!-- <img :src="img" alt="" class="img_invite" v-show="false">
+        <img :src="avatar" alt="" class="img_invite" v-show="false"> -->
         <!-- <p>移动端预览</p> -->
         <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
           <div class="show-container">
@@ -190,7 +192,7 @@
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary" class="length152" :disabled="!invitation" @click="onSubmit">保存</el-button>
+        <el-button type="primary" class="length152" :disabled="!invitation" v-preventReClick @click="onSubmit">保存</el-button>
       </div>
       <div class="white-show" v-show="!invitation"></div>
     </div>
@@ -201,6 +203,7 @@
 import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import html2canvas from 'html2canvas';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
@@ -234,7 +237,7 @@ export default {
     return {
       invitation: true,
       qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
-      showCode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      showCode: '',
       showType: 1,
       avatar: '',
       img: '',
@@ -287,6 +290,9 @@ export default {
   created(){
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
+    let token = sessionOrLocal.get('token', 'localStorage');
+    this.link = `${process.env.VUE_APP_WAP_WATCH}/invite/${this.$route.params.str}?token=${token}`;
+    this.showCode = `${Env.staticLinkVo.aliQr}${this.link}`;
     this.getInviteCardInfo();
   },
   components: {
@@ -328,7 +334,6 @@ export default {
       this.$router.push({path: '/code'});
     },
     onSubmitImg(type, url, trueImg) {
-      console.log(type, url, trueImg, '??????????????');
       if (!type) {
         this.formInvitation.img = url;
         this.img = trueImg;
@@ -353,27 +358,47 @@ export default {
        }
       });
     },
+    fileDownLoad(imgUrl, name) {
+      // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
+      if (window.navigator.msSaveOrOpenBlob) {
+        var bstr = atob(imgUrl.split(',')[1])
+        var n = bstr.length
+        var u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        var blob = new Blob([u8arr])
+        window.navigator.msSaveOrOpenBlob(blob, 'chart-download' + '.' + 'png')
+      } else {
+        // 这里就按照chrome等新版浏览器来处理
+        const a = document.createElement('a')
+        a.href = imgUrl
+        a.setAttribute('download', 'chart-download')
+        a.click()
+      }
+    },
     // 本地下载
     loadDownInvition() {
       let image = new Image();
-      // 解决跨域 Canvas 污染问题
-      image.setAttribute("crossOrigin", "anonymous");
-      image.onload = function() {
-        let canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        let context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0, image.width, image.height);
-        let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
-        let a = document.createElement("a"); // 生成一个a元素
-        let event = new MouseEvent("click"); // 创建一个单击事件
-        a.download = `code${new Date().getTime()}`; // 设置图片名称
-        a.href = url; // 将生成的URL设置为a.href属性
-        a.dispatchEvent(event); // 触发a的单击事件
-      };
-      // let token = sessionOrLocal.get('token', 'localStorage');
-      // let link = `http://172.16.23.59:8081/invite/${this.$route.params.str}?token=${token}`;
-      // image.src = link;
+      let canvas1 = document.createElement('canvas');
+      let _canvas = document.getElementById('shopInvent');
+      let w = parseInt(window.getComputedStyle(_canvas).width);
+      let h = parseInt(window.getComputedStyle(_canvas).height);
+      canvas1.width = w * 2;
+      canvas1.height = h * 2;
+      canvas1.style.width = w + 'px';
+      canvas1.style.height = h + 'px';
+      let context = canvas1.getContext('2d');
+      context.scale(2,2);
+      html2canvas(_canvas, {
+        useCORS: true,
+        background: '#fff'
+      }).then(canvas => {
+        let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
+        image.src = this.dataUrl;
+        this.fileDownLoad(dataUrl)
+        // this.dataURIToBlob(imgName, dataUrl);
+      })
     }
   }
 };
@@ -849,8 +874,8 @@ export default {
         height: 190px;
         text-align: center;
         img{
-          width: 100%;
-          height: 100%;
+          width: 200px;
+          height: 190px;
           object-fit: scale-down;
         }
       }

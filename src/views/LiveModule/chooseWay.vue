@@ -120,7 +120,7 @@ export default {
       let params = {
         webinar_id: this.arr[0],
         type: this.arr[1],
-        live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
+        live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken', 'localStorage') : ''
       }; // 若非主持人登录，需传递用户token
       this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
         if(res && res.code === 200) {

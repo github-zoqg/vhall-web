@@ -67,7 +67,7 @@
             <el-input v-model.trim="signSetForm.skip_url" />
           </el-form-item>
           <el-form-item label="">
-            <el-button type="primary" round @click.prevent.stop="signSetSave">保 存</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
       </div>

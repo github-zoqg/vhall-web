@@ -35,6 +35,16 @@ export const session = {
     return sessionStorage.removeItem(param);
   }
 };
+export function formateSeconds(result) {
+  const h = mat(Math.floor(result / 3600));
+  const m = mat(Math.floor((result / 60) % 60));
+  const s = mat(Math.floor(result % 60));
+  if (h < 1) {
+    return `00:${m}:${s}`;
+  } else {
+    return `${h}:${m}:${s}`;
+  }
+}
 
 export function formatDate(date, fmt) {
   if (/(y+)/.test(fmt)) {

@@ -70,13 +70,13 @@
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
-                    <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
                 </el-input>
               </div>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" class="length152" @click.stop="sureFindPassword()" round>确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" class="length152" @click.stop="sureFindPassword()" round>提&nbsp;&nbsp;&nbsp;交</el-button>
             </div>
           </el-form>
           </div>
@@ -89,7 +89,7 @@
                 auto-complete="off"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
-                    <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
               </el-input>
             </el-form-item>
@@ -138,15 +138,18 @@
         </div>
       </div>
     </div>
+    <footer-section></footer-section>
   </div>
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
 import PageTitle from '@/components/PageTitle';
+import footerSection from '../../components/Footer/index';
 export default {
   components: {
     OldHeader,
-    PageTitle
+    PageTitle,
+    footerSection
   },
   data() {
     let validatePhone = (rule, value, callback) => {
@@ -267,14 +270,14 @@ export default {
           this.$message.error(res.msg);
         });
         } else {
-          this.$message({
-            message: '请检查邮箱是否输入正确',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
-          return;
+          // this.$message({
+          //   message: '请检查邮箱是否输入正确',
+          //   showClose: true,
+          //   // duration: 0,
+          //   type: 'error',
+          //   customClass: 'zdy-info-box'
+          // });
+          // return;
         }
       }
     },
@@ -406,6 +409,18 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+/deep/.footer {
+  text-align: center;
+  font-weight: 100;
+  font-size: 12px;
+  line-height: 18px;
+  position: unset;
+  padding-bottom: 30px;
+}
+/deep/.pageTitle {
+  font-size: 24px;
+  font-weight: normal;
+}
 .section__main {
   padding-top: 40px;
   width: 1020px;
@@ -556,25 +571,31 @@ export default {
       position: absolute;
       bottom: -1px;
       right: 3px;
-      width: 90px;
+      width: 103px;
+      padding: 8px 0;
+      line-height: 18px;
+      text-align: center;
       background: #E8E8E8;
       border-radius: 2px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 400;
       color: #222222;
       cursor: pointer;
-      padding: 8px;
-      cursor: pointer;
-      line-height: 18px;
-      text-align: center;
       &.isLoginActive{
         background: #FB3A32;
-        border-radius: 2px;
         color: #FFFFFF;
+        &:hover {
+          color: #fff;
+          background: #FC615B;
+        }
+        &:active {
+          color: #FFFFFF;
+          background: #E2332C;
+        }
       }
       &.isSend {
         background: #E8E8E8;
-        color: #222222;
+        color: #666666;
       }
     }
   }

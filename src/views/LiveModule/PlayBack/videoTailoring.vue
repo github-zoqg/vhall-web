@@ -1,21 +1,26 @@
 <template>
   <div class="tailorWrap">
     <header>
-      <i class="el-icon-back" @click="$router.back()"></i>
-      <span>回放剪辑台</span>
+      <div class="leftBox">
+        <i class="el-icon-back" @click="$router.back()"></i>
+        <span>回放剪辑台</span>
+      </div>
+
+      <div v-if="!recordId" class="time-box">
+        <div class="rightBox">
+          <span class="time-label">选择回放时间</span>
+          <el-date-picker
+            v-model="timeVal"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间">
+          </el-date-picker>
+          <el-button @click="createRecord" size="small">确定</el-button>
+        </div>
+      </div>
     </header>
-    <div v-if="!recordId" class="time-box">
-      <span class="time-label">选择回放时间</span>
-      <el-date-picker
-        v-model="timeVal"
-        value-format="yyyy-MM-dd HH:mm:ss"
-        type="datetimerange"
-        range-separator="至"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间">
-      </el-date-picker>
-      <el-button @click="createRecord" size="small">确定</el-button>
-    </div>
     <videoTailoring
       v-if="dataReady"
       ref="videoTailoringComponent"
@@ -368,7 +373,7 @@ export default {
     }
     .vh-video-tailoring__warp{
       width: 100%;
-      height: calc( 100vh - 143px);
+      height: calc( 100vh - 63px);
       margin-top: 0px;
       margin-bottom: 0;
       border-radius: 0px;
@@ -377,16 +382,24 @@ export default {
       }
     }
     header{
-      background: #FB3A32;
+      background: #222;
       color: #ffffff;
-      font-size: 20px;
-      text-align: center;
+      font-size: 16px;
+      line-height: 16px;
+      // text-align: center;
       // width: 1366px;
       margin: 0 auto;
-      padding: 22px 25px;
+      position: relative;
+      height: 64px;
+      .leftBox {
+        position: absolute;
+        top: 34px;
+        left: 0;
+      }
       i{
         float: left;
         cursor: pointer;
+        padding-right: 10px;
       }
     }
     .time-box {
@@ -395,7 +408,9 @@ export default {
       align-items: center;
       justify-content: center;
       background: #222222;
-      border-bottom: 1px #000 solid;
+      .rightBox {
+        padding-top: 10px;
+      }
       .time-label {
         color: #999999;
         font-size: 14px;

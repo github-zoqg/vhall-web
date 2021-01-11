@@ -239,6 +239,7 @@ export default {
   .top-item {
     text-align: left;
     width: 100%;
+    min-width: 250px;
     height: 140px;
     padding: 32px 0;
     position: relative;

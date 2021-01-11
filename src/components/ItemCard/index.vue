@@ -43,16 +43,18 @@
     <section v-if="type!=4">
       <p class="subject">直播</p>
       <div class="subjectOuter">
-        <div class="sunjectInner" v-for="item in liveDataList" :key="item.id" @click="blockHandler(item)" v-if="item.isShow">
-          <icon class="icon" :icon-class="item.icon"></icon>
-          <div class="desc">
-            <p class="mainText">{{item.title}}</p>
-            <p class="subText">{{item.subText}}</p>
+        <template v-for="item in liveDataList">
+          <div class="sunjectInner" :key="item.id" @click="blockHandler(item)" v-if="item.isShow">
+            <icon class="icon" :icon-class="item.icon"></icon>
+            <div class="desc">
+              <p class="mainText">{{item.title}}</p>
+              <p class="subText">{{item.subText}}</p>
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </section>
-    <section>
+    <section v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
       <p class="subject">{{ type == 4 ? '点播' : '回放'}}</p>
       <div class="subjectOuter">
         <div class="sunjectInner" @click="goHandler(type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`)">
@@ -64,16 +66,18 @@
         </div>
       </div>
     </section>
-     <section>
+     <section  v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
       <p class="subject">数据</p>
       <div class="subjectOuter">
-        <div class="sunjectInner" v-for="item in reportDataList" @click="blockHandler(item)" :key="item.id" v-if="item.isShow">
-          <icon class="icon" :icon-class="item.icon"></icon>
-          <div class="desc">
-            <p class="mainText">{{item.title}}</p>
-            <p class="subText">{{item.subText}}</p>
+        <template  v-for="item in reportDataList">
+          <div class="sunjectInner" @click="blockHandler(item)" :key="item.id" v-if="item.isShow">
+            <icon class="icon" :icon-class="item.icon"></icon>
+            <div class="desc">
+              <p class="mainText">{{item.title}}</p>
+              <p class="subText">{{item.subText}}</p>
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </section>
   </div>
@@ -92,6 +96,9 @@ export default {
       default: 1
     },
     perssionInfo: {
+      type: Object
+    },
+    childPremission: {
       type: Object
     },
     isTrue: {

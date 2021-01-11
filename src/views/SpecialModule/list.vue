@@ -208,8 +208,7 @@ export default {
     },
     toShare(id) {
       this.dialogShareVisible = true;
-      this.shareVo.url = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
-      // console.log(this.home_link, '?????????????????')
+      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
@@ -348,7 +347,7 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
-        border-radius: 4px;
+        border-radius: 4px 4px 0 0;
         cursor: pointer;
         img{
           width: 100%;
@@ -372,7 +371,7 @@ export default {
           position: absolute;
           height: 40px;
           width: 100%;
-          background: rgba(0, 0, 0, .4);
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
           /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
           bottom: 0px;
           left: 0px;
@@ -394,7 +393,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        border-radius: 4px;
+        border-radius: 0 0 4px 4px;
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;

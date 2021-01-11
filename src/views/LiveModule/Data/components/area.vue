@@ -14,8 +14,8 @@
               <th>占比</th>
             </tr>
             <tr v-for="(item, index) in areaDataList" :key="index">
-              <td>{{ item.name }}</td>
-              <td>{{ item.value }}</td>
+              <td>{{ item.name || '城市'  }}</td>
+              <td>{{ item.value || 0 }}</td>
               <td>{{ ((parseInt(item.value) / total) * 100).toFixed(2)}}%</td>
             </tr>
           </table>
@@ -35,7 +35,8 @@ export default {
   },
   data() {
     return{
-      total: 0
+      total: 0,
+      maxNum: 10
     }
   },
   methods: {
@@ -45,9 +46,10 @@ export default {
         item.value = item.num
       })
       this.total = this.areaDataList.reduce((tem, item, index) =>{return tem + Number(item.value)}, 0);
-      this.initMapEcharts(this.areaDataList);
+      this.maxNum = Math.max.apply(Math, this.areaDataList.map(item => { return parseInt(item.value)}));
+      this.initMapEcharts(this.areaDataList, this.maxNum);
     },
-    initMapEcharts(data) {
+    initMapEcharts(data, maxNum) {
       let mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
@@ -67,14 +69,14 @@ export default {
         },
         visualMap: {
           min: 0,
-          max: 100,
+          max: maxNum,
           left: '10',
           top: 'bottom',
           type: 'continuous',
           text: ['high', 'low'],
           calculable: true,
           color: ['#fb3a32', '#ff6250', '#ffd5c1', '#fff8e1', '#fff'],
-          show: true,
+          show: false,
         },
         series: [
           {
@@ -128,11 +130,15 @@ export default {
       line-height: 32px;
       color: #1A1A1A;
       font-size: 16px;
+      padding: 0 10px;
+      text-align: left;
     }
     td{
-      line-height: 20px;
+      line-height: 22px;
       color: #666666;
       font-size: 14px;
+      padding: 0 10px;
+      text-align: left;
     }
   }
 </style>

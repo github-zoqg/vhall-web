@@ -20,12 +20,12 @@
         ></doc>
       </div>
       <div class="actionBar">
-        <span class="translatePage">
+        <!-- <span class="translatePage">
           <i class="el-icon-arrow-left" @click="prevPage"></i>
           <i class="el-icon-arrow-right" @click="nextPage"></i>
-        </span>
+        </span> -->
         <span class="pages">
-          <em>{{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
+          <em>{{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
         </span>
       </div>
     </div>
@@ -231,12 +231,12 @@ export default {
         this.showDoc = true
       })
     },
-    prevPage(){
-      this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
-    },
-    nextPage(){
-      this.docsdk.nextPage({id: document.querySelector('.docInner .doc-box').id});
-    },
+    // prevPage(){
+    //   this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
+    // },
+    // nextPage(){
+    //   this.docsdk.nextPage({id: document.querySelector('.docInner .doc-box').id});
+    // },
     // 格式化秒数为时分秒 s => hh:mm:ss
     secondsFormmat(val){
       val = Number(val);

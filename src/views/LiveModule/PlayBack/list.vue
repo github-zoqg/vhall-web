@@ -1,10 +1,10 @@
 <template>
   <div class="listBox">
     <pageTitle :title="title"></pageTitle>
-    <div v-if="no_show === true">
+    <div class="noData" v-if="no_show === true">
       <null-page text="暂未创建回放" nullType="noAuth">
         <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
-        <el-button class="length152" round type="white-primary" @click="toRecord">录制</el-button>
+        <el-button class="length152 recordbtn" round type="white-primary" @click="toRecord">录制</el-button>
         <!-- <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button> -->
       </null-page>
     </div>
@@ -93,7 +93,7 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button :disabled="!!scope.row.transcoding" v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
-              <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
+              <el-button type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu slot="dropdown">
@@ -478,19 +478,47 @@ export default {
       // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
       // window.open(routeData.href, '_blank');
     },
-    toChapter(recordId){
-      if (this.isDemand) {
+    toChapter(row){
+      const recordId = row.id
+      // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
+      if (this.isDemand || (row.transcode_status == 1 && row.doc_status)) {
         this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         return false
       }
-      this.$fetch('getDocInfo', {
+      // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
+      this.$fetch('recordInfo', {
         record_id: recordId
       }).then(res => {
-        console.log(res)
-        if (res.data.doc_titles.length) {
-          this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
+          this.$message({
+            message:  '视频转码中，请稍后再试',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else if (res.data.transcode_status == 2){
+          this.$message({
+            message:  '视频转码失败',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
         } else {
-          this.$message.warning('当前回放内容未演示PPT格式的文档，不支持使用章节功能')
+          this.$fetch('getDocInfo', {
+            record_id: recordId
+          }).then(res => {
+            console.log(res)
+            if (res.data.doc_titles.length) {
+              this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+            } else {
+              this.$message({
+                message:  '当前回放内容未演示PPT格式的文档，不支持使用章节功能',
+                showClose: true, // 是否展示关闭按钮
+                type: 'warning', //  提示类型
+                customClass: 'zdy-info-box' // 样式处理
+              });
+            }
+          })
         }
       })
     },
@@ -564,6 +592,29 @@ export default {
       margin-left: 0;
     }
     min-width: 1020px;
+    .noData {
+      /deep/.recordbtn {
+        background: transparent;
+        border-color: #ccc;
+        color: #666;
+        &:hover {
+          background: #FB3A32;
+          border: 1px solid #FB3A32;
+        }
+        &:active {
+          background: #E2332C;
+          border: 1px solid #E2332C;
+        }
+        &.is-disabled {
+          border: 1px solid #E6E6E6;
+          background: transparent;
+          color: #B3B3B3;
+          &:hover,&:active {
+            background: transparent;
+          }
+        }
+      }
+    }
   }
   .tableBox{
     padding: 32px 24px;

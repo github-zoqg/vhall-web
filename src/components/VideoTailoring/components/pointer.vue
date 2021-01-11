@@ -228,7 +228,7 @@ export default {
   top: 11px;
   background-size: 12px 109px;
   background-image: url('../image/point-warp@2x.e10898e.png');
-  z-index: 3;
+  z-index: 5;
   &:hover {
     cursor: grabbing;
   }
