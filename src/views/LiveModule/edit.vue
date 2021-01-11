@@ -84,7 +84,7 @@
             <p class="desc">互动直播</p>
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
-          <div @click='liveModeChange(1)' :class="{active: liveMode== 1}">
+          <div>
             <img src="../../common/images/live/mode-media_check.png" alt=""  @click='liveModeChange(1)' v-if="formData.liveMode== 1">
             <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
             <!-- <el-container class='model'>
@@ -223,7 +223,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -417,7 +417,7 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？？`, '提示', {
+    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',

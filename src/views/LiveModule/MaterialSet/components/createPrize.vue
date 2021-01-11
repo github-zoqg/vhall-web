@@ -34,7 +34,7 @@
       </span>
     </VhallDialog>
     <VhallDialog
-      title="资料库选择"
+      title="选择奖品"
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
