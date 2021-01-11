@@ -64,6 +64,7 @@
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
       width="280px"
+      top="40vh"
       class="add-menu-dialog"
     >
       <el-form

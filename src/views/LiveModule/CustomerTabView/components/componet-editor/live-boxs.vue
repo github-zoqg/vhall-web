@@ -213,6 +213,7 @@ export default {
       top: 0;
       color: #FB3A32;
       font-size: 20px;
+      line-height: 20px;
       z-index: 1;
     }
     &.checkedActive{

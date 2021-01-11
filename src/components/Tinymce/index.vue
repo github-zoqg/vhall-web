@@ -43,7 +43,7 @@ export default {
     toolbar: {
       type: String,
       required: false,
-      default: 'fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | image | fullscreen | wordcount'
+      default: 'fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | image | fullscreen'
     },
     height: {
       type: [Number, String],
@@ -58,7 +58,7 @@ export default {
 
     maxWord: {
       requred: false,
-      defaut: 1000
+      defaut: () => 1000
     }
   },
 
@@ -80,6 +80,9 @@ export default {
       setting: {
         selector: `#${this.tinymceId}`,
         plugins: 'fullscreen image wordcount',
+        // 字体Icon 库。  等瑞芳提供完整时 进行替换
+        // icons_url: '//t-static01-open.e.vhall.com/vhallyun/upload/icons.js',
+        // icons: 'vhall',
         image_dimensions: false,
         toolbar: this.toolbar,
         quickbars_selection_toolbar: "removeformat | bold italic underline strikethrough | fontsizeselect forecolor backcolor",
@@ -96,7 +99,7 @@ export default {
         urlconverter_callback: (url, node, onSave, name) => {
           if (node === 'img' && url.startsWith('blob:')) {
             // Do some custom URL conversion
-            console.log('urlConverter:', url, node, onSave, name)
+            // console.log('urlConverter:', url, node, onSave, name)
             tinymce.activeEditor && tinymce.activeEditor.uploadImages()
           }
           // Return new URL
@@ -142,14 +145,13 @@ export default {
   methods: {
     // 内容修改后，将信息返回
     sendContent(text) {
-      console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
+      // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 
-      if(this.currentCount > 1000) {
-        this.$emit('input', value)
+      if(this.currentCount > (this.maxWord || 1000)) {
+        this.$emit('input', this.value)
         return
       }
-
       // 移除-base64图片
       this.$emit('input', text);
     }
@@ -159,14 +161,27 @@ export default {
 <style lang="less" scoped>
 /deep/ .tox-statusbar{
   display: none !important;
-
   .blue{
-
   }
 }
 
 .vh-editor-wrapbox{
   position: relative;
+  /deep/ .tox-tinymce{
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  /deep/ .tox-toolbar__primary{
+    background: #f7f7f7;
+    border-bottom: 1px solid #ccc;
+  }
+  /deep/ .tox .tox-tbtn {
+    width: 30px;
+    height: 30px;
+  }
+  /deep/ .tox .tox-tbtn--select{
+    width: 70px;
+  }
 }
 
 .word-count{
