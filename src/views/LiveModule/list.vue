@@ -297,7 +297,7 @@ export default {
     },
     toDetail(id, state) {
       const { href } = this.$router.resolve({path: `/live/detail/${id}`});
-      window.open(href, 'blank');
+      window.open(href, '_blank');
     },
     toRoom(id){
       const { href } = this.$router.resolve({path: `/lives/room/${id}`});
