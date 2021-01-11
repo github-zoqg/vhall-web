@@ -881,7 +881,7 @@ export default {
   }*/
   .mediaBox{
     background-color: #fbfdff;
-    border: 1px dashed #c0ccda;
+    border: 1px dashed #ccc;
     border-radius: 6px;
     box-sizing: border-box;
     width: 100%;
@@ -901,7 +901,7 @@ export default {
       }
     }
     &:hover{
-      border-color: #FB3A32;
+      border-color: #999;
     }
     .mediaSlot{
       display: table-cell;

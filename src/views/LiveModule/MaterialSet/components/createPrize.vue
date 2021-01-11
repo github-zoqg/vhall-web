@@ -65,11 +65,13 @@
             <el-button type="primary" v-if="nullText == 'nullData'" round  @click.prevent.stop="createPrize" v-preventReClick>创建奖品</el-button>
           </noData>
         </div>
-       <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
-       <div class="dialog-footer" v-show="total || isSearch">
-        <el-button size="medium" type="primary" @click="sureChoisePrize" v-preventReClick round :disabled="!checkedList.length">确 定</el-button>
-        <el-button size="medium" @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
-       </div>
+      <div class="prize-footer">
+        <div class="prize-check" v-show="total || isSearch"><span>当前选中 <b>{{ checkedList.length }}</b> 件奖品</span></div>
+        <div class="dialog-footer" v-show="total || isSearch">
+          <el-button size="medium" type="primary" @click="sureChoisePrize" v-preventReClick round :disabled="!checkedList.length">确 定</el-button>
+          <el-button size="medium" @click.prevent.stop="dialogPrizeVisible = false" v-preventReClick round>取 消</el-button>
+        </div>
+      </div>
      </div>
     </VhallDialog>
     <VhallDialog
@@ -371,7 +373,7 @@ export default {
 <style lang="less" scoped>
 .prize-create{
   /deep/.el-input__inner{
-    border-radius: 4px;
+    border-radius: 20px;
     height: 36px;
     background: transparent;
   }
@@ -437,16 +439,6 @@ export default {
         }
       }
     }
-    .prize-check{
-     span{
-       color: #666;
-       padding-right: 250px;
-       b{
-         color: #FB3A32;
-       }
-     }
-      margin: 12px 0 24px 0;
-    }
   }
   .surePrize{
     padding-bottom: 16px;
@@ -464,6 +456,24 @@ export default {
     .dialog-footer{
       text-align: center;
       margin-top: 20px;
+    }
+  }
+  .prize-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    .prize-check{
+     span{
+       color: #666;
+      //  padding-right: 250px;
+       b{
+         color: #FB3A32;
+       }
+     }
+    }
+    .dialog-footer{
+
     }
   }
 }
