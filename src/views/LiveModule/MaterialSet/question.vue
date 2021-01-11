@@ -26,6 +26,17 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
+      <div class="show-question">
+        <div class="show-main">
+          <p>问卷预览 <i class="el-icon-close" @click="isShowQuestion=false"></i></p>
+          <pre-question  :questionId="questionId"></pre-question>
+          <div class="submit-footer">
+            <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- <template v-if="isShowQuestion">
       <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
@@ -34,7 +45,7 @@
           <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
         </div>
       </el-dialog>
-    </template>
+    </template> -->
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
   </div>
 </template>
@@ -272,8 +283,37 @@ export default {
       }
     }
   }
-  .submit-footer{
-    text-align: center;
+  .show-question{
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    .show-main{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background: #fff;
+      transform: translate(-50%, -50%);
+      width: 800px;
+      padding: 24px 32px;
+      p{
+        font-size: 20px;
+        font-weight: 600;
+        color: #1A1A1A;
+        line-height: 28px;
+        padding-bottom: 14px;
+        i{
+          float: right;
+          cursor: pointer;
+        }
+      }
+      .submit-footer{
+        text-align: center;
+      }
+    }
   }
 }
 </style>

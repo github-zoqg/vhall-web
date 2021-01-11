@@ -688,6 +688,7 @@ export default {
     font-weight: 400;
     color: #999999;
     line-height: 17px;
+    font-family: @fontRegular;
   }
 }
 .operaBox{

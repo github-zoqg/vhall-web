@@ -945,8 +945,8 @@
     width: 100%;
     height: 100%;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 101;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1002;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -963,7 +963,6 @@
       background: #fff;
       position: relative;
       z-index: 101;
-      margin-left: 13%;
       &.signWrapHid{
         height: auto;
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);

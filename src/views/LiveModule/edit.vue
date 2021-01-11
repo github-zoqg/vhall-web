@@ -6,9 +6,9 @@
       :rules="[
         { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
-        <VhallInput v-model.trim="formData.title" :maxlength="100" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
+        <VhallInput v-model.trim="formData.title" :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="直播时间" required v-if="webniarType=='live'">
+      <el-form-item label="直播时间" required v-if="webniarType=='live'" class="item-time">
           <el-col :span="11.5">
             <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
@@ -41,21 +41,32 @@
           <slot name="default"></slot>
         </div>
         <div class="modeBox">
-          <div @click='liveModeChange(2)' :class="{active: liveMode== 2}">
-            <el-container class='model'>
-              <el-aside width="80px" class="block">
+          <div>
+            <img src="../../common/images/live/mode-video_check.png" :class="{active: formData.liveMode== 2}" @click='liveModeChange(2)' v-if="formData.liveMode== 2">
+            <img src="../../common/images/live/mode-video.png" alt="" @click='liveModeChange(2)' v-else>
+            <p class="desc">视频直播</p>
+            <!-- <el-container class='model'> -->
+              <!-- :class="{active: liveMode== 2}" -->
+              <!-- <el-aside width="80px" class="block">
                 <i class="el-icon-video-camera icon"></i>
               </el-aside>
               <el-container>
                 <el-header height='13px' class="block"></el-header>
                 <el-main class="block"></el-main>
-              </el-container>
-            </el-container>
-            <p class="desc">视频直播</p>
+              </el-container> -->
+            <!-- </el-container> -->
           </div>
-          <div @click='!webniarIntact && liveModeChange(3)' :class="{active: liveMode== 3 }">
-            <el-container class='model'>
-              <el-header height='13px'>
+          <div>
+            <template v-if="webniarIntact">
+              <img src="../../common/images/live/mode-active_disabled.png" alt="" style="cursor: default;">
+            </template>
+            <template v-else>
+             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: formData.liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="formData.liveMode== 3">
+              <img src="../../common/images/live/mode-active.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
+            </template>
+            <!-- <el-container class='model'> -->
+
+              <!-- <el-header height='13px'>
                 <el-col :span="3" class="block"></el-col>
                 <el-col :span="3" :offset='1' class="block"></el-col>
                 <el-col :span="3" :offset='1' class="block"></el-col>
@@ -68,13 +79,16 @@
                   <i class="el-icon-s-custom icon"></i>
                 </el-aside>
                 <el-main class="block"></el-main>
-              </el-container>
-            </el-container>
+              </el-container> -->
+            <!-- </el-container> -->
             <p class="desc">互动直播</p>
-            <span class="notAllow" v-if="webniarIntact">未开通</span>
+            <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
-          <div @click='liveModeChange(1)' :class="{active: liveMode== 1}">
-            <el-container class='model'>
+          <div>
+            <img src="../../common/images/live/mode-media_check.png" :class="{active: formData.liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="formData.liveMode== 1">
+            <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
+            <!-- <el-container class='model'>
+              <img src="../../common/images/live/mode-media.png" alt="">
               <el-aside width="80px" class="block">
                 <i class="el-icon-microphone icon"></i>
               </el-aside>
@@ -82,7 +96,7 @@
                 <el-header height='13px' class="block"></el-header>
                 <el-main class="block"></el-main>
               </el-container>
-            </el-container>
+            </el-container> -->
             <p class="desc">音频直播</p>
           </div>
         </div>
@@ -90,8 +104,8 @@
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面`">
         <upload
-          v-model="imageUrl"
-          :domain_url="domain_url"
+          v-model="formData.imageUrl"
+          :domain_url="formData.domain_url"
           :saveData="{
              path: pathUrl,
              type: 'image',
@@ -133,7 +147,7 @@
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}简介`">
-        <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="content"></v-editor>
+        <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
       <!-- <el-form-item :label="`${webniarTypeToZH}类别`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
@@ -141,7 +155,7 @@
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
           style="display: block"
-          v-model="docSwtich"
+          v-model="formData.docSwtich"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="文档翻页"
@@ -151,7 +165,7 @@
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
           style="display: block"
-          v-model="reservation"
+          v-model="formData.reservation"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="预约人数"
@@ -161,7 +175,7 @@
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
           style="display: block"
-          v-model="online"
+          v-model="formData.online"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="在线人数"
@@ -171,7 +185,7 @@
       <p class="switch__box">
         <el-switch
           style="display: block"
-          v-model="hot"
+          v-model="formData.hot"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="活动热度"
@@ -181,7 +195,7 @@
       <p class="switch__box">
         <el-switch
           style="display: block"
-          v-model="home"
+          v-model="formData.home"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="关联主页"
@@ -191,7 +205,7 @@
       <p class="switch__box" v-if="webniarType=='live' && !versionType">
          <el-switch
           style="display: block"
-          v-model="capacity"
+          v-model="formData.capacity"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="并发扩容"
@@ -202,14 +216,14 @@
       <p class="switch__box">
         <el-switch
           style="display: block"
-          v-model="limitCapacitySwtich"
+          v-model="formData.limitCapacitySwtich"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="最高并发"
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="limitCapacitySwtich" v-model="limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
+         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -264,49 +278,49 @@ export default {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
     docSwtichDesc(){
-      if(this.docSwtich){
+      if(this.formData.docSwtich){
         return '已开启，直播中观众可以提前预览文档，进行文档翻页';
       }else{
         return "开启后，直播中观众可以提前预览文档，进行文档翻页";
       }
     },
     reservationDesc(){
-      if(this.reservation){
+      if(this.formData.reservation){
         return '已开启，观看端显示预约人数';
       }else{
         return "开启后，观看端显示预约人数";
       }
     },
     onlineDesc(){
-      if(this.online){
+      if(this.formData.online){
         return '已开启，观看端显示在线人数';
       }else{
         return "开启后，观看端显示在线人数";
       }
     },
     hotDesc(){
-      if(this.hot){
+      if(this.formData.hot){
         return '已开启，观看端显示活动热度';
       }else{
         return "开启后，观看端显示活动热度";
       }
     },
     homeDesc(){
-      if(this.home){
+      if(this.formData.home){
         return '已开启，该活动在个人主页中显示';
       }else{
         return "开启后，该活动在个人主页中显示";
       }
     },
     capacityDesc(){
-      if(this.capacity){
+      if(this.formData.capacity){
         return `已开启，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }else{
         return `开启后，可以使用扩展包扩容并发人数（扩展包剩余${this.limitInfo.extend}人）`;
       }
     },
     limitCapacityDesc(){
-      if(this.limitCapacitySwtich){
+      if(this.formData.limitCapacitySwtich){
         return '已开启，限制进入活动的观众最大并发数';
       }else{
         return "开启后，限制进入活动的观众最大并发数";
@@ -345,14 +359,35 @@ export default {
       return `${hours}:${minutes}`;
     }
   },
+  watch: {
+    formData: {
+      deep: true,
+      handler() {
+        this.isChange = true;
+      }
+    }
+  },
   data(){
     return {
-      initFormData:{},//idiff表单
       formData: {
         title: '',
         date1: '',
-        date2: ''
+        date2: '',
+        liveMode: 2,
+        content: ``,
+        docSwtich: false,
+        reservation: true,
+        online: true,
+        hot: true,
+        home: true,
+        capacity: false,
+        limitCapacity: '',
+        limitCapacitySwtich: false,
+        imageUrl: '',
+        domain_url: '',
       },
+      isChange: false,
+      showDialog: false,
       startVal: '',
       limitInfo: {},
       pickerOptions: {
@@ -360,23 +395,9 @@ export default {
           return time.getTime() < Date.now() - 8.64e7;
         }
       },
-      content: ``,
-      docSwtich: false,
-      reservation: true,
-      online: true,
-      showDialog: false,
-      hot: true,
-      home: true,
-      capacity: false,
-      isSaveInfo: false,
-      limitCapacity: '',
-      limitCapacitySwtich: false,
       liveTags: ["金融", '互联网', '汽车', '教育', '健康', '其他'],
-      liveMode: 2,
       tagIndex: 0,
       loading: false,
-      imageUrl: '',
-      domain_url: '',
       selectMedia: {},
       expireTimeOption: {
         disabledDate(time) {
@@ -390,22 +411,23 @@ export default {
       }
     };
   },
-  // beforeRouteLeave(to, from, next) {
-  //   if (!this.isSaveInfo) {
-  //     this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
-  //       confirmButtonText: '确定',
-  //       cancelButtonText: '取消',
-  //       customClass: 'zdy-message-box',
-  //       lockScroll: false,
-  //       cancelButtonClass: 'zdy-confirm-cancel'
-  //     }).then(() => {
-  //       next();
-  //     }).catch(() => {
-  //     });
-  //   } else {
-  //     next();
-  //   }
-  // },
+  beforeRouteLeave(to, from, next) {
+     // 离开页面前判断信息是否修改
+    if (!this.isChange) {
+      next()
+      return false;
+    }
+    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      customClass: 'zdy-message-box',
+      lockScroll: false,
+      cancelButtonClass: 'zdy-confirm-cancel'
+    }).then(() => {
+      next()
+    }).catch(() => {
+    });
+  },
   created(){
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
@@ -440,41 +462,37 @@ export default {
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
-        // if (this.$route.query.type == 3) {
-        //   this.$route.meta.title = '复制直播';
-        // }
         this.liveDetailInfo = res.data;
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
-        this.liveMode = this.liveDetailInfo.webinar_type;
-        // if (this.$route.query.type == 2) {
-        //   this.liveMode = 1;
-        // }
-        this.imageUrl = this.liveDetailInfo.img_url;
-        this.domain_url = this.liveDetailInfo.img_url;
+        this.formData.liveMode = this.liveDetailInfo.webinar_type;
+        this.formData.imageUrl = this.liveDetailInfo.img_url;
+        this.formData.domain_url = this.liveDetailInfo.img_url;
         console.log(this.domain_url, this.imageUrl, '封面地址');
         this.tagIndex = this.liveDetailInfo.category - 1;
-        this.home = this.liveDetailInfo.is_private == 1 ? false : true;
-        this.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
-        this.online = Boolean(this.liveDetailInfo.hide_watch);
-        this.reservation = Boolean(this.liveDetailInfo.hide_appointment);
-        this.content = this.liveDetailInfo.introduction;
-        // this.$refs.unitImgTxtEditor.content = this.liveDetailInfo.introduction;
-        this.hot = Boolean(this.liveDetailInfo.hide_pv);
+        this.formData.home = this.liveDetailInfo.is_private == 1 ? false : true;
+        this.formData.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
+        this.formData.online = Boolean(this.liveDetailInfo.hide_watch);
+        this.formData.reservation = Boolean(this.liveDetailInfo.hide_appointment);
+        this.formData.content = this.liveDetailInfo.introduction;
+        this.formData.hot = Boolean(this.liveDetailInfo.hide_pv);
         if (this.liveDetailInfo.webinar_curr_num) {
-          this.limitCapacity = this.liveDetailInfo.webinar_curr_num;
-          this.limitCapacitySwtich = true;
+          this.formData.limitCapacity = this.liveDetailInfo.webinar_curr_num;
+          this.formData.limitCapacitySwtich = true;
         } else {
-          this.limitCapacitySwtich = false;
+          this.formData.limitCapacitySwtich = false;
         }
-        this.capacity = Boolean(this.liveDetailInfo.is_capacity);
+        this.formData.capacity = Boolean(this.liveDetailInfo.is_capacity);
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
           this.selectMedia.name = this.liveDetailInfo.record_subject;
         }
-        this.initFormData = JSON.stringify(this.formData) // 为了对比表单内的数据是否被修改
+        // 重置修改状态
+        setTimeout(() => {
+          this.isChange = false
+        }, 300)
       }).catch(error=>{
         this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
         console.log(error);
@@ -483,10 +501,10 @@ export default {
       });
     },
     sendData(content) {
-      this.content = content;
+      this.formData.content = content;
     },
     liveModeChange(index) {
-      this.liveMode = index;
+      this.formData.liveMode = index;
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
@@ -494,8 +512,8 @@ export default {
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
-        this.imageUrl = file_url;
-        this.domain_url = domain_url;
+        this.formData.imageUrl = file_url;
+        this.formData.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -526,12 +544,12 @@ export default {
     },
     submitForm(formName) {
       if (!this.versionType) {
-        if (this.limitCapacity > this.limitInfo.total) {
+        if (this.formData.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
       }
-      if (this.limitCapacitySwtich && this.limitCapacity < 1) {
+      if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
         this.$message.error('最高并发请输入大于1的数值');
         return;
       }
@@ -543,19 +561,19 @@ export default {
         webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
-        introduction: this.content, // 简介
+        introduction: this.formData.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
-        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
+        webinar_type: this.formData.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
-        is_private: this.home ? 0 : 1 , // 是否在个人主页显示
+        is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
-        hide_watch: Number(this.online), // 是否显示在线人数  1 是 0 否
-        is_adi_watch_doc: Number(this.docSwtich),// 观众是否可预览文档 1 是 0 否
-        hide_appointment: Number(this.reservation),// 是否显示预约人数 1 是 0 否
-        hide_pv: Number(this.hot),// 是否显示活动热度 1 是 0 否
-        webinar_curr_num: this.limitCapacitySwtich ? this.limitCapacity : 0,// 	最高并发 0 无限制
-        is_capacity: Number(this.capacity),// 是否扩容 1 是 0 否
-        img_url: this.$parseURL(this.imageUrl).path, // 封面图
+        hide_watch: Number(this.formData.online), // 是否显示在线人数  1 是 0 否
+        is_adi_watch_doc: Number(this.formData.docSwtich),// 观众是否可预览文档 1 是 0 否
+        hide_appointment: Number(this.formData.reservation),// 是否显示预约人数 1 是 0 否
+        hide_pv: Number(this.formData.hot),// 是否显示活动热度 1 是 0 否
+        webinar_curr_num: this.formData.limitCapacitySwtich ? this.formData.limitCapacity : 0,// 	最高并发 0 无限制
+        is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
+        img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : ''
       };
       if(this.$route.query.type != 2 ) {
@@ -573,7 +591,7 @@ export default {
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res && res.code === 200) {
               this.$message.success(`${this.title}成功`);
-              this.isSaveInfo = true;
+              this.isChange = false;
               console.log(res);
               setTimeout(()=>{
                 this.$router.push({path: '/live/list'});
@@ -678,18 +696,24 @@ export default {
       color: #1A1A1A;
       pointer-events: none;
       user-select: none;
-      margin: 0 20px;
+      margin: 0 13px;
     }
     /deep/ .el-switch__label--right{
       color: #999999;
       pointer-events: none;
       user-select: none;
     }
+    .title-inform /deep/.el-input__inner{
+      padding: 0 12px;
+    }
     // /deep/.el-date-editor {
     //   /deep/input {
     //     width: 270px;
     //   }
     // }
+  }
+  .item-time .el-form-item {
+    margin-bottom: 0px;
   }
   /deep/ .el-form-item{
     // width: 100%;
@@ -729,35 +753,42 @@ export default {
     justify-content: space-between;
     position: relative;
     >div{
-      height: 112px;
+      // height: 112px;
       width: 180px;
       border-radius: 4px;
-      border: 1px solid #CCCCCC;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      &.disabled{
-        pointer-events: none;
-        .notAllow{
-          display: block;
-        }
-      }
-      &.active{
-        border-color: #FB3A32;
-        .block{
-          background: #FFEBEB;
-          .icon{
-            color: #FB3A32;
+      img{
+        width: 100%;
+        height: 112px;
+        object-fit: scale-down;
+        cursor: pointer;
+        &.disabled{
+          pointer-events: none;
+          .notAllow{
+            display: block;
           }
         }
-      }
-      &:nth-child(2){
-        .el-header{
+        &.active{
+          border-color: #FB3A32;
           .block{
-            height: 13px;
+            background: #FFEBEB;
+            .icon{
+              color: #FB3A32;
+            }
           }
         }
+        &:nth-child(2){
+          .el-header{
+            .block{
+              height: 13px;
+            }
+          }
+        }
+        &.active{
+          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+        }
       }
+      // position: relative;
+      // overflow: hidden;
       .notAllow{
         position: absolute;
         color: #727272;
@@ -772,41 +803,46 @@ export default {
         display: block;
       }
     }
-    .model{
-      width: 100px;
-      height: 56px;
-      margin: 0 auto;
-      margin-top: 16px;
-      .el-aside{
-        margin-right: 2px;
-      }
-      .el-header{
-        margin-bottom: 2px;
-      }
-      .el-header,.el-main{
-        padding: 0;
-      }
-      .block{
-        background: #F2F2F2;
-        position: relative;
-      }
-      .icon{
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        margin: auto;
-        font-size: 20px;
-        color: #999999;
-        height: fit-content;
-        width: fit-content;
-      }
-    }
+    // .model{
+    //   width: 100px;
+    //   height: 56px;
+    //   margin: 0 auto;
+    //   margin-top: 16px;
+    //   img{
+    //     width: 100%;
+    //     height: 100%;
+    //     object-fit: scale-down;
+    //   }
+    //   .el-aside{
+    //     margin-right: 2px;
+    //   }
+    //   .el-header{
+    //     margin-bottom: 2px;
+    //   }
+    //   .el-header,.el-main{
+    //     padding: 0;
+    //   }
+    //   .block{
+    //     background: #F2F2F2;
+    //     position: relative;
+    //   }
+    //   .icon{
+    //     position: absolute;
+    //     top: 0;
+    //     right: 0;
+    //     bottom: 0;
+    //     left: 0;
+    //     margin: auto;
+    //     font-size: 20px;
+    //     color: #999999;
+    //     height: fit-content;
+    //     width: fit-content;
+    //   }
+    // }
     .desc{
       font-size: 14px;
       text-align: center;
-      line-height: 30px;
+      line-height: 5px;
     }
   }
   .modeHide{
@@ -881,7 +917,7 @@ export default {
   }*/
   .mediaBox{
     background-color: #fbfdff;
-    border: 1px dashed #c0ccda;
+    border: 1px dashed #ccc;
     border-radius: 6px;
     box-sizing: border-box;
     width: 100%;
@@ -901,7 +937,7 @@ export default {
       }
     }
     &:hover{
-      border-color: #FB3A32;
+      border-color: #999;
     }
     .mediaSlot{
       display: table-cell;

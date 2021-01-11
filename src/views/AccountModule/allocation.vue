@@ -92,7 +92,7 @@
             :currentPage="query.pageNumber"
             @current-change="currentChangeHandler"
             align="center"
-            v-if="!(is_dynamic > 0) && dataList.length > query.limit">
+            v-if="!(is_dynamic > 0) && total > query.limit">
           </SPagination>
         </div>
         <!-- 动态分配，无查询列表 -->

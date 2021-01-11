@@ -38,19 +38,19 @@ const router = [
       {
         path: 'edit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit'},
+        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'vodEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/edit'},
+        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/edit'},
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/list'},
         hidden: true
       },
       {

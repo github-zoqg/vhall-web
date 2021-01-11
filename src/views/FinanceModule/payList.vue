@@ -22,7 +22,7 @@
         <div class="order-item">{{ payInfo.arrears.fee }}</div>
       </div>
       <div class="table-order_2">
-        <p>总金额：<span>￥{{ payInfo.amount }}</span></p>
+        <p>总金额：<span>￥{{ payInfo.total_amount }}</span></p>
       </div>
       <div class="pay-over-time" v-if="timeOut">
         <p><img src="//t-alistatic01.e.vhall.com/static/images/vhall3.0/pay-fail.png" alt=""></p>
