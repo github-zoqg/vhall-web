@@ -12,8 +12,7 @@
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
           <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
-          <el-link :href="downloadUrl"  v-if="downloadUrl" class="unHover">下载模版</el-link>
-          <el-link :href="downloadUrl" v-else  class="unHover">下载模板</el-link>
+          <el-button round size="medium" v-if="downloadUrl" @click="downloadTemplate">下载模版</el-button>
           <div class="searchBox">
             <VhallInput
               placeholder="搜索内容"
@@ -54,6 +53,7 @@
         <p class="group__title">全部分组</p>
         <ul v-if="groupList && groupList.length > 0">
           <el-dropdown
+            placement="bottom-start"
             split-button
             size="medium"
             round
@@ -63,7 +63,7 @@
             :key="`group${ins}`"
             @click.prevent.stop="changeViewerList(item)"
           >{{ item.subject }}
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu slot="dropdown" style="width: 152px;">
               <el-dropdown-item command="rename">重命名</el-dropdown-item>
               <el-dropdown-item command="delete">删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -77,9 +77,9 @@
     </div>
     <!-- 添加分组/ 重命名分组 -->
     <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
-      <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" :label-width="groupDialog.formLabelWidth">
-        <el-form-item label="分组名" prop="subject">
-          <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
+      <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" @submit.native.prevent>
+        <el-form-item prop="subject">
+          <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名称" :maxlength="15"
                     :minlength="1" show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
@@ -139,6 +139,7 @@
           <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
           <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
         </file-upload>
+        <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
         <div class="dialog-right-btn">
           <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
           <el-button @click="closeImportViewer" size="medium" round>取 消</el-button>
@@ -302,6 +303,28 @@ export default {
     }
   },
   methods: {
+    fileDownLoad(imgUrl, name) {
+      // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
+      if (window.navigator.msSaveOrOpenBlob) {
+        var bstr = atob(imgUrl.split(',')[1])
+        var n = bstr.length
+        var u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        var blob = new Blob([u8arr])
+        window.navigator.msSaveOrOpenBlob(blob, 'chart-download' + '.' + 'png')
+      } else {
+        // 这里就按照chrome等新版浏览器来处理
+        const a = document.createElement('a')
+        a.href = imgUrl
+        a.setAttribute('download', 'chart-download')
+        a.click()
+      }
+    },
+    downloadTemplate() {
+      this.fileDownLoad(this.downloadUrl)
+    },
     handleCommand(type, data) {
       type == 'rename' && this.addGroupDialogShow(data)
       type == 'delete' && this.postGroupDel(data)
@@ -335,6 +358,7 @@ export default {
         this.groupDialog.title = '添加分组';
         this.groupDialog.row = null;
         this.groupDialog.visible = true;
+        this.groupForm.subject = ''
       }
     },
     // 获取白名单分组列表
@@ -385,6 +409,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
+            this.groupForm.subject = ''
             // 刷新数据
             this.audienceGet();
             this.groupDialog.visible = false;
@@ -776,13 +801,22 @@ export default {
   /deep/ .el-table .el-button.el-button--text {
     font-size: 14px;
   }
+  /deep/ .noPic .saasicon_shangchuan {
+    font-size: 44px;
+  }
+}
+.uploadtips {
+  padding-top: 8px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #999999;
+  line-height: 17px;
 }
 .operaBox{
   overflow: hidden;
   margin-bottom: 20px;
   .el-link {
-    margin-left: 20px;
-    margin-left: 20px;
     text-decoration: none;
     color: #666666;
     &:hover {
@@ -830,7 +864,7 @@ export default {
   min-height: 120px;
   background: #FFFFFF;
   border-radius: 4px;
-  margin-left: 32px;
+  margin-left: 24px;
   padding: 24px 24px;
   li {
     list-style-type: none;
@@ -839,14 +873,37 @@ export default {
   }
   /deep/ .el-dropdown {
     margin-bottom: 12px;
+    .el-button:first-child {
+      border-right: none;
+      text-align: left;
+      padding-right: 0;
+    }
     .el-button {
-      padding: 4px 28px;
+      padding: 4px 12px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      &:focus {
+        color: #666666;
+        border-color: #cccccc;
+        background-color: #ffffff;
+      }
     }
     .el-dropdown__caret-button {
       padding: 4px 5px;
+      border-left: none;
+      &::before {
+        width: 0;
+      }
+    }
+    .el-button-group {
+      &:hover {
+        .el-button {
+          background-color: #FB3A32;
+          border-color: #FB3A32;
+          color: #fff;
+        }
+      }
     }
     .el-button-group>.el-button {
       border-radius: 23px;
@@ -938,6 +995,6 @@ export default {
 .dialog-right-btn {
   text-align: right;
   margin-bottom: 24px;
-  margin-top: 24px;
+  margin-top: 22px;
 }
 </style>
