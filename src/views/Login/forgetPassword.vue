@@ -248,13 +248,13 @@ export default {
           this.$message.error(res.msg);
         });
         } else {
-          this.$message({
-            message: '请检查手机号是否输入正确',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
+          // this.$message({
+          //   message: '请检查手机号是否输入正确',
+          //   showClose: true,
+          //   // duration: 0,
+          //   type: 'error',
+          //   customClass: 'zdy-info-box'
+          // });
           return;
         }
       } else if (this.isType === 'email') {
