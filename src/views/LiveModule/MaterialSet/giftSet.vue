@@ -80,7 +80,7 @@
              <el-switch v-model="scope.row.status" active-color="#FC5659" inactive-color="#CECECE" @change="changeGiftStatu(scope.row.status, scope.row.gift_id)"></el-switch>
            </template>
         </el-table-column> -->
-        <el-table-column label="操作" align="left">
+        <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
             <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
             <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
@@ -143,36 +143,8 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="提示"
-      width="400px"
-      :visible.sync="dialogTipVisible"
-      :close-on-click-modal=false
-      :close-on-press-escape=false
-      :before-close="handleCancelDelete"
-    >
-      <span>观众端礼物显示将受到影响, 确认删除?</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="handleDeleteGift">确 定</el-button>
-        <el-button @click="handleCancelDelete">取 消</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
-      title="提示"
-      width="400px"
-      :visible.sync="batchDialogTipVisible"
-      :close-on-click-modal=false
-      :close-on-press-escape=false
-      :before-close="handleCancelBatchDelete"
-    >
-      <span>观众端礼物显示将受到影响, 确认删除?</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelBatchDelete">取 消</el-button>
-        <el-button type="primary" @click="handleBatchDeletion">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog
       title="选择礼物"
-      width="620px"
+      width="588px"
       v-if="dialogGiftsVisible"
       :visible.sync="dialogGiftsVisible"
       :close-on-click-modal=false
@@ -184,7 +156,7 @@
         @keyup.enter.native="searchMaterialGift"
         clearable
         @clear="searchMaterialGift"
-        class="head-btn fr search"
+        class="head-btn search"
         v-model.trim="materiaSearchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -197,7 +169,7 @@
         </i>
       </VhallInput>
       <div class="select-matrial-wrap">
-        <div v-show="materiaTableData.length" class="material-box">
+        <div v-show="materiaTableData.length > 4" class="material-box">
           <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
             <div
               v-for="(item, index) in materiaTableData"
@@ -213,14 +185,17 @@
                 <span class="gift-name">{{item.name}}</span>
                 <span class="gift-price">￥{{item.price}}</span>
               </div>
-              <i v-if="item.isChecked" class="el-icon-check"></i>
+              <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
+              <label class="img-tangle" v-show="item.isChecked">
+                <i class="el-icon-check"></i>
+              </label>
             </div>
           </el-scrollbar>
         </div>
-        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length === 0"></null-page>
+        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length === 4"></null-page>
       </div>
       <div class="control">
-        <span>当前选中{{addGiftsIds.length}}件商品</span>
+        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件商品</span>
         <div class="control-btn" style="text-align: right;">
           <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
           <el-button @click="handleCloseChooseGift" round>取消</el-button>
@@ -270,8 +245,6 @@ export default {
         name: '',
         price: ''
       },
-      batchDialogTipVisible: false, // 批量删除提示
-      dialogTipVisible: false, // 删除提示
       dialogVisible: false, // 新建礼品
       dialogGiftsVisible: false, // 显示资料库添加礼品
       shareMaterial: false, // 是否分享到资料库
@@ -295,6 +268,23 @@ export default {
       },
       isWebinarLiving: false
     };
+  },
+  watch: {
+    total(newVal, oldVal) {
+      if (newVal == 4 && newVal != oldVal) {
+        this.$nextTick(() => {
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__original').setAttribute('disabled', 'true')
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox').className += ' is-disabled';
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__input').className += ' is-disabled';
+        })
+      } else {
+        this.$nextTick(() => {
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__original').setAttribute('disabled', 'false')
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox').className = 'el-checkbox'
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__input').className = 'el-checkbox__input'
+        })
+      }
+    }
   },
   components: {
     PageTitle,
@@ -381,7 +371,6 @@ export default {
     // 全选方法
     onSelectAll() {
       if(this.total == 4) {
-        this.$message.warning('没有可以删除的自定义礼物')
         this.$refs.multipleTable.clearSelection()
       }
     },
@@ -609,7 +598,15 @@ export default {
         this.$message.warning('正在直播中，请直播结束后操作！')
         return false;
       }
-      this.batchDialogTipVisible = true
+      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.handleBatchDeletion()
+      })
     },
     // 删除礼品
     async handleDelete (data) {
@@ -618,8 +615,19 @@ export default {
         this.$message.warning('正在直播中，请直播结束后操作！')
         return false;
       }
-      this.dialogTipVisible = true
       this.deleteId = data.id
+
+      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.handleDeleteGift()
+      }).catch(() => {
+        this.deleteId = ''
+      })
     },
     handleDeleteGift () {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
@@ -629,7 +637,6 @@ export default {
       this.chooseGift()
 
       this.deleteId = ''
-      this.dialogTipVisible = false
     },
     isCanDelete () {
       return new Promise(resolve => {
@@ -641,16 +648,8 @@ export default {
         })
       })
     },
-    handleCancelDelete () {
-      this.deleteId = ''
-      this.dialogTipVisible = false
-    },
-    handleCancelBatchDelete () {
-      this.selectIds = []
-      this.batchDialogTipVisible = false
-    },
     // 批量删除
-    handleBatchDeletion () {
+    async handleBatchDeletion () {
       this.selectIds.forEach((item, index) => {
         const resData = this.tableData.filter(curItem => curItem.id != item)
         this.tableData = resData
@@ -663,7 +662,6 @@ export default {
       this.addedGiftsIds = this.tableData.map(item => item.id)
       this.chooseGift()
       this.selectIds = []
-      this.batchDialogTipVisible = false
     },
     // 选择奖品添加
     handleChooseGift (index, gift) {
@@ -779,11 +777,35 @@ export default {
         border: 1px solid #CCC;
       }
     }
+    /deep/.el-button--default {
+      background: transparent;
+      &:hover {
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
+      &.is-disabled {
+        border: 1px solid #E6E6E6;
+        background: transparent;
+        color: #B3B3B3;
+        &:hover,&:active {
+          background: transparent;
+        }
+      }
+    }
   }
   .gift-list{
     width: 100%;
+    box-shadow: none;
+    border: none;
     .gift-price{
       color: #FB3A32;
+    }
+    /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
+      background: #e6e6e6;
     }
   }
   /deep/.el-dialog__wrapper {
@@ -793,20 +815,20 @@ export default {
     }
   }
   /deep/.el-dialog{
-    border-radius: 8px;
+    border-radius: 4px;
     position: relative;
   }
   .select-matrial-wrap {
     box-sizing: border-box;
     width: 100%;
-    height: 320px;
-    padding: 10px 0;
+    height: 328px;
+    padding: 16px 0 0 32px;
     overflow: hidden;
     /deep/ .null-page {
       margin-top: 110px!important;
     }
     .material-box {
-      height: 310px;
+      height: 318px;
       margin-bottom: 10px;
     }
     .head-btn{
@@ -821,19 +843,23 @@ export default {
     }
     .matrial-item {
       display: inline-block;
-      width: 261px;
-      height: 92px;
-      margin: 6px;
+      width: 256px;
+      height: 96px;
       background: #F5F5F5;
       border-radius: 4px;
-      padding: 12px;
-      border: 1px solid #fff;
+      padding: 11px;
+      border: 1px solid #F5F5F5;
+      margin-bottom: 12px;
+      &:nth-child(2n + 1) {
+        margin-right: 12px;
+      }
       .gift-cover{
-        display: inline-block;
-        width: 70px;
-        height: 70px;
+        float: left;
+        width: 72px;
+        height: 72px;
         border-radius: 4px;
         border: 1px solid #e6e6e6;
+        margin: 0;
         img{
           width: 100%;
           height: 100%;
@@ -841,72 +867,77 @@ export default {
         }
       }
       .gift-info{
-        display: inline-block;
+        float: left;
         width: auto;
         height: 100%;
-        vertical-align: top;
         margin-left: 12px;
         font-size: 14px;
         font-family: @fontRegular;
         font-weight: 400;
         .gift-name{
           display: block;
-          color: #222222;
+          font-size: 14px;
+          color: #1a1a1a;
           line-height: 20px;
-          width: 120px;
+          margin-top: 15px;
         }
         .gift-price{
           display: block;
-          font-size: 16px;
-          color: #FC5659;
-          line-height: 22px;
+          font-size: 14px;
+          color: #666666;
+          line-height: 20px;
           margin-top: 4px;
         }
       }
       &:hover{
         cursor: pointer;
       }
-      .el-icon-check {
+      .img-tangle{
         position: absolute;
-        bottom: 2px;
-        right: 3px;
-        color: #fff;
-        z-index: 2;
-        font-size: 16px;
-        font-weight: 800;
+        right: 0;
+        top:0;
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        border-right-color: #FB3A32;
+        border-top-color: #FB3A32;
+        i{
+          color:#fff;
+          position: absolute;
+          top: -8px;
+          right:-11px;
+          font-size: 10px;
+        }
       }
     }
     .matrial-item.active{
-      border: 1px solid #FC5659;
+      border: 1px solid #fb3a32;
       position: relative;
-      &:after{
-        content: '';
-        display: block;
-        position: absolute;
-        bottom: 0px;
-        right: 0px;
-        width: 22px;
-        height: 22px;
-        background: red;
-      }
+      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
     }
   }
   .pageBox{
     margin-bottom: 20px;
   }
   .control{
-    padding-top: 20px;
-    padding-bottom: 32px;
+    padding: 24px 32px;
     width: 100%;
     position:relative;
     &>span {
       display: inline-block;
-      position: absolute;
-      top: 24px;
-      left: 20px;
+      line-height: 36px;
     }
     /deep/ .disabled{
       opacity: 0.5;
+    }
+    .control-btn {
+      float: right;
+      /deep/ .el-button.is-round {
+          padding: 7px 33px;
+      }
+    }
+    .choosed-num {
+      color: #FB3A32;
     }
   }
   .share-material{
@@ -929,9 +960,16 @@ export default {
   }
 }
 /deep/ .choose-gift {
+  .el-dialog__title {
+    line-height: 24px;
+  }
+  .el-dialog__body {
+    padding: 0;
+  }
   .head-btn.el-input {
-    width: 180px;
+    width: 220px;
     height: 36px;
+    margin-left: 32px;
     .el-input__inner {
       border-radius: 18px;
       border: 1px solid #CCC;
