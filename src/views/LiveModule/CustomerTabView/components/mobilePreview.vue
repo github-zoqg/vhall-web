@@ -318,9 +318,9 @@ export default {
     // 预告显示 隐藏菜单
     showOrHide(index) {
       if(this.menus[index].status == 3) {
-        this.menus[index].status == 4
+        this.menus[index].status = 4
       } else {
-        this.menus[index].status == 3
+        this.menus[index].status = 3
       }
     },
     // 删除
