@@ -269,7 +269,7 @@ export default {
           this.$message({
             message:  `报名表单${ behaviour }成功！`,
             showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
+            type: 'success', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
           });
         }
