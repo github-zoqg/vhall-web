@@ -148,12 +148,15 @@ export default {
       // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 
-      if(this.currentCount > (this.maxWord || 1000)) {
+      if(this.currentCount > 1000) {
+
+        this.$message.warning('您输入的内容超出1000限制，已自动取消')
+        this.$refs.editor.getInstance().setContent(this.value)
         this.$emit('input', this.value)
         return
+      } else {
+        this.$emit('input', text);
       }
-      // 移除-base64图片
-      this.$emit('input', text);
     }
   },
 };
@@ -187,7 +190,7 @@ export default {
 .word-count{
   position: absolute;
   right: 12px;
-  bottom: -5px;
+  bottom: 5px;
   font-size: 14px;
   color: #999;
   .blue{
