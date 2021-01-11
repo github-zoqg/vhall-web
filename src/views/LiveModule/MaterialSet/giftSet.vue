@@ -192,7 +192,7 @@
             </div>
           </el-scrollbar>
         </div>
-        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length === 4"></null-page>
+        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length <= 4"></null-page>
       </div>
       <div class="control">
         <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件商品</span>
