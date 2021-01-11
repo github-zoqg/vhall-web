@@ -20,10 +20,10 @@
             :action="actionUrl"
             :on-success="handleUploadSuccess"
           >
-          <div class="preview" v-show="info.imageSrc">
+          <div class="preview" v-show="info.imageSrc && info.imageSrc != defaultQr">
             <img :src="info.imageSrc" alt="">
           </div>
-           <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc">
+           <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc || info.imageSrc == defaultQr">
               <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
               <div data-v-4d7778f2="" class="tips">
                 <div data-v-62244b0e="">
@@ -67,6 +67,7 @@ export default {
         type: 'image',
       },
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
+      defaultQr: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
       token: localStorage.getItem('token') || ''
     }
   },
