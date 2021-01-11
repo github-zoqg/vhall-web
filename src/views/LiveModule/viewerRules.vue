@@ -278,7 +278,7 @@ export default {
         }
       ],
       viewerDao: {},
-      perssionInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
+      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,

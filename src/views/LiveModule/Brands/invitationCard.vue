@@ -70,7 +70,8 @@
           <el-form-item label="时间">
             <VhallInput
               v-model.trim="formInvitation.webinar_date"
-              show-word-limit
+              :maxlength="20"
+              autocomplete="off"
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
@@ -155,8 +156,8 @@
               <div class="watch-code"><img :src="qrcode" alt=""></div>
               <div class="watch-action">
                 <p>扫码观看视频</p>
-                <h1>{{ formInvitation.webinar_date }}</h1>
-                <h1>{{ formInvitation.location }}</h1>
+                <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
+                <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
               </div>
             </div>
           </div>
@@ -598,7 +599,8 @@ export default {
             color:#1A1A1A;
             font-weight: 600;
             line-height: 37px;
-            // min-height: 80px;
+            word-wrap: break-all;
+            word-wrap:break-word;
           }
           p{
             font-size: 14px;
@@ -703,6 +705,8 @@ export default {
         color: #1A1A1A;
         line-height: 40px;
         font-weight: 500;
+        word-wrap: break-all;
+        word-wrap:break-word;
       }
       p{
         padding:0;
@@ -711,6 +715,8 @@ export default {
         line-height: 25px;
         font-weight: 400;
         min-height: 50px;
+        word-wrap: break-all;
+        word-wrap:break-word;
       }
       .watch-footer{
           position: absolute;
@@ -799,6 +805,8 @@ export default {
           font-size: 26px;
           font-weight: 600;
           line-height: 40px;
+          word-wrap: break-all;
+          word-wrap:break-word;
         }
         p{
           font-size: 14px;
@@ -806,6 +814,8 @@ export default {
           line-height: 20px;
           color:#fff;
           padding: 5px 15px;
+          word-wrap: break-all;
+          word-wrap:break-word;
         }
       }
       .look-time{

@@ -58,7 +58,7 @@ export default {
     PageTitle
   },
   created() {
-    this.isInteract = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact;
+    this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
   },
   methods: {
     goForm(url) {
