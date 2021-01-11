@@ -116,14 +116,6 @@ export default {
         this.userHomeVo = null;
       });
     },
-    userLogoGet() {
-      this.$fetch('userLogoGet', {
-        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
-      }).then(res => {
-        console.log(res);
-      }).catch(err=>{
-      });
-    },
     toHomeSetPage() {
       this.$router.push({
         path: `/homeSet/${sessionOrLocal.get('userId')}`

@@ -17,8 +17,8 @@
           </div>
 
           <div class="info">
-            <p class="mainColor font-20">
-              {{ fontNumber(liveDetailInfo.subject) }}
+            <p class="mainColor font-20" :title="liveDetailInfo.subject">
+              {{ liveDetailInfo.subject }}
             </p>
             <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.first_broad || liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
@@ -27,7 +27,7 @@
               <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
-              <el-button round size="mini" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                 placement="bottom"
                 trigger="hover"
@@ -38,7 +38,7 @@
                   <img :src="h5WapLink" alt="" v-if="h5WapLink">
                   <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
                 </div>
-                <el-button round size="mini" slot="reference">扫码</el-button>
+                <el-button round size="small" slot="reference">扫码</el-button>
               </el-popover>
               <el-popover
                 placement="bottom"
@@ -46,11 +46,12 @@
               >
                 <div class="invitation-code urlCopy">
                   <p>观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
-                  <p>
-                    <el-button round size="mini" type="primary" @click="doCopy">复制</el-button>
-                    <el-button round size="mini" type="primary" @click="openLink">打开页面</el-button></p>
+                  <div class="copy-item">
+                    <el-button round size="small" type="primary" @click="doCopy">复制</el-button>
+                    <el-button round size="small" @click="openLink">打开页面</el-button>
+                  </div>
                 </div>
-                <el-button round size="mini" slot="reference">查看</el-button>
+                <el-button round size="small" slot="reference">查看</el-button>
               </el-popover>
             </div>
           </div>
@@ -100,6 +101,7 @@ export default {
       perssionInfo:JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       loading: true,
       isForm: false,
+      isExport: false,
       isAnginOpen: false,
       outLiveTime: false,
       liveDetailInfo: {
@@ -399,6 +401,9 @@ export default {
           return `0天0时0分0秒`;
         }
       }
+    },
+    exportInfo() {
+      this.isExport = !this.isExport;
     }
   }
 };
@@ -421,14 +426,16 @@ export default {
     display: flex;
     .info{
       flex: 1;
+      // overflow: auto;
+      // height: 175px;
       p{
         font-size: 14px;
         line-height: 28px;
         &:nth-child(1){
           margin-bottom: 16px;
-          height: 56px;
+          // height: 56px;
           font-size: 20px;
-          display: table-cell;
+          // display: table-cell;
           vertical-align: middle;
         }
         &:last-child{
@@ -495,7 +502,7 @@ export default {
 //
 .invitation-code{
   text-align: center;
-  padding: 2px 40px;
+  padding: 2px 20px 10px;
   display: block!important;
   left: 50%;
   p{
@@ -503,6 +510,10 @@ export default {
   }
   img{
     margin-bottom: 10px;
+  }
+  .copy-item{
+    text-align: right;
+    padding: 24px 0 10px 0;
   }
 }
 .urlCopy{
@@ -533,7 +544,15 @@ export default {
 }
 .font-20{
   font-size: @20;
-  max-width: 500px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  // max-width: 500px;
   // height: 56px;
   // overflow: hidden;
   // text-overflow:ellipsis;
@@ -553,7 +572,7 @@ export default {
     }
     &:nth-child(2){
       span{
-        font-size: 30px;
+        font-size: 22px;
         font-weight: bold;
       }
       i{

@@ -5,7 +5,7 @@
     :headers="{token: token, platform: 17}"
     :data=saveData
     name="resfile"
-    accept="image/x-ms-bmp,image/x-png,image/gif,image/jpeg"
+    accept="image/x-ms-bmp,image/x-png,image/gif,image/jpeg,image/bmp"
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">

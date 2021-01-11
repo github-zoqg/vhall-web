@@ -27,10 +27,11 @@
             @onExportData="exportCenterData()"
             :searchAreaLayout="searchAreaLayout"
             @onSearchFun="getTableList('search')"
+            v-show="tableList.length > 0 || isSearch"
             >
           </search-area>
         </div>
-        <noData v-show="tableList.length == 0" :height="50">
+        <noData v-show="tableList.length == 0" :nullType="nullText" :height="100">
         </noData>
         <table-list
           ref="tableList"
@@ -57,6 +58,8 @@ export default {
     return {
       active: 2,
       totalNum: 0,
+      nullText: 'nullData',
+      isSearch: false,
       isHandle: false,
       params: {}, //导出的时候用来记录参数
       activeName: '1',
@@ -333,6 +336,11 @@ export default {
         pageInfo.pos= 0;
         // 如果搜索是有选中状态，取消选择
         this.$refs.tableList.clearSelect();
+        this.isSearch = true;
+        this.nullText = 'search';
+      } else {
+        this.nullText = 'nullData';
+        this.isSearch = false;
       }
       paramsObj.merge_type = formParams.merge_type ? 1 : 2;
       let obj = Object.assign({}, pageInfo, paramsObj);
@@ -378,10 +386,6 @@ export default {
 <style lang="less" scoped>
 .user-data {
   padding: 0;
-  /deep/.el-button {
-    border: none;
-    background: transparent;
-  }
   .container-box {
     margin-bottom: 24px;
   }
@@ -400,9 +404,10 @@ export default {
       width: 135px!important;
     }
   }
-  // /deep/.time-kuai {
-  //   width: 189px;
-  // }
+  /deep/.el-tabs__item {
+   height: 56px;
+   line-height: 56px;
+  }
   /deep/.el-date-editor {
     width: 200px!important;
     /deep/ input {

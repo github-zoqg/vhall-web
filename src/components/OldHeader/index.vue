@@ -3,7 +3,10 @@
     <header class="commen-header home-header">
       <nav :class="['navbar nav-top all']" role="navigation">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/"><img src="../../common/images/sys/logo@2x.png" alt=""></a>
+          <a :href="logo_jump_url" v-if="logo" class="navbar-brand">
+            <img v-if="logo" :src="logo">
+          </a>
+          <a class="navbar-brand" :href="logo_jump_url" v-else><img src="../../common/images/sys/logo@2x.png" alt=""></a>
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
@@ -46,7 +49,9 @@ export default {
     return {
       isLogin: null,
       userInfo: null,
-      avatarImgUrl: null
+      avatarImgUrl: null,
+      logo: null,
+      logo_jump_url: null
     };
   },
   methods: {
@@ -65,6 +70,18 @@ export default {
         this.loginOut();
       }
     },
+    userLogoGet(id) {
+      this.$fetch('userLogoGet', {
+        webinar_user_id: id
+      }).then(res => {
+        console.log('用户控制台标识图：', res);
+        this.logo = res.data.logo;
+        this.logo_jump_url = res.data.logo_jump_url ? res.data.logo_jump_url : process.env.VUE_APP_COMPANY_URL;
+      }).catch(err=>{
+        this.logo = null;
+        this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
+      });
+    },
     loginOut() {
       sessionOrLocal.clear();
       sessionOrLocal.clear('localStorage');
@@ -74,6 +91,16 @@ export default {
     updateAccount(account) {
       this.userInfo = account;
       this.avatarImgUrl = account ? account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    },
+    // 获取标记 logo 主办方信息
+    getSignInfo (id) {
+      return this.$fetch('watchInterGetWebinarTag', {
+        webinar_id: id
+      }).then(res => {
+        if (res.data) {
+          this.signInfo = res.data
+        }
+      })
     }
   },
   mounted() {
@@ -85,6 +112,16 @@ export default {
     this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     this.$EventBus.$on('saas_vs_login_out', this.loginOut);
+    if (this.$route.path.indexOf('/user/home') !== -1) {
+      if(this.$route.meta.type !== 'owner') {
+        // 非控制台查看
+        this.userLogoGet(this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str);
+      }
+    } else if (this.$route.path.indexOf('/v3/chooseWay/') !== -1) {
+      let _data = this.$route.params
+      this.arr = [_data.str, _data.role]; // 活动ID，角色
+      this.getSignInfo(this.arr[0]);
+    }
   }
 };
 </script>

@@ -70,7 +70,7 @@
           <el-form-item label="时间">
             <VhallInput
               v-model.trim="formInvitation.webinar_date"
-              autocomplete="off"
+              show-word-limit
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
@@ -213,6 +213,13 @@ export default {
         callback();
       }
     };
+    const timeValidate = (rule, value, callback) => {
+      if (value && value.length > 20) {
+        callback && callback('时间在20个字符以内');
+      } else {
+        callback();
+      }
+    };
     const desciptionValidate = (rule, value, callback) => {
       if (value && value.length > 45) {
         callback && callback('简介在45个字符以内');
@@ -281,6 +288,9 @@ export default {
         location: [
           { required: false, validator: locationValidate, trigger: 'blur' },
         ],
+        webinar_date: [
+          { required: false, validator: timeValidate, trigger: 'blur' },
+        ],
         company: [
           { required: false, validator: companyValidate, trigger: 'blur' },
         ],
@@ -291,7 +301,7 @@ export default {
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     let token = sessionOrLocal.get('token', 'localStorage');
-    this.link = `${process.env.VUE_APP_WAP_WATCH}/invite/${this.$route.params.str}?token=${token}`;
+    this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     this.showCode = `${Env.staticLinkVo.aliQr}${this.link}`;
     this.getInviteCardInfo();
   },
@@ -869,16 +879,6 @@ export default {
       /deep/.el-button:last-child{
         margin-left: 10px;
       }
-      .invitation-code{
-        width: 200px;
-        height: 190px;
-        text-align: center;
-        img{
-          width: 200px;
-          height: 190px;
-          object-fit: scale-down;
-        }
-      }
     }
   }
   .sureBtn {
@@ -899,6 +899,16 @@ export default {
     left:0;
     background: rgba(255, 255, 255, 0.5);
     z-index: 9;
+  }
+}
+.invitation-code{
+  width: 200px;
+  height: 190px;
+  text-align: center;
+  img{
+    width: 200px;
+    height: 190px;
+    object-fit: scale-down;
   }
 }
 </style>

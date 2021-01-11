@@ -400,6 +400,7 @@ export default {
       const typeList = ['png', 'jpeg', 'gif', 'bmp'];
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
+      console.log(typeArr, '??????????')
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
