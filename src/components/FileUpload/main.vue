@@ -9,7 +9,7 @@
     :on-success='uploadSuccess'>
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
-          <i class="img"></i>
+          <i class="iconfont-v3 saasexcelwendang excel"></i>
           <p class="file-name" style="color: rgb(136, 136, 136);" :title="fileName">{{fileName}}</p>
           <div class="change-txt" v-if="result && (progress.percent === 0 || progress.percent === 100)">
             <p id="right">上传成功，共检测到{{result.success}}条有效数据</p>
@@ -198,6 +198,13 @@ export default {
     i.img {
       font-size: 44px;
       color: #8c939d;
+    }
+    i.excel {
+      font-size: 28px;
+      color: rgb(20, 186, 106);
+      margin-top: 40px;
+      display: block;
+      margin: 40px auto 0 auto;
     }
     .box{
       width: 100%;

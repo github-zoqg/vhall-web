@@ -676,7 +676,7 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['csv', 'xls', 'xlsx'];
+      const typeList = ['xls', 'xlsx'];
       let nameArr = file.name.split('.');
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;

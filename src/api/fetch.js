@@ -20,9 +20,14 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
   let data = Object.assign(data1);
+  if (window.location.hash.indexOf('/live/watch/') !== -1) {
+    let _live_token = sessionOrLocal.get('live_token', 'localStorage')
+    if(_live_token){
+      data.live_token = _live_token
+    }
+  }
   // const interact_token = sessionStorage.getItem('interact_token') || null;
   let formData = null;
-
   if (method === 'GET' && data) {
       let Uri;
       api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
@@ -48,7 +53,6 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   };
 
   // interact_token && (headers['interact-token'] = interact_token)
-
   if(window.location.hash.indexOf('/live/watch/') !== -1) {
 
     // pc观看等
