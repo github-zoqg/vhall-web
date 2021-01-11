@@ -105,7 +105,7 @@ const router = [
     ]
   },
   {
-    path: '/lives/user/home/:str(\\d+)',
+    path: '/user/home/:str(\\d+)',
     component: () => import('@/views/UserHome/home'),
     meta: { auth: false, title: '个人主页', name: 'userHome', type: 'new' },
     hidden: true
