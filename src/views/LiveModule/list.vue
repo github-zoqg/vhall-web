@@ -11,6 +11,7 @@
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
         <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick v-if="vodPerssion == 1">创建点播</el-button>
+        <!--  -->
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -186,7 +187,9 @@ export default {
           });
         });
       } else if (command === '/live/edit') {
-        this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
+        const { href } = this.$router.resolve({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
+        window.open(href, '_blank');
+        // this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
       } else {
         // 新标签页打开
         // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
@@ -389,6 +392,7 @@ export default {
       .inner{
         transition: all .15s ease-in;
         position: relative;
+        border-radius: 4px;
       }
       .inner:hover{
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);

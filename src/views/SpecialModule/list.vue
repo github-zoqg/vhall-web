@@ -52,7 +52,7 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                <i class="iconfont-v3 saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
+                <i class="iconfont-v3 saasicon-pencil" @click="editSpecialInfo(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
                 <i class="iconfont-v3 saasicon-eye" @click="specialDetail(item)"></i>
@@ -205,6 +205,11 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 编辑专题
+    editSpecialInfo(id) {
+      const { href } = this.$router.resolve({path:'/special/edit',query: {id: id, title: '编辑'}});
+      window.open(href, '_blank');
     },
     toShare(id) {
       this.dialogShareVisible = true;

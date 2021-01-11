@@ -426,7 +426,7 @@ export default {
     }
     .add-product{
       background: #fff;
-      padding: 24px 32px;
+      padding: 48px 32px 1px 32px;
       border-radius: 4px;
     }
     .el-form-item {

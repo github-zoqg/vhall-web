@@ -52,7 +52,7 @@
       </el-form-item>
     </el-form>
     <div class="export-data" v-if="isExports">
-      <el-button round type="white-primary" size="medium" @click="exportData">导出数据</el-button>
+      <el-button round  size="medium" @click="exportData">导出数据</el-button>
     </div>
   </div>
 </template>
@@ -214,7 +214,7 @@ export default {
       // }
       .el-form--inline .el-form-item {
           margin-right: 16px;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
       }
     .time-kuai {
       height: 36px;

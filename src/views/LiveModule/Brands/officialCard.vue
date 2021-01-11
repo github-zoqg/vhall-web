@@ -15,7 +15,6 @@
     </div>-->
    <!-- <div :class="!status ? 'pre&#45;&#45;full-mask' : ''">
       <div class="pre&#45;&#45;full-cover" v-show="!status"></div>-->
-    <el-card>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
@@ -141,7 +140,6 @@
           <!--手机预览,end-->
         </div>
       </div>
-    </el-card>
   <!--  </div>-->
   </div>
 </template>
@@ -357,16 +355,21 @@ export default {
     .form-phone{
       display: flex;
       padding: 30px 12px;
+      background: #fff;
+      min-height: 730px;
     }
     .official-form{
-      width: 450px;
-      margin-right: 200px;
+      width: 482px;
+      margin-right: 80px;
       /deep/.el-button{
         margin-top: 100px;
         // padding: 10px 45px;
       }
       /deep/.el-input {
         width: 360px;
+      }
+      /deep/.el-switch__label{
+        color: #999;
       }
     }
     .v-preview-content {
@@ -477,7 +480,7 @@ export default {
     }
   }
   .img-box{
-    width: 360px;
+    width: 100%;
     height: 135px;
   }
   /deep/.length152{
