@@ -169,7 +169,7 @@
         </i>
       </VhallInput>
       <div class="select-matrial-wrap">
-        <div v-show="materiaTableData.length > 4" class="material-box">
+        <div v-show="!isNull" class="material-box">
           <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
             <div
               v-for="(item, index) in materiaTableData"
@@ -192,7 +192,7 @@
             </div>
           </el-scrollbar>
         </div>
-        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="materiaTableData.length <= 4"></null-page>
+        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="isNull"></null-page>
       </div>
       <div class="control">
         <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件商品</span>
@@ -268,6 +268,11 @@ export default {
       },
       isWebinarLiving: false
     };
+  },
+  computed: {
+    isNull() {
+      return !this.materiaTableData.some(item => item.source_status == 1)
+    }
   },
   watch: {
     total(newVal, oldVal) {
