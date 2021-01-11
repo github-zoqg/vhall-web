@@ -222,6 +222,7 @@ export default {
           hot: true,
           home: true
         }
+        this.$refs.unitImgTxtEditor.$refs.editor.resetContent()
       }
     }
   },
