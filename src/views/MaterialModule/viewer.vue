@@ -116,7 +116,7 @@
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="468px">
+    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="400px">
       <div class="upload-dialog-content">
         <file-upload
           ref="viewerUpload"
@@ -803,6 +803,13 @@ export default {
   }
   /deep/ .noPic .saasicon_shangchuan {
     font-size: 44px;
+  }
+  /deep/ .el-upload--picture-card {
+    width: 100%;
+    height: 130px;
+  }
+  /deep/ .el-dialog__title {
+    line-height: 24px;
   }
 }
 .uploadtips {
