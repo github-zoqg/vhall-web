@@ -851,7 +851,7 @@ export default {
       border-radius: 16px;
       &:last-child {
         background: #ffffff;
-        display: block;
+        /* display: block; */
         text-align: left;
         padding: 3px 16px 3px 0;
       }

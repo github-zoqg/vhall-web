@@ -52,7 +52,7 @@ export default {
     return {
       dialogVisible: false,
       wxDialogVisible: false,
-      link: `${process.env.VUE_APP_WEB_URL}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
+      link: `${process.env.VUE_APP_WEB_URL}/lives/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
       wxUrl: `${Env.staticLinkVo.aliQr}`
     };
   },
