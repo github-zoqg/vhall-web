@@ -21,19 +21,25 @@
           <div class="vhallPlayer-controller-box">
             <div class="v-c-left">
               <div class="vh-video-chapter__operate">
-                <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
-                  <icon icon-class="saasicon_shangyimiao"></icon>
-                </span>
-                <span
-                  @click="videoPlayBtn"
-                  class="vh-btn vh-video-chapter__play"
-                  :class="{ 'is-pause': statePaly }"
-                >
-                  <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
-                </span>
-                <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
-                  <icon icon-class="saasicon_xiayimiao"></icon>
-                </span>
+                <el-tooltip content="上一秒" placement="top">
+                  <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
+                    <icon icon-class="saasicon_shangyimiao"></icon>
+                  </span>
+                </el-tooltip>
+                <el-tooltip :content="statePaly ? '暂停' : '播放'" placement="top">
+                  <span
+                    @click="videoPlayBtn"
+                    class="vh-btn vh-video-chapter__play"
+                    :class="{ 'is-pause': statePaly }"
+                  >
+                    <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
+                  </span>
+                </el-tooltip>
+                <el-tooltip content="下一秒" placement="top">
+                  <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
+                    <icon icon-class="saasicon_xiayimiao"></icon>
+                  </span>
+                </el-tooltip>
               </div>
 
             </div>
@@ -45,9 +51,11 @@
               </span>
             </div>
             <div class="vh-video-chapter__volume-box">
-              <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
-                <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
-              </span>
+              <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top">
+                <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
+                  <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+                </span>
+              </el-tooltip>
               <div class="vh-video-chapter__slider">
                 <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
               </div>
@@ -76,17 +84,29 @@
         </div>
         <div class="actionBar">
           <span class="pages">
-            <span class="translatePage">
-              <icon icon-class="saasicon_arrowleft" @click="prevPage"></icon>
-            </span>
+            <el-tooltip content="上一页" placement="top">
+              <span class="translatePage" @click="prevPage">
+                <icon icon-class="saasicon_arrowleft"></icon>
+              </span>
+            </el-tooltip>
             <em> {{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
-            <span class="translatePage">
-              <icon icon-class="saasicon_arrowright1" @click="nextPage"></icon>
-            </span>
+            <el-tooltip content="下一页" placement="top">
+              <span class="translatePage" @click="nextPage">
+                <icon icon-class="saasicon_arrowright1"></icon>
+              </span>
+            </el-tooltip>
           </span>
           <span class="docs">
-            <icon icon-class="saasicon_wordleft" @click="prevDoc"></icon>
-            <icon icon-class="saasicon_wordright" @click="nextDoc"></icon>
+            <el-tooltip content="上一个文档" placement="top">
+              <span @click="prevDoc">
+                <icon icon-class="saasicon_wordleft"></icon>
+              </span>
+            </el-tooltip>
+            <el-tooltip content="下一个文档" placement="top">
+              <span @click="nextDoc">
+                <icon icon-class="saasicon_wordright"></icon>
+              </span>
+            </el-tooltip>
           </span>
           <!-- <span class="thumbnail"></span> -->
         </div>
@@ -524,11 +544,13 @@ export default {
     },
     closePreview() {
       this.previewVisible = false;
+      document.getElementById('app').style.overflow = 'auto'
     },
     previewChapters() {
       window.scrollTo(0, 0);
       this.previewVisible = true;
       this.$refs.player.$PLAYER.pause();
+      document.getElementById('app').style.overflow = 'hidden'
     },
     saveChapters() {
       debounce(() => {
@@ -819,20 +841,21 @@ export default {
 
 <style lang="less" scoped>
   .wraper{
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,.5);
     top: 0;
     left: 0;
-    z-index: 22;
+    z-index: 1002;
     display: flex;
     justify-content: center;
+    align-items: center;
     .preViewChapters {
-      margin-top: 200px;
+      // margin-top: 200px;
       min-height: 320px;
-      width: 960px;
-      height: 600px;
+      width: 50%;
+      height: 64%;
       background: #222;
       position: relative;
       .close {
@@ -853,6 +876,9 @@ export default {
     justify-content: space-between;
     >div{
       flex: 1;
+    }
+    /deep/ .el-loading-mask{
+      z-index: 1000!important;
     }
     .docBox{
       display: flex;
@@ -970,6 +996,7 @@ export default {
           }
         }
         .vh-video-chapter__icon-voice-warp {
+          cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;

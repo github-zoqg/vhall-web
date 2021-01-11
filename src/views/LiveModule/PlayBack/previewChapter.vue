@@ -259,8 +259,8 @@ export default {
   .contentView{
     min-height: 320px;
     padding: 16px;
-    width: 960px;
-    height: 600px;
+    width: 100%;
+    height: 100%;
     background: #222;
     .docBox{
       float: left;
@@ -375,5 +375,9 @@ export default {
   // 这个页面是在 iframe 中加载，不会影响项目中的整体布局
   #app {
     min-width: 0;
+  }
+  // 页面底部插入了一个一像素高元素，影响一屏页面，不知作用是啥，先隐藏
+  #myVodNode {
+    height: 0px!important;
   }
 </style>
