@@ -6,9 +6,9 @@
       :rules="[
         { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
-        <VhallInput v-model.trim="formData.title" :maxlength="100" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
+        <VhallInput v-model.trim="formData.title" :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="直播时间" required v-if="webniarType=='live'">
+      <el-form-item label="直播时间" required v-if="webniarType=='live'" class="item-time">
           <el-col :span="11.5">
             <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
@@ -42,7 +42,7 @@
         </div>
         <div class="modeBox">
           <div>
-            <img src="../../common/images/live/mode-video_check.png" @click='liveModeChange(2)' v-if="formData.liveMode== 2">
+            <img src="../../common/images/live/mode-video_check.png" :class="{active: formData.liveMode== 2}" @click='liveModeChange(2)' v-if="formData.liveMode== 2">
             <img src="../../common/images/live/mode-video.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
             <!-- <el-container class='model'> -->
@@ -61,7 +61,7 @@
               <img src="../../common/images/live/mode-active_disabled.png" alt="" style="cursor: default;">
             </template>
             <template v-else>
-             <img src="../../common/images/live/mode-active_check.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-if="formData.liveMode== 3">
+             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: formData.liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="formData.liveMode== 3">
               <img src="../../common/images/live/mode-active.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
             <!-- <el-container class='model'> -->
@@ -85,7 +85,7 @@
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
           <div>
-            <img src="../../common/images/live/mode-media_check.png" alt=""  @click='liveModeChange(1)' v-if="formData.liveMode== 1">
+            <img src="../../common/images/live/mode-media_check.png" :class="{active: formData.liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="formData.liveMode== 1">
             <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
             <!-- <el-container class='model'>
               <img src="../../common/images/live/mode-media.png" alt="">
@@ -501,10 +501,10 @@ export default {
       });
     },
     sendData(content) {
-      this.content = content;
+      this.formData.content = content;
     },
     liveModeChange(index) {
-      this.liveMode = index;
+      this.formData.liveMode = index;
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
@@ -696,21 +696,24 @@ export default {
       color: #1A1A1A;
       pointer-events: none;
       user-select: none;
-      margin: 0 20px;
+      margin: 0 13px;
     }
     /deep/ .el-switch__label--right{
       color: #999999;
       pointer-events: none;
       user-select: none;
     }
-    // /deep/.el-input__inner{
-    //   padding: 0 12px;
-    // }
+    .title-inform /deep/.el-input__inner{
+      padding: 0 12px;
+    }
     // /deep/.el-date-editor {
     //   /deep/input {
     //     width: 270px;
     //   }
     // }
+  }
+  .item-time .el-form-item {
+    margin-bottom: 0px;
   }
   /deep/ .el-form-item{
     // width: 100%;
@@ -755,32 +758,34 @@ export default {
       border-radius: 4px;
       img{
         width: 100%;
-        // border: 1px solid #CCCCCC;
         height: 112px;
         object-fit: scale-down;
         cursor: pointer;
         &.disabled{
-        pointer-events: none;
-        .notAllow{
-          display: block;
-        }
-      }
-      &.active{
-        border-color: #FB3A32;
-        .block{
-          background: #FFEBEB;
-          .icon{
-            color: #FB3A32;
+          pointer-events: none;
+          .notAllow{
+            display: block;
           }
         }
-      }
-      &:nth-child(2){
-        .el-header{
+        &.active{
+          border-color: #FB3A32;
           .block{
-            height: 13px;
+            background: #FFEBEB;
+            .icon{
+              color: #FB3A32;
+            }
           }
         }
-      }
+        &:nth-child(2){
+          .el-header{
+            .block{
+              height: 13px;
+            }
+          }
+        }
+        &.active{
+          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+        }
       }
       // position: relative;
       // overflow: hidden;
