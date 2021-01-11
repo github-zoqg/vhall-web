@@ -1,17 +1,11 @@
 <template>
   <div class="user-data">
     <div class="title-data">
-      <span>用户统计</span>
-      <el-tooltip effect="dark" placement="right-start">
+      <pageTitle title="用户统计">
         <div slot="content">
           1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
         </div>
-        <el-button
-          circle
-          icon="el-icon-question"
-          class="button-tip"
-        ></el-button>
-      </el-tooltip>
+      </pageTitle>
     </div>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <div class="active-box">
@@ -52,6 +46,7 @@
 <script>
 import titleData from './components/title';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import PageTitle from '@/components/PageTitle';
 import { getRangeDays } from '@/utils/general';
 export default {
   data() {
@@ -247,7 +242,8 @@ export default {
   },
   components: {
     titleData,
-    noData
+    noData,
+    PageTitle
   },
   created() {
     this.getLiveDetail();
@@ -394,6 +390,10 @@ export default {
   }
   .search{
     margin-top: 24px;
+    padding: 0 24px;
+  }
+  .data-list{
+    padding: 0 24px;
   }
   /deep/.el-select {
     width:130px!important;
@@ -418,18 +418,22 @@ export default {
     margin: 20px 0;
     text-align: left;
     line-height: 30px;
+    i{
+      padding: 4px;
+      font-size: 14px;
+    }
     span {
       font-size: 22px;
       font-family: @fontSemibold;
       font-weight: 600;
       color: #1a1a1a;
     }
-    .button-tip {
-      vertical-align: top;
-    }
+    // .button-tip {
+    //   vertical-align: top;
+    // }
   }
   .active-box{
-    padding: 24px 32px;
+    padding: 24px 0;
     border-radius: 4px;
     background: #fff;
     padding-top: 1px;

@@ -80,7 +80,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler"></item-card>
+    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
   </div>
 </template>
 
@@ -98,7 +98,9 @@ export default {
   data(){
     return {
       msg: '',
-      perssionInfo:JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
+      perssionInfo: {},
+      isTrue: true,
+      isShow: false,
       loading: true,
       isForm: false,
       isExport: false,
@@ -115,43 +117,6 @@ export default {
         hours: 0,
         minute: 0,
         second: 0
-      },
-      operasOld: {
-        '准备': [
-          { icon: 'saasicon_jibenxinxi', title: '基本信息', subText: '编辑直播基本信息', path: '/live/edit' },
-          { icon: 'saasicon_gongnengpeizhi', title: '功能配置', subText: '编辑直播功能配置', path: `/live/planFunction/${this.$route.params.str}`},
-          { icon: 'saasicon_guankanxianzhi', title: '观看限制', subText: '设置直播观看限制', path: `/live/viewerRules/${this.$route.params.str}`},
-          { icon: 'saasicon_jiaoseyaoqing', title: '角色邀请', subText: '设置不同角色参与直播的权限', index: 4, path: `/live/roleInvitation/${this.$route.params.str}`},
-          { icon: 'saasicon_nuanchangshipin', title: '暖场视频', subText: '开启后设置暖场视频',index: 4, path: `/live/warm/${this.$route.params.str}`},
-          { icon: 'saasicon_xunirenshu', title: '虚拟人数', subText: '添加直播的虚拟人数', path: `/live/virtual/${this.$route.params.str}`},
-          { icon: 'saasicon_baomingbiaodan', title: '报名表单', subText: '开启后收集目标观众信息', path: `/live/signup/${this.$route.params.str}`},
-          { icon: 'saasicon_tuiguangqianru', title: '推广嵌入', subText: '编辑设置直播推广嵌入', path: `/live/embedCard/${this.$route.params.str}`},
-        ],
-        '品牌': [
-          { icon: 'saasicon_pinpaishezhi1', title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`},
-          { icon: 'saasicon_zidingyicaidan', title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`},
-          { icon: 'saasicon_bofangqishezhi', title: '播放器设置', subText: '设置直播跑马灯水印', path: `/live/playerSet/${this.$route.params.str}`},
-          { icon: 'saasicon_yaoqingkashezhi', title: '邀请卡', subText: '用于直播邀请或裂变分享', path: `/live/invCard/${this.$route.params.str}`},
-          { icon: 'saasicon_guanggaotuijian', title: '广告', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`},
-          { icon: 'saasicon_gongzhonghaozhanshi', title: '公众号展示', subText: '设置观看页展示公众号', path: `/live/officialCard/${this.$route.params.str}`},
-          { icon: 'saasicon_kaipinghaibao', title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`},
-        ],
-        '直播': [
-          { icon: 'saasicon_wendang', title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`},
-          { icon: 'saasicon_choujiang', title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`},
-          { icon: 'saasicon_wenjuan', title: '问卷', subText: '创建问卷收集信息', path: '/live/question' },
-          { icon: 'saasicon_shangpin', title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`},
-          { icon: 'saasicon_liwu', title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`},
-        ],
-        '回放': [
-          { icon: 'saasicon_huifangguanli', title: '回放管理', subText: '管理直播回放内容', path: `/live/playback/${this.$route.params.str}` },
-          // { icon: '', title: '回放重制', subText: '将文档和视频合并为MP4文件' },
-        ],
-        '数据': [
-          { icon: 'saasicon_shujubaogao', title: '数据报告', subText: '统计直播基本数据', path: `/live/reportsData/${this.$route.params.str}` },
-          { icon: 'saasicon_hudongtongji', title: '互动统计', subText: '统计直播互动工具数据', path: `/live/interactionData/${this.$route.params.str}` },
-          { icon: 'saasicon_yonghutongji', title: '用户统计', subText: '统计直播观众详细数据', path: `/live/userData/${this.$route.params.str}` },
-        ]
       }
     };
   },
@@ -165,44 +130,11 @@ export default {
     },
     childPremission: function(){
       return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
-    },
-    operas() {
-      if (this.liveDetailInfo && this.liveDetailInfo.webinar_state === 4) {
-        // 点播
-        let { keys, values} = Object;
-        let operas = this.operasOld;
-        keys(this.operasOld).map((item, ins) => {
-          operas[item] = values(this.operasOld)[ins].filter(vItem =>{
-            vItem.title = vItem.title.replace(/回放/, '点播')
-            vItem.subText = vItem.subText.replace(/直播/, '点播')
-            if(vItem.title == '点播管理'){
-               vItem.subText = '管理点播内容'
-               vItem.path = `/live/recordplayback/${this.$route.params.str}`
-            }
-            if(vItem.title == '基本信息'){
-              vItem.path = `/live/vodEdit/${this.$route.params.str}`
-            }
-            return vItem.index !== 4
-          });
-        })
-        if (keys(this.operasOld).includes('直播')) {
-          delete operas['直播'];
-        }
-        // console.log(operas, '过滤后内容');
-        return operas;
-      } else {
-        return this.operasOld;
-      }
     }
   },
   created(){
     this.getLiveDetail(this.$route.params.str);
-    this.getPermission()
-    let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
-    this.isTrue = arr.some(item => {
-      // eslint-disable-next-line no-prototype-builtins
-      return this.perssionInfo.hasOwnProperty(item)
-    })
+    this.getPermission(this.$route.params.str);
   },
   mounted() {
     console.log(this.$route.meta.title, '1111111111111111');
@@ -219,9 +151,27 @@ export default {
           return date
         }
     },
-    getPermission() {
-      let perssionInfo = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
-      console
+    getPermission(id) {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+      if(res.code == 200) {
+        let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
+        if(res.data.permissions) {
+          sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
+          this.perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+          this.isShow = true;
+          this.isTrue = arr.some(item => {
+            // eslint-disable-next-line no-prototype-builtins
+            return this.perssionInfo.hasOwnProperty(item)
+          })
+        } else {
+          sessionOrLocal.removeItem('WEBINAR_PES');
+        }
+      }
+    }).catch(e => {
+      console.log(e);
+      sessionOrLocal.removeItem('SAAS_VS_PES');
+    });
     },
     // 获取基本信息
     getLiveDetail(id) {
