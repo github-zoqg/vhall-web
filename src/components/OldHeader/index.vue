@@ -43,6 +43,10 @@ export default {
     isShowLogin: {
       require: false,
       default: true
+    },
+    scene: {
+      require: false,
+      default: ''
     }
   },
   data() {

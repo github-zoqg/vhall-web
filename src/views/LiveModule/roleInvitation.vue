@@ -41,7 +41,7 @@
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </VhallInput> -->
               <VhallInput v-model.trim="privilegeVo.host_password" readonly class="btn-relative btn-two" autocomplete="off">
-                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
+                  <el-button type="text" class="no-border no-hover" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
           </el-form>
@@ -80,7 +80,7 @@
               <VhallInput :value="privilegeVo && join_link ? join_link : ''" readonly autocomplete="off" ></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <VhallInput v-model.trim="privilegeVo.guest_password" readonly class="input-no-right-border" autocomplete="off" >
+              <VhallInput v-model.trim="privilegeVo.guest_password" readonly  class="btn-relative btn-two" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
@@ -715,7 +715,10 @@ export default {
   border: 1px solid #CCCCCC;
   color: #666666;
 }
-/deep/.no-hover {
-  padding: 0 12px;
+/deep/button.el-button.el-button--mini.no-hover {
+  padding: 0 12px!important;
+  span {
+    color: #666666;
+  }
 }
 </style>

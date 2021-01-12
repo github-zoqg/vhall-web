@@ -1,6 +1,6 @@
 <template>
   <div class="show-special">
-    <OldHeader></OldHeader>
+    <OldHeader scene="preShow"></OldHeader>
     <div class="special-show-ctx">
       <pageTitle title="专题详情"></pageTitle>
       <el-card>

@@ -32,8 +32,12 @@
                   </el-radio-group>
                 </template>
                 <span class="show-span" v-else>{{appForm[node.modelKey]}}</span>
-                <span class="copy" v-if="action === 'detail' && node.nodeType == 'text'" @click="copy(appForm[node.modelKey])"><i class="iconfont-v3 saasicon_copy"></i></span>
-              </el-form-item>
+                <span class="copy" v-if="action === 'detail' && node.nodeType == 'text'" @click="copy(appForm[node.modelKey])">
+                  <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                    <i class="iconfont-v3 saasicon_copy"></i>
+                  </el-tooltip>
+                </span>
+                </el-form-item>
             </div>
           </template>
         </el-form>
@@ -376,6 +380,7 @@ export default {
       top: 0;
       color: #666666;
       font-size: 15px;
+      cursor: pointer;
     }
     /deep/.el-form-item__content {
       line-height: 40px;
