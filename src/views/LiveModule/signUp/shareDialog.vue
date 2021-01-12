@@ -78,7 +78,8 @@ export default {
       dialogVisible: false,
       wxDialogVisible: false,
       shareSwtich: true,
-      link: `${process.env.VUE_APP_WEB_URL}/lives/entryform/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.$route.params.str}`,
+      sinaLink: `${process.env.VUE_APP_WEB_URL}/lives/entryform/${this.$route.params.str}`,
       wxUrl: ''
     };
   },
@@ -108,7 +109,7 @@ export default {
       window.open(url, '_blank');
     },
     shareSina() {
-      const url = `//service.weibo.com/share/share.php?url=${this.link}&summary=${this.baseInfo.intro}&title=${this.baseInfo.title}&pic=undefined&appkey=&searchPic=false`;
+      const url = `//service.weibo.com/share/share.php?url=${this.sinaLink}&summary=${this.baseInfo.intro}&title=${this.baseInfo.title}&pic=undefined&appkey=&searchPic=false`;
       window.open(url, '_blank');
     },
     shareWX() {
