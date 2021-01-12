@@ -58,7 +58,7 @@
           </div>
         </div>
         <!-- 嘉宾 -->
-        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest && isInteract==1">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
@@ -106,7 +106,7 @@
           </div>
         </div>
         <!-- 助理 -->
-        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.assistant && isInteract==1">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.assistant">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role3">助理</label>
@@ -269,7 +269,7 @@ export default {
     }
   },
   created() {
-    this.isInteract = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')).new_interact;
+    this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
   },
   methods: {
     async updateSwitch() {

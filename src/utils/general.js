@@ -120,11 +120,11 @@ export function getRangeDays(value) {
     return formateDate(oldDate);
   } else if (value == 3) {
     // 近7日
-    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 8);
+    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
     return formateDate(oldWeek);
   } else if (value == 4) {
     // 近30日
-    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 31);
+    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
     return formateDate(oldMonth);
   } else if (value == 5){
     let yesDate = date.setTime(date.getTime() - 3600 * 1000 * 24);

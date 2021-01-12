@@ -112,7 +112,7 @@
       :aria-label="label"
     >
     </textarea>
-    <span ref="limit_count" v-if="isWordLimitVisible && type === 'textarea'" class="el-input__count">
+    <span v-if="isWordLimitVisible && type === 'textarea'" class="el-input__count">
       <span
         :class="[
           'el-input__count-inner__numerator',
@@ -141,12 +141,7 @@
         return {
           paddingRight: this.calcWidth
         }
-      },
-      textareaStyle() {
-        return merge({
-          paddingRight: this.calcWidth
-        }, this.textareaCalcStyle, { resize: this.resize });
-      },
+      }
     }
   }
 </script>

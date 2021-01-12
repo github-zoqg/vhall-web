@@ -63,6 +63,7 @@
                         v-model="formHorse.interval"
                         :disabled="!scrolling_open"
                         maxlength="300"
+                        oninput="this.value=this.value.replace(/[^\d]/g, '')"
                         placeholder="默认10s，输入范围1-300s">
                         <i slot="suffix">秒</i>
                         </el-input>
