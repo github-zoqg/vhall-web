@@ -87,21 +87,18 @@ export default {
       this.$fetch('getSonInfo', {
         user_id: sessionOrLocal.get('userId')
       }).then(res => {
-        if(res && res.code === 200) {
-          this.sonInfo = res.data;
-          this.tabType = 'sonList';
-          try {
-            this.$nextTick(() => {
-              this.$refs[`sonListComp`].initComp();
-            });
-          } catch (e) {
-            console.log(e);
-          }
-        } else {
-          // this.$message.error(res.msg || '获取信息失败');
+        this.sonInfo = res.data;
+        this.tabType = 'sonList';
+        try {
+          this.$nextTick(() => {
+            this.$refs[`sonListComp`].initComp();
+          });
+        } catch (e) {
+          console.log(e);
         }
       }).catch(e => {
         console.log(e);
+        this.$message.error(res.msg || '获取信息失败');
       });
     },
     initPage() {
@@ -142,11 +139,13 @@ export default {
     line-height: 20px;
     &:last-child {
       margin-top: 4px;
-      font-size: @font_size_28;
-      font-family: @fontDINAL;
-      font-weight: bold;
-      color: @font_color_h1;
-      line-height: 32px;
+      span {
+        font-size: @font_size_28;
+        font-family: @fontDINAL;
+        font-weight: bold;
+        color: @font_color_h1;
+        line-height: 32px;
+      }
     }
   }
 }

@@ -130,7 +130,7 @@ export default {
             if (res && res.code === 200) {
               success(res.data.domain_url);
             } else {
-              debugger;
+              // debugger;
               failure(res.msg || '上传失败');
             }
           }).catch((res) => {

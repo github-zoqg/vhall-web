@@ -115,7 +115,7 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
-          @delete="imageUrl = ''">
+          @delete="formData.imageUrl = ''">
           <div slot="tip">
             <p>建议尺寸：1280*720px，小于2M</p>
             <p>支持jpg、gif、png、bmp</p>
@@ -355,7 +355,6 @@ export default {
       if (minutes <= 9) {
         minutes = `0${minutes}`
       }
-      debugger
       return `${hours}:${minutes}`;
     }
   },
