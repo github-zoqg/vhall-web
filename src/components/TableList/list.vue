@@ -103,6 +103,11 @@
               <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
               <span v-else v-html="scope.row.transform_schedule_str"></span>
             </div>
+            <div v-else-if="item.key === 'video_name'" class="videoName">
+              <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+              <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+              {{ scope.row[item.key]  || '----'}}
+            </div>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
               {{ scope.row[item.key] || '----' }}
@@ -488,6 +493,16 @@ export default {
   }
   .empty{
     text-align: center;
+  }
+  .videoName{
+    .saasyinpinwenjian{
+      color: #10d3a8;
+      padding-right: 3px;
+    }
+    .saasshipinwenjian{
+      color: #ff733c;
+      padding-right: 3px;
+    }
   }
 }
 /* 表格行样式 */
