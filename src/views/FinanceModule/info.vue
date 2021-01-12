@@ -450,17 +450,27 @@ export default {
     border-radius: 4px;
     background: #fff;
   }
-  /deep/.el-input__inner{
-    border-radius: 18px;
-    height: 36px;
-    background: transparent;
-  }
-  /deep/.el-input__icon {
-    margin-bottom: 5px;
-    // line-height: 36px;
-  }
-  /deep/.el-input__suffix{
-    top: 0px;
+  .search-data {
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      height: 36px;
+      background: transparent;
+      padding-left: 12px;
+      padding-right: 50px;
+    }
+     /deep/.el-input__icon {
+        margin-bottom: 5px;
+        line-height: 36px;
+      }
+      /deep/.el-input__suffix{
+        top: 0px;
+      }
+    /deep/.el-range-editor.el-input__inner{
+      padding: 1px 10px;
+    }
+    /deep/.el-date-editor .el-range-separator{
+      padding: 2px 5px;
+    }
   }
   .title-data {
       margin: 10px 0 20px 0;

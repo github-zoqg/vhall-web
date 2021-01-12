@@ -19,7 +19,7 @@
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
-                :restPic="true"
+                :isProduct="true"
                 @resetImage="resetPic(item)"
                 :coverPic="!item.cover"
                 @delete="formDelete(item)"
@@ -34,9 +34,9 @@
                 :on-success="productLoadSuccess"
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
+                :isProduct="true"
                 :on-preview="uploadPreview"
                 :before-upload="beforeUploadHandler"
-                :restPic="true"
                 >
                 <p slot="tip">上传图片</p>
               </upload>
