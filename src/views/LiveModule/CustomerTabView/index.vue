@@ -86,7 +86,7 @@ export default {
       customMenus: [],
       qrCode: '',
       link:  '',
-      showWatch: true
+      showWatch: false
     }
   },
 
