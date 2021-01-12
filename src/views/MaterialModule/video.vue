@@ -87,7 +87,7 @@ export default {
       tabelColumn: [
         {
           label: '音视频名称',
-          key: 'name',
+          key: 'video_name',
         },
         {
           label: '上传时间',
@@ -120,7 +120,7 @@ export default {
   },
   created() {
     // 初始化聊天SDK
-    this.initChat();
+    // this.initChat();
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -129,7 +129,7 @@ export default {
     EventBus.$on('sign_trans_code', res => { // 转码状态
       console.log(res, '监听到sign_trans_code未读消息提示事件');
       this.tableData.map(item => {
-        if (item.id === res.record_id) {
+        if (res.record_id == item.id) {
           if (res.status == 1) {
             item.transcode_status = 1;
             item.duration = formateSeconds(res.duration);
@@ -144,49 +144,6 @@ export default {
     });
   },
   methods: {
-    // 初始化
-    async initChat(){
-      let result = await this.$fetch('msgInitConsole');
-      if (result) {
-        let option = {
-          appId: result.data.paasAppId || '', // appId 必须
-          accountId: result.data.accountId || '', // 第三方用户ID
-          channelId: result.data.channelId || '', // 频道id 必须
-          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
-        }
-        window.VhallChat.createInstance(option, (event) => {
-          this.$Chat = event.message; // 聊天实例句柄
-          this.monitor()
-        },err=>{
-          // alert('初始化错误')
-          console.error(err);
-        })
-      }
-    },
-    // 监听
-    monitor(){
-      /**
-       * 接收聊天自定义消息*/
-      this.$Chat.onCustomMsg(async msg => {
-        try {
-          if (typeof msg !== 'object') {
-            msg = JSON.parse(msg)
-          }
-          if (typeof msg.context !== 'object') {
-            msg.context = JSON.parse(msg.context)
-          }
-          if (typeof msg.data !== 'object') {
-            msg.data = JSON.parse(msg.data)
-          }
-        } catch (e) {
-          console.log(e)
-        }
-        console.log('============收到msg1111111===============' + JSON.stringify(msg.data))
-        if (msg.data.type === 'sign_trans_code') {
-          EventBus.$emit('sign_trans_code', msg.data);
-        }
-      })
-    },
     getTableList(params){
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       if (this.keyword || params == 'delete') {
@@ -207,6 +164,7 @@ export default {
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
       let videoArr = beforeName.toLowerCase().split('.');
+      console.log(videoArr, '??????????????')
       const videoType = typeList.includes(videoArr[videoArr.length - 1]);
       if (!videoType) {
         this.$message.error(`您上传的文件格式不正确`);
@@ -239,6 +197,8 @@ export default {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
         duration: '',
+        video_name: beforeName,
+        msg_url: `.${videoArr[videoArr.length - 1]}`,
         uploadObj: {}, // type：1   上传视频     2创建点播
         id: onlyId
       };
@@ -315,6 +275,8 @@ export default {
           this.total = res.data.total;
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
           res.data.list.forEach(ele => {
+            ele.video_name = ele.name;
+            ele.msg_url = ele.msg_url.toLowerCase();
             switch (ele.transcode_status) {
               case '0':
                 ele.transcode_status_text = '新增排队中';
@@ -498,8 +460,9 @@ export default {
   height: 100%;
   width: 100%;
   .video-text{
-    padding-left: 20px;
-    color: #666;
+    padding-left: 5px;
+    color: #999;
+    font-size: 14px;
   }
   /deep/.el-card__body{
     padding: 0 0 30px 0;
@@ -515,7 +478,7 @@ export default {
   }
   .vh-dialog{
   /deep/ .el-dialog {
-    width: 642px!important;
+    width: 624px!important;
     background: transparent!important;
     border:none;
     box-shadow: none;
@@ -526,19 +489,22 @@ export default {
     height: 55px;
     background: transparent!important;
     border:none;
+    color: #fff;
   }
   /deep/ .el-dialog__headerbtn{
     top: 30px;
     right: 0px;
     .el-dialog__close {
-      color: #1a1a1a;
+      color: #fff;
     }
   }
   /deep/ .el-dialog__body{
     width: 642px;
     height: 375px;
-    border: 16px solid #333;
-    background: #fff;
+    border-top: 16px solid #333;
+    border-bottom: 16px solid #333;
+    background: #333;
+    border-radius: 4px;
   }
 }
   .head-operat, .no-live{

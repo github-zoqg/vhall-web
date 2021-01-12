@@ -68,10 +68,10 @@
           <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
         </noData>
       </div>
-      <div class="select-option" v-if="total || isSearch">已选择<span>{{ selectedOption.length }}</span>个</div>
-      <span slot="footer" class="dialog-footer" v-if="total || isSearch">
-        <el-button type="primary" round @click="saveSelect" v-preventReClick>确 定</el-button>
-        <el-button round @click="cancelSelect" v-preventReClick>取 消</el-button>
+      <div class="select-option" v-if="total">已选择<span>{{ selectedOption.length }}</span>个</div>
+      <span slot="footer" class="dialog-footer" v-if="total">
+        <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick>确 定</el-button>
+        <el-button round @click="cancelSelect" size="medium" v-preventReClick>取 消</el-button>
       </span>
     </el-dialog>
 </template>
@@ -82,7 +82,6 @@ export default {
   data() {
     return {
       page: 1,
-      pageSize: 6,
       maxPage: 0,
       nullText: 'nullData',
       text: '你还没有创建直播',
@@ -243,7 +242,7 @@ export default {
 <style lang="less">
   .vh-chose-active-box{
     // width: 560px;
-    max-height: 310px;
+    max-height: 315px;
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;
@@ -383,7 +382,7 @@ export default {
   }
   .select-option{
     position: absolute;
-    bottom: 40px;
+    bottom: 32px;
     left: 32px;
     line-height: 20px;
     span{

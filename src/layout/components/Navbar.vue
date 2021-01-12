@@ -177,6 +177,9 @@ export default {
         if (msg.data.type === 'doc_convert_jpeg') {
           EventBus.$emit('doc_convert_jpeg', msg.data.data)
         }
+        if (msg.data.type === 'sign_trans_code') {
+          EventBus.$emit('sign_trans_code', msg.data);
+        }
       })
     },
     // 初始化
