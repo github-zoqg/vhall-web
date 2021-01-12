@@ -436,7 +436,12 @@ export default {
       return isType && isLt2M;
     },
     // 打开编辑面板
-    handleEditGift (data) {
+    async handleEditGift (data) {
+      const isWebinarLiving = await this.isCanDelete()
+      if (isWebinarLiving) {
+        this.$message.warning('正在直播中，请直播结束后操作！')
+        return false;
+      }
       this.editParams = {
         gift_id: data.id,
         name: data.name,
