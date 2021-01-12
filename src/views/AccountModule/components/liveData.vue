@@ -12,7 +12,6 @@
         end-placeholder="结束日期"
         style="width: 240px"
         :picker-options="pickerOptions"
-        :clearable=false
         @change="queryList"
       />
       <el-input placeholder="请输入活动标题" v-model.trim="query.title"
@@ -200,24 +199,21 @@ export default {
   .justify(flex-start);
   .align(center);
   margin-bottom: 20px;
-  .el-select{
-    margin-right: 20px;
-    /deep/ .el-input__inner{
-      user-select: none;
-      border-radius: 50px;
-      font-size: 14px;
-      color: #666666;
-      height: 36px;
-      line-height: 36px;
-    }
+  /deep/.el-input__inner{
+    border-radius: 18px;
+    height: 36px;
+    background: transparent;
+  }
+  /deep/.el-input__icon {
+    margin-bottom: 5px;
+    // line-height: 36px;
+  }
+  /deep/.el-input__suffix{
+    top: 0px;
   }
   .el-input{
     margin-left: 24px;
     width: 270px;
-    /deep/ .el-input__inner{
-      border-radius: 20px;
-      height: 36px;
-    }
     /deep/ .el-input__suffix{
       cursor: pointer;
       /deep/ .el-input__icon{
@@ -225,6 +221,7 @@ export default {
       }
     }
   }
+
   .el-button {
     margin-left: auto;
   }
