@@ -14,7 +14,7 @@
       <div class="list--search">
         <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
         <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
-        <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
+        <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
         <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
                   clearable
@@ -53,7 +53,7 @@
         </table-list>
       </div>
       <!-- 无消息内容 -->
-      <null-page class="search-no-data" :height="0"></null-page>
+      <null-page class="search-no-data" :height="0" v-if="sonDao && sonDao.total === 0"></null-page>
     </div>
     <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
@@ -623,7 +623,7 @@ export default {
   padding: 24px 24px 40px 24px;
 }
 .search-no-data {
-  padding-top: 176px;
+  padding-top: 148px;
   /deep/.search {
     padding-bottom: 0;
   }

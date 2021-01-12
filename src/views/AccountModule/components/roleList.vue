@@ -22,7 +22,7 @@
         </el-input>
       </div>
       <!-- 有消息内容 -->
-      <div v-if="roleDao.total > 0">
+      <div>
         <!-- 表格与分页 -->
         <table-list
           ref="roleTab"
@@ -59,7 +59,7 @@
         </son-role-table> -->
       </div>
       <!-- 无消息内容 -->
-      <null-page v-else class="search-no-data" :height="0"></null-page>
+      <null-page class="search-no-data" :height="0" v-if="roleDao && roleDao.total === 0"></null-page>
     </div>
     <VhallDialog
       width="520px"
@@ -400,7 +400,7 @@ export default {
   padding: 24px 24px 40px 24px;
 }
 .search-no-data {
-  padding-top: 176px;
+  padding-top: 148px;
   /deep/.search {
     padding-bottom: 0;
   }
