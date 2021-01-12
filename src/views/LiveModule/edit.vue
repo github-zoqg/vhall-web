@@ -355,7 +355,6 @@ export default {
       if (minutes <= 9) {
         minutes = `0${minutes}`
       }
-      debugger
       return `${hours}:${minutes}`;
     }
   },

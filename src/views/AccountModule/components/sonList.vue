@@ -1,49 +1,60 @@
 <template>
-  <div class="son--list">
-    <!-- 搜索 -->
-    <div class="list--search">
-      <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
-      <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
-      <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
-                clearable
-                @clear="initQuerySonList"
-                @keyup.enter.native="initQuerySonList">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
-      </el-input>
-      <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
-        <el-option value="">全部</el-option>
-        <el-option
-          v-for="item in roleList"
-          :key="'v_' + item.id"
-          :label="item.role_name"
-          :value="item.id">
-        </el-option>
-      </el-select>
+  <div class="son--list" v-loading="loading"
+    element-loading-text="加载中，请稍候"
+    element-loading-background="rgba(255,255,255,.9)">
+    <!-- 全部无结果 -->
+    <div class="all-no-data" v-if="sonDao && sonDao.total === 0  && query.role_id === '' && query.keyword === ''">
+      <null-page nullType="nullData" text="暂未创建子账号" :height="0">
+        <el-button type="primary" round v-preventReClick @click.prevent.stop="addSonShow(null)">创建子账号</el-button>
+      </null-page>
     </div>
-    <!-- 有消息内容 -->
-    <div v-if="sonDao && sonDao.total > 0">
-      <!-- 表格与分页 -->
-      <table-list
-        ref="sonTab"
-        :isHandle=true
-        :manageTableData="sonDao.list"
-        :tabelColumnLabel="sonTableColumn"
-        :totalNum="sonDao.total"
-        :tableRowBtnFun="tableRowBtnFun"
-        :needPagination=true
-        width="150px"
-        max-height="auto"
-        scene="accountList"
-        @getTableList="getSonList"
-        @changeTableCheckbox="checkMoreRow"
-        @onHandleBtnClick="onHandleBtnClick"
-      >
-      </table-list>
+    <!-- 全部有结果 -->
+    <div class="all-yes-data" v-else>
+      <!-- 搜索 -->
+      <div class="list--search">
+        <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
+        <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
+        <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
+        <el-button size="medium" round @click="downloadHandle">导出</el-button>
+        <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
+                  clearable
+                  @clear="initQuerySonList"
+                  @keyup.enter.native="initQuerySonList">
+          <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
+        </el-input>
+        <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
+          <el-option value="">全部</el-option>
+          <el-option
+            v-for="item in roleList"
+            :key="'v_' + item.id"
+            :label="item.role_name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </div>
+      <!-- 有消息内容 -->
+      <div>
+        <!-- 表格与分页 -->
+        <table-list
+          ref="sonTab"
+          :isHandle=true
+          :manageTableData="sonDao.list||[]"
+          :tabelColumnLabel="sonTableColumn"
+          :totalNum="sonDao.total||0"
+          :tableRowBtnFun="tableRowBtnFun"
+          :needPagination=true
+          width="150px"
+          max-height="auto"
+          scene="accountList"
+          @getTableList="getSonList"
+          @changeTableCheckbox="checkMoreRow"
+          @onHandleBtnClick="onHandleBtnClick"
+        >
+        </table-list>
+      </div>
+      <!-- 无消息内容 -->
+      <null-page class="search-no-data" :height="0"></null-page>
     </div>
-    <!-- 无消息内容 -->
-    <null-page v-else></null-page>
     <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
                  width="520px">
@@ -156,8 +167,9 @@ export default {
       }
     };
     return {
+      loading: false,
       query: {
-        role_id: null,
+        role_id: '',
         keyword: '',
         pos: 0,
         limit: 1000,
@@ -478,7 +490,7 @@ export default {
           }).catch(res => {
             console.log(res);
             this.$message({
-              message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`,
+              message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`,
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -502,7 +514,9 @@ export default {
         keyword: this.query.keyword,
         scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
+      this.loading = true;
       this.$fetch('getSonList', this.$params(params)).then(res => {
+        this.loading = false;
         let dao = res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
@@ -535,6 +549,7 @@ export default {
         });
         this.sonDao = dao;
       }).catch(e => {
+        this.loading = false;
         console.log(e);
         this.sonDao = {
           total: 0,
@@ -596,8 +611,22 @@ export default {
 </script>
 <style lang="less" scoped>
 // 初始化查询子账号列表信息
-.son--list {
+.all-no-data {
+  /* 基于外边框已经有距离： padding: 24px 24px 40px 24px; */
+  padding-top: 30px;
+  margin-top: 164px;
+  /deep/.createActive {
+    padding-bottom: 30px;
+  }
+}
+.all-yes-data {
   padding: 24px 24px 40px 24px;
+}
+.search-no-data {
+  padding-top: 176px;
+  /deep/.search {
+    padding-bottom: 0;
+  }
 }
 .list--search {
   margin-bottom: 20px;

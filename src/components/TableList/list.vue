@@ -1,5 +1,5 @@
 <template>
-  <div class="data-list">
+  <div :class="['data-list', {'no-height': manageTableData && manageTableData.length === 0}]">
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -9,6 +9,7 @@
       :row-class-name="tableRowClassName"
       :row-style="tableRowStyle"
     >
+      <div slot="empty" style="height:0"></div>
       <el-table-column
         type="selection"
         width="55"
@@ -105,7 +106,7 @@
             </div>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] || '----' }}
+              {{ scope.row[item.key] || '- -' }}
             </p>
           </template>
         </el-table-column>
@@ -335,6 +336,16 @@ export default {
 <style lang="less" scoped>
 .data-list {
   min-height: 650px;
+  &.no-height {
+    min-height: 0;
+    /deep/.el-table {
+      margin-bottom: 0;
+    }
+    /deep/.el-table__empty-block {
+      height: 0!important;
+      min-height: 0;
+    }
+  }
   .downloadStatus {
     display: inline-block;
     width: 146px;
