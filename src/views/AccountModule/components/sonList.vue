@@ -69,9 +69,13 @@
         <el-form-item label="账号昵称" prop="nick_name">
           <VhallInput type="text" placeholder="请输入账号昵称，不输入默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="预设密码" prop="password">
+        <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
           <VhallInput type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
                     :maxlength="30" :minlength="6" show-word-limit></VhallInput>
+        </el-form-item>
+        <el-form-item label="预设密码" prop="editPwd" v-else>
+          <VhallInput type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="账号角色" prop="role_id">
           <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
@@ -135,6 +139,16 @@ export default {
       let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
       if (value === '') {
         callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else if (!pattern.exec(value)) {
+        callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else {
+        callback();
+      }
+    };
+    let verifyEnterEditPwd = (rule, value, callback) => {
+      let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
+      if (value === '') {
+        callback();
       } else if (!pattern.exec(value)) {
         callback(new Error('支持数字，大小写英文，6-30个字符'));
       } else {
@@ -211,6 +225,7 @@ export default {
         nums: null,
         nick_name: '',
         password: '',
+        editPwd: '',
         role_id: '',
         phone: '',
         email: ''
@@ -221,6 +236,9 @@ export default {
         ],
         password: [
           {required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30, message: '支持数字，大小写英文，6-30个字符'}
+        ],
+        editPwd: [
+          {required: false, trigger: 'blur', validator: verifyEnterEditPwd, max: 30, message: '支持数字，大小写英文，6-30个字符'}
         ],
         role_id: [
           {required: true, message: '请输入账号角色', trigger: 'change'}
@@ -417,13 +435,34 @@ export default {
             });
             return;
           }
-          let params = Object.assign(
-            this.sonDialog.type === 'add' ? {} : {
+          let params = null;
+          if (this.sonDialog.type === 'add') {
+            params = this.$params({
+              is_batch: this.sonForm.is_batch,
+              nums: this.sonForm.nums,
+              nick_name: this.sonForm.nick_name,
+              password: this.sonForm.password,
+              role_id: this.sonForm.role_id,
+              phone: this.sonForm.phone,
+              email: this.sonForm.email
+            })
+          } else {
+            params = Object.assign({
               id: this.sonDialog.row.id,
               child_id: this.sonDialog.row.child_id
-            }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit',
-            this.sonDialog.type === 'add' ? this.$params(params) : params).then(res => {
+            },
+            this.$params({
+              is_batch: this.sonForm.is_batch,
+              nums: this.sonForm.nums,
+              nick_name: this.sonForm.nick_name,
+              password: this.sonForm.editPwd,
+              role_id: this.sonForm.role_id
+            }), {
+              phone: this.sonForm.phone,
+              email: this.sonForm.email
+            })
+          }
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
             this.$message({
               message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`,
               showClose: true,

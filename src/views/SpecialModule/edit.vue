@@ -449,7 +449,7 @@ export default {
 <style lang="less" scoped>
   .el-form{
     background: #ffffff;
-    padding: 48px 20px 50px 48px;
+    padding: 48px 20px 1px 48px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -467,6 +467,9 @@ export default {
   .el-form-item{
     width: 100%;
     max-width: 640px;
+    &:last-child{
+      padding: 16px 0;
+    }
   }
   .btnGroup{
     text-align: center;

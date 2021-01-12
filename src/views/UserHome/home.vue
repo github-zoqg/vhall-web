@@ -1,6 +1,6 @@
 <template>
  <div class="home-main console">
-   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
+   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"  scene="userHome"></OldHeader>
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
    <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || 'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png' :
         'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'}) 0px center / 100% no-repeat`}"></div>

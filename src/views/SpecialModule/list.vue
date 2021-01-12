@@ -38,7 +38,7 @@
     <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
-          <div class="top" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})">
+          <div class="top" @click="editSpecialInfo(item.id)">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>

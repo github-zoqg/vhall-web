@@ -69,7 +69,15 @@ export default {
       if(vo.parent_id > 0) {
         return children.filter(item => item.meta.name !== 'sonMgr');
       } else {
-        return children;
+        let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+        let perVo = permissions ? JSON.parse(permissions) : {};
+        // TODO 模拟 perVo['child_num_limit'] = 0;
+        if (perVo && Number(perVo['child_num_limit']) !== 1) {
+          // 父账号，但是没有子账号管理
+          return children.filter(item => item.meta.name !== 'sonMgr');
+        } else {
+          return children;
+        }
       }
     } else {
       return children;

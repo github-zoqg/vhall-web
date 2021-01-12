@@ -20,7 +20,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
   let data = Object.assign(data1);
-  if (window.location.hash.indexOf('/live/watch/') !== -1) {
+  if (window.location.href.indexOf('/chooseWay') !== -1) {
     let _live_token = sessionOrLocal.get('live_token', 'localStorage')
     if(_live_token){
       data.live_token = _live_token
