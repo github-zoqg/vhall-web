@@ -1369,8 +1369,10 @@ export default {
       return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.data) {
+        console.log(777777777777777, res)
+        if (res.code == 200 && res.data) {
           this.skinInfo = res.data
+          console.log(666, this.skinInfo)
           this.theme = (this.skinInfo && this.skinInfo.skin_json_pc) ? JSON.parse(this.skinInfo.skin_json_pc) : ''
         }
       })
