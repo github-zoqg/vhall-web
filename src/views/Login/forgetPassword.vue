@@ -1,6 +1,6 @@
 <template>
   <div class="forget-password">
-    <OldHeader :isShowLogin=false></OldHeader>
+    <OldHeader :isShowLogin=false scene="forgetPwd"></OldHeader>
     <div class="section__main">
       <pageTitle title="找回密码"></pageTitle>
       <div class="forget__layout">
