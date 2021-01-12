@@ -37,8 +37,76 @@ export default {
         // visitDataValue.push(item.value.replace(/,/g, ""));
       });
       // console.log(visitDataDate, visitDataValue);
+      let minLabel = visitDataDate[0], maxLabel = visitDataDate[visitDataDate.length - 1];
+      console.log('最小日期：', minLabel, '最大日期：', maxLabel);
+      /*1、一周内，每天都显示
+        2、一个月内，3天一个刻度
+        3、一个季度内，7天一个刻度
+        4、一年内，1个月一个刻度 */
+      let yearCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'year');
+      let monCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'month');
+      let dayCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'day');
+      console.log('计算', yearCha, monCha, dayCha);
+      let showTimeDate = [];
+      let level = 0;
+      try {
+        if (yearCha >= 1) {
+          level = 365;
+          // 超过一年，年刻度
+          for(let i =0; i<= (dayCha > 0 ? yearCha + 1 : yearCha); i++) {
+            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "years").format("YYYY-MM-DD");
+            showTimeDate.push(startTr);
+          }
+          showTimeDate = showTimeDate.reverse();
+        } else if (monCha <= 3 && monCha > 0) {
+          level = 7;
+          let maxDayCount = dayCha % 7 > 0  ? (parseInt(dayCha / 7) + 1) * 7 : dayCha;
+          // console.log('maxDayCount', maxDayCount)
+          // 一个季度内，7天一个刻度
+          for(let i =0; i<= maxDayCount; i += 7) {
+            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "day").format("YYYY-MM-DD");
+            showTimeDate.push(startTr);
+          }
+          showTimeDate = showTimeDate.reverse();
+        } else if (monCha > 3) {
+          level = 30;
+          // 一年内，1个月一个刻度
+          for(let i =0; i<= monCha + 1; i ++) {
+            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "month").format("YYYY-MM-DD");
+            showTimeDate.push(startTr);
+          }
+          showTimeDate = showTimeDate.reverse();
+        } else if (monCha === 0 && dayCha <= 7) {
+          level = 0;
+          // 一周内，每天都显示
+          showTimeDate = visitDataDate;
+        } else if (monCha === 0 && dayCha > 7) {
+          level = 3;
+          // 一个月内，3天一个刻度
+          let maxDayCount = dayCha % 3 > 0  ? (parseInt(dayCha / 3) + 1) * 3 : dayCha;
+          // console.log('maxDayCount', maxDayCount)
+          for(let i =0; i<= maxDayCount; i += 3) {
+            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "day").format("YYYY-MM-DD");
+            showTimeDate.push(startTr);
+          }
+          showTimeDate = showTimeDate.reverse();
+        } else {
+          level = 0;
+          showTimeDate = visitDataDate;
+        }
+      }catch(e) {
+        console.log(e);
+      }
       let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
+      // 若开始日期未能达成百分比情况
+      /*let minSDate = showTimeDate[0];
+      let minVDate = visitDataDate[0];
+       if (this.$moment(minVDate).diff(this.$moment(minSDate), 'day') > 0) {
+        if (index === 0) {
+
+        }
+      } */
       let options = {
         visualMap: {
           show: false,
@@ -80,12 +148,20 @@ export default {
           },
           axisLabel: {
             inside: false,
+            interval: minLabel.length < 19 ? level : 'auto',
             textStyle: {
               color: '#999999',
               fontSize: 12,
               fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
-            }
-
+            },
+            /* formatter:function(value,index){
+              console.log(showTimeDate, value);
+              if (showTimeDate.includes(`${value}`)) {
+                return value;
+              } else {
+                return '';
+              }
+            } */
           },
           data: visitDataDate,
         },

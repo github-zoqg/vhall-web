@@ -16,10 +16,10 @@
       </a>
     </div>
     <div class="setting-chat-main">
-      <el-form :model="chatForm" ref="chatForm" label-width="120px">
+      <el-form :model="chatForm" ref="chatForm" label-width="86px">
         <el-form-item label="严禁词列表">
           <div class="words-white">
-            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '暴力、政治敏感、严禁词，逗号隔开、固定宽度换行'}}
+            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '请设置聊天严禁词'}}
           </div>
           <div class="notice">
             <p>提示：</p>
@@ -31,12 +31,12 @@
       </el-form>
     </div>
     <!-- 聊天严禁词弹出框 -->
-    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false>
+    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
       <div class="chat-dialog-content">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round>添加</el-button>
-          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round>批量添加</el-button>
+          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
           <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
           <div class="searchBox">
             <el-input
@@ -76,9 +76,11 @@
           :data="showChatList"
           tooltip-effect="dark"
           style="width: 100%"
-          height="380px"
+          class="table-td56"
+          height="378px"
           :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
           @selection-change="checkMoreRow"
+          @select-all="checkAllRow"
           v-show="total"
           v-loadMore="moreLoadData">
            <el-table-column
@@ -106,6 +108,8 @@
             </template>
           </el-table-column>
         </el-table>
+        <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
+        <null-page nullType="search" v-if="total === 0"></null-page>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -113,7 +117,16 @@
       <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
           <el-form-item label="严禁词" prop="name">
-            <VhallInput
+           <!--  <el-input
+              v-if="addForm.executeType === 'add'"
+              type="textarea"
+              placeholder="可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃"
+              v-model.trim="addForm.name"
+              :maxlength="1000"
+              autocomplete="off"
+              show-word-limit
+            ></el-input> -->
+             <VhallInput
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
               :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
               v-model.trim="addForm.name"
@@ -187,7 +200,7 @@ export default {
       pageInfo: {
         keyword: '',
         pos: 0,
-        limit: 10,
+        limit: 6,
         pageNum: 1
       },
       downloadHref: null,
@@ -240,7 +253,8 @@ export default {
       importResult: {
         fail: 0,
         success: 0
-      }
+      },
+      isCheckAll: false
     };
   },
   computed: {
@@ -269,10 +283,9 @@ export default {
         this.checkNames = [];
       });
     },
-    handleClose(done) {
+    handleClose() {
       this.pageInfo.pageNum = 1;
       this.getAllKeyWordList();
-      done();
     },
     // 获取关键字
     getKeywordList() {
@@ -281,6 +294,9 @@ export default {
           this.showChatList = res.data.list;
         } else {
           this.showChatList.push(...res.data.list);
+        }
+        if(this.isCheckAll) {
+          this.$refs.chatTable.toggleAllSelection();
         }
         this.total = res.data.total;
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
@@ -324,6 +340,11 @@ export default {
       this.ids = val.map(item => {
         return item.id;
       });
+    },
+    checkAllRow(selection) {
+      console.log('全选与非全选', selection);
+      // 只要数量大于0，即是够了全选
+      this.isCheckAll = selection && selection.length > 0;
     },
     // 编辑
     keywordEdit(rows) {
@@ -412,9 +433,10 @@ export default {
             customClass: 'zdy-info-box'
           });
           that.ids = [];
+          that.isCheckAll = false;
           try {
-            that.$refs.chatTable.clearSelect();
-          } catch(e){
+            that.$refs.chatTable.clearSelection();
+          } catch (e) {
             console.log(e);
           }
           that.searchKeyWord();
@@ -621,6 +643,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.select-option{
+  line-height: 20px;
+  margin-top: 8px;
+  /deep/span {
+    color: #FB3A32;
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
 .btn-a {
   margin-left: 12px;
   /deep/button {
@@ -632,6 +663,9 @@ export default {
   margin-top: 24px;
   padding: 48px 60px 48px 56px;
   min-height: 510px;
+  /deep/.el-form-item__label {
+    line-height: normal;
+  }
 }
 .words-white {
   padding: 10px 12px;
@@ -640,20 +674,21 @@ export default {
   font-weight: 400;
   color: #999999;
   line-height: 20px;
-  height: 216px;
+  height: 215px;
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
 }
 .notice {
-  margin-top: 12px;
+  margin-top: 8px;
   p {
     margin: 0 0;
     padding: 0 0;
     font-size: 12px;
     font-weight: 400;
     color: #999999;
-    line-height: 20px;
+    line-height: 17px;
+    font-family: @fontRegular;
   }
 }
 .operaBox{

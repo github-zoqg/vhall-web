@@ -6,7 +6,7 @@
       :close-on-press-escape=false
       :before-close="handleClose"
       @close="cancelSelect"
-      width="620px">
+      width="612px">
       <div class="search" v-show="total || isSearch">
         <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input>
       </div>
@@ -86,7 +86,7 @@ export default {
       maxPage: 0,
       nullText: 'nullData',
       text: '你还没有创建直播',
-      total: 0,
+      total: 1,
       activeList: [],
       selectedOption: [],
       keyword: '',
@@ -327,7 +327,7 @@ export default {
         bottom: 0;
         height: 30px;
         width: 100%;
-        background: rgba(0,0,0, .6);
+        background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
         // left: 10px;
         // bottom: 4px;
         font-size: 14px;

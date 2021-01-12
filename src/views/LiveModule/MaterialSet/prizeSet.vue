@@ -90,11 +90,13 @@
                     <VhallInput v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></VhallInput>
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
-                      <el-switch
+                      <p class="switch__box">
+                         <el-switch
                       v-if="index > 1"
                         v-model="item.is_required"
                         inactive-text="必填">
                       </el-switch>
+                      </p>
                     </div>
                 </el-form-item>
                 <div class="add-prize" @click="addField">
@@ -467,15 +469,15 @@ export default {
   /deep/.el-switch{
     float: right;
     padding-top: 10px;
-    /deep/.el-switch__core {
-      width: 32px!important;
-      height: 20px;
-    }
-    /deep/.el-switch__core::after {
-      top: 2px;
-      width: 14px;
-      height: 14px;
-    }
+    // /deep/.el-switch__core {
+    //   width: 32px!important;
+    //   height: 20px;
+    // }
+    // /deep/.el-switch__core::after {
+    //   top: 2px;
+    //   width: 14px;
+    //   height: 14px;
+    // }
   }
   /deep/.el-form-item__label{
     color: #1A1A1A;

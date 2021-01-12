@@ -242,7 +242,7 @@ export default {
         if (valid) {
           if (this.$route.params.str) {
             // 直播-新建广告
-            if (this.title == '编辑') {
+            if (this.advInfo.adv_id) {
               this.createAdvAndsync(0);
             } else {
               this.dialogTongVisible = true;
@@ -294,7 +294,7 @@ export default {
           this.dialogTongVisible = false;
           this.advertisement = {};
           this.clearForm();
-          this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
+          this.$message.success(`${this.advInfo.adv_id ? '修改' : '创建'}成功`);
           // 获取列表数据
           this.$emit('reload');
         } else {
@@ -303,7 +303,7 @@ export default {
         }
       }).catch(() => {
         this.dialogVisible = true;
-        this.$message.error(res.msg || `${this.title === '编辑' ? '修改' : '创建'}失败`);
+        this.$message.error(res.msg || `${this.advInfo.adv_id ? '修改' : '创建'}失败`);
       });
     },
     moreLoadData() {
@@ -357,7 +357,7 @@ export default {
     },
     // 从资料库保存到活动
     advSaveToWebinar(id) {
-      if (this.maxTotal + this.selectChecked.length >= 50) {
+      if (this.maxTotal + this.selectChecked.length > 50) {
         this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
         return;
       }
@@ -400,6 +400,7 @@ export default {
       const typeList = ['png', 'jpeg', 'gif', 'bmp'];
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
+      console.log(typeArr, '??????????')
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {

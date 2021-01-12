@@ -38,7 +38,7 @@
     <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <div class="inner">
-          <div class="top" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})">
+          <div class="top" @click="editSpecialInfo(item.id)">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
@@ -52,7 +52,7 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                <i class="iconfont-v3 saasicon-pencil" @click="$router.push({path:'/special/edit',query: {id: item.id, title: '编辑'}})"></i>
+                <i class="iconfont-v3 saasicon-pencil" @click="editSpecialInfo(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
                 <i class="iconfont-v3 saasicon-eye" @click="specialDetail(item)"></i>
@@ -206,10 +206,14 @@ export default {
         this.loading = false;
       });
     },
+    // 编辑专题
+    editSpecialInfo(id) {
+      const { href } = this.$router.resolve({path:'/special/edit',query: {id: id, title: '编辑'}});
+      window.open(href, '_blank');
+    },
     toShare(id) {
       this.dialogShareVisible = true;
-      this.shareVo.url = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
-      // console.log(this.home_link, '?????????????????')
+      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
@@ -348,7 +352,7 @@ export default {
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
-        border-radius: 4px;
+        border-radius: 4px 4px 0 0;
         cursor: pointer;
         img{
           width: 100%;
@@ -372,7 +376,7 @@ export default {
           position: absolute;
           height: 40px;
           width: 100%;
-          background: rgba(0, 0, 0, .4);
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
           /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
           bottom: 0px;
           left: 0px;
@@ -394,7 +398,7 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        border-radius: 4px;
+        border-radius: 0 0 4px 4px;
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;

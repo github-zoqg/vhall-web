@@ -245,12 +245,24 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
+  // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
       this.getBaseInfo();
       this.getQuestionList();
     },
     watch: {
+      province(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.city = ''
+          this.county = ''
+        }
+      },
+      city(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.county = ''
+        }
+      },
       isPhoneValidate: {
         immediate: true,
         handler(newVal) {
@@ -479,7 +491,7 @@
       };
     },
     mounted() {
-
+      // new DevicePixelRatio('#signFormBox');
     },
     methods: {
       handleUnfold(val) {
@@ -540,15 +552,35 @@
         }
       },
       getDyCode(isForm) {
+        let isPhoneValid = true
         let phone = ''
         if (isForm) {
           const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
           phone = this.form[phoneItem.id];
+          // 点击获取短信验证码之前验证手机号
+          this.$refs['form'].validateField(''+phoneItem.id, err => {
+            if (!err) {
+              isPhoneValid = true
+            } else {
+              isPhoneValid = false
+            }
+          })
         } else {
           phone = this.verifyForm.phone
+          this.$refs['verifyForm'].validateField('phone', err => {
+            if (!err) {
+              isPhoneValid = true
+            } else {
+              isPhoneValid = false
+            }
+          })
         }
+        if (!isPhoneValid) {
+          return false
+        }
+
         // 获取短信验证码
-        if (validPhone('', phone) && this.mobileKey) {
+        if (this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
             webinar_id: this.webinar_id,
             phone: phone,
@@ -568,6 +600,7 @@
           }, 1000);
         } else {
           this[key] = 60;
+          isForm ? this.callCaptcha('#setCaptcha') : this.callCaptcha('#setCaptcha1');
         }
       },
       /**
@@ -653,8 +686,15 @@
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
                 this.$refs['form'].validateField('code', err => {
+                  // 还原状态
                   this.isVerifyCodeErr = false
                 })
+              } else if (err.code == 12814) {
+                // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
+                // 报名成功的操作，跳转到直播间
+                this.closePreview()
+                // 判断当前直播状态，进行相应的跳转
+                this.getWebinarStatus()
               }
             })
           } else {
@@ -692,6 +732,7 @@
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
                 this.$refs['verifyForm'].validateField('code', res => {
+                  // 还原状态
                   this.isVerifyCodeErr = false
                 })
               } else {
@@ -904,8 +945,8 @@
     width: 100%;
     height: 100%;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 101;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1002;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -917,7 +958,7 @@
     }
     .signWrap {
       overflow-y: auto;
-      height: 843px;
+      height: 90%;
       border-radius: 4px;
       background: #fff;
       position: relative;
@@ -1258,9 +1299,9 @@
               line-height: 38px;
             }
             .yidun_slider {
-              .yidun_slider__icon {
+              // .yidun_slider__icon {
                 // background-image: none;
-              }
+              // }
               &:hover {
                 background-color: #FB3A32;
               }

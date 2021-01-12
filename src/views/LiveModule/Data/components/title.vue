@@ -6,7 +6,7 @@
       </div>
       <div class="box-title">
         <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
-          <img src="../../../../common/images/live.gif" alt="">
+          <img src="../../../../common/images/live/lives.gif" alt="">
           <b>直播</b>
         </div>
         <div class="title-status grayColor" v-else>
@@ -24,7 +24,10 @@
 </template>
 <script>
 export default {
-  props: ['liveDetailInfo']
+  props: ['liveDetailInfo'],
+  created() {
+    console.log(this.liveDetailInfo, '>>>""""""""""""""""""');
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -62,11 +65,9 @@ export default {
     padding: 0 8px;
     img {
       height: 8px;
-      // width: 8px;
+      width: 8px;
       vertical-align: top;
-      margin: 5px;
-      background: #fff;
-      transform: rotate(180deg)
+      margin: 5px 3px 5px 0;
     }
     b {
       display: inline-block;

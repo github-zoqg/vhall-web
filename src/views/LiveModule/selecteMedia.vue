@@ -1,5 +1,5 @@
 <template>
-<div class="select-video">
+<div class="select-video" v-if="dialogVisible">
   <el-dialog
     title="选择音视频"
     @closed="closeHandler"
@@ -129,10 +129,13 @@ export default {
       if (this.dialogVisible) {
         this.tableSelect = [];
         this.docList = [];
+        this.pageInfo.pageNum = 1;
+        this.pageInfo.pos = 0;
         this.getMediaList();
       } else {
         this.keyWords = '';
         this.pageInfo.pageNum = 1;
+        this.pageInfo.pos = 0;
       }
     }
   },
@@ -238,6 +241,7 @@ export default {
     },
     searchHandler(){
       this.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 1;
       this.docList = [];
       this.getMediaList();
     },
@@ -332,6 +336,7 @@ export default {
       width: 220px;
       /deep/ .el-input__inner{
         height: 36px;
+        border-radius: 20px;
       }
       .el-input__suffix{
         i{

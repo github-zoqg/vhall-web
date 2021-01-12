@@ -54,7 +54,7 @@
           <span class="forget" @click="forgetPassword">忘记密码</span>
         </el-form-item>
         <div class="login-btn">
-          <el-button class="submit" type="primary" @click="loginAccount" round>登 录</el-button>
+          <el-button class="submit" type="primary" @click="loginAccount" round>登&nbsp;&nbsp;&nbsp;录</el-button>
         </div>
         <div class="login-just">
           现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
@@ -80,6 +80,7 @@
               clearable
               v-model.trim="dynamicForm.phoneNumber">
             </VhallInput>
+            <p class="errorText" v-if="isRegister"><i class="el-icon-error"></i>该手机号未注册，请先注册</p>
           </el-form-item>
           <el-form-item>
             <div id="loginCaptcha">
@@ -97,7 +98,7 @@
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="getDyCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                 </template>
               </el-input>
             </div>
@@ -120,8 +121,8 @@
                 placeholder="请输入手机号"
                 :maxlength="11"
                 clearable
-                auto-complete="off"
                 @input="checkPhone"
+                auto-complete="off"
                 v-model.trim="registerForm.phone">
               </el-input>
             </el-form-item>
@@ -142,7 +143,7 @@
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="getRegisterCode" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
                   </template>
                 </VhallInput>
               </div>
@@ -196,11 +197,31 @@ export default {
         callback();
       }
     };
+    var validateLoginPhone = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入手机号'));
+      } else {
+        if (!(/^1[0-9]{10}$/.test(value))) {
+          callback(new Error('请输入正确的手机号'));
+        } else {
+          this.$fetch('loginCheck', {account: value}).then(res => {
+            if (!res.data.account_exist) {
+              callback(new Error('该手机号未注册，请先注册'));
+            } else {
+              callback();
+            }
+          }).catch(res => {
+            this.errorMsgShow = res.msg || '登录失败';
+          });
+        }
+      }
+    };
     return {
       remember: 0,
       isPassWordType: true,
       errorText: '',
       registerText: '',
+      isRegister: false,
       isLogin: false, //账号、密码是否已经输入正确
       loginForm: {
         account: '',
@@ -226,7 +247,7 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' }
         ],
         phoneNumber: [
-          { validator: validatePhone, trigger: 'blur' }
+          { validator: validateLoginPhone, trigger: 'blur' }
         ],
         dynamic_code: [
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
@@ -618,9 +639,9 @@ export default {
     border-bottom: 1px solid #cccccc;
     border-radius: unset;
     padding: 0 0;
-    /* &:hover {
-      color: #999999;
-    } */
+    &:hover {
+      border-bottom-color: #FB3A32;
+    }
     &:active {
       color: #1A1A1A;
       border-bottom: 1px solid #cccccc;

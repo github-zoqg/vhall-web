@@ -26,9 +26,9 @@
         </upload>
       </el-form-item>
       <el-form-item label="专题简介" required>
-        <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
+        <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
-      <el-form-item label="预约人数:">
+      <el-form-item label="预约人数">
         <p class="switch__box">
           <el-switch
             v-model="formData.reservation"
@@ -38,7 +38,7 @@
           </el-switch>
         </p>
       </el-form-item>
-      <el-form-item label="热度">
+      <el-form-item label="专题热度">
         <p class="switch__box">
           <el-switch
             v-model="formData.hot"
@@ -164,6 +164,9 @@ export default {
     },
     homeDesc(){
       return this.formData.home ? '已开启，该专题在个人主页中显示' : "开启后，该专题在个人主页中显示";
+    },
+    title() {
+      return this.$route.query.title
     }
   },
   data(){
@@ -205,6 +208,21 @@ export default {
       deep: true,
       handler() {
         this.isChange = true;
+      }
+    },
+    title(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.formData = {
+          selectedActives: [],
+          title: '',
+          reservation: true,
+          imageUrl: '',
+          domain_url:'',
+          content: '',
+          hot: true,
+          home: true
+        }
+        this.$refs.unitImgTxtEditor.$refs.editor.resetContent()
       }
     }
   },
@@ -431,7 +449,7 @@ export default {
 <style lang="less" scoped>
   .el-form{
     background: #ffffff;
-    padding: 48px 20px 50px 48px;
+    padding: 48px 20px 1px 48px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -449,6 +467,9 @@ export default {
   .el-form-item{
     width: 100%;
     max-width: 640px;
+    &:last-child{
+      padding: 16px 0;
+    }
   }
   .btnGroup{
     text-align: center;

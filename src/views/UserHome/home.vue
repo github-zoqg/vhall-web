@@ -11,14 +11,14 @@
          <li>
            <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
          </li>
-         <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
+         <li :class="`layout__center ${!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''}`">
            <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
            <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
            <span v-show="userHomeVo && userHomeVo.content" class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收起'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
          </li>
-         <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
+         <li :class="!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''">
            <el-button size="medium" round v-if="setHomeCheck" @click.prevent.stop="toHomeSetPage">设置</el-button>
-           <el-button size="medium" round @click="openDialog('share')">分享</el-button>
+           <el-button size="medium" round @click="openDialog('share')" v-if="userHomeVo && Number(userHomeVo.show_share) === 1">分享</el-button>
          </li>
        </ul>
      </div>
@@ -114,14 +114,6 @@ export default {
       }).catch(err=>{
         console.log(err);
         this.userHomeVo = null;
-      });
-    },
-    userLogoGet() {
-      this.$fetch('userLogoGet', {
-        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
-      }).then(res => {
-        console.log(res);
-      }).catch(err=>{
       });
     },
     toHomeSetPage() {

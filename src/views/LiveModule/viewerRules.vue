@@ -278,7 +278,7 @@ export default {
         }
       ],
       viewerDao: {},
-      perssionInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
+      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,
@@ -676,13 +676,14 @@ export default {
   padding: 49px 56px 40px 56px;
   /deep/.el-radio__label {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
+    font-family: @fontRegular;
     color: #1A1A1A;
   }
   /deep/.el-radio__input.is-checked+.el-radio__label {
     font-size: 14px;
     font-family: @fontRegular;
-    font-weight: 500;
+    font-weight: 400;
     color: #1A1A1A;
   }
 }
@@ -850,6 +851,9 @@ export default {
       border-radius: 16px;
       &:last-child {
         background: #ffffff;
+        /* display: block; */
+        text-align: left;
+        padding: 3px 16px 3px 0;
       }
       span {
         font-size: 14px;

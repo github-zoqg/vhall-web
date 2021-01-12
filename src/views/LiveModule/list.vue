@@ -11,6 +11,7 @@
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
         <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick v-if="vodPerssion == 1">创建点播</el-button>
+        <!--  -->
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
             <el-option
@@ -67,8 +68,8 @@
                     <i class="el-icon-video-camera" @click.prevent.stop="goLivePlay(item)"></i>
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="回放" placement="top">
-                  <i class="el-icon-s-promotion" @click="$router.push({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`})"></i>
+                  <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
+                  <i class="el-icon-s-promotion" @click="goPlayback(item)"></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="详情" placement="top">
                     <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
@@ -76,9 +77,9 @@
                   <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
                     <i class="el-icon-more"></i>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item command='/live/reportsData'>数据报告</el-dropdown-item>
-                      <el-dropdown-item command='/live/interactionData'>互动统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/userData'>用户统计</el-dropdown-item>
+                      <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
+                      <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
+                      <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
                       <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
                       <el-dropdown-item command='删除'>删除</el-dropdown-item>
                     </el-dropdown-menu>
@@ -140,12 +141,18 @@ export default {
       liveList: [],
     };
   },
+  computed: {
+    childPremission: function(){
+      return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
+    }
+  },
   components: {
     PageTitle,
     noData
   },
   created() {
     this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
+    console.log(sessionOrLocal.get('SAAS_V3_SON_PS'), '??????????????????')
     console.log(this.vodPerssion, '??????????????????')
     this.getLiveList();
   },
@@ -180,9 +187,14 @@ export default {
           });
         });
       } else if (command === '/live/edit') {
-        this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
+        const { href } = this.$router.resolve({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
+        window.open(href, '_blank');
+        // this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
       } else {
-        this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        // 新标签页打开
+        // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        const { href } = this.$router.resolve({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        window.open(href, '_blank');
       }
     },
     currentChangeHandler(current) {
@@ -234,6 +246,10 @@ export default {
         this.goIsLive(item)
       }
     },
+    goPlayback(item) {
+      const { href } = this.$router.resolve({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`});
+      window.open(href, '_blank');
+    },
     goIsLive(item) {
       if (item.webinar_type != 1) {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
@@ -266,9 +282,9 @@ export default {
       if (!userPhone) {
         this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
           confirmButtonText: '立即绑定',
-          customClass: 'zdy-alert-box',
-          type: 'warning',
-          center: true,
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
           callback: action => {
             if (action === 'confirm') {
               this.$router.push({path:'/account/info'});
@@ -280,7 +296,8 @@ export default {
       }
     },
     toDetail(id, state) {
-      this.$router.push({path: `/live/detail/${id}`});
+      const { href } = this.$router.resolve({path: `/live/detail/${id}`});
+      window.open(href, '_blank');
     },
     toRoom(id){
       const { href } = this.$router.resolve({path: `/lives/room/${id}`});
@@ -375,6 +392,7 @@ export default {
       .inner{
         transition: all .15s ease-in;
         position: relative;
+        border-radius: 4px;
       }
       .inner:hover{
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
@@ -396,7 +414,7 @@ export default {
           height: 100%;
           object-fit: scale-down;
           position: absolute;
-          border-radius: 4px;
+          border-radius: 4px 4px 0 0;
           top:0;
           left: 0;
         }

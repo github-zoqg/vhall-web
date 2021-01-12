@@ -105,6 +105,7 @@ export default {
     onSwitchChange(option) {
       if(option.watch) {
         if (this.saleTotal >= 100) {
+          option.watch = false;
           this.$message.error('商品最大上架数量为100，请下架后再进行操作');
           return;
         }
@@ -204,6 +205,13 @@ export default {
     },
     // 编辑
     edit(that, {rows}) {
+      if (rows.watch) {
+        that.$alert('商品已上架，如需编辑请先做下架处理？', '提示', {
+          confirmButtonText: '知道了',
+          customClass: 'zdy-message-box'
+        });
+        return;
+      }
       that.$router.push({
         path: `/live/editProduct/${that.$route.params.str}`,
         query: {

@@ -1,12 +1,14 @@
 <template>
   <div class="video-wrap">
     <pageTitle title="音视频">
+      <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span>
       <div slot="content">
         1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
         <br>
         2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
         <br>
         3.上传的视频，不支持剪辑和下载
+        <br>
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
@@ -60,6 +62,7 @@ import VideoPreview from './VideoPreview/index.vue';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from "@/utils/Events";
+import { formateSeconds } from '@/utils/general';
 export default {
   name: 'video.vue',
   data() {
@@ -125,9 +128,19 @@ export default {
     this.getVideoAppid();
     EventBus.$on('sign_trans_code', res => { // 转码状态
       console.log(res, '监听到sign_trans_code未读消息提示事件');
-      // if(Number(res.user_id) === Number(this.userId)) {
-
-      // }
+      this.tableData.map(item => {
+        if (item.id === res.record_id) {
+          if (res.status == 1) {
+            item.transcode_status = 1;
+            item.duration = formateSeconds(res.duration);
+            item.transcode_status_text = '转码成功';
+          } else {
+            item.transcode_status = 2;
+            item.duration = '——';
+            item.transcode_status_text = '转码失败';
+          }
+        }
+      })
     });
   },
   methods: {
@@ -154,7 +167,7 @@ export default {
     monitor(){
       /**
        * 接收聊天自定义消息*/
-      this.$Chat.on(async msg => {
+      this.$Chat.onCustomMsg(async msg => {
         try {
           if (typeof msg !== 'object') {
             msg = JSON.parse(msg)
@@ -168,16 +181,10 @@ export default {
         } catch (e) {
           console.log(e)
         }
-        console.log('============收到msg===============' + JSON.stringify(msg.data))
+        console.log('============收到msg1111111===============' + JSON.stringify(msg.data))
         if (msg.data.type === 'sign_trans_code') {
           EventBus.$emit('sign_trans_code', msg.data);
         }
-        if (msg.data.type === 'host_msg_webinar') {
-          console.log('EFASDFD', msg.data);
-        }
-        // if (msg.data.type === 'doc_convert_jpeg') {
-        //   EventBus.$emit('doc_convert_jpeg', msg.data.data)
-        // }
       })
     },
     getTableList(params){
@@ -490,6 +497,10 @@ export default {
 .video-wrap{
   height: 100%;
   width: 100%;
+  .video-text{
+    padding-left: 20px;
+    color: #666;
+  }
   /deep/.el-card__body{
     padding: 0 0 30px 0;
   }
@@ -519,6 +530,9 @@ export default {
   /deep/ .el-dialog__headerbtn{
     top: 30px;
     right: 0px;
+    .el-dialog__close {
+      color: #1a1a1a;
+    }
   }
   /deep/ .el-dialog__body{
     width: 642px;

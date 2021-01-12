@@ -435,6 +435,14 @@ export default {
     },
     // 下拉题目选项 subject 改变
     selectOptChange(question, node, isSelect, isPrivacy) {
+      // 如果是更改的隐私声明的跳转链接需要验证链接格式
+      if (node.key == 'url') {
+        const reg = /^(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/
+        if (!reg.test(node.value)) {
+          this.$message.error('请输入正确格式的跳转链接！')
+          node.value = ''
+        }
+      }
       // 只有 select 才可以更改
       if (isSelect) {
         const options = {
@@ -724,6 +732,9 @@ export default {
     .radioInput {
       margin-bottom: 10px;
     }
+    /deep/ .el-textarea__inner {
+      padding-left: 12px;
+    }
   }
   .header-img-tip {
     display: block;
@@ -806,7 +817,7 @@ export default {
     }
   }
   .bottomBtn{
-    margin-top: 23px;
+    margin-top: 9px;
     text-align: right;
     overflow: hidden;
     .addBtn{

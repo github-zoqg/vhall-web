@@ -58,7 +58,7 @@
           </div>
         </div>
         <!-- 嘉宾 -->
-        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest && isInteract==1">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
@@ -175,6 +175,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import Clipboard from 'clipboard';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'embedCard.vue',
   components: {
@@ -203,6 +204,7 @@ export default {
     return {
       roleSwitch: null,
       webinarVo: {},
+      isInteract: 1,
       privilegeVo: {
         host_password: '',
         guest_password: '',
@@ -265,6 +267,9 @@ export default {
     assistant_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/3`;
     }
+  },
+  created() {
+    this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
   },
   methods: {
     async updateSwitch() {
