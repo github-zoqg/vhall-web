@@ -91,8 +91,8 @@
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <p class="switch__box">
-                         <el-switch
-                      v-if="index > 1"
+                        <el-switch
+                          v-if="index > 1"
                         v-model="item.is_required"
                         inactive-text="必填">
                       </el-switch>
@@ -520,8 +520,15 @@ export default {
         i{
           font-size: 16px;
           vertical-align: top;
-          margin: 7px 10px 0 0;
+          margin-top: 7px;
           cursor: pointer;
+        }
+      }
+      .switch__box{
+        display: inline-block;
+        padding-left: 5px;
+        /deep/.el-switch{
+          padding-top: 0px;
         }
       }
       /deep/.el-form-item__label{
