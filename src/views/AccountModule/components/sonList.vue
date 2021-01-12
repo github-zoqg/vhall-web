@@ -621,6 +621,14 @@ export default {
 }
 .all-yes-data {
   padding: 24px 24px 40px 24px;
+  /deep/.data-list {
+    /deep/.el-table {
+      margin-bottom: 40px;
+      .cell{
+        line-height: 25px;
+      }
+    }
+  }
 }
 .search-no-data {
   padding-top: 148px;
