@@ -81,8 +81,8 @@ export default {
         selector: `#${this.tinymceId}`,
         plugins: 'fullscreen image wordcount',
         // 字体Icon 库。  等瑞芳提供完整时 进行替换
-        // icons_url: '//t-static01-open.e.vhall.com/vhallyun/upload/icons.js',
-        // icons: 'vhall',
+        icons_url: '//cnstatic01.e.vhall.com/saas/common_libs/editor/icons.js',
+        icons: 'vhall',
         image_dimensions: false,
         toolbar: this.toolbar,
         quickbars_selection_toolbar: "removeformat | bold italic underline strikethrough | fontsizeselect forecolor backcolor",
