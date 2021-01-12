@@ -13,7 +13,7 @@
     </div>
     <div class="tips-box">
       <span class="tips-title">温馨提示：</span>
-      <div class="tips-content">请在左侧导航栏中的<span><a href="javascript:;" @click.stop="goLink">【商品】</a></span>中添加内容</div>
+      <div class="tips-content">请在<span><a href="javascript:;" @click.stop="goLink">【商品】</a></span>中添加内容</div>
     </div>
   </div>
 </template>
