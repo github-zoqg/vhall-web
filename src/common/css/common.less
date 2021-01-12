@@ -426,6 +426,11 @@
   line-height: 20px;
 }
 
+/*dialog开启会给body添加padding-right:10px;导致画面抖动，故去掉*/
+body {
+  padding-right: 0!important;
+}
+
 /*-----------------------------------------文本框placeholder 样式重置 ---------------------------------------------*/
 ::-webkit-input-placeholder, :-moz-placeholder, ::-moz-placeholder, :-ms-input-placeholder { /* WebKit, Blink, Edge */
   font-size: @font_size_14;
