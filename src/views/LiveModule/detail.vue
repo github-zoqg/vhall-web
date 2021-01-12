@@ -301,6 +301,8 @@ export default {
         } else if (item.path === `/live/interactionData/${this.$route.params.str}`) {
           // 互动统计
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
+        } else if (item.path == `/live/embedCard/${this.$route.params.str}`) {
+          this.$router.push({path: item.path, query: {type:this.liveDetailInfo.webinar_type }});
         } else {
           this.$router.push({path: item.path});
         }
@@ -351,9 +353,6 @@ export default {
           return `0天0时0分0秒`;
         }
       }
-    },
-    exportInfo() {
-      this.isExport = !this.isExport;
     }
   }
 };
