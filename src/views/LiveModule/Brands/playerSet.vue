@@ -1,199 +1,192 @@
 <template>
   <div class="prize-card">
     <pageTitle title="播放器设置"></pageTitle>
-    <el-card style="min-height:741px;">
-      <el-row :gutter="20">
-        <el-col :span="13">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="防录屏跑马灯" name="first">
-              <div class="give-item">
-                <div class="give-prize">
-                  <el-form :model="formHorse" ref="ruleForm" label-width="100px">
-                    <el-form-item label="跑马灯">
-                      <p class="switch__box">
-                        <el-switch
-                          v-model="scrolling_open"
-                          active-color="#ff4949"
-                          inactive-color="#ccc"
-                          @change="closeHorseInfo"
-                          :active-text="horseLampText"
-                        >
-                        </el-switch>
-                      </p>
-                    </el-form-item>
-                    <el-form-item label="类型">
-                      <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
-                      <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
-                    </el-form-item>
-                    <el-form-item label="固定文本">
-                      <VhallInput
-                        v-model="formHorse.text"
-                        class="textType"
-                        placeholder="版权所有，盗版必究"
-                        :disabled="!scrolling_open"
-                        autocomplete="off"
-                        :maxlength="20"
-                        show-word-limit
-                      ></VhallInput>
-                    </el-form-item>
-                    <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:323px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                    <el-form-item label="字体大小">
-                      <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
-                        <el-option
-                          v-for="item in fontList"
-                          :key="item.value"
-                          :label="item.value"
-                          :value="item.value">
-                        </el-option>
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item label="移动速度">
-                      <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
-                      <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open">快</el-radio>
-                    </el-form-item>
-                    <el-form-item label="显示位置">
-                      <el-radio v-model="formHorse.position" :label="1" :disabled="!scrolling_open">随机</el-radio>
-                      <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open">上</el-radio>
-                      <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
-                      <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
-                    </el-form-item>
-                    <el-form-item label="间隔时间">
-                      <el-input
-                        v-model="formHorse.interval"
-                        :disabled="!scrolling_open"
-                        maxlength="300"
-                        oninput="this.value=this.value.replace(/[^\d]/g, '')"
-                        placeholder="默认10s，输入范围1-300s">
-                        <i slot="suffix">秒</i>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" class="common-save length152" v-preventReClick :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
-                    </el-form-item>
-                  </el-form>
-                </div>
-                <div class="give-white" v-show="!scrolling_open"></div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="水印设置" name="second">
-              <div class="give-item">
-                <div class="give-prize">
-                  <el-form :model="formWatermark" ref="ruleForm" label-width="100px">
-                    <el-form-item label="水印">
-                      <p class="switch__box">
-                        <el-switch
-                          v-model="watermark_open"
-                          active-color="#ff4949"
-                          inactive-color="#ccc"
-                          @change="openWaterMarkInfo"
-                          :active-text="waterMarkText"
-                        >
-                        </el-switch>
-                      </p>
-                    </el-form-item>
-                    <el-form-item label="水印图片" required>
-                      <upload
-                        class="giftUpload"
-                        v-model="formWatermark.img_url"
-                        :domain_url="domain_url"
-                        :saveData="{
-                          path: 'interacts/watermark-imgs',
-                          type: 'image',
-                        }"
-                        :on-success="uploadAdvSuccess"
-                        :on-progress="uploadProcess"
-                        :on-error="uploadError"
-                        :on-preview="uploadPreview"
-                        :before-upload="beforeUploadHnadler"
-                        :disabled="!watermark_open"
-                        @delete="deleteImg"
-                      >
-                        <div slot="tip">
-                          <p>建议尺寸：98*28px，小于2M</p>
-                          <p>支持jpg、gif、png、bmp</p>
-                        </div>
-                      </upload>
-                    </el-form-item>
-                    <el-form-item label="水印位置">
-                      <el-radio v-model="formWatermark.img_position" :label="1" :disabled="!watermark_open">左上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" :label="2" :disabled="!watermark_open">右上角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">左下角</el-radio>
-                      <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">右下角</el-radio>
-                    </el-form-item>
-                    <el-form-item label="透明度">
-                      <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
-                      <span class="isNum">{{formWatermark.img_alpha}}%</span>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
-                    </el-form-item>
-                  </el-form>
-                </div>
-                <div class="give-white" v-show="!watermark_open"></div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="其他" name="third">
-            <div class="give-item">
-              <div class="give-prize">
-                  <el-form :model="formOther" ref="ruleForm" label-width="100px">
-                <el-form-item label="弹幕">
+    <div class="player-set" style="min-height:741px;">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="防录屏跑马灯" name="first">
+          <div class="give-item">
+            <div class="give-prize">
+              <el-form :model="formHorse" ref="ruleForm" label-width="100px">
+                <el-form-item label="跑马灯">
                   <p class="switch__box">
                     <el-switch
-                      v-model="formOther.bulletChat"
+                      v-model="scrolling_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
-                      :active-text="bulletChatText"
-                      @change="otherOtherInfo(1)"
+                      @change="closeHorseInfo"
+                      :active-text="horseLampText"
                     >
                     </el-switch>
                   </p>
                 </el-form-item>
-                <el-form-item label="进度条">
-                  <p class="switch__box">
-                    <el-switch
-                      v-model="formOther.progress"
-                      active-color="#ff4949"
-                      inactive-color="#ccc"
-                      :active-text="progressText"
-                      @change="otherOtherInfo(2)"
-                    >
-                    </el-switch>
-                  </p>
+                <el-form-item label="类型">
+                  <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
+                  <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
                 </el-form-item>
-                <el-form-item label="倍速">
-                  <p class="switch__box">
-                    <el-switch
-                      v-model="formOther.doubleSpeed"
-                      active-color="#ff4949"
-                      inactive-color="#ccc"
-                      :active-text="doubleSpeedText"
-                      @change="otherOtherInfo(3)"
-                    >
-                    </el-switch>
-                  </p>
+                <el-form-item label="固定文本">
+                  <VhallInput
+                    v-model="formHorse.text"
+                    class="textType"
+                    placeholder="版权所有，盗版必究"
+                    :disabled="!scrolling_open"
+                    autocomplete="off"
+                    :maxlength="20"
+                    show-word-limit
+                  ></VhallInput>
+                </el-form-item>
+                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:323px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
+                <el-form-item label="字体大小">
+                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
+                    <el-option
+                      v-for="item in fontList"
+                      :key="item.value"
+                      :label="item.value"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="移动速度">
+                  <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
+                  <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
+                  <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open">快</el-radio>
+                </el-form-item>
+                <el-form-item label="显示位置">
+                  <el-radio v-model="formHorse.position" :label="1" :disabled="!scrolling_open">随机</el-radio>
+                  <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open">上</el-radio>
+                  <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
+                  <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
+                </el-form-item>
+                <el-form-item label="间隔时间">
+                  <el-input
+                    v-model="formHorse.interval"
+                    :disabled="!scrolling_open"
+                    maxlength="300"
+                    oninput="this.value=this.value.replace(/[^\d]/g, '')"
+                    placeholder="默认10s，输入范围1-300s">
+                    <i slot="suffix">秒</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" class="common-save length152" v-preventReClick :disabled="!scrolling_open" @click="preFormHorse">保存</el-button>
                 </el-form-item>
               </el-form>
-              </div>
             </div>
-            </el-tab-pane>
-          </el-tabs>
-       </el-col>
-        <el-col :span="6">
-          <div class="show-purple">
-            <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
-            <img :src="audioEnd" alt="" v-show="!showVideo">
-            <div id="videoDom" v-show="showVideo"></div>
-            <p class="show-purple-info">
-              <span>提示</span>
-              <span>1、移动端全屏播放时，跑马灯会失效</span>
-              <span>2、安卓手机浏览器劫持可能导致跑马灯失效</span>
-            </p>
-            <!-- <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview> -->
+            <div class="give-white" v-show="!scrolling_open"></div>
           </div>
-        </el-col>
-      </el-row>
-    </el-card>
+        </el-tab-pane>
+        <el-tab-pane label="水印设置" name="second">
+          <div class="give-item">
+            <div class="give-prize">
+              <el-form :model="formWatermark" ref="ruleForm" label-width="100px">
+                <el-form-item label="水印">
+                  <p class="switch__box">
+                    <el-switch
+                      v-model="watermark_open"
+                      active-color="#ff4949"
+                      inactive-color="#ccc"
+                      @change="openWaterMarkInfo"
+                      :active-text="waterMarkText"
+                    >
+                    </el-switch>
+                  </p>
+                </el-form-item>
+                <el-form-item label="水印图片" required>
+                  <upload
+                    class="giftUpload"
+                    v-model="formWatermark.img_url"
+                    :domain_url="domain_url"
+                    :saveData="{
+                      path: 'interacts/watermark-imgs',
+                      type: 'image',
+                    }"
+                    :on-success="uploadAdvSuccess"
+                    :on-progress="uploadProcess"
+                    :on-error="uploadError"
+                    :on-preview="uploadPreview"
+                    :before-upload="beforeUploadHnadler"
+                    :disabled="!watermark_open"
+                    @delete="deleteImg"
+                  >
+                    <div slot="tip">
+                      <p>建议尺寸：98*28px，小于2M</p>
+                      <p>支持jpg、gif、png、bmp</p>
+                    </div>
+                  </upload>
+                </el-form-item>
+                <el-form-item label="水印位置">
+                  <el-radio v-model="formWatermark.img_position" :label="1" :disabled="!watermark_open">左上角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" :label="2" :disabled="!watermark_open">右上角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">左下角</el-radio>
+                  <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">右下角</el-radio>
+                </el-form-item>
+                <el-form-item label="透明度">
+                  <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
+                  <span class="isNum">{{formWatermark.img_alpha}}%</span>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+            <div class="give-white" v-show="!watermark_open"></div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="其他" name="third">
+        <div class="give-item">
+          <div class="give-prize">
+              <el-form :model="formOther" ref="ruleForm" label-width="100px">
+            <el-form-item label="弹幕">
+              <p class="switch__box">
+                <el-switch
+                  v-model="formOther.bulletChat"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="bulletChatText"
+                  @change="otherOtherInfo(1)"
+                >
+                </el-switch>
+              </p>
+            </el-form-item>
+            <el-form-item label="进度条">
+              <p class="switch__box">
+                <el-switch
+                  v-model="formOther.progress"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="progressText"
+                  @change="otherOtherInfo(2)"
+                >
+                </el-switch>
+              </p>
+            </el-form-item>
+            <el-form-item label="倍速">
+              <p class="switch__box">
+                <el-switch
+                  v-model="formOther.doubleSpeed"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="doubleSpeedText"
+                  @change="otherOtherInfo(3)"
+                >
+                </el-switch>
+              </p>
+            </el-form-item>
+          </el-form>
+          </div>
+        </div>
+        </el-tab-pane>
+      </el-tabs>
+      <div class="show-purple">
+          <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
+          <img :src="audioEnd" alt="" v-show="!showVideo">
+          <div id="videoDom" v-show="showVideo"></div>
+          <p class="show-purple-info">
+            <span>提示</span>
+            <span>1、移动端全屏播放时，跑马灯会失效</span>
+            <span>2、安卓手机浏览器劫持可能导致跑马灯失效</span>
+          </p>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -668,12 +661,11 @@ export default {
 }
 .prize-card {
   height: 100%;
-  /deep/.el-card__body {
-    padding: 0;
-  }
-  /deep/.el-card {
-    box-shadow: none;
-  }
+ .player-set{
+   background: #fff;
+   position: relative;
+   border-radius: 4px;
+ }
   /deep/.el-tabs__active-bar {
     border-radius: 2px;
   }
@@ -696,8 +688,14 @@ export default {
        color: #999;
     }
   }
+  /deep/.el-tabs__content{
+    width: 50%;
+  }
   /deep/#vh-video {
     border-radius: 5px;
+  }
+  /deep/.el-input__inner{
+    padding: 0 12px;
   }
   /deep/.el-radio__input {
     width: 16px;
@@ -731,7 +729,7 @@ export default {
   .isNum{
     position: absolute;
     top: -2px;
-    right: 0;
+    right: -10px;
   }
   .give-item {
     padding: 40px 24px;
@@ -747,9 +745,8 @@ export default {
       width: 460px;
       // margin-right: 30px;
       /deep/.el-button {
-        padding: 12px 61px;
         border-radius: 20px;
-        margin-top: 25px;
+        margin-top: 16px;
       }
     }
     .give-show {
@@ -775,7 +772,9 @@ export default {
     margin-top: 100px;
     margin-left: 20px;
     border-radius: 5px;
-    position: relative;
+    position: absolute;
+    top: 20px;
+    left: 53%;
     img{
       width: 400px;
       height: 226px;

@@ -365,6 +365,12 @@ export default {
       handler() {
         this.isChange = true;
       }
+    },
+    selectMedia: {
+      deep: true,
+      handler() {
+        this.isChange = true;
+      }
     }
   },
   data(){

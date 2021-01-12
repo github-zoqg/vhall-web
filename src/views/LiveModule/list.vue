@@ -282,9 +282,9 @@ export default {
       if (!userPhone) {
         this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
           confirmButtonText: '立即绑定',
-          customClass: 'zdy-alert-box',
-          type: 'warning',
-          center: true,
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
           callback: action => {
             if (action === 'confirm') {
               this.$router.push({path:'/account/info'});
