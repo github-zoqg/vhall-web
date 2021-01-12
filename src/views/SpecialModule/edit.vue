@@ -467,6 +467,9 @@ export default {
   .el-form-item{
     width: 100%;
     max-width: 640px;
+    &:last-child{
+      padding: 16px 0;
+    }
   }
   .btnGroup{
     text-align: center;
