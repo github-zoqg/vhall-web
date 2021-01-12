@@ -767,6 +767,7 @@ export default {
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
+      background-repeat: no-repeat;
       position: relative;
       .look-header{
         padding: 20px 24px;

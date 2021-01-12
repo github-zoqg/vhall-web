@@ -242,7 +242,7 @@ export default {
         if (valid) {
           if (this.$route.params.str) {
             // 直播-新建广告
-            if (this.title == '编辑') {
+            if (this.advInfo.adv_id) {
               this.createAdvAndsync(0);
             } else {
               this.dialogTongVisible = true;
@@ -294,7 +294,7 @@ export default {
           this.dialogTongVisible = false;
           this.advertisement = {};
           this.clearForm();
-          this.$message.success(`${this.title === '编辑' ? '修改' : '创建'}成功`);
+          this.$message.success(`${this.advInfo.adv_id ? '修改' : '创建'}成功`);
           // 获取列表数据
           this.$emit('reload');
         } else {
@@ -303,7 +303,7 @@ export default {
         }
       }).catch(() => {
         this.dialogVisible = true;
-        this.$message.error(res.msg || `${this.title === '编辑' ? '修改' : '创建'}失败`);
+        this.$message.error(res.msg || `${this.advInfo.adv_id ? '修改' : '创建'}失败`);
       });
     },
     moreLoadData() {
