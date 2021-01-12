@@ -549,4 +549,15 @@ export default {
     }
   }
 }
+/deep/.el-checkbox__inner {
+  border-color: #999999;
+  &:hover {
+    border-color: #FB3A32;
+  }
+}
+/deep/.el-checkbox__input.is-disabled .el-checkbox__inner {
+  background-color: #f7f7f7;
+  border-color: #B3B3B3;
+  cursor: not-allowed;
+}
 </style>
