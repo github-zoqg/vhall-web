@@ -15,7 +15,10 @@
         <div class="base-item" v-if="isStatus!= 4" @click="exportSubscribeInfo">
           <p>导出</p>
           <div class="base-main">
-            <icon icon-class="saasicon_yuyue"></icon>
+            <label>
+              <img src="../../../../common/images/icon/icon_appointment@2x.png" alt="">
+            </label>
+            <!-- <icon icon-class="saasicon_yuyue"></icon> -->
             <div class="base-text">
               <span>预约（人）</span>
               <h1>
@@ -31,7 +34,9 @@
         <div class="base-item" @click="exportAnswer">
           <p>导出</p>
           <div class="base-main">
-            <icon icon-class="saasicon_baomingbiaodan"></icon>
+            <label><img src="../../../../common/images/icon/icon_registration form@2x.png" alt=""></label>
+
+            <!-- <icon icon-class="saasicon_baomingbiaodan"></icon> -->
             <div class="base-text">
               <span>报名表单（人）</span>
               <h1>
@@ -47,7 +52,9 @@
         <div class="base-item" @click="exportPreviewInfo">
           <p>导出</p>
           <div class="base-main">
-           <icon icon-class="saasicon_shikan"></icon>
+            <label><img src="../../../../common/images/icon/icon_And proved@2x.png" alt=""></label>
+
+           <!-- <icon icon-class="saasicon_shikan"></icon> -->
             <div class="base-text">
               <span>试看（人）</span>
               <h1>
@@ -63,7 +70,8 @@
         <div class="base-item" @click="lookOption('邀请排名')">
           <p>查看</p>
           <div class="base-main">
-            <icon icon-class="saasicon_yaoqingpaiming"></icon>
+            <label><img src="../../../../common/images/icon/icon_ranking@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_yaoqingpaiming"></icon> -->
             <div class="base-text">
               <span>邀请排名（人）</span>
               <h1>
@@ -79,7 +87,9 @@
         <div class="base-item" @click="exportShare">
           <p>导出</p>
           <div class="base-main">
-            <icon icon-class="saasicon_fenxiangpaiming"></icon>
+            <label><img src="../../../../common/images/icon/icon_share@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_fenxiangpaiming"></icon> -->
+
             <div class="base-text">
               <span>分享排名（条）</span>
               <h1>
@@ -110,7 +120,9 @@
         <div class="base-item" @click="lookOption('聊天')">
           <p>查看</p>
           <div class="base-main">
-            <icon icon-class="saasicon_liaotian"></icon>
+            <label><img src="../../../../common/images/icon/icon_ban@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_liaotian"></icon> -->
+
             <div class="base-text">
               <span>聊天(条)</span>
               <h1>
@@ -126,7 +138,9 @@
         <div class="base-item" v-if="isStatus!=4" @click="lookOption('问答')">
           <p >查看</p>
           <div class="base-main">
-            <icon icon-class="saasicon_wenda"></icon>
+            <label><img src="../../../../common/images/icon/icon_Question@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_wenda"></icon> -->
+
             <div class="base-text">
               <span>问答(条)</span>
               <h1>
@@ -141,7 +155,9 @@
         </div>
          <div class="base-item" style="cursor: default;">
           <div class="base-main">
-            <icon icon-class="saasicon_dianzan"></icon>
+            <label><img src="../../../../common/images/icon/icon_like@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_dianzan"></icon> -->
+
             <div class="base-text">
               <span>点赞(次)</span>
               <h1>
@@ -157,7 +173,9 @@
          <div class="base-item" v-if="isStatus!=4" @click="lookOption('签到')">
           <p>查看</p>
           <div class="base-main">
-            <icon icon-class="saasicon_qiandao"></icon>
+            <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_qiandao"></icon> -->
+
             <div class="base-text">
               <span>签到(人)</span>
               <h1>
@@ -173,7 +191,9 @@
          <div class="base-item" v-if="isStatus!=4"  @click="lookOption('问卷')">
           <p>查看</p>
          <div class="base-main">
-            <icon icon-class="saasicon_wenjuan"></icon>
+           <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_wenjuan"></icon> -->
+
             <div class="base-text">
               <span>问卷(人)</span>
               <h1>
@@ -189,7 +209,9 @@
          <div class="base-item" v-if="isStatus!=4" @click="lookOption('抽奖')">
           <p>查看</p>
           <div class="base-main">
-            <icon icon-class="saasicon_choujiang"></icon>
+            <!-- <icon icon-class="saasicon_choujiang"></icon> -->
+            <label><img src="../../../../common/images/icon/icon_Lucky draw@2x.png" alt=""></label>
+
             <div class="base-text">
               <span>抽奖(人)</span>
               <h1>
@@ -205,7 +227,9 @@
         <div class="base-item" v-if="isStatus!=4" @click="lookOption('发群红包')">
           <p>查看</p>
          <div class="base-main">
-            <icon icon-class="saasicon_hongbao"></icon>
+           <label><img src="../../../../common/images/icon/icon_envelope@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_hongbao"></icon> -->
+
             <div class="base-text">
               <span>发群红包(元)</span>
               <h1>{{ dataInfo.redpacketMoney }}</h1>
@@ -215,7 +239,9 @@
         <div class="base-item" @click="exportReward">
           <p>导出</p>
           <div class="base-main">
-            <icon icon-class="saasicon_dashang"></icon>
+            <label><img src="../../../../common/images/icon/icon_exceptional@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_dashang"></icon> -->
+
             <div class="base-text">
               <span>打赏(元)</span>
               <h1>{{ dataInfo.rewardMoney }}</h1>
@@ -225,7 +251,9 @@
         <div class="base-item"  @click="exportGift">
           <p>导出</p>
           <div class="base-main">
-            <icon icon-class="saasicon_liwu"></icon>
+            <label><img src="../../../../common/images/icon/icon_gift@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_liwu"></icon> -->
+
             <div class="base-text">
               <span>礼物(元)</span>
               <h1>
@@ -237,7 +265,9 @@
          <div class="base-item" v-if="isStatus!=4&&webinarType==3" @click="exportSpeak">
           <p>导出</p>
           <div class="base-main">
-            <icon icon-class="saasicon_lianmai"></icon>
+            <label><img src="../../../../common/images/icon/icon_whea@2x.png" alt=""></label>
+            <!-- <icon icon-class="saasicon_lianmai"></icon> -->
+
             <div class="base-text">
               <span>连麦(条)</span>
               <h1>
@@ -490,22 +520,33 @@ export default {
         }
         .base-main{
           height: 100%;
-          margin: 30px 0 0 36px;
+          margin: 35px 0 0 36px;
           display: flex;
-          /deep/.svg-icon{
-            font-size: 38px;
-            color: #FB3A32;
+          // /deep/.svg-icon{
+          //   font-size: 38px;
+          //   color: #FB3A32;
+          // }
+          label{
+            width: 40px;
+            height: 35px;
+            margin-top: 8px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
+            }
           }
+
           .base-text{
             margin-left: 15px;
             span{
               color:#666;
             }
             h1{
-              font-size: 36px;
+              font-size: 32px;
               color:#1A1A1A;
               font-weight: bold;
-              line-height: 42px;
+              line-height: 35px;
               padding-top: 5px;
               span{
                 color:#1A1A1A;

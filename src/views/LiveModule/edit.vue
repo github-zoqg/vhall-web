@@ -550,7 +550,7 @@ export default {
     },
     submitForm(formName) {
       if (!this.versionType) {
-        if (this.formData.limitCapacity > this.limitInfo.total) {
+        if (this.formData.limitCapacitySwtich && this.formData.limitCapacity > this.limitInfo.total) {
           this.$message.error(`最大并发数不能大于并发剩余量`);
           return;
         }
@@ -655,40 +655,7 @@ export default {
     mediaSelected(media){
       this.selectMedia = media;
       console.log(this.selectMedia);
-    },
-    diff (obj1, obj2) {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-
-    if (keys1.length !== keys2.length) {
-        return false;
     }
-    else {
-        for (let key in obj1) {
-            if (!obj2.hasOwnProperty(key)) {
-                return false;
-            }
-            //类型相同
-            if (typeof obj1[key] === typeof obj2[key]) {
-                //同为引用类型
-                if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-                    const equal = diff(obj1[key], obj2[key]);
-                    if (!equal) {
-                        return false;
-                    }
-                }
-                //同为基础数据类型
-                if (typeof obj1[key] !== 'object' && typeof obj2[key] !== 'object' && obj1[key] !== obj2[key]) {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    }
-    return true;
-   }
   },
 };
 </script>
