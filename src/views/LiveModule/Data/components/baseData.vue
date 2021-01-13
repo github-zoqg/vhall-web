@@ -502,7 +502,7 @@ export default {
         margin-bottom: 24px;
         margin-right: 24px;
         position: relative;
-        border-radius: 8px;
+        border-radius: 4px;
         background: #fff;
         cursor: pointer;
         &:nth-child(3n) {

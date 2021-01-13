@@ -54,6 +54,7 @@
                   :inactive-value="1"
                   active-color="#ff4949"
                   inactive-color="#ccc"
+                  @change="changeOpenStatus"
                   :active-text="activeTitle"
                 >
                 </el-switch>
@@ -96,13 +97,13 @@
         <div class="official-preview">
           <!-- 模拟开关 -->
           <div class="zdy--switch">
-            <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
             <span :class="switchType === 'app' ? 'active' : ''"  @click.prevent.stop="changeSwitch('app')">手机预览</span>
+            <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
           </div>
           <!--PC预览,begin-->
           <div class="official-pc" v-show="switchType === 'pc'">
             <!-- status 控制是否阴影 -->
-            <div class="v-preview-content" :style="status > 0 ? 'opacity: 0.2;' : ''">
+            <div class="v-preview-content">
                <!-- 公众号 -->
                <div class="gzh_pc" v-if="title === '公众号展示'">
                  <img class="gzh_bg_default" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0"/>
@@ -114,14 +115,15 @@
               <!-- 开屏海报 -->
               <div class="hb_pc" v-if="title !== '公众号展示'">
                 <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" />
-                <img class="hb_img v-poster-preview" :src="domain_url + '?x-oss-process=image/resize,m_fill,w_160,h_160,limit_0'" alt=""
-                     v-if="domain_url"/>
+                <div class="pc-poster-wrap"  v-if="domain_url && status <= 0">
+                  <img class="hb_img v-poster-preview" :src="domain_url" alt=""/>
+                </div>
               </div>
             </div>
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div :class="['official-app', {'null-page' : title !== '公众号展示'}]" v-show="switchType === 'app'" :style="status > 0 ? 'opacity: 0.2;' : ''">
+          <div :class="['official-app', {'null-page' : title !== '公众号展示'}]" v-show="switchType === 'app'">
             <span class="title">{{title === '公众号展示' ? '公众号展示' : '开屏海报展示'}}</span>
             <!-- 公众号 -->
             <div class="gzh_app" v-if="title === '公众号展示'">
@@ -130,11 +132,11 @@
               </div>
             </div>
             <!-- 开屏海报 -->
-            <div class="hb_app" v-if="title !== '开屏海报展示'">
-              <div class="poster-img" v-if="domain_url">
+            <div class="hb_app" v-if="title === '开屏海报' && status <= 0 && showPoster">
+              <div class="poster-img" v-show="domain_url">
                 <img :src="domain_url" alt="">
               </div>
-              <el-button class="poster-btn" size="mini" round>{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
+              <el-button v-show="domain_url" class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
             </div>
           </div>
           <!--手机预览,end-->
@@ -155,7 +157,8 @@ export default {
       imgShowUrl: '',
       status: null,
       alertType: null,
-      switchType: 'pc',
+      switchType: 'app',
+      showPoster: false,
       form: {
         url: ''
       },
@@ -191,6 +194,16 @@ export default {
       }
     }
   },
+  watch: {
+    domain_url: {
+      handler (val) {
+        if (val) {
+          this.showPoster = true
+        }
+      },
+      immediate: true
+    }
+  },
   components: {
     PageTitle,
     upload
@@ -199,8 +212,23 @@ export default {
     this.getData();
   },
   methods: {
+    changeOpenStatus (e) {
+      if (!e) {
+        this.showPoster = true
+      }
+    },
+    closePoster () {
+      this.showPoster = false
+    },
     changeSwitch(type) {
       this.switchType = type;
+      if (this.domain_url) {
+        if (this.switchType == 'pc') {
+          this.resizePcImg(this.domain_url)
+        } else {
+          this.resizeImg(this.domain_url)
+        }
+      }
     },
     getData() {
       this.$fetch(this.title === '公众号展示' ? 'getPublicInfo': 'getPosterInfo', {
@@ -210,6 +238,13 @@ export default {
           this.img = res.data.img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
+          if (this.domain_url) {
+            if (this.switchType == 'pc') {
+              this.resizePcImg(this.domain_url)
+            } else {
+              this.resizeImg(this.domain_url)
+            }
+          }
           this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
           if (this.title === '公众号展示') {
             this.alertType = res.data.alert_type === null || res.data.alert_type === undefined || res.data.alert_type === '' ? 1 : res.data.alert_type;
@@ -285,6 +320,13 @@ export default {
         let file_url = res.data.file_url || '';
         this.img = file_url;
         this.domain_url = domain_url;
+        if (this.domain_url) {
+          if (this.switchType == 'pc') {
+            this.resizePcImg(this.domain_url)
+          } else {
+            this.resizeImg(this.domain_url)
+          }
+        }
       }
     },
     beforeUploadHnadler(file){
@@ -335,6 +377,60 @@ export default {
     handleFileChange(file) {
       console.log(file);
       // this.handleuploadSuccess(file);
+    },
+    resizeImg (data) {
+      let img = new Image()
+      img.src = data
+      this.$nextTick(() => {
+        let dom = document.querySelector('.poster-img img')
+        if (dom) {
+          img.onload = () => {
+            let w = img.width
+            let h = img.height
+            let winWidth = 284
+            let winHeight = 520
+            if (w != h) {
+              if (w > h) {
+                dom.style.width = '100%'
+                dom.style.height = 'auto'
+              } else {
+                dom.style.width = 'auto'
+                dom.style.height = 'auto'
+              }
+            } else {
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+            }
+          }
+        }
+      })
+    },
+    resizePcImg (data) {
+      let img = new Image()
+      img.src = data
+      this.$nextTick(() => {
+        let dom = document.querySelector('.pc-poster-wrap .v-poster-preview')
+        console.log(222, dom)
+        if (dom) {
+          img.onload = () => {
+            let w = img.width
+            let h = img.height
+            console.log(12, w, h)
+            let winWidth = 58
+            let winHeight = 102
+            if (w > h) {
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+            } else if (w == h) {
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+            } else {
+              dom.style.width = 'auto'
+              dom.style.height = 'auto'
+            }
+          }
+        }
+      })
     }
   }
 };
@@ -388,12 +484,24 @@ export default {
         display: block;
         margin: 110px auto 0;
       }
-      .v-poster-preview {
+      .pc-poster-wrap{
         position: absolute;
-        width: 58px;
+        width: 56px;
         height: 102px;
-        top: -61px;
+        top: 50px;
         right: 16px;
+        background: transparent;
+      }
+      .v-poster-preview {
+        display: inline-block;
+        position:absolute;
+        top: 50%;
+        left: 50%;
+        max-width: 58px;
+        max-height: 102px;
+        transform: translate(-50%, -50%);
+        margin-top: 0px;
+        object-fit: cover;
       }
       .v-code-preview {
         position: absolute;
@@ -467,17 +575,22 @@ export default {
       }
       .poster-img {
         position: absolute;
-        height: 142px;
-        width: 90px;
-        left: 66px;
-        top: 148px;
-        transform: translate(-50%, -50%);
+        height: 520px;
+        width: 284px;
+        left: 22px;
+        top: 78px;
+        border-bottom-right-radius: 16px;
+        border-bottom-left-radius: 16px;
+        overflow: hidden;
         img {
           display: inline-block;
-          width: 284px;
-          height: 520px;
-          border-bottom-right-radius: 16px;
-          border-bottom-left-radius: 16px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          object-fit:cover; 
+          max-width: 284px;
+          max-height: 520px;
         }
       }
       .poster-btn {

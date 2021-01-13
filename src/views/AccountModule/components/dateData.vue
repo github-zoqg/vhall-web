@@ -107,28 +107,6 @@ export default {
     },
     renderLineCharts() {
       this.myChart = Echarts.init(this.$refs.dateLineChartDom);
-      this.tableList = [{
-			"time": "2021-01-05",
-			"value": 0.26
-		}, {
-			"time": "2021-01-06",
-			"value": 0
-		}, {
-			"time": "2021-01-07",
-			"value": 0
-		}, {
-			"time": "2021-01-08",
-			"value": 0.18
-		}, {
-			"time": "2021-01-09",
-			"value": 0
-		}, {
-			"time": "2021-01-10",
-			"value": 0
-		}, {
-			"time": "2021-01-11",
-			"value": 0
-		}];
       // 指定图表的配置项和数据
       let dateData = [], valData = [];
       this.tableList.forEach(item => {

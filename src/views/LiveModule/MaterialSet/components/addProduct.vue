@@ -449,6 +449,7 @@ export default {
     }
     .imgList{
       display: flex;
+      width: 640px;
       height: 150px;
       // justify-content: space-between;
       align-items: center;
@@ -457,7 +458,6 @@ export default {
         height: 150px;
         border: 4px;
         position: relative;
-        // border: 1px dashed #ccc;
         margin-right: 10px;
         cursor: pointer;
         .cover-item{

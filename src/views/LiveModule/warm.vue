@@ -384,6 +384,8 @@ export default {
       }
       /deep/.iconfont-v3{
         font-size: 26px;
+      }
+      .saasshipinwenjian{
         color: #FF733C;
       }
       p{

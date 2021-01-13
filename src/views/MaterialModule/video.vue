@@ -41,18 +41,18 @@
     </template>
     <!-- 编辑功能 -->
     <template v-if="editShowDialog">
-      <el-dialog title="编辑" :visible.sync="editShowDialog" width="300px" center
+      <VhallDialog title="编辑" :visible.sync="editShowDialog" width="420px" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
         <div class="main-edit">
-          <VhallInput v-model.trim="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:220px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
+          <VhallInput v-model.trim="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">
-          <el-button size="medium" type="primary" @click="sureMaterialVideo" v-preventReClick round>确 定</el-button>
-          <el-button size="medium"  @click="editShowDialog=false"  round>取 消</el-button>
+          <el-button size="medium" type="primary" round class="length104" @click="sureMaterialVideo" v-preventReClick>确定</el-button>
+          <el-button size="medium" round class="length104"  @click="editShowDialog=false" >取消</el-button>
        </div>
-      </el-dialog>
+      </VhallDialog>
     </template>
   </div>
 </template>
@@ -206,8 +206,8 @@ export default {
       this.uploadList.unshift(param);
       this.tableData.unshift(param);
       this.total = 1;
-      console.log(this.tableData, '??????????????????')
       this.UploadSDK.upload([file],(pro)=>{
+        console.log(pro, '???????11111111111111111????????????????????')
         this.tableData.forEach((ele)=>{
           if(ele.id == file.id){
             ele.uploadObj = {
@@ -277,9 +277,15 @@ export default {
           res.data.list.forEach(ele => {
             ele.video_name = ele.name;
             ele.msg_url = ele.msg_url.toLowerCase();
+            // if (!ele.transcode_status) {
+            //   ele.uploadObj = {
+            //     text: '视频正在转码',
+            //     num: Math.floor(1*100)
+            //   }
+            // }
             switch (ele.transcode_status) {
               case '0':
-                ele.transcode_status_text = '新增排队中';
+                ele.transcode_status_text = '等待转码';
                 ele.duration = '——';
                 break;
               case '1':
@@ -294,7 +300,7 @@ export default {
                 ele.duration = '——'
                 break;
               default:
-                ele.transcode_status_text = '新增排队中';
+                ele.transcode_status_text = '转码中';
                 ele.duration = '——'
                 break;
             }
@@ -448,12 +454,16 @@ export default {
   .padding-table-list();
   .min-height();
 }
+/deep/.el-input__inner{
+    padding: 0 12px;
+  }
 .inputKey{
       float: right;
       height: 35px;
       width: 220px;
       /deep/.el-input__inner{
         border-radius: 18px;
+        padding: 0 12px;
       }
     }
 .video-wrap{
@@ -469,6 +479,7 @@ export default {
   }
   ::v-deep .el-dialog__header{
     padding-top: 10px;
+    text-align: left;
   }
   ::v-deep .el-dialog__headerbtn{
     top: 15px;
@@ -477,36 +488,36 @@ export default {
     padding: 0px 10px 10px;
   }
   .vh-dialog{
-  /deep/ .el-dialog {
-    width: 624px!important;
-    background: transparent!important;
-    border:none;
-    box-shadow: none;
-  }
-  /deep/ .el-dialog__header {
-    width: 642px!important;
-    padding: 0px;
-    height: 55px;
-    background: transparent!important;
-    border:none;
-    color: #fff;
-  }
-  /deep/ .el-dialog__headerbtn{
-    top: 30px;
-    right: 0px;
-    .el-dialog__close {
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
+    }
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
       color: #fff;
     }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 16px solid #333;
+      border-bottom: 16px solid #333;
+      background: #333;
+      border-radius: 4px;
+    }
   }
-  /deep/ .el-dialog__body{
-    width: 642px;
-    height: 375px;
-    border-top: 16px solid #333;
-    border-bottom: 16px solid #333;
-    background: #333;
-    border-radius: 4px;
-  }
-}
   .head-operat, .no-live{
     margin-bottom: 20px;
     .head-btn{
@@ -537,6 +548,10 @@ export default {
   }
 }
 .dialog-footer{
-  text-align: center;
+  text-align: right;
+  margin-right: 20px;
+  /deep/.button.el-button.el-button--medium{
+    padding: 4px 23px;
+  }
 }
 </style>
