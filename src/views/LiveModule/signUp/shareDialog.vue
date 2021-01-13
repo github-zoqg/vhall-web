@@ -34,7 +34,7 @@
         </p>
         <p>
           <span class="content-key">链接地址</span>
-          <el-input placeholder="请输入内容" v-model="link" class="input-with-select" id="linkBox">
+          <el-input placeholder="请输入内容" v-model="sinaLink" class="input-with-select" id="linkBox">
             <el-button slot="append" @click="copy">复制</el-button>
           </el-input>
 
