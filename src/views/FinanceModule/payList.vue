@@ -7,19 +7,19 @@
         <div class="order-item">商品名称</div>
         <div class="order-item">购买内容</div>
         <div class="order-item">订单类型</div>
-        <div class="order-item">金额</div>
+        <div class="order-item" style="text-align: right;">金额</div>
       </div>
       <div class="table-order">
         <div class="order-item">{{ payInfo.type | orderTypeText }}套餐</div>
         <div class="order-item">{{ payInfo.content }}</div>
         <div class="order-item">{{ payInfo.type | orderTypeText }}</div>
-        <div class="order-item">{{ payInfo.amount }}</div>
+        <div class="order-item" style="text-align: right;">{{ payInfo.amount }}</div>
       </div>
       <div class="table-order" v-if="payInfo.arrears">
         <div class="order-item">{{ payInfo.arrears.product_name }}</div>
         <div class="order-item">{{ payInfo.arrears.content }}</div>
         <div class="order-item">{{ payInfo.arrears.type | orderTypeText }}</div>
-        <div class="order-item">{{ payInfo.arrears.fee }}</div>
+        <div class="order-item" style="text-align: right;">{{ payInfo.arrears.fee }}</div>
       </div>
       <div class="table-order_2">
         <p>总金额：<span>￥{{ payInfo.total_amount }}</span></p>
@@ -71,7 +71,7 @@
           <div class="isPay">
             <div class="reBtn">
              <img :src="payCode" alt="">
-             <p>请用微信扫描二维码,完成支付</p>
+             <p class="line-text">请用微信扫描二维码,完成支付</p>
              <el-button size="medium" type="primary" round @click="finishPay">完成支付</el-button>
             </div>
           </div>
@@ -260,7 +260,7 @@ export default {
         padding-bottom: 24px;
       }
       .table-order{
-        padding: 0 30px;
+        padding: 0 24px;
         display: flex;
         justify-content: space-between;
         align-items: left;
@@ -286,7 +286,7 @@ export default {
           float: right;
           height: 56px;
           line-height: 56px;
-          padding-right: 40px;
+          padding-right: 24px;
           span{
             color: #FB3A32;
             font-weight: bold;
@@ -325,6 +325,7 @@ export default {
             position: relative;
             text-align: center;
             line-height: 88px;
+            border-radius: 4px;
             cursor: pointer;
             /deep/.svg-icon{
               font-size: 32px;
@@ -392,6 +393,9 @@ export default {
           border: 1px solid #fc5659;
           color: #fff;
           margin-left: 10px;
+        }
+        .line-text{
+          padding-top: 15px;
         }
       }
     }

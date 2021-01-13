@@ -2,7 +2,7 @@
   <div class="prize-card">
     <pageTitle title="抽奖">
     </pageTitle>
-    <el-card>
+    <div class="card__body">
        <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="抽奖页设置" name="first">
             <div class="give-item">
@@ -142,7 +142,7 @@
           </div>
         </el-tab-pane>
       </el-tabs>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -463,12 +463,14 @@ export default {
 <style lang="less" scoped>
 .prize-card{
   height: 100%;
-  /deep/.el-card__body {
+  .card__body {
     padding:0;
+    background: #fff;
   }
   /deep/.el-switch{
     float: right;
     padding-top: 10px;
+    margin-right: 0;
     // /deep/.el-switch__core {
     //   width: 32px!important;
     //   height: 20px;
@@ -555,7 +557,7 @@ export default {
       cursor: pointer;
       i{
         color: #3562FA;
-        border: 1px dashed #3562FA;
+        // border: 1px dashed #3562FA;
       }
       .el-icon-plus:before {
         font-weight: bolder;

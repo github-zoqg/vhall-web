@@ -498,13 +498,16 @@ export default {
 <style lang="less" scoped>
   .account-income{
     .interact-detail {
-      padding: 0 24px;
       min-height: 550px;
     }
     .box-card{
-      padding: 24px 32px;
+      padding: 24px 0 40px 0;
       border-radius: 4px;
       background: #fff;
+    }
+    /deep/.el-tabs__content{
+      padding: 0 24px;
+      min-height: 500px;
     }
     .search-box{
       padding-top: 30px;
