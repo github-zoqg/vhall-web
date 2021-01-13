@@ -33,7 +33,7 @@
                 <span>{{
                   scope.row.uploadObj.num == 100
                     ? '上传已完成'
-                    : '视频正在上传中'
+                    : '文件上传中'
                 }}</span>
                 <el-progress
                   :percentage="scope.row.uploadObj.num"

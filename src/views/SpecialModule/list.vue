@@ -213,7 +213,7 @@ export default {
     },
     toShare(id) {
       this.dialogShareVisible = true;
-      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
+      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/lives/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
