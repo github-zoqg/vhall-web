@@ -26,7 +26,7 @@
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
-        <lint-charts :lineDataList="limitDataList" :type="1"></lint-charts>
+        <lint-charts :lineDataList="limitDataList" :type="3"></lint-charts>
       </div>
       <div class="statistical-line statistical-dark">
         <span>观看人数趋势</span>

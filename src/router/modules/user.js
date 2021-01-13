@@ -87,7 +87,7 @@ const router = [
       {
         path: '/homeSet/:str(\\d+)',
         component: () => import('@/views/UserHome/homeSet'),
-        meta: { auth: true, title: '设置', name: 'homeSet', activeMenu: '/account/homeSet'},
+        meta: { auth: true, title: '设置', name: 'homeSet', activeMenu: '/account/myHome'},
         hidden: true
       },
       {

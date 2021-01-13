@@ -191,10 +191,11 @@ export default {
     align-items: flex-start;
     .page--son {
       width: calc(100% - 272px);
-      min-height: 612px;
+      min-height: 560px;
       height: auto;
       background: #FFFFFF;
       position: relative;
+      border-radius: 4px;
       .el-button {
         margin-top: 3px;
       }

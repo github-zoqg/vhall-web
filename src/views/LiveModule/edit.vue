@@ -235,7 +235,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center
+      <el-dialog class="vh-dialog" :visible.sync="showDialog" width="30%" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
@@ -889,8 +889,8 @@ export default {
   }*/
   .mediaBox{
     background-color: #fbfdff;
-    border: 1px dashed #ccc;
-    border-radius: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     box-sizing: border-box;
     width: 100%;
     height: 148px;
@@ -920,11 +920,16 @@ export default {
       background: #f7f7f7;
       font-size: 12px;
       cursor: pointer;
+      border-radius: 4px;
       i{
         font-size: 30px;
       }
       /deep/.iconfont-v3{
         font-size: 26px;
+        color: #FF733C;
+      }
+      p{
+        padding-top: 5px;
       }
     }
     .el-tooltip{
@@ -937,10 +942,36 @@ export default {
     }
   }
   .vh-dialog{
-    /deep/.el-dialog__body {
-      padding-bottom: 20px;
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
     }
-
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
+      color: #fff;
+    }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 16px solid #333;
+      border-bottom: 16px solid #333;
+      background: #333;
+      border-radius: 4px;
+      padding: 0 20px;
+    }
   }
 </style>
 <style lang="less">

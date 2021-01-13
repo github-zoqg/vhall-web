@@ -59,7 +59,7 @@ export default {
             } else {
               num = ((parseInt(value) / data.total) * 100).toFixed(2);
             }
-            let res = params.name + '<br/>观看次数' + '  ' + parseInt(value) + '<br/>观看比例' + '  ' + num  + '%';
+            let res = params.name + '<br/>观看次数' + '  ' + parseInt(value) + '  (' + num + '%)';
             return res;
           },
         },

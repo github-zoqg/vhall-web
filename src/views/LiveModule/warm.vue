@@ -384,35 +384,46 @@ export default {
       }
       /deep/.iconfont-v3{
         font-size: 26px;
+        color: #FF733C;
+      }
+      p{
+        padding-top: 5px;
       }
     }
    }
 }
 .vh-dialog{
-  /deep/ .el-dialog {
-    width: 642px!important;
-    background: transparent!important;
-    border:none;
-    box-shadow: none;
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
+    }
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
+      color: #fff;
+    }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 18px solid #333;
+      border-bottom: 18px solid #333;
+      background: #333;
+      border-radius: 4px;
+      padding: 0 20px;
+    }
   }
-  /deep/ .el-dialog__header {
-    width: 642px!important;
-    padding: 0px;
-    height: 55px;
-    background: transparent!important;
-    border:none;
-  }
-  /deep/ .el-dialog__headerbtn{
-    top: 30px;
-    right: 0px;
-  }
-  /deep/ .el-dialog__body{
-    width: 642px;
-    height: 375px;
-    border: 16px solid #333;
-    background: #fff;
-  }
-}
 .box{
   text-align: center;
 }
