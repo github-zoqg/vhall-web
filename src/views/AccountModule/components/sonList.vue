@@ -19,6 +19,7 @@
         <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
                   clearable
                   @clear="initQuerySonList"
+                  class="search-query"
                   @keyup.enter.native="initQuerySonList">
           <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
         </el-input>
@@ -659,12 +660,15 @@ export default {
     /deep/ .el-input__inner {
       border-radius: 20px;
       height: 36px;
+      padding-right: 50px;
     }
 
     /deep/ .el-input__suffix {
       cursor: pointer;
 
       /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
         line-height: 36px;
       }
     }

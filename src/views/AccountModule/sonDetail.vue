@@ -31,7 +31,7 @@
         <ul class="son__detail--show">
           <li>
             <label>账号</label>
-            <p :title="sonVo && sonVo.name ? sonVo.name : ''">{{ sonVo && sonVo.name ? sonVo.name : '--' }}</p>
+            <p :title="sonVo && sonVo.name ? sonVo.name : ''">{{ sonVo && sonVo.name ? sonVo.name : '- -' }}</p>
           </li>
           <li>
             <label>账号昵称</label>
@@ -47,11 +47,11 @@
           </li>
           <li>
             <label>手机号码</label>
-            <p :title="sonVo && sonVo.phone ? sonVo.phone : ''">{{sonVo &&  sonVo.phone ? sonVo.phone : '--'  }}</p>
+            <p :title="sonVo && sonVo.phone ? sonVo.phone : ''">{{sonVo &&  sonVo.phone ? sonVo.phone : '- -'  }}</p>
           </li>
           <li>
             <label>邮箱地址</label>
-            <p :title="sonVo && sonVo.email ? sonVo.email : ''">{{sonVo &&  sonVo.email ? sonVo.email : '--' }}</p>
+            <p :title="sonVo && sonVo.email ? sonVo.email : ''">{{sonVo &&  sonVo.email ? sonVo.email : '- -' }}</p>
           </li>
         </ul>
       </div>
