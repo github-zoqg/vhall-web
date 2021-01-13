@@ -151,13 +151,13 @@ export default {
     },
     createApp(){
       if(!(this.available_num > 0)) {
-        this.$alert('如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970', '提示', {
+        this.$confirm(`如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970`, '提示', {
           confirmButtonText: '我知道了',
-          customClass: 'zdy-alert-box',
-          center: true,
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
           lockScroll: false
-        }).then(()=>{
-        }).catch(()=>{});
+        }).then(() => {
+        }).catch(() => {});
         return;
       }
       /**
@@ -166,16 +166,15 @@ export default {
        */
       this.$fetch('createApp', {}).then(res => {
         console.log('getAppList', res);
-        this.$alert('添加成功，请手动添加包名签名信息', '提示', {
+        this.$confirm(`添加成功，请手动添加包名签名信息`, '提示', {
           confirmButtonText: '我知道了',
-          customClass: 'zdy-alert-box',
-          center: true,
-          lockScroll: false
-        }).then(()=>{
-          // 添加成功，刷新列表
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel-hide'
+        }).then(() => {
           this.search();
-        }).catch(()=>{});
-        // this.$router.push({path: `/dev/${res.data.result}`});
+        }).catch(() => {});
       }).catch(res =>{
         this.$message({
           message:  res.msg || '创建失败',
