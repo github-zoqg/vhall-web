@@ -643,7 +643,13 @@ export default {
         this.form.email = vo.email || '';
         this.form.code = '';
         this.form.new_code = '';
-
+        this.form.new_password = '';
+        this.form.password = '';
+        this.form.old_pwd = '';
+        this.form.new_email = '';
+        this.form.new_phone = '';
+        this.form.imgCode = '';
+        this.form.imgCode1 = '';
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
