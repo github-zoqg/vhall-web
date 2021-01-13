@@ -19,7 +19,7 @@
     </div>
     <el-input maxlength="8" v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名">
       <span
-        v-if="title1"
+        v-if="title1 != '用户报名'"
         class="el-input__icon resetbtn"
         slot="suffix"
         @click="title1 = '用户报名'">重置
@@ -27,7 +27,7 @@
     </el-input>
     <el-input maxlength="8" v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证">
       <span
-        v-if="title2"
+        v-if="title2 != '验证'"
         class="el-input__icon resetbtn"
         slot="suffix"
         @click="title2 = '验证'">重置
