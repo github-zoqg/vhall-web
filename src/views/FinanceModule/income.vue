@@ -96,7 +96,7 @@
           :isHandle="isHandle"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
-          :width = '150'
+          :width = '100'
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getIncomeList"
           >
@@ -370,8 +370,11 @@ export default {
     position: relative;
     .box-card{
       background: #fff;
-      padding: 24px 32px;
+      padding: 24px 0 40px 0;
       border-radius: 4px;
+    }
+    /deep/.el-tabs__content{
+      padding: 0 24px;
     }
     .detail{
       position: absolute;
@@ -430,7 +433,7 @@ export default {
     }
   }
   .money-come{
-    margin-left: 10px;
+    margin-left: 16px;
     height: 170px;
     padding: 24px 32px;
     border-radius: 4px;
@@ -445,10 +448,7 @@ export default {
   .listTab {
     margin-top: 24px;
     .search-income{
-      margin-top: 24px;
-    }
-    .data-list {
-      padding: 0 24px;
+      margin-top: 32px;
     }
   }
   }

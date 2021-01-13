@@ -31,11 +31,19 @@
         <h3>
           为了保障您的账号安全，请验证进行安全验证，手机号是当前账号绑定的手机号
         </h3>
-        <el-form label-width="85px">
+        <el-form label-width="72px">
+          <el-form-item label="">
+           <div id="payCaptcha">
+            <el-input
+              v-model="withdrawForm.text">
+            </el-input>
+          </div>
+          <p style="color:#fb3a32;padding:0;line-height:25px"  v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+          </el-form-item>
            <el-form-item label="动态密码">
             <div class="inputCode">
               <el-input v-model="code" style="width: 150px"></el-input>
-              <span @click="getBangCode" class="isLoginActive">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+              <span @click="mobileKey && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
             <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
           </el-form-item>
@@ -149,6 +157,9 @@ export default {
     dialogCashVisible() {
       if (this.dialogCashVisible) {
         this.time = 60;
+        this.mobileKey = '';
+        this.phone = '';
+        this.errorMsgShow = ''
         this.callCaptcha();
         this.getWeinName();
       } else {
@@ -225,17 +236,23 @@ export default {
     },
     // 绑定微信短信验证码
     getBangCode() {
+      if (!this.mobileKey) {
+        this.$message.error('图形验证码错误');
+        return;
+      }
       this.phone = this.userInfo.phone;
       let params = {
         type: 1,
         data: this.userInfo.phone,
-        scene_id: 6
+        scene_id: 6,
+        validate: this.mobileKey
       };
       this.$fetch('sendCode', params).then(res => {
-        this.countDown();
-        console.log(res.data, '12300000000000000000');
-      //  this.$message.success('提现成功');
-      //  this.dialogCashVisible = false;
+        if (res.code == 200) {
+          this.countDown();
+        } else {
+          this.callCaptcha();
+        }
       });
     },
     // 绑定微信 ---获取绑定微信二维码
@@ -261,6 +278,7 @@ export default {
       this.dialogChangeVisible = true;
       this.dialogCashVisible = false;
       this.time = 60;
+      this.callCaptcha();
     },
     nextBinding() {
       this.dialogChangeVisible = false;
@@ -305,7 +323,6 @@ export default {
   padding: 10px 20px 30px 20px;
 }
 /deep/.el-dialog__title {
-  font-size: 16px;
   font-weight: 500;
 }
 /deep/.el-input__inner:focus {
@@ -318,7 +335,10 @@ export default {
   color: #666;
 }
 .box-wei {
-  padding-bottom: 20px;
+  // padding-bottom: 20px;
+  // .el-form-item{
+  //   margin-bottom: 20px;
+  // }
   .img-box {
     width: 132px;
     height: 132px;
@@ -332,8 +352,9 @@ export default {
   h3 {
     color: #1a1a1a;
     font-weight: 400;
-    padding: 20px 10px;
+    padding: 20px 0;
     line-height: 20px;
+    font-size: 14px;
   }
   p {
     font-size: 14px;
@@ -447,7 +468,7 @@ export default {
 }
 .nextBtn {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
   .el-button {
     padding: 10px 38px;
   }

@@ -373,6 +373,7 @@ export default {
     height: 100%;
     padding: 24px;
     display: flex;
+    border-radius: 4px;
     .info{
       flex: 1;
       // overflow: auto;

@@ -446,7 +446,7 @@ export default {
 <style lang="less" scoped>
 .finance-info{
   .serach-line{
-    padding: 24px 32px;
+    padding: 24px;
     border-radius: 4px;
     background: #fff;
   }
@@ -506,7 +506,7 @@ export default {
     background: #fff;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     .content-item{
       width: 24%;
       background: #F7F7F7;

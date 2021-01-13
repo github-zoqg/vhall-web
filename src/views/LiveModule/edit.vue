@@ -125,7 +125,7 @@
       <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
         <div class="mediaBox">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
-            <i class="el-icon-film"></i>
+            <i class="iconfont-v3 saasicon_shangchuan"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
@@ -926,6 +926,9 @@ export default {
       }
       /deep/.iconfont-v3{
         font-size: 26px;
+
+      }
+      .saasshipinwenjian{
         color: #FF733C;
       }
       p{

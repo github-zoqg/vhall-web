@@ -222,4 +222,11 @@ export default {
     }
   }
 }
+.no-live{
+  /deep/.btn-list .el-button {
+    &:last-child{
+      margin: 0;
+    }
+  }
+}
 </style>

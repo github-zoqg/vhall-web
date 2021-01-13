@@ -7,7 +7,7 @@
     :close-on-click-modal=false
     :close-on-press-escape=false
     :before-close="handleClose"
-    width="880px">
+    width="800px">
     <div class="search"  v-show="total || isSearch">
       <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @change="searchHandler" clearable>
         <i class="el-icon-search el-input__icon"
@@ -32,11 +32,12 @@
         width="55">
       </el-table-column>
       <el-table-column
-       width="210"
+       width="180"
         label="音视频名称">
           <template slot-scope="scope">
             <span class="mediaName">
-              <!-- <i></i> -->
+              <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.MP3' || scope.row.msg_url == '.MAV'"></i>
+              <i class="iconfont-v3 saasshipinwenjian" v-else></i>
               {{fontNumber(scope.row.name)}}
             </span>
           </template>
@@ -50,16 +51,16 @@
       <el-table-column
         label="时长"
         prop="duration"
-        width="120"
+        width="100"
         show-overflow-tooltip>
       </el-table-column>
 
       <el-table-column
         label="进度"
-        width="150"
+        width="120"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{ scope.row.transcode_status_text }}</span>
+          <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
           <!-- <el-progress v-if="scope.row.status=='transcoding'" color="#14BA6A" :percentage="scope.row.process" :stroke-width="8" :width="100"></el-progress>
           <span v-else :class="[scope.row.status, 'statusTag']">{{scope.row.status | statusStr}}</span> -->
         </template>
@@ -67,7 +68,7 @@
 
       <el-table-column
         label="操作"
-        width="100"
+        width="80"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <el-button type="text" class="actionBtn" @click="preVidio(scope.row)">预览</el-button>
@@ -315,13 +316,21 @@ export default {
   .mediaName{
     font-size: 14px;
     color: #1A1A1A;
+    .saasyinpinwenjian{
+      color: #10d3a8;
+      padding-right: 3px;
+    }
+    .saasshipinwenjian{
+      color: #ff733c;
+      padding-right: 3px;
+    }
     i{
       display: inline-block;
       width: 20px;
       height: 20px;
-      background: #10D3A8;
+      // background: #10D3A8;
       border-radius: 4px;
-      margin-right: 12px;
+      // margin-right: 12px;
       vertical-align: middle;
     }
   }
@@ -338,6 +347,7 @@ export default {
       /deep/ .el-input__inner{
         height: 36px;
         border-radius: 20px;
+        padding-right: 50px;
       }
       .el-input__suffix{
         i{

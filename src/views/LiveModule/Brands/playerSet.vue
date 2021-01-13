@@ -517,10 +517,10 @@ export default {
         case 2:
           watermarkOptionPosition = ['5%','5%']
           break;
-        case 3:
+        case 4:
           watermarkOptionPosition = ['75%','70%']
           break;
-        case 4:
+        case 3:
           watermarkOptionPosition = ['5%','70%']
           break;
       }
