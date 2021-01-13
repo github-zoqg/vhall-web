@@ -254,6 +254,7 @@ export default {
     // 开关状态切换的回调
     switchChange(option) {
       this.$emit('switchChange', option);
+
       console.log(option);
     },
     isImg(_data) {
@@ -361,6 +362,8 @@ export default {
    /deep/.cell .advImg {
     width: 142px;
     height: 80px;
+    background: #1a1a1a;
+    border-radius: 4px;
     img{
       width:100%;
       height:100%;

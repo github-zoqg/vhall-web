@@ -12,7 +12,9 @@
       </div>
        <el-scrollbar v-loadMore="moreLoadData">
         <div class="vh-chose-active-box"
-          v-show="total"
+        v-loading="loading"
+        element-loading-spinner="el-icon-loading"
+        v-show="total"
         >
         <!-- 单个视频 -->
           <div class="vh-chose-active-item"
@@ -89,13 +91,13 @@ export default {
       activeList: [],
       selectedOption: [],
       keyword: '',
+      loading: true,
       pageInfo: {
         page: 1,
         limit: 6,
         pos: 0
       },
       lock: false,
-      loading: false,
       visible: true,
       isSearch: false
     }
@@ -103,12 +105,6 @@ export default {
   components: {
     noData
   },
-  computed: {
-    disabled () {
-      return this.loading || this.lock
-    }
-  },
-
   created() {
     this.getActiveList();
   },
@@ -141,6 +137,7 @@ export default {
       this.getActiveList();
     },
     getActiveList() {
+      this.loading = true;
       const userId = sessionStorage.getItem('userId')
       let params = {
         title: this.keyword,
@@ -162,17 +159,10 @@ export default {
             this.text = '';
             this.isSearch = true;
           }
-          if(res.data.total == 0) {
-            this.lock = true
-            this.loading = false
-            this.total = 0
-          } else {
-            this.activeList = this.activeList.concat(res.data.list)
-            this.total = res.data.total
-            this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
-            // this.syncCheckStatus()
-            this.loading = false
-          }
+          this.activeList = this.activeList.concat(res.data.list)
+          this.total = res.data.total
+          this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
+          this.loading = false;
         } else {
           this.loading = false
         }

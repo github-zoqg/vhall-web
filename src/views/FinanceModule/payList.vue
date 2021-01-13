@@ -1,7 +1,7 @@
 <template>
   <div class="pay-list">
     <h1>订单支付</h1>
-    <el-card class="pay-main">
+    <div class="pay-main">
       <h2>订单信息</h2>
       <div class="table-order table-order_1">
         <div class="order-item">商品名称</div>
@@ -77,7 +77,7 @@
           </div>
           </el-dialog>
       </div>
-    </el-card>
+    </div>
     <div class="down-time" v-if="!timeOut">
       <p><i class="el-icon-warning-outline"></i> 请在<span>{{ time }}</span>内完成支付</p>
     </div>
@@ -252,7 +252,10 @@ export default {
       margin-bottom: 24px;
     }
     .pay-main{
-      padding: 8px;
+      // padding: 8px;
+      background: #fff;
+      padding: 24px;
+      border-radius: 4px;
       h2{
         padding-left: 8px;
         font-size: 16px;

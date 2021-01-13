@@ -2,7 +2,9 @@
   <div>
     <div id="settingBox" v-show="isCreate">
     </div>
-    <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content" v-show="showPreview">
+    <div v-loading="loading" element-loading-spinner="el-icon-loading" v-show="!isCreate">
+      <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content" v-show="showPreview">
+      </div>
     </div>
     <VhallDialog
       title="提示"
@@ -37,6 +39,7 @@ export default {
       dialogTongVisible: false,
       sureChecked: true,
       isPrevent: true,
+      loading: true,
     }
   },
   props: ['questionId'],
@@ -82,6 +85,7 @@ export default {
         // 预览
         if (this.questionId) {
           this.preview(this.questionId);
+          this.loading = false;
         } else {
           this.createQuestion(this.$route.query.questionId || '');
         }

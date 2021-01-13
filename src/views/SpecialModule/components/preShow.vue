@@ -2,7 +2,7 @@
   <div class="show-special">
     <OldHeader scene="preShow"></OldHeader>
     <div class="special-show-ctx">
-      <pageTitle title="专题详情"></pageTitle>
+      <!-- <pageTitle title="专题详情"></pageTitle> -->
       <div class="special-info">
         <div class="special-main">
           <div class="special-img">

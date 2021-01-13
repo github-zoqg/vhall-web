@@ -91,6 +91,7 @@ export default {
       tableRowBtnFun: [
        {name:'编辑', methodName: 'edit'},{name:'复制', methodName: 'cope'},{name:'删除', methodName: 'del'}
       ],
+      vm: null,
       tableData: []
     };
   },
@@ -114,7 +115,11 @@ export default {
           webinar_id: this.$route.params.str,
           goods_id: option.goods_id
         }).then(res => {
-          this.$message.success("上架设置成功！");
+          if (this.vm) {
+            this.vm.close();
+          }
+          this.messageInfo('上架设置成功！');
+          // this.$message.success("");
           this.getTableList();
           console.log(res);
         }).catch(err => {
@@ -128,7 +133,11 @@ export default {
           webinar_id: this.$route.params.str,
           goods_id: option.goods_id
         }).then(res => {
-          this.$message.success("下架设置成功！");
+          if (this.vm) {
+            this.vm.close();
+          }
+          this.messageInfo('下架设置成功！');
+          // this.$message.success("下架设置成功！");
           this.getTableList();
           console.log(res);
         }).catch(err => {
@@ -175,6 +184,15 @@ export default {
         this.getSaleGoodsList();
       }).catch(e => {
         console.log(e);
+      });
+    },
+    //文案提示问题
+    messageInfo(msg) {
+      this.vm = this.$message({
+        showClose: false,
+        duration: 2000,
+        message: msg,
+        type: 'success'
       });
     },
     // 为每个商品设置显示的封面

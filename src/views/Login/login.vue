@@ -21,6 +21,7 @@
           <VhallInput
             placeholder="用户名/邮箱/手机号"
             clearable
+            :maxlength="30"
             auto-complete="off"
             v-model.trim="loginForm.account">
           </VhallInput>
@@ -95,6 +96,7 @@
               <el-input
                 placeholder="动态密码"
                 clearable
+                :maxlength="6"
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
@@ -140,6 +142,7 @@
                 <VhallInput
                   placeholder="动态密码"
                   clearable
+                  :maxlength="6"
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
@@ -188,6 +191,7 @@ export default {
   },
   data() {
     var validatePhone = (rule, value, callback) => {
+      this.registerText = '';
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -197,7 +201,24 @@ export default {
         callback();
       }
     };
+    var validAccout = (rule, value, callback) => {
+      this.errorText = '';
+      if (value === '') {
+        callback(new Error('请输入账号'));
+      } else {
+        callback();
+      }
+    };
+    var validpassword = (rule, value, callback) => {
+      this.errorText = '';
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        callback();
+      }
+    };
     var validateLoginPhone = (rule, value, callback) => {
+      this.errorMsgShow = '';
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -241,10 +262,10 @@ export default {
       },
       loginRules: {
         account: [
-          { required: true, message: '请输入账号', trigger: 'blur' }
+          { required: true, validator:validAccout, trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          { required: true, validator:validpassword, trigger: 'blur' }
         ],
         phoneNumber: [
           { validator: validateLoginPhone, trigger: 'blur' }
