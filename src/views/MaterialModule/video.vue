@@ -212,7 +212,7 @@ export default {
           if(ele.id == file.id){
             ele.uploadObj = {
               type: 1, // 上传类型
-              text: '视频正在上传中',
+              text: '文件正在上传中',
               num: Math.floor(pro.progress*100)
             };
           }
@@ -285,7 +285,7 @@ export default {
             // }
             switch (ele.transcode_status) {
               case '0':
-                ele.transcode_status_text = '等待转码';
+                ele.transcode_status_text = '转码中';
                 ele.duration = '——';
                 break;
               case '1':
@@ -369,7 +369,7 @@ export default {
      }
     },
     confirmDelete(id) {
-      this.$confirm('是否删除该视频？', '提示', {
+      this.$confirm('是否删除该文件？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
@@ -451,7 +451,8 @@ export default {
 .video-list{
   width: 100%;
   .layout--right--main();
-  .padding-table-list();
+  padding: 38px 24px 40px 24px;
+  // .padding-table-list();
   .min-height();
 }
 /deep/.el-input__inner{

@@ -169,6 +169,20 @@ export default {
         this.withdrawForm.code = '';
         this.errorText = '';
         this.phone = '';
+        this.callCaptcha();
+        window.clearInterval(this.timer);
+      }
+    },
+    dialogChangeVisible() {
+      if (this.dialogChangeVisible) {
+        this.callCaptcha();
+        this.time = 60;
+        this.mobileKey = '';
+        window.clearInterval(this.timer);
+      } else {
+        this.callCaptcha();
+        this.time = 60;
+        this.mobileKey = '';
         window.clearInterval(this.timer);
       }
     },
