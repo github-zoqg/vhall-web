@@ -1,55 +1,67 @@
 <template>
-  <div class="role--list">
-    <!-- 搜索 -->
-    <div class="role--list--search">
-      <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
-      <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-input placeholder="搜索角色名称" v-model.trim="role_name"
-                clearable
-                @clear="initQuerySonList"
-                @keyup.enter.native="initQuerySonList">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
-      </el-input>
+  <div class="role--list"  v-loading="loading"
+    element-loading-text="加载中，请稍候"
+    element-loading-background="rgba(255,255,255,.9)">
+    <!-- 全部无结果 -->
+    <div class="all-no-data" v-if="roleDao && roleDao.total === 0  && role_name === ''">
+      <null-page nullType="nullData" text="暂未创建角色" :height="0">
+        <el-button type="primary" round v-preventReClick @click.prevent.stop="addRole">创建角色</el-button>
+      </null-page>
     </div>
-    <!-- 有消息内容 -->
-    <div v-if="roleDao.total > 0">
-      <!-- 表格与分页 -->
-       <table-list
-        ref="roleTab"
-        :isHandle=true
-        :manageTableData="roleDao.list"
-        :tabelColumnLabel="roleTableColumn"
-        :totalNum="roleDao.total"
-        :tableRowBtnFun="tableRowBtnFun"
-        :needPagination=true
-        width="150px"
-        max-height="auto"
-        scene="roleList"
-        @getTableList="getRoleList"
-        @changeTableCheckbox="checkMoreRow"
-        @onHandleBtnClick="onHandleBtnClick"
-      >
-      </table-list>
-      <!-- <son-role-table
-        class="son-role-table"
-        ref="roleTab"
-        :isHandle=true
-        :isCheckout=true
-        :checkoutKey="'child_count'"
-        :manageTableData="roleDao.list"
-        :tabelColumnLabel="roleTableColumn"
-        :totalNum="roleDao.total"
-        :tableRowBtnFun="tableRowBtnFun"
-        width="120px"
-        max-height="auto"
-        @getTableList="getRoleList"
-        @changeTableCheckbox="checkMoreRow"
-        @onHandleBtnClick="onHandleBtnClick"
-      >
-      </son-role-table> -->
+    <!-- 全部有结果 -->
+    <div class="all-yes-data" v-else>
+      <!-- 搜索 -->
+      <div class="role--list--search">
+        <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
+        <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
+        <el-input placeholder="搜索角色名称" v-model.trim="role_name"
+                  clearable
+                  @clear="initQuerySonList"
+                  class="search-query"
+                  @keyup.enter.native="initQuerySonList">
+          <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
+        </el-input>
+      </div>
+      <!-- 有消息内容 -->
+      <div>
+        <!-- 表格与分页 -->
+        <table-list
+          ref="roleTab"
+          :isHandle=true
+          :manageTableData="roleDao.list"
+          :tabelColumnLabel="roleTableColumn"
+          :totalNum="roleDao.total"
+          :tableRowBtnFun="tableRowBtnFun"
+          :needPagination=true
+          width="114px"
+          max-height="auto"
+          scene="roleList"
+          @getTableList="getRoleList"
+          @changeTableCheckbox="checkMoreRow"
+          @onHandleBtnClick="onHandleBtnClick"
+        >
+        </table-list>
+        <!-- <son-role-table
+          class="son-role-table"
+          ref="roleTab"
+          :isHandle=true
+          :isCheckout=true
+          :checkoutKey="'child_count'"
+          :manageTableData="roleDao.list"
+          :tabelColumnLabel="roleTableColumn"
+          :totalNum="roleDao.total"
+          :tableRowBtnFun="tableRowBtnFun"
+          width="120px"
+          max-height="auto"
+          @getTableList="getRoleList"
+          @changeTableCheckbox="checkMoreRow"
+          @onHandleBtnClick="onHandleBtnClick"
+        >
+        </son-role-table> -->
+      </div>
+      <!-- 无消息内容 -->
+      <null-page class="search-no-data" :height="0" v-if="roleDao && roleDao.total === 0"></null-page>
     </div>
-    <!-- 无消息内容 -->
-    <null-page v-else></null-page>
     <VhallDialog
       width="520px"
       :visible.sync="roleDialogVisible"
@@ -123,6 +135,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       query: {
         pos: 0,
         limit: 10,
@@ -336,16 +349,19 @@ export default {
         this.query.pos = row.pos;
         this.query.pageNumber = row.pageNum;
       }
+      this.loading = true;
       this.$fetch('sonRoleList', {
         role_name: this.role_name,
         pos: this.query.pos,
         limit: this.query.limit
       }).then(res =>{
+        this.loading = false;
         this.roleDao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
         };
       }).catch(e=>{
+        this.loading = false;
         console.log(e);
         this.roleDao = {
           total: 0,
@@ -373,8 +389,30 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.role--list {
+.all-no-data {
+  /* 基于外边框已经有距离： padding: 24px 24px 40px 24px; */
+  padding-top: 30px;
+  margin-top: 164px;
+  /deep/.createActive {
+    padding-bottom: 30px;
+  }
+}
+.all-yes-data {
   padding: 24px 24px 40px 24px;
+  /deep/.data-list {
+    /deep/.el-table {
+      margin-bottom: 40px;
+      .cell{
+        line-height: 25px;
+      }
+    }
+  }
+}
+.search-no-data {
+  padding-top: 148px;
+  /deep/.search {
+    padding-bottom: 0;
+  }
 }
 .role--list--search{
   margin-bottom: 20px;
@@ -396,11 +434,25 @@ export default {
     /deep/ .el-input__inner{
       border-radius: 20px;
       height: 36px;
+      padding-right: 50px;
     }
     /deep/ .el-input__suffix{
       cursor: pointer;
       /deep/ .el-input__icon{
+        width: auto;
+        margin-right: 5px;
         line-height: 36px;
+      }
+    }
+  }
+  .search-input {
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      height: 36px;
+      background: transparent;
+      padding-right: 50px;
+      &.el-date-editor--daterange {
+        padding-right: 10px;
       }
     }
   }

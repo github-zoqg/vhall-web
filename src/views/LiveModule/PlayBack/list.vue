@@ -57,7 +57,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="110">
+          <el-table-column width="120">
             <template slot-scope="{ column, $index }" slot="header">
               <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
                 <el-option
@@ -86,9 +86,11 @@
           </el-table-column>
 
           <el-table-column
-            width="200"
+            width="176"
             label="操作"
-            show-overflow-tooltip>
+            show-overflow-tooltip
+            align="left"
+          >
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
@@ -96,7 +98,7 @@
               <el-button type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
-                <el-dropdown-menu slot="dropdown">
+                <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
@@ -314,6 +316,7 @@ export default {
         limit: this.pageSize,
         source: this.recordType,
       };
+      param.source == '上传' && (param.source = -1)
       this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
@@ -627,6 +630,11 @@ export default {
     }
     .playpackSource{
       color: #1a1a1a;
+    }
+    /deep/ thead .el-select .el-input__inner {
+      border: none;
+      color: #666;
+      padding-left: 0;
     }
   }
   /* /deep/ .el-table__header{

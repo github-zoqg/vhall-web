@@ -47,6 +47,29 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      width="480px"
+      height="316px"
+      title="预览"
+      :visible.sync="showWatch"
+      :close-on-click-modal="false"
+    >
+      <div class="qr-previewbox">
+        <img :src="qrCode" alt="">
+      </div>
+      <div class="qr-previewbox-tips">
+        请扫描二维码，观看效果
+      </div>
+      <div class="vh-copyUrl">
+        <div class="vh-copyUrl__input">
+          <el-input readonly="" :value="link"></el-input>
+        </div>
+        <div class="vh-copyUrl__button">
+          <el-button size="medium" type="primary" @click="copy">复制</el-button>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -60,7 +83,10 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      customMenus: []
+      customMenus: [],
+      qrCode: '',
+      link:  '',
+      showWatch: false
     }
   },
 
@@ -72,10 +98,20 @@ export default {
   },
 
   created() {
+    this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`
+    this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.getInitMenus()
   },
 
   methods: {
+    copy() {
+      this.$copyText(this.link).then(e => {
+        this.$message.success('复制成功！');
+      }).catch(error=>{
+        this.$message.error('复制失败！');
+      });
+    },
+
     getInitMenus() {
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
@@ -129,7 +165,8 @@ export default {
         if(res.code === 200) {
           this.$message.success('保存成功');
           this.addCustomVisbile = false;
-          this.customMenuList();
+          // this.customMenuList();
+          this.showWatch = true
         } else {
           this.$message.error(res.msg || '保存失败');
         }
@@ -235,6 +272,35 @@ export default {
     position: absolute;
     right: 10px;
     top: 0;
+  }
+  .qr-previewbox{
+    text-align: center;
+    margin-bottom: 15px;
+    img{
+      height: 180px;
+    }
+  }
+  .vh-copyUrl{
+    text-align: center;
+    padding-bottom: 25px;
+    .vh-copyUrl__input{
+      display: inline-block;
+     width: 250px;
+    }
+    .vh-copyUrl__button{
+      display: inline-block;
+      margin-left: 15px;
+    }
+  }
+
+  .qr-previewbox-tips{
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #999999;
+    line-height: 20px;
+    text-align: center;
+    margin-bottom: 10px;
   }
   .vh-customer-menu-contentBox{
     overflow: hidden;

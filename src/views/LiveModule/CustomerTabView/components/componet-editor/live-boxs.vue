@@ -226,6 +226,18 @@ export default {
       background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(180deg,transparent,rgba(0,0,0,.2));
+        bottom: 0;
+        left: 0;
+        color: #fff;
+        font-size: 14px;
+      }
       img{
         width: 100%;
         height: 100%;

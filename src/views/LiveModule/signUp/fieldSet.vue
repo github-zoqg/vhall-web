@@ -136,6 +136,7 @@
                 :label="radioItem.item_id"
               >
                 <VhallInput
+                  :disabled="item.reqType == 0 && item.default_type == 4"
                   @change="(chooseOptChange(item, radioItem))"
                   :maxlength="60"
                   autocomplete="off"
@@ -143,6 +144,7 @@
                   placeholder="选项"
                   v-model="radioItem.value"
                   class="radioInput"
+                  :class="{'radioGender': item.reqType == 0 && item.default_type == 4}"
                 >
                   <i
                     class="el-icon-remove-outline removeIcon"
@@ -790,6 +792,10 @@ export default {
           .el-input__inner {
             padding-right: 74px;
           }
+        }
+        .radioGender .el-input__inner{
+          cursor: default;
+          color: #1a1a1a;
         }
         .other-input {
           margin-top: 10px;

@@ -138,7 +138,7 @@ export default {
       .el-button{
         color: #666;
         &:hover{
-          color: #409EFF;
+          color: #FB3A32;
         }
       }
     }

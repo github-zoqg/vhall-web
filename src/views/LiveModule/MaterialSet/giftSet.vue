@@ -436,7 +436,12 @@ export default {
       return isType && isLt2M;
     },
     // 打开编辑面板
-    handleEditGift (data) {
+    async handleEditGift (data) {
+      const isWebinarLiving = await this.isCanDelete()
+      if (isWebinarLiving) {
+        this.$message.warning('正在直播中，请直播结束后操作！')
+        return false;
+      }
       this.editParams = {
         gift_id: data.id,
         name: data.name,
@@ -496,7 +501,8 @@ export default {
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('updateGiftInfo', {
-          ...this.editParams
+          ...this.editParams,
+          room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
             this.$message.success('编辑成功')
@@ -504,8 +510,12 @@ export default {
             this.queryMateriaGifts()
             this.handleCancelEdit()
           }
-        }).catch((e) => {
-            this.$message.error('编辑失败')
+        }).catch((err) => {
+            if (err.code == 13001) {
+              this.$message.error('直播中禁止编辑礼物')
+            } else {
+              this.$message.error('编辑失败')
+            }
             this.handleCancelEdit()
         })
       })

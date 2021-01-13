@@ -193,7 +193,7 @@
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary" class="length152" :disabled="!invitation" v-preventReClick @click="onSubmit">保存</el-button>
+        <el-button type="primary length152" round   :disabled="!invitation" v-preventReClick @click="onSubmit">保存</el-button>
       </div>
       <div class="white-show" v-show="!invitation"></div>
     </div>
@@ -449,19 +449,20 @@ export default {
     width: 106px;
     height: 36px;
   }
-  /deep/.el-button.is-round {
-    padding: 0 26px;
-  }
   /deep/.el-input__count {
     line-height: 20px;
     bottom:7px;
+  }
+   /deep/.el-input__inner {
+    padding: 0 12px;
   }
   .invitation-from {
     display: flex;
     height: 100%;
     background: #fff;
-    padding: 20px 48px 60px 30px;
+    padding: 20px 48px 85px 30px;
     position: relative;
+    border-radius: 4px;
   }
   .form-data {
     padding: 10px 0 10px;
@@ -894,13 +895,13 @@ export default {
   }
   .sureBtn {
     position: absolute;
-    bottom: 20px;
+    bottom: 40px;
     left: 110px;
-    /deep/.el-button {
-      padding: 9px 60px;
-      border-radius: 20px;
-      margin: auto;
-    }
+    // /deep/.el-button {
+    //   padding: 9px 60px;
+    //   border-radius: 20px;
+    //   margin: auto;
+    // }
   }
   .white-show{
     position: absolute;
@@ -913,12 +914,12 @@ export default {
   }
 }
 .invitation-code{
-  width: 200px;
-  height: 190px;
+  width: 132px;
+  height: 132px;
   text-align: center;
   img{
-    width: 200px;
-    height: 190px;
+    width: 132px;
+    height: 132px;
     object-fit: scale-down;
   }
 }

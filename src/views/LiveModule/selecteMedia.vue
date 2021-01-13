@@ -154,6 +154,7 @@ export default {
     },
     handleClose(done) {
       this.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 0;
       done();
     },
     moreLoadData() {
@@ -241,7 +242,7 @@ export default {
     },
     searchHandler(){
       this.pageInfo.pageNum = 1;
-      this.pageInfo.pos = 1;
+      this.pageInfo.pos = 0;
       this.docList = [];
       this.getMediaList();
     },

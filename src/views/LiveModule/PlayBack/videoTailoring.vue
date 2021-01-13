@@ -34,18 +34,26 @@
       :class="[recordId ? 'vh-video-tailoring__editwarp' : '']"
     ></videoTailoring>
     <el-dialog
-      title="请输入视频名称"
+      title="视频标题"
       v-loading="editLoading"
       :visible.sync="titleDialogVisible"
       :close-on-click-modal=false
       :close-on-press-escape=false
       custom-class="save-title"
-      center
-      width="480px">
-      <VhallInput placeholder="请输入标题" :maxlength="100" autocomplete="off"  resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="text"></VhallInput>
+      :before-close="resetTitleValue"
+      width="483px">
+      <VhallInput
+        placeholder="请输入视频标题"
+        :maxlength="100"
+        autocomplete="off"
+        show-word-limit
+        v-model="titleEdit"
+        type="textarea"
+        resize=none
+      ></VhallInput>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmTitle" :disabled="editLoading" round size="medium">确 定</el-button>
-        <el-button @click="titleDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
+        <el-button @click="handleCancle" :disabled="editLoading" round size="medium">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -139,6 +147,14 @@ export default {
     }
   },
   methods:{
+    handleCancle() {
+      this.titleDialogVisible = false
+      this.titleEdit = ''
+    },
+    resetTitleValue(done) {
+      this.titleEdit = ''
+      done()
+    },
     // 传 sid 的时候，需要查询回放的起止时间，回显
     getTime() {
       this.$fetch('getWebinarSwitchList', {
@@ -275,6 +291,15 @@ export default {
             this.$message.warning('生成失败');
             this.editLoading = false;
           }
+        }).catch(err => {
+          if (err.code == 12005) {
+            this.$message({
+              message:  '所选时间范围内没有搜索到回放视频',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          }
         })
       }
     },
@@ -361,14 +386,25 @@ export default {
     height: 100%;
     overflow: hidden;
     /deep/ .save-title{
-      margin-top: 18%!important;
+      // margin-top: 18%!important;
       .el-dialog__title {
-        font-size: 18px;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #1a1a1a;
       }
       .el-dialog__body{
         .el-input__inner{
           padding-right: 66px;
         }
+      }
+      .el-textarea__inner {
+        color: #1a1a1a;
+        height: 96px;
+        font-family: PingFangSC-Regular, PingFang SC;
+      }
+      .el-button--default {
+        margin-left: 12px;
       }
     }
     .vh-video-tailoring__warp{
@@ -394,7 +430,7 @@ export default {
       .leftBox {
         position: absolute;
         top: 34px;
-        left: 0;
+        left: 24px;
       }
       i{
         float: left;

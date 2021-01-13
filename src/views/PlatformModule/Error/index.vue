@@ -4,13 +4,13 @@
     <div class="container 404" v-if="$route.params.str !== 'sysUnder' && $route.params.str !== 'network'">
       <div class="left-section">
         <div class="inner-content">
-          <h1  class="heading">404</h1>
+          <h1  class="heading">{{$route.params.str}}</h1>
           <!-- 具体文案 -->
           <p class="subheading">页面已失联，攻城狮正在赶来的路上…</p>
           <p class="headingNotice">
-            无法访问本页的原因：
-            服务器过热导致网站可能出现故障！
-            所访问的页面不存在或者已被管理员删除！
+            无法访问本页的原因：<br/>
+            服务器过热导致网站可能出现故障！<br/>
+            所访问的页面不存在或者已被管理员删除！<br/>
           </p>
           <p class="index-btn"><el-button type="primary" @click.prevent.stop="toReturn" round>返回首页</el-button></p>
         </div>
@@ -19,7 +19,7 @@
         <img src="../../../common/images/sys/404.svg" class="svgImg" alt=""/>
       </div>
     </div>
-    <!-- 系统升级 -->
+    <!-- 无服务 -->
     <div class="container sysUnder" v-if="$route.params.str === 'sysUnder'">
       <div class="left-section">
         <div class="inner-content">

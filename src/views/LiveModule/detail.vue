@@ -27,7 +27,7 @@
               <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
-              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:15px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:10px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                 placement="bottom"
                 trigger="hover"
@@ -36,7 +36,7 @@
                 <div class="invitation-code">
                   <p>活动观看页</p>
                   <img :src="h5WapLink" alt="" v-if="h5WapLink">
-                  <p><el-button round type="primary" @click="downErCode">下载二维码</el-button></p>
+                  <p><el-button round type="primary" size="medium" @click="downErCode">下载二维码</el-button></p>
                 </div>
                 <el-button round size="small" slot="reference">扫码</el-button>
               </el-popover>
@@ -301,6 +301,8 @@ export default {
         } else if (item.path === `/live/interactionData/${this.$route.params.str}`) {
           // 互动统计
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
+        } else if (item.path == `/live/embedCard/${this.$route.params.str}`) {
+          this.$router.push({path: item.path, query: {type:this.liveDetailInfo.webinar_type }});
         } else {
           this.$router.push({path: item.path});
         }
@@ -351,9 +353,6 @@ export default {
           return `0天0时0分0秒`;
         }
       }
-    },
-    exportInfo() {
-      this.isExport = !this.isExport;
     }
   }
 };
@@ -452,7 +451,7 @@ export default {
 //
 .invitation-code{
   text-align: center;
-  padding: 2px 20px 10px;
+  padding: 2px 40px 10px;
   display: block!important;
   left: 50%;
   p{
@@ -460,6 +459,8 @@ export default {
   }
   img{
     margin-bottom: 10px;
+    width: 132px;
+    height: 132px;
   }
   .copy-item{
     text-align: right;

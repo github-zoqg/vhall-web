@@ -1,6 +1,6 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
-    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'"></OldHeader>
+    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'" scene="chooseWay"></OldHeader>
     <pageTitle title="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
@@ -85,7 +85,7 @@ export default {
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          if (Number(this.arr[1]) === 1) {
+          // if (Number(this.arr[1]) === 1) {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
               webinar_id: this.arr[0]
@@ -102,10 +102,10 @@ export default {
               console.log(e);
               this.$message.error(e.msg || '检测异常');
             });
-          }else{
-            // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
-            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
-          }
+          // }else{
+          //   // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
+          //   window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
+          // }
         } else {
           this.$router.push({path: '/browser'})
         }

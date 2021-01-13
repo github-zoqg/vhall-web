@@ -1,6 +1,6 @@
 <template>
   <div class="new-qa">
-    <OldHeader class="head-wrap"></OldHeader>
+    <OldHeader class="head-wrap" scene="qa"></OldHeader>
     <div class="qa-wrap">
         <h3 class="title">{{baseObj.webinar && baseObj.webinar.subject}}</h3>
         <p class="host">主播：{{ baseObj.webinar && baseObj.webinar.userinfo && baseObj.webinar.userinfo.nickname}}</p>

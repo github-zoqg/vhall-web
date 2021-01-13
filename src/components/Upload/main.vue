@@ -10,19 +10,19 @@
       <div class="box">
         <div v-if="value">
           <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop="false"/>
-          <div class="mask">
-            <span v-if="!!$props.coverPic">
-              <i class="el-icon-collection" @click.stop="coverPage"></i>
+          <div class="mask" @click="isProduct && refresh($event)">
+            <span v-if="!!$props.coverPic" @click.stop.prevent="coverPage">
+              <i class="el-icon-collection"></i>
               <br/>
               封面
             </span>
-            <span v-if="!!$props.restPic">
-              <i class="el-icon-refresh-left" @click.self="refresh($event)"></i>
+            <span @click="refresh($event)">
+              <i class="el-icon-refresh-left"></i>
               <br/>
               重置
             </span>
-             <span>
-              <i class="el-icon-delete" @click.stop="deletes"></i>
+             <span @click.stop.prevent="deletes">
+              <i class="el-icon-delete"></i>
               <br/>
               删除
             </span>
@@ -100,11 +100,11 @@ export default {
       type: String,
       default: ''
     },
-    restPic: {
-      type: [Function, Boolean],
-      default: null
-    },
     coverPic: {
+      type: Boolean,
+      default: false
+    },
+    isProduct: {
       type: Boolean,
       default: false
     },
@@ -162,11 +162,12 @@ export default {
     },
     refresh(event){
       this.$emit('resetImage');
-      if(typeof this.restPic == "function"){
-        this.restPic();
-        event.stopPropagation();
-        // this.$emit('resetImage');
-      }
+      // event.stopPropagation();
+      // if(typeof this.restPic == "function"){
+      //   this.restPic();
+      //   event.stopPropagation();
+      //   // this.$emit('resetImage');
+      // }
     }
   },
   watch: {

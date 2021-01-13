@@ -3,7 +3,7 @@
     <div class="content" v-loading="loading" @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
       <div class="tips" v-if="!loading">
-        <img v-if="tipsType == 1" class="audio-img" :src="audioImg" alt="">
+        <img v-if="videoParam.msg_url=='.mp3' || videoParam.msg_url=='.mav'" class="audio-img" :src="audioImg" alt="">
         <p v-if="tipsType == 2" class="video-end">
           <img :src="audioEnd" alt="" srcset="">
           <el-button class="reset-play" @click="resetPlay">再次播放</el-button>
@@ -82,6 +82,7 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getVideoAppid();
+    console.log(this.videoParam, '???????????')
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
