@@ -86,7 +86,7 @@
           </el-tooltip>
         </div>
         <span class="vh-video-tailoring__time fr">
-          <span class="vh-video-tailoring__hover-time">{{ showTime }}</span>
+          <span :class="{'vh-video-tailoring__hover-time': vodReady}">{{ showTime }}</span>
           /
           {{ showVideoTime }}
         </span>

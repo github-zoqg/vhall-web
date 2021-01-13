@@ -78,7 +78,7 @@ export default {
       dialogVisible: false,
       wxDialogVisible: false,
       shareSwtich: true,
-      link: `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WAP_WATCH}/lives/signup/${this.$route.params.str}`,
       sinaLink: `${process.env.VUE_APP_WEB_URL}/lives/entryform/${this.$route.params.str}`,
       wxUrl: ''
     };
@@ -105,7 +105,7 @@ export default {
       this.$emit('setBaseInfo', { open_link: val } );
     },
     shareQQ() {
-      const url = `//connect.qq.com/widget/shareqq/index.html?title=${this.baseInfo.title}&url=${this.link}&summary=${this.baseInfo.intro}&pics=undefined`;
+      const url = `//connect.qq.com/widget/shareqq/index.html?url=${this.link}`;
       window.open(url, '_blank');
     },
     shareSina() {
