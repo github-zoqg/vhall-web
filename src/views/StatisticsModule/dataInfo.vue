@@ -1,5 +1,6 @@
 <template>
-  <div class="data-info" v-loading="loading" element-loading-text="数据获取中">
+  <div class="data-info">
+    <!-- v-loading="loading" element-loading-text="数据获取中" -->
     <pageTitle :title="$route.meta.title">
       <div slot="content">
         1.数据更新频率：天，不支持查看当日数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
@@ -200,6 +201,7 @@ export default {
 <style lang="less" scoped>
 .data-info {
   .statistical-data {
+    margin-top: 24px;
     padding: 24px 32px;
     background: #fff;
     border-radius: 4px;
@@ -213,6 +215,9 @@ export default {
     i{
       padding: 0 2px;
       font-size: 14px;
+    }
+    .iconfont-v3{
+      color: #999;
     }
   }
   .statistical-line {

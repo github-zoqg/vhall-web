@@ -7,19 +7,24 @@
       width="320px"
     >
       <div class="box-wei">
-        <div class="img-box">
+        <div class="img-box" v-if="qrcode">
           <img :src="`//aliqr.e.vhall.com/qr.png?t=${encodeURIComponent(qrcode)}`" alt="" v-if="qrcode">
+          <p>请用微信扫描二维码，绑定收款账户</p>
+          <el-button type="primary" class="length120"  round @click="goBangWeixin">确定</el-button>
           <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
             <p>点击重新加载</p>
           </div> -->
         </div>
-        <p v-if="!qrcode">您还未绑定账号，请先绑定</p>
+        <div class="no-bang" v-else>
+           <p >您还未绑定账号，请先绑定</p>
+           <el-button type="primary" class="length120" round @click="goBangWeixin">立即绑定</el-button>
+        </div>
       </div>
-      <div class="nextBtn" v-if="!qrcode">
-        <el-button type="primary" round @click="goBangWeixin">立即绑定</el-button>
-      </div>
+      <!-- <div class="nextBtn" v-if="!qrcode">
+
+      </div> -->
     </VhallDialog>
     <VhallDialog
       title="更改绑定微信"
@@ -33,7 +38,7 @@
         </h3>
         <el-form label-width="72px">
           <el-form-item label="">
-           <div id="payCaptcha">
+           <div id="payCaptcha" class="captcha">
             <el-input
               v-model="withdrawForm.text">
             </el-input>
@@ -50,7 +55,7 @@
         </el-form>
       </div>
       <div class="nextBtn">
-        <el-button type="primary" round @click="nextBinding"  :disabled="!code"
+        <el-button type="primary" class="length120" round @click="nextBinding"  :disabled="!code"
           >下一步</el-button>
       </div>
     </VhallDialog>
@@ -73,7 +78,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <div id="payCaptcha">
+          <div id="payCaptcha" class="captcha">
             <el-input
               v-model="withdrawForm.text">
             </el-input>
@@ -100,7 +105,7 @@
         </el-form-item>
       </el-form>
       <div class="nextBtn">
-        <el-button type="primary" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
+        <el-button type="primary" class="length120" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -348,19 +353,30 @@ export default {
 /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
   color: #666;
 }
+/deep/.el-button.is-round{
+  padding: 7px 32px;
+}
+.length120{
+  width: 120px;
+  text-align: center;
+}
 .box-wei {
   // padding-bottom: 20px;
   // .el-form-item{
   //   margin-bottom: 20px;
   // }
   .img-box {
-    width: 132px;
-    height: 132px;
-    background: #f7f7f7;
+    // width: 132px;
+    // height: 132px;
     margin: 0 auto;
+    text-align: center;
+    padding-bottom: 24px;
     img{
       width: 132px;
       height: 132px;
+    }
+    p{
+      padding-bottom: 20px;
     }
   }
   h3 {
@@ -375,6 +391,13 @@ export default {
     color: 999;
     text-align: center;
     padding-top: 8px;
+  }
+  .no-bang{
+    padding: 24px 0;
+    text-align: center;
+    p{
+      padding-bottom: 50px;
+    }
   }
   .isUntime {
     text-align: center;
@@ -451,7 +474,7 @@ export default {
     font-size: 14px;
     span {
       color: #1a1a1a;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
     }
   }
@@ -484,7 +507,7 @@ export default {
   text-align: center;
   padding: 24px;
   .el-button {
-    padding: 10px 38px;
+    // padding: 10px 38px;
   }
 }
 </style>

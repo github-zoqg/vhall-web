@@ -232,6 +232,7 @@ export default {
   border-radius: 4px;
   .row-top {
     background: #ffffff;
+    border-radius: 4px;
   }
   .row-center {
     margin: 24px 0;
@@ -298,6 +299,7 @@ export default {
   /deep/.el-col {
     margin-right: 20px;
     background: #fff;
+    border-radius: 4px;
   }
   /deep/.el-row--flex.is-justify-space-around {
     justify-content: space-between;
@@ -336,8 +338,8 @@ export default {
     }
     .account{
       position: absolute;
-      top: 8px;
-      right:8px;
+      top: 14px;
+      right:20px;
       color: #3562FA;
       font-size: 14px;
       cursor: pointer;

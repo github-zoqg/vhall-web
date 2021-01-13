@@ -86,7 +86,7 @@
     </span>
   </el-dialog>
   <template v-if="showDialog">
-    <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center
+    <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
     :close-on-click-modal=false
     :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
@@ -318,11 +318,11 @@ export default {
     color: #1A1A1A;
     .saasyinpinwenjian{
       color: #10d3a8;
-      padding-right: 3px;
+      // padding-right: 2px;
     }
     .saasshipinwenjian{
       color: #ff733c;
-      padding-right: 3px;
+      // padding-right: 2px;
     }
     i{
       display: inline-block;
@@ -360,30 +360,36 @@ export default {
     }
   }
   .vh-dialog{
-  /deep/ .el-dialog {
-    width: 642px!important;
-    background: transparent!important;
-    border:none;
-    box-shadow: none;
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
+    }
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
+      color: #fff;
+    }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 16px solid #333;
+      border-bottom: 16px solid #333;
+      background: #333;
+      border-radius: 4px;
+    }
   }
-  /deep/ .el-dialog__header {
-    width: 642px!important;
-    padding: 0px;
-    height: 55px;
-    background: transparent!important;
-    border:none;
-  }
-  /deep/ .el-dialog__headerbtn{
-    top: 30px;
-    right: 0px;
-  }
-  /deep/ .el-dialog__body{
-    width: 642px;
-    height: 375px;
-    border: 16px solid #333;
-    background: #fff;
-  }
-}
  /*  /deep/ .el-table__header{
     th{
       background: #F7F7F7;
