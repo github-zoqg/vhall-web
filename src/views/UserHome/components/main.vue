@@ -39,7 +39,7 @@
                   <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/>
                 </label>{{item | liveTag}}
               </span>
-              <span class="hot">
+              <span class="hot" v-if="item.hide_pv > 0">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | unitCovert}}</i>
               </span>
               <a :href="item.share_link" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">

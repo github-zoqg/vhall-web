@@ -976,6 +976,9 @@ export default {
       padding: 0 20px;
     }
   }
+  /deep/.saasicon_help_m {
+    color: #999999;
+  }
 </style>
 <style lang="less">
   html{
@@ -986,7 +989,4 @@ export default {
       display: none;
     }
   }
-/deep/.saasicon_help_m {
-  color: #999999;
-}
 </style>

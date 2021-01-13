@@ -632,7 +632,7 @@ export default {
     line-height: 32px;
     border: none;
     outline-style: none;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
     color: #1A1A1A;
     background-color: transparent;
@@ -648,13 +648,16 @@ export default {
     }
   }
   input::-webkit-input-placeholder {
-      color: #999999;
+    font-size: 16px;
+    color: #999999;
   }
   input:-ms-input-placeholder, input::-ms-input-placeholder {
-      color:#999999;
+    font-size: 16px;
+    color:#999999;
   }
   input::placeholder {
-      color: #999999;
+    font-size: 16px;
+    color: #999999;
   }
   &.auto-login {
     font-size: 13px;

@@ -179,8 +179,8 @@ export default {
 
 .user__layout--title {
   width: 100%;
-  padding: 35px 24px;
-  min-height: 170px;
+  padding: 35px 24px 0 24px;
+  min-height: 135px;
   background: #FFFFFF;
   border-radius: 4px;
   li {
@@ -253,7 +253,7 @@ export default {
   margin-right: 16px;
 }
 .user__layout--main {
-  margin-top: 24px;
+  margin-top: 32px;
   width: 100%;
   min-height: 710px;
   height: auto;
