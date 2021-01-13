@@ -106,6 +106,7 @@ export default {
       // 创建回放剪辑
       this.dataReady = true;
       this.getInitMsgInfo();
+      this.getDefaultTime();
     }
     // 监听事件点的变化
     this.$EventBus.$on('eventPointListChange', eventPointList => {
@@ -147,6 +148,13 @@ export default {
     }
   },
   methods:{
+    getDefaultTime() {
+      this.$fetch('getDefaultStartTime', {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        this.timeVal = [res.data.start_time, `${ this.$moment(new Date()).format("YYYY-MM-DD") } 23:59:59`];
+      })
+    },
     handleCancle() {
       this.titleDialogVisible = false
       this.titleEdit = ''
@@ -295,6 +303,13 @@ export default {
           if (err.code == 12005) {
             this.$message({
               message:  '所选时间范围内没有搜索到回放视频',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12908) {
+            this.$message({
+              message:  '所选时间范围不能超过7天',
               showClose: true, // 是否展示关闭按钮
               type: 'error', //  提示类型
               customClass: 'zdy-info-box' // 样式处理
