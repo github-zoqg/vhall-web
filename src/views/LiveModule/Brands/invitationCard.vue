@@ -19,9 +19,9 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-            <el-button class="invite-card-button" round slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button round slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button  class="invite-card-button" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button  round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
