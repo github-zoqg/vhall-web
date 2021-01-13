@@ -64,8 +64,8 @@
         </el-table-column>
         <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
-            <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

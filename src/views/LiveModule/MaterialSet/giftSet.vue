@@ -82,8 +82,8 @@
         </el-table-column> -->
         <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
-            <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -211,6 +211,7 @@ import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import { debounce } from "@/utils/utils"
 
 export default {
   name: "giftSize",
@@ -349,7 +350,8 @@ export default {
         if (res.code == 200 && res.data) {
           this.searchParams.page = 1
           this.tableData = res.data.list
-          if (isSearch) {
+          this.addedGiftsIds = this.tableData.map((item) => item.id)
+          if (this.searchName) {
             const resultData = []
             this.tableData.forEach(item => {
               if(item.name.indexOf(this.searchName) != -1) {
@@ -363,7 +365,6 @@ export default {
           this.currentTableData = this.tableData.filter((item, index) => {
             return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
           })
-          this.addedGiftsIds = this.tableData.map((item) => item.id)
         }
       })
     },
@@ -436,20 +437,22 @@ export default {
       return isType && isLt2M;
     },
     // 打开编辑面板
-    async handleEditGift (data) {
-      const isWebinarLiving = await this.isCanDelete()
-      if (isWebinarLiving) {
-        this.$message.warning('正在直播中，请直播结束后操作！')
-        return false;
-      }
-      this.editParams = {
-        gift_id: data.id,
-        name: data.name,
-        price: data.price,
-        img: data.image_url
-      }
-      this.domain_url = this.editParams.img
-      this.dialogVisible = true
+    handleEditGift (data) {
+      debounce(async () => {
+        const isWebinarLiving = await this.isCanDelete()
+        if (isWebinarLiving) {
+          this.$message.warning('正在直播中，请直播结束后操作！')
+          return false;
+        }
+        this.editParams = {
+          gift_id: data.id,
+          name: data.name,
+          price: data.price,
+          img: data.image_url
+        }
+        this.domain_url = this.editParams.img
+        this.dialogVisible = true
+      }, 500)
     },
     // 新建
     addGift () {
@@ -624,32 +627,47 @@ export default {
       })
     },
     // 删除礼品
-    async handleDelete (data) {
-      const isWebinarLiving = await this.isCanDelete()
-      if (isWebinarLiving) {
-        this.$message.warning('正在直播中，请直播结束后操作！')
-        return false;
-      }
-      this.deleteId = data.id
+    handleDelete (data) {
+      debounce(async () => {
+        const isWebinarLiving = await this.isCanDelete()
+        if (isWebinarLiving) {
+          this.$message.warning('正在直播中，请直播结束后操作！')
+          return false;
+        }
+        this.deleteId = data.id
 
-      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        lockScroll: false,
-        cancelButtonClass: 'zdy-confirm-cancel'
-      }).then(() => {
-        this.handleDeleteGift()
-      }).catch(() => {
-        this.deleteId = ''
-      })
+        this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          this.handleDeleteGift()
+        }).catch(() => {
+          this.deleteId = ''
+        })
+      }, 500)
     },
     handleDeleteGift () {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
       this.tableData = resData
-      this.addedGiftsIds = this.tableData.map(item => item.id)
+      this.addedGiftsIds = this.addedGiftsIds.filter(curItem => curItem != this.deleteId)
 
-      this.chooseGift()
+      this.chooseGift(1)
+
+      this.total = this.tableData.length
+      // 切换table显示的内容
+      this.currentTableData = this.tableData.filter((item, index) => {
+        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      })
+      if (this.currentTableData.length == 0) {
+        this.searchParams.page--
+        // 切换table显示的内容
+        this.currentTableData = this.tableData.filter((item, index) => {
+          return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+        })
+      }
 
       this.deleteId = ''
     },
@@ -667,6 +685,7 @@ export default {
     async handleBatchDeletion () {
       this.selectIds.forEach((item, index) => {
         const resData = this.tableData.filter(curItem => curItem.id != item)
+        this.addedGiftsIds = this.addedGiftsIds.filter(curItem => curItem != item)
         this.tableData = resData
         this.materiaTableData.forEach(meterialItem => {
           if (meterialItem.gift_id == item) {
@@ -674,8 +693,19 @@ export default {
           }
         })
       })
-      this.addedGiftsIds = this.tableData.map(item => item.id)
-      this.chooseGift()
+      this.total = this.tableData.length
+      // 切换table显示的内容
+      this.currentTableData = this.tableData.filter((item, index) => {
+        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      })
+      if (this.currentTableData.length == 0) {
+        this.searchParams.page--
+        // 切换table显示的内容
+        this.currentTableData = this.tableData.filter((item, index) => {
+          return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+        })
+      }
+      this.chooseGift(1)
       this.selectIds = []
     },
     // 选择奖品添加
@@ -690,17 +720,18 @@ export default {
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
-    chooseGift() {
+    chooseGift(isDeleteChoose) {
       this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
       this.$fetch('setRelevance', {
         gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
       }).then(res => {
         this.handleCloseChooseGift()
-        this.getTableList()
+        isDeleteChoose != 1 && this.getTableList()
       })
     },
     handleCloseChooseGift () {
+      this.materiaSearchName = ''
       this.addGiftsIds = []
       this.materiaSearchParams.page = 1
       this.dialogGiftsVisible = false
@@ -733,6 +764,9 @@ export default {
   }
 }
 .live-gift-wrap{
+  /deep/ .el-table__empty-block {
+    display: none;
+  }
   /deep/ .create-gift .el-dialog__footer {
     padding-top: 0;
   }
