@@ -787,7 +787,6 @@ export default {
     },
   },
   mounted () {
-    console.log(666, this.userModules)
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}
     if (this.userInfo && this.userInfo.user_id) {
       this.isLogin = true

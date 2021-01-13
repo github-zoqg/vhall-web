@@ -1527,7 +1527,7 @@ export default {
         auth: this.isLogin ? {
           avatar: data.join_info.avatar,
           id: this.userInfo ? this.userInfo.user_id : data.join_info.third_party_user_id,
-          nick_name: this.userInfo ? this.userInfo.nick_name : data.join_info.nickname,
+          nick_name: data.join_info.nickname,
           phone: this.userInfo ? this.userInfo.phone : ''
         } : [],
         interactiveInfo: this.interactiveInfo ? this.interactiveInfo : {},
