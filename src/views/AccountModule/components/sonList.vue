@@ -615,7 +615,7 @@ export default {
 .all-no-data {
   /* 基于外边框已经有距离： padding: 24px 24px 40px 24px; */
   padding-top: 30px;
-  margin-top: 164px;
+  margin-top: 110px;
   /deep/.createActive {
     padding-bottom: 30px;
   }
