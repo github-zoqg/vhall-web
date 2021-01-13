@@ -152,10 +152,11 @@ export default {
     createApp(){
       if(!(this.available_num > 0)) {
         this.$confirm(`如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970`, '提示', {
-          confirmButtonText: '我知道了',
-          cancelButtonText: '',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
           customClass: 'zdy-message-box',
-          lockScroll: false
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
         }).catch(() => {});
         return;
