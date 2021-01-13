@@ -11,18 +11,18 @@
         <div v-if="value">
           <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop="false"/>
           <div class="mask" @click="isProduct && refresh($event)">
-            <span v-if="!!$props.coverPic">
-              <i class="el-icon-collection" @click.stop.prevent="coverPage"></i>
+            <span v-if="!!$props.coverPic" @click.stop.prevent="coverPage">
+              <i class="el-icon-collection"></i>
               <br/>
               封面
             </span>
-            <span>
-              <i class="el-icon-refresh-left" @click="refresh($event)"></i>
+            <span @click="refresh($event)">
+              <i class="el-icon-refresh-left"></i>
               <br/>
               重置
             </span>
-             <span>
-              <i class="el-icon-delete" @click.stop.prevent="deletes"></i>
+             <span @click.stop.prevent="deletes">
+              <i class="el-icon-delete"></i>
               <br/>
               删除
             </span>
