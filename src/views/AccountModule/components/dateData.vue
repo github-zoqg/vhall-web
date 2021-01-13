@@ -319,7 +319,7 @@ export default {
     height: 36px;
     background: transparent;
   }
-  /deep/.el-input__icon {
+  /deep/.el-range__close-icon {
     margin-bottom: 5px;
     // line-height: 36px;
   }

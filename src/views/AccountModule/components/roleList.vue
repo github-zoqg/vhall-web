@@ -17,6 +17,7 @@
         <el-input placeholder="搜索角色名称" v-model.trim="role_name"
                   clearable
                   @clear="initQuerySonList"
+                  class="search-query"
                   @keyup.enter.native="initQuerySonList">
           <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
         </el-input>
@@ -433,11 +434,25 @@ export default {
     /deep/ .el-input__inner{
       border-radius: 20px;
       height: 36px;
+      padding-right: 50px;
     }
     /deep/ .el-input__suffix{
       cursor: pointer;
       /deep/ .el-input__icon{
+        width: auto;
+        margin-right: 5px;
         line-height: 36px;
+      }
+    }
+  }
+  .search-input {
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      height: 36px;
+      background: transparent;
+      padding-right: 50px;
+      &.el-date-editor--daterange {
+        padding-right: 10px;
       }
     }
   }

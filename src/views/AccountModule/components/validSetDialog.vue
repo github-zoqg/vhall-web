@@ -20,7 +20,7 @@
           <p class="errorText" v-show="errorMsgShow">图形码错误</p>
         </el-form-item>
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
-          <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
+          <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码" :maxlength="6">
             <el-button type="text" class="no-border" size="mini" slot="append" @click="getDyCode()"
                        v-preventReClick
                        :class="showCaptcha ? 'isLoginActive' : ''"
@@ -42,7 +42,7 @@
           </div>
           <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
-        <el-form-item label="验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="验证码"  :maxlength="6" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
             <el-button  type="text" class="no-border" size="mini" slot="append"
                        v-preventReClick
@@ -286,7 +286,7 @@ export default {
           if(this.downTimer) {
             window.clearTimeout(this.downTimer);
           }
-          this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+          // this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
           this.countDown();
         }).catch(res => {
           console.log(res);
@@ -297,7 +297,7 @@ export default {
             type: 'error',
             customClass: 'zdy-info-box'
           });
-          this.sendText = ``;
+          // this.sendText = ``;
         });
       }
     },
@@ -347,11 +347,11 @@ export default {
           if(this.downTimer1) {
             window.clearTimeout(this.downTimer1);
           }
-          this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+          // this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
           this.countDown1();
         }).catch(res => {
           console.log(res);
-          this.sendText1 = ``;
+          // this.sendText1 = ``;
           this.$message({
             message: res.msg || '验证码发送失败',
             showClose: true,
@@ -375,7 +375,7 @@ export default {
         this.time = 60;
         this.isDisabledClick = false;
         this.callCaptcha();
-        this.sendText = '';
+        // this.sendText = '';
       }
     },
     // 验证码倒计时（ 场景使用： 设置手机号、修改手机号-第二步、修改邮箱-第二步、设置邮箱）
@@ -390,7 +390,7 @@ export default {
         this.time1 = 60;
         this.isDisabledClick1 = false;
         this.callCaptcha(1);
-        this.sendText1 = '';
+        // this.sendText1 = '';
       }
     },
     // 下一步按钮，校验 验证码，成功后进入下一步。 （场景使用： 修改手机、修改关联邮箱）

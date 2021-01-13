@@ -33,11 +33,10 @@
         :totalNum="dataDao.total"
         :needPagination=true
         @getTableList="getUserPayDetail"
-        v-if="dataDao.total > 0 && dataDao.list.length > 0"
       >
       </table-list>
       <!-- 无消息内容 -->
-      <null-page v-else></null-page>
+      <null-page  class="search-no-data" :height="0" v-if="dataDao && dataDao.total === 0"></null-page>
     </div>
   </div>
 </template>
@@ -119,11 +118,18 @@ export default {
         params.end_time = this.query.timeStr[1] || '';
       }
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'getBusinessList' : 'getAccountList', params).then(res=>{
-        if (res && res.code === 200 && res.data) {
-          this.dataDao = res.data;
+        if (res.data) {
+          this.dataDao = {
+            total: res.data.total || 0,
+            list: res.data.list || []
+          };
         }
       }).catch(e=>{
         console.log(e);
+        this.dataDao = {
+          total: 0,
+          list: []
+        };
       });
     },
     downloadHandle() {
@@ -177,7 +183,7 @@ export default {
         {
           label: `${this.sonVo.vip_info.type > 0 ? '消耗流量（GB）' : '最高并发（方）'}`,
           key: `${this.sonVo.vip_info.type > 0 ? 'webinar_flow' : 'webinar_max_uv'}`,
-          width: 200
+          width: 150
         }
       ]
 
@@ -194,6 +200,12 @@ export default {
   /* .padding41-40(); */
   padding: 24px 24px 0 24px;
 }
+.search-no-data {
+  padding-top: 100px;
+  /deep/.search {
+    padding-bottom: 0;
+  }
+}
 .list--search{
   .flex-display();
   .justify(flex-start);
@@ -203,8 +215,12 @@ export default {
     border-radius: 18px;
     height: 36px;
     background: transparent;
+    padding-right: 50px;
+    &.el-date-editor--daterange {
+      padding-right: 10px;
+    }
   }
-  /deep/.el-input__icon {
+  /deep/.el-range__close-icon {
     margin-bottom: 5px;
     // line-height: 36px;
   }
@@ -212,11 +228,13 @@ export default {
     top: 0px;
   }
   .el-input{
-    margin-left: 24px;
-    width: 270px;
+    margin-left: 12px;
+    width: 220px;
     /deep/ .el-input__suffix{
       cursor: pointer;
       /deep/ .el-input__icon{
+        width: auto;
+        margin-right: 5px;
         line-height: 36px;
       }
     }
@@ -225,5 +243,8 @@ export default {
   .el-button {
     margin-left: auto;
   }
+}
+/deep/.el-table .cell {
+  line-height: 25px;
 }
 </style>
