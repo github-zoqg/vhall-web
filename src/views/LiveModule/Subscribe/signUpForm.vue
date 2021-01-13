@@ -349,12 +349,18 @@
               }
             } else if (item.type === 0 && item.default_type === 3) {
               // 邮箱
-              rules[item.id] = {
-                type: 'email',
-                required: !!item.is_must,
-                message: '请填写邮箱',
-                trigger: 'blur'
-              }
+              rules[item.id] = [
+                {
+                  required: !!item.is_must,
+                  message: '请填写邮箱',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'email',
+                  message: '请填写正确格式的邮箱',
+                  trigger: 'blur'
+                }
+              ]
             } else if (item.type === 1) {
               // 问答
               rules[item.id] = {
