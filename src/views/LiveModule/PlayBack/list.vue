@@ -316,7 +316,7 @@ export default {
         limit: this.pageSize,
         source: this.recordType,
       };
-      param.source == '上传' && (param.source = 2)
+      param.source == '上传' && (param.source = -1)
       this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
