@@ -32,7 +32,7 @@
                 <el-button type="text" class="operaBtn" >预览</el-button>
               </div>
               <div class="tool" @click.stop="deleteVideo">
-                <icon icon-class="saasicon-trash"></icon>
+                <i class="iconfont-v3 saasicon_shanchu"></i>
                 <el-button type="text" class="operaBtn" >删除</el-button>
               </div>
             </div>
