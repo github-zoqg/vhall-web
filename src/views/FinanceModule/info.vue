@@ -163,16 +163,19 @@
           </div>
         </div>
       </div>
-      <table-list
-        ref="accountTableList"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isCheckout="false"
-        :isHandle="false"
-        :totalNum="totalNum"
-        @getTableList="getAccountList"
-        >
-      </table-list>
+      <div class="list_info">
+        <table-list
+          ref="accountTableList"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isCheckout="false"
+          :isHandle="false"
+          :totalNum="totalNum"
+          @getTableList="getAccountList"
+          >
+        </table-list>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
+      </div>
       </div>
     </div>
   </div>
@@ -183,12 +186,14 @@ import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import { sessionOrLocal } from '@/utils/utils';
 import { formatMoney } from '@/utils/filter';
+import noData from '@/views/PlatformModule/Error/nullPage';
 // import { getCountDownTime } from '@/utils/general';
 export default {
   name: "financeInfo",
   components: {
     versionInfo,
-    lintCharts
+    lintCharts,
+    noData
   },
   data() {
     return {
