@@ -138,8 +138,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button :disabled="!editParams.name || !editParams.price || !editParams.img" type="primary" size="medium" @click="handleUpdateGift" round>确 定</el-button>
-        <el-button size="medium" @click="handleCancelEdit" round>取 消</el-button>
+        <el-button :disabled="!editParams.name || !editParams.price || !editParams.img" type="primary" size="medium" @click="handleUpdateGift" round>确定</el-button>
+        <el-button size="medium" @click="handleCancelEdit" round>取消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -870,7 +870,7 @@ export default {
   .select-matrial-wrap {
     box-sizing: border-box;
     width: 100%;
-    height: 328px;
+    height: 324px;
     padding: 16px 0 0 32px;
     overflow: hidden;
     /deep/ .null-page {
@@ -982,7 +982,7 @@ export default {
     .control-btn {
       float: right;
       /deep/ .el-button.is-round {
-          padding: 7px 33px;
+        padding: 7px 23px;
       }
     }
     .choosed-num {
@@ -1010,7 +1010,7 @@ export default {
 }
 /deep/ .choose-gift {
   .el-dialog__title {
-    line-height: 24px;
+    line-height: 28px;
   }
   .el-dialog__body {
     padding: 0;

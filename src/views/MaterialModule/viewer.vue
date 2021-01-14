@@ -84,8 +84,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="postGroupSend('groupForm')" round size="medium">确 定</el-button>
-        <el-button @click="groupDialog.visible = false" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="postGroupSend('groupForm')" round size="medium">确定</el-button>
+        <el-button @click="groupDialog.visible = false" round size="medium">取消</el-button>
       </div>
     </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
@@ -111,8 +111,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
-        <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确定</el-button>
+        <el-button @click="viewerDialog.visible = false" size="medium" round>取消</el-button>
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
@@ -140,9 +140,9 @@
           <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
         </file-upload>
         <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
-        <div class="dialog-right-btn">
-          <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
-          <el-button @click="closeImportViewer" size="medium" round>取 消</el-button>
+        <div class="dialog-right-btn dialog-footer">
+          <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确定</el-button>
+          <el-button @click="closeImportViewer" size="medium" round>取消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -810,6 +810,11 @@ export default {
   }
   /deep/ .el-dialog__title {
     line-height: 24px;
+  }
+  /deep/ .dialog-footer {
+    .el-button {
+      padding: 4px 23px;
+    }
   }
 }
 .uploadtips {

@@ -115,8 +115,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
+        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确定</el-button>
+        <el-button @click="handleCancelEdit" size="medium" round>取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -535,6 +535,11 @@ export default {
     }
     /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
       background: #e6e6e6;
+    }
+  }
+  /deep/ .dialog-footer {
+    .el-button {
+      padding: 4px 23px;
     }
   }
 }
