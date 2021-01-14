@@ -176,12 +176,18 @@ export default {
         this.getChildPermission();
       }
     }
+    if (document.body.clientWidth < 1366) {
+      document.getElementById('app').style.minWidth="auto"
+    }
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
+  },
+  beforeDestroy() {
+    document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
     getChildPermission() {
@@ -253,7 +259,7 @@ export default {
     margin: auto;
     max-width: 1374px;
     height: 100%;
-    display: flex;
+    // display: flex;
     // overflow: hidden;
     /deep/.el-col-5{
       width: 18.8%;
@@ -262,7 +268,9 @@ export default {
       color: #999;
     }
     .main-center{
-      flex: 1;
+      float: left;
+      // flex: 1;
+      width: calc(100% - 256px);
       height: 100%;
       .data-usage {
         padding: 0;
@@ -360,6 +368,7 @@ export default {
       }
     }
     .advert-banner{
+      float: left;
       width: 224px;
       height: 100%;
       margin-left: 32px;

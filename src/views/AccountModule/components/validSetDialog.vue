@@ -8,10 +8,10 @@
       <el-form :model="form" ref="form" :rules="formRules" label-width="80px">
         <p class="info" v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
         <el-form-item label="邮箱地址" key="email" prop="email" v-if="showVo.executeType === 'email' && showVo.step === 1">
-          <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled/>
+          <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" :maxlength="30"/>
         </el-form-item>
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
-          <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled/>
+          <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
         </el-form-item>
         <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
           <div id="setCaptcha">
@@ -31,10 +31,10 @@
           <p v-if="sendText" class="no-use">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
+          <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址" :maxlength="30"/>
         </el-form-item>
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号"/>
+          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号" :maxlength="30"/>
         </el-form-item>
         <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <div id="setCaptcha1">
@@ -42,8 +42,8 @@
           </div>
           <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
-        <el-form-item label="验证码"  :maxlength="6" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
+        <el-form-item label="验证码" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+          <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码"  :maxlength="6">
             <el-button  type="text" class="no-border" size="mini" slot="append"
                        v-preventReClick
                        @click="getDyCode1()"
@@ -53,15 +53,15 @@
           <p v-if="sendText1" class="no-use">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
-          <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
+          <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码" :maxlength="30"></el-input>
         </el-form-item>
         <el-form-item label="新密码"  key="pasword"  prop="password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''">
+          <el-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''" :maxlength="30">
             <template slot="append" v-if="form.password && form.password.length >= 6">{{pwdLevel}}</template>
           </el-input>
         </el-form-item>
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
+          <el-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></el-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
           <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>

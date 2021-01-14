@@ -138,9 +138,15 @@ const router = [
         hidden: true
       },
       {
-        path: 'posterCard/:str(\\d+)',
+        path: 'officeSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/officialCard'),
-        meta:{ auth: true, title: '开屏海报', name: 'posterCard', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '公众号', name: 'officeSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'posterCard/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/posterCard'),
+        meta:{ auth: true, title: '开屏海报', name: 'posterSet', activeMenu: '/live/list'},
         hidden: true
       },
       {

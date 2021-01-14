@@ -1327,11 +1327,16 @@
               line-height: 38px;
             }
             .yidun_slider {
-              // .yidun_slider__icon {
-                // background-image: url(./images/default_active2.png);
-              // }
+              .yidun_slider__icon {
+                background-image: url(./images/icon-slide1.png);
+                background-size: 28px 20px;
+                background-position: center;
+              }
               &:hover {
                 background-color: #FB3A32;
+                .yidun_slider__icon {
+                  background-image: url(./images/icon-slide.png);
+                }
               }
             }
             &.yidun_control--moving {
@@ -1354,11 +1359,14 @@
             .yidun_control {
               border-color: #3562FA!important;
               .yidun_slider {
-                // .yidun_slider__icon {
-                  // background-image: url(./images/default_active2.png);
-                // }
+                .yidun_slider__icon {
+                  background-image: url(./images/icon-succeed.png);
+                }
                 &:hover {
                   background-color: #FB3A32;
+                  .yidun_slider__icon {
+                    background-image: url(./images/icon-succeed.png);
+                  }
                 }
               }
             }

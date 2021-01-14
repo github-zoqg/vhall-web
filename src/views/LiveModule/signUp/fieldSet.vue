@@ -730,6 +730,11 @@ export default {
 }
 .viewItem{
   margin-bottom: 16px;
+  /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
+    background-color: #F7F7F7;
+    border-color: #E6E6E6;
+    cursor: not-allowed;
+  }
   &.privacyItem {
     .radioInput {
       margin-bottom: 10px;
@@ -749,7 +754,7 @@ export default {
     align-items: center;
     font-size: 16px;
     color: #1A1A1A;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     // text-indent: 8px;
     .titleInput {
       font-size: 16px;
@@ -956,6 +961,12 @@ export default {
   /deep/ .el-input__inner{
     border-color: transparent !important;
     &:focus{
+      background: #F7F7F7;
+      /deep/ & + .el-input__suffix .el-input__count{
+        visibility: visible;
+      }
+    }
+    &:hover{
       background: #F7F7F7;
       /deep/ & + .el-input__suffix .el-input__count{
         visibility: visible;

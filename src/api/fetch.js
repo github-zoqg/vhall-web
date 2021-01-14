@@ -31,8 +31,11 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
         _live_token = _live_token.slice(live_token.length - 32)
       }
     }
-    if(_live_token.indexOf(ActiveID)!=-1){
-      data.live_token = _live_token.split(`${ActiveID}_`)[1]
+    try {
+      if(_live_token.indexOf(ActiveID)!=-1){
+        data.live_token = _live_token.split(`${ActiveID}_`)[1]
+      }
+    } catch (error) {
     }
   }
   // const interact_token = sessionStorage.getItem('interact_token') || null;
