@@ -196,8 +196,8 @@ export default {
         series: [
           {
             type: 'line',
-            showSymbol: false,
-            symbolSize: 2,   //拐点圆的大小
+            showSymbol: true,
+            symbolSize: 1,   //拐点圆的大小
             smooth:true,
             itemStyle:{
               normal:{

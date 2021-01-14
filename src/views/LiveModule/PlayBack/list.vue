@@ -31,6 +31,7 @@
       </div>
       <div class="tableBox" v-loading="loading">
         <el-table
+          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
           v-if="isDemand !== ''"
           ref="playBackTable"
           :data="tableData"
@@ -642,10 +643,19 @@ export default {
     .playpackSource{
       color: #1a1a1a;
     }
-    /deep/ thead .el-select .el-input__inner {
-      border: none;
-      color: #666;
-      padding-left: 0;
+    /deep/ thead .el-select {
+      .el-input__inner {
+        border: none;
+        color: #666;
+        padding-left: 0;
+      }
+      .el-input__suffix {
+        .el-icon-arrow-up {
+          color: #666;
+          line-height: 36px;
+          // height: 14px;
+        }
+      }
     }
   }
   /* /deep/ .el-table__header{

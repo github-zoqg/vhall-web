@@ -1021,7 +1021,7 @@ export default {
       .vh-video-tailoring__btn-group {
         text-align: right;
         margin-top: 24px;
-        padding-bottom: 32px;
+        padding-bottom: 24px;
         /deep/.el-button--default {
           margin-left: 12px;
           background: transparent;
