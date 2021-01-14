@@ -16,7 +16,7 @@
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
-        class="head-btn fr search"
+        class="head-btn fr search resetRightBrn"
         v-model.trim="searchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -485,6 +485,23 @@ export default {
     .no-data{
       color: #b3b3b3;
       background: #ffffff;
+    }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
     }
     ::v-deep.set-upload{
       position: relative;

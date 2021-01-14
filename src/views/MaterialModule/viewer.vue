@@ -20,6 +20,7 @@
               clearable
               autocomplete="off"
               @keyup.enter.native="queryList"
+              class="resetRightBrn"
               @clear="queryList">
               <i
                 class="el-icon-search el-input__icon"
@@ -853,6 +854,23 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
+    }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
     }
   }
 }

@@ -223,6 +223,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'recordchapter/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/chapter'),
+        meta:{ auth: true, title: '章节打点', name: 'recordchapter', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'reportsData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         meta:{ auth: true, title: '数据报告', name: 'reportsData', activeMenu: '/live/list'},

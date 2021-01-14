@@ -1312,26 +1312,55 @@
             background: #DEDEDE;
           }
         }
+        // 云盾样式重置
         .captcha{
           /deep/ .yidun .yidun_control {
             border-radius: 4px!important;
             border-color: #ccc;
             background: #fff;
+            overflow: hidden;
+            .yidun_slide_indicator {
+              border-radius: 4px!important;
+            }
             .yidun_tips {
               color: #888888;
               line-height: 38px;
             }
             .yidun_slider {
               // .yidun_slider__icon {
-                // background-image: none;
+                // background-image: url(./images/default_active2.png);
               // }
               &:hover {
                 background-color: #FB3A32;
               }
             }
-            &.yidun_control--moving .yidun_slide_indicator {
-              border-color: #FB3A32;
+            &.yidun_control--moving {
               background-color: #E2E2E2;
+              border-color: #FB3A32;
+              .yidun_slide_indicator {
+                border-color: #FB3A32;
+                background-color: #E2E2E2;
+              }
+            }
+
+          }
+          /deep/ .yidun--success {
+            .yidun_control--moving {
+              background-color: #F0F1FE!important;
+              .yidun_slide_indicator {
+                background-color: #F0F1FE!important;
+              }
+            }
+            .yidun_control {
+              border-color: #3562FA!important;
+              .yidun_slider {
+                // .yidun_slider__icon {
+                  // background-image: url(./images/default_active2.png);
+                // }
+                &:hover {
+                  background-color: #FB3A32;
+                }
+              }
             }
           }
         }

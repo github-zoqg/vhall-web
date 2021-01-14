@@ -15,9 +15,12 @@
         <el-button size="medium" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
         <VhallInput
+          clearable
           @keyup.enter.native="getList"
           placeholder="请输入内容标题"
           autocomplete="off"
+          class="resetRightBrn"
+          @clear="getList"
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
@@ -115,6 +118,7 @@
           @current-change="currentChangeHandler"
           align="center"
         ></SPagination>
+        <null-page text="未搜索到相关内容" nullType="search" v-if="totalElement === 0"></null-page>
       </div>
     </template>
 
@@ -139,8 +143,8 @@
       >
       </VhallInput>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
-        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确定</el-button>
+        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取消</el-button>
       </span>
     </el-dialog>
     <!-- 预览功能 -->
@@ -483,9 +487,10 @@ export default {
     },
     toChapter(row){
       const recordId = row.id
+      const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
       // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
       if (this.isDemand || (row.transcode_status == 1 && row.doc_status)) {
-        this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         return false
       }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
@@ -512,7 +517,7 @@ export default {
           }).then(res => {
             console.log(res)
             if (res.data.doc_titles.length) {
-              this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+              this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
             } else {
               this.$message({
                 message:  '当前回放内容未演示PPT格式的文档，不支持使用章节功能',
@@ -585,6 +590,14 @@ export default {
 
 <style lang="less" scoped>
   .listBox{
+    /deep/ .dialog-footer {
+      .el-button {
+        padding: 4px 23px;
+      }
+    }
+    /deep/ .el-textarea__inner {
+      font-family: PingFangSC-Regular, PingFang SC;
+    }
     .btn-list .el-button:last-child {
       margin-right: 0;
       margin-left: 0;
@@ -617,6 +630,9 @@ export default {
   .tableBox{
     padding: 32px 24px;
     background: #fff;
+    /deep/ .el-table__empty-block {
+      display: none;
+    }
     /deep/ .cell{
       color: #666;
     }
@@ -726,6 +742,23 @@ export default {
       /deep/ .el-input__suffix{
         cursor: pointer;
         /deep/ .el-input__icon{
+          line-height: 36px;
+        }
+      }
+    }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
           line-height: 36px;
         }
       }

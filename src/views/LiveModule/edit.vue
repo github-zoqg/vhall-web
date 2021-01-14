@@ -228,7 +228,7 @@
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button class="common-button length152" @click="resetForm('ruleForm')" round>取消</el-button>
+        <el-button class="length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 
@@ -860,25 +860,6 @@ export default {
   .btnGroup{
     // text-align: center;
     margin-top: 40px;
-    .el-button{
-      color:#FB3A32;
-      border-color:#FB3A32;
-      width: 150px;
-      &:hover{
-        background: #ffebeb;
-      }
-    }
-    .el-button--primary{
-      background:#FB3A32;
-      border-color:#FB3A32;
-      color: #fff;
-      &:hover{
-        background: #fc615b;
-      }
-    }
-    .el-button.is-round{
-      padding: 10px 23px;
-    }
   }
   .editBox {
     .common-button {

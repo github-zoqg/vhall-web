@@ -254,7 +254,7 @@ export default {
     max-width: 1374px;
     height: 100%;
     display: flex;
-    overflow: hidden;
+    // overflow: hidden;
     /deep/.el-col-5{
       width: 18.8%;
     }
@@ -388,9 +388,15 @@ export default {
         background: #fff;
         border-radius: 4px;
         position: relative;
+        width: 100%;
         .ad-web{
           height: 126px;
           width: 100%;
+          // img{
+          //   width: 100%;
+          //   height: 100%;
+          //   object-fit: scale-down;
+          // }
          /*  img{
             width: 100%;
             height: 100%;
