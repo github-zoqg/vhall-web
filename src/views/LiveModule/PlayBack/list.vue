@@ -143,8 +143,8 @@
       >
       </VhallInput>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
-        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确定</el-button>
+        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取消</el-button>
       </span>
     </el-dialog>
     <!-- 预览功能 -->
@@ -590,6 +590,14 @@ export default {
 
 <style lang="less" scoped>
   .listBox{
+    /deep/ .dialog-footer {
+      .el-button {
+        padding: 4px 23px;
+      }
+    }
+    /deep/ .el-textarea__inner {
+      font-family: PingFangSC-Regular, PingFang SC;
+    }
     .btn-list .el-button:last-child {
       margin-right: 0;
       margin-left: 0;
