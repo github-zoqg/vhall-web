@@ -26,9 +26,11 @@
               <icon icon-class="saasshipinwenjian"></icon>
               <p>{{selectMedia.name}}</p>
             </div>
-            <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
+            <!-- <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked"> -->
+            <div class="abRight">
+
               <div class="tool" @click.stop="previewVideo">
-                <icon icon-class="saasicon-eye"></icon>
+                <i class="iconfont-v3 saasicon-eye"></i>
                 <el-button type="text" class="operaBtn" >预览</el-button>
               </div>
               <div class="tool" @click.stop="deleteVideo">
@@ -342,15 +344,16 @@ export default {
       justify-content: center;
       color: #fff;
       .tool{
-        width: 40px;
-        height: 60px;
-        // p {
-        //   width: 100%;
-        //   height: 25px;
-        // }
+        width: 30px;
+        line-height: 20px;
+        margin: 0px 5px;
       }
       span{
         color: #fff;
+      }
+      /deep/.saasicon-eye, /deep/.saasicon_shanchu{
+        font-size: 30px!important;
+        height: 30px;
       }
     }
     .operaBtn{
@@ -383,7 +386,7 @@ export default {
         font-size: 30px;
       }
       /deep/.iconfont-v3{
-        font-size: 26px;
+        font-size: px;
       }
       /deep/.saasshipinwenjian{
         color: #FF733C;
