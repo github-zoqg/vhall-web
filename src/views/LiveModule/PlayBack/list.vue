@@ -483,9 +483,10 @@ export default {
     },
     toChapter(row){
       const recordId = row.id
+      const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
       // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
       if (this.isDemand || (row.transcode_status == 1 && row.doc_status)) {
-        this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         return false
       }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
@@ -512,7 +513,7 @@ export default {
           }).then(res => {
             console.log(res)
             if (res.data.doc_titles.length) {
-              this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+              this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
             } else {
               this.$message({
                 message:  '当前回放内容未演示PPT格式的文档，不支持使用章节功能',
