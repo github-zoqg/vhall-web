@@ -170,9 +170,10 @@ export default {
             type: 'value',
             position: 'left',
             splitLine: {
-              show: false,
+              show: true,
               lineStyle: {
-                type: 'dashed',
+                type: 'solid',
+                color: '#E6E6E6'
               }
             },
             axisLine: {
@@ -200,14 +201,14 @@ export default {
             smooth:true,
             itemStyle:{
               normal:{
-                  color: '#fb3a32',
-                  borderColor: '#fb3a32',  //拐点边框颜色
+                color: '#fb3a32',
+                borderColor: '#fb3a32',  //拐点边框颜色
               }
             },
-            data: visitDataValue,
             lineStyle: {
               color: '#fb3a32'
-            }
+            },
+            data: visitDataValue,
             // color: '#fb3a32'
           },
         ],
