@@ -18,14 +18,15 @@
         <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入音视频名称" clearable @change="getTableList"></el-input>
       </div>
     </div>
-    <div class="video-list" v-show="total">
+    <div class="video-list" v-if="total || isSearch">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="150" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
+      <noData :nullType="'search'" v-if="isSearch"></noData>
     </div>
-    <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="text">
-        <el-button type="primary" round class="head-btn set-upload" v-if="nullText==='nullData'">
+    <div class="no-live" v-else>
+      <noData :nullType="'nullData'" :text="'暂未上传音视频'">
+        <el-button type="primary" round class="head-btn set-upload">
           上传
           <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)">
         </el-button>
@@ -67,7 +68,7 @@ export default {
   name: 'video.vue',
   data() {
     return {
-      total: 0,
+      total: 1,
       // 预览
       showDialog: false,
       isSearch: false,
@@ -76,9 +77,8 @@ export default {
       lowName: '',
       videoId: '',
       keyword: '',
+      loading: true,
       editShowDialog: false,
-      nullText: 'nullData',
-      text: '暂未上传音视频',
       videoParam: {},
       // 表格
       tableData: [],
@@ -121,6 +121,7 @@ export default {
   created() {
     // 初始化聊天SDK
     // this.initChat();
+    this.loading = false;
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -157,6 +158,7 @@ export default {
         user_id: this.userId,
         ...pageInfo
       }
+      this.isSearch = this.keyword ? true : false;
       this.getList(formParams);
     },
     tirggerFile(event){
@@ -309,20 +311,13 @@ export default {
             this.$refs.tableList.clearSelect();
           }
           this.tableData = res.data.list;
-          if (this.keyword) {
-            this.isSearch = true;
-            this.nullText = 'search';
-            this.text = '';
-          } else {
-            this.isSearch = false;
-            this.nullText = 'nullData';
-            this.text = '暂未上传音视频';
-          }
           // this.checkedList = [];
           // if(this.uploadList.length!=0){
           //   this.tableData =this.uploadList.concat(this.tableData);
           // }
         }
+      }).finally(()=>{
+        this.loading = false;
       });
     },
     // 编辑

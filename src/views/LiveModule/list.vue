@@ -494,7 +494,7 @@ export default {
             float: right;
             &.active{
               z-index: 2;
-              color: #fff;
+              // color: #fff;
             }
           }
         }

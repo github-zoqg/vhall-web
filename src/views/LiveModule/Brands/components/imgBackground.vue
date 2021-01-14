@@ -41,8 +41,8 @@
       </div>
     </el-scrollbar>
     <div slot="footer" class="dialog-footer">
-      <el-button round size="medium"  @click.prevent.stop="dialogVisible = false">取 消</el-button>
       <el-button round  size="medium" v-preventReClick type="primary" @click.prevent.stop="changePic">选 择</el-button>
+      <el-button round size="medium"  @click.prevent.stop="dialogVisible = false">取 消</el-button>
     </div>
   </VhallDialog>
 </template>
@@ -199,7 +199,7 @@ export default {
 }
 .dialog-footer {
   padding-top: 24px;
-  // float: left;
+  text-align: right;
 }
 </style>
 

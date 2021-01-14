@@ -10,7 +10,7 @@
           </div>
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
-            <p>{{ specialInfo.created_at }}</p>
+            <p>{{ specialInfo.created_at | unitTime  }}</p>
             <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i>热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <el-popover
@@ -72,14 +72,15 @@ export default {
       pagePos: 0,
       totalElement: 0,
       shareVo: {
-        url: `${process.env.VUE_APP_WAP_WATCH}/lives/special/detail/?id=${this.$route.query.id}`
+        url: `${process.env.VUE_APP_WAP_WATCH}/lives/special/detail/?id=${this.$route.query.id}`,
+        pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
       },
       totalList: [], //总数
       liveList: []
     };
   },
   components: {
-    PageTitle,
+    // PageTitle,
     OldHeader,
     share
   },

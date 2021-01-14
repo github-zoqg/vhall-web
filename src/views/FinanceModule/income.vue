@@ -101,6 +101,7 @@
           @getTableList="getIncomeList"
           >
         </table-list>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
       </el-tabs>
     </div>
     <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
@@ -111,6 +112,7 @@
 import PageTitle from '@/components/PageTitle';
 import cashBox from './components/cashBox';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "income",
   data() {
@@ -164,11 +166,11 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
+          width: 200,
         },
         {
           label: '标题',
           key: 'name',
-          width: 150,
         },
         {
           label: '总收益（元）',
@@ -227,7 +229,8 @@ export default {
   },
   components: {
     cashBox,
-    PageTitle
+    PageTitle,
+    noData
   },
   created() {
     this.tabelColumn = this.liveColumns;

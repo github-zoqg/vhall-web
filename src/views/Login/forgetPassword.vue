@@ -44,7 +44,7 @@
         <!-- 第二步 -->
         <div class="step-2" v-if="findStep===2">
           <div class="find-phone" v-if="isType==='phone'">
-            <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email')">邮箱找回密码</span></p>
+            <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email', 1)">邮箱找回密码</span></p>
             <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="phone">
               <el-input
@@ -82,7 +82,7 @@
           </el-form>
           </div>
           <div class="find-phone" v-if="isType==='email'">
-            <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone')">手机找回密码</span></p>
+            <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone', 1)">手机找回密码</span></p>
             <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="email">
               <el-input
@@ -221,12 +221,14 @@ export default {
   //   });
   // },
   methods: {
-    findPassword(type) {
-      this.$refs['checkDynamicForm'].resetFields();
+    findPassword(type, index) {
       this.isType = type;
       this.findStep = 2;
       if (type === 'phone') {
         this.callCaptcha();
+      }
+      if (index) {
+        this.$refs['checkDynamicForm'].resetFields();
       }
     },
     // 第二步获取短信验证码
