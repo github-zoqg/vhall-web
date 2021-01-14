@@ -350,7 +350,7 @@ export default {
   // margin-bottom: 20px;
   .liveItem{
     // width: 312px;
-    height: 244px;
+    height: 274px;
     margin-bottom: 20px;
     // float: left;
     // margin-right: 40px;
@@ -415,7 +415,7 @@ export default {
       }
     }
     .bottom{
-      height: 72px;
+      height: 102px;
       background: #f7f7f7;
       box-sizing: border-box;
       padding: 12px 16px;
