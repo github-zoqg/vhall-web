@@ -25,7 +25,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <VhallInput v-model.trim="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
+          <VhallInput v-model.trim="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -372,15 +372,15 @@ export default {
 </script>
 <style lang="less" scoped>
 .prize-create{
-  /deep/.el-input__inner{
-    border-radius: 20px;
-    height: 36px;
-    background: transparent;
-  }
   .prizeList{
     padding-bottom: 24px;
     .search{
       margin-bottom: 16px;
+      /deep/.el-input__inner{
+      border-radius: 20px;
+      height: 36px;
+      background: transparent;
+    }
     }
     .prize{
       max-height: 300px;

@@ -47,7 +47,7 @@
         <el-checkbox v-model="searchParams[item.key]" v-else-if="item.type==7"  @change="changeDate">{{ item.name }}</el-checkbox>
         <el-button v-else-if="item.type==6" @click="searchList" size="medium" round>查询</el-button>
         <!-- 输入框 -->
-        <el-input v-model.trim="searchParams[item.key]" suffix-icon="el-icon-search" :placeholder="placeholder" style="width: 180px" v-else  @keyup.enter.native="changeInput" @change="changeInput"  clearable></el-input>
+        <el-input v-model.trim="searchParams[item.key]" :placeholder="placeholder" style="width: 180px" v-else  @keyup.enter.native="changeInput"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="changeInput"></i></el-input>
 
       </el-form-item>
     </el-form>
