@@ -15,9 +15,12 @@
         <el-button size="medium" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
         <VhallInput
+          clearable
           @keyup.enter.native="getList"
           placeholder="请输入内容标题"
           autocomplete="off"
+          class="resetRightBrn"
+          @clear="getList"
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
@@ -115,6 +118,7 @@
           @current-change="currentChangeHandler"
           align="center"
         ></SPagination>
+        <null-page text="未搜索到相关内容" nullType="search" v-if="totalElement === 0"></null-page>
       </div>
     </template>
 
@@ -618,6 +622,9 @@ export default {
   .tableBox{
     padding: 32px 24px;
     background: #fff;
+    /deep/ .el-table__empty-block {
+      display: none;
+    }
     /deep/ .cell{
       color: #666;
     }
@@ -727,6 +734,23 @@ export default {
       /deep/ .el-input__suffix{
         cursor: pointer;
         /deep/ .el-input__icon{
+          line-height: 36px;
+        }
+      }
+    }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
           line-height: 36px;
         }
       }
