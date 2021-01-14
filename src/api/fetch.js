@@ -23,7 +23,14 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   if (window.location.href.indexOf('/chooseWay') !== -1) {
     // 修改存储live_token 方案    改为活动ID_token值
     let _live_token = sessionOrLocal.get('live_token', 'localStorage')
-    let ActiveID = location.pathname.split('chooseWay/')[1].split('/')[0]
+    let ActiveID = null
+    try {
+      ActiveID = location.pathname.split('chooseWay/')[1].split('/')[0]
+    } catch (error) {
+      if(_live_token.length >32){
+        _live_token = _live_token.slice(live_token.length - 32)
+      }
+    }
     if(_live_token.indexOf(ActiveID)!=-1){
       data.live_token = _live_token.split(`${ActiveID}_`)[1]
     }
