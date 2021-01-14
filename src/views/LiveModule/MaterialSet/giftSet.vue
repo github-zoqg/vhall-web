@@ -874,7 +874,19 @@ export default {
     padding: 16px 0 0 32px;
     overflow: hidden;
     /deep/ .null-page {
-      margin-top: 110px!important;
+      width: 100%;
+      height: 100%;
+      margin-top: 0!important;
+      padding-right: 32px;
+      padding-bottom: 16px;
+      .search {
+        padding-bottom: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
     }
     .material-box {
       height: 318px;
