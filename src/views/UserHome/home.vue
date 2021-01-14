@@ -4,9 +4,9 @@
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
    <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || 'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png' :
         'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'}) 0px center / 100% no-repeat`}"></div>
-   <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
+   <div :class="$route.meta.type !== 'owner' ? userHomeVo && Number(userHomeVo.show_subject) === 0 && Number(userHomeVo.show_webinar_list) === 0 ? 'pc_bg no-creates' : 'pc_bg' : ''">
      <!-- 内容区域 -->
-     <div class="user__layout--title">
+     <div :class="['user__layout--title', {'ctrl-layout': $route.meta.type === 'owner'}]">
        <ul>
          <li>
            <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
@@ -175,6 +175,12 @@ export default {
   margin: -220px auto 0 auto;
   background: #ffffff;
   border-radius: 4px;
+  &.no-creates {
+     margin: -170px auto 0 auto;
+     .user__layout--main {
+       min-height: 500px;
+     }
+  }
 }
 
 .user__layout--title {
@@ -183,6 +189,9 @@ export default {
   min-height: 135px;
   background: #FFFFFF;
   border-radius: 4px;
+  &.ctrl-layout {
+    padding: 35px 24px;
+  }
   li {
     list-style-type: none;
     display: inline-block;
@@ -256,6 +265,7 @@ export default {
   margin-top: 32px;
   width: 100%;
   min-height: 710px;
+  margin-bottom: 56px;
   height: auto;
   background: #FFFFFF;
   position: relative;
