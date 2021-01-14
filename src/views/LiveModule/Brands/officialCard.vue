@@ -74,7 +74,7 @@
             <!-- status 控制是否阴影 -->
             <div class="v-preview-content">
                <!-- 公众号 -->
-               <div class="gzh_pc" v-if="title === '公众号展示'">
+               <div class="gzh_pc">
                  <img class="gzh_bg_default" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0"/>
                  <img class="gzh_bg" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCodeAtuo.png" alt="" v-if="!(alertType > 0)"/>
                  <div class="gzh_img v-code-preview" v-if="domain_url && !(alertType > 0)">
