@@ -196,9 +196,19 @@ export default {
           {
             type: 'line',
             showSymbol: false,
-            smooth: true,
+            symbolSize: 2,   //拐点圆的大小
+            smooth:true,
+            itemStyle:{
+              normal:{
+                  color: '#fb3a32',
+                  borderColor: '#fb3a32',  //拐点边框颜色
+              }
+            },
             data: visitDataValue,
-            color: '#fb3a32'
+            lineStyle: {
+              color: '#fb3a32'
+            }
+            // color: '#fb3a32'
           },
         ],
       };
