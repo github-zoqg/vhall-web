@@ -13,7 +13,8 @@
             <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
-              <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
+              <el-date-picker type="date" class="date" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
@@ -687,6 +688,11 @@ export default {
   .item-time .el-form-item {
     margin-bottom: 0px;
   }
+  .date{
+    /deep/.el-input__prefix {
+        left: 8px;
+    }
+  }
   /deep/ .el-form-item{
     // width: 100%;
     max-width: 660px;
@@ -928,7 +934,7 @@ export default {
         font-size: 26px;
 
       }
-      .saasshipinwenjian{
+      /deep/.saasshipinwenjian{
         color: #FF733C;
       }
       p{
@@ -976,6 +982,9 @@ export default {
       padding: 0 20px;
     }
   }
+  /deep/.saasicon_help_m {
+    color: #999999;
+  }
 </style>
 <style lang="less">
   html{
@@ -986,7 +995,4 @@ export default {
       display: none;
     }
   }
-/deep/.saasicon_help_m {
-  color: #999999;
-}
 </style>

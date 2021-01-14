@@ -1,8 +1,8 @@
 <template>
   <div class="show-special">
-    <OldHeader scene="preShow"></OldHeader>
+    <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id"></OldHeader>
     <div class="special-show-ctx">
-      <pageTitle title="专题详情"></pageTitle>
+      <!-- <pageTitle title="专题详情"></pageTitle> -->
       <div class="special-info">
         <div class="special-main">
           <div class="special-img">
@@ -119,27 +119,8 @@ export default {
       this.activeName = tab.name;
       this.pageNum = 1;
       this.liveList = this.totalList.slice(0, this.pageSize * this.pageNum)
-    },
-    userLogoGet() {
-      this.$fetch('userLogoGet', {
-        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
-      }).then(res => {
-        console.log(res);
-      }).catch(err=>{
-      });
-    },
-    // 获取标记 logo 主办方信息
-    getSignInfo () {
-      return this.$fetch('watchInterGetWebinarTag', {
-        webinar_id: this.$route.params.id
-      }).then(res => {
-        if (res.data) {
-          this.signInfo = res.data
-        }
-      })
-    },
+    }
   }
-
 };
 </script>
 <style lang="less">
@@ -148,7 +129,7 @@ export default {
 }
 .special-show-ctx {
   width: 1300px;
-  margin: 0 auto 50px auto;
+  margin: 40px auto 50px auto;
 }
   .show-special{
     height: 100%;

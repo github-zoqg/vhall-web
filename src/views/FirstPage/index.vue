@@ -258,6 +258,9 @@ export default {
     /deep/.el-col-5{
       width: 18.8%;
     }
+    /deep/.iconfont-v3{
+      color: #999;
+    }
     .main-center{
       flex: 1;
       height: 100%;
@@ -301,6 +304,7 @@ export default {
       .row-list{
         height: 146px;
         background: #fff;
+        border-radius: 4px;
         .list-title{
           font-family: @fontRegular;
           font-size: 16px;
@@ -340,6 +344,7 @@ export default {
         margin-top: 24px;
         background: #fff;
         padding-bottom: 10px;
+        border-radius: 4px;
         .line-tip{
           padding: 24px 0 0 32px;
           font-size: 16px;
@@ -443,6 +448,7 @@ export default {
       .data-document{
         background: #fff;
         height: 190px;
+        border-radius: 4px;
         h2{
           font-size: 16px;
           color: #1A1A1A;

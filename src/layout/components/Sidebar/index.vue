@@ -59,7 +59,7 @@ export default {
         withoutAnimation: false
       },
       logo: null,
-      logo_jump_url: '',
+      logo_jump_url: process.env.VUE_APP_COMPANY_URL,
       childPremission: {},
     };
   },
@@ -124,7 +124,7 @@ export default {
     console.log(this.logo, process.env.VUE_APP_COMPANY_URL, '2222222222222222')
 
     if(this.logo) {
-      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : '';
+      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : process.env.VUE_APP_COMPANY_URL;
     } else {
       this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
     }
@@ -137,7 +137,7 @@ export default {
       this.logo = user_extends.logo;
       console.log(this.logo,process.env.VUE_APP_COMPANY_URL, '1111111111111111')
       if(this.logo) {
-        this.logo_jump_url = user_extends.logo_jump_url || '';
+        this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_COMPANY_URL;
       } else {
         this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
       }

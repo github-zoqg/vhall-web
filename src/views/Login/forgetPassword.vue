@@ -67,6 +67,7 @@
                 <el-input
                   placeholder="输入验证码"
                   clearable
+                  :maxlength="6"
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
@@ -87,6 +88,7 @@
               <el-input
                 placeholder="请输入邮箱"
                 auto-complete="off"
+                :maxlength="30"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
                     <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
@@ -97,6 +99,7 @@
               <el-input
                 placeholder="输入邮箱验证码"
                 auto-complete="off"
+                :maxlength="6"
                 v-model.trim="dynamicForm.code">
               </el-input>
             </el-form-item>
@@ -112,6 +115,7 @@
             <el-form-item prop="password">
               <el-input
                 placeholder="请输入新密码"
+                :maxlength="30"
                 type="password"
                 auto-complete="off"
                 v-model.trim="dynamicForm.password">
@@ -121,6 +125,7 @@
               <el-input
                 placeholder="请再次输入密码"
                 type="password"
+                :maxlength="30"
                 auto-complete="off"
                 v-model.trim="dynamicForm.checkPassword">
               </el-input>
@@ -217,6 +222,7 @@ export default {
   // },
   methods: {
     findPassword(type) {
+      this.$refs['checkDynamicForm'].resetFields();
       this.isType = type;
       this.findStep = 2;
       if (type === 'phone') {
