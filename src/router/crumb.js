@@ -396,7 +396,23 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-   else if (metaName === 'posterCard') {// 开屏海报
+   else if (metaName === 'officeSet') {// 公众号展示
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '公众号展示',
+        path: `/live/officeSet/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'posterSet') {// 开屏海报展示
     return [
       ...CrumbLiveList('liveList'),
       {
