@@ -96,11 +96,12 @@
           :isHandle="isHandle"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
-          :width = '150'
+          :width = '100'
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getIncomeList"
           >
         </table-list>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
       </el-tabs>
     </div>
     <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
@@ -111,6 +112,7 @@
 import PageTitle from '@/components/PageTitle';
 import cashBox from './components/cashBox';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "income",
   data() {
@@ -164,11 +166,11 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
+          width: 200,
         },
         {
           label: '标题',
           key: 'name',
-          width: 150,
         },
         {
           label: '总收益（元）',
@@ -227,7 +229,8 @@ export default {
   },
   components: {
     cashBox,
-    PageTitle
+    PageTitle,
+    noData
   },
   created() {
     this.tabelColumn = this.liveColumns;
@@ -370,8 +373,11 @@ export default {
     position: relative;
     .box-card{
       background: #fff;
-      padding: 24px 32px;
+      padding: 24px 0 40px 0;
       border-radius: 4px;
+    }
+    /deep/.el-tabs__content{
+      padding: 0 24px;
     }
     .detail{
       position: absolute;
@@ -430,7 +436,7 @@ export default {
     }
   }
   .money-come{
-    margin-left: 10px;
+    margin-left: 16px;
     height: 170px;
     padding: 24px 32px;
     border-radius: 4px;
@@ -445,10 +451,7 @@ export default {
   .listTab {
     margin-top: 24px;
     .search-income{
-      margin-top: 24px;
-    }
-    .data-list {
-      padding: 0 24px;
+      margin-top: 32px;
     }
   }
   }

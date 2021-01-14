@@ -34,7 +34,7 @@
                     show-word-limit
                   ></VhallInput>
                 </el-form-item>
-                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:323px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
+                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="字体大小">
                   <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
                     <el-option
@@ -517,10 +517,10 @@ export default {
         case 2:
           watermarkOptionPosition = ['5%','5%']
           break;
-        case 3:
+        case 4:
           watermarkOptionPosition = ['75%','70%']
           break;
-        case 4:
+        case 3:
           watermarkOptionPosition = ['5%','70%']
           break;
       }
@@ -729,7 +729,7 @@ export default {
   .isNum{
     position: absolute;
     top: -2px;
-    right: -10px;
+    right: 0px;
   }
   .give-item {
     padding: 40px 24px;

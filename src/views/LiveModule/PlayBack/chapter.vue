@@ -627,6 +627,13 @@ export default {
               type: 'error', //  提示类型
               customClass: 'zdy-info-box' // 样式处理
             });
+          } else if (err.code == 12025) {
+            this.$message({
+              message:  '保存失败，子章节页码或步数不能重复',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
           } else {
             this.$message({
               message:  '保存失败',
@@ -865,6 +872,10 @@ export default {
         top: -30px;
         font-size: 25px;
         cursor: pointer;
+      }
+      iframe {
+        border-radius: 4px;
+        overflow: hidden;
       }
     }
   }

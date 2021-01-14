@@ -299,8 +299,8 @@
 
   .el-menu-item {
     padding-left: 30px !important;
-    padding-top: 17px;
-    padding-bottom: 17px;
+    padding-top: 12px;
+    padding-bottom: 12px;
     line-height: 22px;
     border-left: 4px solid @background_black;
     background: @background_black;
@@ -353,8 +353,8 @@
 
   .el-submenu__title {
     padding-left: 34px !important;
-    padding-top: 17px;
-    padding-bottom: 17px;
+    padding-top: 12px;
+    padding-bottom: 12px;
     line-height: 22px;
     background: @background_black;
 
@@ -398,6 +398,15 @@
   }
 }
 
+/*悬浮退出重置*/
+.zdy-hover-dropdown.el-dropdown-menu {
+  padding: 0 0;
+  .el-dropdown-menu__item {
+    min-width: 160px;
+    height: 40px;
+    background: #FFFFFF;
+  }
+}
 /*按钮-type="text"重置*/
 /deep/ .el-button--text {
   font-size: @font_size_14;
@@ -1101,7 +1110,42 @@ button.el-button.el-button--white-primary {
 }
 
 /*云盾色值*/
-.yidun.yidun--light.yidun--success.yidun--jigsaw .yidun_control .yidun_slide_indicator {
-  border-color: #52ccba;
-  background-color: #d2f4ef;
+
+
+.captcha{
+  /deep/ .yidun .yidun_control {
+    border-radius: 4px!important;
+    border-color: #ccc;
+    background: #fff;
+    .yidun_tips {
+      color: #888888;
+      line-height: 38px;
+    }
+    .yidun_slider {
+      // .yidun_slider__icon {
+        // background-image: none;
+      // }
+      &:hover {
+        background-color: #3562FA;
+      }
+    }
+    &.yidun_control--moving .yidun_slide_indicator {
+      border-color: #3562FA;
+      background-color: #F0F1FE;
+    }
+  }
+  .yidun.yidun--light.yidun--success.yidun--jigsaw .yidun_control .yidun_slide_indicator {
+    border-color: #3562FA;
+    background-color: #F0F1FE;
+  }
+  .yidun.yidun--light.yidun--success.yidun--jigsaw {
+    .yidun_control .yidun_slider {
+      background-color: #3562FA;
+    }
+    .yidun_slide_indicator {
+      border-color: #3562FA;
+      background-color:#F0F1FE;
+    }
+  }
 }
+

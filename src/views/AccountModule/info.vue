@@ -70,7 +70,12 @@ export default {
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
-      this.$refs[`${this.tabType}Comp`].initComp();
+      let tabCount = this.tabType === 'validSet' ? 1 : this.tabType === 'accountSet' ? 2 : 0;
+      // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=${this.$route.query.tab}`;
+      // this.$refs[`${this.tabType}Comp`].initComp();
+      this.$router.push({path: `/acc/info`, query: {
+        tab: tabCount
+      }})
     },
     updateAccount(account) {
       this.userInfo = account;
@@ -83,8 +88,13 @@ export default {
       this.userInfo = JSON.parse(userInfo);
       this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-    this.tabType = 'baseSet';
-    this.$refs[`baseSetComp`].initComp();
+    if (this.$route.query.tab) {
+      this.tabType = ['baseSet', 'validSet', 'accountSet'][this.$route.query.tab];
+      this.$refs[`${['baseSet', 'validSet', 'accountSet'][this.$route.query.tab]}Comp`].initComp();
+    } else {
+      this.tabType = 'baseSet';
+      this.$refs[`baseSetComp`].initComp();
+    }
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
   },
   created() {
@@ -116,10 +126,11 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info`;
             sessionOrLocal.removeItem('tag', 'localStorage');
             sessionOrLocal.removeItem('bind_result');
-            window.location.reload();
+            // window.location.reload();
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
           }).catch(resError  => {
             this.$message({
               message:  resError.msg || '绑定失败',

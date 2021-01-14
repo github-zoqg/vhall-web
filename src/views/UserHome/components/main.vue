@@ -39,7 +39,7 @@
                   <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/>
                 </label>{{item | liveTag}}
               </span>
-              <span class="hot">
+              <span class="hot" v-if="item.hide_pv > 0">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | unitCovert}}</i>
               </span>
               <a :href="item.share_link" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
@@ -66,9 +66,15 @@
       @current-change="changeHandle" align="center"
       v-if="tabType === 'live' ? tabList[0].total > query.limit : tabList[1].total > query.limit"
     ></SPagination>
-    <null-page text="贫瘠之地，毛都没有" nullType="create" v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0"></null-page>
-    <!-- 无消息内容 -->
-    <null-page v-if="tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0"></null-page>
+    <!-- 既无专题权限 且 无直播权限 -->
+    <div class="no-create" :height=170  v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0">
+      <null-page text="贫瘠之地，毛都没有" nullType="create"></null-page>
+    </div>
+    <!-- 搜索全部，并且无数据 -->
+    <null-page text="暂未添加内容" nullType="create" :height=200 v-if="query.keyword == '' && (tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0)"></null-page>
+    <!-- 搜索无结果 -->
+    <null-page v-if="query.keyword != '' && (tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0)"></null-page>
+
   </div>
 </template>
 
@@ -279,6 +285,21 @@ export default {
 }
 .search-query {
   width: 220px;
+  .el-input {
+    /deep/ .el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
+    }
+  }
 }
 /deep/.el-tabs__header {
   margin: 0 0;
@@ -308,6 +329,10 @@ export default {
 /deep/.el-tabs__nav-wrap::after {
   height: 1px;
   color: #E6E6E6;
+}
+.no-create {
+  border-top: 1px solid #E6E6E6;
+  min-height: 618px;
 }
 /* 直播、专题*/
 .live-panel {

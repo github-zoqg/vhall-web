@@ -254,9 +254,12 @@ export default {
     max-width: 1374px;
     height: 100%;
     display: flex;
-    overflow: hidden;
+    // overflow: hidden;
     /deep/.el-col-5{
       width: 18.8%;
+    }
+    /deep/.iconfont-v3{
+      color: #999;
     }
     .main-center{
       flex: 1;
@@ -301,6 +304,7 @@ export default {
       .row-list{
         height: 146px;
         background: #fff;
+        border-radius: 4px;
         .list-title{
           font-family: @fontRegular;
           font-size: 16px;
@@ -340,6 +344,7 @@ export default {
         margin-top: 24px;
         background: #fff;
         padding-bottom: 10px;
+        border-radius: 4px;
         .line-tip{
           padding: 24px 0 0 32px;
           font-size: 16px;
@@ -383,9 +388,15 @@ export default {
         background: #fff;
         border-radius: 4px;
         position: relative;
+        width: 100%;
         .ad-web{
           height: 126px;
           width: 100%;
+          // img{
+          //   width: 100%;
+          //   height: 100%;
+          //   object-fit: scale-down;
+          // }
          /*  img{
             width: 100%;
             height: 100%;
@@ -443,6 +454,7 @@ export default {
       .data-document{
         background: #fff;
         height: 190px;
+        border-radius: 4px;
         h2{
           font-size: 16px;
           color: #1A1A1A;

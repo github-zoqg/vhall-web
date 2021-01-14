@@ -17,10 +17,16 @@
                 <span class="isEllipsis"></span>{{ '收起' }}
               </span>
             </p>
-            <div class="tabsBox">
+            <div v-if="isSubscribe === 1" class="tabsBox">
               <div :class="['tabs', baseInfo.theme_color]">
                 <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
                 <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+              </div>
+            </div>
+            <div v-if="isSubscribe === 2" class="tabsBox">
+              <div :class="['tabs', baseInfo.theme_color]">
+                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
               </div>
             </div>
             <!-- 报名表单 -->
@@ -248,6 +254,7 @@
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
+      this.getWebinarType();
       this.getBaseInfo();
       this.getQuestionList();
     },
@@ -349,12 +356,18 @@
               }
             } else if (item.type === 0 && item.default_type === 3) {
               // 邮箱
-              rules[item.id] = {
-                type: 'email',
-                required: !!item.is_must,
-                message: '请填写邮箱',
-                trigger: 'blur'
-              }
+              rules[item.id] = [
+                {
+                  required: !!item.is_must,
+                  message: '请填写邮箱',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'email',
+                  message: '请填写正确格式的邮箱',
+                  trigger: 'blur'
+                }
+              ]
             } else if (item.type === 1) {
               // 问答
               rules[item.id] = {
@@ -423,8 +436,9 @@
         webinar_id: this.$route.params.id || this.$route.params.str,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
         isPreview: this.$route.path.startsWith('/live/signup'),
+        isSubscribe: 0,
         colorIndex: 'red',
-        tabs: 1,
+        tabs: 0,
         province: '',
         city: '',
         county: '',
@@ -494,6 +508,15 @@
       // new DevicePixelRatio('#signFormBox');
     },
     methods: {
+      // 获取当前活动类型
+      getWebinarType() {
+        this.$fetch('watchInit', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          this.isSubscribe = res.data.webinar.type == 2 ? 1 : 2
+          this.tabs = res.data.webinar.type == 2 ? 1 : 2
+        })
+      },
       handleUnfold(val) {
         this.overflowStatus = val
       },
@@ -681,7 +704,7 @@
                 this.getWebinarStatus()
               }
             }).catch(err => {
-              if (err.code == 12809 || (err.code == 600 && (err.msg.indexOf("验证码格式错误") > 0))) {
+              if (err.code == 12809 || err.code == 12570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -727,7 +750,7 @@
                 }
               }
             }).catch(err => {
-              if (res.code == 12809 || (res.code == 600 && (res.msg.indexOf("验证码格式错误") > 0))) {
+              if (res.code == 12809 || err.code == 12570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -1289,26 +1312,55 @@
             background: #DEDEDE;
           }
         }
+        // 云盾样式重置
         .captcha{
           /deep/ .yidun .yidun_control {
             border-radius: 4px!important;
             border-color: #ccc;
             background: #fff;
+            overflow: hidden;
+            .yidun_slide_indicator {
+              border-radius: 4px!important;
+            }
             .yidun_tips {
               color: #888888;
               line-height: 38px;
             }
             .yidun_slider {
               // .yidun_slider__icon {
-                // background-image: none;
+                // background-image: url(./images/default_active2.png);
               // }
               &:hover {
                 background-color: #FB3A32;
               }
             }
-            &.yidun_control--moving .yidun_slide_indicator {
-              border-color: #FB3A32;
+            &.yidun_control--moving {
               background-color: #E2E2E2;
+              border-color: #FB3A32;
+              .yidun_slide_indicator {
+                border-color: #FB3A32;
+                background-color: #E2E2E2;
+              }
+            }
+
+          }
+          /deep/ .yidun--success {
+            .yidun_control--moving {
+              background-color: #F0F1FE!important;
+              .yidun_slide_indicator {
+                background-color: #F0F1FE!important;
+              }
+            }
+            .yidun_control {
+              border-color: #3562FA!important;
+              .yidun_slider {
+                // .yidun_slider__icon {
+                  // background-image: url(./images/default_active2.png);
+                // }
+                &:hover {
+                  background-color: #FB3A32;
+                }
+              }
             }
           }
         }

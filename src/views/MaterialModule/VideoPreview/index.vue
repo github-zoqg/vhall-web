@@ -5,7 +5,7 @@
       <div class="tips" v-if="!loading">
         <img v-if="videoParam.msg_url=='.mp3' || videoParam.msg_url=='.mav'" class="audio-img" :src="audioImg" alt="">
         <p v-if="tipsType == 2" class="video-end">
-          <img :src="audioEnd" alt="" srcset="">
+          <!-- <img :src="audioEnd" alt="" srcset=""> -->
           <el-button class="reset-play" @click="resetPlay">再次播放</el-button>
         </p>
       </div>
@@ -244,10 +244,11 @@ export default {
       width: 100%;
       height: 100%;
       z-index: 22;
-      img{
-        width: 100%;
-        height: 100%;
-      }
+      background: #333;
+      // img{
+      //   width: 100%;
+      //   height: 100%;
+      // }
       .reset-play{
         position: absolute;
         left: 50%;

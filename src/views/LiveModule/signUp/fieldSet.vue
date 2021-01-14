@@ -439,7 +439,7 @@ export default {
     selectOptChange(question, node, isSelect, isPrivacy) {
       // 如果是更改的隐私声明的跳转链接需要验证链接格式
       if (node.key == 'url') {
-        const reg = /^(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/
+        const reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/
         if (!reg.test(node.value)) {
           this.$message.error('请输入正确格式的跳转链接！')
           node.value = ''

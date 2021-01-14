@@ -19,9 +19,9 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-            <el-button class="invite-card-button" round slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button round slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button  class="invite-card-button" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button  round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -37,15 +37,15 @@
             <div class="data-show">
               <p :class="showType === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
                 <img src="../../../common/images/invite-card/tmpl1.png" alt="">
-                <label class="img-tangle" v-if="showType === 1"><i class="el-icon-check"></i></label>
+                <label  class="img-tangle" v-if="showType === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
                <p :class="showType === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
                 <img src="../../../common/images/invite-card/tmpl2.png" alt="">
-                <label class="img-tangle" v-if="showType === 2"><i class="el-icon-check"></i></label>
+               <label  class="img-tangle" v-if="showType === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
                <p :class="showType === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
                 <img src="../../../common/images/invite-card/tmpl3.png" alt="">
-                <label class="img-tangle" v-if="showType === 3"><i class="el-icon-check"></i></label>
+                <label  class="img-tangle" v-if="showType === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
             </div>
           </el-form-item>
@@ -453,8 +453,9 @@ export default {
     line-height: 20px;
     bottom:7px;
   }
-   /deep/.el-input__inner {
+  /deep/.el-input__inner, /deep/.el-textarea__inner {
     padding: 0 12px;
+    color: #1A1A1A;
   }
   .invitation-from {
     display: flex;
@@ -483,7 +484,7 @@ export default {
       img {
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        // object-fit: scale-down;
       }
     }
 
@@ -514,26 +515,22 @@ export default {
       position: relative;
       height: 128px;
       border: 1px solid transparent;
-      .img-tangle{
-        position: absolute;
-        right: 0;
-        top:0;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-right-color: #FB3A32;
-        border-top-color: #FB3A32;
-        i{
-          color:#fff;
-          position: absolute;
-          top: -8px;
-          right:-11px;
-          font-size: 10px;
-        }
-      }
+      cursor: pointer;
       img {
         width: 100%;
         height: 125px;
+      }
+      .img-tangle{
+        position: absolute;
+        right: -1px;
+        top:-1px;
+        width: 20px;
+        height: 20px;
+        font-size: 0;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
       &.isActiveColor{
         box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
@@ -566,6 +563,7 @@ export default {
         background: #fff;
         box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
         position: relative;
+        border-radius: 4px;
         .show-header{
           padding: 20px 24px;
           text-align: center;
@@ -607,7 +605,7 @@ export default {
             font-size: 14px;
             color:#1A1A1A;
             font-weight: 400;
-            line-height: 30px;
+            line-height: 20px;
             padding: 2px 0 5px 0;
             overflow: hidden;
             text-emphasis: wrap;
@@ -841,9 +839,10 @@ export default {
         bottom: 20px;
         left: 40px;
         width: 250px;
-        background: #000;
+        // background: #000;
+        background: rgba(0, 0, 0, 0.2);
         border-radius: 4px;
-        opacity: 0.2;
+        // opacity: 0.2;
         padding: 10px;
         .look-code{
           width: 60px;
@@ -859,6 +858,8 @@ export default {
           h1{
             padding:0;
             font-size: 14px;
+            color: #fff;
+            color: #fff;
             font-weight: 600;
             line-height: 30px;
           }

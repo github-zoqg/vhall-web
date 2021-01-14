@@ -16,7 +16,7 @@
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
-        class="head-btn fr search"
+        class="head-btn fr search resetRightBrn"
         v-model.trim="searchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -64,8 +64,8 @@
         </el-table-column>
         <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
-            <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,8 +115,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
+        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确定</el-button>
+        <el-button @click="handleCancelEdit" size="medium" round>取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -486,6 +486,23 @@ export default {
       color: #b3b3b3;
       background: #ffffff;
     }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
     ::v-deep.set-upload{
       position: relative;
       span{
@@ -535,6 +552,11 @@ export default {
     }
     /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
       background: #e6e6e6;
+    }
+  }
+  /deep/ .dialog-footer {
+    .el-button {
+      padding: 4px 23px;
     }
   }
 }

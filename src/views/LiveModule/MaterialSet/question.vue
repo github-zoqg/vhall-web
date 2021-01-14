@@ -29,7 +29,12 @@
       <div class="show-question">
         <div class="show-main">
           <p>问卷预览 <i class="el-icon-close" @click="isShowQuestion=false"></i></p>
-          <pre-question  :questionId="questionId"></pre-question>
+          <el-scrollbar>
+            <div class="question_main">
+              <pre-question  :questionId="questionId"></pre-question>
+            </div>
+          </el-scrollbar>
+          <!-- <pre-question  :questionId="questionId"></pre-question> -->
           <div class="submit-footer">
             <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
           </div>
@@ -69,10 +74,6 @@ export default {
       isShowQuestion: false,
       questionId: '',
       tabelColumn: [
-        {
-          label: '问卷ID',
-          key: 'question_no',
-        },
         {
           label: '问卷名称',
           key: 'title',
@@ -297,8 +298,12 @@ export default {
       left: 50%;
       background: #fff;
       transform: translate(-50%, -50%);
-      width: 800px;
+      width: 700px;
       padding: 24px 32px;
+      .question_main{
+        max-height: 600px;
+        // overflow: auto;
+      }
       p{
         font-size: 20px;
         font-weight: 600;

@@ -161,6 +161,7 @@ export default {
 
     this.$EventBus.$on('component_playerSDK_ready', ()=>{
       console.log('component_playerSDK_ready');
+      this.updateEventPonitPosition()
     });
 
     this.$EventBus.$on('component_page_info', ()=>{
@@ -223,6 +224,22 @@ export default {
     //   // this.docsdk.gotoPage(opts);
     //   this.$refs.player.$PLAYER.setCurrentTime(this.tableData[index].createTime, (e) => console.log(e));
     // },
+    updateEventPonitPosition() {
+      const parentWidth = document.querySelector('.vhallPlayer-progress-container').offsetWidth
+      const markpoints = document.getElementsByClassName('v-p-markpoint')
+      const markpointMarks = document.getElementsByClassName('v-p-markpoint__mark')
+      markpoints.forEach((item, index) => {
+        markpointMarks[index].style.left = 'auto'
+        if (item.offsetLeft < 52) {
+          markpointMarks[index].style.left = '54px'
+        } else if (parentWidth - item.offsetLeft - 50 < 52) {
+          console.log(item.offsetLeft)
+          markpointMarks[index].style.right = '-46px'
+        } else {
+          markpointMarks[index].style.left = item.style.left
+        }
+      })
+    },
     videoMouseOver() {
       this.chanBenVisible = true;
     },
@@ -243,6 +260,7 @@ export default {
       this.bigElem = this.bigElem == 'doc' ? 'video' : 'doc';
       this.$nextTick(() => {
         this.$refs.doc.resize()
+        this.updateEventPonitPosition()
       })
     },
     getPlayBackInfo() {
@@ -305,6 +323,7 @@ export default {
     height: 560px;
     background: #222;
     position: relative;
+    border-radius: 4px;
     .bigBox{
       width: calc(100% - 32px);
       height: calc(100% - 32px);
@@ -367,6 +386,20 @@ export default {
       }
       .vhallPlayer-verticalSlider-popup .vhallPlayer-verticalSlider-box .verticalSlider-range .verticalSlider-value{
         background: #FB3A32;
+      }
+      .v-p-markpoint__mark {
+        min-height: auto;
+        background: #fff;
+        border-radius: 4px;
+        width: auto;
+        width: 100px;
+        padding: 10px;
+        img {
+          display: none;
+        }
+        .v-p-markpoint-msg {
+          color: #1a1a1a;
+        }
       }
     }
     .littleBox{

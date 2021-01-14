@@ -5,7 +5,7 @@
       :visible.sync="dataBaseVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
-      width="50%">
+      width="750px">
       <div class="data-base">
         <div class="data-search" v-show="total || isSearch">
           <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="搜索问卷名称" clearable @change="getTitle" style="width: 200px"></el-input>
@@ -15,7 +15,7 @@
               :data="tableData"
               ref="tableList"
               style="width: 100%"
-              height="300"
+              height="320"
               v-loadMore="moreLoadData"
               @selection-change="handleSelectionChange"
               >
@@ -55,17 +55,25 @@
         </div>
         <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个</p>
         <div slot="footer" class="dialog-footer" v-show="total || isSearch">
-          <el-button round @click.prevent.stop="dataBaseVisible = false" v-preventReClick>取 消</el-button>
-          <el-button round type="primary" @click.prevent.stop="choseSureQuestion" v-preventReClick>确 定</el-button>
+          <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" v-preventReClick>确 定</el-button>
+          <el-button round size="medium" @click.prevent.stop="dataBaseVisible = false" v-preventReClick>取 消</el-button>
         </div>
       </div>
   </VhallDialog>
   <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center
-      :close-on-click-modal=false
-      :close-on-press-escape=false>
-        <pre-question  :questionId="questionId"></pre-question>
-      </el-dialog>
+      <div class="show-question">
+        <div class="show-main">
+          <p>问卷预览 <i class="el-icon-close" @click="choseShowQueston"></i></p>
+          <el-scrollbar>
+            <div class="question_main">
+              <pre-question  :questionId="questionId"></pre-question>
+            </div>
+          </el-scrollbar>
+          <div class="submit-footer">
+            <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>
@@ -176,6 +184,10 @@ export default {
         }
       })
     },
+    choseShowQueston() {
+      this.isShowQuestion = false;
+      this.dataBaseVisible = true;
+    },
     addQuestion() {
       this.$router.push({
         path: '/material/addQuestion',
@@ -189,6 +201,7 @@ export default {
       console.log('预览', rows);
       this.questionId = rows.question_id;
       this.isShowQuestion = true;
+      this.dataBaseVisible = false;
     },
      // 选中
     handleSelectionChange(val) {
@@ -198,6 +211,17 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.data-base{
+  position: relative;
+  padding-bottom: 20px;
+  .data-search{
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      padding-left: 12px;
+    }
+  }
+}
+
 .data-base-list {
   width: 100%;
   margin: 24px 0;
@@ -215,12 +239,53 @@ export default {
   }
   /deep/.el-table td{
     padding: 15px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   span{
     cursor: pointer;
   }
 }
+.show-question{
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .3);
+    .show-main{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background: #fff;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      padding: 24px 32px;
+      .question_main{
+        max-height: 600px;
+        // overflow: auto;
+      }
+      p{
+        font-size: 20px;
+        font-weight: 600;
+        color: #1A1A1A;
+        line-height: 28px;
+        padding-bottom: 14px;
+        i{
+          float: right;
+          cursor: pointer;
+        }
+      }
+      .submit-footer{
+        text-align: center;
+      }
+    }
+  }
 .dialog-footer{
-  padding-bottom: 24px;
+  position: absolute;
+  bottom: 25px;
+  right: 24px;
 }
 </style>

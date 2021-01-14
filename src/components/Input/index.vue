@@ -162,7 +162,7 @@
   .el-form-item.is-error .el-input__inner {
     border-color: #FB3A32;
   }
-  .el-input__inner {
+  .el-input__inner,.el-textarea__inner {
     border-color: #ccc;
     color: #1a1a1a;
     &:hover {

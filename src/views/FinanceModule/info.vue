@@ -163,16 +163,19 @@
           </div>
         </div>
       </div>
-      <table-list
-        ref="accountTableList"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isCheckout="false"
-        :isHandle="false"
-        :totalNum="totalNum"
-        @getTableList="getAccountList"
-        >
-      </table-list>
+      <div class="list_info">
+        <table-list
+          ref="accountTableList"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isCheckout="false"
+          :isHandle="false"
+          :totalNum="totalNum"
+          @getTableList="getAccountList"
+          >
+        </table-list>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
+      </div>
       </div>
     </div>
   </div>
@@ -183,12 +186,14 @@ import versionInfo from '@/components/DataUsage/index';
 import lintCharts from '@/components/Echarts/lineEcharts';
 import { sessionOrLocal } from '@/utils/utils';
 import { formatMoney } from '@/utils/filter';
+import noData from '@/views/PlatformModule/Error/nullPage';
 // import { getCountDownTime } from '@/utils/general';
 export default {
   name: "financeInfo",
   components: {
     versionInfo,
-    lintCharts
+    lintCharts,
+    noData
   },
   data() {
     return {
@@ -446,7 +451,7 @@ export default {
 <style lang="less" scoped>
 .finance-info{
   .serach-line{
-    padding: 24px 32px;
+    padding: 24px;
     border-radius: 4px;
     background: #fff;
   }
@@ -506,7 +511,7 @@ export default {
     background: #fff;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     .content-item{
       width: 24%;
       background: #F7F7F7;

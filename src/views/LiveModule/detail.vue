@@ -20,7 +20,7 @@
             <p class="mainColor font-20" :title="liveDetailInfo.subject">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.first_broad || liveDetailInfo.start_time }}</p>
+            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
@@ -57,7 +57,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
+      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4" class="rightbox">
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
@@ -360,10 +360,13 @@ export default {
 
 <style lang="less" scoped>
 .basicInfo{
-  display: flex;
+  // display: flex;
   // min-width: 756px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  // flex-wrap: wrap;
+  // justify-content: space-between;
+  .rightbox {
+    height: 223px;
+  }
   .active{
     width: 100%;
   }
@@ -373,6 +376,7 @@ export default {
     height: 100%;
     padding: 24px;
     display: flex;
+    border-radius: 4px;
     .info{
       flex: 1;
       // overflow: auto;

@@ -294,7 +294,7 @@ export default {
             });
             // 回到前一个页面
             this.$router.push({
-              path: `/account/myHome`
+              path: `/acc/myHome`
             });
             // window.location.reload();
           }).catch(res =>{
@@ -314,7 +314,7 @@ export default {
       this.$refs['homeSetInfoForm'].resetFields();
       this.isEditUnit = false;
       this.$router.push({
-        path: `/account/myHome`
+        path: `/acc/myHome`
       })
     },
     homeInfoGet() {

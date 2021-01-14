@@ -7,19 +7,24 @@
       width="320px"
     >
       <div class="box-wei">
-        <div class="img-box">
+        <div class="img-box" v-if="qrcode">
           <img :src="`//aliqr.e.vhall.com/qr.png?t=${encodeURIComponent(qrcode)}`" alt="" v-if="qrcode">
+          <p>请用微信扫描二维码，绑定收款账户</p>
+          <el-button type="primary" class="length120"  round @click="goBangWeixin">确定</el-button>
           <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
             <p>点击重新加载</p>
           </div> -->
         </div>
-        <p v-if="!qrcode">您还未绑定账号，请先绑定</p>
+        <div class="no-bang" v-else>
+           <p >您还未绑定账号，请先绑定</p>
+           <el-button type="primary" class="length120" round @click="goBangWeixin">立即绑定</el-button>
+        </div>
       </div>
-      <div class="nextBtn" v-if="!qrcode">
-        <el-button type="primary" round @click="goBangWeixin">立即绑定</el-button>
-      </div>
+      <!-- <div class="nextBtn" v-if="!qrcode">
+
+      </div> -->
     </VhallDialog>
     <VhallDialog
       title="更改绑定微信"
@@ -31,18 +36,26 @@
         <h3>
           为了保障您的账号安全，请验证进行安全验证，手机号是当前账号绑定的手机号
         </h3>
-        <el-form label-width="85px">
+        <el-form label-width="72px">
+          <el-form-item label="">
+           <div id="payCaptcha" class="captcha">
+            <el-input
+              v-model="withdrawForm.text">
+            </el-input>
+          </div>
+          <p style="color:#fb3a32;padding:0;line-height:25px"  v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+          </el-form-item>
            <el-form-item label="动态密码">
             <div class="inputCode">
               <el-input v-model="code" style="width: 150px"></el-input>
-              <span @click="getBangCode" class="isLoginActive">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+              <span @click="mobileKey && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
             <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
           </el-form-item>
         </el-form>
       </div>
       <div class="nextBtn">
-        <el-button type="primary" round @click="nextBinding"  :disabled="!code"
+        <el-button type="primary" class="length120" round @click="nextBinding"  :disabled="!code"
           >下一步</el-button>
       </div>
     </VhallDialog>
@@ -65,7 +78,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <div id="payCaptcha">
+          <div id="payCaptcha" class="captcha">
             <el-input
               v-model="withdrawForm.text">
             </el-input>
@@ -92,7 +105,7 @@
         </el-form-item>
       </el-form>
       <div class="nextBtn">
-        <el-button type="primary" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
+        <el-button type="primary" class="length120" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -149,6 +162,9 @@ export default {
     dialogCashVisible() {
       if (this.dialogCashVisible) {
         this.time = 60;
+        this.mobileKey = '';
+        this.phone = '';
+        this.errorMsgShow = ''
         this.callCaptcha();
         this.getWeinName();
       } else {
@@ -158,6 +174,20 @@ export default {
         this.withdrawForm.code = '';
         this.errorText = '';
         this.phone = '';
+        this.callCaptcha();
+        window.clearInterval(this.timer);
+      }
+    },
+    dialogChangeVisible() {
+      if (this.dialogChangeVisible) {
+        this.callCaptcha();
+        this.time = 60;
+        this.mobileKey = '';
+        window.clearInterval(this.timer);
+      } else {
+        this.callCaptcha();
+        this.time = 60;
+        this.mobileKey = '';
         window.clearInterval(this.timer);
       }
     },
@@ -225,17 +255,23 @@ export default {
     },
     // 绑定微信短信验证码
     getBangCode() {
+      if (!this.mobileKey) {
+        this.$message.error('图形验证码错误');
+        return;
+      }
       this.phone = this.userInfo.phone;
       let params = {
         type: 1,
         data: this.userInfo.phone,
-        scene_id: 6
+        scene_id: 6,
+        validate: this.mobileKey
       };
       this.$fetch('sendCode', params).then(res => {
-        this.countDown();
-        console.log(res.data, '12300000000000000000');
-      //  this.$message.success('提现成功');
-      //  this.dialogCashVisible = false;
+        if (res.code == 200) {
+          this.countDown();
+        } else {
+          this.callCaptcha();
+        }
       });
     },
     // 绑定微信 ---获取绑定微信二维码
@@ -261,6 +297,7 @@ export default {
       this.dialogChangeVisible = true;
       this.dialogCashVisible = false;
       this.time = 60;
+      this.callCaptcha();
     },
     nextBinding() {
       this.dialogChangeVisible = false;
@@ -305,7 +342,6 @@ export default {
   padding: 10px 20px 30px 20px;
 }
 /deep/.el-dialog__title {
-  font-size: 16px;
   font-weight: 500;
 }
 /deep/.el-input__inner:focus {
@@ -317,29 +353,51 @@ export default {
 /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
   color: #666;
 }
+/deep/.el-button.is-round{
+  padding: 7px 32px;
+}
+.length120{
+  width: 120px;
+  text-align: center;
+}
 .box-wei {
-  padding-bottom: 20px;
+  // padding-bottom: 20px;
+  // .el-form-item{
+  //   margin-bottom: 20px;
+  // }
   .img-box {
-    width: 132px;
-    height: 132px;
-    background: #f7f7f7;
+    // width: 132px;
+    // height: 132px;
     margin: 0 auto;
+    text-align: center;
+    padding-bottom: 24px;
     img{
       width: 132px;
       height: 132px;
+    }
+    p{
+      padding-bottom: 20px;
     }
   }
   h3 {
     color: #1a1a1a;
     font-weight: 400;
-    padding: 20px 10px;
+    padding: 20px 0;
     line-height: 20px;
+    font-size: 14px;
   }
   p {
     font-size: 14px;
     color: 999;
     text-align: center;
     padding-top: 8px;
+  }
+  .no-bang{
+    padding: 24px 0;
+    text-align: center;
+    p{
+      padding-bottom: 50px;
+    }
   }
   .isUntime {
     text-align: center;
@@ -416,7 +474,7 @@ export default {
     font-size: 14px;
     span {
       color: #1a1a1a;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
     }
   }
@@ -447,9 +505,9 @@ export default {
 }
 .nextBtn {
   text-align: center;
-  padding: 20px;
+  padding: 24px;
   .el-button {
-    padding: 10px 38px;
+    // padding: 10px 38px;
   }
 }
 </style>

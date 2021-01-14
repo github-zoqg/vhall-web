@@ -230,9 +230,10 @@ export default {
             type: 'value',
             position: 'left',
             splitLine: {
-              show: false,
+              show: true,
               lineStyle: {
-                type: 'dashed',
+                type: 'solid',
+                color: '#E6E6E6'
               }
             },
             axisLine: {

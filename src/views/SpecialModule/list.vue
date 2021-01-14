@@ -48,7 +48,7 @@
           <div class="bottom">
             <div class="">
               <p class="liveTitle" :title="item.title">{{item.title}}</p>
-              <p class="liveTime">{{item.created_at}}</p>
+              <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
@@ -214,6 +214,7 @@ export default {
     toShare(id) {
       this.dialogShareVisible = true;
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
+      this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {

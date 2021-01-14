@@ -1,8 +1,8 @@
 <template>
   <div class="show-special">
-    <OldHeader scene="preShow"></OldHeader>
+    <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id"></OldHeader>
     <div class="special-show-ctx">
-      <pageTitle title="专题详情"></pageTitle>
+      <!-- <pageTitle title="专题详情"></pageTitle> -->
       <div class="special-info">
         <div class="special-main">
           <div class="special-img">
@@ -10,7 +10,7 @@
           </div>
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
-            <p>{{ specialInfo.created_at }}</p>
+            <p>{{ specialInfo.created_at | unitTime  }}</p>
             <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i>热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <el-popover
@@ -72,14 +72,15 @@ export default {
       pagePos: 0,
       totalElement: 0,
       shareVo: {
-        url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`
+        url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`,
+        pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
       },
       totalList: [], //总数
       liveList: []
     };
   },
   components: {
-    PageTitle,
+    // PageTitle,
     OldHeader,
     share
   },
@@ -119,27 +120,8 @@ export default {
       this.activeName = tab.name;
       this.pageNum = 1;
       this.liveList = this.totalList.slice(0, this.pageSize * this.pageNum)
-    },
-    userLogoGet() {
-      this.$fetch('userLogoGet', {
-        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
-      }).then(res => {
-        console.log(res);
-      }).catch(err=>{
-      });
-    },
-    // 获取标记 logo 主办方信息
-    getSignInfo () {
-      return this.$fetch('watchInterGetWebinarTag', {
-        webinar_id: this.$route.params.id
-      }).then(res => {
-        if (res.data) {
-          this.signInfo = res.data
-        }
-      })
-    },
+    }
   }
-
 };
 </script>
 <style lang="less">
@@ -148,7 +130,7 @@ export default {
 }
 .special-show-ctx {
   width: 1300px;
-  margin: 0 auto 50px auto;
+  margin: 40px auto 50px auto;
 }
   .show-special{
     height: 100%;

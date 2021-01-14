@@ -13,7 +13,8 @@
             <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
-              <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
+              <el-date-picker type="date" class="date" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
@@ -125,7 +126,7 @@
       <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
         <div class="mediaBox">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
-            <i class="el-icon-film"></i>
+            <i class="iconfont-v3 saasicon_shangchuan"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
@@ -227,7 +228,7 @@
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button class="common-button length152" @click="resetForm('ruleForm')" round>取消</el-button>
+        <el-button class="length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 
@@ -687,6 +688,11 @@ export default {
   .item-time .el-form-item {
     margin-bottom: 0px;
   }
+  .date{
+    /deep/.el-input__prefix {
+        left: 8px;
+    }
+  }
   /deep/ .el-form-item{
     // width: 100%;
     max-width: 660px;
@@ -854,25 +860,6 @@ export default {
   .btnGroup{
     // text-align: center;
     margin-top: 40px;
-    .el-button{
-      color:#FB3A32;
-      border-color:#FB3A32;
-      width: 150px;
-      &:hover{
-        background: #ffebeb;
-      }
-    }
-    .el-button--primary{
-      background:#FB3A32;
-      border-color:#FB3A32;
-      color: #fff;
-      &:hover{
-        background: #fc615b;
-      }
-    }
-    .el-button.is-round{
-      padding: 10px 23px;
-    }
   }
   .editBox {
     .common-button {
@@ -926,6 +913,9 @@ export default {
       }
       /deep/.iconfont-v3{
         font-size: 26px;
+
+      }
+      /deep/.saasshipinwenjian{
         color: #FF733C;
       }
       p{
@@ -973,6 +963,9 @@ export default {
       padding: 0 20px;
     }
   }
+  /deep/.saasicon_help_m {
+    color: #999999;
+  }
 </style>
 <style lang="less">
   html{
@@ -983,7 +976,4 @@ export default {
       display: none;
     }
   }
-/deep/.saasicon_help_m {
-  color: #999999;
-}
 </style>

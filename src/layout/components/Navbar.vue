@@ -31,12 +31,8 @@
             <span>{{show_name}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item divided @click.native="toAccountPage">
-              <span><icon icon-class="saasicon_Settings" class="hover-icon"></icon>账户信息</span>
-            </el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">
-              <span><icon icon-class="saasicon_Settings" class="hover-icon"></icon>退出</span>
-            </el-dropdown-item>
+            <el-dropdown-item divided @click.native="toAccountPage">账户信息</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -96,7 +92,7 @@ export default {
       this.$router.push({path: '/other/downloadList'});
     },
     toAccountPage() {
-      this.$router.push({path: '/account/info'});
+      this.$router.push({path: '/acc/info'});
     },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{
@@ -264,8 +260,19 @@ export default {
 <style lang="less" scoped>
 @import '../../common/css/index.less';
 .user-dropdown {
+  border-radius: 4px;
   /deep/.el-dropdown-menu__item{
     padding: 0 10px!important;
+    min-width: 160px;
+    height: 40px;
+    background: #FFFFFF;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.65);
+    border-radius: 0 0 4px 4px;
+  }
+  li:first-child {
+    border-radius: 4px 4px 0 0;
   }
   /deep/.el-dropdown-menu__item--divided:before {
     display: none!important;

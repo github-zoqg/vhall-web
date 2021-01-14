@@ -38,7 +38,7 @@
         <VhallInput v-model.trim="advertisement.url" placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span slot="footer" class="dialog-footer create-footer">
       <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
       <el-button  size="medium" @click="dialogVisible = false" round>取 消</el-button>
     </span>
@@ -69,7 +69,7 @@
         </noData>
       </div>
       <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
-      <span slot="footer" class="dialog-footer" v-show="total || isSearch">
+      <span slot="footer" class="dialog-footer sureBtn" v-show="total || isSearch">
         <el-button type="primary" size="medium" @click="advSaveToWebinar()" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
       </span>
@@ -434,9 +434,10 @@ export default {
 .dialog-box {
   /deep/.el-dialog {
     border-radius: 4px;
+    // padding-bottom: 15px;
   }
   /deep/.el-dialog__title {
-    font-size: 16px;
+    // font-size: 16px;
     font-weight: 500;
     color: #1A1A1A;
   }
@@ -446,6 +447,9 @@ export default {
   /deep/.img-box ,/deep/.el-upload{
     width: 324px;
     height: 130px;
+  }
+  /deep/.el-input__inner{
+   padding: 0 12px;
   }
   /deep/.el-input__count-inner {
     color: #999;
@@ -520,12 +524,14 @@ export default {
         }
         .spanImg{
           display: block;
-          width: 165px;
+          width: 163px;
           height: 93px;
+          background: #1A1A1A;
+          border-radius: 4px 4px 0 0;
           img{
            width:100%;
            height:100%;
-           object-fit: cover;
+           object-fit: scale-down;
          }
         }
          p{
@@ -537,17 +543,8 @@ export default {
          }
        }
      }
-     .text{
-      //  margin-top: 20px;
-      position: absolute;
-      bottom: 40px;
-       span{
-         color: #FB3A32;
-         padding: 0 5px;
-       }
-     }
    }
-   .sureQuestion{
+  .sureQuestion{
     padding-bottom: 16px;
     .textPrize{
       padding-left: 50px;
@@ -571,5 +568,19 @@ export default {
       text-align: center;
       margin-top: 20px;
     }
+  }
+  .text{
+      //  margin-top: 20px;
+      position: absolute;
+      bottom: 40px;
+       span{
+         color: #FB3A32;
+         padding: 0 5px;
+       }
+     }
+  .sureBtn{
+    position: absolute;
+    right: 32px;
+    bottom: 28px;
   }
 </style>
