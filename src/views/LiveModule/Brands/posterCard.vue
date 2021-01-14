@@ -1,10 +1,10 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="公众号展示"></pageTitle>
+    <pageTitle title="开屏海报"></pageTitle>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item label="二维码">
+            <el-form-item label="图片">
               <div class="img-box">
                 <upload
                   class="giftUpload"
@@ -22,13 +22,16 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：160*160px</p>
+                    <p>建议尺寸：750*1334px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
             </el-form-item>
-            <el-form-item label="公众号展示">
+            <el-form-item label="链接" prop="url">
+              <VhallInput v-model.trim="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
+            </el-form-item>
+            <el-form-item label="开屏海报">
               <!--{{status  - 0开启，1关闭}}-->
               <div class="switch__box">
                 <el-switch
@@ -43,13 +46,13 @@
                 </el-switch>
               </div>
             </el-form-item>
-            <el-form-item label="自动弹出">
-              <!--{{alertType 0自动弹出；1-手动弹出}}-->
+            <el-form-item label="自动关闭">
+              <!--{{alertType 0手动关闭 1自动关闭}}-->
               <div class="switch__box">
                 <el-switch
                   v-model="alertType"
-                  :active-value="0"
-                  :inactive-value="1"
+                  :active-value="1"
+                  :inactive-value="0"
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="autoUpText"
@@ -73,25 +76,25 @@
           <div class="official-pc" v-show="switchType === 'pc'">
             <!-- status 控制是否阴影 -->
             <div class="v-preview-content">
-               <!-- 公众号 -->
-               <div class="gzh_pc" v-if="title === '公众号展示'">
-                 <img class="gzh_bg_default" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0"/>
-                 <img class="gzh_bg" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCodeAtuo.png" alt="" v-if="!(alertType > 0)"/>
-                 <div class="gzh_img v-code-preview" v-if="domain_url && !(alertType > 0)">
-                   <img :src="domain_url" alt="" />
-                 </div>
-               </div>
+              <!-- 开屏海报 -->
+              <div class="hb_pc">
+                <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" />
+                <div class="pc-poster-wrap"  v-if="domain_url && status <= 0">
+                  <img class="hb_img v-poster-preview" :src="domain_url" alt=""/>
+                </div>
+              </div>
             </div>
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div class="official-app" v-show="switchType === 'app'">
-            <span class="title">公众号展示</span>
-            <!-- 公众号 -->
-            <div class="gzh_app">
-              <div class="img-code v-code-preview app-preview" v-if="domain_url && !(alertType > 0)">
+          <div class="official-app null-page" v-show="switchType === 'app'">
+            <span class="title">开屏海报展示</span>
+            <!-- 开屏海报 -->
+            <div class="hb_app" v-if="status <= 0 && showPoster">
+              <div class="poster-img" v-show="domain_url">
                 <img :src="domain_url" alt="">
               </div>
+              <el-button v-show="domain_url" class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
             </div>
           </div>
           <!--手机预览,end-->
@@ -129,13 +132,13 @@ export default {
   },
   computed: {
     pathUrl: function() {
-      return `interacts/wechat-official-imgs`;
+      return `interacts/screen-imgs`;
     },
     activeTitle(){
-      return this.status ? '开启后，进入活动页面时展示公众号' : '已开启，进入活动页面时展示公众号';
+      return this.status ? '开启后，观看直播前展示广告图' : '已开启，观看直播前展示广告图';
     },
     autoUpText(){
-      return this.alertType > 0 ? '开启后，进入活动页公众号自动展示' : '已开启，进入活动页公众号自动展示';
+      return this.alertType > 0 ? '已开启，5秒倒计时结束后自动关闭' : '开启后，5秒倒计时结束后自动关闭';
     }
   },
   watch: {
@@ -175,7 +178,7 @@ export default {
       }
     },
     getData() {
-      this.$fetch('getPublicInfo', {
+      this.$fetch('getPosterInfo', {
         webinar_id: this.$route.params.str
       }).then(res => {
         if(res && res.code === 200) {
@@ -190,7 +193,7 @@ export default {
             }
           }
           this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
-          this.alertType = res.data.alert_type === null || res.data.alert_type === undefined || res.data.alert_type === '' ? 1 : res.data.alert_type;
+          this.alertType = res.data.shutdown_type === null || res.data.shutdown_type === undefined || res.data.shutdown_type === '' ? 1 : res.data.shutdown_type;
         }
       }).catch(res => {
         console.log(res);
@@ -206,7 +209,7 @@ export default {
     preSure() {
       if (Number(this.status === 0) && !this.img) {
         this.$message({
-          message: '请上传二维码图片',
+          message: '请上传图片',
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -220,10 +223,11 @@ export default {
         img: this.img ? this.$parseURL(this.img).path : '' // 公众号/开屏海报  图片地址
       };
       let type = this.alertType;
-      params.alert_type = type; // 公众号-弹窗方式：0自动弹出 1手动弹出
+      params.shutdown_type = type;
+      params.url = this.form.url;
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
-          this.$fetch('setPublicInfo', this.$params(params)).then(res => {
+          this.$fetch('setPosterInfo', this.$params(params)).then(res => {
             this.$message({
               message: '保存成功',
               showClose: true,
@@ -270,7 +274,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message({
-          message:  `二维码图片只能是 ${typeList.join('、')} 格式!`,
+          message:  `图片只能是 ${typeList.join('、')} 格式!`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -280,7 +284,7 @@ export default {
       }
       if (!isLt2M) {
         this.$message({
-          message: `二维码图片大小不能超过 2MB!`,
+          message: `图片大小不能超过 2MB!`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -296,7 +300,7 @@ export default {
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       this.$message({
-        message: `二维码图片上传失败`,
+        message: `图片二维码图片上传失败`,
         showClose: true,
         // duration: 0,
         type: 'error',
