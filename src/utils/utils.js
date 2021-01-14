@@ -265,7 +265,7 @@ export function checkAuth(to, from, next) {
           if(auth_tag) {
             if (auth_tag.indexOf('bind') !== -1) {
               // 绑定成功
-              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+              window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
             }
           } else {
             window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/home`;
@@ -280,7 +280,7 @@ export function checkAuth(to, from, next) {
             sessionOrLocal.set('bind_result', JSON.stringify(res));
             sessionOrLocal.set('user_auth_key', user_auth_key);
             // 绑定成功
-            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
           } else {
             // 获取回调token失败
             this.$message.error('登录信息获取失败，请重新登录');
@@ -303,7 +303,7 @@ export function checkAuth(to, from, next) {
           sessionOrLocal.set('bind_result', JSON.stringify(e));
           sessionOrLocal.set('user_auth_key', user_auth_key);
           // 绑定成功
-          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+          window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
         } else {
           // 获取回调token失败
           this.$message.error('登录信息获取失败，请重新登录');

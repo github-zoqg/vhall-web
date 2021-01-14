@@ -53,7 +53,7 @@ export function CrumbLiveList(key) {
    account: [
     {
       title: '账户管理',
-      path: '/account',
+      path: '/acc',
       isClick: false,
       redirect: 'noRedirect'
     }
@@ -1020,7 +1020,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('account'),
       {
         title: '账户信息',
-        path: `/account/info`,
+        path: `/acc/info`,
         isClick: false,
         redirect: 'noRedirect'
       }
@@ -1031,7 +1031,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('account'),
       {
         title: '子账号管理',
-        path: `/account/son`,
+        path: `/acc/son`,
         isClick: false,
         redirect: 'noRedirect'
       }
@@ -1042,7 +1042,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('account'),
       {
         title: '子账号管理',
-        path: `/account/son`,
+        path: `/acc/son`,
         isClick: true
       },
       {
@@ -1058,7 +1058,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('account'),
       {
         title: '子账号管理',
-        path: `/account/son`,
+        path: `/acc/son`,
         isClick: true
       },
       {
@@ -1074,7 +1074,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('account'),
       {
         title: '个人主页',
-        path: `/account/myHome`,
+        path: `/acc/myHome`,
         isClick: false,
         redirect: 'noRedirect'
       }
@@ -1085,7 +1085,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('account'),
       {
         title: '个人主页',
-        path: `/account/myHome`,
+        path: `/acc/myHome`,
         isClick: true
       },
       {

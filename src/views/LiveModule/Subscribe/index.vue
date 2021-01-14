@@ -966,7 +966,7 @@ export default {
         this.myliveRoute = window.location.origin + '/live/list'
         this.accountRoute = window.location.origin + '/finance/info'
         this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
-        this.myAccountRoute = window.location.origin + '/account/info'
+        this.myAccountRoute = window.location.origin + '/acc/info'
         this.subscribeOptions = {
           show: this.roomData.subscribe.show,
           num: this.roomData.subscribe.num,

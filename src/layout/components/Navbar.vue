@@ -92,7 +92,7 @@ export default {
       this.$router.push({path: '/other/downloadList'});
     },
     toAccountPage() {
-      this.$router.push({path: '/account/info'});
+      this.$router.push({path: '/acc/info'});
     },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{

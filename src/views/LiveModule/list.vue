@@ -287,7 +287,7 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel',
           callback: action => {
             if (action === 'confirm') {
-              this.$router.push({path:'/account/info'});
+              this.$router.push({path:'/acc/info', query: {tab: 1}});
             }
           }
         });
