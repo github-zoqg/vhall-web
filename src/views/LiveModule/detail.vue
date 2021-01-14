@@ -57,7 +57,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
+      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4" class="rightbox">
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
@@ -360,10 +360,13 @@ export default {
 
 <style lang="less" scoped>
 .basicInfo{
-  display: flex;
+  // display: flex;
   // min-width: 756px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  // flex-wrap: wrap;
+  // justify-content: space-between;
+  .rightbox {
+    height: 223px;
+  }
   .active{
     width: 100%;
   }
