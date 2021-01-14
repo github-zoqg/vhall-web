@@ -72,7 +72,7 @@ export default {
       pagePos: 0,
       totalElement: 0,
       shareVo: {
-        url: `${process.env.VUE_APP_WAP_WATCH}/lives/special/detail/?id=${this.$route.query.id}`,
+        url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`,
         pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
       },
       totalList: [], //总数

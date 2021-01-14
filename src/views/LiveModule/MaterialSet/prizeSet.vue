@@ -7,7 +7,7 @@
         <el-tab-pane label="抽奖页设置" name="first">
             <div class="give-item">
             <div class="give-prize">
-              <el-form :model="formData" ref="ruleForm" label-width="100px">
+              <el-form :model="formData" ref="ruleForm" label-width="80px">
                 <!-- <el-form-item label="图片上传">
                   <upload
                     class="giftUpload"
@@ -466,6 +466,9 @@ export default {
   .card__body {
     padding:0;
     background: #fff;
+    // max-width: 1374px;
+    margin: auto;
+    border-radius: 4px;
   }
   /deep/.el-switch{
     float: right;
@@ -514,8 +517,8 @@ export default {
       position: relative;
     }
     .give-prize{
-      width: 650px;
-      margin-right: 120px;
+      width: 480px;
+      margin-right: 80px;
       .isDelete{
         float: right;
         height: 20px;
@@ -644,13 +647,12 @@ export default {
       }
     }
     .prize-type{
-      // width: 100%;
       display: flex;
       text-align: center;
       justify-content: space-between;
       .przieImg{
-        width: 120px;
-        height: 120px;
+        width: 88px;
+        height: 88px;
         border-radius: 4px;
         border: 1px solid #ccc;
         position: relative;
@@ -660,7 +662,7 @@ export default {
         }
         img{
           width: 100%;
-          height: 120px;
+          height: 100%;
         }
         .img-tangle{
           position: absolute;
@@ -683,10 +685,10 @@ export default {
       .prizeNoBorder{
         border: 0;
         /deep/.el-upload--picture-card {
-          height: 120px;
+          height: 88px;
         }
         /deep/.el-upload--picture-card .box > div{
-          height: 120px;
+          height: 88px;
         }
       }
     }
