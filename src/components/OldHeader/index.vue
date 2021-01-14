@@ -51,6 +51,10 @@ export default {
       require: false,
       default: ''
     },
+    user_id: {
+      require: false,
+      default: ''
+    },
     isWhiteBg: {
       require: false,
       default: false
@@ -134,6 +138,9 @@ export default {
       let _data = this.$route.params
       this.arr = [_data.str, _data.role]; // 活动ID，角色
       this.getSignInfo(this.arr[0]);
+    } else if (this.$route.path.indexOf('/special/detai') !== -1 && this.user_id) {
+      // 根据专题得创建者Id，得到其头像数据
+      this.userLogoGet(this.user_id);
     }
   }
 };

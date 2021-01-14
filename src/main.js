@@ -120,7 +120,7 @@ window.i18n = i18n;
 
 function clientToken(param) {
   let reg = new RegExp('[?&]' + param + '=([^&]*)[&$]*');
-  let ret = window.location.hash.match(reg);
+  let ret = (window.location.hash || window.location.search).match(reg);
   if (ret) {
     ret = decodeURIComponent(ret[1]);
   }

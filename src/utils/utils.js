@@ -229,9 +229,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/live/watch') !== -1 ||
     to.path.indexOf('/login') !== -1 ||
     to.path.indexOf('/register') !== -1 ||
-    to.path.indexOf('/user/home') !== -1 ||
     to.path.indexOf('/live/room') !== -1 ||
-    to.path.indexOf('/special/detail') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
     // 不验证直接进入
@@ -368,6 +366,12 @@ export function checkAuth(to, from, next) {
       NProgress.done();
     });
   } else {
+    // 若无token，专题详情、个人主页亦是可以登录得
+    if(to.path.indexOf('/special/detail') !== -1 || to.path.indexOf('/user/home') !== -1) {
+      next();
+      NProgress.done();
+      return;
+    }
     next({path: '/login'});
     NProgress.done();
   }
