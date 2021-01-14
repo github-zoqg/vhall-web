@@ -23,8 +23,9 @@
         <el-input
           placeholder="请输入专题标题"
           clearable
-          @change="searchHandler"
-          v-model.trim="keyWords">
+          @keyup.enter.native="searchHandler"
+          @clear="inputChange"
+          v-model.trim="searchHandler">
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"
