@@ -178,7 +178,7 @@
       </el-tabs>
       <div class="show-purple">
           <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
-          <img :src="audioEnd" alt="" v-show="!showVideo">
+          <!-- <img :src="audioEnd" alt="" v-show="!showVideo"> -->
           <div id="videoDom" v-show="showVideo"></div>
           <p class="show-purple-info">
             <span>提示</span>
@@ -285,6 +285,7 @@ export default {
   created() {
     this.getFontList();
     this.getBasescrollingList();
+    this.getBaseOtherList();
   },
   mounted () {
     this.initPlayer();
@@ -492,6 +493,7 @@ export default {
     // 初始化播放器
     initPlayer() {
       this.showVideo = true;
+      // document.querySelector('.vhallPlayer-container').style.display = 'block';
       this.initSDK().then(() => {
         // this.initSlider();
         // this.totalTime = this.$Vhallplayer.getDuration(() => {
@@ -574,6 +576,10 @@ export default {
               // 加载中
               resolve();
             });
+            // document.querySelector('.vhallPlayer-container').classList.remove("hide");
+            document.querySelector('.vhallPlayer-container').style.display = 'block';
+            document.querySelector('.vhallPlayer-container').classList.remove('hide')
+            console.log(document.querySelector('.vhallPlayer-container').classList, '?????????????')
           },
           (e) => {
             console.log('播放器创建实例失败', e, e.message);
@@ -652,6 +658,9 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  /deep/.vhallPlayer-container{
+    display: block !important;
+  }
   /deep/.vhallPlayer-config-btn {
     display: none;
   };

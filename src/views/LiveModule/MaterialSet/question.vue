@@ -11,18 +11,21 @@
       <el-button round  @click="dataBase" size="medium">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model.trim="keyword" placeholder="请输入问卷名称"  @change="getTableList" maxlength="50" suffix-icon="el-icon-search" clearable></el-input>
+        <VhallInput v-model.trim="keyword" placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
       </div>
     </div>
-    <div class="question-list" v-show="total">
+    <div class="question-list" v-show="total || isSearch">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" :width="180" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
+      <noData :nullType="'search'" v-if="isSearch"></noData>
     </div>
-    <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
-        <el-button size="white-primary" round v-if="nullText == 'nullData'" @click="dataBase" v-preventReClick>资料库</el-button>
+    <div class="no-live" v-show="!total && !isSearch">
+      <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'">
+        <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
+        <el-button size="white-primary" round @click="dataBase" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <template v-if="isShowQuestion">
@@ -65,9 +68,7 @@ export default {
   data() {
     return {
       total: 0,
-      nullText: 'nullData',
       isSearch: false, //是否是搜索
-      text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
       loading: true,
@@ -110,6 +111,9 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchTableList() {
+      this.getTableList('search')
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = {
@@ -117,19 +121,11 @@ export default {
         room_id: this.$route.query.roomId,
         keyword: this.keyword
       }
-      if (this.keyword || params == 'delete') {
+      if (params == 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        this.$refs.tableList.clearSelect();
-        this.nullText = 'search';
-        this.text = '';
-        this.isSearch = true;
-      } else {
-        this.nullText = 'nullData';
-        this.text = '您还没有问卷，快来创建吧！';
-        this.isSearch = false;
       }
+      this.isSearch = this.keyword ? true : false;
       let obj = Object.assign({}, pageInfo, formParams);
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list || [];
@@ -210,7 +206,7 @@ export default {
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
             if (res.code == 200) {
-              this.getTableList('delete');
+              this.getTableList('search');
               this.$message.success('删除成功');
             }
           }).catch(res => {

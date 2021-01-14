@@ -42,7 +42,9 @@
       width="588px">
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
-         <el-input v-model.trim="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+         <VhallInput v-model.trim="keyword" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
+           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
+         </VhallInput>
        </div>
        <div v-show="total">
         <el-scrollbar v-loadMore="moreLoadData">
