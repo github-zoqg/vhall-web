@@ -145,7 +145,7 @@
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
       :close-on-click-modal=false
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
@@ -583,11 +583,6 @@ export default {
 };
 </script>
 
-<style lang="less">
-  .dialog-padding_playbackpreview{
-    padding: 0px 0px 30px;
-  }
-</style>
 <style lang="less" scoped>
   .listBox{
     .btn-list .el-button:last-child {
@@ -738,6 +733,19 @@ export default {
   }
   .input-with-select{
     vertical-align: text-top;
+  }
+  /deep/ .dialog-padding_playbackpreview{
+    padding: 0px 0px 30px;
+    background: transparent!important;
+    border: none;
+    box-shadow: none;
+    .el-dialog__headerbtn {
+      top: 24px;
+      margin-bottom: 8px;
+      .el-dialog__close {
+        color: #FFFFFF;
+      }
+    }
   }
 </style>
 <style lang="less">

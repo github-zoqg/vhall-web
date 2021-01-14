@@ -323,6 +323,7 @@ export default {
     height: 560px;
     background: #222;
     position: relative;
+    border-radius: 4px;
     .bigBox{
       width: calc(100% - 32px);
       height: calc(100% - 32px);
@@ -366,7 +367,6 @@ export default {
       visibility: visible;
       opacity: 1;
       z-index: 2;
-      display: block!important;
       .vhallPlayer-progress-container .vhallPlayer-progress-play{
         background: #FB3A32;
       }

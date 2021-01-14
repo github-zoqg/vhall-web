@@ -152,7 +152,7 @@ export default {
       this.$fetch('getDefaultStartTime', {
         webinar_id: this.webinar_id
       }).then(res => {
-        this.timeVal = [res.data.start_time, `${ this.$moment(new Date()).format("YYYY-MM-DD") } 23:59:59`];
+        this.timeVal = [res.data.start_time, res.data.end_time];
       })
     },
     handleCancle() {
