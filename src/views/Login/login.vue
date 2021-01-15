@@ -27,7 +27,7 @@
           </VhallInput>
         </el-form-item>
         <el-form-item v-show="isLogin">
-          <div id="loginCaptcha">
+          <div id="loginCaptcha" class="captcha">
             <VhallInput
               auto-complete="off"
               v-model.trim="loginForm.text">
@@ -129,7 +129,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <div id="registerCaptcha">
+              <div id="registerCaptcha" class="captcha">
                 <el-input
                  auto-complete="off"
                  v-model.trim="registerForm.text">
