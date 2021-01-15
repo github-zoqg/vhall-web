@@ -14,28 +14,27 @@
       </div>
     </pageTitle>
     <!-- 无权限，未创建 -->
-    <div v-if="no_show">
-      <null-page text="您还没有文档，快来上传吧" nullType="noAuth">
+    <div>
+      <null-page text="您还没有文档，快来上传吧" nullType="noAuth" v-show="no_show">
         <el-upload
-          class="btn-upload"
+           class="btn-upload"
           :action=actionUrl
           :headers="{token: token, platform: 17}"
           :data=saveData
-          name="resfile"
           accept="*"
+          name="resfile"
           :show-file-list=false
           :on-success='uploadSuccess'
           :on-error="uploadError"
           :before-upload="beforeUploadHandler"
+          :on-progress="uploadProcess"
           :on-preview="uploadPreview"
         >
           <el-button round type="primary" class="length152">上传</el-button>
         </el-upload>
         <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button>
       </null-page>
-    </div>
-    <div v-else>
-      <div class="head-operat">
+      <div class="head-operat" v-show="!no_show">
         <el-upload
           class="btn-upload"
           :action=actionUrl
@@ -69,10 +68,9 @@
           </i>
         </el-input>
       </div>
-      <div class="word-list">
+      <div class="word-list" v-show="!no_show">
         <table-list
           ref="tableListWord"
-          v-if="totalNum > 0"
           scene="word"
           :manageTableData="tableList"
           :tabelColumnLabel="tableColumn"
@@ -334,6 +332,9 @@ export default {
         return false;
       }
       if (isType && isLt2M) {
+        this.totalNum = 1;
+        this.no_show = false;
+        // 若是当前为 this.no_show
         this.tableList.unshift({
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
           ext: lastFileKey.toLowerCase(),
@@ -571,56 +572,11 @@ export default {
       }
       this.getTableWordList();
     },
-    // 初始化
-    initChat(){
-      let option = {
-        appId: 'fd8d3653', // appId 必须
-        accountId: sessionOrLocal.get('userId') || '', // 第三方用户ID
-        channelId: this.channel_id, // 频道id 必须
-        token: sessionOrLocal.get('token', 'localStorage'), // 必须， token，初始化接口获取
-      }
-      window.VhallChat.createInstance(option, (event) => {
-        // alert('初始化成功')
-        this.$Chat = event.message; // 聊天实例句柄
-        this.monitor()
-      },err=>{
-        // alert('初始化错误')
-        console.error(err);
-      })
-    },
-    // 监听
-    monitor(){
-      /**
-       * 接收聊天自定义消息*/
-      this.$Chat.onCustomMsg(async msg => {
-        try {
-          if (typeof msg !== 'object') {
-            msg = JSON.parse(msg)
-          }
-          if (typeof msg.context !== 'object') {
-            msg.context = JSON.parse(msg.context)
-          }
-          if (typeof msg.data !== 'object') {
-            msg.data = JSON.parse(msg.data)
-          }
-        } catch (e) {
-          console.log(e)
-        }
-        console.log('============收到消息频道内容===============' + JSON.stringify(msg.data))
-        if (msg.data.type === 'host_msg_webinar') {
-          EventBus.$emit('host_msg_webinar', msg.data.data)
-        }
-        if (msg.data.type === 'doc_convert_jpeg') {
-          EventBus.$emit('doc_convert_jpeg', msg.data.data)
-        }
-      })
-    },
     getWebinarInfo() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         if (res && res.code === 200) {
           this.channel_id = res.data.vss_channel_id;
           this.initPage();
-          // this.initChat();
         }
       }).catch(error=>{
         console.log(error);
@@ -639,7 +595,6 @@ export default {
     } else {
       this.channel_id = sessionOrLocal.get('SAAS_V3_CHANNEL_ID', 'localStorage') || '';
       this.initPage();
-      // this.initChat();
     }
   },
   mounted() {
@@ -843,6 +798,16 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
+      padding-right: 50px;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
     }
     ::v-deep.set-upload{
       position: relative;
