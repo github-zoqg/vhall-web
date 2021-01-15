@@ -19,18 +19,23 @@
       <!-- 表格 -->
       <el-table
         ref="elTable"
-        id="elTable"
         :data="dialogTableList"
-        :row-key="setRowKeyFun"
-        @selection-change="changeDialogCheck"
+        tooltip-effect="dark"
         style="width: 100%"
-        height="336"
+        height="336px"
         v-loadMore="moreLoadData"
         v-if="dialogTableList.length > 0"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+        @selection-change="changeDialogCheck"
+        @select-all="checkAllRow"
       >
-        <el-table-column
+        <!-- <el-table-column
           :reserve-selection="true"
+          type="selection"
+          width="55"
+          align="left"
+        /> -->
+        <el-table-column
           type="selection"
           width="55"
           align="left"
@@ -59,14 +64,20 @@
           width="164px"
         >
           <template slot-scope="scope">
-            <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
-            <span v-else v-html="scope.row.transform_schedule_str"></span>
+            <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
+            <span v-else v-html="scope.row.transform_schedule_str"></span> -->
+            <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
+            <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress>
+            <div v-else class="progressBox">
+              <!-- 样式变化 -->
+              <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}<span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span></span>
+            </div>
           </template>
         </el-table-column>
       </el-table>
       <null-page text="未搜索到相关内容" nullType="search" v-else :height=60></null-page>
       <div class="btn-center">
-        <span class="btn-select">已勾选 <strong>{{this.dialogMulti.length}}</strong> 条</span>
+        <span class="select-option">已勾选 <strong>{{this.dialogMulti.length}}</strong> 条</span>
         <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
       </div>
@@ -76,6 +87,7 @@
 
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import EventBus from "@/utils/Events";
 
 export default {
   name: "selectWord.vue",
@@ -85,7 +97,8 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      dialogTotal: 0,
+      total: 0,
+      isCheckAll: false,
       dialogTableList: [],
       dialogMulti: [],
       tableColumn: [
@@ -154,6 +167,8 @@ export default {
             const status = item.status * 1;
             if (statusJpeg === 0) {
               item.showEventType = 0;
+              item.fileStatusCss = 'wating';
+              item.fileStatusStr = '等待转码';
               item.transform_schedule_str = `等待转码中...`;
             } else if (statusJpeg === 100) {
               item.showEventType = 1;
@@ -165,24 +180,36 @@ export default {
                 // 如果是ppt or pptx
                 if (status === 0) {
                   item.showEventType = 2;
+                  item.fileStatusCss = 'wating';
+                  item.fileStatusStr = '等待转码';
                   item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
                 } else if (status === 100) {
                   item.showEventType = 3;
+                  item.fileStatusCss = 'success';
+                  item.fileStatusStr = '动态转码中';
                   item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
                 } else if (status === 200) {
                   item.showEventType = 4;
+                  item.fileStatusCss = 'success';
+                  item.fileStatusStr = '转码成功';
                   item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
                 } else {
                   item.showEventType = 5;
+                  item.fileStatusCss = 'failer';
+                  item.fileStatusStr = '转码失败';
                   item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
                 }
               } else {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
+                item.fileStatusCss = 'success';
+                item.fileStatusStr = '转码成功';
                 item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
+              item.fileStatusCss = 'failer';
+              item.fileStatusStr = '转码失败';
               item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
             }
           })
@@ -191,6 +218,10 @@ export default {
           } else {
             this.dialogTableList.push(...res.data.list);
           }
+          if(this.isCheckAll) {
+            this.$refs.elTable.toggleAllSelection();
+          }
+          this.total = res.data.total;
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
         }
       }).catch(e => {
@@ -200,7 +231,7 @@ export default {
     },
     setRowKeyFun() {},
     searchHandle() {
-      this.dialogMulti = [];
+      // this.dialogMulti = [];
       try {
         this.$refs.elTable.clearSelection();
       } catch (e) {
@@ -213,6 +244,11 @@ export default {
     // 改变资料库-弹出框内容
     changeDialogCheck(val) {
       this.dialogMulti = val.map(item => item.document_id);
+    },
+    checkAllRow(selection) {
+      console.log('全选与非全选', selection);
+      // 只要数量大于0，即是够了全选
+      this.isCheckAll = selection && selection.length > 0;
     },
     initComp() {
       // 历史已经选择过的数据清空
@@ -229,30 +265,48 @@ export default {
           webinar_id: this.$route.params.str
         }
         console.log(params, '同步到活动中');
-        this.$confirm('确定同步到活动？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
+        // this.$confirm('确定同步到活动？', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   customClass: 'zdy-message-box',
+        //   lockScroll: false,
+        //   cancelButtonClass: 'zdy-confirm-cancel'
+        // }).then(() => {
           // 同步到资料库
           this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
             if(res && res.code === 200) {
-              this.$message.success('同步成功');
+              this.$message({
+                message: '同步成功',
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.cancelCheckHandle();
               this.$emit('reload');
             } else {
-              this.$message.error(res.msg || '保存失败');
+              this.$message({
+                message: res.msg || '保存失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
           }).catch(e => {
             console.log(e);
-            this.$message.error(e.msg || '保存失败');
+            this.$message({
+              message: e.msg || '保存失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
-        }).catch(() => {
-        });
+      //   }).catch(() => {
+      //   });
       } else {
-        this.$message.info('已取消选择');
+        // this.$message.info('已取消选择');
         this.dialogVisible = false;
       }
     },
@@ -267,6 +321,71 @@ export default {
     }
   },
   mounted() {
+    EventBus.$on('host_msg_webinar', res => { // 转码状态
+      console.log(res, '监听到host_msg_webinar转码状态事件');
+      /*
+        converted_page: "0" // 动态页数
+        converted_page_jpeg: "1" // 静态页数
+        document_id: "01b17b82" // 文档ID
+        page: "1" // 文档总页数
+        status: "200" // 动态转换状态 0待转换 100转换中 200完成 500失败
+        status_jpeg: "200" // 静态转换状态 0待转换 100转换中 200完成 500失败
+      */
+      this.dialogTableList.map((item) => {
+        if (res.document_id === item.document_id) {
+          const statusJpeg = res.status_jpeg * 1;
+          const status = res.status * 1;
+          if (statusJpeg === 0) {
+            item.showEventType = 0;
+            item.fileStatusCss = 'wating';
+            item.fileStatusStr = '等待转码';
+            item.transform_schedule_str = `等待转码中...`;
+          } else if (statusJpeg === 100) {
+            item.showEventType = 1;
+            item.transform_schedule_str = ``; // 静态转码中
+            let _percent = parseInt(res.converted_page_jpeg) / parseInt(res.page) * 100;
+            item.codeProcess = (_percent + "").substr(0, 4);
+          } else if (statusJpeg === 200) {
+            if (/pptx?/.test(item.ext)) {
+              // 如果是ppt or pptx
+              if (status === 0) {
+                item.showEventType = 2;
+                item.fileStatusCss = 'wating';
+                item.fileStatusStr = '等待转码';
+                item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+              } else if (status === 100) {
+                item.showEventType = 3;
+                item.fileStatusCss = 'success';
+                item.fileStatusStr = '动态转码中';
+                item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+              } else if (status === 200) {
+                item.showEventType = 4;
+                item.fileStatusCss = 'success';
+                item.fileStatusStr = '转码成功';
+                item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+              } else {
+                item.showEventType = 5;
+                item.fileStatusCss = 'failer';
+                item.fileStatusStr = '转码失败';
+                item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+              }
+            } else {
+              // 非PPT静态转码完成
+              item.showEventType = 6;
+              item.fileStatusCss = 'success';
+              item.fileStatusStr = '转码成功';
+              item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+            }
+          } else if (statusJpeg >= 500) {
+            item.showEventType = 7;
+            item.fileStatusCss = 'failer';
+            item.fileStatusStr = '转码失败';
+            item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+          }
+          item.page = res.page || '';
+        }
+      });
+    });
   }
 };
 </script>
@@ -307,10 +426,14 @@ export default {
       margin-right: 0;
     }
   }
-  .btn-select {
+  .select-option{
     float: left;
-    strong {
+    line-height: 20px;
+    margin-top: 8px;
+    /deep/span {
       color: #FB3A32;
+      font-size: 16px;
+      padding: 0 10px;
     }
   }
 }
@@ -394,6 +517,39 @@ export default {
   }
   .empty{
     text-align: center;
+  }
+
+  .progressBox {
+    /deep/ .el-progress-bar__inner {
+      background-color: #14BA6A;
+    }
+  }
+  .statusTag{
+    font-size: 14px;
+    &::before{
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    &.wating::before{
+      background:#FA9A32;
+    }
+    &.success::before{
+      background:#14BA6A;
+    }
+    &.failer::before{
+      background:#FB3A32;
+    }
+    .iconContainer {
+      padding-left: 10px;
+      cursor: pointer;
+    }
+    /deep/ .saasicon-reset {
+      color: #FB3A32;
+    }
   }
 }
 </style>

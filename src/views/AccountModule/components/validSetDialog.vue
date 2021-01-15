@@ -14,7 +14,7 @@
           <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
         </el-form-item>
         <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
-          <div id="setCaptcha">
+          <div id="setCaptcha" class="captcha">
             <el-input  v-model.trim="form.imgCode"> </el-input>
           </div>
           <p class="errorText" v-show="errorMsgShow">图形码错误</p>
@@ -37,7 +37,7 @@
           <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号" :maxlength="30"/>
         </el-form-item>
         <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <div id="setCaptcha1">
+          <div id="setCaptcha1" class="captcha">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
           <p class="errorText" v-show="errorMsgShow1">图形码错误</p>

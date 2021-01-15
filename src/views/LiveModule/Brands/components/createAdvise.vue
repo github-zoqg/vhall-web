@@ -78,21 +78,23 @@
         <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
-    <VhallDialog
+     <VhallDialog
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
+      :lock-scroll=false
+      class="zdy-async-dialog"
       width="400px"
     >
-      <div class="sureQuestion">
-        <div class="textPrize">
-          <p>确定保存当前广告？</p>
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>保存广告同时共享至资料管理，便于其他活动使用？</p>
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
-        <div class="dialog-footer">
+        <div class="async__footer">
           <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialAdver" round>确 定</el-button>
           <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
-       </div>
+        </div>
       </div>
     </VhallDialog>
   </div>
@@ -553,7 +555,7 @@ export default {
      }
    }
   .sureQuestion{
-    padding-bottom: 16px;
+    padding-bottom: 24px;
     .textPrize{
       padding-left: 50px;
       p{
