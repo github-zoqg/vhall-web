@@ -383,7 +383,7 @@ export default {
             message: res.msg || '删除失败',
             showClose: true,
             // duration: 0,
-            type: 'success',
+            type: 'error',
             customClass: 'zdy-info-box'
           });
         });
