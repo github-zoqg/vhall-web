@@ -360,6 +360,7 @@ export default {
     }
     .inner:hover{
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
     }
     .top{
       cursor: pointer;
