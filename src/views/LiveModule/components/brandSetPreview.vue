@@ -116,7 +116,10 @@
               <li>商品</li>
             </ul>
             <!-- 简介 -->
-            <img src="../../../common/images/custom-tab/detail-bg-new-h5.png" alt="" class="h5-notice" />
+            <div class="h5-notice-panel">
+              <img src="../../../common/images/custom-tab/detail-bg-new-h5.png" alt="" class="h5-notice" />
+              <span class="h5__txt" :style="{background: skinSetVo.pageStyle}"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -471,6 +474,18 @@ export default {
   .h5-player {
     width: 310px;
     height: 174px;
+  }
+  .h5-notice-panel {
+    position: relative;
+    span {
+      width: 2px;
+      background: #FB3A32;
+      position: absolute;
+      top: 114px;
+      height: 13px;
+      display: block;
+      left: 12px;
+    }
   }
   .h5-notice {
     width: 100%;
