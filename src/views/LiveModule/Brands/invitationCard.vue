@@ -141,12 +141,14 @@
         </div>
         <div class="watch-img" v-else-if="showType===2"  id="shopInvent">
           <div class="watch-bg" :style="`backgroundImage: url(${img})`">
-            <div class="watch-header">
+            <div class="watch-color">
+              <div class="watch-header">
               <div class="watch-avator">
                 <img :src="avatar" alt="">
               </div>
               <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
               <p style="color:#fff;">邀请你一起看直播</p>
+            </div>
             </div>
           </div>
           <div class="watch-text">
@@ -163,6 +165,7 @@
           </div>
         </div>
         <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+          <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
                 <img :src="avatar" alt="">
@@ -190,6 +193,7 @@
                 <p>长按保存图片后分享</p>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <div class="sureBtn">
@@ -674,6 +678,13 @@ export default {
         background-size: 100% 100%;
         background-repeat: no-repeat;
         border-radius: 4px 4px 0 0;
+        // background-color: rgba(0, 0, 0, 0.1);
+        .watch-color{
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 4px 4px 0 0;
+        }
         .watch-header{
             padding: 20px 24px;
             text-align: center;
@@ -771,6 +782,12 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      .look-color{
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
       .look-header{
         padding: 20px 24px;
         text-align: center;

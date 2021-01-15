@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="dataBaseVisible">
   <VhallDialog
       title="资料库"
       :visible.sync="dataBaseVisible"
@@ -221,7 +221,7 @@ export default {
     checkAllQuestion(selection) {
       // 全选
       this.isCheckAll = selection && selection.length > 0;
-      this.checkList = selection;
+      this.checkList = selection.map(item => item.question_id);
     },
      // 选中
     handleSelectionChange(val) {
