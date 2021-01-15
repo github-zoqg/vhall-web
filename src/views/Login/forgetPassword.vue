@@ -55,7 +55,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <div id="loginCaptcha" class="findCaptcha">
+              <div id="loginCaptcha" class="captcha">
                 <el-input
                   auto-complete="off"
                   v-model.trim="dynamicForm.text">
