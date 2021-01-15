@@ -564,7 +564,7 @@ export default {
 }
 /deep/.el-checkbox__inner {
   border-color: #999999;
-  &:hover {
+  &:hover, &:active {
     border-color: #FB3A32;
   }
 }

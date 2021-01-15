@@ -101,6 +101,28 @@
         </div>
       </VhallDialog>
     </template>
+
+    <!-- 同步弹出框 -->
+    <VhallDialog
+      title="提示"
+      :visible.sync="asyncDialog.visible"
+      :close-on-click-modal="false"
+      :lock-scroll=false
+      class="zdy-async-dialog"
+      width="400px"
+    >
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>{{asyncDialog.question}}</p>
+          <el-checkbox v-model="asyncDialog.sureChecked">{{asyncDialog.show}}</el-checkbox>
+        </div>
+        <div class="async__footer">
+          <el-button type="primary" size="medium" v-preventReClick @click="sureAsyncHandle" round>确 定</el-button>
+          <el-button size="medium"  @click="unSureAsyncHandle"  round>取 消</el-button>
+        </div>
+      </div>
+    </VhallDialog>
+
     <!-- 文档列表 -->
     <select-word ref="dialogWordComp" @reload="initPage"></select-word>
   </div>
@@ -125,6 +147,12 @@ export default {
   },
   data() {
     return {
+      asyncDialog: {
+        visible: false,
+        question: '上传文档同时共享至资料管理，便于其他活动使用？',
+        show: '共享到资料管理',
+        sureChecked: true
+      },
       importWordShow: false,
       env: Env,
       activeIns: null,
@@ -250,26 +278,30 @@ export default {
       if(res.code === 200) {
         // this.$message.success('上传成功');
         if (this.$route.params.str) {
+          this.asyncDialog.visible = true;
           // 弹出框提示是否同步
-          this.$confirm('确定同步到资料库？', '提示', {
-            confirmButtonText: '同步',
-            cancelButtonText: '不同步',
-            customClass: 'zdy-message-box',
-            lockScroll: false,
-            cancelButtonClass: 'zdy-confirm-cancel'
-          }).then(() => {
-            // 同步到资料库
-            this.asyncWord(res);
-          }).catch(() => {
-            // 取消同步，刷新列表
-            this.initPage();
-          });
+          this.asyncDialog.rows = res;
         } else {
           // 判断文件上传情况
-          // this.initPage();
-          window.location.reload();
+          this.initPage();
+          // window.location.reload();
         }
       }
+    },
+    sureAsyncHandle() {
+      if (this.asyncDialog.sureChecked) {
+        // 同步到资料库
+        this.asyncWord(this.asyncDialog.rows);
+      } else {
+        this.asyncDialog.visible = false;
+        // 未勾选同步，不同步数据
+        this.initPage();
+      }
+    },
+    unSureAsyncHandle() {
+      this.asyncDialog.visible = false;
+      // 取消同步，刷新列表
+      this.initPage();
     },
     asyncWord(resV) {
       let params = {
@@ -278,6 +310,7 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
+        this.asyncDialog.visible = false;
         this.$message({
           message: res.msg || '同步成功',
           showClose: true,
@@ -291,6 +324,7 @@ export default {
           console.log(e);
         }
       }).catch(res => {
+        this.asyncDialog.visible = false;
         console.log(res);
         this.$message({
           message: res.msg || '同步失败',
@@ -300,6 +334,7 @@ export default {
           customClass: 'zdy-info-box'
         });
       }).finally(()=>{
+        this.asyncDialog.visible = false;
         this.initPage();
       });
     },
