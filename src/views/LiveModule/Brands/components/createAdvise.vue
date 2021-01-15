@@ -549,7 +549,7 @@ export default {
      }
    }
   .sureQuestion{
-    padding-bottom: 16px;
+    padding-bottom: 24px;
     .textPrize{
       padding-left: 50px;
       p{
