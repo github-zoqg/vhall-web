@@ -16,7 +16,7 @@
           :tabelColumnLabel="msgTableColumn"
           :totalNum="msgDao.total"
           :tableRowBtnFun="tableRowBtnFun"
-          width=120
+          width=114
           min-height="auto"
           scene="msg_list"
           @getTableList="getMsgList"

@@ -276,6 +276,9 @@ export default {
     /deep/.el-date-editor .el-range__icon{
       line-height: 30px;
     }
+    /deep/.el-date-editor .el-range__close-icon {
+      line-height: 28px;
+    }
     /deep/.el-input__icon{
       line-height: 36px;
     }

@@ -131,7 +131,7 @@ if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
 }
-new Vue({
+window.vm = new Vue({
   router,
   i18n,
   render: h => h(App),

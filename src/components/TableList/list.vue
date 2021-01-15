@@ -519,6 +519,14 @@ export default {
     text-align: center;
   }
   .videoName{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .iconfont-v3{
+      font-size: 20px;
+      vertical-align: middle;
+    }
     .saasyinpinwenjian{
       color: #10d3a8;
       padding-right: 3px;
