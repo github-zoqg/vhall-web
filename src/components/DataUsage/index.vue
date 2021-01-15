@@ -245,6 +245,7 @@ export default {
     padding: 32px 0;
     position: relative;
     margin-right: 16px;
+    border-radius: 4px;
     .level {
       border: 1px solid #FB3A32;
       font-size: 12px;
@@ -311,6 +312,7 @@ export default {
     padding: 32px 40px;
     position: relative;
     background: #fff;
+    border-radius: 4px;
     .level {
       border: 1px solid #FB3A32;
       font-size: 12px;

@@ -285,7 +285,6 @@ export default {
   created() {
     this.getFontList();
     this.getBasescrollingList();
-    this.getBaseOtherList();
   },
   mounted () {
     this.initPlayer();
@@ -393,11 +392,11 @@ export default {
        this.$fetch('getOtherOptions', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
-          this.otherOtherInfo(1)
           this.formOther.progress = Boolean(res.data.progress_bar);
           // this.otherOtherInfo(2)
           this.formOther.doubleSpeed = Boolean(res.data.speed);
           // this.otherOtherInfo(3)
+          this.otherOtherInfo(1)
         } else {
           this.$message.success('获取信息失败');
         }
@@ -571,7 +570,7 @@ export default {
 
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.$Vhallplayer.pause()
-              this.$Vhallplayer.openControls(true);
+              this.$Vhallplayer.openControls(false);
               this.loading = false;
               // 加载中
               resolve();
