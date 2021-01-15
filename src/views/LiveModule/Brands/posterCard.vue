@@ -1,6 +1,22 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="开屏海报"></pageTitle>
+    <pageTitle title="开屏海报">
+      <div class="switch__box">
+        <el-switch
+          class="el-role-switch"
+          v-model="status"
+          :active-value="0"
+          :inactive-value="1"
+          active-color="#ff4949"
+          inactive-color="#ccc"
+          @change="changeOpenStatus"
+          :active-text="activeTitle"
+        >
+        </el-switch>
+      </div>
+    </pageTitle>
+    <div :class="status ? 'pre--full-mask' : ''">
+      <div class="pre--full-cover" v-show="status"></div>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
@@ -30,21 +46,6 @@
             </el-form-item>
             <el-form-item label="链接" prop="url">
               <VhallInput v-model.trim="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
-            </el-form-item>
-            <el-form-item label="开屏海报">
-              <!--{{status  - 0开启，1关闭}}-->
-              <div class="switch__box">
-                <el-switch
-                  v-model="status"
-                  :active-value="0"
-                  :inactive-value="1"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  @change="changeOpenStatus"
-                  :active-text="activeTitle"
-                >
-                </el-switch>
-              </div>
             </el-form-item>
             <el-form-item label="自动关闭">
               <!--{{alertType 0手动关闭 1自动关闭}}-->
@@ -78,10 +79,13 @@
             <div class="v-preview-content">
               <!-- 开屏海报 -->
               <div class="hb_pc">
-                <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" />
+                <!-- <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" /> -->
+                <img class="hb_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
+                <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap"  v-if="domain_url && status <= 0">
                   <img class="hb_img v-poster-preview" :src="domain_url" alt=""/>
                 </div>
+                <el-button v-show="domain_url" class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
               </div>
             </div>
           </div>
@@ -100,7 +104,7 @@
           <!--手机预览,end-->
         </div>
       </div>
-  <!--  </div>-->
+    </div>
   </div>
 </template>
 <script>
@@ -113,7 +117,7 @@ export default {
       img: '',
       domain_url: '',
       imgShowUrl: '',
-      status: null,
+      status: 1,
       alertType: null,
       switchType: 'app',
       showPoster: false,
@@ -159,23 +163,44 @@ export default {
     this.getData();
   },
   methods: {
-    changeOpenStatus (e) {
-      if (!e) {
-        this.showPoster = true
-      }
+    async changeOpenStatus (e) {
+      let status = this.status; // 目标
+      this.status = Number(!status);
+      let params = {
+        webinar_id: this.$route.params.str,
+        status: status, //是否展示公众号/是否展示开屏海报：0开启1关闭
+      };
+      this.$fetch('setPosterInfo', params).then(res => {
+        this.$message({
+          showClose: true,
+          message: status > 0 ? '关闭成功' : '开启成功',
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.status = status;
+      }).catch(res => {
+        this.$message({
+          showClose: true,
+          message: res.msg || (status > 0 ? '关闭失败' : '开启失败'),
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      })
     },
     closePoster () {
       this.showPoster = false
     },
     changeSwitch(type) {
       this.switchType = type;
-      if (this.domain_url) {
+      /* if (this.domain_url) {
         if (this.switchType == 'pc') {
           this.resizePcImg(this.domain_url)
         } else {
           this.resizeImg(this.domain_url)
         }
-      }
+      } */
     },
     getData() {
       this.$fetch('getPosterInfo', {
@@ -185,13 +210,13 @@ export default {
           this.img = res.data.img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
-          if (this.domain_url) {
+          /* if (this.domain_url) {
             if (this.switchType == 'pc') {
               this.resizePcImg(this.domain_url)
             } else {
               this.resizeImg(this.domain_url)
             }
-          }
+          } */
           this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
           this.alertType = res.data.shutdown_type === null || res.data.shutdown_type === undefined || res.data.shutdown_type === '' ? 1 : res.data.shutdown_type;
         }
@@ -227,7 +252,7 @@ export default {
       params.url = this.form.url;
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
-          this.$fetch('setPosterInfo', this.$params(params)).then(res => {
+          this.$fetch('setPosterInfo', params).then(res => {
             this.$message({
               message: '保存成功',
               showClose: true,
@@ -256,13 +281,13 @@ export default {
         let file_url = res.data.file_url || '';
         this.img = file_url;
         this.domain_url = domain_url;
-        if (this.domain_url) {
+        /* if (this.domain_url) {
           if (this.switchType == 'pc') {
             this.resizePcImg(this.domain_url)
           } else {
             this.resizeImg(this.domain_url)
           }
-        }
+        } */
       }
     },
     beforeUploadHnadler(file){
@@ -372,6 +397,14 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.switch__box {
+  display: inline-block;
+}
+/deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
+  color: #999999;
+  pointer-events: none;
+  user-select: none;
+}
   .offical-show{
     /deep/.el-switch__label.is-active {
         color: #1A1A1A;
@@ -414,22 +447,34 @@ export default {
     }
     .v-preview-content {
       position: relative;
-      img {
+      /* img {
         width: 331px;
         height: 265px;
         display: block;
         margin: 110px auto 0;
+      } */
+      img {
+        width: 400px;
+        height: 242px;
+        display: block;
+        margin: 24px auto 0;
       }
       .pc-poster-wrap{
-        position: absolute;
+        /* position: absolute;
         width: 56px;
         height: 102px;
         top: 50px;
         right: 16px;
-        background: transparent;
+        background: transparent; */
+        position: absolute;
+        top: 24px;
+        right: 0;
+        background: rgba(0, 0, 0, 0.4);
+        width: 106px;
+        height: 195px;
       }
       .v-poster-preview {
-        display: inline-block;
+        /* display: inline-block;
         position:absolute;
         top: 50%;
         left: 50%;
@@ -437,7 +482,11 @@ export default {
         max-height: 102px;
         transform: translate(-50%, -50%);
         margin-top: 0px;
-        object-fit: cover;
+        object-fit: cover; */
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+        margin: 0 0;
       }
       .v-code-preview {
         position: absolute;
@@ -453,6 +502,13 @@ export default {
           height: 100%;
           object-fit: scale-down;
           margin: 0 0;
+        }
+      }
+      .hb_pc {
+        .poster-btn {
+          position: absolute;
+          right: 0;
+          top: 24px;
         }
       }
     }
