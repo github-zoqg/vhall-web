@@ -74,7 +74,7 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>{{ formData.title || '抽奖' }}<i class="el-icon-close"></i></h3>
+                <h3>{{ formData.title || '抽奖' }}</h3>
                 <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
                 </div>
                 <div class="sureBtn">{{ formData.description || '正在进行抽奖' }}</div>
@@ -110,7 +110,7 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>领奖<i class="el-icon-close"></i></h3>
+                <h3>领奖</h3>
                 <el-scrollbar class="scroll-bar">
                   <div class="give-msg">
                     <el-form :model="givePrizeForm">
@@ -569,9 +569,9 @@ export default {
     .give-show{
       width: 340px;
       height: 631px;
-      background-image: url('../../../common/images/h5-show-phone.png');
+      background-image: url('../../../common/images/gif/prize.png');
       background-size: cover;
-      margin-top: -15px;
+      margin-top: -25px;
       position: relative;
       .give-show-title{
         position: absolute;
@@ -583,16 +583,15 @@ export default {
       }
       .give-people{
         margin: auto;
-        margin-top: 287px;
+        margin-top: 275px;
         width: 290px;
-        margin-left: 25px;
+        margin-left: 45px;
         h3{
           text-align: center;
           font-size: 14px;
           height: 40px;
           line-height: 40px;
           color:#1A1A1A;
-          border-bottom: 1px solid #E6E6E6;
           position: relative;
           i{
             position: absolute;
@@ -637,7 +636,7 @@ export default {
         height: 200px;
         background-size: 100%;
         background-repeat:no-repeat;
-        margin-top: 24px;
+        margin-top: 16px;
         background-position: center;
         // img{
         //   width: 200px;

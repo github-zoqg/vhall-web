@@ -74,8 +74,8 @@
         </noData>
       </div>
       <div class="select-option" v-if="total">已选择<span>{{ selectedOption.length }}</span>个</div>
-      <span slot="footer" class="dialog-footer" v-if="total">
-        <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick>确 定</el-button>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick :disabled="!selectedOption.length">确 定</el-button>
         <el-button round @click="cancelSelect" size="medium" v-preventReClick>取 消</el-button>
       </span>
     </el-dialog>
@@ -89,7 +89,7 @@ export default {
       page: 1,
       maxPage: 0,
       nullText: 'nullData',
-      text: '你还没有创建直播',
+      text: '您还没有创建直播',
       total: 1,
       activeList: [],
       selectedOption: [],
@@ -372,6 +372,9 @@ export default {
           }
         }
     }
+  }
+  .no-live{
+    padding-bottom: 24px;
   }
   .select-option{
     position: absolute;

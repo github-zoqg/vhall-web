@@ -60,7 +60,7 @@
         </div>
         <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个</p>
         <div slot="footer" class="dialog-footer" v-show="total || isSearch">
-          <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" v-preventReClick>确 定</el-button>
+          <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
           <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
         </div>
       </div>
@@ -181,6 +181,10 @@ export default {
     },
     // 选择资料库中的问卷
     choseSureQuestion() {
+      if (this.checkList.length >= 21) {
+        this.$message.error('每次只能添加20个问卷');
+        return;
+      }
       let params = {
         room_id: this.$route.query.roomId,
         survey_ids: this.checkList.join(','),
