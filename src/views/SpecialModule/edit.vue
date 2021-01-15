@@ -460,6 +460,9 @@ export default {
       pointer-events: none;
       user-select: none;
     }
+    /deep/.el-input__inner{
+      height: 40px;
+    }
     .tox-tinymce{
       border-radius: 4px;
     }

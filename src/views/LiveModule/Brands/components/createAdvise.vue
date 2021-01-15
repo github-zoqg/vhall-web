@@ -458,6 +458,9 @@ export default {
   /deep/.el-input__count-inner {
     color: #999;
   }
+  /deep/.el-dialog__body{
+    padding-bottom: 40px;
+  }
 
   /deep/.noPic {
     width: 324px !important;
@@ -476,6 +479,7 @@ export default {
    }
    .content{
      padding-bottom: 15px;
+     position: relative;
      .search{
        height: 40px;
        margin-bottom: 18px;
@@ -574,7 +578,7 @@ export default {
     }
   }
   .text{
-      //  margin-top: 20px;
+       margin-top: 10px;
       position: absolute;
       bottom: 40px;
        span{
@@ -585,6 +589,6 @@ export default {
   .sureBtn{
     position: absolute;
     right: 32px;
-    bottom: 28px;
+    bottom: 24px;
   }
 </style>
