@@ -2,31 +2,39 @@
   <div class="wapper wapperClass">
    <div class="left fl">
     <div>
-     <img src="../../common/images/login/login-logo.png" alt="" class="logo" />
-     <div class="content">
-      <p>针对不同类型、不同行业企业业务和使用场景，<br/>专注于为企业提供通用型场景化直播解决方案和服务</p>
-      <img src="../../common/images/login/login-advert.png" alt="" class="bg" />
-     </div>
+      <img src="../../common/images/login/login-logo.png" alt="" class="logo" />
+      <div class="content">
+        <p>针对不同类型、不同行业企业业务和使用场景，<br/>专注于为企业提供通用型场景化直播解决方案和服务</p>
+        <img src="../../common/images/login/login-advert.png" alt="" class="bg" />
+      </div>
     </div>
    </div>
    <div class="right fr">
     <!-- 登录 -->
     <div class="login-box" v-if="$route.path==='/login'">
      <h3>欢迎登录微吼直播</h3>
-     <p class="tab"><span @click="changeLogin('1')" :class="isActive == 1 ? 'active' : ''">账号登录</span><em>|</em><span @click="changeLogin('2')" :class="isActive == 2 ? 'active' : ''">手机登录</span></p>
+     <p class="tab">
+       <span @click="changeLogin('1')" :class="isActive == 1 ? 'active' : ''">账号登录</span>
+       <em>|</em>
+       <span @click="changeLogin('2')" :class="isActive == 2 ? 'active' : ''">手机登录</span>
+      </p>
      <!-- 账号登录 -->
-     <div class="user-wapper"  v-if="isActive===1">
+     <div class="user-wapper form-items"  v-if="isActive===1">
       <el-form ref="loginForm" :model="loginForm" :rules="loginRules">
-        <el-form-item prop="account">
+        <el-form-item prop="account" class="loginUsername">
+          <p class="itemLable" :class="{'active': isLoginAccountFocus || loginForm.account}">用户名 / 邮箱 / 手机号</p>
           <VhallInput
-            placeholder="用户名/邮箱/手机号"
+            :placeholder="!isLoginAccountFocus ? '用户名/邮箱/手机号' : ''"
+            @focus="handleFocus('isLoginAccountFocus')"
+            @blur="handleBlur('isLoginAccountFocus')"
             clearable
             :maxlength="30"
             auto-complete="off"
             v-model.trim="loginForm.account">
           </VhallInput>
         </el-form-item>
-        <el-form-item v-show="isLogin">
+        <!-- 这个 id 有 3 个用来重置样式 -->
+        <el-form-item v-show="isLogin" id="captcha-box">
           <div id="loginCaptcha" class="captcha">
             <VhallInput
               auto-complete="off"
@@ -34,9 +42,13 @@
             </VhallInput>
           </div>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="password" class="loginPassword">
+          <p class="itemLable" :class="{'active': isLoginPasswordFocus || loginForm.account}">密码</p>
           <VhallInput
-            placeholder="密码"
+            :placeholder="!isLoginPasswordFocus ? '密码' : ''"
+            @focus="handleFocus('isLoginPasswordFocus')"
+            @blur="handleBlur('isLoginPasswordFocus')"
+            clearable
             :maxlength="30"
             style="ime-mode:disabled"
             :type="isPassWordType ? 'password' : 'text'"
@@ -71,11 +83,14 @@
       </el-form>
      </div>
      <!-- 手机号登录 -->
-     <div class="phone-wapper" v-if="isActive===2">
+     <div class="phone-wapper form-items" v-if="isActive===2">
         <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
-          <el-form-item prop="phoneNumber">
+          <el-form-item prop="phoneNumber" class="loginUsername">
+            <p class="itemLable" :class="{'active': isLoginPhoneFocus || dynamicForm.phoneNumber}">手机号</p>
             <VhallInput
-              placeholder="请输入手机号"
+              :placeholder="!isLoginPhoneFocus ? '手机号' : ''"
+              @focus="handleFocus('isLoginPhoneFocus')"
+              @blur="handleBlur('isLoginPhoneFocus')"
               :maxlength="11"
               auto-complete="off"
               clearable
@@ -83,8 +98,9 @@
             </VhallInput>
             <p class="errorText" v-if="isRegister"><i class="el-icon-error"></i>该手机号未注册，请先注册</p>
           </el-form-item>
-          <el-form-item>
-            <div id="loginCaptcha">
+          <!-- 这个 id 有两个，只为覆盖样式 -->
+          <el-form-item id="captcha-box">
+            <div id="loginCaptcha" class="captcha">
               <VhallInput
                auto-complete="off"
                v-model.trim="dynamicForm.text">
@@ -93,14 +109,17 @@
           </el-form-item>
           <el-form-item prop="dynamic_code">
             <div class="code">
+              <p class="itemLable" :class="{'active': isLoginPasswordFocus1 || dynamicForm.dynamic_code}">动态密码</p>
               <el-input
-                placeholder="动态密码"
+                :placeholder="!isLoginPasswordFocus1 ? '动态密码' : ''"
+                @focus="handleFocus('isLoginPasswordFocus1')"
+                @blur="handleBlur('isLoginPasswordFocus1')"
                 clearable
                 :maxlength="6"
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                 </template>
               </el-input>
             </div>
@@ -118,17 +137,20 @@
       <div class="login-line"></div>
       <div class="form-items">
         <el-form ref="registerForm" :model="registerForm" :rules="registerRules">
-            <el-form-item prop="phone">
+            <el-form-item prop="phone" class="phone-box">
+              <p class="itemLable" :class="{'active': isPhoneFocus || registerForm.phone}">手机号</p>
               <el-input
-                placeholder="请输入手机号"
+                :placeholder="!isPhoneFocus ? '请输入手机号' : ''"
                 :maxlength="11"
                 clearable
+                @focus="handleFocus('isPhoneFocus')"
+                @blur="handleBlur('isPhoneFocus')"
                 @input="checkPhone"
                 auto-complete="off"
                 v-model.trim="registerForm.phone">
               </el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item id="captcha-box">
               <div id="registerCaptcha" class="captcha">
                 <el-input
                  auto-complete="off"
@@ -137,23 +159,30 @@
               </div>
               <!-- <p class="errorText" v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p> -->
             </el-form-item>
-            <el-form-item prop="code">
+            <el-form-item prop="code" class="code">
               <div class="code">
+                <p class="itemLable" :class="{'active': isCodeFocus || registerForm.code}">动态密码</p>
                 <VhallInput
-                  placeholder="动态密码"
+                  :placeholder="!isCodeFocus ? '动态密码' : ''"
                   clearable
+                  @focus="handleFocus('isCodeFocus')"
+                  @blur="handleBlur('isCodeFocus')"
                   :maxlength="6"
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                   </template>
                 </VhallInput>
               </div>
             </el-form-item>
-            <el-form-item prop="password">
+            <el-form-item prop="password" class="password">
+              <p class="itemLable" :class="{'active': isPasswordFocus || registerForm.password}">密码</p>
               <el-input
-                placeholder="设置密码(6-30个字符)"
+                clearable
+                @focus="handleFocus('isPasswordFocus')"
+                @blur="handleBlur('isPasswordFocus')"
+                :placeholder="!isPasswordFocus ? '设置密码（6-30个字符）' : ''"
                 :maxlength="30"
                 auto-complete="off"
                 onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
@@ -172,7 +201,7 @@
             </div>
             <el-form-item class="auto-login register-checked">
               <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
-              <span class="forget" @click="$router.push({path: '/login'})">去登录</span>
+              <span class="toLogin" @click="$router.push({path: '/login'})">去登录</span>
             </el-form-item>
         </el-form>
       </div>
@@ -191,7 +220,7 @@ export default {
   },
   data() {
     var validatePhone = (rule, value, callback) => {
-      this.registerText = '';
+      // this.registerText = '';
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -238,6 +267,13 @@ export default {
       }
     };
     return {
+      isPhoneFocus: false,
+      isCodeFocus: false,
+      isPasswordFocus: false,
+      isLoginPasswordFocus: false,
+      isLoginAccountFocus: false,
+      isLoginPhoneFocus: false,
+      isLoginPasswordFocus1: false,
       remember: 0,
       isPassWordType: true,
       errorText: '',
@@ -299,6 +335,12 @@ export default {
     });
   },
   methods: {
+    handleFocus(key) {
+      this[key] = true;
+    },
+    handleBlur(key) {
+      this[key] = false;
+    },
     openOther() {
       this.isOpenOther = !this.isOpenOther;
     },
@@ -519,12 +561,26 @@ export default {
 </script>
 <style lang="less" scoped>
 .wapper {
-    width: 100%;
-    height: 100%;
-    min-height: 640px;
-    background-color: #fff;
-    position: relative;
-    font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important
+  width: 100%;
+  height: 100%;
+  min-height: 770px;
+  background-color: #fff;
+  position: relative;
+  font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important;
+  /deep/ .el-input__clear{
+    height: 17px;
+    line-height: 17px;
+    vertical-align: middle;
+  }
+
+    /deep/ .el-input .el-input__suffix {
+      display: flex;
+      align-items: center;
+      .closePwd {
+        width: 25px;
+        display: inline-block;
+      }
+    }
 }
 
 .left {
@@ -594,12 +650,16 @@ export default {
 }
 
 .login-box .phone-wapper,.login-box .user-wapper {
-    height: 299px
+    height: 299px;
+}
+
+.user-wapper .login-btn {
+  margin-top: 8px;
 }
 
 .login-box .tab {
     margin-top: 40px;
-    font-weight: 400
+    font-weight: 400;
 }
 
 .login-box .tab:before {
@@ -636,10 +696,29 @@ export default {
 }
 
 /deep/.el-form-item {
-  width: 320px;
+  width: 340px;
   position: relative;
   margin-top: 24px;
   margin-bottom: 0;
+  &.phone-box {
+    margin-top :46px;
+  }
+  &.code {
+    margin-top: 27px;
+  }
+  &#captcha-box {
+    margin-top: 36px;
+  }
+  &.password {
+    margin-top: 39px;
+    margin-bottom: 24px;
+  }
+  &.loginUsername {
+    margin-top: 33px;
+  }
+  &.loginPassword {
+    margin-top: 33px;
+  }
   .el-form-item__content {
     line-height: 1;
   }
@@ -657,7 +736,7 @@ export default {
     font-weight: 400;
     color: #1A1A1A;
     background-color: transparent;
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 2px solid #cccccc;
     border-radius: unset;
     padding: 0 0;
     &:hover {
@@ -665,7 +744,7 @@ export default {
     }
     &:active {
       color: #1A1A1A;
-      border-bottom: 1px solid #cccccc;
+      border-color: #FB3A32;
     }
   }
   input::-webkit-input-placeholder {
@@ -683,7 +762,7 @@ export default {
   &.auto-login {
     font-size: 13px;
     color: #999;
-    margin-top: 24px;
+    margin-top: 20px;
     /deep/.el-checkbox__label {
       display: inline-block;
       padding-left: 5px;
@@ -707,11 +786,111 @@ export default {
         color: #1A1A1A;
       }
     }
+    span.toLogin {
+      float: right;
+      font-size: 12px;
+      font-weight: 400;
+      color: #4da1ff;
+      line-height: 17px;
+      cursor: pointer;
+    }
+  }
+  &#captcha-box {
+    // 云盾样式重置
+    /deep/ .yidun {
+      .yidun_control {
+        border: 1px solid #e2e2e2;
+        background-color: #ffffff;
+        .yidun_tips {
+          height: 38px;
+          line-height: 38px!important;
+          .yidun_tips__text {
+            color: #888888;
+            font-size: 14px;
+          }
+        }
+        .yidun_slider {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-slide1.png);
+            background-size: 28px 20px;
+            background-position: center;
+          }
+          &:hover {
+            // background-color: #FB3A32;
+            .yidun_slider__icon {
+              background-image: url(./images/icon-slide.png);
+            }
+          }
+        }
+        // &.yidun_control--moving {
+        //   background-color: #E2E2E2;
+        //   border-color: #FB3A32;
+        //   .yidun_slide_indicator {
+        //     border-color: #FB3A32;
+        //     background-color: #E2E2E2;
+        //   }
+        // }
+      }
+    }
+    /deep/ .yidun--success {
+      // .yidun_control--moving {
+      //   background-color: #F0F1FE!important;
+      //   .yidun_slide_indicator {
+      //     background-color: #F0F1FE!important;
+      //   }
+      // }
+      .yidun_control {
+        // border-color: #3562FA!important;
+        .yidun_slider {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-succeed.png);
+          }
+          &:hover {
+            // background-color: #FB3A32;
+            .yidun_slider__icon {
+              background-image: url(./images/icon-succeed.png);
+            }
+          }
+        }
+      }
+    }
+    // .yidun.yidun--light.yidun--success.yidun--jigsaw {
+    //   .yidun_control .yidun_slider {
+    //     background-color: #3562FA;
+    //   }
+    //   .yidun_slide_indicator {
+    //     border-color: #3562FA;
+    //     background-color: #E2E2E2;
+    //   }
+    // }
+  }
+}
+.form-items {
+  .login-btn {
+    .el-button {
+      margin-top: 0px;
+      padding-top: 11px;
+      padding-bottom: 11px;
+      border-radius: 22px;
+    }
+  }
+  .itemLable {
+    color: #999999;
+    font-size: 12px;
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    &.active{
+      opacity: 1;
+      top: -14px;
+    }
   }
 }
 .submit {
   margin-top: 16px;
-  width: 320px;
+  width: 340px;
   border-radius: 4px;
   text-align: center;
   font-size: 16px;
@@ -829,27 +1008,30 @@ export default {
   #loginCaptcha {
     margin-bottom: 8px;
   }
+  .login-btn {
+    margin-top: 50px;
+  }
 }
 
 /deep/.el-input-group__append {
     border: 0;
     position: absolute;
-    bottom: 4px;
+    bottom: 3px;
     right: 0;
     cursor: pointer;
     span {
       border: 0;
       position: absolute;
-      bottom: 4px;
+      bottom: 3px;
       right: 0;
-      width: 90px;
+      width: 103px;
       background: #E8E8E8;
       border-radius: 2px;
       font-size: 13px;
       font-weight: 400;
       color: #222222;
       cursor: pointer;
-      padding: 8px;
+      padding: 8px 0;
       cursor: pointer;
       line-height: 18px;
       text-align: center;
@@ -868,6 +1050,7 @@ export default {
     line-height: 20px;
     color:#fc5659;
     font-size: 12px;
+    position: absolute;
     i{
       color: #fc5659;
       padding-right: 5px;
