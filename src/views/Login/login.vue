@@ -33,7 +33,8 @@
             v-model.trim="loginForm.account">
           </VhallInput>
         </el-form-item>
-        <el-form-item v-show="isLogin">
+        <!-- 这个 id 有 3 个用来重置样式 -->
+        <el-form-item v-show="isLogin" id="captcha-box">
           <div id="loginCaptcha" class="captcha">
             <VhallInput
               auto-complete="off"
@@ -99,7 +100,7 @@
           </el-form-item>
           <!-- 这个 id 有两个，只为覆盖样式 -->
           <el-form-item id="captcha-box">
-            <div id="loginCaptcha">
+            <div id="loginCaptcha" class="captcha">
               <VhallInput
                auto-complete="off"
                v-model.trim="dynamicForm.text">
@@ -200,7 +201,7 @@
             </div>
             <el-form-item class="auto-login register-checked">
               <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
-              <span class="toLogon" @click="$router.push({path: '/login'})">去登录</span>
+              <span class="toLogin" @click="$router.push({path: '/login'})">去登录</span>
             </el-form-item>
         </el-form>
       </div>
@@ -562,7 +563,7 @@ export default {
 .wapper {
   width: 100%;
   height: 100%;
-  min-height: 640px;
+  min-height: 770px;
   background-color: #fff;
   position: relative;
   font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important;
@@ -716,7 +717,7 @@ export default {
     margin-top: 33px;
   }
   &.loginPassword {
-    margin-top: 46px;
+    margin-top: 33px;
   }
   .el-form-item__content {
     line-height: 1;
@@ -785,7 +786,7 @@ export default {
         color: #1A1A1A;
       }
     }
-    span.toLogon {
+    span.toLogin {
       float: right;
       font-size: 12px;
       font-weight: 400;
