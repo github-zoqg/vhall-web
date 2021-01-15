@@ -364,7 +364,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'advertCard') {// 广告
+  else if (metaName === 'advertCard' && that.$route.params.str) {// 广告
     return [
       ...CrumbLiveList('liveList'),
       {

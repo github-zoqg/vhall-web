@@ -387,6 +387,7 @@ export default {
             is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
             preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
           };
+          this.whiteId = verify === 2 ? white_id : null;
           console.log(this.form, '当前');
           // 表单选项初始化
           this.initViewerSet();

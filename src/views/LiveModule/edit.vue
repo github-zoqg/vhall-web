@@ -676,6 +676,9 @@ export default {
       pointer-events: none;
       user-select: none;
     }
+    /deep/.el-input__inner{
+      height: 40px;
+    }
     .title-inform /deep/.el-input__inner{
       padding: 0 12px;
     }
