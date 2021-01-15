@@ -141,12 +141,14 @@
         </div>
         <div class="watch-img" v-else-if="showType===2"  id="shopInvent">
           <div class="watch-bg" :style="`backgroundImage: url(${img})`">
-            <div class="watch-header">
+            <div class="watch-color">
+              <div class="watch-header">
               <div class="watch-avator">
                 <img :src="avatar" alt="">
               </div>
               <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
               <p style="color:#fff;">邀请你一起看直播</p>
+            </div>
             </div>
           </div>
           <div class="watch-text">
@@ -163,6 +165,7 @@
           </div>
         </div>
         <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+          <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
                 <img :src="avatar" alt="">
@@ -190,6 +193,7 @@
                 <p>长按保存图片后分享</p>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <div class="sureBtn">
@@ -552,7 +556,7 @@ export default {
     .show-img {
       width: 330px;
       border-radius: 4px;
-      border: 1px solid #E2E2E2;
+      border: 1px solid #E6E6E6;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       height: 622px;
@@ -561,7 +565,7 @@ export default {
         width: 282px;
         height: 520px;
         background: #fff;
-        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
         .show-header{
@@ -665,12 +669,22 @@ export default {
       background: #FFFFFF;
       height: 620px;
       position: relative;
-      box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      border: 1px solid #E6E6E6;
+      // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       .watch-bg{
         height: 360px;
         background-image: url('../../../common/images/v35-webinar.png');
         background-size: 100% 100%;
         background-repeat: no-repeat;
+        border-radius: 4px 4px 0 0;
+        // background-color: rgba(0, 0, 0, 0.1);
+        .watch-color{
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 4px 4px 0 0;
+        }
         .watch-header{
             padding: 20px 24px;
             text-align: center;
@@ -768,6 +782,12 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      .look-color{
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
       .look-header{
         padding: 20px 24px;
         text-align: center;

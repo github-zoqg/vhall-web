@@ -18,26 +18,29 @@
             ref="searchArea"
             :placeholder="placeholder"
             :active="active"
+            :clearable="false"
             @onExportData="exportCenterData()"
             :searchAreaLayout="searchAreaLayout"
             @onSearchFun="getTableList('search')"
             >
           </search-area>
         </div>
-        <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
-        </noData>
-        <table-list
-          ref="tableList"
-          v-show="tableList.length > 0"
-          :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
-          :isHandle="false"
-          :isCheckout="false"
-          :totalNum="totalNum"
-          @changeTableCheckbox="changeTableCheckbox"
-          @getTableList="getTableList"
-          >
-        </table-list>
+        <div>
+          <table-list
+            ref="tableList"
+            :manageTableData="tableList"
+            :tabelColumnLabel="tabelColumn"
+            :isHandle="false"
+            :isCheckout="false"
+            :totalNum="totalNum"
+            @changeTableCheckbox="changeTableCheckbox"
+            @getTableList="getTableList"
+            >
+          </table-list>
+          <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
+          </noData>
+        </div>
+
     </div>
 
   </div>
@@ -120,7 +123,7 @@ export default {
           name: '合并同一用户'
         },
         {
-          key: "searchTitle",
+          key: "nick_name",
         }
       ],
       searchLayout: [
@@ -165,7 +168,7 @@ export default {
           name: '合并同一用户'
         },
         {
-          key: "searchTitle",
+          key: "nick_name",
         }
       ],
       searchVodOut: [
@@ -201,7 +204,7 @@ export default {
           name: '合并同一用户'
         },
         {
-          key: "searchTitle",
+          key: "nick_name",
         }
       ],
       searchAreaVideoOut: [
@@ -232,7 +235,7 @@ export default {
           name: '合并同一用户'
         },
         {
-          key: "searchTitle",
+          key: "nick_name",
         }
       ]
     };
@@ -361,11 +364,11 @@ export default {
     handleClick(tab) {
       this.activeName = tab.name;
       // tab切换时搜索的值和分页的值都重置
-      this.$refs.searchArea.searchParams = {};
+      // this.$refs.searchArea.searchParams = {};
       this.$refs.searchArea.searchParams.searchIsTime = '1',
       this.$refs.tableList.pageInfo.pageNum = 1;
       this.$refs.tableList.pageInfo.pos = 0;
-      this.active = 2;
+      // this.active = 2;
       this.getTableList();
     }
   }

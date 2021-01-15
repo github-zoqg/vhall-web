@@ -581,8 +581,7 @@ export function CrumbSet(metaName, that) {
     {
       title: '回放管理',
       path: `/live/playback/${that.$route.params.str}`,
-      isClick: false,
-      redirect: 'noRedirect'
+      isClick: true,
     },
     {
       title: '章节打点',

@@ -254,6 +254,8 @@ export default {
             item.key === 'switchId' ? item.options = this.switchList : []
           })
           this.searchAreaLayout = this.searchArea;
+          formParams.end_time = '';
+          formParams.start_time = '';
         } else {
           this.searchAreaLayout = this.searchLayout;
           paramsObj.switch_id = 0;
@@ -264,8 +266,13 @@ export default {
         formParams.end_time = '';
         formParams.start_time = '';
       } else {
-        paramsObj.start_time = getRangeDays(this.active);
-        paramsObj.end_time = getRangeDays(this.active);
+        if (formParams.searchIsTime == 2) {
+          paramsObj.start_time = '';
+          paramsObj.end_time = '';
+        } else {
+          paramsObj.start_time = getRangeDays(this.active);
+          paramsObj.end_time = getRangeDays(this.active);
+        }
       }
       for (let i in this.$params(formParams)) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -316,7 +323,9 @@ export default {
       });
       // 获取并发趋势图
       this.$fetch('getWebinarinfo', params).then(res => {
-        this.limitDataList = res.data.list;
+        if (res.data.list.length) {
+           this.limitDataList = res.data.list
+        }
       });
       // 获取观看地域
       this.$fetch('getProvinceinfo', params).then(res => {
@@ -328,7 +337,12 @@ export default {
       });
       // 获取浏览器
       this.$fetch('getBrowserinfo', params).then(res => {
-        this.browerDataList = res.data.list;
+        if (res.data) {
+          this.browerDataList = res.data.list;
+        } else {
+          this.browerDataList = [];
+        }
+
       });
     },
     // 导出

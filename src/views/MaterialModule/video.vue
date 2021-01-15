@@ -15,7 +15,9 @@
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
       <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入音视频名称" clearable @change="getTableList"></el-input>
+        <VhallInput v-model.trim="keyword" placeholder="请输入音视频名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
       </div>
     </div>
     <div class="video-list" v-if="total || isSearch">
@@ -145,13 +147,14 @@ export default {
     });
   },
   methods: {
+    searchTableList() {
+      this.getTableList('search');
+    },
     getTableList(params){
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      if (this.keyword || params == 'delete') {
+      if (params == 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        this.$refs.tableList.clearSelect();
       }
       let formParams = {
         title: this.keyword,
@@ -307,9 +310,6 @@ export default {
                 break;
             }
           });
-          if (res.data.total === 1) {
-            this.$refs.tableList.clearSelect();
-          }
           this.tableData = res.data.list;
           // this.checkedList = [];
           // if(this.uploadList.length!=0){
@@ -373,7 +373,7 @@ export default {
       }).then(() => {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
-            this.getTableList('delete');
+            this.getTableList('search');
             this.$message.success('删除成功');
           }
         }).catch(res => {

@@ -8,7 +8,10 @@
       @close="cancelSelect"
       width="612px">
       <div class="search" v-show="total || isSearch">
-        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input>
+        <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="add-living-input" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
+        <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
       </div>
        <el-scrollbar v-loadMore="moreLoadData">
         <div class="vh-chose-active-box"

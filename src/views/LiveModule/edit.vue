@@ -43,7 +43,7 @@
         </div>
         <div class="modeBox">
           <div>
-            <img src="../../common/images/live/mode-video_check.png" :class="{active: formData.liveMode== 2}" @click='liveModeChange(2)' v-if="formData.liveMode== 2">
+            <img src="../../common/images/live/mode-video_check.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
             <img src="../../common/images/live/mode-video.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
             <!-- <el-container class='model'> -->
@@ -62,7 +62,7 @@
               <img src="../../common/images/live/mode-active_disabled.png" alt="" style="cursor: default;">
             </template>
             <template v-else>
-             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: formData.liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="formData.liveMode== 3">
+             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
               <img src="../../common/images/live/mode-active.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
             <!-- <el-container class='model'> -->
@@ -86,7 +86,7 @@
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
           <div>
-            <img src="../../common/images/live/mode-media_check.png" :class="{active: formData.liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="formData.liveMode== 1">
+            <img src="../../common/images/live/mode-media_check.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
             <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
             <!-- <el-container class='model'>
               <img src="../../common/images/live/mode-media.png" alt="">
@@ -379,7 +379,6 @@ export default {
         title: '',
         date1: '',
         date2: '',
-        liveMode: 2,
         content: ``,
         docSwtich: false,
         reservation: true,
@@ -392,6 +391,7 @@ export default {
         imageUrl: '',
         domain_url: '',
       },
+      liveMode: 2,
       isChange: false,
       showDialog: false,
       startVal: '',
@@ -423,15 +423,15 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
+    this.$confirm(`是否保存${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
       lockScroll: false,
       cancelButtonClass: 'zdy-confirm-cancel'
     }).then(() => {
-      next()
     }).catch(() => {
+      next()
     });
   },
   created(){
@@ -472,7 +472,7 @@ export default {
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
-        this.formData.liveMode = this.liveDetailInfo.webinar_type;
+        this.liveMode = this.liveDetailInfo.webinar_type;
         this.formData.imageUrl = this.liveDetailInfo.img_url;
         this.formData.domain_url = this.liveDetailInfo.img_url;
         console.log(this.domain_url, this.imageUrl, '封面地址');
@@ -510,7 +510,7 @@ export default {
       this.formData.content = content;
     },
     liveModeChange(index) {
-      this.formData.liveMode = index;
+      this.liveMode = index;
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
@@ -569,7 +569,7 @@ export default {
         subject: this.formData.title, // 标题
         introduction: this.formData.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
-        webinar_type: this.formData.liveMode, // 1 音频 2 视频 3 互动
+        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开

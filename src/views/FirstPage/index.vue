@@ -401,11 +401,9 @@ export default {
         .ad-web{
           height: 126px;
           width: 100%;
-          // img{
-          //   width: 100%;
-          //   height: 100%;
-          //   object-fit: scale-down;
-          // }
+          img{
+            border-radius: 4px 4px 0 0;
+          }
          /*  img{
             width: 100%;
             height: 100%;
@@ -452,6 +450,9 @@ export default {
         .app-web{
           font-size: 0;
           border-radius: 4px;
+          img{
+            border-radius: 4px 4px 0 0;
+          }
           /* img{
             width: 100%;
             height: 100%;

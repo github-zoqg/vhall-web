@@ -14,27 +14,21 @@
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入奖品名称" clearable @change="getTableList"></el-input>
+        <VhallInput v-model.trim="keyword" placeholder="请输入奖品名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
       </div>
-      <!-- <search-area class="head-btn fr search"
-        ref="searchArea"
-        :isExports='false'
-        :placeholder="'请输入奖品名称'"
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
-        >
-      </search-area> -->
     </div>
-    <div class="question-list" v-show="total">
+    <div class="no-live" v-if="!total && !isSearch">
+      <noData :nullType="'nullData'" :text="'您还未添加奖品，快去添加吧~'">
+        <el-button type="primary"  round @click="createPrize" v-preventReClick>创建奖品</el-button>
+      </noData>
+    </div>
+    <div class="question-list" v-show="total || isSearch">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" :width="150" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-    </div>
-    <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建奖品</el-button>
-        <el-button type="white-primary" v-if="nullText == 'nullData' && $route.path !='/material/prize'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
-      </noData>
+      <noData :nullType="'search'" v-if="isSearch"></noData>
     </div>
     <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo" :liveTotal="total"></create-prize>
   </div>
@@ -61,10 +55,8 @@ export default {
   data() {
     return {
       total: 0,
-      nullText: 'nullData',
       isSearch: false,
       keyword: '',
-      text: '您还未添加奖品，快去添加吧~',
       prizeInfo: {},
       isDelete: false,
       searchAreaLayout: [
@@ -110,35 +102,29 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchTableList() {
+      this.getTableList('search');
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo;
        //获取分页信息
       let formParams = {
         keyword: this.keyword
       }; //获取搜索参数
-      if (this.keyword || params == 'delete') {
+      if (params == 'search') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
-        this.$refs.tableList.clearSelect();
       }
       if (this.source == '0') {
         formParams.room_id = this.roomId;
       }
+      this.isSearch = this.keyword ? true : false;
       formParams.source =  this.source;
       let obj = Object.assign({}, pageInfo, formParams);
 
       this.$fetch('getPrizeList', obj).then(res => {
         this.tableData = res.data.list;
         this.total = res.data.count;
-        if (this.keyword) {
-          this.nullText = 'search';
-          this.text = '';
-          this.isSearch = true;
-        } else {
-          this.nullText = 'nullData';
-          this.text = '您还未添加奖品，快去添加吧~';
-          this.isSearch = false;
-        }
         this.tableData.map(item => {
           item.img = item.img_path;
         })
@@ -184,7 +170,7 @@ export default {
         }
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
-            this.getTableList('delete');
+            this.getTableList('search');
             this.$message.success('删除成功');
           }
         }).catch(res => {
