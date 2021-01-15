@@ -24,10 +24,7 @@
 </template>
 <script>
 export default {
-  props: ['liveDetailInfo'],
-  created() {
-    console.log(this.liveDetailInfo, '>>>""""""""""""""""""');
-  }
+  props: ['liveDetailInfo']
 };
 </script>
 <style lang="less" scoped>
@@ -45,10 +42,12 @@ export default {
   height: 81px;
   margin: 16px 21px 17px 16px;
   border-radius: 4px;
+  background: #1a1a1a;
   img {
     width: 100%;
-    height: 81px;
+    height: 100%;
     border-radius: 4px;
+    object-fit: scale-down;
   }
 }
 .box-title {

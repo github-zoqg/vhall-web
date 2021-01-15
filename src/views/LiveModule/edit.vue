@@ -417,6 +417,24 @@ export default {
       }
     };
   },
+  beforeRouteEnter (to, from, next) {
+    let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
+    if (!vm.$route.query.id && !userPhone) {
+        vm.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
+          confirmButtonText: '立即绑定',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+          callback: action => {
+            if (action === 'confirm') {
+              vm.$router.push({path:'/acc/info', query: {tab: 1}});
+            }
+          }
+        });
+    } else {
+      next()
+    }
+  },
   beforeRouteLeave(to, from, next) {
      // 离开页面前判断信息是否修改
     if (!this.isChange) {

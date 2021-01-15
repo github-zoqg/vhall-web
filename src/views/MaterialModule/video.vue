@@ -476,7 +476,7 @@ export default {
     padding: 0 0 30px 0;
   }
   ::v-deep .el-dialog__header{
-    padding-top: 10px;
+    padding-top: 24px;
     text-align: left;
   }
   ::v-deep .el-dialog__headerbtn{

@@ -27,7 +27,7 @@
               <p>{{selectMedia.name}}</p>
             </div>
             <!-- <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked"> -->
-            <div class="abRight">
+            <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
 
               <div class="tool" @click.stop="previewVideo">
                 <i class="iconfont-v3 saasicon-eye"></i>
