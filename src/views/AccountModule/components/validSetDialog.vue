@@ -725,11 +725,22 @@ export default {
 }
 .info {
   margin-bottom: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
 }
 /deep/.el-form-item.link__to {
   text-align: right;
   margin-bottom: 0;
   margin-top: -20px;
+  a {
+    color: #fb3a32;
+    &:hover {
+      color: #fc615b;
+    }
+    &:active {
+      color: #e2332c;
+    }
+  }
 }
 .no-use {
   color: #1384FF;
