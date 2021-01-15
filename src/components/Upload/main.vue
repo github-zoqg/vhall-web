@@ -22,7 +22,7 @@
               重置
             </span>
              <span @click.stop.prevent="deletes">
-              <i class="el-icon-delete"></i>
+              <i class="iconfont-v3 saasicon_shanchu"></i>
               <br/>
               删除
             </span>
@@ -231,7 +231,7 @@ export default {
     display: none;
     span{
       &:nth-child(2){
-        margin: 0  10px;
+        margin: 5px 10px 0px;
       }
       i{
         color: #fff;

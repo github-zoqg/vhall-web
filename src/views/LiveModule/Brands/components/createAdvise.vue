@@ -50,7 +50,11 @@
       :before-close="handleClose"
       width="620px">
       <div class="content">
-        <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" clearable @change="changeAdverment"></el-input></div>
+        <div class="search" v-show="total || isSearch">
+           <VhallInput v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
+            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
+          </VhallInput>
+          </div>
         <el-scrollbar v-loadMore="moreLoadData" v-show="total">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">

@@ -39,7 +39,7 @@
             />
           </el-select>
           <div class="export-data">
-            <el-button round type="white-primary" size="medium" @click="exportCenterData">导出数据</el-button>
+            <el-button round size="medium" @click="exportCenterData">导出数据</el-button>
           </div>
         </div>
           <!-- <search-area
@@ -77,7 +77,9 @@
           :picker-options="pickerOptions"
           style="width: 240px"
         />
-        <el-input v-model.trim="subject" suffix-icon="el-icon-search" placeholder="请输入活动名称" style="width: 180px;marginLeft:15px"  @change="getSearchList"  clearable></el-input>
+        <VhallInput v-model.trim="subject" placeholder="请输入活动名称" style="width: 180px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
+        </VhallInput>
           <el-select filterable clearable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
@@ -87,7 +89,7 @@
             />
           </el-select>
           <div class="export-data">
-            <el-button round type="white-primary" size="medium" @click="exportAccount">导出数据</el-button>
+            <el-button round  size="medium" @click="exportAccount">导出数据</el-button>
           </div>
         </div>
         <!-- <search-area

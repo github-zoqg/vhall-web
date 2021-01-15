@@ -552,7 +552,7 @@ export default {
     .show-img {
       width: 330px;
       border-radius: 4px;
-      border: 1px solid #E2E2E2;
+      border: 1px solid #E6E6E6;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       height: 622px;
@@ -561,7 +561,7 @@ export default {
         width: 282px;
         height: 520px;
         background: #fff;
-        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
         .show-header{
@@ -665,12 +665,15 @@ export default {
       background: #FFFFFF;
       height: 620px;
       position: relative;
-      box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      border: 1px solid #E6E6E6;
+      // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       .watch-bg{
         height: 360px;
         background-image: url('../../../common/images/v35-webinar.png');
         background-size: 100% 100%;
         background-repeat: no-repeat;
+        border-radius: 4px 4px 0 0;
         .watch-header{
             padding: 20px 24px;
             text-align: center;

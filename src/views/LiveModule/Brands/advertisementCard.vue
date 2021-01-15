@@ -9,11 +9,20 @@
         <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
         <span class="searchTitle">
-          <el-input v-model.trim="paramsObj.keyword" placeholder="请输入广告标题"
-          suffix-icon="el-icon-search" clearable @change="getAdvTableList()"></el-input>
+          <VhallInput v-model.trim="paramsObj.keyword" placeholder="请输入广告标题" @keyup.enter.native="searchAdvTableList" @clear="searchAdvTableList" clearable>
+            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchAdvTableList" style="cursor: pointer; line-height: 36px;"></i>
+          </VhallInput>
+          <!-- <el-input v-model.trim="paramsObj.keyword" placeholder="请输入广告标题"
+          suffix-icon="el-icon-search" clearable @change="getAdvTableList()"></el-input> -->
         </span>
       </div>
-      <div class="advert-card-list" v-show="total">
+      <div class="no-live" v-if="!total && !isSearch">
+        <noData :nullType="'nullData'" :text="'您还没有广告，快来创建吧！'">
+          <el-button type="primary"  round @click="createAdvise()" v-preventReClick>创建广告</el-button>
+          <el-button size="white-primary" round v-if="$route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
+        </noData>
+      </div>
+      <div class="advert-card-list" v-show="total || isSearch">
          <table-list
           ref="tableList"
           :manageTableData="tableList"
@@ -26,12 +35,7 @@
           @changeTableCheckbox="changeTableCheckbox"
           >
         </table-list>
-      </div>
-      <div class="no-live" v-show="!total">
-        <noData :nullType="nullText" :text="text">
-          <el-button type="primary"  v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
-          <el-button size="white-primary" round v-if="nullText == 'nullData' && $route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
-        </noData>
+        <noData :nullType="'search'" v-if="isSearch"></noData>
       </div>
       <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList" :maxTotal="total"></create-advise>
     </div>
@@ -51,9 +55,7 @@ export default {
       pos: 0,
       limit: 10,
       total: 0,
-      nullText: 'nullData',
       isSearch: false, //是否是搜索
-      text: '您还没有广告，快来创建吧！',
       tableList: [],
       tabelColumn: [
        {
@@ -94,10 +96,12 @@ export default {
     this.getAdvTableList();
   },
   methods: {
+    searchAdvTableList() {
+      this.getAdvTableList('search')
+    },
     getAdvTableList(param) {
        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      if (this.paramsObj.keyword || param == 'delete') {
-        this.$refs.tableList.clearSelect();
+      if (param == 'search') {
         pageInfo.pos = 0;
         pageInfo.pageNum = 1;
       }
@@ -107,15 +111,7 @@ export default {
         limit: pageInfo.limit,
         webinar_id: this.$route.params.str || ''
       };
-      if (this.paramsObj.keyword) {
-          this.nullText = 'search';
-          this.text = '';
-          this.isSearch = true;
-        } else {
-          this.nullText = 'nullData';
-          this.text = '您还没有广告，快来创建吧！';
-          this.isSearch = false;
-        }
+      this.isSearch = this.paramsObj.keyword ? true : false;
       this.$fetch('getAdvList', this.$params(params)).then(res => {
         this.total = res.data.total;
         this.tableList = res.data.adv_list;
@@ -149,7 +145,7 @@ export default {
               this.$message.success('删除成功');
               // 刷新页面
             this.$refs.tableList.clearSelect();
-            this.getAdvTableList('delete');
+            this.getAdvTableList('search');
             this.adv_ids = [];
           } else {
             this.$message.error(res.msg || '删除失败');
