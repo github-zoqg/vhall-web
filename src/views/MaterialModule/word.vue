@@ -151,7 +151,7 @@ export default {
         visible: false,
         question: '上传文档同时共享至资料管理，便于其他活动使用？',
         show: '共享到资料管理',
-        sureChecked: false
+        sureChecked: true
       },
       importWordShow: false,
       env: Env,

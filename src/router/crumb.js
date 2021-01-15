@@ -444,6 +444,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'prizeSet') {// 抽奖
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '抽奖',
+        path: `/live/prizeSet/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'question') {// 问卷
     return [
       ...CrumbLiveList('liveList'),
