@@ -791,6 +791,9 @@ export default {
       display: block;
       margin-top: 10px;
       margin-right: 0px;
+      &:first-child {
+        margin-top: 0;
+      }
       /deep/ .el-radio__label {
         .radioInput {
           width: calc(100% - 24px);

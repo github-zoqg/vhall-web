@@ -231,7 +231,10 @@ export default {
     display: none;
     span{
       &:nth-child(2){
-        margin: 5px 10px 0px;
+        margin: 0 10px;
+        i {
+          line-height: 1;
+        }
       }
       i{
         color: #fff;

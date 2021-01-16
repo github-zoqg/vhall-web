@@ -67,7 +67,7 @@
       v-if="tabType === 'live' ? tabList[0].total > query.limit : tabList[1].total > query.limit"
     ></SPagination>
     <!-- 既无专题权限 且 无直播权限 -->
-    <div class="no-create" :height=170  v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0">
+    <div :class="['no-create', {'no-border': $route.meta.type === 'owner'}]" :height=170  v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0">
       <null-page text="贫瘠之地，毛都没有" nullType="create"></null-page>
     </div>
     <!-- 搜索全部，并且无数据 -->
@@ -332,6 +332,9 @@ export default {
 }
 .no-create {
   border-top: 1px solid #E6E6E6;
+  &.no-border {
+    border-top: 0;
+  }
   min-height: 618px;
 }
 /* 直播、专题*/
@@ -360,6 +363,7 @@ export default {
     }
     .inner:hover{
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
     }
     .top{
       cursor: pointer;

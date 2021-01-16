@@ -5,7 +5,7 @@
         单个文件不可超过5000条数据，数据量较大时请拆分文件上传
       </div>
     </pageTitle>
-    <div class="div__main">
+    <div class="div__main" v-if="groupList.length > 0">
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
@@ -30,7 +30,7 @@
             </VhallInput>
           </div>
         </div>
-        <!-- 操作栏 -->
+        <!-- 列表 -->
         <table-list
           ref="viewerTable"
           :manageTableData="viewerDao.list"
@@ -44,11 +44,10 @@
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
-          v-if="viewerDao && viewerDao.total > 0"
         >
         </table-list>
         <!-- 无消息内容 -->
-        <null-page v-else></null-page>
+        <null-page v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
@@ -75,6 +74,11 @@
         </div>
         <div class="clear"></div>
       </div>
+    </div>
+    <div v-else>
+      <null-page :nullType="'nullData'" :text="'您还没有观众分组，快来创建吧！'">
+        <el-button type="primary"  round @click="addGroupDialogShow(null)" v-preventReClick>添加分组</el-button>
+      </null-page>
     </div>
     <!-- 添加分组/ 重命名分组 -->
     <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
@@ -122,6 +126,7 @@
         <file-upload
           ref="viewerUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel',
@@ -304,6 +309,11 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.percent = 0
+      this.isUploadEnd = false
+    },
     fileDownLoad(imgUrl, name) {
       // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
       if (window.navigator.msSaveOrOpenBlob) {
@@ -883,7 +893,13 @@ export default {
   width: calc(100% - 256px);
   .padding-table-list2();
   background: #FFFFFF;
-  min-height: 500px;
+  min-height: 676px;
+  .data-list {
+    min-height: auto;
+    /deep/ .el-table__empty-block {
+      display: none;
+    }
+  }
 }
 .row__container {
   display: flex;

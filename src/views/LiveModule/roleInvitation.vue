@@ -521,12 +521,16 @@ export default {
   display: inline-block;
   margin-bottom: 24px;
   /* border: 1px dashed #EEEEEE; */
-  padding: 32px 32px;
+  padding: 32px 0 32px 32px;
   background: #FFFFFF;
   vertical-align: middle;
+  border-radius: 4px;
   &:nth-child(2n) {
     margin-right: 0;
     margin-left: 12px;
+  }
+  .role-card-head, .el-form, .role-qx-title {
+    padding-right: 32px;
   }
 }
 .title--label {
@@ -633,6 +637,7 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
+  height: 26px;
   margin-top: 24px;
   display: flex;
   justify-content: flex-start;

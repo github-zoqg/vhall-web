@@ -77,13 +77,13 @@
           tooltip-effect="dark"
           style="width: 100%"
           class="table-td56"
-          height="378px"
+          height="358px"
           :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
           @selection-change="checkMoreRow"
           @select-all="checkAllRow"
           v-show="total"
           v-loadMore="moreLoadData">
-           <el-table-column
+          <el-table-column
             type="selection"
             width="55"
             align="left"
@@ -96,7 +96,7 @@
           </el-table-column>
           <el-table-column
             label="操作"
-            width="100"
+            width="114"
             show-overflow-tooltip>
             <template slot-scope="scope">
               <el-button
@@ -148,6 +148,7 @@
         <file-upload
           ref="chatUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel'
@@ -268,6 +269,11 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.percent = 0
+      this.isUploadEnd = false
+    },
     getAllKeyWordList() {
       this.$fetch('getKeywordList', {
         keyword: '',
@@ -726,6 +732,25 @@ export default {
 .chat-dialog-content {
   /*dataList 里面已经包含30间距*/
   padding-bottom: 32px;
+  // 滚动条的宽度
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条 必写
+  }
+  // 滚动条的滑块
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    // background-color:#E0E0E0;
+    border-radius: 3px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: none;
+    background-color: rgba(255, 255, 255);
+  }
+  &:hover {
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      display: block;
+    }
+  }
 }
 .chat-add-dialog-content {
   &.add {
