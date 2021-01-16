@@ -122,7 +122,7 @@
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="400px">
+    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="400px" @close="closeImportViewer">
       <div class="upload-dialog-content">
         <file-upload
           ref="viewerUpload"
@@ -792,7 +792,10 @@ export default {
       this.importFileShow = false;
       this.isUploadEnd = false;
       this.fileUrl = '';
-      this.uploadResult.status === 'start'; // 删除回到开始状态
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     reloadViewerList() {
       if(!this.fileUrl) {
