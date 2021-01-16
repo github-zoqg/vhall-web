@@ -588,7 +588,7 @@ export default {
   }
   .img-box{
     width: 100%;
-    height: 135px;
+    height: 140px;
   }
   /deep/.length152{
     margin-top: 0px!important;
