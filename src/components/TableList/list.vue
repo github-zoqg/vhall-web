@@ -106,8 +106,11 @@
             </div> -->
             <!-- 文档，进度 -->
             <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
-              <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
-              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress>
+              <div v-if="!scope.row.transform_schedule_str" class="progressBox">
+                <el-progress :percentage="scope.row.codeProcess" ></el-progress>
+              </div>
+              <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
+              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress> -->
               <div v-else class="progressBox">
                 <!-- 样式变化 -->
                 <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}<span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span></span>

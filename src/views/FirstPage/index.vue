@@ -121,7 +121,7 @@
       </div>
       <div class="app-download">
         <div class="app-web">
-          <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/b4/57/b457d400f378d2c3411d13b525e4e40c.png?x-oss-process=image/resize,w_225,m_lfit" alt="">
+          <div class="img-show"><img src="../../common/images/account/banner2.png" alt=""/></div>
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
@@ -450,6 +450,20 @@ export default {
         .app-web{
           font-size: 0;
           border-radius: 4px;
+          .img-show {
+            width: 225px;
+            height: 117px;
+            img {
+              width: 100%;
+              height: 100%;
+              /* object-fit: cover; */
+              image-rendering: -moz-crisp-edges; /* Firefox */
+              image-rendering: -o-crisp-edges; /* Opera */
+              image-rendering: -webkit-optimize-contrast; /*Webkit (non-standard naming) */
+              image-rendering: crisp-edges;
+              -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+            }
+          }
           img{
             border-radius: 4px 4px 0 0;
           }
