@@ -1,6 +1,6 @@
 <template>
   <div class="line-charts">
-    <div :style="{ height: '240px', width: '100%' }" ref="visitEchart"></div>
+    <div :style="{ height: '330px', width: '100%' }" ref="visitEchart"></div>
   </div>
 </template>
 <script>
@@ -29,10 +29,6 @@ export default {
   },
   methods: {
     initLintEcharts(data) {
-      console.log(data, '????????????????')
-      let minLabel = '';
-      let maxLabel = '';
-      let level = 0;
       let visitDataDate = [];
       let visitDataValue = [];
       data.map(item => {
@@ -41,68 +37,6 @@ export default {
         // visitDataValue.push(item.value.replace(/,/g, ""));
       });
       // console.log(visitDataDate, visitDataValue);
-      if (visitDataDate.length) {
-        minLabel = visitDataDate[0], maxLabel = visitDataDate[visitDataDate.length - 1];
-        console.log('最小日期：', minLabel, '最大日期：', maxLabel);
-        /*1、一周内，每天都显示
-          2、一个月内，3天一个刻度
-          3、一个季度内，7天一个刻度
-          4、一年内，1个月一个刻度 */
-        let yearCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'year');
-        let monCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'month');
-        let dayCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'day');
-        console.log('计算', yearCha, monCha, dayCha);
-        let showTimeDate = [];
-        level = 0;
-        try {
-          if (yearCha >= 1) {
-            level = 365;
-            // 超过一年，年刻度
-            for(let i =0; i<= (dayCha > 0 ? yearCha + 1 : yearCha); i++) {
-              let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "years").format("YYYY-MM-DD");
-              showTimeDate.push(startTr);
-            }
-            showTimeDate = showTimeDate.reverse();
-          } else if (monCha <= 3 && monCha > 0) {
-            level = 7;
-            let maxDayCount = dayCha % 7 > 0  ? (parseInt(dayCha / 7) + 1) * 7 : dayCha;
-            // console.log('maxDayCount', maxDayCount)
-            // 一个季度内，7天一个刻度
-            for(let i =0; i<= maxDayCount; i += 7) {
-              let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "day").format("YYYY-MM-DD");
-              showTimeDate.push(startTr);
-            }
-            showTimeDate = showTimeDate.reverse();
-          } else if (monCha > 3) {
-            level = 30;
-            // 一年内，1个月一个刻度
-            for(let i =0; i<= monCha + 1; i ++) {
-              let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "month").format("YYYY-MM-DD");
-              showTimeDate.push(startTr);
-            }
-            showTimeDate = showTimeDate.reverse();
-          } else if (monCha === 0 && dayCha <= 7) {
-            level = 0;
-            // 一周内，每天都显示
-            showTimeDate = visitDataDate;
-          } else if (monCha === 0 && dayCha > 7) {
-            level = 3;
-            // 一个月内，3天一个刻度
-            let maxDayCount = dayCha % 3 > 0  ? (parseInt(dayCha / 3) + 1) * 3 : dayCha;
-            // console.log('maxDayCount', maxDayCount)
-            for(let i =0; i<= maxDayCount; i += 3) {
-              let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "day").format("YYYY-MM-DD");
-              showTimeDate.push(startTr);
-            }
-            showTimeDate = showTimeDate.reverse();
-          } else {
-            level = 0;
-            showTimeDate = visitDataDate;
-          }
-        }catch(e) {
-          console.log(e);
-        }
-      }
 
       let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
@@ -122,10 +56,10 @@ export default {
           max: 100,
         },
         grid: {
-          left: '65',
+          left: '85',
           top: '25',
-          bottom: '30',
-          right: '32'
+          bottom: '60',
+          right: '95'
         },
         tooltip: {
           trigger: 'axis',
@@ -155,7 +89,6 @@ export default {
           },
           axisLabel: {
             inside: false,
-            interval: minLabel.length < 19 ? level : 'auto',
             textStyle: {
               color: '#999999',
               fontSize: 12,
@@ -172,6 +105,18 @@ export default {
           },
           data: visitDataDate || [],
         },
+        dataZoom: [{
+            type: 'inside',
+            xAxisIndex: 0,
+            minSpan: 5
+        }, {
+            type: 'slider',
+            xAxisIndex: 0,
+            minSpan: 5,
+            height: 20,
+            bottom: 10,
+            handleSize: '100%'
+        }],
         yAxis: [
           {
             type: 'value',
