@@ -61,7 +61,8 @@
             trigger="click"
             v-for="(item, ins) in groupList"
             :key="`group${ins}`"
-            @click.prevent.stop="changeViewerList(item)"
+            @click.prevent.stop="changeViewerList(item, ins)"
+            :class="{'active': activeGroupIndex == ins}"
           >{{ item.subject }}
             <el-dropdown-menu slot="dropdown" style="width: 152px;">
               <el-dropdown-item command="rename">重命名</el-dropdown-item>
@@ -172,6 +173,7 @@ export default {
   },
   data() {
     return {
+      activeGroupIndex: '',
       isUploadEnd: false,
       percent: 0,
       isCheckout: true,
@@ -675,7 +677,8 @@ export default {
       }
     },
     // 每次改变，重新查询观众信息
-    changeViewerList(item) {
+    changeViewerList(item, index) {
+      this.activeGroupIndex = index;
       this.query.group_id = item.id;
       this.queryList();
     },
@@ -933,6 +936,13 @@ export default {
         color: #666666;
         border-color: #cccccc;
         background-color: #ffffff;
+      }
+    }
+    &.active {
+      .el-button {
+        border-color: #FB3A32;
+        background-color: #ffebeb;
+        color: #FB3A32;
       }
     }
     .el-dropdown__caret-button {
