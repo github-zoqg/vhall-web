@@ -119,8 +119,7 @@
               {{ scope.row[item.key]  || '- -'}}
             </div>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
-              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
+              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
           </template>
         </el-table-column>
@@ -367,6 +366,12 @@ export default {
   }
   .word-status {
     margin-right: 12px;
+    &.iconContainer {
+      padding-right: 0;
+    }
+    /deep/i.iconfont-v3 {
+      font-size: 20px;
+    }
   }
    /deep/.cell .advImg {
     width: 142px;
