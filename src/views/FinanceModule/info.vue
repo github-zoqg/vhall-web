@@ -527,7 +527,7 @@ export default {
       border-radius: 4px;
     }
     .grid-content{
-      margin: 22px 60px;
+      margin: 22px 40px;
       text-align: left;
       h1{
         font-size: 28px;

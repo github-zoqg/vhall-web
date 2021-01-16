@@ -386,7 +386,7 @@ export default {
     }
     .form-phone{
       display: flex;
-      padding: 30px 12px;
+      padding: 48px 12px;
       background: #fff;
       min-height: 730px;
     }
@@ -418,7 +418,7 @@ export default {
         width: 331px;
         height: 265px;
         display: block;
-        margin: 110px auto 0;
+        margin: 22px auto 0;
       }
       .pc-poster-wrap{
         position: absolute;
@@ -547,6 +547,6 @@ export default {
     height: 773px;
   }
   .el-form{
-    margin-top: 70px;
+    margin-top: 55px;
   }
 </style>
