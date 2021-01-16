@@ -172,18 +172,6 @@ export default {
           },
           data: dateData || [],
         },
-        dataZoom: [{
-            type: 'inside',
-            xAxisIndex: 0,
-            minSpan: 5
-        }, {
-            type: 'slider',
-            xAxisIndex: 0,
-            minSpan: 5,
-            height: 20,
-            bottom: 10,
-            handleSize: '100%'
-        }],
         yAxis: [
           {
           /*   name: this.sonVo.vip_info.type > 0 ? '流量' : '并发', */
@@ -233,6 +221,22 @@ export default {
           },
         ],
       };
+      if (valData && valData.length > 0) {
+        options.dataZoom = [{
+            type: 'inside',
+            xAxisIndex: 0,
+            minSpan: 5
+        }, {
+            type: 'slider',
+            xAxisIndex: 0,
+            minSpan: 5,
+            height: 20,
+            bottom: 10,
+            handleSize: '100%'
+        }];
+      } else {
+        options.dataZoom = [];
+      }
       // 使用刚指定的配置项和数据显示图表。
       this.myChart.setOption(options);
     }
