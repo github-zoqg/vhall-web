@@ -270,6 +270,8 @@ export default {
   },
   created() {
     this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
+    // 根據活動ID獲取活動信息
+    this.getWebinarInfo();
   },
   methods: {
     async updateSwitch() {
@@ -491,10 +493,6 @@ export default {
       // 根据ID获取活动-角色配置信息
       this.getPrivilegeInfo();
     }
-  },
-  created() {
-    // 根據活動ID獲取活動信息
-    this.getWebinarInfo();
   }
 };
 </script>

@@ -1,9 +1,9 @@
 <template>
   <div class="audienceBox">
     <pageTitle title="观众">
-      <div slot="content">
-        单个文件不可超过5000条数据，数据量较大时请拆分文件上传
-      </div>
+      <span class="dev-show-tips">
+        观众分组应用于观看限制中的白名单，设置后只有指定的观众才能观看活动
+      </span>
     </pageTitle>
     <div class="div__main" v-if="groupList.length > 0">
       <div class="table__container">
@@ -71,7 +71,7 @@
           </el-dropdown>
         </ul>
         <div class="group_button__add" @click.prevent.stop="addGroupDialogShow(null)">
-          <el-button size="medium" type="primary" round>点击添加分组</el-button>
+          <el-button size="medium" v-preventReClick type="primary" round>点击添加分组</el-button>
         </div>
         <div class="clear"></div>
       </div>
@@ -132,19 +132,31 @@
              path: pathUrl,
              type: 'exel',
           }"
-          :result="importResult"
-          :fileResult=fileResult
-          :progress="{
-            isUploadEnd: isUploadEnd,
-            percent: percent
-          }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
-          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
+          <div slot="upload-result">
+            <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
+            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+            <!-- 状态2： 已选择文件，提示上传中，进度条 -->
+            <div v-if="uploadResult && uploadResult.status === 'progress'">
+              <div class="progressBox">
+                <el-progress :percentage="percent" ></el-progress>
+              </div>
+            </div>
+            <!-- 状态3： 检测失败 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
+              <p class="p-error">{{uploadResult.text}}</p>
+            </div>
+            <!-- 状态4:  检测成功 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+            </div>
+          </div>
+          <!-- 状态1： 未上传 -->
+          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
         <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
         <div class="dialog-right-btn dialog-footer">
@@ -175,6 +187,10 @@ export default {
     return {
       activeGroupIndex: '',
       isUploadEnd: false,
+      uploadResult: {
+        status: 'start',
+        text: '请选择模板文件'
+      },
       percent: 0,
       isCheckout: true,
       isHandle: true,
@@ -313,8 +329,11 @@ export default {
   methods: {
     deleteFile() {
       this.fileUrl = ''
-      this.percent = 0
       this.isUploadEnd = false
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     fileDownLoad(imgUrl, name) {
       // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
@@ -685,7 +704,6 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
-      this.percent = 0;
       this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
@@ -696,6 +714,10 @@ export default {
           request_type: 0 // 校验
         }).then(resV => {
           this.fileResult = 'success';
+          this.uploadResult = {
+            status: 'success',
+            text: '检测成功'
+          }
           this.importResult = {
             success: resV.data.success_count,
             fail: resV.data.fail_count
@@ -705,6 +727,10 @@ export default {
           }
         }).catch(res => {
           this.fileResult = 'error';
+          this.uploadResult = {
+            status: 'error',
+            text: res.msg
+          }
           // this.$message.error(resV.msg || '检测观众信息失败！');
           this.importResult = null;
           if (this.$refs.viewerUpload) {
@@ -744,11 +770,19 @@ export default {
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
       this.isUploadEnd = false;
+      this.uploadResult = {
+        status: 'progress',
+        text: '上传中，请稍候'
+      }
       this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       // this.$message.error(`文件上传失败`);
+      this.uploadResult = {
+        status: 'error',
+        text: '文件上传失败'
+      }
       this.fileResult = 'error';
     },
     uploadPreview(file){
@@ -756,9 +790,9 @@ export default {
     },
     closeImportViewer() {
       this.importFileShow = false;
-      this.percent = 0;
       this.isUploadEnd = false;
       this.fileUrl = '';
+      this.uploadResult.status === 'start'; // 删除回到开始状态
     },
     reloadViewerList() {
       if(!this.fileUrl) {
@@ -785,9 +819,12 @@ export default {
           customClass: 'zdy-info-box'
         }); */
         this.importFileShow = false;
-        this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
+        this.uploadResult = {
+          status: 'start',
+          text: '请上传文件'
+        }
         // 刷新列表数据
         this.queryList();
       }).catch(res => {
@@ -1052,5 +1089,39 @@ export default {
   text-align: right;
   margin-bottom: 24px;
   margin-top: 22px;
+}
+/* 文件上传 */
+.p-right {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #888;
+  font-size: 14px;
+}
+.p-error {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #FB3A32;
+  font-size: 14px;
+}
+/deep/.el-progress__text /deep/i {
+  font-size: 18px;
+}
+.progressBox {
+  /deep/ .el-progress-bar__inner {
+    background-color: #14BA6A;
+  }
+}
+
+.dev-show-tips {
+  font-size: 14px;
+  font-weight: 400;
+  color:#999999;
+  line-height: 20px;
+  a {
+    color: #3562FA;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
 }
 </style>

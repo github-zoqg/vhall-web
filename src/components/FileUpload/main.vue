@@ -11,15 +11,7 @@
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="iconfont-v3 saasexcelwendang excel"></i>
           <p class="file-name" style="color: rgb(136, 136, 136);" :title="fileName">{{fileName}}</p>
-          <div class="change-txt" v-if="result && (progress.percent === 0 || progress.percent === 100)">
-            <p id="right">上传成功，共检测到{{result.success}}条有效数据</p>
-          </div>
-          <div class="change-txt" v-if="!result && (progress.percent === 0 || progress.percent === 100)">
-            <p id="error">{{errText}}</p>
-          </div>
-          <div class="change-txt" v-if="!progress.isUploadEnd && progress.percent > 0 && progress.percent < 100">
-            上传中，请稍后<el-progress :percentage="progress.percent" status="success"></el-progress>
-          </div>
+          <slot name="upload-result"></slot>
           <div class="mask">
             <span>
               <i class="el-icon-refresh-left"></i>
@@ -104,21 +96,6 @@ export default {
     coverPic: {
       type: Boolean,
       default: false
-    },
-    progress: {
-      type: Object,
-      default: function() {
-        return {
-          isUploadEnd: false,
-          percent: 0
-        };
-      }
-    },
-    result: {
-      type: Object,
-      default: function() {
-        return null;
-      }
     },
     'on-success': {
       type: Function,
@@ -316,13 +293,13 @@ export default {
     -webkit-box-orient: vertical;
     margin: 0 20px;
   }
-  .a-upload #right {
+  .a-upload .p-right {
     font-weight: 400;
     margin-top: -5px;
     color: #888;
     font-size: 14px;
   }
-  .a-upload #error {
+  .a-upload .p-error {
     font-weight: 400;
     margin-top: -5px;
     color: #FB3A32;
