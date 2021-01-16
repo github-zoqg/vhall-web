@@ -186,7 +186,11 @@ export default {
     width: 70px;
   }
 }
-
+ /deep/ .tox.tox-tinymce {
+  &:hover,&:focus {
+    border-color: #999;
+  }
+}
 .word-count{
   position: absolute;
   right: 12px;
