@@ -26,9 +26,7 @@
               <icon icon-class="saasshipinwenjian"></icon>
               <p>{{selectMedia.name}}</p>
             </div>
-            <!-- <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked"> -->
-            <div class="abRight">
-
+            <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
               <div class="tool" @click.stop="previewVideo">
                 <i class="iconfont-v3 saasicon-eye"></i>
                 <el-button type="text" class="operaBtn" >预览</el-button>
@@ -347,6 +345,9 @@ export default {
         width: 30px;
         line-height: 20px;
         margin: 0px 5px;
+        &:hover{
+          cursor: pointer;
+        }
       }
       span{
         color: #fff;
