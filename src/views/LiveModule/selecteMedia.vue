@@ -9,7 +9,7 @@
     :before-close="handleClose"
     width="800px">
     <div class="search"  v-show="total || isSearch">
-      <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @change="searchHandler" clearable>
+      <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
         <i class="el-icon-search el-input__icon"
         @click="searchHandler"
           slot="suffix"
@@ -32,13 +32,12 @@
         width="55">
       </el-table-column>
       <el-table-column
-       width="180"
         label="音视频名称">
           <template slot-scope="scope">
-            <span class="mediaName">
+            <span class="mediaName" :title="scope.row.name">
               <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.MP3' || scope.row.msg_url == '.MAV'"></i>
               <i class="iconfont-v3 saasshipinwenjian" v-else></i>
-              {{fontNumber(scope.row.name)}}
+              {{scope.row.name}}
             </span>
           </template>
         </el-table-column>
@@ -69,6 +68,7 @@
       <el-table-column
         label="操作"
         width="80"
+        align="left"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <el-button type="text" class="actionBtn" @click="preVidio(scope.row)">预览</el-button>
@@ -293,6 +293,15 @@ export default {
     .el-dialog {
       max-width: 800px;
     }
+    /deep/.el-dialog__body{
+      // padding: 0 24px;
+    }
+    /deep/.el-table__header-wrapper{
+      width: 100%;
+    }
+    // /deep/.el-dialog__footer{
+    //   padding:24px 32px;
+    // }
   }
   .statusTag{
     &::before{
@@ -316,6 +325,14 @@ export default {
   .mediaName{
     font-size: 14px;
     color: #1A1A1A;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .iconfont-v3{
+      font-size: 20px;
+      margin-top: -3px;
+    }
     .saasyinpinwenjian{
       color: #10d3a8;
       // padding-right: 2px;
