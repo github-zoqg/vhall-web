@@ -47,6 +47,7 @@
       <VhallDialog title="编辑" :visible.sync="editShowDialog" width="420px" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
+      <div class="edit-contianer">
         <div class="main-edit">
           <VhallInput v-model.trim="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
@@ -55,6 +56,7 @@
           <el-button size="medium" type="primary" round class="length104" @click="sureMaterialVideo" v-preventReClick>确定</el-button>
           <el-button size="medium" round class="length104"  @click="editShowDialog=false" >取消</el-button>
        </div>
+      </div>
       </VhallDialog>
     </template>
   </div>
@@ -474,7 +476,7 @@ export default {
     padding: 0 0 30px 0;
   }
   ::v-deep .el-dialog__header{
-    padding-top: 10px;
+    padding-top: 24px;
     text-align: left;
   }
   ::v-deep .el-dialog__headerbtn{
@@ -508,8 +510,8 @@ export default {
     /deep/ .el-dialog__body{
       width: 642px;
       height: 375px;
-      border-top: 16px solid #333;
-      border-bottom: 16px solid #333;
+      border-top: 10px solid #333;
+      border-bottom: 10px solid #333;
       background: #333;
       border-radius: 4px;
     }
@@ -534,8 +536,11 @@ export default {
     }
   }
 }
+.edit-contianer{
+  padding-bottom: 14px;
+}
 .main-edit{
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   padding-left: 20px;
   p{
     font-size: 12px;

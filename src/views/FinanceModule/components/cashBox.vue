@@ -22,9 +22,6 @@
            <el-button type="primary" class="length120" round @click="goBangWeixin">立即绑定</el-button>
         </div>
       </div>
-      <!-- <div class="nextBtn" v-if="!qrcode">
-
-      </div> -->
     </VhallDialog>
     <VhallDialog
       title="更改绑定微信"
@@ -54,7 +51,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="nextBtn">
+      <div class="nextBtn withdrawBtn">
         <el-button type="primary" class="length120" round @click="nextBinding"  :disabled="!code"
           >下一步</el-button>
       </div>
@@ -505,9 +502,9 @@ export default {
 }
 .nextBtn {
   text-align: center;
-  padding: 24px;
-  .el-button {
-    // padding: 10px 38px;
-  }
+  padding-bottom: 24px;
+}
+.withdrawBtn{
+  padding-top: 20px;
 }
 </style>

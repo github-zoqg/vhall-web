@@ -116,11 +116,11 @@
             <div v-else-if="item.key === 'video_name'" class="videoName">
               <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
               <i class="iconfont-v3 saasshipinwenjian" v-else></i>
-              {{ scope.row[item.key]  || '----'}}
+              {{ scope.row[item.key]  || '- -'}}
             </div>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] || '- -' }}
+              {{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
           </template>
         </el-table-column>
@@ -519,6 +519,14 @@ export default {
     text-align: center;
   }
   .videoName{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .iconfont-v3{
+      font-size: 20px;
+      vertical-align: middle;
+    }
     .saasyinpinwenjian{
       color: #10d3a8;
       padding-right: 3px;
@@ -564,7 +572,7 @@ export default {
 }
 /deep/.el-checkbox__inner {
   border-color: #999999;
-  &:hover {
+  &:hover, &:active {
     border-color: #FB3A32;
   }
 }

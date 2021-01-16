@@ -72,10 +72,10 @@ export default {
       console.log(tab, event);
       let tabCount = this.tabType === 'validSet' ? 1 : this.tabType === 'accountSet' ? 2 : 0;
       // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=${this.$route.query.tab}`;
-      // this.$refs[`${this.tabType}Comp`].initComp();
       this.$router.push({path: `/acc/info`, query: {
         tab: tabCount
       }})
+      this.$refs[`${this.tabType}Comp`].initComp();
     },
     updateAccount(account) {
       this.userInfo = account;

@@ -265,30 +265,48 @@ export default {
           webinar_id: this.$route.params.str
         }
         console.log(params, '同步到活动中');
-        this.$confirm('确定同步到活动？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
+        // this.$confirm('确定同步到活动？', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   customClass: 'zdy-message-box',
+        //   lockScroll: false,
+        //   cancelButtonClass: 'zdy-confirm-cancel'
+        // }).then(() => {
           // 同步到资料库
           this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
             if(res && res.code === 200) {
-              this.$message.success('同步成功');
+              this.$message({
+                message: '同步成功',
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.cancelCheckHandle();
               this.$emit('reload');
             } else {
-              this.$message.error(res.msg || '保存失败');
+              this.$message({
+                message: res.msg || '保存失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
           }).catch(e => {
             console.log(e);
-            this.$message.error(e.msg || '保存失败');
+            this.$message({
+              message: e.msg || '保存失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
-        }).catch(() => {
-        });
+      //   }).catch(() => {
+      //   });
       } else {
-        this.$message.info('已取消选择');
+        // this.$message.info('已取消选择');
         this.dialogVisible = false;
       }
     },

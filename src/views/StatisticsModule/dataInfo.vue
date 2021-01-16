@@ -6,7 +6,32 @@
         1.数据更新频率：天，不支持查看当日数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
-    <search-area
+    <div class="search">
+      <el-date-picker
+          v-model="dateValue"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          unlink-panels
+          @change="getDataList"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :picker-options="pickerOptions"
+          style="width: 240px;margin-right:16px"
+        />
+        <el-select filterable clearable v-model="versionType" v-if="parentId == 0 && childNum == 1"  style="width: 160px;vertical-align: top;">
+          <el-option
+            v-for="(opt, optIndex) in versionOptions"
+            :key="optIndex"
+            :label="opt.label"
+            :value="opt.value"
+          />
+        </el-select>
+        <div class="export-data">
+          <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
+        </div>
+    </div>
+    <!-- <search-area
       ref="searchArea"
       :active="active"
       :searchAreaLayout="searchAreaLayout"
@@ -14,7 +39,7 @@
       @onExportData="exportCenterData()"
       @onSearchFun="getDataList('search')"
     >
-    </search-area>
+    </search-area> -->
     <main-data :mainKeyData="mainKeyData"></main-data>
     <div class="statistical-data">
       <div class="statistical-title">统计图表</div>
@@ -102,6 +127,52 @@ export default {
           key: 'searchTime',
         }
       ],
+      versionOptions: [
+        {
+          label: '主账号',
+          value: 1,
+        },
+        {
+          label: '主账号+子账号',
+          value: 2,
+        }
+      ],
+      dateValue: '',
+      versionType: 1,
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '全部',
+            onClick(picker) {
+              const end = '';
+              const start = '';
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '近7日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 8);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '近30日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 31);
+              picker.$emit('pick', [start, end]);
+            }
+          }],
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
+        }
+      },
       allDataList: {},
       mainKeyData: {},
       lineDataList: [],
@@ -113,49 +184,40 @@ export default {
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
-    if (this.parentId == 0 && this.childNum == 1) {
-      this.searchAreaLayout.push({
-        type: '3',
-        key: 'type',
-        options: [
-          {
-            label: '主账号',
-            value: 1,
-          },
-          {
-            label: '主账号+子账号',
-            value: 2,
-          }
-        ],
-      })
-      // this.searchAreaLayout.map(item => {
-      //   item.key === 'type' ? item.options.push({label: '主账号+子账号',value: 2}) : []
-      // })
-    }
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getDataList();
   },
   methods: {
+    dealDisabledData(time) {
+      // return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+      return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+    },
     getDataList() {
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
-      let paramsObj = {
+      let params = {
         account_id: this.userId,
-        end_time: getRangeDays(1)
-      };
-      for (let i in formParams) {
-        if (i === 'searchTime' && formParams.searchTime) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
+        type: this.versionType,
+        start_time: this.dateValue ? this.dateValue[0] : '',
+        end_time: this.dateValue ? this.dateValue[1] : ''
       }
-      let obj = Object.assign({}, paramsObj);
+      // let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      // let paramsObj = {
+      //   account_id: this.userId,
+      //   end_time: getRangeDays(1)
+      // };
+      // for (let i in formParams) {
+      //   if (i === 'searchTime' && formParams.searchTime) {
+      //     paramsObj['start_time'] = formParams[i][0];
+      //     paramsObj['end_time'] = formParams[i][1];
+      //   } else {
+      //     paramsObj[i] = formParams[i];
+      //   }
+      // }
+      // let obj = Object.assign({}, paramsObj);
       this.loading = true;
-      this.params = obj;
-      this.getAllCenterData(obj);
+      this.params = params;
+      this.getAllCenterData(params);
     },
     // 获取总数据
     getAllCenterData(params) {
@@ -200,6 +262,32 @@ export default {
 
 <style lang="less" scoped>
 .data-info {
+  .search{
+    margin-bottom: 24px;
+    position: relative;
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      height: 36px;
+      background: transparent;
+    }
+    /deep/.el-range-input{
+      background: transparent;
+    }
+    /deep/.el-date-editor .el-range__icon{
+      line-height: 30px;
+    }
+    /deep/.el-date-editor .el-range__close-icon {
+      line-height: 28px;
+    }
+    /deep/.el-input__icon{
+      line-height: 36px;
+    }
+    .export-data {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
   .statistical-data {
     margin-top: 24px;
     padding: 24px 32px;

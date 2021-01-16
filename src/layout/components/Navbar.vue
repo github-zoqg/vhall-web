@@ -4,7 +4,7 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl">返回旧版</a></div>
+      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl" class="set-font">返回旧版</a></div>
       <!-- 下载中心 -->
       <div class="right-menu-item" @click.prevent.stop="toDownloadPage">
         <el-badge is-dot :hidden="!down_num > 0">
@@ -314,6 +314,12 @@ export default {
       margin-left: 6px;
     }
     &:first-child {
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #3562FA;
+    }
+    .set-font {
       font-size: 14px;
       font-family: @fontRegular;
       font-weight: 400;

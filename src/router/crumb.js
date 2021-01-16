@@ -364,7 +364,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'advertCard') {// 广告
+  else if (metaName === 'advertCard' && that.$route.params.str) {// 广告
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -439,6 +439,22 @@ export function CrumbSet(metaName, that) {
       {
         title: '文档',
         path: `/live/word/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'prizeSet') {// 抽奖
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '抽奖',
+        path: `/live/prizeSet/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }

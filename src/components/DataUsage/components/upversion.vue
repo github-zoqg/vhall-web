@@ -67,9 +67,10 @@
               <h3>{{ item.flow }}GB</h3>
               <p>+{{ item.gift_flow }}GB(赠送)</p>
               <b class="isMark">{{ flowInfo.flow_fee }}元/GB</b>
-              <label class="img-tangle" v-if="item.isChose">
+              <label class="img-tangle" v-if="item.isChose"><img src="../../../common/images/icon-choose.png" alt=""></label>
+              <!-- <label class="img-tangle" v-if="item.isChose">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
             </div>
           </div>
         </el-form-item>
@@ -129,6 +130,7 @@ export default {
   watch: {
     dialogBuyVisible() {
       if (this.dialogBuyVisible) {
+        this.checked = false;
         this.flowInfo = this.concurrentPrice.flow;
         this.nomalBuyList = this.flowInfo.plans,
         this.nomalBuyList.map(item => item.isChose = false)
@@ -138,6 +140,7 @@ export default {
     },
     dialogVisible() {
       if (this.dialogVisible) {
+        this.checked = false;
         this.currentInfo = this.concurrentPrice.concurrency;
         this.number = this.currentInfo.total_concurrency + 100;
       }
@@ -288,6 +291,9 @@ export default {
   font-weight: 600;
   color: #FB3A32;
 }
+/deep/.el-checkbox__input.is-checked+.el-checkbox__label{
+  color: #666;
+}
 .img-box {
   width: 182px;
   height: 104px;
@@ -340,22 +346,34 @@ export default {
       padding:1px 8px;
     }
     .img-tangle{
-      position: absolute;
-      right: 0;
-      top:0;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-      border-right-color: #FB3A32;
-      border-top-color: #FB3A32;
-      i{
-        color:#fff;
         position: absolute;
-        top: -8px;
-        right:-11px;
-        font-size: 10px;
+        right: -1px;
+        top:-1px;
+        width: 20px;
+        height: 20px;
+        font-size: 0;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
-    }
+    // .img-tangle{
+    //   position: absolute;
+    //   right: 0;
+    //   top:0;
+    //   width: 0;
+    //   height: 0;
+    //   border: 10px solid transparent;
+    //   border-right-color: #FB3A32;
+    //   border-top-color: #FB3A32;
+    //   i{
+    //     color:#fff;
+    //     position: absolute;
+    //     top: -8px;
+    //     right:-11px;
+    //     font-size: 10px;
+    //   }
+    // }
     &:last-child{
       margin-right: 0;
     }

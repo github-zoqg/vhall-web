@@ -1148,4 +1148,34 @@ button.el-button.el-button--white-primary {
     }
   }
 }
+/*确定同步xxxx至XXXX 弹出框*/
+.zdy-async-dialog {
+  .async__body {
 
+  }
+  .async__ctx {
+    p {
+      font-size: 14px;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 20px;
+      margin-bottom: 8px;
+    }
+    /deep/.el-checkbox {
+      /deep/.el-checkbox__label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 20px;
+        padding-left: 8px;
+      }
+    }
+  }
+  .async__footer {
+    padding: 16px 0 24px 0;
+    text-align: right;
+    /deep/.el-button+.el-button {
+      margin-left: 12px;
+    }
+  }
+}

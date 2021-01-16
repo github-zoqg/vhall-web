@@ -633,6 +633,7 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
+  height: 26px;
   margin-top: 24px;
   display: flex;
   justify-content: flex-start;

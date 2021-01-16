@@ -6,15 +6,40 @@
       </div>
     </pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
-    <search-area
-      ref="searchArea"
-      v-if="searchAreaLayout"
-      :searchAreaLayout="searchAreaLayout"
-      :active="active"
-      @onExportData="exportCenterData()"
-      @onSearchFun="getDataList('search')"
-      >
-    </search-area>
+    <div class="search">
+      <el-select filterable clearable v-model="type" @change="changeType" v-if="liveDetailInfo.webinar_state!=4"  style="width: 160px;vertical-align: top;margin-right:16px">
+        <el-option
+          v-for="(opt, optIndex) in timeData"
+          :key="optIndex"
+          :label="opt.label"
+          :value="opt.value"
+        />
+      </el-select>
+      <el-date-picker
+        v-model="dateValue"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        unlink-panels
+        @change="getDataList"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+        v-if="type=='1'"
+        style="width: 240px;"
+      />
+      <el-select filterable clearable v-model="switchId" v-if="type=='2'" @change="getDataList"  style="width: 160px;vertical-align: top;">
+        <el-option
+          v-for="(opt, optIndex) in switchList"
+          :key="optIndex"
+          :label="opt.label"
+          :value="opt.value"
+        />
+      </el-select>
+      <div class="export-data">
+        <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
+      </div>
+      </div>
     <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
     <div class="statistical-data">
       <div class="statistical-title">统计图表</div>
@@ -92,7 +117,10 @@ export default {
       deviceDataList: [],
       browerDataList: [],
       isActive: 1,
+      switchId: '',
+      dateValue: '',
       switchList: [],
+      type: '1',
       timeData: [
         {
           label: '按时间筛选',
@@ -103,98 +131,50 @@ export default {
           value: '2',
         },
       ],
-      searchAreaLayout: [],
-      searchLayout: [
-        {
-          type: "3",
-          key: "searchIsTime",
-          options: [
-            {
-              label: '按时间筛选',
-              value: '1',
-            },
-            {
-              label: '按场次筛选',
-              value: '2',
-            },
-          ]
-        },
-        {
-          type: "1",
-          active: 2,
-          options: [
-            {
-              title: '全部',
-              active: 1,
-            },
-            {
-              title: '今日',
-              active: 2,
-            },
-            {
-              title: '近7日',
-              active: 3,
-            },
-            {
-              title: '近30日',
-              active: 4,
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '全部',
+            onClick(picker) {
+              const end = '';
+              const start = '';
+              picker.$emit('pick', [start, end]);
             }
-          ]
-        },
-        {
-          type: "2",
-          key: "searchTime",
-        },
-      ],
-      searchArea: [
-        {
-          type: "3",
-          key: "searchIsTime",
-          options: [
-            {
-              label: '按时间筛选',
-              value: '1',
-            },
-            {
-              label: '按场次筛选',
-              value: '2',
-            },
-          ]
-        },
-        {
-          type: "3",
-          key: "switchId",
-          options: []
-        }
-      ],
-      searchVodOut: [
-        {
-          type: "1",
-          active: 2,
-          options: [
-            {
-              title: '全部',
-              active: 1,
-            },
-            {
-              title: '今日',
-              active: 2,
-            },
-            {
-              title: '近7日',
-              active: 3,
-            },
-            {
-              title: '近30日',
-              active: 4,
+          },
+          {
+            text: '今日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime());
+              start.setTime(start.getTime());
+              picker.$emit('pick', [start, end]);
             }
-          ]
-        },
-        {
-          type: "2",
-          key: "searchTime",
+          },
+          {
+            text: '近7日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 8);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '近30日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 31);
+              picker.$emit('pick', [start, end]);
+            }
+          }],
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
         }
-      ]
+      }
     };
   },
   components: {
@@ -206,24 +186,34 @@ export default {
     PageTitle
   },
   created() {
+    this.initPage();
     this.getLiveDetail();
   },
   mounted() {
     // this.getLiveDetail();
   },
   methods: {
+    dealDisabledData(time) {
+      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+      // return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+    },
+    initPage() {
+      // 初始化设置日期为今天
+      const end = new Date();
+      const start = new Date();
+      end.setTime(end.getTime());
+      start.setTime(start.getTime());
+      this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+    },
     //获取直播详情
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         if (this.liveDetailInfo.webinar_state != 4) {
-          this.searchAreaLayout = this.searchLayout;
           this.getLiveSwitchInfo();
           this.titleType = 1;
         } else {
           this.titleType = 4;
-          this.searchAreaLayout = this.searchVodOut;
-          console.log(this.searchAreaLayout, '11111111111111111');
         }
         this.getDataList();
       }).catch(error=>{
@@ -243,47 +233,14 @@ export default {
       })
     },
     getDataList(params) {
-      let formParams = this.$refs.searchArea.searchParams;
       let paramsObj = {
         webinar_id: this.$route.params.str,
-        switch_id: formParams.switchId || 0
+        switch_id: this.switchId || 0,
+        start_time: this.dateValue ? this.dateValue[0] : '',
+        end_time: this.dateValue ? this.dateValue[1] : ''
       };
-      if (this.liveDetailInfo.webinar_state != 4) {
-        if (formParams.searchIsTime == 2) {
-          this.searchArea.map(item => {
-            item.key === 'switchId' ? item.options = this.switchList : []
-          })
-          this.searchAreaLayout = this.searchArea;
-          formParams.end_time = '';
-          formParams.start_time = '';
-        } else {
-          this.searchAreaLayout = this.searchLayout;
-          paramsObj.switch_id = 0;
-          // formParams.switchId = 0;
-        }
-      }
-      if (formParams.end_time && !formParams.start_time) {
-        formParams.end_time = '';
-        formParams.start_time = '';
-      } else {
-        if (formParams.searchIsTime == 2) {
-          paramsObj.start_time = '';
-          paramsObj.end_time = '';
-        } else {
-          paramsObj.start_time = getRangeDays(this.active);
-          paramsObj.end_time = getRangeDays(this.active);
-        }
-      }
-      for (let i in this.$params(formParams)) {
-        if (i === 'searchTime' && formParams.searchTime) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
-      }
       this.params = this.$params(paramsObj);
-      this.getAllData(paramsObj);
+      this.getAllData(this.$params(paramsObj));
     },
     getAllData(params) {
       let promiseArr = [] //promise异步数组
@@ -356,6 +313,14 @@ export default {
         }
       })
     },
+    changeType() {
+      if (this.type == 1) {
+        this.switchId = '';
+      } else {
+        this.dateValue = '';
+      }
+      this.getDataList()
+    },
     changeTime(title) {
       if (title === '直播') {
         this.isActive = true;
@@ -373,6 +338,32 @@ export default {
 .contain-data {
   // margin: 0 41px;
   padding: 0;
+  .search{
+    position: relative;
+    margin-bottom: 24px;
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      height: 36px;
+      background: transparent;
+    }
+    /deep/.el-range-input{
+      background: transparent;
+    }
+    /deep/.el-date-editor .el-range__icon{
+      line-height: 30px;
+    }
+    /deep/.el-date-editor .el-range__close-icon {
+      line-height: 28px;
+    }
+    /deep/.el-input__icon{
+      line-height: 36px;
+    }
+    .export-data {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+  }
 }
 .statistical-data {
   background: #fff;

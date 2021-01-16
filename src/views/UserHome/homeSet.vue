@@ -105,8 +105,8 @@
           </div>
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" v-preventReClick round @click.prevent.stop="saveHandle">保 存</el-button>
-          <el-button round @click.prevent.stop="returnHandle">取 消</el-button>
+          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveHandle">保 存</el-button>
+          <el-button round  class="length152" @click.prevent.stop="returnHandle">取 消</el-button>
         </el-form-item>
       </el-form>
     </div>
