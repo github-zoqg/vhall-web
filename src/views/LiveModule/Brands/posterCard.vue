@@ -82,23 +82,23 @@
                 <!-- <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" /> -->
                 <img class="hb_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
                 <!-- 开启 并且有图-->
-                <div class="pc-poster-wrap"  v-if="domain_url && status <= 0">
-                  <img class="hb_img v-poster-preview" :src="domain_url" alt=""/>
+                <div class="pc-poster-wrap"  v-if="status <= 0">
+                  <img class="hb_img v-poster-preview" :src="domain_url" alt="" v-show="domain_url"/>
                 </div>
-                <el-button v-show="domain_url" class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
+                <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
               </div>
             </div>
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
           <div class="official-app null-page" v-show="switchType === 'app'">
-            <span class="title">开屏海报展示</span>
+            <span class="title">开屏海报展示{{status}},{{showPoster}},{{alertType}}</span>
             <!-- 开屏海报 -->
-            <div class="hb_app" v-if="status <= 0 && showPoster">
-              <div class="poster-img" v-show="domain_url">
+            <div class="hb_app">
+              <div class="poster-img" v-if="status <= 0 && showPoster && domain_url">
                 <img :src="domain_url" alt="">
               </div>
-              <el-button v-show="domain_url" class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
+              <el-button class="poster-btn" size="mini" v-if="status <= 0" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
             </div>
           </div>
           <!--手机预览,end-->
