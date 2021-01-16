@@ -20,11 +20,11 @@
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item label="二维码">
+            <el-form-item label="二维码"  prop="img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
-                  v-model="img"
+                  v-model="form.img"
                   :domain_url="domain_url"
                   :saveData="{
                      path: pathUrl,
@@ -36,7 +36,7 @@
                   :on-preview="uploadPreview"
                   @handleFileChange="handleFileChange"
                   :before-upload="beforeUploadHnadler"
-                  @delete="img = '', domain_url = ''">
+                  @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
                     <p>建议尺寸：160*160px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
@@ -117,7 +117,6 @@ import Env from '@/api/env.js';
 export default {
   data() {
     return {
-      img: '',
       domain_url: '',
       imgShowUrl: '',
       status: null,
@@ -125,9 +124,13 @@ export default {
       switchType: 'app',
       showPoster: false,
       form: {
+        img: '',
         url: ''
       },
       formRules: {
+        img: [
+          { required: true, message: '请上传二维码', trigger: 'blur' },
+        ],
         url: [
           { required: false, message: '请输入跳转链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
@@ -182,6 +185,8 @@ export default {
           customClass: 'zdy-info-box'
         });
         this.status = status;
+        // 重新获取数据
+        this.getData();
       }).catch(res => {
         this.$message({
           showClose: true,
@@ -210,7 +215,7 @@ export default {
         webinar_id: this.$route.params.str
       }).then(res => {
         if(res && res.code === 200) {
-          this.img = res.data.img || '';
+          this.form.img = res.data.img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
           if (this.domain_url) {
@@ -235,20 +240,10 @@ export default {
       });
     },
     preSure() {
-      if (Number(this.status === 0) && !this.img) {
-        this.$message({
-          message: '请上传二维码图片',
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
-      }
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.img ? this.$parseURL(this.img).path : '' // 公众号/开屏海报  图片地址
+        img: this.form.img ? this.$parseURL(this.form.img).path : '' // 公众号/开屏海报  图片地址
       };
       let type = this.alertType;
       params.alert_type = type; // 公众号-弹窗方式：0自动弹出 1手动弹出
@@ -281,7 +276,7 @@ export default {
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
-        this.img = file_url;
+        this.form.img = file_url;
         this.domain_url = domain_url;
         if (this.domain_url) {
           if (this.switchType == 'pc') {
@@ -291,6 +286,8 @@ export default {
           }
         }
       }
+      // 触发验证
+      this.$refs.officialForm.validateField('img');
     },
     beforeUploadHnadler(file){
       console.log(file);
