@@ -406,9 +406,6 @@ export default {
   user-select: none;
 }
   .offical-show{
-    /deep/.el-switch__label.is-active {
-        color: #1A1A1A;
-    }
     .show-on{
       position: absolute;
       top: 42px;
