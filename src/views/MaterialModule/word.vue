@@ -53,7 +53,7 @@
         </el-upload>
         <!--<el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>-->
         <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
-        <el-button round @click="wordMultiDel" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
+        <el-button round @click="wordMultiDel" class="transparent-btn" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
         <el-input
           class="head-btn search-tag"
           placeholder="请输入文档名称"
