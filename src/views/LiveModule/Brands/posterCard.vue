@@ -419,9 +419,10 @@ export default {
     }
     .form-phone{
       display: flex;
-      padding: 30px 12px;
+      padding: 48px 12px;
       background: #fff;
       min-height: 730px;
+      border-radius: 4px;
     }
     .official-form{
       width: 482px;
@@ -522,7 +523,7 @@ export default {
         background-image: url('../../../common/images/official/phone-model.png');
       }
       background-size: cover;
-      margin-top: -15px;
+      margin-top: -24px;
       position: relative;
       .title{
         display: inline-block;
@@ -603,6 +604,6 @@ export default {
     height: 773px;
   }
   .el-form{
-    margin-top: 70px;
+    margin-top: 55px;
   }
 </style>
