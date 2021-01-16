@@ -22,6 +22,7 @@ import 'tinymce/plugins/image'; //图片插件
 import 'tinymce/plugins/quickbars';//快速栏插件
 import 'tinymce/plugins/wordcount';//快速栏插件
 import 'tinymce/plugins/fullscreen';//全屏插件
+import 'tinymce/plugins/paste';//复制插件
 
 import {sessionOrLocal} from "@/utils/utils";
 import VueTinymce from './editorPlugin'
@@ -79,7 +80,7 @@ export default {
       tinymceId: this.id,
       setting: {
         selector: `#${this.tinymceId}`,
-        plugins: 'fullscreen image wordcount',
+        plugins: 'fullscreen image wordcount paste',
         // 字体Icon 库。  等瑞芳提供完整时 进行替换
         icons_url: '//cnstatic01.e.vhall.com/saas/common_libs/editor/icons.js',
         icons: 'vhall',
@@ -89,6 +90,7 @@ export default {
         // 引入汉化组件
         language_url: require('../../common/js/tinynce/zh_CN.js'),
         language: 'zh_CN',
+        paste_as_text: true, //只粘贴文本
         height: this.height || 300,
         menubar: false, // 隐藏菜单
         convert_urls: false, // 关闭url自动识别转换

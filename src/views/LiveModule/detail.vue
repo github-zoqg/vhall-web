@@ -17,9 +17,12 @@
           </div>
 
           <div class="info">
-            <p class="mainColor font-20" :title="liveDetailInfo.subject">
+            <div class="hidden_hover">
+            <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
+            <p class="title_hover">{{ liveDetailInfo.subject }}</p>
+            </div>
             <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
@@ -27,11 +30,11 @@
               <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
-              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:10px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:8px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                 placement="bottom"
                 trigger="hover"
-                style="margin-right:15px"
+                style="margin-right:8px"
               >
                 <div class="invitation-code">
                   <p>活动观看页</p>
@@ -390,6 +393,7 @@ export default {
           font-size: 20px;
           // display: table-cell;
           vertical-align: middle;
+          cursor: pointer;
         }
         &:last-child{
           margin-bottom: 20px;
@@ -402,6 +406,24 @@ export default {
         //   // margin-bottom: 20px;
         //   line-height: 20px;
         // }
+      }
+
+      .hidden_hover:hover .title_hover{
+        display: block;
+      }
+      .title_hover{
+        position: absolute;
+        left: 40%;
+        top: 35%;
+        border-radius: 4px;
+        width: 368px;
+        line-height: 17px;
+        background: rgba(#1A1A1A, 0.95);
+        font-size: 12px;
+        color: #fff;
+        padding: 8px 10px;
+        z-index: 100;
+        display: none;
       }
     }
     .thumb{
@@ -507,6 +529,10 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  position: relative;
+  // &:hover .info .title_hover {
+  //   display: block;
+  // }
   // max-width: 500px;
   // height: 56px;
   // overflow: hidden;
