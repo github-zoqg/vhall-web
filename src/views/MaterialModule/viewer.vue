@@ -126,6 +126,7 @@
         <file-upload
           ref="viewerUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel',
@@ -308,6 +309,11 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.percent = 0
+      this.isUploadEnd = false
+    },
     fileDownLoad(imgUrl, name) {
       // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
       if (window.navigator.msSaveOrOpenBlob) {

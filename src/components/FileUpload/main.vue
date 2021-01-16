@@ -20,6 +20,18 @@
           <div class="change-txt" v-if="!progress.isUploadEnd && progress.percent > 0 && progress.percent < 100">
             上传中，请稍后<el-progress :percentage="progress.percent" status="success"></el-progress>
           </div>
+          <div class="mask">
+            <span>
+              <i class="el-icon-refresh-left"></i>
+              <br/>
+              重置
+            </span>
+             <span @click.stop.prevent="deletes">
+              <i class="iconfont-v3 saasicon_shanchu"></i>
+              <br/>
+              删除
+            </span>
+          </div>
         </a>
         <div v-else class="noPic">
           <i class="iconfont-v3 saasicon_shangchuan"></i>
@@ -210,6 +222,7 @@ export default {
       width: 100%;
       height: 100%;
       display: table;
+      position: relative;
       >div{
         width: 100%;
         height: 140px;
@@ -241,7 +254,11 @@ export default {
     background: rgba(0, 0, 0, 0.6);
     border-radius: 2px 2px 4px 4px;
     display: none;
+    justify-content: center;
+    align-items: center;
     span{
+      cursor: pointer;
+      color: #fff;
       &:nth-child(2){
         margin: 0  10px;
       }
@@ -266,11 +283,16 @@ export default {
     line-height: 28px;
     text-align: center;
     cursor: initial;
-    border: solid 1px #E2E2E2;
+    // border: solid 1px #E2E2E2;
     color: #222;
     border-radius: 2px;
     background-color: #F7F7F7;
     overflow: hidden;
+    &:hover {
+      .mask {
+        display: flex;
+      }
+    }
   }
   .a-upload .img {
     display: inline-block;

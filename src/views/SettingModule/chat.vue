@@ -148,6 +148,7 @@
         <file-upload
           ref="chatUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel'
@@ -268,6 +269,11 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.percent = 0
+      this.isUploadEnd = false
+    },
     getAllKeyWordList() {
       this.$fetch('getKeywordList', {
         keyword: '',
