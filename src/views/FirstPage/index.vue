@@ -2,32 +2,32 @@
   <div class="data-center">
     <div class="main-center">
       <data-usage></data-usage>
-      <el-row type="flex" class="row-center" justify="space-between" :gutter="20" >
-        <el-col :span="colVal">
+      <el-row type="flex" class="row-center" :gutter="16" >
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toCreateLive">
             <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
-        <el-col :span="colVal">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toUploadWord">
             <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
-        <el-col :span="colVal">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toBrandSet">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>设置中心</h3>
           </div>
         </el-col>
-        <el-col :span="colVal" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
+        <el-col :xl="{span: colVal}" v-if="(childPremission && Number(childPremission.permission_data) === 0)">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>
           </div>
         </el-col>
-        <el-col :span="colVal">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务中心</h3>
