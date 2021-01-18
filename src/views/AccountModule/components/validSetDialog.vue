@@ -717,6 +717,9 @@ export default {
   top: 100%;
   left: 0;
 }
+/deep/.el-input__inner {
+  height: 40px!important;
+}
 .el-input-group__append {
   /deep/.el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
     background: transparent;
@@ -733,12 +736,12 @@ export default {
   margin-bottom: 0;
   margin-top: -20px;
   a {
-    color: #fb3a32;
+     color: #3562FA;
     &:hover {
-      color: #fc615b;
+      color: #3562FA;
     }
     &:active {
-      color: #e2332c;
+      color:#3562FA;
     }
   }
 }
