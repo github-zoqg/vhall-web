@@ -980,7 +980,7 @@ export default {
     }
     &.active {
       .el-button {
-        border-color: #FB3A32;
+        border-color:#ffebeb;
         background-color: #ffebeb;
         color: #FB3A32;
       }

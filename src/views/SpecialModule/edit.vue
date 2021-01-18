@@ -28,7 +28,16 @@
       <el-form-item label="专题简介" required>
         <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
-      <el-form-item label="预约人数">
+      <p class="switch__box">
+        <el-switch
+          v-model="formData.reservation"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="预约人数"
+          :active-text="reservationDesc">
+        </el-switch>
+      </p>
+      <!-- <el-form-item label="预约人数">
         <p class="switch__box">
           <el-switch
             v-model="formData.reservation"
@@ -37,27 +46,29 @@
             :active-text="reservationDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="专题热度">
+      </el-form-item> -->
+      <!-- <el-form-item label="专题热度"> -->
         <p class="switch__box">
           <el-switch
             v-model="formData.hot"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            inactive-text="专题热度"
             :active-text="hotDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="关联主页">
+      <!-- </el-form-item> -->
+      <!-- <el-form-item label="关联主页"> -->
         <p class="switch__box">
           <el-switch
             v-model="formData.home"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            inactive-text="关联主页"
             :active-text="homeDesc">
           </el-switch>
         </p>
-      </el-form-item>
+      <!-- </el-form-item> -->
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
@@ -466,6 +477,14 @@ export default {
     .tox-tinymce{
       border-radius: 4px;
     }
+    /deep/.el-switch__label--left {
+      margin-right: 13px;
+    }
+  }
+  .switch__box{
+    line-height: 35px;
+    padding-bottom: 10px;
+    padding-left: 10px;
   }
   .el-form-item{
     width: 100%;

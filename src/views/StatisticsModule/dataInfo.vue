@@ -237,7 +237,7 @@ export default {
     },
     // 导出
     exportCenterData() {
-      this.$fetch('exportCenterInfo', this.params).then(res => {
+      this.$fetch('exportCenterInfo', this.$params(this.params)).then(res => {
         if (res.code == 200) {
           this.$message.success(`账号维度下数据报告导出成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
