@@ -389,7 +389,7 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '公众号展示',
+        title: '公众号',
         path: `/live/officialCard/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
@@ -405,7 +405,7 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '公众号展示',
+        title: '公众号',
         path: `/live/officeSet/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'

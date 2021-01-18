@@ -1,6 +1,6 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="公众号展示">
+    <pageTitle title="公众号">
       <div class="switch__box">
         <el-switch
           class="el-role-switch"
@@ -92,7 +92,7 @@
           <!--PC预览,end-->
           <!--手机预览，begin-->
           <div class="official-app" v-show="switchType === 'app'">
-            <span class="title">公众号展示</span>
+            <span class="title">公众号</span>
             <!-- 公众号 -->
             <div class="gzh_app"  v-if="!(alertType > 0)">
               <div class="gzh_img_layout">
