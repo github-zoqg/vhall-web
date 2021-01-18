@@ -441,15 +441,15 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否保存${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
+    this.$confirm(`是否取消${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
       lockScroll: false,
       cancelButtonClass: 'zdy-confirm-cancel'
     }).then(() => {
-    }).catch(() => {
       next()
+    }).catch(() => {
     });
   },
   created(){

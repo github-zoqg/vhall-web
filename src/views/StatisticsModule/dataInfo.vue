@@ -155,7 +155,7 @@ export default {
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 8);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
             }
           }, {
@@ -164,7 +164,7 @@ export default {
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 31);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
             }
           }],

@@ -138,8 +138,8 @@ export default {
       ],
       liveDataList: [
         { icon: 'icon_document@2x', id: 1, title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`,isShow: true},
-        { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.perssionInfo['ui.show_lottery']==1},
-        { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', path: '/live/question',isShow: this.perssionInfo.survey==1 },
+        { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.perssionInfo['ui.hide_lottery']==0},
+        { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', path: '/live/question',isShow: this.perssionInfo['ui.hide_survey']==0 },
         { icon: 'icon_goods@2x', id: 4, title: '商品', subText: '直播中展示商品给观众', path: `/live/productSet/${this.$route.params.str}`,isShow: this.perssionInfo.product_show==1},
         { icon: 'icon_gift@2x', id: 5, title: '礼物', subText: '直播中观众发送的礼物', path: `/live/gift/${this.$route.params.str}`,isShow: this.perssionInfo['ui.show_gift']==1},
       ],

@@ -215,6 +215,8 @@ export default {
             this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
               this.phone = res.data.phone;
               this.countDown();
+            }).catch(res => {
+              this.$message.error(res.msg);
             });
           }
         } else {
@@ -248,6 +250,8 @@ export default {
         } else {
           this.$message.error(res.msg || '提现失败');
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信短信验证码
@@ -269,6 +273,8 @@ export default {
         } else {
           this.callCaptcha();
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信 ---获取绑定微信二维码

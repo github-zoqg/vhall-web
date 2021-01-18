@@ -255,6 +255,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
+        this.$parent.isChange = false;
         this.$router.push({path: "/material/video"});
       }).catch(()=>{});
     }
