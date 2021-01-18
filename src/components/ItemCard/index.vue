@@ -61,7 +61,7 @@
       <div class="subjectOuter">
         <div class="sunjectInner" @click="goHandler(type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`)">
           <!-- <icon class="icon" icon-class="saasicon_huifangguanli"></icon> -->
-          <span><img src="../../common/images/icon/icon_playback@2x.png" alt=""></span>
+          <span><img src="../../common/images/icon/icon_review.png" alt=""></span>
 
           <div class="desc">
             <p class="mainText">{{ type == 4 ? '点播管理' : '回放管理'}}</p>
