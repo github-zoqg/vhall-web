@@ -92,7 +92,7 @@
           <!--PC预览,end-->
           <!--手机预览，begin-->
           <div class="official-app null-page" v-show="switchType === 'app'">
-            <span class="title">开屏海报展示{{status}},{{showPoster}},{{alertType}}</span>
+            <span class="title">开屏海报展示</span>
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img" v-if="status <= 0 && showPoster && domain_url">
