@@ -344,19 +344,16 @@ export default {
           }
           break;
         case 2 :
-           this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
+           this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
           break;
         case 3 :
           let list = this.$Vhallplayer.getUsableSpeed()
           if (this.formOther.doubleSpeed) {
-            // this.$Vhallplayer.openControls(false)
             this.$Vhallplayer.setPlaySpeed(list[0])
-            // this.$Vhallplayer.openControls(true)
-            // document.querySelector('.vhallPlayer-container').style.display = 'block'
-            // document.querySelector('.vhallPlayer-container').classList.remove('hide')
+          
              document.querySelector('.vhallPlayer-speed-component').style.display = "block"
           }else {
-            // this.$Vhallplayer.openControls(true)
             document.querySelector('.vhallPlayer-speed-component').style.display = "none"
           }
           break;
@@ -478,17 +475,6 @@ export default {
         type: 'success'
       });
     },
-    // 开启和隐藏控制台-- 由于sdk文档上这个开关控制条的方法=>openControls不能用，用获取dom去控制
-    // changeController (data) {
-    //   if( Number(data['progress_bar'])) {
-    //     document.querySelector('.vhallPlayer-container').style.visibility = 'visible'
-    //     document.querySelector('.vhallPlayer-container').style.opacity = 1
-    //   }else {
-    //     document.querySelector('.vhallPlayer-container').style.visibility = 'hidden'
-    //     document.querySelector('.vhallPlayer-container').style.opacity = 0
-    //     document.querySelector('.vhallPlayer-container').style.display= 'none'
-    //   }
-    // },
     // 初始化播放器
     initPlayer() {
       this.showVideo = true;
