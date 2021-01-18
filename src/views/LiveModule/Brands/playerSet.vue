@@ -201,6 +201,7 @@ export default {
   data() {
     return {
       activeName: 'first',
+      loading: true,
       showVideo: false,
       totalTime: 0,
       scrolling_open: false,
@@ -289,7 +290,12 @@ export default {
   },
   mounted () {
     this.initPlayer();
-   
+
+  },
+  beforeDestroy() {
+    if(this.$Vhallplayer){
+      this.$Vhallplayer.destroy();
+    }
   },
   methods: {
     // 预览视频
@@ -308,6 +314,7 @@ export default {
     // 关闭跑马灯
     closeHorseInfo() {
       if (!this.scrolling_open) {
+        console.log('111111111111111111111')
         this.preFormHorse();
       }
     },
@@ -346,13 +353,16 @@ export default {
           }
           break;
         case 2 :
-           this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          // eslint-disable-next-line no-case-declarations
+          let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
+           this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
           break;
         case 3 :
+          // eslint-disable-next-line no-case-declarations
           let list = this.$Vhallplayer.getUsableSpeed()
           if (this.formOther.doubleSpeed) {
-            // this.$Vhallplayer.openControls(false)
             this.$Vhallplayer.setPlaySpeed(list[0])
+
              document.querySelector('.vhallPlayer-speed-component').style.display = "block"
           }else {
             document.querySelector('.vhallPlayer-speed-component').style.display = "none"
@@ -392,11 +402,12 @@ export default {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
+          this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
           this.otherOtherInfo(1)
           this.$nextTick(()=>{
             if (this.formOther.doubleSpeed) {
-              this.$Vhallplayer.setPlaySpeed(list[0])
+              // this.$Vhallplayer.setPlaySpeed(list[0])
                 document.querySelector('.vhallPlayer-speed-component').style.display = "block"
               }else {
                 document.querySelector('.vhallPlayer-speed-component').style.display = "none"
@@ -461,12 +472,12 @@ export default {
             if (this.vm) {
               this.vm.close();
             }
-            if (!this.checkEnter) this.messageInfo();  
+            if (!this.checkEnter) this.messageInfo();
             let backSettingData = res.data;
             this.$nextTick(()=>{
               console.log('弹幕',this.$Vhallplayer,vp);
               Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
-              
+
            })
 
            this.checkEnter = false
@@ -523,6 +534,7 @@ export default {
           watermarkOptionPosition = ['5%','70%']
           break;
       }
+      console.log(this.scrolling_open, ':?????????????????????')
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
@@ -550,8 +562,8 @@ export default {
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
-              enable: true
-            }
+            enable: true
+          }
 
       };
       return new Promise((resolve) => {
@@ -740,6 +752,7 @@ export default {
     position: absolute;
     top: -2px;
     right: 0px;
+    color: #FB3A32;
   }
   .give-item {
     padding: 40px 24px;
