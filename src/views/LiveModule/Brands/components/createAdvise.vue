@@ -460,10 +460,9 @@ export default {
   /deep/.el-input__count-inner {
     color: #999;
   }
-  /* /deep/.el-dialog__body{
+  /*  /deep/.el-dialog__body{
     padding-bottom: 40px;
   } */
-
   /deep/.noPic {
     width: 324px !important;
     height: 130px !important;
