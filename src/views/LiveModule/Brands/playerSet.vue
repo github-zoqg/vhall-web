@@ -34,6 +34,9 @@
                     show-word-limit
                   ></VhallInput>
                 </el-form-item>
+                <el-form-item label="文字颜色" prop="color">
+                  <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
+                </el-form-item>
                 <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="字体大小">
                   <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
@@ -193,6 +196,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
+import ColorSet from '@/components/ColorSelect';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
@@ -206,6 +210,7 @@ export default {
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
+      pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA'],
       formHorse: {
         color: '#FFFFFF', // 六位
         text_type: 2,
@@ -245,6 +250,7 @@ export default {
   components: {
     PageTitle,
     upload,
+    ColorSet,
     // VideoPreview
   },
    computed: {
@@ -304,6 +310,11 @@ export default {
       // 设置水印的透明度
 
     },
+    // 页面样式色值
+    pageStyleHandle(color) {
+      this.formHorse.color = color;
+      console.log(color, '??????????????????')
+    },
     getFontList() {
       let num = 10;
       while (num <= 36) {
@@ -326,7 +337,7 @@ export default {
     },
     // 关闭或保存其他信息
     otherOtherInfo(value) {
-      this.preOthersOptions();
+      // this.preOthersOptions();
       // 1--弹幕  2--进度条  3--倍速
       switch (value) {
         case 1 :
@@ -376,6 +387,10 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
+          this.$nextTick(() => {
+            this.$refs.pageThemeColors.initColor(res.data.color);
+          })
+          console.log(this.formHorse.color, '?222222222222222222')
           this.scrolling_open = Boolean(res.data.scrolling_open);
         } else {
           // this.$message.error('获取信息失败');
@@ -503,11 +518,6 @@ export default {
       this.initSDK().then(() => {
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
-        // this.initSlider();
-        // this.totalTime = this.$Vhallplayer.getDuration(() => {
-        //   console.log('获取总时间失败');
-        // });
-        // this.listen();
 
       });
     },
@@ -548,7 +558,7 @@ export default {
           text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
           alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
           size:this.formHorse.size,      // 文字大小
-          color:"#ff8d41",   //  文字颜色
+          color: this.formHorse.color || '#fff',   //  文字颜色
           interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
           speed: this.formHorse.speed, // 跑马灯移动速度  3000快     6000中   10000慢
           position:this.formHorse.position   // 跑马灯位置 ， 1 随机 2上  3中 4下

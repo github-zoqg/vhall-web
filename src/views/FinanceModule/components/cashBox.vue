@@ -363,6 +363,9 @@ export default {
   width: 120px;
   text-align: center;
 }
+.codeTitle{
+  line-height: 20px;
+}
 .box-wei {
   // padding-bottom: 20px;
   // .el-form-item{
@@ -511,6 +514,6 @@ export default {
   padding-bottom: 24px;
 }
 .withdrawBtn{
-  padding-top: 20px;
+  // padding-top: 20px;
 }
 </style>
