@@ -21,7 +21,7 @@
             <h3>设置中心</h3>
           </div>
         </el-col>
-        <el-col :xl="{span: colVal}" v-if="(childPremission && Number(childPremission.permission_data) === 0)">
+        <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>

@@ -346,13 +346,14 @@ export default {
           }
           break;
         case 2 :
-           this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
+           this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
           break;
         case 3 :
           let list = this.$Vhallplayer.getUsableSpeed()
           if (this.formOther.doubleSpeed) {
-            // this.$Vhallplayer.openControls(false)
             this.$Vhallplayer.setPlaySpeed(list[0])
+          
              document.querySelector('.vhallPlayer-speed-component').style.display = "block"
           }else {
             document.querySelector('.vhallPlayer-speed-component').style.display = "none"
@@ -392,11 +393,12 @@ export default {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
+          this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
           this.otherOtherInfo(1)
           this.$nextTick(()=>{
             if (this.formOther.doubleSpeed) {
-              this.$Vhallplayer.setPlaySpeed(list[0])
+              // this.$Vhallplayer.setPlaySpeed(list[0])
                 document.querySelector('.vhallPlayer-speed-component').style.display = "block"
               }else {
                 document.querySelector('.vhallPlayer-speed-component').style.display = "none"
