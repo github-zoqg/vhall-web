@@ -131,7 +131,7 @@
             <div class="give-white" v-show="!watermark_open"></div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="其他" name="third">
+        <el-tab-pane label="其它" name="third">
         <div class="give-item">
           <div class="give-prize">
               <el-form :model="formOther" ref="ruleForm" label-width="100px">
@@ -236,6 +236,7 @@ export default {
         paas_record_id: '922013fa'
       },
       vm: null,
+      checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
     };
@@ -288,6 +289,7 @@ export default {
   },
   mounted () {
     this.initPlayer();
+   
   },
   methods: {
     // 预览视频
@@ -390,10 +392,19 @@ export default {
         if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
-          // this.otherOtherInfo(2)
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          // this.otherOtherInfo(3)
+          let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
+          this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
           this.otherOtherInfo(1)
+          this.$nextTick(()=>{
+            if (this.formOther.doubleSpeed) {
+              // this.$Vhallplayer.setPlaySpeed(list[0])
+                document.querySelector('.vhallPlayer-speed-component').style.display = "block"
+              }else {
+                document.querySelector('.vhallPlayer-speed-component').style.display = "none"
+              }
+          })
+
         } else {
           this.$message.success('获取信息失败');
         }
@@ -452,15 +463,15 @@ export default {
             if (this.vm) {
               this.vm.close();
             }
-            this.messageInfo();
+            if (!this.checkEnter) this.messageInfo();  
             let backSettingData = res.data;
             this.$nextTick(()=>{
               console.log('弹幕',this.$Vhallplayer,vp);
               Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
-            // Number(backSettingData['progress_bar']) ? vp.setControls(true) : vp.setControls(false)
-            // this.changeController(backSettingData)
-            // Number(backSettingData['speed']) ? document.querySelector('.vhallPlayer-speed-component').style.display = 'block' : document.querySelector('.vhallPlayer-speed-component').style.display = 'none'
+              
            })
+
+           this.checkEnter = false
           }
         }).catch((res) => {
             this.$message.error(res.msg || '设置失败')
@@ -478,8 +489,11 @@ export default {
     // 初始化播放器
     initPlayer() {
       this.showVideo = true;
+
       // document.querySelector('.vhallPlayer-container').style.display = 'block';
       this.initSDK().then(() => {
+        // 初试完播放器获取其它设置
+        this.getBaseOtherList()
         // this.initSlider();
         // this.totalTime = this.$Vhallplayer.getDuration(() => {
         //   console.log('获取总时间失败');
@@ -561,6 +575,7 @@ export default {
               // 加载中
               resolve();
             });
+
             // document.querySelector('.vhallPlayer-container').classList.remove("hide");
             document.querySelector('.vhallPlayer-container').style.display = 'block';
             document.querySelector('.vhallPlayer-container').classList.remove('hide')
@@ -631,6 +646,7 @@ export default {
       } else if(tab.name === 'second') {
         this.getBaseWaterList();
       } else {
+        this.checkEnter = true
         this.getBaseOtherList();
       }
     },
@@ -648,11 +664,13 @@ export default {
   }
   /deep/.vhallPlayer-config-btn {
     display: none;
-  };
+  }
   /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
     display: none;
   }
+
 }
+
 .prize-card {
   height: 100%;
  .player-set{
