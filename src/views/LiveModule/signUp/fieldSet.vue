@@ -729,6 +729,7 @@ export default {
   width: 100%
 }
 .viewItem{
+  border-radius: 4px;
   margin-bottom: 16px;
   /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
     background-color: #F7F7F7;
