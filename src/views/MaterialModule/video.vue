@@ -448,8 +448,7 @@ export default {
 .video-list{
   width: 100%;
   .layout--right--main();
-  padding: 38px 24px 40px 24px;
-  // .padding-table-list();
+  .padding-table-list();
   .min-height();
 }
 /deep/.el-input__inner{
