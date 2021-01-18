@@ -1,6 +1,6 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="公众号展示">
+    <pageTitle title="公众号">
       <div class="switch__box">
         <el-switch
           class="el-role-switch"
@@ -38,7 +38,7 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：160*160px</p>
+                    <p>建议尺寸：300*300px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
@@ -75,14 +75,15 @@
             <!-- status 控制是否阴影 -->
             <div class="v-preview-content">
                <!-- 公众号 -->
+               <div class="gzh_pc_mask" v-if="!(alertType > 0)"></div>
                <div class="gzh_pc">
-                 <img class="gzh_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
+                 <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
                  <!-- 扫码外层 -->
                  <div class="gzh_img_layout" v-if="!(alertType > 0)">
                    <p><i class="iconfont-v3 saasicon_close"></i></p>
                    <div class="gzh_img v-code-preview">
                     <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)"/>
-                    <img src="../../../common/images/sys/default_code.png" alt="" v-if="!domain_url && !(alertType > 0)"/>
+                    <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url && !(alertType > 0)"/>
                   </div>
                    <p class="gzh_txt">扫码关注公众号</p>
                  </div>
@@ -91,17 +92,19 @@
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div class="official-app" v-show="switchType === 'app'">
-            <span class="title">公众号展示</span>
+          <div :class="['official-app', {'show-code': !(alertType > 0)}]" v-show="switchType === 'app'">
+            <span class="title">公众号</span>
             <!-- 公众号 -->
+            <div class="gzh_app_mask" v-if="!(alertType > 0)"></div>
             <div class="gzh_app"  v-if="!(alertType > 0)">
               <div class="gzh_img_layout">
                 <div class="img-code v-code-preview app-preview">
                   <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)" />
-                  <img src="../../../common/images/sys/default_code.png" v-if="!domain_url && !(alertType > 0)"/>
+                  <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url && !(alertType > 0)"/>
                 </div>
               </div>
-              <p class="gzh_txt">扫码关注公众号</p>
+              <!-- 非默认图，有文字
+              <p class="gzh_txt" v-if="domain_url">扫码关注公众号</p> -->
             </div>
           </div>
           <!--手机预览,end-->
@@ -437,8 +440,9 @@ export default {
         color: #999;
       }
       /deep/.el-form-item{
+        margin-bottom: 32px;
         &:last-child{
-          padding-top: 14px;
+          padding-top: 8px;
         }
       }
     }
@@ -446,7 +450,7 @@ export default {
       position: relative;
       img {
         width: 400px;
-        height: 242px;
+        height: 274px;
         display: block;
         margin: 24px auto 0;
       }
@@ -486,11 +490,23 @@ export default {
         }
       } */
 
+      .gzh_pc_mask {
+        position: absolute;
+        display: block;
+        margin: 0;
+        right: 0;
+        top: 14px;
+        text-align: center;
+        width: 400px;
+        height: 250px;
+        background: #000000;
+        opacity: 0.6;
+      }
       .gzh_img_layout {
         position: absolute;
         display: block;
         margin: 0;
-        top: 63px;
+        top: 69px;
         right: calc(50% - 62px);
         width: 124px;
         height: 138px;
@@ -501,7 +517,7 @@ export default {
       p {
         text-align: right;
         .saasicon_close {
-          font-size: 8px;
+          font-size: 5px;
           margin-right: 5px;
           margin-top: 5px;
         }
@@ -528,11 +544,11 @@ export default {
     .official-app{
       width: 326px;
       height: 631px;
-      background-image: url('../../../common/images/official/phone-model.png');
+      background-image: url('../../../common/images/official/phone_yl_1@2x.png');
       background-size: 100%;
       background-position: center;
-      &.null-page {
-        background-image: url('../../../common/images/official/phone-model.png');
+      &.show-code {
+        background-image: url('../../../common/images/official/phone_yl@2x.png');
       }
       background-size: cover;
       margin-top: -24px;
@@ -543,7 +559,9 @@ export default {
         height: 30px;
         line-height: 30px;
         text-align: center;
-        color: #555;
+        font-size: 16px;
+        font-weight: 400;
+        color: #666666;
         background: #f7f7f7;
         position: absolute;
         top: 38px;
@@ -602,17 +620,35 @@ export default {
         right: 20px;
         top: 90px;
       }
-
-
+      .gzh_app_mask {
+        position: absolute;
+        display: block;
+        margin: 0;
+       /*  right: calc(50% - 155px);
+        top: 56px;
+        text-align: center;
+        width: 310px;
+        height: 566px; */
+        right: calc(50% - 143px);
+        top: 75px;
+        text-align: center;
+        width: 286px;
+        height: 522px;
+        background: #000000;
+        border-radius: 0px 0px 26px 26px;
+        opacity: 0.6;
+      }
       .gzh_app {
         position: absolute;
         display: block;
         margin: 0;
         right: calc(50% - 81px);
-        top: calc(50% - 95px);
         text-align: center;
         width: 162px;
-        height: 191px;
+        /* top: calc(50% - 95px);
+        height: 191px; */
+        top: calc(50% - 81px);
+        height: 162px;
         background: transparent;
         border-radius: 4px;
       }
