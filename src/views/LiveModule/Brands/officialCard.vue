@@ -38,7 +38,7 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：160*160px</p>
+                    <p>建议尺寸：300*300px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
