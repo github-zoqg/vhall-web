@@ -77,7 +77,7 @@
                <!-- 公众号 -->
                <div class="gzh_pc_mask" v-if="!(alertType > 0)"></div>
                <div class="gzh_pc">
-                 <img class="gzh_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
+                 <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
                  <!-- 扫码外层 -->
                  <div class="gzh_img_layout" v-if="!(alertType > 0)">
                    <p><i class="iconfont-v3 saasicon_close"></i></p>
@@ -544,11 +544,11 @@ export default {
     .official-app{
       width: 326px;
       height: 631px;
-      background-image: url('../../../common/images/poster/phone_yl_1@2x.png');
+      background-image: url('../../../common/images/official/phone_yl_1@2x.png');
       background-size: 100%;
       background-position: center;
       &.show-code {
-        background-image: url('../../../common/images/poster/phone_yl@2x.png');
+        background-image: url('../../../common/images/official/phone_yl@2x.png');
       }
       background-size: cover;
       margin-top: -24px;
