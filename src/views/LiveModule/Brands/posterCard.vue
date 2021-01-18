@@ -92,7 +92,7 @@
           <!--PC预览,end-->
           <!--手机预览，begin-->
           <div class="official-app null-page" v-show="switchType === 'app'">
-            <span class="title">开屏海报展示</span>
+            <span class="title">开屏海报</span>
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img" v-if="status <= 0 && showPoster && domain_url">
@@ -509,11 +509,11 @@ export default {
     .official-app{
       width: 326px;
       height: 631px;
-      background-image: url('../../../common/images/official/phone-model.png');
+      background-image: url('../../../common/images/poster/phone-model.png');
       background-size: 100%;
       background-position: center;
       &.null-page {
-        background-image: url('../../../common/images/official/phone-model.png');
+        background-image: url('../../../common/images/poster/phone-model.png');
       }
       background-size: cover;
       margin-top: -24px;
