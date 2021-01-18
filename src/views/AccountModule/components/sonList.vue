@@ -168,6 +168,7 @@ export default {
       }
     };
     return {
+      pwdreadOnly: true,
       loading: false,
       query: {
         role_id: '',

@@ -38,7 +38,7 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：160*160px</p>
+                    <p>建议尺寸：300*300px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
@@ -82,7 +82,7 @@
                    <p><i class="iconfont-v3 saasicon_close"></i></p>
                    <div class="gzh_img v-code-preview">
                     <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)"/>
-                    <img src="../../../common/images/sys/default_code.png" alt="" v-if="!domain_url && !(alertType > 0)"/>
+                    <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url && !(alertType > 0)"/>
                   </div>
                    <p class="gzh_txt">扫码关注公众号</p>
                  </div>
@@ -98,7 +98,7 @@
               <div class="gzh_img_layout">
                 <div class="img-code v-code-preview app-preview">
                   <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)" />
-                  <img src="../../../common/images/sys/default_code.png" v-if="!domain_url && !(alertType > 0)"/>
+                  <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url && !(alertType > 0)"/>
                 </div>
               </div>
               <p class="gzh_txt">扫码关注公众号</p>
