@@ -8,7 +8,7 @@
       <el-form :model="form" ref="form" :rules="formRules" label-width="80px">
         <p class="info" v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
         <el-form-item label="邮箱地址" key="email" prop="email" v-if="showVo.executeType === 'email' && showVo.step === 1">
-          <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" :maxlength="30"/>
+          <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled :maxlength="30"/>
         </el-form-item>
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
           <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
