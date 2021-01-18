@@ -118,68 +118,6 @@ export default {
       if (valData.length > 0) {
         max = Math.max(...valData);
       }
-
-      let minLabel = dateData[0], maxLabel = dateData[dateData.length - 1];
-      console.log('最小日期：', minLabel, '最大日期：', maxLabel);
-      /*1、一周内，每天都显示
-        2、一个月内，3天一个刻度
-        3、一个季度内，7天一个刻度
-        4、一年内，1个月一个刻度 */
-      let yearCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'year');
-      let monCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'month');
-      let dayCha = this.$moment(maxLabel).diff(this.$moment(minLabel), 'day');
-      console.log('计算', yearCha, monCha, dayCha);
-      let showTimeDate = [];
-      let level = 0;
-      try {
-        if (yearCha >= 1) {
-          level = 365;
-          // 超过一年，年刻度
-          for(let i =0; i<= (dayCha > 0 ? yearCha + 1 : yearCha); i++) {
-            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "years").format("YYYY-MM-DD");
-            showTimeDate.push(startTr);
-          }
-          showTimeDate = showTimeDate.reverse();
-        } else if (monCha <= 3 && monCha > 0) {
-          level = 7;
-          let maxDayCount = dayCha % 7 > 0  ? (parseInt(dayCha / 7) + 1) * 7 : dayCha;
-          // console.log('maxDayCount', maxDayCount)
-          // 一个季度内，7天一个刻度
-          for(let i =0; i<= maxDayCount; i += 7) {
-            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "day").format("YYYY-MM-DD");
-            showTimeDate.push(startTr);
-          }
-          showTimeDate = showTimeDate.reverse();
-        } else if (monCha > 3) {
-          level = 30;
-          // 一年内，1个月一个刻度
-          for(let i =0; i<= monCha + 1; i ++) {
-            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "month").format("YYYY-MM-DD");
-            showTimeDate.push(startTr);
-          }
-          showTimeDate = showTimeDate.reverse();
-        } else if (monCha === 0 && dayCha <= 7) {
-          level = 0;
-          // 一周内，每天都显示
-          showTimeDate = dateData;
-        } else if (monCha === 0 && dayCha > 7) {
-          level = 3;
-          // 一个月内，3天一个刻度
-          let maxDayCount = dayCha % 3 > 0  ? (parseInt(dayCha / 3) + 1) * 3 : dayCha;
-          // console.log('maxDayCount', maxDayCount)
-          for(let i =0; i<= maxDayCount; i += 3) {
-            let startTr = this.$moment(this.$moment(maxLabel)).subtract(i, "day").format("YYYY-MM-DD");
-            showTimeDate.push(startTr);
-          }
-          showTimeDate = showTimeDate.reverse();
-        } else {
-          level = 0;
-          showTimeDate = dateData;
-        }
-      }catch(e) {
-        console.log(e);
-      }
-
       let options = {
         visualMap: {
           show: false,
@@ -187,11 +125,17 @@ export default {
           min: 0,
           max: 100,
         },
-        grid: {
+        /* grid: {
           left: '65',
           top: '45',
           bottom: '30',
           right: '32'
+        }, */
+        grid: {
+          left: '85',
+          top: '25',
+          bottom: '60',
+          right: '95'
         },
         tooltip: {
           trigger: 'axis',
@@ -212,17 +156,21 @@ export default {
               color: '#CCCCCC',
             }
           },
+          splitLine: {
+            show: false,
+            lineStyle: {
+              type: 'solid',
+            }
+          },
           axisLabel: {
             inside: false,
-            interval: (minLabel||'').length < 19 ? level : 'auto',
             textStyle: {
               color: '#999999',
               fontSize: 12,
               fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
-            }
-
+            },
           },
-          data: dateData,
+          data: dateData || [],
         },
         yAxis: [
           {
@@ -273,6 +221,22 @@ export default {
           },
         ],
       };
+      if (valData && valData.length > 0) {
+        options.dataZoom = [{
+            type: 'inside',
+            xAxisIndex: 0,
+            minSpan: 5
+        }, {
+            type: 'slider',
+            xAxisIndex: 0,
+            minSpan: 5,
+            height: 20,
+            bottom: 10,
+            handleSize: '100%'
+        }];
+      } else {
+        options.dataZoom = [];
+      }
       // 使用刚指定的配置项和数据显示图表。
       this.myChart.setOption(options);
     }

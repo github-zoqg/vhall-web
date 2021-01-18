@@ -105,18 +105,6 @@ export default {
           },
           data: visitDataDate || [],
         },
-        dataZoom: [{
-            type: 'inside',
-            xAxisIndex: 0,
-            minSpan: 5
-        }, {
-            type: 'slider',
-            xAxisIndex: 0,
-            minSpan: 5,
-            height: 20,
-            bottom: 10,
-            handleSize: '100%'
-        }],
         yAxis: [
           {
             type: 'value',
@@ -148,8 +136,8 @@ export default {
         series: [
           {
             type: 'line',
-            showSymbol: true,
-            symbolSize: 1,   //拐点圆的大小
+            showSymbol: false,
+            symbolSize: 2,   //拐点圆的大小
             smooth:true,
             itemStyle:{
               normal:{
@@ -165,6 +153,22 @@ export default {
           },
         ],
       };
+      if (visitDataValue && visitDataValue.length > 0) {
+        options.dataZoom = [{
+            type: 'inside',
+            xAxisIndex: 0,
+            minSpan: 5
+        }, {
+            type: 'slider',
+            xAxisIndex: 0,
+            minSpan: 5,
+            height: 20,
+            bottom: 10,
+            handleSize: '100%'
+        }];
+      } else {
+        options.dataZoom = [];
+      }
       visitEchart.setOption(options);
     },
   },

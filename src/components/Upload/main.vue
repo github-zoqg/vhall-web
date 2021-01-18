@@ -192,6 +192,10 @@ export default {
     i {
       color: #8c939d;
     }
+    i.saasicon_shangchuan {
+      font-size: 44px!important;
+      color: #8c939d;
+    }
     .box{
       width: 100%;
       height: 100%;

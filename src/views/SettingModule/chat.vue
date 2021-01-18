@@ -143,7 +143,7 @@
       </div>
     </VhallDialog>
     <!-- 批量上传 -->
-    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false>
+    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
       <div class="upload-dialog-content">
         <file-upload
           ref="chatUpload"
@@ -579,7 +579,10 @@ export default {
       this.multiUploadShow = false;
       this.isUploadEnd = false;
       this.fileUrl = '';
-      this.uploadResult.status === 'start'; // 删除回到开始状态
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     saveUploadKey() {
       if(!this.fileUrl) {
