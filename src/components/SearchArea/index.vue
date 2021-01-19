@@ -48,7 +48,7 @@
         <el-button v-else-if="item.type==6" @click="searchList" size="medium" round>查询</el-button>
         <!-- 输入框 -->
        <!--  <el-input class="inputer" v-model.trim="searchParams[item.key]" :placeholder="placeholder" style="width: 180px;" v-else @clear="changeInput" @keyup.enter.native="changeInput"  :clearable="clearable"><i slot="suffix" class="el-input__icon el-icon-search" @click="changeInput"></i></el-input> -->
-        <el-input
+        <VhallInput
           v-else
           class="search-tag"
           :placeholder="placeholder"
@@ -61,7 +61,7 @@
             slot="suffix"
             @click="changeInput">
           </i>
-        </el-input>
+        </VhallInput>
       </el-form-item>
     </el-form>
     <div class="export-data" v-if="isExports">
@@ -271,7 +271,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

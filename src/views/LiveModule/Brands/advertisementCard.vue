@@ -13,7 +13,7 @@
             <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchAdvTableList" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
         </span> -->
-        <el-input
+        <VhallInput
           class="search-tag"
           placeholder="请输入广告标题"
           v-model.trim="paramsObj.keyword"
@@ -25,7 +25,7 @@
             slot="suffix"
             @click="searchAdvTableList">
           </i>
-        </el-input>
+        </VhallInput>
       </div>
       <div class="no-live" v-if="!total && !isSearch">
         <noData :nullType="'nullData'" :text="'您还没有广告，快来创建吧！'">
@@ -233,7 +233,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

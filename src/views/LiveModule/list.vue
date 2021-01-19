@@ -29,7 +29,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-input
+          <VhallInput
             class="search-tag"
             placeholder="搜索直播标题"
             v-model.trim="keyWords"
@@ -41,7 +41,7 @@
               slot="suffix"
               @click="searchHandler">
             </i>
-          </el-input>
+          </VhallInput>
         </div>
       </div>
     <!-- 操作栏 -->
@@ -381,7 +381,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

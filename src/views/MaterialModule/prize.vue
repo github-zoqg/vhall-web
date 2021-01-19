@@ -13,7 +13,7 @@
       <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
-      <el-input
+      <VhallInput
         class="search-tag"
         placeholder="请输入奖品名称"
         v-model.trim="keyword"
@@ -25,7 +25,7 @@
           slot="suffix"
           @click="searchTableList">
         </i>
-      </el-input>
+      </VhallInput>
       <!-- <div class="inputKey">
         <VhallInput v-model.trim="keyword" placeholder="请输入奖品名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
@@ -266,7 +266,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

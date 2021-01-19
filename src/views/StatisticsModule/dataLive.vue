@@ -19,7 +19,7 @@
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
         />
-        <el-input
+        <VhallInput
           class="search-tag"
           placeholder="请输入活动标题"
           v-model.trim="title"
@@ -31,7 +31,7 @@
             slot="suffix"
             @click="searchTableList">
           </i>
-        </el-input>
+        </VhallInput>
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
@@ -267,7 +267,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

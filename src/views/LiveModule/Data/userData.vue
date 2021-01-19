@@ -43,7 +43,7 @@
           />
         </el-select>
         <el-checkbox v-model="checkedValue"  @change="searchTableList" style="margin-left:16px">合并同一用户</el-checkbox>
-        <el-input
+        <VhallInput
             class="search-tag"
             placeholder="请输入用户昵称"
             v-model.trim="title"
@@ -55,7 +55,7 @@
               slot="suffix"
               @click="searchTableList">
             </i>
-          </el-input>
+          </VhallInput>
         <!-- <el-input class="inputer" v-model.trim="title" placeholder="请输入用户昵称" style="vertical-align: top;margin-left:20px" @clear="searchTableList" @keyup.enter.native="searchTableList"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="searchTableList"></i></el-input> -->
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
@@ -351,7 +351,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

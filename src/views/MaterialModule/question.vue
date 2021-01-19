@@ -10,7 +10,7 @@
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload" v-preventReClick @click="addQuestion">创建问卷</el-button>
       <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</el-button>
-      <el-input
+      <VhallInput
         class="search-tag"
         placeholder="请输入问卷名称"
         v-model.trim="keyword"
@@ -22,7 +22,7 @@
           slot="suffix"
           @click="searchTableList">
         </i>
-      </el-input>
+      </VhallInput>
     </div>
     <div class="no-live" v-if="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'">
@@ -236,7 +236,7 @@ export default {
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px;
+        padding-right: 50px!important;
       }
       /deep/ .el-input__suffix {
         cursor: pointer;

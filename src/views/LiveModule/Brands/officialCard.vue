@@ -96,6 +96,7 @@
             <span class="title">公众号</span>
             <!-- 公众号 -->
             <div class="gzh_app_mask" v-if="!(alertType > 0)"></div>
+            <div class="gzh_app_close" v-if="!(alertType > 0)"></div>
             <div class="gzh_app"  v-if="!(alertType > 0)">
               <div class="gzh_img_layout">
                 <div class="img-code v-code-preview app-preview">
@@ -542,8 +543,10 @@ export default {
       }
     }
     .official-app{
-      width: 326px;
-      height: 631px;
+      width: 420px;
+      height: 690px;
+      margin-top: -24px;
+      margin-left: -47px;
       background-image: url('../../../common/images/official/phone_yl_1@2x.png');
       background-size: 100%;
       background-position: center;
@@ -551,7 +554,6 @@ export default {
         background-image: url('../../../common/images/official/phone_yl@2x.png');
       }
       background-size: cover;
-      margin-top: -24px;
       position: relative;
       .title{
         display: inline-block;
@@ -629,14 +631,17 @@ export default {
         text-align: center;
         width: 310px;
         height: 566px; */
-        right: calc(50% - 143px);
+        right: calc(50% - 156px);
         top: 75px;
         text-align: center;
-        width: 286px;
-        height: 522px;
+        width: 312px;
+        height: 576px;
         background: #000000;
         border-radius: 0px 0px 26px 26px;
         opacity: 0.6;
+      }
+      .gzh_app_close {
+
       }
       .gzh_app {
         position: absolute;
