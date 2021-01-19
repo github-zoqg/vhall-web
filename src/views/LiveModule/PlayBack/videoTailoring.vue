@@ -126,15 +126,15 @@ export default {
       next()
       return false;
     } else {
-      this.$alert(`是否放弃当前编辑？`, '提示', {
+      this.$confirm('是否放弃当前编辑？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        customClass: 'zdy-alert-box',
-        type: 'warning'
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         next()
-      }).catch(() => {
-      });
+      }).catch(() => {});
     }
   },
   beforeDestroy() {

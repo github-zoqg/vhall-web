@@ -22,10 +22,10 @@
         </el-select>
         <el-input
           placeholder="请输入专题标题"
-          clearable
           @keyup.enter.native="searchHandler"
-          @clear="inputChange"
-          v-model.trim="searchHandler">
+          @clear="searchHandler"
+          clearable
+          v-model.trim="keyWords">
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"

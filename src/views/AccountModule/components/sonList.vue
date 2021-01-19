@@ -82,7 +82,7 @@
           <VhallInput type="text" placeholder="请输入账号昵称，不输入默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
-          <VhallInput type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+          <VhallInput :type="pwdType" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
                     :maxlength="30" :minlength="6" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="预设密码" prop="editPwd" v-else>
@@ -168,6 +168,7 @@ export default {
       }
     };
     return {
+      pwdType: 'text',
       loading: false,
       query: {
         role_id: '',
@@ -606,6 +607,12 @@ export default {
     },
     emailPlaceholder() {
       return this.sonForm.email ? '' : '子账号登录后自行操作绑定，父账号允许重置';
+    }
+  },
+  watch: {
+    'sonForm.password': function() {
+      let len = this.sonForm.password.length;
+      console.log(len)
     }
   }
 };

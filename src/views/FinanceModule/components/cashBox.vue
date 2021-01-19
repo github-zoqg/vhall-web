@@ -215,6 +215,8 @@ export default {
             this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
               this.phone = res.data.phone;
               this.countDown();
+            }).catch(res => {
+              this.$message.error(res.msg);
             });
           }
         } else {
@@ -248,6 +250,8 @@ export default {
         } else {
           this.$message.error(res.msg || '提现失败');
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信短信验证码
@@ -269,6 +273,8 @@ export default {
         } else {
           this.callCaptcha();
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信 ---获取绑定微信二维码
@@ -356,6 +362,9 @@ export default {
 .length120{
   width: 120px;
   text-align: center;
+}
+.codeTitle{
+  line-height: 20px;
 }
 .box-wei {
   // padding-bottom: 20px;
@@ -505,6 +514,6 @@ export default {
   padding-bottom: 24px;
 }
 .withdrawBtn{
-  padding-top: 20px;
+  // padding-top: 20px;
 }
 </style>

@@ -73,7 +73,6 @@ export default {
   },
   updated() {
   },
-
   data() {
     return {
       // content: this.value || '',
@@ -201,6 +200,12 @@ export default {
   color: #999;
   .blue{
     color: #3562FA;
+  }
+  .zero{
+    color: #999;
+  }
+  .red{
+    color: #fb3a32;
   }
 }
 

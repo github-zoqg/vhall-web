@@ -210,8 +210,8 @@ export default {
         goods_id: this.$route.query.goodId
       }).then(res => {
         this.form = {
-          ...res.data,
           ...this.form,
+          ...res.data,
           url: res.data.goods_url
         };
         this.fileList = res.data.img_list.map(item => {

@@ -879,7 +879,6 @@ export default {
             padding:0;
             font-size: 14px;
             color: #fff;
-            color: #fff;
             font-weight: 600;
             line-height: 30px;
           }
@@ -912,6 +911,9 @@ export default {
       /deep/.el-button{
         background-color: transparent;
         padding: 4px 23px;
+        &:hover{
+          background-color: #FB3A32;
+        }
       }
       /deep/.el-button:last-child{
         margin-left: 10px;
