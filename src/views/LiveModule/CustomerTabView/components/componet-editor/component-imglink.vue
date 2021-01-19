@@ -119,6 +119,14 @@ export default {
     font-size: 44px;
     color: #8c939d;
   }
+  /deep/.tips {
+    p {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      line-height: 16px;
+    }
+  }
   .label{
     display: inline-block;
     vertical-align: top;
