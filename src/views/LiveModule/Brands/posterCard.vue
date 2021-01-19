@@ -86,7 +86,8 @@
                   <img class="hb_img v-poster-preview" :src="domain_url" alt="" v-if="status <= 0 && domain_url"/>
                   <img class="hb_img v-poster-preview" src="../../../common/images/poster/pc_poster_default.png"  v-if="!domain_url" />
                 </div>
-                <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
+               <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
+                <div :class="['poster-btn', {'five': alertType > 0}]"></div>
               </div>
             </div>
           </div>
@@ -414,8 +415,7 @@ export default {
     }
     .form-phone{
       display: flex;
-      /* padding: 48px 12px; */
-      padding: 48px 12px 0 12px;
+      padding: 48px 12px;
       background: #fff;
       min-height: 768px;
       border-radius: 4px;
@@ -521,12 +521,11 @@ export default {
           top: 21px;
           width: 28px;
           height: 12px;
-          background: #1A1A1A;
-          opacity: 0.65;
-          margin: 0 0;
-          border: 1px solid #1A1A1A;
-          &:hover {
-            border: 1px solid #1A1A1A;
+          background: url('../../../common/images/poster/pc_poster_close@2x.png') no-repeat;
+          background-size: 100% 100%;
+          &.five {
+            background: url('../../../common/images/poster/pc_poster_close5@2x.png') no-repeat;
+            background-size: 100% 100%;
           }
         }
       }
