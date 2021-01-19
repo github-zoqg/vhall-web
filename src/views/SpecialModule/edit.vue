@@ -324,8 +324,10 @@ export default {
     },
 
     submitForm(formName) {
+    window.cd = this.formData
+      console.warn(this.formData, 111111111111222222, this.formData.introduction, ' this.formData.introduction');
       if (!this.formData.content) {
-        this.$message.error('请选择专题简介');
+        this.$message.error('请输入专题简介');
         return;
       }
       if (!this.formData.selectedActives.length) {

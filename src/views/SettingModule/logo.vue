@@ -25,7 +25,7 @@
             :before-upload="beforeUploadHandler"
             @delete="logoForm.logo = ''">
             <div slot="tip">
-              <p>建议尺寸：156*56px，小于2M</p>
+              <p>建议尺寸：118*42px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>

@@ -27,7 +27,7 @@
               <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
               <div data-v-4d7778f2="" class="tips">
                 <div data-v-62244b0e="">
-                  <p data-v-62244b0e="">建议尺寸：600*600px，小于2M</p>
+                  <p data-v-62244b0e="">建议尺寸：300*300px，小于2M</p>
                   <p data-v-62244b0e="">支持jpg、gif、png、bmp</p>
                 </div>
               </div>
@@ -67,7 +67,7 @@ export default {
         type: 'image',
       },
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
-      defaultQr: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      defaultQr: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       token: localStorage.getItem('token') || ''
     }
   },

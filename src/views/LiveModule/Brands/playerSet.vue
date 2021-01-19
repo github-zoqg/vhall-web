@@ -34,6 +34,9 @@
                     show-word-limit
                   ></VhallInput>
                 </el-form-item>
+                <el-form-item label="文字颜色" prop="color">
+                  <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
+                </el-form-item>
                 <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="字体大小">
                   <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
@@ -193,6 +196,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
+import ColorSet from '@/components/ColorSelect';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
@@ -201,10 +205,12 @@ export default {
   data() {
     return {
       activeName: 'first',
+      loading: true,
       showVideo: false,
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
+      pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA'],
       formHorse: {
         color: '#FFFFFF', // 六位
         text_type: 2,
@@ -236,6 +242,7 @@ export default {
         paas_record_id: '922013fa'
       },
       vm: null,
+      $Vhallplayer:null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
@@ -244,6 +251,7 @@ export default {
   components: {
     PageTitle,
     upload,
+    ColorSet,
     // VideoPreview
   },
    computed: {
@@ -289,7 +297,13 @@ export default {
   },
   mounted () {
     this.initPlayer();
-   
+
+  },
+  beforeDestroy() {
+    if(this.$Vhallplayer){
+      this.$Vhallplayer.destroy();
+      vp.destroy();
+    }
   },
   methods: {
     // 预览视频
@@ -297,6 +311,11 @@ export default {
       this.initNodePlay()
       // 设置水印的透明度
 
+    },
+    // 页面样式色值
+    pageStyleHandle(color) {
+      this.formHorse.color = color;
+      console.log(color, '??????????????????')
     },
     getFontList() {
       let num = 10;
@@ -319,7 +338,7 @@ export default {
     },
     // 关闭或保存其他信息
     otherOtherInfo(value) {
-      this.preOthersOptions();
+      // this.preOthersOptions();
       // 1--弹幕  2--进度条  3--倍速
       switch (value) {
         case 1 :
@@ -346,13 +365,16 @@ export default {
           }
           break;
         case 2 :
-           this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          // eslint-disable-next-line no-case-declarations
+          let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
+           this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
           break;
         case 3 :
+          // eslint-disable-next-line no-case-declarations
           let list = this.$Vhallplayer.getUsableSpeed()
           if (this.formOther.doubleSpeed) {
-            // this.$Vhallplayer.openControls(false)
             this.$Vhallplayer.setPlaySpeed(list[0])
+
              document.querySelector('.vhallPlayer-speed-component').style.display = "block"
           }else {
             document.querySelector('.vhallPlayer-speed-component').style.display = "none"
@@ -366,6 +388,10 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
+          this.$nextTick(() => {
+            this.$refs.pageThemeColors.initColor(res.data.color);
+          })
+          console.log(this.formHorse.color, '?222222222222222222')
           this.scrolling_open = Boolean(res.data.scrolling_open);
         } else {
           // this.$message.error('获取信息失败');
@@ -392,11 +418,12 @@ export default {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          this.formOther.progress ?  this.$Vhallplayer.openControls(true) : this.$Vhallplayer.openControls(false)
+          let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
+          this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
           this.otherOtherInfo(1)
           this.$nextTick(()=>{
             if (this.formOther.doubleSpeed) {
-              this.$Vhallplayer.setPlaySpeed(list[0])
+              // this.$Vhallplayer.setPlaySpeed(list[0])
                 document.querySelector('.vhallPlayer-speed-component').style.display = "block"
               }else {
                 document.querySelector('.vhallPlayer-speed-component').style.display = "none"
@@ -461,12 +488,12 @@ export default {
             if (this.vm) {
               this.vm.close();
             }
-            if (!this.checkEnter) this.messageInfo();  
+            if (!this.checkEnter) this.messageInfo();
             let backSettingData = res.data;
             this.$nextTick(()=>{
               console.log('弹幕',this.$Vhallplayer,vp);
               Number(backSettingData['barrage_button']) ? vp.openBarrage() : vp.closeBarrage()
-              
+
            })
 
            this.checkEnter = false
@@ -492,11 +519,6 @@ export default {
       this.initSDK().then(() => {
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
-        // this.initSlider();
-        // this.totalTime = this.$Vhallplayer.getDuration(() => {
-        //   console.log('获取总时间失败');
-        // });
-        // this.listen();
 
       });
     },
@@ -523,6 +545,7 @@ export default {
           watermarkOptionPosition = ['5%','70%']
           break;
       }
+      console.log(this.scrolling_open, ':?????????????????????')
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
@@ -536,7 +559,7 @@ export default {
           text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
           alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
           size:this.formHorse.size,      // 文字大小
-          color:"#ff8d41",   //  文字颜色
+          color: this.formHorse.color || '#fff',   //  文字颜色
           interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
           speed: this.formHorse.speed, // 跑马灯移动速度  3000快     6000中   10000慢
           position:this.formHorse.position   // 跑马灯位置 ， 1 随机 2上  3中 4下
@@ -550,8 +573,8 @@ export default {
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
-              enable: true
-            }
+            enable: true
+          }
 
       };
       return new Promise((resolve) => {
@@ -565,10 +588,9 @@ export default {
 
             this.$Vhallplayer = event.vhallplayer;
             window.vp = this.$Vhallplayer;
-
+            this.$Vhallplayer.pause()
+            this.$Vhallplayer.openControls(false);
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
-              this.$Vhallplayer.pause()
-              this.$Vhallplayer.openControls(false);
               this.loading = false;
               // 加载中
               resolve();
@@ -589,11 +611,16 @@ export default {
     },
     // 初始化播放器节点，重新加载播放器
    async initNodePlay() {
-    if(document.querySelector('#videoDom')){
-        await vp.destroy();
-        document.querySelector('#videoDom').innerHTML = ''
-        await this.initPlayer()
-      }
+     if (this.$Vhallplayer) {
+       await vp.destroy();
+       await this.$Vhallplayer.destroy();
+       await this.initPlayer()
+     }
+    // if(document.querySelector('#videoDom')){
+    //     await vp.destroy();
+    //     document.querySelector('#videoDom').innerHTML = ''
+    //     await this.initPlayer()
+    //   }
     },
     destroy() {
       vp.destroy();
@@ -740,6 +767,7 @@ export default {
     position: absolute;
     top: -2px;
     right: 0px;
+    color: #FB3A32;
   }
   .give-item {
     padding: 40px 24px;

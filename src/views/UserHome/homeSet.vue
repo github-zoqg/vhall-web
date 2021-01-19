@@ -26,7 +26,7 @@
             :before-upload="beforeUploadHandler"
             @delete="homeSetInfoForm.homepage_avatar = ''">
             <div slot="tip">
-              <p>建议尺寸：128*128px，小于2M</p>
+              <p>建议尺寸：100*100px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -60,7 +60,7 @@
             :before-upload="beforeUploadHandlerBg"
             @delete="homeSetInfoForm.img_url = ''">
             <div slot="tip">
-              <p>建议尺寸：1280*768px，小于2M</p>
+              <p>建议尺寸：1920*630px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>

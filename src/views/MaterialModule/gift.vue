@@ -100,7 +100,7 @@
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
-              <p>建议尺寸：120*120px，小于2MB</p>
+              <p>建议尺寸：160*160px，小于2MB</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>

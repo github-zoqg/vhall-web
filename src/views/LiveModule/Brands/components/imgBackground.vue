@@ -24,7 +24,7 @@
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">
-              <p>建议尺寸：750*1624px，小于2M</p>
+              <p>建议尺寸：750*1334px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>

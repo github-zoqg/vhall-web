@@ -4,13 +4,14 @@
       title="提现"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      @close="sureBangWeixin"
       width="320px"
     >
       <div class="box-wei">
         <div class="img-box" v-if="qrcode">
           <img :src="`//aliqr.e.vhall.com/qr.png?t=${encodeURIComponent(qrcode)}`" alt="" v-if="qrcode">
           <p>请用微信扫描二维码，绑定收款账户</p>
-          <el-button type="primary" class="length120"  round @click="goBangWeixin">确定</el-button>
+          <el-button type="primary" class="length120"  round @click="sureBangWeixin">确定</el-button>
           <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
@@ -215,6 +216,8 @@ export default {
             this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
               this.phone = res.data.phone;
               this.countDown();
+            }).catch(res => {
+              this.$message.error(res.msg);
             });
           }
         } else {
@@ -248,6 +251,8 @@ export default {
         } else {
           this.$message.error(res.msg || '提现失败');
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信短信验证码
@@ -269,12 +274,24 @@ export default {
         } else {
           this.callCaptcha();
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`;
+<<<<<<< HEAD
+      this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`;
+=======
+      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind`;
       console.log(this.qrcode)
+    },
+    sureBangWeixin() {
+      this.dialogVisible = false;
+      if (this.qrcode) {
+        window.location.reload();
+      }
+>>>>>>> e885ead87fb4f1f0c6fbeab0171506aab449889d
     },
     /**
      * 倒计时函数
@@ -356,6 +373,9 @@ export default {
 .length120{
   width: 120px;
   text-align: center;
+}
+.codeTitle{
+  line-height: 20px;
 }
 .box-wei {
   // padding-bottom: 20px;
@@ -505,6 +525,6 @@ export default {
   padding-bottom: 24px;
 }
 .withdrawBtn{
-  padding-top: 20px;
+  // padding-top: 20px;
 }
 </style>

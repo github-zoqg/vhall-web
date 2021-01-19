@@ -2,7 +2,7 @@
   <!-- 文档资料库 -->
   <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="878px">
     <div class="word-list">
-      <el-input
+      <VhallInput
         class="head-btn search-tag"
         placeholder="请输入文档名称"
         v-model="formParams.keyword"
@@ -15,7 +15,7 @@
           slot="suffix"
           @click="searchHandle">
         </i>
-      </el-input>
+      </VhallInput>
       <!-- 表格 -->
       <el-table
         ref="elTable"
@@ -415,6 +415,21 @@ export default {
     color: #666666;
     height: 36px;
     line-height: 36px;
+  }
+  .search-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
+    }
   }
 }
 .btn-center {

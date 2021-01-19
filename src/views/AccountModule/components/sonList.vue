@@ -82,12 +82,12 @@
           <VhallInput type="text" placeholder="请输入账号昵称，不输入默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
-          <VhallInput type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" :minlength="6" show-word-limit></VhallInput>
+          <pwd-input type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" :minlength="6" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="预设密码" prop="editPwd" v-else>
-          <VhallInput type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" show-word-limit></VhallInput>
+          <pwd-input type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="账号角色" prop="role_id">
           <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
@@ -124,11 +124,12 @@
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
-
+import PwdInput from './pwdInput.vue';
 export default {
   name: "sonList.vue",
   components: {
-    NullPage
+    NullPage,
+    PwdInput
   },
   props: {
     vipType: {
@@ -168,6 +169,7 @@ export default {
       }
     };
     return {
+      pwdType: 'text',
       loading: false,
       query: {
         role_id: '',

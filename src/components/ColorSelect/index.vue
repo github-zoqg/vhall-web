@@ -81,6 +81,9 @@ export default {
       this.colors = tab;
       console.log(this.colors, '当前样式1');
       this.$emit('color', this.colors);
+    },
+    initColor(color) {
+      this.colors = color || '';
     }
   },
   created() {

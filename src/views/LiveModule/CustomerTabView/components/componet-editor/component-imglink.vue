@@ -28,7 +28,7 @@
               <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
               <div data-v-4d7778f2="" class="tips">
                 <div data-v-62244b0e="">
-                  <p data-v-62244b0e="">建议尺寸：1280*720px，小于2M</p>
+                  <p data-v-62244b0e="">建议尺寸：400*225px，小于2M</p>
                   <p data-v-62244b0e="">支持jpg、gif、png、bmp</p>
                 </div>
               </div>
@@ -97,6 +97,7 @@ export default {
 
     changeLink() {
       const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
+      this.info.src = this.info.src.trim()
       if(result) {
         this.$emit('updateInfo', this.info)
       } else {
