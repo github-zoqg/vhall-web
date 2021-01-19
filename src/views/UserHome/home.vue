@@ -1,24 +1,24 @@
 <template>
  <div class="home-main console">
-   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"></OldHeader>
+   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"  scene="userHome" :isWhiteBg=true></OldHeader>
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
    <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || 'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png' :
         'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'}) 0px center / 100% no-repeat`}"></div>
-   <div :class="$route.meta.type !== 'owner' ? 'pc_bg' : ''">
+   <div :class="$route.meta.type !== 'owner' ? userHomeVo && Number(userHomeVo.show_subject) === 0 && Number(userHomeVo.show_webinar_list) === 0 ? 'pc_bg no-creates' : 'pc_bg' : ''">
      <!-- 内容区域 -->
-     <div class="user__layout--title">
+     <div :class="['user__layout--title', {'ctrl-layout': $route.meta.type === 'owner'}]">
        <ul>
          <li>
            <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
          </li>
-         <li :class="`layout__center ${!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''}`">
+         <li :class="`layout__center ${!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''}`">
            <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
            <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
            <span v-show="userHomeVo && userHomeVo.content" class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收起'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
          </li>
-         <li :class="!(userHomeVo && userHomeVo.show_share) ? 'one--btn' : ''">
+         <li :class="!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''">
            <el-button size="medium" round v-if="setHomeCheck" @click.prevent.stop="toHomeSetPage">设置</el-button>
-           <el-button size="medium" round @click="openDialog('share')">分享</el-button>
+           <el-button size="medium" round @click="openDialog('share')" v-if="userHomeVo && Number(userHomeVo.show_share) === 1">分享</el-button>
          </li>
        </ul>
      </div>
@@ -126,6 +126,9 @@ export default {
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },
+  beforeMount() {
+
+  },
   mounted() {
     let userInfo  = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {
@@ -172,14 +175,23 @@ export default {
   margin: -220px auto 0 auto;
   background: #ffffff;
   border-radius: 4px;
+  &.no-creates {
+     margin: -170px auto 0 auto;
+     .user__layout--main {
+       min-height: 500px;
+     }
+  }
 }
 
 .user__layout--title {
   width: 100%;
-  padding: 35px 24px;
-  min-height: 170px;
+  padding: 35px 24px 0 24px;
+  min-height: 135px;
   background: #FFFFFF;
   border-radius: 4px;
+  &.ctrl-layout {
+    padding: 35px 24px;
+  }
   li {
     list-style-type: none;
     display: inline-block;
@@ -250,9 +262,10 @@ export default {
   margin-right: 16px;
 }
 .user__layout--main {
-  margin-top: 24px;
+  margin-top: 32px;
   width: 100%;
   min-height: 710px;
+  margin-bottom: 56px;
   height: auto;
   background: #FFFFFF;
   position: relative;

@@ -1,49 +1,61 @@
 <template>
-  <div class="son--list">
-    <!-- 搜索 -->
-    <div class="list--search">
-      <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
-      <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
-      <el-button size="medium" round @click.prevent.stop="multiMsgDel">批量删除</el-button>
-      <el-button size="medium" round @click="downloadHandle">导出</el-button>
-      <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
-                clearable
-                @clear="initQuerySonList"
-                @keyup.enter.native="initQuerySonList">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
-      </el-input>
-      <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
-        <el-option value="">全部</el-option>
-        <el-option
-          v-for="item in roleList"
-          :key="'v_' + item.id"
-          :label="item.role_name"
-          :value="item.id">
-        </el-option>
-      </el-select>
+  <div class="son--list" v-loading="loading"
+    element-loading-text="加载中，请稍候"
+    element-loading-background="rgba(255,255,255,.9)">
+    <!-- 全部无结果 -->
+    <div class="all-no-data" v-if="sonDao && sonDao.total === 0  && query.role_id === '' && query.keyword === ''">
+      <null-page nullType="nullData" text="暂未创建子账号" :height="0">
+        <el-button type="primary" round v-preventReClick @click.prevent.stop="addSonShow(null)">创建子账号</el-button>
+      </null-page>
     </div>
-    <!-- 有消息内容 -->
-    <div v-if="sonDao && sonDao.total > 0">
-      <!-- 表格与分页 -->
-      <table-list
-        ref="sonTab"
-        :isHandle=true
-        :manageTableData="sonDao.list"
-        :tabelColumnLabel="sonTableColumn"
-        :totalNum="sonDao.total"
-        :tableRowBtnFun="tableRowBtnFun"
-        :needPagination=true
-        width="150px"
-        max-height="auto"
-        scene="accountList"
-        @getTableList="getSonList"
-        @changeTableCheckbox="checkMoreRow"
-        @onHandleBtnClick="onHandleBtnClick"
-      >
-      </table-list>
+    <!-- 全部有结果 -->
+    <div class="all-yes-data" v-else>
+      <!-- 搜索 -->
+      <div class="list--search">
+        <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
+        <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
+        <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
+        <el-button size="medium" round @click="downloadHandle">导出</el-button>
+        <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
+                  clearable
+                  @clear="initQuerySonList"
+                  class="search-query"
+                  @keyup.enter.native="initQuerySonList">
+          <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
+        </el-input>
+        <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
+          <el-option value="">全部</el-option>
+          <el-option
+            v-for="item in roleList"
+            :key="'v_' + item.id"
+            :label="item.role_name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </div>
+      <!-- 有消息内容 -->
+      <div>
+        <!-- 表格与分页 -->
+        <table-list
+          ref="sonTab"
+          :isHandle=true
+          :manageTableData="sonDao.list||[]"
+          :tabelColumnLabel="sonTableColumn"
+          :totalNum="sonDao.total||0"
+          :tableRowBtnFun="tableRowBtnFun"
+          :needPagination=true
+          width="150px"
+          max-height="auto"
+          scene="accountList"
+          @getTableList="getSonList"
+          @changeTableCheckbox="checkMoreRow"
+          @onHandleBtnClick="onHandleBtnClick"
+        >
+        </table-list>
+      </div>
+      <!-- 无消息内容 -->
+      <null-page class="search-no-data" :height="0" v-if="sonDao && sonDao.total === 0"></null-page>
     </div>
-    <!-- 无消息内容 -->
-    <null-page v-else></null-page>
     <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
                  width="520px">
@@ -69,9 +81,13 @@
         <el-form-item label="账号昵称" prop="nick_name">
           <VhallInput type="text" placeholder="请输入账号昵称，不输入默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="预设密码" prop="password">
-          <VhallInput type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" :minlength="6" show-word-limit></VhallInput>
+        <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
+          <pwd-input type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" :minlength="6" show-word-limit></pwd-input>
+        </el-form-item>
+        <el-form-item label="预设密码" prop="editPwd" v-else>
+          <pwd-input type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                    :maxlength="30" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="账号角色" prop="role_id">
           <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
@@ -108,11 +124,12 @@
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
-
+import PwdInput from './pwdInput.vue';
 export default {
   name: "sonList.vue",
   components: {
-    NullPage
+    NullPage,
+    PwdInput
   },
   props: {
     vipType: {
@@ -141,9 +158,21 @@ export default {
         callback();
       }
     };
+    let verifyEnterEditPwd = (rule, value, callback) => {
+      let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
+      if (value === '') {
+        callback();
+      } else if (!pattern.exec(value)) {
+        callback(new Error('支持数字，大小写英文，6-30个字符'));
+      } else {
+        callback();
+      }
+    };
     return {
+      pwdType: 'text',
+      loading: false,
       query: {
-        role_id: null,
+        role_id: '',
         keyword: '',
         pos: 0,
         limit: 1000,
@@ -211,6 +240,7 @@ export default {
         nums: null,
         nick_name: '',
         password: '',
+        editPwd: '',
         role_id: '',
         phone: '',
         email: ''
@@ -221,6 +251,9 @@ export default {
         ],
         password: [
           {required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30, message: '支持数字，大小写英文，6-30个字符'}
+        ],
+        editPwd: [
+          {required: false, trigger: 'blur', validator: verifyEnterEditPwd, max: 30, message: '支持数字，大小写英文，6-30个字符'}
         ],
         role_id: [
           {required: true, message: '请输入账号角色', trigger: 'change'}
@@ -352,7 +385,7 @@ export default {
             message: res.msg || '删除失败',
             showClose: true,
             // duration: 0,
-            type: 'success',
+            type: 'error',
             customClass: 'zdy-info-box'
           });
         });
@@ -417,13 +450,34 @@ export default {
             });
             return;
           }
-          let params = Object.assign(
-            this.sonDialog.type === 'add' ? {} : {
+          let params = null;
+          if (this.sonDialog.type === 'add') {
+            params = this.$params({
+              is_batch: this.sonForm.is_batch,
+              nums: this.sonForm.nums,
+              nick_name: this.sonForm.nick_name,
+              password: this.sonForm.password,
+              role_id: this.sonForm.role_id,
+              phone: this.sonForm.phone,
+              email: this.sonForm.email
+            })
+          } else {
+            params = Object.assign({
               id: this.sonDialog.row.id,
               child_id: this.sonDialog.row.child_id
-            }, this.sonForm);
-          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit',
-            this.sonDialog.type === 'add' ? this.$params(params) : params).then(res => {
+            },
+            this.$params({
+              is_batch: this.sonForm.is_batch,
+              nums: this.sonForm.nums,
+              nick_name: this.sonForm.nick_name,
+              password: this.sonForm.editPwd,
+              role_id: this.sonForm.role_id
+            }), {
+              phone: this.sonForm.phone,
+              email: this.sonForm.email
+            })
+          }
+          this.$fetch(this.sonDialog.type === 'add' ? 'sonAdd' : 'sonEdit', params).then(res => {
             this.$message({
               message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作成功`,
               showClose: true,
@@ -439,7 +493,7 @@ export default {
           }).catch(res => {
             console.log(res);
             this.$message({
-              message: `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`,
+              message: res.msg || `${this.sonDialog.type === 'add' ? '添加子账号' : '修改子账号'}操作失败`,
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -463,7 +517,9 @@ export default {
         keyword: this.query.keyword,
         scene_id: 1 // 场景id：1子账号列表 2用量分配获取子账号列表
       };
+      this.loading = true;
       this.$fetch('getSonList', this.$params(params)).then(res => {
+        this.loading = false;
         let dao = res && res.code === 200 && res.data ? res.data : {
           total: 0,
           list: []
@@ -496,6 +552,7 @@ export default {
         });
         this.sonDao = dao;
       }).catch(e => {
+        this.loading = false;
         console.log(e);
         this.sonDao = {
           total: 0,
@@ -557,8 +614,30 @@ export default {
 </script>
 <style lang="less" scoped>
 // 初始化查询子账号列表信息
-.son--list {
+.all-no-data {
+  /* 基于外边框已经有距离： padding: 24px 24px 40px 24px; */
+  padding-top: 30px;
+  margin-top: 110px;
+  /deep/.createActive {
+    padding-bottom: 30px;
+  }
+}
+.all-yes-data {
   padding: 24px 24px 40px 24px;
+  /deep/.data-list {
+    /deep/.el-table {
+      margin-bottom: 40px;
+      .cell{
+        line-height: 25px;
+      }
+    }
+  }
+}
+.search-no-data {
+  padding-top: 148px;
+  /deep/.search {
+    padding-bottom: 0;
+  }
 }
 .list--search {
   margin-bottom: 20px;
@@ -583,12 +662,15 @@ export default {
     /deep/ .el-input__inner {
       border-radius: 20px;
       height: 36px;
+      padding-right: 50px;
     }
 
     /deep/ .el-input__suffix {
       cursor: pointer;
 
       /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
         line-height: 36px;
       }
     }

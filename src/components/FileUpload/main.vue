@@ -9,16 +9,20 @@
     :on-success='uploadSuccess'>
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
-          <i class="img"></i>
+          <i class="iconfont-v3 saasexcelwendang excel"></i>
           <p class="file-name" style="color: rgb(136, 136, 136);" :title="fileName">{{fileName}}</p>
-          <div class="change-txt" v-if="result && (progress.percent === 0 || progress.percent === 100)">
-            <p id="right">上传成功，共检测到{{result.success}}条有效数据</p>
-          </div>
-          <div class="change-txt" v-if="!result && (progress.percent === 0 || progress.percent === 100)">
-            <p id="error">{{errText}}</p>
-          </div>
-          <div class="change-txt" v-if="!progress.isUploadEnd && progress.percent > 0 && progress.percent < 100">
-            上传中，请稍后<el-progress :percentage="progress.percent" status="success"></el-progress>
+          <slot name="upload-result"></slot>
+          <div class="mask">
+            <span>
+              <i class="el-icon-refresh-left"></i>
+              <br/>
+              重置
+            </span>
+             <span @click.stop.prevent="deletes">
+              <i class="iconfont-v3 saasicon_shanchu"></i>
+              <br/>
+              删除
+            </span>
           </div>
         </a>
         <div v-else class="noPic">
@@ -92,21 +96,6 @@ export default {
     coverPic: {
       type: Boolean,
       default: false
-    },
-    progress: {
-      type: Object,
-      default: function() {
-        return {
-          isUploadEnd: false,
-          percent: 0
-        };
-      }
-    },
-    result: {
-      type: Object,
-      default: function() {
-        return null;
-      }
     },
     'on-success': {
       type: Function,
@@ -199,10 +188,22 @@ export default {
       font-size: 44px;
       color: #8c939d;
     }
+    i.saasicon_shangchuan {
+      font-size: 44px!important;
+      color: #8c939d;
+    }
+    i.excel {
+      font-size: 28px;
+      color: rgb(20, 186, 106);
+      margin-top: 40px;
+      display: block;
+      margin: 40px auto 0 auto;
+    }
     .box{
       width: 100%;
       height: 100%;
       display: table;
+      position: relative;
       >div{
         width: 100%;
         height: 140px;
@@ -234,7 +235,11 @@ export default {
     background: rgba(0, 0, 0, 0.6);
     border-radius: 2px 2px 4px 4px;
     display: none;
+    justify-content: center;
+    align-items: center;
     span{
+      cursor: pointer;
+      color: #fff;
       &:nth-child(2){
         margin: 0  10px;
       }
@@ -259,11 +264,16 @@ export default {
     line-height: 28px;
     text-align: center;
     cursor: initial;
-    border: solid 1px #E2E2E2;
+    // border: solid 1px #E2E2E2;
     color: #222;
     border-radius: 2px;
     background-color: #F7F7F7;
     overflow: hidden;
+    &:hover {
+      .mask {
+        display: flex;
+      }
+    }
   }
   .a-upload .img {
     display: inline-block;
@@ -287,13 +297,13 @@ export default {
     -webkit-box-orient: vertical;
     margin: 0 20px;
   }
-  .a-upload #right {
+  .a-upload .p-right {
     font-weight: 400;
     margin-top: -5px;
     color: #888;
     font-size: 14px;
   }
-  .a-upload #error {
+  .a-upload .p-error {
     font-weight: 400;
     margin-top: -5px;
     color: #FB3A32;

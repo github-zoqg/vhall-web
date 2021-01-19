@@ -1,29 +1,30 @@
 <template>
   <div class="offical-show">
-    <pageTitle :title="title"></pageTitle>
-    <!--<div class="show-on">
-      <el-switch
-        v-model="status"
-        :active-value="1"
-        :inactive-value="0"
-        active-color="#ff4949"
-        inactive-color="#ccc"
-        :active-text="activeTitle"
-        @change="updateSwitch"
-      >
-      </el-switch>
-    </div>-->
-   <!-- <div :class="!status ? 'pre&#45;&#45;full-mask' : ''">
-      <div class="pre&#45;&#45;full-cover" v-show="!status"></div>-->
-    <el-card>
+    <pageTitle title="公众号">
+      <div class="switch__box">
+        <el-switch
+          class="el-role-switch"
+          v-model="status"
+          :active-value="0"
+          :inactive-value="1"
+          active-color="#ff4949"
+          inactive-color="#ccc"
+          @change="changeOpenStatus"
+          :active-text="activeTitle"
+        >
+        </el-switch>
+      </div>
+    </pageTitle>
+    <div :class="status ? 'pre--full-mask' : ''">
+      <div class="pre--full-cover" v-show="status"></div>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item :label="title!=='公众号展示' ? '图片' : '二维码'">
+            <el-form-item label="二维码"  prop="img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
-                  v-model="img"
+                  v-model="form.img"
                   :domain_url="domain_url"
                   :saveData="{
                      path: pathUrl,
@@ -35,52 +36,21 @@
                   :on-preview="uploadPreview"
                   @handleFileChange="handleFileChange"
                   :before-upload="beforeUploadHnadler"
-                  @delete="img = '', domain_url = ''">
+                  @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：{{title !== '公众号展示' ? '750*1334' : '160*160'}}px</p>
+                    <p>建议尺寸：300*300px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
             </el-form-item>
-            <el-form-item label="链接" v-if="title !== '公众号展示'" prop="url">
-              <VhallInput v-model="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
-            </el-form-item>
-            <el-form-item :label="title">
-              <!--{{status  - 0开启，1关闭}}-->
-              <div class="switch__box">
-                <el-switch
-                  v-model="status"
-                  :active-value="0"
-                  :inactive-value="1"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  :active-text="activeTitle"
-                >
-                </el-switch>
-              </div>
-            </el-form-item>
-            <el-form-item label="自动弹出" v-if="title==='公众号展示'">
+            <el-form-item label="自动弹出">
               <!--{{alertType 0自动弹出；1-手动弹出}}-->
               <div class="switch__box">
                 <el-switch
                   v-model="alertType"
                   :active-value="0"
                   :inactive-value="1"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  :active-text="autoUpText"
-                >
-                </el-switch>
-              </div>
-            </el-form-item>
-            <el-form-item label="自动关闭" v-else>
-              <!--{{alertType 0手动关闭 1自动关闭}}-->
-              <div class="switch__box">
-                <el-switch
-                  v-model="alertType"
-                  :active-value="1"
-                  :inactive-value="0"
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="autoUpText"
@@ -97,52 +67,51 @@
         <div class="official-preview">
           <!-- 模拟开关 -->
           <div class="zdy--switch">
-            <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
             <span :class="switchType === 'app' ? 'active' : ''"  @click.prevent.stop="changeSwitch('app')">手机预览</span>
+            <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
           </div>
           <!--PC预览,begin-->
           <div class="official-pc" v-show="switchType === 'pc'">
             <!-- status 控制是否阴影 -->
-            <div class="v-preview-content" :style="status > 0 ? 'opacity: 0.2;' : ''">
+            <div class="v-preview-content">
                <!-- 公众号 -->
-               <div class="gzh_pc" v-if="title === '公众号展示'">
-                 <img class="gzh_bg_default" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0"/>
-                 <img class="gzh_bg" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCodeAtuo.png" alt="" v-if="!(alertType > 0)"/>
-                 <div class="gzh_img v-code-preview" v-if="domain_url && !(alertType > 0)">
-                   <img :src="domain_url" alt="" />
+               <div class="gzh_pc_mask" v-if="!(alertType > 0)"></div>
+               <div class="gzh_pc">
+                 <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
+                 <!-- 扫码外层 -->
+                 <div class="gzh_img_layout" v-if="!(alertType > 0)">
+                   <p><i class="iconfont-v3 saasicon_close"></i></p>
+                   <div class="gzh_img v-code-preview">
+                    <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)"/>
+                    <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url && !(alertType > 0)"/>
+                  </div>
+                   <p class="gzh_txt">扫码关注公众号</p>
                  </div>
                </div>
-              <!-- 开屏海报 -->
-              <div class="hb_pc" v-if="title !== '公众号展示'">
-                <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" />
-                <img class="hb_img v-poster-preview" :src="domain_url + '?x-oss-process=image/resize,m_fill,w_160,h_160,limit_0'" alt=""
-                     v-if="domain_url"/>
-              </div>
             </div>
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div :class="['official-app', {'null-page' : title !== '公众号展示'}]" v-show="switchType === 'app'" :style="status > 0 ? 'opacity: 0.2;' : ''">
-            <span class="title">{{title === '公众号展示' ? '公众号展示' : '开屏海报展示'}}</span>
+          <div :class="['official-app', {'show-code': !(alertType > 0)}]" v-show="switchType === 'app'">
+            <span class="title">公众号</span>
             <!-- 公众号 -->
-            <div class="gzh_app" v-if="title === '公众号展示'">
-              <div class="img-code v-code-preview app-preview" v-if="domain_url && !(alertType > 0)">
-                <img :src="domain_url" alt="">
+            <div class="gzh_app_mask" v-if="!(alertType > 0)"></div>
+            <div class="gzh_app_close" v-if="!(alertType > 0)"></div>
+            <div class="gzh_app"  v-if="!(alertType > 0)">
+              <div class="gzh_img_layout">
+                <div class="img-code v-code-preview app-preview">
+                  <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)" />
+                  <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url && !(alertType > 0)"/>
+                </div>
               </div>
-            </div>
-            <!-- 开屏海报 -->
-            <div class="hb_app" v-if="title !== '开屏海报展示'">
-              <div class="poster-img" v-if="domain_url">
-                <img :src="domain_url" alt="">
-              </div>
-              <el-button class="poster-btn" size="mini" round>{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
+              <!-- 非默认图，有文字
+              <p class="gzh_txt" v-if="domain_url">扫码关注公众号</p> -->
             </div>
           </div>
           <!--手机预览,end-->
         </div>
       </div>
-    </el-card>
-  <!--  </div>-->
+   </div>
   </div>
 </template>
 <script>
@@ -152,16 +121,20 @@ import Env from '@/api/env.js';
 export default {
   data() {
     return {
-      img: '',
       domain_url: '',
       imgShowUrl: '',
       status: null,
       alertType: null,
-      switchType: 'pc',
+      switchType: 'app',
+      showPoster: false,
       form: {
+        img: '',
         url: ''
       },
       formRules: {
+        img: [
+          { required: true, message: '请上传二维码', trigger: 'blur' },
+        ],
         url: [
           { required: false, message: '请输入跳转链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
@@ -173,24 +146,23 @@ export default {
   },
   computed: {
     pathUrl: function() {
-      return this.title==='公众号展示' ? `interacts/wechat-official-imgs` : `interacts/screen-imgs`;
-    },
-    title() {
-      return this.$route.meta.title === '开屏海报' ? '开屏海报' : '公众号展示';
+      return `interacts/wechat-official-imgs`;
     },
     activeTitle(){
-      if (this.title==='公众号展示') {
-        return this.status ? '开启后，进入活动页面时展示公众号' : '已开启，进入活动页面时展示公众号';
-      } else {
-        return this.status ? '开启后，观看直播前展示广告图' : '已开启，观看直播前展示广告图';
-      }
+      return this.status ? '开启后，进入活动页面时展示公众号' : '已开启，进入活动页面时展示公众号';
     },
     autoUpText(){
-      if (this.title==='公众号展示') {
-        return this.alertType > 0 ? '开启后，进入活动页公众号自动展示' : '已开启，进入活动页公众号自动展示';
-      } else {
-        return this.alertType > 0 ? '已开启，5秒倒计时结束后自动关闭' : '开启后，5秒倒计时结束后自动关闭';
-      }
+      return this.alertType > 0 ? '开启后，进入活动页公众号自动展示' : '已开启，进入活动页公众号自动展示';
+    }
+  },
+  watch: {
+    domain_url: {
+      handler (val) {
+        if (val) {
+          this.showPoster = true
+        }
+      },
+      immediate: true
     }
   },
   components: {
@@ -201,23 +173,64 @@ export default {
     this.getData();
   },
   methods: {
+    async changeOpenStatus (e) {
+      let status = this.status; // 目标
+      this.status = Number(!status);
+      let params = {
+        webinar_id: this.$route.params.str,
+        status: status, //是否展示公众号/是否展示开屏海报：0开启1关闭
+      };
+      this.$fetch('setPublicInfo', params).then(res => {
+        this.$message({
+          showClose: true,
+          message: status > 0 ? '关闭成功' : '开启成功',
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.status = status;
+        // 重新获取数据
+        this.getData();
+      }).catch(res => {
+        this.$message({
+          showClose: true,
+          message: res.msg || (status > 0 ? '关闭失败' : '开启失败'),
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      })
+    },
+    closePoster () {
+      this.showPoster = false
+    },
     changeSwitch(type) {
       this.switchType = type;
+      if (this.domain_url) {
+        if (this.switchType == 'pc') {
+          this.resizePcImg(this.domain_url)
+        } else {
+          this.resizeImg(this.domain_url)
+        }
+      }
     },
     getData() {
-      this.$fetch(this.title === '公众号展示' ? 'getPublicInfo': 'getPosterInfo', {
+      this.$fetch('getPublicInfo', {
         webinar_id: this.$route.params.str
       }).then(res => {
         if(res && res.code === 200) {
-          this.img = res.data.img || '';
+          this.form.img = res.data.img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
-          this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
-          if (this.title === '公众号展示') {
-            this.alertType = res.data.alert_type === null || res.data.alert_type === undefined || res.data.alert_type === '' ? 1 : res.data.alert_type;
-          } else {
-            this.alertType = res.data.shutdown_type === null || res.data.shutdown_type === undefined || res.data.shutdown_type === '' ? 1 : res.data.shutdown_type;
+          if (this.domain_url) {
+            if (this.switchType == 'pc') {
+              this.resizePcImg(this.domain_url)
+            } else {
+              this.resizeImg(this.domain_url)
+            }
           }
+          this.status = res.data.status === null || res.data.status === undefined || res.data.status === '' ? 1 : res.data.status;
+          this.alertType = res.data.alert_type === null || res.data.alert_type === undefined || res.data.alert_type === '' ? 1 : res.data.alert_type;
         }
       }).catch(res => {
         console.log(res);
@@ -231,34 +244,16 @@ export default {
       });
     },
     preSure() {
-      let url = '';
-      if (Number(this.status === 0) && !this.img) {
-        this.$message({
-          message: `${this.title === '公众号展示' ? ' 请上传二维码图片' : '请上传图片'}`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
-      }
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.img ? this.$parseURL(this.img).path : '' // 公众号/开屏海报  图片地址
+        img: this.form.img ? this.$parseURL(this.form.img).path : '' // 公众号/开屏海报  图片地址
       };
       let type = this.alertType;
-      if (this.title === '公众号展示') {
-        params.alert_type = type; // 公众号-弹窗方式：0自动弹出 1手动弹出
-        url = 'setPublicInfo';
-      } else {
-        params.shutdown_type = type;
-        params.url = this.form.url;
-        url = 'setPosterInfo';
-      }
+      params.alert_type = type; // 公众号-弹窗方式：0自动弹出 1手动弹出
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
-          this.$fetch(url, this.$params(params)).then(res => {
+          this.$fetch('setPublicInfo', params).then(res => {
             this.$message({
               message: '保存成功',
               showClose: true,
@@ -285,9 +280,18 @@ export default {
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
-        this.img = file_url;
+        this.form.img = file_url;
         this.domain_url = domain_url;
+        if (this.domain_url) {
+          if (this.switchType == 'pc') {
+            this.resizePcImg(this.domain_url)
+          } else {
+            this.resizeImg(this.domain_url)
+          }
+        }
       }
+      // 触发验证
+      this.$refs.officialForm.validateField('img');
     },
     beforeUploadHnadler(file){
       console.log(file);
@@ -298,7 +302,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message({
-          message:  `${this.title!=='公众号展示' ? '图片' : '二维码图片'}只能是 ${typeList.join('、')} 格式!`,
+          message:  `二维码图片只能是 ${typeList.join('、')} 格式!`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -308,7 +312,7 @@ export default {
       }
       if (!isLt2M) {
         this.$message({
-          message: `${this.title!=='公众号展示' ? '图片' : '二维码图片'}大小不能超过 2MB!`,
+          message: `二维码图片大小不能超过 2MB!`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -324,7 +328,7 @@ export default {
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       this.$message({
-        message: `${this.title!=='公众号展示' ? '图片' : '二维码图片'}上传失败`,
+        message: `二维码图片上传失败`,
         showClose: true,
         // duration: 0,
         type: 'error',
@@ -337,15 +341,74 @@ export default {
     handleFileChange(file) {
       console.log(file);
       // this.handleuploadSuccess(file);
+    },
+    resizeImg (data) {
+      let img = new Image()
+      img.src = data
+      this.$nextTick(() => {
+        let dom = document.querySelector('.poster-img img')
+        if (dom) {
+          img.onload = () => {
+            let w = img.width
+            let h = img.height
+            let winWidth = 284
+            let winHeight = 520
+            if (w != h) {
+              if (w > h) {
+                dom.style.width = '100%'
+                dom.style.height = 'auto'
+              } else {
+                dom.style.width = 'auto'
+                dom.style.height = 'auto'
+              }
+            } else {
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+            }
+          }
+        }
+      })
+    },
+    resizePcImg (data) {
+      let img = new Image()
+      img.src = data
+      this.$nextTick(() => {
+        let dom = document.querySelector('.pc-poster-wrap .v-poster-preview')
+        console.log(222, dom)
+        if (dom) {
+          img.onload = () => {
+            let w = img.width
+            let h = img.height
+            console.log(12, w, h)
+            let winWidth = 58
+            let winHeight = 102
+            if (w > h) {
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+            } else if (w == h) {
+              dom.style.width = '100%'
+              dom.style.height = 'auto'
+            } else {
+              dom.style.width = 'auto'
+              dom.style.height = 'auto'
+            }
+          }
+        }
+      })
     }
   }
 };
 </script>
 <style lang="less" scoped>
+.switch__box {
+  display: inline-block;
+}
+/deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
+  color: #999999;
+  pointer-events: none;
+  user-select: none;
+}
   .offical-show{
-    /deep/.el-switch__label.is-active {
-        color: #1A1A1A;
-    }
     .show-on{
       position: absolute;
       top: 42px;
@@ -356,11 +419,14 @@ export default {
     }
     .form-phone{
       display: flex;
-      padding: 30px 12px;
+      padding: 48px 12px;
+      background: #fff;
+      min-height: 730px;
+      border-radius: 4px;
     }
     .official-form{
-      width: 450px;
-      margin-right: 200px;
+      width: 482px;
+      margin-right: 80px;
       /deep/.el-button{
         margin-top: 100px;
         // padding: 10px 45px;
@@ -368,23 +434,47 @@ export default {
       /deep/.el-input {
         width: 360px;
       }
+      /deep/.el-input__inner{
+        padding-left: 12px;
+      }
+      /deep/.el-switch__label{
+        color: #999;
+      }
+      /deep/.el-form-item{
+        margin-bottom: 32px;
+        &:last-child{
+          padding-top: 8px;
+        }
+      }
     }
     .v-preview-content {
       position: relative;
       img {
-        width: 331px;
-        height: 265px;
+        width: 400px;
+        height: 274px;
         display: block;
-        margin: 110px auto 0;
+        margin: 24px auto 0;
+      }
+      .pc-poster-wrap{
+        position: absolute;
+        width: 56px;
+        height: 102px;
+        top: 50px;
+        right: 16px;
+        background: transparent;
       }
       .v-poster-preview {
-        position: absolute;
-        width: 58px;
-        height: 102px;
-        top: -61px;
-        right: 16px;
+        display: inline-block;
+        position:absolute;
+        top: 50%;
+        left: 50%;
+        max-width: 58px;
+        max-height: 102px;
+        transform: translate(-50%, -50%);
+        margin-top: 0px;
+        object-fit: cover;
       }
-      .v-code-preview {
+      /* .v-code-preview {
         position: absolute;
         display: block;
         width: 76px;
@@ -399,19 +489,71 @@ export default {
           object-fit: scale-down;
           margin: 0 0;
         }
+      } */
+
+      .gzh_pc_mask {
+        position: absolute;
+        display: block;
+        margin: 0;
+        right: 0;
+        top: 14px;
+        text-align: center;
+        width: 400px;
+        height: 250px;
+        background: #000000;
+        opacity: 0.6;
+      }
+      .gzh_img_layout {
+        position: absolute;
+        display: block;
+        margin: 0;
+        top: 69px;
+        right: calc(50% - 62px);
+        width: 124px;
+        height: 138px;
+        background: #FFFFFF;
+        border-radius: 4px;
+        text-align: center;
+      }
+      p {
+        text-align: right;
+        .saasicon_close {
+          font-size: 5px;
+          margin-right: 5px;
+          margin-top: 5px;
+        }
+      }
+      .v-code-preview  {
+        width: 98px;
+        height: 98px;
+        margin: 0 auto;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+          margin: 0 0;
+        }
+      }
+      .gzh_txt {
+        font-size: 14px;
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 20px;
+        text-align: center;
       }
     }
     .official-app{
-      width: 326px;
-      height: 631px;
-      background-image: url('../../../common/images/official/phone-model.png');
+      width: 420px;
+      height: 690px;
+      margin-top: -24px;
+      margin-left: -47px;
+      background-image: url('../../../common/images/official/phone_yl_1@2x.png');
       background-size: 100%;
       background-position: center;
-      &.null-page {
-        background-image: url('../../../common/images/official/phone-model.png');
+      &.show-code {
+        background-image: url('../../../common/images/official/phone_yl@2x.png');
       }
       background-size: cover;
-      margin-top: -15px;
       position: relative;
       .title{
         display: inline-block;
@@ -419,20 +561,21 @@ export default {
         height: 30px;
         line-height: 30px;
         text-align: center;
-        color: #555;
+        font-size: 16px;
+        font-weight: 400;
+        color: #666666;
         background: #f7f7f7;
         position: absolute;
         top: 38px;
         left: 50%;
         transform: translateX(-50%);
       }
-      .img-code{
+   /*    .img-code{
         position: absolute;
         height: 142px;
         width: 142px;
         left: 53%;
         top: 50%;
-        /*border: 1px solid #ccc;*/
         transform: translate(-50%, -50%);
         background: transparent;
         img{
@@ -453,20 +596,25 @@ export default {
           height: 100%;
           border-radius: 100%;
         }
-      }
+      } */
       .poster-img {
         position: absolute;
-        height: 142px;
-        width: 90px;
-        left: 66px;
-        top: 148px;
-        transform: translate(-50%, -50%);
+        height: 520px;
+        width: 284px;
+        left: 22px;
+        top: 78px;
+        border-bottom-right-radius: 16px;
+        border-bottom-left-radius: 16px;
+        overflow: hidden;
         img {
           display: inline-block;
-          width: 284px;
-          height: 520px;
-          border-bottom-right-radius: 16px;
-          border-bottom-left-radius: 16px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          object-fit:cover;
+          max-width: 284px;
+          max-height: 520px;
         }
       }
       .poster-btn {
@@ -474,11 +622,69 @@ export default {
         right: 20px;
         top: 90px;
       }
+      .gzh_app_mask {
+        position: absolute;
+        display: block;
+        margin: 0;
+       /*  right: calc(50% - 155px);
+        top: 56px;
+        text-align: center;
+        width: 310px;
+        height: 566px; */
+        right: calc(50% - 156px);
+        top: 75px;
+        text-align: center;
+        width: 312px;
+        height: 576px;
+        background: #000000;
+        border-radius: 0px 0px 26px 26px;
+        opacity: 0.6;
+      }
+      .gzh_app_close {
+
+      }
+      .gzh_app {
+        position: absolute;
+        display: block;
+        margin: 0;
+        right: calc(50% - 81px);
+        text-align: center;
+        width: 162px;
+        /* top: calc(50% - 95px);
+        height: 191px; */
+        top: calc(50% - 81px);
+        height: 162px;
+        background: transparent;
+        border-radius: 4px;
+      }
+      .gzh_img_layout {
+        background: #F7F7F7;
+        border-radius: 4px;
+        padding: 6px 6px;
+        text-align: center;
+      }
+      .app-preview {
+        width: 150px;
+        height: 150px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      .gzh_txt {
+        font-size: 14px;
+        font-weight: 400;
+        color: #FFFFFF;
+        line-height: 20px;
+        text-align: center;
+        margin-top: 9px;
+      }
     }
   }
   .img-box{
-    width: 360px;
-    height: 135px;
+    width: 100%;
+    height: 140px;
   }
   /deep/.length152{
     margin-top: 0px!important;
@@ -487,6 +693,6 @@ export default {
     height: 773px;
   }
   .el-form{
-    margin-top: 70px;
+    margin-top: 55px;
   }
 </style>

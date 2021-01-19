@@ -1,6 +1,6 @@
 <template>
   <div class="order-detail">
-    <pageTitle title="订单支付">
+    <pageTitle title="升级版本">
     </pageTitle>
     <div class="version-info">
       <div class="version-item">

@@ -1,6 +1,6 @@
 <template>
   <div class="form-product">
-    <pageTitle title="创建商品"></pageTitle>
+    <pageTitle :title="$route.meta.title"></pageTitle>
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">
@@ -19,7 +19,7 @@
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
-                :restPic="true"
+                :isProduct="true"
                 @resetImage="resetPic(item)"
                 :coverPic="!item.cover"
                 @delete="formDelete(item)"
@@ -34,9 +34,9 @@
                 :on-success="productLoadSuccess"
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
+                :isProduct="true"
                 :on-preview="uploadPreview"
                 :before-upload="beforeUploadHandler"
-                :restPic="true"
                 >
                 <p slot="tip">上传图片</p>
               </upload>
@@ -210,8 +210,8 @@ export default {
         goods_id: this.$route.query.goodId
       }).then(res => {
         this.form = {
-          ...res.data,
           ...this.form,
+          ...res.data,
           url: res.data.goods_url
         };
         this.fileList = res.data.img_list.map(item => {
@@ -426,7 +426,7 @@ export default {
     }
     .add-product{
       background: #fff;
-      padding: 24px 32px;
+      padding: 48px 32px 1px 32px;
       border-radius: 4px;
     }
     .el-form-item {
@@ -449,6 +449,7 @@ export default {
     }
     .imgList{
       display: flex;
+      width: 640px;
       height: 150px;
       // justify-content: space-between;
       align-items: center;
@@ -457,7 +458,6 @@ export default {
         height: 150px;
         border: 4px;
         position: relative;
-        // border: 1px dashed #ccc;
         margin-right: 10px;
         cursor: pointer;
         .cover-item{

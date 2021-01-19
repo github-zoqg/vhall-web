@@ -55,6 +55,14 @@ export default {
       let that = this;
       let barEcharts = echarts.init(this.$refs.barEchart);
       let option = {
+        tooltip: {
+          show: true,
+          formatter: function (params) {
+            let value = params.value ? params.value : 0;
+            let res = params.name + '<br/>填写人数' + '  ' + parseInt(params.value || 0);
+            return res;
+          },
+        },
         xAxis: {
           type: 'category',
           data: xData,
@@ -93,11 +101,15 @@ export default {
       line-height: 32px;
       color: #1A1A1A;
       font-size: 16px;
+      text-align: left;
+      padding: 0 10px;
     }
     td{
-      line-height: 20px;
+      line-height: 22px;
       color: #666666;
       font-size: 14px;
+      padding: 0 10px;
+      text-align: left;
     }
   }
 </style>

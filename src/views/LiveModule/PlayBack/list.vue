@@ -1,110 +1,128 @@
 <template>
   <div class="listBox">
     <pageTitle :title="title"></pageTitle>
-    <div v-if="!isDemand" class="operaBlock">
-      <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-      <el-button size="medium" plain round @click="toRecord">录制</el-button>
-      <el-button size="medium" round @click="settingHandler">回放设置</el-button>
-      <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
-      <VhallInput
-        @keyup.enter.native="getList"
-        placeholder="请输入内容标题"
-        autocomplete="off"
-        v-model="keyWords">
-        <i
-          class="el-icon-search el-input__icon"
-          slot="suffix"
-          @click="getList">
-        </i>
-      </VhallInput>
+    <div class="noData" v-if="no_show === true">
+      <null-page text="暂未创建回放" nullType="noAuth">
+        <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
+        <el-button class="length152 recordbtn" round type="white-primary" @click="toRecord">录制</el-button>
+        <!-- <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button> -->
+      </null-page>
     </div>
-    <div class="tableBox" v-loading="loading">
-      <el-table
-        v-if="isDemand !== ''"
-        ref="playBackTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange">
-        <el-table-column
-          v-if="!isDemand"
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          width="430"
-          label="内容标题">
-          <template slot-scope="scope">
-            {{ scope.row.date }}
-            <div class="content">
-              <div class="imageBox">
-                <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+    <template v-if="no_show === false">
+      <div v-if="!isDemand" class="operaBlock">
+        <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
+        <el-button size="medium" plain round @click="toRecord">录制</el-button>
+        <el-button size="medium" round @click="settingHandler">回放设置</el-button>
+        <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
+        <VhallInput
+          clearable
+          @keyup.enter.native="getList"
+          placeholder="请输入内容标题"
+          autocomplete="off"
+          class="resetRightBrn"
+          @clear="getList"
+          v-model="keyWords">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="getList">
+          </i>
+        </VhallInput>
+      </div>
+      <div class="tableBox" v-loading="loading">
+        <el-table
+          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+          v-if="isDemand !== ''"
+          ref="playBackTable"
+          :data="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange">
+          <el-table-column
+            v-if="!isDemand"
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            width="430"
+            label="内容标题">
+            <template slot-scope="scope">
+              {{ scope.row.date }}
+              <div class="content">
+                <div class="imageBox">
+                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
+                  <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                </div>
+                <div class="info">
+                  <p class="name">{{ scope.row.name }}</p>
+                  <p class="create-time">{{ scope.row.created_at }}</p>
+                  <span v-if="scope.row.doc_status" class="tag">章节</span>
+                </div>
               </div>
-              <div class="info">
-                <p class="name">{{ scope.row.name }}</p>
-                <p class="create-time">{{ scope.row.created_at }}</p>
-                <span v-if="scope.row.doc_status" class="tag">章节</span>
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column width="138">
-          <template slot-scope="{ column, $index }" slot="header">
-            <el-select v-model="recordType" @change="typeChange(column, $index)">
-              <el-option
-                v-for="item in typeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </template>
-          <span class="playpackSource" slot-scope="scope">{{scope.row.source | soruceTotext}}</span>
-        </el-table-column>
+            </template>
+          </el-table-column>
+          <el-table-column width="120">
+            <template slot-scope="{ column, $index }" slot="header">
+              <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
+                <el-option
+                  v-for="item in typeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <span v-else>视频来源</span>
+            </template>
+            <span class="playpackSource" slot-scope="scope">{{scope.row.source | soruceTotext}}</span>
+          </el-table-column>
 
-        <el-table-column
-          label="时长"
-          show-overflow-tooltip>
-          <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
-        </el-table-column>
+          <el-table-column
+            label="时长"
+            show-overflow-tooltip>
+            <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
+          </el-table-column>
 
-        <el-table-column
-          v-if="!isDemand"
-          label="暂存至"
-          show-overflow-tooltip>
-          <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
-        </el-table-column>
+          <el-table-column
+            v-if="!isDemand"
+            label="暂存至"
+            show-overflow-tooltip>
+            <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
+          </el-table-column>
 
-        <el-table-column
-          width="200"
-          label="操作"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            {{ scope.row.date }}
-            <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-            <el-button :disabled="!!scope.row.transcoding" v-if="!isDemand" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
-            <el-button type="text" @click="toChapter(scope.row.id)">章节</el-button>
-            <el-dropdown v-if="!isDemand" @command="handleCommand">
-              <el-button type="text">更多</el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
-                <el-dropdown-item :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
-                <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <SPagination
-        v-show="totalElement > pageSize"
-        :total="totalElement"
-        :page-size='pageSize'
-        :current-page='pageNum'
-        @current-change="currentChangeHandler"
-        align="center"
-      ></SPagination>
-    </div>
+          <el-table-column
+            width="176"
+            label="操作"
+            show-overflow-tooltip
+            align="left"
+          >
+            <template slot-scope="scope">
+              {{ scope.row.date }}
+              <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
+              <el-button :disabled="!!scope.row.transcoding" v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
+              <el-button type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-dropdown v-if="!isDemand" @command="handleCommand">
+                <el-button type="text">更多</el-button>
+                <el-dropdown-menu style="width: 160px;" slot="dropdown">
+                  <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
+                  <el-dropdown-item :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
+                  <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+        <SPagination
+          v-show="totalElement > pageSize"
+          :total="totalElement"
+          :page-size='pageSize'
+          :current-page='pageNum'
+          @current-change="currentChangeHandler"
+          align="center"
+        ></SPagination>
+        <null-page text="未搜索到相关内容" nullType="search" v-if="totalElement === 0"></null-page>
+      </div>
+    </template>
+
     <!-- 编辑弹窗 -->
     <el-dialog
       title="编辑内容标题"
@@ -126,13 +144,13 @@
       >
       </VhallInput>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
-        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确定</el-button>
+        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取消</el-button>
       </span>
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
       :close-on-click-modal=false
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
@@ -145,6 +163,7 @@
 import VideoPreview from './components/previewVideo';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
+import NullPage from '../../PlatformModule/Error/nullPage.vue';
 export default {
   data(){
     return {
@@ -169,6 +188,7 @@ export default {
       isDemand: '',
       chatSDK: '',
       handleMsgTimer: '',
+      no_show: '',
       typeOptions: [
         { label: '来源', value: '-1' },
         { label: '回放', value: '0' },
@@ -186,7 +206,7 @@ export default {
       return this.$route.params.str;
     },
     title(){
-      if (this.isDemand == '') {
+      if (this.isDemand === '') {
         return ''
       } else if (this.isDemand) {
         return '点播管理'
@@ -235,6 +255,7 @@ export default {
         this.liveDetailInfo = res.data;
         this.isDemand = this.liveDetailInfo.is_demand == 1;
         if (this.isDemand) {
+          this.recordType = '上传'
           this.typeOptions = [
             { label: '上传', value: '2' }
           ]
@@ -243,7 +264,6 @@ export default {
             { label: '来源', value: '-1' },
             { label: '回放', value: '0' },
             { label: '录制', value: '1' },
-            { label: '上传', value: '2' },
             { label: '打点录制', value: '3' }
           ]
         }
@@ -301,13 +321,16 @@ export default {
         limit: this.pageSize,
         source: this.recordType,
       };
+      param.source == '上传' && (param.source = -1)
       this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
         res.data.list.forEach(item => (item.transcoding = false))
         this.tableData = res.data.list;
         this.totalElement = res.data.total;
-        console.log(res);
+        if(this.no_show === '') {
+          this.no_show = res.data.total == 0 ? true : false
+        }
       }).catch(error=>{
         this.$message.error(`获取回放列表失败，${error.msg || error.message}`);
       }).finally(()=>{
@@ -438,8 +461,9 @@ export default {
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toCreate() {
-      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
-      window.open(routeData.href, '_blank');
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
+      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`});
+      // window.open(routeData.href, '_blank');
     },
     toRecord() {
       this.$fetch('recordCheck', {
@@ -458,22 +482,52 @@ export default {
       })
     },
     toTailoring(recordId, recordName){
-      const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      window.open(routeData.href, '_blank');
+      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      // window.open(routeData.href, '_blank');
     },
-    toChapter(recordId){
-      if (this.isDemand) {
-        this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+    toChapter(row){
+      const recordId = row.id
+      const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
+      // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
+      if (this.isDemand || (row.transcode_status == 1 && row.doc_status)) {
+        this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         return false
       }
-      this.$fetch('getDocInfo', {
+      // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
+      this.$fetch('recordInfo', {
         record_id: recordId
       }).then(res => {
-        console.log(res)
-        if (res.data.doc_titles.length) {
-          this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
+          this.$message({
+            message:  '视频转码中，请稍后再试',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else if (res.data.transcode_status == 2){
+          this.$message({
+            message:  '视频转码失败',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
         } else {
-          this.$message.warning('当前回放内容未演示PPT格式的文档，不支持使用章节功能')
+          this.$fetch('getDocInfo', {
+            record_id: recordId
+          }).then(res => {
+            console.log(res)
+            if (res.data.doc_titles.length) {
+              this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+            } else {
+              this.$message({
+                message:  '当前回放内容未演示PPT格式的文档，不支持使用章节功能',
+                showClose: true, // 是否展示关闭按钮
+                type: 'warning', //  提示类型
+                customClass: 'zdy-info-box' // 样式处理
+              });
+            }
+          })
         }
       })
     },
@@ -484,7 +538,8 @@ export default {
         query: {
           record_id: recordData.id,
           paas_record_id: recordData.paas_record_id,
-          name: recordData.name
+          name: recordData.name,
+          webinar_id: this.webinar_id
         }
       });
     }
@@ -511,12 +566,12 @@ export default {
           str = "录制";
           break;
 
-        case 3:
-          str = "打点";
-          break;
-
         case 2:
           str = "上传";
+          break;
+
+        case 3:
+          str = "打点";
           break;
 
         default:
@@ -528,23 +583,57 @@ export default {
   },
   components: {
     PageTitle,
-    VideoPreview
+    VideoPreview,
+    NullPage
   }
 };
 </script>
 
-<style lang="less">
-  .dialog-padding_playbackpreview{
-    padding: 0px 0px 30px;
-  }
-</style>
 <style lang="less" scoped>
   .listBox{
+    /deep/ .dialog-footer {
+      .el-button {
+        padding: 4px 23px;
+      }
+    }
+    /deep/ .el-textarea__inner {
+      font-family: PingFangSC-Regular, PingFang SC;
+    }
+    .btn-list .el-button:last-child {
+      margin-right: 0;
+      margin-left: 0;
+    }
     min-width: 1020px;
+    .noData {
+      /deep/.recordbtn {
+        background: transparent;
+        border-color: #ccc;
+        color: #666;
+        &:hover {
+          background: #FB3A32;
+          border: 1px solid #FB3A32;
+        }
+        &:active {
+          background: #E2332C;
+          border: 1px solid #E2332C;
+        }
+        &.is-disabled {
+          border: 1px solid #E6E6E6;
+          background: transparent;
+          color: #B3B3B3;
+          &:hover,&:active {
+            background: transparent;
+          }
+        }
+      }
+    }
   }
   .tableBox{
     padding: 32px 24px;
     background: #fff;
+    /deep/ .el-table__empty-block {
+      display: none;
+    }
     /deep/ .cell{
       color: #666;
     }
@@ -553,6 +642,20 @@ export default {
     }
     .playpackSource{
       color: #1a1a1a;
+    }
+    /deep/ thead .el-select {
+      .el-input__inner {
+        border: none;
+        color: #666;
+        padding-left: 0;
+      }
+      .el-input__suffix {
+        .el-icon-arrow-up {
+          color: #666;
+          line-height: 36px;
+          // height: 14px;
+        }
+      }
     }
   }
   /* /deep/ .el-table__header{
@@ -639,6 +742,25 @@ export default {
   }
   .operaBlock{
     margin-bottom: 20px;
+    .el-button.el-button--medium.el-button--default {
+      background: transparent;
+      &:hover {
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
+      &.is-disabled {
+        border: 1px solid #E6E6E6;
+        background: transparent;
+        color: #B3B3B3;
+        &:hover,&:active {
+          background: transparent;
+        }
+      }
+    }
     .el-input{
       width: 220px;
       float: right;
@@ -653,9 +775,39 @@ export default {
         }
       }
     }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
   }
   .input-with-select{
     vertical-align: text-top;
+  }
+  /deep/ .dialog-padding_playbackpreview{
+    padding: 0px 0px 30px;
+    background: transparent!important;
+    border: none;
+    box-shadow: none;
+    .el-dialog__headerbtn {
+      top: 24px;
+      margin-bottom: 8px;
+      .el-dialog__close {
+        color: #FFFFFF;
+      }
+    }
   }
 </style>
 <style lang="less">

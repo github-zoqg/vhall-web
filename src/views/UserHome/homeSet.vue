@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="个人主页"></pageTitle>
+    <pageTitle title="设置"></pageTitle>
     <div class="home--set--info">
       <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
         <el-form-item label="主页标题" prop="title">
@@ -26,7 +26,7 @@
             :before-upload="beforeUploadHandler"
             @delete="homeSetInfoForm.homepage_avatar = ''">
             <div slot="tip">
-              <p>建议尺寸：128*128px，小于2M</p>
+              <p>建议尺寸：100*100px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -60,7 +60,7 @@
             :before-upload="beforeUploadHandlerBg"
             @delete="homeSetInfoForm.img_url = ''">
             <div slot="tip">
-              <p>建议尺寸：1280*768px，小于2M</p>
+              <p>建议尺寸：1920*630px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -105,8 +105,8 @@
           </div>
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" v-preventReClick round @click.prevent.stop="saveHandle">保 存</el-button>
-          <el-button round @click.prevent.stop="returnHandle">取 消</el-button>
+          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveHandle">保 存</el-button>
+          <el-button round  class="length152" @click.prevent.stop="returnHandle">取 消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -294,7 +294,7 @@ export default {
             });
             // 回到前一个页面
             this.$router.push({
-              path: `/account/myHome`
+              path: `/acc/myHome`
             });
             // window.location.reload();
           }).catch(res =>{
@@ -314,7 +314,7 @@ export default {
       this.$refs['homeSetInfoForm'].resetFields();
       this.isEditUnit = false;
       this.$router.push({
-        path: `/account/myHome`
+        path: `/acc/myHome`
       })
     },
     homeInfoGet() {

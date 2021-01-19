@@ -1,6 +1,6 @@
 <template>
   <div class="account-income">
-    <pageTitle title="账单明细">
+    <pageTitle title="订单明细">
       <div slot="content">
         购买明细指用户从后台主动下单购买相关功能的订单；开通明细指通过工作人<br>员给您开通的相关功能订单
       </div>
@@ -498,13 +498,16 @@ export default {
 <style lang="less" scoped>
   .account-income{
     .interact-detail {
-      padding: 0 24px;
       min-height: 550px;
     }
     .box-card{
-      padding: 24px 32px;
+      padding: 24px 0 40px 0;
       border-radius: 4px;
       background: #fff;
+    }
+    /deep/.el-tabs__content{
+      padding: 0 24px;
+      min-height: 500px;
     }
     .search-box{
       padding-top: 30px;

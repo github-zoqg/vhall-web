@@ -60,6 +60,9 @@ export default {
       }
 
     }
+    /deep/.el-input__inner {
+     padding-right: 0px;
+    }
     /deep/ .btn-next,/deep/ .btn-prev{
       border: 1px solid #CCCCCC;
     }

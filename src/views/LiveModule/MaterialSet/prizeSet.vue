@@ -2,13 +2,13 @@
   <div class="prize-card">
     <pageTitle title="抽奖">
     </pageTitle>
-    <el-card>
+    <div class="card__body">
        <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="抽奖页设置" name="first">
             <div class="give-item">
             <div class="give-prize">
-              <el-form :model="formData" ref="ruleForm" label-width="100px">
-                <el-form-item label="图片上传">
+              <el-form :model="formData" ref="ruleForm" label-width="80px">
+                <!-- <el-form-item label="图片上传">
                   <upload
                     class="giftUpload"
                     v-model="previewSrc"
@@ -24,34 +24,48 @@
                       <p>支持jpg、gif、png、bmp</p>
                     </div>
                   </upload>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="模板库">
                     <div class="prize-type">
-                      <p :class="isChecked == 0 ? 'active' : ''" @click="changeType(0)">
+                      <div class="przieImg prizeNoBorder">
+                        <upload
+                          class="giftUpload"
+                          v-model="previewSrc"
+                          :domain_url="previewSrc"
+                          :on-success="prizeLoadSuccess"
+                          :on-progress="uploadProcess"
+                          :on-error="uploadError"
+                          :on-preview="uploadPreview"
+                          @delete="deleteImg"
+                          :before-upload="beforeUploadHandler">
+                        </upload>
+                      </div>
+                      <p :class="isChecked == 0 ? 'active' : ''" class="przieImg" @click="changeType(0)">
                         <img src="../../../common/images/gif/prize03.gif" alt="">
                         <label class="img-tangle" v-show="isChecked == 0" >
                           <i class="el-icon-check"></i>
                         </label>
                       </p>
-                      <p :class="isChecked == 1 ? 'active' : ''" @click="changeType(1)">
+                      <p :class="isChecked == 1 ? 'active' : ''" class="przieImg" @click="changeType(1)">
                         <img src="../../../common/images/gif/prize01.gif" alt="" >
                         <label class="img-tangle" v-show="isChecked == 1" >
                           <i class="el-icon-check"></i>
                         </label>
                       </p>
-                      <p :class="isChecked == 2 ? 'active' : ''" @click="changeType(2)">
+                      <p :class="isChecked == 2 ? 'active' : ''" class="przieImg" @click="changeType(2)">
                         <img src="../../../common/images/gif/prize02.gif" alt="">
                         <label class="img-tangle" v-show="isChecked == 2" >
                           <i class="el-icon-check"></i>
                         </label>
                       </p>
                     </div>
+                    <p style="color:#666">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
                 <el-form-item label="抽奖标题">
-                    <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')" placeholder="请输入抽奖标题" show-word-limit></VhallInput>
+                    <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item label="文字说明">
-                    <VhallInput v-model.trim="formData.description" autocomplete="off" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
+                    <VhallInput v-model.trim="formData.description" autocomplete="off" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary"  round @click="lotterySave" v-preventReClick>保存</el-button>
@@ -60,7 +74,7 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>{{ formData.title || '抽奖' }}<i class="el-icon-close"></i></h3>
+                <h3>{{ formData.title || '抽奖' }}</h3>
                 <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
                 </div>
                 <div class="sureBtn">{{ formData.description || '正在进行抽奖' }}</div>
@@ -73,14 +87,16 @@
             <div class="give-prize">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
-                    <el-input v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></el-input>
+                    <VhallInput v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></VhallInput>
                     <div class="isDelete">
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
-                      <el-switch
-                      v-if="index > 1"
+                      <p class="switch__box">
+                        <el-switch
+                          v-if="index > 1"
                         v-model="item.is_required"
                         inactive-text="必填">
                       </el-switch>
+                      </p>
                     </div>
                 </el-form-item>
                 <div class="add-prize" @click="addField">
@@ -94,7 +110,7 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>领奖<i class="el-icon-close"></i></h3>
+                <h3>领奖</h3>
                 <el-scrollbar class="scroll-bar">
                   <div class="give-msg">
                     <el-form :model="givePrizeForm">
@@ -126,7 +142,7 @@
           </div>
         </el-tab-pane>
       </el-tabs>
-    </el-card>
+    </div>
   </div>
 </template>
 
@@ -151,6 +167,9 @@ export default {
         name: '',
         phone: '',
         address: '',
+        user_define_100: '',
+        user_define_101: '',
+        user_define_102: '',
         placeholder: ''
       },
       action: `${process.env.VUE_APP_BASE_URL}/v3/vss/lottery/save-prize-image`,
@@ -444,21 +463,26 @@ export default {
 <style lang="less" scoped>
 .prize-card{
   height: 100%;
-  /deep/.el-card__body {
+  .card__body {
     padding:0;
+    background: #fff;
+    // max-width: 1374px;
+    margin: auto;
+    border-radius: 4px;
   }
   /deep/.el-switch{
     float: right;
     padding-top: 10px;
-    /deep/.el-switch__core {
-      width: 32px!important;
-      height: 20px;
-    }
-    /deep/.el-switch__core::after {
-      top: 2px;
-      width: 14px;
-      height: 14px;
-    }
+    margin-right: 0;
+    // /deep/.el-switch__core {
+    //   width: 32px!important;
+    //   height: 20px;
+    // }
+    // /deep/.el-switch__core::after {
+    //   top: 2px;
+    //   width: 14px;
+    //   height: 14px;
+    // }
   }
   /deep/.el-form-item__label{
     color: #1A1A1A;
@@ -493,16 +517,23 @@ export default {
       position: relative;
     }
     .give-prize{
-      width: 500px;
-      margin-right: 120px;
+      width: 480px;
+      margin-right: 80px;
       .isDelete{
         float: right;
         height: 20px;
         i{
           font-size: 16px;
           vertical-align: top;
-          margin: 7px 10px 0 0;
+          margin-top: 7px;
           cursor: pointer;
+        }
+      }
+      .switch__box{
+        display: inline-block;
+        padding-left: 5px;
+        /deep/.el-switch{
+          padding-top: 0px;
         }
       }
       /deep/.el-form-item__label{
@@ -529,7 +560,7 @@ export default {
       cursor: pointer;
       i{
         color: #3562FA;
-        border: 1px dashed #3562FA;
+        // border: 1px dashed #3562FA;
       }
       .el-icon-plus:before {
         font-weight: bolder;
@@ -538,9 +569,9 @@ export default {
     .give-show{
       width: 340px;
       height: 631px;
-      background-image: url('../../../common/images/h5-show-phone.png');
+      background-image: url('../../../common/images/gif/prize.png');
       background-size: cover;
-      margin-top: -15px;
+      margin-top: -25px;
       position: relative;
       .give-show-title{
         position: absolute;
@@ -552,16 +583,15 @@ export default {
       }
       .give-people{
         margin: auto;
-        margin-top: 287px;
+        margin-top: 275px;
         width: 290px;
-        margin-left: 25px;
+        margin-left: 45px;
         h3{
           text-align: center;
           font-size: 14px;
           height: 40px;
           line-height: 40px;
           color:#1A1A1A;
-          border-bottom: 1px solid #E6E6E6;
           position: relative;
           i{
             position: absolute;
@@ -606,7 +636,7 @@ export default {
         height: 200px;
         background-size: 100%;
         background-repeat:no-repeat;
-        margin-top: 24px;
+        margin-top: 16px;
         background-position: center;
         // img{
         //   width: 200px;
@@ -616,13 +646,12 @@ export default {
       }
     }
     .prize-type{
-      // width: 100%;
       display: flex;
       text-align: center;
       justify-content: space-between;
-      p{
-        width: 120px;
-        height: 120px;
+      .przieImg{
+        width: 88px;
+        height: 88px;
         border-radius: 4px;
         border: 1px solid #ccc;
         position: relative;
@@ -632,7 +661,7 @@ export default {
         }
         img{
           width: 100%;
-          height: 120px;
+          height: 100%;
         }
         .img-tangle{
           position: absolute;
@@ -650,6 +679,15 @@ export default {
             right:-11px;
             font-size: 10px;
           }
+        }
+      }
+      .prizeNoBorder{
+        border: 0;
+        /deep/.el-upload--picture-card {
+          height: 88px;
+        }
+        /deep/.el-upload--picture-card .box > div{
+          height: 88px;
         }
       }
     }

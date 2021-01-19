@@ -1,6 +1,6 @@
 <template>
   <div class="gift-wrap">
-    <pageTitle title="礼物管理">
+    <pageTitle title="礼物">
       <div slot="content">
         1.支持创建免费礼物。观看端最多显示40个礼物<br/>
         2.为保证显示效果，图片尺寸120 *120，文件大小不超过 2MB，格式jpg、gif、png、bmp<br/>
@@ -11,12 +11,12 @@
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addGift">创建礼物</el-button>
       <el-button round size="medium" :class="{'no-data': selectIds.length <= 0}"
                  :disabled="selectIds.length <= 0"
-                 @click="dialogTipVisible = true">批量删除</el-button>
+                 @click="handleDelete">批量删除</el-button>
       <VhallInput
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
-        class="head-btn fr search"
+        class="head-btn fr search resetRightBrn"
         v-model.trim="searchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -62,10 +62,10 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="left">
+        <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
-            <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -100,7 +100,7 @@
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
-              <p>建议尺寸：120*120px，小于2MB</p>
+              <p>建议尺寸：160*160px，小于2MB</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -115,23 +115,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确 定</el-button>
-        <el-button @click="handleCancelEdit" size="medium" round>取 消</el-button>
+        <el-button :disabled="!editParams.img || !editParams.name || !editParams.price" type="primary" v-preventReClick @click="handleUpdateGift"  size="medium" round>确定</el-button>
+        <el-button @click="handleCancelEdit" size="medium" round>取消</el-button>
       </div>
-    </el-dialog>
-    <el-dialog
-      title="提示"
-      width="400px"
-      v-if="dialogTipVisible"
-      :visible.sync="dialogTipVisible"
-      :close-on-click-modal="false"
-      :before-close="handleCancelDelete"
-    >
-      <span>观众端礼物显示将受到影响, 确认删除?</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleCancelDelete" v-preventReClick>取 消</el-button>
-        <el-button type="primary" @click="handleDeleteGift" v-preventReClick>确 定</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -167,7 +153,6 @@ export default {
         price: ''
       },
       domain_url: '',
-      dialogTipVisible: false,
       dialogVisible: false,
       deleteId: '',
       rules: {
@@ -182,6 +167,23 @@ export default {
         ],
       },
     };
+  },
+  watch: {
+    total(newVal, oldVal) {
+      if (newVal == 4 && newVal != oldVal) {
+        this.$nextTick(() => {
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__original').setAttribute('disabled', 'true')
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox').className += ' is-disabled';
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__input').className += ' is-disabled';
+        })
+      } else {
+        this.$nextTick(() => {
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__original').setAttribute('disabled', 'false')
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox').className = 'el-checkbox'
+          document.querySelector('.gift-list .el-table__header-wrapper th .el-checkbox__input').className = 'el-checkbox__input'
+        })
+      }
+    }
   },
   components: {
     PageTitle,
@@ -250,7 +252,6 @@ export default {
     // 全选方法
     onSelectAll() {
       if(this.total == 4) {
-        this.$message.warning('没有可以删除的自定义礼物')
         this.$refs.multipleTable.clearSelection()
       }
     },
@@ -388,28 +389,33 @@ export default {
     },
     // 删除礼品
     handleDelete (data) {
-      this.dialogTipVisible = true
-      this.selectIds = []
-      this.selectIds.push(data.gift_id)
+      if (data.gift_id) {
+        this.selectIds = []
+        this.selectIds.push(data.gift_id)
+      }
+
+      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.handleDeleteGift()
+      })
     },
     handleDeleteGift () {
-      debounce(() => {
-        this.$fetch('deleteGift', {
-          gift_ids: this.selectIds.join(',')
-        }).then((res) => {
-          if (res.code == 200) {
-            this.$message.success('删除成功')
-            this.getTableList()
-            this.selectIds = []
-            this.dialogTipVisible = false
-          }
-        }).catch((e) => {
-            this.$message.error('删除失败')
-        })
-      }, 100)
-    },
-    handleCancelDelete () {
-      this.dialogTipVisible = false
+      this.$fetch('deleteGift', {
+        gift_ids: this.selectIds.join(',')
+      }).then((res) => {
+        if (res.code == 200) {
+          this.$message.success('删除成功')
+          this.getTableList()
+          this.selectIds = []
+        }
+      }).catch((e) => {
+          this.$message.error('删除失败')
+      })
     },
     // 翻页
     currentChangeHandler (val) {
@@ -480,6 +486,23 @@ export default {
       color: #b3b3b3;
       background: #ffffff;
     }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
     ::v-deep.set-upload{
       position: relative;
       span{
@@ -501,12 +524,39 @@ export default {
         border: 1px solid #CCC;
       }
     }
+    /deep/.el-button--default {
+      background: transparent;
+      &:hover {
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
+      &.is-disabled {
+        border: 1px solid #E6E6E6;
+        background: transparent;
+        color: #B3B3B3;
+        &:hover,&:active {
+          background: transparent;
+        }
+      }
+    }
   }
   .gift-list{
     .layout--right--main();
     .padding-table-list();
     .gift-price{
       color: #FB3A32;
+    }
+    /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
+      background: #e6e6e6;
+    }
+  }
+  /deep/ .dialog-footer {
+    .el-button {
+      padding: 4px 23px;
     }
   }
 }

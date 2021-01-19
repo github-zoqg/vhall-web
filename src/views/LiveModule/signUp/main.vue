@@ -18,8 +18,8 @@
           <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
         </div>
       </pageTitle>
-      <div id="settingBox" class="settingBox">
-        <ul :class="['options', menuBarFixed ? 'isFixed' : '']">
+      <div id="settingBox" class="settingBox clearFix">
+        <ul :class="['options', menuBarFixed ? 'isFixed' : '']" v-show="rightComponent !='signUpForm'">
           <template v-for="(item, key, index) in setOptions">
             <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
             <li
@@ -36,6 +36,7 @@
               <span>{{item.label}}</span>
             </li>
           </template>
+          <div class="disable_wrap" v-if="!signUpSwtich"></div>
         </ul>
         <div class="rightView">
           <!-- 表单编辑组件 -->
@@ -53,6 +54,7 @@
             :questionArr.sync="questionArr"
             @closeSignUp="closePreview"
           ></signUpForm>
+          <div class="disable_wrap" v-if="!signUpSwtich"></div>
         </div>
       </div>
     </div>
@@ -187,7 +189,6 @@ export default {
           this.signUpSwtich = res.data.enable_status == '0' ? false : true;
         }
       }).catch(err => {
-        this.$message.error(`报名表单${ behaviour }失败！`);
         console.log(err);
       });
     },
@@ -266,13 +267,29 @@ export default {
         webinar_id: this.webinar_id
       }).then(res => {
         if (res.code === 200) {
-          this.$message.success(`报名表单${ behaviour }成功！`);
-        } else {
-          this.$message.error(`报名表单${ behaviour }失败！`);
+          this.$message({
+            message:  `报名表单${ behaviour }成功！`,
+            showClose: true, // 是否展示关闭按钮
+            type: 'success', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
         }
       }).catch(err => {
-        this.$message.error(`报名表单${ behaviour }失败！`);
-        console.log(err);
+        if (err.code == 12800) {
+          this.$message({
+            message:  '报名表单不能与白名单同时开启',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else {
+          this.$message({
+            message:  `报名表单${ behaviour }失败！`,
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        }
       });
     },
     // 更改表单基本信息的方法（通用）
@@ -543,20 +560,42 @@ export default {
   }
   .headBtnGroup{
     float: right;
+    /deep/.el-button {
+      background: transparent;
+      &:hover {
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
+      &.is-disabled {
+        border: 1px solid #E6E6E6;
+        background: transparent;
+        color: #B3B3B3;
+        &:hover,&:active {
+          background: transparent;
+        }
+      }
+    }
+
   }
   .titleBox{
-    display: block;
+    display: block!important;
     line-height: 40px;
   }
   .settingBox{
+    position: relative;
     .isFixed {
-      position:fixed;
+      position:fixed!important;
       top:70px;
       z-index:999;
     }
     .options{
       width: 170px;
       float: left;
+      position: relative;
       .block{
         font-size: 16px;
         color: #666666;
@@ -604,6 +643,20 @@ export default {
       justify-content: center;
       width: calc(100% - 170px);
       float: right;
+      position: relative;
+    }
+    .disable_wrap{
+      position: absolute;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.5)
+    }
+    .options .disable_wrap{
+      background: #F7F7F7;
+      opacity: 0.5;
     }
   }
 

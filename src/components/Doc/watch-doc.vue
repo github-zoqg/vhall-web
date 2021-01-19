@@ -43,8 +43,6 @@
         @click="docControl('fullscreen')"
       ></div>
     </div>
-     <!-- v-if="!VhallMsgSdk" -->
-    <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.5.js?time=111" @load="sdkLoad"></remote-script>
   </div>
 </template>
 <script>
@@ -128,7 +126,13 @@ export default {
   },
   mounted () {
     this._listenEvents();
-    // this._initDocSDK();
+    window.roleTypeMap = {
+      1: window.VHDocSDK.RoleType.HOST,
+      2: window.VHDocSDK.RoleType.SPECTATOR,
+      3: window.VHDocSDK.RoleType.ASSISTANT,
+      4: window.VHDocSDK.RoleType.GUEST
+    };
+    this._initDocSDK();
   },
   methods: {
     /**
@@ -708,17 +712,6 @@ export default {
       else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
       else if (document.msExitFullscreen) document.msExitFullscreen();
       this.isFullscreen = false;
-    },
-    sdkLoad(){
-      window.roleTypeMap = {
-        1: window.VHDocSDK.RoleType.HOST,
-        2: window.VHDocSDK.RoleType.SPECTATOR,
-        3: window.VHDocSDK.RoleType.ASSISTANT,
-        4: window.VHDocSDK.RoleType.GUEST
-      };
-      this._initDocSDK();
-      // if(window.VhallMsg)
-
     }
   },
   beforeDestroy () {

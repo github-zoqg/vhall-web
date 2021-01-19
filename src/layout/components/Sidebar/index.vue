@@ -33,7 +33,10 @@
         mode="vertical"
         class="el-menu-reset"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+      <template  v-for="route in routes">
+         <sidebar-item :key="route.path" :item="route" :base-path="route.path" v-show="isShow(route)">
+         </sidebar-item>
+      </template>
       </el-menu>
     </el-scrollbar>
   </div>
@@ -56,7 +59,8 @@ export default {
         withoutAnimation: false
       },
       logo: null,
-      logo_jump_url: ''
+      logo_jump_url: process.env.VUE_APP_COMPANY_URL,
+      childPremission: {},
     };
   },
   computed: {
@@ -76,6 +80,24 @@ export default {
     }
   },
   methods: {
+    isShow(route) {
+      if (this.childPremission && Number(this.childPremission.permission_data) === 0) {
+        // 子账号有设置权限
+        return !(route && route.meta && route.meta.name === 'dataMgr');
+      } else {
+        return true;
+      }
+    },
+    getChildPermission() {
+      return this.$fetch('getChildPermission').then(res => {
+        console.log('当前权限', res.data)
+        sessionOrLocal.set('SAAS_V3_SON_PS', JSON.stringify(res.data));
+        this.childPremission = res.data;
+      }).catch(res => {
+        sessionOrLocal.removeItem('SAAS_V3_SON_PS');
+        this.childPremission = {};
+      })
+    },
     // 开启或者关闭 左侧导航部分
     toggleSideBar() {
       this.sidebar.opened = !this.sidebar.opened;
@@ -86,6 +108,15 @@ export default {
       console.log(111111111111);
     }
   },
+  async created() {
+    let userInfo = sessionOrLocal.get('userInfo');
+    if (userInfo) {
+      if(JSON.parse(userInfo).parent_id > 0) {
+        // 获取子账号权限，更新
+        await this.getChildPermission();
+      }
+    }
+  },
   mounted() {
     // 从缓存中获取控制台图片
     let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
@@ -93,7 +124,7 @@ export default {
     console.log(this.logo, process.env.VUE_APP_COMPANY_URL, '2222222222222222')
 
     if(this.logo) {
-      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : '';
+      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : process.env.VUE_APP_COMPANY_URL;
     } else {
       this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
     }
@@ -106,7 +137,7 @@ export default {
       this.logo = user_extends.logo;
       console.log(this.logo,process.env.VUE_APP_COMPANY_URL, '1111111111111111')
       if(this.logo) {
-        this.logo_jump_url = user_extends.logo_jump_url || '';
+        this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_COMPANY_URL;
       } else {
         this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
       }

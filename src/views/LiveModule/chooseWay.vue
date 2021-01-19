@@ -1,6 +1,6 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
-    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'"></OldHeader>
+    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
     <pageTitle title="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
@@ -85,7 +85,7 @@ export default {
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
         if(browserDetect()) {
-          if (Number(this.arr[1]) === 1) {
+          // if (Number(this.arr[1]) === 1) {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
               webinar_id: this.arr[0]
@@ -102,10 +102,10 @@ export default {
               console.log(e);
               this.$message.error(e.msg || '检测异常');
             });
-          }else{
-            // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
-            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
-          }
+          // }else{
+          //   // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
+          //   window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
+          // }
         } else {
           this.$router.push({path: '/browser'})
         }
@@ -120,7 +120,7 @@ export default {
       let params = {
         webinar_id: this.arr[0],
         type: this.arr[1],
-        live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken') : ''
+        live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken', 'localStorage') : ''
       }; // 若非主持人登录，需传递用户token
       this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
         if(res && res.code === 200) {
@@ -133,7 +133,25 @@ export default {
         console.log(e);
         this.$message.error(e.msg || '当前未获取到启动数据');
       });
-    }
+    },
+    userLogoGet() {
+      this.$fetch('userLogoGet', {
+        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }).then(res => {
+        console.log(res);
+      }).catch(err=>{
+      });
+    },
+    // 获取标记 logo 主办方信息
+    getSignInfo () {
+      return this.$fetch('watchInterGetWebinarTag', {
+        webinar_id: this.$route.params.id
+      }).then(res => {
+        if (res.data) {
+          this.signInfo = res.data
+        }
+      })
+    },
   },
   mounted() {
     this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`

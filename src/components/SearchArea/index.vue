@@ -45,14 +45,27 @@
           />
         </el-select>
         <el-checkbox v-model="searchParams[item.key]" v-else-if="item.type==7"  @change="changeDate">{{ item.name }}</el-checkbox>
-        <el-button v-else-if="item.type==6" @click="searchList" class="search" round>查询</el-button>
+        <el-button v-else-if="item.type==6" @click="searchList" size="medium" round>查询</el-button>
         <!-- 输入框 -->
-        <el-input v-model.trim="searchParams[item.key]" suffix-icon="el-icon-search" :placeholder="placeholder" style="width: 180px" v-else  @keyup.enter.native="changeInput" @change="changeInput"  clearable></el-input>
-
+       <!--  <el-input class="inputer" v-model.trim="searchParams[item.key]" :placeholder="placeholder" style="width: 180px;" v-else @clear="changeInput" @keyup.enter.native="changeInput"  :clearable="clearable"><i slot="suffix" class="el-input__icon el-icon-search" @click="changeInput"></i></el-input> -->
+        <VhallInput
+          v-else
+          class="search-tag"
+          :placeholder="placeholder"
+          v-model.trim="searchParams[item.key]"
+          clearable
+          @change="changeInput"
+          @keyup.enter.native="changeInput">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="changeInput">
+          </i>
+        </VhallInput>
       </el-form-item>
     </el-form>
     <div class="export-data" v-if="isExports">
-      <el-button round type="white-primary" size="medium" @click="exportData">导出数据</el-button>
+      <el-button round  size="medium" @click="exportData">导出数据</el-button>
     </div>
   </div>
 </template>
@@ -103,6 +116,10 @@ export default {
       default: false
     },
     isExports: {
+      type: Boolean,
+      default: true
+    },
+    clearable: {
       type: Boolean,
       default: true
     },
@@ -214,7 +231,7 @@ export default {
       // }
       .el-form--inline .el-form-item {
           margin-right: 16px;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
       }
     .time-kuai {
       height: 36px;
@@ -224,7 +241,7 @@ export default {
       line-height: 33px;
       span {
         border-radius: 18px;
-        padding: 9px 16px;
+        padding: 10px 16px;
         text-align: center;
         font-size: 14px;
         font-family: @fontRegular;
@@ -247,6 +264,23 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
+    }
+    .search-tag {
+      margin-left: 20px;
+      width: 180px!important;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
     }
   }
 </style>

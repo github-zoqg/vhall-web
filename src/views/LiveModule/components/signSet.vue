@@ -67,7 +67,7 @@
             <el-input v-model.trim="signSetForm.skip_url" />
           </el-form-item>
           <el-form-item label="">
-            <el-button type="primary" round @click.prevent.stop="signSetSave">保 存</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -252,7 +252,7 @@ export default {
 
 <style lang="less" scoped>
 .sign--set {
-  .padding41-40;
+  padding: 41px 40px 40px 40px;
 }
 .sign--set--main {
   .flex-display;

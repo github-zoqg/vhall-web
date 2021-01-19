@@ -78,7 +78,7 @@
                   `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
                   `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
                 ]"
-              >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
+              >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
             </span>
           </span>
         </span>
@@ -112,14 +112,14 @@
       :aria-label="label"
     >
     </textarea>
-    <span ref="limit_count" v-if="isWordLimitVisible && type === 'textarea'" class="el-input__count">
+    <span v-if="isWordLimitVisible && type === 'textarea'" class="el-input__count">
       <span
         :class="[
           'el-input__count-inner__numerator',
           `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
           `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
         ]"
-      >{{ textLength }}</span><span class="el-input__count-inner__denominator">/{{ upperLimit }}</span>
+      >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
     </span>
   </div>
 </template>
@@ -129,7 +129,7 @@
   export default {
     extends: Input,
     mounted() {
-      this.calcWidth = this.$refs.limit_count.offsetWidth ? this.$refs.limit_count.offsetWidth + 12 + 'px' : '12px'
+      this.calcWidth = this.$refs.limit_total && this.$refs.limit_total.offsetWidth ? this.$refs.limit_total.offsetWidth * 2 + this.$refs.separator.offsetWidth + 15 + 'px' : '12px'
     },
     data() {
       return {
@@ -141,12 +141,7 @@
         return {
           paddingRight: this.calcWidth
         }
-      },
-      textareaStyle() {
-        return merge({
-          paddingRight: this.calcWidth
-        }, this.textareaCalcStyle, { resize: this.resize });
-      },
+      }
     }
   }
 </script>
@@ -167,8 +162,9 @@
   .el-form-item.is-error .el-input__inner {
     border-color: #FB3A32;
   }
-  .el-input__inner {
+  .el-input__inner,.el-textarea__inner {
     border-color: #ccc;
+    color: #1a1a1a;
     &:hover {
       border-color: #999;
     }

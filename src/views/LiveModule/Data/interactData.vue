@@ -1,8 +1,6 @@
 <template>
   <div class="interaction-data">
-    <div class="title-data">
-      <span>数据报告</span>
-    </div>
+    <pageTitle title="互动统计"></pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <base-data :isStatus="liveDetailInfo.webinar_state" :webinarType="liveDetailInfo.webinar_type"></base-data>
   </div>
@@ -10,8 +8,10 @@
 <script>
 import titleData from './components/title';
 import baseData from './components/baseData';
+import PageTitle from '@/components/PageTitle';
 export default {
   components: {
+    PageTitle,
     titleData,
     baseData
   },
@@ -22,6 +22,7 @@ export default {
   },
   created() {
     this.getLiveDetail();
+    window.scrollTo(0,0)
   },
   methods: {
     //获取直播详情

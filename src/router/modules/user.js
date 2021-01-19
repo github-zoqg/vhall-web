@@ -22,13 +22,13 @@ const router = [
       {
         path: 'incomeDetail/:str(\\d+)',
         component: () => import('@/views/FinanceModule/incomeDetail'),
-        meta:{ auth: true,  title: '收益详情', name: 'incomeDetail', activeMenu: '/finance/info'},
+        meta:{ auth: true,  title: '收益详情', name: 'incomeDetail', activeMenu: '/finance/income'},
         hidden: true
       },
       {
         path: 'payOrder',
         component: () => import('@/views/FinanceModule/payList'),
-        meta:{ auth: true,  title: '购买列表', name: 'payOrder', activeMenu: '/finance/info'},
+        meta:{ auth: true,  title: '订单支付', name: 'payOrder', activeMenu: '/finance/info'},
         hidden: true
       },
       {
@@ -46,7 +46,7 @@ const router = [
       {
         path: 'orderDetail',
         component: () => import('@/views/FinanceModule/orderDetail'),
-        meta:{ auth: true,  title: '订单支付', name: 'orderDetail', activeMenu: '/finance/income'},
+        meta:{ auth: true,  title: '升级版本', name: 'orderDetail', activeMenu: '/finance/income'},
         hidden: true
       }
     ]
@@ -58,48 +58,48 @@ const router = [
     hidden: true
   },
   {
-    path: '/account',
+    path: '/acc',
     component: Layout,
-    redirect: '/account/info',
+    redirect: '/acc/info',
     meta: { auth: true, title: '账户管理', name:'accountMgr', icon: 'saasicon_account' },
     children: [
       {
         path: 'info',
         component: () => import('@/views/AccountModule/info'),
-        meta: { auth: true, title: '账户信息', name: 'accountInfo', activeMenu: '/account/info'}
+        meta: { auth: true, title: '账户信息', name: 'accountInfo', activeMenu: '/acc/info'}
       },
       {
         path: 'son',
         component: () => import('@/views/AccountModule/son'),
-        meta: { auth: true, title: '子账号管理', name: 'sonMgr', activeMenu: '/account/son'}
+        meta: { auth: true, title: '子账号管理', name: 'sonMgr', activeMenu: '/acc/son'}
       },
       /*{
         path: `userHome`,
         component: emptyLayout,
         redirect: `/user/home/${sessionOrLocal.get('userId')}`,
-        meta: { auth: true, title: '个人主页', name: 'homeMain' , activeMenu: '/account/son'}
+        meta: { auth: true, title: '个人主页', name: 'homeMain' , activeMenu: '/acc/son'}
       },*/
       {
         path: 'myHome',
         component: () => import('@/views/UserHome/home'),
-        meta: { auth: true, title: '个人主页', name: 'myHome', activeMenu: '/account/myHome', type: 'owner'}
+        meta: { auth: true, title: '个人主页', name: 'myHome', activeMenu: '/acc/myHome', type: 'owner'}
       },
       {
         path: '/homeSet/:str(\\d+)',
         component: () => import('@/views/UserHome/homeSet'),
-        meta: { auth: true, title: '个人主页', name: 'homeSet', activeMenu: '/account/homeSet'},
+        meta: { auth: true, title: '设置', name: 'homeSet', activeMenu: '/acc/myHome'},
         hidden: true
       },
       {
         path: '/allocation',
         component: () => import('@/views/AccountModule/allocation'),
-        meta:{ auth: true, title: '用量分配', name: 'allocation', activeMenu: '/account/son'},
+        meta:{ auth: true, title: '用量分配', name: 'allocation', activeMenu: '/acc/son'},
         hidden: true
       },
       {
         path: '/sonDetail/:str(\\d+)',
         component: () => import('@/views/AccountModule/sonDetail'),
-        meta:{ auth: true, title: '子账号详情', name: 'sonDetail', activeMenu: '/account/son'},
+        meta:{ auth: true, title: '子账号信息', name: 'sonDetail', activeMenu: '/acc/son'},
         hidden: true
       }
     ]

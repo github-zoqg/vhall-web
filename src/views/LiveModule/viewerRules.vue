@@ -10,10 +10,10 @@
       <el-radio-group v-model="form.verify" @change="handleClick">
         <el-radio :label="0">免费</el-radio>
         <el-radio :label="3">付费</el-radio>
-        <el-radio :label="4">邀请码（原F码）</el-radio>
-        <el-radio :label="6">付费/邀请码</el-radio>
+        <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
+        <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
         <el-radio :label="1">密码</el-radio>
-        <el-radio :label="2">白名单</el-radio>
+        <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
       </el-radio-group>
       <!-- 选值区域 -->
       <div class="viewer-rules-content">
@@ -217,11 +217,13 @@ import PageTitle from '@/components/PageTitle';
 import env from "@/api/env";
 import {formateDate} from "@/utils/general";
 import { parse } from 'qs';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'viewerRules.vue',
   components: {
     PageTitle
   },
+  // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限
   data() {
     let checkNums = (rule, value, callback) => {
       if (this.viewerDao && this.viewerDao.fcodes > 0) {
@@ -276,6 +278,7 @@ export default {
         }
       ],
       viewerDao: {},
+      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,
@@ -384,6 +387,7 @@ export default {
             is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
             preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
           };
+          this.whiteId = verify === 2 ? white_id : null;
           console.log(this.form, '当前');
           // 表单选项初始化
           this.initViewerSet();
@@ -673,13 +677,14 @@ export default {
   padding: 49px 56px 40px 56px;
   /deep/.el-radio__label {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
+    font-family: @fontRegular;
     color: #1A1A1A;
   }
   /deep/.el-radio__input.is-checked+.el-radio__label {
     font-size: 14px;
     font-family: @fontRegular;
-    font-weight: 500;
+    font-weight: 400;
     color: #1A1A1A;
   }
 }
@@ -847,6 +852,9 @@ export default {
       border-radius: 16px;
       &:last-child {
         background: #ffffff;
+        /* display: block; */
+        text-align: left;
+        padding: 3px 16px 3px 0;
       }
       span {
         font-size: 14px;

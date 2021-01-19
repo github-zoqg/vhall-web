@@ -5,13 +5,13 @@
     :close-on-click-modal="false"
     width="510px">
     <div class="themeBox">
-      <span>选择主题</span>
+      <span style="color:#1a1a1a;">选择主题</span>
       <i :class="{active: colorIndex=='red'}" @click="colorIndex='red'"></i>
       <i :class="{active: colorIndex=='blue'}" @click="colorIndex='blue'"></i>
       <i :class="{active: colorIndex=='purple'}" @click="colorIndex='purple'"></i>
     </div>
     <p class="margin">
-      <span>标签页标题</span>
+      <span style="color:#1a1a1a;">标签页标题</span>
     </p>
     <div :class="['tabs', colorIndex]">
       <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '用户报名'}}</div>
@@ -19,6 +19,7 @@
     </div>
     <el-input maxlength="8" v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名">
       <span
+        v-if="title1 != '用户报名'"
         class="el-input__icon resetbtn"
         slot="suffix"
         @click="title1 = '用户报名'">重置
@@ -26,6 +27,7 @@
     </el-input>
     <el-input maxlength="8" v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证">
       <span
+        v-if="title2 != '验证'"
         class="el-input__icon resetbtn"
         slot="suffix"
         @click="title2 = '验证'">重置

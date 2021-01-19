@@ -1,7 +1,6 @@
 <template>
   <div>
     <div :id="nodeId" class="vh-player"></div>
-    <!-- <remote-script src="//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.4.js" @load="sdkLoad"></remote-script> -->
   </div>
 
 </template>
@@ -128,7 +127,19 @@ export default {
     return {};
   },
   async mounted () {
-    this.sdkLoad()
+    try {
+      if (this.openScrollText) {
+        await this.getScrollTextInfo();
+      }
+      await this.initSDK();
+      if (this.showBarrage) {
+        this.openBarrage();
+      } else {
+        this.closeBarrage();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   },
   methods: {
     getScrollTextInfo () {
@@ -241,22 +252,6 @@ export default {
      */
     openUI (boolean) {
       this.$PLAYER && this.$PLAYER.openUI(boolean);
-    },
-
-    async sdkLoad(){
-      try {
-        if (this.openScrollText) {
-          await this.getScrollTextInfo();
-        }
-        await this.initSDK();
-        if (this.showBarrage) {
-          this.openBarrage();
-        } else {
-          this.closeBarrage();
-        }
-      } catch (e) {
-        console.log(e);
-      }
     }
   },
   beforeDestroy () {

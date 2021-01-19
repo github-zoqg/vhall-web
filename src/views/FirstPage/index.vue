@@ -2,39 +2,39 @@
   <div class="data-center">
     <div class="main-center">
       <data-usage></data-usage>
-      <el-row type="flex" class="row-center" justify="space-between">
-        <el-col :span="5">
+      <el-row type="flex" class="row-center" :gutter="16" >
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toCreateLive">
             <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toUploadWord">
             <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toBrandSet">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>设置中心</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>
           </div>
         </el-col>
-        <el-col :span="5">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务中心</h3>
           </div>
         </el-col>
       </el-row>
-      <div class="row-list">
+      <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
         <p class="list-title">数据统计</p>
          <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
@@ -109,7 +109,8 @@
     <div class="advert-banner">
       <div class="web-download">
         <div class="ad-web">
-          <img src="../../common/images/account/banner1.png" alt="">
+          <!-- <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/27/f8/27f8fcd59013845ef0c3774e9af93b4f.png?x-oss-process=image/resize,w_225,m_lfit" alt=""> -->
+          <img src="../../common/images/account/banner1.png" alt=""/>
           <!-- <h1>微吼直播客户端</h1>
           <p>强大文件的直播工具</p> -->
         </div>
@@ -121,7 +122,7 @@
       </div>
       <div class="app-download">
         <div class="app-web">
-          <img src="../../common/images/account/banner2.png" alt="">
+          <div class="img-show"><img src="../../common/images/account/banner2.png" alt=""/></div>
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
@@ -153,7 +154,8 @@ export default {
     return {
       userInfo: {},
       mainKeyData: {},
-      lineDataList: []
+      lineDataList: [],
+      childPremission: {}
     };
   },
   components: {
@@ -161,12 +163,42 @@ export default {
     DataUsage,
     CountTo
   },
+  computed: {
+    colVal: function() {
+      console.log(this.childPremission && Number(this.childPremission.permission_data) === 0);
+      return !(this.childPremission && Number(this.childPremission.permission_data) === 0) ? 5 : 6;
+    }
+  },
+  created() {
+    let userInfo = sessionOrLocal.get('userInfo');
+    if (userInfo) {
+      this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+      if (this.parentId > 0) {
+        this.getChildPermission();
+      }
+    }
+    if (document.body.clientWidth < 1366) {
+      document.getElementById('app').style.minWidth="auto"
+    }
+  },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
   },
+  beforeDestroy() {
+    document.getElementById('app').style.minWidth="1366px"
+  },
   methods: {
+    getChildPermission() {
+      this.$fetch('getChildPermission').then(res => {
+        console.log('getChildPermission', res)
+        this.childPremission = res.data;
+      }).catch(res => {
+        this.childPremission = {};
+      })
+    },
     // 页面跳转
      toCreateLive(){
       this.$router.push({path: `/live/edit`});
@@ -206,7 +238,16 @@ export default {
       };
       this.$fetch('getDataCenterInfo', params).then(res =>{
         this.mainKeyData = {...res.data.key_data};
-        this.lineDataList = res.data.trend.live;
+        // this.lineDataList = res.data.trend.live;
+      }).catch(e=>{
+        console.log(e);
+      });
+      this.getLineData(params);
+    },
+    getLineData(obj) {
+      let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
+      this.$fetch(url, obj).then(res =>{
+        this.lineDataList = res.data.list;
       }).catch(e=>{
         console.log(e);
       });
@@ -219,13 +260,18 @@ export default {
     margin: auto;
     max-width: 1374px;
     height: 100%;
-    display: flex;
-    overflow: hidden;
+    // display: flex;
+    // overflow: hidden;
     /deep/.el-col-5{
       width: 18.8%;
     }
+    /deep/.iconfont-v3{
+      color: #999;
+    }
     .main-center{
-      flex: 1;
+      float: left;
+      // flex: 1;
+      width: calc(100% - 256px);
       height: 100%;
       .data-usage {
         padding: 0;
@@ -267,6 +313,7 @@ export default {
       .row-list{
         height: 146px;
         background: #fff;
+        border-radius: 4px;
         .list-title{
           font-family: @fontRegular;
           font-size: 16px;
@@ -306,6 +353,7 @@ export default {
         margin-top: 24px;
         background: #fff;
         padding-bottom: 10px;
+        border-radius: 4px;
         .line-tip{
           padding: 24px 0 0 32px;
           font-size: 16px;
@@ -321,6 +369,7 @@ export default {
       }
     }
     .advert-banner{
+      float: left;
       width: 224px;
       height: 100%;
       margin-left: 32px;
@@ -349,9 +398,15 @@ export default {
         background: #fff;
         border-radius: 4px;
         position: relative;
+        width: 100%;
         .ad-web{
           height: 126px;
-          width: 100%;
+          height: 126px;
+          img{
+            width: 100%;
+            height: 100%;
+            border-radius: 4px 4px 0 0;
+          }
          /*  img{
             width: 100%;
             height: 100%;
@@ -398,6 +453,23 @@ export default {
         .app-web{
           font-size: 0;
           border-radius: 4px;
+          .img-show {
+            width: 225px;
+            height: 126px;
+            img {
+              width: 100%;
+              height: 100%;
+              /* object-fit: cover; */
+              image-rendering: -moz-crisp-edges; /* Firefox */
+              image-rendering: -o-crisp-edges; /* Opera */
+              image-rendering: -webkit-optimize-contrast; /*Webkit (non-standard naming) */
+              image-rendering: crisp-edges;
+              -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+            }
+          }
+          img{
+            border-radius: 4px 4px 0 0;
+          }
           /* img{
             width: 100%;
             height: 100%;
@@ -409,6 +481,7 @@ export default {
       .data-document{
         background: #fff;
         height: 190px;
+        border-radius: 4px;
         h2{
           font-size: 16px;
           color: #1A1A1A;

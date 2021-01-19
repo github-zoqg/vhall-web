@@ -199,6 +199,9 @@ export default {
 .base--set {
   .padding41-40();
 }
+/deep/.el-input__inner {
+  height: 40px!important;
+}
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;
 }

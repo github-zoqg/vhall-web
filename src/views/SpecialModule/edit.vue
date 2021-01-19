@@ -1,11 +1,11 @@
 <template>
   <div class="editBox">
     <pageTitle :title="`${$route.query.title || '创建'}专题`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="100px">
-      <el-form-item label="专题标题:" prop="title">
+    <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
+      <el-form-item label="专题标题" prop="title">
         <VhallInput v-model.trim="formData.title" :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="专题封面:">
+      <el-form-item label="专题封面">
         <upload
           v-model="formData.imageUrl"
           :domain_url="formData.domain_url"
@@ -25,10 +25,19 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="专题简介:" required>
-        <v-editor  save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
+      <el-form-item label="专题简介" required>
+        <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
-      <el-form-item label="预约人数:">
+      <p class="switch__box">
+        <el-switch
+          v-model="formData.reservation"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="预约人数"
+          :active-text="reservationDesc">
+        </el-switch>
+      </p>
+      <!-- <el-form-item label="预约人数">
         <p class="switch__box">
           <el-switch
             v-model="formData.reservation"
@@ -37,28 +46,30 @@
             :active-text="reservationDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="热度:">
+      </el-form-item> -->
+      <!-- <el-form-item label="专题热度"> -->
         <p class="switch__box">
           <el-switch
             v-model="formData.hot"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            inactive-text="专题热度"
             :active-text="hotDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="关联主页:">
+      <!-- </el-form-item> -->
+      <!-- <el-form-item label="关联主页"> -->
         <p class="switch__box">
           <el-switch
             v-model="formData.home"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            inactive-text="关联主页"
             :active-text="homeDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="专题目录:" required>
+      <!-- </el-form-item> -->
+      <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
@@ -164,6 +175,9 @@ export default {
     },
     homeDesc(){
       return this.formData.home ? '已开启，该专题在个人主页中显示' : "开启后，该专题在个人主页中显示";
+    },
+    title() {
+      return this.$route.query.title
     }
   },
   data(){
@@ -206,6 +220,21 @@ export default {
       handler() {
         this.isChange = true;
       }
+    },
+    title(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.formData = {
+          selectedActives: [],
+          title: '',
+          reservation: true,
+          imageUrl: '',
+          domain_url:'',
+          content: '',
+          hot: true,
+          home: true
+        }
+        this.$refs.unitImgTxtEditor.$refs.editor.resetContent()
+      }
     }
   },
   beforeRouteLeave(to, from, next) {
@@ -214,7 +243,7 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`取消将不保存此页面的内容222222222？`, '提示', {
+    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
@@ -295,8 +324,10 @@ export default {
     },
 
     submitForm(formName) {
+    window.cd = this.formData
+      console.warn(this.formData, 111111111111222222, this.formData.introduction, ' this.formData.introduction');
       if (!this.formData.content) {
-        this.$message.error('请选择专题简介');
+        this.$message.error('请输入专题简介');
         return;
       }
       if (!this.formData.selectedActives.length) {
@@ -365,7 +396,7 @@ export default {
           !this.formData.reservation ||
           !this.formData.hot ||
           this.formData.selectedActives.length > 0) {
-        this.$confirm(`取消将不保存此页面的内容1111111？`, '提示', {
+        this.$confirm(`取消将不保存此页面的内容？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
@@ -396,7 +427,7 @@ export default {
     },
     // 删除事件
     deleteSpecial(id) {
-      this.$confirm('您确定要删除选中的专题吗？', '提示', {
+      this.$confirm('您确定要删除选中的直播吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
@@ -431,7 +462,7 @@ export default {
 <style lang="less" scoped>
   .el-form{
     background: #ffffff;
-    padding: 48px 20px 50px 48px;
+    padding: 48px 20px 1px 48px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -442,13 +473,27 @@ export default {
       pointer-events: none;
       user-select: none;
     }
+    /deep/.el-input__inner{
+      height: 40px;
+    }
     .tox-tinymce{
       border-radius: 4px;
     }
+    /deep/.el-switch__label--left {
+      margin-right: 13px;
+    }
+  }
+  .switch__box{
+    line-height: 35px;
+    padding-bottom: 10px;
+    padding-left: 10px;
   }
   .el-form-item{
     width: 100%;
     max-width: 640px;
+    &:last-child{
+      padding: 16px 0;
+    }
   }
   .btnGroup{
     text-align: center;
@@ -545,9 +590,11 @@ export default {
         box-sizing: border-box;
       }
       &-title{
-        overflow: hidden;
-        text-overflow: ellipsis;
         width: 288px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
       }
       &-status{
         width: 88px;

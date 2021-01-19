@@ -41,7 +41,7 @@
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </VhallInput> -->
               <VhallInput v-model.trim="privilegeVo.host_password" readonly class="btn-relative btn-two" autocomplete="off">
-                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
+                  <el-button type="text" class="no-border no-hover" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
           </el-form>
@@ -58,7 +58,7 @@
           </div>
         </div>
         <!-- 嘉宾 -->
-        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest && isInteract==1">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
@@ -80,7 +80,7 @@
               <VhallInput :value="privilegeVo && join_link ? join_link : ''" readonly autocomplete="off" ></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <VhallInput v-model.trim="privilegeVo.guest_password" readonly class="input-no-right-border" autocomplete="off" >
+              <VhallInput v-model.trim="privilegeVo.guest_password" readonly  class="btn-relative btn-two" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
               </VhallInput>
             </el-form-item>
@@ -175,6 +175,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import Clipboard from 'clipboard';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'embedCard.vue',
   components: {
@@ -203,6 +204,7 @@ export default {
     return {
       roleSwitch: null,
       webinarVo: {},
+      isInteract: 1,
       privilegeVo: {
         host_password: '',
         guest_password: '',
@@ -265,6 +267,11 @@ export default {
     assistant_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/3`;
     }
+  },
+  created() {
+    this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
+    // 根據活動ID獲取活動信息
+    this.getWebinarInfo();
   },
   methods: {
     async updateSwitch() {
@@ -486,10 +493,6 @@ export default {
       // 根据ID获取活动-角色配置信息
       this.getPrivilegeInfo();
     }
-  },
-  created() {
-    // 根據活動ID獲取活動信息
-    this.getWebinarInfo();
   }
 };
 </script>
@@ -516,12 +519,16 @@ export default {
   display: inline-block;
   margin-bottom: 24px;
   /* border: 1px dashed #EEEEEE; */
-  padding: 32px 32px;
+  padding: 32px 0 32px 32px;
   background: #FFFFFF;
   vertical-align: middle;
+  border-radius: 4px;
   &:nth-child(2n) {
     margin-right: 0;
     margin-left: 12px;
+  }
+  .role-card-head, .el-form, .role-qx-title {
+    padding-right: 32px;
   }
 }
 .title--label {
@@ -628,6 +635,7 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
+  height: 26px;
   margin-top: 24px;
   display: flex;
   justify-content: flex-start;
@@ -710,7 +718,10 @@ export default {
   border: 1px solid #CCCCCC;
   color: #666666;
 }
-/deep/.no-hover {
-  padding: 0 12px;
+/deep/button.el-button.el-button--mini.no-hover {
+  padding: 0 12px!important;
+  span {
+    color: #666666;
+  }
 }
 </style>

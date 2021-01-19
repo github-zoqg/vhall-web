@@ -194,6 +194,7 @@
                 :recordHistoryTime="recordHistoryTime"
                 :menuData="menuData"
                 :bizInfo="roominfo"
+                :configList="configList"
                 @NoLogin="callLogin"
                 @descripe="decripeMenu"
               ></vhall-enjoy-watch-Saas>
@@ -1376,8 +1377,10 @@ export default {
       return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.data) {
+        console.log(777777777777777, res)
+        if (res.code == 200 && res.data) {
           this.skinInfo = res.data
+          console.log(666, this.skinInfo)
           this.theme = (this.skinInfo && this.skinInfo.skin_json_pc) ? JSON.parse(this.skinInfo.skin_json_pc) : ''
         }
       })
@@ -1532,7 +1535,7 @@ export default {
         auth: this.isLogin ? {
           avatar: data.join_info.avatar,
           id: this.userInfo ? this.userInfo.user_id : data.join_info.third_party_user_id,
-          nick_name: this.userInfo ? this.userInfo.nick_name : data.join_info.nickname,
+          nick_name: data.join_info.nickname,
           phone: this.userInfo ? this.userInfo.phone : ''
         } : [],
         interactiveInfo: this.interactiveInfo ? this.interactiveInfo : {},
@@ -1614,7 +1617,7 @@ export default {
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
-      this.myAccountRoute = window.location.origin + '/account/info'
+      this.myAccountRoute = window.location.origin + '/acc/info'
       this.followStyle = this.roominfo.modules.attention.follow == 1
 
       this.userChatId = this.roominfo.user.third_party_user_id
@@ -1718,7 +1721,7 @@ export default {
         entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         service_names: this.roominfo.is_replay == 1 ? 2 : 1,
         type: 3,
-        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+        env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
       });
       window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
         event: this.$route.query.refer // 推广渠道，会在url里传参

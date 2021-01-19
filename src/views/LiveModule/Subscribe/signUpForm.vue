@@ -17,10 +17,16 @@
                 <span class="isEllipsis"></span>{{ '收起' }}
               </span>
             </p>
-            <div class="tabsBox">
+            <div v-if="isSubscribe === 1" class="tabsBox">
               <div :class="['tabs', baseInfo.theme_color]">
-                <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
-                <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
+                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
+                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+              </div>
+            </div>
+            <div v-if="isSubscribe === 2" class="tabsBox">
+              <div :class="['tabs', baseInfo.theme_color]">
+                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
               </div>
             </div>
             <!-- 报名表单 -->
@@ -245,12 +251,25 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
+  // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
+      this.getWebinarType();
       this.getBaseInfo();
       this.getQuestionList();
     },
     watch: {
+      province(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.city = ''
+          this.county = ''
+        }
+      },
+      city(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.county = ''
+        }
+      },
       isPhoneValidate: {
         immediate: true,
         handler(newVal) {
@@ -337,12 +356,18 @@
               }
             } else if (item.type === 0 && item.default_type === 3) {
               // 邮箱
-              rules[item.id] = {
-                type: 'email',
-                required: !!item.is_must,
-                message: '请填写邮箱',
-                trigger: 'blur'
-              }
+              rules[item.id] = [
+                {
+                  required: !!item.is_must,
+                  message: '请填写邮箱',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'email',
+                  message: '请填写正确格式的邮箱',
+                  trigger: 'blur'
+                }
+              ]
             } else if (item.type === 1) {
               // 问答
               rules[item.id] = {
@@ -411,8 +436,9 @@
         webinar_id: this.$route.params.id || this.$route.params.str,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
         isPreview: this.$route.path.startsWith('/live/signup'),
+        isSubscribe: 0,
         colorIndex: 'red',
-        tabs: 1,
+        tabs: 0,
         province: '',
         city: '',
         county: '',
@@ -479,9 +505,18 @@
       };
     },
     mounted() {
-
+      // new DevicePixelRatio('#signFormBox');
     },
     methods: {
+      // 获取当前活动类型
+      getWebinarType() {
+        this.$fetch('watchInit', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          this.isSubscribe = res.data.webinar.type == 2 ? 1 : 2
+          this.tabs = res.data.webinar.type == 2 ? 1 : 2
+        })
+      },
       handleUnfold(val) {
         this.overflowStatus = val
       },
@@ -540,15 +575,35 @@
         }
       },
       getDyCode(isForm) {
+        let isPhoneValid = true
         let phone = ''
         if (isForm) {
           const phoneItem = this.list.find(item => item.type === 0 && item.default_type === 2);
           phone = this.form[phoneItem.id];
+          // 点击获取短信验证码之前验证手机号
+          this.$refs['form'].validateField(''+phoneItem.id, err => {
+            if (!err) {
+              isPhoneValid = true
+            } else {
+              isPhoneValid = false
+            }
+          })
         } else {
           phone = this.verifyForm.phone
+          this.$refs['verifyForm'].validateField('phone', err => {
+            if (!err) {
+              isPhoneValid = true
+            } else {
+              isPhoneValid = false
+            }
+          })
         }
+        if (!isPhoneValid) {
+          return false
+        }
+
         // 获取短信验证码
-        if (validPhone('', phone) && this.mobileKey) {
+        if (this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
             webinar_id: this.webinar_id,
             phone: phone,
@@ -568,6 +623,7 @@
           }, 1000);
         } else {
           this[key] = 60;
+          isForm ? this.callCaptcha('#setCaptcha') : this.callCaptcha('#setCaptcha1');
         }
       },
       /**
@@ -648,13 +704,20 @@
                 this.getWebinarStatus()
               }
             }).catch(err => {
-              if (err.code == 12809 || (err.code == 600 && (err.msg.indexOf("验证码格式错误") > 0))) {
+              if (err.code == 12809 || err.code == 12570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
                 this.$refs['form'].validateField('code', err => {
+                  // 还原状态
                   this.isVerifyCodeErr = false
                 })
+              } else if (err.code == 12814) {
+                // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
+                // 报名成功的操作，跳转到直播间
+                this.closePreview()
+                // 判断当前直播状态，进行相应的跳转
+                this.getWebinarStatus()
               }
             })
           } else {
@@ -687,11 +750,12 @@
                 }
               }
             }).catch(err => {
-              if (res.code == 12809 || (res.code == 600 && (res.msg.indexOf("验证码格式错误") > 0))) {
+              if (res.code == 12809 || err.code == 12570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
                 this.$refs['verifyForm'].validateField('code', res => {
+                  // 还原状态
                   this.isVerifyCodeErr = false
                 })
               } else {
@@ -904,8 +968,8 @@
     width: 100%;
     height: 100%;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 101;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1002;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -917,7 +981,7 @@
     }
     .signWrap {
       overflow-y: auto;
-      height: 843px;
+      height: 90%;
       border-radius: 4px;
       background: #fff;
       position: relative;
@@ -1248,26 +1312,63 @@
             background: #DEDEDE;
           }
         }
+        // 云盾样式重置
         .captcha{
           /deep/ .yidun .yidun_control {
             border-radius: 4px!important;
             border-color: #ccc;
             background: #fff;
+            overflow: hidden;
+            .yidun_slide_indicator {
+              border-radius: 4px!important;
+            }
             .yidun_tips {
               color: #888888;
               line-height: 38px;
             }
             .yidun_slider {
               .yidun_slider__icon {
-                // background-image: none;
+                background-image: url(./images/icon-slide1.png);
+                background-size: 28px 20px;
+                background-position: center;
               }
               &:hover {
                 background-color: #FB3A32;
+                .yidun_slider__icon {
+                  background-image: url(./images/icon-slide.png);
+                }
               }
             }
-            &.yidun_control--moving .yidun_slide_indicator {
-              border-color: #FB3A32;
+            &.yidun_control--moving {
               background-color: #E2E2E2;
+              border-color: #FB3A32;
+              .yidun_slide_indicator {
+                border-color: #FB3A32;
+                background-color: #E2E2E2;
+              }
+            }
+
+          }
+          /deep/ .yidun--success {
+            .yidun_control--moving {
+              background-color: #F0F1FE!important;
+              .yidun_slide_indicator {
+                background-color: #F0F1FE!important;
+              }
+            }
+            .yidun_control {
+              border-color: #3562FA!important;
+              .yidun_slider {
+                .yidun_slider__icon {
+                  background-image: url(./images/icon-succeed.png);
+                }
+                &:hover {
+                  background-color: #FB3A32;
+                  .yidun_slider__icon {
+                    background-image: url(./images/icon-succeed.png);
+                  }
+                }
+              }
             }
           }
         }

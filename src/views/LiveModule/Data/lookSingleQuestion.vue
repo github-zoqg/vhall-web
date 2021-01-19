@@ -10,18 +10,18 @@
       </div>
     <div class="question-item">
       <div v-for="item in questionList" :key="item.ques_id">
-        <div class="question-gender" v-if="item.title == '性别'">
-          <p>{{ item.title }}(单选题)</p>
+        <div class="question-gender" v-if="item.ques_title == '性别'">
+          <p>{{ item.ques_title }}(单选题)</p>
           <gender-echarts :genderList="item.list"></gender-echarts>
         </div>
-        <div class="question-city" v-else-if="item.title == '地域'">
-          <p>{{item.title}}统计(城市题目)</p>
+        <div class="question-city" v-else-if="item.ques_title == '地域'">
+          <p>{{item.ques_title}}统计(城市题目)</p>
           <div class="map-charts">
             <map-echarts :areaDataList="item.list"></map-echarts>
           </div>
         </div>
         <div class="question-subject" v-else>
-          <p>{{ item.title }}（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
+          <p>{{ item.ques_title }}（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
           <line-echarts :otherList="item.list"></line-echarts>
         </div>
       </div>

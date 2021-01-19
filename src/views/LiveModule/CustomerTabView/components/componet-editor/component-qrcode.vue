@@ -20,14 +20,14 @@
             :action="actionUrl"
             :on-success="handleUploadSuccess"
           >
-          <div class="preview" v-show="info.imageSrc">
+          <div class="preview" v-show="info.imageSrc && info.imageSrc != defaultQr">
             <img :src="info.imageSrc" alt="">
           </div>
-           <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc">
+           <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc || info.imageSrc == defaultQr">
               <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
               <div data-v-4d7778f2="" class="tips">
                 <div data-v-62244b0e="">
-                  <p data-v-62244b0e="">建议尺寸：600*600px，小于2M</p>
+                  <p data-v-62244b0e="">建议尺寸：300*300px，小于2M</p>
                   <p data-v-62244b0e="">支持jpg、gif、png、bmp</p>
                 </div>
               </div>
@@ -66,6 +66,8 @@ export default {
         path: 'interacts/menu-qrcode-imgs',
         type: 'image',
       },
+      actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
+      defaultQr: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       token: localStorage.getItem('token') || ''
     }
   },
@@ -73,17 +75,21 @@ export default {
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
-
-      this.info.imageSrc = e.data.domain_url
-      this.$emit('updateInfo', {
-        ...this.info,
-        hrc: e.data.domain_url,
-        isDefault: false
-      })
+      if(e.code == 200) {
+        this.info.imageSrc = e.data.domain_url
+        this.$emit('updateInfo', {
+          ...this.info,
+          hrc: e.data.domain_url,
+          isDefault: false
+        })
+      } else {
+        this.$message.error(e.msg)
+      }
     },
 
     uploadError(e) {
       console.log('upload error', e)
+      this.$message.error(e.msg)
     },
   }
 }

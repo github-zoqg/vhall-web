@@ -60,7 +60,7 @@ export default {
     box-sizing: border-box;
     background-clip: content-box;
     cursor: pointer;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 4px;
     &:hover{
       box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
@@ -68,8 +68,8 @@ export default {
     }
   }
   .icon{
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     // background: #FB3A32;
     margin-right: 15px;
     border-radius: 50%;

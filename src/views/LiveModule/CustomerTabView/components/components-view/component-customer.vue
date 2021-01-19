@@ -79,14 +79,15 @@ export default {
       if (componentData.component_id == 1) {
         this.units.push({
           ...componentData,
+          content: '默认图文',
           cUid: uuidV1()
         })
       } else if (componentData.component_id == 2) {
         this.units.push({
          ...componentData,
           // To Do 默认 二维码地址。 替换成当前，直播间 观看页地址！！
-          imageSrc: `//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/546794954`,
-          hrc: '//aliqr.e.vhall.com/qr.png?t=http://live.vhall.com/546794954',
+          imageSrc: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+          hrc: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
           cUid: uuidV1()
         })
       } else if (componentData.component_id == 3) {
@@ -130,13 +131,14 @@ export default {
           cUid: uuidV1()
         })
       } else if(componentData.component_id == 9) {
-
         const isAdded = this.units.filter((item) => {
           return item.component_id == 9
         })
 
-        if (isAdded.length > 0) {
-          this.$message.error('功能组件只能添加一个！')
+        const result = this.$parent.validateALL()
+
+        if (result) {
+          this.$message.error('功能组件只能添加一次，已阻止您本次操作！')
           return
         }
 

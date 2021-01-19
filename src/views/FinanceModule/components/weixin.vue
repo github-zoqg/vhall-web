@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, getQueryString } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -17,7 +17,7 @@ export default {
   methods: {
     getUserInfo(){
       let params = {
-        key: this.$route.query.user_auth_key,
+        key: getQueryString('user_auth_key'),
         scene_id: 2
       };
       this.$fetch('callbackUserInfo', params).then(res => {

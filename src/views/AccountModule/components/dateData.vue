@@ -11,7 +11,6 @@
         end-placeholder="结束日期"
         style="width: 240px"
         :picker-options="pickerOptions"
-        :clearable=false
         @change="getDateInfo"
       />
     </div>
@@ -68,12 +67,15 @@ export default {
     },
     getUserPayDetail() {
       console.log(this.vip_info, 'this.vip_info')
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', {
+      let params = {
         account_id: this.$route.params.str, // 子账号内容，传递子账号数据
-        start_time: this.timeStr[0],
-        end_time: this.timeStr[1],
         type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
-      }).then(res=>{
+      };
+      if (this.timeStr) {
+        params.start_time = this.timeStr[0] || '';
+        params.end_time = this.timeStr[1] || '';
+      }
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', params).then(res=>{
         if (res && res.code === 200) {
           let costList = res.data.list;
           costList.map(item => {
@@ -90,6 +92,14 @@ export default {
         }
       }).catch(e=>{
         console.log(e);
+        // 数据查询错误
+        this.tableList = [];
+        this.renderLineCharts();
+        this.$nextTick(() => {
+          if (this.myChart) {
+            this.myChart.resize();
+          }
+        });
       });
     },
     getDateInfo() {
@@ -115,11 +125,17 @@ export default {
           min: 0,
           max: 100,
         },
-        grid: {
+        /* grid: {
           left: '65',
           top: '45',
           bottom: '30',
           right: '32'
+        }, */
+        grid: {
+          left: '85',
+          top: '25',
+          bottom: '60',
+          right: '95'
         },
         tooltip: {
           trigger: 'axis',
@@ -127,7 +143,7 @@ export default {
           formatter:  `{b} <br/>{a}: {c}（${this.sonVo.vip_info.type > 0 ? 'GB' : '方'}）`
         },
         xAxis: {
-          name: '日期',
+          /* name: '日期', */
           nameLocation: 'start',
           nameGap: 30,
           type: 'category',
@@ -140,26 +156,32 @@ export default {
               color: '#CCCCCC',
             }
           },
+          splitLine: {
+            show: false,
+            lineStyle: {
+              type: 'solid',
+            }
+          },
           axisLabel: {
             inside: false,
             textStyle: {
               color: '#999999',
               fontSize: 12,
               fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
-            }
-
+            },
           },
-          data: dateData,
+          data: dateData || [],
         },
         yAxis: [
           {
-            name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
+          /*   name: this.sonVo.vip_info.type > 0 ? '流量' : '并发', */
             type: 'value',
             position: 'left',
             splitLine: {
-              show: false,
+              show: true,
               lineStyle: {
-                type: 'dashed',
+                type: 'solid',
+                color: '#E6E6E6'
               }
             },
             axisLine: {
@@ -184,12 +206,37 @@ export default {
             name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
             type: 'line',
             showSymbol: false,
-            smooth: true,
+            symbolSize: 2,   //拐点圆的大小
+            smooth:true,
+            itemStyle:{
+              normal:{
+                  color: '#fb3a32',
+                  borderColor: '#fb3a32',  //拐点边框颜色
+              }
+            },
             data: valData,
-            color: '#fb3a32'
+            lineStyle: {
+              color: '#fb3a32'
+            }
           },
         ],
       };
+      if (valData && valData.length > 0) {
+        options.dataZoom = [{
+            type: 'inside',
+            xAxisIndex: 0,
+            minSpan: 5
+        }, {
+            type: 'slider',
+            xAxisIndex: 0,
+            minSpan: 5,
+            height: 20,
+            bottom: 10,
+            handleSize: '100%'
+        }];
+      } else {
+        options.dataZoom = [];
+      }
       // 使用刚指定的配置项和数据显示图表。
       this.myChart.setOption(options);
     }
@@ -207,10 +254,20 @@ export default {
   width: 100%;
   height: 311px;
   box-sizing: border-box;
-  border: 1px solid #E6E6E6;
-  padding: 16px 32px 32px 49px;
 }
 .date__query__form {
   margin-bottom: 24px;
+  /deep/.el-input__inner{
+    border-radius: 18px;
+    height: 36px;
+    background: transparent;
+  }
+  /deep/.el-range__close-icon {
+    margin-bottom: 5px;
+    // line-height: 36px;
+  }
+  /deep/.el-input__suffix{
+    top: 0px;
+  }
 }
 </style>

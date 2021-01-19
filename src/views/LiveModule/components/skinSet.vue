@@ -40,7 +40,7 @@
             <p class="p-notice">无需设置皮肤，默认皮肤效果</p>
           </el-form-item>
           <el-form-item label="" v-if="skinVo.status > 0 || skinType === 1">
-            <el-button type="primary" round @click.prevent.stop="skinSetSave">保 存</el-button>
+            <el-button type="primary" v-preventReClick round @click.prevent.stop="skinSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -285,7 +285,8 @@ export default {
 
 <style lang="less" scoped>
 .skin--set {
-  .padding41-40();
+  /* .padding41-40(); */
+   padding: 41px 40px 40px 40px;
 }
 .sign--set--main {
   .flex-display();

@@ -30,7 +30,7 @@
                   <li @click="addRight(index)"> 右侧新增菜单 </li>
                   <li @click="addLeft(index)"> 左侧新增菜单 </li>
                   <li v-if="item.type == 1">
-                    <input type="checkbox" :checked="item.status == 3" @click="showOrHide(index)" /> 预告/结束显示
+                    <input type="checkbox" :checked="item.status == 4" @click="showOrHide(index)" /> 预告/结束显示
                     <el-tooltip class="item" effect="dark" placement="right">
                       <div slot="content" style="line-height:24px">勾选后，该直播为预告和结束状态时也会显示此菜单；<br />不勾选则只在直播和回放状态显示。</div>
                       <i class="iconfont-v3 saasicon_help_m"></i>
@@ -64,15 +64,17 @@
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
       width="280px"
+      top="40vh"
       class="add-menu-dialog"
     >
       <el-form
         :model="addCustomForm"
         ref="addCustomForm"
         :rules="addCustomFormRules"
+        @submit.native.prevent
         label-width="0">
         <el-form-item prop="name">
-          <el-input
+          <VhallInput
             v-model.trim="addCustomForm.name"
             auto-complete="off"
             placeholder="请输入菜单名称"
@@ -141,6 +143,21 @@ export default {
   },
 
   methods: {
+    validateCanAdd() {
+      let check = 0
+      this.menus.forEach((item) => {
+        if(item.type == 1) {
+          item.components.forEach((component) => {
+            if (component.component_id == 9) {
+              check = check + 1
+            }
+          })
+        }
+      })
+
+      return check != 0
+    },
+
     onDrop(e) {
       console.log('放置了， 数据', e)
       e.preventDefault()
@@ -199,6 +216,14 @@ export default {
     },
 
     addMenuAction() {
+      const addedMenu = this.menus.filter((item) => {
+        return item.type == 1
+      })
+      if (addedMenu.length == 6) {
+        this.$message.error('自定义菜单最多增加六个。您已到达上限！')
+        return false
+      }
+
       this.$insertIndex = this.menus.length
       this.type = 'add'
       this.addCustomForm.name = null
@@ -218,7 +243,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           } else if (this.$insertIndex == 0) {
@@ -227,7 +252,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           } else if(this.$insertIndex == this.menus.length) {
@@ -236,7 +261,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           }
@@ -294,9 +319,9 @@ export default {
     // 预告显示 隐藏菜单
     showOrHide(index) {
       if(this.menus[index].status == 3) {
-        this.menus[index].status == 4
+        this.menus[index].status = 4
       } else {
-        this.menus[index].status == 3
+        this.menus[index].status = 3
       }
     },
     // 删除

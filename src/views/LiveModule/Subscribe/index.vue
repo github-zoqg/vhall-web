@@ -353,7 +353,7 @@
               ></Watch>
             </div>
           </div>
-          <div class="rightWatch">
+          <div class="rightWatch" v-show="initSuccess">
             <template>
               <div class="title" v-show="beginStatus">距离直播开始还有</div>
               <div class="title" v-show="!beginStatus">直播已开始</div>
@@ -552,6 +552,7 @@ export default {
   },
   data(){
     return {
+      initSuccess: false,
       beginStatus: true, // 开始展示
       showLive: false,
       location: process.env.VUE_APP_WAP_WATCH,
@@ -973,7 +974,7 @@ export default {
         this.myliveRoute = window.location.origin + '/live/list'
         this.accountRoute = window.location.origin + '/finance/info'
         this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
-        this.myAccountRoute = window.location.origin + '/account/info'
+        this.myAccountRoute = window.location.origin + '/acc/info'
         this.subscribeOptions = {
           show: this.roomData.subscribe.show,
           num: this.roomData.subscribe.num,
@@ -1017,6 +1018,7 @@ export default {
             this.initPlayerSDK()
           }
         })
+        this.initSuccess = true
         if (this.roomData.webinar.type == 1) {
           this.beginStatus = false
           if (this.timer) {

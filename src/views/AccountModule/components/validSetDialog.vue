@@ -8,60 +8,61 @@
       <el-form :model="form" ref="form" :rules="formRules" label-width="80px">
         <p class="info" v-show="showVo.step === 1">{{showVo.executeType === 'pwd' ? pwdTitle : showVo.executeType === 'phone' ? phoneTitle : emailTitle}}</p>
         <el-form-item label="邮箱地址" key="email" prop="email" v-if="showVo.executeType === 'email' && showVo.step === 1">
-          <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled/>
+          <el-input v-model.trim="form.email" auto-complete="off" placeholder="请输入邮箱地址" disabled :maxlength="30"/>
         </el-form-item>
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
-          <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled/>
+          <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
         </el-form-item>
         <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
-          <div id="setCaptcha">
+          <div id="setCaptcha" class="captcha">
             <el-input  v-model.trim="form.imgCode"> </el-input>
           </div>
           <p class="errorText" v-show="errorMsgShow">图形码错误</p>
         </el-form-item>
         <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
-          <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
+          <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码" :maxlength="6">
             <el-button type="text" class="no-border" size="mini" slot="append" @click="getDyCode()"
                        v-preventReClick
                        :class="showCaptcha ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick">
-              {{ time === 60 ? '发送验证码' : `${time}s` }}
+              {{ time === 60 ? '发送验证码' : `${time}s 后刷新` }}
             </el-button>
           </el-input>
           <p v-if="sendText" class="no-use">{{sendText}}</p>
         </el-form-item>
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址"/>
+          <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址" :maxlength="30"/>
         </el-form-item>
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号"/>
+          <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号" :maxlength="30"/>
         </el-form-item>
         <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
-          <div id="setCaptcha1">
+          <div id="setCaptcha1" class="captcha">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
           <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
-        <el-form-item label="验证码"  key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码">
+        <el-form-item label="验证码" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+          <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码"  :maxlength="6">
             <el-button  type="text" class="no-border" size="mini" slot="append"
                        v-preventReClick
                        @click="getDyCode1()"
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
-                       :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s` }}</el-button>
+                       :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s 后刷新` }}</el-button>
           </el-input>
           <p v-if="sendText1" class="no-use">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
-          <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"></el-input>
+          <pwd-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"
+           :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="新密码"  key="pasword"  prop="password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''">
+          <pwd-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''" :maxlength="30">
             <template slot="append" v-if="form.password && form.password.length >= 6">{{pwdLevel}}</template>
-          </el-input>
+          </pwd-input>
         </el-form-item>
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次"></el-input>
+          <pwd-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
           <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
@@ -83,9 +84,12 @@
 
 <script>
 import env from "@/api/env";
-
+import PwdInput from './pwdInput.vue';
 export default {
   name: "validSetDialog.vue",
+  components: {
+    PwdInput
+  },
   data() {
     let verifyEnterPwd = (rule, value, callback) => {
       let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
@@ -286,7 +290,7 @@ export default {
           if(this.downTimer) {
             window.clearTimeout(this.downTimer);
           }
-          this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+          // this.sendText = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
           this.countDown();
         }).catch(res => {
           console.log(res);
@@ -297,7 +301,12 @@ export default {
             type: 'error',
             customClass: 'zdy-info-box'
           });
-          this.sendText = ``;
+          // 发送验证码失败，图形验证码重新生成
+          this.$nextTick(() => {
+            this.mobileKey = '';
+            this.callCaptcha();
+          })
+          // this.sendText = ``;
         });
       }
     },
@@ -347,11 +356,11 @@ export default {
           if(this.downTimer1) {
             window.clearTimeout(this.downTimer1);
           }
-          this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
+          // this.sendText1 = `动态验证码已发送至您的${this.showVo.executeType !== 'email' ? '手机' : '邮箱'},请注意查收`;
           this.countDown1();
         }).catch(res => {
           console.log(res);
-          this.sendText1 = ``;
+          // this.sendText1 = ``;
           this.$message({
             message: res.msg || '验证码发送失败',
             showClose: true,
@@ -359,6 +368,11 @@ export default {
             type: 'error',
             customClass: 'zdy-info-box'
           });
+          // 发送验证码失败，图形验证码重新生成
+          this.$nextTick(() => {
+            this.mobileKey1 = '';
+            this.callCaptcha(1);
+          })
         });
       }
     },
@@ -375,7 +389,7 @@ export default {
         this.time = 60;
         this.isDisabledClick = false;
         this.callCaptcha();
-        this.sendText = '';
+        // this.sendText = '';
       }
     },
     // 验证码倒计时（ 场景使用： 设置手机号、修改手机号-第二步、修改邮箱-第二步、设置邮箱）
@@ -390,7 +404,7 @@ export default {
         this.time1 = 60;
         this.isDisabledClick1 = false;
         this.callCaptcha(1);
-        this.sendText1 = '';
+        // this.sendText1 = '';
       }
     },
     // 下一步按钮，校验 验证码，成功后进入下一步。 （场景使用： 修改手机、修改关联邮箱）
@@ -643,7 +657,13 @@ export default {
         this.form.email = vo.email || '';
         this.form.code = '';
         this.form.new_code = '';
-
+        this.form.new_password = '';
+        this.form.password = '';
+        this.form.old_pwd = '';
+        this.form.new_email = '';
+        this.form.new_phone = '';
+        this.form.imgCode = '';
+        this.form.imgCode1 = '';
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
@@ -711,6 +731,9 @@ export default {
   top: 100%;
   left: 0;
 }
+/deep/.el-input__inner {
+  height: 40px!important;
+}
 .el-input-group__append {
   /deep/.el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
     background: transparent;
@@ -719,11 +742,22 @@ export default {
 }
 .info {
   margin-bottom: 16px;
+  line-height: 20px;
+  color: #1a1a1a;
 }
 /deep/.el-form-item.link__to {
   text-align: right;
   margin-bottom: 0;
   margin-top: -20px;
+  a {
+     color: #3562FA;
+    &:hover {
+      color: #3562FA;
+    }
+    &:active {
+      color:#3562FA;
+    }
+  }
 }
 .no-use {
   color: #1384FF;

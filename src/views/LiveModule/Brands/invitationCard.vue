@@ -19,9 +19,9 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-            <el-button class="invite-card-button" round slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button round size="medium" slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button  class="invite-card-button" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button size="medium" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -37,15 +37,15 @@
             <div class="data-show">
               <p :class="showType === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
                 <img src="../../../common/images/invite-card/tmpl1.png" alt="">
-                <label class="img-tangle" v-if="showType === 1"><i class="el-icon-check"></i></label>
+                <label  class="img-tangle" v-if="showType === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
                <p :class="showType === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
                 <img src="../../../common/images/invite-card/tmpl2.png" alt="">
-                <label class="img-tangle" v-if="showType === 2"><i class="el-icon-check"></i></label>
+               <label  class="img-tangle" v-if="showType === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
                <p :class="showType === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
                 <img src="../../../common/images/invite-card/tmpl3.png" alt="">
-                <label class="img-tangle" v-if="showType === 3"><i class="el-icon-check"></i></label>
+                <label  class="img-tangle" v-if="showType === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
             </div>
           </el-form-item>
@@ -70,6 +70,7 @@
           <el-form-item label="时间">
             <VhallInput
               v-model.trim="formInvitation.webinar_date"
+              :maxlength="20"
               autocomplete="off"
               style="width: 320px"
             ></VhallInput>
@@ -106,6 +107,8 @@
         </el-form>
       </div>
       <div class="invitation-show">
+        <!-- <img :src="img" alt="" class="img_invite" v-show="false">
+        <img :src="avatar" alt="" class="img_invite" v-show="false"> -->
         <!-- <p>移动端预览</p> -->
         <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
           <div class="show-container">
@@ -138,12 +141,14 @@
         </div>
         <div class="watch-img" v-else-if="showType===2"  id="shopInvent">
           <div class="watch-bg" :style="`backgroundImage: url(${img})`">
-            <div class="watch-header">
+            <div class="watch-color">
+              <div class="watch-header">
               <div class="watch-avator">
                 <img :src="avatar" alt="">
               </div>
               <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
               <p style="color:#fff;">邀请你一起看直播</p>
+            </div>
             </div>
           </div>
           <div class="watch-text">
@@ -153,13 +158,14 @@
               <div class="watch-code"><img :src="qrcode" alt=""></div>
               <div class="watch-action">
                 <p>扫码观看视频</p>
-                <h1>{{ formInvitation.webinar_date }}</h1>
-                <h1>{{ formInvitation.location }}</h1>
+                <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
+                <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
               </div>
             </div>
           </div>
         </div>
         <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+          <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
                 <img :src="avatar" alt="">
@@ -187,10 +193,11 @@
                 <p>长按保存图片后分享</p>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary" class="length152" :disabled="!invitation" @click="onSubmit">保存</el-button>
+        <el-button type="primary length152" round   :disabled="!invitation" v-preventReClick @click="onSubmit">保存</el-button>
       </div>
       <div class="white-show" v-show="!invitation"></div>
     </div>
@@ -201,11 +208,19 @@
 import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import html2canvas from 'html2canvas';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
       if (value && value.length > 20) {
         callback && callback('地点在20个字符以内');
+      } else {
+        callback();
+      }
+    };
+    const timeValidate = (rule, value, callback) => {
+      if (value && value.length > 20) {
+        callback && callback('时间在20个字符以内');
       } else {
         callback();
       }
@@ -233,8 +248,8 @@ export default {
     };
     return {
       invitation: true,
-      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
-      showCode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      qrcode: '',
+      showCode: '',
       showType: 1,
       avatar: '',
       img: '',
@@ -278,6 +293,9 @@ export default {
         location: [
           { required: false, validator: locationValidate, trigger: 'blur' },
         ],
+        webinar_date: [
+          { required: false, validator: timeValidate, trigger: 'blur' },
+        ],
         company: [
           { required: false, validator: companyValidate, trigger: 'blur' },
         ],
@@ -287,6 +305,8 @@ export default {
   created(){
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
+    let token = sessionOrLocal.get('token', 'localStorage');
+    this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     this.getInviteCardInfo();
   },
   components: {
@@ -314,6 +334,7 @@ export default {
       };
       this.$fetch('getCardDetailInfo', params).then(res => {
         this.formInvitation = res.data.invite_card;
+        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
         this.img = this.formInvitation.img || this.fileList[0];
         this.imgUrl = this.formInvitation.img || '';
         this.showType = this.formInvitation.show_type;
@@ -328,7 +349,6 @@ export default {
       this.$router.push({path: '/code'});
     },
     onSubmitImg(type, url, trueImg) {
-      console.log(type, url, trueImg, '??????????????');
       if (!type) {
         this.formInvitation.img = url;
         this.img = trueImg;
@@ -353,27 +373,47 @@ export default {
        }
       });
     },
+    fileDownLoad(imgUrl, name) {
+      // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
+      if (window.navigator.msSaveOrOpenBlob) {
+        var bstr = atob(imgUrl.split(',')[1])
+        var n = bstr.length
+        var u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        var blob = new Blob([u8arr])
+        window.navigator.msSaveOrOpenBlob(blob, 'chart-download' + '.' + 'png')
+      } else {
+        // 这里就按照chrome等新版浏览器来处理
+        const a = document.createElement('a')
+        a.href = imgUrl
+        a.setAttribute('download', 'chart-download')
+        a.click()
+      }
+    },
     // 本地下载
     loadDownInvition() {
       let image = new Image();
-      // 解决跨域 Canvas 污染问题
-      image.setAttribute("crossOrigin", "anonymous");
-      image.onload = function() {
-        let canvas = document.createElement("canvas");
-        canvas.width = image.width;
-        canvas.height = image.height;
-        let context = canvas.getContext("2d");
-        context.drawImage(image, 0, 0, image.width, image.height);
-        let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
-        let a = document.createElement("a"); // 生成一个a元素
-        let event = new MouseEvent("click"); // 创建一个单击事件
-        a.download = `code${new Date().getTime()}`; // 设置图片名称
-        a.href = url; // 将生成的URL设置为a.href属性
-        a.dispatchEvent(event); // 触发a的单击事件
-      };
-      // let token = sessionOrLocal.get('token', 'localStorage');
-      // let link = `http://172.16.23.59:8081/invite/${this.$route.params.str}?token=${token}`;
-      // image.src = link;
+      let canvas1 = document.createElement('canvas');
+      let _canvas = document.getElementById('shopInvent');
+      let w = parseInt(window.getComputedStyle(_canvas).width);
+      let h = parseInt(window.getComputedStyle(_canvas).height);
+      canvas1.width = w * 2;
+      canvas1.height = h * 2;
+      canvas1.style.width = w + 'px';
+      canvas1.style.height = h + 'px';
+      let context = canvas1.getContext('2d');
+      context.scale(2,2);
+      html2canvas(_canvas, {
+        useCORS: true,
+        background: '#fff'
+      }).then(canvas => {
+        let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
+        image.src = this.dataUrl;
+        this.fileDownLoad(dataUrl)
+        // this.dataURIToBlob(imgName, dataUrl);
+      })
     }
   }
 };
@@ -413,19 +453,21 @@ export default {
     width: 106px;
     height: 36px;
   }
-  /deep/.el-button.is-round {
-    padding: 0 26px;
-  }
   /deep/.el-input__count {
     line-height: 20px;
     bottom:7px;
+  }
+  /deep/.el-input__inner, /deep/.el-textarea__inner {
+    padding: 0 12px;
+    color: #1A1A1A;
   }
   .invitation-from {
     display: flex;
     height: 100%;
     background: #fff;
-    padding: 20px 48px 60px 30px;
+    padding: 20px 48px 85px 30px;
     position: relative;
+    border-radius: 4px;
   }
   .form-data {
     padding: 10px 0 10px;
@@ -446,7 +488,7 @@ export default {
       img {
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        // object-fit: scale-down;
       }
     }
 
@@ -477,26 +519,22 @@ export default {
       position: relative;
       height: 128px;
       border: 1px solid transparent;
-      .img-tangle{
-        position: absolute;
-        right: 0;
-        top:0;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-right-color: #FB3A32;
-        border-top-color: #FB3A32;
-        i{
-          color:#fff;
-          position: absolute;
-          top: -8px;
-          right:-11px;
-          font-size: 10px;
-        }
-      }
+      cursor: pointer;
       img {
         width: 100%;
         height: 125px;
+      }
+      .img-tangle{
+        position: absolute;
+        right: -1px;
+        top:-1px;
+        width: 20px;
+        height: 20px;
+        font-size: 0;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
       &.isActiveColor{
         box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
@@ -518,7 +556,7 @@ export default {
     .show-img {
       width: 330px;
       border-radius: 4px;
-      border: 1px solid #E2E2E2;
+      border: 1px solid #E6E6E6;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       height: 622px;
@@ -527,8 +565,9 @@ export default {
         width: 282px;
         height: 520px;
         background: #fff;
-        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
+        border-radius: 4px;
         .show-header{
           padding: 20px 24px;
           text-align: center;
@@ -563,13 +602,14 @@ export default {
             color:#1A1A1A;
             font-weight: 600;
             line-height: 37px;
-            // min-height: 80px;
+            word-wrap: break-all;
+            word-wrap:break-word;
           }
           p{
             font-size: 14px;
             color:#1A1A1A;
             font-weight: 400;
-            line-height: 30px;
+            line-height: 20px;
             padding: 2px 0 5px 0;
             overflow: hidden;
             text-emphasis: wrap;
@@ -629,12 +669,22 @@ export default {
       background: #FFFFFF;
       height: 620px;
       position: relative;
-      box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      border: 1px solid #E6E6E6;
+      // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       .watch-bg{
         height: 360px;
         background-image: url('../../../common/images/v35-webinar.png');
         background-size: 100% 100%;
         background-repeat: no-repeat;
+        border-radius: 4px 4px 0 0;
+        // background-color: rgba(0, 0, 0, 0.1);
+        .watch-color{
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 4px 4px 0 0;
+        }
         .watch-header{
             padding: 20px 24px;
             text-align: center;
@@ -668,6 +718,8 @@ export default {
         color: #1A1A1A;
         line-height: 40px;
         font-weight: 500;
+        word-wrap: break-all;
+        word-wrap:break-word;
       }
       p{
         padding:0;
@@ -676,6 +728,8 @@ export default {
         line-height: 25px;
         font-weight: 400;
         min-height: 50px;
+        word-wrap: break-all;
+        word-wrap:break-word;
       }
       .watch-footer{
           position: absolute;
@@ -726,7 +780,14 @@ export default {
       border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
+      background-repeat: no-repeat;
       position: relative;
+      .look-color{
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
       .look-header{
         padding: 20px 24px;
         text-align: center;
@@ -764,6 +825,8 @@ export default {
           font-size: 26px;
           font-weight: 600;
           line-height: 40px;
+          word-wrap: break-all;
+          word-wrap:break-word;
         }
         p{
           font-size: 14px;
@@ -771,6 +834,8 @@ export default {
           line-height: 20px;
           color:#fff;
           padding: 5px 15px;
+          word-wrap: break-all;
+          word-wrap:break-word;
         }
       }
       .look-time{
@@ -794,9 +859,10 @@ export default {
         bottom: 20px;
         left: 40px;
         width: 250px;
-        background: #000;
+        // background: #000;
+        background: rgba(0, 0, 0, 0.2);
         border-radius: 4px;
-        opacity: 0.2;
+        // opacity: 0.2;
         padding: 10px;
         .look-code{
           width: 60px;
@@ -812,6 +878,7 @@ export default {
           h1{
             padding:0;
             font-size: 14px;
+            color: #fff;
             font-weight: 600;
             line-height: 30px;
           }
@@ -841,30 +908,27 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
+      /deep/.el-button{
+        background-color: transparent;
+        padding: 4px 23px;
+        &:hover{
+          background-color: #FB3A32;
+        }
+      }
       /deep/.el-button:last-child{
         margin-left: 10px;
-      }
-      .invitation-code{
-        width: 200px;
-        height: 190px;
-        text-align: center;
-        img{
-          width: 100%;
-          height: 100%;
-          object-fit: scale-down;
-        }
       }
     }
   }
   .sureBtn {
     position: absolute;
-    bottom: 20px;
+    bottom: 40px;
     left: 110px;
-    /deep/.el-button {
-      padding: 9px 60px;
-      border-radius: 20px;
-      margin: auto;
-    }
+    // /deep/.el-button {
+    //   padding: 9px 60px;
+    //   border-radius: 20px;
+    //   margin: auto;
+    // }
   }
   .white-show{
     position: absolute;
@@ -874,6 +938,16 @@ export default {
     left:0;
     background: rgba(255, 255, 255, 0.5);
     z-index: 9;
+  }
+}
+.invitation-code{
+  width: 132px;
+  height: 132px;
+  text-align: center;
+  img{
+    width: 132px;
+    height: 132px;
+    object-fit: scale-down;
   }
 }
 </style>

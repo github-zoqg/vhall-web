@@ -1,21 +1,26 @@
 <template>
   <div class="tailorWrap">
     <header>
-      <i class="el-icon-back" @click="$router.back()"></i>
-      <span>回放剪辑台</span>
+      <div class="leftBox">
+        <i class="el-icon-back" @click="$router.back()"></i>
+        <span>回放剪辑台</span>
+      </div>
+
+      <div v-if="!recordId" class="time-box">
+        <div class="rightBox">
+          <span class="time-label">选择回放时间</span>
+          <el-date-picker
+            v-model="timeVal"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间">
+          </el-date-picker>
+          <el-button @click="createRecord" size="small">确定</el-button>
+        </div>
+      </div>
     </header>
-    <div v-if="!recordId" class="time-box">
-      <span class="time-label">选择回放时间</span>
-      <el-date-picker
-        v-model="timeVal"
-        value-format="yyyy-MM-dd HH:mm:ss"
-        type="datetimerange"
-        range-separator="至"
-        start-placeholder="开始时间"
-        end-placeholder="结束时间">
-      </el-date-picker>
-      <el-button @click="createRecord" size="small">确定</el-button>
-    </div>
     <videoTailoring
       v-if="dataReady"
       ref="videoTailoringComponent"
@@ -29,18 +34,26 @@
       :class="[recordId ? 'vh-video-tailoring__editwarp' : '']"
     ></videoTailoring>
     <el-dialog
-      title="请输入视频名称"
+      title="视频标题"
       v-loading="editLoading"
       :visible.sync="titleDialogVisible"
       :close-on-click-modal=false
       :close-on-press-escape=false
       custom-class="save-title"
-      center
-      width="480px">
-      <VhallInput placeholder="请输入标题" :maxlength="100" autocomplete="off"  resize=none show-word-limit v-model="titleEdit" class="input-with-select" type="text"></VhallInput>
+      :before-close="resetTitleValue"
+      width="483px">
+      <VhallInput
+        placeholder="请输入视频标题"
+        :maxlength="100"
+        autocomplete="off"
+        show-word-limit
+        v-model="titleEdit"
+        type="textarea"
+        resize=none
+      ></VhallInput>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmTitle" :disabled="editLoading" round size="medium">确 定</el-button>
-        <el-button @click="titleDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
+        <el-button @click="handleCancle" :disabled="editLoading" round size="medium">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -66,8 +79,19 @@ export default {
       timeVal: [],
       chatSDK: null,
       msgInfo: {},
-      handleMsgTimer: ''
+      handleMsgTimer: '',
+      isChange: false
     };
+  },
+  watch: {
+    timeVal: {
+      deep: true,
+      handler(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.isChange = true
+        }
+      }
+    }
   },
   created() {
     // 回放列表剪辑
@@ -82,6 +106,7 @@ export default {
       // 创建回放剪辑
       this.dataReady = true;
       this.getInitMsgInfo();
+      this.getDefaultTime();
     }
     // 监听事件点的变化
     this.$EventBus.$on('eventPointListChange', eventPointList => {
@@ -95,23 +120,23 @@ export default {
     //   return '关闭提示';
     // }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   // 离开页面前判断信息是否修改
-  //   if (!this.isChange) {
-  //     next()
-  //     return false;
-  //   } else {
-  //     this.$alert(`是否放弃当前编辑？`, '提示', {
-  //       confirmButtonText: '确定',
-  //       cancelButtonText: '取消',
-  //       customClass: 'zdy-alert-box',
-  //       type: 'warning'
-  //     }).then(() => {
-  //       next()
-  //     }).catch(() => {
-  //     });
-  //   }
-  // },
+  beforeRouteLeave(to, from, next) {
+    // 离开页面前判断信息是否修改
+    if (!this.isChange) {
+      next()
+      return false;
+    } else {
+      this.$confirm('是否放弃当前编辑？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        next()
+      }).catch(() => {});
+    }
+  },
   beforeDestroy() {
     if (this.$PLAYER) {
       this.$PLAYER.destroy();
@@ -123,6 +148,21 @@ export default {
     }
   },
   methods:{
+    getDefaultTime() {
+      this.$fetch('getDefaultStartTime', {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        this.timeVal = [res.data.start_time, res.data.end_time];
+      })
+    },
+    handleCancle() {
+      this.titleDialogVisible = false
+      this.titleEdit = ''
+    },
+    resetTitleValue(done) {
+      this.titleEdit = ''
+      done()
+    },
     // 传 sid 的时候，需要查询回放的起止时间，回显
     getTime() {
       this.$fetch('getWebinarSwitchList', {
@@ -259,6 +299,22 @@ export default {
             this.$message.warning('生成失败');
             this.editLoading = false;
           }
+        }).catch(err => {
+          if (err.code == 12005) {
+            this.$message({
+              message:  '所选时间范围内没有搜索到回放视频',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12908) {
+            this.$message({
+              message:  '所选时间范围不能超过7天',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          }
         })
       }
     },
@@ -345,19 +401,30 @@ export default {
     height: 100%;
     overflow: hidden;
     /deep/ .save-title{
-      margin-top: 18%!important;
+      // margin-top: 18%!important;
       .el-dialog__title {
-        font-size: 18px;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #1a1a1a;
       }
       .el-dialog__body{
         .el-input__inner{
           padding-right: 66px;
         }
       }
+      .el-textarea__inner {
+        color: #1a1a1a;
+        height: 96px;
+        font-family: PingFangSC-Regular, PingFang SC;
+      }
+      .el-button--default {
+        margin-left: 12px;
+      }
     }
     .vh-video-tailoring__warp{
       width: 100%;
-      height: calc( 100vh - 143px);
+      height: calc( 100vh - 63px);
       margin-top: 0px;
       margin-bottom: 0;
       border-radius: 0px;
@@ -366,16 +433,24 @@ export default {
       }
     }
     header{
-      background: #FB3A32;
+      background: #222;
       color: #ffffff;
-      font-size: 20px;
-      text-align: center;
+      font-size: 16px;
+      line-height: 16px;
+      // text-align: center;
       // width: 1366px;
       margin: 0 auto;
-      padding: 22px 25px;
+      position: relative;
+      height: 64px;
+      .leftBox {
+        position: absolute;
+        top: 34px;
+        left: 24px;
+      }
       i{
         float: left;
         cursor: pointer;
+        padding-right: 10px;
       }
     }
     .time-box {
@@ -384,7 +459,9 @@ export default {
       align-items: center;
       justify-content: center;
       background: #222222;
-      border-bottom: 1px #000 solid;
+      .rightBox {
+        padding-top: 10px;
+      }
       .time-label {
         color: #999999;
         font-size: 14px;

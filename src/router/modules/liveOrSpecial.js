@@ -33,36 +33,36 @@ const router = [
       {
         path: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit' },
+        meta: { auth: true, title: '创建直播', level: 2 , name: 'liveCreate', webniarType: 'live', activeMenu: '/live/edit'},
       },
       {
         path: 'edit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/edit' },
+        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'vodEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑点播', name: 'liveEdit', webniarType: 'vod', activeMenu: '/live/edit' },
+        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'liveEdit', webniarType: 'vod', activeMenu: '/live/edit' },
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'detail/:str(\\d+)',
         component: () => import('@/views/LiveModule/detail'),
-        meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list' },
+        meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'chooseWay/:str/:role?',
         component: () => import('@/views/LiveModule/chooseWay'),
-        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list' },
+        meta: { auth: true, title: '选择发起方式', name: 'chooseWay', level: 3, activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -138,9 +138,15 @@ const router = [
         hidden: true
       },
       {
-        path: 'posterCard/:str(\\d+)',
+        path: 'officeSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/officialCard'),
-        meta:{ auth: true, title: '开屏海报', name: 'posterCard', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '公众号', name: 'officeSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'posterCard/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/posterCard'),
+        meta:{ auth: true, title: '开屏海报', name: 'posterSet', activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -169,7 +175,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'question',
+        path: 'question/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/question'),
         meta:{ auth: true, title: '问卷', name: 'question', activeMenu: '/live/list'},
         hidden: true
@@ -223,6 +229,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'recordchapter/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/chapter'),
+        meta:{ auth: true, title: '章节打点', name: 'recordchapter', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'reportsData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         meta:{ auth: true, title: '数据报告', name: 'reportsData', activeMenu: '/live/list'},
@@ -268,7 +280,7 @@ const router = [
       {
         path: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
-        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/list' }
+        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit' }
       }
     ]
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="forget-password">
-    <OldHeader :isShowLogin=false></OldHeader>
+    <OldHeader :isShowLogin=false scene="forgetPwd"></OldHeader>
     <div class="section__main">
       <pageTitle title="找回密码"></pageTitle>
       <div class="forget__layout">
@@ -44,7 +44,7 @@
         <!-- 第二步 -->
         <div class="step-2" v-if="findStep===2">
           <div class="find-phone" v-if="isType==='phone'">
-            <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email')">邮箱找回密码</span></p>
+            <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email', 1)">邮箱找回密码</span></p>
             <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="phone">
               <el-input
@@ -55,7 +55,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <div id="loginCaptcha" class="findCaptcha">
+              <div id="loginCaptcha" class="captcha">
                 <el-input
                   auto-complete="off"
                   v-model.trim="dynamicForm.text">
@@ -67,29 +67,31 @@
                 <el-input
                   placeholder="输入验证码"
                   clearable
+                  :maxlength="6"
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
-                    <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
                 </el-input>
               </div>
             </el-form-item>
             <div class="login-btn">
-              <el-button type="primary" class="length152" @click.stop="sureFindPassword()" round>确&nbsp;&nbsp;&nbsp;认</el-button>
+              <el-button type="primary" class="length152" @click.stop="sureFindPassword()" round>提&nbsp;&nbsp;&nbsp;交</el-button>
             </div>
           </el-form>
           </div>
           <div class="find-phone" v-if="isType==='email'">
-            <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone')">手机找回密码</span></p>
+            <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone', 1)">手机找回密码</span></p>
             <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="email">
               <el-input
                 placeholder="请输入邮箱"
                 auto-complete="off"
+                :maxlength="30"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
-                    <span @click="getDyCode" :class=" time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
               </el-input>
             </el-form-item>
@@ -97,6 +99,7 @@
               <el-input
                 placeholder="输入邮箱验证码"
                 auto-complete="off"
+                :maxlength="6"
                 v-model.trim="dynamicForm.code">
               </el-input>
             </el-form-item>
@@ -110,20 +113,22 @@
         <div class="step-3" v-if="findStep===3">
           <el-form ref="resetPassword" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="password">
-              <el-input
+              <pwd-input
                 placeholder="请输入新密码"
+                :maxlength="30"
                 type="password"
                 auto-complete="off"
                 v-model.trim="dynamicForm.password">
-              </el-input>
+              </pwd-input>
             </el-form-item>
             <el-form-item prop="checkPassword">
-              <el-input
+              <pwd-input
                 placeholder="请再次输入密码"
                 type="password"
+                :maxlength="30"
                 auto-complete="off"
                 v-model.trim="dynamicForm.checkPassword">
-              </el-input>
+              </pwd-input>
             </el-form-item>
             <div class="login-btn">
               <el-button type="primary" class="length152" @click="resetPassword()" round>提&nbsp;&nbsp;&nbsp;交</el-button>
@@ -138,15 +143,20 @@
         </div>
       </div>
     </div>
+    <footer-section></footer-section>
   </div>
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
 import PageTitle from '@/components/PageTitle';
+import footerSection from '../../components/Footer/index';
+import PwdInput from '../AccountModule/components/pwdInput.vue';
 export default {
   components: {
     OldHeader,
-    PageTitle
+    PageTitle,
+    footerSection,
+    PwdInput
   },
   data() {
     let validatePhone = (rule, value, callback) => {
@@ -213,11 +223,14 @@ export default {
   //   });
   // },
   methods: {
-    findPassword(type) {
+    findPassword(type, index) {
       this.isType = type;
       this.findStep = 2;
       if (type === 'phone') {
         this.callCaptcha();
+      }
+      if (index) {
+        this.$refs['checkDynamicForm'].resetFields();
       }
     },
     // 第二步获取短信验证码
@@ -245,13 +258,13 @@ export default {
           this.$message.error(res.msg);
         });
         } else {
-          this.$message({
-            message: '请检查手机号是否输入正确',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
+          // this.$message({
+          //   message: '请检查手机号是否输入正确',
+          //   showClose: true,
+          //   // duration: 0,
+          //   type: 'error',
+          //   customClass: 'zdy-info-box'
+          // });
           return;
         }
       } else if (this.isType === 'email') {
@@ -267,14 +280,14 @@ export default {
           this.$message.error(res.msg);
         });
         } else {
-          this.$message({
-            message: '请检查邮箱是否输入正确',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
-          return;
+          // this.$message({
+          //   message: '请检查邮箱是否输入正确',
+          //   showClose: true,
+          //   // duration: 0,
+          //   type: 'error',
+          //   customClass: 'zdy-info-box'
+          // });
+          // return;
         }
       }
     },
@@ -316,12 +329,13 @@ export default {
             };
             this.$fetch('resetPassword', params).then(res => {
               this.findStep = 4;
+              let that = this;
               let linkTimer = setInterval(function() {
-                this.linkTime--;
-                if (this.linkTime === 1) {
+                that.linkTime--;
+                if (that.linkTime === 1) {
                   window.clearInterval(linkTimer);
-                  this.$router.push({path: '/'});
-                  this.linkTime = 5;
+                  that.$router.push({path: '/'});
+                  that.linkTime = 5;
                 }
               }, 1000);
             }).catch(res => {
@@ -405,6 +419,18 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+/deep/.footer {
+  text-align: center;
+  font-weight: 100;
+  font-size: 12px;
+  line-height: 18px;
+  position: unset;
+  padding-bottom: 30px;
+}
+/deep/.pageTitle {
+  font-size: 24px;
+  font-weight: normal;
+}
 .section__main {
   padding-top: 40px;
   width: 1020px;
@@ -555,25 +581,31 @@ export default {
       position: absolute;
       bottom: -1px;
       right: 3px;
-      width: 90px;
+      width: 103px;
+      padding: 8px 0;
+      line-height: 18px;
+      text-align: center;
       background: #E8E8E8;
       border-radius: 2px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 400;
       color: #222222;
       cursor: pointer;
-      padding: 8px;
-      cursor: pointer;
-      line-height: 18px;
-      text-align: center;
       &.isLoginActive{
         background: #FB3A32;
-        border-radius: 2px;
         color: #FFFFFF;
+        &:hover {
+          color: #fff;
+          background: #FC615B;
+        }
+        &:active {
+          color: #FFFFFF;
+          background: #E2332C;
+        }
       }
       &.isSend {
         background: #E8E8E8;
-        color: #222222;
+        color: #666666;
       }
     }
   }

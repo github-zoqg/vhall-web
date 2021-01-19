@@ -32,6 +32,11 @@ export const actionText = (val) => {
   let str = liveTypeStr[val];
   return str;
 };
+export const unitTime = (val) => {
+  let str;
+  str = val.substring(0, 16);
+  return str;
+};
 export const unitCovert = (val) => {
   val = Number(val);
   if (isNaN(val)) return 0;

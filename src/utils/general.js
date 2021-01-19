@@ -35,6 +35,16 @@ export const session = {
     return sessionStorage.removeItem(param);
   }
 };
+export function formateSeconds(result) {
+  const h = mat(Math.floor(result / 3600));
+  const m = mat(Math.floor((result / 60) % 60));
+  const s = mat(Math.floor(result % 60));
+  if (h < 1) {
+    return `00:${m}:${s}`;
+  } else {
+    return `${h}:${m}:${s}`;
+  }
+}
 
 export function formatDate(date, fmt) {
   if (/(y+)/.test(fmt)) {
@@ -110,11 +120,11 @@ export function getRangeDays(value) {
     return formateDate(oldDate);
   } else if (value == 3) {
     // 近7日
-    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 8);
+    let oldWeek = date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
     return formateDate(oldWeek);
   } else if (value == 4) {
     // 近30日
-    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 31);
+    let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
     return formateDate(oldMonth);
   } else if (value == 5){
     let yesDate = date.setTime(date.getTime() - 3600 * 1000 * 24);

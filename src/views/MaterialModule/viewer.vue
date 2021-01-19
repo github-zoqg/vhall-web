@@ -1,19 +1,18 @@
 <template>
   <div class="audienceBox">
     <pageTitle title="观众">
-      <div slot="content">
-        单个文件不可超过5000条数据，数据量较大时请拆分文件上传
-      </div>
+      <span class="dev-show-tips">
+        观众分组应用于观看限制中的白名单，设置后只有指定的观众才能观看活动
+      </span>
     </pageTitle>
-    <div class="div__main">
+    <div class="div__main" v-if="groupList.length > 0">
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
           <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
           <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
           <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
-          <el-link :href="downloadUrl"  v-if="downloadUrl" class="unHover">下载模版</el-link>
-          <el-link :href="downloadUrl" v-else  class="unHover">下载模板</el-link>
+          <el-button round size="medium" v-if="downloadUrl" @click="downloadTemplate">下载模版</el-button>
           <div class="searchBox">
             <VhallInput
               placeholder="搜索内容"
@@ -21,6 +20,7 @@
               clearable
               autocomplete="off"
               @keyup.enter.native="queryList"
+              class="resetRightBrn"
               @clear="queryList">
               <i
                 class="el-icon-search el-input__icon"
@@ -30,7 +30,7 @@
             </VhallInput>
           </div>
         </div>
-        <!-- 操作栏 -->
+        <!-- 列表 -->
         <table-list
           ref="viewerTable"
           :manageTableData="viewerDao.list"
@@ -44,96 +44,124 @@
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
-          v-if="viewerDao && viewerDao.total > 0"
         >
         </table-list>
         <!-- 无消息内容 -->
-        <null-page v-else></null-page>
+        <null-page v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
         <ul v-if="groupList && groupList.length > 0">
-          <li class="group__item--active"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="changeViewerList(item)">
-            <span class="group__button__title" @mouseover="item.showHover = true" @mouseout="item.showHover = false">{{ item.subject }}</span>
-            <div class="group__tap" v-show="item.showHover"  @mouseover="item.showHover = true" @mouseout="item.showHover = false">
-              <div class="group_button__rename" @click.prevent.stop="addGroupDialogShow(item)">重命名</div>
-              <div class="group_button__delete" @click.prevent.stop="postGroupDel(item)">删除</div>
-            </div>
-          </li>
+          <el-dropdown
+            placement="bottom-start"
+            split-button
+            size="medium"
+            round
+            @command="handleCommand($event, item)"
+            trigger="click"
+            v-for="(item, ins) in groupList"
+            :key="`group${ins}`"
+            @click.prevent.stop="changeViewerList(item, ins)"
+            :class="{'active': activeGroupIndex == ins}"
+          >{{ item.subject }}
+            <el-dropdown-menu slot="dropdown" style="width: 152px;">
+              <el-dropdown-item command="rename">重命名</el-dropdown-item>
+              <el-dropdown-item command="delete">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </ul>
         <div class="group_button__add" @click.prevent.stop="addGroupDialogShow(null)">
-          <span class="add-icon">+</span><span>点击添加分组</span>
+          <el-button size="medium" v-preventReClick type="primary" round>点击添加分组</el-button>
         </div>
         <div class="clear"></div>
       </div>
     </div>
+    <div v-else>
+      <null-page :nullType="'nullData'" :text="'您还没有观众分组，快来创建吧！'">
+        <el-button type="primary"  round @click="addGroupDialogShow(null)" v-preventReClick>添加分组</el-button>
+      </null-page>
+    </div>
     <!-- 添加分组/ 重命名分组 -->
-    <VhallDialog :title="groupDialog.title" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
-      <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" :label-width="groupDialog.formLabelWidth">
-        <el-form-item label="分组名：" prop="subject">
-          <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名（1-15个字符）" :maxlength="15"
-                    :minlength="1"/>
+    <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
+      <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" @submit.native.prevent>
+        <el-form-item prop="subject">
+          <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名称" :maxlength="15"
+                    :minlength="1" show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="postGroupSend('groupForm')" round size="medium">确 定</el-button>
-        <el-button @click="groupDialog.visible = false" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="postGroupSend('groupForm')" round size="medium">确定</el-button>
+        <el-button @click="groupDialog.visible = false" round size="medium">取消</el-button>
       </div>
     </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
     <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="544px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
-        <el-form-item label="姓名：" prop="name">
+        <el-form-item label="姓名" prop="name">
           <VhallInput v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
         </el-form-item>
-        <el-form-item label="行业：" prop="industry">
+        <el-form-item label="行业" prop="industry">
           <VhallInput v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
         </el-form-item>
-        <el-form-item label="邮箱：" prop="email">
+        <el-form-item label="邮箱" prop="email">
           <VhallInput v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
-        <el-form-item label="手机号码：" prop="phone">
+        <el-form-item label="手机号码" prop="phone">
           <VhallInput v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
         </el-form-item>
-        <el-form-item label="工号：" prop="job_number">
+        <el-form-item label="工号" prop="job_number">
           <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
-        <el-form-item label="其他：" prop="other">
+        <el-form-item label="其他" prop="other">
           <VhallInput v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确 定</el-button>
-        <el-button @click="viewerDialog.visible = false" size="medium" round>取 消</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确定</el-button>
+        <el-button @click="viewerDialog.visible = false" size="medium" round>取消</el-button>
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="468px">
+    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="400px" @close="closeImportViewer">
       <div class="upload-dialog-content">
         <file-upload
           ref="viewerUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel',
-          }"
-          :result="importResult"
-          :fileResult=fileResult
-          :progress="{
-            isUploadEnd: isUploadEnd,
-            percent: percent
           }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
-          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
+          <div slot="upload-result">
+            <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
+            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+            <!-- 状态2： 已选择文件，提示上传中，进度条 -->
+            <div v-if="uploadResult && uploadResult.status === 'progress'">
+              <div class="progressBox">
+                <el-progress :percentage="percent" ></el-progress>
+              </div>
+            </div>
+            <!-- 状态3： 检测失败 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
+              <p class="p-error">{{uploadResult.text}}</p>
+            </div>
+            <!-- 状态4:  检测成功 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+            </div>
+          </div>
+          <!-- 状态1： 未上传 -->
+          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
-        <div class="dialog-right-btn">
-          <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确 定</el-button>
-          <el-button @click="closeImportViewer" size="medium" round>取 消</el-button>
+        <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
+        <div class="dialog-right-btn dialog-footer">
+          <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确定</el-button>
+          <el-button @click="closeImportViewer" size="medium" round>取消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -157,7 +185,12 @@ export default {
   },
   data() {
     return {
+      activeGroupIndex: '',
       isUploadEnd: false,
+      uploadResult: {
+        status: 'start',
+        text: '请选择模板文件'
+      },
       percent: 0,
       isCheckout: true,
       isHandle: true,
@@ -220,7 +253,7 @@ export default {
         title: '添加分组',
         type: 'add',
         row: null,
-        formLabelWidth: '100px'
+        formLabelWidth: '80px'
       },
       groupForm: {
         subject: ''
@@ -294,6 +327,40 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.isUploadEnd = false
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
+    },
+    fileDownLoad(imgUrl, name) {
+      // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
+      if (window.navigator.msSaveOrOpenBlob) {
+        var bstr = atob(imgUrl.split(',')[1])
+        var n = bstr.length
+        var u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
+        }
+        var blob = new Blob([u8arr])
+        window.navigator.msSaveOrOpenBlob(blob, 'chart-download' + '.' + 'png')
+      } else {
+        // 这里就按照chrome等新版浏览器来处理
+        const a = document.createElement('a')
+        a.href = imgUrl
+        a.setAttribute('download', 'chart-download')
+        a.click()
+      }
+    },
+    downloadTemplate() {
+      this.fileDownLoad(this.downloadUrl)
+    },
+    handleCommand(type, data) {
+      type == 'rename' && this.addGroupDialogShow(data)
+      type == 'delete' && this.postGroupDel(data)
+    },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -323,6 +390,7 @@ export default {
         this.groupDialog.title = '添加分组';
         this.groupDialog.row = null;
         this.groupDialog.visible = true;
+        this.groupForm.subject = ''
       }
     },
     // 获取白名单分组列表
@@ -373,6 +441,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
+            this.groupForm.subject = ''
             // 刷新数据
             this.audienceGet();
             this.groupDialog.visible = false;
@@ -627,14 +696,14 @@ export default {
       }
     },
     // 每次改变，重新查询观众信息
-    changeViewerList(item) {
+    changeViewerList(item, index) {
+      this.activeGroupIndex = index;
       this.query.group_id = item.id;
       this.queryList();
     },
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
-      this.percent = 0;
       this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
@@ -645,6 +714,10 @@ export default {
           request_type: 0 // 校验
         }).then(resV => {
           this.fileResult = 'success';
+          this.uploadResult = {
+            status: 'success',
+            text: '检测成功'
+          }
           this.importResult = {
             success: resV.data.success_count,
             fail: resV.data.fail_count
@@ -654,6 +727,10 @@ export default {
           }
         }).catch(res => {
           this.fileResult = 'error';
+          this.uploadResult = {
+            status: 'error',
+            text: res.msg
+          }
           // this.$message.error(resV.msg || '检测观众信息失败！');
           this.importResult = null;
           if (this.$refs.viewerUpload) {
@@ -664,7 +741,7 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
-      const typeList = ['csv', 'xls', 'xlsx'];
+      const typeList = ['xls', 'xlsx'];
       let nameArr = file.name.split('.');
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 2;
@@ -693,11 +770,19 @@ export default {
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
       this.isUploadEnd = false;
+      this.uploadResult = {
+        status: 'progress',
+        text: '上传中，请稍候'
+      }
       this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       // this.$message.error(`文件上传失败`);
+      this.uploadResult = {
+        status: 'error',
+        text: '文件上传失败'
+      }
       this.fileResult = 'error';
     },
     uploadPreview(file){
@@ -705,9 +790,12 @@ export default {
     },
     closeImportViewer() {
       this.importFileShow = false;
-      this.percent = 0;
       this.isUploadEnd = false;
       this.fileUrl = '';
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     reloadViewerList() {
       if(!this.fileUrl) {
@@ -734,9 +822,12 @@ export default {
           customClass: 'zdy-info-box'
         }); */
         this.importFileShow = false;
-        this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
+        this.uploadResult = {
+          status: 'start',
+          text: '请上传文件'
+        }
         // 刷新列表数据
         this.queryList();
       }).catch(res => {
@@ -764,13 +855,34 @@ export default {
   /deep/ .el-table .el-button.el-button--text {
     font-size: 14px;
   }
+  /deep/ .noPic .saasicon_shangchuan {
+    font-size: 44px;
+  }
+  /deep/ .el-upload--picture-card {
+    width: 100%;
+    height: 130px;
+  }
+  /deep/ .el-dialog__title {
+    line-height: 24px;
+  }
+  /deep/ .dialog-footer {
+    .el-button {
+      padding: 4px 23px;
+    }
+  }
+}
+.uploadtips {
+  padding-top: 8px;
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #999999;
+  line-height: 17px;
 }
 .operaBox{
   overflow: hidden;
   margin-bottom: 20px;
   .el-link {
-    margin-left: 20px;
-    margin-left: 20px;
     text-decoration: none;
     color: #666666;
     &:hover {
@@ -796,6 +908,23 @@ export default {
       height: 36px;
       line-height: 36px;
     }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
   }
 }
 .div__main {
@@ -807,7 +936,13 @@ export default {
   width: calc(100% - 256px);
   .padding-table-list2();
   background: #FFFFFF;
-  min-height: 500px;
+  min-height: 676px;
+  .data-list {
+    min-height: auto;
+    /deep/ .el-table__empty-block {
+      display: none;
+    }
+  }
 }
 .row__container {
   display: flex;
@@ -818,18 +953,71 @@ export default {
   min-height: 120px;
   background: #FFFFFF;
   border-radius: 4px;
-  margin-left: 32px;
+  margin-left: 24px;
   padding: 24px 24px;
   li {
     list-style-type: none;
     text-align: center;
     margin-bottom: 32px;
   }
+  /deep/ .el-dropdown {
+    margin-bottom: 12px;
+    .el-button:first-child {
+      border-right: none;
+      text-align: left;
+      padding-right: 0;
+    }
+    .el-button {
+      padding: 4px 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      &:focus {
+        color: #666666;
+        border-color: #cccccc;
+        background-color: #ffffff;
+      }
+    }
+    &.active {
+      .el-button {
+        border-color:#ffebeb;
+        background-color: #ffebeb;
+        color: #FB3A32;
+      }
+    }
+    .el-dropdown__caret-button {
+      padding: 4px 5px;
+      border-left: none;
+      &::before {
+        width: 0;
+      }
+    }
+    .el-button-group {
+      &:hover {
+        .el-button {
+          background-color: #FB3A32;
+          border-color: #FB3A32;
+          color: #fff;
+        }
+      }
+    }
+    .el-button-group>.el-button {
+      border-radius: 23px;
+    }
+    .el-button-group>.el-button:first-child {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      width: 122px;
+    }
+    .el-button-group>.el-button:last-child {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
 }
 .group__title {
   color: @font_color_h1;
-  margin-bottom: 32px;
-  text-align: center;
+  margin-bottom: 20px;
 }
 .group__item--active {
   padding: 8px 0;
@@ -856,6 +1044,9 @@ export default {
   text-align: center;
   color: @font_color_h1;
   cursor: pointer;
+  /deep/ .el-button {
+    width: 150px;
+  }
 }
 .download {
   display: block;
@@ -900,6 +1091,40 @@ export default {
 .dialog-right-btn {
   text-align: right;
   margin-bottom: 24px;
-  margin-top: 24px;
+  margin-top: 22px;
+}
+/* 文件上传 */
+.p-right {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #888;
+  font-size: 14px;
+}
+.p-error {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #FB3A32;
+  font-size: 14px;
+}
+/deep/.el-progress__text /deep/i {
+  font-size: 18px;
+}
+.progressBox {
+  /deep/ .el-progress-bar__inner {
+    background-color: #14BA6A;
+  }
+}
+
+.dev-show-tips {
+  font-size: 14px;
+  font-weight: 400;
+  color:#999999;
+  line-height: 20px;
+  a {
+    color: #3562FA;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
 }
 </style>

@@ -230,6 +230,8 @@ const apis = {
   startrecord: ['/v3/webinars/record/start-record', 'POST'], // 开始录制 xiaodong.ding
   stoprecord: ['/v3/webinars/record/stop-record', 'POST'], // 结束录制 xiaodong.ding
   recordCheck: ['/v3/webinars/record/check', 'POST'], // 开始录制前检测 xiaodong.ding
+  recordInfo: ['/v3/webinars/record/get-info', 'POST'], // 回放详情 xiaodong.ding
+  getDefaultStartTime: ['/v3/webinars/record/get-record-time', 'POST'], // 获取创建回放初始时间-预览场景 xiaodong.ding
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -337,8 +339,7 @@ const apis = {
   sonRoleGet: ['/v3/users/child-role/get-info', 'POST'], // 子账号-角色-详情查询 Jia.li
   sonRoleList: ['/v3/users/child-role/get-list', 'POST'], // 子账号-角色-列表查询 Jia.li
   sonRolePermission: ['/v3/users/child-role/get-list', 'POST'], // 子账号权限查询接口 Jia.li
-  sonResourcesGet: ['/104/v3/user-vip/get-dist-resources', 'POST', 'mock'], // 获取账号可分配资源 Jia.li
-  sonResourcesSave: ['/104/v3/user-vip/dist-resources', 'POST', 'mock'], // 子账号用量分配(可批量) Jia.li
+  getChildPermission: ['/v3/users/child-role/get-permission', 'POST'], // 获取当前账户子账号权限
 
   //财务中心
   getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息 √
@@ -405,6 +406,7 @@ const apis = {
   // 账户管理
   homeInfoCreate: ['/v3/users/homepage/create', 'POST'], // 个人主页创建接口 Jia.li √字段未同步
   homeInfoGet: ['/v3/users/homepage/get-info', 'POST'], // 个人主页查询接口 Jia.li √
+  userLogoGet: ['/v3/users/user-extends/get-logo-info', 'POST'], // 获取控制台标志信息 Jia.li √
   homeInfoEdit: ['/v3/users/homepage/edit', 'POST'], // 个人主页更新接口 Jia.li √字段未同步
   checkAccount: ['/v3/users/user/check-account', 'POST'], // 账号检测接口 Jia.li
   resetPassword: ['/v3/users/user/reset-password', 'POST'], // 修改密码/密码找回/设置密码接口 Jia.li

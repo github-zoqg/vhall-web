@@ -136,6 +136,7 @@
                 :label="radioItem.item_id"
               >
                 <VhallInput
+                  :disabled="item.reqType == 0 && item.default_type == 4"
                   @change="(chooseOptChange(item, radioItem))"
                   :maxlength="60"
                   autocomplete="off"
@@ -143,6 +144,7 @@
                   placeholder="选项"
                   v-model="radioItem.value"
                   class="radioInput"
+                  :class="{'radioGender': item.reqType == 0 && item.default_type == 4}"
                 >
                   <i
                     class="el-icon-remove-outline removeIcon"
@@ -435,6 +437,14 @@ export default {
     },
     // 下拉题目选项 subject 改变
     selectOptChange(question, node, isSelect, isPrivacy) {
+      // 如果是更改的隐私声明的跳转链接需要验证链接格式
+      if (node.key == 'url') {
+        const reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/
+        if (!reg.test(node.value)) {
+          this.$message.error('请输入正确格式的跳转链接！')
+          node.value = ''
+        }
+      }
       // 只有 select 才可以更改
       if (isSelect) {
         const options = {
@@ -719,10 +729,19 @@ export default {
   width: 100%
 }
 .viewItem{
+  border-radius: 4px;
   margin-bottom: 16px;
+  /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
+    background-color: #F7F7F7;
+    border-color: #E6E6E6;
+    cursor: not-allowed;
+  }
   &.privacyItem {
     .radioInput {
       margin-bottom: 10px;
+    }
+    /deep/ .el-textarea__inner {
+      padding-left: 12px;
     }
   }
   .header-img-tip {
@@ -736,7 +755,7 @@ export default {
     align-items: center;
     font-size: 16px;
     color: #1A1A1A;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     // text-indent: 8px;
     .titleInput {
       font-size: 16px;
@@ -773,12 +792,19 @@ export default {
       display: block;
       margin-top: 10px;
       margin-right: 0px;
+      &:first-child {
+        margin-top: 0;
+      }
       /deep/ .el-radio__label {
         .radioInput {
           width: calc(100% - 24px);
           .el-input__inner {
             padding-right: 74px;
           }
+        }
+        .radioGender .el-input__inner{
+          cursor: default;
+          color: #1a1a1a;
         }
         .other-input {
           margin-top: 10px;
@@ -806,7 +832,7 @@ export default {
     }
   }
   .bottomBtn{
-    margin-top: 23px;
+    margin-top: 9px;
     text-align: right;
     overflow: hidden;
     .addBtn{
@@ -939,6 +965,12 @@ export default {
   /deep/ .el-input__inner{
     border-color: transparent !important;
     &:focus{
+      background: #F7F7F7;
+      /deep/ & + .el-input__suffix .el-input__count{
+        visibility: visible;
+      }
+    }
+    &:hover{
       background: #F7F7F7;
       /deep/ & + .el-input__suffix .el-input__count{
         visibility: visible;

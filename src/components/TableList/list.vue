@@ -1,5 +1,5 @@
 <template>
-  <div class="data-list">
+  <div :class="['data-list', {'no-height': manageTableData && manageTableData.length === 0}]">
     <el-table
       ref="elTable"
       :data="manageTableData"
@@ -7,7 +7,9 @@
       :max-height="maxHeight"
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
       :row-class-name="tableRowClassName"
+      :row-style="tableRowStyle"
     >
+      <div slot="empty" style="height:0"></div>
       <el-table-column
         type="selection"
         width="55"
@@ -31,7 +33,7 @@
                 <span>{{
                   scope.row.uploadObj.num == 100
                     ? '上传已完成'
-                    : '视频正在上传中'
+                    : '文件上传中'
                 }}</span>
                 <el-progress
                   :percentage="scope.row.uploadObj.num"
@@ -40,7 +42,7 @@
               <!-- {{scope.row}} -->
               <p v-if="scope.row.transcode_status_text">
                 <!-- 列表 -->
-                <span>{{ scope.row.transcode_status_text }}</span>
+                <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
               </p>
             </div>
             <div v-else-if="item.key === 'img'" class="prizeImg">
@@ -83,27 +85,44 @@
             </div>
             <!-- 下载中心，文件名 -->
             <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
-              <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i>
+              <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
               <p class="text">
+                <icon icon-class="saasexcelwendang" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
                 <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
                 {{ scope.row.file_name }}
               </p>
             </div>
             <!-- 下载中心，生成状态 -->
-            <div v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
+            <div class="progressBox" v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
               <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
-              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}</span>
+              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}<span @click="handleBtnClick(scope, { name: '重新生成', methodName: 'resetDownload' })"><icon v-if="Number(scope.row.file_status) === 2" icon-class="saasicon-reset"></icon></span></span>
             </div>
             <div v-else-if="item.key === 'imgOrText'">
               <p v-html="scope.row.imgOrText"></p>
             </div>
-            <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
+            <!-- 文档，进度 (Old) <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
               <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
               <span v-else v-html="scope.row.transform_schedule_str"></span>
+            </div> -->
+            <!-- 文档，进度 -->
+            <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
+              <div v-if="!scope.row.transform_schedule_str" class="progressBox">
+                <el-progress :percentage="scope.row.codeProcess" ></el-progress>
+              </div>
+              <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
+              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress> -->
+              <div v-else class="progressBox">
+                <!-- 样式变化 -->
+                <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}<span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span></span>
+              </div>
+            </div>
+            <div v-else-if="item.key === 'video_name'" class="videoName">
+              <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+              <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+              {{ scope.row[item.key]  || '- -'}}
             </div>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
-              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] || '----' }}
+              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
           </template>
         </el-table-column>
@@ -145,13 +164,9 @@
               name: '下载',
               methodName: 'download'
             })" style="margin-right: 8px;">
-              <el-button size="mini" type="text">下载</el-button>
+              <el-button style="font-size: 14px" size="mini" type="text">下载</el-button>
             </a>
-            <el-button size="mini" type="text" v-preventReClick v-if="Number(scope.row.file_status) === 2" @click="handleBtnClick(scope, {
-              name: '重新生成',
-              methodName: 'resetDownload'
-            })">重新生成</el-button>
-            <el-button size="mini" type="text" v-preventReClick @click="handleBtnClick(scope, {
+            <el-button style="font-size: 14px" size="mini" type="text" v-preventReClick @click="handleBtnClick(scope, {
               name: '删除',
               methodName: 'delDownload'
             })">删除</el-button>
@@ -250,6 +265,7 @@ export default {
     // 开关状态切换的回调
     switchChange(option) {
       this.$emit('switchChange', option);
+
       console.log(option);
     },
     isImg(_data) {
@@ -271,6 +287,17 @@ export default {
     checkShowHandle(row, item) {
       if (this.scene === 'accountList') {
         return row.parent_id > 0 || (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0);
+      } else if (this.scene === 'word') {
+        // 静态转码完成，展示 演示、删除；动态转码完成，展示 演示、动画版演示、删除；转码失败展示 删除。
+        if (row.showEventType == 4 || row.showEventType == 6) {
+          // ppt or pptx 时展示动画演示
+          return /pptx?/.test(row.ext) ? true : item.methodName !== 'preDocShow';
+        } else if (row.showEventType == 5 || row.showEventType == 7) {
+          // 转码失败
+          return item.methodName === 'deleteHandle';
+        } else {
+          return false;
+        }
       } else {
         return true;
       }
@@ -302,6 +329,14 @@ export default {
         return '';
       }
     },
+    // 给下载中心列表用，给已成功下载的行置灰
+    tableRowStyle({row, rowIndex}) {
+      if (row.file_status == 1 && row.dow_status == 1) {
+        return {
+          color: '#BEBEBE'
+        }
+      }
+    },
     // 复选记忆函数
     setRowKeyFun() {
       // console.log(row);
@@ -329,12 +364,34 @@ export default {
 <style lang="less" scoped>
 .data-list {
   min-height: 650px;
+  &.no-height {
+    min-height: 0;
+    /deep/.el-table {
+      margin-bottom: 0;
+    }
+    /deep/.el-table__empty-block {
+      height: 0!important;
+      min-height: 0;
+    }
+  }
+  .downloadStatus {
+    display: inline-block;
+    width: 146px;
+  }
   .word-status {
     margin-right: 12px;
+    &.iconContainer {
+      padding-right: 0;
+    }
+    /deep/i.iconfont-v3 {
+      font-size: 20px;
+    }
   }
    /deep/.cell .advImg {
     width: 142px;
     height: 80px;
+    background: #1a1a1a;
+    border-radius: 4px;
     img{
       width:100%;
       height:100%;
@@ -344,12 +401,13 @@ export default {
   /deep/.cell .prizeImg{
     width: 80px;
     height: 80px;
-    background: #FFF5F6;
+    background: #FFF;
     border: 1px solid #E6E6E6;
     border-radius: 4px;
     img{
       width:100%;
       height:100%;
+      border-radius: 4px;
       object-fit: scale-down;
     }
   }
@@ -414,7 +472,20 @@ export default {
     margin-top: 0;
     margin-left: -4px;
   }
+  /deep/ .saasexcelwendang{
+    font-size: 20px;
+    color: #14BA6A;
+  }
+  .iconContainer {
+    padding-right: 5px;
+  }
+  .progressBox {
+    /deep/ .el-progress-bar__inner {
+      background-color: #14BA6A;
+    }
+  }
   .statusTag{
+    font-size: 14px;
     &::before{
       content: '';
       width: 8px;
@@ -431,6 +502,13 @@ export default {
     }
     &.failer::before{
       background:#FB3A32;
+    }
+    .iconContainer {
+      padding-left: 10px;
+      cursor: pointer;
+    }
+    /deep/ .saasicon-reset {
+      color: #FB3A32;
     }
   }
   .status-show{
@@ -458,6 +536,24 @@ export default {
   }
   .empty{
     text-align: center;
+  }
+  .videoName{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .iconfont-v3{
+      font-size: 20px;
+      vertical-align: middle;
+    }
+    .saasyinpinwenjian{
+      color: #10d3a8;
+      padding-right: 3px;
+    }
+    .saasshipinwenjian{
+      color: #ff733c;
+      padding-right: 3px;
+    }
   }
 }
 /* 表格行样式 */
@@ -492,5 +588,16 @@ export default {
       margin-left: 0;
     }
   }
+}
+/deep/.el-checkbox__inner {
+  border-color: #999999;
+  &:hover, &:active {
+    border-color: #FB3A32;
+  }
+}
+/deep/.el-checkbox__input.is-disabled .el-checkbox__inner {
+  background-color: #f7f7f7;
+  border-color: #B3B3B3;
+  cursor: not-allowed;
 }
 </style>

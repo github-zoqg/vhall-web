@@ -21,19 +21,25 @@
           <div class="vhallPlayer-controller-box">
             <div class="v-c-left">
               <div class="vh-video-chapter__operate">
-                <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
-                  <icon icon-class="saasicon_shangyimiao"></icon>
-                </span>
-                <span
-                  @click="videoPlayBtn"
-                  class="vh-btn vh-video-chapter__play"
-                  :class="{ 'is-pause': statePaly }"
-                >
-                  <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
-                </span>
-                <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
-                  <icon icon-class="saasicon_xiayimiao"></icon>
-                </span>
+                <el-tooltip content="上一秒" placement="top">
+                  <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
+                    <icon icon-class="saasicon_shangyimiao"></icon>
+                  </span>
+                </el-tooltip>
+                <el-tooltip :content="statePaly ? '暂停' : '播放'" placement="top">
+                  <span
+                    @click="videoPlayBtn"
+                    class="vh-btn vh-video-chapter__play"
+                    :class="{ 'is-pause': statePaly }"
+                  >
+                    <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
+                  </span>
+                </el-tooltip>
+                <el-tooltip content="下一秒" placement="top">
+                  <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
+                    <icon icon-class="saasicon_xiayimiao"></icon>
+                  </span>
+                </el-tooltip>
               </div>
 
             </div>
@@ -45,9 +51,11 @@
               </span>
             </div>
             <div class="vh-video-chapter__volume-box">
-              <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
-                <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
-              </span>
+              <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top">
+                <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
+                  <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+                </span>
+              </el-tooltip>
               <div class="vh-video-chapter__slider">
                 <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
               </div>
@@ -76,17 +84,29 @@
         </div>
         <div class="actionBar">
           <span class="pages">
-            <span class="translatePage">
-              <i class="el-icon-arrow-left" @click="prevPage"></i>
-            </span>
-            <em> {{pageInfo.pageIndex}}</em>/{{pageInfo.total}}
-            <span class="translatePage">
-              <i class="el-icon-arrow-right" @click="nextPage"></i>
-            </span>
+            <el-tooltip content="上一页" placement="top">
+              <span class="translatePage" @click="prevPage">
+                <icon icon-class="saasicon_arrowleft"></icon>
+              </span>
+            </el-tooltip>
+            <em> {{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
+            <el-tooltip content="下一页" placement="top">
+              <span class="translatePage" @click="nextPage">
+                <icon icon-class="saasicon_arrowright1"></icon>
+              </span>
+            </el-tooltip>
           </span>
           <span class="docs">
-            <i class="el-icon-arrow-left" @click="prevDoc"></i>
-            <i class="el-icon-arrow-right" @click="nextDoc"></i>
+            <el-tooltip content="上一个文档" placement="top">
+              <span @click="prevDoc">
+                <icon icon-class="saasicon_wordleft"></icon>
+              </span>
+            </el-tooltip>
+            <el-tooltip content="下一个文档" placement="top">
+              <span @click="nextDoc">
+                <icon icon-class="saasicon_wordright"></icon>
+              </span>
+            </el-tooltip>
           </span>
           <!-- <span class="thumbnail"></span> -->
         </div>
@@ -140,10 +160,10 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="文档页码"
+          label="页码/步数"
           width="110">
            <template slot-scope="scope">
-             <el-input :disabled="isDemand == 'false'" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+             <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
@@ -163,7 +183,12 @@
           show-overflow-tooltip>
           <template slot-scope="scope">
             <el-button type="text" @click="getTime(scope.row)">获取时间</el-button>
-            <el-button v-if="scope.row.sub" type="text" @click="addSonNode(scope.row)">添加子章节</el-button>
+            <el-button
+              :disabled="chapterTotalInfo[scope.row.docId] ? scope.row.sub.length >= chapterTotalInfo[scope.row.docId][scope.row.slideIndex - 1] : false"
+              v-if="scope.row.sub"
+              type="text"
+              @click="addSonNode(scope.row)"
+            >添加子章节</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -233,7 +258,8 @@ export default {
       currentTime: 0, // 当前视频播放时间
       voice: 60, // 音量
       catchVoice: 0,
-      videoTime: 0 // 视频实际时长
+      videoTime: 0, // 视频实际时长
+      chapterTotalInfo: {}
     };
   },
   provide () {
@@ -250,7 +276,7 @@ export default {
      * 视频当前播放时长初始化
      */
     showTime () {
-      return this.formatTime(Math.round(this.currentTime) * 1);
+      return this.formatTime(Math.floor(this.currentTime) * 1);
     },
     /**
      * 视频总时长格式化
@@ -314,7 +340,7 @@ export default {
       console.log('component_playerSDK_ready');
       setTimeout(() => {
         // 动态获取当前视频的总时长及当前播放的时间 当做刻度尺值，弱播放时间小于1200秒，则刻度尺最小赋值为1200秒
-        this.videoTime = Math.round(window.vhallPlayer.getDuration());
+        this.videoTime = Math.floor(window.vhallPlayer.getDuration());
         this.$EventBus.$emit('blockInit', 0, this.videoTime);
         window.vhallPlayer.on(window.VhallPlayer.TIMEUPDATE, () => {
           this.currentTime = window.vhallPlayer.getCurrentTime(() => {
@@ -334,9 +360,9 @@ export default {
       this.vodReady = true;
     });
 
-    this.$EventBus.$on('component_page_info', ()=>{
-      console.log('component_page_info', this.$refs.doc.pageInfo);
-      this.pageInfo = this.$refs.doc.pageInfo;
+    this.$EventBus.$on('documenet_load_complete', (data)=>{
+      console.log('documenet_load_complete', data);
+      this.pageInfo = data;
     });
 
     // 监听文档加载完毕
@@ -351,11 +377,11 @@ export default {
           userCreateTime: this.secondsFormmat(item.createTime),
           isChange: false,
           slideIndex: item.slideIndex + 1,
-          stepIndex: item.stepIndex + 1,
+          stepIndex: item.stepIndex,
           sub: item.sub.map((subItem, subIndex) => ({
             ...subItem,
-            slideIndex: subItem.slideIndex + 1,
-            stepIndex: subItem.stepIndex + 1,
+            slideIndex: subItem.stepIndex, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
+            stepIndex: subItem.slideIndex + 1, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。
             userCreateTime: this.secondsFormmat(subItem.createTime),
             index: `${index + 1}-${subIndex + 1}`,
             isChange: false
@@ -364,6 +390,7 @@ export default {
       });
       this.docIds = [...new Set(ids)]
       this.getDocTitles();
+      this.getChapterTotalInfo(this.docIds);
     });
   },
   mounted(){
@@ -376,6 +403,19 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    handleInput(value) {
+      if (value.slideIndex.length == 0) return;
+      const pattern = /^[1-9][0-9]*$/ // 正整数的正则表达式
+      if (!pattern.test(value.slideIndex)) {
+        value.slideIndex = value.slideIndex.slice(0, value.slideIndex.length - 1)
+        this.$message({
+          message:  '页码只能是整数',
+          showClose: true, // 是否展示关闭按钮
+          type: 'warning', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
+      }
+    },
     /**
      * 时间格式化
      * 将秒转化为hh:mm:ss显示
@@ -500,39 +540,45 @@ export default {
         record_id: this.recordId
       }).then(res => {
         if (res.data && res.data.chatper_callbanck_status == 0) {
-          this.$message.warning('上次章节保存任务尚未完成，当前章节信息为为保存章节')
+          this.$message({
+            message:  '上次章节保存任务尚未完成，当前章节信息为为保存章节',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
         }
       })
     },
     closePreview() {
       this.previewVisible = false;
+      document.getElementById('app').style.overflow = 'auto'
     },
     previewChapters() {
       window.scrollTo(0, 0);
       this.previewVisible = true;
       this.$refs.player.$PLAYER.pause();
+      document.getElementById('app').style.overflow = 'hidden'
     },
     saveChapters() {
       debounce(() => {
         const createTimeArr = [];
-        console.log('tableData', this.tableData)
         const doc_titles = this.tableData.map(item => {
           createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
           return {
             document_id: item.docId,
             created_at: item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime,
             page: item.slideIndex - 1,
-            step: item.stepIndex - 1,
+            step: item.stepIndex,
             title: item.title,
             remark: '',
             step_total: item.sub.length,
             subsection: item.sub.map(subItem => {
               createTimeArr.push(subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime)
               return {
-                document_id: subItem.docId,
+                document_id: item.docId,
                 created_at: subItem.isChange ? this.secondsReverse(subItem.userCreateTime) : subItem.createTime,
-                page: subItem.slideIndex - 1,
-                step: subItem.stepIndex - 1,
+                page: subItem.stepIndex - 1, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
+                step: subItem.slideIndex, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。
                 title: subItem.title,
                 remark: '',
                 step_total: 0
@@ -541,25 +587,64 @@ export default {
           }
         })
         const createTimeArrSet = new Set(createTimeArr);
-        if (createTimeArrSet.size < createTimeArr.length) return this.$message.error('章节时间点不能重复');
-        console.log(doc_titles)
-        console.log('isDemand', this.isDemand ? 2 : 1)
+        if (createTimeArrSet.size < createTimeArr.length) {
+          return this.$message({
+            message:  '章节时间点不能重复',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        }
         this.$fetch('saveChapters', {
           record_id: this.recordId,
           type: this.isDemand == 'true' ? 2 : 1,
           doc_titles: JSON.stringify(doc_titles)
         }).then(res => {
           if (res.code == 200) {
-            this.$message.success('保存成功');
+            this.$message({
+              message:  '保存成功',
+              showClose: true, // 是否展示关闭按钮
+              type: 'success', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
             this.$router.go(-1);
-          } else if (res.code == 12563) {
-            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-            this.$message.warning('上次保存尚未完成,请稍后提交保存');
-          } else if (res.code == 12027) {
-            // 保存章节是异步任务，存储的时候需要判断上次存储是否完成
-            this.$message.warning('保存失败，子章节页码超出章节总步数');
+          }
+        }).catch(err => {
+          if (err.code == 12563) {
+            this.$message({
+              message:  '上次保存尚未完成,请稍后提交保存',
+              showClose: true, // 是否展示关闭按钮
+              type: 'warning', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12027) {
+            this.$message({
+              message:  '保存失败，章节页码或步数超出最大值',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12029) {
+            this.$message({
+              message:  '保存失败，章节时间大于视频时长',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else if (err.code == 12025) {
+            this.$message({
+              message:  '保存失败，子章节页码或步数不能重复',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
           } else {
-            this.$message.warning('保存失败');
+            this.$message({
+              message:  '保存失败',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
           }
         })
       }, 500)
@@ -570,7 +655,6 @@ export default {
         record_id: this.recordId,
         type: 0
       }).then(res => {
-        console.log(res)
         const data = res.data
         this.playerProps = {
           appId: data.paasAppId,
@@ -597,13 +681,18 @@ export default {
         document_id: tableSelect.join(',')
       }).then(res => {
         const ids = []
+        this.chapterTotalInfo = {}
         this.tableData = res.data.doc_titles.map((item, index) => {
+          // 文档子章节总数信息
+          !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
+          this.chapterTotalInfo[item.document_id][item.page] = item.step_total
+
           ids.push(item.document_id);
           return {
             createTime: 0,
             docId: item.document_id,
             slideIndex: item.page + 1,
-            stepIndex: item.step + 1,
+            stepIndex: item.step,
             title: item.title,
             index: index + 1,
             userCreateTime: '00:00:00',
@@ -612,8 +701,8 @@ export default {
               item.subsection.map((subItem, subIndex) => ({
                 createTime: 0,
                 docId: subItem.document_id,
-                slideIndex: subItem.page + 1,
-                stepIndex: subItem.step + 1,
+                stepIndex: subItem.page + 1, // 由于列表中统一使用 slideIndex 字段显示修改，所以，对于子章节，使用 slideIndex
+                slideIndex: subItem.step, // 代替 stepIndex ，使用 stepIndex 代替 slideIndex ，保存的时候会反向处理。
                 title: subItem.title,
                 index: `${index + 1}-${subIndex + 1}`,
                 userCreateTime: '00:00:00',
@@ -623,6 +712,20 @@ export default {
         })
         this.docIds = [...new Set(ids)];
         this.getDocTitles();
+      })
+    },
+    // 获取章节总数信息，只在获取章节信息的事件中调用
+    getChapterTotalInfo(ids) {
+      this.$fetch('playBackChaptersGet', {
+        document_id: ids.join(',')
+      }).then(res => {
+        this.chapterTotalInfo = {}
+        res.data.doc_titles.forEach(item => {
+          // 文档子章节总数信息
+          !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
+          this.chapterTotalInfo[item.document_id][item.page] = item.step_total
+          console.log(this.chapterTotalInfo)
+        })
       })
     },
     prevPage(){
@@ -658,7 +761,14 @@ export default {
       });
     },
     deleteChapter(){
-      if(!this.selectedData.length > 0) return this.$message.warning('请选择要删除的章节');
+      if(!this.selectedData.length > 0) {
+        return this.$message({
+          message:  '请选择要删除的章节',
+          showClose: true, // 是否展示关闭按钮
+          type: 'warning', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
+      }
       this.$confirm('删除后章节不可恢复，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -666,12 +776,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
-        let isAll = false;
-        if (this.tableData.length == this.selectedData.length) {
-          isAll = true
-          this.selectedData.shift()
-        }
-        this.tableData = this.tableData.filter(item => {
+        const temp = this.tableData.filter(item => {
           if (this.selectedData.some(selectItem => selectItem.index == item.index)) {
             return false;
           } else {
@@ -686,12 +791,20 @@ export default {
             return true;
           }
         });
-        this.handleSerialize()
-        if(isAll) {
-          this.$message.warning('至少保留一个章节')
+        if (temp.length === 0) {
+          this.tableData[0].sub = []
+          this.tableData = [this.tableData[0]]
+          this.$message({
+            message:  '至少保留一个章节',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else {
+          this.tableData = temp
         }
+        this.handleSerialize()
       }).catch(()=>{});
-
     },
     handleSerialize() {
       this.tableData.forEach((item, index) => {
@@ -716,8 +829,8 @@ export default {
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         index: `${row.index}-${row.sub.length + 1}`,
-        stepIndex: 1,
-        slideIndex: row.slideIndex,
+        stepIndex: row.slideIndex,
+        slideIndex: 1,
         docId: row.docId,
         cid: '',
         hash: '',
@@ -757,20 +870,21 @@ export default {
 
 <style lang="less" scoped>
   .wraper{
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,.5);
     top: 0;
     left: 0;
-    z-index: 22;
+    z-index: 1002;
     display: flex;
     justify-content: center;
+    align-items: center;
     .preViewChapters {
-      margin-top: 200px;
+      // margin-top: 200px;
       min-height: 320px;
-      width: 960px;
-      height: 600px;
+      width: 50%;
+      height: 64%;
       background: #222;
       position: relative;
       .close {
@@ -780,6 +894,10 @@ export default {
         top: -30px;
         font-size: 25px;
         cursor: pointer;
+      }
+      iframe {
+        border-radius: 4px;
+        overflow: hidden;
       }
     }
   }
@@ -791,6 +909,9 @@ export default {
     justify-content: space-between;
     >div{
       flex: 1;
+    }
+    /deep/ .el-loading-mask{
+      z-index: 1000!important;
     }
     .docBox{
       display: flex;
@@ -815,20 +936,35 @@ export default {
       }
       .pages{
         display: block;
-        color: #666;
+        color: #999999;
         font-size: 14px;
         em{
           color: #fff;
           font-style: normal;
+        }
+        /deep/ span{
+          cursor: pointer;
+          &:hover {
+            color: #FFFFFF;
+          }
+          /deep/ i {
+            vertical-align: -0.05em;
+          }
         }
       }
       .docs{
         position: absolute;
         right: 10px;
         top: 0px;
-        i{
-          color: #999999;
+        color: #999999;
+        /deep/ span{
           cursor: pointer;
+          &:hover {
+            color: #FFFFFF;
+          }
+          /deep/ i {
+            vertical-align: -0.05em;
+          }
         }
       }
     }
@@ -893,6 +1029,7 @@ export default {
           }
         }
         .vh-video-chapter__icon-voice-warp {
+          cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1016,16 +1153,27 @@ export default {
     .el-table{
       margin-top: 24px;
     }
-    /* /deep/ .el-table__header{
+    /deep/ .el-table__header{
       th{
         background: #F7F7F7;
       }
-    } */
+    }
     .el-input {
       width: 95%;
     }
+    /deep/ .el-button.el-button--text.is-disabled span {
+      color: #1a1a1a;
+    }
     /deep/ .el-tooltip .el-button--text span:hover {
       color: #3562fa;
+    }
+    /deep/ .el-button.el-button--text.is-disabled {
+      &:hover {
+        border: 0;
+        span {
+          color: #1a1a1a;
+        }
+      }
     }
   }
   .right{

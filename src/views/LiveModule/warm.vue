@@ -20,7 +20,8 @@
                 <i class="iconfont-v3 saasicon_shangchuan"></i>
               </div>
               视频仅支持MP4格式，文件大小不超过200M<br>
-              上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看
+              上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看<br>
+              点播、音频直播不支持暖场视频
             </div>
             <div class="mediaSlot mediaOther" v-else>
               <icon icon-class="saasshipinwenjian"></icon>
@@ -28,11 +29,11 @@
             </div>
             <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
               <div class="tool" @click.stop="previewVideo">
-                <icon icon-class="saasicon-eye"></icon>
+                <i class="iconfont-v3 saasicon-eye"></i>
                 <el-button type="text" class="operaBtn" >预览</el-button>
               </div>
               <div class="tool" @click.stop="deleteVideo">
-                <icon icon-class="saasicon-trash"></icon>
+                <i class="iconfont-v3 saasicon_shanchu"></i>
                 <el-button type="text" class="operaBtn" >删除</el-button>
               </div>
             </div>
@@ -153,9 +154,7 @@ export default {
       }
       this.$fetch('warmOpen', params).then(res=>{
         if(res.code == 200){
-          if (!index) {
-            this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
-          }
+          this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
         }
       });
     },
@@ -229,7 +228,6 @@ export default {
       if(this.warmForm.record_id == ''){
         this.$message.error('请上传暖场视频');
       }else{
-
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -345,15 +343,19 @@ export default {
       justify-content: center;
       color: #fff;
       .tool{
-        width: 40px;
-        height: 60px;
-        // p {
-        //   width: 100%;
-        //   height: 25px;
-        // }
+        width: 30px;
+        line-height: 20px;
+        margin: 0px 5px;
+        &:hover{
+          cursor: pointer;
+        }
       }
       span{
         color: #fff;
+      }
+      /deep/.saasicon-eye, /deep/.saasicon_shanchu{
+        font-size: 30px!important;
+        height: 30px;
       }
     }
     .operaBtn{
@@ -386,36 +388,49 @@ export default {
         font-size: 30px;
       }
       /deep/.iconfont-v3{
-        font-size: 26px;
+        font-size: px;
+      }
+      /deep/.saasshipinwenjian{
+        color: #FF733C;
+      }
+      p{
+        padding-top: 5px;
       }
     }
    }
 }
 .vh-dialog{
-  /deep/ .el-dialog {
-    width: 642px!important;
-    background: transparent!important;
-    border:none;
-    box-shadow: none;
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
+    }
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
+      color: #fff;
+    }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 18px solid #333;
+      border-bottom: 18px solid #333;
+      background: #333;
+      border-radius: 4px;
+      padding: 0 20px;
+    }
   }
-  /deep/ .el-dialog__header {
-    width: 642px!important;
-    padding: 0px;
-    height: 55px;
-    background: transparent!important;
-    border:none;
-  }
-  /deep/ .el-dialog__headerbtn{
-    top: 30px;
-    right: 0px;
-  }
-  /deep/ .el-dialog__body{
-    width: 642px;
-    height: 375px;
-    border: 16px solid #333;
-    background: #fff;
-  }
-}
 .box{
   text-align: center;
 }

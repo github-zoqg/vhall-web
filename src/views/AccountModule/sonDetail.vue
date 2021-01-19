@@ -21,7 +21,9 @@
       </div>
       <div class="page--son-tab">
          <div class="son__detail--user">
-          <h1 class="title">子账号信息<span class="copy" @click="copy(sonText)"><i class="iconfont-v3 saasicon_copy"></i></span></h1>
+          <h1 class="title">子账号信息<span class="copy" @click="copy(sonText)"> <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                    <i class="iconfont-v3 saasicon_copy"></i>
+                  </el-tooltip></span></h1>
           <div class="son__detail_icon">
             <img src="../../common/images/account/saaszizhanghao_tubiao.png" alt=""/>
           </div>
@@ -29,7 +31,7 @@
         <ul class="son__detail--show">
           <li>
             <label>账号</label>
-            <p :title="sonVo && sonVo.name ? sonVo.name : ''">{{ sonVo && sonVo.name ? sonVo.name : '--' }}</p>
+            <p :title="sonVo && sonVo.name ? sonVo.name : ''">{{ sonVo && sonVo.name ? sonVo.name : '- -' }}</p>
           </li>
           <li>
             <label>账号昵称</label>
@@ -45,11 +47,11 @@
           </li>
           <li>
             <label>手机号码</label>
-            <p :title="sonVo && sonVo.phone ? sonVo.phone : ''">{{sonVo &&  sonVo.phone ? sonVo.phone : '--'  }}</p>
+            <p :title="sonVo && sonVo.phone ? sonVo.phone : ''">{{sonVo &&  sonVo.phone ? sonVo.phone : '- -'  }}</p>
           </li>
           <li>
             <label>邮箱地址</label>
-            <p :title="sonVo && sonVo.email ? sonVo.email : ''">{{sonVo &&  sonVo.email ? sonVo.email : '--' }}</p>
+            <p :title="sonVo && sonVo.email ? sonVo.email : ''">{{sonVo &&  sonVo.email ? sonVo.email : '- -' }}</p>
           </li>
         </ul>
       </div>
@@ -189,10 +191,11 @@ export default {
     align-items: flex-start;
     .page--son {
       width: calc(100% - 272px);
-      min-height: 612px;
+      min-height: 560px;
       height: auto;
       background: #FFFFFF;
       position: relative;
+      border-radius: 4px;
       .el-button {
         margin-top: 3px;
       }

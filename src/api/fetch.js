@@ -20,13 +20,26 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   // TODO 临时用大龙Token，后续删除
   const token = sessionOrLocal.get('token', 'localStorage') || '';
   let data = Object.assign(data1);
-  let _live_token = sessionOrLocal.get('live_token', 'localStorage')
-  if(_live_token){
-    data.live_token = _live_token
+  if (window.location.href.indexOf('/chooseWay') !== -1) {
+    // 修改存储live_token 方案    改为活动ID_token值
+    let _live_token = sessionOrLocal.get('live_token', 'localStorage')
+    let ActiveID = null
+    try {
+      ActiveID = location.pathname.split('chooseWay/')[1].split('/')[0]
+    } catch (error) {
+      if(_live_token.length >32){
+        _live_token = _live_token.slice(live_token.length - 32)
+      }
+    }
+    try {
+      if(_live_token.indexOf(ActiveID)!=-1){
+        data.live_token = _live_token.split(`${ActiveID}_`)[1]
+      }
+    } catch (error) {
+    }
   }
-  const interact_token = sessionStorage.getItem('interact_token') || null;
+  // const interact_token = sessionStorage.getItem('interact_token') || null;
   let formData = null;
-
   if (method === 'GET' && data) {
       let Uri;
       api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
@@ -47,11 +60,11 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   let headers = {
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
+    origin: window.location.origin,
     'request-id': uuidV1()
   };
 
-  interact_token && (headers['interact-token'] = interact_token)
-
+  // interact_token && (headers['interact-token'] = interact_token)
   if(window.location.hash.indexOf('/live/watch/') !== -1) {
 
     // pc观看等
@@ -73,6 +86,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
+    // credentials: 'include',
     // include: cookie既可以同域发送，也可以跨域发送, *same-origin: 表示cookie只能同域发送，不能跨域发送 omit: 默认值，忽略cookie的发送
     headers: headers
   };

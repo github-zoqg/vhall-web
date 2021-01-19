@@ -15,7 +15,7 @@
 
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
-          <p v-if="is_dynamic > 0">每个子账号可单独分配用量，所有用量之和不能大于可分配用量</p>
+          <p v-if="is_dynamic > 0">每个子账号可单独分配用量，<br/>所有用量之和不能大于可分配用量</p>
           <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('regular')" v-if="is_dynamic > 0">保存</el-button>
           <!-- 当前数据库中已经是固定分配 -->
           <el-table
@@ -32,6 +32,7 @@
             </el-table-column>
             <el-table-column
               label="帐号 / 昵称"
+              align="left"
               show-overflow-tooltip
             >
               <template slot-scope="scope">
@@ -41,6 +42,7 @@
             <el-table-column
               label="手机号"
               width="160"
+              align="left"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 {{scope.row.phone || '----'}}
@@ -48,6 +50,7 @@
             </el-table-column>
             <el-table-column
               label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)"
+              align="left"
               width="200">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
@@ -58,6 +61,7 @@
             </el-table-column>
             <el-table-column
               label="分配并发" v-if="resourcesVo && !(resourcesVo.type > 0)"
+              align="left"
               width="200">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
@@ -68,6 +72,7 @@
             </el-table-column>
             <el-table-column
               label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_day"
+              align="left"
               width="200">
               <template slot-scope="scope">
                 <el-input type="text" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative">
@@ -78,8 +83,9 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              align="center"
-              width="140">
+              align="left"
+              class="btn-rows"
+              width="114">
               <template slot-scope="scope">
                 <el-button type="text" @click="save(scope.row)" v-if="scope.row.isHide">保存</el-button>
                 <el-button type="text" @click="showInput(scope.row)" v-if="!scope.row.isHide">编辑</el-button>
@@ -92,7 +98,7 @@
             :currentPage="query.pageNumber"
             @current-change="currentChangeHandler"
             align="center"
-            v-if="!(is_dynamic > 0) && dataList.length > query.limit">
+            v-if="!(is_dynamic > 0) && total > query.limit">
           </SPagination>
         </div>
         <!-- 动态分配，无查询列表 -->
@@ -112,11 +118,11 @@
           </div>
           <ul class="allocation_one">
             <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}}：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
-            <li>有效期至{{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.extend_day">
             <li>可分配并发扩展包（天）：{{ resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0 }}</li>
-            <li>有效期至{{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
         </div>
         <ul class="ac__allocation--info">
@@ -464,9 +470,36 @@
     text-align: center;
     p {
       margin-bottom: 32px;
+      font-size: 16px;
+      font-weight: 400;
+      color: #666666;
+      line-height: 24px;
     }
     &.regular-list {
-      padding: 24px 32px;
+      padding: 24px 32px 40px 32px;
+      /deep/.el-table td, /deep/.el-table th {
+        padding: 9px 0;
+      }
+      /deep/.btn-relative {
+        position: relative;
+        width: 95px;
+      }
+      /deep/.el-table .cell {
+        line-height: 36px;
+      }
+      .btn-rows {
+        /deep/.el-button {
+          margin-left:16px;
+          font-size: 14px;
+          &:first-child {
+            margin-left: 0;
+          }
+        }
+      }
+    }
+    /deep/.btn-relative .el-input__inner {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
     }
   }
   .pageBox {

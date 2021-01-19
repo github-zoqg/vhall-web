@@ -110,7 +110,7 @@
         </div>
         <!-- 固定工具栏区域 -->
         <div class="player-funct" v-show="!isEmbedVideo" :class="{'video-only': watchDocShow}">
-          <div class="player-share" @click="toggleShare" v-if="!isEmbed && userModules.share.show == 0 ">
+          <div class="player-share" @click="toggleShare" v-if="!isEmbed && configList['ui.watch_hide_share'] != 1">
             <span
               class="iconfont"
               style="color: #ccc; display: inline-block;vertical-align: middle"
@@ -148,14 +148,14 @@
             >
           </div>
           <div class="player-active" v-show="!isEmbed">
-            <div class="table-praise" v-if="userModules.like.show != 1">
+            <div class="table-praise" v-if="configList['ui.watch_hide_like'] != 1">
               <praise :roomId="roomId" :isLogin="isLogin"></praise>
             </div>
-            <div class="table-reward" v-if="userModules.reward.show != 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
+            <div class="table-reward" v-if="configList['ui.hide_reward'] != 1 && roomInfo.role_name != 4 && roomInfo.role_name != 3">
               <!-- <reward :roomId="roomId"></reward> -->
               <img @click="showGiveMoneyPannel" src="../../assets/images/reward/reward-pay-23.png" alt="icon加载失败">
             </div>
-            <div class="table-gift" v-if="userModules.gift.show != 1 && roomInfo.role_name == 2">
+            <div class="table-gift" v-if="configList['ui.hide_gifts'] != 1 && roomInfo.role_name == 2">
               <img @click='openGiftPannel' src="../../assets/images/publish/gift-icon-3.1.4.png" alt="">
             </div>
             <div class="table-redCoupon" v-if="redPacketShowBut && !isPlayback && roomInfo.role_name != 4 && roomInfo.role_name != 3">
@@ -539,6 +539,10 @@ export default {
   name: 'vhallEnjoyWatchSaas',
 
   props: {
+    configList: {
+      type: Object,
+      default: () => {}
+    },
     shareId: {
       required: true
     },
@@ -743,7 +747,7 @@ export default {
       isLogin: false,
       noGive: false, // 禁用发送礼物
       disableTimer: null,
-      disableTime: 5
+      disableTime: 5,
     };
   },
   created () {
@@ -767,13 +771,20 @@ export default {
           this.vssInfo = val
           this.poster = val.webinar && val.webinar.image_url ? val.webinar.image_url : '';
           this.userModules = val.modules;
+          console.log(89, val.modules)
           this.isInteract = val.webinar && val.webinar.is_interact;
           this.uploadDomain = val.domains.upload
         }
       },
       deep: true,
       immediate: true
-    }
+    },
+    configList: {
+      handler (val) {
+      },
+      deep: true,
+      immediate: true
+    },
   },
   mounted () {
     this.userInfo = sessionOrLocal.get('userInfo') ? JSON.parse(sessionOrLocal.get('userInfo')) : {}

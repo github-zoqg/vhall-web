@@ -6,7 +6,7 @@
       </div>
       <div class="box-title">
         <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
-          <img src="../../../../common/images/live.gif" alt="">
+          <img src="../../../../common/images/live/lives.gif" alt="">
           <b>直播</b>
         </div>
         <div class="title-status grayColor" v-else>
@@ -42,10 +42,12 @@ export default {
   height: 81px;
   margin: 16px 21px 17px 16px;
   border-radius: 4px;
+  background: #1a1a1a;
   img {
     width: 100%;
-    height: 81px;
+    height: 100%;
     border-radius: 4px;
+    object-fit: scale-down;
   }
 }
 .box-title {
@@ -62,11 +64,9 @@ export default {
     padding: 0 8px;
     img {
       height: 8px;
-      // width: 8px;
+      width: 8px;
       vertical-align: top;
-      margin: 5px;
-      background: #fff;
-      transform: rotate(180deg)
+      margin: 5px 3px 5px 0;
     }
     b {
       display: inline-block;

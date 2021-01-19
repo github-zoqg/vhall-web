@@ -1,11 +1,11 @@
 <template>
   <div>
     <pageTitle title="聊天严禁词" iconCssType="gary">
-      <div slot="content">
+      <!-- <div slot="content">
         1.聊天、评论，包含关键词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
         <br/>
         2.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃
-      </div>
+      </div> -->
     </pageTitle>
     <div>
       <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
@@ -16,45 +16,51 @@
       </a>
     </div>
     <div class="setting-chat-main">
-      <el-form :model="chatForm" ref="chatForm" label-width="120px">
+      <el-form :model="chatForm" ref="chatForm" label-width="86px">
         <el-form-item label="严禁词列表">
           <div class="words-white">
-            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '暴力、政治敏感、严禁词，逗号隔开、固定宽度换行'}}
+            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '请设置聊天严禁词'}}
+          </div>
+          <div class="notice">
+            <p>提示：</p>
+            <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
+            <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
+            <p>3.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃</p>
           </div>
         </el-form-item>
       </el-form>
     </div>
     <!-- 聊天严禁词弹出框 -->
-    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false>
+    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
       <div class="chat-dialog-content">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round>添加</el-button>
-          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round>批量添加</el-button>
+          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
           <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
           <div class="searchBox">
             <el-input
               placeholder="搜索严禁词"
-              v-model="query.keyword"
+              v-model="pageInfo.keyword"
               clearable
-              @clear="getKeywordList"
-              @keyup.enter.native="getKeywordList"
+              @clear="searchKeyWord"
+              @keyup.enter.native="searchKeyWord"
               >
               <i
                 class="el-icon-search el-input__icon"
                 slot="suffix"
-                @click="getKeywordList">
+                @click="searchKeyWord">
               </i>
             </el-input>
           </div>
         </div>
-        <!-- 操作栏 -->
+        <!-- 操作栏
         <table-list
           ref="chatTable"
           :isHandle=true
-          :manageTableData="showChatList"
+          :manageTableData="keyWordDao.list"
           :tabelColumnLabel="tableColumn"
-          :totalNum="showChatList.length"
+          :totalNum="keyWordDao.list.length"
           :tableRowBtnFun="tableRowBtnFun"
           :needPagination=false
           :max-height="380"
@@ -64,9 +70,46 @@
           @onHandleBtnClick="onHandleBtnClick"
           v-if="keyWordDao.total > 0"
         >
-        </table-list>
-        <!-- 无消息内容 -->
-        <null-page v-else></null-page>
+        </table-list> -->
+        <el-table
+          ref="chatTable"
+          :data="showChatList"
+          tooltip-effect="dark"
+          style="width: 100%"
+          class="table-td56"
+          height="358px"
+          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+          @selection-change="checkMoreRow"
+          @select-all="checkAllRow"
+          v-show="total"
+          v-loadMore="moreLoadData">
+          <el-table-column
+            type="selection"
+            width="55"
+            align="left"
+          />
+          <el-table-column
+            label="严禁词"
+            prop="name"
+            width="auto"
+            show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column
+            label="操作"
+            width="114"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
+              <el-button
+              type="text"
+              v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
+        <null-page nullType="search" v-if="total === 0"></null-page>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -74,7 +117,16 @@
       <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
           <el-form-item label="严禁词" prop="name">
-            <VhallInput
+           <!--  <el-input
+              v-if="addForm.executeType === 'add'"
+              type="textarea"
+              placeholder="可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃"
+              v-model.trim="addForm.name"
+              :maxlength="1000"
+              autocomplete="off"
+              show-word-limit
+            ></el-input> -->
+             <VhallInput
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
               :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
               v-model.trim="addForm.name"
@@ -91,27 +143,41 @@
       </div>
     </VhallDialog>
     <!-- 批量上传 -->
-    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false>
+    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
       <div class="upload-dialog-content">
         <file-upload
           ref="chatUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel'
-          }"
-          :result="importResult"
-          :progress="{
-            isUploadEnd: isUploadEnd,
-            percent: percent
           }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
-          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
+          <div slot="upload-result">
+            <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
+            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+            <!-- 状态2： 已选择文件，提示上传中，进度条 -->
+            <div v-if="uploadResult && uploadResult.status === 'progress'">
+              <div class="progressBox">
+                <el-progress :percentage="percent" ></el-progress>
+              </div>
+            </div>
+            <!-- 状态3： 检测失败 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
+              <p class="p-error">{{uploadResult.text}}</p>
+            </div>
+            <!-- 状态4:  检测成功 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+            </div>
+          </div>
+          <!-- 状态1： 未上传 -->
+          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
           <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
@@ -138,6 +204,10 @@ export default {
   data() {
     return {
       isUploadEnd: false,
+      uploadResult: {
+        status: 'start',
+        text: '请选择模板文件'
+      },
       percent: 0,
       chatForm: {},
       checkNames: [],
@@ -145,17 +215,19 @@ export default {
         total: 0,
         list: []
       },
-      query: {
+      pageInfo: {
         keyword: '',
         pos: 0,
-        limit: 1000,
-        pageNumber: 1
+        limit: 6,
+        pageNum: 1
       },
       downloadHref: null,
       // 列表展示开始
       listPanelShow: false,
       isHandle: false, // 是否有操作项
       showChatList: [],
+      total: 0,
+      totalPages: 0,
       tableColumn: [
         {
           label: '严禁词',
@@ -199,7 +271,8 @@ export default {
       importResult: {
         fail: 0,
         success: 0
-      }
+      },
+      isCheckAll: false
     };
   },
   computed: {
@@ -213,28 +286,74 @@ export default {
     }
   },
   methods: {
-    // 获取关键字
-    getKeywordList() {
-      this.$fetch('getKeywordList', this.query).then(res =>{
-        this.keyWordDao = res && res.code === 200 && res.data && res.data.list ? res.data : {
-          total: 0,
-          list: []
-        };
-        this.checkNames = this.keyWordDao.list.map(item => {
+    deleteFile() {
+      this.fileUrl = ''
+      this.isUploadEnd = false
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
+    },
+    getAllKeyWordList() {
+      this.$fetch('getKeywordList', {
+        keyword: '',
+        pos: 0,
+        limit: 1000,
+        pageNumber: 1
+      }).then(res =>{
+        this.checkNames = res.data.list.map(item => {
           return item.name;
         });
       }).catch(e=>{
         console.log(e);
-        this.keyWordDao = {
-          total: 0,
-          list: []
-        };
+        this.checkNames = [];
       });
+    },
+    handleClose() {
+      this.pageInfo.pageNum = 1;
+      this.getAllKeyWordList();
+    },
+    // 获取关键字
+    getKeywordList() {
+      this.$fetch('getKeywordList', this.pageInfo).then(res =>{
+        if (this.pageInfo.pos === 0) {
+          this.showChatList = res.data.list;
+        } else {
+          this.showChatList.push(...res.data.list);
+        }
+        if(this.isCheckAll) {
+          this.$refs.chatTable.toggleAllSelection();
+        }
+        this.total = res.data.total;
+        this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    moreLoadData() {
+      if (this.pageInfo.pageNum >= this.totalPages) {
+        return false;
+      }
+      this.pageInfo.pageNum ++ ;
+      this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit);
+      this.getKeywordList();
     },
     // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
-      this.showChatList = this.keyWordDao.list;
+      this.pageInfo.keyWord = '';
+      this.searchKeyWord();
+    },
+    searchKeyWord() {
+      this.pageInfo.pos = 0;
+      this.pageInfo.pageNum = 1;
+      this.showChatList = [];
+      try {
+        this.$refs.chatTable.clearSelection();
+      } catch (e) {
+        console.log(e);
+      }
+      this.getKeywordList();
     },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
@@ -248,8 +367,14 @@ export default {
         return item.id;
       });
     },
+    checkAllRow(selection) {
+      console.log('全选与非全选', selection);
+      // 只要数量大于0，即是够了全选
+      this.isCheckAll = selection && selection.length > 0;
+    },
     // 编辑
-    keywordEdit(that, { rows }) {
+    keywordEdit(rows) {
+      let that = this;
       that.addShow = true;
       that.$nextTick(() => {
         try{
@@ -299,7 +424,7 @@ export default {
               });
             }
             this.addShow = false;
-            this.getKeywordList(); // 刷新列表数据
+            this.searchKeyWord(); // 刷新列表数据
           }).catch(res => {
             console.log(res);
             this.$message({
@@ -314,7 +439,8 @@ export default {
       });
     },
     // 删除
-    keywordDel(that, { rows }) {
+    keywordDel(rows) {
+      let that = this;
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
@@ -333,8 +459,13 @@ export default {
             customClass: 'zdy-info-box'
           });
           that.ids = [];
-          that.$refs.chatTable.clearSelect();
-          that.getKeywordList();
+          that.isCheckAll = false;
+          try {
+            that.$refs.chatTable.clearSelection();
+          } catch (e) {
+            console.log(e);
+          }
+          that.searchKeyWord();
         }).catch(res => {
           console.log(res);
           that.$message({
@@ -359,10 +490,13 @@ export default {
           customClass: 'zdy-info-box'
         });
       } else {
-        this.keywordDel(this, {
+        /* this.keywordDel(this, {
           rows: {
             id: this.ids.join(',')
           }
+        }); */
+        this.keywordDel({
+          id: this.ids.join(',')
         });
       }
     },
@@ -410,7 +544,6 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
-      this.percent = 0;
       this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
@@ -420,11 +553,19 @@ export default {
         }).then(resV => {
           this.importResult = resV.data;
           this.fileResult = 'success';
+          this.uploadResult = {
+            status: 'success',
+            text: '检测成功'
+          }
           if (this.$refs.chatUpload) {
              this.$refs.chatUpload.setError('');
           }
-        }).catch(e => {
+        }).catch(res => {
           this.fileResult = 'error';
+          this.uploadResult = {
+            status: 'error',
+            text: res.msg
+          }
           // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
           this.isUploadEnd = false;
           this.importResult = null;
@@ -436,9 +577,12 @@ export default {
     },
     closeImportChat() {
       this.multiUploadShow = false;
-      this.percent = 0;
       this.isUploadEnd = false;
       this.fileUrl = '';
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     saveUploadKey() {
       if(!this.fileUrl) {
@@ -456,7 +600,6 @@ export default {
       }).then(resV => {
         this.importResult = resV.data;
         this.multiUploadShow = false;
-        this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
         /* resV.data.success > 0 ? this.$message({
@@ -516,11 +659,19 @@ export default {
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
       this.isUploadEnd = false;
+      this.uploadResult = {
+        status: 'progress',
+        text: '上传中，请稍候'
+      }
       this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       // this.$message.error(`文件上传失败`);
+      this.uploadResult = {
+        status: 'error',
+        text: '文件上传失败'
+      }
       this.fileResult = 'error';
     },
     uploadPreview(file){
@@ -529,12 +680,21 @@ export default {
   },
   created() {
     this.getKeywordTemplate();
-    this.getKeywordList();
+    this.getAllKeyWordList();
   }
 };
 </script>
 
 <style lang="less" scoped>
+.select-option{
+  line-height: 20px;
+  margin-top: 8px;
+  /deep/span {
+    color: #FB3A32;
+    font-size: 16px;
+    padding: 0 10px;
+  }
+}
 .btn-a {
   margin-left: 12px;
   /deep/button {
@@ -546,6 +706,9 @@ export default {
   margin-top: 24px;
   padding: 48px 60px 48px 56px;
   min-height: 510px;
+  /deep/.el-form-item__label {
+    line-height: normal;
+  }
 }
 .words-white {
   padding: 10px 12px;
@@ -554,9 +717,22 @@ export default {
   font-weight: 400;
   color: #999999;
   line-height: 20px;
-  min-height: 200px;
+  height: 215px;
+  overflow-y: auto;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
+}
+.notice {
+  margin-top: 8px;
+  p {
+    margin: 0 0;
+    padding: 0 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: #999999;
+    line-height: 17px;
+    font-family: @fontRegular;
+  }
 }
 .operaBox{
   overflow: hidden;
@@ -592,7 +768,26 @@ export default {
 }
 .chat-dialog-content {
   /*dataList 里面已经包含30间距*/
-  padding-bottom: 2px;
+  padding-bottom: 32px;
+  // 滚动条的宽度
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条 必写
+  }
+  // 滚动条的滑块
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    // background-color:#E0E0E0;
+    border-radius: 3px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: none;
+    background-color: rgba(255, 255, 255);
+  }
+  &:hover {
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      display: block;
+    }
+  }
 }
 .chat-add-dialog-content {
   &.add {
@@ -632,4 +827,26 @@ export default {
 /deep/.data-list {
    min-height: 418px;
  }
+
+ /* 文件上传 */
+.p-right {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #888;
+  font-size: 14px;
+}
+.p-error {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #FB3A32;
+  font-size: 14px;
+}
+/deep/.el-progress__text /deep/i {
+  font-size: 18px;
+}
+.progressBox {
+  /deep/ .el-progress-bar__inner {
+    background-color: #14BA6A;
+  }
+}
 </style>

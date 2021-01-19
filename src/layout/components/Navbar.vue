@@ -4,7 +4,7 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl">返回旧版</a></div>
+      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl" class="set-font">返回旧版</a></div>
       <!-- 下载中心 -->
       <div class="right-menu-item" @click.prevent.stop="toDownloadPage">
         <el-badge is-dot :hidden="!down_num > 0">
@@ -31,12 +31,8 @@
             <span>{{show_name}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item divided @click.native="toAccountPage">
-              <span><icon icon-class="saasicon_Settings" class="hover-icon"></icon>账户信息</span>
-            </el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">
-              <span><icon icon-class="saasicon_Settings" class="hover-icon"></icon>退出</span>
-            </el-dropdown-item>
+            <el-dropdown-item divided @click.native="toAccountPage">账户信息</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -96,7 +92,7 @@ export default {
       this.$router.push({path: '/other/downloadList'});
     },
     toAccountPage() {
-      this.$router.push({path: '/account/info'});
+      this.$router.push({path: '/acc/info'});
     },
     getUnreadNum() {
       this.$fetch('getUnreadNum', {}).then(res =>{
@@ -177,6 +173,9 @@ export default {
         if (msg.data.type === 'doc_convert_jpeg') {
           EventBus.$emit('doc_convert_jpeg', msg.data.data)
         }
+        if (msg.data.type === 'sign_trans_code') {
+          EventBus.$emit('sign_trans_code', msg.data);
+        }
       })
     },
     // 初始化
@@ -246,7 +245,7 @@ export default {
     this.getUnreadNum();
     // 初始进入，获取未下载条数
     this.getDownNum();
-    // 初始化聊天SDK
+    // 初始化聊天SDK [用户下的]
     this.initChat();
   },
   beforeDestroy() {
@@ -261,8 +260,19 @@ export default {
 <style lang="less" scoped>
 @import '../../common/css/index.less';
 .user-dropdown {
+  border-radius: 4px;
   /deep/.el-dropdown-menu__item{
     padding: 0 10px!important;
+    min-width: 160px;
+    height: 40px;
+    background: #FFFFFF;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.65);
+    border-radius: 0 0 4px 4px;
+  }
+  li:first-child {
+    border-radius: 4px 4px 0 0;
   }
   /deep/.el-dropdown-menu__item--divided:before {
     display: none!important;
@@ -304,6 +314,12 @@ export default {
       margin-left: 6px;
     }
     &:first-child {
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #3562FA;
+    }
+    .set-font {
       font-size: 14px;
       font-family: @fontRegular;
       font-weight: 400;
