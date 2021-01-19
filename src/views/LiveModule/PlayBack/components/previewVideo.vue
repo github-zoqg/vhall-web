@@ -161,7 +161,10 @@ export default {
 
     this.$EventBus.$on('component_playerSDK_ready', ()=>{
       console.log('component_playerSDK_ready');
-      this.updateEventPonitPosition()
+      // 延时获取事件点的位置
+      setTimeout(() => {
+        this.updateEventPonitPosition()
+      }, 1000)
     });
 
     this.$EventBus.$on('component_page_info', ()=>{

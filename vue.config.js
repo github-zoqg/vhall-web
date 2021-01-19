@@ -21,6 +21,9 @@ switch (process.env.VUE_APP_NODE_ENV)  {
   case 'test':
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
     break;
+  case 'production':
+    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
+    break;
   default :
     publicPath = './'
     break;
@@ -38,11 +41,11 @@ module.exports = {
         changeOrigin: true
       },
       '/v3': {
-        target: 'http://t-saas-dispatch.vhall.com',
+        target: 'http://saas-api.vhall.com',
         changeOrigin: true
       },
       '/account': {
-        target: 'http://t.e.vhall.com/account',
+        target: 'http://saas-api.vhall.com',
         changeOrigin: true
       },
       '/api/upload':{

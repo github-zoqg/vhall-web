@@ -25,6 +25,7 @@
           value-format="yyyy-MM-dd"
           type="daterange"
           @change="changeDate"
+          prefix-icon="iconfont-v3 saasicon_date"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -843,6 +844,12 @@ export default {
 /deep/.el-range-editor .el-range-input {
     background: transparent;
   }
+  /deep/.el-date-editor .el-range__icon{
+    line-height: 29px
+  }
+  /deep/.el-date-editor .el-range__close-icon {
+      line-height: 28px;
+    }
 .interact-detail {
   .layout--right--main();
   .min-height();

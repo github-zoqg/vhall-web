@@ -522,7 +522,7 @@ export default {
       white-space: nowrap;
     }
     /deep/.el-select{
-      width: 110px!important;
+      width: 140px!important;
     }
     .buyStatus{
       i{

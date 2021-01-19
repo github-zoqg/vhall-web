@@ -776,12 +776,11 @@ export default {
   }
   // 滚动条的滑块
   /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    // background-color:#E0E0E0;
     border-radius: 3px;
     transition: all 0.3s;
     cursor: pointer;
     display: none;
-    background-color: rgba(255, 255, 255);
+    background-color: #cccccc;
   }
   &:hover {
     /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {

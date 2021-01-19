@@ -124,7 +124,7 @@
         </upload>
       </el-form-item>
       <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
-        <div class="mediaBox">
+        <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <i class="iconfont-v3 saasicon_shangchuan"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
@@ -133,9 +133,17 @@
             <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
-          <div class="abRight" v-if="selectMedia.id">
-            <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button>
+          <div class="abRight" v-if="selectMedia.id&&showChecked">
+            <div class="tool" @click.stop="previewVideo">
+              <i class="iconfont-v3 saasicon-eye"></i>
+              <el-button type="text" class="operaBtn" >预览</el-button>
+            </div>
+            <div class="tool" @click.stop="deleteSelectMedia">
+              <i class="iconfont-v3 saasicon_shanchu"></i>
+              <el-button type="text" class="operaBtn" >删除</el-button>
+            </div>
+            <!-- <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
+            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button> -->
           </div>
           <el-tooltip v-if="!$route.query.record_id">
               <div slot="content">
@@ -392,6 +400,7 @@ export default {
         domain_url: '',
       },
       liveMode: 2,
+      showChecked: false,
       isChange: false,
       showDialog: false,
       startVal: '',
@@ -670,6 +679,14 @@ export default {
       // }
       // 重置直播模式、直播封面、直播简介。
     },
+     // 鼠标离开
+    hiddenMenu () {
+      this.showChecked = false
+    },
+    //鼠标滑上去
+    showMenu () {
+      this.showChecked = true
+    },
     mediaSelected(media){
       this.selectMedia = media;
       console.log(this.selectMedia);
@@ -906,15 +923,37 @@ export default {
     position: relative;
     .abRight{
       position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
       top: 0px;
-      right: 12px;
+      right: 0px;
+      // line-height: 180px;
+      text-align: center;
+      display:flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      .tool{
+        width: 30px;
+        line-height: 20px;
+        margin: 0px 5px;
+        &:hover{
+          cursor: pointer;
+        }
+      }
+      span{
+        color: #fff;
+      }
+      /deep/.saasicon-eye, /deep/.saasicon_shanchu{
+        font-size: 30px!important;
+        height: 30px;
+      }
     }
     .operaBtn{
       font-size: 14px;
-      color: #666;
-      &:hover{
-        color: #FB3A32;
-      }
+      color: #fff;
     }
     &:hover{
       border-color: #999;
@@ -935,6 +974,9 @@ export default {
       /deep/.iconfont-v3{
         font-size: 26px;
 
+      }
+      /deep/.saasicon_shangchuan{
+        font-size: 44px;
       }
       /deep/.saasshipinwenjian{
         color: #FF733C;

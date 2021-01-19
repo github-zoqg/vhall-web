@@ -10,21 +10,26 @@
           @onSearchFun="getDetailList('search')"
         >
       </search-area>
-      <table-list
-        ref="tableAccount"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
-        :totalNum="totalNum"
-        @getTableList="getDetailList"
-        >
-      </table-list>
+      <div>
+        <table-list
+          ref="tableAccount"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isCheckout="isCheckout"
+          :isHandle="isHandle"
+          :totalNum="totalNum"
+          @getTableList="getDetailList"
+          >
+        </table-list>
+        <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
+        </noData>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
+import noData from '@/views/PlatformModule/Error/nullPage';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
@@ -134,7 +139,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
