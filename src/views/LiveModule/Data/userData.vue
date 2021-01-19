@@ -124,6 +124,7 @@ export default {
         {
           label: '观看时长（分）',
           key: 'watch_duration',
+          width: '200px'
         },
         {
           label: '观看终端',
