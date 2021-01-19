@@ -74,19 +74,19 @@ module.exports = {
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
       // 为生产环境修改配置...
-      const optimization = {
-        splitChunks: {
-          cacheGroups: {
-            common: {
-              name: 'chunk-common',
-              minChunks: 2,
-              priority: -20,
-              chunks: 'all',
-              reuseExistingChunk: true
-            }
-          }
-        }
-      }
+      // const optimization = {
+      //   splitChunks: {
+      //     cacheGroups: {
+      //       common: {
+      //         name: 'chunk-common',
+      //         minChunks: 2,
+      //         priority: -20,
+      //         chunks: 'all',
+      //         reuseExistingChunk: true
+      //       }
+      //     }
+      //   }
+      // }
       const externals = {
         vue: 'Vue',
         'vue-router': 'VueRouter',
@@ -94,7 +94,7 @@ module.exports = {
         'element-ui': 'ELEMENT'
       }
       return {
-        optimization,
+        // optimization,
         externals
       }
     } else {
