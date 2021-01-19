@@ -135,7 +135,7 @@ export default {
       },
       formRules: {
         img: [
-          { required: true, message: '请上传二维码', trigger: 'blur' },
+          { required: true, message: '请上传图片', trigger: 'blur' },
         ],
         url: [
           { required: false, message: '请输入跳转链接', trigger: 'blur'},

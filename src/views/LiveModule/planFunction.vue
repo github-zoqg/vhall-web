@@ -119,8 +119,8 @@ export default {
         {
           type: 'ui.watch_hide_share',
           key_name: '分享功能',
-          openShow: '开启后，观看页显示分享功能（PC端分享按钮和手机端的微信分享）',
-          closeShow: '已开启，观看页显示分享功能（PC端分享按钮和手机端的微信分享）',
+          openShow: '开启后，观看页显示分享功能（包含微信内分享）',
+          closeShow: '已开启，观看页显示分享功能（包含微信内分享）',
           value: Number(dataVo['ui.watch_hide_share']) || 0
         }
       ];

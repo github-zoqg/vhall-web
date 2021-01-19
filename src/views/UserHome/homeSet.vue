@@ -91,7 +91,7 @@
             </el-switch>
           </div>
         </el-form-item>
-        <el-form-item label="专题展示">
+        <el-form-item label="专题列表">
           <div class="switch__box">
             <el-switch
               v-model="homeSetInfoForm.show_subject"

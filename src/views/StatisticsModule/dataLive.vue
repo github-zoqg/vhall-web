@@ -97,6 +97,7 @@ export default {
         {
           label: '观看时长（分）',
           key: 'watch_duration',
+          width: '200px'
         }
       ],
       tableRowBtnFun: [

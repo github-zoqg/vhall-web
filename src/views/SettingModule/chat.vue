@@ -40,6 +40,7 @@
           <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
           <div class="searchBox">
             <el-input
+              class="search-tag"
               placeholder="搜索严禁词"
               v-model="pageInfo.keyword"
               clearable
@@ -747,8 +748,13 @@ export default {
       .el-input__icon{
         cursor: pointer;
       }
-      /deep/ .el-input__icon{
-        line-height: 36px;
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
     /deep/ .el-input__inner{
@@ -758,6 +764,7 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
+      padding-right: 50px;
     }
   }
 }
