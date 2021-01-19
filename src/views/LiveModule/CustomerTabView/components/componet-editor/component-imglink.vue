@@ -97,6 +97,7 @@ export default {
 
     changeLink() {
       const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
+      this.info.src = this.info.src.trim()
       if(result) {
         this.$emit('updateInfo', this.info)
       } else {
