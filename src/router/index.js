@@ -1,9 +1,7 @@
-import Vue from 'vue';
-import Router from 'vue-router';
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
 import { checkAuth } from "@/utils/utils"; // progress bar style
-Vue.use(Router);
+Vue.use(VueRouter);
 // 所有路由数组
 const routes = [];
 // 动态加载路由
@@ -13,15 +11,15 @@ modulesFiles.keys().map((modulePath) => {
 });
 
 const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
-const createRouter = () => new Router({
+const createRouter = () => new VueRouter({
   mode: 'history',
   base,
   routes
 });
 const router = createRouter();
 NProgress.configure({showSpinner: false}); // NProgress Configuration
-const originalPush = Router.prototype.push
-Router.prototype.push = function push(location) {
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 router.beforeEach((to, from, next) => {
