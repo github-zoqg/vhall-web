@@ -67,7 +67,7 @@ export default {
         type: 'image',
       },
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
-      defaultQr: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+      defaultQr: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       token: localStorage.getItem('token') || ''
     }
   },
