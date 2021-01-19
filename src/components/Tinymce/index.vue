@@ -169,6 +169,18 @@ export default {
   }
 }
 
+/deep/.tox .tox-tbtn svg {
+  display: block;
+  fill: #666!important;
+}
+/deep/.tox .tox-tbtn {
+  color: #666;
+}
+/deep/.tox .tox-tbtn:hover, /deep/.tox .tox-tbtn:active {
+  background: #e6e6e6;
+  color: #666!important;
+}
+
 .vh-editor-wrapbox{
   position: relative;
   /deep/ .tox-tinymce{
