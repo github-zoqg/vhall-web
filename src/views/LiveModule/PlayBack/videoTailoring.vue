@@ -319,7 +319,7 @@ export default {
       }
     },
     getPlayBackInfo(recordId, isCreate, paasRecordId) {
-      this.dataReady = false
+      !isCreate && (this.dataReady = false)
       const opts = {
         webinar_id: this.webinar_id,
         type: 0
