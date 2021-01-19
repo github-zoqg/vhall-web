@@ -417,7 +417,7 @@ export default {
       /* padding: 48px 12px; */
       padding: 48px 12px 0 12px;
       background: #fff;
-      min-height: 730px;
+      min-height: 768px;
       border-radius: 4px;
     }
     .official-form{
@@ -517,20 +517,13 @@ export default {
       .hb_pc {
         .poster-btn {
           position: absolute;
-          right: calc(50% - 144px);
-          top: 97px;
-          width: 80px;
-          height: 32px;
+          right: 6px;
+          top: 21px;
+          width: 28px;
+          height: 12px;
           background: #1A1A1A;
-          border-radius: 25px;
           opacity: 0.65;
-          padding: 0 0;
           margin: 0 0;
-          text-align: center;
-          font-size: 16px;
-          font-weight: 400;
-          color: #FFFFFF;
-          line-height: 22px;
           border: 1px solid #1A1A1A;
           &:hover {
             border: 1px solid #1A1A1A;
