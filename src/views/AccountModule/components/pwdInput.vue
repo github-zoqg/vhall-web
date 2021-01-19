@@ -1,45 +1,36 @@
 <template>
-   <div :class="[
-      'el-input',
-      inputSize ? 'el-input--' + inputSize : '',
-      {
-        'is-disabled': inputDisabled,
-        'is-exceed': inputExceed,
-        'el-input-group': $slots.prepend || $slots.append,
-        'el-input-group--append': $slots.append,
-        'el-input-group--prepend': $slots.prepend,
-        'el-input--prefix': $slots.prefix || prefixIcon,
-        'el-input--suffix': $slots.suffix || suffixIcon || clearable || showPassword
-      }
-    ]"
-    @mouseenter="hovering = true"
-    @mouseleave="hovering = false"
-  >
-  <!-- 前置元素 -->
-  <div class="el-input-group__prepend" v-if="$slots.prepend">
-    <slot name="prepend"></slot>
-  </div>
-  <input
-    :tabindex="tabindex"
-    class="el-input__inner"
-    placeholder="请输入密码"
-    ref="input"
-    @input="handleInput"
-    @compositionstart="handleCompositionStart"
-    @compositionend="handleCompositionEnd"
-    v-bind="$attrs"
-    :disabled="inputDisabled"
-    :readonly="readonly"
-    oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"
-    :aria-label="label"
-    :style="textStyle"
-     />
-  </div>
-
+    <!-- 这里使用了elemntUI的类名，如果没有安装elmentUI则自己自定义样式 -->
+    <div class="pw_input_cp el-input">
+      <input
+        class="el-input__inner"
+        placeholder="请输入密码"
+        ref="input"
+        :maxlength=maxlength
+        @input="handleInput"
+        @compositionstart="handleCompositionStart"
+        @compositionend="handleCompositionEnd"/>
+      <!-- 后置内容 -->
+      <span class="el-input__suffix">
+        <span class="el-input__suffix-inner">
+          <span ref="limit_count" v-if="showWordLimit" class="el-input__count">
+            <span class="el-input__count-inner">
+              <span :class="[
+                  'el-input__count-inner__numerator',
+                  `${value}`.length && `${value}`.length != maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
+                  `${value}`.length && `${value}`.length == maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
+                ]"
+              >{{ value.length }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ maxlength }}</span></span>
+            </span>
+          </span>
+        </span>
+      </span>
+      <!-- 后置元素 -->
+      <div class="el-input-group__append" v-if="$slots.append">
+        <slot name="append"></slot>
+      </div>
+    </div>
 </template>
 <script>
-import { Input } from 'element-ui'
-import merge from 'element-ui/src/utils/merge';
 //自定义密码输入框
 //input元素光标操作
 class CursorPosition{
@@ -97,29 +88,45 @@ class CursorPosition{
 }
 export default {
     name: 'Pw_input_cp',
-    extends: Input,
     props:{
-        value:{
-            type:String,
-            default:"",
-        },
+      value:{
+        type:String,
+        default:"",
+      },
+      showWordLimit: {
+        type: Boolean,
+        default: false,
+      },
+      maxlength: {
+        type: [String, Number],
+        default: ''
+      }
     },
     data(){
-        return{
-            symbol:"●", //自定义的密码符号
-            pwd:"", //密码明文数据
-            inputEl:null, //input元素
-            isComposing:false, //输入框是否还在输入（记录输入框输入的是虚拟文本还是已确定文本）
-        };
+      return {
+        symbol:"●", //自定义的密码符号
+        pwd:"", //密码明文数据
+        inputEl:null, //input元素
+        isComposing:false, //输入框是否还在输入（记录输入框输入的是虚拟文本还是已确定文本）
+        calcWidth: ''
+      };
     },
     mounted(){
-        this.inputEl = this.$refs.input;
+      this.inputEl = this.$refs.input;
+      this.calcWidth = this.$refs.limit_total && this.$refs.limit_total.offsetWidth ? this.$refs.limit_total.offsetWidth * 2 + this.$refs.separator.offsetWidth + 15 + 'px' : '12px'
     },
     watch:{
-        value(){
-            this.pwd = this.value;
-            this.inputDataConversion(this.pwd);
-        },
+      value(){
+          this.pwd = this.value;
+          this.inputDataConversion(this.pwd);
+      },
+    },
+    computed: {
+      textStyle () {
+        return {
+          paddingRight: this.calcWidth
+        }
+      }
     },
     methods:{
         inputDataConversion(value){ //输入框里的数据转换，将123转为***
