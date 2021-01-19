@@ -82,8 +82,9 @@
                 <!-- <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" /> -->
                 <img class="hb_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
                 <!-- 开启 并且有图-->
-                <div class="pc-poster-wrap"  v-if="status <= 0">
-                  <img class="hb_img v-poster-preview" :src="domain_url" alt="" v-show="domain_url"/>
+                <div class="pc-poster-wrap">
+                  <img class="hb_img v-poster-preview" :src="domain_url" alt="" v-if="status <= 0 && domain_url"/>
+                  <img class="hb_img v-poster-preview" src="../../../common/images/poster/pc_poster_default.png"  v-if="!domain_url" />
                 </div>
                 <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
               </div>
@@ -91,14 +92,15 @@
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div class="official-app null-page" v-show="switchType === 'app'">
+          <div class="official-app" v-show="switchType === 'app'">
             <span class="title">开屏海报</span>
             <!-- 开屏海报 -->
             <div class="hb_app">
-              <div class="poster-img" v-if="status <= 0 && showPoster && domain_url">
-                <img :src="domain_url" alt="">
+              <div class="poster-img">
+                <img class="domain_url" :src="domain_url" alt=""  v-if="status <= 0 && domain_url">
+                <img class="default" src="../../../common/images/poster/phone_poster_default@2x.png"  v-if="!domain_url" />
               </div>
-              <el-button class="poster-btn" size="mini" v-if="status <= 0" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button>
+              <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}</el-button>
             </div>
           </div>
           <!--手机预览,end-->
@@ -412,7 +414,8 @@ export default {
     }
     .form-phone{
       display: flex;
-      padding: 48px 12px;
+      /* padding: 48px 12px; */
+      padding: 48px 12px 0 12px;
       background: #fff;
       min-height: 730px;
       border-radius: 4px;
@@ -460,12 +463,19 @@ export default {
         top: 50px;
         right: 16px;
         background: transparent; */
-        position: absolute;
+        /* 第二次 position: absolute;
         top: 24px;
         right: 0;
         background: rgba(0, 0, 0, 0.4);
         width: 106px;
-        height: 195px;
+        height: 195px; */
+        position: absolute;
+        top: 15px;
+        right: 0;
+        background: rgba(0, 0, 0, 0.4);
+        width: 106px;
+        height: 227px;
+        border-bottom-right-radius: 22px;
       }
       .v-poster-preview {
         /* display: inline-block;
@@ -477,10 +487,16 @@ export default {
         transform: translate(-50%, -50%);
         margin-top: 0px;
         object-fit: cover; */
-        width: 100%;
+        /* 第二次 width: 100%;
         height: 100%;
         object-fit: scale-down;
+        margin: 0 0; */
+        width: 100%;
+        height: 100%;
+        -o-object-fit: scale-down;
+        object-fit: fill;
         margin: 0 0;
+        border-bottom-right-radius: 3px;
       }
       .v-code-preview {
         position: absolute;
@@ -501,22 +517,36 @@ export default {
       .hb_pc {
         .poster-btn {
           position: absolute;
-          right: 0;
-          top: 24px;
+          right: calc(50% - 144px);
+          top: 97px;
+          width: 80px;
+          height: 32px;
+          background: #1A1A1A;
+          border-radius: 25px;
+          opacity: 0.65;
+          padding: 0 0;
+          margin: 0 0;
+          text-align: center;
+          font-size: 16px;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 22px;
+          border: 1px solid #1A1A1A;
+          &:hover {
+            border: 1px solid #1A1A1A;
+          }
         }
       }
     }
     .official-app{
-      width: 326px;
-      height: 631px;
-      background-image: url('../../../common/images/poster/phone-model.png');
+      width: 420px;
+      height: 690px;
+      margin-top: -24px;
+      margin-left: -47px;
+      background-image: url('../../../common/images/poster/phone-poster@2x.png');
       background-size: 100%;
       background-position: center;
-      &.null-page {
-        background-image: url('../../../common/images/poster/phone-model.png');
-      }
       background-size: cover;
-      margin-top: -24px;
       position: relative;
       .title{
         display: inline-block;
@@ -524,65 +554,72 @@ export default {
         height: 30px;
         line-height: 30px;
         text-align: center;
-        color: #555;
+        font-weight: 400;
+        color: #666666;
         background: #f7f7f7;
         position: absolute;
-        top: 38px;
+        top: 42px;
         left: 50%;
         transform: translateX(-50%);
       }
-      .img-code{
-        position: absolute;
-        height: 142px;
-        width: 142px;
-        left: 53%;
-        top: 50%;
-        /*border: 1px solid #ccc;*/
-        transform: translate(-50%, -50%);
-        background: transparent;
-        img{
-          width: 100%;
-          height: 100%;
-          object-fit: scale-down;
-        }
-      }
-      .img-code-btn {
-        position: absolute;
-        height: 80px;
-        width: 80px;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        img {
-          width: 100%;
-          height: 100%;
-          border-radius: 100%;
-        }
-      }
       .poster-img {
         position: absolute;
-        height: 520px;
-        width: 284px;
-        left: 22px;
-        top: 78px;
-        border-bottom-right-radius: 16px;
-        border-bottom-left-radius: 16px;
-        overflow: hidden;
-        img {
+        display: block;
+        margin: 0;
+        right: calc(50% - 156px);
+        top: 85px;
+        text-align: center;
+        width: 312px;
+        height: 568px;
+        border-bottom-right-radius: 26px;
+        border-bottom-left-radius: 26px;
+        .domain_url {
+          display: inline-block;
+          position: absolute;
+         /*  -o-object-fit: cover;
+          object-fit: cover; */
+          -o-object-fit: fill;
+          object-fit: fill;
+          max-height: 568px;
+          border-bottom-right-radius: 26px;
+          border-bottom-left-radius: 26px;
+          right: calc(50% - 156px);
+          width: 100%;
+          height: 100%;
+        }
+        .default {
           display: inline-block;
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           object-fit:cover;
-          max-width: 284px;
-          max-height: 520px;
+          max-width: 312px;
+          max-height: 568px;
+          border-bottom-right-radius: 26px;
+          border-bottom-left-radius: 26px;
         }
       }
       .poster-btn {
         position: absolute;
-        right: 20px;
-        top: 90px;
+        right: calc(50% - 144px);
+        top: 97px;
+        width: 80px;
+        height: 32px;
+        background: #1A1A1A;
+        border-radius: 25px;
+        opacity: 0.65;
+        padding: 0 0;
+        margin: 0 0;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+        color: #FFFFFF;
+        line-height: 22px;
+        border: 1px solid #1A1A1A;
+        &:hover {
+          border: 1px solid #1A1A1A;
+        }
       }
     }
   }

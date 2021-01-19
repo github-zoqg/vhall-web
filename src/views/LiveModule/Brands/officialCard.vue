@@ -96,7 +96,9 @@
             <span class="title">公众号</span>
             <!-- 公众号 -->
             <div class="gzh_app_mask" v-if="!(alertType > 0)"></div>
-            <div class="gzh_app_close" v-if="!(alertType > 0)"></div>
+            <div class="gzh_app_close" v-if="!(alertType > 0)">
+              <i class="iconfont-v3 saasicon_close"></i>
+            </div>
             <div class="gzh_app"  v-if="!(alertType > 0)">
               <div class="gzh_img_layout">
                 <div class="img-code v-code-preview app-preview">
@@ -419,7 +421,8 @@ export default {
     }
     .form-phone{
       display: flex;
-      padding: 48px 12px;
+      /* padding: 48px 12px; */
+      padding: 48px 12px 0 12px;
       background: #fff;
       min-height: 730px;
       border-radius: 4px;
@@ -641,7 +644,14 @@ export default {
         opacity: 0.6;
       }
       .gzh_app_close {
-
+        position: absolute;
+        display: block;
+        width: 16px;
+        height: 16px;
+        font-size: 16px;
+        top: calc(50% - 105px);
+        right: calc(50% - 81px);
+        color: #ffffff;
       }
       .gzh_app {
         position: absolute;
