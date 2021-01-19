@@ -331,9 +331,19 @@ export default {
           this.asyncDialog.rows = res;
         } else {
           // 判断文件上传情况
-          this.initPage();
-          // window.location.reload();
+          // this.initPage();
+          window.location.reload();
         }
+      } else {
+        // 上传失败
+        this.$message({
+          message: res.msg ||  `文件上传失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        window.location.reload();
       }
     },
     sureAsyncHandle() {
