@@ -15,6 +15,7 @@
           @change="searchTableList"
           range-separator="至"
           start-placeholder="开始日期"
+          prefix-icon="iconfont-v3 saasicon_date"
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
@@ -253,7 +254,7 @@ export default {
         background: transparent;
       }
       /deep/.el-date-editor .el-range__icon{
-        line-height: 30px;
+        line-height: 29px;
       }
       /deep/.el-date-editor .el-range__close-icon {
         line-height: 28px;

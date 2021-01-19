@@ -328,7 +328,7 @@ export default {
      height: 180px;
      position: relative;
      background: #f7f7f7;
-     .abRight{
+    .abRight{
       position: absolute;
       width: 100%;
       height: 100%;
@@ -389,6 +389,9 @@ export default {
       }
       /deep/.iconfont-v3{
         font-size: px;
+      }
+      /deep/.saasicon_shangchuan{
+        font-size: 44px;
       }
       /deep/.saasshipinwenjian{
         color: #FF733C;

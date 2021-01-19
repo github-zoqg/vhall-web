@@ -3,22 +3,13 @@
     <el-form :inline="true" :model="searchParams" ref="searchForm" onsubmit="return false;">
       <el-form-item v-for="(item, index) in searchAreaLayout" :key="index">
         <el-button v-if="item.type==5" @click="deletedChecked" round>批量删除</el-button>
-        <!-- 快速选择时间 -->
-        <div class="time-kuai" v-else-if="item.type==1">
-          <span
-            v-for="(opt, optIndex) in item.options"
-            :key="optIndex"
-            :class="opt.active === isActive ? 'active' : ''"
-            @click="changeTime(opt.active)"
-            >{{ opt.title }}</span
-          >
-        </div>
         <!-- 日期时间选择器 -->
         <el-date-picker
           v-else-if="item.type==2"
           v-model="searchParams[item.key]"
           value-format="yyyy-MM-dd"
           type="daterange"
+          prefix-icon="iconfont-v3 saasicon_date"
           @change="changeDate"
           range-separator="至"
           start-placeholder="开始日期"
@@ -33,6 +24,7 @@
           value-format="yyyy-MM-dd"
           @change="changeDate"
           type="date"
+          prefix-icon="iconfont-v3 saasicon_date"
           placeholder="选择日期">
         </el-date-picker>
         <!-- 下拉框 -->
@@ -47,7 +39,6 @@
         <el-checkbox v-model="searchParams[item.key]" v-else-if="item.type==7"  @change="changeDate">{{ item.name }}</el-checkbox>
         <el-button v-else-if="item.type==6" @click="searchList" size="medium" round>查询</el-button>
         <!-- 输入框 -->
-       <!--  <el-input class="inputer" v-model.trim="searchParams[item.key]" :placeholder="placeholder" style="width: 180px;" v-else @clear="changeInput" @keyup.enter.native="changeInput"  :clearable="clearable"><i slot="suffix" class="el-input__icon el-icon-search" @click="changeInput"></i></el-input> -->
         <VhallInput
           v-else
           class="search-tag"
@@ -70,29 +61,9 @@
   </div>
 </template>
 <script>
-import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {
-      isActive: 1,
-      allTime: [
-        {
-          title: '全部',
-          active: 1,
-        },
-        {
-          title: '今日',
-          active: 2,
-        },
-        {
-          title: '近7日',
-          active: 3,
-        },
-        {
-          title: '近30日',
-          active: 4,
-        },
-      ],
       searchParams: {
         searchIsTime: '1',
         type: 1
@@ -107,10 +78,6 @@ export default {
   },
   props: {
     searchAreaLayout: Array,
-    active: {
-      type: Number,
-      default: 1
-    },
     isDate: {
       type: Boolean,
       default: false
@@ -133,14 +100,7 @@ export default {
       default: ''
     }
   },
-  watch: {
-    active() {
-      this.isActive = this.active;
-      this.changeTime(this.isActive)
-    }
-  },
   created() {
-    this.isActive = this.active;
     if (this.isDate) {
       this.initPage()
     }
@@ -169,19 +129,6 @@ export default {
       // 设置当天23：59：59可选
       // let currentTime = this.getNowMonthDay() + ` 23:59:59`
       // return time.getTime() > new Date(currentTime).getTime()
-    },
-    changeTime(index) {
-      if (this.$route.path === '/finance/infoDetail') {
-        return;
-      }
-      this.isActive = index || this.active;
-       if (this.isActive == 3 || this.isActive == 4) {
-        this.searchParams.end_time = getRangeDays(5);
-      } else {
-        this.searchParams.end_time = getRangeDays(2);
-      }
-      this.searchParams.start_time = this.isActive == 1 ? '' : getRangeDays(this.isActive);
-      this.$emit("onSearchFun");
     },
     changeDate(){
       if (this.$route.path == '/finance/infoDetail') {
@@ -224,6 +171,11 @@ export default {
       /deep/.el-range-editor .el-range-input {
         background: transparent;
       }
+      /deep/.el-date-editor {
+        .el-range__icon, .el-range__close-icon{
+          line-height: 29px;
+        }
+      }
       // .el-button{
       //   margin-right: 24px;
       //   border-radius: 18px;
@@ -233,27 +185,6 @@ export default {
           margin-right: 16px;
           margin-bottom: 24px;
       }
-    .time-kuai {
-      height: 36px;
-      border: 1px solid #ccc;
-      border-radius: 18px;
-      background: transparent;
-      line-height: 33px;
-      span {
-        border-radius: 18px;
-        padding: 10px 16px;
-        text-align: center;
-        font-size: 14px;
-        font-family: @fontRegular;
-        font-weight: 400;
-        color: #666666;
-        cursor: pointer;
-      }
-      .active {
-        background: #fb3a32;
-        color: #fff;
-      }
-    }
     .search{
       margin-left: 20px;
       background: #fb3a32;
@@ -266,7 +197,6 @@ export default {
       top: 0;
     }
     .search-tag {
-      margin-left: 20px;
       width: 180px!important;
       /deep/.el-input__inner {
         border-radius: 20px;
