@@ -3,7 +3,7 @@
     <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
     <div class="word-count">
-      <span class="blue">{{ currentCount }}</span> / {{ maxWord || '1000' }}
+      <span :class="currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : currentCount == (maxWord || 1000)  ? 'red' : ''">{{ currentCount }}</span> / {{ maxWord || '1000' }}
     </div>
   </div>
 </template>
@@ -77,6 +77,7 @@ export default {
     return {
       // content: this.value || '',
       tinymceId: this.id,
+      vm: null,
       setting: {
         selector: `#${this.tinymceId}`,
         plugins: 'fullscreen image wordcount paste',
@@ -154,15 +155,29 @@ export default {
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 
       if(this.currentCount > 1000) {
-
-        this.$message.warning('您输入的内容超出1000限制，已自动取消')
+        if (this.vm) {
+          this.vm.close();
+          this.messageInfo();
+        } else {
+          this.messageInfo();
+        }
+        // this.$message.warning('您输入的内容超出1000限制，已自动取消')
         this.$refs.editor.getInstance().setContent(this.value)
         this.$emit('input', this.value)
         return
       } else {
         this.$emit('input', text);
       }
-    }
+    },
+     //文案提示问题
+    messageInfo() {
+      this.vm = this.$message({
+        showClose: false,
+        duration: 2000,
+        message: '您输入的内容超出1000限制，已自动取消',
+        type: 'warning'
+      });
+    },
   },
 };
 </script>
