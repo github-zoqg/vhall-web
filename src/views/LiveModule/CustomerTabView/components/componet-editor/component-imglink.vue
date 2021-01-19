@@ -114,8 +114,10 @@ export default {
 </script>
 <style lang="less" scoped>
   .qr-previewbox{
-    .upload-imglink{
-    }
+  }
+  /deep/.el-upload--picture-card i {
+    font-size: 44px;
+    color: #8c939d;
   }
   .label{
     display: inline-block;
