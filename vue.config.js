@@ -41,11 +41,11 @@ module.exports = {
         changeOrigin: true
       },
       '/v3': {
-        target: 'http://saas-api.vhall.com',
+        target: 'http://t-saas-dispatch.vhall.com',
         changeOrigin: true
       },
       '/account': {
-        target: 'http://saas-api.vhall.com',
+        target: 'http://t-saas-dispatch.vhall.com',
         changeOrigin: true
       },
       '/api/upload':{
