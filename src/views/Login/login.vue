@@ -736,7 +736,7 @@ export default {
     font-weight: 400;
     color: #1A1A1A;
     background-color: transparent;
-    border-bottom: 2px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
     border-radius: unset;
     padding: 0 0;
     &:hover {
