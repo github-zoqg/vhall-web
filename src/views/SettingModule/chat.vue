@@ -781,6 +781,12 @@ export default {
     cursor: pointer;
     display: none;
     background-color: #cccccc;
+    &:hover {
+      background-color: #cccccc;
+    }
+    &:active {
+      background-color: #cccccc;
+    }
   }
   &:hover {
     /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
