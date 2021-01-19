@@ -280,9 +280,6 @@ export default {
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-<<<<<<< HEAD
-      this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`;
-=======
       this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind`;
       console.log(this.qrcode)
     },
@@ -291,7 +288,6 @@ export default {
       if (this.qrcode) {
         window.location.reload();
       }
->>>>>>> e885ead87fb4f1f0c6fbeab0171506aab449889d
     },
     /**
      * 倒计时函数
