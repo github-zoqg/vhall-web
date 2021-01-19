@@ -421,10 +421,9 @@ export default {
     }
     .form-phone{
       display: flex;
-      /* padding: 48px 12px; */
-      padding: 48px 12px 0 12px;
+      padding: 48px 12px;
       background: #fff;
-      min-height: 730px;
+      min-height: 768px;
       border-radius: 4px;
     }
     .official-form{
