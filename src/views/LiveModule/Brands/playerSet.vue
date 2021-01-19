@@ -693,6 +693,14 @@ export default {
   /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
     display: none;
   }
+  /deep/.vhallPlayer-speed-component span.vhallPlayer-speedBtn:hover{
+    background: #FB3A32 !important;
+  }
+  /deep/.vhallPlayer-speed-component .speed-popup {
+    ul.speed-list-box li:hover, ul.speed-list-box li.active{
+      color: #FB3A32 !important;
+    }
+  }
 
 }
 

@@ -266,7 +266,6 @@
           <p>导出</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_whea@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_lianmai"></icon> -->
 
             <div class="base-text">
               <span>连麦(条)</span>

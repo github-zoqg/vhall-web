@@ -33,9 +33,9 @@
           style="width: 240px;margin-right: 20px;"
           v-if="title==='聊天' || title==='问答'"
         />
-        <el-button size="medium" round v-if="title==='聊天' || title==='问答'" @click="deleteAll(null)">批量删除</el-button>
+        <el-button size="medium" round v-if="title==='聊天' || title==='问答'" :disabled="!isSeletedCheckout" @click="deleteAll(null)">批量删除</el-button>
       </div>
-      <span v-if="totalNum"><el-button size="medium" type="white-primary" round @click="exportData" >导出数据</el-button></span>
+      <span v-if="totalNum" class="search-export"><el-button round  size="medium" @click="exportData" >导出数据</el-button></span>
     </div>
     <div class="interact-detail" v-show="totalNum">
       <table-list
@@ -45,7 +45,7 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :totalNum="totalNum"
-        :width="120"
+        :width="100"
         @changeTableCheckbox="changeTableCheckbox"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
@@ -73,9 +73,11 @@ export default {
       isSearch: false, //是否是搜索
       text: '暂无数据',
       isCheckout: false,
+      isSeletedCheckout: false,
       placeholder: '',
       title: '',
       webinarId: '',
+      num:0,
       roomId: '',
       searchTime: null,
       searchText: '',
@@ -401,10 +403,17 @@ export default {
           item.chatText = item.data.text_content || '';
           if (item.data.image_urls) {
             item.chatImg = this.chartsImgs(item.data.image_urls);
+            console.log(item.chatImg, '>>>>>>???????')
           } else {
             item.chatImg = '';
           }
           item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
+          // if (item.data.image_urls.length > 0 && this.num == item.data.image_urls.length) {
+          //   item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
+          // } else {
+          //   item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
+          // }
+
           // item.revice = '主持人';
         })
         this.totalNum = res.data.total;
@@ -420,10 +429,13 @@ export default {
       });
     },
     chartsImgs(list) {
+      //  style="width: 100%;object-fit: scale-down;height: 100%;"
       let arr = '';
+      this.num = 0;
       if (list.length) {
-        list.map(item => {
-          arr = `<img width="100" width="100"  src="${item}" border="0" />`;
+        list.map((item, index) => {
+          this.num = index;
+          arr = `<span style="width: 80px;display: inline-block;height: 80px;background: #1a1a1a;border-radius: 4px;"><img style="width: 100%;object-fit: scale-down;height: 100%;" src="${item}" border="0" />`;
         }).join(' ')
       }
       return arr;
@@ -714,9 +726,15 @@ export default {
     changeTableCheckbox(val) {
       if (this.title === '聊天') {
         this.seleteAllOptionList = val.map(item => item.msg_id);
+        this.isSeletedCheckout = this.seleteAllOptionList.length > 0 ? true : false
       } else {
         this.seleteAnwerList = val.filter(item => item.name == '答').map(item => item.id);
         this.seleteQuestionList = val.filter(item => item.name == '问').map(item => item.id);
+        if (this.seleteAnwerList.length > 0 || this.seleteQuestionList.length > 0) {
+          this.isSeletedCheckout = true;
+        } else {
+          this.isSeletedCheckout = false;
+        }
       }
 
     },
@@ -850,6 +868,9 @@ export default {
   /deep/.el-date-editor .el-range__close-icon {
       line-height: 28px;
     }
+  /deep/.el-button, .el-button.is-disabled{
+    background: transparent;
+  }
 .interact-detail {
   .layout--right--main();
   .min-height();
@@ -875,15 +896,6 @@ export default {
     display: flex;
     &:first-child{
       margin-right: 20px;
-    }
-  }
-  /deep/.el-button{
-    background: transparent;
-    &:hover{
-      background: #fb3a32;
-      span{
-        color: #fff;
-      }
     }
   }
   // &.flex-between {
@@ -917,5 +929,14 @@ export default {
 }
 .search-export{
   float: right;
+  /deep/.el-button{
+    background: transparent;
+    &:hover{
+      background: #fb3a32;
+      span{
+        color: #fff;
+      }
+    }
+  }
 }
 </style>
