@@ -68,8 +68,8 @@ module.exports = {
       options[0].cdn = cdn
       return options
     })
-    config.plugin('webpack-bundle-analyzer')
-      .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    // config.plugin('webpack-bundle-analyzer')
+    //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
