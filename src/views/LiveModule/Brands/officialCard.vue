@@ -1,14 +1,30 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="公众号展示"></pageTitle>
+    <pageTitle title="公众号">
+      <div class="switch__box">
+        <el-switch
+          class="el-role-switch"
+          v-model="status"
+          :active-value="0"
+          :inactive-value="1"
+          active-color="#ff4949"
+          inactive-color="#ccc"
+          @change="changeOpenStatus"
+          :active-text="activeTitle"
+        >
+        </el-switch>
+      </div>
+    </pageTitle>
+    <div :class="status ? 'pre--full-mask' : ''">
+      <div class="pre--full-cover" v-show="status"></div>
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item label="二维码">
+            <el-form-item label="二维码"  prop="img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
-                  v-model="img"
+                  v-model="form.img"
                   :domain_url="domain_url"
                   :saveData="{
                      path: pathUrl,
@@ -20,27 +36,12 @@
                   :on-preview="uploadPreview"
                   @handleFileChange="handleFileChange"
                   :before-upload="beforeUploadHnadler"
-                  @delete="img = '', domain_url = ''">
+                  @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：160*160px</p>
+                    <p>建议尺寸：300*300px</p>
                     <p>小于2M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
-              </div>
-            </el-form-item>
-            <el-form-item label="公众号展示">
-              <!--{{status  - 0开启，1关闭}}-->
-              <div class="switch__box">
-                <el-switch
-                  v-model="status"
-                  :active-value="0"
-                  :inactive-value="1"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  @change="changeOpenStatus"
-                  :active-text="activeTitle"
-                >
-                </el-switch>
               </div>
             </el-form-item>
             <el-form-item label="自动弹出">
@@ -74,30 +75,43 @@
             <!-- status 控制是否阴影 -->
             <div class="v-preview-content">
                <!-- 公众号 -->
+               <div class="gzh_pc_mask" v-if="!(alertType > 0)"></div>
                <div class="gzh_pc">
-                 <img class="gzh_bg_default" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCode.png" alt="" v-if="alertType > 0"/>
-                 <img class="gzh_bg" src="//t-alistatic01.e.vhall.com/static/images/advertising/pcCodeAtuo.png" alt="" v-if="!(alertType > 0)"/>
-                 <div class="gzh_img v-code-preview" v-if="domain_url && !(alertType > 0)">
-                   <img :src="domain_url" alt="" />
+                 <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
+                 <!-- 扫码外层 -->
+                 <div class="gzh_img_layout" v-if="!(alertType > 0)">
+                   <p><i class="iconfont-v3 saasicon_close"></i></p>
+                   <div class="gzh_img v-code-preview">
+                    <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)"/>
+                    <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url && !(alertType > 0)"/>
+                  </div>
+                   <p class="gzh_txt">扫码关注公众号</p>
                  </div>
                </div>
             </div>
           </div>
           <!--PC预览,end-->
           <!--手机预览，begin-->
-          <div class="official-app" v-show="switchType === 'app'">
-            <span class="title">公众号展示</span>
+          <div :class="['official-app', {'show-code': !(alertType > 0)}]" v-show="switchType === 'app'">
+            <span class="title">公众号</span>
             <!-- 公众号 -->
-            <div class="gzh_app">
-              <div class="img-code v-code-preview app-preview" v-if="domain_url && !(alertType > 0)">
-                <img :src="domain_url" alt="">
+            <div class="gzh_app_mask" v-if="!(alertType > 0)"></div>
+            <div class="gzh_app_close" v-if="!(alertType > 0)"></div>
+            <div class="gzh_app"  v-if="!(alertType > 0)">
+              <div class="gzh_img_layout">
+                <div class="img-code v-code-preview app-preview">
+                  <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)" />
+                  <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url && !(alertType > 0)"/>
+                </div>
               </div>
+              <!-- 非默认图，有文字
+              <p class="gzh_txt" v-if="domain_url">扫码关注公众号</p> -->
             </div>
           </div>
           <!--手机预览,end-->
         </div>
       </div>
-  <!--  </div>-->
+   </div>
   </div>
 </template>
 <script>
@@ -107,7 +121,6 @@ import Env from '@/api/env.js';
 export default {
   data() {
     return {
-      img: '',
       domain_url: '',
       imgShowUrl: '',
       status: null,
@@ -115,9 +128,13 @@ export default {
       switchType: 'app',
       showPoster: false,
       form: {
+        img: '',
         url: ''
       },
       formRules: {
+        img: [
+          { required: true, message: '请上传二维码', trigger: 'blur' },
+        ],
         url: [
           { required: false, message: '请输入跳转链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
@@ -156,10 +173,33 @@ export default {
     this.getData();
   },
   methods: {
-    changeOpenStatus (e) {
-      if (!e) {
-        this.showPoster = true
-      }
+    async changeOpenStatus (e) {
+      let status = this.status; // 目标
+      this.status = Number(!status);
+      let params = {
+        webinar_id: this.$route.params.str,
+        status: status, //是否展示公众号/是否展示开屏海报：0开启1关闭
+      };
+      this.$fetch('setPublicInfo', params).then(res => {
+        this.$message({
+          showClose: true,
+          message: status > 0 ? '关闭成功' : '开启成功',
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.status = status;
+        // 重新获取数据
+        this.getData();
+      }).catch(res => {
+        this.$message({
+          showClose: true,
+          message: res.msg || (status > 0 ? '关闭失败' : '开启失败'),
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      })
     },
     closePoster () {
       this.showPoster = false
@@ -179,7 +219,7 @@ export default {
         webinar_id: this.$route.params.str
       }).then(res => {
         if(res && res.code === 200) {
-          this.img = res.data.img || '';
+          this.form.img = res.data.img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
           if (this.domain_url) {
@@ -204,26 +244,16 @@ export default {
       });
     },
     preSure() {
-      if (Number(this.status === 0) && !this.img) {
-        this.$message({
-          message: '请上传二维码图片',
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
-      }
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.img ? this.$parseURL(this.img).path : '' // 公众号/开屏海报  图片地址
+        img: this.form.img ? this.$parseURL(this.form.img).path : '' // 公众号/开屏海报  图片地址
       };
       let type = this.alertType;
       params.alert_type = type; // 公众号-弹窗方式：0自动弹出 1手动弹出
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
-          this.$fetch('setPublicInfo', this.$params(params)).then(res => {
+          this.$fetch('setPublicInfo', params).then(res => {
             this.$message({
               message: '保存成功',
               showClose: true,
@@ -250,7 +280,7 @@ export default {
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
-        this.img = file_url;
+        this.form.img = file_url;
         this.domain_url = domain_url;
         if (this.domain_url) {
           if (this.switchType == 'pc') {
@@ -260,6 +290,8 @@ export default {
           }
         }
       }
+      // 触发验证
+      this.$refs.officialForm.validateField('img');
     },
     beforeUploadHnadler(file){
       console.log(file);
@@ -368,10 +400,15 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.switch__box {
+  display: inline-block;
+}
+/deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
+  color: #999999;
+  pointer-events: none;
+  user-select: none;
+}
   .offical-show{
-    /deep/.el-switch__label.is-active {
-        color: #1A1A1A;
-    }
     .show-on{
       position: absolute;
       top: 42px;
@@ -382,9 +419,10 @@ export default {
     }
     .form-phone{
       display: flex;
-      padding: 30px 12px;
+      padding: 48px 12px;
       background: #fff;
       min-height: 730px;
+      border-radius: 4px;
     }
     .official-form{
       width: 482px;
@@ -403,18 +441,19 @@ export default {
         color: #999;
       }
       /deep/.el-form-item{
+        margin-bottom: 32px;
         &:last-child{
-          padding-top: 14px;
+          padding-top: 8px;
         }
       }
     }
     .v-preview-content {
       position: relative;
       img {
-        width: 331px;
-        height: 265px;
+        width: 400px;
+        height: 274px;
         display: block;
-        margin: 110px auto 0;
+        margin: 24px auto 0;
       }
       .pc-poster-wrap{
         position: absolute;
@@ -435,7 +474,7 @@ export default {
         margin-top: 0px;
         object-fit: cover;
       }
-      .v-code-preview {
+      /* .v-code-preview {
         position: absolute;
         display: block;
         width: 76px;
@@ -450,19 +489,71 @@ export default {
           object-fit: scale-down;
           margin: 0 0;
         }
+      } */
+
+      .gzh_pc_mask {
+        position: absolute;
+        display: block;
+        margin: 0;
+        right: 0;
+        top: 14px;
+        text-align: center;
+        width: 400px;
+        height: 250px;
+        background: #000000;
+        opacity: 0.6;
+      }
+      .gzh_img_layout {
+        position: absolute;
+        display: block;
+        margin: 0;
+        top: 69px;
+        right: calc(50% - 62px);
+        width: 124px;
+        height: 138px;
+        background: #FFFFFF;
+        border-radius: 4px;
+        text-align: center;
+      }
+      p {
+        text-align: right;
+        .saasicon_close {
+          font-size: 5px;
+          margin-right: 5px;
+          margin-top: 5px;
+        }
+      }
+      .v-code-preview  {
+        width: 98px;
+        height: 98px;
+        margin: 0 auto;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+          margin: 0 0;
+        }
+      }
+      .gzh_txt {
+        font-size: 14px;
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 20px;
+        text-align: center;
       }
     }
     .official-app{
-      width: 326px;
-      height: 631px;
-      background-image: url('../../../common/images/official/phone-model.png');
+      width: 420px;
+      height: 690px;
+      margin-top: -24px;
+      margin-left: -47px;
+      background-image: url('../../../common/images/official/phone_yl_1@2x.png');
       background-size: 100%;
       background-position: center;
-      &.null-page {
-        background-image: url('../../../common/images/official/phone-model.png');
+      &.show-code {
+        background-image: url('../../../common/images/official/phone_yl@2x.png');
       }
       background-size: cover;
-      margin-top: -15px;
       position: relative;
       .title{
         display: inline-block;
@@ -470,20 +561,21 @@ export default {
         height: 30px;
         line-height: 30px;
         text-align: center;
-        color: #555;
+        font-size: 16px;
+        font-weight: 400;
+        color: #666666;
         background: #f7f7f7;
         position: absolute;
         top: 38px;
         left: 50%;
         transform: translateX(-50%);
       }
-      .img-code{
+   /*    .img-code{
         position: absolute;
         height: 142px;
         width: 142px;
         left: 53%;
         top: 50%;
-        /*border: 1px solid #ccc;*/
         transform: translate(-50%, -50%);
         background: transparent;
         img{
@@ -504,7 +596,7 @@ export default {
           height: 100%;
           border-radius: 100%;
         }
-      }
+      } */
       .poster-img {
         position: absolute;
         height: 520px;
@@ -530,11 +622,69 @@ export default {
         right: 20px;
         top: 90px;
       }
+      .gzh_app_mask {
+        position: absolute;
+        display: block;
+        margin: 0;
+       /*  right: calc(50% - 155px);
+        top: 56px;
+        text-align: center;
+        width: 310px;
+        height: 566px; */
+        right: calc(50% - 156px);
+        top: 75px;
+        text-align: center;
+        width: 312px;
+        height: 576px;
+        background: #000000;
+        border-radius: 0px 0px 26px 26px;
+        opacity: 0.6;
+      }
+      .gzh_app_close {
+
+      }
+      .gzh_app {
+        position: absolute;
+        display: block;
+        margin: 0;
+        right: calc(50% - 81px);
+        text-align: center;
+        width: 162px;
+        /* top: calc(50% - 95px);
+        height: 191px; */
+        top: calc(50% - 81px);
+        height: 162px;
+        background: transparent;
+        border-radius: 4px;
+      }
+      .gzh_img_layout {
+        background: #F7F7F7;
+        border-radius: 4px;
+        padding: 6px 6px;
+        text-align: center;
+      }
+      .app-preview {
+        width: 150px;
+        height: 150px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      .gzh_txt {
+        font-size: 14px;
+        font-weight: 400;
+        color: #FFFFFF;
+        line-height: 20px;
+        text-align: center;
+        margin-top: 9px;
+      }
     }
   }
   .img-box{
     width: 100%;
-    height: 135px;
+    height: 140px;
   }
   /deep/.length152{
     margin-top: 0px!important;
@@ -543,6 +693,6 @@ export default {
     height: 773px;
   }
   .el-form{
-    margin-top: 70px;
+    margin-top: 55px;
   }
 </style>

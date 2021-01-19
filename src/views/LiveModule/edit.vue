@@ -227,7 +227,7 @@
          <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
         <el-button class="length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
@@ -441,15 +441,15 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否保存${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
+    this.$confirm(`是否取消${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
       lockScroll: false,
       cancelButtonClass: 'zdy-confirm-cancel'
     }).then(() => {
-    }).catch(() => {
       next()
+    }).catch(() => {
     });
   },
   created(){

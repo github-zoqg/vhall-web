@@ -28,7 +28,7 @@
           />
         </el-select>
         <div class="export-data">
-          <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
+          <el-button round  size="medium" @click="exportCenterData" class="transparent-btn">导出数据</el-button>
         </div>
     </div>
     <!-- <search-area
@@ -155,7 +155,7 @@ export default {
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 8);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
             }
           }, {
@@ -164,7 +164,7 @@ export default {
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 31);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
             }
           }],
@@ -237,7 +237,7 @@ export default {
     },
     // 导出
     exportCenterData() {
-      this.$fetch('exportCenterInfo', this.params).then(res => {
+      this.$fetch('exportCenterInfo', this.$params(this.params)).then(res => {
         if (res.code == 200) {
           this.$message.success(`账号维度下数据报告导出成功，请去下载中心下载`);
           this.$EventBus.$emit('saas_vs_download_change');
@@ -335,12 +335,13 @@ export default {
       font-size: 14px;
       color: #666;
       padding: 8px 16px;
-      border-radius: 14px;
+      border-radius: 100px;
     }
     .span-active {
       border: none;
       background: #fb3a32;
       color: #fff;
+      border-radius: 100px;
     }
   }
   .statistical-map {

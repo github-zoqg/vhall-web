@@ -270,6 +270,8 @@ export default {
   },
   created() {
     this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
+    // 根據活動ID獲取活動信息
+    this.getWebinarInfo();
   },
   methods: {
     async updateSwitch() {
@@ -491,10 +493,6 @@ export default {
       // 根据ID获取活动-角色配置信息
       this.getPrivilegeInfo();
     }
-  },
-  created() {
-    // 根據活動ID獲取活動信息
-    this.getWebinarInfo();
   }
 };
 </script>
@@ -521,12 +519,16 @@ export default {
   display: inline-block;
   margin-bottom: 24px;
   /* border: 1px dashed #EEEEEE; */
-  padding: 32px 32px;
+  padding: 32px 0 32px 32px;
   background: #FFFFFF;
   vertical-align: middle;
+  border-radius: 4px;
   &:nth-child(2n) {
     margin-right: 0;
     margin-left: 12px;
+  }
+  .role-card-head, .el-form, .role-qx-title {
+    padding-right: 32px;
   }
 }
 .title--label {

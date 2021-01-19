@@ -1009,7 +1009,7 @@ export default {
     margin-bottom: 8px;
   }
   .login-btn {
-    margin-top: 50px;
+    margin-top: 32px;
   }
 }
 

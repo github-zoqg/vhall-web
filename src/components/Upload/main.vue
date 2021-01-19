@@ -192,6 +192,10 @@ export default {
     i {
       color: #8c939d;
     }
+    i.saasicon_shangchuan {
+      font-size: 44px!important;
+      color: #8c939d;
+    }
     .box{
       width: 100%;
       height: 100%;
@@ -231,7 +235,10 @@ export default {
     display: none;
     span{
       &:nth-child(2){
-        margin: 5px 10px 0px;
+        margin: 0 10px;
+        i {
+          line-height: 1;
+        }
       }
       i{
         color: #fff;

@@ -168,6 +168,7 @@ export default {
       }
     };
     return {
+      pwdType: 'text',
       loading: false,
       query: {
         role_id: '',
@@ -606,6 +607,12 @@ export default {
     },
     emailPlaceholder() {
       return this.sonForm.email ? '' : '子账号登录后自行操作绑定，父账号允许重置';
+    }
+  },
+  watch: {
+    'sonForm.password': function() {
+      let len = this.sonForm.password.length;
+      console.log(len)
     }
   }
 };

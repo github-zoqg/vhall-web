@@ -143,27 +143,41 @@
       </div>
     </VhallDialog>
     <!-- 批量上传 -->
-    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false>
+    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
       <div class="upload-dialog-content">
         <file-upload
           ref="chatUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel'
-          }"
-          :result="importResult"
-          :progress="{
-            isUploadEnd: isUploadEnd,
-            percent: percent
           }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
-          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
+          <div slot="upload-result">
+            <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
+            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+            <!-- 状态2： 已选择文件，提示上传中，进度条 -->
+            <div v-if="uploadResult && uploadResult.status === 'progress'">
+              <div class="progressBox">
+                <el-progress :percentage="percent" ></el-progress>
+              </div>
+            </div>
+            <!-- 状态3： 检测失败 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
+              <p class="p-error">{{uploadResult.text}}</p>
+            </div>
+            <!-- 状态4:  检测成功 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+            </div>
+          </div>
+          <!-- 状态1： 未上传 -->
+          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
           <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
@@ -190,6 +204,10 @@ export default {
   data() {
     return {
       isUploadEnd: false,
+      uploadResult: {
+        status: 'start',
+        text: '请选择模板文件'
+      },
       percent: 0,
       chatForm: {},
       checkNames: [],
@@ -268,6 +286,14 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.isUploadEnd = false
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
+    },
     getAllKeyWordList() {
       this.$fetch('getKeywordList', {
         keyword: '',
@@ -518,7 +544,6 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
-      this.percent = 0;
       this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
@@ -528,11 +553,19 @@ export default {
         }).then(resV => {
           this.importResult = resV.data;
           this.fileResult = 'success';
+          this.uploadResult = {
+            status: 'success',
+            text: '检测成功'
+          }
           if (this.$refs.chatUpload) {
              this.$refs.chatUpload.setError('');
           }
-        }).catch(e => {
+        }).catch(res => {
           this.fileResult = 'error';
+          this.uploadResult = {
+            status: 'error',
+            text: res.msg
+          }
           // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
           this.isUploadEnd = false;
           this.importResult = null;
@@ -544,9 +577,12 @@ export default {
     },
     closeImportChat() {
       this.multiUploadShow = false;
-      this.percent = 0;
       this.isUploadEnd = false;
       this.fileUrl = '';
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     saveUploadKey() {
       if(!this.fileUrl) {
@@ -564,7 +600,6 @@ export default {
       }).then(resV => {
         this.importResult = resV.data;
         this.multiUploadShow = false;
-        this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
         /* resV.data.success > 0 ? this.$message({
@@ -624,11 +659,19 @@ export default {
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
       this.isUploadEnd = false;
+      this.uploadResult = {
+        status: 'progress',
+        text: '上传中，请稍候'
+      }
       this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       // this.$message.error(`文件上传失败`);
+      this.uploadResult = {
+        status: 'error',
+        text: '文件上传失败'
+      }
       this.fileResult = 'error';
     },
     uploadPreview(file){
@@ -784,4 +827,26 @@ export default {
 /deep/.data-list {
    min-height: 418px;
  }
+
+ /* 文件上传 */
+.p-right {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #888;
+  font-size: 14px;
+}
+.p-error {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #FB3A32;
+  font-size: 14px;
+}
+/deep/.el-progress__text /deep/i {
+  font-size: 18px;
+}
+.progressBox {
+  /deep/ .el-progress-bar__inner {
+    background-color: #14BA6A;
+  }
+}
 </style>

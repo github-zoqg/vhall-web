@@ -101,8 +101,8 @@ export default {
       line-height: 32px;
       color: #1A1A1A;
       font-size: 16px;
-      padding: 0 10px;
       text-align: left;
+      padding: 0 10px;
     }
     td{
       line-height: 22px;

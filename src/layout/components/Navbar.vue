@@ -245,7 +245,7 @@ export default {
     this.getUnreadNum();
     // 初始进入，获取未下载条数
     this.getDownNum();
-    // 初始化聊天SDK
+    // 初始化聊天SDK [用户下的]
     this.initChat();
   },
   beforeDestroy() {

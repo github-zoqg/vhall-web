@@ -183,7 +183,12 @@
           show-overflow-tooltip>
           <template slot-scope="scope">
             <el-button type="text" @click="getTime(scope.row)">获取时间</el-button>
-            <el-button v-if="scope.row.sub" type="text" @click="addSonNode(scope.row)">添加子章节</el-button>
+            <el-button
+              :disabled="chapterTotalInfo[scope.row.docId] ? scope.row.sub.length >= chapterTotalInfo[scope.row.docId][scope.row.slideIndex - 1] : false"
+              v-if="scope.row.sub"
+              type="text"
+              @click="addSonNode(scope.row)"
+            >添加子章节</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -253,7 +258,8 @@ export default {
       currentTime: 0, // 当前视频播放时间
       voice: 60, // 音量
       catchVoice: 0,
-      videoTime: 0 // 视频实际时长
+      videoTime: 0, // 视频实际时长
+      chapterTotalInfo: {}
     };
   },
   provide () {
@@ -384,6 +390,7 @@ export default {
       });
       this.docIds = [...new Set(ids)]
       this.getDocTitles();
+      this.getChapterTotalInfo(this.docIds);
     });
   },
   mounted(){
@@ -555,7 +562,6 @@ export default {
     saveChapters() {
       debounce(() => {
         const createTimeArr = [];
-        console.log('tableData', this.tableData)
         const doc_titles = this.tableData.map(item => {
           createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
           return {
@@ -589,8 +595,6 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         }
-        console.log(doc_titles)
-        console.log('isDemand', this.isDemand ? 2 : 1)
         this.$fetch('saveChapters', {
           record_id: this.recordId,
           type: this.isDemand == 'true' ? 2 : 1,
@@ -651,7 +655,6 @@ export default {
         record_id: this.recordId,
         type: 0
       }).then(res => {
-        console.log(res)
         const data = res.data
         this.playerProps = {
           appId: data.paasAppId,
@@ -678,7 +681,12 @@ export default {
         document_id: tableSelect.join(',')
       }).then(res => {
         const ids = []
+        this.chapterTotalInfo = {}
         this.tableData = res.data.doc_titles.map((item, index) => {
+          // 文档子章节总数信息
+          !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
+          this.chapterTotalInfo[item.document_id][item.page] = item.step_total
+
           ids.push(item.document_id);
           return {
             createTime: 0,
@@ -704,6 +712,20 @@ export default {
         })
         this.docIds = [...new Set(ids)];
         this.getDocTitles();
+      })
+    },
+    // 获取章节总数信息，只在获取章节信息的事件中调用
+    getChapterTotalInfo(ids) {
+      this.$fetch('playBackChaptersGet', {
+        document_id: ids.join(',')
+      }).then(res => {
+        this.chapterTotalInfo = {}
+        res.data.doc_titles.forEach(item => {
+          // 文档子章节总数信息
+          !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
+          this.chapterTotalInfo[item.document_id][item.page] = item.step_total
+          console.log(this.chapterTotalInfo)
+        })
       })
     },
     prevPage(){
@@ -1131,16 +1153,27 @@ export default {
     .el-table{
       margin-top: 24px;
     }
-    /* /deep/ .el-table__header{
+    /deep/ .el-table__header{
       th{
         background: #F7F7F7;
       }
-    } */
+    }
     .el-input {
       width: 95%;
     }
+    /deep/ .el-button.el-button--text.is-disabled span {
+      color: #1a1a1a;
+    }
     /deep/ .el-tooltip .el-button--text span:hover {
       color: #3562fa;
+    }
+    /deep/ .el-button.el-button--text.is-disabled {
+      &:hover {
+        border: 0;
+        span {
+          color: #1a1a1a;
+        }
+      }
     }
   }
   .right{

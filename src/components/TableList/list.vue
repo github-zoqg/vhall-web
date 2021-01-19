@@ -106,8 +106,11 @@
             </div> -->
             <!-- 文档，进度 -->
             <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
-              <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
-              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress>
+              <div v-if="!scope.row.transform_schedule_str" class="progressBox">
+                <el-progress :percentage="scope.row.codeProcess" ></el-progress>
+              </div>
+              <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
+              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress> -->
               <div v-else class="progressBox">
                 <!-- 样式变化 -->
                 <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}<span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span></span>
@@ -119,8 +122,7 @@
               {{ scope.row[item.key]  || '- -'}}
             </div>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" :title="scope.row[item.key]">
-              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
-              {{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
+              <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
           </template>
         </el-table-column>
@@ -285,6 +287,17 @@ export default {
     checkShowHandle(row, item) {
       if (this.scene === 'accountList') {
         return row.parent_id > 0 || (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0);
+      } else if (this.scene === 'word') {
+        // 静态转码完成，展示 演示、删除；动态转码完成，展示 演示、动画版演示、删除；转码失败展示 删除。
+        if (row.showEventType == 4 || row.showEventType == 6) {
+          // ppt or pptx 时展示动画演示
+          return /pptx?/.test(row.ext) ? true : item.methodName !== 'preDocShow';
+        } else if (row.showEventType == 5 || row.showEventType == 7) {
+          // 转码失败
+          return item.methodName === 'deleteHandle';
+        } else {
+          return false;
+        }
       } else {
         return true;
       }
@@ -367,6 +380,12 @@ export default {
   }
   .word-status {
     margin-right: 12px;
+    &.iconContainer {
+      padding-right: 0;
+    }
+    /deep/i.iconfont-v3 {
+      font-size: 20px;
+    }
   }
    /deep/.cell .advImg {
     width: 142px;

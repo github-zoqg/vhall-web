@@ -68,9 +68,6 @@
               <p>+{{ item.gift_flow }}GB(赠送)</p>
               <b class="isMark">{{ flowInfo.flow_fee }}元/GB</b>
               <label class="img-tangle" v-if="item.isChose"><img src="../../../common/images/icon-choose.png" alt=""></label>
-              <!-- <label class="img-tangle" v-if="item.isChose">
-                <i class="el-icon-check"></i>
-              </label> -->
             </div>
           </div>
         </el-form-item>
@@ -214,9 +211,9 @@ export default {
           this.$message.error(res.msg);
         }
 
-      }).catch(e=>{
+      }).catch(res=>{
+        this.$message.error(res.msg);
         this.dialogBuyVisible = false;
-        console.log(e);
       });
     },
     payUpgradeList() {
@@ -230,9 +227,9 @@ export default {
         } else {
           this.$message.error(res.msg);
         }
-      }).catch(e=>{
+      }).catch(res=>{
         this.dialogVisible = false;
-        console.log(e);
+        this.$message.error(res.msg);
       });
     },
     payExtentList() {
@@ -246,8 +243,9 @@ export default {
         } else {
           this.$message.error(res.msg);
         }
-      }).catch(e=>{
+      }).catch(res=>{
         this.dialogVisible = false;
+        this.$message.error(res.msg);
         console.log(e);
       });
     },

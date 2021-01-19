@@ -147,10 +147,12 @@
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
       min-width: @sideBarWidth !important;
-      background-color: @subMenuBg !important;
-
+      &.is-active {
+        background-color: @subMenuBg !important;
+      }
       &:hover {
-        background-color: @subMenuHover !important;
+        // background-color: @subMenuHover !important;
+        background-color: @subMenuBg !important;
       }
     }
   }
@@ -324,9 +326,16 @@
 
   .nest-menu .el-submenu>.el-submenu__title,
   .el-menu-item {
+    border-left: 4px @menuBg solid;
     &:hover {
       // you can use @subMenuHover
       background-color: @menuHover !important;
+      color: @menuActiveText !important;
+      border-left-color: @menuActiveText;
+    }
+    &.is-active {
+      background-color: @subMenuBg !important;
+      border-left-color: @menuActiveText;
     }
   }
 

@@ -2,32 +2,32 @@
   <div class="data-center">
     <div class="main-center">
       <data-usage></data-usage>
-      <el-row type="flex" class="row-center" justify="space-between" :gutter="20" >
-        <el-col :span="colVal">
+      <el-row type="flex" class="row-center" :gutter="16" >
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toCreateLive">
             <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
           </div>
         </el-col>
-        <el-col :span="colVal">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toUploadWord">
             <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
           </div>
         </el-col>
-        <el-col :span="colVal">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toBrandSet">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>设置中心</h3>
           </div>
         </el-col>
-        <el-col :span="colVal" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
+        <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
           <div class="center-item" @click="toDataInfo">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>
           </div>
         </el-col>
-        <el-col :span="colVal">
+        <el-col :xl="{span: colVal}">
           <div class="center-item" @click="toFinanceInfo">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务中心</h3>
@@ -109,7 +109,8 @@
     <div class="advert-banner">
       <div class="web-download">
         <div class="ad-web">
-          <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/27/f8/27f8fcd59013845ef0c3774e9af93b4f.png?x-oss-process=image/resize,w_225,m_lfit" alt="">
+          <!-- <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/27/f8/27f8fcd59013845ef0c3774e9af93b4f.png?x-oss-process=image/resize,w_225,m_lfit" alt=""> -->
+          <img src="../../common/images/account/banner1.png" alt=""/>
           <!-- <h1>微吼直播客户端</h1>
           <p>强大文件的直播工具</p> -->
         </div>
@@ -121,7 +122,7 @@
       </div>
       <div class="app-download">
         <div class="app-web">
-          <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/b4/57/b457d400f378d2c3411d13b525e4e40c.png?x-oss-process=image/resize,w_225,m_lfit" alt="">
+          <div class="img-show"><img src="../../common/images/account/banner2.png" alt=""/></div>
         </div>
         <div class="ad-text">
           <h1>微吼直播APP下载</h1>
@@ -400,8 +401,10 @@ export default {
         width: 100%;
         .ad-web{
           height: 126px;
-          width: 100%;
+          height: 126px;
           img{
+            width: 100%;
+            height: 100%;
             border-radius: 4px 4px 0 0;
           }
          /*  img{
@@ -450,6 +453,20 @@ export default {
         .app-web{
           font-size: 0;
           border-radius: 4px;
+          .img-show {
+            width: 225px;
+            height: 126px;
+            img {
+              width: 100%;
+              height: 100%;
+              /* object-fit: cover; */
+              image-rendering: -moz-crisp-edges; /* Firefox */
+              image-rendering: -o-crisp-edges; /* Opera */
+              image-rendering: -webkit-optimize-contrast; /*Webkit (non-standard naming) */
+              image-rendering: crisp-edges;
+              -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+            }
+          }
           img{
             border-radius: 4px 4px 0 0;
           }

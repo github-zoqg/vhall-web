@@ -6,10 +6,6 @@
     :close-on-press-escape=false
     width="810px"
   >
-    <!-- <div class="tabs">
-      <div :class="{active: tabs==1}">1.选择文档</div>
-      <div :class="{active: tabs==2}">2.生成章节</div>
-    </div> -->
     <template>
       <el-table
         ref="docList"
@@ -61,10 +57,6 @@
         <el-button type="primary" @click="nextStep" round size="medium">确认</el-button>
       </span>
     </template>
-    <!-- <template v-else>
-      转换完成
-      <el-button type="primary" @click="transOver" round size="medium">确认</el-button>
-    </template> -->
   </el-dialog>
 </template>
 
@@ -80,7 +72,6 @@ export default {
       },
       docList: [],
       dialogVisible: false,
-      // tabs: 1,
       tableSelect: []
     };
   },
@@ -105,7 +96,6 @@ export default {
             lockScroll: false,
             cancelButtonClass: 'zdy-confirm-cancel'
           }).then(() => {
-            // this.tabs = 2
             this.$EventBus.$emit('demonstration', {
               documentIds: this.tableSelect
             });
@@ -125,10 +115,6 @@ export default {
         }
       }
     },
-    // transOver() {
-    //   this.dialogVisible = false
-    //   this.tabs = 1
-    // },
     handleSelectionChange(val){
       let ids = []
       val.length > 0 && val.forEach((item, index) => {
@@ -177,34 +163,6 @@ export default {
 <style lang="less" scoped>
   @red: #FB3A32;
   @redBg: #FFEBEB;
-  // .tabs{
-  //   width: 100%;
-  //   overflow: hidden;
-  //   margin: 8px 0 24px 0;
-  //   >div{
-  //     width: 50%;
-  //     float: left;
-  //     border-radius: 4px;
-  //     border: 1px solid #E6E6E6;
-  //     border-radius: 4px 0px 0px 4px;
-  //     line-height: 40px;
-  //     height: 40px;
-  //     text-align: center;
-  //     transition: all .2s linear;
-  //     cursor: pointer;
-  //     &:nth-child(1){
-  //       border-right: 0px none;
-  //     }
-  //     &:nth-child(2){
-  //       border-left: 0px none;
-  //     }
-  //     &.active{
-  //       border: 1px solid @red;
-  //       background: @redBg;
-  //       color: @red;
-  //     }
-  //   }
-  // }
   .statusTag{
     &::before{
       content: '';
