@@ -21,6 +21,7 @@
           </el-option>
         </el-select>
         <el-input
+          class="search-tag"
           placeholder="请输入专题标题"
           @keyup.enter.native="searchHandler"
           @clear="searchHandler"
@@ -323,6 +324,21 @@ export default {
       }
        /deep/.el-input__icon{
          line-height: 35px;
+      }
+    }
+    .search-tag {
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
   }

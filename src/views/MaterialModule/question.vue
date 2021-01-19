@@ -10,11 +10,19 @@
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload" v-preventReClick @click="addQuestion">创建问卷</el-button>
       <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</el-button>
-      <div class="inputKey">
-        <VhallInput v-model.trim="keyword" placeholder="请输入问卷名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
-        </VhallInput>
-      </div>
+      <el-input
+        class="search-tag"
+        placeholder="请输入问卷名称"
+        v-model.trim="keyword"
+        clearable
+        @clear="searchTableList"
+        @keyup.enter.native="searchTableList">
+        <i
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchTableList">
+        </i>
+      </el-input>
     </div>
     <div class="no-live" v-if="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'">
@@ -214,12 +222,29 @@ export default {
     .head-btn{
       display: inline-block;
     }
-    .inputKey{
+    /* .inputKey{
       float: right;
       height: 35px;
       width: 220px;
       /deep/.el-input__inner{
         border-radius: 18px;
+      }
+    } */
+    .search-tag {
+      float: right;
+      width: 220px;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
   }

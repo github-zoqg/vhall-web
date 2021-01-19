@@ -14,11 +14,19 @@
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
       <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
-      <div class="inputKey">
-        <VhallInput v-model.trim="keyword" placeholder="请输入音视频名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
-        </VhallInput>
-      </div>
+      <el-input
+        class="search-tag"
+        placeholder="请输入音视频名称"
+        v-model.trim="keyword"
+        clearable
+        @clear="searchTableList"
+        @keyup.enter.native="searchTableList">
+        <i
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchTableList">
+        </i>
+      </el-input>
     </div>
     <div class="video-list" v-if="total || isSearch">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
@@ -454,15 +462,27 @@ export default {
 /deep/.el-input__inner{
     padding: 0 12px;
   }
-.inputKey{
-      float: right;
-      height: 35px;
-      width: 220px;
-      /deep/.el-input__inner{
-        border-radius: 18px;
-        padding: 0 12px;
+.search-tag{
+  float: right;
+  width: 220px;
+  /* /deep/.el-input__inner{
+    border-radius: 18px;
+    padding: 0 12px;
+  } */
+   /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
       }
     }
+}
 .video-wrap{
   height: 100%;
   width: 100%;

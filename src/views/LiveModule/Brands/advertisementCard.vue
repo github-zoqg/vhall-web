@@ -8,13 +8,24 @@
         <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建广告</el-button>
         <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
-        <span class="searchTitle">
+        <!-- <span class="searchTitle">
           <VhallInput v-model.trim="paramsObj.keyword" placeholder="请输入广告标题" @keyup.enter.native="searchAdvTableList" @clear="searchAdvTableList" clearable>
             <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchAdvTableList" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
-          <!-- <el-input v-model.trim="paramsObj.keyword" placeholder="请输入广告标题"
-          suffix-icon="el-icon-search" clearable @change="getAdvTableList()"></el-input> -->
-        </span>
+        </span> -->
+        <el-input
+          class="search-tag"
+          placeholder="请输入广告标题"
+          v-model.trim="paramsObj.keyword"
+          clearable
+          @clear="searchAdvTableList"
+          @keyup.enter.native="searchAdvTableList">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="searchAdvTableList">
+          </i>
+        </el-input>
       </div>
       <div class="no-live" v-if="!total && !isSearch">
         <noData :nullType="'nullData'" :text="'您还没有广告，快来创建吧！'">
@@ -206,7 +217,7 @@ export default {
     .search-data{
       margin-bottom: 30px;
     }
-    .searchTitle{
+    /* .searchTitle{
       float: right;
       width: 220px;
       /deep/.el-button{
@@ -214,6 +225,23 @@ export default {
       }
       /deep/.el-input__inner{
         border-radius: 20px;
+      }
+    } */
+    .search-tag {
+      float: right;
+      width: 220px;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
   }
