@@ -15,12 +15,19 @@
         style="margin-left: 12px;width: 240px"
         @change="search"
       />
-      <el-input placeholder="搜索文件名称" v-model.trim="file_name"
-       clearable
-       @keyup.enter.native="search"
-       @clear="search">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="search"></i>
-      </el-input>
+      <VhallInput
+        class="search-tag"
+        placeholder="搜索文件名称"
+        v-model.trim="file_name"
+        clearable
+        @change="search"
+        @keyup.enter.native="search">
+        <i
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="search">
+        </i>
+      </VhallInput>
     </div>
     <div class="download-list" v-if="docDao.total >0">
       <table-list
@@ -454,6 +461,21 @@ export default {
     /deep/ .el-input__suffix{
       cursor: pointer;
       /deep/ .el-input__icon{
+        line-height: 36px;
+      }
+    }
+  }
+  .search-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
         line-height: 36px;
       }
     }

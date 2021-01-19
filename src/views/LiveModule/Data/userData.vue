@@ -43,7 +43,20 @@
           />
         </el-select>
         <el-checkbox v-model="checkedValue"  @change="searchTableList" style="margin-left:16px">合并同一用户</el-checkbox>
-        <el-input class="inputer" v-model.trim="title" placeholder="请输入用户昵称" style="vertical-align: top;margin-left:20px" @clear="searchTableList" @keyup.enter.native="searchTableList"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="searchTableList"></i></el-input>
+        <VhallInput
+            class="search-tag"
+            placeholder="请输入用户昵称"
+            v-model.trim="title"
+            clearable
+            @change="searchTableList"
+            @keyup.enter.native="searchTableList">
+            <i
+              class="el-icon-search el-input__icon"
+              slot="suffix"
+              @click="searchTableList">
+            </i>
+          </VhallInput>
+        <!-- <el-input class="inputer" v-model.trim="title" placeholder="请输入用户昵称" style="vertical-align: top;margin-left:20px" @clear="searchTableList" @keyup.enter.native="searchTableList"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="searchTableList"></i></el-input> -->
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
@@ -330,6 +343,24 @@ export default {
       position: absolute;
       right: 24px;
       top: 0;
+    }
+
+    .search-tag {
+      margin-left: 20px;
+      width: 180px!important;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
     }
   }
   .data-list{

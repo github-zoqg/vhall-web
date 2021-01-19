@@ -19,7 +19,19 @@
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
         />
-        <el-input class="inputer" v-model.trim="title" placeholder="请输入活动标题" style="width: 180px;vertical-align: top;" @clear="searchTableList" @keyup.enter.native="searchTableList"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="searchTableList"></i></el-input>
+        <VhallInput
+          class="search-tag"
+          placeholder="请输入活动标题"
+          v-model.trim="title"
+          clearable
+          @change="searchTableList"
+          @keyup.enter.native="searchTableList">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="searchTableList">
+          </i>
+        </VhallInput>
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
@@ -250,6 +262,23 @@ export default {
         line-height: 36px;
       }
     }
+    .search-tag {
+      width: 180px;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
+
   }
   .export-data {
       position: absolute;

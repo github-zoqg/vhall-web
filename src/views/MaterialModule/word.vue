@@ -54,7 +54,7 @@
         <!--<el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>-->
         <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
         <el-button round @click="wordMultiDel" class="transparent-btn" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
-        <el-input
+        <VhallInput
           class="head-btn search-tag"
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
@@ -66,7 +66,7 @@
             slot="suffix"
             @click="initPage">
           </i>
-        </el-input>
+        </VhallInput>
       </div>
       <div class="word-list" v-show="!no_show">
         <table-list
@@ -1065,7 +1065,7 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
-      padding-right: 50px;
+      padding-right: 50px!important;
     }
     /deep/ .el-input__suffix {
       cursor: pointer;

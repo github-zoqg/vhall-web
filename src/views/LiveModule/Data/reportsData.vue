@@ -37,7 +37,7 @@
         />
       </el-select>
       <div class="export-data">
-        <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
+        <el-button round  size="medium" @click="exportCenterData" class="transparent-btn">导出数据</el-button>
       </div>
       </div>
     <main-data :mainKeyData="mainKeyData" :titleType="titleType"></main-data>
@@ -422,12 +422,13 @@ export default {
     font-size: 14px;
     color: #666;
     padding: 3px 10px;
-    border-radius: 16px;
+    border-radius: 100px;
   }
   .span-active {
     border: none;
     background: #fb3a32;
     color: #fff;
+    border-radius: 100px;
   }
 }
 .statistical-map{
