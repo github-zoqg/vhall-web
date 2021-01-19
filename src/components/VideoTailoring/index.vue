@@ -77,6 +77,7 @@
           :range-separator="t('至')"
           :start-placeholder="t('开始日期')"
           :end-placeholder="t('结束日期')"
+          prefix-icon="iconfont-v3 saasicon_date"
           format="yyyy-MM-dd HH:mm:ss"
           value-format="yyyy-MM-dd HH:mm:ss"
           :editable="false"
@@ -615,6 +616,12 @@ export default {
   .fr {
     margin-left: 20px;
     color: #888;
+  }
+  /deep/.el-date-editor .el-range__icon{
+    line-height: 29px;
+  }
+  /deep/.el-date-editor .el-range__close-icon {
+    line-height: 28px;
   }
   .vh-video-tailoring__section {
     background-color: #222222;

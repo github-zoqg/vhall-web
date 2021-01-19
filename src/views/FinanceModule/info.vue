@@ -28,6 +28,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
+          prefix-icon="iconfont-v3 saasicon_date"
           style="width: 240px"
         />
           <el-select filterable clearable v-model="lineType" style="width: 160px;marginLeft:15px" @change="getLineList" v-if="type">
@@ -70,6 +71,7 @@
           v-model="accountSearchDate"
           value-format="yyyy-MM-dd"
           type="daterange"
+          prefix-icon="iconfont-v3 saasicon_date"
           @change="getSearchList"
           range-separator="至"
           start-placeholder="开始日期"
@@ -466,8 +468,8 @@ export default {
       padding-right: 50px;
     }
      /deep/.el-input__icon {
-        margin-bottom: 5px;
-        line-height: 36px;
+        // margin-bottom: 5px;
+        line-height: 33px;
       }
       /deep/.el-input__suffix{
         top: 0px;
