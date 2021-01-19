@@ -129,12 +129,15 @@ export default {
             'Content-Type': 'multipart/form-data'
           }).then(res => {
             if (res && res.code === 200) {
+              console.log('11111111111111');
               success(res.data.domain_url);
             } else {
               // debugger;
               failure(res.msg || '上传失败');
+              console.log('222222222222');
             }
           }).catch((res) => {
+            console.log('333333333333');
             failure(res.msg || '上传失败');
           })
         }
@@ -146,6 +149,7 @@ export default {
   methods: {
     // 内容修改后，将信息返回
     sendContent(text) {
+      console.log(text, '2222222222222')
       // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 

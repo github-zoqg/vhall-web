@@ -283,7 +283,10 @@ export default {
     },
 
     sendData(content) {
+      // let imgNum = content.querySelectorAll('img');
+      // console.log(imgNum, '???????????????');
       this.formData.content = content;
+      console.log(content, "1111111111111111");
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -325,7 +328,6 @@ export default {
 
     submitForm(formName) {
     window.cd = this.formData
-      console.warn(this.formData, 111111111111222222, this.formData.introduction, ' this.formData.introduction');
       if (!this.formData.content) {
         this.$message.error('请输入专题简介');
         return;
@@ -334,58 +336,58 @@ export default {
         this.$message.error('请选择专题目录');
         return;
       }
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          const webinar_ids = this.formData.selectedActives.map((item) => {
-            return item.webinar_id || item.id
-          });
-          let data = {
-            subject: this.formData.title,
-            introduction: this.formData.content,
-            img_url: this.formData.imageUrl,
-            is_private: this.formData.home ? 0 : 1,
-            hide_appointment: Number(this.formData.reservation),
-            hide_pv: Number(this.formData.hot),
-          };
+      // this.$refs[formName].validate((valid) => {
+      //   if (valid) {
+      //     const webinar_ids = this.formData.selectedActives.map((item) => {
+      //       return item.webinar_id || item.id
+      //     });
+      //     let data = {
+      //       subject: this.formData.title,
+      //       introduction: this.formData.content,
+      //       img_url: this.formData.imageUrl,
+      //       is_private: this.formData.home ? 0 : 1,
+      //       hide_appointment: Number(this.formData.reservation),
+      //       hide_pv: Number(this.formData.hot),
+      //     };
 
-          if (webinar_ids.length) {
-            data.webinar_ids = webinar_ids.join(',')
-          }
+      //     if (webinar_ids.length) {
+      //       data.webinar_ids = webinar_ids.join(',')
+      //     }
 
-          this.loading = true;
-          let url = this.$route.query.id ? 'subjectEdit' : 'subjectCreate';
+      //     this.loading = true;
+      //     let url = this.$route.query.id ? 'subjectEdit' : 'subjectCreate';
 
-          if(url == 'subjectEdit') {
-            data.id = this.subject_id
-          }
+      //     if(url == 'subjectEdit') {
+      //       data.id = this.subject_id
+      //     }
 
-          this.$fetch(url, this.$params(data)).then(res=>{
-            if(res.code == 200) {
-              this.subject_id = res.data.subject_id;
-              this.$message.success(`创建成功`);
-              // 保存或创建成功重置更改状态
-              this.isChange = false
-              console.log(res);
-              setTimeout(()=>{
-                this.$router.push({path: '/special'});
-              }, 500);
-            } else {
-              this.$message.error(`创建失败，${res.msg}`);
-            }
-          }).catch(error=>{
-            this.$message.error(`创建失败，${error.message}`);
-          }).finally(()=>{
-            this.loading = false;
-          });
-          console.log(data);
+      //     this.$fetch(url, this.$params(data)).then(res=>{
+      //       if(res.code == 200) {
+      //         this.subject_id = res.data.subject_id;
+      //         this.$message.success(this.$route.query.id ? '编辑成功' : `创建成功`);
+      //         // 保存或创建成功重置更改状态
+      //         this.isChange = false
+      //         console.log(res);
+      //         setTimeout(()=>{
+      //           this.$router.push({path: '/special'});
+      //         }, 500);
+      //       } else {
+      //         this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${res.msg}`);
+      //       }
+      //     }).catch(error=>{
+      //       this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`);
+      //     }).finally(()=>{
+      //       this.loading = false;
+      //     });
+      //     console.log(data);
 
 
-        } else {
-          this.$message.error('请完善必填字段');
-          document.documentElement.scrollTop = 0;
-          return false;
-        }
-      });
+      //   } else {
+      //     this.$message.error('请完善必填字段');
+      //     document.documentElement.scrollTop = 0;
+      //     return false;
+      //   }
+      // });
     },
     // 判断是否填写数据
     isContent() {

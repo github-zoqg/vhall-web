@@ -297,7 +297,10 @@ export default {
     /deep/.el-dialog__body{
       // padding: 0 24px;
     }
-    /deep/.el-table__header-wrapper{
+    /deep/.el-table__header{
+      th{
+        background: #F7F7F7;
+      }
       width: 100%;
     }
     // /deep/.el-dialog__footer{
