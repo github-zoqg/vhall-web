@@ -248,7 +248,7 @@ export default {
     };
     return {
       invitation: true,
-      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+      qrcode: '',
       showCode: '',
       showType: 1,
       avatar: '',
@@ -306,8 +306,7 @@ export default {
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     let token = sessionOrLocal.get('token', 'localStorage');
-    this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
-    this.showCode = `${Env.staticLinkVo.aliQr}${this.link}`;
+    this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     this.getInviteCardInfo();
   },
   components: {
@@ -335,6 +334,7 @@ export default {
       };
       this.$fetch('getCardDetailInfo', params).then(res => {
         this.formInvitation = res.data.invite_card;
+        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
         this.img = this.formInvitation.img || this.fileList[0];
         this.imgUrl = this.formInvitation.img || '';
         this.showType = this.formInvitation.show_type;

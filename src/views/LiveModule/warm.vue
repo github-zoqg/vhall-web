@@ -20,7 +20,8 @@
                 <i class="iconfont-v3 saasicon_shangchuan"></i>
               </div>
               视频仅支持MP4格式，文件大小不超过200M<br>
-              上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看
+              上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看<br>
+              点播、音频直播不支持暖场视频
             </div>
             <div class="mediaSlot mediaOther" v-else>
               <icon icon-class="saasshipinwenjian"></icon>
