@@ -22,7 +22,7 @@
           {{ item.view_num }}
         </div>
       </div>
-      <div class="vh-chose-active-item__title">
+      <div class="vh-chose-active-item__title ellsips">
         {{ item.title }}
       </div>
       <div class="vh-chose-active-item__info">

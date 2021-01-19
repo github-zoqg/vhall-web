@@ -4,13 +4,14 @@
       title="提现"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      @close="sureBangWeixin"
       width="320px"
     >
       <div class="box-wei">
         <div class="img-box" v-if="qrcode">
           <img :src="`//aliqr.e.vhall.com/qr.png?t=${encodeURIComponent(qrcode)}`" alt="" v-if="qrcode">
           <p>请用微信扫描二维码，绑定收款账户</p>
-          <el-button type="primary" class="length120"  round @click="goBangWeixin">确定</el-button>
+          <el-button type="primary" class="length120"  round @click="sureBangWeixin">确定</el-button>
           <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
@@ -279,8 +280,14 @@ export default {
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`;
+      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind`;
       console.log(this.qrcode)
+    },
+    sureBangWeixin() {
+      this.dialogVisible = false;
+      if (this.qrcode) {
+        window.location.reload();
+      }
     },
     /**
      * 倒计时函数

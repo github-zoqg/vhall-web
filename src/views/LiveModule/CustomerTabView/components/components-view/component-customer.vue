@@ -86,8 +86,8 @@ export default {
         this.units.push({
          ...componentData,
           // To Do 默认 二维码地址。 替换成当前，直播间 观看页地址！！
-          imageSrc: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
-          hrc: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`,
+          imageSrc: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+          hrc: `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
           cUid: uuidV1()
         })
       } else if (componentData.component_id == 3) {

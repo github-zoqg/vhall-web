@@ -41,7 +41,7 @@
           </div>
 
         </div>
-        <div class="vh-chose-active-item__title">
+        <div class="vh-chose-active-item__title ellsips">
           {{ item.subject }}
         </div>
         <div class="vh-chose-active-item__info">
