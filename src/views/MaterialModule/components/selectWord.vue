@@ -416,6 +416,21 @@ export default {
     height: 36px;
     line-height: 36px;
   }
+  .search-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
+    }
+  }
 }
 .btn-center {
   margin: 24px auto 0 auto;
