@@ -59,7 +59,7 @@
               </div>
 
             </div>
-            <div class="vh-chose-active-item__title" :title="item.subject">
+            <div class="vh-chose-active-item__title ellsips" :title="item.subject">
               {{ item.subject }}
             </div>
             <div class="vh-chose-active-item__info">
