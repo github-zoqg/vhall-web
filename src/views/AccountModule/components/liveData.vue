@@ -11,6 +11,7 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         style="width: 240px"
+        prefix-icon="iconfont-v3 saasicon_date"
         :picker-options="pickerOptions"
         @change="queryList"
       />

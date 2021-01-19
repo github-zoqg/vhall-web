@@ -12,6 +12,7 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
+        prefix-icon="iconfont-v3 saasicon_date"
         style="margin-left: 12px;width: 240px"
         @change="search"
       />
@@ -513,6 +514,9 @@ export default {
   }
 }
 /deep/.el-date-editor .el-range__icon{
+  line-height: 29px;
+}
+/deep/.el-date-editor .el-range__close-icon {
   line-height: 28px;
 }
 .download-list {
