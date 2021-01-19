@@ -1,12 +1,24 @@
 <template>
     <!-- 这里使用了elemntUI的类名，如果没有安装elmentUI则自己自定义样式 -->
-    <div class="pw_input_cp el-input">
+    <div class=""
+    :class="[
+        'pw_input_cp el-input',
+        {
+          'el-input-group': $slots.prepend || $slots.append,
+          'el-input-group--append': $slots.append,
+          'el-input-group--prepend': $slots.prepend,
+        }
+      ]"
+      @mouseenter="hovering = true"
+      @mouseleave="hovering = false"
+    >
       <input
         class="el-input__inner"
         placeholder="请输入密码"
         ref="input"
         :maxlength=maxlength
         @input="handleInput"
+        oncut="return false" onpaste="return false" oncopy="return false"
         @compositionstart="handleCompositionStart"
         @compositionend="handleCompositionEnd"/>
       <!-- 后置内容 -->

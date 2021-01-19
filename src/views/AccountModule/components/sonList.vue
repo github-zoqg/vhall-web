@@ -87,7 +87,7 @@
         </el-form-item>
         <el-form-item label="预设密码" prop="editPwd" v-else>
           <pwd-input type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" showWordLimit=true></pwd-input>
+                    :maxlength="30" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="账号角色" prop="role_id">
           <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
