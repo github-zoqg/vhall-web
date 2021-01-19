@@ -242,6 +242,7 @@ export default {
         paas_record_id: '922013fa'
       },
       vm: null,
+      $Vhallplayer:null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
@@ -301,6 +302,7 @@ export default {
   beforeDestroy() {
     if(this.$Vhallplayer){
       this.$Vhallplayer.destroy();
+      vp.destroy();
     }
   },
   methods: {
@@ -325,7 +327,6 @@ export default {
     // 关闭跑马灯
     closeHorseInfo() {
       if (!this.scrolling_open) {
-        console.log('111111111111111111111')
         this.preFormHorse();
       }
     },
@@ -587,10 +588,9 @@ export default {
 
             this.$Vhallplayer = event.vhallplayer;
             window.vp = this.$Vhallplayer;
-
+            this.$Vhallplayer.pause()
+            this.$Vhallplayer.openControls(false);
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
-              this.$Vhallplayer.pause()
-              this.$Vhallplayer.openControls(false);
               this.loading = false;
               // 加载中
               resolve();
@@ -611,11 +611,16 @@ export default {
     },
     // 初始化播放器节点，重新加载播放器
    async initNodePlay() {
-    if(document.querySelector('#videoDom')){
-        await vp.destroy();
-        document.querySelector('#videoDom').innerHTML = ''
-        await this.initPlayer()
-      }
+     if (this.$Vhallplayer) {
+       await vp.destroy();
+       await this.$Vhallplayer.destroy();
+       await this.initPlayer()
+     }
+    // if(document.querySelector('#videoDom')){
+    //     await vp.destroy();
+    //     document.querySelector('#videoDom').innerHTML = ''
+    //     await this.initPlayer()
+    //   }
     },
     destroy() {
       vp.destroy();
