@@ -202,6 +202,7 @@
         </div>
       </div>
     </el-dialog>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -211,13 +212,16 @@ import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
-import { debounce } from "@/utils/utils"
+import { sessionOrLocal, debounce } from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
+
 
 export default {
   name: "giftSize",
   data() {
     return {
       webinar_id: this.$route.params.str,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       room_id: this.$route.query.roomId,
       total: 0,
       materialTotal: 100,
@@ -296,7 +300,8 @@ export default {
     PageTitle,
     upload,
     SPagination,
-    NullPage
+    NullPage,
+    beginPlay
   },
   created() {
     this.getTableList()

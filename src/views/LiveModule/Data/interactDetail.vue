@@ -844,7 +844,7 @@ export default {
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
-      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id, subject: rows.subject, number: rows.filled_number}});
+      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id,roomId:that.$route.query.roomId, subject: rows.subject, number: rows.filled_number}});
     }
   }
 };

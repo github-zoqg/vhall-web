@@ -68,6 +68,7 @@
       @setBaseInfo="setBaseInfo"
       ref="theme"
     ></themeSet>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -78,13 +79,16 @@ import shareDialog from './shareDialog';
 import signUpForm from '../Subscribe/signUpForm';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
+import { sessionOrLocal } from '@/utils/utils';
+import beginPlay from '@/components/beginBtn';
 export default {
   components: {
     PageTitle,
     fieldSet,
     shareDialog,
     themeSet,
-    signUpForm
+    signUpForm,
+    beginPlay
   },
   data(){
     return {
@@ -101,6 +105,7 @@ export default {
       },
       radio: 3,
       rightComponent: 'fieldSet',
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       setOptions: {
         "基本信息": [
           {icon: 'saasicon_name', label: "姓名", name: 'name'},

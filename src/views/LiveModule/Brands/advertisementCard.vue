@@ -50,14 +50,18 @@
       </div>
       <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList" :maxTotal="total"></create-advise>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
 import createAdvise from './components/createAdvise';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 export default {
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       advInfo: {},
       adv_ids: [],
       paramsObj: {
@@ -101,7 +105,8 @@ export default {
   },
   components: {
     createAdvise,
-    noData
+    noData,
+    beginPlay
   },
   mounted() {
     this.getAdvTableList();
