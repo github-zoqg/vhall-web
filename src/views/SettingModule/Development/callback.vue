@@ -153,15 +153,23 @@ export default {
             callback_event: numKeys.join(',')
           }
           this.$fetch(this.isAdd ? 'addCallbackInfo' : 'editCallbackInfo', params).then(res => {
-            if (res && res.code === 200) {
-              this.$message.success(res.msg || '设置成功');
-              // 数据刷新
-              this.getCallbackInfo();
-            } else {
-              this.$message.error(res.msg || '设置失败');
-            }
-          }).catch( e=> {
-            console.log(e);
+            this.$message({
+              message:  `设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 数据刷新
+            this.getCallbackInfo();
+          }).catch( res => {
+            this.$message({
+              message:  res.msg || `设置失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }
       })
