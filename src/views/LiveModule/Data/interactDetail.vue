@@ -45,7 +45,7 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :totalNum="totalNum"
-        :width="100"
+        :width="120"
         @changeTableCheckbox="changeTableCheckbox"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
@@ -874,7 +874,7 @@ export default {
 .interact-detail {
   .layout--right--main();
   .min-height();
-  padding: 32px 24px 40px 24px;
+  padding: 24px;
    /deep/.el-table td, .el-table th{
     padding: 15px 0;
   }

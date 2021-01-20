@@ -72,6 +72,7 @@ export default {
       text-align: center;
       cursor: pointer;
       position: relative;
+      z-index: 10;
       box-shadow: 0px 2px 12px 0px rgba(207, 45, 48, 0.7), 0px 1px 2px 0px rgba(220, 64, 66, 0.5);
       i{
         position: absolute;

@@ -39,7 +39,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer create-footer">
-      <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+      <el-button type="primary" size="medium" v-preventReClick :disabled="!(advertisement.subject&&advertisement.url&&advertisement.img_url)" @click="saveAdviseHandle" round>确 定</el-button>
       <el-button  size="medium" @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
@@ -72,7 +72,7 @@
           <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
         </noData>
       </div>
-      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
+      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个广告</p>
       <span slot="footer" class="dialog-footer sureBtn" v-show="total || isSearch">
         <el-button type="primary" size="medium" @click="advSaveToWebinar()" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
@@ -479,7 +479,7 @@ export default {
      border: 1px solid #ccc;
    }
    .content{
-     padding-bottom: 15px;
+     padding-bottom: 50px;
      position: relative;
      .search{
        height: 40px;
@@ -493,7 +493,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 300px;
+       height: 320px;
       //  overflow: auto;
        .ad-item{
           width: 165px;

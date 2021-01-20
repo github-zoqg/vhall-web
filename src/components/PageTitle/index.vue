@@ -65,7 +65,7 @@ export default {
 /deep/.saasicon_help_m {
   /* color: #1A1A1A; */
   color: #999999;
-  font-size: 14px;
+  font-size: 16px;
 }
 /*.saasicon_help_m {
    &.gary {

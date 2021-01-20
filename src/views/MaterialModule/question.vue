@@ -250,7 +250,7 @@ export default {
   }
   .show-question{
     position: absolute;
-    z-index: 5;
+    z-index: 2002;
     top: 0;
     left: 0;
     width: 100%;
@@ -264,6 +264,7 @@ export default {
       transform: translate(-50%, -50%);
       width: 700px;
       padding: 24px 32px;
+      border-radius: 4px;
       .question_main{
         max-height: 600px;
         // overflow: auto;

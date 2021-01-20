@@ -190,11 +190,11 @@ export default {
       border-radius: 4px;
     }
     i {
-      color: #8c939d;
+      color: #999;
     }
     i.saasicon_shangchuan {
       font-size: 44px!important;
-      color: #8c939d;
+      color: #999;
     }
     .box{
       width: 100%;
