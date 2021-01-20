@@ -166,7 +166,7 @@
           label="页码/步数"
           width="110">
            <template slot-scope="scope">
-             <el-input :disabled="isDemand" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+             <el-input :disabled="!isDemand" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
@@ -175,7 +175,7 @@
           width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input :disabled="isDemand" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
+            <el-input :disabled="!isDemand" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
@@ -560,7 +560,7 @@ export default {
       }).then(res => {
         if (res.data && res.data.chatper_callbanck_status == 0) {
           this.$message({
-            message:  '上次章节保存任务尚未完成，当前章节信息为为保存章节',
+            message:  '上次章节保存任务尚未完成，当前章节信息为未保存章节',
             showClose: true, // 是否展示关闭按钮
             type: 'warning', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
