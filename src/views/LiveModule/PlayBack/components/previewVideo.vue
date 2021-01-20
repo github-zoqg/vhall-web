@@ -499,8 +499,11 @@ export default {
       }
     }
     /deep/ .v-c-right{
-      >*:not(.vhallPlayer-volume-component){
+      .vhallPlayer-definition-component, .vhallPlayer-config-component, .vhallPlayer-speed-component{
         display: none;
+      }
+      .vhallPlayer-fullScreen-btn {
+        margin-left: 8px;
       }
     }
     /deep/ .vh-doc__wrap{
