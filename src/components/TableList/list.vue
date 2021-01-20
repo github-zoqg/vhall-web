@@ -87,9 +87,8 @@
             <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
               <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
               <p class="text">
-                <icon icon-class="saasexcelwendang" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
-                <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
-                {{ scope.row.file_name }}
+                <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
+                {{scope.row.ext}} {{scope.row.ext | wordStatusCss}} {{ scope.row.file_name }}
               </p>
             </div>
             <!-- 下载中心，生成状态 -->
