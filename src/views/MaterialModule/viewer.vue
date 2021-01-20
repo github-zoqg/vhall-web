@@ -117,7 +117,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round>确定</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round :disabled="!viewerForm.name || !viewerForm.phone">确定</el-button>
         <el-button @click="viewerDialog.visible = false" size="medium" round>取消</el-button>
       </div>
     </VhallDialog>
