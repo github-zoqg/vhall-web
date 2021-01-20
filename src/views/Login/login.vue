@@ -75,15 +75,9 @@
         <div class="login-other">
           其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
           <div class="other-img" v-show="!isOpenOther">
-<<<<<<< HEAD
             <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
             <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
             <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
-=======
-            <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=')">
-            <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')">
-            <!-- <img src="../../common/images/icon/weibo.png" alt="" @click="thirdLogin('https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=')"> -->
->>>>>>> e885ead87fb4f1f0c6fbeab0171506aab449889d
           </div>
         </div>
       </el-form>

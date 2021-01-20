@@ -78,34 +78,7 @@ export default {
       ],
       isCheckout: false,
       isHandle: false,
-      tableList: [
-        {
-          created_at: '2020-09-17',
-          withdraw_type: '0',
-          withdraw_fee: '123,000',
-          account: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
-          id: '1',
-          status: 1,
-          type: '直播',
-          statusText: '成功',
-          withdraw_status: '1',
-          actual_fee: '12456',
-          service_fee:'111245',
-        },
-        {
-          created_at: '2020-01-17',
-          withdraw_type: '2',
-          withdraw_status: '2',
-          withdraw_fee: '111,000',
-          account: '哈哈减肥吧开始讲课',
-          id: '2',
-          status: 2,
-          type: '红包',
-          statusText: '红包',
-          service_fee:'失败',
-          actual_fee: '444444',
-        }
-      ],
+      tableList: [],
       tabelColumn: [
         {
           label: '收款账号',

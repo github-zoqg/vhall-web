@@ -240,10 +240,23 @@ export default {
     },
     goLivePlay(item) {
       //判断是否可以开播
-      if (item.webinar_state == 1) {
-        this.getOpenLive(item);
+      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
+      if (status) {
+        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+          confirmButtonText: '去充值',
+          cancelButtonText: '知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+        }).then(() => {
+          this.$router.push({path:'/finance/info'});
+        }).catch(() => {});
       } else {
-        this.goIsLive(item)
+        if (item.webinar_state == 1) {
+          this.getOpenLive(item);
+        } else {
+          this.goIsLive(item)
+        }
       }
     },
     goPlayback(item) {
