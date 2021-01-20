@@ -9,7 +9,7 @@
     <div class="app-layout">
       <div :class="`app--info-ctx ${action=='detail' ? 'detail-show' : 'edit-show'}`">
         <el-form :model="appForm" ref="appForm" label-width="220px">
-          <template v-for="(node, index) in nodesData">
+          <template v-for="(node, index) in nodesShowData">
             <div :class="node.subject ? 'app-node-item padding' : 'app-node-item'">
               <p class="subject" v-if="node.subject" :key="index" v-html="node.label"></p>
               <el-form-item
@@ -158,6 +158,16 @@ export default {
           ],
           modelKey: 'sign_type',
         },
+        {
+          nodeType: 'text',
+          modelKey: 'rsa_private_key',
+          label: '私钥',
+        },
+        {
+          nodeType: 'text',
+          modelKey: 'rsa_public_key',
+          label: '公钥',
+        },
         /*{
           subject: true,
           label: '回调设置'
@@ -200,6 +210,11 @@ export default {
       }else{
         return '应用详情';
       }
+    },
+    nodesShowData() {
+      return this.appForm['sign_type'] > 0 ? this.nodesData : this.nodesData.filter(item => {
+        return item.modelKey!== 'rsa_private_key' && item.modelKey !== 'rsa_public_key';
+      })
     }
   },
   methods: {
@@ -245,6 +260,8 @@ export default {
       delete param.APPKey;
       delete param.SecretKey;
       delete param.APP_SecretKey;
+      delete param.rsa_private_key;
+      delete param.rsa_public_key;
       this.fetching = true;
       let api = 'createApp';
       let msgText = '创建';
@@ -326,6 +343,14 @@ export default {
 .app--info-ctx {
   .layout--right--main();
   background: #F7F7F7;
+  .show-span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
   &.edit-show {
     .el-form-item{
       width: 820px;

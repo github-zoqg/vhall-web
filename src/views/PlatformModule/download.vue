@@ -185,14 +185,10 @@ export default {
         dow_task_ids: dow_task_ids // 可能多个可能单个
       };
       this.$fetch('downloadedEdit', this.$params(params)).then(res =>{
-        if (res && res.code === 200) {
-          // 通知右上角导航，需要更新下载消息
-          this.$EventBus.$emit('saas_vs_download_count', true);
-          // 重新拉取数据
-          this.search();
-        } else {
-          console.log('下载状态更新失败');
-        }
+        // 通知右上角导航，需要更新下载消息
+        this.$EventBus.$emit('saas_vs_download_count', true);
+        // 重新拉取数据
+        this.search();
       }).then(e => {
         console.log(e, '下载状态更新失败');
       });

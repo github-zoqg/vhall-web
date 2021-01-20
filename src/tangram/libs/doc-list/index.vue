@@ -66,7 +66,7 @@
           </div>
           <div class="search">
             <div class="search-icon" :style="{'background-image': `url(//${domains.static + '/static/images/account-file/account-file-search.png'}`}"></div>
-            <input type="text" placeholder="搜索关键词" v-model.trim="searchKey">
+            <input type="text" placeholder="搜索严禁词" v-model.trim="searchKey">
             <div class="keyword-clear" @click="searchKey = ''" v-show="searchKey" :style="{'background-image': `url(//${domains.static + '/static/images/account-file/account-file-close.png'}`}"></div>
           </div>
         </ul>

@@ -45,7 +45,7 @@
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
-      :close-on-click-modal=false
+      :close-on-click-modal=true
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
       </el-dialog>

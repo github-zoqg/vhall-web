@@ -79,10 +79,10 @@ export default {
         }
       ],
       tabelColumn: [
-        {
-          label: '奖品id',
-          key: 'prize_id',
-        },
+        // {
+        //   label: '奖品id',
+        //   key: 'prize_id',
+        // },
         {
           label: '奖品图片',
           key: 'img',
@@ -238,6 +238,9 @@ export default {
     margin-bottom: 20px;
     .head-btn{
       display: inline-block;
+    }
+    /deep/.el-button.is-disabled{
+      background: transparent;
     }
     ::v-deep.set-upload{
       position: relative;

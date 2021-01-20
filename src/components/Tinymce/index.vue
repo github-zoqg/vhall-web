@@ -240,4 +240,13 @@ export default {
   }
 }
 
+/* 样式重写-弹出框 */
+.tox  {
+  /deep/.tox-dialog {
+    border-radius: 4px!important;
+    box-shadow: unset!important;
+    border-width: 0!important;
+  }
+}
+
 </style>

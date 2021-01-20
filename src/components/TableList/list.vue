@@ -160,7 +160,7 @@
           class="btn-rows"
         >
            <template slot-scope="scope">
-            <a :href="scope.row.dow_url" v-preventReClick v-if="Number(scope.row.file_status) === 1" @click="handleBtnClick(scope, {
+            <a :href="scope.row.dow_url" :download="scope.row.file_name" v-preventReClick v-if="Number(scope.row.file_status) === 1" @click="handleBtnClick(scope, {
               name: '下载',
               methodName: 'download'
             })" style="margin-right: 8px;">

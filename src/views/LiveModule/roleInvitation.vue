@@ -169,6 +169,7 @@
         <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
@@ -176,10 +177,12 @@
 import PageTitle from '@/components/PageTitle';
 import Clipboard from 'clipboard';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'embedCard.vue',
   components: {
     PageTitle,
+    beginPlay
   },
   data() {
     let checkPassword = (rule, value, callback) => {

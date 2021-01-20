@@ -55,6 +55,7 @@
       </el-dialog>
     </template> -->
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
@@ -63,6 +64,7 @@ import PageTitle from '@/components/PageTitle';
 import preQuestion from '@/components/Question/preQuestion';
 import baseQuestion from './components/questionBase';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: "question",
   data() {
@@ -98,7 +100,8 @@ export default {
     PageTitle,
     preQuestion,
     baseQuestion,
-    noData
+    noData,
+    beginPlay
   },
   created() {
     this.webinarId = this.$route.params.str;

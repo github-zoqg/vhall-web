@@ -1,11 +1,7 @@
 <template>
-  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中" v-show="!loading">
+  <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-show="!loading">
     <pageTitle title="专题列表">
-      <!-- <div slot="content">
-        1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
-        <br/>
-        2.控制台数据为真实数据，不统计虚拟数据
-      </div> -->
+      <div class="title_text">专题功能教您如何玩转不同场景下的多会场直播，<span>了解一下</span></div>
     </pageTitle>
 
     <!-- 操作栏 -->
@@ -283,6 +279,14 @@ export default {
     }*/
     /deep/.el-dialog__body{
       padding-bottom: 20px;
+    }
+    .title_text{
+      color: #999;
+      font-size: 14px;
+      span{
+        color: #3562FA;
+        cursor: pointer;
+      }
     }
   /*  .el-button.is-round{
       padding: 10px 23px;

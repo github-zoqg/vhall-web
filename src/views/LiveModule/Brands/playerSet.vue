@@ -34,12 +34,8 @@
                     show-word-limit
                   ></VhallInput>
                 </el-form-item>
-                <el-form-item label="文字颜色" prop="color">
-                  <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
-                </el-form-item>
-                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="字体大小">
-                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
+                <el-form-item label="文字大小">
+                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open" style="margin-bottom:10px">
                     <el-option
                       v-for="item in fontList"
                       :key="item.value"
@@ -48,6 +44,10 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
+                <el-form-item label="文字颜色" prop="color">
+                  <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
+                </el-form-item>
+                <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="移动速度">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
@@ -63,9 +63,9 @@
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
-                    maxlength="300"
+                    maxlength="3"
                     oninput="this.value=this.value.replace(/[^\d]/g, '')"
-                    placeholder="默认10s，输入范围1-300s">
+                    placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
                     </el-input>
                 </el-form-item>
@@ -111,7 +111,7 @@
                     @delete="deleteImg"
                   >
                     <div slot="tip">
-                      <p>建议尺寸：98*28px，小于2M</p>
+                      <p>建议尺寸：180*60px，小于2M</p>
                       <p>支持jpg、gif、png、bmp</p>
                     </div>
                   </upload>
@@ -122,8 +122,8 @@
                   <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">左下角</el-radio>
                   <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">右下角</el-radio>
                 </el-form-item>
-                <el-form-item label="透明度">
-                  <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
+                <el-form-item label="不透明度">
+                  <el-slider v-model="formWatermark.img_alpha" style="width: 315px" :disabled="!watermark_open"></el-slider>
                   <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
@@ -185,11 +185,12 @@
           <div id="videoDom" v-show="showVideo"></div>
           <p class="show-purple-info">
             <span>提示</span>
-            <span>1、移动端全屏播放时，跑马灯会失效</span>
-            <span>2、安卓手机浏览器劫持可能导致跑马灯失效</span>
+            <span>1. 移动端全屏播放时，跑马灯会失效</span>
+            <span>2. 安卓手机浏览器劫持可能导致跑马灯失效</span>
           </p>
         </div>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -200,17 +201,19 @@ import ColorSet from '@/components/ColorSelect';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'prizeSet',
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
       loading: true,
       showVideo: false,
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
-      pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA'],
+      pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       formHorse: {
         color: '#FFFFFF', // 六位
         text_type: 2,
@@ -218,15 +221,15 @@ export default {
         speed: 6000,
         text: '版权所有，盗版必究',
         position: 1,
-        alpha: 50,
-        interval: 10
+        alpha: 100,
+        interval: 20
       },
       accountIds:10000127,
       fontList: [],
       formWatermark: {
-        img_position: 1,
+        img_position: 2,
         img_url: '',
-        img_alpha: 80
+        img_alpha: 100
       },
       domain_url: '',
       formOther: {
@@ -252,6 +255,7 @@ export default {
     PageTitle,
     upload,
     ColorSet,
+    beginPlay
     // VideoPreview
   },
    computed: {
@@ -420,7 +424,6 @@ export default {
           this.formOther.doubleSpeed = Boolean(res.data.speed);
           let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
           this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
-          this.otherOtherInfo(1)
           this.$nextTick(()=>{
             if (this.formOther.doubleSpeed) {
               // this.$Vhallplayer.setPlaySpeed(list[0])
@@ -673,6 +676,7 @@ export default {
       } else {
         this.checkEnter = true
         this.getBaseOtherList();
+        this.otherOtherInfo(1)
       }
     },
   },

@@ -282,9 +282,7 @@ export default {
       });
       // 获取并发趋势图
       this.$fetch('getWebinarinfo', params).then(res => {
-        if (res.data.list.length) {
-           this.limitDataList = res.data.list
-        }
+        this.limitDataList = res.data.list
       });
       // 获取观看地域
       this.$fetch('getProvinceinfo', params).then(res => {

@@ -250,11 +250,13 @@
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
+    <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import beginPlay from '@/components/beginBtn';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
@@ -268,7 +270,8 @@ export default {
     upload,
     selectMedia,
     VEditor,
-    VideoPreview
+    VideoPreview,
+    beginPlay
   },
   computed: {
     rangHourMins() {
@@ -400,6 +403,7 @@ export default {
         domain_url: '',
       },
       liveMode: 2,
+      liveDetailInfo: {},
       showChecked: false,
       isChange: false,
       showDialog: false,

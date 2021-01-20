@@ -1,5 +1,5 @@
 <template>
-  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
+  <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-if="!loading">
     <pageTitle title="直播列表">
       <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
@@ -240,10 +240,23 @@ export default {
     },
     goLivePlay(item) {
       //判断是否可以开播
-      if (item.webinar_state == 1) {
-        this.getOpenLive(item);
+      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
+      if (status) {
+        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+          confirmButtonText: '去充值',
+          cancelButtonText: '知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+        }).then(() => {
+          this.$router.push({path:'/finance/info'});
+        }).catch(() => {});
       } else {
-        this.goIsLive(item)
+        if (item.webinar_state == 1) {
+          this.getOpenLive(item);
+        } else {
+          this.goIsLive(item)
+        }
       }
     },
     goPlayback(item) {

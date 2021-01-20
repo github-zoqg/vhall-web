@@ -156,6 +156,7 @@
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
     </template>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -164,11 +165,13 @@ import VideoPreview from './components/previewVideo';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import beginPlay from '@/components/beginBtn';
 export default {
   data(){
     return {
       // 预览
       showDialog: false,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       videoParamId: '',
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
@@ -584,7 +587,8 @@ export default {
   components: {
     PageTitle,
     VideoPreview,
-    NullPage
+    NullPage,
+    beginPlay
   }
 };
 </script>

@@ -84,11 +84,13 @@
         </el-dialog>
       </div>
     </template>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
+import beginPlay from '@/components/beginBtn';
 import Env from "@/api/env";
 import selectMedias from './selecteMedia';
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
@@ -97,7 +99,8 @@ export default {
     PageTitle,
     Upload,
     selectMedias,
-    VideoPreview
+    VideoPreview,
+    beginPlay
   },
   data() {
     return {
