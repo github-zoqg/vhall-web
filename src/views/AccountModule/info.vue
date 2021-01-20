@@ -184,8 +184,8 @@ export default {
   img {
     display: block;
     margin: 0 auto;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border: 1px solid #E2E2E2;
     border-radius: 100%;
   }
