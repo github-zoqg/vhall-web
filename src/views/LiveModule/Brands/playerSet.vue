@@ -34,12 +34,8 @@
                     show-word-limit
                   ></VhallInput>
                 </el-form-item>
-                <el-form-item label="文字颜色" prop="color">
-                  <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
-                </el-form-item>
-                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="字体大小">
-                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open">
+                <el-form-item label="文字大小">
+                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open" style="margin-bottom:10px">
                     <el-option
                       v-for="item in fontList"
                       :key="item.value"
@@ -48,6 +44,10 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
+                <el-form-item label="文字颜色" prop="color">
+                  <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
+                </el-form-item>
+                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="移动速度">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
@@ -63,9 +63,9 @@
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
-                    maxlength="300"
+                    maxlength="3"
                     oninput="this.value=this.value.replace(/[^\d]/g, '')"
-                    placeholder="默认10s，输入范围1-300s">
+                    placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
                     </el-input>
                 </el-form-item>
@@ -185,8 +185,8 @@
           <div id="videoDom" v-show="showVideo"></div>
           <p class="show-purple-info">
             <span>提示</span>
-            <span>1、移动端全屏播放时，跑马灯会失效</span>
-            <span>2、安卓手机浏览器劫持可能导致跑马灯失效</span>
+            <span>1. 移动端全屏播放时，跑马灯会失效</span>
+            <span>2. 安卓手机浏览器劫持可能导致跑马灯失效</span>
           </p>
         </div>
     </div>
@@ -218,15 +218,15 @@ export default {
         speed: 6000,
         text: '版权所有，盗版必究',
         position: 1,
-        alpha: 50,
-        interval: 10
+        alpha: 0,
+        interval: 20
       },
       accountIds:10000127,
       fontList: [],
       formWatermark: {
-        img_position: 1,
+        img_position: 2,
         img_url: '',
-        img_alpha: 80
+        img_alpha: 0
       },
       domain_url: '',
       formOther: {

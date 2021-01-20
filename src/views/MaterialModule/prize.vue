@@ -79,10 +79,10 @@ export default {
         }
       ],
       tabelColumn: [
-        {
-          label: '奖品id',
-          key: 'prize_id',
-        },
+        // {
+        //   label: '奖品id',
+        //   key: 'prize_id',
+        // },
         {
           label: '奖品图片',
           key: 'img',

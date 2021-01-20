@@ -1,6 +1,6 @@
 <template>
   <VhallDialog
-    title="添加封面背景"
+    title="选择封面背景"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="700px"

@@ -315,12 +315,25 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
-      if (this.liveDetailInfo.webinar_type == 1) {
-        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
-        window.open(href, '_blank');
+      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
+      if (status) {
+        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+          confirmButtonText: '去充值',
+          cancelButtonText: '知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+        }).then(() => {
+          this.$router.push({path:'/finance/info'});
+        }).catch(() => {});
       } else {
-         const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
-        window.open(href, '_blank');
+        if (this.liveDetailInfo.webinar_type == 1) {
+          let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
+          window.open(href, '_blank');
+        } else {
+          const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
+          window.open(href, '_blank');
+        }
       }
       // const { href } = this.$router.resolve({path: `/lives/room/${this.$route.params.str}`});
 

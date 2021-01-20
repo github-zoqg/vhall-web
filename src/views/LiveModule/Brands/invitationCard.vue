@@ -27,10 +27,10 @@
     <div class="invitation-from">
       <div class="form-data">
         <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation" :rules="rules">
-          <el-form-item label="背景">
+          <el-form-item label="封面背景">
             <div class="data-img">
               <div class="advor_img"><img :src="img" alt=""/></div>
-              <span class="choseImg" @click="invitation && changeImg()">重新选择</span>
+              <span class="choseImg" @click="invitation && changeImg()">选择封面</span>
             </div>
           </el-form-item>
           <el-form-item label="展示方式">
@@ -72,6 +72,7 @@
               v-model.trim="formInvitation.webinar_date"
               :maxlength="20"
               autocomplete="off"
+              show-word-limit
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
@@ -913,6 +914,9 @@ export default {
         padding: 4px 23px;
         &:hover{
           background-color: #FB3A32;
+        }
+        &.is-disabled:hover{
+          background-color: transparent;
         }
       }
       /deep/.el-button:last-child{

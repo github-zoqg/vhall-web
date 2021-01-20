@@ -280,7 +280,18 @@ export default {
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind`;
+      //获取key值
+      let key = 'sdfjdsfiweirertt';
+      // this.$fetch('getBindKey').then(res => {
+      //   if (res.code == 200) {
+      //     this.$message.success('提现成功');
+      //     this.dialogCashVisible = false;
+      //     this.$emit('onreload');
+      //   }
+      // }).catch(res => {
+      //   this.$message.error(res.msg);
+      // });
+      this.qrcode = `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind/${key}`;
       console.log(this.qrcode)
     },
     sureBangWeixin() {
