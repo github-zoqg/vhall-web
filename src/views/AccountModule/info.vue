@@ -196,7 +196,7 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
-     overflow: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 1;

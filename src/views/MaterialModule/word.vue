@@ -530,7 +530,7 @@ export default {
               item.showEventType = 0;
               item.fileStatusCss = 'wating';
               item.fileStatusStr = '等待转码';
-              item.transform_schedule_str = `等待转码中...`;
+              item.transform_schedule_str = `等待转码`;
             } else if (statusJpeg === 100) {
               item.showEventType = 1;
               item.transform_schedule_str = ``; // 静态转码中
@@ -543,35 +543,35 @@ export default {
                   item.showEventType = 2;
                   item.fileStatusCss = 'wating';
                   item.fileStatusStr = '等待转码';
-                  item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                  item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
                 } else if (status === 100) {
                   item.showEventType = 3;
                   item.fileStatusCss = 'success';
                   item.fileStatusStr = '动态转码中';
-                  item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                  item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码中
                 } else if (status === 200) {
                   item.showEventType = 4;
                   item.fileStatusCss = 'success';
                   item.fileStatusStr = '转码成功';
-                  item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                  item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
                 } else {
                   item.showEventType = 5;
                   item.fileStatusCss = 'failer';
                   item.fileStatusStr = '转码失败';
-                  item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                  item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
                 }
               } else {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+                item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
               item.fileStatusCss = 'failer';
               item.fileStatusStr = '转码失败';
-              item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+              item.transform_schedule_str = `转码失败`; // 静态转码失败
             }
           })
           this.tableList = list;
@@ -908,7 +908,7 @@ export default {
             } else {
               let _percent = CalculatePercent(res.converted_page, res.page, 0);
               if (_percent == "100%") {
-                item.transform_schedule_str = '转码完成';
+                item.transform_schedule_str = '转码成功';
                 item.transcoded = true;
                 item.codeProcess = 100;
                 item.isError = false;
@@ -951,7 +951,7 @@ export default {
             item.showEventType = 0;
             item.fileStatusCss = 'wating';
             item.fileStatusStr = '等待转码';
-            item.transform_schedule_str = `等待转码中...`;
+            item.transform_schedule_str = `等待转码`;
           } else if (statusJpeg === 100) {
             item.showEventType = 1;
             item.transform_schedule_str = ``; // 静态转码中
@@ -964,35 +964,35 @@ export default {
                 item.showEventType = 2;
                 item.fileStatusCss = 'wating';
                 item.fileStatusStr = '等待转码';
-                item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
               } else if (status === 100) {
                 item.showEventType = 3;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '动态转码中';
-                item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                item.transform_schedule_str = `静态转码成功<br/>动态转码中...`; // 静态转码完成，动态转码中
               } else if (status === 200) {
                 item.showEventType = 4;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
               } else {
                 item.showEventType = 5;
                 item.fileStatusCss = 'failer';
                 item.fileStatusStr = '转码失败';
-                item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
               }
             } else {
               // 非PPT静态转码完成
               item.showEventType = 6;
               item.fileStatusCss = 'success';
               item.fileStatusStr = '转码成功';
-              item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+              item.transform_schedule_str = `静态转码成功`; // 静态转码完成，动态转码失败
             }
           } else if (statusJpeg >= 500) {
             item.showEventType = 7;
             item.fileStatusCss = 'failer';
             item.fileStatusStr = '转码失败';
-            item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+            item.transform_schedule_str = `转码失败`; // 静态转码失败
           }
           item.page = res.page || '';
         }

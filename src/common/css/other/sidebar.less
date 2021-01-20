@@ -214,7 +214,7 @@
       .el-submenu {
         &>.el-submenu__title {
           &>span[slot="title"] {
-            height: 56px;
+            height: 48px;
             width: 0;
             overflow: hidden;
             visibility: hidden;
@@ -314,6 +314,9 @@
 
 // when menu collapsed
 .el-menu--vertical {
+  .el-menu--popup {
+    padding: 0 0;
+  }
   &>.el-menu {
     .svg-icon {
       margin-right: 16px;
@@ -322,6 +325,11 @@
       margin-right: 12px;
       margin-left: -2px;
     }
+  }
+
+  .el-menu-item, .el-submenu__title {
+    height: 48px;
+    line-height: 48px;
   }
 
   .nest-menu .el-submenu>.el-submenu__title,

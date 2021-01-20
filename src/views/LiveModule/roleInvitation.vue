@@ -564,7 +564,7 @@ export default {
     font-size: 14px;
     font-family: @fontRegular;
     font-weight: 400;
-    color: #666666;
+    color: #1A1A1A;
     padding: 0 10px 0 0;
   }
   /deep/.el-input__inner {
@@ -636,7 +636,7 @@ export default {
   font-size: 14px;
   font-family: @fontRegular;
   font-weight: 400;
-  color: #666666;
+  color: #1A1A1A;
   line-height: 20px;
   height: 26px;
   margin-top: 24px;

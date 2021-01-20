@@ -222,7 +222,7 @@ export default {
 };
 </script>
 <style lang="less">
-.el-select-dropdown__list{
+/deep/.el-select-dropdown__list{
   .el-select-dropdown__item.selected{
     color: #606266;
   }
@@ -237,7 +237,7 @@ export default {
     }
   }
 }
-.vhall-watch-setting {
+/deep/.vhall-watch-setting {
   padding: 20px 40px;
   width: 100%;
   background-color: white;

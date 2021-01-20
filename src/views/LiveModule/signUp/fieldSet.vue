@@ -59,7 +59,7 @@
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
         <li
           :ref="item.question_id"
-          :class="['viewItem', item.privacy ? 'privacyItem' : '']"
+          :class="['viewItem', 'viewItemHover', item.privacy ? 'privacyItem' : '']"
           v-for="(item, index) in renderQuestion"
           :key="item.question_id"
         >
@@ -104,6 +104,7 @@
                   slot="suffix"
                   v-if="!!node.canRemove"
                   @click="deleteOptions(item, nodeIndex, item.privacy ? 'privacy' : 'select')"
+                  v-show="item.privacy || item.nodes.length != 2"
                 ></i>
                 <i
                   class="el-icon-circle-plus-outline removeIcon"
@@ -147,6 +148,7 @@
                   :class="{'radioGender': item.reqType == 0 && item.default_type == 4}"
                 >
                   <i
+                    v-show="item.nodes[0].children.length != 2"
                     class="el-icon-remove-outline removeIcon"
                     slot="suffix"
                     @click="deleteOptions(item, raionIndex, 'option')"
@@ -190,6 +192,7 @@
                   @change="chooseOptChange(item, radioItem)"
                 >
                   <i
+                    v-show="item.nodes[0].children.length != 2"
                     class="el-icon-remove-outline removeIcon"
                     slot="suffix"
                     @click="deleteOptions(item, raionIndex, 'option')"
@@ -235,30 +238,6 @@
                 ><i class="el-icon-plus"></i>添加其他</el-button>
               </template>
             </div>
-            <el-tooltip class="item" effect="dark" content="删除" placement="top">
-              <i
-                class="el-icon-delete"
-                v-if="item.bottomBtn.includes('delete')"
-                @click="deleteQuestion(questionArr, index)"
-              ></i>
-            </el-tooltip>
-            <el-tooltip class="item" effect="dark" content="移动" placement="top">
-              <i
-                class="el-icon-rank moveBtn"
-                v-if="item.bottomBtn.includes('move')"
-              ></i>
-            </el-tooltip>
-            <el-switch
-              @change="requiredSwitchChange(item)"
-              v-if="item.bottomBtn.includes('requireSwtich')"
-              class="swtich"
-              :width='30'
-              :height="16"
-              v-model="item.required"
-              active-color="#FB3A32"
-              inactive-color="#CECECE"
-              inactive-text="必填项">
-            </el-switch>
             <el-switch
               @change="phoneSwitchChange(item)"
               v-if="item.bottomBtn.includes('phoneValid')"
@@ -270,6 +249,32 @@
               inactive-color="#CECECE"
               inactive-text="短信验证">
             </el-switch>
+            <el-switch
+              @change="requiredSwitchChange(item)"
+              v-if="item.bottomBtn.includes('requireSwtich')"
+              class="swtich"
+              :width='30'
+              :height="16"
+              v-model="item.required"
+              active-color="#FB3A32"
+              inactive-color="#CECECE"
+              inactive-text="必填项">
+            </el-switch>
+            <div class="controlBtnBox">
+              <el-tooltip class="item" effect="dark" content="删除" placement="top">
+                <i
+                  class="iconfont-v3 saasicon-trash"
+                  v-if="item.bottomBtn.includes('delete')"
+                  @click="deleteQuestion(questionArr, index)"
+                ></i>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="移动" placement="top">
+                <i
+                  class="iconfont-v3 saasicon_move moveBtn"
+                  v-if="item.bottomBtn.includes('move')"
+                ></i>
+              </el-tooltip>
+            </div>
           </div>
           <!-- 底部按钮 -->
         </li>
@@ -731,6 +736,10 @@ export default {
 .viewItem{
   border-radius: 4px;
   margin-bottom: 16px;
+  border: 1px solid #FFFFFF;
+  &.viewItemHover:hover{
+    border-color: #FB3A32;
+  }
   /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
     background-color: #F7F7F7;
     border-color: #E6E6E6;
@@ -874,9 +883,16 @@ export default {
       margin-left: 16px;
       cursor: pointer;
     }
+    .controlBtnBox{
+      display: inline-flex;
+      height: 20px;
+      line-height: 20px;
+      float: right;
+    }
     .swtich{
       vertical-align: text-top;
       margin-left: 16px;
+      float: right;
     }
     /deep/ .el-switch__label{
       font-size: 14px;

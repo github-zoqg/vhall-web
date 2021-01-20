@@ -461,6 +461,13 @@
   line-height: 20px;
 }
 
+
+/*下拉框箭头颜色重置*/
+.el-select .el-input .el-select__caret {
+  color: #666666;
+}
+
+
 /*dialog开启会给body添加padding-right:10px;导致画面抖动，故去掉*/
 body {
   padding-right: 0!important;
@@ -657,6 +664,7 @@ button.el-button.el-button--white-primary {
   &.is-disabled {
     background: #F09D99;
     border: 1px solid #F09D99;
+    color: #ffffff;
     cursor: not-allowed;
 
     &:hover, &:active {
@@ -1004,14 +1012,12 @@ button.el-button.el-button--white-primary {
 }
 
 .zdy-info-box {
-  /*&.top-81 {
-    top: 81px!important;
-  }*/
+  z-index:3000 !important;
   /deep/.el-message__content {
     font-size: 14px;
     font-weight: 400;
-    color: #1A1A1A;
     line-height: 20px;
+    padding-right: 26px!important;
   }
   /deep/.el-icon-error {
     color: #FB3A32;
@@ -1029,6 +1035,9 @@ button.el-button.el-button--white-primary {
     background-color: #FFEBEB;
     border: 0;
     border-radius: 4px;
+    /deep/.el-message__content {
+      color: #FB3A32;
+    }
     /deep/.el-message__closeBtn {
       color: #FB3A32;
       right: 19px;
@@ -1039,6 +1048,9 @@ button.el-button.el-button--white-primary {
     background-color: #E8F8F0;
     border: 0;
     border-radius: 4px;
+    /deep/.el-message__content {
+      color: #14BA6A;
+    }
     /deep/.el-message__closeBtn {
       color: #14BA6A;
       right: 19px;
@@ -1049,6 +1061,9 @@ button.el-button.el-button--white-primary {
     background-color: #EBEFFF;
     border: 0;
     border-radius: 4px;
+    /deep/.el-message__content {
+      color: #3562FA;
+    }
     /deep/.el-message__closeBtn {
       color: #3562FA;
       right: 19px;
@@ -1059,6 +1074,9 @@ button.el-button.el-button--white-primary {
     background-color: #FFF5EB;
     border: 0;
     border-radius: 4px;
+    /deep/.el-message__content {
+      color: #FA9A32;
+    }
     /deep/.el-message__closeBtn {
       color: #FA9A32;
       right: 19px;

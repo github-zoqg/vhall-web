@@ -163,17 +163,26 @@ export default {
           this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
             this.getTableList('search');
             this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
               type: 'success',
-              message: '删除成功!'
+              customClass: 'zdy-info-box'
             });
           }).catch(res => {
-            this.$message.error(res.msg || '删除失败')
+            this.$message({
+              message: res.msg || '删除失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }).catch(() => {
-          this.$message({
+          /* this.$message({
             type: 'info',
             message: '已取消删除'
-          });
+          }); */
         });
     },
     deleteAll(id) {

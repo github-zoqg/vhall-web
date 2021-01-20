@@ -7,10 +7,10 @@
     <div class="layout-callback">
       <el-form :model="form" ref="form" :rules="formRules" label-width="91px">
         <el-form-item label="签名Key" prop="secret_key">
-          <el-input v-model.trim="form.secret_key" auto-complete="off" placeholder="请输入签名规则"/>
+          <VhallInput v-model.trim="form.secret_key" auto-complete="off" placeholder="请输入签名规则" :maxlength="32" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="回调地址" prop="callback_url">
-          <el-input v-model.trim="form.callback_url" auto-complete="off" placeholder="请输入Https或http开头的完整url"/>
+          <VhallInput v-model.trim="form.callback_url" auto-complete="off" placeholder="请输入Https或http开头的完整url" :maxlength="255" show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <div class="div__func div__view" v-if="keyList.length > 0">
@@ -153,15 +153,23 @@ export default {
             callback_event: numKeys.join(',')
           }
           this.$fetch(this.isAdd ? 'addCallbackInfo' : 'editCallbackInfo', params).then(res => {
-            if (res && res.code === 200) {
-              this.$message.success(res.msg || '设置成功');
-              // 数据刷新
-              this.getCallbackInfo();
-            } else {
-              this.$message.error(res.msg || '设置失败');
-            }
-          }).catch( e=> {
-            console.log(e);
+            this.$message({
+              message:  `设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            // 数据刷新
+            this.getCallbackInfo();
+          }).catch( res => {
+            this.$message({
+              message:  res.msg || `设置失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }
       })

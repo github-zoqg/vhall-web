@@ -200,7 +200,13 @@ export default {
         if (value.indexOf('.') > -1) {
           console.log(value.length, value.indexOf('.'))
           if (value.length - value.indexOf('.') > 3) {
-            this.$message.warning('价格最多支持两位小数')
+            this.$message({
+              message: `价格最多支持两位小数`,
+              showClose: true,
+              // duration: 0,
+              type: 'warning',
+              customClass: 'zdy-info-box'
+            });
           }
           this.editParams.price = value.slice(0, value.indexOf('.') + 3)
         } else {
@@ -281,7 +287,13 @@ export default {
     // 上传失败处理
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message({
+        message: `封面上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     // 上传预览
     uploadPreview(file){
@@ -296,11 +308,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`文件格式不支持，请检查图片`);
+        this.$message({
+          message: `文件格式不支持，请检查图片`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message({
+          message: `上传封面图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -333,13 +357,25 @@ export default {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
             if (price < 0 || price > 9999.99) {
-              this.$message.error('价格必须介于0-9999.99之间')
+              this.$message({
+                message: `价格必须介于0-9999.99之间`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
               return
             }
             price=Math.floor(price*100)/100;
             this.editParams.price = price.toFixed(2)
           } else {
-            this.$message.error('请输入正确礼物价格')
+            this.$message({
+              message: `请输入正确礼物价格`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             return
           }
           if(this.editParams.gift_id) {
@@ -356,12 +392,24 @@ export default {
         ...this.editParams
       }).then((res) => {
         if (res.code == 200) {
-          this.$message.success('编辑成功')
+          this.$message({
+            message: `编辑成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.getTableList()
           this.handleCancelEdit()
         }
       }).catch((e) => {
-          this.$message.error('编辑失败')
+        this.$message({
+          message: `编辑失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 创建
@@ -370,12 +418,24 @@ export default {
         ...this.editParams
       })).then((res) => {
         if (res.code == 200) {
-          this.$message.success('创建成功')
+          this.$message({
+            message: `创建成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.getTableList()
           this.handleCancelEdit()
         }
-      }).catch((e) => {
-          this.$message.error('创建失败')
+      }).catch((res) => {
+        this.$message({
+          message: res.msg || `创建失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 取消礼品编辑
@@ -409,12 +469,24 @@ export default {
         gift_ids: this.selectIds.join(',')
       }).then((res) => {
         if (res.code == 200) {
-          this.$message.success('删除成功')
+          this.$message({
+            message: `删除成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.getTableList()
           this.selectIds = []
         }
-      }).catch((e) => {
-          this.$message.error('删除失败')
+      }).catch((res) => {
+        this.$message({
+          message: res.msg || `删除失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 翻页

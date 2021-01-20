@@ -516,7 +516,7 @@ export default {
 };
 </script>
 <style lang="less">
-.el-select-dropdown__list{
+/deep/.el-select-dropdown__list{
   .el-select-dropdown__item.selected{
     color: #606266;
   }

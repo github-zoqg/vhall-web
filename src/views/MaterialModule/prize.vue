@@ -185,10 +185,22 @@ export default {
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
             this.getTableList('search');
-            this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
           }
         }).catch(res => {
-          this.$message.success(res.msg || '删除失败');
+          this.$message({
+            message: res.msg || `删除失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }).catch(() => {
       });
@@ -204,7 +216,13 @@ export default {
     // 创建奖品
     createPrize() {
       if (this.source == 0 && Number(this.total) >= 20) {
-        this.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        this.$message({
+          message: `每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (this.tableData.length) {

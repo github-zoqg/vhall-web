@@ -947,4 +947,8 @@ export default {
 /deep/.saasicon_help_m {
   color: #999999;
 }
+
+/deep/.el-select-dropdown__list .el-select-dropdown__item {
+  max-width: 100%;
+}
 </style>

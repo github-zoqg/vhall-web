@@ -158,16 +158,34 @@ export default {
           webinar_id: this.$route.params.str
         })).then(res => {
           if (res && res.code === 200) {
-              this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
               // 刷新页面
             this.$refs.tableList.clearSelect();
             this.getAdvTableList('search');
             this.adv_ids = [];
           } else {
-            this.$message.error(res.msg || '删除失败');
+            this.$message({
+              message: res.msg || `删除失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           }
         }).catch((res) => {
-          this.$message.error(res.msg || '删除失败');
+          this.$message({
+            message: res.msg || `删除失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       })
     },
@@ -181,7 +199,13 @@ export default {
     },
     createAdvise(title) {
       if (this.$route.path !='/material/advertCard' && this.total >= 50) {
-        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        this.$message({
+          message: `广告推荐个数已达到最大个数限制，请删除后再进行添加`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.advInfo = {};

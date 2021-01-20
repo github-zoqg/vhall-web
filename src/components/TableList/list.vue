@@ -87,9 +87,8 @@
             <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
               <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
               <p class="text">
-                <icon icon-class="saasexcelwendang" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
-                <!--  <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon> -->
-                {{ scope.row.file_name }}
+                <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss" v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
+                {{scope.row.ext}} {{scope.row.ext | wordStatusCss}} {{ scope.row.file_name }}
               </p>
             </div>
             <!-- 下载中心，生成状态 -->
@@ -110,10 +109,13 @@
                 <el-progress :percentage="scope.row.codeProcess" ></el-progress>
               </div>
               <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
-              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress> -->
+              <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress>
+              <span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span>-->
               <div v-else class="progressBox">
                 <!-- 样式变化 -->
-                <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}<span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span></span>
+                <template v-for="(item, ins) of scope.row.transform_schedule_str.split('<br/>')" >
+                  <span :class="[scope.row.fileStatusCss, 'statusTag']" :key="ins">{{item}}</span><br/>
+                </template>
               </div>
             </div>
             <div v-else-if="item.key === 'video_name'" class="videoName">
