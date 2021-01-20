@@ -255,8 +255,8 @@ export default {
       delete param.APPKey;
       delete param.SecretKey;
       delete param.APP_SecretKey;
-      delete params.rsa_private_key;
-      delete params.rsa_public_key;
+      delete param.rsa_private_key;
+      delete param.rsa_public_key;
       this.fetching = true;
       let api = 'createApp';
       let msgText = '创建';
