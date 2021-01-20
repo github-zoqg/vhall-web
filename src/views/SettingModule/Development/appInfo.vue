@@ -9,7 +9,7 @@
     <div class="app-layout">
       <div :class="`app--info-ctx ${action=='detail' ? 'detail-show' : 'edit-show'}`">
         <el-form :model="appForm" ref="appForm" label-width="220px">
-          <template v-for="(node, index) in nodesData">
+          <template v-for="(node, index) in nodesShowData">
             <div :class="node.subject ? 'app-node-item padding' : 'app-node-item'">
               <p class="subject" v-if="node.subject" :key="index" v-html="node.label"></p>
               <el-form-item
@@ -210,6 +210,11 @@ export default {
       }else{
         return '应用详情';
       }
+    },
+    nodesShowData() {
+      return this.appForm['sign_type'] > 0 ? this.nodesData : this.nodesData.filter(item => {
+        return item.modelKey!== 'rsa_private_key' && item.modelKey !== 'rsa_public_key';
+      })
     }
   },
   methods: {
