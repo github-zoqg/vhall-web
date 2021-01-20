@@ -117,9 +117,9 @@
     </div>
     <div class="cont">
       <div class="btnGroup">
-        <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
+        <el-button v-if="isDemand" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
         <!-- <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button> -->
-        <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand == 'true'" @command="addChapter">
+        <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand" @command="addChapter">
           <el-button :disabled="tableData.length == 0" size="medium" round>
             新增章节<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
@@ -166,7 +166,7 @@
           label="页码/步数"
           width="110">
            <template slot-scope="scope">
-             <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+             <el-input :disabled="isDemand" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
@@ -175,12 +175,12 @@
           width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
+            <el-input :disabled="isDemand" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
         <el-table-column
-          v-if="isDemand == 'true'"
+          v-if="isDemand"
           label="操作"
           width="190"
           show-overflow-tooltip>
@@ -616,7 +616,7 @@ export default {
         }
         this.$fetch('saveChapters', {
           record_id: this.recordId,
-          type: this.isDemand == 'true' ? 2 : 1,
+          type: this.isDemand ? 2 : 1,
           doc_titles: JSON.stringify(doc_titles)
         }).then(res => {
           if (res.code == 200) {
