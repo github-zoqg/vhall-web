@@ -199,11 +199,11 @@ export default {
 /*收缩按钮部分*/
 .hamburger-container {
   position: absolute;
-  top: calc(50% - 16px);
-  line-height: 32px;
-  height: 32px;
+  top: calc(50% - 26px);
+  line-height: 44px;
+  height: 44px;
   cursor: pointer;
-  transition: background .3s;
+  transition: background 0.3s;
   -webkit-tap-highlight-color:transparent;
   &.right {
     right: 0;
