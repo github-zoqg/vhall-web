@@ -143,13 +143,15 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
-import prizeList from '../../MaterialModule/prize'
+import prizeList from '../../MaterialModule/prize';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'prizeSet',
   data() {
@@ -238,6 +240,7 @@ export default {
   components: {
     PageTitle,
     upload,
+    beginPlay,
     // createPrize,
     prizeList
   },

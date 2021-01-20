@@ -203,6 +203,7 @@
       <div class="white-show" v-show="!invitation"></div>
     </div>
     <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
@@ -210,6 +211,7 @@ import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import html2canvas from 'html2canvas';
+import beginPlay from '@/components/beginBtn';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
@@ -249,6 +251,7 @@ export default {
     };
     return {
       invitation: true,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       qrcode: '',
       showCode: '',
       showType: 1,
@@ -311,7 +314,8 @@ export default {
     this.getInviteCardInfo();
   },
   components: {
-    addBackground
+    addBackground,
+    beginPlay
   },
   methods: {
     changeType(index) {

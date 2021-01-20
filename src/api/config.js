@@ -389,6 +389,7 @@ const apis = {
   packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET'], // 红包收益
   accountList: ['/v3/fin/withdraw/list', 'GET'], // 提现明细
   weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定  微信授权
+  getBindKey: ['/v3/users/user/mark', 'POST'], //创建用户标识
   callbackUserInfo: ['/v3/users/oauth/callback', 'POST'], // 绑定之后获取用户信息
   withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
   withdrawal: ['/v3/fin/withdraw', 'POST'], // 提现

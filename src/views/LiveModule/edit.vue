@@ -250,7 +250,7 @@
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
-    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
+    <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
   </div>
 </template>
 

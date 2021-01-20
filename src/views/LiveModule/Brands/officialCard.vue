@@ -114,15 +114,19 @@
         </div>
       </div>
    </div>
+   <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import Env from '@/api/env.js';
+import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
       imgShowUrl: '',
       status: null,
@@ -169,7 +173,8 @@ export default {
   },
   components: {
     PageTitle,
-    upload
+    upload,
+    beginPlay
   },
   mounted() {
     this.getData();
