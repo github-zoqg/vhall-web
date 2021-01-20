@@ -84,11 +84,13 @@
       </el-col>
     </el-row>
     <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
+    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import beginPlay from '@/components/beginBtn';
 import ItemCard from '@/components/ItemCard/index.vue';
 import Env from "@/api/env";
 import { formateDates } from "@/utils/general.js"
@@ -96,7 +98,8 @@ import { sessionOrLocal } from '@/utils/utils';
 export default {
   components: {
     PageTitle,
-    ItemCard
+    ItemCard,
+    beginPlay
   },
   data(){
     return {

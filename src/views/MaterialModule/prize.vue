@@ -239,6 +239,9 @@ export default {
     .head-btn{
       display: inline-block;
     }
+    /deep/.el-button.is-disabled{
+      background: transparent;
+    }
     ::v-deep.set-upload{
       position: relative;
       span{

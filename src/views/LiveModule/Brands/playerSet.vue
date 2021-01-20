@@ -47,7 +47,7 @@
                 <el-form-item label="文字颜色" prop="color">
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
-                <el-form-item label="透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
+                <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="移动速度">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
@@ -111,7 +111,7 @@
                     @delete="deleteImg"
                   >
                     <div slot="tip">
-                      <p>建议尺寸：98*28px，小于2M</p>
+                      <p>建议尺寸：180*60px，小于2M</p>
                       <p>支持jpg、gif、png、bmp</p>
                     </div>
                   </upload>
@@ -122,8 +122,8 @@
                   <el-radio v-model="formWatermark.img_position" :label="4" :disabled="!watermark_open">左下角</el-radio>
                   <el-radio v-model="formWatermark.img_position" :label="3" :disabled="!watermark_open">右下角</el-radio>
                 </el-form-item>
-                <el-form-item label="透明度">
-                  <el-slider v-model="formWatermark.img_alpha" style="width: 320px" :disabled="!watermark_open"></el-slider>
+                <el-form-item label="不透明度">
+                  <el-slider v-model="formWatermark.img_alpha" style="width: 315px" :disabled="!watermark_open"></el-slider>
                   <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
@@ -210,7 +210,7 @@ export default {
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
-      pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA'],
+      pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       formHorse: {
         color: '#FFFFFF', // 六位
         text_type: 2,
@@ -218,7 +218,7 @@ export default {
         speed: 6000,
         text: '版权所有，盗版必究',
         position: 1,
-        alpha: 0,
+        alpha: 100,
         interval: 20
       },
       accountIds:10000127,
@@ -226,7 +226,7 @@ export default {
       formWatermark: {
         img_position: 2,
         img_url: '',
-        img_alpha: 0
+        img_alpha: 100
       },
       domain_url: '',
       formOther: {
@@ -420,7 +420,6 @@ export default {
           this.formOther.doubleSpeed = Boolean(res.data.speed);
           let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
           this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
-          this.otherOtherInfo(1)
           this.$nextTick(()=>{
             if (this.formOther.doubleSpeed) {
               // this.$Vhallplayer.setPlaySpeed(list[0])
@@ -673,6 +672,7 @@ export default {
       } else {
         this.checkEnter = true
         this.getBaseOtherList();
+        this.otherOtherInfo(1)
       }
     },
   },
