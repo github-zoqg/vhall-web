@@ -184,6 +184,8 @@ export default {
       this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
+        sessionOrLocal.set('webinarState', this.liveDetailInfo.webinar_state);
+        sessionOrLocal.set('webinarType', this.liveDetailInfo.webinar_type);
         if (res.data.webinar_state == 4) {
           this.$route.meta.title = '点播详情';
         } else {

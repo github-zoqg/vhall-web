@@ -190,6 +190,7 @@
           </p>
         </div>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -200,10 +201,12 @@ import ColorSet from '@/components/ColorSelect';
 import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'prizeSet',
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
       loading: true,
       showVideo: false,
@@ -252,6 +255,7 @@ export default {
     PageTitle,
     upload,
     ColorSet,
+    beginPlay
     // VideoPreview
   },
    computed: {

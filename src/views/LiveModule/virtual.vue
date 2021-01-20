@@ -31,15 +31,19 @@
         </el-form-item>
       </el-form>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import beginPlay from '@/components/beginBtn';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "virtual.vue",
   components: {
-    PageTitle
+    PageTitle,
+    beginPlay
   },
   data() {
     // 校验人数
@@ -77,6 +81,7 @@ export default {
       }
     };
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       virtualForm: {
         pv: null, // pv
         online: null // 在线人数
