@@ -91,7 +91,7 @@
       <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
-      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px">
+      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
         <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif" v-show="isLoading">
         <div  v-if="isDot" style="position: relative;height: 396px;">
           <!-- 动态文档区域 -->
@@ -114,7 +114,6 @@
     <VhallDialog
       title="提示"
       :visible.sync="asyncDialog.visible"
-      :close-on-click-modal="false"
       :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
@@ -197,11 +196,11 @@ export default {
       ],
       tableRowBtnFun: [
         {
-          name: '演示',
+          name: '预览',
           methodName: 'preShow'
         },
         {
-          name: '动画版演示',
+          name: '动画版预览',
           methodName: 'preDocShow'
         },
         {
@@ -241,7 +240,8 @@ export default {
         pageIndex: 0,
         total: 0
       },
-      isDotEnd: false
+      isDotEnd: false, // 是否播放完毕
+      isLoadingEnd: false // 是否初始化文档加载完毕
     };
   },
   computed: {
@@ -600,6 +600,7 @@ export default {
       that.isDot = true;
       that.dotPageInfo.pageIndex = 0;
       that.dotPageInfo.total = 0;
+      that.isLoadingEnd = false;
       await that.$nextTick(() => {})
       that.docEvents(rows);
     },
@@ -790,17 +791,17 @@ export default {
           console.log('播放完毕');
           this.isDotEnd = true;
         });
+        this.docSDK.on(VHDocSDK.Event.ALL_COMPLETE, event => {
+            // 数据格式同  翻页事件 VHDocSDK.Event.PAGE_CHANGE
+          console.log('ALL_COMPLETE所有文档加载完毕');
+          this.isLoadingEnd = true;
+        })
         console.log('docSDK_ready', docsdk, this.$refs.doc);
       });
       // 文档页码
       this.$EventBus.$on('documenet_load_complete', (data)=>{
         console.log('文档页码 documenet_load_complete', data)
         this.dotPageInfo = data;
-      });
-      // 监听文档加载完毕
-      this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
-        const ids = []
-        console.log("=============所有文档加载完毕==============", chapters)
       });
     },
     // 初始化

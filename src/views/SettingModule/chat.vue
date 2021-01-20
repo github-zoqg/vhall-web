@@ -612,7 +612,7 @@ export default {
           customClass: 'zdy-info-box'
         }); */
         // 重新刷新列表数据
-        this.getKeywordList();
+        this.searchKeyWord();
       }).catch(res => {
         console.log(res);
         this.$message({
