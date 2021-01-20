@@ -26,7 +26,7 @@
             :before-upload="beforeUploadHandler"
             @delete="homeSetInfoForm.homepage_avatar = ''">
             <div slot="tip">
-              <p>建议尺寸：100*100px，小于2M</p>
+              <p>建议尺寸：140*140px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -360,6 +360,10 @@ export default {
   }
   /deep/.el-form-item__content {
     width: 641px;
+  }
+  /deep/.el-input__inner {
+    height: 40px;
+    line-height: 40px;
   }
 }
 /deep/.el-form-item {

@@ -20,7 +20,7 @@
           :before-upload="beforeUploadHandler"
           @delete="baseSetForm.avatar = ''">
           <div slot="tip">
-            <p>建议尺寸：100*100px</p>
+            <p>建议尺寸：140*140px</p>
             <p>小于2M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
