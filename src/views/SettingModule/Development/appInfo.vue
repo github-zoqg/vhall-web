@@ -158,6 +158,16 @@ export default {
           ],
           modelKey: 'sign_type',
         },
+        {
+          nodeType: 'text',
+          modelKey: 'rsa_private_key',
+          label: '私钥',
+        },
+        {
+          nodeType: 'text',
+          modelKey: 'rsa_public_key',
+          label: '公钥',
+        },
         /*{
           subject: true,
           label: '回调设置'
@@ -245,6 +255,8 @@ export default {
       delete param.APPKey;
       delete param.SecretKey;
       delete param.APP_SecretKey;
+      delete params.rsa_private_key;
+      delete params.rsa_public_key;
       this.fetching = true;
       let api = 'createApp';
       let msgText = '创建';
@@ -326,6 +338,14 @@ export default {
 .app--info-ctx {
   .layout--right--main();
   background: #F7F7F7;
+  .show-span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
   &.edit-show {
     .el-form-item{
       width: 820px;
