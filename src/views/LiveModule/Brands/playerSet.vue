@@ -338,7 +338,7 @@ export default {
     },
     // 关闭或保存其他信息
     otherOtherInfo(value) {
-      // this.preOthersOptions();
+      this.preOthersOptions();
       // 1--弹幕  2--进度条  3--倍速
       switch (value) {
         case 1 :
@@ -412,7 +412,7 @@ export default {
       })
     },
     // 获取其他基本信息
-     getBaseOtherList() {
+    getBaseOtherList() {
        this.$fetch('getOtherOptions', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
@@ -692,6 +692,14 @@ export default {
   }
   /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
     display: none;
+  }
+  /deep/.vhallPlayer-speed-component span.vhallPlayer-speedBtn:hover{
+    background: #FB3A32 !important;
+  }
+  /deep/.vhallPlayer-speed-component .speed-popup {
+    ul.speed-list-box li:hover, ul.speed-list-box li.active{
+      color: #FB3A32 !important;
+    }
   }
 
 }

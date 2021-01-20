@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 
@@ -22,7 +21,6 @@ Vue.use(vuescroll, {
 import EventBus from './utils/Events';
 import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
-import ElementUI from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
@@ -53,7 +51,7 @@ Vue.prototype.$domainCovert = domainCovert;// 添加域名
 Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
 Vue.prototype.$img = require('./common/images/small.png');
 Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
-Vue.use(ElementUI);
+Vue.use(ELEMENT);
 Vue.use(vhallSaas, {
   config: {
     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报

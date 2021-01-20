@@ -137,7 +137,7 @@ export default {
         { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, path: `/live/playerSet/${this.$route.params.str}`,isShow: this.perssionInfo.player_config==1},
         { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, path: `/live/invCard/${this.$route.params.str}`,isShow: this.perssionInfo.btn_invite==1},
         { icon: 'icon_advertising@2x', id: 5, title: '广告', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`,isShow: this.perssionInfo.ad_recommend==1},
-        { icon: 'icon_public@2x', id: 6, title: '公众号', subText: '设置观看页展示公众号', path: `/live/officeSet/${this.$route.params.str}`,isShow: this.perssionInfo.live_broadcast_window==1},
+        { icon: 'icon_public@2x', id: 6, title: '公众号', subText: '设置观看页展示的公众号', path: `/live/officeSet/${this.$route.params.str}`,isShow: this.perssionInfo.live_broadcast_window==1},
         { icon: 'icon_posters@2x', id: 7, title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`,isShow: this.perssionInfo.market_open_posters==1},
       ],
       liveDataList: [

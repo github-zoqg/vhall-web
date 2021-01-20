@@ -8,6 +8,8 @@ let cdn = {
     "//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js",
     "//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202",
     "//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.5.js",
+    '//cnstatic01.e.vhall.com/3rdlibs/common-libs/vue/VhallLibs.js',
+    '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     // "//static01-open.e.vhall.com/jssdk/question-component/1.0.3/questionnaire_service.js",
   ]
 }
@@ -20,6 +22,9 @@ switch (process.env.VUE_APP_NODE_ENV)  {
     break;
   case 'test':
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
+    break;
+  case 'production':
+    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
     break;
   default :
     publicPath = './'
@@ -42,7 +47,7 @@ module.exports = {
         changeOrigin: true
       },
       '/account': {
-        target: 'http://t.e.vhall.com/account',
+        target: 'http://t-saas-dispatch.vhall.com',
         changeOrigin: true
       },
       '/api/upload':{
@@ -63,6 +68,38 @@ module.exports = {
       options[0].cdn = cdn
       return options
     })
+    // config.plugin('webpack-bundle-analyzer')
+    //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+  },
+  configureWebpack: (config) => {
+    if (process.env.NODE_ENV === 'production') {
+      // 为生产环境修改配置...
+      // const optimization = {
+      //   splitChunks: {
+      //     cacheGroups: {
+      //       common: {
+      //         name: 'chunk-common',
+      //         minChunks: 2,
+      //         priority: -20,
+      //         chunks: 'all',
+      //         reuseExistingChunk: true
+      //       }
+      //     }
+      //   }
+      // }
+      const externals = {
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+        vuex: 'Vuex',
+        'element-ui': 'ELEMENT'
+      }
+      return {
+        // optimization,
+        externals
+      }
+    } else {
+      // 为开发环境修改配置...
+    }
   },
 
   pluginOptions: {

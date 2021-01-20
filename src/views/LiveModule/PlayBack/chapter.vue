@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <pageTitle title="章节打点">
-      <div slot="content">
-        章节功能支持文档格式：PPT、PPTX，其他格式不支持
-      </div>
-    </pageTitle>
+  <div class="chapterManager">
+    <div class="titleContainer clearFix">
+      <pageTitle title="章节打点">
+        <div slot="content">
+          章节功能支持文档格式：PPT、PPTX，其他格式不支持
+        </div>
+      </pageTitle>
+      <p class="chapterTutorial">设置章节打点后，通过点击文档目录快速查看精彩看点，适用于培训场景。<span @click="startTutorial" class="startTutorial">了解一下</span></p>
+    </div>
     <div class="contentView" v-loading="loading">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
@@ -200,6 +203,17 @@
         <iframe width="100%" height="100%" :src="`${VUE_APP_WEB_URL}/previewChapter/${webinar_id}?recordId=${recordId}`" frameborder="0"></iframe>
       </div>
     </div>
+    <el-dialog
+      custom-class="dialog-tutorial-wrap"
+      class="vh-dialog"
+      :visible.sync="tutorialVisible"
+      width="740px"
+      center
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+    >
+      <moduleTutorial></moduleTutorial>
+    </el-dialog>
   </div>
 </template>
 
@@ -208,6 +222,7 @@ import PageTitle from '@/components/PageTitle';
 import player from '@/components/Player_1';
 import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
+import moduleTutorial from './components/moduleTutorial'
 import { debounce } from "@/utils/utils"
 export default {
   name: 'Chapters',
@@ -259,7 +274,8 @@ export default {
       voice: 60, // 音量
       catchVoice: 0,
       videoTime: 0, // 视频实际时长
-      chapterTotalInfo: {}
+      chapterTotalInfo: {},
+      tutorialVisible: false
     };
   },
   provide () {
@@ -403,6 +419,9 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    startTutorial() {
+      this.tutorialVisible = true
+    },
     handleInput(value) {
       if (value.slideIndex.length == 0) return;
       const pattern = /^[1-9][0-9]*$/ // 正整数的正则表达式
@@ -864,11 +883,50 @@ export default {
     player,
     doc,
     associateDoc,
+    moduleTutorial
   }
 };
 </script>
 
 <style lang="less" scoped>
+  .chapterManager {
+    .titleContainer {
+      /deep/ .titleBox {
+        float:left;
+      }
+      .chapterTutorial {
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        line-height: 30px;
+        float:left;
+        padding-left: 8px;
+        .startTutorial {
+          color: #3562FA;
+          cursor: pointer;
+        }
+      }
+    }
+    /deep/ .el-dialog__wrapper .dialog-tutorial-wrap {
+      padding: 0px 0px 30px;
+      background: transparent!important;
+      border: none;
+      box-shadow: none;
+      .el-dialog__headerbtn {
+        top: 24px;
+        right: 0;
+        margin-bottom: 8px;
+        .el-dialog__close {
+          color: #FFFFFF;
+        }
+      }
+      .el-dialog__body {
+        padding: 0;
+        border-radius: 8px;
+      }
+    }
+  }
   .wraper{
     position: fixed;
     width: 100%;

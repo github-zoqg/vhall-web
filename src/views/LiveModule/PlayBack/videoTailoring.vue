@@ -14,6 +14,7 @@
             value-format="yyyy-MM-dd HH:mm:ss"
             type="datetimerange"
             range-separator="至"
+            prefix-icon="iconfont-v3 saasicon_date"
             start-placeholder="开始时间"
             end-placeholder="结束时间">
           </el-date-picker>
@@ -319,7 +320,7 @@ export default {
       }
     },
     getPlayBackInfo(recordId, isCreate, paasRecordId) {
-      this.dataReady = false
+      !isCreate && (this.dataReady = false)
       const opts = {
         webinar_id: this.webinar_id,
         type: 0
@@ -518,12 +519,12 @@ export default {
         }
         .el-range__icon {
           font-size: 14px;
-          line-height: 26px;
+          line-height: 29px;
           color: #666666;
         }
         .el-range__close-icon {
           font-size: 14px;
-          line-height: 26px;
+          line-height: 28px;
           color: #666666;
         }
       }

@@ -46,7 +46,7 @@ export default {
       .vh-chose-active-item__cover{
         height: 136px;
       }
-      .vh-chose-active-item__title{
+      .vh-chose-active-item__title ellsips{
         font-size: 16px;
         font-family: @fontRegular;
         font-weight: 400;

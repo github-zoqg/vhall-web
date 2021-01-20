@@ -6,7 +6,13 @@
       <div class="input-card">
         <div class="input-item">
           <span>我的主页</span>
-          <el-input v-model="myMain" readonly style="max-width:640px"><i slot="suffix" class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(myMain)"></i></el-input>
+          <el-input v-model="myMain" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(myMain)"></i>
+              </el-tooltip>
+            </template>
+          </el-input>
         </div>
         <div class="input-item">
           <span>观看直播</span>
@@ -14,7 +20,11 @@
             <i class="el-input__icon el-icon-document-copy" @click="cope(liveContent)"></i>
           </el-tooltip> -->
           <el-input v-model="liveContent" readonly style="max-width:640px">
-            <i slot="suffix" class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent)"></i>
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent)"></i>
+              </el-tooltip>
+            </template>
           </el-input>
         </div>
         <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://www.vhall.com/saas/doc/1692.html')"> 微信嵌入</a></p>
@@ -25,11 +35,23 @@
       <div class="input-card">
         <div class="input-item">
           <span>完全嵌入</span>
-          <el-input v-model="completion" readonly style="max-width:640px"><i slot="suffix" class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(completion)"></i></el-input>
+          <el-input v-model="completion" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(completion)"></i>
+              </el-tooltip>
+            </template>
+          </el-input>
         </div>
         <div class="input-item" v-if="isInteract != 3">
           <span>视频嵌入</span>
-          <el-input v-model="video" readonly style="max-width:640px"><i slot="suffix" class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(video)"></i></el-input>
+          <el-input v-model="video" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(video)"></i>
+              </el-tooltip>
+            </template>
+          </el-input>
         </div>
         <p>提示：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://www.vhall.com/saas/doc/163.html')"> 网页嵌入指南</a></p>
       </div>

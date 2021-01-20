@@ -3,7 +3,7 @@
     <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
     <div class="word-count">
-      <span class="blue">{{ currentCount }}</span> / {{ maxWord || '1000' }}
+      <span :class="currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : currentCount == (maxWord || 1000)  ? 'red' : ''">{{ currentCount }}</span> / {{ maxWord || '1000' }}
     </div>
   </div>
 </template>
@@ -77,6 +77,7 @@ export default {
     return {
       // content: this.value || '',
       tinymceId: this.id,
+      vm: null,
       setting: {
         selector: `#${this.tinymceId}`,
         plugins: 'fullscreen image wordcount paste',
@@ -129,12 +130,15 @@ export default {
             'Content-Type': 'multipart/form-data'
           }).then(res => {
             if (res && res.code === 200) {
+              console.log('11111111111111');
               success(res.data.domain_url);
             } else {
               // debugger;
               failure(res.msg || '上传失败');
+              console.log('222222222222');
             }
           }).catch((res) => {
+            console.log('333333333333');
             failure(res.msg || '上传失败');
           })
         }
@@ -146,19 +150,34 @@ export default {
   methods: {
     // 内容修改后，将信息返回
     sendContent(text) {
+      console.log(text, '2222222222222')
       // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 
       if(this.currentCount > 1000) {
-
-        this.$message.warning('您输入的内容超出1000限制，已自动取消')
+        if (this.vm) {
+          this.vm.close();
+          this.messageInfo();
+        } else {
+          this.messageInfo();
+        }
+        // this.$message.warning('您输入的内容超出1000限制，已自动取消')
         this.$refs.editor.getInstance().setContent(this.value)
         this.$emit('input', this.value)
         return
       } else {
         this.$emit('input', text);
       }
-    }
+    },
+     //文案提示问题
+    messageInfo() {
+      this.vm = this.$message({
+        showClose: false,
+        duration: 2000,
+        message: '您输入的内容超出1000限制，已自动取消',
+        type: 'warning'
+      });
+    },
   },
 };
 </script>
@@ -167,6 +186,18 @@ export default {
   display: none !important;
   .blue{
   }
+}
+
+/deep/.tox .tox-tbtn svg {
+  display: block;
+  fill: #666!important;
+}
+/deep/.tox .tox-tbtn {
+  color: #666;
+}
+/deep/.tox .tox-tbtn:hover, /deep/.tox .tox-tbtn:active {
+  background: #e6e6e6;
+  color: #666!important;
 }
 
 .vh-editor-wrapbox{

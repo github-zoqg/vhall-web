@@ -2,7 +2,8 @@
   <div class="contain-data">
     <pageTitle title="数据报告">
       <div slot="content">
-        当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据
+        <p>1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据</p>
+        <p>2.控制台数据统计为真实数据，不统计虚拟数据</p>
       </div>
     </pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
@@ -26,6 +27,7 @@
         end-placeholder="结束日期"
         :picker-options="pickerOptions"
         v-if="type=='1'"
+        prefix-icon="iconfont-v3 saasicon_date"
         style="width: 240px;"
       />
       <el-select filterable clearable v-model="switchId" v-if="type=='2'" @change="getDataList"  style="width: 160px;vertical-align: top;">
@@ -350,7 +352,7 @@ export default {
       background: transparent;
     }
     /deep/.el-date-editor .el-range__icon{
-      line-height: 30px;
+      line-height: 29px;
     }
     /deep/.el-date-editor .el-range__close-icon {
       line-height: 28px;

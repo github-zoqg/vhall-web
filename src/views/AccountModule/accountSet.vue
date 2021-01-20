@@ -63,11 +63,11 @@ export default {
     },
     bindWx() {
       sessionOrLocal.set('tag', 'bindWx', 'localStorage');
-      window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
+      window.open(`${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
     },
     bindQQ() {
       sessionOrLocal.set('tag', 'bindQQ', 'localStorage');
-      window.open(`https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
+      window.open(`${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
     },
     unBindQQ() {
       this.$confirm('解绑 QQ 后你将无法使用 QQ 登录，你确定要解绑吗？', '提示', {

@@ -166,7 +166,7 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
-          width: 200,
+          width: 130,
         },
         {
           label: '标题',
@@ -197,6 +197,7 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
+          width: 130,
         },
         {
           label: '标题',
@@ -205,18 +206,22 @@ export default {
         {
           label: '发红包用户',
           key: 'red_packet_user',
+          width: 300,
         },
         {
           label: '红包类型',
           key: 'red_packet',
+          width: 135,
         },
         {
           label: '领取时间',
           key: 'created_at',
+          width: 150,
         },
         {
           label: '领取金额（元）',
           key: 'money',
+          width: 135,
         }
       ],
       tableRowBtnFun: [

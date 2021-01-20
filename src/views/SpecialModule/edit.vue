@@ -284,6 +284,7 @@ export default {
 
     sendData(content) {
       this.formData.content = content;
+      console.log(content, "1111111111111111");
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -324,8 +325,9 @@ export default {
     },
 
     submitForm(formName) {
+    window.cd = this.formData
       if (!this.formData.content) {
-        this.$message.error('请选择专题简介');
+        this.$message.error('请输入专题简介');
         return;
       }
       if (!this.formData.selectedActives.length) {
@@ -360,7 +362,7 @@ export default {
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
               this.subject_id = res.data.subject_id;
-              this.$message.success(`创建成功`);
+              this.$message.success(this.$route.query.id ? '编辑成功' : `创建成功`);
               // 保存或创建成功重置更改状态
               this.isChange = false
               console.log(res);
@@ -368,10 +370,10 @@ export default {
                 this.$router.push({path: '/special'});
               }, 500);
             } else {
-              this.$message.error(`创建失败，${res.msg}`);
+              this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${res.msg}`);
             }
           }).catch(error=>{
-            this.$message.error(`创建失败，${error.message}`);
+            this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`);
           }).finally(()=>{
             this.loading = false;
           });

@@ -53,15 +53,16 @@
           <p v-if="sendText1" class="no-use">{{sendText1}}</p>
         </el-form-item>
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
-          <el-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码" :maxlength="30"></el-input>
+          <pwd-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"
+           :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="新密码"  key="pasword"  prop="password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''" :maxlength="30">
+          <pwd-input type="password" v-model.trim="form.password" auto-complete="off" placeholder="输入新密码" :class="form.password && form.password.length >= 6 ? 'btn-relative no-border' : ''" :maxlength="30">
             <template slot="append" v-if="form.password && form.password.length >= 6">{{pwdLevel}}</template>
-          </el-input>
+          </pwd-input>
         </el-form-item>
         <el-form-item label="再输一次"  key="new_password"  prop="new_password" v-if="showVo.executeType === 'pwd' && showVo.step === 2">
-          <el-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></el-input>
+          <pwd-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
           <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
@@ -83,9 +84,12 @@
 
 <script>
 import env from "@/api/env";
-
+import PwdInput from './pwdInput.vue';
 export default {
   name: "validSetDialog.vue",
+  components: {
+    PwdInput
+  },
   data() {
     let verifyEnterPwd = (rule, value, callback) => {
       let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;

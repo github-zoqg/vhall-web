@@ -113,22 +113,22 @@
         <div class="step-3" v-if="findStep===3">
           <el-form ref="resetPassword" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="password">
-              <el-input
+              <pwd-input
                 placeholder="请输入新密码"
                 :maxlength="30"
                 type="password"
                 auto-complete="off"
                 v-model.trim="dynamicForm.password">
-              </el-input>
+              </pwd-input>
             </el-form-item>
             <el-form-item prop="checkPassword">
-              <el-input
+              <pwd-input
                 placeholder="请再次输入密码"
                 type="password"
                 :maxlength="30"
                 auto-complete="off"
                 v-model.trim="dynamicForm.checkPassword">
-              </el-input>
+              </pwd-input>
             </el-form-item>
             <div class="login-btn">
               <el-button type="primary" class="length152" @click="resetPassword()" round>提&nbsp;&nbsp;&nbsp;交</el-button>
@@ -150,11 +150,13 @@
 import OldHeader from '@/components/OldHeader';
 import PageTitle from '@/components/PageTitle';
 import footerSection from '../../components/Footer/index';
+import PwdInput from '../AccountModule/components/pwdInput.vue';
 export default {
   components: {
     OldHeader,
     PageTitle,
-    footerSection
+    footerSection,
+    PwdInput
   },
   data() {
     let validatePhone = (rule, value, callback) => {
