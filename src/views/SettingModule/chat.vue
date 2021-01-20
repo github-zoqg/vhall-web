@@ -2,9 +2,9 @@
   <div>
     <pageTitle title="聊天严禁词" iconCssType="gary">
       <!-- <div slot="content">
-        1.聊天、评论，包含关键词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
+        1.聊天、评论，包含严禁词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
         <br/>
-        2.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃
+        2.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃
       </div> -->
     </pageTitle>
     <div>
@@ -25,7 +25,7 @@
             <p>提示：</p>
             <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
             <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
-            <p>3.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃</p>
+            <p>3.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃</p>
           </div>
         </el-form-item>
       </el-form>
@@ -107,7 +107,7 @@
         </div>
       </div>
     </VhallDialog>
-    <!-- 添加关键词 -->
+    <!-- 添加严禁词 -->
     <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
       <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
@@ -115,7 +115,7 @@
            <!--  <el-input
               v-if="addForm.executeType === 'add'"
               type="textarea"
-              placeholder="可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃"
+              placeholder="可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃"
               v-model.trim="addForm.name"
               :maxlength="1000"
               autocomplete="off"
@@ -123,7 +123,7 @@
             ></el-input> -->
              <VhallInput
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
-              :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
+              :placeholder="addForm.executeType === 'add' ? '可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃' : '每个严禁词的长度为1~20个字符'"
               v-model.trim="addForm.name"
               :maxlength="addForm.executeType === 'add' ? 1000 : 20"
               autocomplete="off"
@@ -240,7 +240,7 @@ export default {
         }
       ],
       ids: [],
-      // 添加关键词
+      // 添加严禁词
       addShow: false,
       addForm: {
         id: null,
@@ -249,17 +249,17 @@ export default {
       },
       addFormRules: {
         name: [
-          { required: true, message: '请输入关键词', trigger: 'blur' },
+          { required: true, message: '请输入严禁词', trigger: 'blur' },
           { maxlength: 1000, message: '最多可输入1000个字符', trigger: 'blur' }
         ]
       },
       editFormRules: {
         name: [
-          { required: true, message: '请输入关键词', trigger: 'blur' },
+          { required: true, message: '请输入严禁词', trigger: 'blur' },
           { maxlength: 20, message: '单个严禁词可输入1~20个字符', trigger: 'blur' }
         ]
       },
-      // 批量添加关键词
+      // 批量添加严禁词
       multiUploadShow: false,
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
@@ -385,7 +385,7 @@ export default {
         }
       });
     },
-    // 关键词新增 or 关键词修改
+    // 严禁词新增 or 严禁词修改
     keywordSend() {
       // addForm.executeType
       this.$refs.addForm.validate((valid) => {
@@ -398,7 +398,7 @@ export default {
           }).then(res =>{
             if (this.addForm.executeType === 'add') {
               res.data.success > 0 ? this.$message({
-                message: `成功添加了${res.data.success}个关键词`,
+                message: `成功添加了${res.data.success}个严禁词`,
                 showClose: true,
                 // duration: 0,
                 type: 'success',
@@ -599,7 +599,7 @@ export default {
         this.isUploadEnd = false;
         this.fileUrl = '';
         /* resV.data.success > 0 ? this.$message({
-          message: `成功添加了${resV.data.success}个关键词`,
+          message: `成功添加了${resV.data.success}个严禁词`,
           showClose: true,
           // duration: 0,
           type: 'success',

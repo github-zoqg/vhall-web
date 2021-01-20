@@ -127,7 +127,7 @@ export function uploadFileNames(type) {
     {code:21,text:'创建专题、编辑专题上传海报,专题简介富文本上传',url:'/saas/webinars/subject-imgs/', type: 1 ,key: 'subjectImg1'},
     {code:28,text:'资料管理上传白名单观众',url:'/saas/interacts/audience-docs/', type: 1 ,key: 'audienceDocs1'},
     {code:31,text:'资料管理创建、编辑礼物上传图片',url:'/saas/interacts/gift-imgs/', type: 1,key: 'giftImg1'},
-    {code:33,text:'资料管理上传关键词过滤',url:'/saas/interacts/keyword-docs/', type: 1,key: 'keywordDocs1'},
+    {code:33,text:'资料管理上传严禁词过滤',url:'/saas/interacts/keyword-docs/', type: 1,key: 'keywordDocs1'},
     {code:34,text:'资料管理上传联想词库',url:'/saas/interacts/associative-docs/', type: 1,key: 'assocDocs1'},
     {code:35,text:'提交问题上传附件',url:'/saas/interacts/feedback-imgs/',type: 1 ,key: 'feebackDocs1'},
     {code:36,text:'我的主页设置背景',url:'/saas/users/homepage-imgs/',type: 1,key: 'homeImg1'},

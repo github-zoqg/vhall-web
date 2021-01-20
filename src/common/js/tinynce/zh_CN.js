@@ -88,7 +88,7 @@ tinymce.addI18n('zh_CN', {
 "Emoticons...": "表情符号...",
 "Metadata and Document Properties": "元数据和文档属性",
 "Title": "标题",
-"Keywords": "关键词",
+"Keywords": "严禁词",
 "Description": "描述",
 "Robots": "机器人",
 "Author": "作者",
