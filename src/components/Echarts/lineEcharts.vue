@@ -18,7 +18,7 @@ export default {
   },
   mounted() {
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    this.initLintEcharts(this.lineDataList);
+    // this.initLintEcharts(this.lineDataList);
   },
   watch: {
     lineDataList: {
@@ -36,18 +36,11 @@ export default {
         visitDataValue.push(item.value);
         // visitDataValue.push(item.value.replace(/,/g, ""));
       });
+
       // console.log(visitDataDate, visitDataValue);
 
       let that = this;
       let visitEchart = echarts.init(this.$refs.visitEchart);
-      // 若开始日期未能达成百分比情况
-      /*let minSDate = showTimeDate[0];
-      let minVDate = visitDataDate[0];
-       if (this.$moment(minVDate).diff(this.$moment(minSDate), 'day') > 0) {
-        if (index === 0) {
-
-        }
-      } */
       let options = {
         visualMap: {
           show: false,

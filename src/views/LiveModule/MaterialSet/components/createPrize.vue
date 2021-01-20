@@ -19,7 +19,7 @@
             @delete="deleteImg"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
-              <p>建议尺寸：120*120px，小于2M</p>
+              <p>建议尺寸：240*240px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
