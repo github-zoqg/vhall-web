@@ -2,7 +2,7 @@
   <div class="qrcode-wrapbox">
     <div class="qr-previewbox" v-if="mode == 1">
       <div>
-        <img :src="info.imageSrc" style="width: 100%" alt="">
+        <img :src="info.imageSrc ? info.imageSrc : defaultImg" style="width: 100%" alt="">
       </div>
     </div>
     <div class="qr-editor-box" v-if="mode == 2">
@@ -68,6 +68,7 @@ export default {
   data() {
     return {
       domain_url: '',
+      defaultImg: '//cnstatic01.e.vhall.com/static/images/menu/image-unit.png',
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
       saveData: {
         path: 'interacts/menu-link-imgs',
