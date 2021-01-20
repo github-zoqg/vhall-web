@@ -39,7 +39,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer create-footer">
-      <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+      <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round :disabled="!advertisement.subject || !advertisement.img_url || !advertisement.url">确 定</el-button>
       <el-button  size="medium" @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
