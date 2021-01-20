@@ -182,11 +182,23 @@ export default {
       console.log(videoArr, '??????????????')
       const videoType = typeList.includes(videoArr[videoArr.length - 1]);
       if (!videoType) {
-        this.$message.error(`您上传的文件格式不正确`);
+        this.$message({
+          message: `您上传的文件格式不正确`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (file.size > 2147483648) {
-        this.$message.error(`您上传的文件不能大于2G`);
+        this.$message({
+          message: `您上传的文件不能大于2G`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       // if(beforeName.indexOf('.mp')==-1){
@@ -240,7 +252,13 @@ export default {
         console.log(err, '失败');
         this.tableData.shift();
         this.uploadList.shift();
-        this.$message.error('本地上传失败');
+        this.$message({
+          message: `本地上传失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     createVod(_file){
@@ -258,13 +276,25 @@ export default {
         this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
           this.tableData.splice(0, 1, this.uploadList);
           console.log(this.tableData, this.uploadList, '000000000000000000')
-          this.$message.success('上传视频成功');
+          this.$message({
+            message: `上传视频成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.getTableList();
         });
       },err=>{
         this.tableData.shift();
         this.uploadList.shift();
-        this.$message.error('创建点播失败');
+        this.$message({
+          message: `创建点播失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     initUpload(id, token){
@@ -367,7 +397,13 @@ export default {
       this.$fetch('dataVideoupdate', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
         if (res.code == 200) {
           this.editShowDialog = false;
-          this.$message.success('修改成功');
+          this.$message({
+            message: `修改成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.getTableList();
         }
       });
@@ -384,10 +420,22 @@ export default {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
             this.getTableList('search');
-            this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
           }
         }).catch(res => {
-          this.$message.error(res.msg || '删除失败');
+          this.$message({
+            message: res.msg || `删除失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }).catch(() => {});
     },
