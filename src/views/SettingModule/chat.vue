@@ -33,84 +33,78 @@
     <!-- 聊天严禁词弹出框 -->
     <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
       <div class="chat-dialog-content">
-        <!-- 操作栏 -->
-        <div class="operaBox">
-          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
-          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
-          <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
-          <div class="searchBox">
-            <el-input
-              class="search-tag"
-              placeholder="搜索严禁词"
-              v-model="pageInfo.keyword"
-              clearable
-              @clear="searchKeyWord"
-              @keyup.enter.native="searchKeyWord"
-              >
-              <i
-                class="el-icon-search el-input__icon"
-                slot="suffix"
-                @click="searchKeyWord">
-              </i>
-            </el-input>
-          </div>
+        <!-- 全部无结果 -->
+        <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
+          <null-page nullType="nullData" text="暂未设置严禁词，快去添加吧" :height="0">
+            <el-button type="primary" class="length106" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+            <el-button type="white-primary" class="length106" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
+          </null-page>
         </div>
-        <!-- 操作栏
-        <table-list
-          ref="chatTable"
-          :isHandle=true
-          :manageTableData="keyWordDao.list"
-          :tabelColumnLabel="tableColumn"
-          :totalNum="keyWordDao.list.length"
-          :tableRowBtnFun="tableRowBtnFun"
-          :needPagination=false
-          :max-height="380"
-          width=120
-          @getTableList="getKeywordList"
-          @changeTableCheckbox="checkMoreRow"
-          @onHandleBtnClick="onHandleBtnClick"
-          v-if="keyWordDao.total > 0"
-        >
-        </table-list> -->
-        <el-table
-          ref="chatTable"
-          :data="showChatList"
-          tooltip-effect="dark"
-          style="width: 100%"
-          class="table-td56"
-          height="358px"
-          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-          @selection-change="checkMoreRow"
-          @select-all="checkAllRow"
-          v-show="total"
-          v-loadMore="moreLoadData">
-          <el-table-column
-            type="selection"
-            width="55"
-            align="left"
-          />
-          <el-table-column
-            label="严禁词"
-            prop="name"
-            width="auto"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="114"
-            show-overflow-tooltip>
-            <template slot-scope="scope">
-              <el-button
+        <!-- 全部有结果 -->
+        <div class="all-yes-data" v-else>
+          <!-- 操作栏 -->
+          <div class="operaBox">
+            <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+            <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
+            <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
+            <div class="searchBox">
+              <el-input
+                class="search-tag"
+                placeholder="搜索严禁词"
+                v-model="pageInfo.keyword"
+                clearable
+                @clear="searchKeyWord"
+                @keyup.enter.native="searchKeyWord"
+                >
+                <i
+                  class="el-icon-search el-input__icon"
+                  slot="suffix"
+                  @click="searchKeyWord">
+                </i>
+              </el-input>
+            </div>
+          </div>
+          <el-table
+            ref="chatTable"
+            :data="showChatList"
+            tooltip-effect="dark"
+            style="width: 100%"
+            class="table-td56"
+            max-height="328px"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+            @selection-change="checkMoreRow"
+            @select-all="checkAllRow"
+            v-loadMore="moreLoadData">
+            <div slot="empty" style="height:0"></div>
+            <el-table-column
+              type="selection"
+              width="55"
+              align="left"
+            />
+            <el-table-column
+              label="严禁词"
+              prop="name"
+              width="auto"
+              show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
+              label="操作"
+              width="114"
+              show-overflow-tooltip>
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
+                <el-button
                 type="text"
-                v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
-              <el-button
-              type="text"
-              v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
-        <null-page nullType="search" v-if="total === 0"></null-page>
+                v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
+          <!-- 无聊天严禁词内容 -->
+          <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
+        </div>
       </div>
     </VhallDialog>
     <!-- 添加关键词 -->
@@ -325,6 +319,7 @@ export default {
         if(this.isCheckAll) {
           this.$refs.chatTable.toggleAllSelection();
         }
+        console.log(`当前数据showChatList=${this.showChatList},total=${res.data.total}`)
         this.total = res.data.total;
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
       }).catch(e=>{
@@ -342,7 +337,7 @@ export default {
     // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
-      this.pageInfo.keyWord = '';
+      this.pageInfo.keyword = '';
       this.searchKeyWord();
     },
     searchKeyWord() {
@@ -799,6 +794,47 @@ export default {
     /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
       display: block;
     }
+  }
+  .table-td56 {
+    min-height: 0;
+    /deep/.el-table {
+      margin-bottom: 0;
+    }
+    /deep/.el-table__empty-block {
+      height: 0!important;
+      min-height: 0;
+    }
+  }
+}
+.all-no-data {
+  padding-top: 30px;
+  margin-top: 32px;
+  /deep/.createActive {
+    padding-bottom: 30px;
+  }
+  /deep/.btn-list .el-button {
+    margin-right: 0;
+  }
+}
+.all-yes-data {
+  padding: 0 0;
+  /deep/.data-list {
+    /deep/.el-table {
+      margin-bottom: 40px;
+      .cell{
+        line-height: 25px;
+      }
+    }
+  }
+  /deep/.el-table .cell {
+    line-height: 25px;
+  }
+}
+.search-no-data {
+  padding-top: 82px;
+  margin-bottom: 50px;
+  /deep/.search {
+    padding-bottom: 0;
   }
 }
 .chat-add-dialog-content {
