@@ -44,7 +44,7 @@ export default {
         {
           type: '3',
           key: "withdraw_status",
-          placeholder: '请选择提现状态',
+          placeholder: '提现状态',
           options: [
             {
               label: '审核中',
@@ -63,7 +63,7 @@ export default {
         {
           type: '3',
           key: "withdraw_type",
-          placeholder: '请选择提现类型',
+          placeholder: '提现类型',
           options: [
             {
               label: '直播收益',
