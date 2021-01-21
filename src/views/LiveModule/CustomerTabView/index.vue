@@ -111,9 +111,21 @@ export default {
   methods: {
     copy() {
       this.$copyText(this.link).then(e => {
-        this.$message.success('复制成功！');
-      }).catch(error=>{
-        this.$message.error('复制失败！');
+        this.$message({
+          message: `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res =>{
+        this.$message({
+          message: res.msg || '复制失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
 
@@ -168,18 +180,26 @@ export default {
         request_data: JSON.stringify(params)
       }).then(res =>{
         if(res.code === 200) {
-          this.$message.success('保存成功');
+          this.$message({
+            message: `保存成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.addCustomVisbile = false;
           // this.customMenuList();
           this.showWatch = true
-        } else {
-          this.$message.error(res.msg || '保存失败');
         }
-      }).catch(e=>{
-        console.log(e);
-        // if(e.code != 200) {
-        //   this.$message.error(e.msg || `保存失败`);
-        // }
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || '保存失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
 
@@ -252,12 +272,24 @@ export default {
         let err
         try {
           err = JSON.parse(e.message)
-          this.$message.error(err.msg)
+          this.$message({
+            message: err.msg || '未知错误',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           this.$refs.menusControl.choseMenu(err.index)
           // this.activeIndex = err.index
           checkResult = false
         } catch(e) {
-          this.$message.error('未知错误')
+          this.$message({
+            message: e.msg || '未知错误',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           checkResult = false
         }
       }

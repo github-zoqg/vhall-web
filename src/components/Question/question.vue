@@ -141,7 +141,13 @@ export default {
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
         if (this.type == 1) {
-          this.$message.success('新建成功');
+          this.$message({
+            message: `新建成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.$router.push({
             path: '/material/question',
           });
@@ -150,7 +156,13 @@ export default {
     },
     materialEditQuestion(id, title, description) {
       this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
-        this.$message.success('编辑成功');
+        this.$message({
+          message: `编辑成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$router.push({
           path: '/material/question',
         });
@@ -165,7 +177,13 @@ export default {
         description: description,
       }
       this.$fetch('createLiveQuestion', params).then(res => {
-        this.$message.success('新建成功');
+        this.$message({
+          message: `新建成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.dialogTongVisible = false;
           this.$router.push({
             path: `/live/question/${this.$route.query.webinarId}`,
@@ -184,7 +202,13 @@ export default {
         description: description,
       }
       this.$fetch('editLiveQuestion', params).then(res => {
-        this.$message.success('编辑成功');
+        this.$message({
+          message: `编辑成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
          this.$router.push({
             path: `/live/question/${this.$route.query.webinarId}`,
             query: {

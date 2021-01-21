@@ -203,6 +203,13 @@ export default {
           });
         });
       }).catch(() => {
+        this.$message({
+          message:  `已取消删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'info',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     allDelete(id) {

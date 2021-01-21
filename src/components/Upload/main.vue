@@ -120,7 +120,13 @@ export default {
     handleuploadSuccess(response, file, fileList){
       console.log('heqhwhqhwhd ', response, file, fileList, this.onSuccess);
       if(response.code !== 200) {
-        this.$message.error(response.msg || '上传失败');
+        this.$message({
+          message: response.msg || '上传失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         console.log(this.$props);
         if(response.data.domain_url) {

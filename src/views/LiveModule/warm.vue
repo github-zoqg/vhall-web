@@ -157,8 +157,22 @@ export default {
       }
       this.$fetch('warmOpen', params).then(res=>{
         if(res.code == 200){
-          this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
+          this.$message({
+            message: this.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || (this.warmFlag ? '开启暖场视频失败' : '关闭暖场视频失败'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 获取暖场视频详情
@@ -208,11 +222,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: "上传封面图片只能是 ${typeList.join('、')} 格式",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2MB!');
+        this.$message({
+          message: "上传封面图片大小不能超过 2M",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -222,14 +248,26 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面图片上传失败`);
+      this.$message({
+        message: "封面图片上传失败",
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
     submitForm(){
       if(this.warmForm.record_id == ''){
-        this.$message.error('请上传暖场视频');
+        this.$message({
+          message: "请上传暖场视频",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }else{
         this.$confirm('是否保存当前设置？', '提示', {
           confirmButtonText: '确定',
@@ -251,12 +289,22 @@ export default {
         record_id: this.warmForm.record_id
       }
       this.$fetch('warnEdit', this.$params(params)).then(res => {
-        if (res.code == 200) {
-          this.$message.success('保存暖场视频成功');
-        } else {
-          this.$message.error(res.msg || '保持暖场视频失败');
-        }
-      })
+        this.$message({
+          message: `保存暖场视频成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res => {
+        this.$message({
+          message: res.msg || "保存暖场视频失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
     },
     // 删除图片
     deleteImg() {

@@ -2,6 +2,7 @@
   <div class="invitation-card">
     <div class="title-data">
       <p>邀请卡</p>
+      <p class="switch__box">
       <el-switch
         style="display: block; padding-top: 4px"
         v-model="invitation"
@@ -11,6 +12,7 @@
         active-text="开启后，观众可以在观看页面生成邀请卡，邀请好友观看"
       >
       </el-switch>
+      </p>
       <div class="invitation-look">
         <el-popover
             placement="bottom"
@@ -28,9 +30,9 @@
       <div class="form-data">
         <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation" :rules="rules">
           <el-form-item label="封面背景">
-            <div class="data-img">
+            <div class="data-img" @click="invitation && changeImg()">
               <div class="advor_img"><img :src="img" alt=""/></div>
-              <span class="choseImg" @click="invitation && changeImg()">选择封面</span>
+              <span class="choseImg">选择封面</span>
             </div>
           </el-form-item>
           <el-form-item label="展示方式">
@@ -140,8 +142,8 @@
             </div>
           </div>
         </div>
-        <div class="watch-img" v-else-if="showType===2"  id="shopInvent">
-          <div class="watch-bg" :style="`backgroundImage: url(${img})`">
+        <div class="watch-img" v-else-if="showType===2"  id="shopInvent" :style="`backgroundImage: url(${img})`">
+          <div class="watch-bg">
             <div class="watch-color">
               <div class="watch-header">
               <div class="watch-avator">
@@ -202,7 +204,7 @@
       </div>
       <div class="white-show" v-show="!invitation"></div>
     </div>
-    <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
+    <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl" :type="formInvitation.img_type"></add-background>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
@@ -330,7 +332,21 @@ export default {
         status: Number(this.invitation)
       };
       this.$fetch('setCardStatus', params).then(res => {
-        this.$message.success(this.invitation ? '开启邀请卡' : '关闭邀请卡');
+        this.$message({
+          message: this.invitation ? '开启邀请卡成功' : '关闭邀请卡成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res => {
+        this.$message({
+          message: res.msg || (this.invitation ? '开启邀请卡失败' : '关闭邀请卡失败'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     getInviteCardInfo() {
@@ -341,6 +357,11 @@ export default {
         this.formInvitation = res.data.invite_card;
         this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
         this.img = this.formInvitation.img || this.fileList[0];
+        if (!this.formInvitation.img_type) {
+          this.img = this.formInvitation.img || this.fileList[0];
+        } else {
+          this.img = this.fileList[this.formInvitation.img_type - 1];
+        }
         this.imgUrl = this.formInvitation.img || '';
         this.showType = this.formInvitation.show_type;
         this.invitation = Boolean(res.data.status);
@@ -361,7 +382,7 @@ export default {
         this.img = this.fileList[type - 1];
       }
       this.formInvitation.img_type = type;
-      this.onSubmit();
+      // this.onSubmit();
     },
     // 修改邀请卡信息
     onSubmit() {
@@ -374,8 +395,22 @@ export default {
       let obj = Object.assign({}, ids, this.formInvitation);
       this.$fetch('editCardStatus', this.$params(obj)).then(res => {
        if (res.code == 200) {
-         this.$message.success('保存数据成功');
+         this.$message({
+          message: `保存数据成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
        }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `保存数据失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     fileDownLoad(imgUrl, name) {
@@ -463,7 +498,7 @@ export default {
     bottom:7px;
   }
   /deep/.el-input__inner, /deep/.el-textarea__inner {
-    padding: 0 12px;
+    padding: 5px 12px;
     color: #1A1A1A;
   }
   .invitation-from {
@@ -485,6 +520,7 @@ export default {
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-top: 10px;
+    cursor: pointer;
     .advor_img{
       width: 70px;
       height: 130px;
@@ -677,12 +713,18 @@ export default {
       border-radius: 4px;
       border: 1px solid #E6E6E6;
       // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+      // height: 360px;
+      background-image: url('../../../common/images/v35-webinar.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      border-radius: 4px 4px 0 0;
+      z-index: 0;
       .watch-bg{
         height: 360px;
-        background-image: url('../../../common/images/v35-webinar.png');
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        border-radius: 4px 4px 0 0;
+        // background-image: url('../../../common/images/v35-webinar.png');
+        // background-size: 100% 100%;
+        // background-repeat: no-repeat;
+        // border-radius: 4px 4px 0 0;
         // background-color: rgba(0, 0, 0, 0.1);
         .watch-color{
           width: 100%;
@@ -717,6 +759,10 @@ export default {
       }
     .watch-text{
       padding: 10px 20px 24px 24px;
+      background: #fff;
+      z-index: 1;
+      height: 258px;
+      position: relative;
       h1{
         padding:0;
         font-size: 28px;
@@ -747,7 +793,7 @@ export default {
             width: 67px;
             height: 67px;
             margin-right: 10px;
-            margin-left: 10px;
+            // margin-left: 10px;
             img{
               width: 67px;
               height: 67px;
@@ -825,6 +871,7 @@ export default {
         margin: auto;
         margin-top: 10px;
         // padding: 20px 0;
+        padding: 5px 0;
         h1{
           padding: 0;
           font-size: 26px;
@@ -854,7 +901,7 @@ export default {
         span{
           display: inline-block;
           width: 24px;
-          height: 2px;
+          height: 4px;
           background: #fff;
         }
       }

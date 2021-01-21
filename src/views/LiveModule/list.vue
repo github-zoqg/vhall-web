@@ -151,9 +151,8 @@ export default {
     noData
   },
   created() {
+    // 创建点播是否可用(全局)
     this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
-    console.log(sessionOrLocal.get('SAAS_V3_SON_PS'), '??????????????????')
-    console.log(this.vodPerssion, '??????????????????')
     this.getLiveList();
   },
   methods: {
@@ -169,7 +168,13 @@ export default {
     commandMethod(command) {
       if (command === '删除') {
         if (this.webinarInfo.webinar_state == 1) {
-          this.$message.error('正在直播的活动不能删除');
+          this.$message({
+            message: "正在直播的活动不能删除",
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
         this.$confirm('删除直播后，直播也将从所属的专题中删除，确定要删除吗？', '提示', {
@@ -182,8 +187,11 @@ export default {
          this.deleteLive();
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
       } else if (command === '/live/edit') {
@@ -225,17 +233,37 @@ export default {
           this.text = '';
           this.isSearch = true;
         }
-      }).catch(error=>{
-        this.$message.error(`获取直播列表失败,${error.msg || error.message}`);
-        console.log(error);
+      }).catch(res =>{
+        this.$message({
+          message: res.msg || "获取直播列表失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       }).finally(()=>{
         this.loading = false;
       });
     },
     deleteLive() {
       this.$fetch('liveDel', {webinar_ids: this.webinarInfo.webinar_id}).then(res => {
-        this.$message.success('删除成功');
+        this.$message({
+          message: `删除成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.getLiveList();
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `删除失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     goLivePlay(item) {
@@ -281,11 +309,23 @@ export default {
           this.goIsLive(item);
         } else {
           // 不能发起
-          this.$message.error('该活动正在直播或录播中，无法重复发起');
+          this.$message({
+            message: "该活动正在直播或录播中，无法重复发起",
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
       }).catch(e => {
-        this.$message.error('该活动正在直播或录播中，无法重复发起');
+        this.$message({
+          message: "该活动正在直播或录播中，无法重复发起",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       });
     },

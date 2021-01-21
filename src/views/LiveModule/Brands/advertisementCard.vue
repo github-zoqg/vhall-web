@@ -50,7 +50,7 @@
       </div>
       <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList" :maxTotal="total"></create-advise>
     </div>
-    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4&&$route.path !='/material/advertCard'"></begin-play>
   </div>
 </template>
 <script>

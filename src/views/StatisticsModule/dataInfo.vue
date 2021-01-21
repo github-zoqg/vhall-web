@@ -20,7 +20,7 @@
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
         />
-        <el-select filterable clearable v-model="versionType" v-if="parentId == 0 && childNum == 1"  style="width: 160px;vertical-align: top;">
+        <el-select filterable clearable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getDataList"  style="width: 160px;vertical-align: top;">
           <el-option
             v-for="(opt, optIndex) in versionOptions"
             :key="optIndex"
@@ -198,7 +198,7 @@ export default {
     getDataList() {
       let params = {
         account_id: this.userId,
-        type: this.versionType,
+        type: this.versionType || 1,
         start_time: this.dateValue ? this.dateValue[0] : '',
         end_time: this.dateValue ? this.dateValue[1] : ''
       }
@@ -239,12 +239,22 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportCenterInfo', this.$params(this.params)).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`账号维度下数据报告导出成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`账号维度下数据报告${res.msg}`);
-        }
+        this.$message({
+          message: `账号维度下数据报告导出成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `账号维度下数据报告导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     changeTime(title) {

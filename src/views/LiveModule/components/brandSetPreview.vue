@@ -99,7 +99,8 @@
         <div :class="`skin-preview preview-${switchType} ${bgColorType}`">
           <div class="panel__preview">
             <header class="h5-title"  v-if="signSetVo && signSetVo.organizers_status == 1">
-              <img :src="domain_url || signSetVo.logo_url" alt v-if="(signSetVo && signSetVo.logo_url) || domain_url" class="logo"/>
+              <!-- <img :src="domain_url || signSetVo.logo_url" alt v-if="(signSetVo && signSetVo.logo_url) || domain_url" class="logo"/> -->
+              <img src="https://t-alistatic01.e.vhall.com/upload/users/face-imgs/5b/5c/5b5cff960c528fab4a711df72ff60b7e.png" class="logo"/>
               <span class="title">北京微吼时代科技有限公司</span>
               <div class="title-icons" :style="{'color': skinSetVo.pageStyle }">
                 <icon icon-class="saasguanzhu"></icon>

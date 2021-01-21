@@ -83,7 +83,13 @@ export default {
         }
       }).catch(error => {
         console.error('全体禁言接口失败', error, this.bannedAll);
-        this.$message.error(error.msg)
+        this.$message({
+          message: error.msg || '全体禁言失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     sendMsgToAssistant () {

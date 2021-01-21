@@ -42,13 +42,15 @@ export default {
           this.$fetch('checkLive', this.$params({
             webinar_id: this.webinarId
           })).then((res) => {
-            if(res && res.code === 200) {
-              this.getOpenLive()
-            } else {
-              this.$message.error(res.msg)
-            }
+            this.getOpenLive()
           }).catch(res => {
-            this.$message.error(res.msg)
+            this.$message({
+              message: res.msg || '校验失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           });
         }
 
@@ -64,6 +66,7 @@ export default {
     position: fixed;
     right: 60px;
     bottom: 100px;
+    z-index: 100;
     .begin-btn{
       width: 80px;
       height: 80px;

@@ -360,12 +360,22 @@ export default {
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exportLiveIncome' : 'exportRedPacket';
       this.$fetch(url, this.params).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出申请成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`收益明细${res.msg}`);
-        }
+        this.$message({
+          message: `${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     }
   },

@@ -177,7 +177,13 @@ export default {
       // type 3:升级并发  4:购买扩展包
       if (this.title == '升级') {
          if (this.number < this.concurrentPrice.total_concurrency) {
-          this.$message.error('需要大于当前并发人数');
+          this.$message({
+            message: `需要大于当前并发人数`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          })
           return;
         }
         this.payUpgradeList();
@@ -205,14 +211,15 @@ export default {
         number: this.flows
       };
       this.$fetch('orderFlow', params).then(res =>{
-        if (res.code == 200) {
-          this.goPayList(res.data.order_id);
-        } else {
-          this.$message.error(res.msg);
-        }
-
-      }).catch(res=>{
-        this.$message.error(res.msg);
+        this.goPayList(res.data.order_id);
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '信息获取异常',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
         this.dialogBuyVisible = false;
       });
     },
@@ -222,14 +229,16 @@ export default {
         number: this.number
       };
       this.$fetch('orderUpgrade', params).then(res =>{
-        if (res.code == 200) {
-          this.goPayList(res.data.order_id);
-        } else {
-          this.$message.error(res.msg);
-        }
-      }).catch(res=>{
-        this.dialogVisible = false;
-        this.$message.error(res.msg);
+        this.goPayList(res.data.order_id);
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '信息获取异常',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
+         this.dialogVisible = false;
       });
     },
     payExtentList() {
@@ -238,20 +247,28 @@ export default {
         number: this.number
       };
       this.$fetch('orderExtend', params).then(res =>{
-        if (res.code == 200) {
-          this.goPayList(res.data.order_id);
-        } else {
-          this.$message.error(res.msg);
-        }
+        this.goPayList(res.data.order_id);
       }).catch(res=>{
         this.dialogVisible = false;
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || '信息获取失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
         console.log(e);
       });
     },
     changeInput() {
       if (this.number <= this.concurrentPrice.concurrency.total_concurrency) {
-        this.$message.error('请输入比当前并发数大的值');
+        this.$message({
+          message: `请输入比当前并发数大的值`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
         return;
       }
     }

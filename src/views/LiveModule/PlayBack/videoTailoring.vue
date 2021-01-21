@@ -261,15 +261,30 @@ export default {
       this.$fetch('tailorSave', opts).then(res => {
         console.log(res);
         if (res.code == 200) {
-          this.$message.success('保存成功');
+          this.$message({
+            message: `保存成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.recordId = res.data.record_id;
           // 保存需要重置 isNew 的状态，导出不需要
           this.isNew = false;
           this.recordName = this.titleEdit;
           this.getPlayBackInfo(res.data.record_id);
-        } else {
-          this.$message.success('保存失败');
         }
+        this.editLoading = false;
+        this.titleEdit = '';
+        this.titleDialogVisible = false;
+      }).catch(res=> {
+        this.$message({
+          message: res.msg || `保存失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.editLoading = false;
         this.titleEdit = '';
         this.titleDialogVisible = false;
@@ -290,7 +305,13 @@ export default {
           if (res.code == 200) {
             if (res.data.status == 0) {
               // 点击创建，如果 status===0 视频未生成，等消息
-              this.$message.success('视频生成中,请稍侯...')
+              this.$message({
+                message: `视频生成中,请稍侯...`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
             } else if (res.data.status == 1) {
               // 点击创建，如果 status===1 视频已生成，直接初始化剪辑台
               this.getPlayBackInfo(res.data.pass_record_id, true, res.data.pass_record_id)
@@ -376,12 +397,22 @@ export default {
 
       this.$fetch('tailorSave', opts).then(res => {
         console.log(res)
-        if (res.code == 200) {
-          this.$message.success('导出成功')
-        } else {
-          this.$message.success('导出失败')
-        }
+        this.$message({
+          message: `导出成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$refs.videoTailoringComponent.cancelExportVideoFun()
+      }).catch(res => {
+         this.$message({
+          message: res.msg || `导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // isAdd 为false 没有该方法

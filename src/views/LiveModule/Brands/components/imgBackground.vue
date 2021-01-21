@@ -64,7 +64,7 @@ export default {
   components: {
     upload
   },
-  props: ['url'],
+  props: ['url', 'type'],
   watch: {
    dialogVisible() {
      if (this.dialogVisible) {
@@ -72,6 +72,8 @@ export default {
         this.imageUrl = this.url;
         if (this.imageUrl) {
           this.isType = 0;
+        } else {
+          this.isType = this.type
         }
      }
    }
@@ -109,11 +111,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`背景图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `背景图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('背景图片大小不能超过 2MB!');
+        this.$message({
+          message: `背景图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -123,7 +137,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`背景图片上传失败`);
+      this.$message({
+        message: `背景图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);

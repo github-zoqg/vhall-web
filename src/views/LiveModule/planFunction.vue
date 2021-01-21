@@ -1,39 +1,64 @@
 <template>
   <div class="page-padding">
     <pageTitle title="功能配置"></pageTitle>
-    <div class="div__func div__view" v-if="keyList">
-      <div class="div__view__title">观看页设置</div>
-      <ul class="switch__list">
-        <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
-          <label class="leve3_title label__r12">{{ item.key_name }}</label>
-          <el-switch
-            v-model="item.value"
-            :active-value="0"
-            :inactive-value="1"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="changeStatus($event, item)">
-          </el-switch>
-          <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
-        </li>
-      </ul>
-    </div>
-    <div class="div__func div__playback" v-if="liveKeyList && liveKeyList">
-      <div class="div__view__title">回放设置</div>
-      <ul class="switch__list">
-        <li class="switch__box" v-for="(item, ins) in liveKeyList" :key="`playback_`+ins">
-          <label class="leve3_title label__r12">{{ item.key_name }}</label>
-          <el-switch
-            v-model="item.value"
-            :active-value="1"
-            :inactive-value="0"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="changeStatus($event, item)">
-          </el-switch>
-          <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
-        </li>
-      </ul>
+    <!-- 内容区域  -->
+    <div class="plan-func-main">
+      <div class="plan-func-form">
+        <div class="div__func div__view" v-if="keyList.length>0">
+          <div class="div__view__title">观看页设置</div>
+          <ul class="switch__list">
+            <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
+              <label class="leve3_title label__r12">{{ item.key_name }}</label>
+              <el-switch
+                v-model="item.value"
+                :active-value="0"
+                :inactive-value="1"
+                active-color="#FB3A32"
+                inactive-color="#CECECE"
+                @change="changeStatus($event, item)">
+              </el-switch>
+              <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="div__func div__playback" v-if="liveKeyList.length>0">
+          <div class="div__view__title">回放设置</div>
+          <ul class="switch__list">
+            <li class="switch__box" v-for="(item, ins) in liveKeyList" :key="`playback_`+ins" >
+                <label class="leve3_title label__r12">{{ item.key_name }}</label>
+                <el-switch
+                  v-model="item.value"
+                  :active-value="1"
+                  :inactive-value="0"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE"
+                  @change="changeStatus($event, item)">
+                </el-switch>
+                <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="plan-func-preview">
+        <!-- 模拟开关 -->
+        <div class="zdy--switch">
+          <span :class="switchType === 'app' ? 'active' : ''"  @click.prevent.stop="changeSwitch('app')">手机预览</span>
+          <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
+        </div>
+        <!--PC预览,begin-->
+        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" v-show="switchType === 'pc'">
+          <div class="icon-spans">
+           <span class="share-span"  v-if="shareCompute"></span><span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
+          </div>
+        </div>
+        <!--手机预览,begin-->
+        <div :class="['plan-func-app', {'zj': !chapterCompute }]" v-show="switchType === 'app'">
+          <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
+          <div class="icon-spans">
+            <span class="gift-span" v-if="giftCompute"></span><span class="reward-span" v-if="rewardCompute"></span><span class="share-span"  v-if="shareCompute"></span><span class="like-span" v-if="likeCompute"></span>
+          </div>
+        </div>
+      </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
@@ -51,13 +76,50 @@ export default {
   },
   data() {
     return {
+      switchType: 'app',
       query: {},
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
       liveKeyList: []
     };
   },
+  computed: {
+    rewardCompute: function() {
+      let voArr =  this.keyList.filter(item => item.type === 'ui.hide_reward')[0];
+      return !(voArr && voArr.value > 0);
+    },
+    giftCompute: function() {
+      let voArr =  this.keyList.filter(item => item.type === 'ui.hide_gifts')[0];
+      return !(voArr && voArr.value > 0);
+    },
+    shareCompute: function() {
+      let voArr =  this.keyList.filter(item => item.type === 'ui.watch_hide_share')[0];
+      return !(voArr && voArr.value > 0);
+    },
+    likeCompute: function() {
+      let voArr =  this.keyList.filter(item => item.type === 'ui.watch_hide_like')[0];
+      return !(voArr && voArr.value > 0);
+    },
+    chatCompute: function() {
+      let voArr =  this.liveKeyList.filter(item => item.type === 'ui.watch_record_no_chatting')[0];
+      return !(voArr && voArr.value > 0);
+    },
+    chapterCompute: function() {
+      let voArr =  this.liveKeyList.filter(item => item.type === 'ui.watch_record_chapter')[0];
+      return !(voArr && voArr.value > 0);
+    }
+  },
   methods: {
+    showLiveKey(key) {
+      let live = this.keyList.filter(item => item.type === key);
+      let liveKey = this.liveKeyList.filter(item => item.type === key);
+      console.log(live, liveKey)
+      return live[0] || liveKey[0]
+    },
+    // 预览切换
+    changeSwitch(type) {
+      this.switchType = type;
+    },
     changeStatus(callback, item) {
       item.value = Number(!callback)
       let params = {
@@ -93,8 +155,8 @@ export default {
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
       console.log(dataVo, '功能配置');
-      let permissions = sessionOrLocal.get('WEBINAR_PES', 'localStorage');
-      let perVo = permissions ? JSON.parse(permissions) : {};
+      let permissions = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      // let perVo = permissions ? JSON.parse(permissions) : {};
       // if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
       //   perVo['ui.record_chapter'] = 1;
       // }
@@ -128,22 +190,24 @@ export default {
           value: Number(dataVo['ui.watch_hide_share']) || 0
         }
       ];
-      this.liveKeyList = [
-        {
-          type: 'ui.watch_record_no_chatting',
-          key_name: '回放禁言',
-          openShow: '已开启，回放/点播不支持聊天',
-          closeShow: '开启后，回放/点播不支持聊天',
-          value: Number(dataVo['ui.watch_record_no_chatting']) || 0
-        },
-        {
+      this.liveKeyList = [{
+        type: 'ui.watch_record_no_chatting',
+        key_name: '回放禁言',
+        openShow: '已开启，回放/点播不支持聊天',
+        closeShow: '开启后，回放/点播不支持聊天',
+        value: Number(dataVo['ui.watch_record_no_chatting']) || 0
+      }]
+      if (permissions['ui.record_chapter'] > 0) {
+        this.liveKeyList.push({
           type: 'ui.watch_record_chapter',
           key_name: '回放章节',
           openShow: '已开启，回放/点播观看端显示文档章节',
           closeShow: '开启后，回放/点播观看端显示文档章节',
           value: Number(dataVo['ui.watch_record_chapter']) || 0
-        }
-      ]
+        })
+      } else {
+        this.liveKeyList = [];
+      }
     },
     planErrorRender(err) {
       this.$message({
@@ -159,7 +223,8 @@ export default {
     planFunctionGet() {
       this.$fetch('planFunctionGet', {
         webinar_id: this.$route.params.str,
-        webinar_user_id: sessionOrLocal.get('userId')
+        webinar_user_id: sessionOrLocal.get('userId'),
+        scene_id: 2
       }).then(res=>{
         console.log(res);
         // 数据渲染
@@ -170,7 +235,7 @@ export default {
         console.log(res);
         this.planErrorRender(res);
       });
-    },
+    }
   },
   created() {
     this.planFunctionGet();
@@ -184,6 +249,18 @@ export default {
 .page-padding {
   padding: 0 0;
 }
+.plan-func-main {
+  display: flex;
+  padding: 48px 0;
+  background: #fff;
+  min-height: 816px;
+  border-radius: 4px;
+}
+/* 左侧 */
+.plan-func-form {
+  width: 500px;
+  margin-right: 64px;
+}
 .h1__title {
   margin-bottom: 32px;
 }
@@ -191,11 +268,10 @@ export default {
   min-height: 190px;
   background: @background_white;
   border-radius: 4px;
-  margin: 0 auto 24px auto;
+  margin: 0 auto 20px auto;
 }
 .div__view__title {
-  padding-top: 24px;
-  margin-left: 24px;
+  margin-left: 56px;
   font-size: @font_size_16;
   font-family: @fontRegular;
   font-weight: 400;
@@ -209,10 +285,97 @@ export default {
     display: block;
     list-style-type: none;
     margin-bottom: 32px;
-    margin-left: 56px;
+    margin-left: 88px;
     line-height: 20px;
     &:last-child {
       margin-bottom: 0;
+    }
+  }
+}
+
+/* 右侧 */
+.plan-func-pc {
+  width: 421px;
+  height: 254px;
+  background-image: url('../../common/images/plan-function/pc-default.png');
+  background-size: 100%;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  &.zj {
+    background-image: url('../../common/images/plan-function/pc-zj.png');
+  }
+  .icon-spans {
+    position: absolute;
+    bottom: 0;
+    right: 118px;
+    span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      margin-left: 2px;
+    }
+    .reward-span{
+      background-image: url('../../common/images/plan-function/pc-reward@2x.png');
+    }
+    .like-span{
+      background-image: url('../../common/images/plan-function/pc-like@2x.png');
+    }
+    .gift-span{
+      background-image: url('../../common/images/plan-function/pc-gift@2x.png');
+    }
+    .share-span{
+      background-image: url('../../common/images/plan-function/pc-share@2x.png');
+    }
+  }
+}
+.plan-func-app {
+  width: 420px;
+  height: 690px;
+  margin-top: -24px;
+  margin-left: -47px;
+  background-image: url('../../common/images/plan-function/phone-default.png');
+  background-size: 100%;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  &.zj {
+    background-image: url('../../common/images/plan-function/phone-zj.png');
+  }
+  .chat-span {
+    position: absolute;
+    bottom: 60px;
+    left: 78px;
+    height: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 12px;
+  }
+  .icon-spans {
+    position: absolute;
+    bottom: 50px;
+    right: 60px;
+    span {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
+    .reward-span{
+      background-image: url('../../common/images/plan-function/phone-reward@2x.png');
+    }
+    .like-span{
+      background-image: url('../../common/images/plan-function/phone-like@2x.png');
+    }
+    .gift-span{
+      background-image: url('../../common/images/plan-function/phone-gift@2x.png');
+    }
+    .share-span{
+      background-image: url('../../common/images/plan-function/phone-share@2x.png');
     }
   }
 }

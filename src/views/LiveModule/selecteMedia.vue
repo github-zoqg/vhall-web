@@ -231,7 +231,13 @@ export default {
     },
     handlerConfirm(){
       if (this.tableSelect[0].transcode_status != 1) {
-        this.$message.error('只能选择已经转码成功的视频');
+        this.$message({
+          message: "只能选择已经转码成功的视频",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.$emit('selected', this.tableSelect[0]);

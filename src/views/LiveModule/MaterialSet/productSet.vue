@@ -103,7 +103,13 @@ export default {
       if(option.watch) {
         if (this.saleTotal >= 100) {
           option.watch = false;
-          this.$message.error('商品最大上架数量为100，请下架后再进行操作');
+          this.$message({
+            message: `商品最大上架数量为100，请下架后再进行操作`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
         // 上架处理
@@ -114,14 +120,19 @@ export default {
           if (this.vm) {
             this.vm.close();
           }
-          this.messageInfo('上架设置成功！');
-          // this.$message.success("");
+          this.messageInfo('上架设置成功');
           this.getTableList();
           console.log(res);
-        }).catch(err => {
-          this.$message.error("上架设置失败！");
+        }).catch(res => {
+          this.$message({
+            message: res.msg || '上架设置失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           this.getTableList();
-          console.log(err);
+          console.log(res);
         });
       } else {
         // 下架处理
@@ -132,13 +143,18 @@ export default {
           if (this.vm) {
             this.vm.close();
           }
-          this.messageInfo('下架设置成功！');
-          // this.$message.success("下架设置成功！");
+          this.messageInfo('下架设置成功');
           this.getTableList();
           console.log(res);
-        }).catch(err => {
-          this.$message.error("下架设置失败！");
-          console.log(err);
+        }).catch(res => {
+          this.$message({
+            message: res.msg || '下架设置失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          console.log(res);
         });
       }
     },
@@ -178,10 +194,13 @@ export default {
     //文案提示问题
     messageInfo(msg) {
       this.vm = this.$message({
-        showClose: false,
-        duration: 2000,
         message: msg,
-        type: 'success'
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+        // showClose: false,
+        // duration: 2000,
       });
     },
     // 为每个商品设置显示的封面
@@ -236,17 +255,32 @@ export default {
       }).then(() => {
         this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
           if (res.code == 200) {
-            this.$message.success("删除成功！");
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.checkedGoodsId = [];
             this.getTableList('delete');
           }
         }).catch(res => {
-          this.$message.error( res.msg || '删除失败, 请下架后删除');
+          this.$message({
+            message: res.msg || `删除失败, 请下架后删除`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         })
       }).catch(() => {
         this.$message({
+          message:  `已取消删除`,
+          showClose: true,
+          // duration: 0,
           type: 'info',
-          message: '已取消删除'
+          customClass: 'zdy-info-box'
         });
       });
     },
@@ -262,7 +296,13 @@ export default {
     // 批量删除
     batchDel(id) {
      if (this.checkedGoodsId.length < 1) {
-        this.$message.error("请选择要操作的文件");
+        this.$message({
+          message: '请选择要操作的文件',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         id = this.checkedGoodsId.join(',');
         this.delConfirm(id);
@@ -281,7 +321,13 @@ export default {
     // 新建商品
     addProduct() {
       if (this.saleTotal >= 100) {
-        this.$message.error('商品最大上架数量为100，请删除后再进行操作');
+        this.$message({
+          message: '商品最大上架数量为100，请删除后再进行操作',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.$router.push({path: `/live/addProduct/${this.$route.params.str}`});

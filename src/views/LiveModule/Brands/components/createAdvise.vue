@@ -51,7 +51,7 @@
       width="620px">
       <div class="content">
         <div class="search" v-show="total || isSearch">
-           <VhallInput v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
+           <VhallInput class="search-dialog-tag" v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
             <i slot="suffix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
           </div>
@@ -492,6 +492,25 @@ export default {
 </script>
 <style lang="less" scoped>
 .dialog-box {
+  .search-dialog-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      .el-input__suffix-inner {
+        i {
+          margin-right: 5px;
+          line-height: 36px;
+          cursor: pointer;
+        }
+      }
+      /deep/ .el-input__icon {
+        width: auto;
+      }
+    }
+  }
   /deep/.el-dialog {
     border-radius: 4px;
     // padding-bottom: 15px;
