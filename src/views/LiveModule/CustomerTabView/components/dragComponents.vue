@@ -1,5 +1,5 @@
 <template>
-  <div class="vh-menus-dragComponents">
+  <div id="settingBox" :class="['vh-menus-dragComponents', menuBarFixed ? 'isFixed' : '']">
     <div class="vh-menus-dragComponents__title">
       基础组件
     </div>
@@ -55,7 +55,8 @@ export default {
     return {
       compList: [],
       disableAll: false,
-      menuUUID: null
+      menuUUID: null,
+      menuBarFixed: false
     }
   },
   computed: {
@@ -70,7 +71,22 @@ export default {
     this.getComponents()
     EventBus.$on(eventsType.INIT_MENU_INFO, this.menuCheck)
   },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll)
+  },
   methods: {
+    handleScroll () {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      let offsetTop = document.querySelector('#settingBox').offsetTop
+      if (scrollTop > offsetTop) {
+        this.menuBarFixed = true
+      } else {
+        this.menuBarFixed = false
+      }
+    },
     getComponents() {
       this.$fetch('menuTplList', {
         webinar_id: this.$route.params.str
@@ -131,6 +147,11 @@ export default {
     height: 100%;
     background: #F7F7F7;
     user-select: none;
+    &.isFixed {
+      position:fixed!important;
+      top:70px;
+      z-index:999;
+    }
     &__title{
       width: 140px;
       height: 40px;

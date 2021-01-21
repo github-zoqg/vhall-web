@@ -17,8 +17,8 @@
           </vhscroll>
       </div>
       <div class="rank-band">
-          <img v-show="activeIndex == 1" src="//cnstatic01.e.vhall.com/static/images/menu/bang01.png">
-          <img v-show="activeIndex == 2" src="//cnstatic01.e.vhall.com/static/images/menu/bang02.png">
+          <img v-show="activeIndex == 1" src="./bang01@2x.png">
+          <img v-show="activeIndex == 2" src="./bang02@2x.png">
       </div>
     </div>
     <div class="rank-editor-box" v-if="mode == 2">
@@ -101,6 +101,11 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+  .vh-customer__preview-pc {
+    .rank-wrapbox {
+      margin-bottom: 20px;
+    }
+  }
   .rank-editor-box{
     padding-top: 16px;
   }
