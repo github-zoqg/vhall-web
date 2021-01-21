@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 
@@ -21,6 +22,7 @@ Vue.use(vuescroll, {
 import EventBus from './utils/Events';
 import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
+import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
