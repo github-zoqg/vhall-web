@@ -40,6 +40,7 @@
 <script>
 import Env from "@/api/env";
 export default {
+  name: 'share',
   created() {},
   props: {
     url:{
