@@ -30,7 +30,7 @@
                   <li @click="addRight(index)"> 右侧新增菜单 </li>
                   <li @click="addLeft(index)"> 左侧新增菜单 </li>
                   <li v-if="item.type == 1">
-                    <el-checkbox type="checkbox" :checked="item.status == 4" @click="showOrHide(index)" /> 预告/结束显示
+                    <el-checkbox type="checkbox" :checked="item.status == 4" @change="showOrHide(index)" /> 预告/结束显示
                     <el-tooltip class="item" effect="dark" placement="right">
                       <div slot="content" style="line-height:24px">勾选后，该直播为预告和结束状态时也会显示此菜单；<br />不勾选则只在直播和回放状态显示。</div>
                       <i class="iconfont-v3 saasicon_help_m"></i>
@@ -220,13 +220,7 @@ export default {
         return item.type == 1
       })
       if (addedMenu.length == 6) {
-        this.$message({
-          message: '自定义菜单最多增加六个。您已到达上限',
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.$message.error('自定义菜单最多增加六个。您已到达上限！')
         return false
       }
 
@@ -329,7 +323,6 @@ export default {
       } else {
         this.menus[index].status = 3
       }
-      console.log(2323234, this.menus[index])
     },
     // 删除
     delThis(index) {
