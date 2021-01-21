@@ -24,6 +24,7 @@
           :key="index"
           :width="item.width"
           :label="item.label"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row[item.isEdit] }}</span>
