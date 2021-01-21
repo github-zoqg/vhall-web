@@ -48,10 +48,10 @@
           <VhallInput type="textarea" v-model.trim="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <VhallInput v-model.trim="form.price" placeholder="请输入原价" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
+          <VhallInput v-model.trim="form.price" placeholder="请输入价格" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="优惠价" prop="discount_price">
-         <VhallInput v-model.trim="form.discount_price" placeholder="请输入优惠价" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
+         <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <VhallInput v-model.trim="form.url" placeholder="请输入商品链接" autocomplete="off" ></VhallInput>
