@@ -50,6 +50,9 @@
               {{ scope.row.date }}
               <div class="content">
                 <div class="imageBox">
+                  <div class="imageWrap" v-if="scope.row.transcode_status != 1">
+                    <p class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : scope.row.transcode_status == 2 ? '转码失败' : '' }}</p>
+                  </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                 </div>
@@ -228,7 +231,8 @@ export default {
       dangerouslyUseHTMLString: true,
       message: '<span class="msgGray">非默认回放暂存15天。</span><a href="http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738" target="_blank" class="msgBlue">开通点播服务</a>',
       showClose: true,
-      duration: 0
+      duration: 0,
+      offset: 86
     });
   },
   beforeDestroy(){
@@ -528,12 +532,12 @@ export default {
       // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
       // window.open(routeData.href, '_blank');
     },
-    toChapter(row){
+    async toChapter(row){
       const recordId = row.id
       const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
       // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
       if (this.isDemand || (row.transcode_status == 1 && row.doc_status)) {
-        this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        await this.checkChapterSave(recordId, chapterType)
         return false
       }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
@@ -560,7 +564,7 @@ export default {
           }).then(res => {
             console.log(res)
             if (res.data.doc_titles.length) {
-              this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+              this.checkChapterSave(recordId, chapterType)
             } else {
               this.$message({
                 message:  '当前回放内容未演示PPT格式的文档，不支持使用章节功能',
@@ -570,6 +574,22 @@ export default {
               });
             }
           })
+        }
+      })
+    },
+    checkChapterSave(recordId, chapterType) {
+      return this.$fetch('checkChapterSave', {
+        record_id: recordId
+      }).then(res => {
+        if (res.data && res.data.chatper_callbanck_status == 0) {
+          this.$message({
+            message:  '当前视频与文档正在关联中，请稍后再试',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else {
+          this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         }
       })
     },
@@ -715,6 +735,29 @@ export default {
       float: left;
       width: 160px;
       height: 90px;
+      .imageWrap{
+        width: 100%;
+        height: 100%;
+        cursor: not-allowed;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 255, 255, 0.6);
+        z-index: 2;
+        .statusDesc{
+          width: 80px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          border-radius: 15px;
+          background-color: rgba(0,0,0,.6);
+          color: #fff;
+          font-size: 14px;
+        }
+      }
       .defaultSign{
         position: absolute;
         bottom: 0;
