@@ -64,7 +64,7 @@ export default {
   components: {
     upload
   },
-  props: ['url'],
+  props: ['url', 'type'],
   watch: {
    dialogVisible() {
      if (this.dialogVisible) {
@@ -72,6 +72,8 @@ export default {
         this.imageUrl = this.url;
         if (this.imageUrl) {
           this.isType = 0;
+        } else {
+          this.isType = this.type
         }
      }
    }
