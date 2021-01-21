@@ -141,3 +141,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+// input type=number 隐藏默认的上下调整按钮
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+}
+input[type="number"]{
+  -moz-appearance: textfield;
+}
