@@ -147,10 +147,12 @@
     & .nest-menu .el-submenu>.el-submenu__title,
     & .el-submenu .el-menu-item {
       min-width: @sideBarWidth !important;
-      background-color: @subMenuBg !important;
-
+      &.is-active {
+        background-color: @subMenuBg !important;
+      }
       &:hover {
-        background-color: @subMenuHover !important;
+        // background-color: @subMenuHover !important;
+        background-color: @subMenuBg !important;
       }
     }
   }
@@ -212,7 +214,7 @@
       .el-submenu {
         &>.el-submenu__title {
           &>span[slot="title"] {
-            height: 56px;
+            height: 48px;
             width: 0;
             overflow: hidden;
             visibility: hidden;
@@ -312,6 +314,9 @@
 
 // when menu collapsed
 .el-menu--vertical {
+  .el-menu--popup {
+    padding: 0 0;
+  }
   &>.el-menu {
     .svg-icon {
       margin-right: 16px;
@@ -322,11 +327,23 @@
     }
   }
 
+  .el-menu-item, .el-submenu__title {
+    height: 48px;
+    line-height: 48px;
+  }
+
   .nest-menu .el-submenu>.el-submenu__title,
   .el-menu-item {
+    border-left: 4px @menuBg solid;
     &:hover {
       // you can use @subMenuHover
       background-color: @menuHover !important;
+      color: @menuActiveText !important;
+      border-left-color: @menuActiveText;
+    }
+    &.is-active {
+      background-color: @subMenuBg !important;
+      border-left-color: @menuActiveText;
     }
   }
 

@@ -53,7 +53,7 @@
         <el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>
         <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
         <el-button round @click="wordMultiDel" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
-        <el-input
+        <VhallInput
           class="head-btn search-tag"
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
@@ -65,7 +65,7 @@
             slot="suffix"
             @click="initPage">
           </i>
-        </el-input>
+        </VhallInput>
       </div>
       <div class="word-list">
         <table-list

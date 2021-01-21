@@ -6,30 +6,41 @@
     </null-page>
   </div>
   <div v-else  class="dev-show-layout" v-loading="fetching" element-loading-text="获取数据中">
-    <pageTitle title="开发设置"></pageTitle>
-    <p class="top">
-      <el-button type="primary" size="medium" round @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
-      <el-button size="medium" round @click="toCallbackPage" class="bg--trans">回调设置</el-button>
-    </p>
-    <div class="dev-show-list" v-if="totalNum > 0">
-      <table-list
-        ref="tableList"
-        v-if="totalNum > 0"
-        :isCheckout=false
-        :manageTableData="tableList"
-        :tabelColumnLabel="tableColumn"
-        :tableRowBtnFun="tableRowBtnFun"
-        :isHandle="isHandle"
-        :totalNum="totalNum"
-        max-height="auto"
-        width=150
-        scene="development"
-        @onHandleBtnClick="onHandleBtnClick"
-        @getTableList="getTableList"
-      >
-      </table-list>
+    <pageTitle title="开发设置">
+      <span class="dev-show-tips">
+        使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
+      </span>
+    </pageTitle>
+    <!-- 未创建 -->
+    <div class="all-no-data"  v-if="totalNum === 0">
+      <null-page text="暂未创建应用" nullType="no-create" :height="0">
+        <el-button type="primary" round v-preventReClick @click="createApp">创建应用</el-button>
+      </null-page>
     </div>
-    <null-page text="您还未创建应用，请先创建" nullType="no-create" v-if="totalNum === 0"></null-page>
+    <!-- 有数据 -->
+    <div v-else>
+      <p class="top">
+        <el-button type="primary" size="medium" round v-preventReClick @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
+        <el-button size="medium" round @click="toCallbackPage" class="bg--trans">回调设置</el-button>
+      </p>
+      <div class="dev-show-list">
+        <table-list
+          ref="tableList"
+          :isCheckout=false
+          :manageTableData="tableList"
+          :tabelColumnLabel="tableColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :isHandle="isHandle"
+          :totalNum="totalNum"
+          max-height="auto"
+          width=144
+          scene="development"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getTableList"
+        >
+        </table-list>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -116,15 +127,6 @@ export default {
         if (perVo.is_developer > 0) {
           // 开启
           this.auth_show = true;
-          this.msg = this.$message({
-            type: 'info',
-            duration: 0,
-            dangerouslyUseHTMLString: true,
-            message: `<span class="dev-show-tips">
-        使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
-      </span>`,
-            customClass: 'zdy-info-box top-81'
-          });
           this.search();
         } else {
           this.auth_show = false;
@@ -149,13 +151,14 @@ export default {
     },
     createApp(){
       if(!(this.available_num > 0)) {
-        this.$alert('如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970', '提示', {
-          confirmButtonText: '我知道了',
-          customClass: 'zdy-alert-box',
-          center: true,
-          lockScroll: false
-        }).then(()=>{
-        }).catch(()=>{});
+        this.$confirm(`如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+        }).catch(() => {});
         return;
       }
       /**
@@ -164,16 +167,15 @@ export default {
        */
       this.$fetch('createApp', {}).then(res => {
         console.log('getAppList', res);
-        this.$alert('添加成功，请手动添加包名签名信息', '提示', {
+        this.$confirm(`添加成功，请手动添加包名签名信息`, '提示', {
           confirmButtonText: '我知道了',
-          customClass: 'zdy-alert-box',
-          center: true,
-          lockScroll: false
-        }).then(()=>{
-          // 添加成功，刷新列表
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel-hide'
+        }).then(() => {
           this.search();
-        }).catch(()=>{});
-        // this.$router.push({path: `/dev/${res.data.result}`});
+        }).catch(() => {});
       }).catch(res =>{
         this.$message({
           message:  res.msg || '创建失败',
@@ -281,11 +283,6 @@ export default {
         });
       });
     }
-  },
-  beforeDestroy() {
-    if (this.msg) {
-      this.msg.close();
-    }
   }
 };
 </script>
@@ -340,15 +337,25 @@ export default {
        }*/
     }
   }
+  .all-no-data {
+    padding-top: 30px;
+    margin-top: 164px;
+    /deep/.createActive {
+      padding-bottom: 30px;
+    }
+  }
   .dev-show-list {
     .layout--right--main();
     .padding-table-list();
     .min-height();
+    /deep/.el-table .cell {
+      line-height: 25px;
+    }
   }
   .dev-show-tips {
     font-size: 14px;
     font-weight: 400;
-    color: #666666;
+    color:#999999;
     line-height: 20px;
     a {
       color: #3562FA;

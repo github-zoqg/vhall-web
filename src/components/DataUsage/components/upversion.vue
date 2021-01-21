@@ -15,16 +15,16 @@
           </div>
         </el-form-item>
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
-          <el-input v-model="number" style="width: 398px"
+          <el-input v-model="number" :style="{width: title== '升级'? '414px' : '428px'}"
             oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><i slot="suffix" style="font-style: normal;">人</i></el-input
           >
           <!-- <template slot="append">人</template> -->
           <p class="inputNums">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
         </el-form-item>
         <el-form-item label="订单信息">
-          <div class="informtion">
+          <div class="informtion" :style="{width: title== '升级'? '414px' : '428px'}">
             <div class="inform-pay">
-              <h3>支付金额: <b>￥{{ title === '升级'? currentInfo.concurrency_fee * (number - currentInfo.total_concurrency) * concurrentPrice.left_months :  currentInfo.extend_fee * (number - currentInfo.total_concurrency) }}</b></h3>
+              <h3>支付金额: <b>￥{{ totalConcurrency > 0 ? totalConcurrency : 0 }}</b></h3>
               <p v-if="title === '升级'">有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
             </div>
             <div class="xieyi">
@@ -40,13 +40,12 @@
           type="primary"
           @click="orderExtent"
           round
-          size="medium"
           :disabled="!checked"
           >结算</el-button
         >
       </div>
       <div class="instest">
-        <div class="speak">说明:</div>
+        <div class="speak">提示:</div>
         <div v-if="title==='升级'">
           升级套餐有效期为当前套餐剩下的完整自然月
         </div>
@@ -61,16 +60,14 @@
       :close-on-click-modal="false"
       width="560px"
     >
-      <el-form label-width="85px">
+      <el-form label-width="70px">
         <el-form-item label="流量包">
           <div class="img-boxs">
             <div class="img-box img-liu" v-for="(item, index) in nomalBuyList" :key="index" :class="item.isChose ? 'active' : ''" @click="choseVersion(item)">
               <h3>{{ item.flow }}GB</h3>
               <p>+{{ item.gift_flow }}GB(赠送)</p>
               <b class="isMark">{{ flowInfo.flow_fee }}元/GB</b>
-              <label class="img-tangle" v-if="item.isChose">
-                <i class="el-icon-check"></i>
-              </label>
+              <label class="img-tangle" v-if="item.isChose"><img src="../../../common/images/icon-choose.png" alt=""></label>
             </div>
           </div>
         </el-form-item>
@@ -102,7 +99,7 @@
         >
       </div>
       <div class="instest">
-        <div class="speak">说明:</div>
+        <div class="speak">提示:</div>
         <div>
           1、量大更优惠，详询400-800-9970<br />2、优先消耗较早购买/赠送的流量包，消耗完自动启用下一个流量包
         </div>
@@ -130,6 +127,7 @@ export default {
   watch: {
     dialogBuyVisible() {
       if (this.dialogBuyVisible) {
+        this.checked = false;
         this.flowInfo = this.concurrentPrice.flow;
         this.nomalBuyList = this.flowInfo.plans,
         this.nomalBuyList.map(item => item.isChose = false)
@@ -139,6 +137,7 @@ export default {
     },
     dialogVisible() {
       if (this.dialogVisible) {
+        this.checked = false;
         this.currentInfo = this.concurrentPrice.concurrency;
         this.number = this.currentInfo.total_concurrency + 100;
       }
@@ -151,6 +150,13 @@ export default {
         return '￥' + this.concurrentPrice.flow.flow_fee * this.flows;
       } else {
         return 0;
+      }
+    },
+    totalConcurrency() {
+      if (this.title == '升级') {
+        return this.currentInfo.concurrency_fee * (this.number - this.currentInfo.total_concurrency) * this.concurrentPrice.left_months;
+      } else {
+        return this.currentInfo.extend_fee * (this.number - this.currentInfo.total_concurrency)
       }
     }
   },
@@ -205,9 +211,9 @@ export default {
           this.$message.error(res.msg);
         }
 
-      }).catch(e=>{
+      }).catch(res=>{
+        this.$message.error(res.msg);
         this.dialogBuyVisible = false;
-        console.log(e);
       });
     },
     payUpgradeList() {
@@ -221,9 +227,9 @@ export default {
         } else {
           this.$message.error(res.msg);
         }
-      }).catch(e=>{
+      }).catch(res=>{
         this.dialogVisible = false;
-        console.log(e);
+        this.$message.error(res.msg);
       });
     },
     payExtentList() {
@@ -237,8 +243,9 @@ export default {
         } else {
           this.$message.error(res.msg);
         }
-      }).catch(e=>{
+      }).catch(res=>{
         this.dialogVisible = false;
+        this.$message.error(res.msg);
         console.log(e);
       });
     },
@@ -261,6 +268,9 @@ export default {
   color: #1a1a1a;
   font-family: @fontMedium;
 }
+/deep/.el-input__inner {
+  padding: 0 12px;
+}
 /deep/.el-form-item__label {
   color: #1a1a1a;
   font-family: @fontMedium;
@@ -278,6 +288,9 @@ export default {
   font-family: @fontRegular;
   font-weight: 600;
   color: #FB3A32;
+}
+/deep/.el-checkbox__input.is-checked+.el-checkbox__label{
+  color: #666;
 }
 .img-box {
   width: 182px;
@@ -313,11 +326,12 @@ export default {
 }
 .img-boxs{
   display: flex;
+  justify-content: space-between;
   .img-liu{
-    width: 116px;
+    width: 127px;
     height: 120px;
     position: relative;
-    margin-right: 25px;
+    // margin-right: 24px;
     cursor: pointer;
     .isMark{
       display: inline-block;
@@ -330,21 +344,36 @@ export default {
       padding:1px 8px;
     }
     .img-tangle{
-      position: absolute;
-      right: 0;
-      top:0;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-      border-right-color: #FB3A32;
-      border-top-color: #FB3A32;
-      i{
-        color:#fff;
         position: absolute;
-        top: -8px;
-        right:-11px;
-        font-size: 10px;
+        right: -1px;
+        top:-1px;
+        width: 20px;
+        height: 20px;
+        font-size: 0;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
+    // .img-tangle{
+    //   position: absolute;
+    //   right: 0;
+    //   top:0;
+    //   width: 0;
+    //   height: 0;
+    //   border: 10px solid transparent;
+    //   border-right-color: #FB3A32;
+    //   border-top-color: #FB3A32;
+    //   i{
+    //     color:#fff;
+    //     position: absolute;
+    //     top: -8px;
+    //     right:-11px;
+    //     font-size: 10px;
+    //   }
+    // }
+    &:last-child{
+      margin-right: 0;
     }
   }
   .active{
@@ -357,20 +386,20 @@ export default {
   padding-top: 8px;
 }
 .informtion {
-  width: 398px;
+  width: 428px;
   .inform-pay {
-    height: 90px;
+    max-height: 90px;
     background: #f7f7f7;
     border-radius: 4px;
     font-family: @fontRegular;
-    padding: 15px 0 15px 12px;
+    padding: 5px 0 15px 12px;
     h3 {
       font-size: 14px;
       font-weight: 400;
       color: #1a1a1a;
-      height: 20px;
+      height: 30px;
       b {
-        font-size: 16px;
+        font-size: 24px;
         font-weight: 400;
         color: #fb3a32;
       }
@@ -379,10 +408,7 @@ export default {
       font-size: 14px;
       color: #666;
       height: 20px;
-      margin-top: 8px;
-      span {
-        color: #999;
-      }
+      margin-bottom: 15px;
     }
   }
 }
@@ -399,16 +425,16 @@ export default {
   .el-button {
     float: right;
     padding: 10px 45px;
-    margin-right: 35px;
   }
 }
 .instest {
   display: flex;
-  padding-left: 20px;
   line-height: 20px;
-  padding: 10px 0;
+  padding: 20px 0 24px 20px;
+  color: #999;
   .speak {
     padding-right: 10px;
+    color: #999;
   }
 }
 </style>

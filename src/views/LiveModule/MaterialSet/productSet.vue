@@ -5,20 +5,12 @@
         <el-button type="primary" size="medium" round  @click="addProduct" v-preventReClick>创建商品</el-button>
         <el-button round @click="batchDel(null)" size="medium" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
          <div class="inputKey">
-          <el-input v-model.trim="keyword" placeholder="请输入商品名称"  @change="getTableList" maxlength="50" clearable>
-            <i slot="suffix" class="iconfont-v3 saasicon_search"></i>
-          </el-input>
+          <VhallInput v-model.trim="keyword" placeholder="请输入商品名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
+            <i slot="suffix" @click="searchTableList" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;"></i>
+          </VhallInput>
         </div>
-        <!-- <search-area class="head-btn fr search"
-          ref="searchArea"
-          :placeholder="'请输入商品名称'"
-          :isExports='false'
-          :searchAreaLayout="searchAreaLayout"
-          @onSearchFun="getTableList('search')"
-          >
-        </search-area> -->
       </div>
-      <div class="question-list" v-show="total">
+      <div class="question-list" v-show="total || isSearch">
         <table-list
           ref="tableProductList"
           :manageTableData="tableData"
@@ -32,29 +24,32 @@
           @switchChange="onSwitchChange"
         >
         </table-list>
+        <noData :nullType="'search'" v-if="isSearch"></noData>
       </div>
-       <div class="empty" v-show="!total">
-        <noData :nullType="nullText" :text="text">
-          <el-button type="primary" round v-if="nullText == 'nullData'" @click="addProduct" v-preventReClick>创建</el-button>
+       <div class="empty" v-show="!total && !isSearch">
+        <noData :nullType="'nullData'" :text="'您还没有商品，快来创建吧！'">
+          <el-button type="primary" round  @click="addProduct" v-preventReClick>创建</el-button>
         </noData>
       </div>
+      <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "prize",
   data() {
     return {
       formData: {},
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       imageUrl: '',
       keyword:'',
       saleTotal: 0,
-      nullText: 'nullData',
       isSearch: false, //是否是搜索
-      text: '您还没有商品，快来创建吧！',
       checkedGoodsId: [],
       total: 1,
       searchAreaLayout: [
@@ -91,12 +86,14 @@ export default {
       tableRowBtnFun: [
        {name:'编辑', methodName: 'edit'},{name:'复制', methodName: 'cope'},{name:'删除', methodName: 'del'}
       ],
+      vm: null,
       tableData: []
     };
   },
   components: {
     PageTitle,
-    noData
+    noData,
+    beginPlay
   },
   mounted() {
     this.getTableList();
@@ -114,7 +111,11 @@ export default {
           webinar_id: this.$route.params.str,
           goods_id: option.goods_id
         }).then(res => {
-          this.$message.success("上架设置成功！");
+          if (this.vm) {
+            this.vm.close();
+          }
+          this.messageInfo('上架设置成功！');
+          // this.$message.success("");
           this.getTableList();
           console.log(res);
         }).catch(err => {
@@ -128,7 +129,11 @@ export default {
           webinar_id: this.$route.params.str,
           goods_id: option.goods_id
         }).then(res => {
-          this.$message.success("下架设置成功！");
+          if (this.vm) {
+            this.vm.close();
+          }
+          this.messageInfo('下架设置成功！');
+          // this.$message.success("下架设置成功！");
           this.getTableList();
           console.log(res);
         }).catch(err => {
@@ -141,19 +146,21 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchTableList() {
+      this.getTableList('search');
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableProductList.pageInfo; //获取分页信息
-      if (this.keyword || params == 'delete') {
+      if (params == 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        this.$refs.tableProductList.clearSelect();
       }
       let obj = {
         ...pageInfo,
         keyword: this.keyword,
         webinar_id: this.$route.params.str
       };
+      this.isSearch = this.keyword ? true : false;
       this.$fetch('goodsGet', this.$params(obj)).then(res => {
         let tableData = res.data.goods_list;
         tableData.map(item => {
@@ -162,19 +169,19 @@ export default {
         });
         this.total = res.data.total;
         this.tableData = tableData;
-        if (this.keyword) {
-            this.nullText = 'search';
-            this.text = '';
-            this.isSearch = true;
-          } else {
-            this.nullText = 'nullData';
-            this.text = '您还没有商品，快来创建吧！';
-            this.isSearch = false;
-          }
         this.addCover();
         this.getSaleGoodsList();
       }).catch(e => {
         console.log(e);
+      });
+    },
+    //文案提示问题
+    messageInfo(msg) {
+      this.vm = this.$message({
+        showClose: false,
+        duration: 2000,
+        message: msg,
+        type: 'success'
       });
     },
     // 为每个商品设置显示的封面
@@ -205,7 +212,7 @@ export default {
     },
     // 编辑
     edit(that, {rows}) {
-      if (rows.watch) {
+      if (!rows.status) {
         that.$alert('商品已上架，如需编辑请先做下架处理？', '提示', {
           confirmButtonText: '知道了',
           customClass: 'zdy-message-box'

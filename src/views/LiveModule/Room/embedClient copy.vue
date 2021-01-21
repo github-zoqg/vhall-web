@@ -100,7 +100,7 @@ export default {
     },
     // 聊天过滤接口
     chatFilter() {
-      // 单视频 嵌入 不调取--关键词。
+      // 单视频 嵌入 不调取--严禁词。
       if (this.$route.query.embed == 'video') return
       this.$fetch('getAudinceKeyWordList', {
         room_id: this.roominfo.interact.room_id
@@ -186,7 +186,7 @@ export default {
         entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         service_names: this.roominfo.webinar.type == 1 ? 2 : 1,
         type: 3,
-        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+        env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
       });
       window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
         event: this.$route.query.refer // 推广渠道，会在url里传参

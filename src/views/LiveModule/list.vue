@@ -1,5 +1,5 @@
 <template>
-  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
+  <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-if="!loading">
     <pageTitle title="直播列表">
       <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium" round @click="createLiveAction('2')" v-preventReClick v-if="vodPerssion == 1">创建点播</el-button>
+        <el-button size="medium" class="is_medium" round @click="createLiveAction('2')" v-if="vodPerssion == 1" v-preventReClick>创建点播</el-button>
         <!--  v-if="vodPerssion == 1"  -->
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
@@ -29,10 +29,10 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-input
+          <VhallInput
             class="search-tag"
             placeholder="搜索直播标题"
-            v-model="keyWords"
+            v-model.trim="keyWords"
             clearable
             @change="searchHandler"
             @keyup.enter.native="searchHandler">
@@ -41,7 +41,7 @@
               slot="suffix"
               @click="searchHandler">
             </i>
-          </el-input>
+          </VhallInput>
         </div>
       </div>
     <!-- 操作栏 -->
@@ -65,18 +65,18 @@
                 </div>
                 <p class="liveOpera">
                   <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
-                    <i class="el-icon-video-camera" @click.prevent.stop="goLivePlay(item)"></i>
+                    <i class="iconfont-v3 saasicon_kaibo" @click.prevent.stop="goLivePlay(item)"></i>
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
-                  <i class="el-icon-s-promotion" @click="goPlayback(item)"></i>
+                  <i class="iconfont-v3 saasicon_huifang" @click="goPlayback(item)"></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="详情" placement="top">
-                    <i class="el-icon-document" @click.prevent.stop="toDetail(item.webinar_id)"></i>
+                    <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
                   <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
-                    <i class="el-icon-more"></i>
-                    <el-dropdown-menu slot="dropdown">
+                    <i class="iconfont-v3 saasicon_more2"></i>
+                    <el-dropdown-menu style="width: 98px;" slot="dropdown">
                       <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
                       <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
                       <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
@@ -240,10 +240,23 @@ export default {
     },
     goLivePlay(item) {
       //判断是否可以开播
-      if (item.webinar_state == 1) {
-        this.getOpenLive(item);
+      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
+      if (status) {
+        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+          confirmButtonText: '去充值',
+          cancelButtonText: '知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+        }).then(() => {
+          this.$router.push({path:'/finance/info'});
+        }).catch(() => {});
       } else {
-        this.goIsLive(item)
+        if (item.webinar_state == 1) {
+          this.getOpenLive(item);
+        } else {
+          this.goIsLive(item)
+        }
       }
     },
     goPlayback(item) {
@@ -287,7 +300,7 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel',
           callback: action => {
             if (action === 'confirm') {
-              this.$router.push({path:'/account/info'});
+              this.$router.push({path:'/acc/info', query: {tab: 1}});
             }
           }
         });
@@ -374,6 +387,27 @@ export default {
         color: #666666;
         height: 36px;
         line-height: 36px;
+      }
+    }
+    /deep/.is_medium.el-button.el-button--medium{
+      background: transparent;
+      &:hover{
+        color: #fb3a32;
+      }
+    }
+    .search-tag {
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
   }
@@ -490,11 +524,14 @@ export default {
               margin: 0 20px;
             }
           }
+          /deep/.iconfont-v3{
+            font-size: 18px;
+          }
           .el-dropdown{
             float: right;
             &.active{
               z-index: 2;
-              color: #fff;
+              // color: #fff;
             }
           }
         }

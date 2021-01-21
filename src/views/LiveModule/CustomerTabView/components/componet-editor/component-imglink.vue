@@ -2,7 +2,7 @@
   <div class="qrcode-wrapbox">
     <div class="qr-previewbox" v-if="mode == 1">
       <div>
-        <img :src="info.imageSrc" style="width: 100%" alt="">
+        <img :src="info.imageSrc ? info.imageSrc : defaultImg" style="width: 100%" alt="">
       </div>
     </div>
     <div class="qr-editor-box" v-if="mode == 2">
@@ -28,7 +28,7 @@
               <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
               <div data-v-4d7778f2="" class="tips">
                 <div data-v-62244b0e="">
-                  <p data-v-62244b0e="">建议尺寸：1280*720px，小于2M</p>
+                  <p data-v-62244b0e="">建议尺寸：400*225px，小于2M</p>
                   <p data-v-62244b0e="">支持jpg、gif、png、bmp</p>
                 </div>
               </div>
@@ -68,6 +68,7 @@ export default {
   data() {
     return {
       domain_url: '',
+      defaultImg: '//cnstatic01.e.vhall.com/static/images/menu/image-unit.png',
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/commons/upload/index`,
       saveData: {
         path: 'interacts/menu-link-imgs',
@@ -97,6 +98,7 @@ export default {
 
     changeLink() {
       const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
+      this.info.src = this.info.src.trim()
       if(result) {
         this.$emit('updateInfo', this.info)
       } else {
@@ -113,7 +115,17 @@ export default {
 </script>
 <style lang="less" scoped>
   .qr-previewbox{
-    .upload-imglink{
+  }
+  /deep/.el-upload--picture-card i {
+    font-size: 44px;
+    color: #8c939d;
+  }
+  /deep/.tips {
+    p {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      line-height: 16px;
     }
   }
   .label{

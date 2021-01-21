@@ -6,14 +6,34 @@
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
         <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建广告</el-button>
-        <el-button size="medium" class="head-btn length104" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
-        <el-button size="medium" class="head-btn length104" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
-        <span class="searchTitle">
-          <el-input v-model.trim="paramsObj.keyword" placeholder="请输入广告标题"
-          suffix-icon="el-icon-search" clearable @change="getAdvTableList()"></el-input>
-        </span>
+        <el-button size="medium" class="head-btn length104 transparent-btn" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
+        <el-button size="medium" class="head-btn length104 transparent-btn" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
+        <!-- <span class="searchTitle">
+          <VhallInput v-model.trim="paramsObj.keyword" placeholder="请输入广告标题" @keyup.enter.native="searchAdvTableList" @clear="searchAdvTableList" clearable>
+            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchAdvTableList" style="cursor: pointer; line-height: 36px;"></i>
+          </VhallInput>
+        </span> -->
+        <VhallInput
+          class="search-tag"
+          placeholder="请输入广告标题"
+          v-model.trim="paramsObj.keyword"
+          clearable
+          @clear="searchAdvTableList"
+          @keyup.enter.native="searchAdvTableList">
+          <i
+            class="el-icon-search el-input__icon"
+            slot="suffix"
+            @click="searchAdvTableList">
+          </i>
+        </VhallInput>
       </div>
-      <div class="advert-card-list" v-show="total">
+      <div class="no-live" v-if="!total && !isSearch">
+        <noData :nullType="'nullData'" :text="'您还没有广告，快来创建吧！'">
+          <el-button type="primary"  round @click="createAdvise()" v-preventReClick>创建广告</el-button>
+          <el-button size="white-primary" round v-if="$route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
+        </noData>
+      </div>
+      <div class="advert-card-list" v-show="total || isSearch">
          <table-list
           ref="tableList"
           :manageTableData="tableList"
@@ -26,23 +46,22 @@
           @changeTableCheckbox="changeTableCheckbox"
           >
         </table-list>
-      </div>
-      <div class="no-live" v-show="!total">
-        <noData :nullType="nullText" :text="text">
-          <el-button type="primary"  v-if="nullText == 'nullData'" round @click="createAdvise()" v-preventReClick>创建广告</el-button>
-          <el-button size="white-primary" round v-if="nullText == 'nullData' && $route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
-        </noData>
+        <noData :nullType="'search'" v-if="isSearch"></noData>
       </div>
       <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList" :maxTotal="total"></create-advise>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
 import createAdvise from './components/createAdvise';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 export default {
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       advInfo: {},
       adv_ids: [],
       paramsObj: {
@@ -51,9 +70,7 @@ export default {
       pos: 0,
       limit: 10,
       total: 0,
-      nullText: 'nullData',
       isSearch: false, //是否是搜索
-      text: '您还没有广告，快来创建吧！',
       tableList: [],
       tabelColumn: [
        {
@@ -88,16 +105,19 @@ export default {
   },
   components: {
     createAdvise,
-    noData
+    noData,
+    beginPlay
   },
   mounted() {
     this.getAdvTableList();
   },
   methods: {
+    searchAdvTableList() {
+      this.getAdvTableList('search')
+    },
     getAdvTableList(param) {
        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      if (this.paramsObj.keyword || param == 'delete') {
-        this.$refs.tableList.clearSelect();
+      if (param == 'search') {
         pageInfo.pos = 0;
         pageInfo.pageNum = 1;
       }
@@ -107,15 +127,7 @@ export default {
         limit: pageInfo.limit,
         webinar_id: this.$route.params.str || ''
       };
-      if (this.paramsObj.keyword) {
-          this.nullText = 'search';
-          this.text = '';
-          this.isSearch = true;
-        } else {
-          this.nullText = 'nullData';
-          this.text = '您还没有广告，快来创建吧！';
-          this.isSearch = false;
-        }
+      this.isSearch = this.paramsObj.keyword ? true : false;
       this.$fetch('getAdvList', this.$params(params)).then(res => {
         this.total = res.data.total;
         this.tableList = res.data.adv_list;
@@ -146,16 +158,34 @@ export default {
           webinar_id: this.$route.params.str
         })).then(res => {
           if (res && res.code === 200) {
-              this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
               // 刷新页面
             this.$refs.tableList.clearSelect();
-            this.getAdvTableList('delete');
+            this.getAdvTableList('search');
             this.adv_ids = [];
           } else {
-            this.$message.error(res.msg || '删除失败');
+            this.$message({
+              message: res.msg || `删除失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           }
         }).catch((res) => {
-          this.$message.error(res.msg || '删除失败');
+          this.$message({
+            message: res.msg || `删除失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       })
     },
@@ -169,7 +199,13 @@ export default {
     },
     createAdvise(title) {
       if (this.$route.path !='/material/advertCard' && this.total >= 50) {
-        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        this.$message({
+          message: `广告推荐个数已达到最大个数限制，请删除后再进行添加`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.advInfo = {};
@@ -210,7 +246,7 @@ export default {
     .search-data{
       margin-bottom: 30px;
     }
-    .searchTitle{
+    /* .searchTitle{
       float: right;
       width: 220px;
       /deep/.el-button{
@@ -219,6 +255,30 @@ export default {
       /deep/.el-input__inner{
         border-radius: 20px;
       }
+    } */
+    .search-tag {
+      float: right;
+      width: 220px;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
+  }
+}
+.no-live{
+  /deep/.btn-list .el-button {
+    &:last-child{
+      margin: 0;
     }
   }
 }

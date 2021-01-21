@@ -44,7 +44,7 @@
         <!-- 第二步 -->
         <div class="step-2" v-if="findStep===2">
           <div class="find-phone" v-if="isType==='phone'">
-            <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email')">邮箱找回密码</span></p>
+            <p class="find-text">请填写您的注册手机号获取验证码，完成身份验证；您还可以选择<span @click="findPassword('email', 1)">邮箱找回密码</span></p>
             <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="phone">
               <el-input
@@ -55,7 +55,7 @@
               </el-input>
             </el-form-item>
             <el-form-item>
-              <div id="loginCaptcha" class="findCaptcha">
+              <div id="loginCaptcha" class="captcha">
                 <el-input
                   auto-complete="off"
                   v-model.trim="dynamicForm.text">
@@ -67,6 +67,7 @@
                 <el-input
                   placeholder="输入验证码"
                   clearable
+                  :maxlength="6"
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
@@ -81,12 +82,13 @@
           </el-form>
           </div>
           <div class="find-phone" v-if="isType==='email'">
-            <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone')">手机找回密码</span></p>
+            <p class="find-text">请填写您的邮箱获取验证码，完成身份验证；您还可以选择<span @click="findPassword('phone', 1)">手机找回密码</span></p>
             <el-form ref="checkDynamicForm" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="email">
               <el-input
                 placeholder="请输入邮箱"
                 auto-complete="off"
+                :maxlength="30"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
                     <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
@@ -97,6 +99,7 @@
               <el-input
                 placeholder="输入邮箱验证码"
                 auto-complete="off"
+                :maxlength="6"
                 v-model.trim="dynamicForm.code">
               </el-input>
             </el-form-item>
@@ -110,20 +113,22 @@
         <div class="step-3" v-if="findStep===3">
           <el-form ref="resetPassword" :model="dynamicForm" :rules="loginRules">
             <el-form-item prop="password">
-              <el-input
+              <pwd-input
                 placeholder="请输入新密码"
+                :maxlength="30"
                 type="password"
                 auto-complete="off"
                 v-model.trim="dynamicForm.password">
-              </el-input>
+              </pwd-input>
             </el-form-item>
             <el-form-item prop="checkPassword">
-              <el-input
+              <pwd-input
                 placeholder="请再次输入密码"
                 type="password"
+                :maxlength="30"
                 auto-complete="off"
                 v-model.trim="dynamicForm.checkPassword">
-              </el-input>
+              </pwd-input>
             </el-form-item>
             <div class="login-btn">
               <el-button type="primary" class="length152" @click="resetPassword()" round>提&nbsp;&nbsp;&nbsp;交</el-button>
@@ -145,11 +150,13 @@
 import OldHeader from '@/components/OldHeader';
 import PageTitle from '@/components/PageTitle';
 import footerSection from '../../components/Footer/index';
+import PwdInput from '../AccountModule/components/pwdInput.vue';
 export default {
   components: {
     OldHeader,
     PageTitle,
-    footerSection
+    footerSection,
+    PwdInput
   },
   data() {
     let validatePhone = (rule, value, callback) => {
@@ -216,11 +223,14 @@ export default {
   //   });
   // },
   methods: {
-    findPassword(type) {
+    findPassword(type, index) {
       this.isType = type;
       this.findStep = 2;
       if (type === 'phone') {
         this.callCaptcha();
+      }
+      if (index) {
+        this.$refs['checkDynamicForm'].resetFields();
       }
     },
     // 第二步获取短信验证码

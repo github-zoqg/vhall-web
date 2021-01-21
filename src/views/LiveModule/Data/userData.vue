@@ -14,30 +14,70 @@
         <el-tab-pane label="回放" name="2"></el-tab-pane>
       </el-tabs>
       <div class="search">
-          <search-area
-            ref="searchArea"
-            :placeholder="placeholder"
-            :active="active"
-            @onExportData="exportCenterData()"
-            :searchAreaLayout="searchAreaLayout"
-            @onSearchFun="getTableList('search')"
-            >
-          </search-area>
+        <el-select filterable clearable v-model="type" @change="changeType" v-if="isSwitch"  style="width: 160px;vertical-align: top;margin-right: 16px">
+        <el-option
+        v-for="(opt, optIndex) in timeData"
+        :key="optIndex"
+        :label="opt.label"
+        :value="opt.value"
+          />
+        </el-select>
+        <el-date-picker
+          v-model="dateValue"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          unlink-panels
+          @change="searchTableList"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          prefix-icon="iconfont-v3 saasicon_date"
+          :picker-options="pickerOptions"
+          v-if="type=='1'"
+        />
+        <el-select filterable clearable v-model="switchId" v-if="type=='2'" @change="searchTableList">
+          <el-option
+            v-for="(opt, optIndex) in switchList"
+            :key="optIndex"
+            :label="opt.label"
+            :value="opt.value"
+          />
+        </el-select>
+        <el-checkbox v-model="checkedValue"  @change="searchTableList" style="margin-left:16px">合并同一用户</el-checkbox>
+        <VhallInput
+            class="search-tag"
+            placeholder="请输入用户昵称"
+            v-model.trim="title"
+            clearable
+            @change="searchTableList"
+            @keyup.enter.native="searchTableList">
+            <i
+              class="el-icon-search el-input__icon"
+              slot="suffix"
+              @click="searchTableList">
+            </i>
+          </VhallInput>
+        <!-- <el-input class="inputer" v-model.trim="title" placeholder="请输入用户昵称" style="vertical-align: top;margin-left:20px" @clear="searchTableList" @keyup.enter.native="searchTableList"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="searchTableList"></i></el-input> -->
+        <div class="export-data">
+          <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
-        <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
-        </noData>
-        <table-list
-          ref="tableList"
-          v-show="tableList.length > 0"
-          :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
-          :isHandle="false"
-          :isCheckout="false"
-          :totalNum="totalNum"
-          @changeTableCheckbox="changeTableCheckbox"
-          @getTableList="getTableList"
-          >
-        </table-list>
+        </div>
+        <div>
+          <table-list
+            ref="tableList"
+            :manageTableData="tableList"
+            :tabelColumnLabel="tabelColumn"
+            :isHandle="false"
+            :isCheckout="false"
+            :totalNum="totalNum"
+            @changeTableCheckbox="changeTableCheckbox"
+            @getTableList="getTableList"
+            >
+          </table-list>
+          <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
+          </noData>
+        </div>
+
     </div>
 
   </div>
@@ -55,11 +95,15 @@ export default {
       isHandle: false,
       params: {}, //导出的时候用来记录参数
       activeName: '1',
+      type:'1',
+      switchId: 0,
+      dateValue: '',
+      checkedValue: false,
+      title: '',
       liveDetailInfo: {},
       switchList: [],
-      placeholder: '搜索用户昵称',
-      searchAreaLayout: [],
       tableList: [],
+      isSwitch: true,
       tabelColumn:[
         {
           label: '用户信息',
@@ -80,6 +124,7 @@ export default {
         {
           label: '观看时长（分）',
           key: 'watch_duration',
+          width: '200px'
         },
         {
           label: '观看终端',
@@ -94,147 +139,52 @@ export default {
           key: 'ip',
         }
       ],
-      searchArea:[
-         {
-          type: "3",
-          key: "searchIsTime",
-          options: [
-            {
-              label: '按时间筛选',
-              value: '1',
-            },
-            {
-              label: '按场次筛选',
-              value: '2',
-            },
-          ]
+      timeData: [
+        {
+          label: '按时间筛选',
+          value: '1',
         },
         {
-          type: "3",
-          key: "switchId",
-          options: []
+          label: '按场次筛选',
+          value: '2',
         },
-        {
-          type: "7",
-          key: "merge_type",
-          name: '合并同一用户'
-        },
-        {
-          key: "searchTitle",
-        }
       ],
-      searchLayout: [
-        {
-          type: "3",
-          key: "searchIsTime",
-          options: [
-            {
-              label: '按时间筛选',
-              value: '1'
-            },
-            {
-              label: '按场次筛选',
-              value: '2'
+      pickerOptions: {
+        shortcuts: [
+          {
+            text: '今日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime());
+              start.setTime(start.getTime());
+              picker.$emit('pick', [start, end]);
             }
-          ]
-        },
-        {
-          type: "1",
-          options: [
-            {
-              title: '今日',
-              active: 2,
-            },
-            {
-              title: '近7日',
-              active: 3,
-            },
-            {
-              title: '近30日',
-              active: 4,
+          },
+          {
+            text: '近7日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
             }
-          ]
-        },
-        {
-          type: "2",
-          key: "searchTime",
-        },
-        {
-          type: "7",
-          key: "merge_type",
-          name: '合并同一用户'
-        },
-        {
-          key: "searchTitle",
+          }, {
+            text: '近30日',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime() - 3600 * 1000 * 24);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }],
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledData(time);
         }
-      ],
-      searchVodOut: [
-        {
-          type: "1",
-          active: 2,
-          options: [
-            {
-              title: '全部',
-              active: 1,
-            },
-            {
-              title: '今日',
-              active: 2,
-            },
-            {
-              title: '近7日',
-              active: 3,
-            },
-            {
-              title: '近30日',
-              active: 4,
-            }
-          ]
-        },
-        {
-          type: "2",
-          key: "searchTime",
-        },
-        {
-          type: "7",
-          key: "merge_type",
-          name: '合并同一用户'
-        },
-        {
-          key: "searchTitle",
-        }
-      ],
-      searchAreaVideoOut: [
-        {
-          type: "1",
-          options: [
-            {
-              title: '今日',
-              active: 2,
-            },
-            {
-              title: '近7日',
-              active: 3,
-            },
-            {
-              title: '近30日',
-              active: 4,
-            }
-          ]
-        },
-        {
-          type: "2",
-          key: "searchTime",
-        },
-        {
-          type: "7",
-          key: "merge_type",
-          name: '合并同一用户'
-        },
-        {
-          key: "searchTitle",
-        }
-      ]
+      }
     };
   },
   components: {
@@ -243,6 +193,7 @@ export default {
     PageTitle
   },
   created() {
+    this.initPage()
     this.getLiveDetail();
   },
   watch: {
@@ -253,15 +204,29 @@ export default {
   mounted() {
   },
   methods: {
+     dealDisabledData(time) {
+      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+      // return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+    },
+    initPage() {
+      // 初始化设置日期为今天
+      const end = new Date();
+      const start = new Date();
+      end.setTime(end.getTime());
+      start.setTime(start.getTime());
+      this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+    },
+    searchTableList() {
+      this.getTableList('search');
+    },
     //获取直播详情
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         if (this.liveDetailInfo.webinar_state != 4) {
-          this.searchAreaLayout = this.searchLayout;
           this.getLiveSwitchInfo();
         } else {
-          this.searchAreaLayout = this.searchVodOut;
+          this.isSwitch = false;
         }
         this.getTableList();
       }).catch(error=>{
@@ -282,55 +247,20 @@ export default {
     },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
+      // let formParams = this.$refs.searchArea.searchParams; //获取搜索参数
       let paramsObj = {
         webinar_id: this.$route.params.str,
-        switch_id: formParams.switchId || 0,
+        switch_id: this.switchId || 0,
         service_names: this.liveDetailInfo.webinar_state == 4 ? '2' : this.activeName,
-        end_time: getRangeDays(1)
+        start_time: this.dateValue ? this.dateValue[0] : '',
+        end_time: this.dateValue ? this.dateValue[1] : '',
+        merge_type: this.checkedValue ? 1 : 2,
+        nick_name: this.title
       };
-      if (this.active!= 1 && formParams.searchIsTime == 1) {
-        paramsObj.start_time = getRangeDays(this.active);
-      }
-      for (let i in formParams) {
-        if (i === 'searchTime' && formParams.searchTime && formParams.searchIsTime == 1) {
-          paramsObj['start_time'] = formParams[i][0];
-          paramsObj['end_time'] = formParams[i][1];
-        } else {
-          paramsObj[i] = formParams[i];
-        }
-      }
-      if (this.liveDetailInfo.webinar_state != 4) {
-        if (this.activeName == 2) {
-          this.searchAreaLayout = this.searchAreaVideoOut;
-          paramsObj.switch_id = 0;
-          formParams.searchIsTime = 1;
-          formParams.searchTime = ''
-        } else {
-          if (formParams.searchIsTime == 2) {
-            formParams.searchTime = '';
-            paramsObj.start_time = '';
-            this.active = 2;
-            paramsObj.end_time = '';
-            console.log(formParams, paramsObj, "11111111111场次")
-              this.searchArea.map(item => {
-                item.key === 'switchId' ? item.options = this.switchList : []
-              })
-              this.searchAreaLayout = this.searchArea;
-            } else {
-              this.searchAreaLayout = this.searchLayout;
-              paramsObj.switch_id = 0;
-              this.active = 2;
-            }
-          }
-        }
       if (params === 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        this.$refs.tableList.clearSelect();
       }
-      paramsObj.merge_type = formParams.merge_type ? 1 : 2;
       let obj = Object.assign({}, pageInfo, paramsObj);
       this.params = paramsObj;
       this.getBaseUserInfo(obj);
@@ -358,15 +288,25 @@ export default {
     changeTableCheckbox(val) {
       console.log(val);
     },
+    changeType() {
+      this.switchId = '';
+      if (this.type == 1) {
+        this.initPage();
+      } else {
+        this.dateValue = '';
+      }
+      this.getTableList('search');
+    },
     handleClick(tab) {
       this.activeName = tab.name;
       // tab切换时搜索的值和分页的值都重置
-      this.$refs.searchArea.searchParams = {};
-      this.$refs.searchArea.searchParams.searchIsTime = '1',
-      this.$refs.tableList.pageInfo.pageNum = 1;
-      this.$refs.tableList.pageInfo.pos = 0;
-      this.active = 2;
-      this.getTableList();
+      this.isSwitch = tab.name == '2' ? false : true;
+      this.initPage();
+      this.type = '1';
+      this.title = '';
+      this.checkedValue = false;
+      this.switchId = '';
+      this.getTableList('search');
     }
   }
 };
@@ -381,19 +321,60 @@ export default {
     padding: 3px;
   }
   .search{
-    margin-top: 24px;
     padding: 0 24px;
+    margin: 24px 0;
+    position: relative;
+    /deep/.el-input__inner{
+      border-radius: 18px;
+      height: 36px;
+      background: transparent;
+    }
+    /deep/.el-range-input{
+      background: transparent;
+    }
+    /deep/.el-date-editor .el-range__icon{
+      line-height: 29px;
+    }
+    /deep/.el-date-editor .el-range__close-icon {
+      line-height: 28px;
+    }
+    /deep/.el-input__icon{
+      line-height: 36px;
+    }
+    .export-data {
+      position: absolute;
+      right: 24px;
+      top: 0;
+    }
+
+    .search-tag {
+      margin-left: 20px;
+      width: 180px!important;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
   }
   .data-list{
     padding: 0 24px;
   }
   /deep/.el-select {
-    width:130px!important;
+    // width:130px!important;
   }
 
   @media screen and (max-width:1920px) {
     /deep/.el-input {
-      width: 135px!important;
+      width: 160px!important;
     }
   }
   /deep/.el-tabs__item {
@@ -401,7 +382,7 @@ export default {
    line-height: 56px;
   }
   /deep/.el-date-editor {
-    width: 200px!important;
+    width: 220px!important;
     /deep/ input {
      width: 72px;
     }

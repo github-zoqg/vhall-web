@@ -27,10 +27,14 @@ export const liveTag = (val) => {
     return str;
 };
 export const actionText = (val) => {
-  console.log(val, '>>>>>>>>>>?????????????????')
   // webinar_state  1直播 2预约 3结束 4点播 5回放
   const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
   let str = liveTypeStr[val];
+  return str;
+};
+export const unitTime = (val) => {
+  let str;
+  str = val.substring(0, 16);
   return str;
 };
 export const unitCovert = (val) => {
@@ -77,6 +81,8 @@ export const filterPhone = (value) => {
 };
 
 export const wordStatusCss = (ext) => {
+  console.log(ext)
+  ext = ext.toLowerCase();
   if (ext === 'pdf') {
     return 'saasPDFwenjian color-E34522';
   } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'bmp') {

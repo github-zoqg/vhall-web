@@ -19,33 +19,33 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-            <el-button class="invite-card-button" round slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button round size="medium" slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button  class="invite-card-button" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button size="medium" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
       <div class="form-data">
         <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation" :rules="rules">
-          <el-form-item label="背景">
+          <el-form-item label="封面背景">
             <div class="data-img">
               <div class="advor_img"><img :src="img" alt=""/></div>
-              <span class="choseImg" @click="invitation && changeImg()">重新选择</span>
+              <span class="choseImg" @click="invitation && changeImg()">选择封面</span>
             </div>
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
               <p :class="showType === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
                 <img src="../../../common/images/invite-card/tmpl1.png" alt="">
-                <label class="img-tangle" v-if="showType === 1"><i class="el-icon-check"></i></label>
+                <label  class="img-tangle" v-if="showType === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
                <p :class="showType === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
                 <img src="../../../common/images/invite-card/tmpl2.png" alt="">
-                <label class="img-tangle" v-if="showType === 2"><i class="el-icon-check"></i></label>
+               <label  class="img-tangle" v-if="showType === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
                <p :class="showType === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
                 <img src="../../../common/images/invite-card/tmpl3.png" alt="">
-                <label class="img-tangle" v-if="showType === 3"><i class="el-icon-check"></i></label>
+                <label  class="img-tangle" v-if="showType === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
             </div>
           </el-form-item>
@@ -72,6 +72,7 @@
               v-model.trim="formInvitation.webinar_date"
               :maxlength="20"
               autocomplete="off"
+              show-word-limit
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
@@ -141,12 +142,14 @@
         </div>
         <div class="watch-img" v-else-if="showType===2"  id="shopInvent">
           <div class="watch-bg" :style="`backgroundImage: url(${img})`">
-            <div class="watch-header">
+            <div class="watch-color">
+              <div class="watch-header">
               <div class="watch-avator">
                 <img :src="avatar" alt="">
               </div>
               <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
               <p style="color:#fff;">邀请你一起看直播</p>
+            </div>
             </div>
           </div>
           <div class="watch-text">
@@ -163,6 +166,7 @@
           </div>
         </div>
         <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+          <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
                 <img :src="avatar" alt="">
@@ -190,6 +194,7 @@
                 <p>长按保存图片后分享</p>
               </div>
             </div>
+          </div>
         </div>
       </div>
       <div class="sureBtn">
@@ -198,6 +203,7 @@
       <div class="white-show" v-show="!invitation"></div>
     </div>
     <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
@@ -205,6 +211,7 @@ import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import html2canvas from 'html2canvas';
+import beginPlay from '@/components/beginBtn';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
@@ -244,7 +251,8 @@ export default {
     };
     return {
       invitation: true,
-      qrcode: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      qrcode: '',
       showCode: '',
       showType: 1,
       avatar: '',
@@ -302,12 +310,12 @@ export default {
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     let token = sessionOrLocal.get('token', 'localStorage');
-    this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
-    this.showCode = `${Env.staticLinkVo.aliQr}${this.link}`;
+    this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     this.getInviteCardInfo();
   },
   components: {
-    addBackground
+    addBackground,
+    beginPlay
   },
   methods: {
     changeType(index) {
@@ -331,6 +339,7 @@ export default {
       };
       this.$fetch('getCardDetailInfo', params).then(res => {
         this.formInvitation = res.data.invite_card;
+        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
         this.img = this.formInvitation.img || this.fileList[0];
         this.imgUrl = this.formInvitation.img || '';
         this.showType = this.formInvitation.show_type;
@@ -453,8 +462,9 @@ export default {
     line-height: 20px;
     bottom:7px;
   }
-   /deep/.el-input__inner {
+  /deep/.el-input__inner, /deep/.el-textarea__inner {
     padding: 0 12px;
+    color: #1A1A1A;
   }
   .invitation-from {
     display: flex;
@@ -483,7 +493,7 @@ export default {
       img {
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        // object-fit: scale-down;
       }
     }
 
@@ -514,26 +524,22 @@ export default {
       position: relative;
       height: 128px;
       border: 1px solid transparent;
-      .img-tangle{
-        position: absolute;
-        right: 0;
-        top:0;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-right-color: #FB3A32;
-        border-top-color: #FB3A32;
-        i{
-          color:#fff;
-          position: absolute;
-          top: -8px;
-          right:-11px;
-          font-size: 10px;
-        }
-      }
+      cursor: pointer;
       img {
         width: 100%;
         height: 125px;
+      }
+      .img-tangle{
+        position: absolute;
+        right: -1px;
+        top:-1px;
+        width: 20px;
+        height: 20px;
+        font-size: 0;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
       &.isActiveColor{
         box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
@@ -555,7 +561,7 @@ export default {
     .show-img {
       width: 330px;
       border-radius: 4px;
-      border: 1px solid #E2E2E2;
+      border: 1px solid #E6E6E6;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       height: 622px;
@@ -564,8 +570,9 @@ export default {
         width: 282px;
         height: 520px;
         background: #fff;
-        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
+        border-radius: 4px;
         .show-header{
           padding: 20px 24px;
           text-align: center;
@@ -607,7 +614,7 @@ export default {
             font-size: 14px;
             color:#1A1A1A;
             font-weight: 400;
-            line-height: 30px;
+            line-height: 20px;
             padding: 2px 0 5px 0;
             overflow: hidden;
             text-emphasis: wrap;
@@ -667,12 +674,22 @@ export default {
       background: #FFFFFF;
       height: 620px;
       position: relative;
-      box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      border: 1px solid #E6E6E6;
+      // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       .watch-bg{
         height: 360px;
         background-image: url('../../../common/images/v35-webinar.png');
         background-size: 100% 100%;
         background-repeat: no-repeat;
+        border-radius: 4px 4px 0 0;
+        // background-color: rgba(0, 0, 0, 0.1);
+        .watch-color{
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 4px 4px 0 0;
+        }
         .watch-header{
             padding: 20px 24px;
             text-align: center;
@@ -770,6 +787,12 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      .look-color{
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
       .look-header{
         padding: 20px 24px;
         text-align: center;
@@ -841,9 +864,10 @@ export default {
         bottom: 20px;
         left: 40px;
         width: 250px;
-        background: #000;
+        // background: #000;
+        background: rgba(0, 0, 0, 0.2);
         border-radius: 4px;
-        opacity: 0.2;
+        // opacity: 0.2;
         padding: 10px;
         .look-code{
           width: 60px;
@@ -859,6 +883,7 @@ export default {
           h1{
             padding:0;
             font-size: 14px;
+            color: #fff;
             font-weight: 600;
             line-height: 30px;
           }
@@ -888,6 +913,16 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
+      /deep/.el-button{
+        background-color: transparent;
+        padding: 4px 23px;
+        &:hover{
+          background-color: #FB3A32;
+        }
+        &.is-disabled:hover{
+          background-color: transparent;
+        }
+      }
       /deep/.el-button:last-child{
         margin-left: 10px;
       }

@@ -96,14 +96,15 @@
           :isHandle="isHandle"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
-          :width = '150'
+          :width = '100'
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getIncomeList"
           >
         </table-list>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
       </el-tabs>
     </div>
-    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
+    <cash-box ref="cashBox" :money="money" :type="type" @onreload="onreload"></cash-box>
   </div>
 </template>
 
@@ -111,6 +112,7 @@
 import PageTitle from '@/components/PageTitle';
 import cashBox from './components/cashBox';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "income",
   data() {
@@ -164,11 +166,11 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
+          width: 130,
         },
         {
           label: '标题',
           key: 'name',
-          width: 150,
         },
         {
           label: '总收益（元）',
@@ -195,6 +197,7 @@ export default {
         {
           label: '活动id',
           key: 'webinar_id',
+          width: 130,
         },
         {
           label: '标题',
@@ -203,18 +206,22 @@ export default {
         {
           label: '发红包用户',
           key: 'red_packet_user',
+          width: 300,
         },
         {
           label: '红包类型',
           key: 'red_packet',
+          width: 135,
         },
         {
           label: '领取时间',
           key: 'created_at',
+          width: 150,
         },
         {
           label: '领取金额（元）',
           key: 'money',
+          width: 135,
         }
       ],
       tableRowBtnFun: [
@@ -227,12 +234,12 @@ export default {
   },
   components: {
     cashBox,
-    PageTitle
+    PageTitle,
+    noData
   },
   created() {
     this.tabelColumn = this.liveColumns;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
   },
   mounted() {
     this.getIncomeInfo();
@@ -305,6 +312,8 @@ export default {
       });
     },
     cash(title) {
+      this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
+      console.log(this.userInfo, '???????????????')
       if (this.incomeInfo.in_live_withdraw || this.incomeInfo.in_red_withdraw) {
         this.$alert('您有进行中的提现，无法再次提现', '提示', {
           confirmButtonText: '知道了',
@@ -321,9 +330,10 @@ export default {
         this.$message.warning('当前余额不足1元，不支持提现');
         return false;
       }
-      let flag = this.isBangWeixin();
-      // （false）未绑定微信   绑定微信(true)
-      if (flag) {
+      // let flag = this.isBangWeixin();
+      let flag = this.userInfo.user_extends.is_bind_wechat;
+      // 0未绑定微信   绑定微信1
+      if (flag == 1) {
         this.$refs.cashBox.dialogCashVisible = true;
         this.phone = this.userInfo.phone;
         this.money = title === '直播' ? this.incomeInfo.live_balance : this.incomeInfo.red_packet_balance;
@@ -334,9 +344,6 @@ export default {
     },
     onreload() {
       this.getIncomeInfo();
-    },
-    isBangWeixin() {
-      return this.userInfo.user_thirds.some(item => item.type == 3);
     },
     detail(that, { rows }) {
       that.$router.push({
@@ -370,8 +377,11 @@ export default {
     position: relative;
     .box-card{
       background: #fff;
-      padding: 24px 32px;
+      padding: 24px 0 40px 0;
       border-radius: 4px;
+    }
+    /deep/.el-tabs__content{
+      padding: 0 24px;
     }
     .detail{
       position: absolute;
@@ -430,7 +440,7 @@ export default {
     }
   }
   .money-come{
-    margin-left: 10px;
+    margin-left: 16px;
     height: 170px;
     padding: 24px 32px;
     border-radius: 4px;
@@ -445,10 +455,7 @@ export default {
   .listTab {
     margin-top: 24px;
     .search-income{
-      margin-top: 24px;
-    }
-    .data-list {
-      padding: 0 24px;
+      margin-top: 32px;
     }
   }
   }

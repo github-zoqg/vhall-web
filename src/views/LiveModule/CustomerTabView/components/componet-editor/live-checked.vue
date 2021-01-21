@@ -18,7 +18,7 @@
           0
         </div>
       </div>
-      <div class="vh-chose-active-item__title">
+      <div class="vh-chose-active-item__title ellsips">
         示例活动
       </div>
       <div class="vh-chose-active-item__info">
@@ -46,7 +46,7 @@
           {{ item.pv }}
         </div>
       </div>
-      <div class="vh-chose-active-item__title">
+      <div class="vh-chose-active-item__title ellsips">
         {{ item.subject }}
       </div>
       <div class="vh-chose-active-item__info">

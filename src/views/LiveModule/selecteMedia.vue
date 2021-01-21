@@ -7,9 +7,9 @@
     :close-on-click-modal=false
     :close-on-press-escape=false
     :before-close="handleClose"
-    width="880px">
+    width="800px">
     <div class="search"  v-show="total || isSearch">
-      <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @change="searchHandler" clearable>
+      <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
         <i class="el-icon-search el-input__icon"
         @click="searchHandler"
           slot="suffix"
@@ -32,12 +32,12 @@
         width="55">
       </el-table-column>
       <el-table-column
-       width="210"
         label="音视频名称">
           <template slot-scope="scope">
-            <span class="mediaName">
-              <!-- <i></i> -->
-              {{fontNumber(scope.row.name)}}
+            <span class="mediaName" :title="scope.row.name">
+              <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.MP3' || scope.row.msg_url == '.MAV'"></i>
+              <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+              {{scope.row.name}}
             </span>
           </template>
         </el-table-column>
@@ -50,16 +50,16 @@
       <el-table-column
         label="时长"
         prop="duration"
-        width="120"
+        width="100"
         show-overflow-tooltip>
       </el-table-column>
 
       <el-table-column
         label="进度"
-        width="150"
+        width="120"
         show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{ scope.row.transcode_status_text }}</span>
+          <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
           <!-- <el-progress v-if="scope.row.status=='transcoding'" color="#14BA6A" :percentage="scope.row.process" :stroke-width="8" :width="100"></el-progress>
           <span v-else :class="[scope.row.status, 'statusTag']">{{scope.row.status | statusStr}}</span> -->
         </template>
@@ -67,7 +67,8 @@
 
       <el-table-column
         label="操作"
-        width="100"
+        width="80"
+        align="left"
         show-overflow-tooltip>
         <template slot-scope="scope">
           <el-button type="text" class="actionBtn" @click="preVidio(scope.row)">预览</el-button>
@@ -85,7 +86,7 @@
     </span>
   </el-dialog>
   <template v-if="showDialog">
-    <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center
+    <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
     :close-on-click-modal=false
     :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
@@ -254,6 +255,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
+        this.$parent.isChange = false;
         this.$router.push({path: "/material/video"});
       }).catch(()=>{});
     }
@@ -292,6 +294,18 @@ export default {
     .el-dialog {
       max-width: 800px;
     }
+    /deep/.el-dialog__body{
+      // padding: 0 24px;
+    }
+    /deep/.el-table__header{
+      th{
+        background: #F7F7F7;
+      }
+      width: 100%;
+    }
+    // /deep/.el-dialog__footer{
+    //   padding:24px 32px;
+    // }
   }
   .statusTag{
     &::before{
@@ -315,13 +329,29 @@ export default {
   .mediaName{
     font-size: 14px;
     color: #1A1A1A;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .iconfont-v3{
+      font-size: 20px;
+      margin-top: -3px;
+    }
+    .saasyinpinwenjian{
+      color: #10d3a8;
+      // padding-right: 2px;
+    }
+    .saasshipinwenjian{
+      color: #ff733c;
+      // padding-right: 2px;
+    }
     i{
       display: inline-block;
       width: 20px;
       height: 20px;
-      background: #10D3A8;
+      // background: #10D3A8;
       border-radius: 4px;
-      margin-right: 12px;
+      // margin-right: 12px;
       vertical-align: middle;
     }
   }
@@ -338,6 +368,7 @@ export default {
       /deep/ .el-input__inner{
         height: 36px;
         border-radius: 20px;
+        padding-right: 50px;
       }
       .el-input__suffix{
         i{
@@ -350,30 +381,36 @@ export default {
     }
   }
   .vh-dialog{
-  /deep/ .el-dialog {
-    width: 642px!important;
-    background: transparent!important;
-    border:none;
-    box-shadow: none;
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
+    }
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
+      color: #fff;
+    }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 16px solid #333;
+      border-bottom: 16px solid #333;
+      background: #333;
+      border-radius: 4px;
+    }
   }
-  /deep/ .el-dialog__header {
-    width: 642px!important;
-    padding: 0px;
-    height: 55px;
-    background: transparent!important;
-    border:none;
-  }
-  /deep/ .el-dialog__headerbtn{
-    top: 30px;
-    right: 0px;
-  }
-  /deep/ .el-dialog__body{
-    width: 642px;
-    height: 375px;
-    border: 16px solid #333;
-    background: #fff;
-  }
-}
  /*  /deep/ .el-table__header{
     th{
       background: #F7F7F7;

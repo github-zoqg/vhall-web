@@ -1,16 +1,16 @@
 <template>
   <div class="show-special">
-    <OldHeader scene="preShow"></OldHeader>
+    <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id"></OldHeader>
     <div class="special-show-ctx">
-      <pageTitle title="专题详情"></pageTitle>
-      <el-card>
+      <!-- <pageTitle title="专题详情"></pageTitle> -->
+      <div class="special-info">
         <div class="special-main">
           <div class="special-img">
             <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
           </div>
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
-            <p>{{ specialInfo.created_at }}</p>
+            <p>{{ specialInfo.created_at | unitTime  }}</p>
             <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i>热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <el-popover
@@ -24,34 +24,34 @@
             </div>
           </div>
         </div>
-      </el-card>
-      <el-card class="special-list">
-        <el-tabs v-model="activeName" @tab-click="handleClick">
+      </div>
+      <div class="special-list">
+        <el-tabs v-model="activeName" @tab-click="handleClick" v-loadMore="moreLoadData">
           <el-tab-pane label="专题简介" name="first">
-            <p class="text" v-html="specialInfo.intro"></p>
+            <div class="text" v-html="specialInfo.intro"></div>
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
-            <el-row :gutter="40" class="lives">
-              <!-- <el-scrollbar v-loadMore="moreLoadData"> -->
-                <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-                  <div class="inner">
-                    <div class="top" @click="goWatchData(item)">
-                      <span class="liveTag">{{item | liveTag }}</span>
-                      <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
-                    </div>
-                    <div class="bottom">
-                      <div class="">
-                        <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
-                        <p class="liveTime">{{item.start_time}} <span><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
+            <!-- <el-scrollbar v-loadMore="moreLoadData"> -->
+              <el-row :gutter="40" class="lives">
+                  <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
+                    <div class="inner">
+                      <div class="top" @click="goWatchData(item)">
+                        <span class="liveTag">{{item | liveTag }}</span>
+                        <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
+                      </div>
+                      <div class="bottom">
+                        <div class="">
+                          <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
+                          <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </el-col>
-              <!-- </el-scrollbar> -->
-            </el-row>
+                  </el-col>
+              </el-row>
+            <!-- </el-scrollbar> -->
           </el-tab-pane>
         </el-tabs>
-      </el-card>
+      </div>
     </div>
   </div>
 </template>
@@ -72,14 +72,15 @@ export default {
       pagePos: 0,
       totalElement: 0,
       shareVo: {
-        url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`
+        url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${this.$route.query.id}`,
+        pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
       },
       totalList: [], //总数
       liveList: []
     };
   },
   components: {
-    PageTitle,
+    // PageTitle,
     OldHeader,
     share
   },
@@ -88,33 +89,25 @@ export default {
   },
   methods: {
     moreLoadData() {
-      let page = 0;
-      if (page >= this.maxPage) {
+      if (this.pageNum >= this.maxPage) {
         return false;
       }
-      page ++ ;
-      this.liveList = this.totalList.splice(this.pageSize * page + 1, this.pageSize);
-      console.log(this.liveList)
-      // this.pageInfo.pos = parseInt((this.pageInfo.page - 1) * this.pageInfo.limit);
+      this.pageNum ++;
+      this.liveList = this.totalList.slice(0, this.pageSize * this.pageNum)
     },
     getSpecialList() {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
         if (res.code == 200) {
           this.specialInfo = res.data.webinar_subject;
-          this.liveList = res.data.webinar_subject.webinar_list;
-          // this.totalList = res.data.webinar_subject.webinar_list;
-          // this.liveList = this.totalList.splice(0, this.pageSize);
+          // this.liveList = res.data.webinar_subject.webinar_list;
+          this.totalList = res.data.webinar_subject.webinar_list;
+          this.liveList = this.totalList.slice(0, this.pageSize);
           let totalElement = res.data.webinar_subject.webinar_num;
           this.maxPage = Math.ceil(totalElement / this.pageSize);
         } else {
           this.$message.error('获取失败');
         }
       })
-    },
-    currentChangeHandler(current) {
-      this.pageNum = current;
-      this.pagePos = parseInt((current - 1) * this.pageSize);
-      this.getSpecialList();
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
@@ -125,27 +118,10 @@ export default {
     },
     handleClick(tab) {
       this.activeName = tab.name;
-    },
-    userLogoGet() {
-      this.$fetch('userLogoGet', {
-        home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
-      }).then(res => {
-        console.log(res);
-      }).catch(err=>{
-      });
-    },
-    // 获取标记 logo 主办方信息
-    getSignInfo () {
-      return this.$fetch('watchInterGetWebinarTag', {
-        webinar_id: this.$route.params.id
-      }).then(res => {
-        if (res.data) {
-          this.signInfo = res.data
-        }
-      })
-    },
+      this.pageNum = 1;
+      this.liveList = this.totalList.slice(0, this.pageSize * this.pageNum)
+    }
   }
-
 };
 </script>
 <style lang="less">
@@ -154,7 +130,7 @@ export default {
 }
 .special-show-ctx {
   width: 1300px;
-  margin: 0 auto 50px auto;
+  margin: 40px auto 50px auto;
 }
   .show-special{
     height: 100%;
@@ -229,14 +205,28 @@ export default {
       min-height: 300px;
       padding: 20px;
       overflow: auto;
-      // max-height: 500px;
+      max-height: 500px;
+    }
+    .special-info{
+      background: #fff;
+      border-radius: 4px;
+      padding: 24px 32px;
     }
     .special-list{
       margin-top: 20px;
+      background: #fff;
+      border-radius: 4px;
+      padding: 24px 32px;
       // max-height: 500px;
       .text{
         color: #383838;
         height: calc(100% - 592px);
+        strong{
+          font-weight: bold;
+        }
+        p{
+          font-style:normal;
+        }
       }
       .lives{
         // max-height: 500px;

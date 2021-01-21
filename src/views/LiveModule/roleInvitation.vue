@@ -169,6 +169,7 @@
         <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
@@ -176,10 +177,12 @@
 import PageTitle from '@/components/PageTitle';
 import Clipboard from 'clipboard';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'embedCard.vue',
   components: {
     PageTitle,
+    beginPlay
   },
   data() {
     let checkPassword = (rule, value, callback) => {
@@ -270,6 +273,8 @@ export default {
   },
   created() {
     this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
+    // 根據活動ID獲取活動信息
+    this.getWebinarInfo();
   },
   methods: {
     async updateSwitch() {
@@ -491,10 +496,6 @@ export default {
       // 根据ID获取活动-角色配置信息
       this.getPrivilegeInfo();
     }
-  },
-  created() {
-    // 根據活動ID獲取活動信息
-    this.getWebinarInfo();
   }
 };
 </script>
@@ -521,12 +522,16 @@ export default {
   display: inline-block;
   margin-bottom: 24px;
   /* border: 1px dashed #EEEEEE; */
-  padding: 32px 32px;
+  padding: 32px 0 32px 32px;
   background: #FFFFFF;
   vertical-align: middle;
+  border-radius: 4px;
   &:nth-child(2n) {
     margin-right: 0;
     margin-left: 12px;
+  }
+  .role-card-head, .el-form, .role-qx-title {
+    padding-right: 32px;
   }
 }
 .title--label {
@@ -559,7 +564,7 @@ export default {
     font-size: 14px;
     font-family: @fontRegular;
     font-weight: 400;
-    color: #666666;
+    color: #1A1A1A;
     padding: 0 10px 0 0;
   }
   /deep/.el-input__inner {
@@ -631,8 +636,9 @@ export default {
   font-size: 14px;
   font-family: @fontRegular;
   font-weight: 400;
-  color: #666666;
+  color: #1A1A1A;
   line-height: 20px;
+  height: 26px;
   margin-top: 24px;
   display: flex;
   justify-content: flex-start;

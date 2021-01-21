@@ -20,7 +20,7 @@
           :before-upload="beforeUploadHandler"
           @delete="baseSetForm.avatar = ''">
           <div slot="tip">
-            <p>建议尺寸：100*100px</p>
+            <p>建议尺寸：140*140px</p>
             <p>小于2M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
@@ -198,6 +198,9 @@ export default {
 <style lang="less" scoped>
 .base--set {
   .padding41-40();
+}
+/deep/.el-input__inner {
+  height: 40px!important;
 }
 /deep/.el-form-item__label {
   padding: 0 10px 0 0;

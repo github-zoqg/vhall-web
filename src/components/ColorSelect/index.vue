@@ -81,6 +81,9 @@ export default {
       this.colors = tab;
       console.log(this.colors, '当前样式1');
       this.$emit('color', this.colors);
+    },
+    initColor(color) {
+      this.colors = color || '';
     }
   },
   created() {
@@ -99,6 +102,7 @@ export default {
     margin-right: 12px;
     cursor: pointer;
     &.active {
+      // border: 1px solid #FB3A32;
       transform: scale(1.2);
       -webkit-transform: scale(1.2);
       -o-transform: scale(1.2);
@@ -113,15 +117,15 @@ export default {
 }
 .themes__F2F2F2 {
   background: #F2F2F2;
-  border: 1px solid #E6E6E6;
+  border: 1px solid #F2F2F2;
 }
 .themes__1A1A1A {
   background: #1A1A1A;
-  border: 1px solid #333333;
+  border: 1px solid #1A1A1A;
 }
 .themes__FB3A32 {
   background: #FB3A32;
-  border: 1px solid #FB3A32;
+  border: 1px solid  #FB3A32;
 }
 .themes__FFB201 {
   background: #FFB201;

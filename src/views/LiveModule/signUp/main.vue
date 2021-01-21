@@ -36,6 +36,7 @@
               <span>{{item.label}}</span>
             </li>
           </template>
+          <div class="disable_wrap" v-if="!signUpSwtich"></div>
         </ul>
         <div class="rightView">
           <!-- 表单编辑组件 -->
@@ -53,8 +54,8 @@
             :questionArr.sync="questionArr"
             @closeSignUp="closePreview"
           ></signUpForm>
+          <div class="disable_wrap" v-if="!signUpSwtich"></div>
         </div>
-        <div class="disable_wrap" v-if="!signUpSwtich"></div>
       </div>
     </div>
     <shareDialog
@@ -67,6 +68,7 @@
       @setBaseInfo="setBaseInfo"
       ref="theme"
     ></themeSet>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -77,13 +79,16 @@ import shareDialog from './shareDialog';
 import signUpForm from '../Subscribe/signUpForm';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
+import { sessionOrLocal } from '@/utils/utils';
+import beginPlay from '@/components/beginBtn';
 export default {
   components: {
     PageTitle,
     fieldSet,
     shareDialog,
     themeSet,
-    signUpForm
+    signUpForm,
+    beginPlay
   },
   data(){
     return {
@@ -100,6 +105,7 @@ export default {
       },
       radio: 3,
       rightComponent: 'fieldSet',
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       setOptions: {
         "基本信息": [
           {icon: 'saasicon_name', label: "姓名", name: 'name'},
@@ -587,13 +593,14 @@ export default {
   .settingBox{
     position: relative;
     .isFixed {
-      position:fixed;
+      position:fixed!important;
       top:70px;
       z-index:999;
     }
     .options{
       width: 170px;
       float: left;
+      position: relative;
       .block{
         font-size: 16px;
         color: #666666;
@@ -641,6 +648,7 @@ export default {
       justify-content: center;
       width: calc(100% - 170px);
       float: right;
+      position: relative;
     }
     .disable_wrap{
       position: absolute;
@@ -650,6 +658,10 @@ export default {
       width: 100%;
       height: 100%;
       background-color: rgba(255, 255, 255, 0.5)
+    }
+    .options .disable_wrap{
+      background: #F7F7F7;
+      opacity: 0.5;
     }
   }
 

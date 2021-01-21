@@ -28,7 +28,16 @@
       <el-form-item label="专题简介" required>
         <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
-      <el-form-item label="预约人数">
+      <p class="switch__box">
+        <el-switch
+          v-model="formData.reservation"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="预约人数"
+          :active-text="reservationDesc">
+        </el-switch>
+      </p>
+      <!-- <el-form-item label="预约人数">
         <p class="switch__box">
           <el-switch
             v-model="formData.reservation"
@@ -37,27 +46,29 @@
             :active-text="reservationDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="专题热度">
+      </el-form-item> -->
+      <!-- <el-form-item label="专题热度"> -->
         <p class="switch__box">
           <el-switch
             v-model="formData.hot"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            inactive-text="专题热度"
             :active-text="hotDesc">
           </el-switch>
         </p>
-      </el-form-item>
-      <el-form-item label="关联主页">
+      <!-- </el-form-item> -->
+      <!-- <el-form-item label="关联主页"> -->
         <p class="switch__box">
           <el-switch
             v-model="formData.home"
             active-color="#FB3A32"
             inactive-color="#CECECE"
+            inactive-text="关联主页"
             :active-text="homeDesc">
           </el-switch>
         </p>
-      </el-form-item>
+      <!-- </el-form-item> -->
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
@@ -273,6 +284,7 @@ export default {
 
     sendData(content) {
       this.formData.content = content;
+      console.log(content, "1111111111111111");
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -313,8 +325,9 @@ export default {
     },
 
     submitForm(formName) {
+    window.cd = this.formData
       if (!this.formData.content) {
-        this.$message.error('请选择专题简介');
+        this.$message.error('请输入专题简介');
         return;
       }
       if (!this.formData.selectedActives.length) {
@@ -349,7 +362,7 @@ export default {
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
               this.subject_id = res.data.subject_id;
-              this.$message.success(`创建成功`);
+              this.$message.success(this.$route.query.id ? '编辑成功' : `创建成功`);
               // 保存或创建成功重置更改状态
               this.isChange = false
               console.log(res);
@@ -357,10 +370,10 @@ export default {
                 this.$router.push({path: '/special'});
               }, 500);
             } else {
-              this.$message.error(`创建失败，${res.msg}`);
+              this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${res.msg}`);
             }
           }).catch(error=>{
-            this.$message.error(`创建失败，${error.message}`);
+            this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`);
           }).finally(()=>{
             this.loading = false;
           });
@@ -460,9 +473,20 @@ export default {
       pointer-events: none;
       user-select: none;
     }
+    /deep/.el-input__inner{
+      height: 40px;
+    }
     .tox-tinymce{
       border-radius: 4px;
     }
+    /deep/.el-switch__label--left {
+      margin-right: 13px;
+    }
+  }
+  .switch__box{
+    line-height: 35px;
+    padding-bottom: 10px;
+    padding-left: 10px;
   }
   .el-form-item{
     width: 100%;

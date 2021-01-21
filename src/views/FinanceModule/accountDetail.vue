@@ -10,21 +10,26 @@
           @onSearchFun="getDetailList('search')"
         >
       </search-area>
-      <table-list
-        ref="tableAccount"
-        :manageTableData="tableList"
-        :tabelColumnLabel="tabelColumn"
-        :isCheckout="isCheckout"
-        :isHandle="isHandle"
-        :totalNum="totalNum"
-        @getTableList="getDetailList"
-        >
-      </table-list>
+      <div>
+        <table-list
+          ref="tableAccount"
+          :manageTableData="tableList"
+          :tabelColumnLabel="tabelColumn"
+          :isCheckout="isCheckout"
+          :isHandle="isHandle"
+          :totalNum="totalNum"
+          @getTableList="getDetailList"
+          >
+        </table-list>
+        <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
+        </noData>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
+import noData from '@/views/PlatformModule/Error/nullPage';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
@@ -39,7 +44,7 @@ export default {
         {
           type: '3',
           key: "withdraw_status",
-          placeholder: '请选择提现状态',
+          placeholder: '提现状态',
           options: [
             {
               label: '审核中',
@@ -58,7 +63,7 @@ export default {
         {
           type: '3',
           key: "withdraw_type",
-          placeholder: '请选择提现类型',
+          placeholder: '提现类型',
           options: [
             {
               label: '直播收益',
@@ -73,34 +78,7 @@ export default {
       ],
       isCheckout: false,
       isHandle: false,
-      tableList: [
-        {
-          created_at: '2020-09-17',
-          withdraw_type: '0',
-          withdraw_fee: '123,000',
-          account: 'hahhsdhjkdhfhjkfhdjghkfdjghkdj哈哈哈哈',
-          id: '1',
-          status: 1,
-          type: '直播',
-          statusText: '成功',
-          withdraw_status: '1',
-          actual_fee: '12456',
-          service_fee:'111245',
-        },
-        {
-          created_at: '2020-01-17',
-          withdraw_type: '2',
-          withdraw_status: '2',
-          withdraw_fee: '111,000',
-          account: '哈哈减肥吧开始讲课',
-          id: '2',
-          status: 2,
-          type: '红包',
-          statusText: '红包',
-          service_fee:'失败',
-          actual_fee: '444444',
-        }
-      ],
+      tableList: [],
       tabelColumn: [
         {
           label: '收款账号',
@@ -134,7 +112,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -196,5 +175,6 @@ export default {
     background: #fff;
     padding: 24px 32px;
     border-radius: 4px;
+    min-height: 500px;
   }
 </style>

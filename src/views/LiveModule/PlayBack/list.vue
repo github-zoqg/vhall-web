@@ -15,9 +15,12 @@
         <el-button size="medium" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
         <VhallInput
+          clearable
           @keyup.enter.native="getList"
           placeholder="请输入内容标题"
           autocomplete="off"
+          class="resetRightBrn"
+          @clear="getList"
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
@@ -28,6 +31,7 @@
       </div>
       <div class="tableBox" v-loading="loading">
         <el-table
+          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
           v-if="isDemand !== ''"
           ref="playBackTable"
           :data="tableData"
@@ -57,7 +61,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="110">
+          <el-table-column width="120">
             <template slot-scope="{ column, $index }" slot="header">
               <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
                 <el-option
@@ -86,9 +90,11 @@
           </el-table-column>
 
           <el-table-column
-            width="200"
+            width="176"
             label="操作"
-            show-overflow-tooltip>
+            show-overflow-tooltip
+            align="left"
+          >
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
@@ -96,7 +102,7 @@
               <el-button type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
-                <el-dropdown-menu slot="dropdown">
+                <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
@@ -113,6 +119,7 @@
           @current-change="currentChangeHandler"
           align="center"
         ></SPagination>
+        <null-page text="未搜索到相关内容" nullType="search" v-if="totalElement === 0"></null-page>
       </div>
     </template>
 
@@ -137,18 +144,19 @@
       >
       </VhallInput>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确 定</el-button>
-        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取 消</el-button>
+        <el-button type="primary" @click="confirmEdit" :disabled="editLoading" round size="medium">确定</el-button>
+        <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取消</el-button>
       </span>
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" title="预览" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
       :close-on-click-modal=false
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
     </template>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -157,11 +165,13 @@ import VideoPreview from './components/previewVideo';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import beginPlay from '@/components/beginBtn';
 export default {
   data(){
     return {
       // 预览
       showDialog: false,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       videoParamId: '',
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
@@ -314,6 +324,7 @@ export default {
         limit: this.pageSize,
         source: this.recordType,
       };
+      param.source == '上传' && (param.source = -1)
       this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
@@ -480,9 +491,10 @@ export default {
     },
     toChapter(row){
       const recordId = row.id
+      const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
       // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
       if (this.isDemand || (row.transcode_status == 1 && row.doc_status)) {
-        this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+        this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
         return false
       }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
@@ -509,7 +521,7 @@ export default {
           }).then(res => {
             console.log(res)
             if (res.data.doc_titles.length) {
-              this.$router.push({path: `/live/chapter/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+              this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
             } else {
               this.$message({
                 message:  '当前回放内容未演示PPT格式的文档，不支持使用章节功能',
@@ -575,18 +587,22 @@ export default {
   components: {
     PageTitle,
     VideoPreview,
-    NullPage
+    NullPage,
+    beginPlay
   }
 };
 </script>
 
-<style lang="less">
-  .dialog-padding_playbackpreview{
-    padding: 0px 0px 30px;
-  }
-</style>
 <style lang="less" scoped>
   .listBox{
+    /deep/ .dialog-footer {
+      .el-button {
+        padding: 4px 23px;
+      }
+    }
+    /deep/ .el-textarea__inner {
+      font-family: PingFangSC-Regular, PingFang SC;
+    }
     .btn-list .el-button:last-child {
       margin-right: 0;
       margin-left: 0;
@@ -619,6 +635,9 @@ export default {
   .tableBox{
     padding: 32px 24px;
     background: #fff;
+    /deep/ .el-table__empty-block {
+      display: none;
+    }
     /deep/ .cell{
       color: #666;
     }
@@ -627,6 +646,20 @@ export default {
     }
     .playpackSource{
       color: #1a1a1a;
+    }
+    /deep/ thead .el-select {
+      .el-input__inner {
+        border: none;
+        color: #666;
+        padding-left: 0;
+      }
+      .el-input__suffix {
+        .el-icon-arrow-up {
+          color: #666;
+          line-height: 36px;
+          // height: 14px;
+        }
+      }
     }
   }
   /* /deep/ .el-table__header{
@@ -713,6 +746,25 @@ export default {
   }
   .operaBlock{
     margin-bottom: 20px;
+    .el-button.el-button--medium.el-button--default {
+      background: transparent;
+      &:hover {
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
+      &.is-disabled {
+        border: 1px solid #E6E6E6;
+        background: transparent;
+        color: #B3B3B3;
+        &:hover,&:active {
+          background: transparent;
+        }
+      }
+    }
     .el-input{
       width: 220px;
       float: right;
@@ -727,9 +779,39 @@ export default {
         }
       }
     }
+    .resetRightBrn {
+      /deep/ .el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
   }
   .input-with-select{
     vertical-align: text-top;
+  }
+  /deep/ .dialog-padding_playbackpreview{
+    padding: 0px 0px 30px;
+    background: transparent!important;
+    border: none;
+    box-shadow: none;
+    .el-dialog__headerbtn {
+      top: 24px;
+      margin-bottom: 8px;
+      .el-dialog__close {
+        color: #FFFFFF;
+      }
+    }
   }
 </style>
 <style lang="less">

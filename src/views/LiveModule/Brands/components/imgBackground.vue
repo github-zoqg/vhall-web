@@ -1,6 +1,6 @@
 <template>
   <VhallDialog
-    title="添加封面背景"
+    title="选择封面背景"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="700px"
@@ -24,25 +24,27 @@
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">
-              <p>建议尺寸：750*1624px，小于2M</p>
+              <p>建议尺寸：750*1334px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
-          <label class="img-tangle" v-show="isType==0">
+          <label  class="img-tangle" v-if="isType === 0"><img src="../../../../common/images/icon-choose.png" alt=""></label>
+          <!-- <label class="img-tangle" v-show="isType==0">
             <i class="el-icon-check"></i>
-          </label>
+          </label> -->
         </div>
         <div class="list-item list-imgs is-success" v-for="(item, index) in fileList" :key="index">
-          <label class="img-tangle" v-if="isType === index + 1">
+          <label  class="img-tangle" v-if="isType === index + 1"><img src="../../../../common/images/icon-choose.png" alt=""></label>
+          <!-- <label class="img-tangle" v-if="isType === index + 1">
             <i class="el-icon-check"></i>
-          </label>
-          <img :src="item" alt="" @click="choseBackground(index)"/>
+          </label> -->
+          <img :src="item" alt="" class="bgImg" @click="choseBackground(index)"/>
         </div>
       </div>
     </el-scrollbar>
     <div slot="footer" class="dialog-footer">
-      <el-button round size="medium"  @click.prevent.stop="dialogVisible = false">取 消</el-button>
       <el-button round  size="medium" v-preventReClick type="primary" @click.prevent.stop="changePic">选 择</el-button>
+      <el-button round size="medium"  @click.prevent.stop="dialogVisible = false">取 消</el-button>
     </div>
   </VhallDialog>
 </template>
@@ -146,25 +148,22 @@ export default {
     margin: 8px;
     border: 1px solid #ccc;
     position: relative;
+    border-radius: 4px;
+    .bgImg {
+      width: 100%;
+      border-radius: 4px;
+    }
     .img-tangle{
       position: absolute;
       right: 0;
       top:0;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-      border-right-color: #FB3A32;
-      border-top-color: #FB3A32;
-      i{
-        color:#fff;
-        position: absolute;
-        top: -8px;
-        right:-11px;
-        font-size: 10px;
+      width: 20px;
+      height: 20px;
+      font-size: 0;
+      img{
+        width: 100%;
+        height: 100%;
       }
-    }
-    img {
-      width: 100%;
     }
     .upload-demo {
       margin-top: 20px;
@@ -175,23 +174,23 @@ export default {
   }
   .list-imgs{
     position: relative;
-    .img-tangle{
-      position: absolute;
-      right: 0;
-      top:0;
-      width: 0;
-      height: 0;
-      border: 10px solid transparent;
-      border-right-color: #FB3A32;
-      border-top-color: #FB3A32;
-      i{
-        color:#fff;
-        position: absolute;
-        top: -8px;
-        right:-11px;
-        font-size: 10px;
-      }
-    }
+    // .img-tangle{
+    //   position: absolute;
+    //   right: 0;
+    //   top:0;
+    //   width: 0;
+    //   height: 0;
+    //   border: 10px solid transparent;
+    //   border-right-color: #FB3A32;
+    //   border-top-color: #FB3A32;
+    //   i{
+    //     color:#fff;
+    //     position: absolute;
+    //     top: -8px;
+    //     right:-11px;
+    //     font-size: 10px;
+    //   }
+    // }
   }
 }
 /deep/.el-dialog__footer{
@@ -199,7 +198,7 @@ export default {
 }
 .dialog-footer {
   padding-top: 24px;
-  // float: left;
+  text-align: right;
 }
 </style>
 

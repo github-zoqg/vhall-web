@@ -19,13 +19,13 @@
             @delete="deleteImg"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
-              <p>建议尺寸：120*120px，小于2M</p>
+              <p>建议尺寸：240*240px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-            <VhallInput v-model.trim="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
+          <VhallInput v-model.trim="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -42,7 +42,9 @@
       width="588px">
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
-         <el-input v-model.trim="keyword" placeholder="请输入奖品名称" suffix-icon="el-icon-search" @change="inputChange" style="width:220px" clearable></el-input>
+         <VhallInput v-model.trim="keyword" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
+           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
+         </VhallInput>
        </div>
        <div v-show="total">
         <el-scrollbar v-loadMore="moreLoadData">
@@ -78,18 +80,19 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :before-close="handleClose"
+      :lock-scroll=false
+      class="zdy-async-dialog"
       width="400px"
     >
-      <div class="surePrize">
-        <div class="textPrize">
-          <p>确定保存当前奖品？</p>
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>保存奖品同时共享至资料管理，便于其他活动使用？</p>
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
-        <div class="dialog-footer">
-          <el-button size="medium" type="primary" @click="sureMaterialPrize" round>确 定</el-button>
+        <div class="async__footer">
+          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
           <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
-       </div>
+        </div>
       </div>
     </VhallDialog>
   </div>
@@ -372,15 +375,15 @@ export default {
 </script>
 <style lang="less" scoped>
 .prize-create{
-  /deep/.el-input__inner{
-    border-radius: 20px;
-    height: 36px;
-    background: transparent;
-  }
   .prizeList{
     padding-bottom: 24px;
     .search{
       margin-bottom: 16px;
+      /deep/.el-input__inner{
+      border-radius: 20px;
+      height: 36px;
+      background: transparent;
+    }
     }
     .prize{
       max-height: 300px;

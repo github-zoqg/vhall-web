@@ -13,7 +13,8 @@
             <el-form-item prop="date1" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
-              <el-date-picker type="date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%"></el-date-picker>
+              <el-date-picker type="date" class="date" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col class="line" :span="1">-</el-col>
@@ -42,7 +43,7 @@
         </div>
         <div class="modeBox">
           <div>
-            <img src="../../common/images/live/mode-video_check.png" :class="{active: formData.liveMode== 2}" @click='liveModeChange(2)' v-if="formData.liveMode== 2">
+            <img src="../../common/images/live/mode-video_check.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
             <img src="../../common/images/live/mode-video.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
             <!-- <el-container class='model'> -->
@@ -61,7 +62,7 @@
               <img src="../../common/images/live/mode-active_disabled.png" alt="" style="cursor: default;">
             </template>
             <template v-else>
-             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: formData.liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="formData.liveMode== 3">
+             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
               <img src="../../common/images/live/mode-active.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
             <!-- <el-container class='model'> -->
@@ -85,7 +86,7 @@
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
           <div>
-            <img src="../../common/images/live/mode-media_check.png" :class="{active: formData.liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="formData.liveMode== 1">
+            <img src="../../common/images/live/mode-media_check.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
             <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
             <!-- <el-container class='model'>
               <img src="../../common/images/live/mode-media.png" alt="">
@@ -115,7 +116,7 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
-          @delete="imageUrl = ''">
+          @delete="formData.imageUrl = ''">
           <div slot="tip">
             <p>建议尺寸：1280*720px，小于2M</p>
             <p>支持jpg、gif、png、bmp</p>
@@ -123,18 +124,26 @@
         </upload>
       </el-form-item>
       <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
-        <div class="mediaBox">
+        <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
-            <i class="el-icon-film"></i>
+            <i class="iconfont-v3 saasicon_shangchuan"></i>
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
             <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
-          <div class="abRight" v-if="selectMedia.id">
-            <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button>
+          <div class="abRight" v-if="selectMedia.id&&showChecked">
+            <div class="tool" @click.stop="previewVideo">
+              <i class="iconfont-v3 saasicon-eye"></i>
+              <el-button type="text" class="operaBtn" >预览</el-button>
+            </div>
+            <div class="tool" @click.stop="deleteSelectMedia">
+              <i class="iconfont-v3 saasicon_shanchu"></i>
+              <el-button type="text" class="operaBtn" >删除</el-button>
+            </div>
+            <!-- <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
+            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button> -->
           </div>
           <el-tooltip v-if="!$route.query.record_id">
               <div slot="content">
@@ -226,8 +235,8 @@
          <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" class="common-button length152" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
-        <el-button class="common-button length152" @click="resetForm('ruleForm')" round>取消</el-button>
+        <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button class="length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
 
@@ -235,17 +244,19 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="40%" center
+      <el-dialog class="vh-dialog" :visible.sync="showDialog" width="30%" center
       :close-on-click-modal=false
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
+    <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import beginPlay from '@/components/beginBtn';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
@@ -259,7 +270,8 @@ export default {
     upload,
     selectMedia,
     VEditor,
-    VideoPreview
+    VideoPreview,
+    beginPlay
   },
   computed: {
     rangHourMins() {
@@ -355,7 +367,6 @@ export default {
       if (minutes <= 9) {
         minutes = `0${minutes}`
       }
-      debugger
       return `${hours}:${minutes}`;
     }
   },
@@ -379,7 +390,6 @@ export default {
         title: '',
         date1: '',
         date2: '',
-        liveMode: 2,
         content: ``,
         docSwtich: false,
         reservation: true,
@@ -392,6 +402,9 @@ export default {
         imageUrl: '',
         domain_url: '',
       },
+      liveMode: 2,
+      liveDetailInfo: {},
+      showChecked: false,
       isChange: false,
       showDialog: false,
       startVal: '',
@@ -417,13 +430,31 @@ export default {
       }
     };
   },
+  beforeRouteEnter (to, from, next) {
+    let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
+    if (!vm.$route.query.id && !userPhone) {
+        vm.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
+          confirmButtonText: '立即绑定',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+          callback: action => {
+            if (action === 'confirm') {
+              vm.$router.push({path:'/acc/info', query: {tab: 1}});
+            }
+          }
+        });
+    } else {
+      next()
+    }
+  },
   beforeRouteLeave(to, from, next) {
      // 离开页面前判断信息是否修改
     if (!this.isChange) {
       next()
       return false;
     }
-    this.$confirm(`是否取消编辑的${this.webniarTypeToZH}内容？`, '提示', {
+    this.$confirm(`是否取消${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
@@ -472,7 +503,7 @@ export default {
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
-        this.formData.liveMode = this.liveDetailInfo.webinar_type;
+        this.liveMode = this.liveDetailInfo.webinar_type;
         this.formData.imageUrl = this.liveDetailInfo.img_url;
         this.formData.domain_url = this.liveDetailInfo.img_url;
         console.log(this.domain_url, this.imageUrl, '封面地址');
@@ -510,7 +541,7 @@ export default {
       this.formData.content = content;
     },
     liveModeChange(index) {
-      this.formData.liveMode = index;
+      this.liveMode = index;
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
@@ -569,7 +600,7 @@ export default {
         subject: this.formData.title, // 标题
         introduction: this.formData.content, // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
-        webinar_type: this.formData.liveMode, // 1 音频 2 视频 3 互动
+        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
@@ -652,6 +683,14 @@ export default {
       // }
       // 重置直播模式、直播封面、直播简介。
     },
+     // 鼠标离开
+    hiddenMenu () {
+      this.showChecked = false
+    },
+    //鼠标滑上去
+    showMenu () {
+      this.showChecked = true
+    },
     mediaSelected(media){
       this.selectMedia = media;
       console.log(this.selectMedia);
@@ -676,6 +715,9 @@ export default {
       pointer-events: none;
       user-select: none;
     }
+    /deep/.el-input__inner{
+      height: 40px;
+    }
     .title-inform /deep/.el-input__inner{
       padding: 0 12px;
     }
@@ -687,6 +729,11 @@ export default {
   }
   .item-time .el-form-item {
     margin-bottom: 0px;
+  }
+  .date{
+    /deep/.el-input__prefix {
+        left: 8px;
+    }
   }
   /deep/ .el-form-item{
     // width: 100%;
@@ -855,25 +902,6 @@ export default {
   .btnGroup{
     // text-align: center;
     margin-top: 40px;
-    .el-button{
-      color:#FB3A32;
-      border-color:#FB3A32;
-      width: 150px;
-      &:hover{
-        background: #ffebeb;
-      }
-    }
-    .el-button--primary{
-      background:#FB3A32;
-      border-color:#FB3A32;
-      color: #fff;
-      &:hover{
-        background: #fc615b;
-      }
-    }
-    .el-button.is-round{
-      padding: 10px 23px;
-    }
   }
   .editBox {
     .common-button {
@@ -890,8 +918,8 @@ export default {
   }*/
   .mediaBox{
     background-color: #fbfdff;
-    border: 1px dashed #ccc;
-    border-radius: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     box-sizing: border-box;
     width: 100%;
     height: 148px;
@@ -899,15 +927,37 @@ export default {
     position: relative;
     .abRight{
       position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
       top: 0px;
-      right: 12px;
+      right: 0px;
+      // line-height: 180px;
+      text-align: center;
+      display:flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      .tool{
+        width: 30px;
+        line-height: 20px;
+        margin: 0px 5px;
+        &:hover{
+          cursor: pointer;
+        }
+      }
+      span{
+        color: #fff;
+      }
+      /deep/.saasicon-eye, /deep/.saasicon_shanchu{
+        font-size: 30px!important;
+        height: 30px;
+      }
     }
     .operaBtn{
       font-size: 14px;
-      color: #666;
-      &:hover{
-        color: #FB3A32;
-      }
+      color: #fff;
     }
     &:hover{
       border-color: #999;
@@ -921,11 +971,22 @@ export default {
       background: #f7f7f7;
       font-size: 12px;
       cursor: pointer;
+      border-radius: 4px;
       i{
         font-size: 30px;
       }
       /deep/.iconfont-v3{
         font-size: 26px;
+
+      }
+      /deep/.saasicon_shangchuan{
+        font-size: 44px;
+      }
+      /deep/.saasshipinwenjian{
+        color: #FF733C;
+      }
+      p{
+        padding-top: 5px;
       }
     }
     .el-tooltip{
@@ -938,10 +999,39 @@ export default {
     }
   }
   .vh-dialog{
-    /deep/.el-dialog__body {
-      padding-bottom: 20px;
+    /deep/ .el-dialog {
+      width: 624px!important;
+      background: transparent!important;
+      border:none;
+      box-shadow: none;
     }
-
+    /deep/ .el-dialog__header {
+      width: 642px!important;
+      padding: 0px;
+      height: 55px;
+      background: transparent!important;
+      border:none;
+      color: #fff;
+    }
+    /deep/ .el-dialog__headerbtn{
+      top: 30px;
+      right: 0px;
+      .el-dialog__close {
+        color: #fff;
+      }
+    }
+    /deep/ .el-dialog__body{
+      width: 642px;
+      height: 375px;
+      border-top: 16px solid #333;
+      border-bottom: 16px solid #333;
+      background: #333;
+      border-radius: 4px;
+      padding: 0 20px;
+    }
+  }
+  /deep/.saasicon_help_m {
+    color: #999999;
   }
 </style>
 <style lang="less">
@@ -953,7 +1043,4 @@ export default {
       display: none;
     }
   }
-/deep/.saasicon_help_m {
-  color: #999999;
-}
 </style>

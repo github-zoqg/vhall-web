@@ -14,28 +14,27 @@
       </div>
     </pageTitle>
     <!-- 无权限，未创建 -->
-    <div v-if="no_show">
-      <null-page text="您还没有文档，快来上传吧" nullType="noAuth">
+    <div>
+      <null-page text="您还没有文档，快来上传吧" nullType="noAuth" v-show="no_show">
         <el-upload
-          class="btn-upload"
+           class="btn-upload"
           :action=actionUrl
           :headers="{token: token, platform: 17}"
           :data=saveData
-          name="resfile"
           accept="*"
+          name="resfile"
           :show-file-list=false
           :on-success='uploadSuccess'
           :on-error="uploadError"
           :before-upload="beforeUploadHandler"
+          :on-progress="uploadProcess"
           :on-preview="uploadPreview"
         >
           <el-button round type="primary" class="length152">上传</el-button>
         </el-upload>
         <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button>
       </null-page>
-    </div>
-    <div v-else>
-      <div class="head-operat">
+      <div class="head-operat" v-show="!no_show">
         <el-upload
           class="btn-upload"
           :action=actionUrl
@@ -54,8 +53,8 @@
         </el-upload>
         <!--<el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>-->
         <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
-        <el-button round @click="wordMultiDel" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
-        <el-input
+        <el-button round @click="wordMultiDel" class="transparent-btn" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
+        <VhallInput
           class="head-btn search-tag"
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
@@ -67,19 +66,18 @@
             slot="suffix"
             @click="initPage">
           </i>
-        </el-input>
+        </VhallInput>
       </div>
-      <div class="word-list">
+      <div class="word-list" v-show="!no_show">
         <table-list
           ref="tableListWord"
-          v-if="totalNum > 0"
           scene="word"
           :manageTableData="tableList"
           :tabelColumnLabel="tableColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :totalNum="totalNum"
           max-height="auto"
-          width=120
+          width=194
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getTableWordList"
           @changeTableCheckbox="changeTableCheckbox"
@@ -88,23 +86,53 @@
         <null-page text="未搜索到相关内容" nullType="search" v-if="totalNum === 0"></null-page>
       </div>
     </div>
-    <!-- 预览功能 -->
+    <!-- 静态预览功能 -->
     <template v-if="showDialog">
       <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
-      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false'>
+      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
         <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif" v-show="isLoading">
-        <div class="preview-doc">
+        <div  v-if="isDot" style="position: relative;height: 396px;">
+          <!-- 动态文档区域 -->
+          <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
+        </div>
+        <!-- 静态文档区域 -->
+        <div class="preview-doc" id="previewDoc" v-else>
           <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`" alt="" />
         </div>
-        <div class="preview-pages">
+        <div class="preview-pages" v-if="isDot && dotPageInfo.total > 0">
+          <span class="left" @click="prevStep">&lt;</span><span class="current">{{ dotPageInfo.pageIndex }}</span><span class="side">/</span><span class="total">{{ dotPageInfo.total }}</span><span class="right" @click="nextStep">&gt;</span>
+        </div>
+        <div class="preview-pages" v-else>
           <span class="left" @click="showLastImg">&lt;</span><span class="current">{{ activeIns }}</span><span class="side">/</span><span class="total">{{ docParam.page }}</span><span class="right" @click="showNextImg">&gt;</span>
         </div>
       </VhallDialog>
     </template>
+
+    <!-- 同步弹出框 -->
+    <VhallDialog
+      title="提示"
+      :visible.sync="asyncDialog.visible"
+      :lock-scroll=false
+      class="zdy-async-dialog"
+      width="400px"
+    >
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>{{asyncDialog.question}}</p>
+          <el-checkbox v-model="asyncDialog.sureChecked">{{asyncDialog.show}}</el-checkbox>
+        </div>
+        <div class="async__footer">
+          <el-button type="primary" size="medium" v-preventReClick @click="sureAsyncHandle" round>确 定</el-button>
+          <el-button size="medium"  @click="unSureAsyncHandle"  round>取 消</el-button>
+        </div>
+      </div>
+    </VhallDialog>
+
     <!-- 文档列表 -->
     <select-word ref="dialogWordComp" @reload="initPage"></select-word>
+    <begin-play :webinarId="$route.params.str" v-if="$route.params.str"></begin-play>
   </div>
 </template>
 <script>
@@ -114,6 +142,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import SelectWord from './components/selectWord.vue';
 import Env from '@/api/env';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 import EventBus from "@/utils/Events";
 /* import FileUpload from '@/components/FileUpload/main'; */
 import {v1 as uuidV1} from "uuid";
@@ -123,10 +152,17 @@ export default {
   components: {
     PageTitle,
     NullPage,
-    SelectWord
+    SelectWord,
+    beginPlay
   },
   data() {
     return {
+      asyncDialog: {
+        visible: false,
+        question: '上传文档同时共享至资料管理，便于其他活动使用？',
+        show: '共享到资料管理',
+        sureChecked: true
+      },
       importWordShow: false,
       env: Env,
       activeIns: null,
@@ -167,6 +203,10 @@ export default {
           methodName: 'preShow'
         },
         {
+          name: '动画版预览',
+          methodName: 'preDocShow'
+        },
+        {
           name: '删除',
           methodName: 'deleteHandle'
         }
@@ -190,7 +230,21 @@ export default {
         limit: 1000,
         pageNumber: 1
       },
-      uploadProgress: 0
+      uploadProgress: 0,
+      docBoxStyle: {}, // 文档宽高
+      boardBoxStyle: {},
+      watchDocShow: true,
+      currentCid: '',
+      activeTool: '', // 激活状态的工具
+      isFullscreen: false,
+      VhallMsgSdk: !!window.VhallMsg, // 是否加载了msgsdk
+      addDoc: false,
+      dotPageInfo: {
+        pageIndex: 0,
+        total: 0
+      },
+      isDotEnd: false, // 是否播放完毕
+      isLoadingEnd: false // 是否初始化文档加载完毕
     };
   },
   computed: {
@@ -208,6 +262,15 @@ export default {
       }
       return data;
     },
+    playerProps: function() {
+      let channelVo = JSON.parse(sessionOrLocal.get('SAAS_V3_INIT', 'localStorage') || '{}');
+      return {
+        appId: channelVo.paasAppId || '',
+        accountId: channelVo.accountId || '',
+        channel_id: this.$route.params.str ? this.channel_id : channelVo.channelId || '',
+        token: channelVo.paasAccessToken || '',
+      }
+    }
   },
   methods: {
     // 打开导入观众弹出框
@@ -215,6 +278,7 @@ export default {
       this.importWordShow = true;
       this.fileUrl = null;
     },
+    // 下一页
     showNextImg() {
       if(this.activeIns === this.docParam.page) {
         return;
@@ -223,12 +287,24 @@ export default {
         this.setImgSize();
       }
     },
+    nextStep() {
+      console.log(this.isDotEnd)
+      if(!this.isDotEnd) {
+        this.$EventBus.$emit('nextStep');
+      }
+    },
+    // 上一页
     showLastImg() {
       if(this.activeIns === 1) {
         return;
       } else {
         this.activeIns--;
         this.setImgSize();
+      }
+    },
+    prevStep() {
+      if (!this.dotPageInfo.pageIndex === 1) {
+        this.$EventBus.$emit('prevStep');
       }
     },
     setImgSize() {
@@ -252,26 +328,41 @@ export default {
       if(res.code === 200) {
         // this.$message.success('上传成功');
         if (this.$route.params.str) {
+          this.asyncDialog.visible = true;
+          this.asyncDialog.sureChecked = true;
           // 弹出框提示是否同步
-          this.$confirm('确定同步到资料库？', '提示', {
-            confirmButtonText: '同步',
-            cancelButtonText: '不同步',
-            customClass: 'zdy-message-box',
-            lockScroll: false,
-            cancelButtonClass: 'zdy-confirm-cancel'
-          }).then(() => {
-            // 同步到资料库
-            this.asyncWord(res);
-          }).catch(() => {
-            // 取消同步，刷新列表
-            this.initPage();
-          });
+          this.asyncDialog.rows = res;
         } else {
           // 判断文件上传情况
           // this.initPage();
           window.location.reload();
         }
+      } else {
+        // 上传失败
+        this.$message({
+          message: res.msg ||  `文件上传失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        window.location.reload();
       }
+    },
+    sureAsyncHandle() {
+      if (this.asyncDialog.sureChecked) {
+        // 同步到资料库
+        this.asyncWord(this.asyncDialog.rows);
+      } else {
+        this.asyncDialog.visible = false;
+        // 未勾选同步，不同步数据
+        this.initPage();
+      }
+    },
+    unSureAsyncHandle() {
+      this.asyncDialog.visible = false;
+      // 取消同步，刷新列表
+      this.initPage();
     },
     asyncWord(resV) {
       let params = {
@@ -280,6 +371,7 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
+        this.asyncDialog.visible = false;
         this.$message({
           message: res.msg || '同步成功',
           showClose: true,
@@ -293,6 +385,7 @@ export default {
           console.log(e);
         }
       }).catch(res => {
+        this.asyncDialog.visible = false;
         console.log(res);
         this.$message({
           message: res.msg || '同步失败',
@@ -302,6 +395,7 @@ export default {
           customClass: 'zdy-info-box'
         });
       }).finally(()=>{
+        this.asyncDialog.visible = false;
         this.initPage();
       });
     },
@@ -334,6 +428,9 @@ export default {
         return false;
       }
       if (isType && isLt2M) {
+        this.totalNum = 1;
+        this.no_show = false;
+        // 若是当前为 this.no_show
         this.tableList.unshift({
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
           ext: lastFileKey.toLowerCase(),
@@ -431,7 +528,9 @@ export default {
             const status = item.status * 1;
             if (statusJpeg === 0) {
               item.showEventType = 0;
-              item.transform_schedule_str = `等待转码中...`;
+              item.fileStatusCss = 'wating';
+              item.fileStatusStr = '等待转码';
+              item.transform_schedule_str = `等待转码`;
             } else if (statusJpeg === 100) {
               item.showEventType = 1;
               item.transform_schedule_str = ``; // 静态转码中
@@ -442,25 +541,37 @@ export default {
                 // 如果是ppt or pptx
                 if (status === 0) {
                   item.showEventType = 2;
-                  item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                  item.fileStatusCss = 'wating';
+                  item.fileStatusStr = '等待转码';
+                  item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
                 } else if (status === 100) {
                   item.showEventType = 3;
-                  item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                  item.fileStatusCss = 'success';
+                  item.fileStatusStr = '动态转码中';
+                  item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码中
                 } else if (status === 200) {
                   item.showEventType = 4;
-                  item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                  item.fileStatusCss = 'success';
+                  item.fileStatusStr = '转码成功';
+                  item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
                 } else {
                   item.showEventType = 5;
-                  item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                  item.fileStatusCss = 'failer';
+                  item.fileStatusStr = '转码失败';
+                  item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
                 }
               } else {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
-                item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+                item.fileStatusCss = 'success';
+                item.fileStatusStr = '转码成功';
+                item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
-              item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+              item.fileStatusCss = 'failer';
+              item.fileStatusStr = '转码失败';
+              item.transform_schedule_str = `转码失败`; // 静态转码失败
             }
           })
           this.tableList = list;
@@ -481,7 +592,20 @@ export default {
       that.showDialog = true;
       that.docParam = rows;
       that.activeIns = 1; // 默认打开第一页
-      this.setImgSize(); // loading
+      that.isDot = false;
+      that.setImgSize(); // loading
+    },
+    // 动态演示
+    async preDocShow(that, { rows }) {
+      that.showDialog = true;
+      that.docParam = rows;
+      that.activeIns = 1; // 默认打开第一页
+      that.isDot = true;
+      that.dotPageInfo.pageIndex = 0;
+      that.dotPageInfo.total = 0;
+      that.isLoadingEnd = false;
+      await that.$nextTick(() => {})
+      that.docEvents(rows);
     },
     // 删除
     deleteHandle(that, { rows }) {
@@ -557,28 +681,157 @@ export default {
       }
       this.getTableWordList();
     },
-    // 初始化
-    initChat(){
-      let option = {
-        appId: 'fd8d3653', // appId 必须
-        accountId: sessionOrLocal.get('userId') || '', // 第三方用户ID
-        channelId: this.channel_id, // 频道id 必须
-        token: sessionOrLocal.get('token', 'localStorage'), // 必须， token，初始化接口获取
-      }
-      window.VhallChat.createInstance(option, (event) => {
-        // alert('初始化成功')
-        this.$Chat = event.message; // 聊天实例句柄
-        this.monitor()
-      },err=>{
-        // alert('初始化错误')
-        console.error(err);
+    getWebinarInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if (res && res.code === 200) {
+          this.channel_id = res.data.vss_channel_id;
+          // 初始化聊天SDK [活动下的]
+          this.initWebinarChat();
+          this.initPage();
+        }
+      }).catch(error=>{
+        console.log(error);
+      }).finally(()=>{
+      });
+    },
+    async _initDocSDK() {
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        console.log(result, '值');
+        sessionOrLocal.set('SAAS_V3_INIT', JSON.stringify(result.data), 'localStorage');
+        let opt = {
+          accountId: result.data.accountId,
+          roomId: 'yyyy',
+          channelId: result.data.channelId, // 频道id 必须
+          appId: result.data.paasAppId, // appId 必须
+          role: VHDocSDK.RoleType.SPECTATOR, // 角色 必须
+          isVod: false, // 是否是回放 必须
+          client: window.VHDocSDK.Client.PC_WEB, // 客户端类型
+          token: result.data.paasAccessToken
+        };
+        console.log('实例化文档参数', opt);
+        let success = () => {
+          console.log('实例化文档成功')
+          this.$EventBus.$emit('docSDK_ready', this.docSDK);
+        };
+        let failed = error => {
+          console.error('实例化文档失败', error.msg);
+        };
+        this.docSDK = window.VHDocSDK.createInstance(opt, success, failed);
+        }
+    },
+    /**
+     * 初始化文档容器
+     */
+    initContainer (data) {
+      let opts = {
+        id: data.id,
+        docId: data.docId || '',
+        elId: data.id, // div 容器 必须
+        width: 704, // div 宽度，像素单位，数值型不带px 必须
+        height: 396, // div 高度，像素单位，数值型不带px 必须
+        noDispatch: !data.select // 通过监听创建容器消息创建的需要派发加载完成消息
+      };
+      console.log(opts);
+      this.docSDK.createDocument(opts);
+    },
+    async docEvents(rows) {
+      let cid = this.docSDK.createUUID('document')
+      this.currentCid = cid;
+      await this.$nextTick(() => {})
+      this.initContainer({
+        type: 'document',
+        docId: rows.document_id,
+        id: cid
+      });
+      this.docSDK.selectContainer({id: cid});
+      await this.docSDK.loadDoc({ docId: rows.document_id, id: cid})
+    },
+    docSdkEvent() {
+      // 下一步
+      this.$EventBus.$on('nextStep', () => {
+        console.log('nextStep下一步... ...')
+        try {
+          this.docSDK.nextStep({id: this.currentCid});
+        } catch(err) {
+          console.log(err)
+        }
       })
+      // 上一步
+      this.$EventBus.$on('prevStep', () => {
+        console.log('prevStep上一步... ...')
+        try {
+          this.docSDK.prevStep({id: this.currentCid});
+        } catch(err) {
+          console.log(err)
+        }
+      })
+      this.$EventBus.$on('docSDK_ready', docsdk=>{
+        this.isDotEnd = false;
+        console.log('文档ready----go')
+        this.docSDK = docsdk;
+        // 翻页事件
+        this.docSDK.on(window.VHDocSDK.Event.PAGE_CHANGE, event => {
+          console.log('页码改变')
+        /* event内容
+        {
+          id:"document-5cbbb8f", // 当前选中的容器id
+          info:{
+              docType: "h5" // 演示的文档类型
+              hash: "e4d67e902b9ecddd157ed3ffbadb6bc4" // 文档hash
+              pageHash: "e4d67e902b9ecddd157ed3ffbadb6bc4/0" // 文档对应的pageHash
+              slideIndex: 0 // 当前页码
+              slidesTotal: 4 // 总页码
+              stepIndex: 0 // 当前步数
+              stepsAll: [1, 1, 1, 1,] 每页的总步数
+              totalSteps: 1 // 当前页的总步数
+            ｝
+        ｝*/
+          this.dotPageInfo.pageIndex= event.info.slideIndex+1;
+          this.dotPageInfo.total= event.info.slidesTotal;
+        });
+        this.docSDK.on(window.VHDocSDK.Event.PLAYBACKCOMPLETE, function (e) {
+          console.log('播放完毕');
+          this.isDotEnd = true;
+        });
+        this.docSDK.on(VHDocSDK.Event.ALL_COMPLETE, event => {
+            // 数据格式同  翻页事件 VHDocSDK.Event.PAGE_CHANGE
+          console.log('ALL_COMPLETE所有文档加载完毕');
+          this.isLoadingEnd = true;
+        })
+        console.log('docSDK_ready', docsdk, this.$refs.doc);
+      });
+      // 文档页码
+      this.$EventBus.$on('documenet_load_complete', (data)=>{
+        console.log('文档页码 documenet_load_complete', data)
+        this.dotPageInfo = data;
+      });
+    },
+    // 初始化
+    async initWebinarChat(){
+      let result = await this.$fetch('msgInitConsole');
+      if (result) {
+        console.log(result, '值');
+        let option = {
+          appId: result.data.paasAppId || '', // appId 必须
+          accountId: result.data.accountId || '', // 第三方用户ID
+          channelId: this.channel_id || '', // 频道id 必须 => 活动的
+          token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+        }
+        window.VhallChat.createInstance(option, (event) => {
+          this.$WebinarChat = event.message; // 聊天实例句柄
+          this.monitor()
+        },err=>{
+          // alert('初始化错误')
+          console.error(err);
+        })
+      }
     },
     // 监听
     monitor(){
       /**
        * 接收聊天自定义消息*/
-      this.$Chat.onCustomMsg(async msg => {
+      this.$WebinarChat.onCustomMsg(async msg => {
         try {
           if (typeof msg !== 'object') {
             msg = JSON.parse(msg)
@@ -592,7 +845,7 @@ export default {
         } catch (e) {
           console.log(e)
         }
-        console.log('============收到消息频道内容===============' + JSON.stringify(msg.data))
+        console.log('============收到活动下msg_center_num2===============' + JSON.stringify(msg.data))
         if (msg.data.type === 'host_msg_webinar') {
           EventBus.$emit('host_msg_webinar', msg.data.data)
         }
@@ -601,21 +854,6 @@ export default {
         }
       })
     },
-    getWebinarInfo() {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
-        if (res && res.code === 200) {
-          this.channel_id = res.data.vss_channel_id;
-          this.initPage();
-          // this.initChat();
-        }
-      }).catch(error=>{
-        console.log(error);
-      }).finally(()=>{
-      });
-    },
-    covertList() {
-
-    }
   },
   created() {
     // 如果存在活动Id，查询活动接口
@@ -625,7 +863,6 @@ export default {
     } else {
       this.channel_id = sessionOrLocal.get('SAAS_V3_CHANNEL_ID', 'localStorage') || '';
       this.initPage();
-      // this.initChat();
     }
   },
   mounted() {
@@ -671,7 +908,7 @@ export default {
             } else {
               let _percent = CalculatePercent(res.converted_page, res.page, 0);
               if (_percent == "100%") {
-                item.transform_schedule_str = '转码完成';
+                item.transform_schedule_str = '转码成功';
                 item.transcoded = true;
                 item.codeProcess = 100;
                 item.isError = false;
@@ -712,7 +949,9 @@ export default {
           const status = res.status * 1;
           if (statusJpeg === 0) {
             item.showEventType = 0;
-            item.transform_schedule_str = `等待转码中...`;
+            item.fileStatusCss = 'wating';
+            item.fileStatusStr = '等待转码';
+            item.transform_schedule_str = `等待转码`;
           } else if (statusJpeg === 100) {
             item.showEventType = 1;
             item.transform_schedule_str = ``; // 静态转码中
@@ -723,30 +962,55 @@ export default {
               // 如果是ppt or pptx
               if (status === 0) {
                 item.showEventType = 2;
-                item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                item.fileStatusCss = 'wating';
+                item.fileStatusStr = '等待转码';
+                item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
               } else if (status === 100) {
                 item.showEventType = 3;
-                item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                item.fileStatusCss = 'success';
+                item.fileStatusStr = '动态转码中';
+                item.transform_schedule_str = `静态转码成功<br/>动态转码中...`; // 静态转码完成，动态转码中
               } else if (status === 200) {
                 item.showEventType = 4;
-                item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                item.fileStatusCss = 'success';
+                item.fileStatusStr = '转码成功';
+                item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
               } else {
                 item.showEventType = 5;
-                item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                item.fileStatusCss = 'failer';
+                item.fileStatusStr = '转码失败';
+                item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
               }
             } else {
               // 非PPT静态转码完成
               item.showEventType = 6;
-              item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+              item.fileStatusCss = 'success';
+              item.fileStatusStr = '转码成功';
+              item.transform_schedule_str = `静态转码成功`; // 静态转码完成，动态转码失败
             }
           } else if (statusJpeg >= 500) {
             item.showEventType = 7;
-            item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+            item.fileStatusCss = 'failer';
+            item.fileStatusStr = '转码失败';
+            item.transform_schedule_str = `转码失败`; // 静态转码失败
           }
           item.page = res.page || '';
         }
       });
     });
+    this.docSdkEvent();
+    // 初始化文档
+    this._initDocSDK();
+  },
+  beforeDestroy() {
+    if(this.docSDK) {
+      this.docSDK.destroy();
+      this.docSDK = null;
+    }
+    if (this.$WebinarChat) {
+      this.$WebinarChat.destroy();
+      this.$WebinarChat = null;
+    }
   }
 };
 </script>
@@ -815,6 +1079,16 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
     }
     ::v-deep.set-upload{
       position: relative;
@@ -847,6 +1121,10 @@ export default {
   }
   /deep/.el-dialog__body {
     padding: 16px 16px 0 16px;
+  }
+  .preview-box {
+    width: 100%;
+    height: 396px;
   }
   .preview-doc {
     width: 100%;

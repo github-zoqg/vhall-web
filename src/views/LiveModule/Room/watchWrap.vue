@@ -194,6 +194,7 @@
                 :recordHistoryTime="recordHistoryTime"
                 :menuData="menuData"
                 :bizInfo="roominfo"
+                :configList="configList"
                 @NoLogin="callLogin"
                 @descripe="decripeMenu"
               ></vhall-enjoy-watch-Saas>
@@ -402,12 +403,12 @@
                       <div class="third-way-choose" v-if="otherWayShow && roominfo.webinar.id">
                         <div class="third-auth">
                           <a
-                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
+                            :href="qqLink"
                             class="qq"
                             title="QQ登录"
                           ></a>
                           <a
-                            :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=' + location + '/watch/' + roominfo.webinar.id"
+                            :href="wxLink"
                             class="weixin"
                             title="微信登录"
                           ></a>
@@ -764,7 +765,7 @@ export default {
     this.$EventBus.$on('updateBaseNum', (msg) => {
       let num = this.roomData.online.num
       this.roomData.online.num = Number(num) + Number(msg.data.update_online_num)
-      
+
       let pvNum = this.roomData.pv.num
       this.roomData.pv.num = Number(pvNum) + Number(msg.data.update_pv)
     })
@@ -846,6 +847,14 @@ export default {
     if (this.timeinterval) clearInterval(this.timeinterval)
     this.timeinterval = null
     window.vhallReport && window.vhallReport.report('LEAVE_WATCH')
+  },
+  computed: {
+    qqLink() {
+      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+    },
+    wxLink() {
+      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+    }
   },
   methods: {
     closeWXCode () {
@@ -1209,7 +1218,7 @@ export default {
         this.$set(this.menuList, index, menu);
       });
     },
-    
+
     fullScreen() {
       var docElm = document.querySelector('.seeding-content');
       // W3C
@@ -1368,8 +1377,10 @@ export default {
       return this.$fetch('watchGetWebinarSkin', {
         webinar_id: this.$route.params.il_id
       }).then(res => {
-        if (res.data) {
+        console.log(777777777777777, res)
+        if (res.code == 200 && res.data) {
           this.skinInfo = res.data
+          console.log(666, this.skinInfo)
           this.theme = (this.skinInfo && this.skinInfo.skin_json_pc) ? JSON.parse(this.skinInfo.skin_json_pc) : ''
         }
       })
@@ -1524,7 +1535,7 @@ export default {
         auth: this.isLogin ? {
           avatar: data.join_info.avatar,
           id: this.userInfo ? this.userInfo.user_id : data.join_info.third_party_user_id,
-          nick_name: this.userInfo ? this.userInfo.nick_name : data.join_info.nickname,
+          nick_name: data.join_info.nickname,
           phone: this.userInfo ? this.userInfo.phone : ''
         } : [],
         interactiveInfo: this.interactiveInfo ? this.interactiveInfo : {},
@@ -1606,7 +1617,7 @@ export default {
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
-      this.myAccountRoute = window.location.origin + '/account/info'
+      this.myAccountRoute = window.location.origin + '/acc/info'
       this.followStyle = this.roominfo.modules.attention.follow == 1
 
       this.userChatId = this.roominfo.user.third_party_user_id
@@ -1710,7 +1721,7 @@ export default {
         entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         service_names: this.roominfo.is_replay == 1 ? 2 : 1,
         type: 3,
-        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+        env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
       });
       window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
         event: this.$route.query.refer // 推广渠道，会在url里传参

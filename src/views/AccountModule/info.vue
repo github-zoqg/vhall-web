@@ -70,6 +70,11 @@ export default {
   methods: {
     handleClick(tab, event) {
       console.log(tab, event);
+      let tabCount = this.tabType === 'validSet' ? 1 : this.tabType === 'accountSet' ? 2 : 0;
+      // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=${this.$route.query.tab}`;
+      this.$router.push({path: `/acc/info`, query: {
+        tab: tabCount
+      }})
       this.$refs[`${this.tabType}Comp`].initComp();
     },
     updateAccount(account) {
@@ -83,8 +88,13 @@ export default {
       this.userInfo = JSON.parse(userInfo);
       this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-    this.tabType = 'baseSet';
-    this.$refs[`baseSetComp`].initComp();
+    if (this.$route.query.tab) {
+      this.tabType = ['baseSet', 'validSet', 'accountSet'][this.$route.query.tab];
+      this.$refs[`${['baseSet', 'validSet', 'accountSet'][this.$route.query.tab]}Comp`].initComp();
+    } else {
+      this.tabType = 'baseSet';
+      this.$refs[`baseSetComp`].initComp();
+    }
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
   },
   created() {
@@ -116,10 +126,11 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/account/info`;
+            // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info`;
             sessionOrLocal.removeItem('tag', 'localStorage');
             sessionOrLocal.removeItem('bind_result');
-            window.location.reload();
+            // window.location.reload();
+            window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
           }).catch(resError  => {
             this.$message({
               message:  resError.msg || '绑定失败',
@@ -173,8 +184,8 @@ export default {
   img {
     display: block;
     margin: 0 auto;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border: 1px solid #E2E2E2;
     border-radius: 100%;
   }
@@ -185,7 +196,7 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
-     overflow: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 1;

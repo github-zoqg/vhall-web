@@ -3,7 +3,7 @@
     <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
     <div class="word-count">
-      <span class="blue">{{ currentCount }}</span> / {{ maxWord || '1000' }}
+      <span :class="currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : currentCount == (maxWord || 1000)  ? 'red' : ''">{{ currentCount }}</span> / {{ maxWord || '1000' }}
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@ import 'tinymce/plugins/image'; //图片插件
 import 'tinymce/plugins/quickbars';//快速栏插件
 import 'tinymce/plugins/wordcount';//快速栏插件
 import 'tinymce/plugins/fullscreen';//全屏插件
+import 'tinymce/plugins/paste';//复制插件
 
 import {sessionOrLocal} from "@/utils/utils";
 import VueTinymce from './editorPlugin'
@@ -72,14 +73,14 @@ export default {
   },
   updated() {
   },
-
   data() {
     return {
       // content: this.value || '',
       tinymceId: this.id,
+      vm: null,
       setting: {
         selector: `#${this.tinymceId}`,
-        plugins: 'fullscreen image wordcount',
+        plugins: 'fullscreen image wordcount paste',
         // 字体Icon 库。  等瑞芳提供完整时 进行替换
         icons_url: '//cnstatic01.e.vhall.com/saas/common_libs/editor/icons.js',
         icons: 'vhall',
@@ -89,6 +90,7 @@ export default {
         // 引入汉化组件
         language_url: require('../../common/js/tinynce/zh_CN.js'),
         language: 'zh_CN',
+        paste_as_text: true, //只粘贴文本
         height: this.height || 300,
         menubar: false, // 隐藏菜单
         convert_urls: false, // 关闭url自动识别转换
@@ -128,12 +130,15 @@ export default {
             'Content-Type': 'multipart/form-data'
           }).then(res => {
             if (res && res.code === 200) {
+              console.log('11111111111111');
               success(res.data.domain_url);
             } else {
-              debugger;
+              // debugger;
               failure(res.msg || '上传失败');
+              console.log('222222222222');
             }
           }).catch((res) => {
+            console.log('333333333333');
             failure(res.msg || '上传失败');
           })
         }
@@ -145,19 +150,34 @@ export default {
   methods: {
     // 内容修改后，将信息返回
     sendContent(text) {
+      console.log(text, '2222222222222')
       // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 
       if(this.currentCount > 1000) {
-
-        this.$message.warning('您输入的内容超出1000限制，已自动取消')
+        if (this.vm) {
+          this.vm.close();
+          this.messageInfo();
+        } else {
+          this.messageInfo();
+        }
+        // this.$message.warning('您输入的内容超出1000限制，已自动取消')
         this.$refs.editor.getInstance().setContent(this.value)
         this.$emit('input', this.value)
         return
       } else {
         this.$emit('input', text);
       }
-    }
+    },
+     //文案提示问题
+    messageInfo() {
+      this.vm = this.$message({
+        showClose: false,
+        duration: 2000,
+        message: '您输入的内容超出1000限制，已自动取消',
+        type: 'warning'
+      });
+    },
   },
 };
 </script>
@@ -166,6 +186,18 @@ export default {
   display: none !important;
   .blue{
   }
+}
+
+/deep/.tox .tox-tbtn svg {
+  display: block;
+  fill: #666!important;
+}
+/deep/.tox .tox-tbtn {
+  color: #666;
+}
+/deep/.tox .tox-tbtn:hover, /deep/.tox .tox-tbtn:active {
+  background: #e6e6e6;
+  color: #666!important;
 }
 
 .vh-editor-wrapbox{
@@ -186,7 +218,11 @@ export default {
     width: 70px;
   }
 }
-
+ /deep/ .tox.tox-tinymce {
+  &:hover,&:focus {
+    border-color: #999;
+  }
+}
 .word-count{
   position: absolute;
   right: 12px;
@@ -195,6 +231,21 @@ export default {
   color: #999;
   .blue{
     color: #3562FA;
+  }
+  .zero{
+    color: #999;
+  }
+  .red{
+    color: #fb3a32;
+  }
+}
+
+/* 样式重写-弹出框 */
+.tox  {
+  /deep/.tox-dialog {
+    border-radius: 4px!important;
+    box-shadow: unset!important;
+    border-width: 0!important;
   }
 }
 

@@ -29,7 +29,7 @@
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
-        class="head-btn fr search"
+        class="head-btn fr search resetRightBrn"
         v-model.trim="searchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -82,8 +82,8 @@
         </el-table-column> -->
         <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
-            <el-button class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -138,8 +138,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button :disabled="!editParams.name || !editParams.price || !editParams.img" type="primary" size="medium" @click="handleUpdateGift" round>确 定</el-button>
-        <el-button size="medium" @click="handleCancelEdit" round>取 消</el-button>
+        <el-button :disabled="!editParams.name || !editParams.price || !editParams.img" type="primary" size="medium" @click="handleUpdateGift" round>确定</el-button>
+        <el-button size="medium" @click="handleCancelEdit" round>取消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -156,7 +156,7 @@
         @keyup.enter.native="searchMaterialGift"
         clearable
         @clear="searchMaterialGift"
-        class="head-btn search"
+        class="head-btn search resetRightBrn"
         v-model.trim="materiaSearchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -195,13 +195,14 @@
         <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="isNull"></null-page>
       </div>
       <div class="control">
-        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件商品</span>
+        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件礼物</span>
         <div class="control-btn" style="text-align: right;">
           <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
           <el-button @click="handleCloseChooseGift" round>取消</el-button>
         </div>
       </div>
     </el-dialog>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -211,12 +212,16 @@ import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import { sessionOrLocal, debounce } from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
+
 
 export default {
   name: "giftSize",
   data() {
     return {
       webinar_id: this.$route.params.str,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       room_id: this.$route.query.roomId,
       total: 0,
       materialTotal: 100,
@@ -295,7 +300,8 @@ export default {
     PageTitle,
     upload,
     SPagination,
-    NullPage
+    NullPage,
+    beginPlay
   },
   created() {
     this.getTableList()
@@ -349,7 +355,8 @@ export default {
         if (res.code == 200 && res.data) {
           this.searchParams.page = 1
           this.tableData = res.data.list
-          if (isSearch) {
+          this.addedGiftsIds = this.tableData.map((item) => item.id)
+          if (this.searchName) {
             const resultData = []
             this.tableData.forEach(item => {
               if(item.name.indexOf(this.searchName) != -1) {
@@ -363,7 +370,6 @@ export default {
           this.currentTableData = this.tableData.filter((item, index) => {
             return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
           })
-          this.addedGiftsIds = this.tableData.map((item) => item.id)
         }
       })
     },
@@ -437,14 +443,21 @@ export default {
     },
     // 打开编辑面板
     handleEditGift (data) {
-      this.editParams = {
-        gift_id: data.id,
-        name: data.name,
-        price: data.price,
-        img: data.image_url
-      }
-      this.domain_url = this.editParams.img
-      this.dialogVisible = true
+      debounce(async () => {
+        const isWebinarLiving = await this.isCanDelete()
+        if (isWebinarLiving) {
+          this.$message.warning('正在直播中，请直播结束后操作！')
+          return false;
+        }
+        this.editParams = {
+          gift_id: data.id,
+          name: data.name,
+          price: data.price,
+          img: data.image_url
+        }
+        this.domain_url = this.editParams.img
+        this.dialogVisible = true
+      }, 500)
     },
     // 新建
     addGift () {
@@ -496,7 +509,8 @@ export default {
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.$fetch('updateGiftInfo', {
-          ...this.editParams
+          ...this.editParams,
+          room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
             this.$message.success('编辑成功')
@@ -504,8 +518,12 @@ export default {
             this.queryMateriaGifts()
             this.handleCancelEdit()
           }
-        }).catch((e) => {
-            this.$message.error('编辑失败')
+        }).catch((err) => {
+            if (err.code == 13001) {
+              this.$message.error('直播中禁止编辑礼物')
+            } else {
+              this.$message.error('编辑失败')
+            }
             this.handleCancelEdit()
         })
       })
@@ -614,32 +632,47 @@ export default {
       })
     },
     // 删除礼品
-    async handleDelete (data) {
-      const isWebinarLiving = await this.isCanDelete()
-      if (isWebinarLiving) {
-        this.$message.warning('正在直播中，请直播结束后操作！')
-        return false;
-      }
-      this.deleteId = data.id
+    handleDelete (data) {
+      debounce(async () => {
+        const isWebinarLiving = await this.isCanDelete()
+        if (isWebinarLiving) {
+          this.$message.warning('正在直播中，请直播结束后操作！')
+          return false;
+        }
+        this.deleteId = data.id
 
-      this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        lockScroll: false,
-        cancelButtonClass: 'zdy-confirm-cancel'
-      }).then(() => {
-        this.handleDeleteGift()
-      }).catch(() => {
-        this.deleteId = ''
-      })
+        this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          this.handleDeleteGift()
+        }).catch(() => {
+          this.deleteId = ''
+        })
+      }, 500)
     },
     handleDeleteGift () {
       const resData = this.tableData.filter(curItem => curItem.id != this.deleteId)
       this.tableData = resData
-      this.addedGiftsIds = this.tableData.map(item => item.id)
+      this.addedGiftsIds = this.addedGiftsIds.filter(curItem => curItem != this.deleteId)
 
-      this.chooseGift()
+      this.chooseGift(1)
+
+      this.total = this.tableData.length
+      // 切换table显示的内容
+      this.currentTableData = this.tableData.filter((item, index) => {
+        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      })
+      if (this.currentTableData.length == 0) {
+        this.searchParams.page--
+        // 切换table显示的内容
+        this.currentTableData = this.tableData.filter((item, index) => {
+          return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+        })
+      }
 
       this.deleteId = ''
     },
@@ -657,6 +690,7 @@ export default {
     async handleBatchDeletion () {
       this.selectIds.forEach((item, index) => {
         const resData = this.tableData.filter(curItem => curItem.id != item)
+        this.addedGiftsIds = this.addedGiftsIds.filter(curItem => curItem != item)
         this.tableData = resData
         this.materiaTableData.forEach(meterialItem => {
           if (meterialItem.gift_id == item) {
@@ -664,8 +698,19 @@ export default {
           }
         })
       })
-      this.addedGiftsIds = this.tableData.map(item => item.id)
-      this.chooseGift()
+      this.total = this.tableData.length
+      // 切换table显示的内容
+      this.currentTableData = this.tableData.filter((item, index) => {
+        return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+      })
+      if (this.currentTableData.length == 0) {
+        this.searchParams.page--
+        // 切换table显示的内容
+        this.currentTableData = this.tableData.filter((item, index) => {
+          return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
+        })
+      }
+      this.chooseGift(1)
       this.selectIds = []
     },
     // 选择奖品添加
@@ -680,17 +725,18 @@ export default {
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
-    chooseGift() {
+    chooseGift(isDeleteChoose) {
       this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
       this.$fetch('setRelevance', {
         gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
       }).then(res => {
         this.handleCloseChooseGift()
-        this.getTableList()
+        isDeleteChoose != 1 && this.getTableList()
       })
     },
     handleCloseChooseGift () {
+      this.materiaSearchName = ''
       this.addGiftsIds = []
       this.materiaSearchParams.page = 1
       this.dialogGiftsVisible = false
@@ -723,6 +769,9 @@ export default {
   }
 }
 .live-gift-wrap{
+  /deep/ .el-table__empty-block {
+    display: none;
+  }
   /deep/ .create-gift .el-dialog__footer {
     padding-top: 0;
   }
@@ -826,11 +875,23 @@ export default {
   .select-matrial-wrap {
     box-sizing: border-box;
     width: 100%;
-    height: 328px;
+    height: 324px;
     padding: 16px 0 0 32px;
     overflow: hidden;
     /deep/ .null-page {
-      margin-top: 110px!important;
+      width: 100%;
+      height: 100%;
+      margin-top: 0!important;
+      padding-right: 32px;
+      padding-bottom: 16px;
+      .search {
+        padding-bottom: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
     }
     .material-box {
       height: 318px;
@@ -938,7 +999,7 @@ export default {
     .control-btn {
       float: right;
       /deep/ .el-button.is-round {
-          padding: 7px 33px;
+        padding: 7px 23px;
       }
     }
     .choosed-num {
@@ -963,10 +1024,27 @@ export default {
       background: #FC5659;
     }
   }
+  .resetRightBrn {
+    /deep/ .el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
+    }
+  }
 }
 /deep/ .choose-gift {
   .el-dialog__title {
-    line-height: 24px;
+    line-height: 28px;
   }
   .el-dialog__body {
     padding: 0;

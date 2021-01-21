@@ -8,11 +8,16 @@
       @close="cancelSelect"
       width="612px">
       <div class="search" v-show="total || isSearch">
-        <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input>
+        <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="add-living-input" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
+        <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
       </div>
        <el-scrollbar v-loadMore="moreLoadData">
         <div class="vh-chose-active-box"
-          v-show="total"
+        v-loading="loading"
+        element-loading-spinner="el-icon-loading"
+        v-show="total"
         >
         <!-- 单个视频 -->
           <div class="vh-chose-active-item"
@@ -54,7 +59,7 @@
               </div>
 
             </div>
-            <div class="vh-chose-active-item__title" :title="item.subject">
+            <div class="vh-chose-active-item__title ellsips" :title="item.subject">
               {{ item.subject }}
             </div>
             <div class="vh-chose-active-item__info">
@@ -68,10 +73,10 @@
           <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
         </noData>
       </div>
-      <div class="select-option" v-if="total || isSearch">已选择<span>{{ selectedOption.length }}</span>个</div>
-      <span slot="footer" class="dialog-footer" v-if="total || isSearch">
-        <el-button type="primary" round @click="saveSelect" v-preventReClick>确 定</el-button>
-        <el-button round @click="cancelSelect" v-preventReClick>取 消</el-button>
+      <div class="select-option" v-if="total">已选择<span>{{ selectedOption.length }}</span>个</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick :disabled="!selectedOption.length">确 定</el-button>
+        <el-button round @click="cancelSelect" size="medium" v-preventReClick>取 消</el-button>
       </span>
     </el-dialog>
 </template>
@@ -82,21 +87,20 @@ export default {
   data() {
     return {
       page: 1,
-      pageSize: 6,
       maxPage: 0,
       nullText: 'nullData',
-      text: '你还没有创建直播',
+      text: '您还没有创建直播',
       total: 1,
       activeList: [],
       selectedOption: [],
       keyword: '',
+      loading: true,
       pageInfo: {
         page: 1,
         limit: 6,
         pos: 0
       },
       lock: false,
-      loading: false,
       visible: true,
       isSearch: false
     }
@@ -104,12 +108,6 @@ export default {
   components: {
     noData
   },
-  computed: {
-    disabled () {
-      return this.loading || this.lock
-    }
-  },
-
   created() {
     this.getActiveList();
   },
@@ -142,6 +140,7 @@ export default {
       this.getActiveList();
     },
     getActiveList() {
+      this.loading = true;
       const userId = sessionStorage.getItem('userId')
       let params = {
         title: this.keyword,
@@ -163,17 +162,10 @@ export default {
             this.text = '';
             this.isSearch = true;
           }
-          if(res.data.total == 0) {
-            this.lock = true
-            this.loading = false
-            this.total = 0
-          } else {
-            this.activeList = this.activeList.concat(res.data.list)
-            this.total = res.data.total
-            this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
-            // this.syncCheckStatus()
-            this.loading = false
-          }
+          this.activeList = this.activeList.concat(res.data.list)
+          this.total = res.data.total
+          this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
+          this.loading = false;
         } else {
           this.loading = false
         }
@@ -243,7 +235,7 @@ export default {
 <style lang="less">
   .vh-chose-active-box{
     // width: 560px;
-    max-height: 310px;
+    max-height: 315px;
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;
@@ -381,9 +373,12 @@ export default {
         }
     }
   }
+  .no-live{
+    padding-bottom: 24px;
+  }
   .select-option{
     position: absolute;
-    bottom: 40px;
+    bottom: 32px;
     left: 32px;
     line-height: 20px;
     span{

@@ -13,28 +13,36 @@
       <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
-      <div class="inputKey">
-        <el-input v-model.trim="keyword" suffix-icon="el-icon-search" placeholder="请输入奖品名称" clearable @change="getTableList"></el-input>
-      </div>
-      <!-- <search-area class="head-btn fr search"
-        ref="searchArea"
-        :isExports='false'
-        :placeholder="'请输入奖品名称'"
-        :searchAreaLayout="searchAreaLayout"
-        @onSearchFun="getTableList('search')"
-        >
-      </search-area> -->
+      <VhallInput
+        class="search-tag"
+        placeholder="请输入奖品名称"
+        v-model.trim="keyword"
+        clearable
+        @clear="searchTableList"
+        @keyup.enter.native="searchTableList">
+        <i
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="searchTableList">
+        </i>
+      </VhallInput>
+      <!-- <div class="inputKey">
+        <VhallInput v-model.trim="keyword" placeholder="请输入奖品名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
+      </div> -->
     </div>
-    <div class="question-list" v-show="total">
+    <div class="no-live" v-if="!total && !isSearch">
+      <noData :nullType="'nullData'" :text="'您还未添加奖品，快去添加吧~'">
+        <el-button type="primary"  round @click="createPrize" v-preventReClick>创建奖品</el-button>
+        <el-button v-if="$route.meta.title !== '奖品'"  round @click="prizeMeterial" v-preventReClick>资料库</el-button>
+      </noData>
+    </div>
+    <div class="question-list" v-show="total || isSearch">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" :width="150" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-    </div>
-    <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round  @click="createPrize" v-preventReClick>创建奖品</el-button>
-        <el-button type="white-primary" v-if="nullText == 'nullData' && $route.path !='/material/prize'" round  @click="prizeMeterial" v-preventReClick>资料库</el-button>
-      </noData>
+      <noData :nullType="'search'" v-if="isSearch"></noData>
     </div>
     <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo" :liveTotal="total"></create-prize>
   </div>
@@ -61,10 +69,8 @@ export default {
   data() {
     return {
       total: 0,
-      nullText: 'nullData',
       isSearch: false,
       keyword: '',
-      text: '您还未添加奖品，快去添加吧~',
       prizeInfo: {},
       isDelete: false,
       searchAreaLayout: [
@@ -73,10 +79,10 @@ export default {
         }
       ],
       tabelColumn: [
-        {
-          label: '奖品id',
-          key: 'prize_id',
-        },
+        // {
+        //   label: '奖品id',
+        //   key: 'prize_id',
+        // },
         {
           label: '奖品图片',
           key: 'img',
@@ -110,35 +116,29 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchTableList() {
+      this.getTableList('search');
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo;
        //获取分页信息
       let formParams = {
         keyword: this.keyword
       }; //获取搜索参数
-      if (this.keyword || params == 'delete') {
+      if (params == 'search') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
-        this.$refs.tableList.clearSelect();
       }
       if (this.source == '0') {
         formParams.room_id = this.roomId;
       }
+      this.isSearch = this.keyword ? true : false;
       formParams.source =  this.source;
       let obj = Object.assign({}, pageInfo, formParams);
 
       this.$fetch('getPrizeList', obj).then(res => {
         this.tableData = res.data.list;
         this.total = res.data.count;
-        if (this.keyword) {
-          this.nullText = 'search';
-          this.text = '';
-          this.isSearch = true;
-        } else {
-          this.nullText = 'nullData';
-          this.text = '您还未添加奖品，快去添加吧~';
-          this.isSearch = false;
-        }
         this.tableData.map(item => {
           item.img = item.img_path;
         })
@@ -184,11 +184,23 @@ export default {
         }
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
-            this.getTableList('delete');
-            this.$message.success('删除成功');
+            this.getTableList('search');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
           }
         }).catch(res => {
-          this.$message.success(res.msg || '删除失败');
+          this.$message({
+            message: res.msg || `删除失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
       }).catch(() => {
       });
@@ -204,7 +216,13 @@ export default {
     // 创建奖品
     createPrize() {
       if (this.source == 0 && Number(this.total) >= 20) {
-        this.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        this.$message({
+          message: `每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (this.tableData.length) {
@@ -239,6 +257,9 @@ export default {
     .head-btn{
       display: inline-block;
     }
+    /deep/.el-button.is-disabled{
+      background: transparent;
+    }
     ::v-deep.set-upload{
       position: relative;
       span{
@@ -252,12 +273,29 @@ export default {
         }
       }
     }
-    .inputKey{
+    /* .inputKey{
       float: right;
       height: 35px;
       width: 220px;
       /deep/.el-input__inner{
         border-radius: 18px;
+      }
+    } */
+    .search-tag {
+      float: right;
+      width: 220px;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
   }

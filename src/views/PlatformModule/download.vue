@@ -12,15 +12,23 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
+        prefix-icon="iconfont-v3 saasicon_date"
         style="margin-left: 12px;width: 240px"
         @change="search"
       />
-      <el-input placeholder="搜索文件名称" v-model.trim="file_name"
-       clearable
-       @keyup.enter.native="search"
-       @clear="search">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="search"></i>
-      </el-input>
+      <VhallInput
+        class="search-tag"
+        placeholder="搜索文件名称"
+        v-model.trim="file_name"
+        clearable
+        @change="search"
+        @keyup.enter.native="search">
+        <i
+          class="el-icon-search el-input__icon"
+          slot="suffix"
+          @click="search">
+        </i>
+      </VhallInput>
     </div>
     <div class="download-list" v-if="docDao.total >0">
       <table-list
@@ -177,14 +185,10 @@ export default {
         dow_task_ids: dow_task_ids // 可能多个可能单个
       };
       this.$fetch('downloadedEdit', this.$params(params)).then(res =>{
-        if (res && res.code === 200) {
-          // 通知右上角导航，需要更新下载消息
-          this.$EventBus.$emit('saas_vs_download_count', true);
-          // 重新拉取数据
-          this.search();
-        } else {
-          console.log('下载状态更新失败');
-        }
+        // 通知右上角导航，需要更新下载消息
+        this.$EventBus.$emit('saas_vs_download_count', true);
+        // 重新拉取数据
+        this.search();
       }).then(e => {
         console.log(e, '下载状态更新失败');
       });
@@ -223,6 +227,8 @@ export default {
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
           item.percentage = 90;
+          let dow_urlArr = item.dow_url.split('.');
+          item.ext = dow_urlArr[dow_urlArr.length - 1];
         });
         this.docDao =  dao;
       }).catch(e=>{
@@ -458,6 +464,21 @@ export default {
       }
     }
   }
+  .search-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      cursor: pointer;
+      /deep/ .el-input__icon {
+        width: auto;
+        margin-right: 5px;
+        line-height: 36px;
+      }
+    }
+  }
 }
 .download-list {
   .layout--right--main();
@@ -491,6 +512,9 @@ export default {
   }
 }
 /deep/.el-date-editor .el-range__icon{
+  line-height: 29px;
+}
+/deep/.el-date-editor .el-range__close-icon {
   line-height: 28px;
 }
 .download-list {

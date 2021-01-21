@@ -38,8 +38,8 @@
         <VhallInput v-model.trim="advertisement.url" placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+    <span slot="footer" class="dialog-footer create-footer">
+      <el-button type="primary" size="medium" v-preventReClick :disabled="!(advertisement.subject&&advertisement.url&&advertisement.img_url)" @click="saveAdviseHandle" round>确 定</el-button>
       <el-button  size="medium" @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
@@ -50,7 +50,11 @@
       :before-close="handleClose"
       width="620px">
       <div class="content">
-        <div class="search" v-show="total || isSearch"><el-input v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" suffix-icon="el-icon-search" clearable @change="changeAdverment"></el-input></div>
+        <div class="search" v-show="total || isSearch">
+           <VhallInput v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
+            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
+          </VhallInput>
+          </div>
         <el-scrollbar v-loadMore="moreLoadData" v-show="total">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
@@ -68,27 +72,29 @@
           <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
         </noData>
       </div>
-      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
-      <span slot="footer" class="dialog-footer" v-show="total || isSearch">
+      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个广告</p>
+      <span slot="footer" class="dialog-footer sureBtn" v-show="total || isSearch">
         <el-button type="primary" size="medium" @click="advSaveToWebinar()" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
-    <VhallDialog
+     <VhallDialog
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
+      :lock-scroll=false
+      class="zdy-async-dialog"
       width="400px"
     >
-      <div class="sureQuestion">
-        <div class="textPrize">
-          <p>确定保存当前广告？</p>
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>保存广告同时共享至资料管理，便于其他活动使用？</p>
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
-        <div class="dialog-footer">
+        <div class="async__footer">
           <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialAdver" round>确 定</el-button>
           <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
-       </div>
+        </div>
       </div>
     </VhallDialog>
   </div>
@@ -294,16 +300,34 @@ export default {
           this.dialogTongVisible = false;
           this.advertisement = {};
           this.clearForm();
-          this.$message.success(`${this.advInfo.adv_id ? '修改' : '创建'}成功`);
+          this.$message({
+            message: `${this.advInfo.adv_id ? '修改' : '创建'}成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           // 获取列表数据
           this.$emit('reload');
         } else {
           this.dialogVisible = true;
-          this.$message.error('链接格式不正确');
+          this.$message({
+            message: `链接格式不正确`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
       }).catch(() => {
         this.dialogVisible = true;
-        this.$message.error(res.msg || `${this.advInfo.adv_id ? '修改' : '创建'}失败`);
+        this.$message({
+          message: res.msg || `${this.advInfo.adv_id ? '修改' : '创建'}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     moreLoadData() {
@@ -358,7 +382,13 @@ export default {
     // 从资料库保存到活动
     advSaveToWebinar(id) {
       if (this.maxTotal + this.selectChecked.length > 50) {
-        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        this.$message({
+          message: `广告推荐个数已达到最大个数限制，请删除后再进行添加`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let params = {
@@ -367,7 +397,13 @@ export default {
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
-          this.$message.success('选择广告成功');
+          this.$message({
+            message: `选择广告成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.dialogAdverVisible = false;
           this.selectChecked = [];
           this.adList.map(item => {
@@ -375,7 +411,13 @@ export default {
           });
           this.$emit('reload');
         } else {
-          this.$message.error('选择广告失败');
+          this.$message({
+            message: `选择广告失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
       })
     },
@@ -404,11 +446,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`推广图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `推广图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('推广图片大小不能超过 2MB!');
+        this.$message({
+          message: `推广图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -418,7 +472,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`推广图片上传失败`);
+      this.$message({
+        message: `推广图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -434,9 +494,10 @@ export default {
 .dialog-box {
   /deep/.el-dialog {
     border-radius: 4px;
+    // padding-bottom: 15px;
   }
   /deep/.el-dialog__title {
-    font-size: 16px;
+    // font-size: 16px;
     font-weight: 500;
     color: #1A1A1A;
   }
@@ -447,10 +508,15 @@ export default {
     width: 324px;
     height: 130px;
   }
+  /deep/.el-input__inner{
+   padding: 0 12px;
+  }
   /deep/.el-input__count-inner {
     color: #999;
   }
-
+  /*  /deep/.el-dialog__body{
+    padding-bottom: 40px;
+  } */
   /deep/.noPic {
     width: 324px !important;
     height: 130px !important;
@@ -467,7 +533,8 @@ export default {
      border: 1px solid #ccc;
    }
    .content{
-     padding-bottom: 15px;
+     padding-bottom: 50px;
+     position: relative;
      .search{
        height: 40px;
        margin-bottom: 18px;
@@ -480,7 +547,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 300px;
+       height: 320px;
       //  overflow: auto;
        .ad-item{
           width: 165px;
@@ -520,12 +587,14 @@ export default {
         }
         .spanImg{
           display: block;
-          width: 165px;
+          width: 163px;
           height: 93px;
+          background: #1A1A1A;
+          border-radius: 4px 4px 0 0;
           img{
            width:100%;
            height:100%;
-           object-fit: cover;
+           object-fit: scale-down;
          }
         }
          p{
@@ -537,18 +606,9 @@ export default {
          }
        }
      }
-     .text{
-      //  margin-top: 20px;
-      position: absolute;
-      bottom: 40px;
-       span{
-         color: #FB3A32;
-         padding: 0 5px;
-       }
-     }
    }
-   .sureQuestion{
-    padding-bottom: 16px;
+  .sureQuestion{
+    padding-bottom: 24px;
     .textPrize{
       padding-left: 50px;
       p{
@@ -571,5 +631,19 @@ export default {
       text-align: center;
       margin-top: 20px;
     }
+  }
+  .text{
+       margin-top: 10px;
+      position: absolute;
+      bottom: 40px;
+       span{
+         color: #FB3A32;
+         padding: 0 5px;
+       }
+     }
+  .sureBtn{
+    position: absolute;
+    right: 32px;
+    bottom: 24px;
   }
 </style>

@@ -1,11 +1,7 @@
 <template>
-  <div class="liveListBox" v-loading="loading" element-loading-text="数据获取中" v-show="!loading">
+  <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-show="!loading">
     <pageTitle title="专题列表">
-      <!-- <div slot="content">
-        1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
-        <br/>
-        2.控制台数据为真实数据，不统计虚拟数据
-      </div> -->
+      <div class="title_text">专题功能教您如何玩转不同场景下的多会场直播，<span @click="introduceDetail">了解一下</span></div>
     </pageTitle>
 
     <!-- 操作栏 -->
@@ -20,17 +16,19 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input
+        <VhallInput
+          class="search-tag"
           placeholder="请输入专题标题"
+          @keyup.enter.native="searchHandler"
+          @clear="searchHandler"
           clearable
-          @change="searchHandler"
           v-model.trim="keyWords">
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"
             @click="searchHandler">
           </i>
-        </el-input>
+        </VhallInput>
       </div>
     </div>
     <!-- 操作栏 -->
@@ -48,7 +46,7 @@
           <div class="bottom">
             <div class="">
               <p class="liveTitle" :title="item.title">{{item.title}}</p>
-              <p class="liveTime">{{item.created_at}}</p>
+              <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
@@ -86,6 +84,17 @@
         <share slot="content" :shareVo="shareVo"></share>
       </div>
    </VhallDialog>
+   <el-dialog
+      custom-class="dialog-tutorial-wrap"
+      class="vh-dialog"
+      :visible.sync="tutorialVisible"
+      width="740px"
+      center
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+    >
+      <introduce-show></introduce-show>
+    </el-dialog>
   </div>
 </template>
 
@@ -94,11 +103,13 @@ import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from '@/components/Share'
+import introduceShow from './components/moduleTutorial'
 export default {
   data() {
     return {
       liveStatus: 0,
       isSearch: false,
+      tutorialVisible:false,
       nullText: 'nullData',
       text: '暂未创建专题活动',
       dialogShareVisible: false,
@@ -125,7 +136,8 @@ export default {
   components: {
     PageTitle,
     share,
-    noData
+    noData,
+    introduceShow
   },
   created() {
     this.getLiveList();
@@ -214,11 +226,15 @@ export default {
     toShare(id) {
       this.dialogShareVisible = true;
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
+      this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
       let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
+    },
+    introduceDetail() {
+      this.tutorialVisible = true;
     }
   },
   filters: {
@@ -281,6 +297,32 @@ export default {
     /deep/.el-dialog__body{
       padding-bottom: 20px;
     }
+    .title_text{
+      color: #999;
+      font-size: 14px;
+      span{
+        color: #3562FA;
+        cursor: pointer;
+      }
+    }
+    /deep/ .el-dialog__wrapper .dialog-tutorial-wrap {
+      padding: 0px 0px 30px;
+      background: transparent!important;
+      border: none;
+      box-shadow: none;
+      .el-dialog__headerbtn {
+        top: 24px;
+        right: 0;
+        margin-bottom: 8px;
+        .el-dialog__close {
+          color: #FFFFFF;
+        }
+      }
+      .el-dialog__body {
+        padding: 0;
+        border-radius: 8px;
+      }
+    }
   /*  .el-button.is-round{
       padding: 10px 23px;
     }*/
@@ -323,6 +365,21 @@ export default {
          line-height: 35px;
       }
     }
+    .search-tag {
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 50px!important;
+      }
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
+      }
+    }
   }
   .lives{
     // overflow: hidden;
@@ -341,7 +398,8 @@ export default {
         position: relative;
       }
       .inner:hover{
-        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
       }
       .top{
         height: 175px;

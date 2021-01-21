@@ -10,6 +10,7 @@
       <sign-set ref="signSetComp" v-show="tabType === 'signSet'"></sign-set>
       <skin-set ref="skinSetComp" v-show="tabType === 'skinSet'"></skin-set>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -17,16 +18,20 @@
 import PageTitle from '@/components/PageTitle';
 import SignSet from '../LiveModule/components/signSet';
 import SkinSet from '../LiveModule/components/skinSet';
+import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "brandSet.vue",
   components: {
     PageTitle,
     SignSet,
-    SkinSet
+    SkinSet,
+    beginPlay
   },
   data() {
     return {
       tabType: null,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
     };
   },
   methods:{

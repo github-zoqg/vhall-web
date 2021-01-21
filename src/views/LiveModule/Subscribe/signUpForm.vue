@@ -1,7 +1,7 @@
 <template>
   <div :class="['signFormBox']">
     <div :class="['signWrap']">
-      <vhscroll>
+      <vueScroll :ops="ops">
         <div class="entryFormBox">
           <header>
             <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
@@ -17,10 +17,16 @@
                 <span class="isEllipsis"></span>{{ '收起' }}
               </span>
             </p>
-            <div class="tabsBox">
+            <div v-if="isSubscribe === 1" class="tabsBox">
               <div :class="['tabs', baseInfo.theme_color]">
                 <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
                 <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+              </div>
+            </div>
+            <div v-if="isSubscribe === 2" class="tabsBox">
+              <div :class="['tabs', baseInfo.theme_color]">
+                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
               </div>
             </div>
             <!-- 报名表单 -->
@@ -42,6 +48,7 @@
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model.number="form[question.id]"
+                      type="number"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                     <VhallInput
@@ -205,7 +212,7 @@
                   label="请输入报名时您填写的手机号"
                   prop="phone"
                 >
-                  <VhallInput v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
+                  <VhallInput type="number" v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
                 </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" prop="code">
                   <el-row :gutter="20">
@@ -233,7 +240,7 @@
             </template>
           </article>
         </div>
-      </vhscroll>
+      </vueScroll>
       <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
         <icon icon-class="saasicon_close"></icon>
       </i>
@@ -248,6 +255,7 @@
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
+      this.getWebinarType();
       this.getBaseInfo();
       this.getQuestionList();
     },
@@ -349,12 +357,18 @@
               }
             } else if (item.type === 0 && item.default_type === 3) {
               // 邮箱
-              rules[item.id] = {
-                type: 'email',
-                required: !!item.is_must,
-                message: '请填写邮箱',
-                trigger: 'blur'
-              }
+              rules[item.id] = [
+                {
+                  required: !!item.is_must,
+                  message: '请填写邮箱',
+                  trigger: 'blur'
+                },
+                {
+                  type: 'email',
+                  message: '请填写正确格式的邮箱',
+                  trigger: 'blur'
+                }
+              ]
             } else if (item.type === 1) {
               // 问答
               rules[item.id] = {
@@ -423,8 +437,9 @@
         webinar_id: this.$route.params.id || this.$route.params.str,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
         isPreview: this.$route.path.startsWith('/live/signup'),
+        isSubscribe: 0,
         colorIndex: 'red',
-        tabs: 1,
+        tabs: 0,
         province: '',
         city: '',
         county: '',
@@ -487,13 +502,27 @@
         colNum: 8,
         regionalId: '',
         isVerifyCodeErr: false,
-        overflowStatus: 0 // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        overflowStatus: 0, // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        ops: {
+          bar: {
+            background: '#ccc',
+          }
+        }
       };
     },
     mounted() {
       // new DevicePixelRatio('#signFormBox');
     },
     methods: {
+      // 获取当前活动类型
+      getWebinarType() {
+        this.$fetch('watchInit', {
+          webinar_id: this.webinar_id
+        }).then(res => {
+          this.isSubscribe = res.data.webinar.type == 2 ? 1 : 2
+          this.tabs = res.data.webinar.type == 2 ? 1 : 2
+        })
+      },
       handleUnfold(val) {
         this.overflowStatus = val
       },
@@ -681,7 +710,7 @@
                 this.getWebinarStatus()
               }
             }).catch(err => {
-              if (err.code == 12809 || (err.code == 600 && (err.msg.indexOf("验证码格式错误") > 0))) {
+              if (err.code == 12809 || err.code == 12570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -727,7 +756,7 @@
                 }
               }
             }).catch(err => {
-              if (res.code == 12809 || (res.code == 600 && (res.msg.indexOf("验证码格式错误") > 0))) {
+              if (res.code == 12809 || err.code == 12570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -963,12 +992,13 @@
       background: #fff;
       position: relative;
       z-index: 101;
+
       &.signWrapHid{
         height: auto;
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
       }
       .entryFormBox {
-        width: 840px;
+        width: 760px;
         background: #fff;
         padding-bottom: 87px;
       }
@@ -1289,38 +1319,78 @@
             background: #DEDEDE;
           }
         }
+        // 云盾样式重置,注释部分为设计稿样式，暂时不删除，有备无患
         .captcha{
-          /deep/ .yidun .yidun_control {
-            border-radius: 4px!important;
-            border-color: #ccc;
-            background: #fff;
+        //   /deep/ .yidun .yidun_control {
+        //     border-radius: 4px!important;
+        //     border-color: #ccc;
+        //     background: #fff;
+        //     overflow: hidden;
+        //     .yidun_slide_indicator {
+        //       border-radius: 4px!important;
+        //     }
             .yidun_tips {
-              color: #888888;
-              line-height: 38px;
-            }
-            .yidun_slider {
-              // .yidun_slider__icon {
-                // background-image: none;
-              // }
-              &:hover {
-                background-color: #FB3A32;
+              color: #999999;
+              line-height: 38px!important;
+              .yidun_tips__text {
+                vertical-align: initial;
               }
             }
-            &.yidun_control--moving .yidun_slide_indicator {
-              border-color: #FB3A32;
-              background-color: #E2E2E2;
+            .yidun_slider {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-slide1.png);
+                background-size: 28px 20px;
+                background-position: center;
+              }
+              &:hover {
+                // background-color: #FB3A32;
+                .yidun_slider__icon {
+                  background-image: url(./images/icon-slide.png);
+                }
+              }
             }
-          }
+        //     &.yidun_control--moving {
+        //       background-color: #E2E2E2;
+        //       border-color: #FB3A32;
+        //       .yidun_slide_indicator {
+        //         border-color: #FB3A32;
+        //         background-color: #E2E2E2;
+        //       }
+        //     }
+
+          // }
+        //   /deep/ .yidun--success {
+        //     .yidun_control--moving {
+        //       background-color: #F0F1FE!important;
+        //       .yidun_slide_indicator {
+        //         background-color: #F0F1FE!important;
+        //       }
+        //     }
+        //     .yidun_control {
+        //       border-color: #3562FA!important;
+        //       .yidun_slider {
+        //         .yidun_slider__icon {
+        //           background-image: url(./images/icon-succeed.png);
+        //         }
+        //         &:hover {
+        //           background-color: #FB3A32;
+        //           .yidun_slider__icon {
+        //             background-image: url(./images/icon-succeed.png);
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
         }
-        .yidun.yidun--light.yidun--success.yidun--jigsaw {
-          .yidun_control .yidun_slider {
-            background-color: #3562FA;
-          }
-          .yidun_slide_indicator {
-            border-color: #3562FA;
-            background-color: #E2E2E2;
-          }
-        }
+        // .yidun.yidun--light.yidun--success.yidun--jigsaw {
+        //   .yidun_control .yidun_slider {
+        //     background-color: #3562FA;
+        //   }
+        //   .yidun_slide_indicator {
+        //     border-color: #3562FA;
+        //     background-color: #E2E2E2;
+        //   }
+        // }
       }
     }
     .entryForm .blue {

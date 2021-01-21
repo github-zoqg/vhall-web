@@ -2,9 +2,9 @@
   <div>
     <pageTitle title="聊天严禁词" iconCssType="gary">
       <!-- <div slot="content">
-        1.聊天、评论，包含关键词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
+        1.聊天、评论，包含严禁词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
         <br/>
-        2.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃
+        2.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃
       </div> -->
     </pageTitle>
     <div>
@@ -25,7 +25,7 @@
             <p>提示：</p>
             <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
             <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
-            <p>3.批量上传时每个关键词的长度为1~20个字符，超出范围的会自动丢弃</p>
+            <p>3.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃</p>
           </div>
         </el-form-item>
       </el-form>
@@ -33,86 +33,81 @@
     <!-- 聊天严禁词弹出框 -->
     <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
       <div class="chat-dialog-content">
-        <!-- 操作栏 -->
-        <div class="operaBox">
-          <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
-          <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
-          <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
-          <div class="searchBox">
-            <el-input
-              placeholder="搜索严禁词"
-              v-model="pageInfo.keyword"
-              clearable
-              @clear="searchKeyWord"
-              @keyup.enter.native="searchKeyWord"
-              >
-              <i
-                class="el-icon-search el-input__icon"
-                slot="suffix"
-                @click="searchKeyWord">
-              </i>
-            </el-input>
-          </div>
+        <!-- 全部无结果 -->
+        <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
+          <null-page nullType="nullData" text="暂未设置严禁词，快去添加吧" :height="0">
+            <el-button type="primary" class="length106" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+            <el-button type="white-primary" class="length106" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
+          </null-page>
         </div>
-        <!-- 操作栏
-        <table-list
-          ref="chatTable"
-          :isHandle=true
-          :manageTableData="keyWordDao.list"
-          :tabelColumnLabel="tableColumn"
-          :totalNum="keyWordDao.list.length"
-          :tableRowBtnFun="tableRowBtnFun"
-          :needPagination=false
-          :max-height="380"
-          width=120
-          @getTableList="getKeywordList"
-          @changeTableCheckbox="checkMoreRow"
-          @onHandleBtnClick="onHandleBtnClick"
-          v-if="keyWordDao.total > 0"
-        >
-        </table-list> -->
-        <el-table
-          ref="chatTable"
-          :data="showChatList"
-          tooltip-effect="dark"
-          style="width: 100%"
-          class="table-td56"
-          height="378px"
-          :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-          @selection-change="checkMoreRow"
-          @select-all="checkAllRow"
-          v-show="total"
-          v-loadMore="moreLoadData">
-           <el-table-column
-            type="selection"
-            width="55"
-            align="left"
-          />
-          <el-table-column
-            label="严禁词"
-            prop="name"
-            width="auto"
-            show-overflow-tooltip>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="100"
-            show-overflow-tooltip>
-            <template slot-scope="scope">
-              <el-button
+        <!-- 全部有结果 -->
+        <div class="all-yes-data" v-else>
+          <!-- 操作栏 -->
+          <div class="operaBox">
+            <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+            <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
+            <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
+            <div class="searchBox">
+              <el-input
+                class="search-tag"
+                placeholder="搜索严禁词"
+                v-model="pageInfo.keyword"
+                clearable
+                @clear="searchKeyWord"
+                @keyup.enter.native="searchKeyWord"
+                >
+                <i
+                  class="el-icon-search el-input__icon"
+                  slot="suffix"
+                  @click="searchKeyWord">
+                </i>
+              </el-input>
+            </div>
+          </div>
+          <el-table
+            ref="chatTable"
+            :data="showChatList"
+            tooltip-effect="dark"
+            style="width: 100%"
+            class="table-td56"
+            max-height="328px"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+            @selection-change="checkMoreRow"
+            @select-all="checkAllRow"
+            v-loadMore="moreLoadData">
+            <div slot="empty" style="height:0"></div>
+            <el-table-column
+              type="selection"
+              width="55"
+              align="left"
+            />
+            <el-table-column
+              label="严禁词"
+              prop="name"
+              width="auto"
+              show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
+              label="操作"
+              width="114"
+              show-overflow-tooltip>
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
+                <el-button
                 type="text"
-                v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
-              <el-button
-              type="text"
-              v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
-        <null-page nullType="search" v-if="total === 0"></null-page>
+                v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <div class="select-option" v-if="total">已选择<span> {{ids.length || 0}} </span>个，共<span> {{total}} </span>条</div>
+          <!-- 无聊天严禁词内容 -->
+          <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
+        </div>
       </div>
     </VhallDialog>
-    <!-- 添加关键词 -->
+    <!-- 添加严禁词 -->
     <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
       <div :class="`chat-add-dialog-content ${addForm.executeType}`">
         <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
@@ -120,7 +115,7 @@
            <!--  <el-input
               v-if="addForm.executeType === 'add'"
               type="textarea"
-              placeholder="可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃"
+              placeholder="可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃"
               v-model.trim="addForm.name"
               :maxlength="1000"
               autocomplete="off"
@@ -128,7 +123,7 @@
             ></el-input> -->
              <VhallInput
               :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
-              :placeholder="addForm.executeType === 'add' ? '可同时添加多个关键词，中间以逗号(不区分中英文)分隔,每个关键词的长度为1~20个字符，超出范围的会自动丢弃' : '每个关键词的长度为1~20个字符'"
+              :placeholder="addForm.executeType === 'add' ? '可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃' : '每个严禁词的长度为1~20个字符'"
               v-model.trim="addForm.name"
               :maxlength="addForm.executeType === 'add' ? 1000 : 20"
               autocomplete="off"
@@ -143,27 +138,41 @@
       </div>
     </VhallDialog>
     <!-- 批量上传 -->
-    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false>
+    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
       <div class="upload-dialog-content">
         <file-upload
           ref="chatUpload"
           v-model="fileUrl"
+          @delete="deleteFile"
           :saveData="{
              path: pathUrl,
              type: 'exel'
-          }"
-          :result="importResult"
-          :progress="{
-            isUploadEnd: isUploadEnd,
-            percent: percent
           }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler">
-          <p slot="tip" v-if="!isUploadEnd && percent === 0">请使用模版上传文件</p>
-          <p slot="tip" v-if="!isUploadEnd && percent > 0"><el-progress :percentage="percent" status="success"></el-progress></p>
+          <div slot="upload-result">
+            <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
+            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+            <!-- 状态2： 已选择文件，提示上传中，进度条 -->
+            <div v-if="uploadResult && uploadResult.status === 'progress'">
+              <div class="progressBox">
+                <el-progress :percentage="percent" ></el-progress>
+              </div>
+            </div>
+            <!-- 状态3： 检测失败 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
+              <p class="p-error">{{uploadResult.text}}</p>
+            </div>
+            <!-- 状态4:  检测成功 -->
+            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+            </div>
+          </div>
+          <!-- 状态1： 未上传 -->
+          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
         <div class="dialog-right-btn">
           <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
@@ -190,6 +199,10 @@ export default {
   data() {
     return {
       isUploadEnd: false,
+      uploadResult: {
+        status: 'start',
+        text: '请选择模板文件'
+      },
       percent: 0,
       chatForm: {},
       checkNames: [],
@@ -227,7 +240,7 @@ export default {
         }
       ],
       ids: [],
-      // 添加关键词
+      // 添加严禁词
       addShow: false,
       addForm: {
         id: null,
@@ -236,17 +249,17 @@ export default {
       },
       addFormRules: {
         name: [
-          { required: true, message: '请输入关键词', trigger: 'blur' },
+          { required: true, message: '请输入严禁词', trigger: 'blur' },
           { maxlength: 1000, message: '最多可输入1000个字符', trigger: 'blur' }
         ]
       },
       editFormRules: {
         name: [
-          { required: true, message: '请输入关键词', trigger: 'blur' },
+          { required: true, message: '请输入严禁词', trigger: 'blur' },
           { maxlength: 20, message: '单个严禁词可输入1~20个字符', trigger: 'blur' }
         ]
       },
-      // 批量添加关键词
+      // 批量添加严禁词
       multiUploadShow: false,
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
@@ -268,6 +281,14 @@ export default {
     }
   },
   methods: {
+    deleteFile() {
+      this.fileUrl = ''
+      this.isUploadEnd = false
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
+    },
     getAllKeyWordList() {
       this.$fetch('getKeywordList', {
         keyword: '',
@@ -298,6 +319,7 @@ export default {
         if(this.isCheckAll) {
           this.$refs.chatTable.toggleAllSelection();
         }
+        console.log(`当前数据showChatList=${this.showChatList},total=${res.data.total}`)
         this.total = res.data.total;
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
       }).catch(e=>{
@@ -315,7 +337,7 @@ export default {
     // 打开关键字设置面板
     setKeyWordShow() {
       this.listPanelShow = true;
-      this.pageInfo.keyWord = '';
+      this.pageInfo.keyword = '';
       this.searchKeyWord();
     },
     searchKeyWord() {
@@ -363,7 +385,7 @@ export default {
         }
       });
     },
-    // 关键词新增 or 关键词修改
+    // 严禁词新增 or 严禁词修改
     keywordSend() {
       // addForm.executeType
       this.$refs.addForm.validate((valid) => {
@@ -376,7 +398,7 @@ export default {
           }).then(res =>{
             if (this.addForm.executeType === 'add') {
               res.data.success > 0 ? this.$message({
-                message: `成功添加了${res.data.success}个关键词`,
+                message: `成功添加了${res.data.success}个严禁词`,
                 showClose: true,
                 // duration: 0,
                 type: 'success',
@@ -518,7 +540,6 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file){
       console.log(res, file);
-      this.percent = 0;
       this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
@@ -528,11 +549,19 @@ export default {
         }).then(resV => {
           this.importResult = resV.data;
           this.fileResult = 'success';
+          this.uploadResult = {
+            status: 'success',
+            text: '检测成功'
+          }
           if (this.$refs.chatUpload) {
              this.$refs.chatUpload.setError('');
           }
-        }).catch(e => {
+        }).catch(res => {
           this.fileResult = 'error';
+          this.uploadResult = {
+            status: 'error',
+            text: res.msg
+          }
           // this.$message.error(resV.msg || '导入严禁词信息校验失败！');
           this.isUploadEnd = false;
           this.importResult = null;
@@ -544,9 +573,12 @@ export default {
     },
     closeImportChat() {
       this.multiUploadShow = false;
-      this.percent = 0;
       this.isUploadEnd = false;
       this.fileUrl = '';
+      this.uploadResult = {
+        status: 'start',
+        text: '请上传文件'
+      }
     },
     saveUploadKey() {
       if(!this.fileUrl) {
@@ -564,11 +596,10 @@ export default {
       }).then(resV => {
         this.importResult = resV.data;
         this.multiUploadShow = false;
-        this.percent = 0;
         this.isUploadEnd = false;
         this.fileUrl = '';
         /* resV.data.success > 0 ? this.$message({
-          message: `成功添加了${resV.data.success}个关键词`,
+          message: `成功添加了${resV.data.success}个严禁词`,
           showClose: true,
           // duration: 0,
           type: 'success',
@@ -581,7 +612,7 @@ export default {
           customClass: 'zdy-info-box'
         }); */
         // 重新刷新列表数据
-        this.getKeywordList();
+        this.searchKeyWord();
       }).catch(res => {
         console.log(res);
         this.$message({
@@ -624,11 +655,19 @@ export default {
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
       this.isUploadEnd = false;
+      this.uploadResult = {
+        status: 'progress',
+        text: '上传中，请稍候'
+      }
       this.percent = parseInt(event.percent);
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
       // this.$message.error(`文件上传失败`);
+      this.uploadResult = {
+        status: 'error',
+        text: '文件上传失败'
+      }
       this.fileResult = 'error';
     },
     uploadPreview(file){
@@ -648,8 +687,8 @@ export default {
   margin-top: 8px;
   /deep/span {
     color: #FB3A32;
-    font-size: 16px;
-    padding: 0 10px;
+    /* font-size: 16px;
+    padding: 0 10px; */
   }
 }
 .btn-a {
@@ -704,8 +743,13 @@ export default {
       .el-input__icon{
         cursor: pointer;
       }
-      /deep/ .el-input__icon{
-        line-height: 36px;
+      /deep/ .el-input__suffix {
+        cursor: pointer;
+        /deep/ .el-input__icon {
+          width: auto;
+          margin-right: 5px;
+          line-height: 36px;
+        }
       }
     }
     /deep/ .el-input__inner{
@@ -715,6 +759,7 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
+      padding-right: 50px;
     }
   }
 }
@@ -726,6 +771,71 @@ export default {
 .chat-dialog-content {
   /*dataList 里面已经包含30间距*/
   padding-bottom: 32px;
+  // 滚动条的宽度
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条 必写
+  }
+  // 滚动条的滑块
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: none;
+    background-color: #cccccc;
+    &:hover {
+      background-color: #cccccc;
+    }
+    &:active {
+      background-color: #cccccc;
+    }
+  }
+  &:hover {
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      display: block;
+    }
+  }
+  .table-td56 {
+    min-height: 0;
+    /deep/.el-table {
+      margin-bottom: 0;
+    }
+    /deep/.el-table__empty-block {
+      height: 0!important;
+      min-height: 0;
+    }
+  }
+}
+.all-no-data {
+  padding-top: 30px;
+  margin-top: 32px;
+  /deep/.createActive {
+    padding-bottom: 30px;
+  }
+  /deep/.btn-list .el-button {
+    margin-right: 0;
+  }
+}
+.all-yes-data {
+  padding: 0 0;
+  /deep/.data-list {
+    /deep/.el-table {
+      margin-bottom: 40px;
+      .cell{
+        line-height: 25px;
+      }
+    }
+  }
+  /deep/.el-table .cell {
+    line-height: 25px;
+  }
+}
+.search-no-data {
+  padding-top: 82px;
+  margin-bottom: 50px;
+  /deep/.search {
+    padding-bottom: 0;
+  }
 }
 .chat-add-dialog-content {
   &.add {
@@ -765,4 +875,26 @@ export default {
 /deep/.data-list {
    min-height: 418px;
  }
+
+ /* 文件上传 */
+.p-right {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #888;
+  font-size: 14px;
+}
+.p-error {
+  font-weight: 400;
+  margin-top: -5px;
+  color: #FB3A32;
+  font-size: 14px;
+}
+/deep/.el-progress__text /deep/i {
+  font-size: 18px;
+}
+.progressBox {
+  /deep/ .el-progress-bar__inner {
+    background-color: #14BA6A;
+  }
+}
 </style>

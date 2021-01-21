@@ -17,21 +17,24 @@
           </div>
 
           <div class="info">
-            <p class="mainColor font-20" :title="liveDetailInfo.subject">
+            <div class="hidden_hover">
+            <p class="mainColor font-20">
               {{ liveDetailInfo.subject }}
             </p>
-            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.webinar_state == 2 ? liveDetailInfo.created_at : liveDetailInfo.first_broad || liveDetailInfo.start_time }}</p>
+            <p class="title_hover">{{ liveDetailInfo.subject }}</p>
+            </div>
+            <p class="subColor" v-if="liveDetailInfo.webinar_state != 4">直播时间：{{ liveDetailInfo.start_time }}</p>
             <p class="subDuration" v-else>点播时长：{{ liveDetailInfo.duration }}</p>
             <p class="subColor">观看限制：
               <span class="tag">{{ liveDetailInfo.verify | limitTag }}</span>
               <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
-              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:10px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:8px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                 placement="bottom"
                 trigger="hover"
-                style="margin-right:15px"
+                style="margin-right:8px"
               >
                 <div class="invitation-code">
                   <p>活动观看页</p>
@@ -57,7 +60,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4">
+      <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4" class="rightbox">
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
@@ -80,12 +83,14 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :type='liveDetailInfo.webinar_state' :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
+    <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
+    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import beginPlay from '@/components/beginBtn';
 import ItemCard from '@/components/ItemCard/index.vue';
 import Env from "@/api/env";
 import { formateDates } from "@/utils/general.js"
@@ -93,7 +98,8 @@ import { sessionOrLocal } from '@/utils/utils';
 export default {
   components: {
     PageTitle,
-    ItemCard
+    ItemCard,
+    beginPlay
   },
   data(){
     return {
@@ -153,7 +159,7 @@ export default {
     },
     getPermission(id) {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
-      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 2}).then(res => {
       if(res.code == 200) {
         let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
         if(res.data.permissions) {
@@ -178,6 +184,8 @@ export default {
       this.loading = true;
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         this.liveDetailInfo = res.data;
+        sessionOrLocal.set('webinarState', this.liveDetailInfo.webinar_state);
+        sessionOrLocal.set('webinarType', this.liveDetailInfo.webinar_type);
         if (res.data.webinar_state == 4) {
           this.$route.meta.title = '点播详情';
         } else {
@@ -312,12 +320,25 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
-      if (this.liveDetailInfo.webinar_type == 1) {
-        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
-        window.open(href, '_blank');
+      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
+      if (status) {
+        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+          confirmButtonText: '去充值',
+          cancelButtonText: '知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel',
+        }).then(() => {
+          this.$router.push({path:'/finance/info'});
+        }).catch(() => {});
       } else {
-         const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
-        window.open(href, '_blank');
+        if (this.liveDetailInfo.webinar_type == 1) {
+          let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
+          window.open(href, '_blank');
+        } else {
+          const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
+          window.open(href, '_blank');
+        }
       }
       // const { href } = this.$router.resolve({path: `/lives/room/${this.$route.params.str}`});
 
@@ -360,10 +381,13 @@ export default {
 
 <style lang="less" scoped>
 .basicInfo{
-  display: flex;
+  // display: flex;
   // min-width: 756px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  // flex-wrap: wrap;
+  // justify-content: space-between;
+  .rightbox {
+    height: 223px;
+  }
   .active{
     width: 100%;
   }
@@ -373,6 +397,7 @@ export default {
     height: 100%;
     padding: 24px;
     display: flex;
+    border-radius: 4px;
     .info{
       flex: 1;
       // overflow: auto;
@@ -386,6 +411,7 @@ export default {
           font-size: 20px;
           // display: table-cell;
           vertical-align: middle;
+          cursor: pointer;
         }
         &:last-child{
           margin-bottom: 20px;
@@ -398,6 +424,24 @@ export default {
         //   // margin-bottom: 20px;
         //   line-height: 20px;
         // }
+      }
+
+      .hidden_hover:hover .title_hover{
+        display: block;
+      }
+      .title_hover{
+        position: absolute;
+        left: 40%;
+        top: 35%;
+        border-radius: 4px;
+        width: 368px;
+        line-height: 17px;
+        background: rgba(#1A1A1A, 0.95);
+        font-size: 12px;
+        color: #fff;
+        padding: 8px 10px;
+        z-index: 100;
+        display: none;
       }
     }
     .thumb{
@@ -503,6 +547,10 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  position: relative;
+  // &:hover .info .title_hover {
+  //   display: block;
+  // }
   // max-width: 500px;
   // height: 56px;
   // overflow: hidden;

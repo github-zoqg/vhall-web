@@ -9,7 +9,7 @@
               <el-radio :label="1">自定义皮肤</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="页面设置" v-if="skinType === 1">
+          <el-form-item label="页面底色" v-if="skinType === 1">
             <color-set ref="pageBgColors" :themeKeys=pageBgColors @color="bgColorHandle" :colorDefault="skinSetForm.bgColor"></color-set>
           </el-form-item>
           <el-form-item label="页面风格" v-if="skinType === 1">

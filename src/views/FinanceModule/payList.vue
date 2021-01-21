@@ -1,25 +1,25 @@
 <template>
   <div class="pay-list">
     <h1>订单支付</h1>
-    <el-card class="pay-main">
+    <div class="pay-main">
       <h2>订单信息</h2>
       <div class="table-order table-order_1">
         <div class="order-item">商品名称</div>
         <div class="order-item">购买内容</div>
         <div class="order-item">订单类型</div>
-        <div class="order-item">金额</div>
+        <div class="order-item" style="text-align: right;">金额</div>
       </div>
       <div class="table-order">
         <div class="order-item">{{ payInfo.type | orderTypeText }}套餐</div>
         <div class="order-item">{{ payInfo.content }}</div>
         <div class="order-item">{{ payInfo.type | orderTypeText }}</div>
-        <div class="order-item">{{ payInfo.amount }}</div>
+        <div class="order-item" style="text-align: right;">{{ payInfo.amount }}</div>
       </div>
       <div class="table-order" v-if="payInfo.arrears">
         <div class="order-item">{{ payInfo.arrears.product_name }}</div>
         <div class="order-item">{{ payInfo.arrears.content }}</div>
         <div class="order-item">{{ payInfo.arrears.type | orderTypeText }}</div>
-        <div class="order-item">{{ payInfo.arrears.fee }}</div>
+        <div class="order-item" style="text-align: right;">{{ payInfo.arrears.fee }}</div>
       </div>
       <div class="table-order_2">
         <p>总金额：<span>￥{{ payInfo.total_amount }}</span></p>
@@ -35,16 +35,18 @@
             <div class="pay-item" @click="changeColor('1')" :class="isChecked == '1' ? 'isActive' : ''">
               <icon icon-class="saaszhifubao" class="payColor"></icon>
               <span>支付宝</span>
-              <label class="img-tangle" v-show="isChecked== '1'">
+              <label class="img-tangle" v-if="isChecked== '1'"><img src="../../common/images/icon-choose.png" alt=""></label>
+              <!-- <label class="img-tangle" v-show="isChecked== '1'">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
             </div>
             <div class="pay-item" @click="changeColor('2')" :class="isChecked == '2' ? 'isActive' : ''">
               <icon icon-class="saasweixinzhifu" class="weixinColor"></icon>
               <span>微信</span>
-              <label class="img-tangle" v-show="isChecked== '2'">
+              <label class="img-tangle" v-if="isChecked== '2'"><img src="../../common/images/icon-choose.png" alt=""></label>
+              <!-- <label class="img-tangle" v-show="isChecked== '2'">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
             </div>
           </div>
           <el-dialog
@@ -63,21 +65,21 @@
           </el-dialog>
            <el-dialog
             :visible.sync="dialogweiXinVisible"
-            width="340px"
+            width="320px"
             title="支付"
             :close-on-click-modal=false
             :close-on-press-escape=false
           >
           <div class="isPay">
             <div class="reBtn">
-             <img :src="payCode" alt="">
-             <p>请用微信扫描二维码,完成支付</p>
-             <el-button size="medium" type="primary" round @click="finishPay">完成支付</el-button>
+              <img :src="payCode" alt="">
+              <p class="line-text">请用微信扫描二维码,完成支付</p>
+              <el-button size="medium" type="primary" round @click="finishPay">完成支付</el-button>
             </div>
           </div>
           </el-dialog>
       </div>
-    </el-card>
+    </div>
     <div class="down-time" v-if="!timeOut">
       <p><i class="el-icon-warning-outline"></i> 请在<span>{{ time }}</span>内完成支付</p>
     </div>
@@ -115,8 +117,8 @@ export default {
       this.$fetch('orderInfo', params).then(res =>{
         this.payInfo = res.data;
         this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.expire_time.replace(/-/g,'/'));
-      }).catch(e=>{
-        console.log(e);
+      }).catch(res=>{
+        this.$message.error(res.msg);
       });
     },
     downTime(targetStartDate, targetEndDate) {
@@ -126,6 +128,7 @@ export default {
         this.timeOut = true;
         return false;
       } else {
+        console.log(this.timeOut, '???????????????????')
         let diff = targetEnd.getTime() - targetStart.getTime();
         targetStart.setTime(targetStart.getTime() + 1000);
         let day = Math.floor(diff / (24 * 3600 * 1000));
@@ -172,8 +175,8 @@ export default {
           this.method = 'WEIXIN';
           this.getweiXinCode(res.data.link);
         }
-      }).catch(e=>{
-        console.log(e);
+      }).catch(res=>{
+        this.$message.error(res.msg);
       });
     },
     getweiXinCode(link) {
@@ -197,6 +200,8 @@ export default {
         this.$router.push({
             path: '/finance/infoDetail'
           });
+      }).catch(res => {
+        this.$message.error(res.msg);
       })
 
     }
@@ -217,6 +222,7 @@ export default {
       width: 100%;
       top: 20px;
       left: 0px;
+      z-index: 100;
       p{
         height: 39px;
         line-height: 39px;
@@ -252,7 +258,10 @@ export default {
       margin-bottom: 24px;
     }
     .pay-main{
-      padding: 8px;
+      // padding: 8px;
+      background: #fff;
+      padding: 24px;
+      border-radius: 4px;
       h2{
         padding-left: 8px;
         font-size: 16px;
@@ -260,7 +269,7 @@ export default {
         padding-bottom: 24px;
       }
       .table-order{
-        padding: 0 30px;
+        padding: 0 24px;
         display: flex;
         justify-content: space-between;
         align-items: left;
@@ -286,7 +295,7 @@ export default {
           float: right;
           height: 56px;
           line-height: 56px;
-          padding-right: 40px;
+          padding-right: 24px;
           span{
             color: #FB3A32;
             font-weight: bold;
@@ -325,6 +334,7 @@ export default {
             position: relative;
             text-align: center;
             line-height: 88px;
+            border-radius: 4px;
             cursor: pointer;
             /deep/.svg-icon{
               font-size: 32px;
@@ -337,22 +347,34 @@ export default {
               color: #09bb07;
             }
             .img-tangle{
-               position: absolute;
-                right: 0;
-                top:0;
-                width: 0;
-                height: 0;
-                border: 10px solid transparent;
-                border-right-color: #FB3A32;
-                border-top-color: #FB3A32;
-                i{
-                  color:#fff;
-                  position: absolute;
-                  top: -8px;
-                  right:-11px;
-                  font-size: 10px;
-                }
+              position: absolute;
+              right: -0;
+              top:-25px;
+              width: 20px;
+              height: 20px;
+              font-size: 0;
+              img{
+                width: 100%;
+                height: 100%;
+              }
             }
+            // .img-tangle{
+            //    position: absolute;
+            //     right: 0;
+            //     top:0;
+            //     width: 0;
+            //     height: 0;
+            //     border: 10px solid transparent;
+            //     border-right-color: #FB3A32;
+            //     border-top-color: #FB3A32;
+            //     i{
+            //       color:#fff;
+            //       position: absolute;
+            //       top: -8px;
+            //       right:-11px;
+            //       font-size: 10px;
+            //     }
+            // }
             &.isActive{
                 box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
                 border: 1px solid #FB3A32;
@@ -392,6 +414,13 @@ export default {
           border: 1px solid #fc5659;
           color: #fff;
           margin-left: 10px;
+        }
+        img{
+          width: 132px;
+          height: 125px;
+        }
+        .line-text{
+          padding-top: 15px;
         }
       }
     }

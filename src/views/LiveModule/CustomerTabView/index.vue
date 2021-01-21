@@ -70,6 +70,7 @@
         </div>
       </div>
     </el-dialog>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
@@ -78,10 +79,13 @@ import DragComponents from './components/dragComponents';
 import MobilePreview from './components/mobilePreview'
 import PcPreview from './components/pcPreview'
 import { v1 as uuidV1 } from 'uuid';
+import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 
 export default {
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeIndex: '1',
       customMenus: [],
       qrCode: '',
@@ -94,11 +98,12 @@ export default {
     PageTitle,
     DragComponents,
     MobilePreview,
-    PcPreview
+    PcPreview,
+    beginPlay
   },
 
   created() {
-    this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/watch/${this.$route.params.str}`
+    this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.getInitMenus()
   },

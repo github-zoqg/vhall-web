@@ -185,7 +185,7 @@ export default {
         type: 4,
         entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         pf: 7,
-        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+        env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
       });
       window.vhallReport && window.vhallReport.report('ENTER_WATCH');
     }

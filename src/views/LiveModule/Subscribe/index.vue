@@ -263,12 +263,12 @@
             <div class="third-way-choose" v-if="otherWayShow && roomData.webinar.id">
               <div class="third-auth">
                 <a
-                  :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/qq?source=pc&jump_url=' + location + '/subscribe/' + roomData.webinar.id"
+                  :href="qqLink"
                   class="qq"
                   title="QQ登录"
                 ></a>
                 <a
-                  :href="'https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=pc&jump_url=' + location + '/subscribe/' + roomData.webinar.id"
+                  :href="wxLink"
                   class="weixin"
                   title="微信登录"
                 ></a>
@@ -353,7 +353,7 @@
               ></Watch>
             </div>
           </div>
-          <div class="rightWatch">
+          <div class="rightWatch" v-show="initSuccess">
             <template>
               <div class="title" v-show="beginStatus">距离直播开始还有</div>
               <div class="title" v-show="!beginStatus">直播已开始</div>
@@ -552,6 +552,7 @@ export default {
   },
   data(){
     return {
+      initSuccess: false,
       beginStatus: true, // 开始展示
       showLive: false,
       location: process.env.VUE_APP_WAP_WATCH,
@@ -651,11 +652,19 @@ export default {
     showWatch(){
       if (this.roomData && this.roomData.webinar){
         if (((this.roomData.preview_paas_record_id || this.roomData.warmup_paas_record_id) && this.roomData.verified == 0) || (!this.roomData.preview_paas_record_id && !this.roomData.warmup_paas_record_id)) {
-          return true
+          return true;
         } else {
-          return false
+          return false;
         }
+      } else {
+        return false;
       }
+    },
+    qqLink() {
+      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/subscribe/${this.roomData.webinar.id}`
+    },
+    wxLink() {
+      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/subscribe/${this.roomData.webinar.id}`
     }
   },
   async created(){
@@ -965,7 +974,7 @@ export default {
         this.myliveRoute = window.location.origin + '/live/list'
         this.accountRoute = window.location.origin + '/finance/info'
         this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
-        this.myAccountRoute = window.location.origin + '/account/info'
+        this.myAccountRoute = window.location.origin + '/acc/info'
         this.subscribeOptions = {
           show: this.roomData.subscribe.show,
           num: this.roomData.subscribe.num,
@@ -1009,6 +1018,7 @@ export default {
             this.initPlayerSDK()
           }
         })
+        this.initSuccess = true
         if (this.roomData.webinar.type == 1) {
           this.beginStatus = false
           if (this.timer) {

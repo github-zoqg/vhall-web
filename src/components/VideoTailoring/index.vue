@@ -77,6 +77,7 @@
           :range-separator="t('至')"
           :start-placeholder="t('开始日期')"
           :end-placeholder="t('结束日期')"
+          prefix-icon="iconfont-v3 saasicon_date"
           format="yyyy-MM-dd HH:mm:ss"
           value-format="yyyy-MM-dd HH:mm:ss"
           :editable="false"
@@ -116,11 +117,9 @@
     <el-dialog
       class="vh-video-tailoring__export"
       :visible.sync="exportVideoVisibile"
-      width="480px"
+      width="483px"
       :title="t('导出回放')"
       :before-close="closeExportVideoDialog"
-    :close-on-click-modal=false
-    :close-on-press-escape=false
     >
       <div class="vh-video-tailoring__form">
         <span class="vh-video-tailoring__label">{{ t('回放时长') }}</span>
@@ -129,17 +128,17 @@
         </div>
       </div>
       <div class="vh-video-tailoring__form">
-        <span class="vh-video-tailoring__label">{{ t('回放标题') }}</span>
+        <span class="vh-video-tailoring__label vh-video-tailoring__title">{{ t('回放标题') }}</span>
         <div class="vh-video-tailoring__input-form">
-          <el-input v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100"></el-input>
-          <span class="vh-invitation-card__title-length">
+          <VhallInput resize=none type="textarea" v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100" show-word-limit ></VhallInput>
+          <!-- <span class="vh-invitation-card__title-length">
             <span :class="videoTitle.length != 0 ? 'vh-invitation-card__curLength' : ''">{{ videoTitleLength }}</span>/100
-          </span>
+          </span> -->
         </div>
       </div>
       <div class="vh-video-tailoring__btn-group">
-        <el-button type="primary" @click="exportVideoFun">{{ t('导出') }}</el-button>
-        <el-button @click="cancelExportVideoFun">{{ t('取消') }}</el-button>
+        <el-button round size="medium" type="primary" @click="exportVideoFun">{{ t('导出') }}</el-button>
+        <el-button round size="medium" @click="cancelExportVideoFun">{{ t('取消') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -618,6 +617,12 @@ export default {
     margin-left: 20px;
     color: #888;
   }
+  /deep/.el-date-editor .el-range__icon{
+    line-height: 29px;
+  }
+  /deep/.el-date-editor .el-range__close-icon {
+    line-height: 28px;
+  }
   .vh-video-tailoring__section {
     background-color: #222222;
     border-radius: 4px;
@@ -721,7 +726,7 @@ export default {
           align-items: center;
           .iconContainer i {
             font-size: 126px;
-            color: #667;
+            color: #666;
           }
         }
       }
@@ -756,7 +761,7 @@ export default {
           align-items: center;
           .iconContainer i {
             font-size: 126px;
-            color: #667;
+            color: #666;
           }
         }
         // .vhall-watch-doc[data-v-65e8c4ba] {
@@ -949,24 +954,46 @@ export default {
     }
   }
   .vh-video-tailoring__export {
+    .el-dialog {
+      overflow: hidden;
+    }
     .el-dialog__body {
       .vh-video-tailoring__form {
-        margin-top: 27px;
+        margin-top: 24px;
         &:first-child {
           margin-top: 0px;
         }
         .vh-video-tailoring__label {
-          display: inline-block;
+          float: left;
           width: 56px;
+          height: 20px;
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #1A1A1A;
+          line-height: 20px;
+          &.vh-video-tailoring__title {
+            height: 120px;
+            line-height: 120px;
+          }
         }
         .vh-video-tailoring__input-form {
           display: inline-block;
-          width: 324px;
-          margin-left: 16px;
+          width: 351px;
+          margin-left: 8px;
           color: #666;
           font-size: 14px;
           text-align: left;
           position: relative;
+          .el-textarea__inner {
+            color: #1a1a1a;
+            height: 120px;
+            font-family: PingFangSC-Regular, PingFang SC;
+          }
+          .vh-video-tailoring__content {
+            line-height: 20px;
+            color: #1a1a1a;
+          }
           .el-input__inner {
             padding: 0 45px 0 12px;
             border: 1px solid #e2e2e2;
@@ -999,16 +1026,27 @@ export default {
         }
       }
       .vh-video-tailoring__btn-group {
-        text-align: center;
-        margin-top: 40px;
-        .el-button--default{
-          border-color: #E2E2E2;
-          color: #666666;
-          background-color: #ffffff;
-          &:hover{
-            border-color: #1E90FF;
-            color: #1E90FF;
-            background-color: #ffffff;
+        text-align: right;
+        margin-top: 24px;
+        padding-bottom: 24px;
+        /deep/.el-button--default {
+          margin-left: 12px;
+          background: transparent;
+          &:hover {
+            background: #FB3A32;
+            border: 1px solid #FB3A32;
+          }
+          &:active {
+            background: #E2332C;
+            border: 1px solid #E2332C;
+          }
+          &.is-disabled {
+            border: 1px solid #E6E6E6;
+            background: transparent;
+            color: #B3B3B3;
+            &:hover,&:active {
+              background: transparent;
+            }
           }
         }
       }
@@ -1016,27 +1054,18 @@ export default {
   }
 
   .el-dialog {
-    margin-top: 0 !important;
-    top: 50%;
-    transform: translate(0,-50%);
     .el-dialog__title {
-      font-size: 18px;
-      color: #333;
+      font-size: 20px;
+      color: #1a1a1a;
       font-weight: 500;
+      line-height: 28px;
     }
     .el-dialog__header {
-      padding: 40px 0px 0px 0px;
-      // background-color: #F0F2F5;
-      box-sizing: border-box;
-      .el-dialog__headerbtn {
-        // margin-top: 10px;
-        .el-dialog__close {
-          font-size: 22px;
-        }
-      }
+      text-align: left;
+      padding-bottom: 32px;
     }
     .el-dialog__body {
-      padding: 40px;
+      text-align: left;
       background-color: #fff;
       .el-input__icon{
         line-height: 36px;
@@ -1048,37 +1077,37 @@ export default {
           height: 38px;
           line-height: 38px;
         }
-        .el-button {
-          width: 76px;
-          height: 36px;
-          line-height: 36px;
-          background: #FB3A32;
-          border: none;
-          border-radius: 18px;
-          padding: 0;
-          text-align: center;
-          color: #FAFAFA;
-          &.el-button--default {
-            border: 1px solid #CCCCCC;
-            padding: 4px 24px;
-            font-size: 14px;
-            font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-            font-weight: 400;
-            color: #666666;
-            line-height: 26px;
-            &:hover{
-              background: #ffebeb;
-              border: 1px solid #CCCCCC;
-              color: #666666;
-            }
-          }
-          &.el-button--primary {
-            &:hover{
-              color: #fff;
-              background: #FC615B;
-            }
-          }
-        }
+        // .el-button {
+        //   width: 76px;
+        //   height: 36px;
+        //   line-height: 36px;
+        //   background: #FB3A32;
+        //   border: none;
+        //   border-radius: 18px;
+        //   padding: 0;
+        //   text-align: center;
+        //   color: #FAFAFA;
+        //   &.el-button--default {
+        //     border: 1px solid #CCCCCC;
+        //     padding: 4px 24px;
+        //     font-size: 14px;
+        //     font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+        //     font-weight: 400;
+        //     color: #666666;
+        //     line-height: 26px;
+        //     &:hover{
+        //       background: #ffebeb;
+        //       border: 1px solid #CCCCCC;
+        //       color: #666666;
+        //     }
+        //   }
+        //   &.el-button--primary {
+        //     &:hover{
+        //       color: #fff;
+        //       background: #FC615B;
+        //     }
+        //   }
+        // }
     }
     .el-dialog__footer {
       text-align: center;

@@ -8,28 +8,36 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addQuestion">创建问卷</el-button>
-      <el-button round  @click="dataBase" size="medium">资料库</el-button>
+      <el-button round  @click="dataBase" class="transparent-btn" size="medium">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
-        <el-input v-model.trim="keyword" placeholder="请输入问卷名称"  @change="getTableList" maxlength="50" suffix-icon="el-icon-search" clearable></el-input>
+        <VhallInput v-model.trim="keyword" placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
+          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
+        </VhallInput>
       </div>
     </div>
-    <div class="question-list" v-show="total">
+    <div class="question-list" v-show="total || isSearch">
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" :width="180" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
+      <noData :nullType="'search'" v-if="isSearch"></noData>
     </div>
-    <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
-        <el-button size="white-primary" round v-if="nullText == 'nullData'" @click="dataBase" v-preventReClick>资料库</el-button>
+    <div class="no-live" v-show="!total && !isSearch">
+      <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'">
+        <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
+        <el-button size="white-primary" class="transparent-btn" round @click="dataBase" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <template v-if="isShowQuestion">
       <div class="show-question">
         <div class="show-main">
           <p>问卷预览 <i class="el-icon-close" @click="isShowQuestion=false"></i></p>
-          <pre-question  :questionId="questionId"></pre-question>
+          <el-scrollbar>
+            <div class="question_main">
+              <pre-question  :questionId="questionId"></pre-question>
+            </div>
+          </el-scrollbar>
+          <!-- <pre-question  :questionId="questionId"></pre-question> -->
           <div class="submit-footer">
             <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
           </div>
@@ -47,6 +55,7 @@
       </el-dialog>
     </template> -->
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
@@ -55,24 +64,19 @@ import PageTitle from '@/components/PageTitle';
 import preQuestion from '@/components/Question/preQuestion';
 import baseQuestion from './components/questionBase';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: "question",
   data() {
     return {
       total: 0,
-      nullText: 'nullData',
       isSearch: false, //是否是搜索
-      text: '您还没有问卷，快来创建吧！',
       selectChecked: [],
       keyword: '',
       loading: true,
       isShowQuestion: false,
       questionId: '',
       tabelColumn: [
-        {
-          label: '问卷ID',
-          key: 'question_no',
-        },
         {
           label: '问卷名称',
           key: 'title',
@@ -96,7 +100,8 @@ export default {
     PageTitle,
     preQuestion,
     baseQuestion,
-    noData
+    noData,
+    beginPlay
   },
   created() {
     this.webinarId = this.$route.params.str;
@@ -109,6 +114,9 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchTableList() {
+      this.getTableList('search')
+    },
     getTableList(params) {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let formParams = {
@@ -116,19 +124,11 @@ export default {
         room_id: this.$route.query.roomId,
         keyword: this.keyword
       }
-      if (this.keyword || params == 'delete') {
+      if (params == 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
-        // 如果搜索是有选中状态，取消选择
-        this.$refs.tableList.clearSelect();
-        this.nullText = 'search';
-        this.text = '';
-        this.isSearch = true;
-      } else {
-        this.nullText = 'nullData';
-        this.text = '您还没有问卷，快来创建吧！';
-        this.isSearch = false;
       }
+      this.isSearch = this.keyword ? true : false;
       let obj = Object.assign({}, pageInfo, formParams);
       this.$fetch('getLiveQuestionList', this.$params(obj)).then(res => {
         this.tableData = res.data.list || [];
@@ -209,7 +209,7 @@ export default {
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
             if (res.code == 200) {
-              this.getTableList('delete');
+              this.getTableList('search');
               this.$message.success('删除成功');
             }
           }).catch(res => {
@@ -260,6 +260,12 @@ export default {
     width: 100%;
     padding: 32px 24px;
   }
+  .bg-button{
+    /deep/button.el-button.el-button--medium{
+      background: transparent;
+    }
+  }
+
   // /deep/.el-dialog__wrapper {
   //   z-index: 2001 !important;
   // }
@@ -285,7 +291,7 @@ export default {
   }
   .show-question{
     position: absolute;
-    z-index: 5;
+    z-index: 2002;
     top: 0;
     left: 0;
     width: 100%;
@@ -297,8 +303,12 @@ export default {
       left: 50%;
       background: #fff;
       transform: translate(-50%, -50%);
-      width: 800px;
+      width: 700px;
       padding: 24px 32px;
+      .question_main{
+        max-height: 600px;
+        // overflow: auto;
+      }
       p{
         font-size: 20px;
         font-weight: 600;

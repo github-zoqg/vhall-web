@@ -6,15 +6,25 @@
       <div class="input-card">
         <div class="input-item">
           <span>我的主页</span>
-          <el-input v-model="myMain" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" :title="'复制'" @click="cope(myMain)"></i></el-input>
+          <el-input v-model="myMain" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(myMain)"></i>
+              </el-tooltip>
+            </template>
+          </el-input>
         </div>
         <div class="input-item">
           <span>观看直播</span>
           <!-- <el-tooltip class="item" effect="dark" content="复制" placement="top">
             <i class="el-input__icon el-icon-document-copy" @click="cope(liveContent)"></i>
           </el-tooltip> -->
-          <el-input v-model="liveContent" readonly>
-            <i slot="suffix" class="el-input__icon el-icon-document-copy" :title="'复制'" @click="cope(liveContent)"></i>
+          <el-input v-model="liveContent" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent)"></i>
+              </el-tooltip>
+            </template>
           </el-input>
         </div>
         <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://www.vhall.com/saas/doc/1692.html')"> 微信嵌入</a></p>
@@ -25,11 +35,23 @@
       <div class="input-card">
         <div class="input-item">
           <span>完全嵌入</span>
-          <el-input v-model="completion" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" :title="'复制'" @click="cope(completion)"></i></el-input>
+          <el-input v-model="completion" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(completion)"></i>
+              </el-tooltip>
+            </template>
+          </el-input>
         </div>
         <div class="input-item" v-if="isInteract != 3">
           <span>视频嵌入</span>
-          <el-input v-model="video" readonly><i slot="suffix" class="el-input__icon el-icon-document-copy" :title="'复制'" @click="cope(video)"></i></el-input>
+          <el-input v-model="video" readonly style="max-width:640px">
+            <template slot="suffix" >
+              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(video)"></i>
+              </el-tooltip>
+            </template>
+          </el-input>
         </div>
         <p>提示：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://www.vhall.com/saas/doc/163.html')"> 网页嵌入指南</a></p>
       </div>
@@ -39,12 +61,14 @@
       <div class="third-list"></div>
       <p class="third-text">提示：目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm"> 填写推广需求表</a></p>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 import Env from "@/api/env";
 export default {
   name: 'embedCard',
@@ -52,6 +76,7 @@ export default {
     return {
       env: Env,
       isInteract: '',
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
       liveContent: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WAP_WATCH}/lives/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
@@ -59,7 +84,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    beginPlay
   },
   created() {
     this.isInteract = this.$route.query.type;
@@ -101,9 +127,9 @@ export default {
     color: #383838;
   }
   p{
-    padding: 10px 0 0 124px;
+    padding: 10px 0 0 100px;
     line-height: 30px;
-    font-size: 14px;
+    font-size: 12px;
     color: #999;
     a{
       color: #3562FA;
@@ -112,10 +138,10 @@ export default {
   }
   .input-item{
     display: flex;
-    padding: 24px 50px 0 60px;
+    padding: 24px 50px 0 30px;
     span{
       display: inline-block;
-      width: 74px;
+      width: 70px;
       line-height: 35px;
       font-size: 14px;
       color: #666;
@@ -131,6 +157,15 @@ export default {
       margin-left: 20px;
       padding: 10px 20px;
     }
+    .iconfont-v3{
+      padding: 3px;
+      // padding-right: 12px;
+      line-height: 38px;
+      color: #666;
+      &:hover{
+        color: #1a1a1a;
+      }
+  }
   }
   .network{
     margin: 30px 0;
@@ -142,8 +177,8 @@ export default {
   .third-list{
     width:724px;
     height: 131px;
-    border: 1px dashed #ccc;
-    margin: 20px 36px 5px 36px;
+    // border: 1px dashed #ccc;
+    margin: 20px 36px 5px 30px;
     background: url(../../common/images/third-promote.png) no-repeat;
     background-position: 0 0;
     background-size:100% 100%;

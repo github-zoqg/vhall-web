@@ -4,21 +4,24 @@
       title="提现"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
+      @close="sureBangWeixin"
       width="320px"
     >
       <div class="box-wei">
-        <div class="img-box">
+        <div class="img-box" v-if="qrcode">
           <img :src="`//aliqr.e.vhall.com/qr.png?t=${encodeURIComponent(qrcode)}`" alt="" v-if="qrcode">
+          <p>请用微信扫描二维码，绑定收款账户</p>
+          <el-button type="primary" class="length120"  round @click="sureBangWeixin">确定</el-button>
           <!-- <div class="isUntime">
             <i class="el-icon-refresh-right"></i>
             <p>已超时</p>
             <p>点击重新加载</p>
           </div> -->
         </div>
-        <p v-if="!qrcode">您还未绑定账号，请先绑定</p>
-      </div>
-      <div class="nextBtn" v-if="!qrcode">
-        <el-button type="primary" round @click="goBangWeixin">立即绑定</el-button>
+        <div class="no-bang" v-else>
+           <p >您还未绑定账号，请先绑定</p>
+           <el-button type="primary" class="length120" round @click="goBangWeixin">立即绑定</el-button>
+        </div>
       </div>
     </VhallDialog>
     <VhallDialog
@@ -31,18 +34,26 @@
         <h3>
           为了保障您的账号安全，请验证进行安全验证，手机号是当前账号绑定的手机号
         </h3>
-        <el-form label-width="85px">
+        <el-form label-width="72px">
+          <el-form-item label="">
+           <div id="payCaptcha" class="captcha">
+            <el-input
+              v-model="withdrawForm.text">
+            </el-input>
+          </div>
+          <p style="color:#fb3a32;padding:0;line-height:25px"  v-show="errorMsgShow"><i class="el-icon-error"></i>图形验证码错误</p>
+          </el-form-item>
            <el-form-item label="动态密码">
             <div class="inputCode">
               <el-input v-model="code" style="width: 150px"></el-input>
-              <span @click="getBangCode" class="isLoginActive">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+              <span @click="mobileKey && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
             <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
           </el-form-item>
         </el-form>
       </div>
-      <div class="nextBtn">
-        <el-button type="primary" round @click="nextBinding"  :disabled="!code"
+      <div class="nextBtn withdrawBtn">
+        <el-button type="primary" class="length120" round @click="nextBinding"  :disabled="!code"
           >下一步</el-button>
       </div>
     </VhallDialog>
@@ -65,7 +76,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <div id="payCaptcha">
+          <div id="payCaptcha" class="captcha">
             <el-input
               v-model="withdrawForm.text">
             </el-input>
@@ -92,7 +103,7 @@
         </el-form-item>
       </el-form>
       <div class="nextBtn">
-        <el-button type="primary" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
+        <el-button type="primary" class="length120" round @click="withdraw()" :disabled="!(withdrawForm.code&&withdrawForm.money&&checked)">确认</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -100,8 +111,9 @@
 <script>
 import QRcode from 'qrcode';
 import Env from "@/api/env";
+import { sessionOrLocal } from '@/utils/utils';
 export default {
-  props: ['money', 'type', 'userInfo'],
+  props: ['money', 'type'],
   data() {
     let validateMoney = (rule, value, callback) => {
       if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
@@ -149,8 +161,12 @@ export default {
     dialogCashVisible() {
       if (this.dialogCashVisible) {
         this.time = 60;
+        this.mobileKey = '';
+        this.phone = '';
+        this.errorMsgShow = ''
         this.callCaptcha();
-        this.getWeinName();
+        this.avatar = this.userInfo.user_extends.wechat_profile || require('../../../common/images/avatar.png');
+        this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
       } else {
         this.mobileKey = '';
         this.showCaptcha = false;
@@ -158,6 +174,20 @@ export default {
         this.withdrawForm.code = '';
         this.errorText = '';
         this.phone = '';
+        this.callCaptcha();
+        window.clearInterval(this.timer);
+      }
+    },
+    dialogChangeVisible() {
+      if (this.dialogChangeVisible) {
+        this.callCaptcha();
+        this.time = 60;
+        this.mobileKey = '';
+        window.clearInterval(this.timer);
+      } else {
+        this.callCaptcha();
+        this.time = 60;
+        this.mobileKey = '';
         window.clearInterval(this.timer);
       }
     },
@@ -168,17 +198,19 @@ export default {
     }
   },
   created() {
-    this.avatar = this.userInfo.avatar || require('../../../common/images/avatar.png');
+    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
+    // this.avatar = this.userInfo.user_extends.wechat_profile || require('../../../common/images/avatar.png');
+    // this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
   },
   methods: {
     // 获取用户微信昵称
-    getWeinName() {
-      this.userInfo.user_thirds.map(item => {
-        if (item.type == 3) {
-          this.nickName = item.nick_name;
-        }
-      });
-    },
+    // getWeinName() {
+    //   this.userInfo.user_thirds.map(item => {
+    //     if (item.type == 3) {
+    //       this.nickName = item.nick_name;
+    //     }
+    //   });
+    // },
     // 提现短信验证码
     getCode() {
       this.$refs['withdrawForm'].validate((valid) => {
@@ -188,6 +220,8 @@ export default {
             this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
               this.phone = res.data.phone;
               this.countDown();
+            }).catch(res => {
+              this.$message.error(res.msg);
             });
           }
         } else {
@@ -221,27 +255,59 @@ export default {
         } else {
           this.$message.error(res.msg || '提现失败');
         }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信短信验证码
     getBangCode() {
+      if (!this.mobileKey) {
+        this.$message.error('图形验证码错误');
+        return;
+      }
       this.phone = this.userInfo.phone;
       let params = {
         type: 1,
         data: this.userInfo.phone,
-        scene_id: 6
+        scene_id: 6,
+        validate: this.mobileKey
       };
       this.$fetch('sendCode', params).then(res => {
-        this.countDown();
-        console.log(res.data, '12300000000000000000');
-      //  this.$message.success('提现成功');
-      //  this.dialogCashVisible = false;
+        if (res.code == 200) {
+          this.countDown();
+        } else {
+          this.callCaptcha();
+        }
+      }).catch(res => {
+        this.$message.error(res.msg);
       });
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wab&jump_url=${process.env.VUE_APP_WEB_URL}/weixin`;
+      //获取key值
+      this.$fetch('getBindKey').then(res => {
+        if (res.code == 200) {
+          this.qrcode = `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind/${res.data.mark}`;
+        }
+      }).catch(res => {
+        this.$message.error(res.msg);
+      });
       console.log(this.qrcode)
+    },
+    sureBangWeixin() {
+      this.dialogVisible = false;
+      if (this.qrcode) {
+        this.$fetch('getInfo', {scene_id: 2}).then(res => {
+          if(res.code === 200) {
+            sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+            sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+            window.location.reload();
+          }
+        }).catch(e=>{
+          console.log(e);
+        });
+        // window.location.reload();
+      }
     },
     /**
      * 倒计时函数
@@ -261,6 +327,7 @@ export default {
       this.dialogChangeVisible = true;
       this.dialogCashVisible = false;
       this.time = 60;
+      this.callCaptcha();
     },
     nextBinding() {
       this.dialogChangeVisible = false;
@@ -305,7 +372,6 @@ export default {
   padding: 10px 20px 30px 20px;
 }
 /deep/.el-dialog__title {
-  font-size: 16px;
   font-weight: 500;
 }
 /deep/.el-input__inner:focus {
@@ -317,29 +383,54 @@ export default {
 /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
   color: #666;
 }
+/deep/.el-button.is-round{
+  padding: 7px 32px;
+}
+.length120{
+  width: 120px;
+  text-align: center;
+}
+.codeTitle{
+  line-height: 20px;
+}
 .box-wei {
-  padding-bottom: 20px;
+  // padding-bottom: 20px;
+  // .el-form-item{
+  //   margin-bottom: 20px;
+  // }
   .img-box {
-    width: 132px;
-    height: 132px;
-    background: #f7f7f7;
+    // width: 132px;
+    // height: 132px;
     margin: 0 auto;
+    text-align: center;
+    padding-bottom: 24px;
     img{
       width: 132px;
       height: 132px;
+    }
+    p{
+      padding-bottom: 20px;
     }
   }
   h3 {
     color: #1a1a1a;
     font-weight: 400;
-    padding: 20px 10px;
+    padding: 20px 0;
     line-height: 20px;
+    font-size: 14px;
   }
   p {
     font-size: 14px;
     color: 999;
     text-align: center;
     padding-top: 8px;
+  }
+  .no-bang{
+    padding: 24px 0;
+    text-align: center;
+    p{
+      padding-bottom: 50px;
+    }
   }
   .isUntime {
     text-align: center;
@@ -416,7 +507,7 @@ export default {
     font-size: 14px;
     span {
       color: #1a1a1a;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
     }
   }
@@ -447,9 +538,9 @@ export default {
 }
 .nextBtn {
   text-align: center;
-  padding: 20px;
-  .el-button {
-    padding: 10px 38px;
-  }
+  padding-bottom: 24px;
+}
+.withdrawBtn{
+  // padding-top: 20px;
 }
 </style>

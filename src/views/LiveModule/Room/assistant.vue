@@ -198,7 +198,7 @@ export default {
           ...res.data,
           pf: 7,
           service_names: 1,
-          env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+          env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
         })
       })
     }

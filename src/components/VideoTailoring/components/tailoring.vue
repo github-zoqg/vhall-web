@@ -64,23 +64,29 @@
     </span>-->
     <div class="vh-video-tailoring__button-operation-warp clearfix" :class="{'vh-video-tailoring__button-operation-warp-active': vodReady}">
       <div>
-        <div class="vh-video-tailoring__operate fl">
-          <span @click="seekBack" class="vh-btn vh-video-tailoring__seek-back">
-            <icon icon-class="saasicon_shangyimiao"></icon>
-          </span>
-          <span
-            @click="videoPlayBtn"
-            class="vh-btn vh-video-tailoring__play"
-            :class="{ 'is-pause': statePaly }"
-          >
-            <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
-          </span>
-          <span @click="seekForward" class="vh-btn vh-video-tailoring__seek-forward">
-            <icon icon-class="saasicon_xiayimiao"></icon>
-          </span>
+        <div class="vh-video-tailoring__operate fl" :class="{'operate-disabled': !vodReady}">
+          <el-tooltip class="item" effect="dark" content="上一秒" placement="top">
+            <span @click="seekBack" class="vh-btn vh-video-tailoring__seek-back">
+              <icon icon-class="saasicon_shangyimiao"></icon>
+            </span>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" :content="statePaly ? '暂停' : '开始'" placement="top">
+            <span
+              @click="videoPlayBtn"
+              class="vh-btn vh-video-tailoring__play"
+              :class="{ 'is-pause': statePaly }"
+            >
+              <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
+            </span>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" content="下一秒" placement="top">
+            <span @click="seekForward" class="vh-btn vh-video-tailoring__seek-forward">
+              <icon icon-class="saasicon_xiayimiao"></icon>
+            </span>
+          </el-tooltip>
         </div>
         <span class="vh-video-tailoring__time fr">
-          <span class="vh-video-tailoring__hover-time">{{ showTime }}</span>
+          <span :class="{'vh-video-tailoring__hover-time': vodReady}">{{ showTime }}</span>
           /
           {{ showVideoTime }}
         </span>
@@ -129,13 +135,13 @@
             <icon class="icon" icon-class="saasicon_suoxiao"></icon>
           </el-tooltip>
         </el-button>
-        <el-button @click="qp" class="fl vh-btn vh-video-tailoring__qp-btn" v-if="!isFullScreen">
+        <el-button :disabled="!vodReady" @click="qp" class="fl vh-btn vh-video-tailoring__qp-btn" v-if="!isFullScreen">
           <el-tooltip class="item" effect="dark" content="全屏" placement="top" v-if="!isFullScreen">
             <icon class="icon" icon-class="saasicon_quanping"></icon>
           </el-tooltip>
           <!-- <span class="vh-iconfont vh-icon-full-screen"></span> -->
         </el-button>
-        <el-button @click="tcqp" class="fl vh-btn vh-video-tailoring__qxqp-btn" v-if="isFullScreen">
+        <el-button :disabled="!vodReady" @click="tcqp" class="fl vh-btn vh-video-tailoring__qxqp-btn" v-if="isFullScreen">
           <el-tooltip class="item" effect="dark" content="退出全屏" placement="top" v-if="isFullScreen">
             <icon class="icon" icon-class="saasicon_quxiaoquanping"></icon>
           </el-tooltip>
@@ -234,29 +240,27 @@
     :close-on-click-modal=false
     :close-on-press-escape=false
     >
-      <div class="vh-video-tailoring__form">
+      <div class="vh-video-tailoring__form vh-video-tailoring__form-time">
         <span>{{ t('选择时间') }}</span>
         <div class="vh-video-tailoring__input-form">{{ formatEventTime }}</div>
       </div>
       <div class="vh-video-tailoring__form">
         <span>{{ t('标记文字') }}</span>
         <div class="vh-video-tailoring__input-form">
-          <el-input
+          <VhallInput
             v-model="eventLabel"
-            :placeholder="t('请输入事件提示文字')"
+            :placeholder="t('请输入标记文字')"
             maxlength="20"
-          ></el-input>
-          <span class="vh-invitation-card__title-length">
-            <span :class="eventLabel.length != 0 ? 'vh-invitation-card__curLength' : ''">{{ eventLabelLength }}</span>/20
-          </span>
+            show-word-limit
+          ></VhallInput>
         </div>
       </div>
       <div class="vh-video-tailoring__btn-group">
-        <el-button type="primary" @click="addEventPoint">{{ t('确定') }}</el-button>
-        <el-button @click="cancelAddEventPoint">{{ t('取消') }}</el-button>
+        <el-button round size="medium" type="primary" @click="addEventPoint">{{ t('确定') }}</el-button>
+        <el-button round size="medium" @click="cancelAddEventPoint">{{ t('取消') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       class="vh-video-tailoring__delcutpoint-popbody"
       :visible.sync="delCutPoint"
       title
@@ -272,7 +276,7 @@
         <el-button type="primary" @click="delCutPointFun">{{ t('确认') }}</el-button>
         <el-button @click="closeDelCutPointPop">{{ t('取消') }}</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 <script>
@@ -781,6 +785,15 @@ export default {
     delCuttingPointFun () {
       if (this.delCuttingPoint !== '') {
         this.delCutPoint = true;
+        this.$confirm('删除剪切点，是否确认删除？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          this.delCutPointFun()
+        }).catch(() => {});
       }
     },
     /**
@@ -1302,6 +1315,12 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
+      &.operate-disabled {
+        i {
+          color: #999!important;
+          cursor: default!important;
+        }
+      }
     }
     &.vh-video-tailoring__button-operation-warp-active{
       .vh-video-tailoring__time{
@@ -1370,56 +1389,36 @@ export default {
     left: 0;
   }
   .vh-video-tailoring__popbody {
-    .el-dialog__header {
-      height: 64px;
-      padding: 44px 0px 0px 0px;
-      background-color: #fff;
-      font-size: 16px;
-      color: #333;
-      .el-dialog__headerbtn {
-        top: 17px;
-        &:hover {
-          .el-dialog__close {
-            color: #eb9630;
-          }
-        }
-      }
+    .el-dialog {
+      overflow: hidden;
     }
     .el-dialog__body {
-      padding: 40px;
       text-align: left;
       background-color: #fff;
       .vh-video-tailoring__form {
-        margin-top: 20px;
-        span {
+        margin-top: 24px;
+        &.vh-video-tailoring__form-time {
+          margin-top: 0;
+        }
+        >span {
           display: inline-block;
           width: 56px;
+          height: 20px;
+          font-size: 14px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #1A1A1A;
+          line-height: 20px;
         }
         .vh-video-tailoring__input-form {
           display: inline-block;
-          width: 324px;
-          margin-left: 16px;
-          color: #666;
+          width: 351px;
+          margin-left: 8px;
+          color: #1a1a1a;
           position: relative;
           .el-input__inner {
-            padding: 0 45px 0 12px;
-            border: 1px solid #e2e2e2;
-            border-radius: 0;
-            background: #fff;
-            border-radius:4px;
-            height: 36px;
-            line-height: 36px;
-          }
-          .el-input__count-inner {
-            background: #fff;
-          }
-          .el-input__suffix{
-            height: 36px;
-            line-height: 36px;
-            width: fit-content;
-            span{
-              width: fit-content;
-            }
+            height: 40px;
+            line-height: 40px;
           }
           .vh-invitation-card__title-length{
             position: absolute;
@@ -1437,8 +1436,9 @@ export default {
         }
       }
       .vh-video-tailoring__btn-group {
-        text-align: center;
-        margin-top: 36px;
+        text-align: right;
+        margin-top: 24px;
+        padding-bottom: 24px;
         .el-button {
           width: 80px;
           height: 36px;
@@ -1446,17 +1446,7 @@ export default {
           line-height: 34px;
           text-align: center;
           & + .el-button {
-            margin-left: 20px;
-          }
-          &.el-button--default{
-            border-color: #E2E2E2;
-            color: #666666;
-            background-color: #ffffff;
-            &:hover{
-              border-color: #1E90FF;
-              color: #1E90FF;
-              background-color: #ffffff;
-            }
+            margin-left: 12px;
           }
         }
       }

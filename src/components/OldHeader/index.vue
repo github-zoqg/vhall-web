@@ -2,22 +2,25 @@
   <div>
     <header class="commen-header home-header">
       <nav :class="['navbar nav-top all']" role="navigation">
-        <div class="navbar-header">
+        <div :class="['navbar-header', {'white-bg': isWhiteBg}]">
           <a :href="logo_jump_url" v-if="logo" class="navbar-brand">
             <img v-if="logo" :src="logo">
           </a>
-          <a class="navbar-brand" :href="logo_jump_url" v-else><img src="../../common/images/sys/logo@2x.png" alt=""></a>
+          <a class="navbar-brand" :href="logo_jump_url" v-else>
+            <img src="../../common/images/sys/logo-red@2x.png" alt="" v-if="isWhiteBg" />
+            <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
+          </a>
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
             <div class=""  v-if="isLogin">
-              <el-dropdown @command="handleCommand">
-              <span class="el-dropdown-link">
-                <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
-                <span class="textofover">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
-                <span class="caret"></span>
-              </span>
-                <el-dropdown-menu slot="dropdown">
+              <el-dropdown @command="handleCommand" class="hover-dropdown">
+                <span class="el-dropdown-link">
+                  <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
+                  <span class="textofover">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
+                  <span class="caret"></span>
+                </span>
+                <el-dropdown-menu slot="dropdown" class="zdy-hover-dropdown">
                   <el-dropdown-item command="loginOut">退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -47,6 +50,14 @@ export default {
     scene: {
       require: false,
       default: ''
+    },
+    user_id: {
+      require: false,
+      default: ''
+    },
+    isWhiteBg: {
+      require: false,
+      default: false
     }
   },
   data() {
@@ -79,10 +90,10 @@ export default {
         webinar_user_id: id
       }).then(res => {
         console.log('用户控制台标识图：', res);
-        this.logo = res.data.logo;
+        this.logo = res.data.logo || '';
         this.logo_jump_url = res.data.logo_jump_url ? res.data.logo_jump_url : process.env.VUE_APP_COMPANY_URL;
       }).catch(err=>{
-        this.logo = null;
+        this.logo = '';
         this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
       });
     },
@@ -102,7 +113,9 @@ export default {
         webinar_id: id
       }).then(res => {
         if (res.data) {
-          this.signInfo = res.data
+          // this.signInfo = res.data
+          this.logo = res.data.logo_url || '';
+          this.logo_jump_url = res.data.skip_url ? res.data.skip_url : process.env.VUE_APP_COMPANY_URL;
         }
       })
     }
@@ -121,15 +134,17 @@ export default {
         // 非控制台查看
         this.userLogoGet(this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str);
       }
-    } else if (this.$route.path.indexOf('/v3/chooseWay/') !== -1) {
+    } else if (this.$route.path.indexOf('/chooseWay/') !== -1 && this.$route.path.indexOf('/live/chooseWay/') === -1) {
       let _data = this.$route.params
       this.arr = [_data.str, _data.role]; // 活动ID，角色
       this.getSignInfo(this.arr[0]);
+    } else if (this.$route.path.indexOf('/special/detai') !== -1 && this.user_id) {
+      // 根据专题得创建者Id，得到其头像数据
+      this.userLogoGet(this.user_id);
     }
   }
 };
 </script>
-
 <style lang="less" scoped>
 header.commen-header {
   margin-bottom: 0;
@@ -154,6 +169,9 @@ header.commen-header {
     height: 64px;
     background: #FB3A32;
     float: left;
+    &.white-bg {
+      background: #ffffff;
+    }
   }
   .navbar-brand {
     float: left;

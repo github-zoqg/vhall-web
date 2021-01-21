@@ -9,11 +9,9 @@
         <!-- 展开情况下 -->
         <div v-else key="expand" class="sidebar-logo-link">
           <a :href="logo_jump_url" v-if="logo" class="sidebar-logo2">
-            {{logo_jump_url}}
             <img v-if="logo" :src="logo">
           </a>
           <a :href="logo_jump_url" v-else class="sidebar-logo2">
-            {{logo_jump_url}}
             <img src="../../../common/images/sys/logo@2x.png"  class="sidebar-logo static"/>
           </a>
         </div>
@@ -59,7 +57,7 @@ export default {
         withoutAnimation: false
       },
       logo: null,
-      logo_jump_url: '',
+      logo_jump_url: process.env.VUE_APP_COMPANY_URL,
       childPremission: {},
     };
   },
@@ -124,7 +122,7 @@ export default {
     console.log(this.logo, process.env.VUE_APP_COMPANY_URL, '2222222222222222')
 
     if(this.logo) {
-      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : '';
+      this.logo_jump_url = userInfo.user_extends ? userInfo.user_extends.logo_jump_url : process.env.VUE_APP_COMPANY_URL;
     } else {
       this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
     }
@@ -137,7 +135,7 @@ export default {
       this.logo = user_extends.logo;
       console.log(this.logo,process.env.VUE_APP_COMPANY_URL, '1111111111111111')
       if(this.logo) {
-        this.logo_jump_url = user_extends.logo_jump_url || '';
+        this.logo_jump_url = user_extends.logo_jump_url || process.env.VUE_APP_COMPANY_URL;
       } else {
         this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
       }
@@ -170,20 +168,20 @@ export default {
     & .sidebar-logo {
       height: 100%;
       width: 100%;
-      &.static {
+      /* &.static {
         height: auto;
         width: 156px;
         float: left;
         margin: 4px 0;
-      }
+      } */
     }
 
     a.sidebar-logo2 {
       float: left;
-      padding: 4px 0;
+      margin: 8px 0 8px 18px;
       text-align: left;
-      width: 156px!important;
-      height: 100%;
+      width: 120px!important;
+      height: 44px;
       img {
         display: block;
         width: 100%;
@@ -201,11 +199,11 @@ export default {
 /*收缩按钮部分*/
 .hamburger-container {
   position: absolute;
-  top: calc(50% - 16px);
-  line-height: 32px;
-  height: 32px;
+  top: calc(50% - 26px);
+  line-height: 44px;
+  height: 44px;
   cursor: pointer;
-  transition: background .3s;
+  transition: background 0.3s;
   -webkit-tap-highlight-color:transparent;
   &.right {
     right: 0;

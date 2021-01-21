@@ -26,7 +26,7 @@
             :before-upload="beforeUploadHandler"
             @delete="homeSetInfoForm.homepage_avatar = ''">
             <div slot="tip">
-              <p>建议尺寸：128*128px，小于2M</p>
+              <p>建议尺寸：140*140px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -60,7 +60,7 @@
             :before-upload="beforeUploadHandlerBg"
             @delete="homeSetInfoForm.img_url = ''">
             <div slot="tip">
-              <p>建议尺寸：1280*768px，小于2M</p>
+              <p>建议尺寸：1920*630px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
@@ -91,7 +91,7 @@
             </el-switch>
           </div>
         </el-form-item>
-        <el-form-item label="专题展示">
+        <el-form-item label="专题列表">
           <div class="switch__box">
             <el-switch
               v-model="homeSetInfoForm.show_subject"
@@ -105,8 +105,8 @@
           </div>
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" v-preventReClick round @click.prevent.stop="saveHandle">保 存</el-button>
-          <el-button round @click.prevent.stop="returnHandle">取 消</el-button>
+          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveHandle">保 存</el-button>
+          <el-button round  class="length152" @click.prevent.stop="returnHandle">取 消</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -294,7 +294,7 @@ export default {
             });
             // 回到前一个页面
             this.$router.push({
-              path: `/account/myHome`
+              path: `/acc/myHome`
             });
             // window.location.reload();
           }).catch(res =>{
@@ -314,7 +314,7 @@ export default {
       this.$refs['homeSetInfoForm'].resetFields();
       this.isEditUnit = false;
       this.$router.push({
-        path: `/account/myHome`
+        path: `/acc/myHome`
       })
     },
     homeInfoGet() {
@@ -360,6 +360,10 @@ export default {
   }
   /deep/.el-form-item__content {
     width: 641px;
+  }
+  /deep/.el-input__inner {
+    height: 40px;
+    line-height: 40px;
   }
 }
 /deep/.el-form-item {

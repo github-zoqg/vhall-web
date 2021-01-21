@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <pageTitle title="章节打点">
-      <div slot="content">
-        章节功能支持文档格式：PPT、PPTX，其他格式不支持
-      </div>
-    </pageTitle>
+  <div class="chapterManager">
+    <div class="titleContainer clearFix">
+      <pageTitle title="章节打点">
+        <div slot="content">
+          章节功能支持文档格式：PPT、PPTX，其他格式不支持
+        </div>
+      </pageTitle>
+      <p class="chapterTutorial">设置章节打点后，通过点击文档目录快速查看精彩看点，适用于培训场景。<span @click="startTutorial" class="startTutorial">了解一下</span></p>
+    </div>
     <div class="contentView" v-loading="loading">
       <div class="playerBox">
         <!-- v-if="docSDKReady" -->
@@ -114,9 +117,9 @@
     </div>
     <div class="cont">
       <div class="btnGroup">
-        <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
+        <el-button v-if="isDemand" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
         <!-- <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button> -->
-        <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand == 'true'" @command="addChapter">
+        <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand" @command="addChapter">
           <el-button :disabled="tableData.length == 0" size="medium" round>
             新增章节<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
@@ -163,7 +166,7 @@
           label="页码/步数"
           width="110">
            <template slot-scope="scope">
-             <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+             <el-input :disabled="!isDemand" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
            </template>
         </el-table-column>
 
@@ -172,18 +175,23 @@
           width="126"
           show-overflow-tooltip>
           <template slot-scope="scope">
-            <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
+            <el-input :disabled="!isDemand" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
           </template>
         </el-table-column>
 
         <el-table-column
-          v-if="isDemand == 'true'"
+          v-if="isDemand"
           label="操作"
           width="190"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <el-button type="text" @click="getTime(scope.row)">获取时间</el-button>
-            <el-button v-if="scope.row.sub" type="text" @click="addSonNode(scope.row)">添加子章节</el-button>
+            <el-button
+              :disabled="chapterTotalInfo[scope.row.docId] ? scope.row.sub.length >= chapterTotalInfo[scope.row.docId][scope.row.slideIndex - 1] : false"
+              v-if="scope.row.sub"
+              type="text"
+              @click="addSonNode(scope.row)"
+            >添加子章节</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -195,6 +203,17 @@
         <iframe width="100%" height="100%" :src="`${VUE_APP_WEB_URL}/previewChapter/${webinar_id}?recordId=${recordId}`" frameborder="0"></iframe>
       </div>
     </div>
+    <el-dialog
+      custom-class="dialog-tutorial-wrap"
+      class="vh-dialog"
+      :visible.sync="tutorialVisible"
+      width="740px"
+      center
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+    >
+      <moduleTutorial></moduleTutorial>
+    </el-dialog>
   </div>
 </template>
 
@@ -203,6 +222,7 @@ import PageTitle from '@/components/PageTitle';
 import player from '@/components/Player_1';
 import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
+import moduleTutorial from './components/moduleTutorial'
 import { debounce } from "@/utils/utils"
 export default {
   name: 'Chapters',
@@ -253,7 +273,9 @@ export default {
       currentTime: 0, // 当前视频播放时间
       voice: 60, // 音量
       catchVoice: 0,
-      videoTime: 0 // 视频实际时长
+      videoTime: 0, // 视频实际时长
+      chapterTotalInfo: {},
+      tutorialVisible: false
     };
   },
   provide () {
@@ -384,6 +406,7 @@ export default {
       });
       this.docIds = [...new Set(ids)]
       this.getDocTitles();
+      this.getChapterTotalInfo(this.docIds);
     });
   },
   mounted(){
@@ -396,6 +419,9 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    startTutorial() {
+      this.tutorialVisible = true
+    },
     handleInput(value) {
       if (value.slideIndex.length == 0) return;
       const pattern = /^[1-9][0-9]*$/ // 正整数的正则表达式
@@ -534,7 +560,7 @@ export default {
       }).then(res => {
         if (res.data && res.data.chatper_callbanck_status == 0) {
           this.$message({
-            message:  '上次章节保存任务尚未完成，当前章节信息为为保存章节',
+            message:  '上次章节保存任务尚未完成，当前章节信息为未保存章节',
             showClose: true, // 是否展示关闭按钮
             type: 'warning', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
@@ -555,7 +581,6 @@ export default {
     saveChapters() {
       debounce(() => {
         const createTimeArr = [];
-        console.log('tableData', this.tableData)
         const doc_titles = this.tableData.map(item => {
           createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
           return {
@@ -589,11 +614,9 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         }
-        console.log(doc_titles)
-        console.log('isDemand', this.isDemand ? 2 : 1)
         this.$fetch('saveChapters', {
           record_id: this.recordId,
-          type: this.isDemand == 'true' ? 2 : 1,
+          type: this.isDemand ? 2 : 1,
           doc_titles: JSON.stringify(doc_titles)
         }).then(res => {
           if (res.code == 200) {
@@ -627,6 +650,13 @@ export default {
               type: 'error', //  提示类型
               customClass: 'zdy-info-box' // 样式处理
             });
+          } else if (err.code == 12025) {
+            this.$message({
+              message:  '保存失败，子章节页码或步数不能重复',
+              showClose: true, // 是否展示关闭按钮
+              type: 'error', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
           } else {
             this.$message({
               message:  '保存失败',
@@ -644,7 +674,6 @@ export default {
         record_id: this.recordId,
         type: 0
       }).then(res => {
-        console.log(res)
         const data = res.data
         this.playerProps = {
           appId: data.paasAppId,
@@ -671,7 +700,12 @@ export default {
         document_id: tableSelect.join(',')
       }).then(res => {
         const ids = []
+        this.chapterTotalInfo = {}
         this.tableData = res.data.doc_titles.map((item, index) => {
+          // 文档子章节总数信息
+          !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
+          this.chapterTotalInfo[item.document_id][item.page] = item.step_total
+
           ids.push(item.document_id);
           return {
             createTime: 0,
@@ -697,6 +731,20 @@ export default {
         })
         this.docIds = [...new Set(ids)];
         this.getDocTitles();
+      })
+    },
+    // 获取章节总数信息，只在获取章节信息的事件中调用
+    getChapterTotalInfo(ids) {
+      this.$fetch('playBackChaptersGet', {
+        document_id: ids.join(',')
+      }).then(res => {
+        this.chapterTotalInfo = {}
+        res.data.doc_titles.forEach(item => {
+          // 文档子章节总数信息
+          !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
+          this.chapterTotalInfo[item.document_id][item.page] = item.step_total
+          console.log(this.chapterTotalInfo)
+        })
       })
     },
     prevPage(){
@@ -835,11 +883,50 @@ export default {
     player,
     doc,
     associateDoc,
+    moduleTutorial
   }
 };
 </script>
 
 <style lang="less" scoped>
+  .chapterManager {
+    .titleContainer {
+      /deep/ .titleBox {
+        float:left;
+      }
+      .chapterTutorial {
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        line-height: 30px;
+        float:left;
+        padding-left: 8px;
+        .startTutorial {
+          color: #3562FA;
+          cursor: pointer;
+        }
+      }
+    }
+    /deep/ .el-dialog__wrapper .dialog-tutorial-wrap {
+      padding: 0px 0px 30px;
+      background: transparent!important;
+      border: none;
+      box-shadow: none;
+      .el-dialog__headerbtn {
+        top: 24px;
+        right: 0;
+        margin-bottom: 8px;
+        .el-dialog__close {
+          color: #FFFFFF;
+        }
+      }
+      .el-dialog__body {
+        padding: 0;
+        border-radius: 8px;
+      }
+    }
+  }
   .wraper{
     position: fixed;
     width: 100%;
@@ -865,6 +952,10 @@ export default {
         top: -30px;
         font-size: 25px;
         cursor: pointer;
+      }
+      iframe {
+        border-radius: 4px;
+        overflow: hidden;
       }
     }
   }
@@ -1120,16 +1211,27 @@ export default {
     .el-table{
       margin-top: 24px;
     }
-    /* /deep/ .el-table__header{
+    /deep/ .el-table__header{
       th{
         background: #F7F7F7;
       }
-    } */
+    }
     .el-input {
       width: 95%;
     }
+    /deep/ .el-button.el-button--text.is-disabled span {
+      color: #1a1a1a;
+    }
     /deep/ .el-tooltip .el-button--text span:hover {
       color: #3562fa;
+    }
+    /deep/ .el-button.el-button--text.is-disabled {
+      &:hover {
+        border: 0;
+        span {
+          color: #1a1a1a;
+        }
+      }
     }
   }
   .right{

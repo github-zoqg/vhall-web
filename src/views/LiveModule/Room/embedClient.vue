@@ -1020,7 +1020,7 @@ export default {
       this.myliveRoute = window.location.origin + '/live/list'
       this.accountRoute = window.location.origin + '/finance/info'
       this.myPageRoute = window.location.origin + `/user/home/${this.userInfo.user_id}`
-      this.myAccountRoute = window.location.origin + '/account/info'
+      this.myAccountRoute = window.location.origin + '/acc/info'
       this.followStyle = this.roominfo.modules.attention.follow == 1
 
       this.userChatId = this.roominfo.user.third_party_user_id
@@ -1124,7 +1124,7 @@ export default {
         entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         service_names: this.roominfo.is_replay == 1 ? 2 : 1,
         type: 3,
-        env: process.env.NODE_ENV === 'production' ? 'production' : 'test'
+        env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
       });
       window.vhallReport && window.vhallReport.report('ENTER_WATCH', {
         event: this.$route.query.refer // 推广渠道，会在url里传参

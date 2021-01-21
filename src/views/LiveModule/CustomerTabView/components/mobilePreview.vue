@@ -30,7 +30,7 @@
                   <li @click="addRight(index)"> 右侧新增菜单 </li>
                   <li @click="addLeft(index)"> 左侧新增菜单 </li>
                   <li v-if="item.type == 1">
-                    <input type="checkbox" :checked="item.status == 3" @click="showOrHide(index)" /> 预告/结束显示
+                    <el-checkbox type="checkbox" :checked="item.status == 4" @click="showOrHide(index)" /> 预告/结束显示
                     <el-tooltip class="item" effect="dark" placement="right">
                       <div slot="content" style="line-height:24px">勾选后，该直播为预告和结束状态时也会显示此菜单；<br />不勾选则只在直播和回放状态显示。</div>
                       <i class="iconfont-v3 saasicon_help_m"></i>
@@ -243,7 +243,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           } else if (this.$insertIndex == 0) {
@@ -252,7 +252,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           } else if(this.$insertIndex == this.menus.length) {
@@ -261,7 +261,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 4, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
               components: []
             })
           }
@@ -478,6 +478,23 @@ export default {
         i{
           vertical-align: middle;
           line-height: 40px;
+        }
+      }
+      /deep/.el-checkbox {
+        span.el-checkbox__input {
+          border-bottom: 0!important;
+        }
+        span.el-checkbox__inner {
+          border-bottom: 1px solid #CCC!important;
+        }
+        .el-checkbox__input.is-focus span.el-checkbox__inner {
+          border-color: #FB3A32!important;
+        }
+        .el-checkbox__input.is-checked span.el-checkbox__inner, .el-checkbox__input.is-indeterminate span.el-checkbox__inner {
+          border-color: #FB3A32!important;
+        }
+        span.el-checkbox__inner:hover {
+          border-color: #FB3A32!important;
         }
       }
   }
