@@ -496,8 +496,11 @@ export default {
         that.deleteSend(rows);
       }).catch(() => {
         that.$message({
+          message:  `已取消删除`,
+          showClose: true,
+          // duration: 0,
           type: 'info',
-          message: '已取消删除'
+          customClass: 'zdy-info-box'
         });
       });
     },

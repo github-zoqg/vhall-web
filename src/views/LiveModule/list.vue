@@ -188,8 +188,11 @@ export default {
          this.deleteLive();
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
       } else if (command === '/live/edit') {

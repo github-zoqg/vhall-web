@@ -464,10 +464,13 @@ export default {
             this.chatInfo();
           });
         }).catch(() => {
-          /* this.$message({
+          this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
-          }); */
+            customClass: 'zdy-info-box'
+          });
         });
     },
     // 聊天删除
@@ -528,10 +531,13 @@ export default {
             this.getRecordList();
           });
         }).catch(() => {
-          /* this.$message({
+          this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
-          }); */
+            customClass: 'zdy-info-box'
+          });
         });
     },
      // 问答单个删除
@@ -554,8 +560,11 @@ export default {
           });
         }).catch(() => {
           that.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -710,10 +719,13 @@ export default {
             this.getRecordList();
           });
         }).catch(() => {
-          /* this.$message({
+          this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
-          }); */
+            customClass: 'zdy-info-box'
+          });
         });
     },
     // 红包列表

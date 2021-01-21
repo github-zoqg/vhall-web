@@ -4,7 +4,7 @@
       <div class="show-main data-base">
         <p class="titlle">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
         <div class="data-search" v-show="total || isSearch">
-          <VhallInput v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
+          <VhallInput class="search-dialog-tag" v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="suffix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
           </VhallInput>
         </div>
@@ -250,6 +250,25 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.search-dialog-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      .el-input__suffix-inner {
+        i {
+          margin-right: 5px;
+          line-height: 36px;
+          cursor: pointer;
+        }
+      }
+      /deep/ .el-input__icon {
+        width: auto;
+      }
+    }
+  }
 .data-base{
   position: relative;
   padding-bottom: 20px;

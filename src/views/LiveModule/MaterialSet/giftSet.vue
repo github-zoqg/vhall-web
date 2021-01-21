@@ -320,7 +320,13 @@ export default {
         if (value.indexOf('.') > -1) {
           console.log(value.length, value.indexOf('.'))
           if (value.length - value.indexOf('.') > 3) {
-            this.$message.warning('价格最多支持两位小数')
+            this.$message({
+              message: `价格最多支持两位小数`,
+              showClose: true,
+              // duration: 0,
+              type: 'warning',
+              customClass: 'zdy-info-box'
+            });
           }
           this.editParams.price = value.slice(0, value.indexOf('.') + 3)
         } else {
@@ -464,7 +470,13 @@ export default {
       debounce(async () => {
         const isWebinarLiving = await this.isCanDelete()
         if (isWebinarLiving) {
-          this.$message.warning('正在直播中，请直播结束后操作！')
+          this.$message({
+            message: `正在直播中，请直播结束后操作`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           return false;
         }
         this.editParams = {
@@ -480,7 +492,13 @@ export default {
     // 新建
     addGift () {
       if (this.addedGiftsIds.length >= 40) {
-        this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
+        this.$message({
+          message: `已达到最大个数限制，请删除后再进行创建/添加`,
+          showClose: true,
+          // duration: 0,
+          type: 'warning',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       this.editParams = {
@@ -696,7 +714,13 @@ export default {
       debounce(async () => {
         const isWebinarLiving = await this.isCanDelete()
         if (isWebinarLiving) {
-          this.$message.warning('正在直播中，请直播结束后操作！')
+          this.$message({
+            message: `正在直播中，请直播结束后操作`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           return false;
         }
         this.deleteId = data.id
@@ -778,7 +802,13 @@ export default {
       if (!this.materiaTableData[index].isChecked) {
         this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
         if (this.resultAddGifts.length >= 40) {
-          this.$message.warning('已达到最大个数限制，请删除后再进行创建/添加')
+          this.$message({
+            message: `已达到最大个数限制，请删除后再进行创建/添加`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           return false;
         }
         this.addGiftsIds.push(Number(this.materiaTableData[index].gift_id))
