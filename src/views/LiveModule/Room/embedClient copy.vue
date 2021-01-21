@@ -100,7 +100,7 @@ export default {
     },
     // 聊天过滤接口
     chatFilter() {
-      // 单视频 嵌入 不调取--关键词。
+      // 单视频 嵌入 不调取--严禁词。
       if (this.$route.query.embed == 'video') return
       this.$fetch('getAudinceKeyWordList', {
         room_id: this.roominfo.interact.room_id

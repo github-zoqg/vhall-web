@@ -1,13 +1,8 @@
 <template>
-  <div v-if="dataBaseVisible">
-  <VhallDialog
-      title="资料库"
-      :visible.sync="dataBaseVisible"
-      :close-on-click-modal="false"
-      :before-close="handleClose"
-      custom-class="dataBaseDialog"
-      width="750px">
-      <div class="data-base">
+  <div class="height-question">
+  <div class="show-question" v-if="dataBaseVisible">
+      <div class="show-main data-base">
+        <p class="titlle">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
         <div class="data-search" v-show="total || isSearch">
           <VhallInput v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="suffix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
@@ -29,8 +24,12 @@
               </el-table-column>
               <el-table-column
                 fixed
-                prop="title"
                 label="标题">
+                <template slot-scope="scope">
+                  <span class="mediaName" :title="scope.row.title">
+                    {{scope.row.title}}
+                  </span>
+                </template>
               </el-table-column>
               <el-table-column
                 fixed
@@ -58,17 +57,17 @@
             <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
           </noData>
         </div>
-        <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个</p>
+        <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个问卷</p>
         <div slot="footer" class="dialog-footer" v-show="total || isSearch">
           <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
           <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
         </div>
       </div>
-  </VhallDialog>
+  </div>
   <template v-if="isShowQuestion">
       <div class="show-question">
         <div class="show-main">
-          <p>问卷预览 <i class="el-icon-close" @click="choseShowQueston"></i></p>
+          <p class="titlle">问卷预览 <i class="el-icon-close" @click="choseShowQueston"></i></p>
           <el-scrollbar>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
@@ -249,7 +248,15 @@ export default {
 .data-base-list {
   width: 100%;
   margin: 24px 0;
+  .mediaName{
+    font-size: 14px;
+    color: #1A1A1A;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+}
   .text{
     height: 40px;
     padding-top: 8px;
@@ -279,6 +286,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 2002;
     background: rgba(0, 0, 0, .3);
     .show-main{
       position: absolute;
@@ -288,13 +296,13 @@ export default {
       transform: translate(-50%, -50%);
       width: 700px;
       padding: 24px 32px;
+      border-radius: 4px;
       .question_main{
         max-height: 600px;
         // overflow: auto;
       }
-      p{
+      .titlle{
         font-size: 20px;
-        font-weight: 600;
         color: #1A1A1A;
         line-height: 28px;
         padding-bottom: 14px;
@@ -307,10 +315,13 @@ export default {
         text-align: center;
       }
     }
+    .data-base{
+      width: 750px;
+    }
   }
 .dialog-footer{
   position: absolute;
   bottom: 25px;
-  right: 0;
+  right: 30px;
 }
 </style>

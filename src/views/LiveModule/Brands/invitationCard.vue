@@ -27,10 +27,10 @@
     <div class="invitation-from">
       <div class="form-data">
         <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation" :rules="rules">
-          <el-form-item label="背景">
+          <el-form-item label="封面背景">
             <div class="data-img">
               <div class="advor_img"><img :src="img" alt=""/></div>
-              <span class="choseImg" @click="invitation && changeImg()">重新选择</span>
+              <span class="choseImg" @click="invitation && changeImg()">选择封面</span>
             </div>
           </el-form-item>
           <el-form-item label="展示方式">
@@ -72,6 +72,7 @@
               v-model.trim="formInvitation.webinar_date"
               :maxlength="20"
               autocomplete="off"
+              show-word-limit
               style="width: 320px"
             ></VhallInput>
           </el-form-item>
@@ -202,6 +203,7 @@
       <div class="white-show" v-show="!invitation"></div>
     </div>
     <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl"></add-background>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
@@ -209,6 +211,7 @@ import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import html2canvas from 'html2canvas';
+import beginPlay from '@/components/beginBtn';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
@@ -248,6 +251,7 @@ export default {
     };
     return {
       invitation: true,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       qrcode: '',
       showCode: '',
       showType: 1,
@@ -310,7 +314,8 @@ export default {
     this.getInviteCardInfo();
   },
   components: {
-    addBackground
+    addBackground,
+    beginPlay
   },
   methods: {
     changeType(index) {
@@ -913,6 +918,9 @@ export default {
         padding: 4px 23px;
         &:hover{
           background-color: #FB3A32;
+        }
+        &.is-disabled:hover{
+          background-color: transparent;
         }
       }
       /deep/.el-button:last-child{

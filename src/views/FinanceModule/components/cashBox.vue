@@ -111,8 +111,9 @@
 <script>
 import QRcode from 'qrcode';
 import Env from "@/api/env";
+import { sessionOrLocal } from '@/utils/utils';
 export default {
-  props: ['money', 'type', 'userInfo'],
+  props: ['money', 'type'],
   data() {
     let validateMoney = (rule, value, callback) => {
       if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
@@ -164,7 +165,8 @@ export default {
         this.phone = '';
         this.errorMsgShow = ''
         this.callCaptcha();
-        this.getWeinName();
+        this.avatar = this.userInfo.user_extends.wechat_profile || require('../../../common/images/avatar.png');
+        this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
       } else {
         this.mobileKey = '';
         this.showCaptcha = false;
@@ -196,17 +198,19 @@ export default {
     }
   },
   created() {
-    this.avatar = this.userInfo.avatar || require('../../../common/images/avatar.png');
+    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
+    // this.avatar = this.userInfo.user_extends.wechat_profile || require('../../../common/images/avatar.png');
+    // this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
   },
   methods: {
     // 获取用户微信昵称
-    getWeinName() {
-      this.userInfo.user_thirds.map(item => {
-        if (item.type == 3) {
-          this.nickName = item.nick_name;
-        }
-      });
-    },
+    // getWeinName() {
+    //   this.userInfo.user_thirds.map(item => {
+    //     if (item.type == 3) {
+    //       this.nickName = item.nick_name;
+    //     }
+    //   });
+    // },
     // 提现短信验证码
     getCode() {
       this.$refs['withdrawForm'].validate((valid) => {
@@ -280,13 +284,29 @@ export default {
     },
     // 绑定微信 ---获取绑定微信二维码
     goBangWeixin() {
-      this.qrcode = `https://t-saas-dispatch.vhall.com/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind`;
+      //获取key值
+      this.$fetch('getBindKey').then(res => {
+        if (res.code == 200) {
+          this.qrcode = `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind/${res.data.mark}`;
+        }
+      }).catch(res => {
+        this.$message.error(res.msg);
+      });
       console.log(this.qrcode)
     },
     sureBangWeixin() {
       this.dialogVisible = false;
       if (this.qrcode) {
-        window.location.reload();
+        this.$fetch('getInfo', {scene_id: 2}).then(res => {
+          if(res.code === 200) {
+            sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+            sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+            window.location.reload();
+          }
+        }).catch(e=>{
+          console.log(e);
+        });
+        // window.location.reload();
       }
     },
     /**

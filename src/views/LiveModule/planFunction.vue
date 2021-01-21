@@ -35,20 +35,24 @@
         </li>
       </ul>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 export default {
   name: "planFunction",
   components: {
-    PageTitle
+    PageTitle,
+    beginPlay
   },
   data() {
     return {
       query: {},
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
       liveKeyList: []
     };

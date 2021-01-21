@@ -31,17 +31,21 @@
           <el-button type="primary" round  @click="addProduct" v-preventReClick>创建</el-button>
         </noData>
       </div>
+      <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "prize",
   data() {
     return {
       formData: {},
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       imageUrl: '',
       keyword:'',
       saleTotal: 0,
@@ -88,7 +92,8 @@ export default {
   },
   components: {
     PageTitle,
-    noData
+    noData,
+    beginPlay
   },
   mounted() {
     this.getTableList();

@@ -8,7 +8,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addQuestion">创建问卷</el-button>
-      <el-button round  @click="dataBase" size="medium">资料库</el-button>
+      <el-button round  @click="dataBase" class="transparent-btn" size="medium">资料库</el-button>
       <el-button round class="head-btn batch-del" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
         <VhallInput v-model.trim="keyword" placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
@@ -25,7 +25,7 @@
     <div class="no-live" v-show="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'">
         <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
-        <el-button size="white-primary" round @click="dataBase" v-preventReClick>资料库</el-button>
+        <el-button size="white-primary" class="transparent-btn" round @click="dataBase" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <template v-if="isShowQuestion">
@@ -55,6 +55,7 @@
       </el-dialog>
     </template> -->
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
@@ -63,6 +64,7 @@ import PageTitle from '@/components/PageTitle';
 import preQuestion from '@/components/Question/preQuestion';
 import baseQuestion from './components/questionBase';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: "question",
   data() {
@@ -98,7 +100,8 @@ export default {
     PageTitle,
     preQuestion,
     baseQuestion,
-    noData
+    noData,
+    beginPlay
   },
   created() {
     this.webinarId = this.$route.params.str;
@@ -257,6 +260,12 @@ export default {
     width: 100%;
     padding: 32px 24px;
   }
+  .bg-button{
+    /deep/button.el-button.el-button--medium{
+      background: transparent;
+    }
+  }
+
   // /deep/.el-dialog__wrapper {
   //   z-index: 2001 !important;
   // }
@@ -282,7 +291,7 @@ export default {
   }
   .show-question{
     position: absolute;
-    z-index: 5;
+    z-index: 2002;
     top: 0;
     left: 0;
     width: 100%;

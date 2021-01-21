@@ -5,7 +5,7 @@
     @close="closeHandler"
     @closed="closedHandler"
     :visible.sync="dialogVisable"
-    :close-on-click-modal=false
+    :close-on-click-modal=modalClick
     :close-on-press-escape=false
     >
     <div>
@@ -30,6 +30,10 @@ export default {
     visible: {
       type: Boolean,
       defalut: false
+    },
+    modalClick: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

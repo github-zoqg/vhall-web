@@ -45,7 +45,7 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :totalNum="totalNum"
-        :width="100"
+        :width="120"
         @changeTableCheckbox="changeTableCheckbox"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
@@ -844,7 +844,7 @@ export default {
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
-      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id, subject: rows.subject, number: rows.filled_number}});
+      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id,roomId:that.$route.query.roomId, subject: rows.subject, number: rows.filled_number}});
     }
   }
 };
@@ -874,7 +874,7 @@ export default {
 .interact-detail {
   .layout--right--main();
   .min-height();
-  padding: 32px 24px 40px 24px;
+  padding: 24px;
    /deep/.el-table td, .el-table th{
     padding: 15px 0;
   }

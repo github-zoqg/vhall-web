@@ -64,21 +64,27 @@
           width="164px"
         >
           <template slot-scope="scope">
-            <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
-            <span v-else v-html="scope.row.transform_schedule_str"></span> -->
-            <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
+           <!--  <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
             <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress>
             <div v-else class="progressBox">
-              <!-- 样式变化 -->
               <span :class="[scope.row.fileStatusCss, 'statusTag']">{{scope.row.fileStatusStr}}<span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span></span>
+            </div> -->
+            <div v-if="!scope.row.transform_schedule_str" class="progressBox">
+              <el-progress :percentage="scope.row.codeProcess" ></el-progress>
+            </div>
+            <div v-else class="progressBox">
+              <!-- 样式变化 -->
+              <template v-for="(item, ins) of scope.row.transform_schedule_str.split('<br/>')" >
+                <span :class="[scope.row.fileStatusCss, 'statusTag']" :key="ins">{{item}}</span><br/>
+              </template>
             </div>
           </template>
         </el-table-column>
       </el-table>
       <null-page text="未搜索到相关内容" nullType="search" v-else :height=60></null-page>
       <div class="btn-center">
-        <span class="select-option">已勾选 <strong>{{this.dialogMulti.length}}</strong> 条</span>
-        <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle">确定</el-button>
+        <span class="select-option">当前选中 <strong>{{dialogMulti.length}}</strong> 个文档</span>
+        <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle" :disabled="!(dialogMulti && dialogMulti.length > 0)">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
       </div>
     </div>
@@ -169,7 +175,7 @@ export default {
               item.showEventType = 0;
               item.fileStatusCss = 'wating';
               item.fileStatusStr = '等待转码';
-              item.transform_schedule_str = `等待转码中...`;
+              item.transform_schedule_str = `等待转码`;
             } else if (statusJpeg === 100) {
               item.showEventType = 1;
               item.transform_schedule_str = ``; // 静态转码中
@@ -182,35 +188,35 @@ export default {
                   item.showEventType = 2;
                   item.fileStatusCss = 'wating';
                   item.fileStatusStr = '等待转码';
-                  item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                  item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
                 } else if (status === 100) {
                   item.showEventType = 3;
                   item.fileStatusCss = 'success';
                   item.fileStatusStr = '动态转码中';
-                  item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                  item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码中
                 } else if (status === 200) {
                   item.showEventType = 4;
                   item.fileStatusCss = 'success';
                   item.fileStatusStr = '转码成功';
-                  item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                  item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
                 } else {
                   item.showEventType = 5;
                   item.fileStatusCss = 'failer';
                   item.fileStatusStr = '转码失败';
-                  item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                  item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
                 }
               } else {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+                item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
               item.fileStatusCss = 'failer';
               item.fileStatusStr = '转码失败';
-              item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+              item.transform_schedule_str = `转码失败`; // 静态转码失败
             }
           })
           if (this.pageInfo.pos === 0) {
@@ -339,11 +345,11 @@ export default {
             item.showEventType = 0;
             item.fileStatusCss = 'wating';
             item.fileStatusStr = '等待转码';
-            item.transform_schedule_str = `等待转码中...`;
+            item.transform_schedule_str = `等待转码`;
           } else if (statusJpeg === 100) {
             item.showEventType = 1;
             item.transform_schedule_str = ``; // 静态转码中
-            let _percent = parseInt(res.converted_page_jpeg) / parseInt(res.page) * 100;
+            let _percent = parseInt(item.converted_page_jpeg) / parseInt(item.page) * 100;
             item.codeProcess = (_percent + "").substr(0, 4);
           } else if (statusJpeg === 200) {
             if (/pptx?/.test(item.ext)) {
@@ -352,35 +358,35 @@ export default {
                 item.showEventType = 2;
                 item.fileStatusCss = 'wating';
                 item.fileStatusStr = '等待转码';
-                item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
               } else if (status === 100) {
                 item.showEventType = 3;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '动态转码中';
-                item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码中
               } else if (status === 200) {
                 item.showEventType = 4;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
               } else {
                 item.showEventType = 5;
                 item.fileStatusCss = 'failer';
                 item.fileStatusStr = '转码失败';
-                item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
               }
             } else {
               // 非PPT静态转码完成
               item.showEventType = 6;
               item.fileStatusCss = 'success';
               item.fileStatusStr = '转码成功';
-              item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+              item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
             }
           } else if (statusJpeg >= 500) {
             item.showEventType = 7;
             item.fileStatusCss = 'failer';
             item.fileStatusStr = '转码失败';
-            item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+            item.transform_schedule_str = `转码失败`; // 静态转码失败
           }
           item.page = res.page || '';
         }
@@ -441,18 +447,15 @@ export default {
       margin-right: 0;
     }
   }
-  .select-option{
-    float: left;
-    line-height: 20px;
-    margin-top: 8px;
-    /deep/span {
-      color: #FB3A32;
-      font-size: 16px;
-      padding: 0 10px;
-    }
+}
+/deep/.select-option{
+  float: left;
+  line-height: 20px;
+  margin-top: 8px;
+  /deep/strong {
+    color: #FB3A32;
   }
 }
-
 .word-list {
   /deep/.cell .imgs {
     width: 100px;

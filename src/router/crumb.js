@@ -714,6 +714,40 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
+  } else if (metaName === 'lookSingleQuestion') {// 邀请排名、聊天、问答、签到、问卷、抽奖、发群红包、
+    return [
+     ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '互动统计',
+        path: `/live/interactionData/${that.$route.params.str}`,
+        query: {
+          roomId: that.$route.query.roomId
+        },
+        isClick: true
+      },
+      {
+        title: `问卷`,
+        path: `/live/interactionDetail`,
+        query: {
+          roomId: that.$route.query.roomId,
+          id: that.$route.params.str,
+          title: '问卷'
+        },
+        isClick: true
+      },
+      {
+        title: `问卷详情`,
+        path: `/live/lookSingleQuestion/${that.$route.params.str}`,
+        query: that.$route.query,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
   }
   /** 专题 **/
 

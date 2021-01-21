@@ -195,13 +195,14 @@
         <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="isNull"></null-page>
       </div>
       <div class="control">
-        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件商品</span>
+        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件礼物</span>
         <div class="control-btn" style="text-align: right;">
           <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
           <el-button @click="handleCloseChooseGift" round>取消</el-button>
         </div>
       </div>
     </el-dialog>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -211,13 +212,16 @@ import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
-import { debounce } from "@/utils/utils"
+import { sessionOrLocal, debounce } from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
+
 
 export default {
   name: "giftSize",
   data() {
     return {
       webinar_id: this.$route.params.str,
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       room_id: this.$route.query.roomId,
       total: 0,
       materialTotal: 100,
@@ -296,7 +300,8 @@ export default {
     PageTitle,
     upload,
     SPagination,
-    NullPage
+    NullPage,
+    beginPlay
   },
   created() {
     this.getTableList()

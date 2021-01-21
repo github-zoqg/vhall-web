@@ -184,8 +184,8 @@ export default {
   img {
     display: block;
     margin: 0 auto;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border: 1px solid #E2E2E2;
     border-radius: 100%;
   }
@@ -196,7 +196,7 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
     line-height: 28px;
-     overflow: hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 1;

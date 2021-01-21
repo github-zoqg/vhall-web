@@ -191,15 +191,15 @@ const apis = {
   virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众 √
   // virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li •••废弃
 
-  // 关键词
-  getKeywordList: ['/v3/interacts/keyword/get-list', 'POST'], // 获取关键词列表[控制台调用] jia.li  √
-  multiKeywordAdd: ['/v3/interacts/keyword/batch-create', 'POST'], // 添加关键词-可批量 jia.li  √
-  multiKeywordEdit: ['/v3/interacts/keyword/edit', 'POST'], // 修改关键词 jia.li  √
-  multiKeywordDel: ['/v3/interacts/keyword/batch-delete', 'POST'], // 批量删除关键词 jia.li  √
-  checkUploadKeyword: ['/v3/interacts/keyword/check-upload-file', 'POST'], // 校验上传文件可以上传的关键词 jia.li •••暂时不用
-  uploadKeywordAdd: ['/v3/interacts/keyword/upload-file-and-create', 'POST'], // 上传关键词文件并添加关键词 jia.li
-  getKeywordTemplate: ['/v3/interacts/keyword/get-template-url', 'POST'], // 获取关键词模板地址 jia.li  √
-  getAudinceKeyWordList: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端关键词列表
+  // 严禁词
+  getKeywordList: ['/v3/interacts/keyword/get-list', 'POST'], // 获取严禁词列表[控制台调用] jia.li  √
+  multiKeywordAdd: ['/v3/interacts/keyword/batch-create', 'POST'], // 添加严禁词-可批量 jia.li  √
+  multiKeywordEdit: ['/v3/interacts/keyword/edit', 'POST'], // 修改严禁词 jia.li  √
+  multiKeywordDel: ['/v3/interacts/keyword/batch-delete', 'POST'], // 批量删除严禁词 jia.li  √
+  checkUploadKeyword: ['/v3/interacts/keyword/check-upload-file', 'POST'], // 校验上传文件可以上传的严禁词 jia.li •••暂时不用
+  uploadKeywordAdd: ['/v3/interacts/keyword/upload-file-and-create', 'POST'], // 上传严禁词文件并添加严禁词 jia.li
+  getKeywordTemplate: ['/v3/interacts/keyword/get-template-url', 'POST'], // 获取严禁词模板地址 jia.li  √
+  getAudinceKeyWordList: ['/v3/interacts/keyword/get-current-user-all-keyword', 'POST'], // 获取观看端严禁词列表
   // 消息管理
   getMsgList: ['/v3/commons/msgcenter/list', 'POST'], // 站内消息列表接口 jia.li  √
   msgDel: ['/v3/commons/msgcenter/delete', 'POST'], // 站内消息删除接口 jia.li  √
@@ -389,6 +389,7 @@ const apis = {
   packetIncomeList: ['/v3/fin/income/red-packet/list', 'GET'], // 红包收益
   accountList: ['/v3/fin/withdraw/list', 'GET'], // 提现明细
   weixinBinding: ['/v3/commons/auth/weixin', 'GET'], // 提现绑定  微信授权
+  getBindKey: ['/v3/users/user/mark', 'POST'], //创建用户标识
   callbackUserInfo: ['/v3/users/oauth/callback', 'POST'], // 绑定之后获取用户信息
   withdrawalPhoneCode: ['/v3/fin/withdraw/phone-code', 'POST'], // 提现-发送手机验证码(仅提现，不包括更改微信发送验证码)
   withdrawal: ['/v3/fin/withdraw', 'POST'], // 提现
@@ -500,7 +501,7 @@ const apis = {
   notAttention: ['/v3/users/attentions/delete', 'POST'], // 取消关注
   newWebinarMenus: ['/v3/interacts/menu/menu-list', 'POST'], // 观看页菜单列表 jian.chang
   goodsList: ['/v3/interacts/goods/get-on-sale-goods-list', 'GET'], // 商品推荐 xiaodong.ding
-  keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天关键词过滤 jian.chang
+  keywordsList: ['/domian/api/webinar/v1/webinar/keywords-list', 'POST'], // 聊天严禁词过滤 jian.chang
   getCustomMenuInfo: ['/api/webinar/v1/webinar/webinar-menus-detail', 'POST'], // 获取自定义菜单数据 jian.chang
   getConfigList: ['/v3/users/permission/get-config-list', 'POST'], // 获取观看端配置项
   getDefinitionConfig: ['/v3/interacts/players/get-clarity-default', 'POST'], // 获取默认清晰度配置项

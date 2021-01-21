@@ -91,7 +91,7 @@
       <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
-      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px">
+      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
         <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif" v-show="isLoading">
         <div  v-if="isDot" style="position: relative;height: 396px;">
           <!-- 动态文档区域 -->
@@ -114,7 +114,6 @@
     <VhallDialog
       title="提示"
       :visible.sync="asyncDialog.visible"
-      :close-on-click-modal="false"
       :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
@@ -133,6 +132,7 @@
 
     <!-- 文档列表 -->
     <select-word ref="dialogWordComp" @reload="initPage"></select-word>
+    <begin-play :webinarId="$route.params.str" v-if="$route.params.str"></begin-play>
   </div>
 </template>
 <script>
@@ -142,6 +142,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import SelectWord from './components/selectWord.vue';
 import Env from '@/api/env';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 import EventBus from "@/utils/Events";
 /* import FileUpload from '@/components/FileUpload/main'; */
 import {v1 as uuidV1} from "uuid";
@@ -151,7 +152,8 @@ export default {
   components: {
     PageTitle,
     NullPage,
-    SelectWord
+    SelectWord,
+    beginPlay
   },
   data() {
     return {
@@ -197,11 +199,11 @@ export default {
       ],
       tableRowBtnFun: [
         {
-          name: '演示',
+          name: '预览',
           methodName: 'preShow'
         },
         {
-          name: '动画版演示',
+          name: '动画版预览',
           methodName: 'preDocShow'
         },
         {
@@ -241,7 +243,8 @@ export default {
         pageIndex: 0,
         total: 0
       },
-      isDotEnd: false
+      isDotEnd: false, // 是否播放完毕
+      isLoadingEnd: false // 是否初始化文档加载完毕
     };
   },
   computed: {
@@ -527,7 +530,7 @@ export default {
               item.showEventType = 0;
               item.fileStatusCss = 'wating';
               item.fileStatusStr = '等待转码';
-              item.transform_schedule_str = `等待转码中...`;
+              item.transform_schedule_str = `等待转码`;
             } else if (statusJpeg === 100) {
               item.showEventType = 1;
               item.transform_schedule_str = ``; // 静态转码中
@@ -540,35 +543,35 @@ export default {
                   item.showEventType = 2;
                   item.fileStatusCss = 'wating';
                   item.fileStatusStr = '等待转码';
-                  item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                  item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
                 } else if (status === 100) {
                   item.showEventType = 3;
                   item.fileStatusCss = 'success';
                   item.fileStatusStr = '动态转码中';
-                  item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                  item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码中
                 } else if (status === 200) {
                   item.showEventType = 4;
                   item.fileStatusCss = 'success';
                   item.fileStatusStr = '转码成功';
-                  item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                  item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
                 } else {
                   item.showEventType = 5;
                   item.fileStatusCss = 'failer';
                   item.fileStatusStr = '转码失败';
-                  item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                  item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
                 }
               } else {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+                item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
               item.fileStatusCss = 'failer';
               item.fileStatusStr = '转码失败';
-              item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+              item.transform_schedule_str = `转码失败`; // 静态转码失败
             }
           })
           this.tableList = list;
@@ -600,6 +603,7 @@ export default {
       that.isDot = true;
       that.dotPageInfo.pageIndex = 0;
       that.dotPageInfo.total = 0;
+      that.isLoadingEnd = false;
       await that.$nextTick(() => {})
       that.docEvents(rows);
     },
@@ -790,17 +794,17 @@ export default {
           console.log('播放完毕');
           this.isDotEnd = true;
         });
+        this.docSDK.on(VHDocSDK.Event.ALL_COMPLETE, event => {
+            // 数据格式同  翻页事件 VHDocSDK.Event.PAGE_CHANGE
+          console.log('ALL_COMPLETE所有文档加载完毕');
+          this.isLoadingEnd = true;
+        })
         console.log('docSDK_ready', docsdk, this.$refs.doc);
       });
       // 文档页码
       this.$EventBus.$on('documenet_load_complete', (data)=>{
         console.log('文档页码 documenet_load_complete', data)
         this.dotPageInfo = data;
-      });
-      // 监听文档加载完毕
-      this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
-        const ids = []
-        console.log("=============所有文档加载完毕==============", chapters)
       });
     },
     // 初始化
@@ -904,7 +908,7 @@ export default {
             } else {
               let _percent = CalculatePercent(res.converted_page, res.page, 0);
               if (_percent == "100%") {
-                item.transform_schedule_str = '转码完成';
+                item.transform_schedule_str = '转码成功';
                 item.transcoded = true;
                 item.codeProcess = 100;
                 item.isError = false;
@@ -947,7 +951,7 @@ export default {
             item.showEventType = 0;
             item.fileStatusCss = 'wating';
             item.fileStatusStr = '等待转码';
-            item.transform_schedule_str = `等待转码中...`;
+            item.transform_schedule_str = `等待转码`;
           } else if (statusJpeg === 100) {
             item.showEventType = 1;
             item.transform_schedule_str = ``; // 静态转码中
@@ -960,35 +964,35 @@ export default {
                 item.showEventType = 2;
                 item.fileStatusCss = 'wating';
                 item.fileStatusStr = '等待转码';
-                item.transform_schedule_str = `等待转码中`; // 静态转码完成，动态待转码
+                item.transform_schedule_str = `等待转码`; // 静态转码完成，动态待转码
               } else if (status === 100) {
                 item.showEventType = 3;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '动态转码中';
-                item.transform_schedule_str = `静态转码完成，动态转码中...`; // 静态转码完成，动态转码中
+                item.transform_schedule_str = `静态转码成功<br/>动态转码中...`; // 静态转码完成，动态转码中
               } else if (status === 200) {
                 item.showEventType = 4;
                 item.fileStatusCss = 'success';
                 item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `静态转码完成<br/>动态转码完成`; // 静态转码完成，动态转码完成
+                item.transform_schedule_str = `静态转码成功<br/>动态转码成功`; // 静态转码完成，动态转码完成
               } else {
                 item.showEventType = 5;
                 item.fileStatusCss = 'failer';
                 item.fileStatusStr = '转码失败';
-                item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码完成，动态转码失败
+                item.transform_schedule_str = `转码失败`; // 静态转码完成，动态转码失败
               }
             } else {
               // 非PPT静态转码完成
               item.showEventType = 6;
               item.fileStatusCss = 'success';
               item.fileStatusStr = '转码成功';
-              item.transform_schedule_str = `静态转码完成`; // 静态转码完成，动态转码失败
+              item.transform_schedule_str = `静态转码成功`; // 静态转码完成，动态转码失败
             }
           } else if (statusJpeg >= 500) {
             item.showEventType = 7;
             item.fileStatusCss = 'failer';
             item.fileStatusStr = '转码失败';
-            item.transform_schedule_str = `转码失败，请重新上传`; // 静态转码失败
+            item.transform_schedule_str = `转码失败`; // 静态转码失败
           }
           item.page = res.page || '';
         }

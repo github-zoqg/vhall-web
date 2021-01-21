@@ -209,6 +209,7 @@
         </el-form>
       </div>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -218,10 +219,12 @@ import env from "@/api/env";
 import {formateDate} from "@/utils/general";
 import { parse } from 'qs';
 import { sessionOrLocal } from '@/utils/utils';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'viewerRules.vue',
   components: {
-    PageTitle
+    PageTitle,
+    beginPlay
   },
   // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限
   data() {
@@ -278,6 +281,7 @@ export default {
         }
       ],
       viewerDao: {},
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       form: {
         webinar_id: this.$route.params.str,
@@ -672,6 +676,14 @@ export default {
 <style lang="less" scoped>
 @import '../../common/css/common.less';
 .viewer-rules {
+  /deep/.el-radio__inner{
+    width: 16px;
+    height: 16px;
+    &::after{
+      width: 8px;
+      height: 8px;
+    }
+  }
   .layout--right--main();
   min-height: 544px;
   padding: 49px 56px 40px 56px;
@@ -934,5 +946,9 @@ export default {
 }
 /deep/.saasicon_help_m {
   color: #999999;
+}
+
+/deep/.el-select-dropdown__list .el-select-dropdown__item {
+  max-width: 100%;
 }
 </style>

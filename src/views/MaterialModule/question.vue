@@ -163,17 +163,26 @@ export default {
           this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
             this.getTableList('search');
             this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
               type: 'success',
-              message: '删除成功!'
+              customClass: 'zdy-info-box'
             });
           }).catch(res => {
-            this.$message.error(res.msg || '删除失败')
+            this.$message({
+              message: res.msg || '删除失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }).catch(() => {
-          this.$message({
+          /* this.$message({
             type: 'info',
             message: '已取消删除'
-          });
+          }); */
         });
     },
     deleteAll(id) {
@@ -250,7 +259,7 @@ export default {
   }
   .show-question{
     position: absolute;
-    z-index: 5;
+    z-index: 2002;
     top: 0;
     left: 0;
     width: 100%;
@@ -264,6 +273,7 @@ export default {
       transform: translate(-50%, -50%);
       width: 700px;
       padding: 24px 32px;
+      border-radius: 4px;
       .question_main{
         max-height: 600px;
         // overflow: auto;

@@ -1,7 +1,7 @@
 <template>
   <div :class="['signFormBox']">
     <div :class="['signWrap']">
-      <vhscroll>
+      <vueScroll :ops="ops">
         <div class="entryFormBox">
           <header>
             <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
@@ -48,6 +48,7 @@
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model.number="form[question.id]"
+                      type="number"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                     <VhallInput
@@ -211,7 +212,7 @@
                   label="请输入报名时您填写的手机号"
                   prop="phone"
                 >
-                  <VhallInput v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
+                  <VhallInput type="number" v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
                 </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" prop="code">
                   <el-row :gutter="20">
@@ -239,7 +240,7 @@
             </template>
           </article>
         </div>
-      </vhscroll>
+      </vueScroll>
       <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
         <icon icon-class="saasicon_close"></icon>
       </i>
@@ -501,7 +502,12 @@
         colNum: 8,
         regionalId: '',
         isVerifyCodeErr: false,
-        overflowStatus: 0 // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        overflowStatus: 0, // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        ops: {
+          bar: {
+            background: '#ccc',
+          }
+        }
       };
     },
     mounted() {
@@ -986,12 +992,13 @@
       background: #fff;
       position: relative;
       z-index: 101;
+
       &.signWrapHid{
         height: auto;
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
       }
       .entryFormBox {
-        width: 840px;
+        width: 760px;
         background: #fff;
         padding-bottom: 87px;
       }
@@ -1312,19 +1319,22 @@
             background: #DEDEDE;
           }
         }
-        // 云盾样式重置
+        // 云盾样式重置,注释部分为设计稿样式，暂时不删除，有备无患
         .captcha{
-          /deep/ .yidun .yidun_control {
-            border-radius: 4px!important;
-            border-color: #ccc;
-            background: #fff;
-            overflow: hidden;
-            .yidun_slide_indicator {
-              border-radius: 4px!important;
-            }
+        //   /deep/ .yidun .yidun_control {
+        //     border-radius: 4px!important;
+        //     border-color: #ccc;
+        //     background: #fff;
+        //     overflow: hidden;
+        //     .yidun_slide_indicator {
+        //       border-radius: 4px!important;
+        //     }
             .yidun_tips {
-              color: #888888;
-              line-height: 38px;
+              color: #999999;
+              line-height: 38px!important;
+              .yidun_tips__text {
+                vertical-align: initial;
+              }
             }
             .yidun_slider {
               .yidun_slider__icon {
@@ -1333,54 +1343,54 @@
                 background-position: center;
               }
               &:hover {
-                background-color: #FB3A32;
+                // background-color: #FB3A32;
                 .yidun_slider__icon {
                   background-image: url(./images/icon-slide.png);
                 }
               }
             }
-            &.yidun_control--moving {
-              background-color: #E2E2E2;
-              border-color: #FB3A32;
-              .yidun_slide_indicator {
-                border-color: #FB3A32;
-                background-color: #E2E2E2;
-              }
-            }
+        //     &.yidun_control--moving {
+        //       background-color: #E2E2E2;
+        //       border-color: #FB3A32;
+        //       .yidun_slide_indicator {
+        //         border-color: #FB3A32;
+        //         background-color: #E2E2E2;
+        //       }
+        //     }
 
-          }
-          /deep/ .yidun--success {
-            .yidun_control--moving {
-              background-color: #F0F1FE!important;
-              .yidun_slide_indicator {
-                background-color: #F0F1FE!important;
-              }
-            }
-            .yidun_control {
-              border-color: #3562FA!important;
-              .yidun_slider {
-                .yidun_slider__icon {
-                  background-image: url(./images/icon-succeed.png);
-                }
-                &:hover {
-                  background-color: #FB3A32;
-                  .yidun_slider__icon {
-                    background-image: url(./images/icon-succeed.png);
-                  }
-                }
-              }
-            }
-          }
+          // }
+        //   /deep/ .yidun--success {
+        //     .yidun_control--moving {
+        //       background-color: #F0F1FE!important;
+        //       .yidun_slide_indicator {
+        //         background-color: #F0F1FE!important;
+        //       }
+        //     }
+        //     .yidun_control {
+        //       border-color: #3562FA!important;
+        //       .yidun_slider {
+        //         .yidun_slider__icon {
+        //           background-image: url(./images/icon-succeed.png);
+        //         }
+        //         &:hover {
+        //           background-color: #FB3A32;
+        //           .yidun_slider__icon {
+        //             background-image: url(./images/icon-succeed.png);
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
         }
-        .yidun.yidun--light.yidun--success.yidun--jigsaw {
-          .yidun_control .yidun_slider {
-            background-color: #3562FA;
-          }
-          .yidun_slide_indicator {
-            border-color: #3562FA;
-            background-color: #E2E2E2;
-          }
-        }
+        // .yidun.yidun--light.yidun--success.yidun--jigsaw {
+        //   .yidun_control .yidun_slider {
+        //     background-color: #3562FA;
+        //   }
+        //   .yidun_slide_indicator {
+        //     border-color: #3562FA;
+        //     background-color: #E2E2E2;
+        //   }
+        // }
       }
     }
     .entryForm .blue {

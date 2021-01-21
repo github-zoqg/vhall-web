@@ -39,7 +39,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer create-footer">
-      <el-button type="primary" size="medium" v-preventReClick @click="saveAdviseHandle" round>确 定</el-button>
+      <el-button type="primary" size="medium" v-preventReClick :disabled="!(advertisement.subject&&advertisement.url&&advertisement.img_url)" @click="saveAdviseHandle" round>确 定</el-button>
       <el-button  size="medium" @click="dialogVisible = false" round>取 消</el-button>
     </span>
     </VhallDialog>
@@ -72,7 +72,7 @@
           <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
         </noData>
       </div>
-      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个</p>
+      <p class="text" v-show="total || isSearch">当前选中<span>{{ selectChecked.length }}</span>个广告</p>
       <span slot="footer" class="dialog-footer sureBtn" v-show="total || isSearch">
         <el-button type="primary" size="medium" @click="advSaveToWebinar()" :disabled="!selectChecked.length" v-preventReClick round>确 定</el-button>
         <el-button @click="dialogAdverVisible = false" round size="medium">取 消</el-button>
@@ -300,16 +300,34 @@ export default {
           this.dialogTongVisible = false;
           this.advertisement = {};
           this.clearForm();
-          this.$message.success(`${this.advInfo.adv_id ? '修改' : '创建'}成功`);
+          this.$message({
+            message: `${this.advInfo.adv_id ? '修改' : '创建'}成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           // 获取列表数据
           this.$emit('reload');
         } else {
           this.dialogVisible = true;
-          this.$message.error('链接格式不正确');
+          this.$message({
+            message: `链接格式不正确`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
       }).catch(() => {
         this.dialogVisible = true;
-        this.$message.error(res.msg || `${this.advInfo.adv_id ? '修改' : '创建'}失败`);
+        this.$message({
+          message: res.msg || `${this.advInfo.adv_id ? '修改' : '创建'}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     moreLoadData() {
@@ -364,7 +382,13 @@ export default {
     // 从资料库保存到活动
     advSaveToWebinar(id) {
       if (this.maxTotal + this.selectChecked.length > 50) {
-        this.$message.error('广告推荐个数已达到最大个数限制，请删除后再进行添加');
+        this.$message({
+          message: `广告推荐个数已达到最大个数限制，请删除后再进行添加`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let params = {
@@ -373,7 +397,13 @@ export default {
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
-          this.$message.success('选择广告成功');
+          this.$message({
+            message: `选择广告成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.dialogAdverVisible = false;
           this.selectChecked = [];
           this.adList.map(item => {
@@ -381,7 +411,13 @@ export default {
           });
           this.$emit('reload');
         } else {
-          this.$message.error('选择广告失败');
+          this.$message({
+            message: `选择广告失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
       })
     },
@@ -410,11 +446,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`推广图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `推广图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('推广图片大小不能超过 2MB!');
+        this.$message({
+          message: `推广图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -424,7 +472,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`推广图片上传失败`);
+      this.$message({
+        message: `推广图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -479,7 +533,7 @@ export default {
      border: 1px solid #ccc;
    }
    .content{
-     padding-bottom: 15px;
+     padding-bottom: 50px;
      position: relative;
      .search{
        height: 40px;
@@ -493,7 +547,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 300px;
+       height: 320px;
       //  overflow: auto;
        .ad-item{
           width: 165px;

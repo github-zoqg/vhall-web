@@ -81,6 +81,8 @@ export const filterPhone = (value) => {
 };
 
 export const wordStatusCss = (ext) => {
+  console.log(ext)
+  ext = ext.toLowerCase();
   if (ext === 'pdf') {
     return 'saasPDFwenjian color-E34522';
   } else if (ext === 'png' || ext === 'jpg' || ext === 'jpeg' || ext === 'bmp') {

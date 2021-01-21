@@ -61,10 +61,10 @@
                     </div>
                     <p style="color:#666">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
-                <el-form-item label="抽奖标题">
+                <el-form-item label="标题">
                     <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
-                <el-form-item label="文字说明">
+                <el-form-item label="说明">
                     <VhallInput v-model.trim="formData.description" autocomplete="off" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
@@ -143,13 +143,15 @@
         </el-tab-pane>
       </el-tabs>
     </div>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
-import prizeList from '../../MaterialModule/prize'
+import prizeList from '../../MaterialModule/prize';
+import beginPlay from '@/components/beginBtn';
 export default {
   name: 'prizeSet',
   data() {
@@ -238,6 +240,7 @@ export default {
   components: {
     PageTitle,
     upload,
+    beginPlay,
     // createPrize,
     prizeList
   },

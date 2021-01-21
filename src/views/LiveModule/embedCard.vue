@@ -61,12 +61,14 @@
       <div class="third-list"></div>
       <p class="third-text">提示：目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm"> 填写推广需求表</a></p>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
+import beginPlay from '@/components/beginBtn';
 import Env from "@/api/env";
 export default {
   name: 'embedCard',
@@ -74,6 +76,7 @@ export default {
     return {
       env: Env,
       isInteract: '',
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
       liveContent: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       completion: `<iframe allow="camera *;microphone *;" allowfullscreen="true" border="0" src="${process.env.VUE_APP_WAP_WATCH}/lives/embedclient/watch/${this.$route.params.str}" width="800" height="600"></iframe>`,
@@ -81,7 +84,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    beginPlay
   },
   created() {
     this.isInteract = this.$route.query.type;
