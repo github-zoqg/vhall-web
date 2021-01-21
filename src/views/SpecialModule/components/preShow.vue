@@ -97,16 +97,14 @@ export default {
     },
     getSpecialList() {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
-        if (res.code == 200) {
-          this.specialInfo = res.data.webinar_subject;
-          // this.liveList = res.data.webinar_subject.webinar_list;
-          this.totalList = res.data.webinar_subject.webinar_list;
-          this.liveList = this.totalList.slice(0, this.pageSize);
-          let totalElement = res.data.webinar_subject.webinar_num;
-          this.maxPage = Math.ceil(totalElement / this.pageSize);
-        } else {
-          this.$message.error('获取失败');
-        }
+        this.specialInfo = res.data.webinar_subject;
+        // this.liveList = res.data.webinar_subject.webinar_list;
+        this.totalList = res.data.webinar_subject.webinar_list;
+        this.liveList = this.totalList.slice(0, this.pageSize);
+        let totalElement = res.data.webinar_subject.webinar_num;
+        this.maxPage = Math.ceil(totalElement / this.pageSize);
+      }).catch(res => {
+        console.log('获取结果失败', res);
       })
     },
     toDetail(id) {

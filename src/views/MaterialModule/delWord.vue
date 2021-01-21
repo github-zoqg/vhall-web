@@ -297,19 +297,27 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
-        if(res && res.code === 200) {
-          this.$message.success('同步成功');
-          try {
-            this.$refs.tableListWord.clearSelect();
-          } catch(e) {
-            console.log(e);
-          }
-        } else {
-          this.$message.error(res.msg || '同步失败');
+        this.$message({
+          message: `同步成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        try {
+          this.$refs.tableListWord.clearSelect();
+        } catch(e) {
+          console.log(e);
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error(e.msg || '同步失败');
+        this.$message({
+          message: e.msg || '同步失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.initPage();
       });
@@ -323,11 +331,23 @@ export default {
       const isType = typeList.includes(lastFileKey.toLowerCase());
       const isLt2M = file.size / 1024 / 1024 < 100;
       if (!isType) {
-        this.$message.error(`上传文件只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传文件只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传文件大小不能超过 100MB!');
+        this.$message({
+          message: '上传文件大小不能超过 100M',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -337,7 +357,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`文件上传失败`);
+      this.$message({
+        message: '文件上传失败',
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -488,12 +514,16 @@ export default {
             console.log(e);
           }
           this.initPage();
-        } else {
-          this.$message.error(res.msg || '删除失败');
         }
       }).catch(e => {
         console.log(e);
-        this.$message.error(e.msg || '删除失败');
+        this.$message({
+          message: e.msg || '删除失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
       });
     },

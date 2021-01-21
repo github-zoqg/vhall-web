@@ -561,7 +561,13 @@
             })
           }
         }).catch(err => {
-          this.$message.error(`报名表单基本信息失败！`);
+          this.$message({
+            message: err.msg || `报名表单基本信息失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           console.log(err);
         });
       },
@@ -759,7 +765,13 @@
                   this.isVerifyCodeErr = false
                 })
               } else {
-                this.$message.error(res.msg)
+                this.$message({
+                  message: res.msg,
+                  showClose: true,
+                  // duration: 0,
+                  type: 'error',
+                  customClass: 'zdy-info-box'
+                });
               }
             })
           } else {

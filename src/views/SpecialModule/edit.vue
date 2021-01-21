@@ -303,11 +303,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传专题封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传专题封面图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传专题封面图片大小不能超过 2MB!');
+        this.$message({
+          message: `上传专题封面图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -318,7 +330,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`专题封面上传失败`);
+      this.$message({
+        message: `专题封面上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -327,11 +345,23 @@ export default {
     submitForm(formName) {
     window.cd = this.formData
       if (!this.formData.content) {
-        this.$message.error('请输入专题简介');
+        this.$message({
+          message: `请输入专题简介`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (!this.formData.selectedActives.length) {
-        this.$message.error('请选择专题目录');
+        this.$message({
+          message: `请选择专题目录`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.$refs[formName].validate((valid) => {
@@ -369,11 +399,15 @@ export default {
               setTimeout(()=>{
                 this.$router.push({path: '/special'});
               }, 500);
-            } else {
-              this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${res.msg}`);
             }
           }).catch(error=>{
-            this.$message.error(this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`);
+            this.$message({
+              message: this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           }).finally(()=>{
             this.loading = false;
           });
@@ -381,7 +415,13 @@ export default {
 
 
         } else {
-          this.$message.error('请完善必填字段');
+          this.$message({
+            message: `请完善必填字段`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           document.documentElement.scrollTop = 0;
           return false;
         }

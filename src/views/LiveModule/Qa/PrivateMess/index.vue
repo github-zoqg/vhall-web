@@ -172,10 +172,22 @@ export default {
     },
     privateSend(){
       if (!this.privateValue.trim()) {
-        return this.$message.error('内容不能为空');
+        return this.$message({
+          message: `内容不能为空`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
       if(this.activeName == ''){
-         return this.$message.error('请选择私聊人员');
+        return this.$message({
+          message: `请选择私聊人员`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
       console.warn(this.userList, '当前的userlIst', this.acrivePrivate);
       let data = {

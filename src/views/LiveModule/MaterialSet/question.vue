@@ -209,16 +209,31 @@ export default {
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
             if (res.code == 200) {
+              this.$message({
+                message: `删除成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.getTableList('search');
-              this.$message.success('删除成功');
             }
           }).catch(res => {
-            this.$message.error(res.msg || '删除失败');
+            this.$message({
+              message: res.msg || '删除失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }).catch(() => {
           this.$message({
+            message: '已取消删除',
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },

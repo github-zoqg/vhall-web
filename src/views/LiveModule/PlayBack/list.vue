@@ -270,8 +270,14 @@ export default {
             { label: '打点录制', value: '3' }
           ]
         }
-      }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || `获取活动信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         console.log(error);
       }).finally(()=>{
         this.loading = false;
@@ -334,8 +340,14 @@ export default {
         if(this.no_show === '') {
           this.no_show = res.data.total == 0 ? true : false
         }
-      }).catch(error=>{
-        this.$message.error(`获取回放列表失败，${error.msg || error.message}`);
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || `获取回放列表失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.loading = false;
       });
@@ -429,33 +441,54 @@ export default {
       }).then(() => {
         this.loading = true;
         this.$fetch('playBackDelete', { record_ids: ids}).then(res=>{
-          if(res.code === 200){
-            this.$message.success('已删除');
-            this.getList();
-          }else{
-            this.$message.error(`删除失败，${res.msg}`);
-          }
-        }).catch(error=>{
-          this.$message.error(`删除失败，${error.msg || error.message}`);
+          this.$message({
+            message: `已删除`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.getList();
+        }).catch(res=>{
+          this.$message({
+            message: res.msg ||  `删除失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           this.loading = false;
         });
       }).catch(() => {});
 
     },
     confirmEdit(){
-      if(!this.titleEdit.trim()) return this.$message.error('请输入标题');
+      if(!this.titleEdit.trim()) return this.$message({
+          message: `请输入标题`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       this.editLoading =true;
       this.$fetch('playBackEdit', { record_id: this.editRecord.id, name: this.titleEdit}).then(res=>{
-        if(res.code === 200){
-          this.$message.success('修改成功');
-          this.getList();
-          this.editDialogVisible = false;
-        }else{
-          this.$message.error(`修改失败，${res.msg}`);
-        }
-
-      }).catch(error=>{
-        this.$message.error(`修改失败，${error.msg || error.message}`);
+        this.$message({
+          message: `修改成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.getList();
+        this.editDialogVisible = false;
+      }).catch(res=>{
+        this.$message({
+          message: res.msg ||  `修改失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.editLoading = false;
       });

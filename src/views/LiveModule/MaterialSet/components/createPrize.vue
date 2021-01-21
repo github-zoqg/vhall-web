@@ -184,7 +184,13 @@ export default {
     },
     surePrize() {
       if (!this.prizeForm.img_path) {
-        this.$message.error("请上传图片");
+        this.$message({
+          message: `请上传图片`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.$refs.prizeForm.validate((valid) => {
@@ -222,12 +228,24 @@ export default {
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
           this.dialogVisible = false;
-          this.$message.success(`资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$message({
+            message: `资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.$emit('getTableList');
-        } else {
-          this.dialogVisible = true;
-          this.$message.error(res.msg);
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `资料中心奖品${this.title === '编辑' ? '修改' : '新建'}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        this.dialogVisible = true;
       })
     },
     // 直播下的保存奖品
@@ -237,17 +255,35 @@ export default {
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
           this.dialogVisible = false;
-          this.$message.success(`直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`);
+          this.$message({
+            message: `直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           this.$emit('getTableList');
-        } else {
-          this.$message.error(res.msg);
-          this.dialogVisible = true;
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `直播下奖品${this.title === '编辑' ? '修改' : '新建'}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        this.dialogVisible = true;
       })
     },
     sureChoisePrize() {
       if (this.liveTotal + this.checkedList.length > 20) {
-        this.$message.error('每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除')
+        this.$message({
+          message: `每个活动最多显示20个奖品，超过20个后无法关联，需要将原有奖品删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let params = {
@@ -255,18 +291,28 @@ export default {
         prize_id: this.checkedList.join(',')
       }
       this.$fetch('saveLotteryPrize', params).then(res => {
-        if (res.code == 200) {
-          this.$message.success('选择成功');
-          this.dialogPrizeVisible = false;
-          this.list.map(item => {
-            item.isChecked = false;
-          });
-          this.list = [];
-          this.checkedList = [];
-          this.$emit('getTableList');
-        } else {
-          this.$message.error(res.msg);
-        }
+        this.$message({
+          message: `选择成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.dialogPrizeVisible = false;
+        this.list.map(item => {
+          item.isChecked = false;
+        });
+        this.list = [];
+        this.checkedList = [];
+        this.$emit('getTableList');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `操作失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     createPrize() {
@@ -343,11 +389,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传奖品图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传奖品图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传奖品图片大小不能超过 2MB!');
+        this.$message({
+          message: `上传奖品图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -357,7 +415,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`奖品图片上传失败`);
+      this.$message({
+        message: `奖品图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);

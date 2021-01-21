@@ -181,7 +181,13 @@ export default {
     // 选择资料库中的问卷
     choseSureQuestion() {
       if (this.checkList.length >= 21) {
-        this.$message.error('每次只能添加20个问卷');
+        this.$message({
+          message: `每次只能添加20个问卷`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let params = {
@@ -190,16 +196,20 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('sharedLiveQuestion', params).then(res => {
-        if (res.code == 200) {
-          this.$message.success('添加成功');
-          this.dataBaseVisible = false;
-          this.pageInfo.pageNum = 1;
-          this.pageInfo.pos = 0;
-          this.$emit("getTableList");
-        } else {
-          this.$message.error('添加失败');
-           this.dataBaseVisible = true;
-        }
+        this.$message.success('添加成功');
+        this.dataBaseVisible = false;
+        this.pageInfo.pageNum = 1;
+        this.pageInfo.pos = 0;
+        this.$emit("getTableList");
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `添加失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        this.dataBaseVisible = true;
       })
     },
     choseShowQueston() {

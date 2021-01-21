@@ -446,7 +446,13 @@ export default {
       if (node.key == 'url') {
         const reg = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/
         if (!reg.test(node.value)) {
-          this.$message.error('请输入正确格式的跳转链接！')
+          this.$message({
+            message: `请输入正确格式的跳转链接！`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           node.value = ''
         }
       }
@@ -549,7 +555,13 @@ export default {
         return;
       }else if(type === 'select') {
         if(item.nodes.length == 2){
-          return this.$message.error('请至少保留两个选项');
+          return  this.$message({
+            message: `请至少保留两个选项`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
         // 删除一个下拉框选项
         this.$fetch('regQOptionDelete', {
@@ -561,7 +573,13 @@ export default {
       } else {
         // 普通选项删除
         if(item.nodes[0].children.length == 2){
-          return this.$message.error('请至少保留两个选项');
+          return this.$message({
+            message: `请至少保留两个选项`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
         // 删除其他题目中的一个选项
         this.$fetch('regQOptionDelete', {
@@ -577,9 +595,21 @@ export default {
     privacyAdd(nodes, question){
       let privacy1 = nodes[1].value;
       if(!privacy1 || !nodes[0].value.match(privacy1)){
-        return this.$message.error('请完善可点击文字');
+        return this.$message({
+          message: '请完善可点击文字',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else if (nodes[0].value.length >= 53) {
-        return this.$message.error('添加隐私协议会超出预览字数，请删减后再添加');
+        return this.$message({
+          message: '添加隐私协议会超出预览字数，请删减后再添加',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
       let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
       let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
@@ -642,11 +672,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传表单头图只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传表单头图只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传表单头图大小不能超过 2MB!');
+        this.$message({
+          message: `上传表单头图大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;

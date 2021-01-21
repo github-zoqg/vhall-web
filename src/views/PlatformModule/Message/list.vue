@@ -163,7 +163,13 @@ export default {
     executeUseRead() {
       console.log(this.ids);
       if (!(this.ids && this.ids.length > 0)) {
-        this.$message.error('请至少选择一条信息标记为已读');
+        this.$message({
+          message: `请至少选择一条信息标记为已读`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         this.$confirm('确定要标记选中内容为已读？', '提示', {
           confirmButtonText: '确定',
@@ -203,7 +209,13 @@ export default {
     // 批量删除
     multiMsgDel() {
       if (!(this.ids && this.ids.length > 0)) {
-        this.$message.error('请至少选择一条信息删除');
+        this.$message({
+          message: `请至少选择一条信息删除`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         this.msgDel(this, {
           rows: {
