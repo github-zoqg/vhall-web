@@ -1,96 +1,96 @@
 <template>
   <div>
     <VhallDialog
-    title="分享"
-    :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
-    width="25%">
-    <div class="content">
-      <div class="code">
-        <img :src="qrcode" alt="">
-        <p>扫码观看</p>
+      title="分享"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      customClass="share-dialog"
+      :lock-scroll='false'
+      width="592px">
+      <div class="content">
+        <div class="share-div">
+          <el-input placeholder="请输入内容" :value="shareVo.pcUrl || url" class="input-with-select" id="linkBox">
+            <el-button type="primary" size="medium" slot="append" @click="doCopy" class="zdy-copy-btn">复制</el-button>
+          </el-input>
+          <ul class="icons">
+            <li><i @click="toShare('qq')"></i><p>QQ</p></li>
+            <li><i @click="toShare('sina')"></i><p>微博</p></li>
+            <li><i @click="toShare('wechat')"></i><p>微信</p></li>
+          </ul>
+        </div>
+        <div class="code-div">
+          <img :src="env.staticLinkVo.aliQr + (shareVo.url || url)" alt="二维码加载失败"><br>
+          <p class="img-code">手机扫码观看</p>
+        </div>
       </div>
-      <p class="shareText">
-        <span>分享链接：</span>
-        <el-input placeholder="请输入内容" v-model.trim="url" class="input-with-select" :id="linkId" style="width:200px" disabled>
-        </el-input>
-        <label  @click="copy">复制</label>
-      </p>
-    </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="dialogVisible = false" round>确 定</el-button>
-      <el-button @click="dialogVisible = false" round>取 消</el-button>
-    </span>
-  </VhallDialog>
-  <VhallDialog
-    title="专题分享"
-    :visible.sync="specialVisible"
-    :close-on-click-modal="false"
-    width="25%">
-    <div class="content">
-      <div class="special-code">
-        <p class="icons">
-          123123<icon icon-class="saasicon_wechat" @click="toShare"></icon>
-         aaa <icon icon-class="saasicon_sina"></icon>
-          vv<icon icon-class="saasicon_qq"></icon>
-        </p>
-        <p class="img-code"><img :src="qrcode" alt=""><br><span>手机扫码观看</span></p>
+    </VhallDialog>
+    <VhallDialog
+      title="分享"
+      :visible.sync="wxDialogVisible"
+      :close-on-click-modal="false"
+      width="320px">
+      <div class="wximg-box">
+        <img :src="`//aliqr.e.vhall.com/qr.png?t=${this.shareVo.url || this.url}`" alt="">
       </div>
-      <p class="shareText">
-        <span>分享链接：</span>
-        <el-input placeholder="请输入内容" v-model="url" class="input-with-select" :id="linkId" style="width:200px" disabled>
-        </el-input>
-        <label  @click="copy">复制</label>
-      </p>
-    </div>
-  </VhallDialog>
+      <p class="wximg-intro">打开微信，点击底部的“发现”，使用 “扫一扫” 即可将网页分享到我的朋友圈。</p>
+    </VhallDialog>
   </div>
 </template>
 
 <script>
-import QRcode from 'qrcode';
+import Env from "@/api/env";
 export default {
-  data(){
-    return {
-      qrcode: '',
-      dialogVisible: false,
-      specialVisible: false,
-    };
-  },
+  created() {},
   props: {
     url:{
       type: String,
-      required: true
+      required: false
     },
-    linkId: {
-      type: String,
-      required: true,
-      default: 'linkBox'
+    shareVo: {
+      type: Object,
+      required: false
     }
   },
-   created(){
-    QRcode.toDataURL(
-      this.url,
-      (err, url) => {
-        console.log(err, url);
-        this.qrcode = url;
-      }
-    );
+  data(){
+    return {
+      env: Env,
+      dialogVisible: false,
+      wxDialogVisible: false
+    };
   },
   methods: {
-    toShare() {
-      window.location.open('https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://t.e.vhall.com/v3/#/lives/room/570327731&sharesource=qzone&title=分享标题&pics=&summary=测试用', '_blank');
+   toShare(type) {
+      let url = '';
+      if(type === 'wechat') {
+        this.wxDialogVisible = true;
+      }
+      else if (type === 'sina') {
+        url = `http://service.weibo.com/share/share.php?url=${this.shareVo.url || this.url}`
+        window.open(url, '_blank');
+      }
+      else if (type === 'qq') {
+        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.shareVo.url || this.url}`
+        window.open(url, '_blank');
+      }
     },
-    copy(){
-      const input = document.getElementById(this.linkId);
-      input.select();
-      document.execCommand('copy');
-      this.$message({
-        message: `复制成功`,
-        showClose: true,
-        // duration: 0,
-        type: 'success',
-        customClass: 'zdy-info-box'
+    doCopy () {
+      let url = this.shareVo.url || this.url;
+      this.$copyText(url).then(e => {
+        this.$message({
+          message: `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(error=>{
+        this.$message({
+          message: `复制失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
   }
@@ -99,74 +99,156 @@ export default {
 
 <style lang="less" scoped>
   @iconpath: '../../../common/images/icon';
-  .content{
-    .el-input-group{
-      width: 330px;
-      float: right;
-    }
-    .code{
-      text-align: center;
-      // margin-top: 50px;
-      img{
-        width: 132px;
-        height: 132px;
-      }
-      p{
-        line-height: 22px;
-        color: #1a1a1a;
-      }
-    }
-    .special-code{
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      img{
-        width: 90px;
-        height: 90px;
-      }
-      span{
-        // display: inline-block;
-        // text-align: center;
-        padding-left: 5px;
+  /deep/ .share-dialog {
+    max-height: 314px;
+    height: auto;
+    padding-bottom: 32px;
+    border-radius: 4px;
+  }
+  /deep/ .smallSwtich{
+    margin-left: 12px;
+    vertical-align: text-bottom;
+    .el-switch__core{
+      height: 16px;
+      &::after{
+        width: 12px;
+        height: 12px;
       }
     }
-    .shareText{
-      // margin-top: 16px;
-      // overflow: hidden;
-      padding: 20px 0 20px 25px;
-      line-height: 34px;
-      label{
-        display: inline-block;
-        height: 36px;
-        width: 70px;
-        line-height: 34px;
-        text-align: center;
-        margin-left: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        cursor: pointer;
-        &:hover{
-          background: #ffebeb;
+    &.is-checked{
+      .el-switch__core{
+        &::after{
+          margin-left: -13px;
         }
       }
+    }
+  }
+  .content{
+    .content-wrap{
+      position: absolute;
+      z-index: 2;
+      width: 100%;
+      bottom: 0;
+      height: calc(100% - 50px);
+      background: rgba(255, 255, 255, 0.5)
+    }
+    .independentForm {
+      margin-top: 0px;
+    }
+    p{
+      margin-top: 20px;
+      overflow: hidden;
+      line-height: 34px;
+    }
+    .content-key{
+      color: #1a1a1a;
     }
     .sub{
       color: #999;
       font-size: 12px;
       margin-top: 0;
-      text-indent: 86px;
-    }
-    .icons{
-      text-align: center;
+      text-indent: 70px;
     }
     /deep/ .el-input__inner{
       border-radius: 4px 0 0 4px;
-      margin-right: 10px;
+      padding: 0 6px 0 12px;
     }
-    // /deep/ .el-input-group__append{
-    //   background: #FB3A32;
-    //   color: #ffffff;
-    //   border-color: transparent;
-    // }
+    /deep/ .el-input-group__append{
+      background: #FB3A32;
+      color: #ffffff;
+      border-color: transparent;
+      border-right: 0;
+    }
+  }
+  .share-div {
+     display: inline-block;
+     vertical-align: top;
+     width: 322px;
+     margin-right: 32px;
+     .input-with-select {
+       background: #F7F7F7;
+       position: relative;
+     }
+     .zdy-copy-btn {
+
+     }
+  }
+  .icons{
+    text-align: left;
+    width: 322px;
+    display: inline-block;
+    margin-top: 32px;
+    li {
+      list-style-type: none;
+      display: inline-block;
+      vertical-align: middle;
+      text-align: center;
+      i{
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+      &:nth-child(1){
+        i {
+          background: url("@{iconpath}/qq.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+      &:nth-child(2){
+        i {
+          background: url("@{iconpath}/weibo.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
+        margin: 0 48px;
+      }
+      &:nth-child(3){
+        i {
+          background: url("@{iconpath}/wechat.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+    }
+    p {
+      font-size: 14px;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 20px;
+      margin-top: 6px;
+    }
+  }
+  .code-div {
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    width: 174px;
+    border: 1px solid #CCCCCC;
+    padding: 21px 21px;
+    img {
+      width: 132px;
+      height: 125px;
+    }
+    .img-code {
+      margin-top: 10px;
+      line-height: 20px;
+    }
+  }
+  .wximg-box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 16px;
+    img {
+      width: 132px;
+      height: 132px;
+    }
+  }
+  .wximg-intro {
+    padding-bottom: 24px;
+    line-height: 20px;
   }
 </style>

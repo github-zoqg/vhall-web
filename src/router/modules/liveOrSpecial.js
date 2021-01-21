@@ -1,4 +1,6 @@
 import Layout from "@/layout/index";
+import Detail from '@/views/LiveModule/detail'
+import CustomerTab from '@/views/LiveModule/CustomerTabView'
 
 const router = [
   {
@@ -55,7 +57,7 @@ const router = [
       },
       {
         path: 'detail/:str(\\d+)',
-        component: () => import('@/views/LiveModule/detail'),
+        component: Detail,
         meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list'},
         hidden: true
       },
@@ -151,15 +153,9 @@ const router = [
       },
       {
         path: 'customTab/:str(\\d+)',
-        component: () => import('@/views/LiveModule/CustomerTabView'),
+        component: CustomerTab,
         // component: () => import('@/views/LiveModule/customTab'),
         meta:{ auth: true, title: '自定义菜单', name: 'customTab', activeMenu: '/live/list'},
-        hidden: true
-      },
-      {
-        path: 'menus/:str(\\d+)',
-        component: () => import('@/views/LiveModule/CustomerTabView'),
-        meta:{ auth: true, title: '品牌—自定义菜单',  activeMenu: '/live/list'},
         hidden: true
       },
       {

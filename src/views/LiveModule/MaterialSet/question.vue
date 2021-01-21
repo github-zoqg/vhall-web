@@ -178,8 +178,11 @@ export default {
           );
         }).catch(() => {
           this.$message({
+            message: `已取消修改`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消修改'
+            customClass: 'zdy-info-box'
           });
         });
       } else {
@@ -239,7 +242,13 @@ export default {
     },
     deleteAll(id) {
       if (this.selectChecked.length < 1) {
-          this.$message.warning('请选择要操作的选项');
+          this.$message({
+            message: `请选择要操作的选项`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
         } else {
           id = this.selectChecked.join(',');
           this.deleteConfirm(id);
@@ -305,8 +314,8 @@ export default {
     }
   }
   .show-question{
-    position: absolute;
-    z-index: 2002;
+    position: fixed;
+    z-index: 3000;
     top: 0;
     left: 0;
     width: 100%;
@@ -337,6 +346,7 @@ export default {
       }
       .submit-footer{
         text-align: center;
+        padding-top: 20px;
       }
     }
   }

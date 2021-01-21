@@ -36,7 +36,7 @@
       <noData :nullType="'search'" v-if="isSearch"></noData>
     </div>
     <template v-if="isShowQuestion">
-      <div class="show-question">
+      <div class="show-question" @touchmove.native.stop.prevent="clear">
         <div class="show-main">
           <p>问卷预览 <i class="el-icon-close" @click="isShowQuestion=false"></i></p>
           <el-scrollbar>
@@ -101,6 +101,10 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    clear(e) {
+      console.log(e, '?????????????????')
+      e.stopPropagation()
+    },
     searchTableList() {
       this.getTableList('search')
     },
@@ -125,6 +129,7 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.isShowQuestion = true;
+      // document.querySelector('.section__main').style.minHeight = 640 + 'px'
       that.questionId = rows.question_id;
     },
     // 复制
@@ -214,6 +219,7 @@ export default {
 <style lang="less" scoped>
 .question-list{
   width: 100%;
+  height: 100%;
   .layout--right--main();
   .padding-table-list();
   .min-height();
@@ -225,10 +231,10 @@ export default {
 .question-wrap{
   height: 100%;
   width: 100%;
-  /deep/.el-card__body{
-    width: 100%;
-    padding: 32px 24px;
-  }
+  // /deep/.el-card__body{
+  //   width: 100%;
+  //   padding: 32px 24px;
+  // }
   .head-operat{
     margin-bottom: 20px;
     .head-btn{
@@ -261,8 +267,8 @@ export default {
     }
   }
   .show-question{
-    position: absolute;
-    z-index: 2002;
+    position: fixed;
+    z-index: 3000;
     top: 0;
     left: 0;
     width: 100%;
@@ -294,6 +300,7 @@ export default {
       }
       .submit-footer{
         text-align: center;
+        padding-top: 20px;
       }
     }
   }

@@ -156,7 +156,7 @@ export default {
       width: 70px;
       line-height: 35px;
       font-size: 14px;
-      color: #666;
+      color: #1a1a1a;
     }
     i{
       cursor: pointer;

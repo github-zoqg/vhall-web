@@ -48,6 +48,7 @@
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
                       v-model.number="form[question.id]"
+                      type="number"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                     <VhallInput
@@ -211,7 +212,7 @@
                   label="请输入报名时您填写的手机号"
                   prop="phone"
                 >
-                  <VhallInput v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
+                  <VhallInput type="number" v-model.number.trim="verifyForm.phone" auto-complete="off" placeholder="请输入手机号"></VhallInput>
                 </el-form-item>
                 <el-form-item class="verifyCodeBox" v-if="isPhoneValidate" prop="code">
                   <el-row :gutter="20">
@@ -1340,10 +1341,13 @@
         //     .yidun_slide_indicator {
         //       border-radius: 4px!important;
         //     }
-        //     .yidun_tips {
-        //       color: #888888;
-        //       line-height: 38px;
-        //     }
+            .yidun_tips {
+              color: #999999;
+              line-height: 38px!important;
+              .yidun_tips__text {
+                vertical-align: initial;
+              }
+            }
             .yidun_slider {
               .yidun_slider__icon {
                 background-image: url(./images/icon-slide1.png);
