@@ -260,6 +260,7 @@ export default {
   .text{
     height: 40px;
     padding-top: 8px;
+    font-size: 14px;
     span{
       color: #fb3a32;
       padding: 0 5px;
@@ -280,13 +281,12 @@ export default {
   }
 }
 .show-question{
-    position: absolute;
-    z-index: 5;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2002;
+    z-index: 3000;
     background: rgba(0, 0, 0, .3);
     .show-main{
       position: absolute;

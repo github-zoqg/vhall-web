@@ -93,11 +93,11 @@ export default {
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
       console.log(dataVo, '功能配置');
-      let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      let permissions = sessionOrLocal.get('WEBINAR_PES', 'localStorage');
       let perVo = permissions ? JSON.parse(permissions) : {};
-      if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
-        perVo['ui.record_chapter'] = 1;
-      }
+      // if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
+      //   perVo['ui.record_chapter'] = 1;
+      // }
       this.keyList = [
         {
           type: 'ui.hide_reward',

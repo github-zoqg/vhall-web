@@ -7,16 +7,28 @@ Vue.use(VueRouter);
 // 所有路由数组
 const routes = [];
 // 动态加载路由
-const modulesFiles = require.context('./modules', true, /\.js$/);
-modulesFiles.keys().map((modulePath) => {
-  routes.push(...modulesFiles(modulePath).default);
-});
+// const modulesFiles = require.context('./modules', true, /\.js$/);
+// modulesFiles.keys().map((modulePath) => {
+//   routes.push(...modulesFiles(modulePath).default);
+// });
+
+import Home from './modules/home'
+import Live from './modules/liveOrSpecial'
+import material from './modules/material'
+import setting from './modules/settingOrData'
+import v3 from './modules/v3Sys'
 
 const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
 const createRouter = () => new VueRouter({
   mode: 'history',
   base,
-  routes
+  routes :[
+    ...Home,
+    ...Live,
+    ...material,
+    ...setting,
+    ...v3
+  ]
 });
 const router = createRouter();
 NProgress.configure({showSpinner: false}); // NProgress Configuration

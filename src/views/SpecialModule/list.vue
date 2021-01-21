@@ -75,15 +75,16 @@
         <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
-    <VhallDialog
+    <!-- <VhallDialog
       title="分享"
       :visible.sync="dialogShareVisible"
       :close-on-click-modal="false"
-      width="500px">
+      width="592px">
       <div class="content">
-        <share slot="content" :shareVo="shareVo"></share>
+
       </div>
-   </VhallDialog>
+   </VhallDialog> -->
+   <share ref="share" :shareVo="shareVo"></share>
    <el-dialog
       custom-class="dialog-tutorial-wrap"
       class="vh-dialog"
@@ -102,7 +103,7 @@
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
-import share from '@/components/Share'
+import share from './components/share'
 import introduceShow from './components/moduleTutorial'
 export default {
   data() {
@@ -224,7 +225,8 @@ export default {
       window.open(href, '_blank');
     },
     toShare(id) {
-      this.dialogShareVisible = true;
+      this.$refs.share.dialogVisible = true;
+      // this.dialogShareVisible = true;
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
     },
